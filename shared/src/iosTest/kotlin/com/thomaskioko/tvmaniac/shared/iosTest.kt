@@ -1,4 +1,4 @@
-package me.thomas.shared
+package com.thomaskioko.tvmaniac.shared
 
 import kotlin.test.Test
 import kotlin.test.assertTrue

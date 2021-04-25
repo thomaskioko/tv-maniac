@@ -1,4 +1,4 @@
-package me.thomas.shared
+package com.thomaskioko.tvmaniac.shared
 
 import org.junit.Assert.assertTrue
 import org.junit.Test

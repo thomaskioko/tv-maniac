@@ -11,7 +11,7 @@ buildscript {
     }
 }
 
-group = "me.thomas"
+group = "com.thomaskioko.tvmaniac"
 version = "1.0-SNAPSHOT"
 
 allprojects {

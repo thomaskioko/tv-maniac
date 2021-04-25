@@ -5,11 +5,12 @@ pluginManagement {
         gradlePluginPortal()
         mavenCentral()
     }
-    
+
 }
-rootProject.name = "TvManiac"
+rootProject.name = "tv-maniac"
 
 
-include(":androidApp")
-include(":shared")
-
+include(
+    ":androidApp",
+    ":shared"
+)

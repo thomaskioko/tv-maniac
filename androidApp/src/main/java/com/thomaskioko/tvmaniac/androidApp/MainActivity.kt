@@ -1,8 +1,8 @@
-package me.thomas.androidApp
+package com.thomaskioko.tvmaniac.androidApp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import me.thomas.shared.Greeting
+import com.thomaskioko.tvmaniac.shared.Greeting
 import android.widget.TextView
 
 fun greet(): String {

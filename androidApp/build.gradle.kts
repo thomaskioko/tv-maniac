@@ -4,7 +4,7 @@ plugins {
     id("kotlin-android-extensions")
 }
 
-group = "me.thomas"
+group = "com.thomaskioko.tvmaniac"
 version = "1.0-SNAPSHOT"
 
 dependencies {
@@ -17,7 +17,7 @@ dependencies {
 android {
     compileSdkVersion(29)
     defaultConfig {
-        applicationId = "me.thomas.androidApp"
+        applicationId = "com.thomaskioko.tvmaniac"
         minSdkVersion(24)
         targetSdkVersion(29)
         versionCode = 1

@@ -1,4 +1,4 @@
-package me.thomas.shared
+package com.thomaskioko.tvmaniac.shared
 
 
 import platform.UIKit.UIDevice

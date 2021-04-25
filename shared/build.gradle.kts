@@ -6,7 +6,7 @@ plugins {
     id("kotlin-android-extensions")
 }
 
-group = "me.thomas"
+group = "com.thomaskioko.tvmaniac"
 version = "1.0-SNAPSHOT"
 
 kotlin {
