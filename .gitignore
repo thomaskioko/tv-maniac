@@ -48,10 +48,6 @@ captures/
 !/.idea/codeStyles
 !/.idea/dictionaries
 
-# Secrets
-/shared/secrets.properties
-*.jks
-
 # Eclipse project files
 .classpath
 .project
@@ -59,6 +55,4 @@ captures/
 ## Playgrounds
 timeline.xctimeline
 playground.xcworkspace
-
-buildboth.sh
 
