@@ -2,22 +2,31 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     kotlin("multiplatform")
+    kotlin("native.cocoapods")
     id("com.android.library")
-    id("kotlin-android-extensions")
 }
 
-group = "com.thomaskioko.tvmaniac"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 kotlin {
     android()
-    ios {
-        binaries {
-            framework {
-                baseName = "shared"
-            }
-        }
+
+    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget =
+        if (System.getenv("SDK_NAME")?.startsWith("iphoneos") == true)
+            ::iosArm64
+        else
+            ::iosX64
+
+    iosTarget("ios") {}
+
+    cocoapods {
+        summary = "Some description for the Shared Module"
+        homepage = "Link to the Shared Module homepage"
+        ios.deploymentTarget = "14.1"
+        frameworkName = "shared"
+        podfile = project.file("../ios/Podfile")
     }
+    
     sourceSets {
         val commonMain by getting
         val commonTest by getting {
@@ -26,15 +35,11 @@ kotlin {
                 implementation(kotlin("test-annotations-common"))
             }
         }
-        val androidMain by getting {
-            dependencies {
-                implementation("com.google.android.material:material:1.2.1")
-            }
-        }
+        val androidMain by getting
         val androidTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
-                implementation("junit:junit:4.13")
+                implementation("junit:junit:4.13.2")
             }
         }
         val iosMain by getting
@@ -43,25 +48,10 @@ kotlin {
 }
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(30)
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
-        minSdkVersion(24)
-        targetSdkVersion(29)
+        minSdkVersion(21)
+        targetSdkVersion(30)
     }
 }
-
-val packForXcode by tasks.creating(Sync::class) {
-    group = "build"
-    val mode = System.getenv("CONFIGURATION") ?: "DEBUG"
-    val sdkName = System.getenv("SDK_NAME") ?: "iphonesimulator"
-    val targetName = "ios" + if (sdkName.startsWith("iphoneos")) "Arm64" else "X64"
-    val framework = kotlin.targets.getByName<KotlinNativeTarget>(targetName).binaries.getFramework(mode)
-    inputs.property("mode", mode)
-    dependsOn(framework.linkTask)
-    val targetDir = File(buildDir, "xcode-frameworks")
-    from({ framework.outputDirectory })
-    into(targetDir)
-}
-
-tasks.getByName("build").dependsOn(packForXcode)
