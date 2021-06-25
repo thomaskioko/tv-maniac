@@ -1,9 +1,10 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-    kotlin("multiplatform")
-    kotlin("native.cocoapods")
-    id("com.android.library")
+    kotlin(Plugins.multiplatform)
+    kotlin(Plugins.cocoapods)
+    kotlin(Plugins.serialization) version("1.5.10")
+    id(Plugins.androidLibrary)
 }
 
 version = "1.0"
@@ -28,7 +29,11 @@ kotlin {
     }
     
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation(libs.kotlin.datetime)
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
@@ -39,7 +44,7 @@ kotlin {
         val androidTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
-                implementation("junit:junit:4.13.2")
+                implementation(libs.testing.junit)
             }
         }
         val iosMain by getting
@@ -48,10 +53,16 @@ kotlin {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = libs.versions.android.compile.get().toInt()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(30)
+        minSdk = libs.versions.android.min.get().toInt()
+        targetSdk = libs.versions.android.target.get().toInt()
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 }

@@ -1,27 +1,57 @@
 plugins {
-    id("com.android.application")
-    kotlin("android")
-}
-
-dependencies {
-    implementation(project(":shared"))
-    implementation("com.google.android.material:material:1.3.0")
-    implementation("androidx.appcompat:appcompat:1.2.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
+    id(Plugins.androidApplication)
+    kotlin(Plugins.android)
+    kotlin(Plugins.kapt)
+    kotlin(Plugins.serialization) version("1.5.10")
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = libs.versions.android.compile.get().toInt()
     defaultConfig {
         applicationId = "com.thomaskioko.tvmaniac.android"
-        minSdkVersion(21)
-        targetSdkVersion(30)
+        minSdk = libs.versions.android.min.get().toInt()
+        targetSdk = libs.versions.android.target.get().toInt()
         versionCode = 1
         versionName = "1.0"
     }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
         }
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.get()
+    }
+
+    dependencies {
+        implementation(project(":shared"))
+
+        implementation(libs.material)
+        implementation(libs.androidx.appCompat)
+
+        implementation(libs.androidx.compose.runtime.core)
+        implementation(libs.androidx.compose.runtime.livedata)
+        implementation(libs.androidx.compose.material)
+        implementation(libs.androidx.compose.ui.runtime)
+        implementation(libs.androidx.compose.ui.tooling)
+        implementation(libs.androidx.compose.foundation)
+        implementation(libs.androidx.compose.compiler)
+        implementation(libs.androidx.compose.constraintlayout)
+        implementation(libs.androidx.compose.activity)
+        implementation(libs.androidx.compose.navigation)
+
+        implementation(libs.kotlin.datetime)
+
+        debugImplementation(libs.squareup.leakcanary)
     }
 }
