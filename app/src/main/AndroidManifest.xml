@@ -3,6 +3,7 @@
     package="com.thomaskioko.tvmaniac.android">
 
     <application
+        android:label="Tv Maniac"
         android:allowBackup="false"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
