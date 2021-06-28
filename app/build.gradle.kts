@@ -25,6 +25,11 @@ android {
         compose = true
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -51,6 +56,8 @@ android {
         implementation(libs.androidx.compose.navigation)
 
         implementation(libs.kotlin.datetime)
+
+        implementation(libs.ktor.android)
 
         debugImplementation(libs.squareup.leakcanary)
     }

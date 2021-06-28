@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 plugins {
     kotlin(Plugins.multiplatform)
     kotlin(Plugins.cocoapods)
-    kotlin(Plugins.serialization) version("1.5.10")
+    kotlin(Plugins.serialization) version ("1.5.10")
     id(Plugins.androidLibrary)
 }
 
@@ -22,33 +22,35 @@ kotlin {
 
     cocoapods {
         summary = "Some description for the Shared Module"
-        homepage = "Link to the Shared Module homepage"
+        homepage = "https://github.com/c0de-wizard/tv-maniac"
         ios.deploymentTarget = "14.1"
         frameworkName = "shared"
         podfile = project.file("../ios/Podfile")
     }
-    
+
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(libs.kotlin.datetime)
-            }
+        sourceSets["commonMain"].dependencies {
+            implementation(libs.kotlin.datetime)
+            implementation(libs.ktor.core)
+            implementation(libs.ktor.serialization)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-            }
+
+        sourceSets["commonTest"].dependencies {
+            implementation(kotlin("test-common"))
+            implementation(kotlin("test-annotations-common"))
         }
-        val androidMain by getting
-        val androidTest by getting {
-            dependencies {
-                implementation(kotlin("test-junit"))
-                implementation(libs.testing.junit)
-            }
+
+        sourceSets["androidMain"].dependencies {
+            implementation(libs.ktor.android)
         }
-        val iosMain by getting
-        val iosTest by getting
+
+        sourceSets["androidTest"].dependencies {}
+
+        sourceSets["iosMain"].dependencies {
+            implementation(libs.ktor.ios)
+        }
+
+        sourceSets["iosTest"].dependencies {}
     }
 }
 
