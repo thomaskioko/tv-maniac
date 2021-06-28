@@ -1,0 +1,21 @@
+name: Shared CI
+
+on:
+  pull_request:
+    paths:
+      - 'shared/**'
+
+jobs:
+
+  test:
+    name: Run all Unit Tests
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Unit tests
+        run: bash ./gradlew allTests
