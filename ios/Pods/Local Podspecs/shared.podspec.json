@@ -1,7 +1,7 @@
 {
   "name": "shared",
   "version": "1.0",
-  "homepage": "Link to the Shared Module homepage",
+  "homepage": "https://github.com/c0de-wizard/tv-maniac",
   "source": {
     "git": "Not Published",
     "tag": "Cocoapods/shared/1.0"
