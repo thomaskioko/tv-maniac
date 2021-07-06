@@ -6,4 +6,5 @@ object Plugins {
     const val cocoapods = "native.cocoapods"
     const val serialization = "plugin.serialization"
     const val kapt = "kapt"
+    const val hilt = "dagger.hilt.android.plugin"
 }

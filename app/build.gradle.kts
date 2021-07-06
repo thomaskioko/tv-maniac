@@ -3,6 +3,7 @@ plugins {
     kotlin(Plugins.android)
     kotlin(Plugins.kapt)
     kotlin(Plugins.serialization) version("1.5.10")
+    id(Plugins.hilt)
 }
 
 android {
@@ -55,9 +56,10 @@ android {
         implementation(libs.androidx.compose.activity)
         implementation(libs.androidx.compose.navigation)
 
+        implementation(libs.hilt.android)
         implementation(libs.kotlin.datetime)
-
         implementation(libs.ktor.android)
+        kapt(libs.hilt.compiler)
 
         debugImplementation(libs.squareup.leakcanary)
     }
