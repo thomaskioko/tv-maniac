@@ -32,6 +32,7 @@ kotlin {
         sourceSets["commonMain"].dependencies {
             implementation(libs.kotlin.datetime)
             implementation(libs.ktor.core)
+            implementation(libs.ktor.logging)
             implementation(libs.ktor.serialization)
         }
 
