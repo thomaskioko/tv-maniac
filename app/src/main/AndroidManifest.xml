@@ -3,8 +3,9 @@
     package="com.thomaskioko.tvmaniac">
 
     <application
-        android:label="Tv Maniac"
+        android:name=".TvManicApplication"
         android:allowBackup="false"
+        android:label="Tv Maniac"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
