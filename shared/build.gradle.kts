@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -5,6 +7,7 @@ plugins {
     kotlin(Plugins.cocoapods)
     kotlin(Plugins.serialization) version ("1.5.10")
     id(Plugins.androidLibrary)
+    id(Plugins.buildkonfig)
 }
 
 version = "1.0"
@@ -67,5 +70,16 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+}
+
+buildkonfig {
+    packageName = "com.thomaskioko.tvmaniac.shared"
+
+    val props = gradleLocalProperties(rootDir)
+    defaultConfigs {
+        buildConfigField(STRING, "TMDB_API_KEY", props.getProperty("TMDB_API_KEY"))
+        buildConfigField(STRING, "TMDB_API_URL", props.getProperty("TMDB_API_URL"))
     }
 }

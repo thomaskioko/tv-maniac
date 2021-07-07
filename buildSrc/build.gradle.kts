@@ -17,4 +17,5 @@ dependencies {
     implementation(libs.android.gradle)
     implementation(libs.plugins.dependency.check)
     implementation(libs.plugins.hilt)
+    implementation(libs.plugins.buildkonfig)
 }
