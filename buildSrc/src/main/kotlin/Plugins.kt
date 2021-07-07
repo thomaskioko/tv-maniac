@@ -7,4 +7,5 @@ object Plugins {
     const val serialization = "plugin.serialization"
     const val kapt = "kapt"
     const val hilt = "dagger.hilt.android.plugin"
+    const val buildkonfig = "com.codingfeline.buildkonfig"
 }
