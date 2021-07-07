@@ -19,8 +19,11 @@ hilt = "2.37"
 ktor = "1.6.0"
 material = "1.4.0-beta01"
 squareup-leakcanary = "2.7"
+napier = "1.5.0"
 
+testing-assertK = "0.24"
 testing-junit = "4.13.2"
+testing-opentest = "1.1.1"
 
 plugins-buildkonfig = "0.7.0"
 plugins-gradle-versions = "0.38.0"
@@ -54,9 +57,12 @@ ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
 squareup-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "squareup-leakcanary" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 plugins-dependency-check = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "plugins-gradle-versions" }
 plugins-hilt = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 plugins-buildkonfig = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "plugins-buildkonfig" }
 
 testing-junit = { module = "junit:junit", version.ref = "testing-junit" }
+testing-assertK = { module = "com.willowtreeapps.assertk:assertk", version.ref = "testing-assertK" }
+testing-opentest = { module = "org.opentest4j:opentest4j", version.ref = "testing-opentest" }

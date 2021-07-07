@@ -37,11 +37,17 @@ kotlin {
             implementation(libs.ktor.core)
             implementation(libs.ktor.logging)
             implementation(libs.ktor.serialization)
+
+            implementation(libs.napier)
         }
 
         sourceSets["commonTest"].dependencies {
+            implementation(kotlin("test"))
+            implementation(kotlin("test-junit"))
             implementation(kotlin("test-common"))
             implementation(kotlin("test-annotations-common"))
+            implementation(libs.testing.assertK)
+            implementation(libs.testing.opentest)
         }
 
         sourceSets["androidMain"].dependencies {
