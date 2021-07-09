@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.datasource.network
 
-import android.util.Log
+import io.github.aakira.napier.Napier
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.features.*
@@ -34,7 +34,7 @@ actual class KtorClientFactory {
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
-                        Log.v("Ktor Logger =>", message)
+                        Napier.v("Ktor Logger => $message")
                     }
                 }
 
@@ -43,7 +43,7 @@ actual class KtorClientFactory {
 
             install(ResponseObserver) {
                 onResponse { response ->
-                    Log.d("HTTP status:", "${response.status.value}")
+                    Napier.d("HTTP status: ${response.status.value}")
                 }
             }
 
