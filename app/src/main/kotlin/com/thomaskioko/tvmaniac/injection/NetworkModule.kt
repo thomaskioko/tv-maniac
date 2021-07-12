@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.di
+package com.thomaskioko.tvmaniac.injection
 
 import com.thomaskioko.tvmaniac.datasource.TvShowsRepository
 import com.thomaskioko.tvmaniac.datasource.TvShowsRepositoryImpl
