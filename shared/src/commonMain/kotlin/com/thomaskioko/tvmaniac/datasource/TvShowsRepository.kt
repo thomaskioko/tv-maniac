@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.datasource
 
-import com.thomaskioko.tvmaniac.datasource.cache.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
 
 interface TvShowsRepository  {
 

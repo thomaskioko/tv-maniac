@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource.cache
+package com.thomaskioko.tvmaniac.datasource.cache.model
 
 data class TvShowsEntity(
     val id: Int = 0,
