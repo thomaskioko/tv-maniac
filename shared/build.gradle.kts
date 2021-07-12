@@ -34,6 +34,8 @@ kotlin {
     sourceSets {
         sourceSets["commonMain"].dependencies {
             implementation(libs.kotlin.datetime)
+            implementation(libs.kotlin.coroutines.core)
+
             implementation(libs.ktor.core)
             implementation(libs.ktor.logging)
             implementation(libs.ktor.serialization)
@@ -48,6 +50,7 @@ kotlin {
             implementation(kotlin("test-annotations-common"))
             implementation(libs.testing.assertK)
             implementation(libs.testing.opentest)
+            implementation(libs.testing.kotest.assertions)
         }
 
         sourceSets["androidMain"].dependencies {

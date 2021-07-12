@@ -11,3 +11,18 @@ allprojects {
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }
+
+subprojects {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        with(kotlinOptions) {
+            jvmTarget = JavaVersion.VERSION_1_8.toString()
+            useIR = true
+            languageVersion = "1.5"
+            apiVersion = "1.5"
+            freeCompilerArgs = freeCompilerArgs + listOf(
+                "-Xopt-in=kotlin.time.ExperimentalTime",
+                "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            )
+        }
+    }
+}

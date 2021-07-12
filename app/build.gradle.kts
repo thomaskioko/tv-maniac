@@ -39,6 +39,10 @@ android {
         kotlinCompilerExtensionVersion = libs.versions.androidx.compose.get()
     }
 
+    tasks.withType<Test>().configureEach {
+        useJUnitPlatform()
+    }
+
     dependencies {
         implementation(project(":shared"))
 
@@ -56,11 +60,28 @@ android {
         implementation(libs.androidx.compose.activity)
         implementation(libs.androidx.compose.navigation)
 
+        implementation(libs.napier)
+
         implementation(libs.hilt.android)
         implementation(libs.kotlin.datetime)
         implementation(libs.ktor.android)
         kapt(libs.hilt.compiler)
 
         debugImplementation(libs.squareup.leakcanary)
+
+        testImplementation(libs.testing.turbine)
+        testImplementation(libs.testing.coroutines.test)
+        testImplementation(libs.testing.kotest.assertions)
+
+        testImplementation(libs.testing.mockito.inline)
+        testImplementation(libs.testing.mockito.kotlin)
+
+        testImplementation(libs.testing.androidx.core)
+
+        testImplementation(libs.testing.junit5.api)
+        testRuntimeOnly(libs.testing.junit5.jupiter)
+        testRuntimeOnly(libs.testing.junit5.engine)
+        testRuntimeOnly(libs.testing.junit5.vintage)
+
     }
 }
