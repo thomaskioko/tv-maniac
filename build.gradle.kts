@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 buildscript {
     repositories.applyDefault()
 }
@@ -13,7 +15,7 @@ tasks.register("clean", Delete::class) {
 }
 
 subprojects {
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    tasks.withType<KotlinCompile>().configureEach {
         with(kotlinOptions) {
             jvmTarget = JavaVersion.VERSION_1_8.toString()
             useIR = true
