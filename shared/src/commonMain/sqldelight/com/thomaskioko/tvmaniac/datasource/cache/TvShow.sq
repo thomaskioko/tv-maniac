@@ -1,0 +1,38 @@
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory;
+import kotlin.collections.List;
+
+
+CREATE TABLE tv_show(
+show_id INTEGER NOT NULL PRIMARY KEY,
+title TEXT NOT NULL,
+description TEXT NOT NULL,
+language TEXT NOT NULL,
+image_url TEXT NOT NULL,
+votes INTEGER NOT NULL,
+vote_average REAL NOT NULL,
+genre_ids TEXT AS List<Int> NOT NULL,
+show_category TEXT AS TvShowCategory NOT NULL
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO tv_show(
+show_id,
+title,
+description,
+language,
+image_url,
+votes,
+vote_average,
+genre_ids,
+show_category
+)VALUES(?,?,?,?,?,?,?,?, ?);
+
+selectByShowId:
+SELECT * FROM tv_show
+WHERE show_id = ?;
+
+selectAll:
+SELECT * FROM tv_show;
+
+deleteAll:
+DELETE FROM tv_show;
