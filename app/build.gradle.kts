@@ -74,7 +74,7 @@ android {
         testImplementation(libs.testing.kotest.assertions)
 
         testImplementation(libs.testing.mockito.inline)
-        testImplementation(libs.testing.mockito.kotlin)
+        testImplementation(libs.testing.mockk.core)
 
         testImplementation(libs.testing.androidx.core)
 
