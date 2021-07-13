@@ -8,4 +8,5 @@ object Plugins {
     const val kapt = "kapt"
     const val hilt = "dagger.hilt.android.plugin"
     const val buildkonfig = "com.codingfeline.buildkonfig"
+    const val sqlDelight = "com.squareup.sqldelight"
 }
