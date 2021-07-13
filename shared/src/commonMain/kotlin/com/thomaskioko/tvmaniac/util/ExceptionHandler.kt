@@ -1,10 +1,9 @@
 package com.thomaskioko.tvmaniac.util
 
-import io.github.aakira.napier.Napier
+import io.ktor.client.features.*
 import io.ktor.client.statement.*
 
 open class ExceptionHandler(
-    val errorCode: Int = -1,
     val errorMessage: String,
 ) : Exception() {
 
@@ -16,25 +15,28 @@ open class ExceptionHandler(
 
     companion object {
         fun parseException(response: HttpResponse): ExceptionHandler {
-            return ExceptionHandler(response.status.value, "unexpected error!!ً")
+            return ExceptionHandler("Unexpected error. ResponseCode:: ${response.status.value}ً")
         }
     }
 }
-
 
 fun Throwable.resolveError() = when (this) {
     is HttpResponse -> {
         when (status.value) {
-            502 -> ExceptionHandler(status.value, "Internal error!")
-            401 -> ExceptionHandler(errorMessage = "Authentication error!")
             400 -> ExceptionHandler.parseException(this)
+            401 -> ExceptionHandler(errorMessage = "Authentication failed!")
+            502 -> ExceptionHandler("Internal error!")
             else -> ExceptionHandler.parseException(this)
         }
     }
+    is ServerResponseException -> ExceptionHandler(errorMessage = getErrorMessage())
     else -> ExceptionHandler(errorMessage = "Something went wrong")
 }
 
-data class ErrorResponse(
-    val errorDescription: String, // this is the translated error shown to the user directly from the API
-    val causes: Map<String, String> = emptyMap() //this is for errors on specific field on a form
-)
+fun ResponseException.getErrorMessage(): String {
+    return if (isDebug) {
+        "Server Error: ${response.status.value} /n $message"
+    } else {
+        "Connection to server failed."
+    }
+}
