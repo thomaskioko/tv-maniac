@@ -15,6 +15,7 @@ dependencies {
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
     implementation(libs.kotlin.gradle)
     implementation(libs.android.gradle)
+    implementation(libs.plugin.squareup.sqldelight)
     implementation(libs.plugins.dependency.check)
     implementation(libs.plugins.hilt)
     implementation(libs.plugins.buildkonfig)
