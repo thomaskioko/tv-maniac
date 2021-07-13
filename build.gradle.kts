@@ -14,6 +14,10 @@ tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }
 
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
+
 subprojects {
     tasks.withType<KotlinCompile>().configureEach {
         with(kotlinOptions) {
