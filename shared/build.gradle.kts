@@ -1,6 +1,7 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin(Plugins.multiplatform)
@@ -8,6 +9,7 @@ plugins {
     kotlin(Plugins.serialization) version ("1.5.10")
     id(Plugins.androidLibrary)
     id(Plugins.buildkonfig)
+    id(Plugins.sqlDelight)
 }
 
 version = "1.0"
@@ -32,6 +34,16 @@ kotlin {
     }
 
     sourceSets {
+
+        // Configure separate debug and release source sets.
+        val commonDebug by sourceSets.creating {
+            dependsOn(sourceSets["commonMain"])
+        }
+
+        val commonRelease by sourceSets.creating {
+            dependsOn(sourceSets["commonMain"])
+        }
+
         sourceSets["commonMain"].dependencies {
             implementation(libs.kotlin.datetime)
             implementation(libs.kotlin.coroutines.core)
@@ -41,29 +53,49 @@ kotlin {
             implementation(libs.ktor.serialization)
 
             implementation(libs.napier)
+            implementation(libs.squareup.sqldelight.runtime)
         }
 
         sourceSets["commonTest"].dependencies {
-            implementation(kotlin("test"))
-            implementation(kotlin("test-junit"))
             implementation(kotlin("test-common"))
             implementation(kotlin("test-annotations-common"))
+
             implementation(libs.testing.assertK)
             implementation(libs.testing.opentest)
+            implementation(libs.testing.turbine)
             implementation(libs.testing.kotest.assertions)
+
+            implementation(libs.testing.mockk.common)
         }
 
         sourceSets["androidMain"].dependencies {
             implementation(libs.ktor.android)
+            implementation(libs.squareup.sqldelight.driver.android)
         }
 
-        sourceSets["androidTest"].dependencies {}
+        sourceSets["androidTest"].dependencies {
+            implementation(kotlin("test"))
+
+            implementation(libs.testing.androidx.junit)
+            implementation(libs.squareup.sqldelight.driver.jvm)
+
+            implementation(libs.testing.mockk.core)
+        }
 
         sourceSets["iosMain"].dependencies {
             implementation(libs.ktor.ios)
+            implementation(libs.squareup.sqldelight.driver.native)
         }
 
-        sourceSets["iosTest"].dependencies {}
+        sourceSets["iosTest"].dependencies {
+            implementation(libs.testing.mockk.common)
+        }
+
+        sourceSets.matching {
+            it.name.endsWith("Test")
+        }.configureEach {
+            languageSettings.useExperimentalAnnotation("kotlin.time.ExperimentalTime")
+        }
     }
 }
 
@@ -90,5 +122,12 @@ buildkonfig {
     defaultConfigs {
         buildConfigField(STRING, "TMDB_API_KEY", props.getProperty("TMDB_API_KEY"))
         buildConfigField(STRING, "TMDB_API_URL", props.getProperty("TMDB_API_URL"))
+    }
+}
+
+sqldelight {
+    database("TvManiacDatabase") {
+        packageName = "com.thomaskioko.tvmaniac.datasource.cache"
+        sourceFolders = listOf("sqldelight")
     }
 }
