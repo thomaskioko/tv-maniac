@@ -20,6 +20,7 @@ ktor = "1.6.0"
 material = "1.4.0-beta01"
 napier = "1.5.0"
 squareup-leakcanary = "2.7"
+sqldelight = "1.5.0"
 turbine = "0.5.2"
 
 testing-arch-core = "2.1.0"
@@ -28,12 +29,13 @@ testing-junit = "4.13.2"
 testing-junitext = "1.1.3-beta02"
 testing-junit5 = "5.8.0-M1"
 testing-kotest = "4.6.0"
+testing-mockk = "1.12.0"
 testing-mockito-core = "3.11.1"
 testing-mockito-kotlin = "2.2.0"
 testing-opentest = "1.1.1"
 
 plugins-buildkonfig = "0.7.0"
-plugins-gradle-versions = "0.38.0"
+plugins-gradle-versions = "0.39.0"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle" }
@@ -66,17 +68,26 @@ ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
 material = { module = "com.google.android.material:material", version.ref = "material" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+
 squareup-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "squareup-leakcanary" }
+squareup-sqldelight-runtime = { module = "com.squareup.sqldelight:runtime", version.ref = "sqldelight" }
+squareup-sqldelight-driver-android = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqldelight" }
+squareup-sqldelight-driver-jvm = { module = "com.squareup.sqldelight:sqlite-driver", version.ref = "sqldelight" }
+squareup-sqldelight-driver-native = { module = "com.squareup.sqldelight:native-driver", version.ref = "sqldelight" }
 
 plugins-dependency-check = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "plugins-gradle-versions" }
 plugins-hilt = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 plugins-buildkonfig = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "plugins-buildkonfig" }
+plugin-squareup-sqldelight = { module = "com.squareup.sqldelight:gradle-plugin", version.ref = "sqldelight" }
 
 testing-assertK = { module = "com.willowtreeapps.assertk:assertk", version.ref = "testing-assertK" }
 testing-junit = { module = "junit:junit", version.ref = "testing-junit" }
 testing-opentest = { module = "org.opentest4j:opentest4j", version.ref = "testing-opentest" }
 testing-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 testing-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+
+testing-mockk-core = { module = "io.mockk:mockk", version.ref = "testing-mockk" }
+testing-mockk-common = { module = "io.mockk:mockk-common", version.ref = "testing-mockk" }
 
 testing-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "testing-kotest" }
 testing-kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref = "testing-kotest" }
@@ -86,7 +97,6 @@ testing-androidx-junit = { module = "androidx.test.ext:junit", version.ref = "te
 testing-androidx-junitktx = { module = "androidx.test.ext:junit-ktx", version.ref = "testing-junitext" }
 
 testing-mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "testing-mockito-core" }
-testing-mockito-kotlin = { module = "com.nhaarman.mockitokotlin2:mockito-kotlin", version.ref = "testing-mockito-kotlin" }
 
 testing-junit5-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "testing-junit5" }
 testing-junit5-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "testing-junit5" }
