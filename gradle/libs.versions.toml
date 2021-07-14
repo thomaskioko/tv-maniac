@@ -80,25 +80,24 @@ plugins-hilt = { module = "com.google.dagger:hilt-android-gradle-plugin", versio
 plugins-buildkonfig = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "plugins-buildkonfig" }
 plugin-squareup-sqldelight = { module = "com.squareup.sqldelight:gradle-plugin", version.ref = "sqldelight" }
 
-testing-assertK = { module = "com.willowtreeapps.assertk:assertk", version.ref = "testing-assertK" }
-testing-junit = { module = "junit:junit", version.ref = "testing-junit" }
-testing-opentest = { module = "org.opentest4j:opentest4j", version.ref = "testing-opentest" }
-testing-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
-testing-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-
-testing-mockk-core = { module = "io.mockk:mockk", version.ref = "testing-mockk" }
-testing-mockk-common = { module = "io.mockk:mockk-common", version.ref = "testing-mockk" }
-
-testing-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "testing-kotest" }
-testing-kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref = "testing-kotest" }
-
 testing-androidx-core = { module = "androidx.arch.core:core-testing", version.ref = "testing-arch-core" }
 testing-androidx-junit = { module = "androidx.test.ext:junit", version.ref = "testing-junitext" }
 testing-androidx-junitktx = { module = "androidx.test.ext:junit-ktx", version.ref = "testing-junitext" }
-
-testing-mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "testing-mockito-core" }
 
 testing-junit5-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "testing-junit5" }
 testing-junit5-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "testing-junit5" }
 testing-junit5-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "testing-junit5" }
 testing-junit5-vintage = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "testing-junit5" }
+
+testing-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "testing-kotest" }
+testing-kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref = "testing-kotest" }
+
+testing-mockk-core = { module = "io.mockk:mockk", version.ref = "testing-mockk" }
+testing-mockk-common = { module = "io.mockk:mockk-common", version.ref = "testing-mockk" }
+
+testing-assertK = { module = "com.willowtreeapps.assertk:assertk", version.ref = "testing-assertK" }
+testing-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+testing-junit = { module = "junit:junit", version.ref = "testing-junit" }
+testing-opentest = { module = "org.opentest4j:opentest4j", version.ref = "testing-opentest" }
+testing-mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "testing-mockito-core" }
+testing-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
