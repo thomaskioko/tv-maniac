@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource
+package com.thomaskioko.tvmaniac.datasource.repository
 
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
 

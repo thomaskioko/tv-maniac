@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource.network
+package com.thomaskioko.tvmaniac.datasource.network.api
 
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
 

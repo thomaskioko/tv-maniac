@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource
+package com.thomaskioko.tvmaniac.datasource.repository
 
 import com.thomaskioko.tvmaniac.datasource.cache.db.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory
@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory.POPULAR_TV
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory.TOP_RATED_TV_SHOWS
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowEntityList
-import com.thomaskioko.tvmaniac.datasource.network.TvShowsService
+import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 
 class TvShowsRepositoryImpl(
     private val apiService: TvShowsService,

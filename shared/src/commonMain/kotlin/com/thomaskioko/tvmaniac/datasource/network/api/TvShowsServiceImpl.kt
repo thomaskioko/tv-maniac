@@ -1,7 +1,8 @@
-package com.thomaskioko.tvmaniac.datasource.network
+package com.thomaskioko.tvmaniac.datasource.network.api
 
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
 import com.thomaskioko.tvmaniac.shared.BuildKonfig
+import com.thomaskioko.tvmaniac.shared.BuildKonfig.TMDB_API_URL
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -11,7 +12,7 @@ class TvShowsServiceImpl(
 ) : TvShowsService {
 
     override suspend fun getTopRatedShows(page: Int): TvShowsResponse {
-        return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/top_rated") {
+        return httpClient.get("${TMDB_API_URL}tv/top_rated") {
             accept(ContentType.Application.Json)
             parameter("api_key", BuildKonfig.TMDB_API_KEY)
             parameter("page", page)
@@ -19,7 +20,7 @@ class TvShowsServiceImpl(
     }
 
     override suspend fun getPopularShows(page: Int): TvShowsResponse {
-        return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/popular") {
+        return httpClient.get("${TMDB_API_URL}tv/popular") {
             accept(ContentType.Application.Json)
             parameter("api_key", BuildKonfig.TMDB_API_KEY)
             parameter("page", page)
