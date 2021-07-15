@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.interactor
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.MockData.getTvResponse
-import com.thomaskioko.tvmaniac.datasource.TvShowsRepository
+import com.thomaskioko.tvmaniac.datasource.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowEntityList
 import com.thomaskioko.tvmaniac.util.DomainResultState

@@ -2,9 +2,8 @@ package com.thomaskioko.tvmaniac.datasource.repository
 
 import com.thomaskioko.tvmaniac.MockData.getTvResponse
 import com.thomaskioko.tvmaniac.MockData.makeTvShowEntityList
-import com.thomaskioko.tvmaniac.datasource.TvShowsRepositoryImpl
 import com.thomaskioko.tvmaniac.datasource.cache.db.TvShowCache
-import com.thomaskioko.tvmaniac.datasource.network.TvShowsService
+import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.util.runBlocking
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery

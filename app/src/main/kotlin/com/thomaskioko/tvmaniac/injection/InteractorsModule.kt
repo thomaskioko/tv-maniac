@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.injection
 
-import com.thomaskioko.tvmaniac.datasource.TvShowsRepository
+import com.thomaskioko.tvmaniac.datasource.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.interactor.PopularShowsInteractor
 import dagger.Module
 import dagger.Provides
