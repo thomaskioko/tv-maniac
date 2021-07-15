@@ -1,16 +1,16 @@
 package com.thomaskioko.tvmaniac.injection
 
-import com.thomaskioko.tvmaniac.datasource.TvShowsRepository
-import com.thomaskioko.tvmaniac.datasource.TvShowsRepositoryImpl
 import com.thomaskioko.tvmaniac.datasource.cache.db.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.network.KtorClientFactory
-import com.thomaskioko.tvmaniac.datasource.network.TvShowsService
-import com.thomaskioko.tvmaniac.datasource.network.TvShowsServiceImpl
+import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
+import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsServiceImpl
+import com.thomaskioko.tvmaniac.datasource.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.datasource.repository.TvShowsRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.ktor.client.*
+import io.ktor.client.HttpClient
 import javax.inject.Singleton
 
 @Module

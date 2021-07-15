@@ -1,15 +1,21 @@
 package com.thomaskioko.tvmaniac.datasource.network
 
+import com.thomaskioko.tvmaniac.shared.BuildKonfig
 import io.github.aakira.napier.Napier
-import io.ktor.client.*
-import io.ktor.client.engine.android.*
-import io.ktor.client.features.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.client.features.logging.*
-import io.ktor.client.features.observer.*
-import io.ktor.client.request.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.features.DefaultRequest
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.features.logging.LogLevel
+import io.ktor.client.features.logging.Logger
+import io.ktor.client.features.logging.Logging
+import io.ktor.client.features.observer.ResponseObserver
+import io.ktor.client.request.header
+import io.ktor.client.request.parameter
+import io.ktor.client.request.url
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 
 private const val TIME_OUT = 60_000
 
@@ -49,6 +55,8 @@ actual class KtorClientFactory {
 
             install(DefaultRequest) {
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
+                parameter("api_key", BuildKonfig.TMDB_API_KEY)
+                url(BuildKonfig.TMDB_API_URL)
             }
         }
     }
