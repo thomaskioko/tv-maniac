@@ -1,7 +1,7 @@
+
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin(Plugins.multiplatform)
@@ -61,6 +61,7 @@ kotlin {
             implementation(kotlin("test-annotations-common"))
 
             implementation(libs.testing.assertK)
+            implementation(libs.testing.ktor.mock)
             implementation(libs.testing.opentest)
             implementation(libs.testing.turbine)
             implementation(libs.testing.kotest.assertions)

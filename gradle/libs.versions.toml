@@ -5,7 +5,7 @@ android-compile = "30"
 android-target = "30"
 android-min = "21"
 
-android-gradle = "7.1.0-alpha02"
+android-gradle = "7.1.0-alpha03"
 date-time = "0.2.1"
 
 androidx-appCompat = "1.4.0-alpha02"
@@ -101,3 +101,5 @@ testing-junit = { module = "junit:junit", version.ref = "testing-junit" }
 testing-opentest = { module = "org.opentest4j:opentest4j", version.ref = "testing-opentest" }
 testing-mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "testing-mockito-core" }
 testing-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+
+testing-ktor-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
