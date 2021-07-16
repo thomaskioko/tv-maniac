@@ -6,7 +6,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.test.Test
 
-internal class TvManiacDatabaseTest : BaseDatabaseTest() {
+internal class TvShowCacheTest : BaseDatabaseTest() {
 
     private val tvShowQueries get() = database.tvShowQueries
 
