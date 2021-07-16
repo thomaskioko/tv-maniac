@@ -1,11 +1,8 @@
 package com.thomaskioko.tvmaniac.injection
 
-import com.thomaskioko.tvmaniac.datasource.cache.db.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.network.KtorClientFactory
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsServiceImpl
-import com.thomaskioko.tvmaniac.datasource.repository.TvShowsRepository
-import com.thomaskioko.tvmaniac.datasource.repository.TvShowsRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,11 +25,4 @@ class NetworkModule {
     fun provideTvShowService(
         httpClient: HttpClient
     ): TvShowsService = TvShowsServiceImpl(httpClient)
-
-    @Singleton
-    @Provides
-    fun provideTvShowsRepository(
-        tvShowsService: TvShowsService,
-        cache: TvShowCache
-    ): TvShowsRepository = TvShowsRepositoryImpl(tvShowsService, cache)
 }
