@@ -10,8 +10,8 @@ import kotlin.test.Test
 internal class TvShowsServiceTest : TvShowsServiceMockEngine() {
 
     companion object {
-        const val GET_TV_SHOW_DETAILS = "/tv/1"
-        const val GET_POPULAR_TV_SHOWS = "/tv/popular"
+        const val GET_TV_SHOW_DETAILS = "https://api.themoviedb.org/3/tv/1"
+        const val GET_POPULAR_TV_SHOWS = "https://api.themoviedb.org/3/tv/popular?page=1"
     }
 
     @Test

@@ -72,7 +72,7 @@ abstract class TvShowsServiceMockEngine {
             addHandler { request ->
                 lastRequest = request
 
-                when (request.url.encodedPath) {
+                when (request.url.fullUrl) {
                     apiUrl -> {
                         respond(
                             content = mockResponse.body.toString(),
