@@ -15,7 +15,6 @@ data class ShowDetailResponse(
     @SerialName("languages") val languages: List<String>,
     @SerialName("last_air_date") val lastAirDate: String,
     @SerialName("name") val name: String,
-    @SerialName("next_episode_to_air") val nextEpisodeToAir: String,
     @SerialName("number_of_episodes") val numberOfEpisodes: Int,
     @SerialName("number_of_seasons") val numberOfSeasons: Int,
     @SerialName("origin_country") val originCountry: List<String>,
@@ -27,7 +26,6 @@ data class ShowDetailResponse(
     @SerialName("seasons") val seasons: List<SeasonsResponse>,
     @SerialName("status") val status: String,
     @SerialName("tagline") val tagline: String,
-    @SerialName("type") val type: String,
     @SerialName("vote_average") val voteAverage: Double,
     @SerialName("vote_count") val voteCount: Int
 )
