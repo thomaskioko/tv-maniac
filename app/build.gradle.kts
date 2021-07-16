@@ -9,7 +9,7 @@ plugins {
 android {
     compileSdk = libs.versions.android.compile.get().toInt()
     defaultConfig {
-        applicationId = "com.thomaskioko.tvmaniac.android"
+        applicationId = "com.thomaskioko.tvmaniac"
         minSdk = libs.versions.android.min.get().toInt()
         targetSdk = libs.versions.android.target.get().toInt()
         versionCode = 1
