@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.datasource.mapper
 
+import com.thomaskioko.tvmaniac.datasource.cache.Season
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
-import com.thomaskioko.tvmaniac.datasource.cache.Tv_season
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
 
@@ -33,7 +33,7 @@ fun SelectSeasonsByShowId.toSeasonsEntity(): SeasonsEntity {
     )
 }
 
-fun Tv_season.toSeasonEntity(): SeasonsEntity {
+fun Season.toSeasonEntity(): SeasonsEntity {
     return SeasonsEntity(
         seasonId = season_id.toInt(),
         tvShowId = tv_show_id.toInt(),

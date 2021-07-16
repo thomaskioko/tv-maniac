@@ -9,7 +9,7 @@ class SeasonsCacheImpl(
     private val database: TvManiacDatabase
 ) : SeasonsCache {
 
-    private val tvSeasonQueries get() = database.tvSeasonQueries
+    private val tvSeasonQueries get() = database.seasonQueries
 
     override fun insert(entity: SeasonsEntity) {
         tvSeasonQueries.insertOrReplace(
