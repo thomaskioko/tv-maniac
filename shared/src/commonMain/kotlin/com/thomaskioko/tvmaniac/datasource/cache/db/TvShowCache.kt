@@ -8,10 +8,11 @@ interface TvShowCache {
 
     fun insert(entityList: List<TvShowsEntity>)
 
-    @Throws(NullPointerException::class)
-    fun getTvShow(showId: Int): TvShowsEntity?
+    fun getTvShow(showId: Int): TvShowsEntity
 
     fun getTvShows(): List<TvShowsEntity>
+
+    fun updateTvShowDetails(entity: TvShowsEntity)
 
     fun deleteTvShows()
 }

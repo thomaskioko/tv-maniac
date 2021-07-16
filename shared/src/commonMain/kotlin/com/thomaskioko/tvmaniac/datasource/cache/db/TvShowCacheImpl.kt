@@ -29,10 +29,10 @@ class TvShowCacheImpl(
         entityList.forEach { insert(it) }
     }
 
-    override fun getTvShow(showId: Int): TvShowsEntity? {
+    override fun getTvShow(showId: Int): TvShowsEntity {
         return database.tvShowQueries.selectByShowId(
             show_id = showId.toLong()
-        ).executeAsOneOrNull()?.toTvShowsEntity()
+        ).executeAsOne().toTvShowsEntity()
     }
 
 
@@ -40,6 +40,13 @@ class TvShowCacheImpl(
         return database.tvShowQueries.selectAll()
             .executeAsList()
             .toTvShowsEntityList()
+    }
+
+    override fun updateTvShowDetails(entity: TvShowsEntity) {
+        database.tvShowQueries.updateTvShow(
+            show_id = entity.showId.toLong(),
+            show_seasons = entity.seasonsList
+        )
     }
 
     override fun deleteTvShows() {
