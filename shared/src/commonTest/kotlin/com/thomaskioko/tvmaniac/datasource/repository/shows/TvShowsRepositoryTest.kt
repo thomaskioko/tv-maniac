@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.datasource.repository.shows
 
 import com.thomaskioko.tvmaniac.MockData.getTvResponse
 import com.thomaskioko.tvmaniac.MockData.makeTvShowEntityList
+import com.thomaskioko.tvmaniac.MockData.tvShowSeasonEntity
 import com.thomaskioko.tvmaniac.datasource.cache.db.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepositoryImpl
@@ -37,6 +38,19 @@ internal class TvShowsRepositoryTest {
     @AfterTest
     fun tearDownAll() {
         unmockkAll()
+    }
+
+    @Test
+    fun givenDataIsCached_thenGetTvShowIsLoadedFromCache() = runBlocking {
+        every { cache.getTvShow(84958) } returns tvShowSeasonEntity
+
+        repository.getTvShow(84958)
+
+        verify(exactly = 0) {
+            runBlocking { apiService.getTvSeasonDetails(1) }
+        }
+
+        verify { cache.getTvShow(84958) }
     }
 
     @Test

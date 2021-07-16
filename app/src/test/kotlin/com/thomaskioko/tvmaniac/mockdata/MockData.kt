@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.mockdata
 
+import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
 
@@ -20,7 +21,8 @@ object MockData {
             votes = 4958,
             averageVotes = 8.1,
             genreIds = listOf(18, 10765),
-            showCategory = TvShowCategory.POPULAR_TV_SHOWS
+            showCategory = TvShowCategory.POPULAR_TV_SHOWS,
+            seasonsList = tvSeasonList()
         ),
         TvShowsEntity(
             showId = 126280,
@@ -36,5 +38,21 @@ object MockData {
             showCategory = TvShowCategory.POPULAR_TV_SHOWS
         ),
 
+        )
+
+    fun tvSeasonList() = listOf(
+        SeasonsEntity(
+            seasonId = 114355,
+            tvShowId = 84958,
+            name = "Season 1",
+            overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+                    "an alternate version of Loki is brought to the mysterious Time Variance " +
+                    "Authority, a bureaucratic organization that exists outside of time and " +
+                    "space and monitors the timeline. They give Loki a choice: face being " +
+                    "erased from existence due to being a “time variant”or help fix " +
+                    "the timeline and stop a greater threat.",
+            seasonNumber = 1,
+            episodeCount = 6
+        )
     )
 }

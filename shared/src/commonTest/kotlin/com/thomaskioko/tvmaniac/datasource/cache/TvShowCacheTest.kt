@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.datasource.cache
 
+import com.thomaskioko.tvmaniac.MockData.makeTvShowEntityList
+import com.thomaskioko.tvmaniac.MockData.tvSeasonsList
 import com.thomaskioko.tvmaniac.MockData.tvShowsEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
 import io.kotest.matchers.shouldBe
@@ -13,11 +15,11 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     @Test
     fun insertTvShow() {
 
-        tvShowsEntity.insertTvShowQuery()
+        makeTvShowEntityList().insertTvShowsEntityList()
 
         val entities = tvShowQueries.selectAll().executeAsList()
 
-        entities.size shouldBe 1
+        entities.size shouldBe 2
     }
 
     @Test
@@ -26,16 +28,61 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         tvShowsEntity.insertTvShowQuery()
 
         val entity = tvShowQueries.selectByShowId(tvShowsEntity.showId.toLong())
-            .executeAsOneOrNull()
+            .executeAsOne()
 
         entity shouldNotBe null
-        entity?.title shouldBe tvShowsEntity.title
-        entity?.description shouldBe tvShowsEntity.description
-        entity?.image_url shouldBe tvShowsEntity.imageUrl
-        entity?.votes shouldBe tvShowsEntity.votes
-        entity?.vote_average shouldBe tvShowsEntity.averageVotes
-        entity?.genre_ids shouldBe tvShowsEntity.genreIds
-        entity?.show_category shouldBe tvShowsEntity.showCategory
+        entity.title shouldBe tvShowsEntity.title
+        entity.description shouldBe tvShowsEntity.description
+        entity.image_url shouldBe tvShowsEntity.imageUrl
+        entity.votes shouldBe tvShowsEntity.votes
+        entity.vote_average shouldBe tvShowsEntity.averageVotes
+        entity.genre_ids shouldBe tvShowsEntity.genreIds
+        entity.show_category shouldBe tvShowsEntity.showCategory
+    }
+
+    @Test
+    fun givenTvShowHasSeasons_queryReturnsCorrectData() {
+
+        makeTvShowEntityList().insertTvShowsEntityList()
+
+        val seasons = tvShowQueries.selectByShowId(tvShowsEntity.showId.toLong())
+            .executeAsOne().show_seasons
+
+        //Verify that the first time the list is empty
+        seasons shouldBe null
+
+        tvShowQueries.updateTvShow(
+            show_id = tvShowsEntity.showId.toLong(),
+            show_seasons = tvSeasonsList
+        )
+
+        val tvSeasonsResult = tvShowQueries.selectByShowId(tvShowsEntity.showId.toLong())
+            .executeAsOne().show_seasons
+
+        //Verify that the list has been updated and exists
+        tvSeasonsResult shouldBe tvSeasonsList
+
+    }
+
+    @Test
+    fun givenTvShowIsUpdated_verifyDataIs_InsertedCorrectly() {
+
+        makeTvShowEntityList().insertTvShowsEntityList()
+
+        val entity = tvShowQueries.selectByShowId(tvShowsEntity.showId.toLong())
+            .executeAsOne()
+
+        entity.show_seasons shouldBe null
+
+        tvShowQueries.updateTvShow(
+            show_id = tvShowsEntity.showId.toLong(),
+            show_seasons = tvSeasonsList
+        )
+
+        val tvShowResult = tvShowQueries.selectByShowId(tvShowsEntity.showId.toLong())
+            .executeAsOne()
+
+        tvShowResult.show_seasons shouldBe tvSeasonsList
     }
 
     @Test
@@ -49,6 +96,10 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             .executeAsOneOrNull()
 
         entity shouldBe null
+    }
+
+    private fun List<TvShowsEntity>.insertTvShowsEntityList() {
+        map { it.insertTvShowQuery() }
     }
 
     private fun TvShowsEntity.insertTvShowQuery() {
