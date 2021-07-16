@@ -13,7 +13,6 @@ import io.ktor.client.features.logging.Logging
 import io.ktor.client.features.observer.ResponseObserver
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
-import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 
@@ -38,13 +37,12 @@ actual class KtorClientFactory {
             }
 
             install(Logging) {
+                level = LogLevel.INFO
                 logger = object : Logger {
                     override fun log(message: String) {
                         Napier.v("Ktor Logger => $message")
                     }
                 }
-
-                level = LogLevel.ALL
             }
 
             install(ResponseObserver) {
@@ -56,7 +54,6 @@ actual class KtorClientFactory {
             install(DefaultRequest) {
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 parameter("api_key", BuildKonfig.TMDB_API_KEY)
-                url(BuildKonfig.TMDB_API_URL)
             }
         }
     }
