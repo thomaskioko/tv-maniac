@@ -13,6 +13,10 @@ class TvShowsRepositoryImpl(
     private val cache: TvShowCache
 ) : TvShowsRepository {
 
+    override suspend fun getTvShow(tvShowId: Int): TvShowsEntity {
+        return cache.getTvShow(tvShowId)
+    }
+
     override suspend fun getPopularTvShows(page: Int): List<TvShowsEntity> {
         return if (cache.getTvShows().isEmpty()) {
 
