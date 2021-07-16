@@ -9,5 +9,6 @@ data class TvShowsEntity(
     val votes: Int,
     val averageVotes: Double,
     val genreIds: List<Int> = listOf(),
-    val showCategory: TvShowCategory
+    val showCategory: TvShowCategory,
+    val seasonsList: List<SeasonsEntity> = emptyList()
 )
