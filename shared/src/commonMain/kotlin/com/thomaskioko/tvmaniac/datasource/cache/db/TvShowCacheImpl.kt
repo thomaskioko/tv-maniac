@@ -12,7 +12,7 @@ class TvShowCacheImpl(
     override fun insert(entity: TvShowsEntity) {
         database.tvShowQueries.transaction {
             database.tvShowQueries.insertOrReplace(
-                show_id = entity.showId.toLong(),
+                id = entity.id.toLong(),
                 title = entity.title,
                 description = entity.description,
                 language = entity.language,
@@ -31,7 +31,7 @@ class TvShowCacheImpl(
 
     override fun getTvShow(showId: Int): TvShowsEntity {
         return database.tvShowQueries.selectByShowId(
-            show_id = showId.toLong()
+            id = showId.toLong()
         ).executeAsOne().toTvShowsEntity()
     }
 
@@ -44,7 +44,7 @@ class TvShowCacheImpl(
 
     override fun updateTvShowDetails(entity: TvShowsEntity) {
         database.tvShowQueries.updateTvShow(
-            show_id = entity.showId.toLong(),
+            id = entity.id.toLong(),
             show_seasons = entity.seasonsList
         )
     }
