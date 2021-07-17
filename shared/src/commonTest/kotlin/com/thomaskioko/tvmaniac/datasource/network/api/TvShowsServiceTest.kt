@@ -23,7 +23,7 @@ internal class TvShowsServiceTest : TvShowsServiceMockEngine() {
             responseBody = getTvSeasonDetailsResponse() //TODO Read this from json file
         )
 
-        apiClient.getTvSeasonDetails(1)
+        apiClient.getTvShowDetails(1)
 
         verifyGetRequest()
         verifyRequestContainsHeader("Accept", "application/json")
