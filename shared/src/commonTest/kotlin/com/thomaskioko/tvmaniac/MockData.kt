@@ -1,9 +1,12 @@
 package com.thomaskioko.tvmaniac
 
+import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.network.model.EpisodesResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.GenreResponse
+import com.thomaskioko.tvmaniac.datasource.network.model.SeasonResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.SeasonsResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowResponse
@@ -94,7 +97,7 @@ object MockData {
         )
     )
 
-    fun getSeasonsListResponse() = listOf(
+    private fun getSeasonsListResponse() = listOf(
         SeasonsResponse(
             id = 114355,
             name = "Season 1",
@@ -111,9 +114,46 @@ object MockData {
         )
     )
 
+    fun getShowSeasonsResponse() = SeasonResponse(
+        air_date = "2021-06-09",
+        name = "Season 1",
+        overview = "",
+        id = 114355,
+        poster_path = "/8uVqe9ThcuYVNdh4O0kuijIWMLL.jpg",
+        season_number = 1,
+        episodes = getEpisodesResponse()
+    )
+
+    private fun getEpisodesResponse() = listOf(
+        EpisodesResponse(
+            id = 2534997,
+            air_date = "2021-06-09",
+            episode_number = 1,
+            name = "Glorious Purpose",
+            overview = "After stealing the Tesseract in \"Avengers: Endgame,\" Loki lands before the Time Variance Authority.",
+            production_code = "",
+            season_number = 1,
+            still_path = "/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
+            vote_average = 6.429,
+            vote_count = 42,
+        ),
+        EpisodesResponse(
+            id = 2927202,
+            air_date = "2021-06-09",
+            episode_number = 2,
+            name = "The Variant",
+            overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
+            still_path = "/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
+            production_code = "",
+            season_number = 1,
+            vote_average = 7.6,
+            vote_count = 23,
+        ),
+    )
+
     fun makeTvShowEntityList() = listOf(
         TvShowsEntity(
-            showId = 84958,
+            id = 84958,
             title = "Loki",
             description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                     "an alternate version of Loki is brought to the mysterious Time Variance " +
@@ -129,7 +169,7 @@ object MockData {
             showCategory = TvShowCategory.POPULAR_TV_SHOWS
         ),
         TvShowsEntity(
-            showId = 126280,
+            id = 126280,
             title = "Sex/Life",
             description = "A woman's daring sexual past collides with her married-with-kids " +
                     "present when the bad-boy ex she can't stop fantasizing about crashes " +
@@ -144,7 +184,7 @@ object MockData {
     )
 
     val tvShowsEntity = TvShowsEntity(
-        showId = 84958,
+        id = 84958,
         title = "Loki",
         description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
@@ -197,7 +237,7 @@ object MockData {
     )
 
     val tvShowSeasonEntity = TvShowsEntity(
-        showId = 84958,
+        id = 84958,
         title = "Loki",
         description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
@@ -212,6 +252,31 @@ object MockData {
         genreIds = listOf(18, 10765),
         showCategory = TvShowCategory.POPULAR_TV_SHOWS,
         seasonsList = tvSeasonsList
+    )
+
+    fun getEpisodeEntityList() = listOf(
+        EpisodeEntity(
+            id = 2534997,
+            seasonId = 114355,
+            name = "Glorious Purpose",
+            overview = "After stealing the Tesseract in \"Avengers: Endgame,\" Loki lands before the Time Variance Authority.",
+            imageUrl = "/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
+            voteCount = 42,
+            voteAverage = 6.429,
+            seasonNumber = 1,
+            episodeNumber = 1
+        ),
+        EpisodeEntity(
+            id = 2927202,
+            seasonId = 114355,
+            name = "The Variant",
+            overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
+            imageUrl = "/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
+            voteCount = 23,
+            voteAverage = 7.6,
+            seasonNumber = 1,
+            episodeNumber = 2
+        )
     )
 
 }

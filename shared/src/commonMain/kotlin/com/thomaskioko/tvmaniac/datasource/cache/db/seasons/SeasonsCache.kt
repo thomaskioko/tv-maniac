@@ -10,6 +10,8 @@ interface SeasonsCache {
 
     fun getSeasonBySeasonId(seasonId: Int): SeasonsEntity
 
-    fun getSeasonListByTvShowId(tvShowId: Int): List<SeasonsEntity>
+    fun getSeasonsByTvShowId(tvShowId: Int): List<SeasonsEntity>
+
+    fun updateSeasonEpisodes(entity: SeasonsEntity)
 
 }

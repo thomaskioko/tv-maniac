@@ -4,7 +4,7 @@ import kotlin.collections.List;
 
 
 CREATE TABLE tv_show(
-show_id INTEGER NOT NULL PRIMARY KEY,
+id INTEGER NOT NULL PRIMARY KEY,
 title TEXT NOT NULL,
 description TEXT NOT NULL,
 language TEXT NOT NULL,
@@ -18,7 +18,7 @@ show_seasons TEXT AS List<SeasonsEntity>
 
 insertOrReplace:
 INSERT OR REPLACE INTO tv_show(
-show_id,
+id,
 title,
 description,
 language,
@@ -32,11 +32,11 @@ show_category
 updateTvShow:
 UPDATE tv_show
 SET show_seasons = ?
-WHERE show_id = ?;
+WHERE id = ?;
 
 selectByShowId:
 SELECT * FROM tv_show
-WHERE show_id = ?;
+WHERE id = ?;
 
 selectAll:
 SELECT * FROM tv_show;

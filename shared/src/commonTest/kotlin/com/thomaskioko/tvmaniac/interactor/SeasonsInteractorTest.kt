@@ -16,7 +16,7 @@ internal class SeasonsInteractorTest {
     private val interactor = SeasonsInteractor(repository)
 
     @Test
-    fun wheneverPopularShowsInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {
+    fun wheneverInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {
         every { runBlocking { repository.getSeasonListByTvShowId(84958) } } returns tvSeasonsList
 
         interactor.invoke(84958).test {
@@ -27,7 +27,7 @@ internal class SeasonsInteractorTest {
     }
 
     @Test
-    fun wheneverPopularShowsInteractorIsInvoked_ErrorIsReturned() = runBlocking {
+    fun wheneverInteractorIsInvoked_ErrorIsReturned() = runBlocking {
 
         interactor.invoke(84958).test {
             expectItem() shouldBe DomainResultState.Loading()

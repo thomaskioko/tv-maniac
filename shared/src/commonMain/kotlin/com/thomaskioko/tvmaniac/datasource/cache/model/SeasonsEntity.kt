@@ -10,5 +10,6 @@ data class SeasonsEntity(
     val overview: String,
     val seasonNumber: Int,
     val episodeCount: Int,
+    val episodeList: List<EpisodeEntity> = emptyList()
 )
 

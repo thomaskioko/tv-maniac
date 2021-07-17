@@ -17,7 +17,7 @@ internal class TvShowResponseMapperTest {
         val mappedShow = mappedData.first()
 
         mappedData.size shouldBe response.results.size
-        mappedShow.showId shouldBe showResponse.id
+        mappedShow.id shouldBe showResponse.id
         mappedShow.title shouldBe showResponse.name
         mappedShow.description shouldBe showResponse.overview
         mappedShow.imageUrl shouldBe showResponse.backdropPath

@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.datasource.network.api
 
 import com.thomaskioko.tvmaniac.datasource.network.model.EpisodeDetailResponse
+import com.thomaskioko.tvmaniac.datasource.network.model.SeasonResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
-import com.thomaskioko.tvmaniac.datasource.network.model.ShowSeasonsResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
 import com.thomaskioko.tvmaniac.shared.BuildKonfig
 import io.ktor.client.HttpClient
@@ -27,12 +27,12 @@ class TvShowsServiceImpl(
         }
     }
 
-    override suspend fun getTvSeasonDetails(showId: Int): ShowDetailResponse {
+    override suspend fun getTvShowDetails(showId: Int): ShowDetailResponse {
         return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/$showId")
     }
 
-    override suspend fun getTvShowSeasons(showId: Int, seasonNumber: Int): ShowSeasonsResponse {
-        return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/$showId/season/$seasonNumber")
+    override suspend fun getSeasonDetails(tvShowId: Int, seasonNumber: Int): SeasonResponse {
+        return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/$tvShowId/season/$seasonNumber")
     }
 
     override suspend fun getTvShowSeasonEpisode(

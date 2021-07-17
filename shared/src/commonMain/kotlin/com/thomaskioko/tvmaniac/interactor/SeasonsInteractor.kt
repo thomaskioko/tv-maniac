@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.interactor
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
 import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepository
 import com.thomaskioko.tvmaniac.util.DomainResultState
-import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.error
 import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.loading
 import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.success
 import com.thomaskioko.tvmaniac.util.Interactor
@@ -19,5 +18,10 @@ class SeasonsInteractor constructor(
 
         emit(success(repository.getSeasonListByTvShowId(params)))
     }
-        .catch { emit(error(it)) }
+        .catch {
+            when (it) {
+                is NullPointerException -> emit(DomainResultState.error(Throwable("No data for season with Show id:: $params")))
+                else -> emit(DomainResultState.error(it))
+            }
+        }
 }

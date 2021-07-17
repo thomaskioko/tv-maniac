@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.datasource.network.model.ShowResponse
 
 fun ShowResponse.toTvShowEntityList(showCategory: TvShowCategory): TvShowsEntity {
     return TvShowsEntity(
-        showId = id,
+        id = id,
         title = name,
         description = overview,
         language = originalLanguage,
@@ -25,7 +25,7 @@ fun List<Tv_show>.toTvShowsEntityList(): List<TvShowsEntity> {
 
 fun Tv_show.toTvShowsEntity(): TvShowsEntity {
     return TvShowsEntity(
-        showId = show_id.toInt(),
+        id = id.toInt(),
         title = title,
         description = description,
         language = language,
