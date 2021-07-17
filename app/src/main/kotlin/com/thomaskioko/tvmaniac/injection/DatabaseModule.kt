@@ -1,15 +1,15 @@
 package com.thomaskioko.tvmaniac.injection
 
 import android.content.Context
-import com.thomaskioko.tvmaniac.datasource.cache.DriverFactory
+import com.thomaskioko.tvmaniac.datasource.cache.db.DriverFactory
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
-import com.thomaskioko.tvmaniac.datasource.cache.TvShowsDatabaseFactory
-import com.thomaskioko.tvmaniac.datasource.cache.db.TvShowCache
-import com.thomaskioko.tvmaniac.datasource.cache.db.TvShowCacheImpl
-import com.thomaskioko.tvmaniac.datasource.cache.db.episode.EpisodesCache
-import com.thomaskioko.tvmaniac.datasource.cache.db.episode.EpisodesCacheImpl
-import com.thomaskioko.tvmaniac.datasource.cache.db.seasons.SeasonsCache
-import com.thomaskioko.tvmaniac.datasource.cache.db.seasons.SeasonsCacheImpl
+import com.thomaskioko.tvmaniac.datasource.cache.db.TvManiacDatabaseFactory
+import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
+import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCacheImpl
+import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
+import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCacheImpl
+import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
+import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCacheImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,7 +30,7 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideTvShowDatabase(driverFactory: DriverFactory): TvManiacDatabase {
-        return TvShowsDatabaseFactory(driverFactory).createDatabase()
+        return TvManiacDatabaseFactory(driverFactory).createDatabase()
     }
 
     @Singleton

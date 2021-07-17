@@ -4,6 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.mockdata.MockData.tvSeasonList
+import com.thomaskioko.tvmaniac.ui.seasons.SeasonsAction
+import com.thomaskioko.tvmaniac.ui.seasons.SeasonsViewModel
+import com.thomaskioko.tvmaniac.ui.seasons.SeasonsViewState
 import com.thomaskioko.tvmaniac.util.DomainResultState.Error
 import com.thomaskioko.tvmaniac.util.DomainResultState.Success
 import io.kotest.matchers.shouldBe

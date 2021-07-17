@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource.cache.adapter
+package com.thomaskioko.tvmaniac.datasource.cache.db.adapter
 
 import com.squareup.sqldelight.ColumnAdapter
 import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity

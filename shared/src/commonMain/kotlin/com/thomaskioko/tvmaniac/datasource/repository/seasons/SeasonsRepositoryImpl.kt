@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.datasource.repository.seasons
 
-import com.thomaskioko.tvmaniac.datasource.cache.db.TvShowCache
-import com.thomaskioko.tvmaniac.datasource.cache.db.seasons.SeasonsCache
+import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
+import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
 import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonsEntityList
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService

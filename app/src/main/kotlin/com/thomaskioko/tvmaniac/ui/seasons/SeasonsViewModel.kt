@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.ui.popularshows
+package com.thomaskioko.tvmaniac.ui.seasons
 
 import com.thomaskioko.stargazer.core.presentation.ViewAction
 import com.thomaskioko.stargazer.core.presentation.ViewState
