@@ -39,5 +39,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build with Gradle
         run: ./gradlew build
-      - name: Unit tests
+
+      - name: Unit Tests
         run: bash ./gradlew testDebugUnitTest
