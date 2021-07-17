@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.datasource.cache.model
 
 data class TvShowsEntity(
-    val showId : Int,
+    val id: Int,
     val title: String,
     val description: String,
     val language: String,

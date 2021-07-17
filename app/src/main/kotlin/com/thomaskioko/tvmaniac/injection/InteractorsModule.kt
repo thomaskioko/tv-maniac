@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.injection
 
-import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
+import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
 import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepository
+import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
+import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.interactor.PopularShowsInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
 import dagger.Module
@@ -25,4 +27,10 @@ object InteractorsModule {
     fun provideTvShowSeasonsInteractor(
         repository: SeasonsRepository
     ): SeasonsInteractor = SeasonsInteractor(repository)
+
+    @Singleton
+    @Provides
+    fun provideEpisodesInteractor(
+        repository: EpisodeRepository
+    ): EpisodesInteractor = EpisodesInteractor(repository)
 }

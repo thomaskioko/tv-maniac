@@ -1,7 +1,8 @@
 package com.thomaskioko.tvmaniac.util
 
-import io.ktor.client.features.*
-import io.ktor.client.statement.*
+import io.ktor.client.features.ResponseException
+import io.ktor.client.features.ServerResponseException
+import io.ktor.client.statement.HttpResponse
 
 open class ExceptionHandler(
     val errorMessage: String,
@@ -30,6 +31,7 @@ fun Throwable.resolveError() = when (this) {
         }
     }
     is ServerResponseException -> ExceptionHandler(errorMessage = getErrorMessage())
+    is NullPointerException -> ExceptionHandler(errorMessage = message ?: "Something went wrong")
     else -> ExceptionHandler(errorMessage = "Something went wrong")
 }
 

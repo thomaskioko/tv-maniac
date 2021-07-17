@@ -47,7 +47,7 @@ internal class TvShowsRepositoryTest {
         repository.getTvShow(84958)
 
         verify(exactly = 0) {
-            runBlocking { apiService.getTvSeasonDetails(1) }
+            runBlocking { apiService.getTvShowDetails(1) }
         }
 
         verify { cache.getTvShow(84958) }
