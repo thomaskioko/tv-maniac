@@ -1,4 +1,4 @@
-name: Shared CI
+name: "Share build & Unit test"
 
 on:
   pull_request:
@@ -6,23 +6,39 @@ on:
       - 'shared/**'
 
 jobs:
-
-  test:
-    name: Run all Unit Tests
+  setup:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-      - name: set up JDK 11
+      - name: Set Up JDK
         uses: actions/setup-java@v1
         with:
           java-version: 11
+
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+  fields_setup:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
       - name: Add TMDB Key
         env:
           BASEURL: ${{ secrets.TMDB_API_KEY }}
         run: echo TMDB_API_KEY="$TMDB_API_KEY" > ./gradle.properties
 
+  test:
+    needs: fields_setup
+    name: Run all Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
       - name: Build with Gradle
         run: ./gradlew build
-      - name: Unit tests
+
+      - name: Unit Tests
         run: bash ./gradlew testDebugUnitTest
