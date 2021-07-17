@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.mockdata
 
+import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
@@ -8,7 +9,7 @@ object MockData {
 
     fun makeTvShowEntityList() = listOf(
         TvShowsEntity(
-            showId = 84958,
+            id = 84958,
             title = "Loki",
             description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                     "an alternate version of Loki is brought to the mysterious Time Variance " +
@@ -25,7 +26,7 @@ object MockData {
             seasonsList = tvSeasonList()
         ),
         TvShowsEntity(
-            showId = 126280,
+            id = 126280,
             title = "Sex/Life",
             description = "A woman's daring sexual past collides with her married-with-kids " +
                     "present when the bad-boy ex she can't stop fantasizing about crashes " +
@@ -55,4 +56,30 @@ object MockData {
             episodeCount = 6
         )
     )
+
+    fun getEpisodeEntityList() = listOf(
+        EpisodeEntity(
+            id = 2534997,
+            seasonId = 114355,
+            name = "Glorious Purpose",
+            overview = "After stealing the Tesseract in \"Avengers: Endgame,\" Loki lands before the Time Variance Authority.",
+            imageUrl = "/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
+            voteCount = 42,
+            voteAverage = 6.429,
+            seasonNumber = 1,
+            episodeNumber = 1
+        ),
+        EpisodeEntity(
+            id = 2927202,
+            seasonId = 114355,
+            name = "The Variant",
+            overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
+            imageUrl = "/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
+            voteCount = 23,
+            voteAverage = 7.6,
+            seasonNumber = 1,
+            episodeNumber = 2
+        )
+    )
+
 }
