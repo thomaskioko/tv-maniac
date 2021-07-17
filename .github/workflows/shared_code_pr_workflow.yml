@@ -1,6 +1,9 @@
 name: "Share build & Unit test"
 
 on:
+  push:
+    branches:
+      - 'feature/*'
   pull_request:
     paths:
       - 'shared/**'
