@@ -13,7 +13,7 @@ votes INTEGER NOT NULL,
 vote_average REAL NOT NULL,
 genre_ids TEXT AS List<Int> NOT NULL,
 show_category TEXT AS TvShowCategory NOT NULL,
-show_seasons TEXT AS List<SeasonsEntity>
+seasons TEXT AS List<SeasonsEntity>
 );
 
 insertOrReplace:
@@ -31,7 +31,7 @@ show_category
 
 updateTvShow:
 UPDATE tv_show
-SET show_seasons = ?
+SET seasons = ?
 WHERE id = ?;
 
 selectByShowId:
