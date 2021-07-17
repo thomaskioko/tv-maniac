@@ -1,8 +1,11 @@
 package com.thomaskioko.tvmaniac.injection
 
 import com.thomaskioko.tvmaniac.datasource.cache.db.TvShowCache
+import com.thomaskioko.tvmaniac.datasource.cache.db.episode.EpisodesCache
 import com.thomaskioko.tvmaniac.datasource.cache.db.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
+import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
+import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepositoryImpl
 import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepository
 import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepositoryImpl
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
@@ -33,6 +36,18 @@ object RepositoriesModule {
     ): SeasonsRepository = SeasonsRepositoryImpl(
         tvShowsService,
         cache,
+        seasonCache
+    )
+
+    @Singleton
+    @Provides
+    fun provideEpisodeRepository(
+        tvShowsService: TvShowsService,
+        episodesCache: EpisodesCache,
+        seasonCache: SeasonsCache
+    ): EpisodeRepository = EpisodeRepositoryImpl(
+        tvShowsService,
+        episodesCache,
         seasonCache
     )
 }
