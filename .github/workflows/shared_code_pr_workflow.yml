@@ -17,5 +17,12 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Add TMDB Key
+        env:
+          BASEURL: ${{ secrets.TMDB_API_KEY }}
+        run: echo TMDB_API_KEY="$TMDB_API_KEY" > ./gradle.properties
+
+      - name: Build with Gradle
+        run: ./gradlew build
       - name: Unit tests
         run: bash ./gradlew testDebugUnitTest
