@@ -24,7 +24,7 @@ fun List<SelectSeasonsByShowId>.toSeasonsEntityList(): List<SeasonsEntity> {
 
 fun SelectSeasonsByShowId.toSeasonsEntity(): SeasonsEntity {
     return SeasonsEntity(
-        seasonId = season_id.toInt(),
+        seasonId = id.toInt(),
         tvShowId = tv_show_id.toInt(),
         name = name,
         overview = overview,
@@ -35,7 +35,7 @@ fun SelectSeasonsByShowId.toSeasonsEntity(): SeasonsEntity {
 
 fun Season.toSeasonEntity(): SeasonsEntity {
     return SeasonsEntity(
-        seasonId = season_id.toInt(),
+        seasonId = id.toInt(),
         tvShowId = tv_show_id.toInt(),
         name = name,
         overview = overview,
