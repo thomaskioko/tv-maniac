@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.datasource.network.api
 
 import com.thomaskioko.tvmaniac.datasource.network.model.EpisodeDetailResponse
+import com.thomaskioko.tvmaniac.datasource.network.model.SeasonResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
-import com.thomaskioko.tvmaniac.datasource.network.model.ShowSeasonsResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
 
 interface TvShowsService {
@@ -11,9 +11,9 @@ interface TvShowsService {
 
     suspend fun getPopularShows(page: Int) : TvShowsResponse
 
-    suspend fun getTvSeasonDetails(showId: Int) : ShowDetailResponse
+    suspend fun getTvShowDetails(showId: Int) : ShowDetailResponse
 
-    suspend fun getTvShowSeasons(showId: Int, seasonNumber : Int) : ShowSeasonsResponse
+    suspend fun getSeasonDetails(tvShowId: Int, seasonNumber : Int) : SeasonResponse
 
     suspend fun getTvShowSeasonEpisode(showId: Int, seasonNumber : Int, episodeNumber: Int) : EpisodeDetailResponse
 
