@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.datasource.repository.tvshow
 
-import com.thomaskioko.tvmaniac.datasource.cache.db.TvShowCache
+import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory.POPULAR_TV_SHOWS
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory.TOP_RATED_TV_SHOWS

@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.datasource.cache
 
 import com.squareup.sqldelight.EnumColumnAdapter
 import com.squareup.sqldelight.db.SqlDriver
-import com.thomaskioko.tvmaniac.datasource.cache.adapter.episodeListAdapter
-import com.thomaskioko.tvmaniac.datasource.cache.adapter.genreListAdapter
-import com.thomaskioko.tvmaniac.datasource.cache.adapter.seasonsListAdapter
+import com.thomaskioko.tvmaniac.datasource.cache.db.adapter.episodeListAdapter
+import com.thomaskioko.tvmaniac.datasource.cache.db.adapter.genreListAdapter
+import com.thomaskioko.tvmaniac.datasource.cache.db.adapter.seasonsListAdapter
 import kotlin.test.AfterTest
 
 expect fun inMemorySqlDriver(): SqlDriver
@@ -22,7 +22,7 @@ abstract class BaseDatabaseTest {
         tv_showAdapter = Tv_show.Adapter(
             genre_idsAdapter = genreListAdapter,
             show_categoryAdapter = EnumColumnAdapter(),
-            show_seasonsAdapter = seasonsListAdapter
+            seasonsAdapter = seasonsListAdapter
         ),
         seasonAdapter = Season.Adapter(
             episodesAdapter = episodeListAdapter

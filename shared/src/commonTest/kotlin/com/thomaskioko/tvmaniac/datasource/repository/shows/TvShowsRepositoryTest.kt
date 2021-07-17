@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.datasource.repository.shows
 import com.thomaskioko.tvmaniac.MockData.getTvResponse
 import com.thomaskioko.tvmaniac.MockData.makeTvShowEntityList
 import com.thomaskioko.tvmaniac.MockData.tvShowSeasonEntity
-import com.thomaskioko.tvmaniac.datasource.cache.db.TvShowCache
+import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepositoryImpl
 import com.thomaskioko.tvmaniac.util.runBlocking
