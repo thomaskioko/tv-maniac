@@ -14,13 +14,13 @@ class SeasonsRepositoryImpl(
 
 
     override suspend fun getSeasonListByTvShowId(tvShowId: Int): List<SeasonsEntity> {
-        return if (seasonCache.getSeasonListByTvShowId(tvShowId).isEmpty()) {
+        return if (seasonCache.getSeasonsByTvShowId(tvShowId).isEmpty()) {
 
             updateTvShowsDetails(tvShowId)
 
-            seasonCache.getSeasonListByTvShowId(tvShowId)
+            seasonCache.getSeasonsByTvShowId(tvShowId)
         } else {
-            seasonCache.getSeasonListByTvShowId(tvShowId)
+            seasonCache.getSeasonsByTvShowId(tvShowId)
         }
     }
 
