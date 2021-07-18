@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.injection
 
-import com.thomaskioko.tvmaniac.datasource.cache.db.TvShowCache
-import com.thomaskioko.tvmaniac.datasource.cache.db.episode.EpisodesCache
-import com.thomaskioko.tvmaniac.datasource.cache.db.seasons.SeasonsCache
+import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
+import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
+import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepositoryImpl
