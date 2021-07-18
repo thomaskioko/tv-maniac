@@ -1,12 +1,15 @@
-package com.thomaskioko.tvmaniac.datasource.cache
+package com.thomaskioko.tvmaniac.datasource.cache.db
 
 import com.squareup.sqldelight.EnumColumnAdapter
 import com.squareup.sqldelight.db.SqlDriver
-import com.thomaskioko.tvmaniac.datasource.cache.adapter.episodeListAdapter
-import com.thomaskioko.tvmaniac.datasource.cache.adapter.genreListAdapter
-import com.thomaskioko.tvmaniac.datasource.cache.adapter.seasonsListAdapter
+import com.thomaskioko.tvmaniac.datasource.cache.Season
+import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.datasource.cache.Tv_show
+import com.thomaskioko.tvmaniac.datasource.cache.db.adapter.episodeListAdapter
+import com.thomaskioko.tvmaniac.datasource.cache.db.adapter.genreListAdapter
+import com.thomaskioko.tvmaniac.datasource.cache.db.adapter.seasonsListAdapter
 
-class TvShowsDatabaseFactory(
+class TvManiacDatabaseFactory(
     private val driverFactory: DriverFactory
 ) {
 
@@ -16,7 +19,7 @@ class TvShowsDatabaseFactory(
             tv_showAdapter = Tv_show.Adapter(
                 genre_idsAdapter = genreListAdapter,
                 show_categoryAdapter = EnumColumnAdapter(),
-                show_seasonsAdapter = seasonsListAdapter,
+                seasonsAdapter = seasonsListAdapter,
             ),
             seasonAdapter = Season.Adapter(
                 episodesAdapter = episodeListAdapter

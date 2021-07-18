@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource.cache.db.seasons
+package com.thomaskioko.tvmaniac.datasource.cache.seasons
 
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
 

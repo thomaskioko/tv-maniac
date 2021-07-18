@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource.cache.db
+package com.thomaskioko.tvmaniac.datasource.cache.shows
 
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
@@ -45,7 +45,7 @@ class TvShowCacheImpl(
     override fun updateTvShowDetails(entity: TvShowsEntity) {
         database.tvShowQueries.updateTvShow(
             id = entity.id.toLong(),
-            show_seasons = entity.seasonsList
+            seasons = entity.seasonsList
         )
     }
 

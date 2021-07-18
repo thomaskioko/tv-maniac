@@ -46,18 +46,18 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         makeTvShowEntityList().insertTvShowsEntityList()
 
         val seasons = tvShowQueries.selectByShowId(tvShowsEntity.id.toLong())
-            .executeAsOne().show_seasons
+            .executeAsOne().seasons
 
         //Verify that the first time the list is empty
         seasons shouldBe null
 
         tvShowQueries.updateTvShow(
             id = tvShowsEntity.id.toLong(),
-            show_seasons = tvSeasonsList
+            seasons = tvSeasonsList
         )
 
         val tvSeasonsResult = tvShowQueries.selectByShowId(tvShowsEntity.id.toLong())
-            .executeAsOne().show_seasons
+            .executeAsOne().seasons
 
         //Verify that the list has been updated and exists
         tvSeasonsResult shouldBe tvSeasonsList
@@ -72,17 +72,17 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         val entity = tvShowQueries.selectByShowId(tvShowsEntity.id.toLong())
             .executeAsOne()
 
-        entity.show_seasons shouldBe null
+        entity.seasons shouldBe null
 
         tvShowQueries.updateTvShow(
             id = tvShowsEntity.id.toLong(),
-            show_seasons = tvSeasonsList
+            seasons = tvSeasonsList
         )
 
         val tvShowResult = tvShowQueries.selectByShowId(tvShowsEntity.id.toLong())
             .executeAsOne()
 
-        tvShowResult.show_seasons shouldBe tvSeasonsList
+        tvShowResult.seasons shouldBe tvSeasonsList
     }
 
     @Test

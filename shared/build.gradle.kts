@@ -1,7 +1,8 @@
 
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import java.io.FileInputStream
+import java.util.*
 
 plugins {
     kotlin(Plugins.multiplatform)
@@ -117,12 +118,16 @@ android {
 }
 
 buildkonfig {
-    packageName = "com.thomaskioko.tvmaniac.shared"
+    val properties = Properties()
+    val secretsFile = file("secrets.properties")
+    if (secretsFile.exists()) {
+        properties.load(FileInputStream(secretsFile))
+    }
 
-    val props = gradleLocalProperties(rootDir)
+    packageName = "com.thomaskioko.tvmaniac.shared"
     defaultConfigs {
-        buildConfigField(STRING, "TMDB_API_KEY", props.getProperty("TMDB_API_KEY"))
-        buildConfigField(STRING, "TMDB_API_URL", props.getProperty("TMDB_API_URL"))
+        buildConfigField(STRING, "TMDB_API_KEY", properties["TMDB_API_KEY"] as String)
+        buildConfigField(STRING, "TMDB_API_URL", properties["TMDB_API_URL"] as String)
     }
 }
 
