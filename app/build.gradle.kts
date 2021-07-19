@@ -63,6 +63,8 @@ android {
         implementation(libs.napier)
 
         implementation(libs.hilt.android)
+        implementation(libs.hilt.navigation)
+        
         implementation(libs.kotlin.datetime)
         implementation(libs.ktor.android)
         kapt(libs.hilt.compiler)
