@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tv Maniac</string>
+    <string name="menu_item_discover">Discover</string>
+    <string name="menu_item_search">Search</string>
+    <string name="menu_item_watchlist">Watchlist</string>
+</resources>
