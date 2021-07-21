@@ -1,11 +1,15 @@
 package com.thomaskioko.tvmaniac.datasource.repository.tvshow
 
-import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory.POPULAR_TV_SHOWS
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory.TOP_RATED_TV_SHOWS
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
-import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowEntityList
+import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
+import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
+import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.FEATURED
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.POPULAR_TV_SHOWS
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.TOP_RATED_TV_SHOWS
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.TRENDING
+import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowEntity
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 
 class TvShowsRepositoryImpl(
@@ -21,7 +25,10 @@ class TvShowsRepositoryImpl(
         return if (cache.getTvShows().isEmpty()) {
 
             val entityList = apiService.getPopularShows(page).results
-                .map { it.toTvShowEntityList(POPULAR_TV_SHOWS) }
+                .map { it.toTvShowEntity() }
+                .map { it.copy(
+                    showCategory = POPULAR_TV_SHOWS
+                ) }
 
             cache.insert(entityList)
 
@@ -35,13 +42,63 @@ class TvShowsRepositoryImpl(
         return if (cache.getTvShows().isEmpty()) {
 
             apiService.getTopRatedShows(page).results
-                .map { it.toTvShowEntityList(TOP_RATED_TV_SHOWS) }
+                .map { it.toTvShowEntity() }
+                .map { it.copy(
+                    showCategory = POPULAR_TV_SHOWS
+                ) }
                 .map { cache.insert(it) }
 
             getShowsByCategory(TOP_RATED_TV_SHOWS)
         } else {
             getShowsByCategory(TOP_RATED_TV_SHOWS)
         }
+    }
+
+    override suspend fun getTrendingShows(
+        timeWindow: String
+    ): List<TvShowsEntity> {
+        return if (getShowsByCategoryAndWindow(TRENDING, TimeWindow[timeWindow]).isEmpty()) {
+
+            apiService.getTrendingShows(timeWindow).results
+                .map { it.toTvShowEntity() }
+                .map {
+                    it.copy(
+                        showCategory = TRENDING,
+                        timeWindow = TimeWindow[timeWindow]
+                    )
+                }
+                .map { cache.insert(it) }
+
+            getShowsByCategoryAndWindow(TRENDING, TimeWindow[timeWindow])
+        } else {
+            getShowsByCategoryAndWindow(TRENDING, TimeWindow[timeWindow])
+        }
+    }
+
+    override suspend fun getFeaturedShows(): List<TvShowsEntity> {
+        return if (getShowsByCategoryAndWindow(FEATURED, WEEK).isEmpty()) {
+
+            apiService.getTrendingShows(WEEK.window).results
+                .map { it.toTvShowEntity() }
+                .map {
+                    it.copy(
+                        showCategory = FEATURED,
+                        timeWindow = WEEK
+                    )
+                }
+                .map { cache.insert(it) }
+
+            cache.getFeaturedTvShows(FEATURED, WEEK)
+        } else {
+            cache.getFeaturedTvShows(FEATURED, WEEK)
+        }
+    }
+
+    override suspend fun getShowsByCategoryAndWindow(
+        category: TvShowCategory,
+        timeWindow: TimeWindow
+    ): List<TvShowsEntity> {
+        return cache.getTvShows(category, timeWindow)
     }
 
     private fun getShowsByCategory(category: TvShowCategory): List<TvShowsEntity> =

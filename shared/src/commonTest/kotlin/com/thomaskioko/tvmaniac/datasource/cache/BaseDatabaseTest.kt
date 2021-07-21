@@ -21,8 +21,9 @@ abstract class BaseDatabaseTest {
         driver = sqlDriver,
         tv_showAdapter = Tv_show.Adapter(
             genre_idsAdapter = genreListAdapter,
+            seasonsAdapter = seasonsListAdapter,
             show_categoryAdapter = EnumColumnAdapter(),
-            seasonsAdapter = seasonsListAdapter
+            time_windowAdapter = EnumColumnAdapter()
         ),
         seasonAdapter = Season.Adapter(
             episodesAdapter = episodeListAdapter
