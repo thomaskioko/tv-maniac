@@ -23,9 +23,12 @@ class GetTrendingShowsInteractor constructor(
             val trendingMap = linkedMapOf<TrendingDataRequest, List<TvShowsEntity>>()
 
             params.forEach {
-                val result = repository.getTrendingShows(
-                    it.timeWindow.window
-                )
+
+                val result = if (it != TrendingDataRequest.FEATURED) {
+                    repository.getTrendingShows(it.timeWindow.window)
+                } else {
+                    repository.getFeaturedShows()
+                }
 
                 trendingMap[it] = result
             }

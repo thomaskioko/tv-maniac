@@ -16,6 +16,8 @@ interface TvShowCache {
 
     fun getTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<TvShowsEntity>
 
+    fun getFeaturedTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<TvShowsEntity>
+
     fun updateTvShowDetails(entity: TvShowsEntity)
 
     fun deleteTvShows()

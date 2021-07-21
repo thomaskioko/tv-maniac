@@ -3,7 +3,9 @@ package com.thomaskioko.tvmaniac.datasource.repository.tvshow
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
+import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.FEATURED
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.POPULAR_TV_SHOWS
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.TOP_RATED_TV_SHOWS
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.TRENDING
@@ -70,6 +72,25 @@ class TvShowsRepositoryImpl(
             getShowsByCategoryAndWindow(TRENDING, TimeWindow[timeWindow])
         } else {
             getShowsByCategoryAndWindow(TRENDING, TimeWindow[timeWindow])
+        }
+    }
+
+    override suspend fun getFeaturedShows(): List<TvShowsEntity> {
+        return if (getShowsByCategoryAndWindow(FEATURED, WEEK).isEmpty()) {
+
+            apiService.getTrendingShows(WEEK.window).results
+                .map { it.toTvShowEntity() }
+                .map {
+                    it.copy(
+                        showCategory = FEATURED,
+                        timeWindow = WEEK
+                    )
+                }
+                .map { cache.insert(it) }
+
+            cache.getFeaturedTvShows(FEATURED, WEEK)
+        } else {
+            cache.getFeaturedTvShows(FEATURED, WEEK)
         }
     }
 
