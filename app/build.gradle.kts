@@ -46,7 +46,6 @@ android {
     dependencies {
         implementation(project(":shared"))
 
-        implementation(libs.accompanist.coil)
         implementation(libs.accompanist.pager)
 
         implementation(libs.androidx.appCompat)
@@ -73,6 +72,7 @@ android {
         implementation(libs.ktor.android)
         kapt(libs.hilt.compiler)
 
+        implementation(libs.coil)
         implementation(libs.material)
         implementation(libs.napier)
         debugImplementation(libs.squareup.leakcanary)
