@@ -1,21 +1,20 @@
 package com.thomaskioko.tvmaniac.datasource.mapper
 
 import com.thomaskioko.tvmaniac.datasource.cache.Tv_show
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowResponse
+import com.thomaskioko.tvmaniac.util.StringUtil.formatPosterPath
 
-fun ShowResponse.toTvShowEntityList(showCategory: TvShowCategory): TvShowsEntity {
+fun ShowResponse.toTvShowEntity(): TvShowsEntity {
     return TvShowsEntity(
         id = id,
         title = name,
         description = overview,
         language = originalLanguage,
-        imageUrl = backdropPath ?: poster_Path,
+        imageUrl = if(backdropPath.isNullOrEmpty()) formatPosterPath(poster_Path) else formatPosterPath(backdropPath),
         votes = voteCount,
         averageVotes = voteAverage,
-        genreIds = genreIds,
-        showCategory = showCategory
+        genreIds = genreIds
     )
 }
 
