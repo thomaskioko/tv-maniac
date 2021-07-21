@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
 import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepository
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
+import com.thomaskioko.tvmaniac.interactor.GetTrendingShowsInteractor
 import com.thomaskioko.tvmaniac.interactor.PopularShowsInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
 import dagger.Module
@@ -33,4 +34,10 @@ object InteractorsModule {
     fun provideEpisodesInteractor(
         repository: EpisodeRepository
     ): EpisodesInteractor = EpisodesInteractor(repository)
+
+    @Singleton
+    @Provides
+    fun provideGetTrendingShowsInteractor(
+        repository: TvShowsRepository
+    ): GetTrendingShowsInteractor = GetTrendingShowsInteractor(repository)
 }
