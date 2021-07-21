@@ -1,5 +1,6 @@
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity;
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory;
+import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow;
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory;
 import kotlin.collections.List;
 
 
@@ -13,6 +14,7 @@ votes INTEGER NOT NULL,
 vote_average REAL NOT NULL,
 genre_ids TEXT AS List<Int> NOT NULL,
 show_category TEXT AS TvShowCategory NOT NULL,
+time_window TEXT AS TimeWindow NOT NULL,
 seasons TEXT AS List<SeasonsEntity>
 );
 
@@ -26,8 +28,9 @@ image_url,
 votes,
 vote_average,
 genre_ids,
-show_category
-)VALUES(?,?,?,?,?,?,?,?, ?);
+show_category,
+time_window
+)VALUES(?,?,?,?,?,?,?,?, ?,?);
 
 updateTvShow:
 UPDATE tv_show
@@ -37,6 +40,10 @@ WHERE id = ?;
 selectByShowId:
 SELECT * FROM tv_show
 WHERE id = ?;
+
+selectByShowIdAndWindow:
+SELECT * FROM tv_show
+WHERE show_category = ? AND time_window = ?;
 
 selectAll:
 SELECT * FROM tv_show;
