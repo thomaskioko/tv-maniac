@@ -23,7 +23,7 @@ internal class TvShowResponseMapperTest {
         mappedShow.id shouldBe showResponse.id
         mappedShow.title shouldBe showResponse.name
         mappedShow.description shouldBe showResponse.overview
-        mappedShow.imageUrl shouldBe formatPosterPath(showResponse.backdropPath!!)
+        mappedShow.posterImageUrl shouldBe formatPosterPath(showResponse.posterPath)
         mappedShow.votes shouldBe showResponse.voteCount
         mappedShow.averageVotes shouldBe showResponse.voteAverage
         mappedShow.genreIds shouldBe showResponse.genreIds

@@ -33,7 +33,8 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         entity shouldNotBe null
         entity.title shouldBe tvShowsEntity.title
         entity.description shouldBe tvShowsEntity.description
-        entity.image_url shouldBe tvShowsEntity.imageUrl
+        entity.poster_image_url shouldBe tvShowsEntity.posterImageUrl
+        entity.backdrop_image_url shouldBe tvShowsEntity.backdropImageUrl
         entity.votes shouldBe tvShowsEntity.votes
         entity.vote_average shouldBe tvShowsEntity.averageVotes
         entity.genre_ids shouldBe tvShowsEntity.genreIds
@@ -108,7 +109,8 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             title = title,
             description = description,
             language = language,
-            image_url = imageUrl,
+            poster_image_url = posterImageUrl,
+            backdrop_image_url = backdropImageUrl,
             votes = votes.toLong(),
             vote_average = averageVotes,
             genre_ids = genreIds,
