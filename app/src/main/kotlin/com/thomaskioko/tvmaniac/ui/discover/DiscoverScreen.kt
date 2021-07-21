@@ -110,11 +110,12 @@ fun FeaturedItems(
     resultMap: Map.Entry<TrendingDataRequest, List<TvShowsEntity>>,
 ) {
 
-    ColumnSpacer(value = 8)
-
-    BoxTextItems(resultMap.key.title)
-
     Column {
+
+        ColumnSpacer(value = 8)
+
+        BoxTextItems(resultMap.key.title)
+
         HorizontalPager(resultMap.value) { tvShowId ->
             Napier.d("Show Clicked $tvShowId")
         }
