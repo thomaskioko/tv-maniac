@@ -46,7 +46,9 @@ android {
     dependencies {
         implementation(project(":shared"))
 
-        implementation(libs.material)
+        implementation(libs.accompanist.coil)
+        implementation(libs.accompanist.pager)
+
         implementation(libs.androidx.appCompat)
 
         implementation(libs.androidx.compose.runtime.core)
@@ -54,13 +56,15 @@ android {
         implementation(libs.androidx.compose.material)
         implementation(libs.androidx.compose.ui.runtime)
         implementation(libs.androidx.compose.ui.tooling)
+        implementation(libs.androidx.compose.ui.util)
         implementation(libs.androidx.compose.foundation)
         implementation(libs.androidx.compose.compiler)
         implementation(libs.androidx.compose.constraintlayout)
         implementation(libs.androidx.compose.activity)
         implementation(libs.androidx.compose.navigation)
 
-        implementation(libs.napier)
+        implementation(libs.androidx.lifecycle.common)
+        implementation(libs.androidx.lifecycle.runtime)
 
         implementation(libs.hilt.android)
         implementation(libs.hilt.navigation)
@@ -69,6 +73,8 @@ android {
         implementation(libs.ktor.android)
         kapt(libs.hilt.compiler)
 
+        implementation(libs.material)
+        implementation(libs.napier)
         debugImplementation(libs.squareup.leakcanary)
 
         testImplementation(libs.testing.turbine)
