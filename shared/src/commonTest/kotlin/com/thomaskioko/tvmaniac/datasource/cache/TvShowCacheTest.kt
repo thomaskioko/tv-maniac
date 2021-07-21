@@ -112,7 +112,8 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             votes = votes.toLong(),
             vote_average = averageVotes,
             genre_ids = genreIds,
-            show_category = showCategory
+            show_category = showCategory,
+            time_window = timeWindow
         )
     }
 
