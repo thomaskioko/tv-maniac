@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.mockdata
 
 import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
 
 object MockData {
 
@@ -17,7 +17,8 @@ object MockData {
                     "space and monitors the timeline. They give Loki a choice: face being " +
                     "erased from existence due to being a “time variant”or help fix " +
                     "the timeline and stop a greater threat.",
-            imageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             language = "en",
             votes = 4958,
             averageVotes = 8.1,
@@ -31,7 +32,8 @@ object MockData {
             description = "A woman's daring sexual past collides with her married-with-kids " +
                     "present when the bad-boy ex she can't stop fantasizing about crashes " +
                     "back into her life.",
-            imageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             language = "en",
             votes = 4958,
             averageVotes = 8.1,
