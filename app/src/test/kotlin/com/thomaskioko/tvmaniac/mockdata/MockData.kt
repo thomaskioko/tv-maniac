@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.mockdata
 
 import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
 
 object MockData {
