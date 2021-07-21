@@ -9,6 +9,7 @@
         android:allowBackup="false"
         android:label="Tv Maniac"
         android:supportsRtl="true"
+        android:icon="@drawable/ic_app_launcher"
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.MainActivity"
