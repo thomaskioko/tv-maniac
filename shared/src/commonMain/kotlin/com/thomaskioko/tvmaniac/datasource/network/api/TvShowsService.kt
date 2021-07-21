@@ -17,4 +17,6 @@ interface TvShowsService {
 
     suspend fun getTvShowSeasonEpisode(showId: Int, seasonNumber : Int, episodeNumber: Int) : EpisodeDetailResponse
 
+    suspend fun getTrendingShows(timeWindow: String) : TvShowsResponse
+
 }
