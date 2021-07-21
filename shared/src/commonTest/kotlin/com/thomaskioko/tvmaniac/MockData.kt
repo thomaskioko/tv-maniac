@@ -2,8 +2,11 @@ package com.thomaskioko.tvmaniac
 
 import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowCategory
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
+import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
+import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowEntity
 import com.thomaskioko.tvmaniac.datasource.network.model.EpisodesResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.GenreResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.SeasonResponse
@@ -278,5 +281,25 @@ object MockData {
             episodeNumber = 2
         )
     )
+
+    fun getTrendingDataMap(): LinkedHashMap<TrendingDataRequest, List<TvShowsEntity>> {
+        val trendingMap = linkedMapOf<TrendingDataRequest, List<TvShowsEntity>>()
+
+        trendingMap[TrendingDataRequest.TODAY] = getTvResponse().results
+            .map { it.toTvShowEntity() }
+            .map { it.copy(
+                showCategory = TvShowCategory.TRENDING,
+                timeWindow = TimeWindow.DAY
+            ) }
+
+        trendingMap[TrendingDataRequest.THIS_WEEK] = getTvResponse().results
+            .map { it.toTvShowEntity() }
+            .map { it.copy(
+                showCategory = TvShowCategory.TRENDING,
+                timeWindow = TimeWindow.WEEK
+            ) }
+
+        return trendingMap
+    }
 
 }
