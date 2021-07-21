@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewModelScope
@@ -23,6 +25,7 @@ fun WelcomeScreen(
     navController: NavHostController
 ) {
 
+    val welcomeText by remember { mutableStateOf("Tv Maniac") }
     Column(
         modifier = Modifier
             .matchParent()
@@ -30,9 +33,7 @@ fun WelcomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        GradientText(
-            text = mutableStateOf("Tv Maniac").value
-        )
+        GradientText(text = welcomeText)
     }
 
     LaunchedEffect(Unit) {
