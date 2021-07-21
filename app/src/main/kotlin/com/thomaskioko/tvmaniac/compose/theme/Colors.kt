@@ -13,8 +13,8 @@ val colorSecondaryLight = Color(0xFF00284d)
 val colorSecondaryVariantLight = Color(0xFFFFD258)
 val colorError = Color(0xFFFC2d11)
 
-val colorPrimaryDark = Color(0xFF202020)
-val colorPrimaryVariantDark = Color(0xFF000000)
+val colorPrimaryDark = Color(0xFF131313)
+val colorPrimaryVariantDark = Color(0xFF202020)
 val colorSecondaryDark = Color(0xFFFFBE0B)
 val colorSecondaryVariantDark = Color(0xFFF1B000)
 
