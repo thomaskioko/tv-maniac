@@ -9,7 +9,8 @@ id INTEGER NOT NULL PRIMARY KEY,
 title TEXT NOT NULL,
 description TEXT NOT NULL,
 language TEXT NOT NULL,
-image_url TEXT NOT NULL,
+poster_image_url TEXT NOT NULL,
+backdrop_image_url TEXT NOT NULL,
 votes INTEGER NOT NULL,
 vote_average REAL NOT NULL,
 genre_ids TEXT AS List<Int> NOT NULL,
@@ -24,13 +25,14 @@ id,
 title,
 description,
 language,
-image_url,
+poster_image_url,
+backdrop_image_url,
 votes,
 vote_average,
 genre_ids,
 show_category,
 time_window
-)VALUES(?,?,?,?,?,?,?,?, ?,?);
+)VALUES(?,?,?,?,?,?,?,?,?, ?,?);
 
 updateTvShow:
 UPDATE tv_show
@@ -47,6 +49,11 @@ WHERE show_category = ? AND time_window = ?;
 
 selectAll:
 SELECT * FROM tv_show;
+
+selectFeatured:
+SELECT * FROM tv_show
+WHERE show_category = ? AND time_window = ?
+ORDER BY vote_average DESC, RANDOM() LIMIT 5;
 
 deleteAll:
 DELETE FROM tv_show;

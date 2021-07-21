@@ -18,7 +18,8 @@ class TvShowCacheImpl(
                 title = entity.title,
                 description = entity.description,
                 language = entity.language,
-                image_url = entity.imageUrl,
+                poster_image_url = entity.posterImageUrl,
+                backdrop_image_url = entity.backdropImageUrl,
                 votes = entity.votes.toLong(),
                 vote_average = entity.averageVotes,
                 genre_ids = entity.genreIds,
@@ -50,6 +51,15 @@ class TvShowCacheImpl(
             show_category = category,
             time_window = timeWindow
         ).executeAsList()
+            .toTvShowsEntityList()
+    }
+
+    override fun getFeaturedTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<TvShowsEntity> {
+        return database.tvShowQueries.selectFeatured(
+            show_category = category,
+            time_window = timeWindow
+        )
+            .executeAsList()
             .toTvShowsEntityList()
     }
 
