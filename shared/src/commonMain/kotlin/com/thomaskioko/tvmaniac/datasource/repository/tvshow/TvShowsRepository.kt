@@ -14,5 +14,7 @@ interface TvShowsRepository  {
 
     suspend fun getTrendingShows(timeWindow: String): List<TvShowsEntity>
 
+    suspend fun getFeaturedShows(): List<TvShowsEntity>
+
     suspend fun getShowsByCategoryAndWindow(category: TvShowCategory, timeWindow: TimeWindow): List<TvShowsEntity>
 }
