@@ -7,11 +7,13 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows from
 ### Android
 * [Jetpack Compose](https://developer.android.com/jetpack/compose)
     * [Coil](https://coil-kt.github.io/coil/compose/) - Image loading
+    * [Insets](https://github.com/google/accompanist/tree/main/insets)
 * [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) UI related data holder, lifecycle
   aware.
 * [Accompanist](https://github.com/google/accompanist)
     * [Pager Composable](https://github.com/google/accompanist/tree/main/pager)
 * [Dagger Hilt](https://dagger.dev/hilt) - dependency injection.
+* [KenBurnsView](https://github.com/flavioarfaria/KenBurnsView) - Immersive image.
 
 ### Common
 * [Ktor](https://ktor.io/) - Networking
