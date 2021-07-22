@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
 import com.thomaskioko.tvmaniac.R
@@ -102,4 +103,15 @@ fun BoxTextItems(
         }
 
     }
+}
+
+@Composable
+fun ErrorText(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text, modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 48.dp),
+        style = MaterialTheme.typography.body2,
+        textAlign = TextAlign.Center, color = MaterialTheme.colors.error
+    )
 }
