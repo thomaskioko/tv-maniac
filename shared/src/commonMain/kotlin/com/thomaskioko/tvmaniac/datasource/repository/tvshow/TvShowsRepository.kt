@@ -1,20 +1,20 @@
 package com.thomaskioko.tvmaniac.datasource.repository.tvshow
 
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShows
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
 
 interface TvShowsRepository  {
 
-    suspend fun getTvShow(tvShowId: Int) : TvShowsEntity
+    suspend fun getTvShow(tvShowId: Int) : TvShows
 
-    suspend fun getPopularTvShows(page: Int) : List<TvShowsEntity>
+    suspend fun getPopularTvShows(page: Int) : List<TvShows>
 
-    suspend fun getTopRatedTvShows(page: Int) : List<TvShowsEntity>
+    suspend fun getTopRatedTvShows(page: Int) : List<TvShows>
 
-    suspend fun getTrendingShows(timeWindow: String): List<TvShowsEntity>
+    suspend fun getTrendingShows(timeWindow: String): List<TvShows>
 
-    suspend fun getFeaturedShows(): List<TvShowsEntity>
+    suspend fun getFeaturedShows(): List<TvShows>
 
-    suspend fun getShowsByCategoryAndWindow(category: TvShowCategory, timeWindow: TimeWindow): List<TvShowsEntity>
+    suspend fun getShowsByCategoryAndWindow(category: TvShowCategory, timeWindow: TimeWindow): List<TvShows>
 }

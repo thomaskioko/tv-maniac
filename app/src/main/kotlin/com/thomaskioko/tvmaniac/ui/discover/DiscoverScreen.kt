@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavHostController
+import com.google.accompanist.insets.statusBarsPadding
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ErrorView
@@ -22,7 +23,7 @@ import com.thomaskioko.tvmaniac.compose.components.HorizontalPager
 import com.thomaskioko.tvmaniac.compose.components.LoadingView
 import com.thomaskioko.tvmaniac.compose.components.TvManiacScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShows
 import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
 import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import io.github.aakira.napier.Napier
@@ -47,7 +48,8 @@ fun DiscoverScreen(
 
     TvManiacScaffold(
         scaffoldState = scaffoldState,
-        appBar = {},
+        modifier = Modifier
+            .statusBarsPadding(),
         content = {
             LoadScreenContent(
                 viewState = discoverViewState,
@@ -97,7 +99,7 @@ private fun ScreenData(
 
 @Composable
 fun FeaturedItems(
-    resultMap: Map.Entry<TrendingDataRequest, List<TvShowsEntity>>,
+    resultMap: Map.Entry<TrendingDataRequest, List<TvShows>>,
     onItemClicked: (Int) -> Unit,
 ) {
 
@@ -118,7 +120,7 @@ fun FeaturedItems(
 
 @Composable
 private fun DisplayShowData(
-    resultMap: Map.Entry<TrendingDataRequest, List<TvShowsEntity>>,
+    resultMap: Map.Entry<TrendingDataRequest, List<TvShows>>,
     onItemClicked: (Int) -> Unit,
 ) {
 
