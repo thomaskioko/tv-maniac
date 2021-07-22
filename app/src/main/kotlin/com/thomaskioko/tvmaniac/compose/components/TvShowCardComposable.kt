@@ -20,12 +20,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.R
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 
 
 @Composable
 fun TvShowCard(
-    entity: TvShowsEntity,
+    tvShow: TvShow,
     isFirstCard: Boolean = false,
     modifier: Modifier = Modifier,
     imageWidth: Dp = 120.dp,
@@ -44,8 +44,8 @@ fun TvShowCard(
             shape = MaterialTheme.shapes.medium
         ) {
             NetworkImageComposable(
-                imageUrl = entity.posterImageUrl,
-                contentDescription = stringResource(R.string.cd_show_poster, entity.title),
+                imageUrl = tvShow.posterImageUrl,
+                contentDescription = stringResource(R.string.cd_show_poster, tvShow.title),
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(2 / 3f)
@@ -56,7 +56,7 @@ fun TvShowCard(
         ColumnSpacer(8)
 
         Text(
-            text = entity.title,
+            text = tvShow.title,
             style = MaterialTheme.typography.body2,
             maxLines = 2,
             modifier = Modifier.padding(horizontal = 8.dp)
@@ -66,7 +66,7 @@ fun TvShowCard(
 
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             Text(
-                text = entity.votes.toString(),
+                text = tvShow.votes.toString(),
                 style = MaterialTheme.typography.overline,
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
