@@ -2,13 +2,13 @@ package com.thomaskioko.tvmaniac.mockdata
 
 import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShows
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
 
 object MockData {
 
     fun makeTvShowEntityList() = listOf(
-        TvShows(
+        TvShow(
             id = 84958,
             title = "Loki",
             overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
@@ -26,7 +26,7 @@ object MockData {
             showCategory = TvShowCategory.POPULAR_TV_SHOWS,
             seasonsList = tvSeasonList()
         ),
-        TvShows(
+        TvShow(
             id = 126280,
             title = "Sex/Life",
             overview = "A woman's daring sexual past collides with her married-with-kids " +

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.datasource.repository.tvshow
 
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShows
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
@@ -17,11 +17,11 @@ class TvShowsRepositoryImpl(
     private val cache: TvShowCache
 ) : TvShowsRepository {
 
-    override suspend fun getTvShow(tvShowId: Int): TvShows {
+    override suspend fun getTvShow(tvShowId: Int): TvShow {
         return cache.getTvShow(tvShowId)
     }
 
-    override suspend fun getPopularTvShows(page: Int): List<TvShows> {
+    override suspend fun getPopularTvShows(page: Int): List<TvShow> {
         return if (cache.getTvShows().isEmpty()) {
 
             val entityList = apiService.getPopularShows(page).results
@@ -38,7 +38,7 @@ class TvShowsRepositoryImpl(
         }
     }
 
-    override suspend fun getTopRatedTvShows(page: Int): List<TvShows> {
+    override suspend fun getTopRatedTvShows(page: Int): List<TvShow> {
         return if (cache.getTvShows().isEmpty()) {
 
             apiService.getTopRatedShows(page).results
@@ -56,7 +56,7 @@ class TvShowsRepositoryImpl(
 
     override suspend fun getTrendingShows(
         timeWindow: String
-    ): List<TvShows> {
+    ): List<TvShow> {
         return if (getShowsByCategoryAndWindow(TRENDING, TimeWindow[timeWindow]).isEmpty()) {
 
             apiService.getTrendingShows(timeWindow).results
@@ -75,7 +75,7 @@ class TvShowsRepositoryImpl(
         }
     }
 
-    override suspend fun getFeaturedShows(): List<TvShows> {
+    override suspend fun getFeaturedShows(): List<TvShow> {
         return if (getShowsByCategoryAndWindow(FEATURED, WEEK).isEmpty()) {
 
             apiService.getTrendingShows(WEEK.window).results
@@ -97,11 +97,11 @@ class TvShowsRepositoryImpl(
     override suspend fun getShowsByCategoryAndWindow(
         category: TvShowCategory,
         timeWindow: TimeWindow
-    ): List<TvShows> {
+    ): List<TvShow> {
         return cache.getTvShows(category, timeWindow)
     }
 
-    private fun getShowsByCategory(category: TvShowCategory): List<TvShows> =
+    private fun getShowsByCategory(category: TvShowCategory): List<TvShow> =
         cache.getTvShows()
             .filter { it.showCategory == category }
 

@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.datasource.mapper
 
 import com.thomaskioko.tvmaniac.datasource.cache.Tv_show
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShows
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowResponse
 import com.thomaskioko.tvmaniac.util.StringUtil.formatPosterPath
 
-fun ShowResponse.toTvShowEntity(): TvShows {
-    return TvShows(
+fun ShowResponse.toTvShowEntity(): TvShow {
+    return TvShow(
         id = id,
         title = name,
         overview = overview,
@@ -19,12 +19,12 @@ fun ShowResponse.toTvShowEntity(): TvShows {
     )
 }
 
-fun List<Tv_show>.toTvShowsEntityList(): List<TvShows> {
+fun List<Tv_show>.toTvShowsEntityList(): List<TvShow> {
     return map { it.toTvShowsEntity() }
 }
 
-fun Tv_show.toTvShowsEntity(): TvShows {
-    return TvShows(
+fun Tv_show.toTvShowsEntity(): TvShow {
+    return TvShow(
         id = id.toInt(),
         title = title,
         overview = description,
