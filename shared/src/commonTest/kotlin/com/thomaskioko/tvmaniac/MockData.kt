@@ -158,7 +158,7 @@ object MockData {
         TvShowsEntity(
             id = 84958,
             title = "Loki",
-            description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+            overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                     "an alternate version of Loki is brought to the mysterious Time Variance " +
                     "Authority, a bureaucratic organization that exists outside of time and " +
                     "space and monitors the timeline. They give Loki a choice: face being " +
@@ -175,7 +175,7 @@ object MockData {
         TvShowsEntity(
             id = 126280,
             title = "Sex/Life",
-            description = "A woman's daring sexual past collides with her married-with-kids " +
+            overview = "A woman's daring sexual past collides with her married-with-kids " +
                     "present when the bad-boy ex she can't stop fantasizing about crashes " +
                     "back into her life.",
             posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -191,7 +191,7 @@ object MockData {
     val tvShowsEntity = TvShowsEntity(
         id = 84958,
         title = "Loki",
-        description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
                 "Authority, a bureaucratic organization that exists outside of time and " +
                 "space and monitors the timeline. They give Loki a choice: face being " +
@@ -245,7 +245,7 @@ object MockData {
     val tvShowSeasonEntity = TvShowsEntity(
         id = 84958,
         title = "Loki",
-        description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
                 "Authority, a bureaucratic organization that exists outside of time and " +
                 "space and monitors the timeline. They give Loki a choice: face being " +

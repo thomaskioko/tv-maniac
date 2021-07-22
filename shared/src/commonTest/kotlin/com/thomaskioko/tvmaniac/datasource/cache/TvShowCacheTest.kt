@@ -32,7 +32,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         entity shouldNotBe null
         entity.title shouldBe tvShowsEntity.title
-        entity.description shouldBe tvShowsEntity.description
+        entity.description shouldBe tvShowsEntity.overview
         entity.poster_image_url shouldBe tvShowsEntity.posterImageUrl
         entity.backdrop_image_url shouldBe tvShowsEntity.backdropImageUrl
         entity.votes shouldBe tvShowsEntity.votes
@@ -107,7 +107,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         tvShowQueries.insertOrReplace(
             id = id.toLong(),
             title = title,
-            description = description,
+            description = overview,
             language = language,
             poster_image_url = posterImageUrl,
             backdrop_image_url = backdropImageUrl,

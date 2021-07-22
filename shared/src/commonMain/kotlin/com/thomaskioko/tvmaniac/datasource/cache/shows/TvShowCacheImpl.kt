@@ -16,7 +16,7 @@ class TvShowCacheImpl(
             database.tvShowQueries.insertOrReplace(
                 id = entity.id.toLong(),
                 title = entity.title,
-                description = entity.description,
+                description = entity.overview,
                 language = entity.language,
                 poster_image_url = entity.posterImageUrl,
                 backdrop_image_url = entity.backdropImageUrl,
