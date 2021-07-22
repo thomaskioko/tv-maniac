@@ -23,7 +23,7 @@ import com.thomaskioko.tvmaniac.compose.components.HorizontalPager
 import com.thomaskioko.tvmaniac.compose.components.LoadingView
 import com.thomaskioko.tvmaniac.compose.components.TvManiacScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShows
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
 import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import io.github.aakira.napier.Napier
@@ -99,7 +99,7 @@ private fun ScreenData(
 
 @Composable
 fun FeaturedItems(
-    resultMap: Map.Entry<TrendingDataRequest, List<TvShows>>,
+    resultMap: Map.Entry<TrendingDataRequest, List<TvShow>>,
     onItemClicked: (Int) -> Unit,
 ) {
 
@@ -120,7 +120,7 @@ fun FeaturedItems(
 
 @Composable
 private fun DisplayShowData(
-    resultMap: Map.Entry<TrendingDataRequest, List<TvShows>>,
+    resultMap: Map.Entry<TrendingDataRequest, List<TvShow>>,
     onItemClicked: (Int) -> Unit,
 ) {
 
@@ -133,7 +133,7 @@ private fun DisplayShowData(
 
     LazyRow {
         itemsIndexed(resultMap.value) { index, tvShow ->
-            TvShowCard(entity = tvShow, isFirstCard = index == 0) {
+            TvShowCard(tvShow = tvShow, isFirstCard = index == 0) {
                 Napier.d("${tvShow.title} Clicked")
                 onItemClicked(tvShow.id)
             }
