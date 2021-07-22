@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.injection
 
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
+import com.thomaskioko.tvmaniac.ui.detail.ShowDetailNavigationFactory
 import com.thomaskioko.tvmaniac.ui.discover.DiscoverNavigationFactory
 import com.thomaskioko.tvmaniac.ui.search.SearchNavigationFactory
 import com.thomaskioko.tvmaniac.ui.watchlist.WatchlistNavigationFactory
@@ -37,4 +38,9 @@ internal interface NavigationModule {
     @Binds
     @IntoSet
     fun bindWelcomeNavigation(factory: WelcomeNavigationFactory): ComposeNavigationFactory
+
+    @Singleton
+    @Binds
+    @IntoSet
+    fun bindShowDetailNavigationFactory(factory: ShowDetailNavigationFactory): ComposeNavigationFactory
 }
