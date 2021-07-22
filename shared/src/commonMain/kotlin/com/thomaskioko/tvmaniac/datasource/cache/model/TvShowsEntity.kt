@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
 data class TvShowsEntity(
     val id: Int,
     val title: String,
-    val description: String,
+    val overview: String,
     val language: String,
     val posterImageUrl: String,
     val backdropImageUrl: String,

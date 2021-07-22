@@ -9,7 +9,7 @@ fun ShowResponse.toTvShowEntity(): TvShowsEntity {
     return TvShowsEntity(
         id = id,
         title = name,
-        description = overview,
+        overview = overview,
         language = originalLanguage,
         posterImageUrl = formatPosterPath(posterPath),
         backdropImageUrl = if(backdropPath.isNullOrEmpty()) formatPosterPath(posterPath) else formatPosterPath(backdropPath),
@@ -27,7 +27,7 @@ fun Tv_show.toTvShowsEntity(): TvShowsEntity {
     return TvShowsEntity(
         id = id.toInt(),
         title = title,
-        description = description,
+        overview = description,
         language = language,
         posterImageUrl = poster_image_url,
         backdropImageUrl = backdrop_image_url,
