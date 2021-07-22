@@ -1,13 +1,10 @@
 package com.thomaskioko.tvmaniac.ui.discover
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,19 +12,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavHostController
-import com.thomaskioko.tvmaniac.R
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
+import com.thomaskioko.tvmaniac.compose.components.ErrorView
 import com.thomaskioko.tvmaniac.compose.components.HorizontalPager
+import com.thomaskioko.tvmaniac.compose.components.LoadingView
 import com.thomaskioko.tvmaniac.compose.components.TvManiacScaffold
-import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
 import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
+import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import io.github.aakira.napier.Napier
 
 @Composable
@@ -50,21 +47,13 @@ fun DiscoverScreen(
 
     TvManiacScaffold(
         scaffoldState = scaffoldState,
-        appBar = {
-            TvManiacTopBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.app_name),
-                        color = MaterialTheme.colors.secondary
-                    )
-                },
-            )
-        },
-        content = { innerPadding ->
-
+        appBar = {},
+        content = {
             LoadScreenContent(
                 viewState = discoverViewState,
-                innerPadding = innerPadding
+                onItemClicked = { tvShowId ->
+                    navController.navigate("${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId")
+                }
             )
         }
     )
@@ -74,21 +63,22 @@ fun DiscoverScreen(
 @Composable
 fun LoadScreenContent(
     viewState: DiscoverShowsState,
-    innerPadding: PaddingValues
+    onItemClicked: (Int) -> Unit,
 ) {
 
     when (viewState) {
-        is DiscoverShowsState.Error -> {
-        }
-        DiscoverShowsState.Loading -> {
-        }
-        is DiscoverShowsState.Success -> ScreenData(viewState)
+        is DiscoverShowsState.Error -> ErrorView(viewState.message)
+        DiscoverShowsState.Loading -> LoadingView()
+        is DiscoverShowsState.Success -> ScreenData(viewState, onItemClicked)
     }
 
 }
 
 @Composable
-private fun ScreenData(viewState: DiscoverShowsState.Success) {
+private fun ScreenData(
+    viewState: DiscoverShowsState.Success,
+    onItemClicked: (Int) -> Unit,
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -96,9 +86,9 @@ private fun ScreenData(viewState: DiscoverShowsState.Success) {
         item {
             viewState.dataMap.forEach {
                 if (it.key.title == "Featured") {
-                    FeaturedItems(it)
+                    FeaturedItems(it, onItemClicked)
                 } else {
-                    DisplayShowData(it)
+                    DisplayShowData(it, onItemClicked)
                 }
             }
         }
@@ -108,6 +98,7 @@ private fun ScreenData(viewState: DiscoverShowsState.Success) {
 @Composable
 fun FeaturedItems(
     resultMap: Map.Entry<TrendingDataRequest, List<TvShowsEntity>>,
+    onItemClicked: (Int) -> Unit,
 ) {
 
     Column {
@@ -118,6 +109,7 @@ fun FeaturedItems(
 
         HorizontalPager(resultMap.value) { tvShowId ->
             Napier.d("Show Clicked $tvShowId")
+            onItemClicked(tvShowId)
         }
     }
 
@@ -127,6 +119,7 @@ fun FeaturedItems(
 @Composable
 private fun DisplayShowData(
     resultMap: Map.Entry<TrendingDataRequest, List<TvShowsEntity>>,
+    onItemClicked: (Int) -> Unit,
 ) {
 
     ColumnSpacer(value = 8)
@@ -140,6 +133,7 @@ private fun DisplayShowData(
         itemsIndexed(resultMap.value) { index, tvShow ->
             TvShowCard(entity = tvShow, isFirstCard = index == 0) {
                 Napier.d("${tvShow.title} Clicked")
+                onItemClicked(tvShow.id)
             }
         }
 
