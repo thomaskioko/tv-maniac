@@ -19,13 +19,13 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.R
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import kotlin.math.absoluteValue
 
 
 @Composable
 fun HorizontalPager(
-    list: List<TvShowsEntity>,
+    list: List<TvShow>,
     onClick: (Int) -> Unit
 ) {
     val pagerState = rememberPagerState(

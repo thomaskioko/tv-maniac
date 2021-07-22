@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.datasource.cache.shows
 
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShows
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowsEntity
@@ -11,7 +11,7 @@ class TvShowCacheImpl(
     private val database: TvManiacDatabase
 ) : TvShowCache {
 
-    override fun insert(entity: TvShows) {
+    override fun insert(entity: TvShow) {
         database.tvShowQueries.transaction {
             database.tvShowQueries.insertOrReplace(
                 id = entity.id.toLong(),
@@ -29,24 +29,24 @@ class TvShowCacheImpl(
         }
     }
 
-    override fun insert(list: List<TvShows>) {
+    override fun insert(list: List<TvShow>) {
         list.forEach { insert(it) }
     }
 
-    override fun getTvShow(showId: Int): TvShows {
+    override fun getTvShow(showId: Int): TvShow {
         return database.tvShowQueries.selectByShowId(
             id = showId.toLong()
         ).executeAsOne().toTvShowsEntity()
     }
 
 
-    override fun getTvShows(): List<TvShows> {
+    override fun getTvShows(): List<TvShow> {
         return database.tvShowQueries.selectAll()
             .executeAsList()
             .toTvShowsEntityList()
     }
 
-    override fun getTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<TvShows> {
+    override fun getTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<TvShow> {
         return database.tvShowQueries.selectByShowIdAndWindow(
             show_category = category,
             time_window = timeWindow
@@ -54,7 +54,7 @@ class TvShowCacheImpl(
             .toTvShowsEntityList()
     }
 
-    override fun getFeaturedTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<TvShows> {
+    override fun getFeaturedTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<TvShow> {
         return database.tvShowQueries.selectFeatured(
             show_category = category,
             time_window = timeWindow
@@ -63,7 +63,7 @@ class TvShowCacheImpl(
             .toTvShowsEntityList()
     }
 
-    override fun updateTvShowDetails(entity: TvShows) {
+    override fun updateTvShowDetails(entity: TvShow) {
         database.tvShowQueries.updateTvShow(
             id = entity.id.toLong(),
             seasons = entity.seasonsList

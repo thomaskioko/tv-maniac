@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.datasource.cache.model
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
 
-data class TvShows(
+data class TvShow(
     val id: Int = 0,
     val title: String = "",
     val overview: String = "",
@@ -18,6 +18,6 @@ data class TvShows(
     val seasonsList: List<SeasonsEntity> = emptyList()
 ) {
     companion object {
-        val EMPTY_SHOW = TvShows()
+        val EMPTY_SHOW = TvShow()
     }
 }

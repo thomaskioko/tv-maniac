@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac
 
 import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShows
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
@@ -155,7 +155,7 @@ object MockData {
     )
 
     fun makeTvShowEntityList() = listOf(
-        TvShows(
+        TvShow(
             id = 84958,
             title = "Loki",
             overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
@@ -172,7 +172,7 @@ object MockData {
             genreIds = listOf(18, 10765),
             showCategory = TvShowCategory.POPULAR_TV_SHOWS
         ),
-        TvShows(
+        TvShow(
             id = 126280,
             title = "Sex/Life",
             overview = "A woman's daring sexual past collides with her married-with-kids " +
@@ -188,7 +188,7 @@ object MockData {
         ),
     )
 
-    val tvShowsEntity = TvShows(
+    val tvShowsEntity = TvShow(
         id = 84958,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
@@ -242,7 +242,7 @@ object MockData {
         )
     )
 
-    val tvShowSeasonEntity = TvShows(
+    val tvShowSeasonEntity = TvShow(
         id = 84958,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
@@ -286,8 +286,8 @@ object MockData {
         )
     )
 
-    fun getTrendingDataMap(): LinkedHashMap<TrendingDataRequest, List<TvShows>> {
-        val trendingMap = linkedMapOf<TrendingDataRequest, List<TvShows>>()
+    fun getTrendingDataMap(): LinkedHashMap<TrendingDataRequest, List<TvShow>> {
+        val trendingMap = linkedMapOf<TrendingDataRequest, List<TvShow>>()
 
         trendingMap[TrendingDataRequest.TODAY] = getTvResponse().results
             .map { it.toTvShowEntity() }

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.interactor
 
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShows
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.error
@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.flow
 
 class PopularShowsInteractor constructor(
     private val repository: TvShowsRepository,
-) : Interactor<Unit, List<TvShows>>() {
-    override fun run(params: Unit): Flow<DomainResultState<List<TvShows>>> = flow {
+) : Interactor<Unit, List<TvShow>>() {
+    override fun run(params: Unit): Flow<DomainResultState<List<TvShow>>> = flow {
         emit(loading())
 
         emit(success(repository.getPopularTvShows(1)))

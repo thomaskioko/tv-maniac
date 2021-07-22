@@ -20,7 +20,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 
-internal class TvShowsRepositoryTest {
+internal class TvShowRepositoryTest {
 
 
     @RelaxedMockK
