@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.compose.theme
 
 import androidx.compose.material.Colors
 import androidx.compose.material.LocalElevationOverlay
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
@@ -40,4 +41,15 @@ fun Colors.elevatedSurface(elevation: Dp): Color {
         color = this.surface,
         elevation = elevation
     ) ?: this.surface
+}
+
+@Composable
+fun backgroundGradient(): List<Color> {
+    return listOf(
+        MaterialTheme.colors.surface,
+        MaterialTheme.colors.surface.copy(alpha = 0.9F),
+        MaterialTheme.colors.surface.copy(alpha = 0.8F),
+        MaterialTheme.colors.surface.copy(alpha = 0.7F),
+        Color.Transparent
+    )
 }
