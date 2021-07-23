@@ -65,8 +65,9 @@ android {
         implementation(libs.androidx.compose.activity)
         implementation(libs.androidx.compose.navigation)
 
-        implementation(libs.androidx.lifecycle.common)
+        implementation(libs.androidx.lifecycle.viewmodel)
         implementation(libs.androidx.lifecycle.runtime)
+        kapt(libs.androidx.lifecycle.compiler)
 
         implementation(libs.glide.core)
         kapt(libs.glide.compiler)
