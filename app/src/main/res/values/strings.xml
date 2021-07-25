@@ -7,4 +7,6 @@
 
     <string name="cd_show_poster">Poster image</string>
     <string name="cd_show_poster_image">Poster image for %s</string>
+    <string name="details_episodes">Episodes</string>
+    <string name="details_cast">Casts</string>
 </resources>

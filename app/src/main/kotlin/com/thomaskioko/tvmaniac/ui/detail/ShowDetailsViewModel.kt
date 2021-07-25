@@ -1,56 +1,141 @@
 package com.thomaskioko.tvmaniac.ui.detail
 
-import com.thomaskioko.stargazer.core.presentation.ViewAction
-import com.thomaskioko.stargazer.core.presentation.ViewState
-import com.thomaskioko.tvmaniac.core.BaseViewModel
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
+import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
+import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
+import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
+import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ShowDetailsViewModel @Inject constructor(
-    private val interactor: GetShowInteractor,
-    private val seasonsInteractor: SeasonsInteractor,
+    savedStateHandle: SavedStateHandle,
+    getShow: GetShowInteractor,
+    seasonsInteractor: SeasonsInteractor,
+    private val episodeInteractor: EpisodesInteractor,
     @DefaultDispatcher private val ioDispatcher: CoroutineDispatcher
-) : BaseViewModel<ShowDetailsAction, ShowDetailsViewState>(
-    initialViewState = ShowDetailsViewState.Loading,
-    dispatcher = ioDispatcher
-) {
+) : ViewModel() {
 
-    override fun handleAction(action: ShowDetailsAction) {
-        when (action) {
-            is ShowDetailsAction.LoadShowDetails -> {
-                interactor.invoke(action.tvShowId)
-                    .onEach { mutableViewState.emit(it.reduce()) }
-                    .stateIn(ioScope, SharingStarted.Eagerly, TvShow.EMPTY_SHOW)
+    //TODO:: Refactor ViewModel to implement BaseViewmodel
+
+    private val showId: Int = savedStateHandle.get("tvShowId")!!
+
+    private val episodes = MutableStateFlow(emptyList<EpisodeEntity>())
+
+    private val viewModelJob = SupervisorJob()
+    val ioScope = CoroutineScope(ioDispatcher + viewModelJob)
+
+    val uiStateFlow = combine(
+        getShow.invoke(showId).distinctUntilChanged(),
+        seasonsInteractor.invoke(showId).distinctUntilChanged(),
+        episodes
+    ) { showDetails, showSeasons, episodes ->
+        ShowDetailViewState(
+            isLoading = showDetails.tvShowReducer().isLoading,
+            tvShow = showDetails.tvShowReducer().tvShow,
+            tvSeasons = showSeasons.seasonReducer().tvSeasons,
+            seasonEpisodes = episodes
+        )
+    }
+
+
+    fun submitAction(action: ShowDetailAction) {
+        ioScope.launch {
+            when (action) {
+                is ShowDetailAction.SeasonSelected -> fetchSeasonEpisodes(action)
             }
         }
     }
+
+    private fun fetchSeasonEpisodes(
+        action: ShowDetailAction.SeasonSelected,
+    ) {
+        episodeInteractor.invoke(action.query)
+            .onEach {
+                when (it) {
+                    is DomainResultState.Error -> {
+                        //TODO:: Pass the error down
+                    }
+                    is DomainResultState.Loading -> {
+                        //TODO:: Pass state down
+                    }
+                    is DomainResultState.Success -> episodes.value = it.data
+                }
+
+            }.launchIn(ioScope)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
+    }
+
 }
 
-
-internal fun DomainResultState<TvShow>.reduce(): ShowDetailsViewState {
+internal fun DomainResultState<TvShow>.tvShowReducer(): ShowDetailViewState {
     return when (this) {
-        is DomainResultState.Error -> ShowDetailsViewState.Error(message)
-        is DomainResultState.Loading -> ShowDetailsViewState.Loading
-        is DomainResultState.Success -> ShowDetailsViewState.Success(data)
+        is DomainResultState.Error -> ShowDetailViewState(
+            isLoading = false,
+            errorMessage = message
+        )
+        is DomainResultState.Loading -> ShowDetailViewState(isLoading = true)
+        is DomainResultState.Success -> ShowDetailViewState(
+            isLoading = false,
+            tvShow = data
+        )
     }
 }
 
-sealed class ShowDetailsAction : ViewAction {
-    data class LoadShowDetails(val tvShowId: Int) : ShowDetailsAction()
+internal fun DomainResultState<List<SeasonsEntity>>.seasonReducer(): ShowDetailViewState {
+    return when (this) {
+        is DomainResultState.Error -> ShowDetailViewState(
+            isLoading = false,
+            errorMessage = message
+        )
+        is DomainResultState.Loading -> ShowDetailViewState(isLoading = true)
+        is DomainResultState.Success -> ShowDetailViewState(
+            isLoading = false,
+            tvSeasons = data
+        )
+    }
 }
 
-sealed class ShowDetailsViewState : ViewState {
-    object Loading : ShowDetailsViewState()
-    data class Success(val data: TvShow) : ShowDetailsViewState()
-    data class Error(val message: String = "") : ShowDetailsViewState()
+sealed class ShowDetailAction {
+    data class SeasonSelected(
+        val query: EpisodeQuery
+    ) : ShowDetailAction()
 }
+
+
+data class ShowDetailViewState(
+    val isLoading: Boolean = false,
+    val errorMessage: String = "",
+    val tvShow: TvShow = TvShow.EMPTY_SHOW,
+    val tvSeasons: List<SeasonsEntity> = emptyList(),
+    val seasonEpisodes: List<EpisodeEntity> = emptyList(),
+) {
+    companion object {
+        val Empty = ShowDetailViewState()
+    }
+}
+
+sealed class UiEffect
+data class OpenEpisodeUiEffect(
+    val episodeList: List<EpisodeEntity> = emptyList()
+) : UiEffect()
