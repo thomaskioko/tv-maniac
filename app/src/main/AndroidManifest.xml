@@ -9,11 +9,13 @@
         android:allowBackup="false"
         android:label="Tv Maniac"
         android:supportsRtl="true"
+        android:launchMode="singleTask"
         android:icon="@drawable/ic_app_launcher"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.TvManiac">
         <activity
             android:name=".ui.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.TvManiac.Home">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

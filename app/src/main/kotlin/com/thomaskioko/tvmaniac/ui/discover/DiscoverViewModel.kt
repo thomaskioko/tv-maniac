@@ -4,7 +4,7 @@ import com.thomaskioko.stargazer.core.presentation.ViewAction
 import com.thomaskioko.stargazer.core.presentation.ViewState
 import com.thomaskioko.tvmaniac.core.BaseViewModel
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
 import com.thomaskioko.tvmaniac.interactor.GetTrendingShowsInteractor
 import com.thomaskioko.tvmaniac.util.DomainResultState
@@ -44,14 +44,14 @@ class DiscoverViewModel @Inject constructor(
                     .stateIn(
                         ioScope,
                         SharingStarted.Eagerly,
-                        emptyMap<TrendingDataRequest, List<TvShowsEntity>>()
+                        emptyMap<TrendingDataRequest, List<TvShow>>()
                     )
             }
         }
     }
 }
 
-private fun DomainResultState<LinkedHashMap<TrendingDataRequest, List<TvShowsEntity>>>.reduce(): DiscoverShowsState {
+private fun DomainResultState<LinkedHashMap<TrendingDataRequest, List<TvShow>>>.reduce(): DiscoverShowsState {
     return when (this) {
         is DomainResultState.Error -> DiscoverShowsState.Error(message)
         is DomainResultState.Loading -> DiscoverShowsState.Loading
@@ -62,7 +62,7 @@ private fun DomainResultState<LinkedHashMap<TrendingDataRequest, List<TvShowsEnt
 sealed class DiscoverShowsState : ViewState {
     object Loading : DiscoverShowsState()
     data class Success(
-        val dataMap: LinkedHashMap<TrendingDataRequest, List<TvShowsEntity>>
+        val dataMap: LinkedHashMap<TrendingDataRequest, List<TvShow>>
     ) : DiscoverShowsState()
 
     data class Error(val message: String = "") : DiscoverShowsState()

@@ -3,23 +3,15 @@ package com.thomaskioko.tvmaniac.ui
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.BottomNavigation
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
+import androidx.core.view.WindowCompat
+import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
-import com.thomaskioko.tvmaniac.navigation.NavigationScreen
-import com.thomaskioko.tvmaniac.navigation.NavigationScreen.DiscoverNavScreen
-import com.thomaskioko.tvmaniac.navigation.NavigationScreen.WelcomeNavScreen
-import com.thomaskioko.tvmaniac.navigation.TabScreens
-import com.thomaskioko.tvmaniac.navigation.addNavigation
+import com.thomaskioko.tvmaniac.ui.home.MainScreenContent
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -30,60 +22,28 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            TvManiacTheme {
+            val systemUiController = rememberSystemUiController()
+            val useDarkIcons = MaterialTheme.colors.isLight
 
-                val bottomNavigationItems = listOf(
-                    TabScreens.Discover,
-                    TabScreens.Search,
-                    TabScreens.Watchlist,
+            SideEffect {
+                systemUiController.setSystemBarsColor(
+                    color = Color.Transparent,
+                    darkIcons = false
                 )
+            }
 
-                val navController = rememberNavController()
-                val route = currentRoute(navController)
-
-                Scaffold(
-                    bottomBar = {
-                        when {
-                            !route.contains(NavigationScreen.ShowDetailsNavScreen.route) -> {
-                                TvManiacBottomNavigation(navController, bottomNavigationItems)
-                            }
-                        }
-                    },
-                    content = {
-                        NavHost(
-                            navController,
-                            startDestination = WelcomeNavScreen.route
-                        ) {
-                            composeNavigationFactories.addNavigation(this, navController)
-                        }
-                    }
-                )
-
+            ProvideWindowInsets(consumeWindowInsets = false) {
+                TvManiacTheme {
+                    MainScreenContent(
+                        composeNavigationFactories
+                    )
+                }
             }
         }
     }
 
-    @Composable
-    private fun TvManiacBottomNavigation(
-        navController: NavHostController,
-        bottomNavigationItems: List<TabScreens>
-    ) {
-        BottomNavigation(
-            backgroundColor = MaterialTheme.colors.primary
-        ) {
-            val currentRoute = currentRoute(navController)
 
-            bottomNavigationItems.forEach { screen ->
-                TvManiacBottomNavigationItem(screen, currentRoute, navController)
-            }
-        }
-    }
-
-    @Composable
-    private fun currentRoute(navController: NavHostController): String {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        return navBackStackEntry?.destination?.route ?: DiscoverNavScreen.route
-    }
 }

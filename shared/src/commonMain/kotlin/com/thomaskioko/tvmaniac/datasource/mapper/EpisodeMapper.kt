@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.datasource.cache.Episode
 import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
 import com.thomaskioko.tvmaniac.datasource.network.model.SeasonResponse
+import com.thomaskioko.tvmaniac.util.StringUtil.formatPosterPath
 
 
 fun SeasonResponse.toEpisodeEntityList(): List<EpisodeEntity> {
@@ -14,10 +15,10 @@ fun SeasonResponse.toEpisodeEntityList(): List<EpisodeEntity> {
             name = episodeResponse.name,
             overview = episodeResponse.overview,
             seasonNumber = episodeResponse.season_number,
-            imageUrl = episodeResponse.still_path,
+            imageUrl = formatPosterPath(episodeResponse.still_path),
             voteAverage = episodeResponse.vote_average,
             voteCount = episodeResponse.vote_count,
-            episodeNumber = episodeResponse.episode_number
+            episodeNumber = episodeResponse.episode_number.toString().padStart(2, '0')
         )
     }
 }
@@ -36,7 +37,7 @@ fun EpisodesBySeasonId.toEpisodeEntity(): EpisodeEntity {
         imageUrl = image_url,
         voteAverage = vote_average,
         voteCount = vote_count.toInt(),
-        episodeNumber = episode_number.toInt()
+        episodeNumber = episode_number
     )
 }
 
@@ -51,6 +52,6 @@ fun Episode.toEpisodeEntity(): EpisodeEntity {
         imageUrl = image_url,
         voteAverage = vote_average,
         voteCount = vote_count.toInt(),
-        episodeNumber = episode_number.toInt()
+        episodeNumber = episode_number
     )
 }

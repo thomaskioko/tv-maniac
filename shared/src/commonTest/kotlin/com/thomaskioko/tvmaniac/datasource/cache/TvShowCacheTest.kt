@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.datasource.cache
 import com.thomaskioko.tvmaniac.MockData.makeTvShowEntityList
 import com.thomaskioko.tvmaniac.MockData.tvSeasonsList
 import com.thomaskioko.tvmaniac.MockData.tvShowsEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.test.Test
@@ -32,7 +32,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         entity shouldNotBe null
         entity.title shouldBe tvShowsEntity.title
-        entity.description shouldBe tvShowsEntity.description
+        entity.description shouldBe tvShowsEntity.overview
         entity.poster_image_url shouldBe tvShowsEntity.posterImageUrl
         entity.backdrop_image_url shouldBe tvShowsEntity.backdropImageUrl
         entity.votes shouldBe tvShowsEntity.votes
@@ -99,15 +99,15 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         entity shouldBe null
     }
 
-    private fun List<TvShowsEntity>.insertTvShowsEntityList() {
+    private fun List<TvShow>.insertTvShowsEntityList() {
         map { it.insertTvShowQuery() }
     }
 
-    private fun TvShowsEntity.insertTvShowQuery() {
+    private fun TvShow.insertTvShowQuery() {
         tvShowQueries.insertOrReplace(
             id = id.toLong(),
             title = title,
-            description = description,
+            description = overview,
             language = language,
             poster_image_url = posterImageUrl,
             backdrop_image_url = backdropImageUrl,

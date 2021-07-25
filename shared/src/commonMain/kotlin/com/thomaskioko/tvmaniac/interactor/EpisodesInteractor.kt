@@ -22,7 +22,7 @@ class EpisodesInteractor constructor(
             tvShowId = params.tvShowId,
             seasonId = params.seasonId,
             seasonNumber = params.seasonNumber
-        )
+        ).sortedBy { it.episodeNumber }
 
         emit(success(result))
     }

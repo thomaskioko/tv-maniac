@@ -1,15 +1,15 @@
 package com.thomaskioko.tvmaniac.datasource.mapper
 
 import com.thomaskioko.tvmaniac.datasource.cache.Tv_show
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowResponse
 import com.thomaskioko.tvmaniac.util.StringUtil.formatPosterPath
 
-fun ShowResponse.toTvShowEntity(): TvShowsEntity {
-    return TvShowsEntity(
+fun ShowResponse.toTvShowEntity(): TvShow {
+    return TvShow(
         id = id,
         title = name,
-        description = overview,
+        overview = overview,
         language = originalLanguage,
         posterImageUrl = formatPosterPath(posterPath),
         backdropImageUrl = if(backdropPath.isNullOrEmpty()) formatPosterPath(posterPath) else formatPosterPath(backdropPath),
@@ -19,15 +19,15 @@ fun ShowResponse.toTvShowEntity(): TvShowsEntity {
     )
 }
 
-fun List<Tv_show>.toTvShowsEntityList(): List<TvShowsEntity> {
+fun List<Tv_show>.toTvShowsEntityList(): List<TvShow> {
     return map { it.toTvShowsEntity() }
 }
 
-fun Tv_show.toTvShowsEntity(): TvShowsEntity {
-    return TvShowsEntity(
+fun Tv_show.toTvShowsEntity(): TvShow {
+    return TvShow(
         id = id.toInt(),
         title = title,
-        description = description,
+        overview = description,
         language = language,
         posterImageUrl = poster_image_url,
         backdropImageUrl = backdrop_image_url,

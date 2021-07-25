@@ -15,7 +15,9 @@ internal class WelcomeNavigationFactory @Inject constructor() : ComposeNavigatio
             content = {
                 WelcomeScreen(
                     viewModel = this,
-                    navController = navController
+                    openDiscoverScreen = {
+                        navController.navigate(NavigationScreen.DiscoverNavScreen.route)
+                    }
                 )
             }
         )

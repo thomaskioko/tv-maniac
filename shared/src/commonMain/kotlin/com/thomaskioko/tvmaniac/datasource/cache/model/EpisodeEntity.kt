@@ -12,5 +12,5 @@ data class EpisodeEntity(
     val imageUrl : String,
     val voteAverage : Double,
     val voteCount : Int,
-    val episodeNumber : Int,
+    val episodeNumber : String,
 )
