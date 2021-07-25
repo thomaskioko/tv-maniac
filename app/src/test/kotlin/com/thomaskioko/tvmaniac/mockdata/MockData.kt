@@ -2,16 +2,16 @@ package com.thomaskioko.tvmaniac.mockdata
 
 import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
 
 object MockData {
 
     fun makeTvShowEntityList() = listOf(
-        TvShowsEntity(
+        TvShow(
             id = 84958,
             title = "Loki",
-            description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+            overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                     "an alternate version of Loki is brought to the mysterious Time Variance " +
                     "Authority, a bureaucratic organization that exists outside of time and " +
                     "space and monitors the timeline. They give Loki a choice: face being " +
@@ -26,10 +26,10 @@ object MockData {
             showCategory = TvShowCategory.POPULAR_TV_SHOWS,
             seasonsList = tvSeasonList()
         ),
-        TvShowsEntity(
+        TvShow(
             id = 126280,
             title = "Sex/Life",
-            description = "A woman's daring sexual past collides with her married-with-kids " +
+            overview = "A woman's daring sexual past collides with her married-with-kids " +
                     "present when the bad-boy ex she can't stop fantasizing about crashes " +
                     "back into her life.",
             posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -69,7 +69,7 @@ object MockData {
             voteCount = 42,
             voteAverage = 6.429,
             seasonNumber = 1,
-            episodeNumber = 1
+            episodeNumber = "01"
         ),
         EpisodeEntity(
             id = 2927202,
@@ -80,7 +80,7 @@ object MockData {
             voteCount = 23,
             voteAverage = 7.6,
             seasonNumber = 1,
-            episodeNumber = 2
+            episodeNumber = "02"
         )
     )
 

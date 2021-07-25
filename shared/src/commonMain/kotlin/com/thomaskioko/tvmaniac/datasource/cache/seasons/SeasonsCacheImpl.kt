@@ -15,7 +15,7 @@ class SeasonsCacheImpl(
         seasonQueries.insertOrReplace(
             id = entity.seasonId.toLong(),
             tv_show_id = entity.tvShowId.toLong(),
-            season_number = entity.seasonId.toLong(),
+            season_number = entity.seasonNumber.toLong(),
             epiosode_count = entity.episodeCount.toLong(),
             name = entity.name,
             overview = entity.overview,

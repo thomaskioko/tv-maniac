@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.util.runBlocking
 
 import kotlin.test.Test
 
-internal class TvShowsServiceTest : TvShowsServiceMockEngine() {
+internal class TvShowServiceTest : TvShowsServiceMockEngine() {
 
     companion object {
         const val GET_TV_SHOW_DETAILS = "https://api.themoviedb.org/3/tv/1"

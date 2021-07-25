@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac
 
 import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
 import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
@@ -133,7 +133,7 @@ object MockData {
             air_date = "2021-06-09",
             episode_number = 1,
             name = "Glorious Purpose",
-            overview = "After stealing the Tesseract in \"Avengers: Endgame,\" Loki lands before the Time Variance Authority.",
+            overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
             production_code = "",
             season_number = 1,
             still_path = "/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
@@ -155,10 +155,10 @@ object MockData {
     )
 
     fun makeTvShowEntityList() = listOf(
-        TvShowsEntity(
+        TvShow(
             id = 84958,
             title = "Loki",
-            description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+            overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                     "an alternate version of Loki is brought to the mysterious Time Variance " +
                     "Authority, a bureaucratic organization that exists outside of time and " +
                     "space and monitors the timeline. They give Loki a choice: face being " +
@@ -172,10 +172,10 @@ object MockData {
             genreIds = listOf(18, 10765),
             showCategory = TvShowCategory.POPULAR_TV_SHOWS
         ),
-        TvShowsEntity(
+        TvShow(
             id = 126280,
             title = "Sex/Life",
-            description = "A woman's daring sexual past collides with her married-with-kids " +
+            overview = "A woman's daring sexual past collides with her married-with-kids " +
                     "present when the bad-boy ex she can't stop fantasizing about crashes " +
                     "back into her life.",
             posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -188,10 +188,10 @@ object MockData {
         ),
     )
 
-    val tvShowsEntity = TvShowsEntity(
+    val tvShowsEntity = TvShow(
         id = 84958,
         title = "Loki",
-        description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
                 "Authority, a bureaucratic organization that exists outside of time and " +
                 "space and monitors the timeline. They give Loki a choice: face being " +
@@ -242,10 +242,10 @@ object MockData {
         )
     )
 
-    val tvShowSeasonEntity = TvShowsEntity(
+    val tvShowSeasonEntity = TvShow(
         id = 84958,
         title = "Loki",
-        description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
                 "Authority, a bureaucratic organization that exists outside of time and " +
                 "space and monitors the timeline. They give Loki a choice: face being " +
@@ -266,28 +266,28 @@ object MockData {
             id = 2534997,
             seasonId = 114355,
             name = "Glorious Purpose",
-            overview = "After stealing the Tesseract in \"Avengers: Endgame,\" Loki lands before the Time Variance Authority.",
-            imageUrl = "/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
+            overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
+            imageUrl = "https://image.tmdb.org/t/p/original/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
             voteCount = 42,
             voteAverage = 6.429,
             seasonNumber = 1,
-            episodeNumber = 1
+            episodeNumber = "01"
         ),
         EpisodeEntity(
             id = 2927202,
             seasonId = 114355,
             name = "The Variant",
             overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
-            imageUrl = "/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
+            imageUrl = "https://image.tmdb.org/t/p/original/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
             voteCount = 23,
             voteAverage = 7.6,
             seasonNumber = 1,
-            episodeNumber = 2
+            episodeNumber = "02"
         )
     )
 
-    fun getTrendingDataMap(): LinkedHashMap<TrendingDataRequest, List<TvShowsEntity>> {
-        val trendingMap = linkedMapOf<TrendingDataRequest, List<TvShowsEntity>>()
+    fun getTrendingDataMap(): LinkedHashMap<TrendingDataRequest, List<TvShow>> {
+        val trendingMap = linkedMapOf<TrendingDataRequest, List<TvShow>>()
 
         trendingMap[TrendingDataRequest.TODAY] = getTvResponse().results
             .map { it.toTvShowEntity() }

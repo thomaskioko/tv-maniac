@@ -4,7 +4,7 @@ import com.thomaskioko.stargazer.core.presentation.ViewAction
 import com.thomaskioko.stargazer.core.presentation.ViewState
 import com.thomaskioko.tvmaniac.core.BaseViewModel
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.interactor.PopularShowsInteractor
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.DomainResultState.Error
@@ -33,13 +33,13 @@ class PopularTvShowsViewModel @Inject constructor(
             PopularShowsAction.LoadPopularTvShows -> {
                 popularShowsInteractor.invoke()
                     .onEach { mutableViewState.emit(it.reduce()) }
-                    .stateIn(ioScope, SharingStarted.Eagerly, emptyList<TvShowsEntity>())
+                    .stateIn(ioScope, SharingStarted.Eagerly, emptyList<TvShow>())
             }
         }
     }
 }
 
-private fun DomainResultState<List<TvShowsEntity>>.reduce(): PopularShowsState {
+private fun DomainResultState<List<TvShow>>.reduce(): PopularShowsState {
     return when(this){
         is Error -> PopularShowsState.Error(message)
         is Loading -> PopularShowsState.Loading
@@ -53,6 +53,6 @@ sealed class PopularShowsAction : ViewAction {
 
 sealed class PopularShowsState : ViewState {
     object Loading : PopularShowsState()
-    data class Success(val list: List<TvShowsEntity>) : PopularShowsState()
+    data class Success(val list: List<TvShow>) : PopularShowsState()
     data class Error(val message: String = "") : PopularShowsState()
 }

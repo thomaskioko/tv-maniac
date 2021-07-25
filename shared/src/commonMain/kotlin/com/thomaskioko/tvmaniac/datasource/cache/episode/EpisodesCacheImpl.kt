@@ -21,7 +21,7 @@ class EpisodesCacheImpl(
             image_url = entity.imageUrl,
             vote_average = entity.voteAverage,
             vote_count = entity.voteCount.toLong(),
-            episode_number = entity.episodeNumber.toLong()
+            episode_number = entity.episodeNumber
         )
     }
 

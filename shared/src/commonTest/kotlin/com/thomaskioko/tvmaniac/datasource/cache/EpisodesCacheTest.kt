@@ -54,7 +54,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             image_url = imageUrl,
             vote_count = voteCount.toLong(),
             vote_average = voteAverage,
-            episode_number = episodeNumber.toLong()
+            episode_number = episodeNumber
         )
     }
 }

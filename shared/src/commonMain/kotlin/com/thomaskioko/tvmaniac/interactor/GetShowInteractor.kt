@@ -11,13 +11,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 
-class PopularShowsInteractor constructor(
+class GetShowInteractor constructor(
     private val repository: TvShowsRepository,
-) : Interactor<Unit, List<TvShow>>() {
-    override fun run(params: Unit): Flow<DomainResultState<List<TvShow>>> = flow {
+) : Interactor<Int, TvShow>() {
+
+    override fun run(params: Int): Flow<DomainResultState<TvShow>> = flow {
         emit(loading())
 
-        emit(success(repository.getPopularTvShows(1)))
+        emit(success(repository.getTvShow(params)))
     }
         .catch { emit(error(it)) }
 }

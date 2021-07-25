@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.interactor
 
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.util.DomainResultState
@@ -14,13 +14,13 @@ import kotlinx.coroutines.flow.flow
 
 class GetTrendingShowsInteractor constructor(
     private val repository: TvShowsRepository,
-) : Interactor<List<TrendingDataRequest>, LinkedHashMap<TrendingDataRequest, List<TvShowsEntity>>>() {
+) : Interactor<List<TrendingDataRequest>, LinkedHashMap<TrendingDataRequest, List<TvShow>>>() {
 
-    override fun run(params: List<TrendingDataRequest>): Flow<DomainResultState<LinkedHashMap<TrendingDataRequest, List<TvShowsEntity>>>> =
+    override fun run(params: List<TrendingDataRequest>): Flow<DomainResultState<LinkedHashMap<TrendingDataRequest, List<TvShow>>>> =
         flow {
             emit(loading())
 
-            val trendingMap = linkedMapOf<TrendingDataRequest, List<TvShowsEntity>>()
+            val trendingMap = linkedMapOf<TrendingDataRequest, List<TvShow>>()
 
             params.forEach {
 

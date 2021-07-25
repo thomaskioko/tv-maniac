@@ -7,27 +7,28 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
-import com.google.accompanist.pager.rememberPagerState
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.R
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import kotlin.math.absoluteValue
 
 
 @Composable
 fun HorizontalPager(
-    list: List<TvShowsEntity>,
+    list: List<TvShow>,
+    pagerState: PagerState,
     onClick: (Int) -> Unit
 ) {
-    val pagerState = rememberPagerState(
-        pageCount = list.size,
-        initialOffscreenLimit = 2,
-    )
 
     HorizontalPager(
         state = pagerState,
@@ -64,8 +65,10 @@ fun HorizontalPager(
             Box {
                 NetworkImageComposable(
                     imageUrl = list[pageNumber].posterImageUrl,
+                    contentDescription = stringResource(R.string.cd_show_poster, list[pageNumber].title),
                     modifier = Modifier
                         .fillMaxSize()
+                        .clip(MaterialTheme.shapes.medium)
                         .height(250.dp)
                 )
             }

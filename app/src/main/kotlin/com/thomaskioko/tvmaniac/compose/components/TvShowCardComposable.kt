@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -16,14 +15,17 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShowsEntity
+import com.thomaskioko.tvmaniac.R
+import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 
 
 @Composable
 fun TvShowCard(
-    entity: TvShowsEntity,
+    tvShow: TvShow,
     isFirstCard: Boolean = false,
     modifier: Modifier = Modifier,
     imageWidth: Dp = 120.dp,
@@ -42,17 +44,19 @@ fun TvShowCard(
             shape = MaterialTheme.shapes.medium
         ) {
             NetworkImageComposable(
-                imageUrl = entity.posterImageUrl,
+                imageUrl = tvShow.posterImageUrl,
+                contentDescription = stringResource(R.string.cd_show_poster, tvShow.title),
                 modifier = Modifier
-                    .fillMaxSize()
-                    .aspectRatio(3 / 4F)
+                    .weight(1f)
+                    .aspectRatio(2 / 3f)
+                    .clip(MaterialTheme.shapes.medium),
             )
         }
 
         ColumnSpacer(8)
 
         Text(
-            text = entity.title,
+            text = tvShow.title,
             style = MaterialTheme.typography.body2,
             maxLines = 2,
             modifier = Modifier.padding(horizontal = 8.dp)
@@ -62,7 +66,7 @@ fun TvShowCard(
 
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             Text(
-                text = entity.votes.toString(),
+                text = tvShow.votes.toString(),
                 style = MaterialTheme.typography.overline,
                 modifier = Modifier.padding(horizontal = 8.dp)
             )

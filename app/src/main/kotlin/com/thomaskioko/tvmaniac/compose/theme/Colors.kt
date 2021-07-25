@@ -2,10 +2,14 @@ package com.thomaskioko.tvmaniac.compose.theme
 
 import androidx.compose.material.Colors
 import androidx.compose.material.LocalElevationOverlay
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.Dp
+import kotlin.math.max
+import kotlin.math.min
 
 val colorPrimaryLight = Color(0xFFFFBE0B)
 val colorPrimaryVariantLight = Color(0xFFF1B000)
@@ -40,4 +44,24 @@ fun Colors.elevatedSurface(elevation: Dp): Color {
         color = this.surface,
         elevation = elevation
     ) ?: this.surface
+}
+
+@Composable
+fun backgroundGradient(): List<Color> {
+    return listOf(
+        MaterialTheme.colors.surface,
+        MaterialTheme.colors.surface.copy(alpha = 0.9F),
+        MaterialTheme.colors.surface.copy(alpha = 0.8F),
+        MaterialTheme.colors.surface.copy(alpha = 0.7F),
+        Color.Transparent
+    )
+}
+
+fun Color.contrastAgainst(background: Color): Float {
+    val fg = if (alpha < 1f) compositeOver(background) else this
+
+    val fgLuminance = fg.luminance() + 0.05f
+    val bgLuminance = background.luminance() + 0.05f
+
+    return max(fgLuminance, bgLuminance) / min(fgLuminance, bgLuminance)
 }

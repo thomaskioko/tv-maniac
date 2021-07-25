@@ -17,7 +17,7 @@ import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.rules.TestRule
 
-internal class PopularTvShowsViewModelTest {
+internal class PopularTvShowViewModelTest {
 
     @get:Rule
     val instantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
