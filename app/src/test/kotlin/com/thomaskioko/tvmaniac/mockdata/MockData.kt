@@ -69,7 +69,7 @@ object MockData {
             voteCount = 42,
             voteAverage = 6.429,
             seasonNumber = 1,
-            episodeNumber = 1
+            episodeNumber = "01"
         ),
         EpisodeEntity(
             id = 2927202,
@@ -80,7 +80,7 @@ object MockData {
             voteCount = 23,
             voteAverage = 7.6,
             seasonNumber = 1,
-            episodeNumber = 2
+            episodeNumber = "02"
         )
     )
 
