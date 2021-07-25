@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.datasource.mapper
 
 import com.thomaskioko.tvmaniac.MockData.getShowSeasonsResponse
+import com.thomaskioko.tvmaniac.util.StringUtil.formatPosterPath
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
@@ -19,8 +20,8 @@ internal class EpisodeMapperTest {
         mappedEpisode.id shouldBe episodeResponse.id
         mappedEpisode.seasonNumber shouldBe episodeResponse.season_number
         mappedEpisode.name shouldBe episodeResponse.name
-        mappedEpisode.imageUrl shouldBe episodeResponse.still_path
-        mappedEpisode.episodeNumber shouldBe episodeResponse.episode_number
+        mappedEpisode.imageUrl shouldBe formatPosterPath(episodeResponse.still_path)
+        mappedEpisode.episodeNumber shouldBe episodeResponse.episode_number.toString().padStart(2, '0')
         mappedEpisode.voteAverage shouldBe episodeResponse.vote_average
         mappedEpisode.voteCount shouldBe episodeResponse.vote_count
         mappedEpisode.overview shouldBe episodeResponse.overview
