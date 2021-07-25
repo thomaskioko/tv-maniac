@@ -16,8 +16,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
-import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.R
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import kotlin.math.absoluteValue
@@ -26,12 +26,9 @@ import kotlin.math.absoluteValue
 @Composable
 fun HorizontalPager(
     list: List<TvShow>,
+    pagerState: PagerState,
     onClick: (Int) -> Unit
 ) {
-    val pagerState = rememberPagerState(
-        pageCount = list.size,
-        initialOffscreenLimit = 2,
-    )
 
     HorizontalPager(
         state = pagerState,
