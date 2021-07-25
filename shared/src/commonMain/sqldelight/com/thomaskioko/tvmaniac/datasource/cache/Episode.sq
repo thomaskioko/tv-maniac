@@ -11,7 +11,7 @@ episode_season_number INTEGER NOT NULL,
 image_url TEXT NOT NULL,
 vote_average REAL NOT NULL,
 vote_count INTEGER NOT NULL,
-episode_number INTEGER NOT NULL,
+episode_number TEXT NOT NULL,
 FOREIGN KEY (season_id) REFERENCES season(id)
 );
 
