@@ -4,8 +4,8 @@ import com.thomaskioko.tvmaniac.MockData.getEpisodeEntityList
 import com.thomaskioko.tvmaniac.MockData.getShowSeasonsResponse
 import com.thomaskioko.tvmaniac.MockData.tvSeasonsList
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
-import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
+import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepositoryImpl
 import com.thomaskioko.tvmaniac.util.runBlocking

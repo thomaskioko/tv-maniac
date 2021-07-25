@@ -133,7 +133,7 @@ object MockData {
             air_date = "2021-06-09",
             episode_number = 1,
             name = "Glorious Purpose",
-            overview = "After stealing the Tesseract in \"Avengers: Endgame,\" Loki lands before the Time Variance Authority.",
+            overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
             production_code = "",
             season_number = 1,
             still_path = "/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
@@ -266,23 +266,23 @@ object MockData {
             id = 2534997,
             seasonId = 114355,
             name = "Glorious Purpose",
-            overview = "After stealing the Tesseract in \"Avengers: Endgame,\" Loki lands before the Time Variance Authority.",
-            imageUrl = "/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
+            overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
+            imageUrl = "https://image.tmdb.org/t/p/original/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
             voteCount = 42,
             voteAverage = 6.429,
             seasonNumber = 1,
-            episodeNumber = 1
+            episodeNumber = "01"
         ),
         EpisodeEntity(
             id = 2927202,
             seasonId = 114355,
             name = "The Variant",
             overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
-            imageUrl = "/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
+            imageUrl = "https://image.tmdb.org/t/p/original/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
             voteCount = 23,
             voteAverage = 7.6,
             seasonNumber = 1,
-            episodeNumber = 2
+            episodeNumber = "02"
         )
     )
 
