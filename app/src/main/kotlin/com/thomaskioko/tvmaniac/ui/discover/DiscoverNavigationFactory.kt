@@ -14,8 +14,10 @@ internal class DiscoverNavigationFactory @Inject constructor() : ComposeNavigati
             route = NavigationScreen.DiscoverNavScreen.route,
             content = {
                 DiscoverScreen(
+                    openShowDetails = { tvShowId ->
+                        navController.navigate("${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId")
+                    },
                     viewModel = this,
-                    navController = navController
                 )
             }
         )

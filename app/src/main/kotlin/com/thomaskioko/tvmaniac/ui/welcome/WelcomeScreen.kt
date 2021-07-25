@@ -12,17 +12,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.thomaskioko.tvmaniac.compose.components.GradientText
 import com.thomaskioko.tvmaniac.compose.matchParent
-import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun WelcomeScreen(
     viewModel: WelcomeViewModel,
-    navController: NavHostController
+    openDiscoverScreen: () -> Unit,
 ) {
 
     val welcomeText by remember { mutableStateOf("Tv Maniac") }
@@ -40,7 +38,7 @@ fun WelcomeScreen(
 
         viewModel.viewModelScope.launch {
             delay(1000)
-            navController.navigate(NavigationScreen.DiscoverNavScreen.route)
+            openDiscoverScreen()
         }
     }
 

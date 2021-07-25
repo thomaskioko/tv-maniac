@@ -2,20 +2,19 @@ package com.thomaskioko.tvmaniac.ui.discover
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
-import androidx.navigation.NavHostController
 import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ErrorView
@@ -23,27 +22,24 @@ import com.thomaskioko.tvmaniac.compose.components.HorizontalPager
 import com.thomaskioko.tvmaniac.compose.components.LoadingView
 import com.thomaskioko.tvmaniac.compose.components.TvManiacScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
+import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
+import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
+import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
+import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
+import com.thomaskioko.tvmaniac.core.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
-import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import io.github.aakira.napier.Napier
 
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverViewModel,
-    navController: NavHostController,
+    openShowDetails: (showId: Int) -> Unit,
 ) {
 
     val scaffoldState = rememberScaffoldState()
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val actionState = viewModel.stateFlow
-
-    val actionStateLifeCycleAware = remember(actionState, lifecycleOwner) {
-        actionState.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-    }
-
-    val discoverViewState by actionStateLifeCycleAware
+    val discoverViewState by rememberFlowWithLifecycle(viewModel.stateFlow)
         .collectAsState(initial = DiscoverShowsState.Loading)
 
     TvManiacScaffold(
@@ -54,7 +50,7 @@ fun DiscoverScreen(
             LoadScreenContent(
                 viewState = discoverViewState,
                 onItemClicked = { tvShowId ->
-                    navController.navigate("${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId")
+                    openShowDetails(tvShowId)
                 }
             )
         }
@@ -75,6 +71,13 @@ fun LoadScreenContent(
     }
 
 }
+
+/**
+ * This is the minimum amount of calculated contrast for a color to be used on top of the
+ * surface color. These values are defined within the WCAG AA guidelines, and we use a value of
+ * 3:1 which is the minimum for user-interface components.
+ */
+private const val MinContrastOfPrimaryVsSurface = 3f
 
 @Composable
 private fun ScreenData(
@@ -103,15 +106,47 @@ fun FeaturedItems(
     onItemClicked: (Int) -> Unit,
 ) {
 
-    Column {
+    val surfaceColor = MaterialTheme.colors.surface
+    val dominantColorState = rememberDominantColorState { color ->
+        // We want a color which has sufficient contrast against the surface color
+        color.contrastAgainst(surfaceColor) >= MinContrastOfPrimaryVsSurface
+    }
 
-        ColumnSpacer(value = 8)
+    DynamicThemePrimaryColorsFromImage(dominantColorState) {
 
-        BoxTextItems(resultMap.key.title)
+        val pagerState = rememberPagerState(
+            pageCount = resultMap.value.size,
+            initialOffscreenLimit = 2,
+        )
 
-        HorizontalPager(resultMap.value) { tvShowId ->
-            Napier.d("Show Clicked $tvShowId")
-            onItemClicked(tvShowId)
+        val selectedImageUrl = resultMap.value.getOrNull(pagerState.currentPage)
+            ?.posterImageUrl
+
+        LaunchedEffect(selectedImageUrl) {
+            if (selectedImageUrl != null) {
+                dominantColorState.updateColorsFromImageUrl(selectedImageUrl)
+            } else {
+                dominantColorState.reset()
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalGradientScrim(
+                    color = MaterialTheme.colors.primary.copy(alpha = 0.38f),
+                    startYPercentage = 1f,
+                    endYPercentage = 0f
+                )
+        ) {
+
+            ColumnSpacer(value = 16)
+
+            BoxTextItems(resultMap.key.title)
+
+            HorizontalPager(resultMap.value, pagerState) { tvShowId ->
+                onItemClicked(tvShowId)
+            }
         }
     }
 
@@ -134,7 +169,6 @@ private fun DisplayShowData(
     LazyRow {
         itemsIndexed(resultMap.value) { index, tvShow ->
             TvShowCard(tvShow = tvShow, isFirstCard = index == 0) {
-                Napier.d("${tvShow.title} Clicked")
                 onItemClicked(tvShow.id)
             }
         }
