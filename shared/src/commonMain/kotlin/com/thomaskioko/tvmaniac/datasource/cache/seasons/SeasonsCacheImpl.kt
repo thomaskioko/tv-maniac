@@ -1,9 +1,8 @@
 package com.thomaskioko.tvmaniac.datasource.cache.seasons
 
+import com.thomaskioko.tvmaniac.datasource.cache.Season
+import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
-import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
-import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonEntity
-import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonsEntityList
 
 class SeasonsCacheImpl(
     private val database: TvManiacDatabase
@@ -11,7 +10,7 @@ class SeasonsCacheImpl(
 
     private val seasonQueries get() = database.seasonQueries
 
-    override fun insert(entity: SeasonsEntity) {
+    override fun insert(entity: com.thomaskioko.tvmaniac.presentation.model.Season) {
         seasonQueries.insertOrReplace(
             id = entity.seasonId.toLong(),
             tv_show_id = entity.tvShowId.toLong(),
@@ -22,26 +21,24 @@ class SeasonsCacheImpl(
         )
     }
 
-    override fun insert(entityList: List<SeasonsEntity>) {
+    override fun insert(entityList: List<com.thomaskioko.tvmaniac.presentation.model.Season>) {
         entityList.forEach { insert(it) }
     }
 
 
-    override fun getSeasonBySeasonId(seasonId: Int): SeasonsEntity {
+    override fun getSeasonBySeasonId(seasonId: Int): Season {
         return seasonQueries.selectBySeasonId(
             id = seasonId.toLong(),
         ).executeAsOne()
-            .toSeasonEntity()
     }
 
-    override fun getSeasonsByTvShowId(tvShowId: Int): List<SeasonsEntity> {
+    override fun getSeasonsByTvShowId(tvShowId: Int): List<SelectSeasonsByShowId> {
         return seasonQueries.selectSeasonsByShowId(
             tv_show_id = tvShowId.toLong()
         ).executeAsList()
-            .toSeasonsEntityList()
     }
 
-    override fun updateSeasonEpisodes(entity: SeasonsEntity) {
+    override fun updateSeasonEpisodes(entity: com.thomaskioko.tvmaniac.presentation.model.Season) {
         seasonQueries.updateEpisodes(
             id = entity.seasonId.toLong(),
             episodes = entity.episodeList

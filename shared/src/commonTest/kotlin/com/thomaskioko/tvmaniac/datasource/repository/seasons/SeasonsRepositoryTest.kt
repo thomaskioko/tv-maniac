@@ -3,11 +3,11 @@ package com.thomaskioko.tvmaniac.datasource.repository.seasons
 import com.thomaskioko.tvmaniac.MockData.getShowDetailResponse
 import com.thomaskioko.tvmaniac.MockData.tvSeasonsList
 import com.thomaskioko.tvmaniac.MockData.tvShowSeasonEntity
-import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
-import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonsEntityList
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
+import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.util.runBlocking
 import io.kotest.matchers.shouldNotBe
 import io.mockk.MockKAnnotations
@@ -51,11 +51,11 @@ class SeasonsRepositoryTest {
 
     @Test
     fun givenDataIsCached_thenGetTvShowSeasonsDataIsLoadedFromCache() = runBlocking {
-        every { seasonCache.getSeasonsByTvShowId(84958) } returns tvSeasonsList
+        every { seasonCache.getSeasonsByTvShowId(84958).toSeasonsEntityList() } returns tvSeasonsList
 
         val result = repository.getSeasonListByTvShowId(84958)
 
-        result shouldNotBe emptyList<SeasonsEntity>()
+        result shouldNotBe emptyList<Season>()
 
         verify(exactly = 0) {
             runBlocking { apiService.getTvShowDetails(1) }

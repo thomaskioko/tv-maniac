@@ -1,11 +1,12 @@
 package com.thomaskioko.tvmaniac.datasource.cache.shows
 
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
+import com.thomaskioko.tvmaniac.datasource.cache.Tv_show
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowsEntity
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowsEntityList
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 
 class TvShowCacheImpl(
     private val database: TvManiacDatabase
@@ -24,7 +25,8 @@ class TvShowCacheImpl(
                 vote_average = entity.averageVotes,
                 genre_ids = entity.genreIds,
                 show_category = entity.showCategory,
-                time_window = entity.timeWindow
+                time_window = entity.timeWindow,
+                year = entity.year
             )
         }
     }
@@ -46,21 +48,19 @@ class TvShowCacheImpl(
             .toTvShowsEntityList()
     }
 
-    override fun getTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<TvShow> {
+    override fun getTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<Tv_show> {
         return database.tvShowQueries.selectByShowIdAndWindow(
             show_category = category,
             time_window = timeWindow
         ).executeAsList()
-            .toTvShowsEntityList()
     }
 
-    override fun getFeaturedTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<TvShow> {
+    override fun getFeaturedTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<Tv_show> {
         return database.tvShowQueries.selectFeatured(
             show_category = category,
             time_window = timeWindow
         )
             .executeAsList()
-            .toTvShowsEntityList()
     }
 
     override fun updateTvShowDetails(entity: TvShow) {

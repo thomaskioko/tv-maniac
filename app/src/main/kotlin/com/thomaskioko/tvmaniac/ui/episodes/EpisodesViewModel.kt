@@ -4,8 +4,8 @@ import com.thomaskioko.stargazer.core.presentation.ViewAction
 import com.thomaskioko.stargazer.core.presentation.ViewState
 import com.thomaskioko.tvmaniac.core.BaseViewModel
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
-import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
+import com.thomaskioko.tvmaniac.presentation.model.Episode
+import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.util.DomainResultState
@@ -34,13 +34,13 @@ class EpisodesViewModel @Inject constructor(
             is EpisodesAction.LoadEpisodes -> {
                 interactor.invoke(action.query)
                     .onEach { mutableViewState.emit(it.reduce()) }
-                    .stateIn(ioScope, SharingStarted.Eagerly, emptyList<SeasonsEntity>())
+                    .stateIn(ioScope, SharingStarted.Eagerly, emptyList<Season>())
             }
         }
     }
 }
 
-private fun DomainResultState<List<EpisodeEntity>>.reduce(): EpisodesViewState {
+private fun DomainResultState<List<Episode>>.reduce(): EpisodesViewState {
     return when (this) {
         is Error -> EpisodesViewState.Error(message)
         is Loading -> EpisodesViewState.Loading
@@ -54,6 +54,6 @@ sealed class EpisodesAction : ViewAction {
 
 sealed class EpisodesViewState : ViewState {
     object Loading : EpisodesViewState()
-    data class Success(val data: List<EpisodeEntity>) : EpisodesViewState()
+    data class Success(val data: List<Episode>) : EpisodesViewState()
     data class Error(val message: String = "") : EpisodesViewState()
 }

@@ -3,9 +3,7 @@ package com.thomaskioko.tvmaniac.datasource.cache
 import com.thomaskioko.tvmaniac.MockData.makeTvShowEntityList
 import com.thomaskioko.tvmaniac.MockData.tvSeasonsList
 import com.thomaskioko.tvmaniac.MockData.tvShowsEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import kotlin.test.Test
 
 internal class TvShowCacheTest : BaseDatabaseTest() {
@@ -115,7 +113,8 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             vote_average = averageVotes,
             genre_ids = genreIds,
             show_category = showCategory,
-            time_window = timeWindow
+            time_window = timeWindow,
+            year = year
         )
     }
 

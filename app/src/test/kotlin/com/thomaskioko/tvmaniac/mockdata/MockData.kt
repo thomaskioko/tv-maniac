@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.mockdata
 
-import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.model.Episode
+import com.thomaskioko.tvmaniac.presentation.model.Season
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
 
 object MockData {
@@ -44,7 +44,7 @@ object MockData {
         )
 
     fun tvSeasonList() = listOf(
-        SeasonsEntity(
+        Season(
             seasonId = 114355,
             tvShowId = 84958,
             name = "Season 1",
@@ -60,7 +60,7 @@ object MockData {
     )
 
     fun getEpisodeEntityList() = listOf(
-        EpisodeEntity(
+        Episode(
             id = 2534997,
             seasonId = 114355,
             name = "Glorious Purpose",
@@ -71,7 +71,7 @@ object MockData {
             seasonNumber = 1,
             episodeNumber = "01"
         ),
-        EpisodeEntity(
+        Episode(
             id = 2927202,
             seasonId = 114355,
             name = "The Variant",

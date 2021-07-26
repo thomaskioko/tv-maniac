@@ -19,7 +19,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.thomaskioko.tvmaniac.R
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import kotlin.math.absoluteValue
 
 

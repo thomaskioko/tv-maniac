@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.datasource.cache
 
 import com.thomaskioko.tvmaniac.MockData.getEpisodeEntityList
 import com.thomaskioko.tvmaniac.MockData.tvSeasonsList
-import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
+import com.thomaskioko.tvmaniac.presentation.model.Season
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.test.Test
@@ -60,11 +60,11 @@ internal class SeasonsCacheTest : BaseDatabaseTest() {
     }
 
 
-    private fun List<SeasonsEntity>.insertSeasonsEntityQuery() {
+    private fun List<Season>.insertSeasonsEntityQuery() {
         map { it.insertSeasonsEntityQuery() }
     }
 
-    private fun SeasonsEntity.insertSeasonsEntityQuery() {
+    private fun Season.insertSeasonsEntityQuery() {
         tvSeasonQueries.insertOrReplace(
             id = seasonId.toLong(),
             tv_show_id = tvShowId.toLong(),
