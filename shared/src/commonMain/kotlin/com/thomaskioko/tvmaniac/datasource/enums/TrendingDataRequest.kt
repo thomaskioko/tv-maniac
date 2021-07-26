@@ -6,7 +6,7 @@ enum class TrendingDataRequest(val type: Int, val timeWindow: TimeWindow, val ti
     FEATURED(1, TimeWindow.WEEK, "Featured"),
     TODAY(2, TimeWindow.DAY, "Trending Today"),
     THIS_WEEK(3, TimeWindow.WEEK, "Trending this week"),
-    POPULAR(4, TimeWindow.WEEK,title ="Popular");
+    POPULAR(4, TimeWindow.WEEK, "Popular");
 
     companion object {
         operator fun get(type: Int): TrendingDataRequest {

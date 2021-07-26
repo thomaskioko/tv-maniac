@@ -3,13 +3,13 @@ package com.thomaskioko.tvmaniac.ui.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
-import com.thomaskioko.tvmaniac.presentation.model.Episode
-import com.thomaskioko.tvmaniac.presentation.model.Season
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
+import com.thomaskioko.tvmaniac.presentation.model.Episode
+import com.thomaskioko.tvmaniac.presentation.model.Season
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -50,7 +50,7 @@ class ShowDetailsViewModel @Inject constructor(
             isLoading = showDetails.tvShowReducer().isLoading,
             tvShow = showDetails.tvShowReducer().tvShow,
             tvSeasons = showSeasons.seasonReducer().tvSeasons,
-            seasonEpisodes = episodes
+            episodeList = episodes
         )
     }
 
@@ -128,14 +128,9 @@ data class ShowDetailViewState(
     val errorMessage: String = "",
     val tvShow: TvShow = TvShow.EMPTY_SHOW,
     val tvSeasons: List<Season> = emptyList(),
-    val seasonEpisodes: List<Episode> = emptyList(),
+    val episodeList: List<Episode> = emptyList(),
 ) {
     companion object {
         val Empty = ShowDetailViewState()
     }
 }
-
-sealed class UiEffect
-data class OpenEpisodeUiEffect(
-    val episodeList: List<Episode> = emptyList()
-) : UiEffect()
