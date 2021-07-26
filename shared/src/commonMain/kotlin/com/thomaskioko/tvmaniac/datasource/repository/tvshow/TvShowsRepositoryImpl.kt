@@ -25,7 +25,7 @@ class TvShowsRepositoryImpl(
     }
 
     override suspend fun getPopularTvShows(page: Int): List<TvShow> {
-        return if (cache.getTvShows().isEmpty()) {
+        return if (getShowsByCategory(POPULAR_TV_SHOWS).isEmpty()) {
 
             val entityList = apiService.getPopularShows(page).results
                 .map { it.toShow() }
@@ -50,7 +50,7 @@ class TvShowsRepositoryImpl(
                 .map { it.toShow() }
                 .map {
                     it.copy(
-                        show_category = POPULAR_TV_SHOWS
+                        show_category = TOP_RATED_TV_SHOWS
                     )
                 }
                 .map { cache.insert(it) }

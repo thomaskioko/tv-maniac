@@ -45,7 +45,12 @@ fun ShowResponse.toTvShowEntity(): TvShow {
     )
 }
 
-private fun formatDate(dateString: String) = dateString.toLocalDate().year.toString()
+private fun formatDate(dateString: String): String {
+    return if (dateString.isNotBlank())
+        dateString.toLocalDate().year.toString()
+    else
+        dateString
+}
 
 fun List<Show>.toTvShowsEntityList(): List<TvShow> {
     return map { it.toTvShowsEntity() }

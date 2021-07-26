@@ -51,6 +51,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.R
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
+import com.thomaskioko.tvmaniac.compose.components.LoadingView
 import com.thomaskioko.tvmaniac.compose.components.TabItem
 import com.thomaskioko.tvmaniac.compose.components.Tabs
 import com.thomaskioko.tvmaniac.compose.components.TvManiacScaffold
@@ -120,6 +121,8 @@ private fun TvShowDetailsScrollingContent(
         state = listState,
         modifier = modifier
     ) {
+
+        item { if (detailUiState.isLoading) LoadingView() }
 
         item {
             TvShowHeaderView(
@@ -373,7 +376,7 @@ fun SeasonEpisodeTabs(viewState: ShowDetailViewState) {
         HorizontalPager(state = pagerState) { page ->
             when (tabs[page]) {
                 TabItem.Casts -> SeasonCastScreen()
-                TabItem.Episodes -> EpisodesScreen(viewState.seasonEpisodes)
+                TabItem.Episodes -> EpisodesScreen(viewState.episodeList)
             }
         }
     }

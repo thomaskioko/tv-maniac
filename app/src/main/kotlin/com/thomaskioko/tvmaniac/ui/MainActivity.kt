@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             val systemUiController = rememberSystemUiController()
-            val useDarkIcons = MaterialTheme.colors.isLight
 
             SideEffect {
                 systemUiController.setSystemBarsColor(
