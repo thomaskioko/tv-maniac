@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.datasource.cache
 
-import com.thomaskioko.tvmaniac.MockData.getEpisodeEntityList
-import com.thomaskioko.tvmaniac.MockData.tvSeasonsList
+import com.thomaskioko.tvmaniac.MockData.seasonsList
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -9,25 +8,25 @@ import kotlin.test.Test
 
 internal class SeasonsCacheTest : BaseDatabaseTest() {
 
-    private val tvSeasonQueries get() = database.seasonQueries
+    private val tvSeasonQueries get() = database.tvSeasonQueries
 
     @Test
     fun insertSeason_andSeasonBySeasonId_returnsExpectedData() {
 
-        tvSeasonsList.insertSeasonsEntityQuery()
+        seasonsList.insertSeasonsEntityQuery()
 
         val queryResult = tvSeasonQueries.selectBySeasonId(114355).executeAsOne()
 
-        queryResult.id shouldBe tvSeasonsList[0].seasonId
-        queryResult.tv_show_id shouldBe tvSeasonsList[0].tvShowId
-        queryResult.name shouldBe tvSeasonsList[0].name
-        queryResult.season_number shouldBe tvSeasonsList[0].seasonNumber
+        queryResult.id shouldBe seasonsList[0].seasonId
+        queryResult.tv_show_id shouldBe seasonsList[0].tvShowId
+        queryResult.name shouldBe seasonsList[0].name
+        queryResult.season_number shouldBe seasonsList[0].seasonNumber
     }
 
     @Test
     fun insertSeason_andSelectSeasonsByShowId_returnsExpectedData() {
 
-        tvSeasonsList.insertSeasonsEntityQuery()
+        seasonsList.insertSeasonsEntityQuery()
 
         val queryResult = tvSeasonQueries.selectSeasonsByShowId(84958).executeAsList()
 
@@ -38,24 +37,24 @@ internal class SeasonsCacheTest : BaseDatabaseTest() {
     @Test
     fun givenUpdateEpisodes_queryReturnsCorrectData() {
 
-        tvSeasonsList.insertSeasonsEntityQuery()
+        seasonsList.insertSeasonsEntityQuery()
 
         val queryResult = tvSeasonQueries.selectBySeasonId(114355).executeAsOne()
 
         //Verify that the first time the list is empty
-        queryResult.episodes shouldBe null
+        queryResult.episode_ids shouldBe null
 
         tvSeasonQueries.updateEpisodes(
             id = 114355,
-            episodes = getEpisodeEntityList()
+            episode_ids = listOf(2534997, 2927202)
         )
 
-        val episodeResult = tvSeasonQueries.selectBySeasonId(114355)
+        val seasonQueryResult = tvSeasonQueries.selectBySeasonId(114355)
             .executeAsOne()
-            .episodes
+
 
         //Verify that the list has been updated and exists
-        episodeResult shouldBe getEpisodeEntityList()
+        seasonQueryResult.episode_ids shouldBe listOf(2534997, 2927202)
 
     }
 

@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.datasource.repository.episodes
 
-import com.thomaskioko.tvmaniac.MockData.getEpisodeEntityList
+import com.thomaskioko.tvmaniac.MockData.getEpisodeCache
+import com.thomaskioko.tvmaniac.MockData.getEpisodeCacheList
+import com.thomaskioko.tvmaniac.MockData.getEpisodesBySeasonId
+import com.thomaskioko.tvmaniac.MockData.getSeasonCache
 import com.thomaskioko.tvmaniac.MockData.getShowSeasonsResponse
-import com.thomaskioko.tvmaniac.MockData.tvSeasonsList
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
-import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeEntityList
-import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonEntity
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepositoryImpl
 import com.thomaskioko.tvmaniac.presentation.model.Episode
@@ -58,8 +58,7 @@ class EpisodeRepositoryTest {
         val episodeNumber = 2534997
         every {
             episodesCache.getEpisodeByEpisodeId(episodeNumber)
-                .toEpisodeEntity()
-        } returns getEpisodeEntityList().first()
+        } returns getEpisodeCache()
 
         val result = repository.getEpisodeByEpisodeId(episodeNumber)
 
@@ -71,7 +70,9 @@ class EpisodeRepositoryTest {
 
     @Test
     fun givenDataIsCached_thenGetEpisodesBySeasonIdDataIsLoadedFromCache() = runBlocking {
-        every { episodesCache.getEpisodesBySeasonId(seasonId).toEpisodeEntityList() } returns getEpisodeEntityList()
+        every {
+            episodesCache.getEpisodesBySeasonId(seasonId)
+        } returns getEpisodesBySeasonId()
 
         val result = repository.getEpisodesBySeasonId(showId, seasonId, 1)
 
@@ -79,7 +80,7 @@ class EpisodeRepositoryTest {
 
         verify(exactly = 0) {
             runBlocking { apiService.getSeasonDetails(seasonId, 1) }
-            episodesCache.insert(getEpisodeEntityList())
+            episodesCache.insert(getEpisodeCacheList())
         }
 
         verify(exactly = 2) { episodesCache.getEpisodesBySeasonId(seasonId) }
@@ -90,7 +91,7 @@ class EpisodeRepositoryTest {
         runBlocking {
 
             coEvery { apiService.getSeasonDetails(showId, 1) } answers { getShowSeasonsResponse() }
-            every { seasonCache.getSeasonBySeasonId(seasonId).toSeasonEntity() } returns tvSeasonsList.first()
+            every { seasonCache.getSeasonBySeasonId(seasonId) } returns getSeasonCache()
 
             repository.getEpisodesBySeasonId(showId, seasonId, 1)
 
@@ -98,15 +99,12 @@ class EpisodeRepositoryTest {
                 runBlocking { apiService.getSeasonDetails(showId, 1) }
 
                 // Episodes are inserted
-                episodesCache.insert(getEpisodeEntityList())
-
-                seasonCache.getSeasonBySeasonId(seasonId)
+                episodesCache.insert(getEpisodeCacheList())
 
                 // Season Episodes are updated
-                seasonCache.updateSeasonEpisodes(
-                    tvSeasonsList.first().copy(
-                        episodeList = getEpisodeEntityList()
-                    )
+                seasonCache.updateSeasonEpisodesIds(
+                    seasonId = seasonId,
+                    episodeIds = listOf(2534997, 2927202)
                 )
             }
         }

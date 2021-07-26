@@ -1,9 +1,10 @@
 package com.thomaskioko.tvmaniac.datasource.cache
 
-import com.thomaskioko.tvmaniac.MockData.makeTvShowEntityList
-import com.thomaskioko.tvmaniac.MockData.tvSeasonsList
-import com.thomaskioko.tvmaniac.MockData.tvShowsEntity
+import com.thomaskioko.tvmaniac.MockData.makeTvShowList
+import com.thomaskioko.tvmaniac.MockData.tvShow
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import kotlin.test.Test
 
 internal class TvShowCacheTest : BaseDatabaseTest() {
@@ -13,7 +14,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     @Test
     fun insertTvShow() {
 
-        makeTvShowEntityList().insertTvShowsEntityList()
+        makeTvShowList().insertTvShowsEntityList()
 
         val entities = tvShowQueries.selectAll().executeAsList()
 
@@ -23,75 +24,75 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     @Test
     fun verify_selectByShowId_returnTvShowEntity_afterInsertHasBeenDone() {
 
-        tvShowsEntity.insertTvShowQuery()
+        tvShow.insertTvShowQuery()
 
-        val entity = tvShowQueries.selectByShowId(tvShowsEntity.id.toLong())
+        val entity = tvShowQueries.selectByShowId(tvShow.id.toLong())
             .executeAsOne()
 
         entity shouldNotBe null
-        entity.title shouldBe tvShowsEntity.title
-        entity.description shouldBe tvShowsEntity.overview
-        entity.poster_image_url shouldBe tvShowsEntity.posterImageUrl
-        entity.backdrop_image_url shouldBe tvShowsEntity.backdropImageUrl
-        entity.votes shouldBe tvShowsEntity.votes
-        entity.vote_average shouldBe tvShowsEntity.averageVotes
-        entity.genre_ids shouldBe tvShowsEntity.genreIds
-        entity.show_category shouldBe tvShowsEntity.showCategory
+        entity.title shouldBe tvShow.title
+        entity.description shouldBe tvShow.overview
+        entity.poster_image_url shouldBe tvShow.posterImageUrl
+        entity.backdrop_image_url shouldBe tvShow.backdropImageUrl
+        entity.votes shouldBe tvShow.votes
+        entity.vote_average shouldBe tvShow.averageVotes
+        entity.genre_ids shouldBe tvShow.genreIds
+        entity.show_category shouldBe tvShow.showCategory
     }
 
     @Test
     fun givenTvShowHasSeasons_queryReturnsCorrectData() {
 
-        makeTvShowEntityList().insertTvShowsEntityList()
+        makeTvShowList().insertTvShowsEntityList()
 
-        val seasons = tvShowQueries.selectByShowId(tvShowsEntity.id.toLong())
-            .executeAsOne().seasons
+        val seasons = tvShowQueries.selectByShowId(84958)
+            .executeAsOne().season_ids
 
         //Verify that the first time the list is empty
         seasons shouldBe null
 
         tvShowQueries.updateTvShow(
-            id = tvShowsEntity.id.toLong(),
-            seasons = tvSeasonsList
+            id = 84958,
+            season_ids = listOf(114355, 77680)
         )
 
-        val tvSeasonsResult = tvShowQueries.selectByShowId(tvShowsEntity.id.toLong())
-            .executeAsOne().seasons
+        val seasonIds = tvShowQueries.selectByShowId(tvShow.id.toLong())
+            .executeAsOne().season_ids
 
         //Verify that the list has been updated and exists
-        tvSeasonsResult shouldBe tvSeasonsList
+        seasonIds shouldBe listOf(114355, 77680)
 
     }
 
     @Test
     fun givenTvShowIsUpdated_verifyDataIs_InsertedCorrectly() {
 
-        makeTvShowEntityList().insertTvShowsEntityList()
+        makeTvShowList().insertTvShowsEntityList()
 
-        val entity = tvShowQueries.selectByShowId(tvShowsEntity.id.toLong())
+        val entity = tvShowQueries.selectByShowId(tvShow.id.toLong())
             .executeAsOne()
 
-        entity.seasons shouldBe null
+        entity.season_ids shouldBe null
 
         tvShowQueries.updateTvShow(
-            id = tvShowsEntity.id.toLong(),
-            seasons = tvSeasonsList
+            id = tvShow.id.toLong(),
+            season_ids = listOf(2534997, 2927202)
         )
 
-        val tvShowResult = tvShowQueries.selectByShowId(tvShowsEntity.id.toLong())
-            .executeAsOne()
+        val seasonsIds = tvShowQueries.selectByShowId(tvShow.id.toLong())
+            .executeAsOne().season_ids
 
-        tvShowResult.seasons shouldBe tvSeasonsList
+        seasonsIds shouldBe listOf(2534997, 2927202)
     }
 
     @Test
     fun verifyDelete_clearsTable() {
 
-        tvShowsEntity.insertTvShowQuery()
+        tvShow.insertTvShowQuery()
 
         tvShowQueries.deleteAll()
 
-        val entity = tvShowQueries.selectByShowId(tvShowsEntity.id.toLong())
+        val entity = tvShowQueries.selectByShowId(tvShow.id.toLong())
             .executeAsOneOrNull()
 
         entity shouldBe null
