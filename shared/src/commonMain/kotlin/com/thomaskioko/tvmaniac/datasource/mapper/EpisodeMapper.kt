@@ -7,6 +7,22 @@ import com.thomaskioko.tvmaniac.util.StringUtil.formatPosterPath
 import com.thomaskioko.tvmaniac.datasource.cache.Episode as EpisodeCache
 
 
+fun SeasonResponse.toEpisodeCacheList(): List<EpisodeCache> {
+    return episodes.map { episodeResponse ->
+        EpisodeCache(
+            id = episodeResponse.id.toLong(),
+            season_id = id.toLong(),
+            name = episodeResponse.name,
+            overview = episodeResponse.overview,
+            episode_season_number = episodeResponse.season_number.toLong(),
+            image_url = formatPosterPath(episodeResponse.still_path),
+            vote_average = episodeResponse.vote_average,
+            vote_count = episodeResponse.vote_count.toLong(),
+            episode_number = episodeResponse.episode_number.toString().padStart(2, '0')
+        )
+    }
+}
+
 fun SeasonResponse.toEpisodeEntityList(): List<Episode> {
     return episodes.map { episodeResponse ->
         Episode(

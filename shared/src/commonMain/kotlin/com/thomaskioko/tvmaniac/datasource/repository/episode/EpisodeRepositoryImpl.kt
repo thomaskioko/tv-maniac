@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.datasource.repository.episode
 
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
+import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeCacheList
 import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeEntity
 import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeEntityList
-import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonEntity
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.presentation.model.Episode
 
@@ -41,19 +41,17 @@ class EpisodeRepositoryImpl(
         seasonNumber: Int
     ) {
         val episodeEntityList = apiService.getSeasonDetails(tvShowId, seasonNumber)
-            .toEpisodeEntityList()
+            .toEpisodeCacheList()
 
         //Insert episodes
         episodesCache.insert(episodeEntityList)
 
-        val seasonCacheResult = seasonCache.getSeasonBySeasonId(seasonId)
-            .toSeasonEntity()
+        val episodesIds = mutableListOf<Int>()
+        for (episode in episodeEntityList) {
+            episodesIds.add(episode.id.toInt())
+        }
 
         //Update season episode list
-        seasonCache.updateSeasonEpisodes(
-            seasonCacheResult.copy(
-                episodeList = episodeEntityList
-            )
-        )
+        seasonCache.updateSeasonEpisodesIds(seasonId =  seasonId, episodeIds = episodesIds)
     }
 }

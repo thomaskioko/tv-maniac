@@ -1,8 +1,9 @@
 package com.thomaskioko.tvmaniac
 
-import com.thomaskioko.tvmaniac.presentation.model.Episode
-import com.thomaskioko.tvmaniac.presentation.model.Season
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
+import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
+import com.thomaskioko.tvmaniac.datasource.cache.Show
+import com.thomaskioko.tvmaniac.datasource.cache.Tv_season
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
@@ -14,6 +15,10 @@ import com.thomaskioko.tvmaniac.datasource.network.model.SeasonsResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
+import com.thomaskioko.tvmaniac.presentation.model.Episode
+import com.thomaskioko.tvmaniac.presentation.model.Season
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.datasource.cache.Episode as EpisodeCache
 
 object MockData {
 
@@ -154,7 +159,7 @@ object MockData {
         ),
     )
 
-    fun makeTvShowEntityList() = listOf(
+    fun makeTvShowList() = listOf(
         TvShow(
             id = 84958,
             title = "Loki",
@@ -188,26 +193,7 @@ object MockData {
         ),
     )
 
-    val tvShowsEntity = TvShow(
-        id = 84958,
-        title = "Loki",
-        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                "an alternate version of Loki is brought to the mysterious Time Variance " +
-                "Authority, a bureaucratic organization that exists outside of time and " +
-                "space and monitors the timeline. They give Loki a choice: face being " +
-                "erased from existence due to being a “time variant”or help fix " +
-                "the timeline and stop a greater threat.",
-        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        language = "en",
-        votes = 4958,
-        averageVotes = 8.1,
-        genreIds = listOf(18, 10765),
-        showCategory = TvShowCategory.POPULAR_TV_SHOWS
-    )
-
-
-    val tvSeasonsList = listOf(
+    val seasonsList = listOf(
         Season(
             seasonId = 114355,
             tvShowId = 84958,
@@ -242,7 +228,7 @@ object MockData {
         )
     )
 
-    val tvShowSeasonEntity = TvShow(
+    val tvShow = TvShow(
         id = 84958,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
@@ -258,10 +244,10 @@ object MockData {
         averageVotes = 8.1,
         genreIds = listOf(18, 10765),
         showCategory = TvShowCategory.POPULAR_TV_SHOWS,
-        seasonsList = tvSeasonsList
+        seasonsList = seasonsList
     )
 
-    fun getEpisodeEntityList() = listOf(
+    fun getEpisodeList() = listOf(
         Episode(
             id = 2534997,
             seasonId = 114355,
@@ -291,19 +277,266 @@ object MockData {
 
         trendingMap[TrendingDataRequest.TODAY] = getTvResponse().results
             .map { it.toTvShowEntity() }
-            .map { it.copy(
-                showCategory = TvShowCategory.TRENDING,
-                timeWindow = TimeWindow.DAY
-            ) }
+            .map {
+                it.copy(
+                    showCategory = TvShowCategory.TRENDING,
+                    timeWindow = TimeWindow.DAY
+                )
+            }
 
         trendingMap[TrendingDataRequest.THIS_WEEK] = getTvResponse().results
             .map { it.toTvShowEntity() }
-            .map { it.copy(
-                showCategory = TvShowCategory.TRENDING,
-                timeWindow = TimeWindow.WEEK
-            ) }
+            .map {
+                it.copy(
+                    showCategory = TvShowCategory.TRENDING,
+                    timeWindow = TimeWindow.WEEK
+                )
+            }
 
         return trendingMap
     }
 
+    fun getSeasonCache(): Tv_season {
+        return Tv_season(
+            id = 4355,
+            tv_show_id = 126280,
+            name = "Season 1",
+            overview = "A woman's daring sexual past collides with her married-with-kids " +
+                    "present when the bad-boy ex she can't stop fantasizing about crashes " +
+                    "back into her life.",
+            season_number = 1,
+            epiosode_count = 6,
+            episode_ids = listOf(2534997, 2927202)
+        )
+    }
+
+    fun getEpisodeCache(): EpisodeCache {
+        return EpisodeCache(
+            id = 2534997,
+            season_id = 114355,
+            name = "Glorious Purpose",
+            overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
+            image_url = "https://image.tmdb.org/t/p/original/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
+            vote_count = 42,
+            vote_average = 6.429,
+            episode_number = "01",
+            episode_season_number = 1
+        )
+    }
+
+    fun getEpisodeCacheList() = listOf(
+        EpisodeCache(
+            id = 2534997,
+            season_id = 114355,
+            name = "Glorious Purpose",
+            overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
+            image_url = "https://image.tmdb.org/t/p/original/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
+            vote_count = 42,
+            vote_average = 6.429,
+            episode_season_number = 1,
+            episode_number = "01"
+        ),
+        EpisodeCache(
+            id = 2927202,
+            season_id = 114355,
+            name = "The Variant",
+            overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
+            image_url = "https://image.tmdb.org/t/p/original/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
+            vote_count = 23,
+            vote_average = 7.6,
+            episode_season_number = 1,
+            episode_number = "02"
+        )
+    )
+
+    fun getEpisodesBySeasonId() = listOf(
+        EpisodesBySeasonId(
+            id = 2534997,
+            season_id = 114355,
+            name = "Glorious Purpose",
+            overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
+            image_url = "https://image.tmdb.org/t/p/original/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
+            vote_count = 42,
+            vote_average = 6.429,
+            episode_number = "01",
+            episode_season_number = 1,
+            tv_show_id = 126280,
+            season_number = 1,
+            epiosode_count = 6,
+            episode_ids = listOf(2534997, 2927202),
+            id_ = null,
+            name_ = null,
+            overview_ = null
+        ),
+        EpisodesBySeasonId(
+            id = 2927202,
+            season_id = 114355,
+            name = "The Variant",
+            overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
+            image_url = "https://image.tmdb.org/t/p/original/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
+            vote_count = 23,
+            vote_average = 7.6,
+            season_number = 1,
+            episode_number = "02",
+            episode_season_number = 1,
+            tv_show_id = 126280,
+            epiosode_count = 6,
+            episode_ids = listOf(2534997, 2927202),
+            id_ = null,
+            name_ = null,
+            overview_ = null
+        )
+    )
+
+    fun getSelectSeasonsByShowId() = listOf(
+        SelectSeasonsByShowId(
+            id = 114355,
+            tv_show_id = 84958,
+            name = "Season 1",
+            overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+                    "an alternate version of Loki is brought to the mysterious Time Variance " +
+                    "Authority, a bureaucratic organization that exists outside of time and " +
+                    "space and monitors the timeline. They give Loki a choice: face being " +
+                    "erased from existence due to being a “time variant”or help fix " +
+                    "the timeline and stop a greater threat.",
+            season_number = 1,
+            title = "Loki",
+            poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            language = "en",
+            votes = 4958,
+            vote_average = 8.1,
+            genre_ids = listOf(18, 10765),
+            show_category = TvShowCategory.POPULAR_TV_SHOWS,
+            epiosode_count = 1,
+            id_ = null,
+            description = null,
+            year = null,
+            time_window = null,
+            season_ids = null,
+            episode_ids = null
+        ),
+        SelectSeasonsByShowId(
+            id = 77680,
+            tv_show_id = 84958,
+            name = "Season 2",
+            overview = "Strange things are afoot in Hawkins, Indiana, where a young boy's " +
+                    "sudden disappearance unearths a young girl with otherworldly powers.",
+            season_number = 1,
+            epiosode_count = 2,
+            language = null,
+            votes = 4958,
+            vote_average = 8.1,
+            genre_ids = listOf(18, 10765),
+            show_category = TvShowCategory.POPULAR_TV_SHOWS,
+            id_ = null,
+            description = null,
+            year = null,
+            time_window = null,
+            season_ids = null,
+            episode_ids = null,
+            title = null,
+            poster_image_url = null,
+            backdrop_image_url = null
+        )
+    )
+
+    fun getSeasonCacheList() = listOf(
+        Tv_season(
+            id = 114355,
+            tv_show_id = 84958,
+            name = "Season 1",
+            overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+                    "an alternate version of Loki is brought to the mysterious Time Variance " +
+                    "Authority, a bureaucratic organization that exists outside of time and " +
+                    "space and monitors the timeline. They give Loki a choice: face being " +
+                    "erased from existence due to being a “time variant”or help fix " +
+                    "the timeline and stop a greater threat.",
+            season_number = 1,
+            epiosode_count = 6,
+            episode_ids = null
+        ),
+        Tv_season(
+            id = 77680,
+            tv_show_id = 84958,
+            name = "Season 2",
+            overview = "Strange things are afoot in Hawkins, Indiana, where a young boy's " +
+                    "sudden disappearance unearths a young girl with otherworldly powers.",
+            season_number = 1,
+            epiosode_count = 4,
+            episode_ids = null
+        ),
+        Tv_season(
+            id = 4355,
+            tv_show_id = 126280,
+            name = "Season 1",
+            overview = "A woman's daring sexual past collides with her married-with-kids " +
+                    "present when the bad-boy ex she can't stop fantasizing about crashes " +
+                    "back into her life.",
+            season_number = 1,
+            epiosode_count = 6,
+            episode_ids = null
+        )
+    )
+
+    fun getShow() = Show(
+        id = 84958,
+        title = "Loki",
+        description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+                "an alternate version of Loki is brought to the mysterious Time Variance " +
+                "Authority, a bureaucratic organization that exists outside of time and " +
+                "space and monitors the timeline. They give Loki a choice: face being " +
+                "erased from existence due to being a “time variant”or help fix " +
+                "the timeline and stop a greater threat.",
+        poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        language = "en",
+        votes = 4958,
+        vote_average = 8.1,
+        genre_ids = listOf(18, 10765),
+        show_category = TvShowCategory.POPULAR_TV_SHOWS,
+        year = "2019",
+        season_ids = null,
+        time_window = null
+    )
+
+    fun makeShowList() = listOf(
+        Show(
+            id = 84958,
+            title = "Loki",
+            description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+                    "an alternate version of Loki is brought to the mysterious Time Variance " +
+                    "Authority, a bureaucratic organization that exists outside of time and " +
+                    "space and monitors the timeline. They give Loki a choice: face being " +
+                    "erased from existence due to being a “time variant”or help fix " +
+                    "the timeline and stop a greater threat.",
+            poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            language = "en",
+            votes = 4958,
+            vote_average = 8.1,
+            genre_ids = listOf(18, 10765),
+            show_category = TvShowCategory.POPULAR_TV_SHOWS,
+            year = "2019",
+            season_ids = null,
+            time_window = null
+        ),
+        Show(
+            id = 126280,
+            title = "Sex/Life",
+            description = "A woman's daring sexual past collides with her married-with-kids " +
+                    "present when the bad-boy ex she can't stop fantasizing about crashes " +
+                    "back into her life.",
+            poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            language = "en",
+            votes = 4958,
+            vote_average = 8.1,
+            genre_ids = listOf(35, 18),
+            show_category = TvShowCategory.POPULAR_TV_SHOWS,
+            year = "2019",
+            season_ids = null,
+            time_window = null
+        ),
+    )
 }

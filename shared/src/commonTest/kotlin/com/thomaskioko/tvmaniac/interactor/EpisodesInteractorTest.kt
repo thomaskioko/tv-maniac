@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.interactor
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.MockData.getEpisodeEntityList
+import com.thomaskioko.tvmaniac.MockData.getEpisodeList
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.runBlocking
@@ -30,11 +30,11 @@ internal class EpisodesInteractorTest {
                     seasonId = query.seasonId
                 )
             }
-        } returns getEpisodeEntityList()
+        } returns getEpisodeList()
 
         interactor.invoke(query).test {
             expectItem() shouldBe DomainResultState.Loading()
-            expectItem() shouldBe DomainResultState.Success(getEpisodeEntityList())
+            expectItem() shouldBe DomainResultState.Success(getEpisodeList())
             expectComplete()
         }
     }

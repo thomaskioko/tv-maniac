@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.datasource.repository.seasons
 
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
+import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonCacheList
 import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonsEntityList
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.presentation.model.Season
@@ -29,15 +30,14 @@ class SeasonsRepositoryImpl(
     override suspend fun updateTvShowsDetails(tvShowId: Int) {
 
         val seasonsEntityList = apiService.getTvShowDetails(tvShowId)
-            .toSeasonsEntityList()
+            .toSeasonCacheList()
 
-        val tvShowCacheResult = tvShowCache.getTvShow(showId = tvShowId)
+        val seasonIds = mutableListOf<Int>()
+        for (season in seasonsEntityList) {
+            seasonIds.add(season.id.toInt())
+        }
 
-        tvShowCache.updateTvShowDetails(
-            tvShowCacheResult.copy(
-                seasonsList = seasonsEntityList
-            )
-        )
+        tvShowCache.updateSeasonIds(tvShowId, seasonIds)
 
         //Insert Seasons
         seasonCache.insert(seasonsEntityList)

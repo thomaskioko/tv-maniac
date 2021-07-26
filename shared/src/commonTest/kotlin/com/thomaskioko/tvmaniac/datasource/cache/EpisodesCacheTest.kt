@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.datasource.cache
 
-import com.thomaskioko.tvmaniac.MockData.getEpisodeEntityList
+import com.thomaskioko.tvmaniac.MockData.getEpisodeList
 import com.thomaskioko.tvmaniac.presentation.model.Episode
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -13,8 +13,8 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
     @Test
     fun insertEpisodes_andEpisodeByEpisodeId_returnsExpectedData() {
 
-        getEpisodeEntityList().insertEpisodeEntityQuery()
-        val entity = getEpisodeEntityList().first()
+        getEpisodeList().insertEpisodeEntityQuery()
+        val entity = getEpisodeList().first()
 
         val queryResult = episodeQueries.episodeById(2534997).executeAsOne()
 
@@ -31,7 +31,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
     @Test
     fun insertEpisodes_andSelectEpisodesBySeasonId_returnsExpectedData() {
 
-        getEpisodeEntityList().insertEpisodeEntityQuery()
+        getEpisodeList().insertEpisodeEntityQuery()
 
         val queryResult = episodeQueries.episodesBySeasonId(114355).executeAsList()
 

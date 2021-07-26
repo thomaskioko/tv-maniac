@@ -1,11 +1,12 @@
 package com.thomaskioko.tvmaniac.datasource.repository.seasons
 
+import com.thomaskioko.tvmaniac.MockData.getSeasonCacheList
+import com.thomaskioko.tvmaniac.MockData.getSelectSeasonsByShowId
+import com.thomaskioko.tvmaniac.MockData.getShow
 import com.thomaskioko.tvmaniac.MockData.getShowDetailResponse
-import com.thomaskioko.tvmaniac.MockData.tvSeasonsList
-import com.thomaskioko.tvmaniac.MockData.tvShowSeasonEntity
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
-import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonsEntityList
+import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonCacheList
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.util.runBlocking
@@ -51,7 +52,7 @@ class SeasonsRepositoryTest {
 
     @Test
     fun givenDataIsCached_thenGetTvShowSeasonsDataIsLoadedFromCache() = runBlocking {
-        every { seasonCache.getSeasonsByTvShowId(84958).toSeasonsEntityList() } returns tvSeasonsList
+        every { seasonCache.getSeasonsByTvShowId(84958) } returns getSelectSeasonsByShowId()
 
         val result = repository.getSeasonListByTvShowId(84958)
 
@@ -59,7 +60,7 @@ class SeasonsRepositoryTest {
 
         verify(exactly = 0) {
             runBlocking { apiService.getTvShowDetails(1) }
-            seasonCache.insert(tvSeasonsList)
+            seasonCache.insert(getSeasonCacheList())
         }
 
         verify(exactly = 2) { seasonCache.getSeasonsByTvShowId(84958) }
@@ -69,20 +70,18 @@ class SeasonsRepositoryTest {
     fun givenDataIsNotCached_thenGetTvSeasonDetailsIsInvoked_AndDataIsLoadedFromCache() =
         runBlocking {
             coEvery { apiService.getTvShowDetails(84958) } answers { getShowDetailResponse() }
-            every { tvShowCache.getTvShow(showId = 84958) } returns tvShowSeasonEntity
+            every { tvShowCache.getTvShow(showId = 84958) } returns getShow()
 
-            val seasonList = getShowDetailResponse().toSeasonsEntityList()
+            val seasonList = getShowDetailResponse().toSeasonCacheList()
 
             repository.getSeasonListByTvShowId(84958)
 
             verify {
                 runBlocking { apiService.getTvShowDetails(84958) }
 
-                tvShowCache.getTvShow(84958)
-                tvShowCache.updateTvShowDetails(
-                    tvShowSeasonEntity.copy(
-                        seasonsList = seasonList
-                    )
+                tvShowCache.updateSeasonIds(
+                    showId = 84958,
+                    seasonIds = listOf(114355)
                 )
                 seasonCache.insert(seasonList)
                 seasonCache.getSeasonsByTvShowId(84958)
