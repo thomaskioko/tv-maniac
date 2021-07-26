@@ -1,9 +1,9 @@
-package com.thomaskioko.tvmaniac.datasource.cache.model
+package com.thomaskioko.tvmaniac.presentation.model
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class EpisodeEntity(
+data class Episode(
     val id: Int,
     val seasonId : Int,
     val name : String,

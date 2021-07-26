@@ -23,11 +23,11 @@ import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.R
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
-import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
+import com.thomaskioko.tvmaniac.presentation.model.Episode
 
 @Composable
 fun EpisodesScreen(
-    seasonEpisodes: List<EpisodeEntity>,
+    seasonEpisodes: List<Episode>,
 ) {
     Column (
         modifier = Modifier.fillMaxWidth()
@@ -41,8 +41,10 @@ fun EpisodesScreen(
 }
 
 @Composable
-fun EpisodeItem(episode: EpisodeEntity) {
-    ConstraintLayout {
+fun EpisodeItem(episode: Episode) {
+    ConstraintLayout(
+        modifier = Modifier.fillMaxWidth()
+    ) {
 
         val (divider, episodeTitle, image, overview, episodeNumber) = createRefs()
 
@@ -118,6 +120,7 @@ fun EpisodeItem(episode: EpisodeEntity) {
                         )
 
                         top.linkTo(episodeTitle.bottom, 5.dp)
+                        end.linkTo(episodeNumber.start)
 
                         width = Dimension.preferredWrapContent
                     }

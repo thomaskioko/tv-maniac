@@ -56,9 +56,9 @@ import com.thomaskioko.tvmaniac.compose.components.Tabs
 import com.thomaskioko.tvmaniac.compose.components.TvManiacScaffold
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.core.rememberFlowWithLifecycle
-import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
+import com.thomaskioko.tvmaniac.presentation.model.Season
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.ui.detail.tabs.EpisodesScreen
 import com.thomaskioko.tvmaniac.ui.detail.tabs.SeasonCastScreen
 import kotlinx.coroutines.delay
@@ -171,7 +171,7 @@ fun TvShowHeaderView(
         }
         if (animateState > 0) {
             KenBurnsViewImage(
-                imageUrl = detailUiState.tvShow.posterImageUrl,
+                imageUrl = detailUiState.tvShow.backdropImageUrl,
                 modifier = Modifier
                     .fillMaxWidth()
                     .onSizeChanged(onBackdropSizeChanged)
@@ -255,7 +255,7 @@ fun TvShowInfo(detailUiState: ShowDetailViewState) {
 }
 
 @Composable
-fun TvShowMetadata(show: TvShow, modifier: Modifier, seasons: List<SeasonsEntity>) {
+fun TvShowMetadata(show: TvShow, modifier: Modifier, seasons: List<Season>) {
     val resources = LocalContext.current.resources
     val divider = "  •  "
     val text = buildAnnotatedString {
@@ -265,6 +265,8 @@ fun TvShowMetadata(show: TvShow, modifier: Modifier, seasons: List<SeasonsEntity
         withStyle(tagStyle) {
             append("  Tv Show  ")
         }
+        append(divider)
+        append(show.year)
         append(divider)
         append(resources.getQuantityString(R.plurals.season_count, seasons.size, seasons.size))
         append(divider)
@@ -284,7 +286,7 @@ fun TvShowMetadata(show: TvShow, modifier: Modifier, seasons: List<SeasonsEntity
 
 @Composable
 fun TvShowSeasons(
-    tvSeasons: List<SeasonsEntity>,
+    tvSeasons: List<Season>,
     onSeasonSelected: (EpisodeQuery) -> Unit
 ) {
 

@@ -1,8 +1,10 @@
 package com.thomaskioko.tvmaniac.interactor
 
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
+import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest.FEATURED
+import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest.POPULAR
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.error
 import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.loading
@@ -23,11 +25,10 @@ class GetTrendingShowsInteractor constructor(
             val trendingMap = linkedMapOf<TrendingDataRequest, List<TvShow>>()
 
             params.forEach {
-
-                val result = if (it != TrendingDataRequest.FEATURED) {
-                    repository.getTrendingShows(it.timeWindow.window)
-                } else {
-                    repository.getFeaturedShows()
+                val result = when {
+                    it != FEATURED -> repository.getTrendingShows(it.timeWindow.window)
+                    it == POPULAR -> repository.getPopularTvShows(1)
+                    else -> repository.getFeaturedShows()
                 }
 
                 trendingMap[it] = result

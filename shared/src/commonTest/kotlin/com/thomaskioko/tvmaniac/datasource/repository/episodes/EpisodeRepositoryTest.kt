@@ -4,10 +4,12 @@ import com.thomaskioko.tvmaniac.MockData.getEpisodeEntityList
 import com.thomaskioko.tvmaniac.MockData.getShowSeasonsResponse
 import com.thomaskioko.tvmaniac.MockData.tvSeasonsList
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
-import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
+import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeEntityList
+import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonEntity
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepositoryImpl
+import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.util.runBlocking
 import io.kotest.matchers.shouldNotBe
 import io.mockk.MockKAnnotations
@@ -54,11 +56,14 @@ class EpisodeRepositoryTest {
     @Test
     fun givenGetEpisodeByEpisodeIdIsInvoked_DataIsLoadedFromCache() = runBlocking {
         val episodeNumber = 2534997
-        every { episodesCache.getEpisodeByEpisodeId(episodeNumber) } returns getEpisodeEntityList().first()
+        every {
+            episodesCache.getEpisodeByEpisodeId(episodeNumber)
+                .toEpisodeEntity()
+        } returns getEpisodeEntityList().first()
 
         val result = repository.getEpisodeByEpisodeId(episodeNumber)
 
-        result shouldNotBe emptyList<EpisodeEntity>()
+        result shouldNotBe emptyList<Episode>()
 
         verify { episodesCache.getEpisodeByEpisodeId(episodeNumber) }
     }
@@ -66,11 +71,11 @@ class EpisodeRepositoryTest {
 
     @Test
     fun givenDataIsCached_thenGetEpisodesBySeasonIdDataIsLoadedFromCache() = runBlocking {
-        every { episodesCache.getEpisodesBySeasonId(seasonId) } returns getEpisodeEntityList()
+        every { episodesCache.getEpisodesBySeasonId(seasonId).toEpisodeEntityList() } returns getEpisodeEntityList()
 
         val result = repository.getEpisodesBySeasonId(showId, seasonId, 1)
 
-        result shouldNotBe emptyList<EpisodeEntity>()
+        result shouldNotBe emptyList<Episode>()
 
         verify(exactly = 0) {
             runBlocking { apiService.getSeasonDetails(seasonId, 1) }
@@ -85,7 +90,7 @@ class EpisodeRepositoryTest {
         runBlocking {
 
             coEvery { apiService.getSeasonDetails(showId, 1) } answers { getShowSeasonsResponse() }
-            every { seasonCache.getSeasonBySeasonId(seasonId) } returns tvSeasonsList.first()
+            every { seasonCache.getSeasonBySeasonId(seasonId).toSeasonEntity() } returns tvSeasonsList.first()
 
             repository.getEpisodesBySeasonId(showId, seasonId, 1)
 

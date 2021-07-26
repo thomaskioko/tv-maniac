@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.interactor
 
-import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
+import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.error
@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.flow
 
 class EpisodesInteractor constructor(
     private val repository: EpisodeRepository,
-) : Interactor<EpisodeQuery, List<EpisodeEntity>>() {
+) : Interactor<EpisodeQuery, List<Episode>>() {
 
-    override fun run(params: EpisodeQuery): Flow<DomainResultState<List<EpisodeEntity>>> = flow {
+    override fun run(params: EpisodeQuery): Flow<DomainResultState<List<Episode>>> = flow {
         emit(loading())
 
         val result = repository.getEpisodesBySeasonId(

@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.datasource.repository.seasons
 
-import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
-import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonsEntityList
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
+import com.thomaskioko.tvmaniac.presentation.model.Season
 
 class SeasonsRepositoryImpl(
     private val apiService: TvShowsService,
@@ -13,14 +13,16 @@ class SeasonsRepositoryImpl(
 ) : SeasonsRepository {
 
 
-    override suspend fun getSeasonListByTvShowId(tvShowId: Int): List<SeasonsEntity> {
+    override suspend fun getSeasonListByTvShowId(tvShowId: Int): List<Season> {
         return if (seasonCache.getSeasonsByTvShowId(tvShowId).isEmpty()) {
 
             updateTvShowsDetails(tvShowId)
 
             seasonCache.getSeasonsByTvShowId(tvShowId)
+                .toSeasonsEntityList()
         } else {
             seasonCache.getSeasonsByTvShowId(tvShowId)
+                .toSeasonsEntityList()
         }
     }
 

@@ -3,9 +3,9 @@ package com.thomaskioko.tvmaniac.ui.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
-import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.model.Episode
+import com.thomaskioko.tvmaniac.presentation.model.Season
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
@@ -36,7 +36,7 @@ class ShowDetailsViewModel @Inject constructor(
 
     private val showId: Int = savedStateHandle.get("tvShowId")!!
 
-    private val episodes = MutableStateFlow(emptyList<EpisodeEntity>())
+    private val episodes = MutableStateFlow(emptyList<Episode>())
 
     private val viewModelJob = SupervisorJob()
     val ioScope = CoroutineScope(ioDispatcher + viewModelJob)
@@ -102,7 +102,7 @@ internal fun DomainResultState<TvShow>.tvShowReducer(): ShowDetailViewState {
     }
 }
 
-internal fun DomainResultState<List<SeasonsEntity>>.seasonReducer(): ShowDetailViewState {
+internal fun DomainResultState<List<Season>>.seasonReducer(): ShowDetailViewState {
     return when (this) {
         is DomainResultState.Error -> ShowDetailViewState(
             isLoading = false,
@@ -127,8 +127,8 @@ data class ShowDetailViewState(
     val isLoading: Boolean = false,
     val errorMessage: String = "",
     val tvShow: TvShow = TvShow.EMPTY_SHOW,
-    val tvSeasons: List<SeasonsEntity> = emptyList(),
-    val seasonEpisodes: List<EpisodeEntity> = emptyList(),
+    val tvSeasons: List<Season> = emptyList(),
+    val seasonEpisodes: List<Episode> = emptyList(),
 ) {
     companion object {
         val Empty = ShowDetailViewState()
@@ -137,5 +137,5 @@ data class ShowDetailViewState(
 
 sealed class UiEffect
 data class OpenEpisodeUiEffect(
-    val episodeList: List<EpisodeEntity> = emptyList()
+    val episodeList: List<Episode> = emptyList()
 ) : UiEffect()

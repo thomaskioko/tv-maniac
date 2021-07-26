@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.datasource.repository.tvshow
 
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
@@ -10,7 +9,9 @@ import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.POPULAR_TV_SHOWS
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.TOP_RATED_TV_SHOWS
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowEntity
+import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowsEntityList
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 
 class TvShowsRepositoryImpl(
     private val apiService: TvShowsService,
@@ -26,9 +27,11 @@ class TvShowsRepositoryImpl(
 
             val entityList = apiService.getPopularShows(page).results
                 .map { it.toTvShowEntity() }
-                .map { it.copy(
-                    showCategory = POPULAR_TV_SHOWS
-                ) }
+                .map {
+                    it.copy(
+                        showCategory = POPULAR_TV_SHOWS
+                    )
+                }
 
             cache.insert(entityList)
 
@@ -43,9 +46,11 @@ class TvShowsRepositoryImpl(
 
             apiService.getTopRatedShows(page).results
                 .map { it.toTvShowEntity() }
-                .map { it.copy(
-                    showCategory = POPULAR_TV_SHOWS
-                ) }
+                .map {
+                    it.copy(
+                        showCategory = POPULAR_TV_SHOWS
+                    )
+                }
                 .map { cache.insert(it) }
 
             getShowsByCategory(TOP_RATED_TV_SHOWS)
@@ -88,9 +93,9 @@ class TvShowsRepositoryImpl(
                 }
                 .map { cache.insert(it) }
 
-            cache.getFeaturedTvShows(FEATURED, WEEK)
+            cache.getFeaturedTvShows(FEATURED, WEEK).toTvShowsEntityList()
         } else {
-            cache.getFeaturedTvShows(FEATURED, WEEK)
+            cache.getFeaturedTvShows(FEATURED, WEEK).toTvShowsEntityList()
         }
     }
 
@@ -99,6 +104,7 @@ class TvShowsRepositoryImpl(
         timeWindow: TimeWindow
     ): List<TvShow> {
         return cache.getTvShows(category, timeWindow)
+            .toTvShowsEntityList()
     }
 
     private fun getShowsByCategory(category: TvShowCategory): List<TvShow> =

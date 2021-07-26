@@ -1,16 +1,16 @@
 package com.thomaskioko.tvmaniac.datasource.cache.db.adapter
 
 import com.squareup.sqldelight.ColumnAdapter
-import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
+import com.thomaskioko.tvmaniac.presentation.model.Episode
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-val episodeListAdapter = object : ColumnAdapter<List<EpisodeEntity>, String> {
+val episodeListAdapter = object : ColumnAdapter<List<Episode>, String> {
 
-    override fun encode(value: List<EpisodeEntity>) = Json.encodeToString(value)
+    override fun encode(value: List<Episode>) = Json.encodeToString(value)
 
-    override fun decode(databaseValue: String): List<EpisodeEntity> =
+    override fun decode(databaseValue: String): List<Episode> =
         if (databaseValue.isEmpty()) {
             listOf()
         } else {

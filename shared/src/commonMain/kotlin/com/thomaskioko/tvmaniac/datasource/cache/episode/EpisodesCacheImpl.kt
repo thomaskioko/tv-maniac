@@ -1,9 +1,8 @@
 package com.thomaskioko.tvmaniac.datasource.cache.episode
 
+import com.thomaskioko.tvmaniac.datasource.cache.Episode
+import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
-import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
-import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeEntity
-import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeEntityList
 
 class EpisodesCacheImpl(
     private val database: TvManiacDatabase
@@ -11,7 +10,7 @@ class EpisodesCacheImpl(
 
     private val episodeQueries get() = database.episodeQueries
 
-    override fun insert(entity: EpisodeEntity) {
+    override fun insert(entity: com.thomaskioko.tvmaniac.presentation.model.Episode) {
         episodeQueries.insertOrReplace(
             id = entity.id.toLong(),
             season_id = entity.seasonId.toLong(),
@@ -25,22 +24,20 @@ class EpisodesCacheImpl(
         )
     }
 
-    override fun insert(entityList: List<EpisodeEntity>) {
-        entityList.map { insert(it) }
+    override fun insert(list: List<com.thomaskioko.tvmaniac.presentation.model.Episode>) {
+        list.map { insert(it) }
     }
 
-    override fun getEpisodeByEpisodeId(episodeId: Int): EpisodeEntity {
+    override fun getEpisodeByEpisodeId(episodeId: Int): Episode {
         return episodeQueries.episodeById(
             id = episodeId.toLong()
         ).executeAsOne()
-            .toEpisodeEntity()
     }
 
-    override fun getEpisodesBySeasonId(seasonId: Int): List<EpisodeEntity> {
+    override fun getEpisodesBySeasonId(seasonId: Int): List<EpisodesBySeasonId> {
         return episodeQueries.episodesBySeasonId(
             season_id = seasonId.toLong()
         ).executeAsList()
-            .toEpisodeEntityList()
     }
 
 
