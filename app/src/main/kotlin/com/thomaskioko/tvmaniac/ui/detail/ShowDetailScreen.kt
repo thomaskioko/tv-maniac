@@ -133,7 +133,7 @@ private fun TvShowDetailsScrollingContent(
             )
         }
 
-        item { TvShowSeasons(detailUiState.tvSeasons, onSeasonSelected) }
+        item { if(detailUiState.tvSeasons.isNotEmpty()) TvShowSeasons(detailUiState.tvSeasons, onSeasonSelected) }
 
         item { SeasonEpisodeTabs(detailUiState) }
 
@@ -306,8 +306,7 @@ fun TvShowSeasons(
         )
     }
 
-    val selectorText = if (tvSeasons.isNotEmpty()) tvSeasons.first().name else "Select Season"
-    var selectedSeasonText by remember { mutableStateOf(selectorText) }
+    var selectedSeasonText by remember { mutableStateOf(tvSeasons.first().name) }
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         TextButton(
@@ -376,7 +375,7 @@ fun SeasonEpisodeTabs(viewState: ShowDetailViewState) {
         HorizontalPager(state = pagerState) { page ->
             when (tabs[page]) {
                 TabItem.Casts -> SeasonCastScreen()
-                TabItem.Episodes -> EpisodesScreen(viewState.episodeList)
+                TabItem.Episodes -> EpisodesScreen(viewState.episodesViewState)
             }
         }
     }

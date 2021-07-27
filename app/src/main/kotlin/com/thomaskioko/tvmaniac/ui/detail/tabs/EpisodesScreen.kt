@@ -22,22 +22,29 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.R
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
+import com.thomaskioko.tvmaniac.compose.components.LoadingView
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.presentation.model.Episode
+import com.thomaskioko.tvmaniac.ui.detail.EpisodesViewState
 
 @Composable
 fun EpisodesScreen(
-    seasonEpisodes: List<Episode>,
+    episodeViewState: EpisodesViewState,
 ) {
-    Column (
+
+    Column(
         modifier = Modifier.fillMaxWidth()
-            ){
-        seasonEpisodes.forEach { episode ->
+    ) {
+        if (episodeViewState.isLoading) {
+            LoadingView()
+        }
+
+        episodeViewState.episodeList.forEach { episode ->
             EpisodeItem(episode)
             ColumnSpacer(16)
         }
-
     }
+
 }
 
 @Composable
