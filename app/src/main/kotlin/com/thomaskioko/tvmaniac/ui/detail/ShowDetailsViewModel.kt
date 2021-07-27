@@ -3,11 +3,9 @@ package com.thomaskioko.tvmaniac.ui.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
-import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
-import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
@@ -36,7 +34,7 @@ class ShowDetailsViewModel @Inject constructor(
 
     private val showId: Int = savedStateHandle.get("tvShowId")!!
 
-    private val episodes = MutableStateFlow(emptyList<Episode>())
+    private val episodes = MutableStateFlow(EpisodesViewState())
 
     private val viewModelJob = SupervisorJob()
     val ioScope = CoroutineScope(ioDispatcher + viewModelJob)
@@ -50,7 +48,7 @@ class ShowDetailsViewModel @Inject constructor(
             isLoading = showDetails.tvShowReducer().isLoading,
             tvShow = showDetails.tvShowReducer().tvShow,
             tvSeasons = showSeasons.seasonReducer().tvSeasons,
-            episodeList = episodes
+            episodesViewState = episodes
         )
     }
 
@@ -70,12 +68,20 @@ class ShowDetailsViewModel @Inject constructor(
             .onEach {
                 when (it) {
                     is DomainResultState.Error -> {
-                        //TODO:: Pass the error down
+                        episodes.value = EpisodesViewState(
+                            isLoading = false,
+                            errorMessage = it.message
+                        )
                     }
                     is DomainResultState.Loading -> {
-                        //TODO:: Pass state down
+                        episodes.value = EpisodesViewState(isLoading = true)
                     }
-                    is DomainResultState.Success -> episodes.value = it.data
+                    is DomainResultState.Success -> {
+                        episodes.value = EpisodesViewState(
+                            isLoading = false,
+                            episodeList = it.data
+                        )
+                    }
                 }
 
             }.launchIn(ioScope)
@@ -116,21 +122,3 @@ internal fun DomainResultState<List<Season>>.seasonReducer(): ShowDetailViewStat
     }
 }
 
-sealed class ShowDetailAction {
-    data class SeasonSelected(
-        val query: EpisodeQuery
-    ) : ShowDetailAction()
-}
-
-
-data class ShowDetailViewState(
-    val isLoading: Boolean = false,
-    val errorMessage: String = "",
-    val tvShow: TvShow = TvShow.EMPTY_SHOW,
-    val tvSeasons: List<Season> = emptyList(),
-    val episodeList: List<Episode> = emptyList(),
-) {
-    companion object {
-        val Empty = ShowDetailViewState()
-    }
-}
