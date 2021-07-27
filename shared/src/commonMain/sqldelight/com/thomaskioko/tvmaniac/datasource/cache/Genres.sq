@@ -1,0 +1,17 @@
+CREATE TABLE genre (
+id integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+name TEXT NOT NULL
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO genre(
+id,
+name
+) VALUES (?,?);
+
+selectAll:
+SELECT * FROM genre;
+
+selectById:
+SELECT * FROM genre
+WHERE id = ?;
