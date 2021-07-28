@@ -1,9 +1,11 @@
 package com.thomaskioko.tvmaniac.injection
 
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
+import com.thomaskioko.tvmaniac.datasource.repository.genre.GenreRepository
 import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepository
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
+import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.GetTrendingShowsInteractor
 import com.thomaskioko.tvmaniac.interactor.PopularShowsInteractor
@@ -47,4 +49,10 @@ object InteractorsModule {
     fun provideGetShowInteractor(
         repository: TvShowsRepository
     ): GetShowInteractor = GetShowInteractor(repository)
+
+    @Singleton
+    @Provides
+    fun provideGenreRepository(
+        repository: GenreRepository
+    ): GetGenresInteractor = GetGenresInteractor(repository)
 }
