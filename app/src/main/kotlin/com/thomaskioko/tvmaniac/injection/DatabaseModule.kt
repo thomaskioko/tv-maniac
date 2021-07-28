@@ -12,6 +12,8 @@ import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCacheImpl
+import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
+import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCacheImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -57,5 +59,11 @@ object DatabaseModule {
     @Provides
     fun provideGenreCache(database: TvManiacDatabase): GenreCache {
         return GenreCacheImpl(database)
+    }
+
+    @Singleton
+    @Provides
+    fun provideTrailerCache(database: TvManiacDatabase): TrailerCache {
+        return TrailerCacheImpl(database)
     }
 }
