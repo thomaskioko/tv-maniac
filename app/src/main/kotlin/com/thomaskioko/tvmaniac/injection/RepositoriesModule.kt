@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
 import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
+import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepositoryImpl
@@ -11,6 +12,8 @@ import com.thomaskioko.tvmaniac.datasource.repository.genre.GenreRepository
 import com.thomaskioko.tvmaniac.datasource.repository.genre.GenreRepositoryImpl
 import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepository
 import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepositoryImpl
+import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepository
+import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepositoryImpl
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepositoryImpl
 import dagger.Module
@@ -60,4 +63,11 @@ object RepositoriesModule {
         episodesCache,
         seasonCache
     )
+
+    @Singleton
+    @Provides
+    fun provideTrailerRepository(
+        tvShowsService: TvShowsService,
+        cache: TrailerCache
+    ): TrailerRepository = TrailerRepositoryImpl(tvShowsService, cache)
 }
