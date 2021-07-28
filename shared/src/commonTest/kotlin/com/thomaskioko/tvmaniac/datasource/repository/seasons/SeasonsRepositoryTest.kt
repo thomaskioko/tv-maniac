@@ -79,9 +79,10 @@ class SeasonsRepositoryTest {
             verify {
                 runBlocking { apiService.getTvShowDetails(84958) }
 
-                tvShowCache.updateSeasonIds(
+                tvShowCache.updateShowDetails(
                     showId = 84958,
-                    seasonIds = listOf(114355)
+                    seasonIds = listOf(114355),
+                    showStatus = "Returning  Series"
                 )
                 seasonCache.insert(seasonList)
                 seasonCache.getSeasonsByTvShowId(84958)

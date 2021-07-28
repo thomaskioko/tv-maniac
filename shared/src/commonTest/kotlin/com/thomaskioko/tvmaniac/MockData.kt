@@ -414,7 +414,9 @@ object MockData {
             year = null,
             time_window = null,
             season_ids = null,
-            episode_ids = null
+            episode_ids = null,
+            status = null,
+            popularity = null
         ),
         SelectSeasonsByShowId(
             id = 77680,
@@ -437,7 +439,9 @@ object MockData {
             episode_ids = null,
             title = null,
             poster_image_url = null,
-            backdrop_image_url = null
+            backdrop_image_url = null,
+            status = null,
+            popularity = null
         )
     )
 
@@ -497,7 +501,9 @@ object MockData {
         show_category = TvShowCategory.POPULAR_TV_SHOWS,
         year = "2019",
         season_ids = null,
-        time_window = null
+        time_window = null,
+        status = "Ended",
+        popularity = 24.4848
     )
 
     fun makeShowList() = listOf(
@@ -519,7 +525,9 @@ object MockData {
             show_category = TvShowCategory.POPULAR_TV_SHOWS,
             year = "2019",
             season_ids = null,
-            time_window = null
+            time_window = null,
+            status = "Ended",
+            popularity = 24.4848
         ),
         Show(
             id = 126280,
@@ -536,7 +544,9 @@ object MockData {
             show_category = TvShowCategory.POPULAR_TV_SHOWS,
             year = "2019",
             season_ids = null,
-            time_window = null
+            time_window = null,
+            status = "Ended",
+            popularity = 24.4848
         ),
     )
 }
