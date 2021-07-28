@@ -9,4 +9,10 @@
     <string name="cd_show_poster_image">Poster image for %s</string>
     <string name="details_episodes">Episodes</string>
     <string name="details_cast">Casts</string>
+    <string name="btn_watchlist">Add to Watchlist</string>
+    <string name="btn_trailer">Add to Watchlist</string>
+
+    <string name="tab_episodes">Episodes</string>
+    <string name="tab_trailer">Trailers</string>
+    <string name="tab_casts">Casts</string>
 </resources>
