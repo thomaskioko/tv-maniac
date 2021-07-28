@@ -53,7 +53,8 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         tvShowQueries.updateTvShow(
             id = 84958,
-            season_ids = listOf(114355, 77680)
+            season_ids = listOf(114355, 77680),
+            status = "Returning  Series"
         )
 
         val seasonIds = tvShowQueries.selectByShowId(tvShow.id.toLong())
@@ -76,7 +77,8 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         tvShowQueries.updateTvShow(
             id = tvShow.id.toLong(),
-            season_ids = listOf(2534997, 2927202)
+            season_ids = listOf(2534997, 2927202),
+            status = "Returning  Series"
         )
 
         val seasonsIds = tvShowQueries.selectByShowId(tvShow.id.toLong())
@@ -115,7 +117,9 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             genre_ids = genreIds,
             show_category = showCategory,
             time_window = timeWindow,
-            year = year
+            year = year,
+            status = status,
+            popularity = 0.0
         )
     }
 
