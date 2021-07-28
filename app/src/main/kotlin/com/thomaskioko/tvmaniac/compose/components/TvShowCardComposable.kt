@@ -8,12 +8,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Card
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
@@ -53,24 +49,6 @@ fun TvShowCard(
             )
         }
 
-        ColumnSpacer(8)
-
-        Text(
-            text = tvShow.title,
-            style = MaterialTheme.typography.body2,
-            maxLines = 2,
-            modifier = Modifier.padding(horizontal = 8.dp)
-        )
-
-        ColumnSpacer(4)
-
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            Text(
-                text = tvShow.votes.toString(),
-                style = MaterialTheme.typography.overline,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-        }
         Spacer(Modifier.height(8.dp))
     }
 
