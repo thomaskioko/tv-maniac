@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.ui.detail
 
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.presentation.model.Episode
+import com.thomaskioko.tvmaniac.presentation.model.GenreModel
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 
@@ -17,7 +18,7 @@ data class ShowDetailViewState(
     val errorMessage: String = "",
     val tvShow: TvShow = TvShow.EMPTY_SHOW,
     val tvSeasons: List<Season> = emptyList(),
-    val episodeList: List<Episode> = emptyList(),
+    val genreList: List<GenreModel> = emptyList(),
     val episodesViewState: EpisodesViewState = EpisodesViewState()
 ) {
     companion object {
