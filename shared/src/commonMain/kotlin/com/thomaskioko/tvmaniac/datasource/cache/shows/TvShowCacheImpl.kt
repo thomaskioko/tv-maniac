@@ -23,7 +23,9 @@ class TvShowCacheImpl(
                 genre_ids = show.genre_ids,
                 show_category = show.show_category,
                 time_window = show.time_window,
-                year = show.year
+                year = show.year,
+                status = show.status,
+                popularity = show.popularity
             )
         }
     }
@@ -58,10 +60,11 @@ class TvShowCacheImpl(
         ).executeAsList()
     }
 
-    override fun updateSeasonIds(showId: Int, seasonIds: List<Int>) {
+    override fun updateShowDetails(showId: Int, showStatus: String, seasonIds: List<Int>) {
         database.tvShowQueries.updateTvShow(
             id = showId.toLong(),
-            season_ids = seasonIds
+            season_ids = seasonIds,
+            status = showStatus
         )
     }
 

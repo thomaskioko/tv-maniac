@@ -18,7 +18,7 @@ interface TvShowCache {
 
     fun getFeaturedTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<Show>
 
-    fun updateSeasonIds(showId: Int, seasonIds: List<Int>)
+    fun updateShowDetails(showId: Int, showStatus: String, seasonIds: List<Int>)
 
     fun deleteTvShows()
 }

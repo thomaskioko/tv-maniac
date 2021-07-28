@@ -29,15 +29,19 @@ class SeasonsRepositoryImpl(
 
     override suspend fun updateTvShowsDetails(tvShowId: Int) {
 
-        val seasonsEntityList = apiService.getTvShowDetails(tvShowId)
-            .toSeasonCacheList()
+        val apiResponse = apiService.getTvShowDetails(tvShowId)
+        val seasonsEntityList = apiResponse.toSeasonCacheList()
 
         val seasonIds = mutableListOf<Int>()
         for (season in seasonsEntityList) {
             seasonIds.add(season.id.toInt())
         }
 
-        tvShowCache.updateSeasonIds(tvShowId, seasonIds)
+        tvShowCache.updateShowDetails(
+            showId = tvShowId,
+            showStatus = apiResponse.status,
+            seasonIds = seasonIds
+        )
 
         //Insert Seasons
         seasonCache.insert(seasonsEntityList)

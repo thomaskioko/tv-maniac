@@ -13,10 +13,12 @@ poster_image_url TEXT NOT NULL,
 backdrop_image_url TEXT NOT NULL,
 votes INTEGER NOT NULL,
 vote_average REAL NOT NULL,
+status TEXT NOT NULL,
+popularity REAL NOT NULL,
 genre_ids TEXT AS List<Int> NOT NULL,
+season_ids TEXT AS List<Int>,
 show_category TEXT AS TvShowCategory,
-time_window TEXT AS TimeWindow,
-season_ids TEXT AS List<Int>
+time_window TEXT AS TimeWindow
 );
 
 insertOrReplace:
@@ -32,12 +34,14 @@ votes,
 vote_average,
 genre_ids,
 show_category,
-time_window
-)VALUES(?,?,?,?,?,?,?,?,?,?, ?,?);
+time_window,
+status,
+popularity
+)VALUES(?,?,?,?,?,?,?,?,?,?, ?,?, ?, ?);
 
 updateTvShow:
 UPDATE show
-SET season_ids = ?
+SET season_ids = ?, status = ?
 WHERE id = ?;
 
 selectByShowId:
@@ -54,7 +58,7 @@ SELECT * FROM show;
 selectFeatured:
 SELECT * FROM show
 WHERE show_category = ? AND time_window = ?
-ORDER BY vote_average DESC, RANDOM() LIMIT 5;
+ORDER BY popularity DESC, RANDOM() LIMIT 5;
 
 deleteAll:
 DELETE FROM show;
