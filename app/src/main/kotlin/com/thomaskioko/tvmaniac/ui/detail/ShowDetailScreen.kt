@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
@@ -42,6 +44,7 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -52,12 +55,14 @@ import com.thomaskioko.tvmaniac.R
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.LoadingView
+import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.components.TabItem
 import com.thomaskioko.tvmaniac.compose.components.Tabs
 import com.thomaskioko.tvmaniac.compose.components.TvManiacScaffold
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.core.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
+import com.thomaskioko.tvmaniac.presentation.model.GenreModel
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.ui.detail.tabs.EpisodesScreen
@@ -133,7 +138,12 @@ private fun TvShowDetailsScrollingContent(
             )
         }
 
-        item { if(detailUiState.tvSeasons.isNotEmpty()) TvShowSeasons(detailUiState.tvSeasons, onSeasonSelected) }
+        item {
+            if (detailUiState.tvSeasons.isNotEmpty()) TvShowSeasons(
+                detailUiState.tvSeasons,
+                onSeasonSelected
+            )
+        }
 
         item { SeasonEpisodeTabs(detailUiState) }
 
@@ -251,6 +261,7 @@ fun TvShowInfo(detailUiState: ShowDetailViewState) {
     TvShowMetadata(
         show = show,
         seasons = detailUiState.tvSeasons,
+        genreList = detailUiState.genreList,
         modifier = Modifier.padding(horizontal = 16.dp)
     )
 
@@ -258,7 +269,12 @@ fun TvShowInfo(detailUiState: ShowDetailViewState) {
 }
 
 @Composable
-fun TvShowMetadata(show: TvShow, modifier: Modifier, seasons: List<Season>) {
+fun TvShowMetadata(
+    show: TvShow,
+    seasons: List<Season>,
+    genreList: List<GenreModel>,
+    modifier: Modifier
+) {
     val resources = LocalContext.current.resources
     val divider = "  •  "
     val text = buildAnnotatedString {
@@ -284,6 +300,44 @@ fun TvShowMetadata(show: TvShow, modifier: Modifier, seasons: List<Season>) {
             style = MaterialTheme.typography.body2,
             modifier = modifier
         )
+    }
+
+    ColumnSpacer(8)
+
+    val result = genreList.filter { genre ->
+        show.genreIds.any { id -> genre.id == id }
+    }
+
+    LazyRow(
+        modifier = Modifier.padding(horizontal = 16.dp)
+    ) {
+        items(result) { item ->
+            GenreText(item.name)
+        }
+    }
+
+}
+
+@Composable
+private fun GenreText(
+    genreText: String,
+) {
+
+    RowSpacer(4)
+
+    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+        TextButton(
+            colors = ButtonDefaults.buttonColors(
+                contentColor = MaterialTheme.colors.onBackground,
+                backgroundColor = Color(0xFF414141)
+            ),
+            onClick = {}
+        ){
+            Text(
+                text = genreText,
+                style = MaterialTheme.typography.body2,
+            )
+        }
     }
 }
 
@@ -318,7 +372,9 @@ fun TvShowSeasons(
         ) {
             Text(
                 text = selectedSeasonText,
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.body1,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,

@@ -4,11 +4,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
+import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
+import com.thomaskioko.tvmaniac.presentation.model.GenreModel
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
+import com.thomaskioko.tvmaniac.util.invoke
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -26,6 +29,7 @@ class ShowDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getShow: GetShowInteractor,
     seasonsInteractor: SeasonsInteractor,
+    genresInteractor: GetGenresInteractor,
     private val episodeInteractor: EpisodesInteractor,
     @DefaultDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
@@ -40,15 +44,17 @@ class ShowDetailsViewModel @Inject constructor(
     val ioScope = CoroutineScope(ioDispatcher + viewModelJob)
 
     val uiStateFlow = combine(
-        getShow.invoke(showId).distinctUntilChanged(),
-        seasonsInteractor.invoke(showId).distinctUntilChanged(),
+        getShow(showId).distinctUntilChanged(),
+        seasonsInteractor(showId).distinctUntilChanged(),
+        genresInteractor().distinctUntilChanged(),
         episodes
-    ) { showDetails, showSeasons, episodes ->
+    ) { showDetails, showSeasons, genreList, episodesState ->
         ShowDetailViewState(
             isLoading = showDetails.tvShowReducer().isLoading,
             tvShow = showDetails.tvShowReducer().tvShow,
             tvSeasons = showSeasons.seasonReducer().tvSeasons,
-            episodesViewState = episodes
+            genreList = genreList.genreReducer().genreList,
+            episodesViewState = episodesState
         )
     }
 
@@ -118,6 +124,20 @@ internal fun DomainResultState<List<Season>>.seasonReducer(): ShowDetailViewStat
         is DomainResultState.Success -> ShowDetailViewState(
             isLoading = false,
             tvSeasons = data
+        )
+    }
+}
+
+internal fun DomainResultState<List<GenreModel>>.genreReducer(): ShowDetailViewState {
+    return when (this) {
+        is DomainResultState.Error -> ShowDetailViewState(
+            isLoading = false,
+            errorMessage = message
+        )
+        is DomainResultState.Loading -> ShowDetailViewState(isLoading = true)
+        is DomainResultState.Success -> ShowDetailViewState(
+            isLoading = false,
+            genreList = data
         )
     }
 }
