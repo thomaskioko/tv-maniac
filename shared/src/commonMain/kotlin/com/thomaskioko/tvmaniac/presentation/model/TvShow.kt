@@ -11,6 +11,7 @@ data class TvShow(
     val posterImageUrl: String = "",
     val backdropImageUrl: String = "",
     val year : String = "",
+    val status : String = "",
     val votes: Int = 0,
     val averageVotes: Double = 0.0,
     val genreIds: List<Int> = listOf(),

@@ -24,7 +24,9 @@ fun ShowResponse.toShow(): Show {
         year = formatDate(firstAirDate),
         show_category = null,
         time_window = null,
-        season_ids = null
+        season_ids = null,
+        status = "",
+        popularity = popularity
     )
 }
 
@@ -68,6 +70,7 @@ fun Show.toTvShowsEntity(): TvShow {
         averageVotes = vote_average,
         genreIds = genre_ids,
         showCategory = show_category ?: POPULAR_TV_SHOWS,
-        year = year
+        year = year,
+        status = status
     )
 }
