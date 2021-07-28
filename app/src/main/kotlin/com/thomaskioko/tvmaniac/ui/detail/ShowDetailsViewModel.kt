@@ -6,9 +6,11 @@ import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
+import com.thomaskioko.tvmaniac.interactor.GetTrailersInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.presentation.model.GenreModel
 import com.thomaskioko.tvmaniac.presentation.model.Season
+import com.thomaskioko.tvmaniac.presentation.model.TrailerModel
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.invoke
@@ -30,6 +32,7 @@ class ShowDetailsViewModel @Inject constructor(
     getShow: GetShowInteractor,
     seasonsInteractor: SeasonsInteractor,
     genresInteractor: GetGenresInteractor,
+    trailersInteractor: GetTrailersInteractor,
     private val episodeInteractor: EpisodesInteractor,
     @DefaultDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
@@ -47,13 +50,15 @@ class ShowDetailsViewModel @Inject constructor(
         getShow(showId).distinctUntilChanged(),
         seasonsInteractor(showId).distinctUntilChanged(),
         genresInteractor().distinctUntilChanged(),
+        trailersInteractor(showId).distinctUntilChanged(),
         episodes
-    ) { showDetails, showSeasons, genreList, episodesState ->
+    ) { showDetails, showSeasons, genreList, trailerState, episodesState, ->
         ShowDetailViewState(
             isLoading = showDetails.tvShowReducer().isLoading,
             tvShow = showDetails.tvShowReducer().tvShow,
             tvSeasons = showSeasons.seasonReducer().tvSeasons,
             genreList = genreList.genreReducer().genreList,
+            trailerViewState = trailerState.trailersReducer(),
             episodesViewState = episodesState
         )
     }
@@ -138,6 +143,20 @@ internal fun DomainResultState<List<GenreModel>>.genreReducer(): ShowDetailViewS
         is DomainResultState.Success -> ShowDetailViewState(
             isLoading = false,
             genreList = data
+        )
+    }
+}
+
+internal fun DomainResultState<List<TrailerModel>>.trailersReducer(): TrailersViewState {
+    return when (this) {
+        is DomainResultState.Error -> TrailersViewState(
+            isLoading = false,
+            errorMessage = message
+        )
+        is DomainResultState.Loading -> TrailersViewState(isLoading = true)
+        is DomainResultState.Success -> TrailersViewState(
+            isLoading = false,
+            trailerList = data
         )
     }
 }
