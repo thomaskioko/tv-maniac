@@ -21,9 +21,13 @@ class SeasonsRepositoryImpl(
 
             seasonCache.getSeasonsByTvShowId(tvShowId)
                 .toSeasonsEntityList()
+                .filter { it.seasonNumber != 0 }
+                .sortedBy { it.seasonNumber }
         } else {
             seasonCache.getSeasonsByTvShowId(tvShowId)
                 .toSeasonsEntityList()
+                .filter { it.seasonNumber != 0 }
+                .sortedBy { it.seasonNumber }
         }
     }
 
