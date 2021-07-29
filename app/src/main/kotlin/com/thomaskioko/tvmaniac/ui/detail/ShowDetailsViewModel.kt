@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.ui.detail
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
@@ -16,13 +17,11 @@ import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.invoke
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,9 +42,6 @@ class ShowDetailsViewModel @Inject constructor(
 
     private val episodes = MutableStateFlow(EpisodesViewState())
 
-    private val viewModelJob = SupervisorJob()
-    val ioScope = CoroutineScope(ioDispatcher + viewModelJob)
-
     val uiStateFlow = combine(
         getShow(showId).distinctUntilChanged(),
         seasonsInteractor(showId).distinctUntilChanged(),
@@ -65,18 +61,18 @@ class ShowDetailsViewModel @Inject constructor(
 
 
     fun submitAction(action: ShowDetailAction) {
-        ioScope.launch {
+        viewModelScope.launch {
             when (action) {
                 is ShowDetailAction.SeasonSelected -> fetchSeasonEpisodes(action)
             }
         }
     }
 
-    private fun fetchSeasonEpisodes(
+    private suspend fun fetchSeasonEpisodes(
         action: ShowDetailAction.SeasonSelected,
     ) {
         episodeInteractor.invoke(action.query)
-            .onEach {
+            .collect {
                 when (it) {
                     is DomainResultState.Error -> {
                         episodes.value = EpisodesViewState(
@@ -95,14 +91,8 @@ class ShowDetailsViewModel @Inject constructor(
                     }
                 }
 
-            }.launchIn(ioScope)
+            }
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel()
-    }
-
 }
 
 internal fun DomainResultState<TvShow>.tvShowReducer(): ShowDetailViewState {
