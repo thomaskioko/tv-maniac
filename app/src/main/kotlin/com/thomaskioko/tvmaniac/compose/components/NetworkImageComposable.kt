@@ -9,8 +9,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.rememberImagePainter
+import coil.load
 import com.flaviofaria.kenburnsview.KenBurnsView
-import com.thomaskioko.tvmaniac.compose.extensions.load
 
 @Composable
 fun NetworkImageComposable(
@@ -32,18 +32,10 @@ fun KenBurnsViewImage(
     imageUrl: String,
     modifier: Modifier
 ){
-    KenBurnsViewWrapper(
-        url = imageUrl,
-        modifier = modifier
-    )
-}
-
-@Composable
-fun KenBurnsViewWrapper(url: String, modifier: Modifier) {
     val context = LocalContext.current
     val kenBuns = remember { KenBurnsView(context) }
 
     AndroidView({ kenBuns }, modifier = modifier) {
-        it.load(url = url)
+        it.load(imageUrl)
     }
 }
