@@ -129,7 +129,7 @@ private fun ShowSeasonsTabs(
                 ChoiceChipContent(
                     text = category.name,
                     selected = index == selectedIndex,
-                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 16.dp)
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
                 )
             }
         }
