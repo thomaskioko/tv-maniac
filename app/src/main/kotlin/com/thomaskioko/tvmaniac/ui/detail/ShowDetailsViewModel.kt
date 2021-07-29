@@ -2,24 +2,26 @@ package com.thomaskioko.tvmaniac.ui.detail
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
-import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
-import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
+import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
+import com.thomaskioko.tvmaniac.interactor.GetTrailersInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
+import com.thomaskioko.tvmaniac.presentation.model.GenreModel
+import com.thomaskioko.tvmaniac.presentation.model.Season
+import com.thomaskioko.tvmaniac.presentation.model.TrailerModel
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
+import com.thomaskioko.tvmaniac.util.invoke
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,6 +30,8 @@ class ShowDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getShow: GetShowInteractor,
     seasonsInteractor: SeasonsInteractor,
+    genresInteractor: GetGenresInteractor,
+    trailersInteractor: GetTrailersInteractor,
     private val episodeInteractor: EpisodesInteractor,
     @DefaultDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
@@ -36,56 +40,59 @@ class ShowDetailsViewModel @Inject constructor(
 
     private val showId: Int = savedStateHandle.get("tvShowId")!!
 
-    private val episodes = MutableStateFlow(emptyList<EpisodeEntity>())
-
-    private val viewModelJob = SupervisorJob()
-    val ioScope = CoroutineScope(ioDispatcher + viewModelJob)
+    private val episodes = MutableStateFlow(EpisodesViewState())
 
     val uiStateFlow = combine(
-        getShow.invoke(showId).distinctUntilChanged(),
-        seasonsInteractor.invoke(showId).distinctUntilChanged(),
+        getShow(showId).distinctUntilChanged(),
+        seasonsInteractor(showId).distinctUntilChanged(),
+        genresInteractor().distinctUntilChanged(),
+        trailersInteractor(showId).distinctUntilChanged(),
         episodes
-    ) { showDetails, showSeasons, episodes ->
+    ) { showDetails, showSeasons, genreList, trailerState, episodesState, ->
         ShowDetailViewState(
             isLoading = showDetails.tvShowReducer().isLoading,
             tvShow = showDetails.tvShowReducer().tvShow,
             tvSeasons = showSeasons.seasonReducer().tvSeasons,
-            seasonEpisodes = episodes
+            genreList = genreList.genreReducer().genreList,
+            trailerViewState = trailerState.trailersReducer(),
+            episodesViewState = episodesState
         )
     }
 
 
     fun submitAction(action: ShowDetailAction) {
-        ioScope.launch {
+        viewModelScope.launch {
             when (action) {
                 is ShowDetailAction.SeasonSelected -> fetchSeasonEpisodes(action)
             }
         }
     }
 
-    private fun fetchSeasonEpisodes(
+    private suspend fun fetchSeasonEpisodes(
         action: ShowDetailAction.SeasonSelected,
     ) {
         episodeInteractor.invoke(action.query)
-            .onEach {
+            .collect {
                 when (it) {
                     is DomainResultState.Error -> {
-                        //TODO:: Pass the error down
+                        episodes.value = EpisodesViewState(
+                            isLoading = false,
+                            errorMessage = it.message
+                        )
                     }
                     is DomainResultState.Loading -> {
-                        //TODO:: Pass state down
+                        episodes.value = EpisodesViewState(isLoading = true)
                     }
-                    is DomainResultState.Success -> episodes.value = it.data
+                    is DomainResultState.Success -> {
+                        episodes.value = EpisodesViewState(
+                            isLoading = false,
+                            episodeList = it.data
+                        )
+                    }
                 }
 
-            }.launchIn(ioScope)
+            }
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel()
-    }
-
 }
 
 internal fun DomainResultState<TvShow>.tvShowReducer(): ShowDetailViewState {
@@ -102,7 +109,7 @@ internal fun DomainResultState<TvShow>.tvShowReducer(): ShowDetailViewState {
     }
 }
 
-internal fun DomainResultState<List<SeasonsEntity>>.seasonReducer(): ShowDetailViewState {
+internal fun DomainResultState<List<Season>>.seasonReducer(): ShowDetailViewState {
     return when (this) {
         is DomainResultState.Error -> ShowDetailViewState(
             isLoading = false,
@@ -116,26 +123,31 @@ internal fun DomainResultState<List<SeasonsEntity>>.seasonReducer(): ShowDetailV
     }
 }
 
-sealed class ShowDetailAction {
-    data class SeasonSelected(
-        val query: EpisodeQuery
-    ) : ShowDetailAction()
-}
-
-
-data class ShowDetailViewState(
-    val isLoading: Boolean = false,
-    val errorMessage: String = "",
-    val tvShow: TvShow = TvShow.EMPTY_SHOW,
-    val tvSeasons: List<SeasonsEntity> = emptyList(),
-    val seasonEpisodes: List<EpisodeEntity> = emptyList(),
-) {
-    companion object {
-        val Empty = ShowDetailViewState()
+internal fun DomainResultState<List<GenreModel>>.genreReducer(): ShowDetailViewState {
+    return when (this) {
+        is DomainResultState.Error -> ShowDetailViewState(
+            isLoading = false,
+            errorMessage = message
+        )
+        is DomainResultState.Loading -> ShowDetailViewState(isLoading = true)
+        is DomainResultState.Success -> ShowDetailViewState(
+            isLoading = false,
+            genreList = data
+        )
     }
 }
 
-sealed class UiEffect
-data class OpenEpisodeUiEffect(
-    val episodeList: List<EpisodeEntity> = emptyList()
-) : UiEffect()
+internal fun DomainResultState<List<TrailerModel>>.trailersReducer(): TrailersViewState {
+    return when (this) {
+        is DomainResultState.Error -> TrailersViewState(
+            isLoading = false,
+            errorMessage = message
+        )
+        is DomainResultState.Loading -> TrailersViewState(isLoading = true)
+        is DomainResultState.Success -> TrailersViewState(
+            isLoading = false,
+            trailerList = data
+        )
+    }
+}
+

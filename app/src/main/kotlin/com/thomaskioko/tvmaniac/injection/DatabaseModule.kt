@@ -1,15 +1,19 @@
 package com.thomaskioko.tvmaniac.injection
 
 import android.content.Context
-import com.thomaskioko.tvmaniac.datasource.cache.db.DriverFactory
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.datasource.cache.db.DriverFactory
 import com.thomaskioko.tvmaniac.datasource.cache.db.TvManiacDatabaseFactory
-import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
-import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCacheImpl
+import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
+import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCacheImpl
+import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
+import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCacheImpl
+import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
+import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCacheImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,5 +53,17 @@ object DatabaseModule {
     @Provides
     fun provideEpisodesCache(database: TvManiacDatabase): EpisodesCache {
         return EpisodesCacheImpl(database)
+    }
+
+    @Singleton
+    @Provides
+    fun provideGenreCache(database: TvManiacDatabase): GenreCache {
+        return GenreCacheImpl(database)
+    }
+
+    @Singleton
+    @Provides
+    fun provideTrailerCache(database: TvManiacDatabase): TrailerCache {
+        return TrailerCacheImpl(database)
     }
 }

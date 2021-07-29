@@ -4,9 +4,13 @@ import com.thomaskioko.stargazer.core.presentation.ViewAction
 import com.thomaskioko.stargazer.core.presentation.ViewState
 import com.thomaskioko.tvmaniac.core.BaseViewModel
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
+import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest.FEATURED
+import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest.POPULAR
+import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest.THIS_WEEK
+import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest.TODAY
 import com.thomaskioko.tvmaniac.interactor.GetTrendingShowsInteractor
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -27,11 +31,7 @@ class DiscoverViewModel @Inject constructor(
     init {
         dispatchAction(
             DiscoverShowsAction.LoadTvShows(
-                listOf(
-                    TrendingDataRequest.FEATURED,
-                    TrendingDataRequest.TODAY,
-                    TrendingDataRequest.THIS_WEEK
-                )
+                listOf(FEATURED, TODAY, THIS_WEEK, POPULAR)
             )
         )
     }

@@ -1,17 +1,18 @@
 package com.thomaskioko.tvmaniac.datasource.cache.seasons
 
-import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
+import com.thomaskioko.tvmaniac.datasource.cache.Tv_season
 
 interface SeasonsCache {
 
-    fun insert(entity: SeasonsEntity)
+    fun insert(tvSeason: Tv_season)
 
-    fun insert(entityList: List<SeasonsEntity>)
+    fun insert(entityList: List<Tv_season>)
 
-    fun getSeasonBySeasonId(seasonId: Int): SeasonsEntity
+    fun getSeasonBySeasonId(seasonId: Int): Tv_season
 
-    fun getSeasonsByTvShowId(tvShowId: Int): List<SeasonsEntity>
+    fun getSeasonsByTvShowId(tvShowId: Int): List<SelectSeasonsByShowId>
 
-    fun updateSeasonEpisodes(entity: SeasonsEntity)
+    fun updateSeasonEpisodesIds(seasonId: Int, episodeIds: List<Int>)
 
 }

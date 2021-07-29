@@ -1,72 +1,70 @@
 package com.thomaskioko.tvmaniac.datasource.cache.shows
 
+import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
-import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowsEntity
-import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowsEntityList
 
 class TvShowCacheImpl(
     private val database: TvManiacDatabase
 ) : TvShowCache {
 
-    override fun insert(entity: TvShow) {
+    override fun insert(show: Show) {
         database.tvShowQueries.transaction {
             database.tvShowQueries.insertOrReplace(
-                id = entity.id.toLong(),
-                title = entity.title,
-                description = entity.overview,
-                language = entity.language,
-                poster_image_url = entity.posterImageUrl,
-                backdrop_image_url = entity.backdropImageUrl,
-                votes = entity.votes.toLong(),
-                vote_average = entity.averageVotes,
-                genre_ids = entity.genreIds,
-                show_category = entity.showCategory,
-                time_window = entity.timeWindow
+                id = show.id,
+                title = show.title,
+                description = show.description,
+                language = show.language,
+                poster_image_url = show.poster_image_url,
+                backdrop_image_url = show.backdrop_image_url,
+                votes = show.votes,
+                vote_average = show.vote_average,
+                genre_ids = show.genre_ids,
+                show_category = show.show_category,
+                time_window = show.time_window,
+                year = show.year,
+                status = show.status,
+                popularity = show.popularity
             )
         }
     }
 
-    override fun insert(list: List<TvShow>) {
+    override fun insert(list: List<Show>) {
         list.forEach { insert(it) }
     }
 
-    override fun getTvShow(showId: Int): TvShow {
+    override fun getTvShow(showId: Int): Show {
         return database.tvShowQueries.selectByShowId(
             id = showId.toLong()
-        ).executeAsOne().toTvShowsEntity()
+        ).executeAsOne()
     }
 
 
-    override fun getTvShows(): List<TvShow> {
+    override fun getTvShows(): List<Show> {
         return database.tvShowQueries.selectAll()
             .executeAsList()
-            .toTvShowsEntityList()
     }
 
-    override fun getTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<TvShow> {
+    override fun getTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<Show> {
         return database.tvShowQueries.selectByShowIdAndWindow(
             show_category = category,
             time_window = timeWindow
         ).executeAsList()
-            .toTvShowsEntityList()
     }
 
-    override fun getFeaturedTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<TvShow> {
+    override fun getFeaturedTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<Show> {
         return database.tvShowQueries.selectFeatured(
             show_category = category,
             time_window = timeWindow
-        )
-            .executeAsList()
-            .toTvShowsEntityList()
+        ).executeAsList()
     }
 
-    override fun updateTvShowDetails(entity: TvShow) {
+    override fun updateShowDetails(showId: Int, showStatus: String, seasonIds: List<Int>) {
         database.tvShowQueries.updateTvShow(
-            id = entity.id.toLong(),
-            seasons = entity.seasonsList
+            id = showId.toLong(),
+            season_ids = seasonIds,
+            status = showStatus
         )
     }
 

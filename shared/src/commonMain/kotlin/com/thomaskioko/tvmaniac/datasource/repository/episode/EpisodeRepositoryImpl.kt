@@ -2,9 +2,11 @@ package com.thomaskioko.tvmaniac.datasource.repository.episode
 
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
-import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
+import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeCacheList
+import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeEntity
 import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeEntityList
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
+import com.thomaskioko.tvmaniac.presentation.model.Episode
 
 class EpisodeRepositoryImpl(
     private val apiService: TvShowsService,
@@ -12,21 +14,24 @@ class EpisodeRepositoryImpl(
     private val seasonCache: SeasonsCache
 ) : EpisodeRepository {
 
-    override suspend fun getEpisodeByEpisodeId(episodeId: Int): EpisodeEntity {
+    override suspend fun getEpisodeByEpisodeId(episodeId: Int): Episode {
         return episodesCache.getEpisodeByEpisodeId(episodeId)
+            .toEpisodeEntity()
     }
 
     override suspend fun getEpisodesBySeasonId(
         tvShowId: Int,
         seasonId: Int,
         seasonNumber: Int
-    ): List<EpisodeEntity> {
+    ): List<Episode> {
         return if (episodesCache.getEpisodesBySeasonId(seasonId).isEmpty()) {
             fetchAndUpdateSeasonEpisodes(tvShowId, seasonId, seasonNumber)
 
             episodesCache.getEpisodesBySeasonId(seasonId)
+                .toEpisodeEntityList()
         } else {
             episodesCache.getEpisodesBySeasonId(seasonId)
+                .toEpisodeEntityList()
         }
     }
 
@@ -36,18 +41,17 @@ class EpisodeRepositoryImpl(
         seasonNumber: Int
     ) {
         val episodeEntityList = apiService.getSeasonDetails(tvShowId, seasonNumber)
-            .toEpisodeEntityList()
+            .toEpisodeCacheList()
 
         //Insert episodes
         episodesCache.insert(episodeEntityList)
 
-        val seasonCacheResult = seasonCache.getSeasonBySeasonId(seasonId)
+        val episodesIds = mutableListOf<Int>()
+        for (episode in episodeEntityList) {
+            episodesIds.add(episode.id.toInt())
+        }
 
         //Update season episode list
-        seasonCache.updateSeasonEpisodes(
-            seasonCacheResult.copy(
-                episodeList = episodeEntityList
-            )
-        )
+        seasonCache.updateSeasonEpisodesIds(seasonId =  seasonId, episodeIds = episodesIds)
     }
 }

@@ -1,10 +1,12 @@
 package com.thomaskioko.tvmaniac.ui.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,18 +15,22 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.FloatingActionButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -41,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.IntOffset
@@ -51,14 +58,18 @@ import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.R
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
-import com.thomaskioko.tvmaniac.compose.components.TabItem
+import com.thomaskioko.tvmaniac.compose.components.LoadingView
+import com.thomaskioko.tvmaniac.compose.components.RowSpacer
+import com.thomaskioko.tvmaniac.compose.components.TabItem.Casts
+import com.thomaskioko.tvmaniac.compose.components.TabItem.Episodes
 import com.thomaskioko.tvmaniac.compose.components.Tabs
 import com.thomaskioko.tvmaniac.compose.components.TvManiacScaffold
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.core.rememberFlowWithLifecycle
-import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
+import com.thomaskioko.tvmaniac.presentation.model.GenreModel
+import com.thomaskioko.tvmaniac.presentation.model.Season
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.ui.detail.tabs.EpisodesScreen
 import com.thomaskioko.tvmaniac.ui.detail.tabs.SeasonCastScreen
 import kotlinx.coroutines.delay
@@ -121,6 +132,8 @@ private fun TvShowDetailsScrollingContent(
         modifier = modifier
     ) {
 
+        item { if (detailUiState.isLoading) LoadingView() }
+
         item {
             TvShowHeaderView(
                 detailUiState,
@@ -130,9 +143,7 @@ private fun TvShowDetailsScrollingContent(
             )
         }
 
-        item { TvShowSeasons(detailUiState.tvSeasons, onSeasonSelected) }
-
-        item { SeasonEpisodeTabs(detailUiState) }
+        item { SeasonTabs(detailUiState, onSeasonSelected) }
 
     }
 }
@@ -146,12 +157,13 @@ fun TvShowHeaderView(
 ) {
     var animateState by remember { mutableStateOf(2) }
     val surfaceGradient = backgroundGradient().reversed()
-    val headerHeight by remember { mutableStateOf(450) }
+    val height = 550
+    val headerHeight by remember { mutableStateOf(height) }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(450.dp)
+            .height(height.dp)
             .background(
                 Brush.verticalGradient(
                     surfaceGradient,
@@ -171,7 +183,7 @@ fun TvShowHeaderView(
         }
         if (animateState > 0) {
             KenBurnsViewImage(
-                imageUrl = detailUiState.tvShow.posterImageUrl,
+                imageUrl = detailUiState.tvShow.backdropImageUrl,
                 modifier = Modifier
                     .fillMaxWidth()
                     .onSizeChanged(onBackdropSizeChanged)
@@ -248,6 +260,7 @@ fun TvShowInfo(detailUiState: ShowDetailViewState) {
     TvShowMetadata(
         show = show,
         seasons = detailUiState.tvSeasons,
+        genreList = detailUiState.genreList,
         modifier = Modifier.padding(horizontal = 16.dp)
     )
 
@@ -255,16 +268,37 @@ fun TvShowInfo(detailUiState: ShowDetailViewState) {
 }
 
 @Composable
-fun TvShowMetadata(show: TvShow, modifier: Modifier, seasons: List<SeasonsEntity>) {
+fun TvShowMetadata(
+    show: TvShow,
+    seasons: List<Season>,
+    genreList: List<GenreModel>,
+    modifier: Modifier
+) {
     val resources = LocalContext.current.resources
-    val divider = "  •  "
+
+    val divider = buildAnnotatedString {
+        val tagStyle = MaterialTheme.typography.overline.toSpanStyle().copy(
+            color = MaterialTheme.colors.secondary
+        )
+        withStyle(tagStyle) {
+            append("  •  ")
+        }
+
+    }
     val text = buildAnnotatedString {
         val tagStyle = MaterialTheme.typography.overline.toSpanStyle().copy(
             background = MaterialTheme.colors.primary.copy(alpha = 0.8f)
         )
-        withStyle(tagStyle) {
-            append("  Tv Show  ")
+
+        if (show.status.isNotBlank()) {
+            withStyle(tagStyle) {
+                append(" ")
+                append(show.status)
+                append(" ")
+            }
+            append(divider)
         }
+        append(show.year)
         append(divider)
         append(resources.getQuantityString(R.plurals.season_count, seasons.size, seasons.size))
         append(divider)
@@ -280,74 +314,46 @@ fun TvShowMetadata(show: TvShow, modifier: Modifier, seasons: List<SeasonsEntity
             modifier = modifier
         )
     }
+
+    ColumnSpacer(8)
+
+    GenreText(genreList, show.genreIds)
+
+    ColumnSpacer(8)
+
+    ShowDetailButtons()
+
 }
 
+
 @Composable
-fun TvShowSeasons(
-    tvSeasons: List<SeasonsEntity>,
-    onSeasonSelected: (EpisodeQuery) -> Unit
+private fun GenreText(
+    genreList: List<GenreModel>,
+    genreIds: List<Int>,
 ) {
 
-    var expanded by remember { mutableStateOf(false) }
-    var selectedPosition by remember { mutableStateOf(0) }
-
-    if (tvSeasons.isNotEmpty() && selectedPosition == 0) {
-        onSeasonSelected(
-            EpisodeQuery(
-                tvShowId = tvSeasons.first().tvShowId,
-                seasonId = tvSeasons.first().seasonId,
-                seasonNumber = tvSeasons.first().seasonNumber
-            )
-        )
+    val result = genreList.filter { genre ->
+        genreIds.any { id -> genre.id == id }
     }
 
-    val selectorText = if (tvSeasons.isNotEmpty()) tvSeasons.first().name else "Select Season"
-    var selectedSeasonText by remember { mutableStateOf(selectorText) }
+    LazyRow(
+        modifier = Modifier.padding(horizontal = 16.dp)
+    ) {
+        items(result) { item ->
+            RowSpacer(4)
 
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        TextButton(
-            onClick = { expanded = !expanded },
-            colors = ButtonDefaults.buttonColors(
-                contentColor = MaterialTheme.colors.onBackground,
-                backgroundColor = Color.Transparent
-            )
-        ) {
-            Text(
-                text = selectedSeasonText,
-                style = MaterialTheme.typography.body1
-            )
-            Icon(
-                imageVector = Icons.Filled.ArrowDropDown,
-                contentDescription = null,
-            )
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            tvSeasons.forEachIndexed { index, season ->
-                DropdownMenuItem(
-                    onClick = {
-                        expanded = false
-                        selectedPosition = index
-                        selectedSeasonText = season.name
-
-                        onSeasonSelected(
-                            EpisodeQuery(
-                                tvShowId = season.tvShowId,
-                                seasonId = season.seasonId,
-                                seasonNumber = season.seasonNumber
-                            )
-                        )
-                    }) {
-
-                    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                        Text(
-                            text = season.name,
-                            style = MaterialTheme.typography.body2,
-                        )
-                    }
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                TextButton(
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = MaterialTheme.colors.onBackground,
+                        backgroundColor = Color(0xFF414141)
+                    ),
+                    onClick = {}
+                ) {
+                    Text(
+                        text = item.name,
+                        style = MaterialTheme.typography.body2,
+                    )
                 }
             }
         }
@@ -355,14 +361,74 @@ fun TvShowSeasons(
 
 }
 
+
 @Composable
-fun SeasonEpisodeTabs(viewState: ShowDetailViewState) {
+fun ShowDetailButtons() {
+
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+
+        ExtendedFloatingActionButton(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.secondary
+                )
+            },
+            text = {
+                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                    Text(
+                        text = stringResource(id = R.string.btn_trailer),
+                        style = MaterialTheme.typography.body2,
+                    )
+                }
+            },
+            backgroundColor = Color.Transparent,
+            elevation = FloatingActionButtonDefaults.elevation(),
+            onClick = {},
+            modifier = Modifier
+                .padding(2.dp)
+                .border(1.dp, Color(0xFF414141), RoundedCornerShape(8.dp))
+        )
+
+        RowSpacer(value = 8)
+
+        ExtendedFloatingActionButton(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.secondary
+                )
+            },
+            text = {
+                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                    Text(
+                        text = stringResource(id = R.string.btn_watchlist),
+                        style = MaterialTheme.typography.body2,
+                    )
+                }
+            },
+            backgroundColor = Color.Transparent,
+            elevation = FloatingActionButtonDefaults.elevation(),
+            onClick = {},
+            modifier = Modifier
+                .padding(2.dp)
+                .border(1.dp, Color(0xFF414141), RoundedCornerShape(8.dp))
+        )
+    }
+}
+
+@Composable
+fun SeasonTabs(viewState: ShowDetailViewState, onSeasonSelected: (EpisodeQuery) -> Unit) {
 
     Column {
-        val tabs = listOf(
-            TabItem.Episodes,
-            TabItem.Casts,
-        )
+        val tabs = listOf(Episodes, Casts)
 
         val pagerState = rememberPagerState(pageCount = tabs.size)
 
@@ -370,8 +436,8 @@ fun SeasonEpisodeTabs(viewState: ShowDetailViewState) {
 
         HorizontalPager(state = pagerState) { page ->
             when (tabs[page]) {
-                TabItem.Casts -> SeasonCastScreen()
-                TabItem.Episodes -> EpisodesScreen(viewState.seasonEpisodes)
+                Casts -> SeasonCastScreen()
+                Episodes -> EpisodesScreen(viewState, onSeasonSelected)
             }
         }
     }

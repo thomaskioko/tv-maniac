@@ -70,9 +70,6 @@ android {
         implementation(libs.androidx.lifecycle.runtime)
         kapt(libs.androidx.lifecycle.compiler)
 
-        implementation(libs.glide.core)
-        kapt(libs.glide.compiler)
-
         implementation(libs.hilt.android)
         implementation(libs.hilt.navigation)
         
