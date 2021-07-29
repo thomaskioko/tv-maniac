@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.datasource.repository.shows
 
+import com.thomaskioko.tvmaniac.MockData.getShow
 import com.thomaskioko.tvmaniac.MockData.getTvResponse
-import com.thomaskioko.tvmaniac.MockData.makeTvShowEntityList
-import com.thomaskioko.tvmaniac.MockData.tvShowSeasonEntity
+import com.thomaskioko.tvmaniac.MockData.makeShowList
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
@@ -44,7 +44,7 @@ internal class TvShowRepositoryTest {
 
     @Test
     fun givenDataIsCached_thenGetTvShowIsLoadedFromCache() = runBlocking {
-        every { cache.getTvShow(84958) } returns tvShowSeasonEntity
+        every { cache.getTvShow(84958) } returns getShow()
 
         repository.getTvShow(84958)
 
@@ -57,7 +57,7 @@ internal class TvShowRepositoryTest {
 
     @Test
     fun givenDataIsCached_thenDataIsLoadedFromCache() {
-        every { cache.getTvShows() } returns makeTvShowEntityList()
+        every { cache.getTvShows() } returns makeShowList()
 
         runBlocking {
             repository.getPopularTvShows(1)
@@ -66,7 +66,7 @@ internal class TvShowRepositoryTest {
         verify(exactly = 0) {
 
             runBlocking { apiService.getPopularShows(1) }
-            cache.insert(makeTvShowEntityList())
+            cache.insert(makeShowList())
         }
 
         verify(exactly = 2) { cache.getTvShows() }

@@ -1,8 +1,9 @@
 package com.thomaskioko.tvmaniac.datasource.network.api
 
-import com.thomaskioko.tvmaniac.datasource.network.model.EpisodeDetailResponse
+import com.thomaskioko.tvmaniac.datasource.network.model.GenresResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.SeasonResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
+import com.thomaskioko.tvmaniac.datasource.network.model.TrailersResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
 import com.thomaskioko.tvmaniac.shared.BuildKonfig
 import io.ktor.client.HttpClient
@@ -35,15 +36,15 @@ class TvShowsServiceImpl(
         return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/$tvShowId/season/$seasonNumber")
     }
 
-    override suspend fun getTvShowSeasonEpisode(
-        showId: Int,
-        seasonNumber: Int,
-        episodeNumber: Int
-    ): EpisodeDetailResponse {
-        return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/$showId/season/$seasonNumber/episode/$episodeNumber")
-    }
-
     override suspend fun getTrendingShows(timeWindow: String): TvShowsResponse {
         return httpClient.get("${BuildKonfig.TMDB_API_URL}trending/tv/$timeWindow")
+    }
+
+    override suspend fun getAllGenres(): GenresResponse {
+        return httpClient.get("${BuildKonfig.TMDB_API_URL}genre/tv/list")
+    }
+
+    override suspend fun getTrailers(showId: Int): TrailersResponse {
+        return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/$showId/videos")
     }
 }

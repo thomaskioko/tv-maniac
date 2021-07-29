@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.datasource.cache.db.adapter
 
 import com.squareup.sqldelight.ColumnAdapter
 
-val genreListAdapter = object : ColumnAdapter<List<Int>, String> {
+val intAdapter = object : ColumnAdapter<List<Int>, String> {
 
     override fun encode(value: List<Int>) = value.joinToString(separator = ",")
 

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.datasource.repository.tvshow
 
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
 

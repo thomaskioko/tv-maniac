@@ -3,9 +3,11 @@ package com.thomaskioko.tvmaniac.ui.discover
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -13,12 +15,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ErrorView
-import com.thomaskioko.tvmaniac.compose.components.HorizontalPager
+import com.thomaskioko.tvmaniac.compose.components.FeaturedHorizontalPager
 import com.thomaskioko.tvmaniac.compose.components.LoadingView
 import com.thomaskioko.tvmaniac.compose.components.TvManiacScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
@@ -27,9 +30,16 @@ import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
 import com.thomaskioko.tvmaniac.core.rememberFlowWithLifecycle
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
 import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import io.github.aakira.napier.Napier
+
+/**
+ * This is the minimum amount of calculated contrast for a color to be used on top of the
+ * surface color. These values are defined within the WCAG AA guidelines, and we use a value of
+ * 3:1 which is the minimum for user-interface components.
+ */
+private const val MinContrastOfPrimaryVsSurface = 3f
 
 @Composable
 fun DiscoverScreen(
@@ -72,21 +82,18 @@ fun LoadScreenContent(
 
 }
 
-/**
- * This is the minimum amount of calculated contrast for a color to be used on top of the
- * surface color. These values are defined within the WCAG AA guidelines, and we use a value of
- * 3:1 which is the minimum for user-interface components.
- */
-private const val MinContrastOfPrimaryVsSurface = 3f
-
 @Composable
 private fun ScreenData(
     viewState: DiscoverShowsState.Success,
     onItemClicked: (Int) -> Unit,
 ) {
+    val listState = rememberLazyListState()
+
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
+            .padding(bottom = 54.dp)
     ) {
         item {
             viewState.dataMap.forEach {
@@ -140,17 +147,15 @@ fun FeaturedItems(
                 )
         ) {
 
-            ColumnSpacer(value = 16)
+            ColumnSpacer(value = 24)
 
-            BoxTextItems(resultMap.key.title)
-
-            HorizontalPager(resultMap.value, pagerState) { tvShowId ->
+            FeaturedHorizontalPager(resultMap.value, pagerState) { tvShowId ->
                 onItemClicked(tvShowId)
             }
         }
     }
 
-    ColumnSpacer(value = 8)
+    ColumnSpacer(value = 16)
 }
 
 @Composable
@@ -172,7 +177,6 @@ private fun DisplayShowData(
                 onItemClicked(tvShow.id)
             }
         }
-
     }
 }
 

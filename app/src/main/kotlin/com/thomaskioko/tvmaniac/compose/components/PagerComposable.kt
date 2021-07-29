@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,12 +18,12 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.thomaskioko.tvmaniac.R
-import com.thomaskioko.tvmaniac.datasource.cache.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import kotlin.math.absoluteValue
 
 
 @Composable
-fun HorizontalPager(
+fun FeaturedHorizontalPager(
     list: List<TvShow>,
     pagerState: PagerState,
     onClick: (Int) -> Unit
@@ -60,16 +59,16 @@ fun HorizontalPager(
                     )
                 }
                 .fillMaxWidth(0.8f)
-                .aspectRatio(1f)
+
         ) {
             Box {
                 NetworkImageComposable(
                     imageUrl = list[pageNumber].posterImageUrl,
                     contentDescription = stringResource(R.string.cd_show_poster, list[pageNumber].title),
                     modifier = Modifier
+                        .height(450.dp)
                         .fillMaxSize()
                         .clip(MaterialTheme.shapes.medium)
-                        .height(250.dp)
                 )
             }
         }

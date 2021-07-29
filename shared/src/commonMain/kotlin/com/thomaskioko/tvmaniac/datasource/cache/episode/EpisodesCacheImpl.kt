@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.datasource.cache.episode
 
+import com.thomaskioko.tvmaniac.datasource.cache.Episode
+import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
-import com.thomaskioko.tvmaniac.datasource.cache.model.EpisodeEntity
-import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeEntity
-import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeEntityList
+import com.thomaskioko.tvmaniac.datasource.cache.Episode as EpisodeCache
 
 class EpisodesCacheImpl(
     private val database: TvManiacDatabase
@@ -11,36 +11,34 @@ class EpisodesCacheImpl(
 
     private val episodeQueries get() = database.episodeQueries
 
-    override fun insert(entity: EpisodeEntity) {
+    override fun insert(entity: EpisodeCache) {
         episodeQueries.insertOrReplace(
-            id = entity.id.toLong(),
-            season_id = entity.seasonId.toLong(),
+            id = entity.id,
+            season_id = entity.season_id,
             name = entity.name,
             overview = entity.overview,
-            episode_season_number = entity.seasonNumber.toLong(),
-            image_url = entity.imageUrl,
-            vote_average = entity.voteAverage,
-            vote_count = entity.voteCount.toLong(),
-            episode_number = entity.episodeNumber
+            episode_season_number = entity.episode_season_number,
+            image_url = entity.image_url,
+            vote_average = entity.vote_average,
+            vote_count = entity.vote_count,
+            episode_number = entity.episode_number
         )
     }
 
-    override fun insert(entityList: List<EpisodeEntity>) {
-        entityList.map { insert(it) }
+    override fun insert(list: List<EpisodeCache>) {
+        list.map { insert(it) }
     }
 
-    override fun getEpisodeByEpisodeId(episodeId: Int): EpisodeEntity {
+    override fun getEpisodeByEpisodeId(episodeId: Int): Episode {
         return episodeQueries.episodeById(
             id = episodeId.toLong()
         ).executeAsOne()
-            .toEpisodeEntity()
     }
 
-    override fun getEpisodesBySeasonId(seasonId: Int): List<EpisodeEntity> {
+    override fun getEpisodesBySeasonId(seasonId: Int): List<EpisodesBySeasonId> {
         return episodeQueries.episodesBySeasonId(
             season_id = seasonId.toLong()
         ).executeAsList()
-            .toEpisodeEntityList()
     }
 
 

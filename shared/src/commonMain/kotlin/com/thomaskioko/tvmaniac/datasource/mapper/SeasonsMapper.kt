@@ -1,29 +1,30 @@
 package com.thomaskioko.tvmaniac.datasource.mapper
 
-import com.thomaskioko.tvmaniac.datasource.cache.Season
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
-import com.thomaskioko.tvmaniac.datasource.cache.model.SeasonsEntity
+import com.thomaskioko.tvmaniac.datasource.cache.Tv_season
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
+import com.thomaskioko.tvmaniac.presentation.model.Season
 
-fun ShowDetailResponse.toSeasonsEntityList(): List<SeasonsEntity> {
+fun ShowDetailResponse.toSeasonCacheList(): List<Tv_season> {
     return seasons.map { seasonResponse ->
-        SeasonsEntity(
-            tvShowId = id,
-            seasonId = seasonResponse.id,
+        Tv_season(
+            id = seasonResponse.id.toLong(),
+            tv_show_id = id.toLong(),
+            season_number = seasonResponse.seasonNumber.toLong(),
             name = seasonResponse.name,
             overview = seasonResponse.overview,
-            seasonNumber = seasonResponse.seasonNumber,
-            episodeCount = seasonResponse.episodeCount
+            epiosode_count = seasonResponse.episodeCount.toLong(),
+            episode_ids = null
         )
     }
 }
 
-fun List<SelectSeasonsByShowId>.toSeasonsEntityList(): List<SeasonsEntity> {
+fun List<SelectSeasonsByShowId>.toSeasonsEntityList(): List<Season> {
     return map { it.toSeasonsEntity() }
 }
 
-fun SelectSeasonsByShowId.toSeasonsEntity(): SeasonsEntity {
-    return SeasonsEntity(
+fun SelectSeasonsByShowId.toSeasonsEntity(): Season {
+    return Season(
         seasonId = id.toInt(),
         tvShowId = tv_show_id.toInt(),
         name = name,
@@ -33,8 +34,8 @@ fun SelectSeasonsByShowId.toSeasonsEntity(): SeasonsEntity {
     )
 }
 
-fun Season.toSeasonEntity(): SeasonsEntity {
-    return SeasonsEntity(
+fun Tv_season.toSeasonEntity(): Season {
+    return Season(
         seasonId = id.toInt(),
         tvShowId = tv_show_id.toInt(),
         name = name,
