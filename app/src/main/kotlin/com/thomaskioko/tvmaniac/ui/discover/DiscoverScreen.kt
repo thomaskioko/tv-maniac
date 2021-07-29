@@ -21,7 +21,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ErrorView
-import com.thomaskioko.tvmaniac.compose.components.HorizontalPager
+import com.thomaskioko.tvmaniac.compose.components.FeaturedHorizontalPager
 import com.thomaskioko.tvmaniac.compose.components.LoadingView
 import com.thomaskioko.tvmaniac.compose.components.TvManiacScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
@@ -147,17 +147,15 @@ fun FeaturedItems(
                 )
         ) {
 
-            ColumnSpacer(value = 16)
+            ColumnSpacer(value = 24)
 
-            BoxTextItems(resultMap.key.title)
-
-            HorizontalPager(resultMap.value, pagerState) { tvShowId ->
+            FeaturedHorizontalPager(resultMap.value, pagerState) { tvShowId ->
                 onItemClicked(tvShowId)
             }
         }
     }
 
-    ColumnSpacer(value = 8)
+    ColumnSpacer(value = 16)
 }
 
 @Composable
