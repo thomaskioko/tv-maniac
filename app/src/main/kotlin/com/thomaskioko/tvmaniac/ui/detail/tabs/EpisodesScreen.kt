@@ -43,9 +43,7 @@ fun EpisodesScreen(
     onSeasonSelected: (EpisodeQuery) -> Unit
 ) {
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
+    Column {
 
         ColumnSpacer(8)
 

@@ -45,13 +45,11 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -85,43 +83,27 @@ fun ShowDetailScreen(
     val viewState by rememberFlowWithLifecycle(viewModel.uiStateFlow)
         .collectAsState(initial = ShowDetailViewState.Empty)
 
+    val listState = rememberLazyListState()
+
     TvManiacScaffold(
         content = {
-            TvShowDetails(
-                viewState,
+            TvShowDetailsScrollingContent(
+                detailUiState = viewState,
+                listState = listState,
+                modifier = Modifier.fillMaxSize(),
                 onBackPressed = { navigateUp() },
-                onSeasonSelected = { viewModel.submitAction(ShowDetailAction.SeasonSelected(it)) }
+                onSeasonSelected = {
+                    viewModel.submitAction(ShowDetailAction.SeasonSelected(it))
+                }
             )
         }
     )
 }
 
 @Composable
-fun TvShowDetails(
-    detailUiState: ShowDetailViewState,
-    onBackPressed: () -> Unit,
-    onSeasonSelected: (EpisodeQuery) -> Unit
-) {
-
-    val listState = rememberLazyListState()
-    var backdropHeight by remember { mutableStateOf(0) }
-
-    TvShowDetailsScrollingContent(
-        detailUiState = detailUiState,
-        listState = listState,
-        onBackdropSizeChanged = { backdropHeight = it.height },
-        modifier = Modifier.fillMaxSize(),
-        onSeasonSelected = onSeasonSelected,
-        onBackPressed = onBackPressed
-    )
-
-}
-
-@Composable
 private fun TvShowDetailsScrollingContent(
     detailUiState: ShowDetailViewState,
     listState: LazyListState,
-    onBackdropSizeChanged: (IntSize) -> Unit,
     modifier: Modifier = Modifier,
     onSeasonSelected: (EpisodeQuery) -> Unit,
     onBackPressed: () -> Unit,
@@ -134,14 +116,7 @@ private fun TvShowDetailsScrollingContent(
 
         item { if (detailUiState.isLoading) LoadingView() }
 
-        item {
-            TvShowHeaderView(
-                detailUiState,
-                onBackdropSizeChanged,
-                listState = listState,
-                onBackPressed = onBackPressed
-            )
-        }
+        item { TvShowHeaderView(detailUiState,listState,onBackPressed) }
 
         item { SeasonTabs(detailUiState, onSeasonSelected) }
 
@@ -151,7 +126,6 @@ private fun TvShowDetailsScrollingContent(
 @Composable
 fun TvShowHeaderView(
     detailUiState: ShowDetailViewState,
-    onBackdropSizeChanged: (IntSize) -> Unit,
     listState: LazyListState,
     onBackPressed: () -> Unit,
 ) {
@@ -160,33 +134,25 @@ fun TvShowHeaderView(
     val height = 550
     val headerHeight by remember { mutableStateOf(height) }
 
+    LaunchedEffect(Unit) {
+        var plus = true
+        while (isActive) {
+            delay(32)
+            animateState += 1 * if (plus) 1 else -1
+            plus = !plus
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(height.dp)
-            .background(
-                Brush.verticalGradient(
-                    surfaceGradient,
-                    0F,
-                    headerHeight.toFloat(),
-                    TileMode.Clamp
-                )
-            )
     ) {
-        LaunchedEffect(Unit) {
-            var plus = true
-            while (isActive) {
-                delay(32)
-                animateState += 1 * if (plus) 1 else -1
-                plus = !plus
-            }
-        }
         if (animateState > 0) {
             KenBurnsViewImage(
                 imageUrl = detailUiState.tvShow.backdropImageUrl,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .onSizeChanged(onBackdropSizeChanged)
                     .clipToBounds()
                     .height(headerHeight.dp)
                     .offset {
