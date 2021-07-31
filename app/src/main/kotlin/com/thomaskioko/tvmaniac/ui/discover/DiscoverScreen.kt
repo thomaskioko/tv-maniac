@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.ui.discover
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,30 +10,37 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
-import com.thomaskioko.tvmaniac.compose.components.ErrorView
 import com.thomaskioko.tvmaniac.compose.components.FeaturedHorizontalPager
 import com.thomaskioko.tvmaniac.compose.components.LoadingView
-import com.thomaskioko.tvmaniac.compose.components.TvManiacScaffold
+import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
 import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
 import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
+import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
+import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
 import com.thomaskioko.tvmaniac.core.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 
 /**
  * This is the minimum amount of calculated contrast for a color to be used on top of the
@@ -49,15 +57,38 @@ fun DiscoverScreen(
 
     val scaffoldState = rememberScaffoldState()
 
-    val discoverViewState by rememberFlowWithLifecycle(viewModel.stateFlow)
-        .collectAsState(initial = DiscoverShowsState.Loading)
+    val discoverViewState by rememberFlowWithLifecycle(viewModel.observeState())
+        .collectAsState(initial = DiscoverShowState.Empty)
 
-    TvManiacScaffold(
+    LaunchedEffect(Unit) {
+        viewModel.observeSideEffect().collect {
+            when (it) {
+                is DiscoverShowEffect.Error -> scaffoldState.snackbarHostState.showSnackbar(it.message)
+            }
+        }
+    }
+
+    Scaffold(
         scaffoldState = scaffoldState,
         modifier = Modifier
             .statusBarsPadding(),
+        snackbarHost = { snackBarHostState ->
+            SnackbarHost(
+                hostState = snackBarHostState,
+                snackbar = { snackBarData ->
+                    SwipeDismissSnackbar(
+                        data = snackBarData,
+                        onDismiss = { }
+                    )
+                },
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 64.dp)
+                    .fillMaxWidth()
+            )
+        },
         content = {
-            LoadScreenContent(
+            ScreenData(
                 viewState = discoverViewState,
                 onItemClicked = { tvShowId ->
                     openShowDetails(tvShowId)
@@ -69,24 +100,12 @@ fun DiscoverScreen(
 }
 
 @Composable
-fun LoadScreenContent(
-    viewState: DiscoverShowsState,
-    onItemClicked: (Int) -> Unit,
-) {
-
-    when (viewState) {
-        is DiscoverShowsState.Error -> ErrorView(viewState.message)
-        DiscoverShowsState.Loading -> LoadingView()
-        is DiscoverShowsState.Success -> ScreenData(viewState, onItemClicked)
-    }
-
-}
-
-@Composable
 private fun ScreenData(
-    viewState: DiscoverShowsState.Success,
+    viewState: DiscoverShowState,
     onItemClicked: (Int) -> Unit,
 ) {
+    if (viewState.isLoading) LoadingView()
+
     val listState = rememberLazyListState()
 
     LazyColumn(
@@ -137,6 +156,17 @@ fun FeaturedItems(
             }
         }
 
+        LaunchedEffect(true) {
+            repeat(Int.MAX_VALUE) {
+                delay(1500)
+                pagerState.animateScrollToPage(
+                    page = it % pagerState.pageCount,
+                    animationSpec = tween(2000)
+                )
+            }
+        }
+
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -152,6 +182,13 @@ fun FeaturedItems(
             FeaturedHorizontalPager(resultMap.value, pagerState) { tvShowId ->
                 onItemClicked(tvShowId)
             }
+
+            HorizontalPagerIndicator(
+                pagerState = pagerState,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp),
+            )
         }
     }
 
