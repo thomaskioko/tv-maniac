@@ -28,6 +28,26 @@ data class ShowDetailViewState(
     }
 }
 
+data class TvShowViewState(
+    val isLoading: Boolean = false,
+    val errorMessage: String = "",
+    val tvShow: TvShow = TvShow.EMPTY_SHOW,
+) {
+    companion object {
+        val Empty = SeasonViewState()
+    }
+}
+
+data class SeasonViewState(
+    val isLoading: Boolean = false,
+    val errorMessage: String = "",
+    val tvSeasons: List<Season> = emptyList(),
+) {
+    companion object {
+        val Empty = SeasonViewState()
+    }
+}
+
 data class EpisodesViewState(
     val isLoading: Boolean = false,
     val errorMessage: String = "",
@@ -37,6 +57,17 @@ data class EpisodesViewState(
         val Empty = EpisodesViewState()
     }
 }
+
+data class GenreViewState(
+    val isLoading: Boolean = false,
+    val errorMessage: String = "",
+    val genreList: List<GenreModel> = emptyList(),
+) {
+    companion object {
+        val Empty = GenreViewState()
+    }
+}
+
 
 data class TrailersViewState(
     val isLoading: Boolean = false,

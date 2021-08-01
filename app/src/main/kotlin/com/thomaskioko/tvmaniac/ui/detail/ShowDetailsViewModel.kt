@@ -17,7 +17,6 @@ import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.invoke
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -46,17 +45,17 @@ class ShowDetailsViewModel @Inject constructor(
         getShow(showId).distinctUntilChanged(),
         seasonsInteractor(showId).distinctUntilChanged(),
         genresInteractor().distinctUntilChanged(),
-        trailersInteractor(showId).distinctUntilChanged(),
         episodes
-    ) { showDetails, showSeasons, genreList, trailerState, episodesState, ->
+    ) { showDetails, showSeasons, genreList, episodesState, ->
+
         ShowDetailViewState(
             isLoading = showDetails.tvShowReducer().isLoading,
             tvShow = showDetails.tvShowReducer().tvShow,
             tvSeasons = showSeasons.seasonReducer().tvSeasons,
             genreList = genreList.genreReducer().genreList,
-            trailerViewState = trailerState.trailersReducer(),
             episodesViewState = episodesState
         )
+
     }
 
 
@@ -95,42 +94,42 @@ class ShowDetailsViewModel @Inject constructor(
     }
 }
 
-internal fun DomainResultState<TvShow>.tvShowReducer(): ShowDetailViewState {
+internal fun DomainResultState<TvShow>.tvShowReducer(): TvShowViewState {
     return when (this) {
-        is DomainResultState.Error -> ShowDetailViewState(
+        is DomainResultState.Error -> TvShowViewState(
             isLoading = false,
             errorMessage = message
         )
-        is DomainResultState.Loading -> ShowDetailViewState(isLoading = true)
-        is DomainResultState.Success -> ShowDetailViewState(
+        is DomainResultState.Loading -> TvShowViewState(isLoading = true)
+        is DomainResultState.Success -> TvShowViewState(
             isLoading = false,
             tvShow = data
         )
     }
 }
 
-internal fun DomainResultState<List<Season>>.seasonReducer(): ShowDetailViewState {
+internal fun DomainResultState<List<Season>>.seasonReducer(): SeasonViewState {
     return when (this) {
-        is DomainResultState.Error -> ShowDetailViewState(
+        is DomainResultState.Error -> SeasonViewState(
             isLoading = false,
             errorMessage = message
         )
-        is DomainResultState.Loading -> ShowDetailViewState(isLoading = true)
-        is DomainResultState.Success -> ShowDetailViewState(
+        is DomainResultState.Loading -> SeasonViewState(isLoading = true)
+        is DomainResultState.Success -> SeasonViewState(
             isLoading = false,
             tvSeasons = data
         )
     }
 }
 
-internal fun DomainResultState<List<GenreModel>>.genreReducer(): ShowDetailViewState {
+internal fun DomainResultState<List<GenreModel>>.genreReducer(): GenreViewState {
     return when (this) {
-        is DomainResultState.Error -> ShowDetailViewState(
+        is DomainResultState.Error -> GenreViewState(
             isLoading = false,
             errorMessage = message
         )
-        is DomainResultState.Loading -> ShowDetailViewState(isLoading = true)
-        is DomainResultState.Success -> ShowDetailViewState(
+        is DomainResultState.Loading -> GenreViewState(isLoading = true)
+        is DomainResultState.Success -> GenreViewState(
             isLoading = false,
             genreList = data
         )
