@@ -48,7 +48,7 @@ fun ShowResponse.toTvShowEntity(): TvShow {
 }
 
 private fun formatDate(dateString: String): String {
-    return if (dateString.isNotBlank())
+    return if (dateString.isNotBlank() && !dateString.contains("N/A"))
         dateString.toLocalDate().year.toString()
     else
         dateString
