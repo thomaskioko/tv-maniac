@@ -59,10 +59,10 @@ import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.R
+import com.thomaskioko.tvmaniac.compose.components.CollasableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
-import com.thomaskioko.tvmaniac.compose.components.ShowDetailsAppBar
 import com.thomaskioko.tvmaniac.compose.components.TabItem.Casts
 import com.thomaskioko.tvmaniac.compose.components.TabItem.Episodes
 import com.thomaskioko.tvmaniac.compose.components.Tabs
@@ -113,7 +113,7 @@ fun ShowDetailScreen(
                 }
             }
 
-            ShowDetailsAppBar(
+            CollasableAppBar(
                 title = viewState.tvShow.title,
                 showAppBarBackground = showAppBarBackground,
                 onNavIconPressed = navigateUp,
