@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.ui.detail.ShowDetailNavigationFactory
 import com.thomaskioko.tvmaniac.ui.discover.DiscoverNavigationFactory
 import com.thomaskioko.tvmaniac.ui.search.SearchNavigationFactory
 import com.thomaskioko.tvmaniac.ui.watchlist.WatchlistNavigationFactory
-import com.thomaskioko.tvmaniac.ui.welcome.WelcomeNavigationFactory
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -34,10 +33,6 @@ internal interface NavigationModule {
     @IntoSet
     fun bindWatchlistNavigation(factory: WatchlistNavigationFactory): ComposeNavigationFactory
 
-    @Singleton
-    @Binds
-    @IntoSet
-    fun bindWelcomeNavigation(factory: WelcomeNavigationFactory): ComposeNavigationFactory
 
     @Singleton
     @Binds
