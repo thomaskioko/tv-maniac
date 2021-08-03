@@ -3,9 +3,9 @@ kotlin = "1.5.10"
 
 android-compile = "30"
 android-target = "30"
-android-min = "24" #  Revert to 21 once issue is fixed https://issuetracker.google.com/issues/194289155
+android-min = "21"
 
-android-gradle = "7.1.0-alpha05"
+android-gradle = "7.1.0-alpha06"
 date-time = "0.2.1"
 
 accompanist = "0.15.0"
