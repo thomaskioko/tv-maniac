@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ShowResponse(
     @SerialName("backdrop_path") val backdropPath: String?,
-    @SerialName("first_air_date") val firstAirDate: String,
+    @SerialName("first_air_date") val firstAirDate: String = "N/A",
     @SerialName("genre_ids") val genreIds: List<Int>,
     @SerialName("id") val id: Int,
     @SerialName("name") val name: String,
