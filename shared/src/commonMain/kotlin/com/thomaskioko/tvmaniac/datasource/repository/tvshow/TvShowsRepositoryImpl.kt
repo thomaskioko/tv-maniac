@@ -44,7 +44,7 @@ class TvShowsRepositoryImpl(
     }
 
     override suspend fun getTopRatedTvShows(page: Int): List<TvShow> {
-        return if (cache.getTvShows().isEmpty()) {
+        return if (getShowsByCategory(TOP_RATED_TV_SHOWS).isEmpty()) {
 
             apiService.getTopRatedShows(page).results
                 .map { it.toShow() }

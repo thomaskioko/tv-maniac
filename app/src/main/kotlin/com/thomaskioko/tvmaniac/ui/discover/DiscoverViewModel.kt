@@ -6,11 +6,11 @@ import com.thomaskioko.tvmaniac.core.Store
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowAction
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
-import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
-import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest.FEATURED
-import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest.POPULAR
-import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest.THIS_WEEK
-import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest.TODAY
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowType
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowType.FEATURED
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowType.POPULAR
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowType.THIS_WEEK
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowType.TOP_RATED
 import com.thomaskioko.tvmaniac.interactor.GetTrendingShowsInteractor
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
@@ -33,7 +33,7 @@ class DiscoverViewModel @Inject constructor(
 
     init {
         dispatch(
-            DiscoverShowAction.LoadTvShows(listOf(FEATURED, TODAY, THIS_WEEK, POPULAR))
+            DiscoverShowAction.LoadTvShows(listOf(FEATURED, THIS_WEEK, TOP_RATED, POPULAR))
         )
     }
 
@@ -47,7 +47,7 @@ class DiscoverViewModel @Inject constructor(
         when (action) {
             is DiscoverShowAction.LoadTvShows -> {
                 viewModelScope.launch {
-                    interactor.invoke(action.trendingDataRequest)
+                    interactor.invoke(action.tvShowType)
                         .collect {
                             state.emit(it.stateReducer(oldState))
                         }
@@ -61,7 +61,7 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    private fun DomainResultState<LinkedHashMap<TrendingDataRequest, List<TvShow>>>.stateReducer(
+    private fun DomainResultState<LinkedHashMap<TvShowType, List<TvShow>>>.stateReducer(
         state: DiscoverShowState,
     ): DiscoverShowState {
         return when (this) {
