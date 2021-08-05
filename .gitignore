@@ -56,5 +56,5 @@ captures/
 timeline.xctimeline
 playground.xcworkspace
 
-/shared/secrets.properties
+shared/secrets.properties
 
