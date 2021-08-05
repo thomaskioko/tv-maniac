@@ -11,7 +11,7 @@ internal class TvShowServiceTest : TvShowsServiceMockEngine() {
 
     companion object {
         const val GET_TV_SHOW_DETAILS = "https://api.themoviedb.org/3/tv/1"
-        const val GET_POPULAR_TV_SHOWS = "https://api.themoviedb.org/3/tv/popular?page=1"
+        const val GET_POPULAR_TV_SHOWS = "https://api.themoviedb.org/3/tv/popular?page=1&sort_by=popularity.desc"
     }
 
     @Test
