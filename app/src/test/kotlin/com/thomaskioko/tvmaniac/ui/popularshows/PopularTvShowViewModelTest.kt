@@ -35,8 +35,8 @@ internal class PopularTvShowViewModelTest {
 
             viewModel.dispatchAction(PopularShowsAction.LoadPopularTvShows)
 
-            expectItem() shouldBe PopularShowsState.Loading
-            expectItem() shouldBe PopularShowsState.Success(dataList)
+            awaitItem() shouldBe PopularShowsState.Loading
+            awaitItem() shouldBe PopularShowsState.Success(dataList)
         }
     }
 
@@ -50,8 +50,8 @@ internal class PopularTvShowViewModelTest {
 
             viewModel.dispatchAction(PopularShowsAction.LoadPopularTvShows)
 
-            expectItem() shouldBe PopularShowsState.Loading
-            expectItem() shouldBe PopularShowsState.Error(errorMessage)
+            awaitItem() shouldBe PopularShowsState.Loading
+            awaitItem() shouldBe PopularShowsState.Error(errorMessage)
         }
     }
 
