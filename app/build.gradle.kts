@@ -47,6 +47,7 @@ android {
         implementation(project(":shared"))
 
         implementation(libs.accompanist.insets)
+        implementation(libs.accompanist.insetsui)
         implementation(libs.accompanist.pager.core)
         implementation(libs.accompanist.pager.indicator)
         implementation(libs.accompanist.systemuicontroller)

@@ -33,18 +33,18 @@ internal class EpisodesInteractorTest {
         } returns getEpisodeList()
 
         interactor.invoke(query).test {
-            expectItem() shouldBe DomainResultState.Loading()
-            expectItem() shouldBe DomainResultState.Success(getEpisodeList())
-            expectComplete()
+            awaitItem() shouldBe DomainResultState.Loading()
+            awaitItem() shouldBe DomainResultState.Success(getEpisodeList())
+            awaitComplete()
         }
     }
 
     @Test
     fun wheneverInteractorIsInvoked_ErrorIsReturned() = runBlocking {
         interactor.invoke(query).test {
-            expectItem() shouldBe DomainResultState.Loading()
-            expectItem() shouldBe DomainResultState.Error("Something went wrong")
-            expectComplete()
+            awaitItem() shouldBe DomainResultState.Loading()
+            awaitItem() shouldBe DomainResultState.Error("Something went wrong")
+            awaitComplete()
         }
     }
 }

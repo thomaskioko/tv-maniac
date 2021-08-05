@@ -19,7 +19,9 @@ fun NetworkImageComposable(
     contentDescription: String
 ) {
     Image(
-        painter = rememberImagePainter(data = imageUrl),
+        painter = rememberImagePainter(data = imageUrl) {
+            crossfade(true)
+        },
         contentDescription = contentDescription,
         contentScale = ContentScale.Crop,
         modifier = modifier,
@@ -31,7 +33,7 @@ fun NetworkImageComposable(
 fun KenBurnsViewImage(
     imageUrl: String,
     modifier: Modifier
-){
+) {
     val context = LocalContext.current
     val kenBuns = remember { KenBurnsView(context) }
 

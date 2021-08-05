@@ -18,6 +18,7 @@ class TvShowsServiceImpl(
         return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/top_rated")
         {
             parameter("page", page)
+            parameter("sort_by", "popularity.desc")
         }
     }
 
@@ -25,6 +26,7 @@ class TvShowsServiceImpl(
         return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/popular")
         {
             parameter("page", page)
+            parameter("sort_by", "popularity.desc")
         }
     }
 
