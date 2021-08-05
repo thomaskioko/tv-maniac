@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.ui
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
@@ -36,9 +35,7 @@ class MainActivity : AppCompatActivity() {
 
             ProvideWindowInsets(consumeWindowInsets = false) {
                 TvManiacTheme {
-                    MainScreenContent(
-                        composeNavigationFactories
-                    )
+                    MainScreenContent(composeNavigationFactories)
                 }
             }
         }

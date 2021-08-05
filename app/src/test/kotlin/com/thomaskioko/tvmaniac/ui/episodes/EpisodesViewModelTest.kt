@@ -39,8 +39,8 @@ internal class EpisodesViewModelTest {
 
             viewModel.dispatchAction(EpisodesAction.LoadEpisodes(query))
 
-            expectItem() shouldBe EpisodesViewState.Loading
-            expectItem() shouldBe EpisodesViewState.Success(getEpisodeEntityList())
+            awaitItem() shouldBe EpisodesViewState.Loading
+            awaitItem() shouldBe EpisodesViewState.Success(getEpisodeEntityList())
         }
     }
 
@@ -59,8 +59,8 @@ internal class EpisodesViewModelTest {
 
             viewModel.dispatchAction(EpisodesAction.LoadEpisodes(query))
 
-            expectItem() shouldBe EpisodesViewState.Loading
-            expectItem() shouldBe EpisodesViewState.Error(errorMessage)
+            awaitItem() shouldBe EpisodesViewState.Loading
+            awaitItem() shouldBe EpisodesViewState.Error(errorMessage)
         }
     }
 

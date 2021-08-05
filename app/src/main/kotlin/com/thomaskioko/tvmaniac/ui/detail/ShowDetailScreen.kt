@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,7 @@ import androidx.compose.material.FloatingActionButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
@@ -35,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,24 +48,26 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.R
+import com.thomaskioko.tvmaniac.compose.components.CollasableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
-import com.thomaskioko.tvmaniac.compose.components.LoadingView
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.components.TabItem.Casts
 import com.thomaskioko.tvmaniac.compose.components.TabItem.Episodes
 import com.thomaskioko.tvmaniac.compose.components.Tabs
-import com.thomaskioko.tvmaniac.compose.components.TvManiacScaffold
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
+import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.core.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.presentation.model.GenreModel
@@ -85,16 +90,45 @@ fun ShowDetailScreen(
 
     val listState = rememberLazyListState()
 
-    TvManiacScaffold(
-        content = {
+    Scaffold(
+        topBar = {
+            var appBarHeight by remember { mutableStateOf(0) }
+            val showAppBarBackground by remember {
+                derivedStateOf {
+                    val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
+                    when {
+                        visibleItemsInfo.isEmpty() -> false
+                        appBarHeight <= 0 -> false
+                        else -> {
+                            val firstVisibleItem = visibleItemsInfo[0]
+                            when {
+                                // If the first visible item is > 0, we want to show the app bar background
+                                firstVisibleItem.index > 0 -> true
+                                // If the first item is visible, only show the app bar background once the only
+                                // remaining part of the item is <= the app bar
+                                else -> firstVisibleItem.size + firstVisibleItem.offset <= appBarHeight
+                            }
+                        }
+                    }
+                }
+            }
+
+            CollasableAppBar(
+                title = viewState.tvShow.title,
+                showAppBarBackground = showAppBarBackground,
+                onNavIconPressed = navigateUp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onSizeChanged { appBarHeight = it.height }
+            )
+        },
+        content = { contentPadding ->
             TvShowDetailsScrollingContent(
                 detailUiState = viewState,
                 listState = listState,
-                modifier = Modifier.fillMaxSize(),
-                onBackPressed = { navigateUp() },
-                onSeasonSelected = {
-                    viewModel.submitAction(ShowDetailAction.SeasonSelected(it))
-                }
+                onSeasonSelected = { viewModel.submitAction(ShowDetailAction.SeasonSelected(it)) },
+                contentPadding = contentPadding,
+                modifier = Modifier.fillMaxSize()
             )
         }
     )
@@ -106,17 +140,16 @@ private fun TvShowDetailsScrollingContent(
     listState: LazyListState,
     modifier: Modifier = Modifier,
     onSeasonSelected: (EpisodeQuery) -> Unit,
-    onBackPressed: () -> Unit,
+    contentPadding: PaddingValues,
 ) {
 
     LazyColumn(
         state = listState,
+        contentPadding = contentPadding.copy(copyTop = false),
         modifier = modifier
     ) {
 
-        item { if (detailUiState.isLoading) LoadingView() }
-
-        item { TvShowHeaderView(detailUiState,listState,onBackPressed) }
+        item { TvShowHeaderView(detailUiState, listState) }
 
         item { SeasonTabs(detailUiState, onSeasonSelected) }
 
@@ -127,12 +160,9 @@ private fun TvShowDetailsScrollingContent(
 fun TvShowHeaderView(
     detailUiState: ShowDetailViewState,
     listState: LazyListState,
-    onBackPressed: () -> Unit,
 ) {
     var animateState by remember { mutableStateOf(2) }
     val surfaceGradient = backgroundGradient().reversed()
-    val height = 550
-    val headerHeight by remember { mutableStateOf(height) }
 
     LaunchedEffect(Unit) {
         var plus = true
@@ -143,48 +173,49 @@ fun TvShowHeaderView(
         }
     }
 
-    Box(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(height.dp)
-    ) {
-        if (animateState > 0) {
-            KenBurnsViewImage(
-                imageUrl = detailUiState.tvShow.backdropImageUrl,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clipToBounds()
-                    .height(headerHeight.dp)
-                    .offset {
-                        IntOffset(
-                            x = 0,
-                            y = if (listState.firstVisibleItemIndex == 0) {
-                                listState.firstVisibleItemScrollOffset / 2
-                            } else 0
-                        )
-                    }
-            )
-        }
+            .height(550.dp)
+            .clipToBounds()
+            .offset {
+                IntOffset(
+                    x = 0,
+                    y = if (listState.firstVisibleItemIndex == 0) {
+                        listState.firstVisibleItemScrollOffset / 2
+                    } else 0
+                )
+            }) {
 
-        BoxWithConstraints {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(headerHeight.dp)
-                    .background(
-                        Brush.verticalGradient(
-                            surfaceGradient,
-                            0F,
-                            constraints.maxHeight.toFloat(),
-                            TileMode.Clamp
+        Box {
+            if (animateState > 0) {
+                KenBurnsViewImage(
+                    imageUrl = detailUiState.tvShow.backdropImageUrl,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clipToBounds()
+                )
+            }
+
+            BoxWithConstraints {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Brush.verticalGradient(
+                                surfaceGradient,
+                                0F,
+                                constraints.maxHeight.toFloat(),
+                                TileMode.Clamp
+                            )
                         )
-                    )
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Bottom
                 ) {
-                    TvShowInfo(detailUiState)
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Bottom
+                    ) {
+                        TvShowInfo(detailUiState)
+                    }
                 }
             }
         }
