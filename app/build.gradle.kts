@@ -56,7 +56,6 @@ android {
         implementation(libs.androidx.palette)
 
         implementation(libs.androidx.compose.runtime.core)
-        implementation(libs.androidx.compose.runtime.livedata)
         implementation(libs.androidx.compose.material)
         implementation(libs.androidx.compose.ui.runtime)
         implementation(libs.androidx.compose.ui.tooling)
