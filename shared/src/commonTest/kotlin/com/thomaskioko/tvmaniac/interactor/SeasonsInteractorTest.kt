@@ -20,9 +20,9 @@ internal class SeasonsInteractorTest {
         every { runBlocking { repository.getSeasonListByTvShowId(84958) } } returns seasonsList
 
         interactor.invoke(84958).test {
-            expectItem() shouldBe DomainResultState.Loading()
-            expectItem() shouldBe DomainResultState.Success(seasonsList)
-            expectComplete()
+            awaitItem() shouldBe DomainResultState.Loading()
+            awaitItem() shouldBe DomainResultState.Success(seasonsList)
+            awaitComplete()
         }
     }
 
@@ -30,9 +30,9 @@ internal class SeasonsInteractorTest {
     fun wheneverInteractorIsInvoked_ErrorIsReturned() = runBlocking {
 
         interactor.invoke(84958).test {
-            expectItem() shouldBe DomainResultState.Loading()
-            expectItem() shouldBe DomainResultState.Error("Something went wrong")
-            expectComplete()
+            awaitItem() shouldBe DomainResultState.Loading()
+            awaitItem() shouldBe DomainResultState.Error("Something went wrong")
+            awaitComplete()
         }
     }
 }
