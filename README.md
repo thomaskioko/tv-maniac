@@ -7,7 +7,7 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
 - You require the latest [Android Studio BumbleBee](https://androidstudio.googleblog.com/2021/05/android-studio-bumblebee-canary-1.html) release to be able to build the app.
 
 ### TMDB Api
-- Create `secrets.properties` in `shared`
+- Create `local.properties` in `root` dir
 - Add the following
     ```
     TMDB_API_KEY=PUT_API_KEY
