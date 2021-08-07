@@ -41,4 +41,4 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew assembleDebug
       - name: Unit Tests
-        run: bash ./gradlew testDebugUnitTest
+        run: ./gradlew testDebugUnitTest
