@@ -9,8 +9,8 @@ import androidx.core.view.WindowCompat
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.home.HomeScreen
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
-import com.thomaskioko.tvmaniac.ui.home.MainScreenContent
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
             ProvideWindowInsets(consumeWindowInsets = false) {
                 TvManiacTheme {
-                    MainScreenContent(composeNavigationFactories)
+                    HomeScreen(composeNavigationFactories)
                 }
             }
         }

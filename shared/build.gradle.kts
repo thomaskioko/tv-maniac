@@ -5,12 +5,12 @@ import java.io.FileInputStream
 import java.util.*
 
 plugins {
-    kotlin(Plugins.multiplatform)
-    kotlin(Plugins.cocoapods)
-    kotlin(Plugins.serialization) version ("1.5.10")
-    id(Plugins.androidLibrary)
-    id(Plugins.buildkonfig)
-    id(Plugins.sqlDelight)
+    kotlin("multiplatform")
+    kotlin("native.cocoapods")
+    kotlin("plugin.serialization") version ("1.5.20")
+    id("com.android.library")
+    id("com.codingfeline.buildkonfig")
+    id("com.squareup.sqldelight")
 }
 
 version = "1.0"
@@ -119,7 +119,7 @@ android {
 
 buildkonfig {
     val properties = Properties()
-    val secretsFile = file("secrets.properties")
+    val secretsFile = file("../local.properties")
     if (secretsFile.exists()) {
         properties.load(FileInputStream(secretsFile))
     }

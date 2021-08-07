@@ -4,9 +4,10 @@ import com.thomaskioko.tvmaniac.datasource.network.TvShowsServiceMockEngine
 import com.thomaskioko.tvmaniac.datasource.network.mockresponse.getPopularTvShows
 import com.thomaskioko.tvmaniac.datasource.network.mockresponse.getTvSeasonDetailsResponse
 import com.thomaskioko.tvmaniac.util.runBlocking
-
+import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Ignore
 internal class TvShowServiceTest : TvShowsServiceMockEngine() {
 
     companion object {

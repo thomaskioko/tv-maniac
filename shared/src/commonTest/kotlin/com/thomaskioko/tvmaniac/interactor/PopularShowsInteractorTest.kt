@@ -29,9 +29,9 @@ internal class PopularShowsInteractorTest {
         every { runBlocking { repository.getPopularTvShows(1) } } returns result
 
         interactor.invoke().test {
-            expectItem() shouldBe DomainResultState.Loading()
-            expectItem() shouldBe DomainResultState.Success(result)
-            expectComplete()
+            awaitItem() shouldBe DomainResultState.Loading()
+            awaitItem() shouldBe DomainResultState.Success(result)
+            awaitComplete()
         }
     }
 
@@ -39,9 +39,9 @@ internal class PopularShowsInteractorTest {
     fun wheneverPopularShowsInteractorIsInvoked_ErrorIsReturned() = runBlocking {
 
         interactor.invoke().test {
-            expectItem() shouldBe DomainResultState.Loading()
-            expectItem() shouldBe DomainResultState.Error("Something went wrong")
-            expectComplete()
+            awaitItem() shouldBe DomainResultState.Loading()
+            awaitItem() shouldBe DomainResultState.Error("Something went wrong")
+            awaitComplete()
         }
     }
 }

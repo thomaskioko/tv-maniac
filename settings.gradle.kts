@@ -13,5 +13,13 @@ rootProject.name = "tv-maniac"
 
 include(
     ":app",
+    ":app-common:core",
+    ":app-common:compose",
+    ":app-common:navigation",
+    ":app-features:discover",
+    ":app-features:home",
+    ":app-features:search",
+    ":app-features:show-details",
+    ":app-features:watchlist",
     ":shared"
 )

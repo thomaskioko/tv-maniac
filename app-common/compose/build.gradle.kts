@@ -1,0 +1,3 @@
+plugins {
+    `android-compose-plugin`
+}
