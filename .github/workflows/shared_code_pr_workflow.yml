@@ -30,8 +30,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: Add App Secrets
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          TMDB_API_URL: ${{ secrets.TMDB_API_URL }}
+        run: |
+            echo -e "\TMDB_API_KEY=$TMDB_API_KEY" >> ./local.properties
+            echo -e "\TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
 
+      - name: Build with Gradle
+        run: ./gradlew assembleDebug
       - name: Unit Tests
-        run: bash ./gradlew testDebugUnitTest
+        run: ./gradlew testDebugUnitTest

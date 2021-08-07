@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.injection
 
+import com.thomaskioko.showdetails.ShowDetailNavigationFactory
+import com.thomaskioko.tvmaniac.DiscoverNavigationFactory
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
-import com.thomaskioko.tvmaniac.ui.detail.ShowDetailNavigationFactory
-import com.thomaskioko.tvmaniac.ui.discover.DiscoverNavigationFactory
-import com.thomaskioko.tvmaniac.ui.search.SearchNavigationFactory
-import com.thomaskioko.tvmaniac.ui.watchlist.WatchlistNavigationFactory
+import com.thomaskioko.tvmaniac.search.SearchNavigationFactory
+import com.thomaskioko.tvmaniac.watchlist.WatchlistNavigationFactory
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

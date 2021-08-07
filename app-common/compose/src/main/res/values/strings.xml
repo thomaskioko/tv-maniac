@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="menu_item_discover">Discover</string>
+    <string name="menu_item_search">Search</string>
+    <string name="menu_item_watchlist">Watchlist</string>
+
+    <string name="cd_show_poster">Poster image</string>
+    <string name="cd_show_poster_image">Poster image for %s</string>
+    <string name="cd_navigate_back">Navigate Back</string>
+
+    <string name="details_episodes">Episodes</string>
+    <string name="details_cast">Casts</string>
+    <string name="btn_watchlist">Add to Watchlist</string>
+    <string name="btn_trailer">Watch Trailer</string>
+
+    <string name="tab_episodes">Episodes</string>
+    <string name="tab_trailer">Trailers</string>
+    <string name="tab_casts">Casts</string>
+</resources>

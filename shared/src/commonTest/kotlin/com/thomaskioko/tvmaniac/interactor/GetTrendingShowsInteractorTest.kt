@@ -5,8 +5,8 @@ import com.thomaskioko.tvmaniac.MockData.getTrendingDataMap
 import com.thomaskioko.tvmaniac.MockData.getTvResponse
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.DAY
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
-import com.thomaskioko.tvmaniac.datasource.enums.TrendingDataRequest
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.TRENDING
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowType
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowEntity
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.util.DomainResultState
@@ -38,27 +38,27 @@ internal class GetTrendingShowsInteractorTest {
             ) }
 
         val trendingTypes = listOf(
-            TrendingDataRequest.TODAY,
-            TrendingDataRequest.THIS_WEEK
+            TvShowType.TODAY,
+            TvShowType.THIS_WEEK
         )
 
         interactor.invoke(trendingTypes).test {
-            expectItem() shouldBe DomainResultState.Loading()
-            expectItem() shouldBe DomainResultState.Success(getTrendingDataMap())
-            expectComplete()
+            awaitItem() shouldBe DomainResultState.Loading()
+            awaitItem() shouldBe DomainResultState.Success(getTrendingDataMap())
+            awaitComplete()
         }
     }
 
     @Test
     fun wheneverPopularShowsInteractorIsInvoked_ErrorIsReturned() = runBlocking {
         val trendingTypes = listOf(
-            TrendingDataRequest.TODAY,
-            TrendingDataRequest.THIS_WEEK
+            TvShowType.TODAY,
+            TvShowType.THIS_WEEK
         )
         interactor.invoke(trendingTypes).test {
-            expectItem() shouldBe DomainResultState.Loading()
-            expectItem() shouldBe DomainResultState.Error("Something went wrong")
-            expectComplete()
+            awaitItem() shouldBe DomainResultState.Loading()
+            awaitItem() shouldBe DomainResultState.Error("Something went wrong")
+            awaitComplete()
         }
     }
 }
