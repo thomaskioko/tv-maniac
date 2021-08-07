@@ -119,7 +119,7 @@ android {
 
 buildkonfig {
     val properties = Properties()
-    val secretsFile = file("secrets.properties")
+    val secretsFile = file("../local.properties")
     if (secretsFile.exists()) {
         properties.load(FileInputStream(secretsFile))
     }
