@@ -28,8 +28,10 @@ subprojects {
             freeCompilerArgs = freeCompilerArgs + listOf(
                 "-Xopt-in=kotlin.time.ExperimentalTime",
                 "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-Xopt-in=androidx.compose.material.ExperimentalMaterialApi",
                 "-Xopt-in=com.google.accompanist.pager.ExperimentalPagerApi",
+                "-Xopt-in=androidx.compose.material.ExperimentalMaterialApi",
+                "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+                "-Xopt-in=androidx.compose.ui.ExperimentalComposeUiApi",
                 "-Xopt-in=coil.annotation.ExperimentalCoilApi",
             )
         }
