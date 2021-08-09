@@ -3,7 +3,12 @@ Tv-Maniac 🚧 Under Heavy Development 🚧
 Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows information from
 [TMDB](https://www.themoviedb.org/).
 
+## Tv Maniac
+
+![Tv Maniac Demo](https://github.com/c0de-wizard/tv-maniac/blob/main/art/tv-maniac.gif)
+
 ## Environment
+- Java 11
 - You require the latest [Android Studio BumbleBee](https://androidstudio.googleblog.com/2021/05/android-studio-bumblebee-canary-1.html) release to be able to build the app.
 
 ### TMDB Api
@@ -44,3 +49,21 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
 ### References
 - [Design Inspiration](https://dribbble.com/shots/7591814-HBO-Max-Companion-App-Animation)
 - [Code Snippets](https://github.com/android/compose-samples)
+
+## License
+
+```
+Copyright 2021 Thomas Kioko
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
