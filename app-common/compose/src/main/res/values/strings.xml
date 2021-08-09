@@ -8,13 +8,19 @@
     <string name="cd_show_poster">Poster image</string>
     <string name="cd_show_poster_image">Poster image for %s</string>
     <string name="cd_navigate_back">Navigate Back</string>
+    <string name="cd_clear">Clear search</string>
 
     <string name="details_episodes">Episodes</string>
     <string name="details_cast">Casts</string>
+
     <string name="btn_watchlist">Add to Watchlist</string>
     <string name="btn_trailer">Watch Trailer</string>
 
     <string name="tab_episodes">Episodes</string>
     <string name="tab_trailer">Trailers</string>
     <string name="tab_casts">Casts</string>
+
+
+    <string name="msg_empty_watchlist">You haven\'t added any shows to your watchlist.</string>
+    <string name="msg_search_show_hint">Search TV Shows</string>
 </resources>
