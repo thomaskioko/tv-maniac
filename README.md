@@ -5,7 +5,7 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
 
 ## Tv Maniac
 
-![Tv Maniac Demo](https://github.com/c0de-wizard/tv-maniac/blob/main/art/tv-maniac.gif)
+![Tv Maniac Demo](https://github.com/c0de-wizard/tv-maniac/blob/main/art/Tv-Maniac.mp4)
 
 ## Environment
 - Java 11
