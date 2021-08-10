@@ -3,9 +3,21 @@ Tv-Maniac 🚧 Under Heavy Development 🚧
 Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows information from
 [TMDB](https://www.themoviedb.org/).
 
-## Tv Maniac
+### Screenshots
 
-https://user-images.githubusercontent.com/841885/128873401-61077f35-9e75-4039-bd4a-e6c4f9cc2625.mp4
+<table>
+  <td>
+    <p align="center">
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/HomeScreen.png?raw=true" alt="Home Screen" width="300"/>
+    </p>
+  </td>
+  <td>
+    <p align="center">
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/ShowDetail.png?raw=true" alt="Show Details Screen" width="300"/>
+    </p>
+  </td>
+</tr>
+</table>
 
 ## Environment
 - Java 11
