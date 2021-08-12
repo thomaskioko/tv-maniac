@@ -18,7 +18,8 @@ popularity REAL NOT NULL,
 genre_ids TEXT AS List<Int> NOT NULL,
 season_ids TEXT AS List<Int>,
 show_category TEXT AS TvShowCategory,
-time_window TEXT AS TimeWindow
+time_window TEXT AS TimeWindow,
+is_watchlist INTEGER AS Boolean DEFAULT 0
 );
 
 insertOrReplace:
@@ -59,6 +60,15 @@ selectFeatured:
 SELECT * FROM show
 WHERE show_category = ? AND time_window = ?
 ORDER BY popularity DESC, RANDOM() LIMIT 5;
+
+updateWatchlist:
+UPDATE show
+SET is_watchlist = ?
+WHERE id = ?;
+
+selectWatchlist:
+SELECT * FROM show
+WHERE is_watchlist = 1;
 
 deleteAll:
 DELETE FROM show;
