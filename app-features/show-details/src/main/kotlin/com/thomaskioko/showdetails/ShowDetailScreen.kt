@@ -59,9 +59,6 @@ import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import com.thomaskioko.showdetails.R
-import com.thomaskioko.showdetails.tabs.EpisodesScreen
-import com.thomaskioko.showdetails.tabs.SeasonCastScreen
 import com.thomaskioko.tvmaniac.compose.components.CollasableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
