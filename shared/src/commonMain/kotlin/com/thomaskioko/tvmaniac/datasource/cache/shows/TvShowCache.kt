@@ -11,7 +11,7 @@ interface TvShowCache {
 
     fun insert(list: List<Show>)
 
-    fun getTvShow(showId: Int): Show
+    fun getTvShow(showId: Int): Flow<Show>
 
     fun getTvShows(): List<Show>
 

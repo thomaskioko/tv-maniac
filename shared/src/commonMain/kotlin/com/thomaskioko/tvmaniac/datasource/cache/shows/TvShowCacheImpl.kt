@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.datasource.cache.shows
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
+import com.squareup.sqldelight.runtime.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
@@ -28,7 +29,8 @@ class TvShowCacheImpl(
                 time_window = show.time_window,
                 year = show.year,
                 status = show.status,
-                popularity = show.popularity
+                popularity = show.popularity,
+                is_watchlist = show.is_watchlist
             )
         }
     }
@@ -37,10 +39,12 @@ class TvShowCacheImpl(
         list.forEach { insert(it) }
     }
 
-    override fun getTvShow(showId: Int): Show {
+    override fun getTvShow(showId: Int): Flow<Show> {
         return database.tvShowQueries.selectByShowId(
             id = showId.toLong()
-        ).executeAsOne()
+        )
+            .asFlow()
+            .mapToOne()
     }
 
 
