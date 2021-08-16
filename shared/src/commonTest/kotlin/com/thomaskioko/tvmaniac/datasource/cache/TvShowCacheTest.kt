@@ -88,6 +88,21 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun givenTvShowIsAddedToWatchList_verifyDataIs_InsertedCorrectly() {
+
+        makeTvShowList().insertTvShowsEntityList()
+
+        tvShowQueries.updateWatchlist(
+            id = 84958.toLong(),
+            is_watchlist = true
+        )
+
+        val watchlist = tvShowQueries.selectWatchlist().executeAsList()
+
+        watchlist.size shouldBe 1
+    }
+
+    @Test
     fun verifyDelete_clearsTable() {
 
         tvShow.insertTvShowQuery()
@@ -119,7 +134,8 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             time_window = timeWindow,
             year = year,
             status = status,
-            popularity = 0.0
+            popularity = 0.0,
+            is_watchlist = false
         )
     }
 

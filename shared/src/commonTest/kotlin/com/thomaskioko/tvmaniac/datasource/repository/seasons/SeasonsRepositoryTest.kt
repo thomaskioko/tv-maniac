@@ -18,6 +18,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.unmockkAll
 import io.mockk.verify
+import kotlinx.coroutines.flow.flowOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -70,7 +71,7 @@ class SeasonsRepositoryTest {
     fun givenDataIsNotCached_thenGetTvSeasonDetailsIsInvoked_AndDataIsLoadedFromCache() =
         runBlocking {
             coEvery { apiService.getTvShowDetails(84958) } answers { getShowDetailResponse() }
-            every { tvShowCache.getTvShow(showId = 84958) } returns getShow()
+            every { tvShowCache.getTvShow(showId = 84958) } returns flowOf(getShow())
 
             val seasonList = getShowDetailResponse().toSeasonCacheList()
 
