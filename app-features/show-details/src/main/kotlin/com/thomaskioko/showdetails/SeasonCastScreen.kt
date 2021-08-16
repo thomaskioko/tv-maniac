@@ -1,4 +1,4 @@
-package com.thomaskioko.showdetails.tabs
+package com.thomaskioko.showdetails
 
 import androidx.compose.runtime.Composable
 

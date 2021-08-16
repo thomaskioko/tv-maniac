@@ -15,6 +15,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.unmockkAll
 import io.mockk.verify
+import kotlinx.coroutines.flow.flowOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -44,7 +45,7 @@ internal class TvShowRepositoryTest {
 
     @Test
     fun givenDataIsCached_thenGetTvShowIsLoadedFromCache() = runBlocking {
-        every { cache.getTvShow(84958) } returns getShow()
+        every { cache.getTvShow(84958) } returns flowOf(getShow())
 
         repository.getTvShow(84958)
 
@@ -85,15 +86,27 @@ internal class TvShowRepositoryTest {
     }
 
     @Test
-    fun givenDataIsNotCached_thenGetTrendingShowsInvokesApiService_AndDataIsLoadedFromCache() = runBlocking {
-        coEvery { apiService.getTrendingShows(WEEK.window) } answers { getTvResponse() }
+    fun givenDataIsNotCached_thenGetTrendingShowsInvokesApiService_AndDataIsLoadedFromCache() =
+        runBlocking {
+            coEvery { apiService.getTrendingShows(WEEK.window) } answers { getTvResponse() }
 
-        repository.getTrendingShows(WEEK.window)
+            repository.getTrendingShows(WEEK.window)
+
+            verify {
+                runBlocking { apiService.getTrendingShows(WEEK.window) }
+                cache.getTvShows(TvShowCategory.TRENDING, WEEK)
+            }
+        }
+
+    @Test
+    fun givenDataIsCached_thenWatchlistIsFetched() = runBlocking {
+        every { cache.getTvShows() } returns makeShowList()
+
+        repository.getWatchlist()
 
         verify {
-            runBlocking { apiService.getTrendingShows(WEEK.window) }
-            cache.getTvShows(TvShowCategory.TRENDING, WEEK)
+            runBlocking { cache.getWatchlist() }
         }
-    }
 
+    }
 }

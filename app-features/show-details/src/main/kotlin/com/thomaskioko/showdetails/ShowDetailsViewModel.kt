@@ -3,11 +3,12 @@ package com.thomaskioko.showdetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thomaskioko.tvmaniac.core.Effect
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
-import com.thomaskioko.tvmaniac.interactor.GetTrailersInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
+import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
 import com.thomaskioko.tvmaniac.presentation.model.GenreModel
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.presentation.model.TrailerModel
@@ -15,8 +16,10 @@ import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.invoke
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -29,9 +32,8 @@ class ShowDetailsViewModel @Inject constructor(
     getShow: GetShowInteractor,
     seasonsInteractor: SeasonsInteractor,
     genresInteractor: GetGenresInteractor,
-    trailersInteractor: GetTrailersInteractor,
     private val episodeInteractor: EpisodesInteractor,
-    @com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val updateWatchlistInteractor: UpdateWatchlistInteractor
 ) : ViewModel() {
 
     //TODO:: Refactor ViewModel to implement BaseViewmodel
@@ -39,6 +41,11 @@ class ShowDetailsViewModel @Inject constructor(
     private val showId: Int = savedStateHandle.get("tvShowId")!!
 
     private val episodes = MutableStateFlow(EpisodesViewState())
+
+    private val _uiEffects = MutableSharedFlow<DetailUiEffect>(extraBufferCapacity = 100)
+
+    val uiEffects: Flow<DetailUiEffect>
+        get() = _uiEffects.asSharedFlow()
 
     val uiStateFlow = combine(
         getShow(showId).distinctUntilChanged(),
@@ -59,38 +66,60 @@ class ShowDetailsViewModel @Inject constructor(
 
 
     fun submitAction(action: ShowDetailAction) {
-        viewModelScope.launch {
             when (action) {
                 is ShowDetailAction.SeasonSelected -> fetchSeasonEpisodes(action)
+                is ShowDetailAction.UpdateWatchlist -> updateWatchlist(action)
             }
+    }
+
+    private fun updateWatchlist(action: ShowDetailAction.UpdateWatchlist) {
+        viewModelScope.launch {
+            updateWatchlistInteractor.invoke(action.params)
+                .collect {
+                    when (it) {
+                        is DomainResultState.Error -> _uiEffects.emit(
+                            DetailUiEffect.WatchlistError(
+                                it.message
+                            )
+                        )
+                        is DomainResultState.Loading -> Unit
+                        is DomainResultState.Success -> Unit
+                    }
+                }
         }
     }
 
-    private suspend fun fetchSeasonEpisodes(
-        action: ShowDetailAction.SeasonSelected,
-    ) {
-        episodeInteractor.invoke(action.query)
-            .collect {
-                when (it) {
-                    is DomainResultState.Error -> {
-                        episodes.value = EpisodesViewState(
-                            isLoading = false,
-                            errorMessage = it.message
-                        )
+    private fun fetchSeasonEpisodes(action: ShowDetailAction.SeasonSelected) {
+        viewModelScope.launch {
+            episodeInteractor.invoke(action.query)
+                .collect {
+                    when (it) {
+                        is DomainResultState.Error -> {
+                            episodes.value = EpisodesViewState(
+                                isLoading = false,
+                                errorMessage = it.message
+                            )
+                        }
+                        is DomainResultState.Loading -> {
+                            episodes.value = EpisodesViewState(isLoading = true)
+                        }
+                        is DomainResultState.Success -> {
+                            episodes.value = EpisodesViewState(
+                                isLoading = false,
+                                episodeList = it.data
+                            )
+                        }
                     }
-                    is DomainResultState.Loading -> {
-                        episodes.value = EpisodesViewState(isLoading = true)
-                    }
-                    is DomainResultState.Success -> {
-                        episodes.value = EpisodesViewState(
-                            isLoading = false,
-                            episodeList = it.data
-                        )
-                    }
-                }
 
-            }
+                }
+        }
     }
+}
+
+sealed class DetailUiEffect : Effect {
+    data class WatchlistError(
+        var errorMessage: String
+    ) : DetailUiEffect()
 }
 
 internal fun DomainResultState<TvShow>.tvShowReducer(): TvShowViewState {

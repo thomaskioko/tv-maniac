@@ -15,7 +15,9 @@ class WatchlistNavigationFactory @Inject constructor() : ComposeNavigationFactor
             content = {
                 WatchListScreen(
                     viewModel = this,
-                    navController = navController
+                    openShowDetails = { tvShowId ->
+                        navController.navigate("${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId")
+                    }
                 )
             }
         )
