@@ -88,7 +88,7 @@ fun AppBarHomeIcon(onNavIconPressed: () -> Unit = { }) {
 }
 
 @Composable
-fun CollasableAppBar(
+fun CollapsableAppBar(
     title: String?,
     showAppBarBackground: Boolean,
     onNavIconPressed: () -> Unit,
