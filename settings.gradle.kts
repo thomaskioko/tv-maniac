@@ -21,6 +21,6 @@ include(
     ":app-features:search",
     ":app-features:show-details",
     ":app-features:watchlist",
-    ":app-features:show-grid",
+    ":app-features:shows-grid",
     ":shared"
 )
