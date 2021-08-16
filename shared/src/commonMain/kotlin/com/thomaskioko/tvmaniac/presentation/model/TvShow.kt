@@ -14,6 +14,7 @@ data class TvShow(
     val status : String = "",
     val votes: Int = 0,
     val averageVotes: Double = 0.0,
+    val isInWatchlist: Boolean = false,
     val genreIds: List<Int> = listOf(),
     val showCategory: TvShowCategory = TvShowCategory.POPULAR_TV_SHOWS,
     val timeWindow : TimeWindow = TimeWindow.WEEK,
