@@ -10,8 +10,10 @@ import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.GetTrailersInteractor
 import com.thomaskioko.tvmaniac.interactor.GetTrendingShowsInteractor
+import com.thomaskioko.tvmaniac.interactor.GetWatchListInteractor
 import com.thomaskioko.tvmaniac.interactor.PopularShowsInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
+import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -63,4 +65,16 @@ object InteractorsModule {
     fun provideGetTrailersInteractor(
         repository: TrailerRepository
     ): GetTrailersInteractor = GetTrailersInteractor(repository)
+
+    @Singleton
+    @Provides
+    fun provideGetWatchListInteractor(
+        repository: TvShowsRepository
+    ): GetWatchListInteractor = GetWatchListInteractor(repository)
+
+    @Singleton
+    @Provides
+    fun provideUpdateWatchlistInteractor(
+        repository: TvShowsRepository
+    ): UpdateWatchlistInteractor = UpdateWatchlistInteractor(repository)
 }
