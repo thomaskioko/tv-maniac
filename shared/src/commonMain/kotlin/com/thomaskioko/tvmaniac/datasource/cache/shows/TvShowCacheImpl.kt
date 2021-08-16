@@ -6,7 +6,7 @@ import com.squareup.sqldelight.runtime.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import kotlinx.coroutines.flow.Flow
 
 class TvShowCacheImpl(
@@ -53,7 +53,7 @@ class TvShowCacheImpl(
             .executeAsList()
     }
 
-    override fun getTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<Show> {
+    override fun getTvShows(category: ShowCategory, timeWindow: TimeWindow): List<Show> {
         return database.tvShowQueries.selectByShowIdAndWindow(
             show_category = category,
             time_window = timeWindow
@@ -66,7 +66,7 @@ class TvShowCacheImpl(
             .mapToList()
     }
 
-    override fun getFeaturedTvShows(category: TvShowCategory, timeWindow: TimeWindow): List<Show> {
+    override fun getFeaturedTvShows(category: ShowCategory, timeWindow: TimeWindow): List<Show> {
         return database.tvShowQueries.selectFeatured(
             show_category = category,
             time_window = timeWindow

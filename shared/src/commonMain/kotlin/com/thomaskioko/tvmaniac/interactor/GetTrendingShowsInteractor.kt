@@ -1,11 +1,12 @@
 package com.thomaskioko.tvmaniac.interactor
 
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType.FEATURED
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType.POPULAR
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType.THIS_WEEK
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType.TODAY
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType.TOP_RATED
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.FEATURED
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.POPULAR
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.THIS_WEEK
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TODAY
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TOP_RATED
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
@@ -19,20 +20,21 @@ import kotlinx.coroutines.flow.flow
 
 class GetTrendingShowsInteractor constructor(
     private val repository: TvShowsRepository,
-) : Interactor<List<TvShowType>, LinkedHashMap<TvShowType, List<TvShow>>>() {
+) : Interactor<List<ShowCategory>, LinkedHashMap<ShowCategory, List<TvShow>>>() {
 
-    override fun run(params: List<TvShowType>): Flow<DomainResultState<LinkedHashMap<TvShowType, List<TvShow>>>> =
+    override fun run(params: List<ShowCategory>): Flow<DomainResultState<LinkedHashMap<ShowCategory, List<TvShow>>>> =
         flow {
             emit(loading())
 
-            val trendingMap = linkedMapOf<TvShowType, List<TvShow>>()
+            val trendingMap = linkedMapOf<ShowCategory, List<TvShow>>()
 
             params.forEach {
                 val result = when (it) {
                     FEATURED -> repository.getFeaturedShows()
-                    TODAY, THIS_WEEK -> repository.getTrendingShows(it.timeWindow.window)
+                    TODAY, THIS_WEEK -> repository.getTrendingShows(it.timeWindow!!.window)
                     POPULAR -> repository.getPopularTvShows(1)
                     TOP_RATED -> repository.getTopRatedTvShows(1)
+                    TRENDING -> repository.getShowsByCategory(TRENDING)
                 }
 
                 trendingMap[it] = result

@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.MockData.getTvResponse
 import com.thomaskioko.tvmaniac.MockData.makeShowList
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepositoryImpl
 import com.thomaskioko.tvmaniac.util.runBlocking
@@ -94,7 +94,7 @@ internal class TvShowRepositoryTest {
 
             verify {
                 runBlocking { apiService.getTrendingShows(WEEK.window) }
-                cache.getTvShows(TvShowCategory.TRENDING, WEEK)
+                cache.getTvShows(ShowCategory.TRENDING, WEEK)
             }
         }
 

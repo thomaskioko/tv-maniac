@@ -3,13 +3,13 @@ package com.thomaskioko.tvmaniac.core.discover
 import com.thomaskioko.tvmaniac.core.Action
 import com.thomaskioko.tvmaniac.core.Effect
 import com.thomaskioko.tvmaniac.core.State
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 
 
 data class DiscoverShowState(
     val isLoading: Boolean,
-    val dataMap: LinkedHashMap<TvShowType, List<TvShow>>
+    val dataMap: LinkedHashMap<ShowCategory, List<TvShow>>
 ) : State {
     companion object {
         val Empty = DiscoverShowState(
@@ -21,7 +21,7 @@ data class DiscoverShowState(
 
 sealed class DiscoverShowAction : Action {
     data class LoadTvShows(
-        val tvShowType: List<TvShowType>
+        val tvShowType: List<ShowCategory>
     ) : DiscoverShowAction()
 
     data class Error(val message: String = "") : DiscoverShowAction()

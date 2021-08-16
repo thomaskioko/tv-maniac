@@ -1,5 +1,5 @@
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory;
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow;
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory;
 import kotlin.collections.List;
 
 
@@ -17,7 +17,7 @@ status TEXT NOT NULL,
 popularity REAL NOT NULL,
 genre_ids TEXT AS List<Int> NOT NULL,
 season_ids TEXT AS List<Int>,
-show_category TEXT AS TvShowCategory,
+show_category TEXT AS ShowCategory,
 time_window TEXT AS TimeWindow,
 is_watchlist INTEGER AS Boolean NOT NULL DEFAULT 0
 );
