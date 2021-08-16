@@ -19,7 +19,7 @@ genre_ids TEXT AS List<Int> NOT NULL,
 season_ids TEXT AS List<Int>,
 show_category TEXT AS TvShowCategory,
 time_window TEXT AS TimeWindow,
-is_watchlist INTEGER AS Boolean DEFAULT 0
+is_watchlist INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
 insertOrReplace:
@@ -37,8 +37,9 @@ genre_ids,
 show_category,
 time_window,
 status,
-popularity
-)VALUES(?,?,?,?,?,?,?,?,?,?, ?,?, ?, ?);
+popularity,
+is_watchlist
+)VALUES(?,?,?,?,?,?,?,?,?,?, ?,?, ?, ?, ?);
 
 updateTvShow:
 UPDATE show
