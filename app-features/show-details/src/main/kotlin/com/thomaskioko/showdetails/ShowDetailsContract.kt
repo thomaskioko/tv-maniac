@@ -1,6 +1,7 @@
 package com.thomaskioko.showdetails
 
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
+import com.thomaskioko.tvmaniac.interactor.UpdateShowParams
 import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.presentation.model.GenreModel
 import com.thomaskioko.tvmaniac.presentation.model.Season
@@ -10,6 +11,10 @@ import com.thomaskioko.tvmaniac.presentation.model.TvShow
 sealed class ShowDetailAction {
     data class SeasonSelected(
         val query: EpisodeQuery
+    ) : ShowDetailAction()
+
+    data class UpdateWatchlist(
+        val params : UpdateShowParams
     ) : ShowDetailAction()
 }
 
