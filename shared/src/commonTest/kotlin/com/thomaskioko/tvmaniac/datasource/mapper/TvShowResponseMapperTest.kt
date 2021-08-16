@@ -13,7 +13,7 @@ internal class TvShowResponseMapperTest {
 
         val response = getTvResponse()
         val mappedData = response.results
-            .map { it.toTvShowEntity() }
+            .map { it.toTvShow() }
             .map { it.copy(showCategory = POPULAR_TV_SHOWS) }
 
         val showResponse = response.results.first()

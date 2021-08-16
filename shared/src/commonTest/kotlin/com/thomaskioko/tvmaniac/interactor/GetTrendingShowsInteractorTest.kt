@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.DAY
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowType
-import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowEntity
+import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.runBlocking
@@ -24,14 +24,14 @@ internal class GetTrendingShowsInteractorTest {
     @Test
     fun wheneverPopularShowsInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {
         coEvery { repository.getTrendingShows(DAY.window) } returns getTvResponse().results
-            .map { it.toTvShowEntity() }
+            .map { it.toTvShow() }
             .map { it.copy(
                 showCategory = TRENDING,
                 timeWindow = DAY
             ) }
 
         coEvery { repository.getTrendingShows(WEEK.window) } returns getTvResponse().results
-            .map { it.toTvShowEntity() }
+            .map { it.toTvShow() }
             .map { it.copy(
                 showCategory = TRENDING,
                 timeWindow = WEEK
