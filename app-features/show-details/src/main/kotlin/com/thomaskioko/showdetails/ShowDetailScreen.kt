@@ -1,5 +1,6 @@
 package com.thomaskioko.showdetails
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -24,16 +25,11 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.FloatingActionButtonDefaults
-import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -49,11 +45,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -70,6 +70,7 @@ import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.components.TabItem.Casts
 import com.thomaskioko.tvmaniac.compose.components.TabItem.Episodes
+import com.thomaskioko.tvmaniac.compose.components.TabItem.Similar
 import com.thomaskioko.tvmaniac.compose.components.Tabs
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
@@ -391,10 +392,10 @@ fun ShowDetailButtons(
 
         ExtendedFloatingActionButton(
             icon = {
-                Icon(
-                    imageVector = Icons.Default.PlayArrow,
+                Image(
+                    painter = painterResource(id = R.drawable.ic_trailer_24),
                     contentDescription = null,
-                    tint = MaterialTheme.colors.secondary
+                    colorFilter = ColorFilter.tint(MaterialTheme.colors.secondary.copy(alpha = 0.8F)),
                 )
             },
             text = {
@@ -419,14 +420,16 @@ fun ShowDetailButtons(
             stringResource(id = R.string.btn_remove_watchlist)
         else stringResource(id = R.string.btn_add_watchlist)
 
-        val imageVector = if (show.isInWatchlist) Icons.Default.Clear else Icons.Default.Add
+        val imageVector = if (show.isInWatchlist)
+            painterResource(id = R.drawable.ic_baseline_check_box_24)
+        else painterResource(id = R.drawable.ic_baseline_add_box_24)
 
         ExtendedFloatingActionButton(
             icon = {
-                Icon(
-                    imageVector = imageVector,
+                Image(
+                    painter = imageVector,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.secondary
+                    colorFilter = ColorFilter.tint(MaterialTheme.colors.secondary.copy(alpha = 0.8F)),
                 )
             },
             text = {
@@ -434,6 +437,9 @@ fun ShowDetailButtons(
                     Text(
                         text = message,
                         style = MaterialTheme.typography.body2,
+                        textAlign = TextAlign.Center,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
                 }
             },
@@ -452,7 +458,7 @@ fun ShowDetailButtons(
 fun SeasonTabs(viewState: ShowDetailViewState, onSeasonSelected: (EpisodeQuery) -> Unit) {
 
     Column {
-        val tabs = listOf(Episodes, Casts)
+        val tabs = listOf(Episodes, Casts, Similar)
 
         val pagerState = rememberPagerState(pageCount = tabs.size)
 
@@ -462,6 +468,7 @@ fun SeasonTabs(viewState: ShowDetailViewState, onSeasonSelected: (EpisodeQuery) 
             when (tabs[page]) {
                 Casts -> SeasonCastScreen()
                 Episodes -> EpisodesScreen(viewState, onSeasonSelected)
+                Similar -> SimilarShowsScreen()
             }
         }
     }
