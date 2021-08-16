@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.datasource.mapper
 
 import com.thomaskioko.tvmaniac.MockData.getTvResponse
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.POPULAR_TV_SHOWS
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.util.StringUtil.formatPosterPath
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
@@ -14,7 +14,7 @@ internal class TvShowResponseMapperTest {
         val response = getTvResponse()
         val mappedData = response.results
             .map { it.toTvShow() }
-            .map { it.copy(showCategory = POPULAR_TV_SHOWS) }
+            .map { it.copy(showCategory = ShowCategory.POPULAR) }
 
         val showResponse = response.results.first()
         val mappedShow = mappedData.first()
@@ -27,6 +27,6 @@ internal class TvShowResponseMapperTest {
         mappedShow.votes shouldBe showResponse.voteCount
         mappedShow.averageVotes shouldBe showResponse.voteAverage
         mappedShow.genreIds shouldBe showResponse.genreIds
-        mappedShow.showCategory shouldBe POPULAR_TV_SHOWS
+        mappedShow.showCategory shouldBe ShowCategory.POPULAR
     }
 }

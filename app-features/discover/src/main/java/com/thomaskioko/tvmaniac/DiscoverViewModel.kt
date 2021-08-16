@@ -6,11 +6,11 @@ import com.thomaskioko.tvmaniac.core.Store
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowAction
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType.FEATURED
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType.POPULAR
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType.THIS_WEEK
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType.TOP_RATED
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.FEATURED
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.POPULAR
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.THIS_WEEK
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TOP_RATED
 import com.thomaskioko.tvmaniac.interactor.GetTrendingShowsInteractor
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
@@ -61,7 +61,7 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    private fun DomainResultState<LinkedHashMap<TvShowType, List<TvShow>>>.stateReducer(
+    private fun DomainResultState<LinkedHashMap<ShowCategory, List<TvShow>>>.stateReducer(
         state: DiscoverShowState,
     ): DiscoverShowState {
         return when (this) {
