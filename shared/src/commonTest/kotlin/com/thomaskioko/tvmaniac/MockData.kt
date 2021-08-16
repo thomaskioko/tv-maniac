@@ -5,9 +5,9 @@ import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.Tv_season
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType
 import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
-import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowEntity
+import com.thomaskioko.tvmaniac.datasource.enums.TvShowType
+import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
 import com.thomaskioko.tvmaniac.datasource.network.model.EpisodesResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.GenreResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.SeasonResponse
@@ -276,7 +276,7 @@ object MockData {
         val trendingMap = linkedMapOf<TvShowType, List<TvShow>>()
 
         trendingMap[TvShowType.TODAY] = getTvResponse().results
-            .map { it.toTvShowEntity() }
+            .map { it.toTvShow() }
             .map {
                 it.copy(
                     showCategory = TvShowCategory.TRENDING,
@@ -285,7 +285,7 @@ object MockData {
             }
 
         trendingMap[TvShowType.THIS_WEEK] = getTvResponse().results
-            .map { it.toTvShowEntity() }
+            .map { it.toTvShow() }
             .map {
                 it.copy(
                     showCategory = TvShowCategory.TRENDING,
@@ -416,7 +416,8 @@ object MockData {
             season_ids = null,
             episode_ids = null,
             status = null,
-            popularity = null
+            popularity = null,
+            is_watchlist = false
         ),
         SelectSeasonsByShowId(
             id = 77680,
@@ -441,7 +442,8 @@ object MockData {
             poster_image_url = null,
             backdrop_image_url = null,
             status = null,
-            popularity = null
+            popularity = null,
+            is_watchlist = false
         )
     )
 
@@ -503,7 +505,8 @@ object MockData {
         season_ids = null,
         time_window = null,
         status = "Ended",
-        popularity = 24.4848
+        popularity = 24.4848,
+        is_watchlist = true
     )
 
     fun makeShowList() = listOf(
@@ -527,7 +530,8 @@ object MockData {
             season_ids = null,
             time_window = null,
             status = "Ended",
-            popularity = 24.4848
+            popularity = 24.4848,
+            is_watchlist = true
         ),
         Show(
             id = 126280,
@@ -546,7 +550,8 @@ object MockData {
             season_ids = null,
             time_window = null,
             status = "Ended",
-            popularity = 24.4848
+            popularity = 24.4848,
+            is_watchlist = false
         ),
     )
 }

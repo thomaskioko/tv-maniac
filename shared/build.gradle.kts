@@ -54,6 +54,7 @@ kotlin {
             implementation(libs.ktor.serialization)
 
             implementation(libs.napier)
+            implementation(libs.squareup.sqldelight.extensions)
             implementation(libs.squareup.sqldelight.runtime)
         }
 

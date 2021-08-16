@@ -5,7 +5,7 @@ android-compile = "30"
 android-target = "30"
 android-min = "21"
 
-android-gradle = "7.1.0-alpha07"
+android-gradle = "7.1.0-alpha08"
 date-time = "0.2.1"
 
 accompanist = "0.16.0"
@@ -91,6 +91,7 @@ napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
 
 squareup-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "squareup-leakcanary" }
+squareup-sqldelight-extensions = { module = "com.squareup.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 squareup-sqldelight-runtime = { module = "com.squareup.sqldelight:runtime", version.ref = "sqldelight" }
 squareup-sqldelight-driver-android = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqldelight" }
 squareup-sqldelight-driver-jvm = { module = "com.squareup.sqldelight:sqlite-driver", version.ref = "sqldelight" }

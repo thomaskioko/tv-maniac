@@ -26,11 +26,12 @@ fun ShowResponse.toShow(): Show {
         time_window = null,
         season_ids = null,
         status = "",
-        popularity = popularity
+        popularity = popularity,
+        is_watchlist = false
     )
 }
 
-fun ShowResponse.toTvShowEntity(): TvShow {
+fun ShowResponse.toTvShow(): TvShow {
     return TvShow(
         id = id,
         title = name,
@@ -54,11 +55,11 @@ private fun formatDate(dateString: String): String {
         dateString
 }
 
-fun List<Show>.toTvShowsEntityList(): List<TvShow> {
-    return map { it.toTvShowsEntity() }
+fun List<Show>.toTvShowList(): List<TvShow> {
+    return map { it.toTvShow() }
 }
 
-fun Show.toTvShowsEntity(): TvShow {
+fun Show.toTvShow(): TvShow {
     return TvShow(
         id = id.toInt(),
         title = title,
@@ -71,6 +72,7 @@ fun Show.toTvShowsEntity(): TvShow {
         genreIds = genre_ids,
         showCategory = show_category ?: POPULAR_TV_SHOWS,
         year = year,
-        status = status
+        status = status,
+        isInWatchlist = is_watchlist
     )
 }

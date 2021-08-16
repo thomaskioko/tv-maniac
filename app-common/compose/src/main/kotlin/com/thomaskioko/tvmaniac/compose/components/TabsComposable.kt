@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 sealed class TabItem(var title: String) {
     object Episodes : TabItem("Episodes")
     object Casts : TabItem("Casts")
+    object Similar : TabItem("Similar")
 }
 
 @OptIn(ExperimentalPagerApi::class)

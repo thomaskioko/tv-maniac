@@ -1,5 +1,6 @@
 package com.thomaskioko.showdetails
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -24,15 +25,12 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.FloatingActionButtonDefaults
-import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -47,11 +45,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -59,25 +61,26 @@ import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import com.thomaskioko.showdetails.R
-import com.thomaskioko.showdetails.tabs.EpisodesScreen
-import com.thomaskioko.showdetails.tabs.SeasonCastScreen
+import com.thomaskioko.showdetails.DetailUiEffect.WatchlistError
+import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
+import com.thomaskioko.tvmaniac.compose.R
 import com.thomaskioko.tvmaniac.compose.components.CollasableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.components.TabItem.Casts
 import com.thomaskioko.tvmaniac.compose.components.TabItem.Episodes
+import com.thomaskioko.tvmaniac.compose.components.TabItem.Similar
 import com.thomaskioko.tvmaniac.compose.components.Tabs
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
+import com.thomaskioko.tvmaniac.interactor.UpdateShowParams
 import com.thomaskioko.tvmaniac.presentation.model.GenreModel
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.flow.collect
 import java.util.*
 
 @Composable
@@ -89,9 +92,20 @@ fun ShowDetailScreen(
     val viewState by rememberFlowWithLifecycle(viewModel.uiStateFlow)
         .collectAsState(initial = ShowDetailViewState.Empty)
 
+    val scaffoldState = rememberScaffoldState()
+
+    LaunchedEffect(viewModel) {
+        viewModel.uiEffects.collect {
+            when (it) {
+                is WatchlistError -> scaffoldState.snackbarHostState.showSnackbar(it.errorMessage)
+            }
+        }
+    }
+
     val listState = rememberLazyListState()
 
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             var appBarHeight by remember { mutableStateOf(0) }
             val showAppBarBackground by remember {
@@ -129,7 +143,8 @@ fun ShowDetailScreen(
                 listState = listState,
                 onSeasonSelected = { viewModel.submitAction(ShowDetailAction.SeasonSelected(it)) },
                 contentPadding = contentPadding,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                onWatchlistClick = { viewModel.submitAction(UpdateWatchlist(it)) }
             )
         }
     )
@@ -141,6 +156,7 @@ private fun TvShowDetailsScrollingContent(
     listState: LazyListState,
     modifier: Modifier = Modifier,
     onSeasonSelected: (EpisodeQuery) -> Unit,
+    onWatchlistClick: (UpdateShowParams) -> Unit,
     contentPadding: PaddingValues,
 ) {
 
@@ -150,7 +166,7 @@ private fun TvShowDetailsScrollingContent(
         modifier = modifier
     ) {
 
-        item { TvShowHeaderView(detailUiState, listState) }
+        item { TvShowHeaderView(detailUiState, listState, onWatchlistClick) }
 
         item { SeasonTabs(detailUiState, onSeasonSelected) }
 
@@ -161,18 +177,10 @@ private fun TvShowDetailsScrollingContent(
 fun TvShowHeaderView(
     detailUiState: ShowDetailViewState,
     listState: LazyListState,
+    onWatchlistClick: (UpdateShowParams) -> Unit,
 ) {
-    var animateState by remember { mutableStateOf(2) }
-    val surfaceGradient = backgroundGradient().reversed()
 
-    LaunchedEffect(Unit) {
-        var plus = true
-        while (isActive) {
-            delay(32)
-            animateState += 1 * if (plus) 1 else -1
-            plus = !plus
-        }
-    }
+    val surfaceGradient = backgroundGradient().reversed()
 
     Surface(
         modifier = Modifier
@@ -189,14 +197,12 @@ fun TvShowHeaderView(
             }) {
 
         Box {
-            if (animateState > 0) {
-                KenBurnsViewImage(
-                    imageUrl = detailUiState.tvShow.backdropImageUrl,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clipToBounds()
-                )
-            }
+            KenBurnsViewImage(
+                imageUrl = detailUiState.tvShow.backdropImageUrl,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clipToBounds()
+            )
 
             BoxWithConstraints {
                 Box(
@@ -215,7 +221,10 @@ fun TvShowHeaderView(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Bottom
                     ) {
-                        TvShowInfo(detailUiState)
+                        TvShowInfo(
+                            detailUiState = detailUiState,
+                            onWatchlistClick = onWatchlistClick
+                        )
                     }
                 }
             }
@@ -224,7 +233,10 @@ fun TvShowHeaderView(
 }
 
 @Composable
-fun TvShowInfo(detailUiState: ShowDetailViewState) {
+fun TvShowInfo(
+    detailUiState: ShowDetailViewState,
+    onWatchlistClick: (UpdateShowParams) -> Unit,
+) {
 
     val show = detailUiState.tvShow
 
@@ -259,6 +271,7 @@ fun TvShowInfo(detailUiState: ShowDetailViewState) {
         show = show,
         seasons = detailUiState.tvSeasons,
         genreList = detailUiState.genreList,
+        onWatchlistClick = onWatchlistClick,
         modifier = Modifier.padding(horizontal = 16.dp)
     )
 
@@ -270,7 +283,8 @@ fun TvShowMetadata(
     show: TvShow,
     seasons: List<Season>,
     genreList: List<GenreModel>,
-    modifier: Modifier
+    modifier: Modifier,
+    onWatchlistClick: (UpdateShowParams) -> Unit,
 ) {
     val resources = LocalContext.current.resources
 
@@ -319,7 +333,10 @@ fun TvShowMetadata(
 
     ColumnSpacer(8)
 
-    ShowDetailButtons()
+    ShowDetailButtons(
+        show = show,
+        onWatchlistClick = onWatchlistClick
+    )
 
 }
 
@@ -361,7 +378,10 @@ private fun GenreText(
 
 
 @Composable
-fun ShowDetailButtons() {
+fun ShowDetailButtons(
+    show: TvShow,
+    onWatchlistClick: (UpdateShowParams) -> Unit,
+) {
 
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -372,10 +392,10 @@ fun ShowDetailButtons() {
 
         ExtendedFloatingActionButton(
             icon = {
-                Icon(
-                    imageVector = Icons.Default.PlayArrow,
+                Image(
+                    painter = painterResource(id = R.drawable.ic_trailer_24),
                     contentDescription = null,
-                    tint = MaterialTheme.colors.secondary
+                    colorFilter = ColorFilter.tint(MaterialTheme.colors.secondary.copy(alpha = 0.8F)),
                 )
             },
             text = {
@@ -396,25 +416,36 @@ fun ShowDetailButtons() {
 
         RowSpacer(value = 8)
 
+        val message = if (show.isInWatchlist)
+            stringResource(id = R.string.btn_remove_watchlist)
+        else stringResource(id = R.string.btn_add_watchlist)
+
+        val imageVector = if (show.isInWatchlist)
+            painterResource(id = R.drawable.ic_baseline_check_box_24)
+        else painterResource(id = R.drawable.ic_baseline_add_box_24)
+
         ExtendedFloatingActionButton(
             icon = {
-                Icon(
-                    imageVector = Icons.Default.Add,
+                Image(
+                    painter = imageVector,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.secondary
+                    colorFilter = ColorFilter.tint(MaterialTheme.colors.secondary.copy(alpha = 0.8F)),
                 )
             },
             text = {
                 CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                     Text(
-                        text = stringResource(id = R.string.btn_watchlist),
+                        text = message,
                         style = MaterialTheme.typography.body2,
+                        textAlign = TextAlign.Center,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
                 }
             },
             backgroundColor = Color.Transparent,
             elevation = FloatingActionButtonDefaults.elevation(),
-            onClick = {},
+            onClick = { onWatchlistClick(UpdateShowParams(show.id, !show.isInWatchlist)) },
             modifier = Modifier
                 .padding(2.dp)
                 .border(1.dp, Color(0xFF414141), RoundedCornerShape(8.dp))
@@ -427,7 +458,7 @@ fun ShowDetailButtons() {
 fun SeasonTabs(viewState: ShowDetailViewState, onSeasonSelected: (EpisodeQuery) -> Unit) {
 
     Column {
-        val tabs = listOf(Episodes, Casts)
+        val tabs = listOf(Episodes, Casts, Similar)
 
         val pagerState = rememberPagerState(pageCount = tabs.size)
 
@@ -437,6 +468,7 @@ fun SeasonTabs(viewState: ShowDetailViewState, onSeasonSelected: (EpisodeQuery) 
             when (tabs[page]) {
                 Casts -> SeasonCastScreen()
                 Episodes -> EpisodesScreen(viewState, onSeasonSelected)
+                Similar -> SimilarShowsScreen()
             }
         }
     }
