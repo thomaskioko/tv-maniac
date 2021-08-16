@@ -13,7 +13,8 @@
     <string name="details_episodes">Episodes</string>
     <string name="details_cast">Casts</string>
 
-    <string name="btn_watchlist">Add to Watchlist</string>
+    <string name="btn_add_watchlist">Add to Watchlist</string>
+    <string name="btn_remove_watchlist">Remove from Watchlist</string>
     <string name="btn_trailer">Watch Trailer</string>
 
     <string name="tab_episodes">Episodes</string>
