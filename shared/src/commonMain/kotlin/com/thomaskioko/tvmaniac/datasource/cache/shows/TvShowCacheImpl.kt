@@ -5,8 +5,8 @@ import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.squareup.sqldelight.runtime.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
-import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
+import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import kotlinx.coroutines.flow.Flow
 
 class TvShowCacheImpl(
@@ -64,6 +64,12 @@ class TvShowCacheImpl(
         return database.tvShowQueries.selectWatchlist()
             .asFlow()
             .mapToList()
+    }
+
+    override fun getTvShowsByCategory(category: ShowCategory): List<Show> {
+        return database.tvShowQueries.selectByCategory(
+            show_category = category,
+        ).executeAsList()
     }
 
     override fun getFeaturedTvShows(category: ShowCategory, timeWindow: TimeWindow): List<Show> {

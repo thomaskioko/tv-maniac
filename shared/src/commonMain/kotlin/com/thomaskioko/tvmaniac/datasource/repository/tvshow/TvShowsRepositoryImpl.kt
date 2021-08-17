@@ -63,24 +63,23 @@ class TvShowsRepositoryImpl(
         }
     }
 
-    override suspend fun getTrendingShows(
-        timeWindow: String
-    ): List<TvShow> {
-        return if (getShowsByCategoryAndWindow(TRENDING, TimeWindow[timeWindow]).isEmpty()) {
+    override suspend fun getTrendingShowsByTime(timeWindow: TimeWindow): List<TvShow> {
+        return if (getShowsByCategoryAndWindow(TRENDING, timeWindow).isEmpty()) {
 
-            apiService.getTrendingShows(timeWindow).results
+            val cacheResult = apiService.getTrendingShows(timeWindow.window).results
                 .map { it.toShow() }
                 .map {
                     it.copy(
                         show_category = TRENDING,
-                        time_window = TimeWindow[timeWindow]
+                        time_window = timeWindow
                     )
                 }
-                .map { cache.insert(it) }
 
-            getShowsByCategoryAndWindow(TRENDING, TimeWindow[timeWindow])
+            cache.insert(cacheResult)
+
+            getShowsByCategoryAndWindow(TRENDING, timeWindow)
         } else {
-            getShowsByCategoryAndWindow(TRENDING, TimeWindow[timeWindow])
+            getShowsByCategoryAndWindow(TRENDING, timeWindow)
         }
     }
 
@@ -104,9 +103,8 @@ class TvShowsRepositoryImpl(
     }
 
     override suspend fun getShowsByCategory(category: ShowCategory): List<TvShow> {
-        return cache.getTvShows()
+        return cache.getTvShowsByCategory(category)
             .toTvShowList()
-            .filter { it.showCategory == category }
     }
 
     override fun getWatchlist(): Flow<List<TvShow>> = cache.getWatchlist()

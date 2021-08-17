@@ -13,7 +13,7 @@ interface TvShowsRepository  {
 
     suspend fun getTopRatedTvShows(page: Int) : List<TvShow>
 
-    suspend fun getTrendingShows(timeWindow: String): List<TvShow>
+    suspend fun getTrendingShowsByTime(timeWindow: TimeWindow): List<TvShow>
 
     suspend fun getFeaturedShows(): List<TvShow>
 
