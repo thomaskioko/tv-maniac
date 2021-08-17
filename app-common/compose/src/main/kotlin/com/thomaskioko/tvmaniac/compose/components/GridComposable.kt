@@ -25,7 +25,6 @@ fun <T> LazyGridItems(
     LazyColumn(
         state = listState,
         modifier = Modifier
-            .padding(bottom = 54.dp)
             .padding(horizontal = hPadding.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
