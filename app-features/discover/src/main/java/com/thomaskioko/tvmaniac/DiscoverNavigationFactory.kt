@@ -17,6 +17,9 @@ class DiscoverNavigationFactory @Inject constructor() : ComposeNavigationFactory
                     openShowDetails = { tvShowId ->
                         navController.navigate("${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId")
                     },
+                    moreClicked = { showType ->
+                        navController.navigate("${NavigationScreen.ShowGridNavScreen.route}/$showType")
+                    },
                     viewModel = this,
                 )
             }
