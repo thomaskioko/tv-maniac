@@ -174,7 +174,8 @@ object MockData {
             votes = 4958,
             averageVotes = 8.1,
             genreIds = listOf(18, 10765),
-            showCategory = ShowCategory.POPULAR
+            showCategory = ShowCategory.TRENDING,
+            timeWindow = TimeWindow.WEEK
         ),
         TvShow(
             id = 126280,
