@@ -50,6 +50,10 @@ selectByShowId:
 SELECT * FROM show
 WHERE id = ?;
 
+selectByCategory:
+SELECT * FROM show
+WHERE show_category = ?;
+
 selectByShowIdAndWindow:
 SELECT * FROM show
 WHERE show_category = ? AND time_window = ?;

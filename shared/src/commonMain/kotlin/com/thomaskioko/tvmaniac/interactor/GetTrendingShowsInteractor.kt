@@ -31,7 +31,7 @@ class GetTrendingShowsInteractor constructor(
             params.forEach {
                 val result = when (it) {
                     FEATURED -> repository.getFeaturedShows()
-                    TODAY, THIS_WEEK -> repository.getTrendingShows(it.timeWindow!!.window)
+                    TODAY, THIS_WEEK -> repository.getTrendingShowsByTime(it.timeWindow!!)
                     POPULAR -> repository.getPopularTvShows(1)
                     TOP_RATED -> repository.getTopRatedTvShows(1)
                     TRENDING -> repository.getShowsByCategory(TRENDING)
