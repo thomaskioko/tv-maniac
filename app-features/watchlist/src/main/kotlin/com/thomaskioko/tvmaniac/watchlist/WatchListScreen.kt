@@ -1,40 +1,28 @@
 package com.thomaskioko.tvmaniac.watchlist
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHost
-import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.google.accompanist.insets.statusBarsPadding
 import com.thomaskioko.tvmaniac.compose.R
-import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
+import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
 import com.thomaskioko.tvmaniac.compose.components.LazyGridItems
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
@@ -65,7 +53,8 @@ fun WatchListScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = Modifier
-            .statusBarsPadding(),
+            .statusBarsPadding()
+            .padding(bottom = 64.dp),
         snackbarHost = { snackBarHostState ->
             SnackbarHost(
                 hostState = snackBarHostState,
@@ -100,7 +89,10 @@ private fun WatchlistContent(
     val listState = rememberLazyListState()
 
     if (viewState.list.isEmpty())
-        EmptyWatchlist()
+        EmptyContentView(
+            painter = painterResource(id = R.drawable.ic_watchlist_empty),
+            message = stringResource(id = R.string.msg_empty_watchlist)
+        )
     else
         LazyGridItems(
             listState = listState,
@@ -131,32 +123,3 @@ private fun WatchlistContent(
         }
 }
 
-@Composable
-private fun EmptyWatchlist() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_watchlist_empty),
-            colorFilter = ColorFilter.tint(MaterialTheme.colors.onSurface.copy(alpha = 0.8F)),
-            modifier = Modifier.size(96.dp),
-            contentDescription = null
-        )
-
-        ColumnSpacer(value = 12)
-
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            Text(
-                text = stringResource(id = R.string.msg_empty_watchlist),
-                style = MaterialTheme.typography.body2,
-                lineHeight = 20.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 48.dp),
-            )
-        }
-    }
-}
