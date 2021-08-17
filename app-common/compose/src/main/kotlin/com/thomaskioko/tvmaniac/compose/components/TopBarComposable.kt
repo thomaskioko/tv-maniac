@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -74,6 +75,28 @@ fun AppBarScaffold(
             content = { content() }
         )
     }
+}
+
+@Composable
+fun BackAppBar(
+    title: String,
+    onBackClick: () -> Unit
+) {
+
+    TopAppBar(
+        title = { H6(text = title) },
+        navigationIcon = {
+            Image(
+                painter = painterResource(R.drawable.ic_baseline_arrow_back_24),
+                contentDescription = null,
+                modifier = Modifier
+                    .clickable(onClick = onBackClick)
+                    .padding(16.dp)
+            )
+        },
+        backgroundColor = MaterialTheme.colors.surface.copy(alpha = 0.95f),
+        elevation = 3.dp
+    )
 }
 
 
@@ -140,6 +163,21 @@ fun CollapsableAppBar(
 
 
 @Preview(
+    name = "BackAppBar",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+)
+@Preview(
+    name = "BackAppBar• Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun BackAppBarPreview() {
+    TvManiacTheme {
+        BackAppBar(title = "Tv Maniac", onBackClick = {})
+    }
+}
+
+@Preview(
     name = "AppBar",
     uiMode = Configuration.UI_MODE_NIGHT_NO,
 )
@@ -162,7 +200,6 @@ private fun AppBarDarkPreview() {
     name = "AppBar Settings• Dark",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
-
 
 @Preview("AppBar Scaffold")
 @Composable
