@@ -64,7 +64,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.showdetails.DetailUiEffect.WatchlistError
 import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
 import com.thomaskioko.tvmaniac.compose.R
-import com.thomaskioko.tvmaniac.compose.components.CollasableAppBar
+import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
@@ -128,7 +128,7 @@ fun ShowDetailScreen(
                 }
             }
 
-            CollasableAppBar(
+            CollapsableAppBar(
                 title = viewState.tvShow.title,
                 showAppBarBackground = showAppBarBackground,
                 onNavIconPressed = navigateUp,
