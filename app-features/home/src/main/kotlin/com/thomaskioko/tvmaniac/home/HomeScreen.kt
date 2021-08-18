@@ -44,7 +44,9 @@ fun HomeScreen(
         bottomBar = {
             val currentSelectedItem by navController.currentScreenAsState()
             when {
-                !route.contains(NavigationScreen.ShowDetailsNavScreen.route) -> {
+                !route.contains(NavigationScreen.ShowDetailsNavScreen.route) &&
+                        !route.contains(NavigationScreen.ShowGridNavScreen.route)
+                -> {
                     TvManiacBottomNavigation(
                         onNavigationSelected = { selected ->
                             navController.navigate(selected.route) {

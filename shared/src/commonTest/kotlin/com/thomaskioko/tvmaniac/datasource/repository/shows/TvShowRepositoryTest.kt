@@ -4,8 +4,8 @@ import com.thomaskioko.tvmaniac.MockData.getShow
 import com.thomaskioko.tvmaniac.MockData.getTvResponse
 import com.thomaskioko.tvmaniac.MockData.makeShowList
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepositoryImpl
 import com.thomaskioko.tvmaniac.util.runBlocking
@@ -58,7 +58,7 @@ internal class TvShowRepositoryTest {
 
     @Test
     fun givenDataIsCached_thenDataIsLoadedFromCache() {
-        every { cache.getTvShows() } returns makeShowList()
+        every { cache.getTvShowsByCategory(ShowCategory.POPULAR) } returns makeShowList()
 
         runBlocking {
             repository.getPopularTvShows(1)
@@ -70,7 +70,7 @@ internal class TvShowRepositoryTest {
             cache.insert(makeShowList())
         }
 
-        verify(exactly = 2) { cache.getTvShows() }
+        verify(exactly = 2) { cache.getTvShowsByCategory(ShowCategory.POPULAR) }
     }
 
     @Test
@@ -81,7 +81,7 @@ internal class TvShowRepositoryTest {
 
         verify {
             runBlocking { apiService.getPopularShows(1) }
-            cache.getTvShows()
+            cache.getTvShowsByCategory(ShowCategory.POPULAR)
         }
     }
 
@@ -90,11 +90,11 @@ internal class TvShowRepositoryTest {
         runBlocking {
             coEvery { apiService.getTrendingShows(WEEK.window) } answers { getTvResponse() }
 
-            repository.getTrendingShows(WEEK.window)
+            repository.getTrendingShowsByTime(WEEK)
 
             verify {
                 runBlocking { apiService.getTrendingShows(WEEK.window) }
-                cache.getTvShows(TvShowCategory.TRENDING, WEEK)
+                cache.getTvShows(ShowCategory.TRENDING, WEEK)
             }
         }
 

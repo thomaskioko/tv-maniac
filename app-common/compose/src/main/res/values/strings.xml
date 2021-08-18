@@ -21,7 +21,9 @@
     <string name="tab_trailer">Trailers</string>
     <string name="tab_casts">Casts</string>
 
-
     <string name="msg_empty_watchlist">You haven\'t added any shows to your watchlist.</string>
+    <string name="msg_empty_category">Could not load show category data!</string>
     <string name="msg_search_show_hint">Search TV Shows</string>
+
+    <string name="str_more">More</string>
 </resources>

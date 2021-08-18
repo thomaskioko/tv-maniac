@@ -12,5 +12,6 @@ dependencies {
     implementation(project(":app-features:home"))
     implementation(project(":app-features:search"))
     implementation(project(":app-features:show-details"))
+    implementation(project(":app-features:shows-grid"))
     implementation(project(":app-features:watchlist"))
 }

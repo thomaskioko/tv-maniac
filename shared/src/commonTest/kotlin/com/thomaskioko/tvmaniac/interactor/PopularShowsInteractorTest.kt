@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.interactor
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.MockData.getTvResponse
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.util.DomainResultState
@@ -23,7 +23,7 @@ internal class PopularShowsInteractorTest {
         val result = getTvResponse().results
             .map { it.toTvShow() }
             .map { it.copy(
-                showCategory = TvShowCategory.POPULAR_TV_SHOWS
+                showCategory = ShowCategory.POPULAR
             ) }
 
         every { runBlocking { repository.getPopularTvShows(1) } } returns result

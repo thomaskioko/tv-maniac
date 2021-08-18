@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
@@ -51,9 +50,8 @@ import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlin.math.absoluteValue
@@ -69,6 +67,7 @@ private const val MinContrastOfPrimaryVsSurface = 3f
 fun DiscoverScreen(
     viewModel: DiscoverViewModel,
     openShowDetails: (showId: Int) -> Unit,
+    moreClicked: (showType: Int) -> Unit,
 ) {
 
     val scaffoldState = rememberScaffoldState()
@@ -106,9 +105,8 @@ fun DiscoverScreen(
         content = {
             ScreenData(
                 viewState = discoverViewState,
-                onItemClicked = { tvShowId ->
-                    openShowDetails(tvShowId)
-                }
+                onItemClicked = { openShowDetails(it) },
+                moreClicked = { moreClicked(it) }
             )
         }
     )
@@ -119,10 +117,9 @@ fun DiscoverScreen(
 private fun ScreenData(
     viewState: DiscoverShowState,
     onItemClicked: (Int) -> Unit,
+    moreClicked: (Int) -> Unit,
 ) {
     if (viewState.isLoading) LoadingView()
-
-    val listState = rememberLazyListState()
 
     Column(
         modifier = Modifier
@@ -136,7 +133,7 @@ private fun ScreenData(
             if (it.key.title == "Featured") {
                 FeaturedItems(it, onItemClicked)
             } else {
-                DisplayShowData(it, onItemClicked)
+                DisplayShowData(it, onItemClicked, moreClicked)
             }
         }
 
@@ -146,7 +143,7 @@ private fun ScreenData(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun FeaturedItems(
-    resultMap: Map.Entry<TvShowType, List<TvShow>>,
+    resultMap: Map.Entry<ShowCategory, List<TvShow>>,
     onItemClicked: (Int) -> Unit,
 ) {
 
@@ -272,15 +269,16 @@ fun FeaturedHorizontalPager(
 
 @Composable
 private fun DisplayShowData(
-    resultMap: Map.Entry<TvShowType, List<TvShow>>,
+    resultMap: Map.Entry<ShowCategory, List<TvShow>>,
     onItemClicked: (Int) -> Unit,
+    moreClicked: (Int) -> Unit,
 ) {
 
-    ColumnSpacer(value = 8)
-
-    BoxTextItems(resultMap.key.title, "More") {
-        Napier.d("${resultMap.key.type} Clicked")
-    }
+    BoxTextItems(
+        title = resultMap.key.title,
+        moreString = stringResource(id = R.string.str_more),
+        onMoreClicked = { moreClicked(resultMap.key.type) }
+    )
 
 
     LazyRow {

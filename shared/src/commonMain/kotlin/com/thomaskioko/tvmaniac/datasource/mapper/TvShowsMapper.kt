@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.datasource.mapper
 
 import com.thomaskioko.tvmaniac.datasource.cache.Show
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.POPULAR_TV_SHOWS
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.POPULAR
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowResponse
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.StringUtil.formatPosterPath
@@ -70,7 +70,7 @@ fun Show.toTvShow(): TvShow {
         votes = votes.toInt(),
         averageVotes = vote_average,
         genreIds = genre_ids,
-        showCategory = show_category ?: POPULAR_TV_SHOWS,
+        showCategory = show_category ?: POPULAR,
         year = year,
         status = status,
         isInWatchlist = is_watchlist

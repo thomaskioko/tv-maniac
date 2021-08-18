@@ -4,9 +4,8 @@ import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.Tv_season
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowType
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
 import com.thomaskioko.tvmaniac.datasource.network.model.EpisodesResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.GenreResponse
@@ -175,7 +174,8 @@ object MockData {
             votes = 4958,
             averageVotes = 8.1,
             genreIds = listOf(18, 10765),
-            showCategory = TvShowCategory.POPULAR_TV_SHOWS
+            showCategory = ShowCategory.TRENDING,
+            timeWindow = TimeWindow.WEEK
         ),
         TvShow(
             id = 126280,
@@ -189,7 +189,7 @@ object MockData {
             votes = 4958,
             averageVotes = 8.1,
             genreIds = listOf(35, 18),
-            showCategory = TvShowCategory.POPULAR_TV_SHOWS
+            showCategory = ShowCategory.POPULAR
         ),
     )
 
@@ -243,7 +243,7 @@ object MockData {
         votes = 4958,
         averageVotes = 8.1,
         genreIds = listOf(18, 10765),
-        showCategory = TvShowCategory.POPULAR_TV_SHOWS,
+        showCategory = ShowCategory.POPULAR,
         seasonsList = seasonsList
     )
 
@@ -272,23 +272,23 @@ object MockData {
         )
     )
 
-    fun getTrendingDataMap(): LinkedHashMap<TvShowType, List<TvShow>> {
-        val trendingMap = linkedMapOf<TvShowType, List<TvShow>>()
+    fun getTrendingDataMap(): LinkedHashMap<ShowCategory, List<TvShow>> {
+        val trendingMap = linkedMapOf<ShowCategory, List<TvShow>>()
 
-        trendingMap[TvShowType.TODAY] = getTvResponse().results
+        trendingMap[ShowCategory.TODAY] = getTvResponse().results
             .map { it.toTvShow() }
             .map {
                 it.copy(
-                    showCategory = TvShowCategory.TRENDING,
+                    showCategory = ShowCategory.TRENDING,
                     timeWindow = TimeWindow.DAY
                 )
             }
 
-        trendingMap[TvShowType.THIS_WEEK] = getTvResponse().results
+        trendingMap[ShowCategory.THIS_WEEK] = getTvResponse().results
             .map { it.toTvShow() }
             .map {
                 it.copy(
-                    showCategory = TvShowCategory.TRENDING,
+                    showCategory = ShowCategory.TRENDING,
                     timeWindow = TimeWindow.WEEK
                 )
             }
@@ -407,7 +407,7 @@ object MockData {
             votes = 4958,
             vote_average = 8.1,
             genre_ids = listOf(18, 10765),
-            show_category = TvShowCategory.POPULAR_TV_SHOWS,
+            show_category = ShowCategory.POPULAR,
             epiosode_count = 1,
             id_ = null,
             description = null,
@@ -431,7 +431,7 @@ object MockData {
             votes = 4958,
             vote_average = 8.1,
             genre_ids = listOf(18, 10765),
-            show_category = TvShowCategory.POPULAR_TV_SHOWS,
+            show_category = ShowCategory.POPULAR,
             id_ = null,
             description = null,
             year = null,
@@ -500,7 +500,7 @@ object MockData {
         votes = 4958,
         vote_average = 8.1,
         genre_ids = listOf(18, 10765),
-        show_category = TvShowCategory.POPULAR_TV_SHOWS,
+        show_category = ShowCategory.POPULAR,
         year = "2019",
         season_ids = null,
         time_window = null,
@@ -525,7 +525,7 @@ object MockData {
             votes = 4958,
             vote_average = 8.1,
             genre_ids = listOf(18, 10765),
-            show_category = TvShowCategory.POPULAR_TV_SHOWS,
+            show_category = ShowCategory.POPULAR,
             year = "2019",
             season_ids = null,
             time_window = null,
@@ -545,7 +545,7 @@ object MockData {
             votes = 4958,
             vote_average = 8.1,
             genre_ids = listOf(35, 18),
-            show_category = TvShowCategory.POPULAR_TV_SHOWS,
+            show_category = ShowCategory.POPULAR,
             year = "2019",
             season_ids = null,
             time_window = null,
