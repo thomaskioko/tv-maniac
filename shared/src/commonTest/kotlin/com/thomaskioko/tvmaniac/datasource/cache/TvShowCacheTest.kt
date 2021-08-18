@@ -2,6 +2,9 @@ package com.thomaskioko.tvmaniac.datasource.cache
 
 import com.thomaskioko.tvmaniac.MockData.makeTvShowList
 import com.thomaskioko.tvmaniac.MockData.tvShow
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.POPULAR
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TRENDING
+import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -100,6 +103,31 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         val watchlist = tvShowQueries.selectWatchlist().executeAsList()
 
         watchlist.size shouldBe 1
+    }
+
+    @Test
+    fun getTvShowsByCategory_queryReturnsCorrectData() {
+
+        makeTvShowList().insertTvShowsEntityList()
+
+        val shows = tvShowQueries.selectByCategory(POPULAR)
+            .executeAsList()
+
+        shows.size shouldBe 1
+
+    }
+
+    @Test
+    fun selectFeatured_queryReturnsCorrectData() {
+
+        makeTvShowList().insertTvShowsEntityList()
+
+        val shows = tvShowQueries.selectFeatured(TRENDING, TimeWindow.WEEK)
+            .executeAsList()
+
+        shows.size shouldBe 1
+        shows.first().title shouldBe "Loki"
+
     }
 
     @Test

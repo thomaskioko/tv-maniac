@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.model
 
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 
 data class TvShow(
     val id: Int = 0,
@@ -16,7 +16,7 @@ data class TvShow(
     val averageVotes: Double = 0.0,
     val isInWatchlist: Boolean = false,
     val genreIds: List<Int> = listOf(),
-    val showCategory: TvShowCategory = TvShowCategory.POPULAR_TV_SHOWS,
+    val showCategory: ShowCategory = ShowCategory.POPULAR,
     val timeWindow : TimeWindow = TimeWindow.WEEK,
     val seasonsList: List<Season> = emptyList()
 ) {

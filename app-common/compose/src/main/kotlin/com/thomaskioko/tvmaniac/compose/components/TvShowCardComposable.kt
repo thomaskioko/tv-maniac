@@ -20,10 +20,10 @@ import com.thomaskioko.tvmaniac.compose.R
 
 @Composable
 fun TvShowCard(
+    modifier: Modifier = Modifier,
     posterImageUrl: String,
     title: String,
     isFirstCard: Boolean = false,
-    modifier: Modifier = Modifier,
     imageWidth: Dp = 120.dp,
     onClick: () -> Unit
 ) {

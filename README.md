@@ -54,8 +54,32 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
 * [Coroutines](https://github.com/Kotlin/kotlinx.coroutines#multiplatform) - Concurrency & Threading
 * [DateTime](https://github.com/Kotlin/kotlinx-datetime) - Date & Time
 * [SQLDelight](https://github.com/cashapp/sqldelight/) - Local storage
+    - [Coroutines Extensions](https://cashapp.github.io/sqldelight/js_sqlite/coroutines/) Consume queries as Flow
 * [Napier](https://github.com/AAkira/Napier) - Logging
 * [Mockk](https://github.com/mockk/mockk) - mocking library for Kotlin.
+
+## Roadmap
+Android
+- [x] Implement Watchlist
+- [x] Add `More` screen. Shows GridView
+- [ ] Implement Search
+- [ ] Recommended Shows
+- [ ] Implement pagination.
+- [ ] Add Settings panel.
+    - Dynamic theme change.
+- [ ] Observe Internet connection
+
+iOS
+- [ ] Add HomeScreen: Tabs & Empty UI
+- [ ] Implement Discover UI
+- [ ] Implement Search UI
+- [ ] Implement Watchlist UI
+
+Core
+- [x] Use SQLDelight extensions to consume queries as Flow
+- [ ] Better MVI implementation
+    - Have `shared-core` module have most of the implementation.
+    - Improve error state, add retry.
 
 
 ### References

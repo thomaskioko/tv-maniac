@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
+import com.thomaskioko.tvmaniac.interactor.GetShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.interactor.GetTrailersInteractor
 import com.thomaskioko.tvmaniac.interactor.GetTrendingShowsInteractor
 import com.thomaskioko.tvmaniac.interactor.GetWatchListInteractor
@@ -77,4 +78,10 @@ object InteractorsModule {
     fun provideUpdateWatchlistInteractor(
         repository: TvShowsRepository
     ): UpdateWatchlistInteractor = UpdateWatchlistInteractor(repository)
+
+    @Singleton
+    @Provides
+    fun provideGetShowsByTypeInteractor(
+        repository: TvShowsRepository
+    ): GetShowsByCategoryInteractor = GetShowsByCategoryInteractor(repository)
 }

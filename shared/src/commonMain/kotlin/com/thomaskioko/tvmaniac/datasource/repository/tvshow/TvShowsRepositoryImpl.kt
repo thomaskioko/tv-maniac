@@ -1,13 +1,13 @@
 package com.thomaskioko.tvmaniac.datasource.repository.tvshow
 
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.FEATURED
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.POPULAR
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TOP_RATED
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.FEATURED
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.POPULAR_TV_SHOWS
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.TOP_RATED_TV_SHOWS
-import com.thomaskioko.tvmaniac.datasource.enums.TvShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.datasource.mapper.toShow
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowList
@@ -27,60 +27,59 @@ class TvShowsRepositoryImpl(
     }
 
     override suspend fun getPopularTvShows(page: Int): List<TvShow> {
-        return if (getShowsByCategory(POPULAR_TV_SHOWS).isEmpty()) {
+        return if (getShowsByCategory(POPULAR).isEmpty()) {
 
             val entityList = apiService.getPopularShows(page).results
                 .map { it.toShow() }
                 .map {
                     it.copy(
-                        show_category = POPULAR_TV_SHOWS
+                        show_category = POPULAR
                     )
                 }
 
             cache.insert(entityList)
 
-            getShowsByCategory(POPULAR_TV_SHOWS)
+            getShowsByCategory(POPULAR)
         } else {
-            getShowsByCategory(POPULAR_TV_SHOWS)
+            getShowsByCategory(POPULAR)
         }
     }
 
     override suspend fun getTopRatedTvShows(page: Int): List<TvShow> {
-        return if (getShowsByCategory(TOP_RATED_TV_SHOWS).isEmpty()) {
+        return if (getShowsByCategory(TOP_RATED).isEmpty()) {
 
             apiService.getTopRatedShows(page).results
                 .map { it.toShow() }
                 .map {
                     it.copy(
-                        show_category = TOP_RATED_TV_SHOWS
+                        show_category = TOP_RATED
                     )
                 }
                 .map { cache.insert(it) }
 
-            getShowsByCategory(TOP_RATED_TV_SHOWS)
+            getShowsByCategory(TOP_RATED)
         } else {
-            getShowsByCategory(TOP_RATED_TV_SHOWS)
+            getShowsByCategory(TOP_RATED)
         }
     }
 
-    override suspend fun getTrendingShows(
-        timeWindow: String
-    ): List<TvShow> {
-        return if (getShowsByCategoryAndWindow(TRENDING, TimeWindow[timeWindow]).isEmpty()) {
+    override suspend fun getTrendingShowsByTime(timeWindow: TimeWindow): List<TvShow> {
+        return if (getShowsByCategoryAndWindow(TRENDING, timeWindow).isEmpty()) {
 
-            apiService.getTrendingShows(timeWindow).results
+            val cacheResult = apiService.getTrendingShows(timeWindow.window).results
                 .map { it.toShow() }
                 .map {
                     it.copy(
                         show_category = TRENDING,
-                        time_window = TimeWindow[timeWindow]
+                        time_window = timeWindow
                     )
                 }
-                .map { cache.insert(it) }
 
-            getShowsByCategoryAndWindow(TRENDING, TimeWindow[timeWindow])
+            cache.insert(cacheResult)
+
+            getShowsByCategoryAndWindow(TRENDING, timeWindow)
         } else {
-            getShowsByCategoryAndWindow(TRENDING, TimeWindow[timeWindow])
+            getShowsByCategoryAndWindow(TRENDING, timeWindow)
         }
     }
 
@@ -103,6 +102,11 @@ class TvShowsRepositoryImpl(
         }
     }
 
+    override suspend fun getShowsByCategory(category: ShowCategory): List<TvShow> {
+        return cache.getTvShowsByCategory(category)
+            .toTvShowList()
+    }
+
     override fun getWatchlist(): Flow<List<TvShow>> = cache.getWatchlist()
         .map { it.toTvShowList() }
 
@@ -111,16 +115,11 @@ class TvShowsRepositoryImpl(
     }
 
     override suspend fun getShowsByCategoryAndWindow(
-        category: TvShowCategory,
+        category: ShowCategory,
         timeWindow: TimeWindow
     ): List<TvShow> {
         return cache.getTvShows(category, timeWindow)
             .toTvShowList()
     }
-
-    private fun getShowsByCategory(category: TvShowCategory): List<TvShow> =
-        cache.getTvShows()
-            .toTvShowList()
-            .filter { it.showCategory == category }
 
 }
