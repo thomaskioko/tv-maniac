@@ -20,6 +20,7 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
 </table>
 
 ## Environment
+### Android
 - Java 11
 - You require the latest [Android Studio BumbleBee](https://androidstudio.googleblog.com/2021/05/android-studio-bumblebee-canary-1.html) release to be able to build the app.
 
@@ -31,6 +32,11 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
     TMDB_API_URL=https://api.themoviedb.org/3/
     ```
 - Run `./gradlew generateBuildKonfig`
+
+### iOS Setup
+- Navigate to ios Dir & run `pod deintegrate && pod install`
+- Open `.xcworkspace` & not `.xcodeproj`
+
 
 ## Libraries Used
 ### Android
