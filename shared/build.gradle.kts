@@ -1,5 +1,5 @@
-
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import java.io.FileInputStream
 import java.util.*
@@ -15,7 +15,24 @@ plugins {
 
 version = "1.0"
 
+android {
+    compileSdk = libs.versions.android.compile.get().toInt()
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+
+    defaultConfig {
+        minSdk = libs.versions.android.min.get().toInt()
+        targetSdk = libs.versions.android.target.get().toInt()
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+}
+
 kotlin {
+    jvm()
     android()
 
     val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget =
@@ -27,11 +44,19 @@ kotlin {
     iosTarget("ios") {}
 
     cocoapods {
-        summary = "Some description for the Shared Module"
+        summary = "Shared logic for TvManiac"
         homepage = "https://github.com/c0de-wizard/tv-maniac"
+
         ios.deploymentTarget = "14.1"
         frameworkName = "shared"
         podfile = project.file("../ios/Podfile")
+    }
+
+    targets.withType<KotlinNativeTarget> {
+        binaries.withType<Framework> {
+            isStatic = false
+            linkerOpts.add("-lsqlite3")
+        }
     }
 
     sourceSets {
@@ -100,22 +125,6 @@ kotlin {
             languageSettings.useExperimentalAnnotation("kotlin.time.ExperimentalTime")
         }
     }
-}
-
-android {
-    compileSdk = libs.versions.android.compile.get().toInt()
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-
-    defaultConfig {
-        minSdk = libs.versions.android.min.get().toInt()
-        targetSdk = libs.versions.android.target.get().toInt()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
 }
 
 buildkonfig {
