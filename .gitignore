@@ -58,3 +58,12 @@ playground.xcworkspace
 
 shared/secrets.properties
 
+*.xcworkspacedata
+*.xcuserstate
+*.xcscheme
+xcschememanagement.plist
+*.xcbkptlist
+
+## User settings
+xcuserdata/
+
