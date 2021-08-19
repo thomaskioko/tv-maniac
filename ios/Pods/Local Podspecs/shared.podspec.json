@@ -8,7 +8,7 @@
   },
   "authors": "",
   "license": "",
-  "summary": "Some description for the Shared Module",
+  "summary": "Shared logic for TvManiac",
   "static_framework": true,
   "vendored_frameworks": "build/cocoapods/framework/shared.framework",
   "libraries": "c++",

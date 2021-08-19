@@ -9,19 +9,17 @@
 /* Begin PBXBuildFile section */
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
-		F2C260183F2CC5E6188E3D4E /* Pods_tv_maniac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93FBFD5546CD4A62E550C3EA /* Pods_tv_maniac.framework */; };
+		C6E9DFAA52C3BD12E7FDEE32 /* Pods_tv_maniac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D0C249E8E83AC251ED2438 /* Pods_tv_maniac.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		07F8E23E9A3462FA5492155D /* Pods-tv-maniac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tv-maniac.release.xcconfig"; path = "Target Support Files/Pods-tv-maniac/Pods-tv-maniac.release.xcconfig"; sourceTree = "<group>"; };
-		0BFECAB5D4B35FDE4582E3C7 /* Pods-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.release.xcconfig"; path = "Target Support Files/Pods-ios/Pods-ios.release.xcconfig"; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
-		24CD3EAE76A781ED6960FAEA /* Pods-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.debug.xcconfig"; path = "Target Support Files/Pods-ios/Pods-ios.debug.xcconfig"; sourceTree = "<group>"; };
+		26BE40B24632D08CF8F18105 /* Pods-tv-maniac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tv-maniac.release.xcconfig"; path = "Target Support Files/Pods-tv-maniac/Pods-tv-maniac.release.xcconfig"; sourceTree = "<group>"; };
+		6D8101CBFE16FD91875A5A4D /* Pods-tv-maniac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tv-maniac.debug.xcconfig"; path = "Target Support Files/Pods-tv-maniac/Pods-tv-maniac.debug.xcconfig"; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		93FBFD5546CD4A62E550C3EA /* Pods_tv_maniac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_tv_maniac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BB9D2A3F1E3167217517DA6E /* Pods-tv-maniac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tv-maniac.debug.xcconfig"; path = "Target Support Files/Pods-tv-maniac/Pods-tv-maniac.debug.xcconfig"; sourceTree = "<group>"; };
+		83D0C249E8E83AC251ED2438 /* Pods_tv_maniac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_tv_maniac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,28 +27,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F2C260183F2CC5E6188E3D4E /* Pods_tv_maniac.framework in Frameworks */,
+				C6E9DFAA52C3BD12E7FDEE32 /* Pods_tv_maniac.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		70E5EC44413DCC524568F83F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				93FBFD5546CD4A62E550C3EA /* Pods_tv_maniac.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
 				7555FF7D242A565900829871 /* ios */,
 				7555FF7C242A565900829871 /* Products */,
 				F57B963061F8E757D1D2A01F /* Pods */,
-				70E5EC44413DCC524568F83F /* Frameworks */,
+				BF3DFBD8D5ED2AF2B59224F1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -72,13 +62,19 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
+		BF3DFBD8D5ED2AF2B59224F1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				83D0C249E8E83AC251ED2438 /* Pods_tv_maniac.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		F57B963061F8E757D1D2A01F /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				24CD3EAE76A781ED6960FAEA /* Pods-ios.debug.xcconfig */,
-				0BFECAB5D4B35FDE4582E3C7 /* Pods-ios.release.xcconfig */,
-				BB9D2A3F1E3167217517DA6E /* Pods-tv-maniac.debug.xcconfig */,
-				07F8E23E9A3462FA5492155D /* Pods-tv-maniac.release.xcconfig */,
+				6D8101CBFE16FD91875A5A4D /* Pods-tv-maniac.debug.xcconfig */,
+				26BE40B24632D08CF8F18105 /* Pods-tv-maniac.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -90,10 +86,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7555FFA5242A565B00829871 /* Build configuration list for PBXNativeTarget "tv-maniac" */;
 			buildPhases = (
-				AB8117943A6562F870244985 /* [CP] Check Pods Manifest.lock */,
+				7FDA8802AA4A7CEF4CFAE212 /* [CP] Check Pods Manifest.lock */,
 				7555FF77242A565900829871 /* Sources */,
 				7555FF79242A565900829871 /* Resources */,
 				9E9525AE31530CCB1C932286 /* Frameworks */,
+				DE7C0F5F3AC617E8690E3A4F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -148,7 +145,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		AB8117943A6562F870244985 /* [CP] Check Pods Manifest.lock */ = {
+		7FDA8802AA4A7CEF4CFAE212 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -168,6 +165,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DE7C0F5F3AC617E8690E3A4F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-tv-maniac/Pods-tv-maniac-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-tv-maniac/Pods-tv-maniac-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-tv-maniac/Pods-tv-maniac-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -303,7 +317,7 @@
 		};
 		7555FFA6242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BB9D2A3F1E3167217517DA6E /* Pods-tv-maniac.debug.xcconfig */;
+			baseConfigurationReference = 6D8101CBFE16FD91875A5A4D /* Pods-tv-maniac.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -330,7 +344,7 @@
 		};
 		7555FFA7242A565B00829871 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 07F8E23E9A3462FA5492155D /* Pods-tv-maniac.release.xcconfig */;
+			baseConfigurationReference = 26BE40B24632D08CF8F18105 /* Pods-tv-maniac.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
