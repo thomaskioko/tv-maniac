@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct SearchView: View {
-	var body: some View {f
+	var body: some View {
 		ZStack {
 			VStack {
 				Text("Search Shows")
