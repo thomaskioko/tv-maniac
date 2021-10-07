@@ -14,6 +14,11 @@
 		E9AC835126CEEA1500829A0D /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835026CEEA1500829A0D /* DiscoverView.swift */; };
 		E9AC835326CEEA9800829A0D /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835226CEEA9800829A0D /* SearchView.swift */; };
 		E9AC835526CEEAB800829A0D /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835426CEEAB800829A0D /* WatchlistView.swift */; };
+		E9AC835726CFDCB200829A0D /* TextViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835626CFDCB200829A0D /* TextViews.swift */; };
+		E9AC835A26CFE72400829A0D /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835926CFE72400829A0D /* ImageLoader.swift */; };
+		E9AC835C26CFE75400829A0D /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835B26CFE75400829A0D /* ImageCache.swift */; };
+		E9AC835E26CFE77F00829A0D /* EnvironmentValues+ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835D26CFE77F00829A0D /* EnvironmentValues+ImageCache.swift */; };
+		E9AC836026CFE8BE00829A0D /* AsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835F26CFE8BE00829A0D /* AsyncImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +33,11 @@
 		E9AC835026CEEA1500829A0D /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
 		E9AC835226CEEA9800829A0D /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		E9AC835426CEEAB800829A0D /* WatchlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistView.swift; sourceTree = "<group>"; };
+		E9AC835626CFDCB200829A0D /* TextViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViews.swift; sourceTree = "<group>"; };
+		E9AC835926CFE72400829A0D /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		E9AC835B26CFE75400829A0D /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		E9AC835D26CFE77F00829A0D /* EnvironmentValues+ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EnvironmentValues+ImageCache.swift"; sourceTree = "<group>"; };
+		E9AC835F26CFE8BE00829A0D /* AsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,11 +73,15 @@
 		7555FF7D242A565900829871 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				E9AC835826CFDFD100829A0D /* Models */,
 				E9AC834D26CEE9E100829A0D /* Views */,
 				E9AC834B26CEE00D00829A0D /* Assets.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
+				E9AC835926CFE72400829A0D /* ImageLoader.swift */,
+				E9AC835B26CFE75400829A0D /* ImageCache.swift */,
+				E9AC835D26CFE77F00829A0D /* EnvironmentValues+ImageCache.swift */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -83,11 +97,20 @@
 		E9AC834D26CEE9E100829A0D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				E9AC835F26CFE8BE00829A0D /* AsyncImage.swift */,
 				E9AC835026CEEA1500829A0D /* DiscoverView.swift */,
 				E9AC835226CEEA9800829A0D /* SearchView.swift */,
 				E9AC835426CEEAB800829A0D /* WatchlistView.swift */,
+				E9AC835626CFDCB200829A0D /* TextViews.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		E9AC835826CFDFD100829A0D /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		F57B963061F8E757D1D2A01F /* Pods */ = {
@@ -110,7 +133,6 @@
 				7555FF77242A565900829871 /* Sources */,
 				7555FF79242A565900829871 /* Resources */,
 				9E9525AE31530CCB1C932286 /* Frameworks */,
-				DE7C0F5F3AC617E8690E3A4F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -188,23 +210,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DE7C0F5F3AC617E8690E3A4F /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-tv-maniac/Pods-tv-maniac-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-tv-maniac/Pods-tv-maniac-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-tv-maniac/Pods-tv-maniac-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -212,11 +217,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9AC836026CFE8BE00829A0D /* AsyncImage.swift in Sources */,
+				E9AC835A26CFE72400829A0D /* ImageLoader.swift in Sources */,
 				E9AC835526CEEAB800829A0D /* WatchlistView.swift in Sources */,
+				E9AC835C26CFE75400829A0D /* ImageCache.swift in Sources */,
 				E9AC835326CEEA9800829A0D /* SearchView.swift in Sources */,
+				E9AC835E26CFE77F00829A0D /* EnvironmentValues+ImageCache.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				E9AC835126CEEA1500829A0D /* DiscoverView.swift in Sources */,
+				E9AC835726CFDCB200829A0D /* TextViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
