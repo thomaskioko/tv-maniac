@@ -3,10 +3,10 @@ package com.thomaskioko.tvmaniac.navigation
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.NamedNavArgument
 import androidx.navigation.compose.composable
 
 inline fun <reified VM> NavGraphBuilder.viewModelComposable(
