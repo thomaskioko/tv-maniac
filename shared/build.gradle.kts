@@ -35,13 +35,22 @@ kotlin {
     jvm()
     android()
 
-    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget =
-        if (System.getenv("SDK_NAME")?.startsWith("iphoneos") == true)
-            ::iosArm64
-        else
-            ::iosX64
+    val pagingIos: String
+    val isDevice = System.getenv("SDK_NAME")?.startsWith("iphoneos") == true
+    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget
+    if (isDevice) {
+        iosTarget = ::iosArm64
+        pagingIos = "io.github.kuuuurt:multiplatform-paging-iosArm64:0.4.5"
+    } else {
+        iosTarget = ::iosX64
+        pagingIos = "io.github.kuuuurt:multiplatform-paging-iosX64:0.4.5"
+    }
 
-    iosTarget("ios") {}
+    iosTarget("ios") {
+        binaries.withType<Framework>().configureEach {
+            export(pagingIos)
+        }
+    }
 
     cocoapods {
         summary = "Shared logic for TvManiac"
@@ -79,6 +88,7 @@ kotlin {
             implementation(libs.ktor.serialization)
 
             implementation(libs.napier)
+            implementation(libs.paging)
             implementation(libs.squareup.sqldelight.extensions)
             implementation(libs.squareup.sqldelight.runtime)
         }
