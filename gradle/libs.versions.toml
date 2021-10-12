@@ -17,6 +17,8 @@ androidx-activity = "1.4.0-beta01"
 androidx-navigation = "2.4.0-alpha10"
 androidx-lifecycle = "2.4.0-rc01"
 androidx-palette = "1.0.0"
+androidx-paging = "3.0.1"
+androidx-composePaging = "1.0.0-alpha13"
 
 coil = "1.3.2"
 coroutines = "1.5.2"
@@ -26,6 +28,7 @@ kenburns = "1.0.7"
 ktor = "1.6.4"
 material = "1.5.0-alpha04"
 napier = "1.5.0"
+paging = "0.4.5"
 squareup-leakcanary = "2.7"
 sqldelight = "1.5.1"
 turbine = "0.6.1"
@@ -70,10 +73,13 @@ androidx-compose-foundation = { module = "androidx.compose.foundation:foundation
 androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "androidx-constraintlayout" }
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
+androidx-compose-paging = { module = "androidx.paging:paging-compose", version.ref = "androidx-composePaging" }
 
 androidx-lifecycle-compiler = { module = "androidx.lifecycle:lifecycle-compiler", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
+
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidx-paging" }
 
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
@@ -89,6 +95,7 @@ coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
+paging = { module = "io.github.kuuuurt:multiplatform-paging", version.ref = "paging" }
 
 squareup-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "squareup-leakcanary" }
 squareup-sqldelight-extensions = { module = "com.squareup.sqldelight:coroutines-extensions", version.ref = "sqldelight" }

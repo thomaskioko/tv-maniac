@@ -50,6 +50,7 @@ dependencies {
     api(libs.androidx.compose.constraintlayout)
     api(libs.androidx.compose.activity)
     api(libs.androidx.compose.navigation)
+    api(libs.androidx.compose.paging)
 
     api(libs.material)
     api(libs.kenburns)

@@ -5,5 +5,5 @@ plugins {
 }
 
 dependencies {
-
+    implementation(libs.paging)
 }
