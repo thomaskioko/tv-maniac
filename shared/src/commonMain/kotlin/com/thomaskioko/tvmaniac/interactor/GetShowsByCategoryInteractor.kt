@@ -1,11 +1,13 @@
 package com.thomaskioko.tvmaniac.interactor
 
+import com.kuuurt.paging.multiplatform.PagingData
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.THIS_WEEK
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TODAY
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.util.CommonFlow
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.error
 import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.loading
@@ -17,15 +19,16 @@ import kotlinx.coroutines.flow.flow
 
 class GetShowsByCategoryInteractor constructor(
     private val repository: TvShowsRepository,
-) : Interactor<Int, List<TvShow>>() {
+) : Interactor<Int, CommonFlow<PagingData<TvShow>>>() {
 
-    override fun run(params: Int): Flow<DomainResultState<List<TvShow>>> =
+    override fun run(params: Int): Flow<DomainResultState<CommonFlow<PagingData<TvShow>>>> =
         flow {
             emit(loading())
 
             val list = when (val type = ShowCategory[params]) {
-                TODAY, THIS_WEEK -> repository.getShowsByCategoryAndWindow(TRENDING, type.timeWindow!!)
-                else -> repository.getShowsByCategory(type)
+                TODAY, THIS_WEEK -> repository
+                    .getPagedShowsByCategoryAndWindow(TRENDING, type.timeWindow!!)
+                else -> repository.getPagedShowsByCategory(type)
             }
             emit(success(list))
         }
