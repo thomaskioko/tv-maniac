@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.show_grid
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kuuurt.paging.multiplatform.PagingData
 import com.thomaskioko.tvmaniac.core.Store
 import com.thomaskioko.tvmaniac.interactor.GetShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.presentation.contract.ShowsGridAction
@@ -11,13 +12,17 @@ import com.thomaskioko.tvmaniac.presentation.contract.ShowsGridAction.LoadTvShow
 import com.thomaskioko.tvmaniac.presentation.contract.ShowsGridEffect
 import com.thomaskioko.tvmaniac.presentation.contract.ShowsGridState
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.util.CommonFlow
 import com.thomaskioko.tvmaniac.util.DomainResultState
+import com.thomaskioko.tvmaniac.util.DomainResultState.Loading
+import com.thomaskioko.tvmaniac.util.DomainResultState.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,8 +46,6 @@ class ShowGridViewModel @Inject constructor(
     override fun observeSideEffect(): Flow<ShowsGridEffect> = sideEffect
 
     override fun dispatch(action: ShowsGridAction) {
-        val oldState = state.value
-
         when (action) {
             is Error -> {
                 viewModelScope.launch {
@@ -50,26 +53,23 @@ class ShowGridViewModel @Inject constructor(
                 }
             }
             is LoadTvShows -> {
-                viewModelScope.launch {
-                    interactor.invoke(showType)
-                        .collect {
-                            state.emit(it.stateReducer(oldState))
-                        }
-                }
+                interactor.invoke(showType)
+                    .onEach { state.emit(it.reducer(state.value)) }
+                    .launchIn(viewModelScope)
             }
         }
     }
 
-    private fun DomainResultState<List<TvShow>>.stateReducer(
-        state: ShowsGridState,
+    private fun DomainResultState<CommonFlow<PagingData<TvShow>>>.reducer(
+        state: ShowsGridState
     ): ShowsGridState {
         return when (this) {
             is DomainResultState.Error -> {
                 dispatch(Error(message))
                 state.copy(isLoading = false)
             }
-            is DomainResultState.Loading -> state.copy(isLoading = true)
-            is DomainResultState.Success -> state.copy(isLoading = false, list = data)
+            is Loading -> state.copy(isLoading = true)
+            is Success -> state.copy(isLoading = false, list = data)
         }
     }
 }
