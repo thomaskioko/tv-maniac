@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.injection
 
+import com.thomaskioko.tvmaniac.core.annotations.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
 import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
@@ -20,6 +21,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 @Module
@@ -30,8 +32,9 @@ object RepositoriesModule {
     @Provides
     fun provideTvShowsRepository(
         tvShowsService: TvShowsService,
-        cache: TvShowCache
-    ): TvShowsRepository = TvShowsRepositoryImpl(tvShowsService, cache)
+        cache: TvShowCache,
+        @IoCoroutineScope coroutineScope: CoroutineScope
+    ): TvShowsRepository = TvShowsRepositoryImpl(tvShowsService, cache, coroutineScope)
 
     @Singleton
     @Provides
