@@ -5,7 +5,7 @@ android-compile = "31"
 android-target = "31"
 android-min = "21"
 
-android-gradle = "7.1.0-alpha13"
+android-gradle = "7.1.0-beta01"
 date-time = "0.2.1"
 
 accompanist = "0.19.0"
