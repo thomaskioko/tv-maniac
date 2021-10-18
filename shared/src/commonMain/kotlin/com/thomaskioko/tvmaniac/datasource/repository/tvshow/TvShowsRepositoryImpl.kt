@@ -23,7 +23,6 @@ import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.CommonFlow
 import com.thomaskioko.tvmaniac.util.asCommonFlow
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -87,11 +86,11 @@ class TvShowsRepositoryImpl(
         return if (getShowsByCategory(TOP_RATED).isEmpty()) {
 
             apiService.getTopRatedShows(page).results
-                .map { it.toShow() }
                 .map {
-                    it.copy(
-                        show_category = TOP_RATED
-                    )
+                    it.toShow()
+                        .copy(
+                            show_category = TOP_RATED
+                        )
                 }
                 .map { cache.insert(it) }
 
@@ -114,10 +113,8 @@ class TvShowsRepositoryImpl(
 
                 mapApiResultAndInsert(apiResponse, TOP_RATED)
 
-                val tvShows = getShowsByCategory(TOP_RATED)
-
                 PagingResult(
-                    items = tvShows,
+                    items = getShowsByCategory(TOP_RATED),
                     currentKey = currentKey,
                     prevKey = { null },
                     nextKey = { apiResponse.page + 1 }
@@ -133,16 +130,16 @@ class TvShowsRepositoryImpl(
     override suspend fun getTrendingShowsByTime(timeWindow: TimeWindow): List<TvShow> {
         return if (getShowsByCategoryAndWindow(TRENDING, timeWindow).isEmpty()) {
 
-            val cacheResult = apiService.getTrendingShows(1, timeWindow.window).results
-                .map { it.toShow() }
+            apiService.getTrendingShows(1, timeWindow.window).results
                 .map {
-                    it.copy(
-                        show_category = TRENDING,
-                        time_window = timeWindow
-                    )
+                    it.toShow()
+                        .copy(
+                            show_category = TRENDING,
+                            time_window = timeWindow
+                        )
                 }
+                .map { cache.insert(it) }
 
-            cache.insert(cacheResult)
 
             getShowsByCategoryAndWindow(TRENDING, timeWindow)
         } else {
@@ -154,12 +151,12 @@ class TvShowsRepositoryImpl(
         return if (getShowsByCategoryAndWindow(FEATURED, WEEK).isEmpty()) {
 
             apiService.getTrendingShows(1, WEEK.window).results
-                .map { it.toShow() }
                 .map {
-                    it.copy(
-                        show_category = FEATURED,
-                        time_window = WEEK
-                    )
+                    it.toShow()
+                        .copy(
+                            show_category = FEATURED,
+                            time_window = WEEK
+                        )
                 }
                 .map { cache.insert(it) }
 
@@ -209,10 +206,8 @@ class TvShowsRepositoryImpl(
         category: ShowCategory,
         timeWindow: TimeWindow
     ): List<TvShow> {
-        val result = cache.getTvShows(category, timeWindow)
+        return cache.getTvShows(category, timeWindow)
             .toTvShowList()
-        Napier.d("Query size ${result.size}")
-        return result
     }
 
     override suspend fun getPagedShowsByCategoryAndWindow(
@@ -236,24 +231,18 @@ class TvShowsRepositoryImpl(
                     POPULAR -> apiService.getPopularShows(currentKey)
                 }
 
-                val cacheResult = apiResponse.results
-                    .map { it.toShow() }
+                apiResponse.results
                     .map {
-                        it.copy(
-                            show_category = category,
-                            time_window = timeWindow
-                        )
+                        it.toShow()
+                            .copy(
+                                show_category = category,
+                                time_window = timeWindow
+                            )
                     }
-
-                cache.insert(cacheResult)
-
-
-                val tvShows = getShowsByCategoryAndWindow(category, timeWindow)
-
-                Napier.d("Updated Query size ${tvShows.size}")
+                    .map { cache.insert(it) }
 
                 PagingResult(
-                    items = tvShows,
+                    items = getShowsByCategoryAndWindow(category, timeWindow),
                     currentKey = currentKey,
                     prevKey = { null },
                     nextKey = { apiResponse.page + 1 }
@@ -268,15 +257,13 @@ class TvShowsRepositoryImpl(
     }
 
     private fun mapApiResultAndInsert(apiResponse: TvShowsResponse, category: ShowCategory) {
-        val entityList = apiResponse.results
-            .map { it.toShow() }
-            .map {
-                it.copy(
-                    show_category = category
-                )
+        apiResponse.results
+            .map { response ->
+                response
+                    .toShow()
+                    .copy(show_category = category)
             }
-
-        cache.insert(entityList)
+            .map { cache.insert(it) }
     }
 
 }
