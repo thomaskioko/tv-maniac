@@ -19,13 +19,16 @@ import com.thomaskioko.tvmaniac.datasource.mapper.toShow
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowList
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
+import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.CommonFlow
 import com.thomaskioko.tvmaniac.util.asCommonFlow
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 @OptIn(FlowPreview::class)
@@ -44,20 +47,40 @@ class TvShowsRepositoryImpl(
     override suspend fun getPopularTvShows(page: Int): List<TvShow> {
         return if (getShowsByCategory(POPULAR).isEmpty()) {
 
-            val entityList = apiService.getPopularShows(page).results
-                .map { it.toShow() }
-                .map {
-                    it.copy(
-                        show_category = POPULAR
-                    )
-                }
-
-            cache.insert(entityList)
+            mapApiResultAndInsert(apiService.getPopularShows(page), POPULAR)
 
             getShowsByCategory(POPULAR)
         } else {
             getShowsByCategory(POPULAR)
         }
+    }
+
+    override suspend fun getPagedPopularTvShows(): CommonFlow<PagingData<TvShow>> {
+        val pager = Pager(
+            clientScope = coroutineScope,
+            config = PagingConfig(
+                pageSize = 30,
+                enablePlaceholders = false
+            ),
+            initialKey = 1,
+            getItems = { currentKey, _ ->
+                val apiResponse = apiService.getPopularShows(currentKey)
+
+                mapApiResultAndInsert(apiResponse, POPULAR)
+
+                val tvShows = getShowsByCategory(POPULAR)
+                PagingResult(
+                    items = tvShows,
+                    currentKey = currentKey,
+                    prevKey = { null },
+                    nextKey = { apiResponse.page + 1 }
+                )
+            }
+        )
+
+        return pager.pagingData
+            .cachedIn(coroutineScope)
+            .asCommonFlow()
     }
 
     override suspend fun getTopRatedTvShows(page: Int): List<TvShow> {
@@ -76,6 +99,35 @@ class TvShowsRepositoryImpl(
         } else {
             getShowsByCategory(TOP_RATED)
         }
+    }
+
+    override suspend fun getPagedTopRatedTvShows(): CommonFlow<PagingData<TvShow>> {
+        val pager = Pager(
+            clientScope = coroutineScope,
+            config = PagingConfig(
+                pageSize = 30,
+                enablePlaceholders = false
+            ),
+            initialKey = 1,
+            getItems = { currentKey, _ ->
+                val apiResponse = apiService.getTopRatedShows(currentKey)
+
+                mapApiResultAndInsert(apiResponse, TOP_RATED)
+
+                val tvShows = getShowsByCategory(TOP_RATED)
+
+                PagingResult(
+                    items = tvShows,
+                    currentKey = currentKey,
+                    prevKey = { null },
+                    nextKey = { apiResponse.page + 1 }
+                )
+            }
+        )
+
+        return pager.pagingData
+            .cachedIn(coroutineScope)
+            .asCommonFlow()
     }
 
     override suspend fun getTrendingShowsByTime(timeWindow: TimeWindow): List<TvShow> {
@@ -133,7 +185,7 @@ class TvShowsRepositoryImpl(
             initialKey = 1,
             getItems = { currentKey, _ ->
                 PagingResult(
-                    items = cache.getTvShowsByCategory(category).toTvShowList(),
+                    items = getShowsByCategory(category),
                     currentKey = currentKey,
                     prevKey = { null },
                     nextKey = { 0 + 1 }
@@ -157,8 +209,10 @@ class TvShowsRepositoryImpl(
         category: ShowCategory,
         timeWindow: TimeWindow
     ): List<TvShow> {
-        return cache.getTvShows(category, timeWindow)
+        val result = cache.getTvShows(category, timeWindow)
             .toTvShowList()
+        Napier.d("Query size ${result.size}")
+        return result
     }
 
     override suspend fun getPagedShowsByCategoryAndWindow(
@@ -169,9 +223,10 @@ class TvShowsRepositoryImpl(
             clientScope = coroutineScope,
             config = PagingConfig(
                 pageSize = 30,
-                enablePlaceholders = false
+                enablePlaceholders = false,
+                initialLoadSize = 30
             ),
-            initialKey = 1,
+            initialKey = 2,
             getItems = { currentKey, _ ->
 
                 val apiResponse = when (category) {
@@ -192,8 +247,13 @@ class TvShowsRepositoryImpl(
 
                 cache.insert(cacheResult)
 
+
+                val tvShows = getShowsByCategoryAndWindow(category, timeWindow)
+
+                Napier.d("Updated Query size ${tvShows.size}")
+
                 PagingResult(
-                    items = cache.getTvShows(category, timeWindow).toTvShowList(),
+                    items = tvShows,
                     currentKey = currentKey,
                     prevKey = { null },
                     nextKey = { apiResponse.page + 1 }
@@ -202,8 +262,21 @@ class TvShowsRepositoryImpl(
         )
 
         return pager.pagingData
+            .distinctUntilChanged()
             .cachedIn(coroutineScope)
             .asCommonFlow()
+    }
+
+    private fun mapApiResultAndInsert(apiResponse: TvShowsResponse, category: ShowCategory) {
+        val entityList = apiResponse.results
+            .map { it.toShow() }
+            .map {
+                it.copy(
+                    show_category = category
+                )
+            }
+
+        cache.insert(entityList)
     }
 
 }
