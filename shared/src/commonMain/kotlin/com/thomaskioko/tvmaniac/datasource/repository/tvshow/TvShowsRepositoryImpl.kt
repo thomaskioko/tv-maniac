@@ -24,14 +24,10 @@ import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.CommonFlow
 import com.thomaskioko.tvmaniac.util.asCommonFlow
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-@OptIn(FlowPreview::class)
-@ExperimentalCoroutinesApi
 class TvShowsRepositoryImpl(
     private val apiService: TvShowsService,
     private val cache: TvShowCache,
