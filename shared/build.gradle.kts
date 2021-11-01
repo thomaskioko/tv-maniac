@@ -32,12 +32,12 @@ android {
 }
 
 kotlin {
-    jvm()
     android()
 
     val pagingIos: String
     val isDevice = System.getenv("SDK_NAME")?.startsWith("iphoneos") == true
     val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget
+
     if (isDevice) {
         iosTarget = ::iosArm64
         pagingIos = "io.github.kuuuurt:multiplatform-paging-iosArm64:0.4.5"
@@ -48,24 +48,17 @@ kotlin {
 
     iosTarget("ios") {
         binaries.withType<Framework>().configureEach {
-            export(pagingIos)
+            //TODO:: Resolve issue with iOS Exports
+            //export(pagingIos)
         }
     }
 
     cocoapods {
-        summary = "Shared logic for TvManiac"
+        summary = "TvManiac"
         homepage = "https://github.com/c0de-wizard/tv-maniac"
 
-        ios.deploymentTarget = "14.1"
-        frameworkName = "shared"
+        ios.deploymentTarget = "12.4"
         podfile = project.file("../ios/Podfile")
-    }
-
-    targets.withType<KotlinNativeTarget> {
-        binaries.withType<Framework> {
-            isStatic = false
-            linkerOpts.add("-lsqlite3")
-        }
     }
 
     sourceSets {
@@ -81,16 +74,26 @@ kotlin {
 
         sourceSets["commonMain"].dependencies {
             implementation(libs.kotlin.datetime)
-            implementation(libs.kotlin.coroutines.core)
 
             implementation(libs.ktor.core)
             implementation(libs.ktor.logging)
             implementation(libs.ktor.serialization)
 
             implementation(libs.napier)
-            implementation(libs.paging)
+            implementation(libs.multiplatform.paging.core)
             implementation(libs.squareup.sqldelight.extensions)
             implementation(libs.squareup.sqldelight.runtime)
+
+            val coroutineCore = libs.kotlin.coroutines.native.get()
+            implementation(
+                "${coroutineCore.module.group}:" +
+                        "${coroutineCore.module.name}:" +
+                        coroutineCore.versionConstraint.displayName
+            ) {
+                version {
+                    strictly(libs.versions.coroutines.native.get())
+                }
+            }
         }
 
         sourceSets["commonTest"].dependencies {
@@ -99,7 +102,6 @@ kotlin {
 
             implementation(libs.testing.assertK)
             implementation(libs.testing.ktor.mock)
-            implementation(libs.testing.opentest)
             implementation(libs.testing.turbine)
             implementation(libs.testing.kotest.assertions)
 
@@ -129,10 +131,17 @@ kotlin {
             implementation(libs.testing.mockk.common)
         }
 
-        sourceSets.matching {
-            it.name.endsWith("Test")
-        }.configureEach {
-            languageSettings.useExperimentalAnnotation("kotlin.time.ExperimentalTime")
+        all {
+            languageSettings.apply {
+                useExperimentalAnnotation("kotlin.time.ExperimentalTime")
+            }
+        }
+    }
+
+    targets.withType<KotlinNativeTarget> {
+        binaries.withType<Framework> {
+            isStatic = false
+            linkerOpts.add("-lsqlite3")
         }
     }
 }
