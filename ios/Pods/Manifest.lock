@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: "../shared"
 
 SPEC CHECKSUMS:
-  shared: 71bc2ca96c118ebe7cfeeec05b2b8b236cf1d1a7
+  shared: a82dc2967140b421d80bb2d0e46cd7a419aeee24
 
-PODFILE CHECKSUM: f95af2126de88bbf70f7298ff2af242062d9f2ec
+PODFILE CHECKSUM: c68ee4c34ddac6ee53f3c220ded9d2c01fd1b77f
 
 COCOAPODS: 1.10.1

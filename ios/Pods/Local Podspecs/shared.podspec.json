@@ -8,7 +8,7 @@
   },
   "authors": "",
   "license": "",
-  "summary": "Shared logic for TvManiac",
+  "summary": "TvManiac",
   "vendored_frameworks": "build/cocoapods/framework/shared.framework",
   "libraries": "c++",
   "module_name": "shared_umbrella",
