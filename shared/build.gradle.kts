@@ -34,30 +34,18 @@ android {
 kotlin {
     android()
 
-    val pagingIos: String
-    val isDevice = System.getenv("SDK_NAME")?.startsWith("iphoneos") == true
-    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget
-
-    if (isDevice) {
-        iosTarget = ::iosArm64
-        pagingIos = "io.github.kuuuurt:multiplatform-paging-iosArm64:0.4.5"
-    } else {
-        iosTarget = ::iosX64
-        pagingIos = "io.github.kuuuurt:multiplatform-paging-iosX64:0.4.5"
+    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget = when {
+        System.getenv("SDK_NAME")?.startsWith("iphoneos") == true -> ::iosArm64
+        System.getenv("NATIVE_ARCH")?.startsWith("arm") == true -> ::iosSimulatorArm64
+        else -> ::iosX64
     }
-
-    iosTarget("ios") {
-        binaries.withType<Framework>().configureEach {
-            //TODO:: Resolve issue with iOS Exports
-            //export(pagingIos)
-        }
-    }
+    iosTarget("ios") {}
 
     cocoapods {
         summary = "TvManiac"
         homepage = "https://github.com/c0de-wizard/tv-maniac"
 
-        ios.deploymentTarget = "12.4"
+        ios.deploymentTarget = "14.1"
         podfile = project.file("../ios/Podfile")
     }
 
@@ -83,17 +71,7 @@ kotlin {
             implementation(libs.multiplatform.paging.core)
             implementation(libs.squareup.sqldelight.extensions)
             implementation(libs.squareup.sqldelight.runtime)
-
-            val coroutineCore = libs.kotlin.coroutines.native.get()
-            implementation(
-                "${coroutineCore.module.group}:" +
-                        "${coroutineCore.module.name}:" +
-                        coroutineCore.versionConstraint.displayName
-            ) {
-                version {
-                    strictly(libs.versions.coroutines.native.get())
-                }
-            }
+            implementation(libs.kotlin.coroutines.core)
         }
 
         sourceSets["commonTest"].dependencies {
@@ -124,7 +102,17 @@ kotlin {
 
         sourceSets["iosMain"].dependencies {
             implementation(libs.ktor.ios)
+            implementation(libs.kotlin.coroutines.core)
             implementation(libs.squareup.sqldelight.driver.native)
+
+            val coroutineCore = libs.kotlin.coroutines.core.get()
+
+            @Suppress("UnstableApiUsage")
+            implementation("${coroutineCore.module.group}:${coroutineCore.module.name}:${coroutineCore.versionConstraint.displayName}") {
+                version {
+                    strictly(libs.versions.coroutines.native.get())
+                }
+            }
         }
 
         sourceSets["iosTest"].dependencies {
@@ -133,7 +121,10 @@ kotlin {
 
         all {
             languageSettings.apply {
+                useExperimentalAnnotation("kotlin.RequiresOptIn")
                 useExperimentalAnnotation("kotlin.time.ExperimentalTime")
+                useExperimentalAnnotation("kotlinx.coroutines.FlowPreview")
+                useExperimentalAnnotation("kotlinx.coroutines.ExperimentalCoroutinesApi")
             }
         }
     }
