@@ -5,7 +5,7 @@ Pod::Spec.new do |spec|
     spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
     spec.authors                  = ''
     spec.license                  = ''
-    spec.summary                  = 'Shared logic for TvManiac'
+    spec.summary                  = 'TvManiac'
 
     spec.vendored_frameworks      = "build/cocoapods/framework/shared.framework"
     spec.libraries                = "c++"
