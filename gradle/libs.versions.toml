@@ -21,7 +21,6 @@ androidx-paging = "3.0.1"
 androidx-composePaging = "1.0.0-alpha13"
 
 coil = "1.3.2"
-coroutines = "1.5.2"
 coroutines-native = "1.5.2-native-mt"
 hilt = "2.39.1"
 hiltNavigation = "1.0.0-alpha03"
@@ -52,7 +51,7 @@ android-gradle = { module = "com.android.tools.build:gradle", version.ref = "and
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "date-time" }
 
-kotlin-coroutines-native = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines-native" }
+kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines-native" }
 
 accompanist-pager-core = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompanist-pager-indicator = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
@@ -128,7 +127,7 @@ testing-mockk-core = { module = "io.mockk:mockk", version.ref = "testing-mockk" 
 testing-mockk-common = { module = "io.mockk:mockk-common", version.ref = "testing-mockk" }
 
 testing-assertK = { module = "com.willowtreeapps.assertk:assertk", version.ref = "testing-assertK" }
-testing-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+testing-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-native" }
 testing-junit = { module = "junit:junit", version.ref = "testing-junit" }
 testing-mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "testing-mockito-core" }
 testing-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
