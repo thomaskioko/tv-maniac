@@ -14,7 +14,7 @@ data class ShowsGridState(
     val list: CommonFlow<PagingData<TvShow>>
 ) : State {
     companion object {
-        val Empty = ShowsGridState(
+        val Empty: ShowsGridState = ShowsGridState(
             isLoading = true,
             title = "",
             list = CommonFlow(flowOf())
@@ -23,7 +23,7 @@ data class ShowsGridState(
 }
 
 sealed class ShowsGridAction : Action {
-    object LoadTvShows  : ShowsGridAction()
+    object LoadTvShows : ShowsGridAction()
     data class Error(val message: String = "") : ShowsGridAction()
 }
 
