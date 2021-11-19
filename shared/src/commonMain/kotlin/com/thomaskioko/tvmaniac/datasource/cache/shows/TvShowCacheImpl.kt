@@ -48,9 +48,10 @@ class TvShowCacheImpl(
     }
 
 
-    override fun getTvShows(): List<Show> {
+    override fun getTvShows(): Flow<List<Show>> {
         return database.tvShowQueries.selectAll()
-            .executeAsList()
+            .asFlow()
+            .mapToList()
     }
 
     override fun getTvShows(category: ShowCategory, timeWindow: TimeWindow): List<Show> {
