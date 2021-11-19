@@ -6,13 +6,12 @@ import com.thomaskioko.tvmaniac.core.Store
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowAction
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.FEATURED
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.POPULAR
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.THIS_WEEK
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TOP_RATED
+import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 import com.thomaskioko.tvmaniac.interactor.GetTrendingShowsInteractor
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -28,7 +27,7 @@ class DiscoverViewModel @Inject constructor(
     private val interactor: GetTrendingShowsInteractor,
 ) : Store<DiscoverShowState, DiscoverShowAction, DiscoverShowEffect>, ViewModel() {
 
-    private val state = MutableStateFlow(DiscoverShowState(false, linkedMapOf()))
+    private val state = MutableStateFlow(DiscoverShowState(false, emptyList()))
     private val sideEffect = MutableSharedFlow<DiscoverShowEffect>()
 
     init {
@@ -61,7 +60,7 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    private fun DomainResultState<LinkedHashMap<ShowCategory, List<TvShow>>>.stateReducer(
+    private fun DomainResultState<List<TrendingShowData>>.stateReducer(
         state: DiscoverShowState,
     ): DiscoverShowState {
         return when (this) {

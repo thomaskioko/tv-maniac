@@ -52,7 +52,7 @@ import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
+import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import kotlinx.coroutines.flow.collect
 import kotlin.math.absoluteValue
@@ -131,7 +131,7 @@ private fun ScreenData(
     ) {
 
         viewState.dataMap.forEach {
-            if (it.key.title == "Featured") {
+            if (it.category.title == "Featured") {
                 FeaturedItems(it, onItemClicked)
             } else {
                 DisplayShowData(it, onItemClicked, moreClicked)
@@ -144,7 +144,7 @@ private fun ScreenData(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun FeaturedItems(
-    resultMap: Map.Entry<ShowCategory, List<TvShow>>,
+    resultMap: TrendingShowData,
     onItemClicked: (Int) -> Unit,
 ) {
 
@@ -158,7 +158,7 @@ fun FeaturedItems(
 
         val pagerState = rememberPagerState()
 
-        val selectedImageUrl = resultMap.value.getOrNull(pagerState.currentPage)
+        val selectedImageUrl = resultMap.shows.getOrNull(pagerState.currentPage)
             ?.posterImageUrl
 
         LaunchedEffect(selectedImageUrl) {
@@ -186,7 +186,7 @@ fun FeaturedItems(
 
             ColumnSpacer(value = 24)
 
-            FeaturedHorizontalPager(resultMap.value, pagerState) { tvShowId ->
+            FeaturedHorizontalPager(resultMap.shows, pagerState) { tvShowId ->
                 onItemClicked(tvShowId)
             }
 
@@ -271,20 +271,20 @@ fun FeaturedHorizontalPager(
 
 @Composable
 private fun DisplayShowData(
-    resultMap: Map.Entry<ShowCategory, List<TvShow>>,
+    resultMap: TrendingShowData,
     onItemClicked: (Int) -> Unit,
     moreClicked: (Int) -> Unit,
 ) {
 
     BoxTextItems(
-        title = resultMap.key.title,
+        title = resultMap.category.title,
         moreString = stringResource(id = R.string.str_more),
-        onMoreClicked = { moreClicked(resultMap.key.type) }
+        onMoreClicked = { moreClicked(resultMap.category.type) }
     )
 
 
     LazyRow {
-        itemsIndexed(resultMap.value) { index, tvShow ->
+        itemsIndexed(resultMap.shows) { index, tvShow ->
             TvShowCard(
                 posterImageUrl = tvShow.posterImageUrl,
                 title = tvShow.title,
