@@ -4,17 +4,17 @@ import com.thomaskioko.tvmaniac.core.Action
 import com.thomaskioko.tvmaniac.core.Effect
 import com.thomaskioko.tvmaniac.core.State
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 
 
 data class DiscoverShowState(
     val isLoading: Boolean,
-    val dataMap: LinkedHashMap<ShowCategory, List<TvShow>>
+    val dataMap: List<TrendingShowData>
 ) : State {
     companion object {
         val Empty = DiscoverShowState(
             isLoading = true,
-            dataMap = linkedMapOf()
+            dataMap = emptyList()
         )
     }
 }
