@@ -11,6 +11,7 @@ plugins {
     id("com.android.library")
     id("com.codingfeline.buildkonfig")
     id("com.squareup.sqldelight")
+    id("com.rickclephas.kmp.nativecoroutines")
 }
 
 version = "1.0"
@@ -25,8 +26,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
 }
