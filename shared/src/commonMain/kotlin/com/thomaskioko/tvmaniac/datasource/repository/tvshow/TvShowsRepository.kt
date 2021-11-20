@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.datasource.repository.tvshow
 import com.kuuurt.paging.multiplatform.PagingData
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
+import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.CommonFlow
 import kotlinx.coroutines.flow.Flow
@@ -40,4 +41,8 @@ interface TvShowsRepository {
         category: ShowCategory,
         timeWindow: TimeWindow
     ): CommonFlow<PagingData<TvShow>>
+
+    suspend fun getTrendingShows(
+        categoryList: List<ShowCategory>
+    ): List<TrendingShowData>
 }
