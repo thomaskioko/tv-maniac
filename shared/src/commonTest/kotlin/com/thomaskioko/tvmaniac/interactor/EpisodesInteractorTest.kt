@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.runBlocking
 import io.kotest.matchers.shouldBe
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import kotlin.test.Test
 
@@ -22,14 +22,12 @@ internal class EpisodesInteractorTest {
 
     @Test
     fun wheneverInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {
-        every {
-            runBlocking {
-                repository.getEpisodesBySeasonId(
-                    tvShowId = query.tvShowId,
-                    seasonNumber = query.seasonNumber,
-                    seasonId = query.seasonId
-                )
-            }
+        coEvery {
+            repository.getEpisodesBySeasonId(
+                tvShowId = query.tvShowId,
+                seasonNumber = query.seasonNumber,
+                seasonId = query.seasonId
+            )
         } returns getEpisodeList()
 
         interactor.invoke(query).test {
@@ -41,6 +39,14 @@ internal class EpisodesInteractorTest {
 
     @Test
     fun wheneverInteractorIsInvoked_ErrorIsReturned() = runBlocking {
+        coEvery {
+            repository.getEpisodesBySeasonId(
+                tvShowId = query.tvShowId,
+                seasonNumber = query.seasonNumber,
+                seasonId = query.seasonId
+            )
+        }.throws(Exception("Something went wrong"))
+
         interactor.invoke(query).test {
             awaitItem() shouldBe DomainResultState.Loading()
             awaitItem() shouldBe DomainResultState.Error("Something went wrong")
