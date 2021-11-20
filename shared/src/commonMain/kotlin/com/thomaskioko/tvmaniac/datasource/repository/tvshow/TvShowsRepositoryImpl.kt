@@ -20,6 +20,7 @@ import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowList
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
+import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.CommonFlow
 import com.thomaskioko.tvmaniac.util.asCommonFlow
@@ -76,6 +77,31 @@ class TvShowsRepositoryImpl(
         return pager.pagingData
             .cachedIn(coroutineScope)
             .asCommonFlow()
+    }
+
+    override suspend fun getTrendingShows(
+        categoryList: List<ShowCategory>
+    ): List<TrendingShowData> {
+        val trendingShowsResult= mutableListOf<TrendingShowData>()
+
+        categoryList.forEach { category ->
+            val result = when (category) {
+                FEATURED -> getFeaturedShows()
+                TODAY, THIS_WEEK -> getTrendingShowsByTime(category.timeWindow!!)
+                POPULAR -> getPopularTvShows(1)
+                TOP_RATED -> getTopRatedTvShows(1)
+                TRENDING -> getShowsByCategory(TRENDING)
+            }
+
+            trendingShowsResult.add(
+                TrendingShowData(
+                    category = category,
+                    shows = result
+                )
+            )
+        }
+
+        return trendingShowsResult
     }
 
     override suspend fun getTopRatedTvShows(page: Int): List<TvShow> {
