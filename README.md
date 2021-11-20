@@ -3,7 +3,7 @@ Tv-Maniac 🚧 Under Heavy Development 🚧
 Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows information from
 [TMDB](https://www.themoviedb.org/).
 
-### Screenshots
+### Android - Screenshots
 
 <table>
   <td>
@@ -14,6 +14,17 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
   <td>
     <p align="center">
       <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/ShowDetail.png?raw=true" alt="Show Details Screen" width="300"/>
+    </p>
+  </td>
+</tr>
+</table>
+
+### iOS - Screenshots
+
+<table>
+  <td>
+    <p align="center">
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOS-HomeScreen.png?raw=true" alt="Home Screen" width="300"/>
     </p>
   </td>
 </tr>
@@ -77,10 +88,12 @@ Android
 - [ ] Observe Internet connection
 
 iOS
-- [ ] Add HomeScreen: Tabs & Empty UI
-- [ ] Implement Discover UI
+- [x] Add HomeScreen: Tabs & Empty UI
+- [x] Implement Discover UI
+- [ ] Show Detail Screen
 - [ ] Implement Search UI
 - [ ] Implement Watchlist UI
+- [ ] Implement Load more
 
 Core
 - [x] Use SQLDelight extensions to consume queries as Flow

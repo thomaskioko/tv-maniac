@@ -1,13 +1,9 @@
 package com.thomaskioko.tvmaniac.interactor
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.MockData.dayResponse
 import com.thomaskioko.tvmaniac.MockData.getTrendingDataMap
-import com.thomaskioko.tvmaniac.MockData.weekResponse
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.THIS_WEEK
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TODAY
-import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.DAY
-import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.runBlocking
@@ -23,11 +19,9 @@ internal class GetTrendingShowsInteractorTest {
 
     @Test
     fun wheneverGetTrendingShowsInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {
-        coEvery { repository.getTrendingShowsByTime(DAY) } returns dayResponse
-
-        coEvery { repository.getTrendingShowsByTime(WEEK) } returns weekResponse
-
         val trendingTypes = listOf(TODAY, THIS_WEEK)
+
+        coEvery { repository.getTrendingShows(trendingTypes) } returns getTrendingDataMap()
 
         interactor(trendingTypes).test {
             awaitItem() shouldBe DomainResultState.Loading()
@@ -42,6 +36,8 @@ internal class GetTrendingShowsInteractorTest {
             TODAY,
             THIS_WEEK
         )
+        coEvery { repository.getTrendingShows(trendingTypes) }.throws(Exception("Something went wrong"))
+
         interactor(trendingTypes).test {
             awaitItem() shouldBe DomainResultState.Loading()
             awaitItem() shouldBe DomainResultState.Error("Something went wrong")
