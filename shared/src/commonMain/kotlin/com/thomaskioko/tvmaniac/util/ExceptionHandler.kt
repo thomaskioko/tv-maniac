@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.util
 
+import io.github.aakira.napier.Napier
 import io.ktor.client.features.ResponseException
 import io.ktor.client.features.ServerResponseException
 import io.ktor.client.statement.HttpResponse
@@ -22,21 +23,30 @@ open class ExceptionHandler(
 }
 
 fun Throwable.resolveError() = when (this) {
-    is HttpResponse -> {
-        when (status.value) {
-            400 -> ExceptionHandler.parseException(this)
-            401 -> ExceptionHandler(errorMessage = "Authentication failed!")
-            502 -> ExceptionHandler("Internal error!")
-            else -> ExceptionHandler.parseException(this)
+        is HttpResponse -> {
+            when (status.value) {
+                400 -> ExceptionHandler.parseException(this)
+                401 -> ExceptionHandler(errorMessage = "Authentication failed!")
+                502 -> ExceptionHandler(errorMessage = "Internal error!")
+                else -> ExceptionHandler.parseException(this)
+            }
         }
+        is ServerResponseException -> ExceptionHandler(errorMessage = getErrorMessage())
+        is NullPointerException -> ExceptionHandler(errorMessage = getErrorMessage())
+        else -> ExceptionHandler(errorMessage = getErrorMessage())
     }
-    is ServerResponseException -> ExceptionHandler(errorMessage = getErrorMessage())
-    is NullPointerException -> ExceptionHandler(errorMessage = message ?: "Something went wrong")
-    else -> ExceptionHandler(errorMessage = "Something went wrong")
+
+fun Throwable.getErrorMessage(): String {
+    return if (BuildConfig().isDebug()) {
+        Napier.e("Exception:: $message", this)
+        message ?: "Something went wrong"
+    } else {
+        "Something went wrong"
+    }
 }
 
 fun ResponseException.getErrorMessage(): String {
-    return if (isDebug) {
+    return if (BuildConfig().isDebug()) {
         "Server Error: ${response.status.value} /n $message"
     } else {
         "Connection to server failed."

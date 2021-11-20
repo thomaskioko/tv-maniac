@@ -9,10 +9,9 @@
 /* Begin PBXAggregateTarget section */
 		8777C9F6889E59EFFD631D80AEE9048B /* shared */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = F440063577969E3524C4FCEF485C7006 /* Build configuration list for PBXAggregateTarget "shared" */;
+			buildConfigurationList = C620C7D039745932506464654EABB275 /* Build configuration list for PBXAggregateTarget "shared" */;
 			buildPhases = (
-				D43AD522A916FCFEB4B2EB82CC91C5C5 /* [CP-User] Build shared */,
-				75F588BAF0E0741C210BE449D9FBF415 /* [CP] Copy dSYMs */,
+				882AF45D8B8C4938AC461F4FBA0FE197 /* [CP-User] Build shared */,
 			);
 			dependencies = (
 			);
@@ -21,9 +20,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		0B8488F39DB1E295BF8DBADE8031E121 /* Pods-tv-maniac-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = CAE62AC294960B0192B500B305955EED /* Pods-tv-maniac-umbrella.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		0B8488F39DB1E295BF8DBADE8031E121 /* Pods-tv-maniac-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DC0794C033F2904B965B25BA5E5644 /* Pods-tv-maniac-umbrella.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		3736EF6166F11F146BF0224EF85DCD33 /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73149DE97EFF466A1568E5444D7CD0D8 /* Publisher.swift */; };
-		3860A66BB7034CD8968DAF3BCDF3C3C5 /* Pods-tv-maniac-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A71632A8667ABC1124CFEEDAC153A0EC /* Pods-tv-maniac-dummy.m */; };
+		3860A66BB7034CD8968DAF3BCDF3C3C5 /* Pods-tv-maniac-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D36ACF72EC3D79584BCFE4CF319948 /* Pods-tv-maniac-dummy.m */; };
 		4D058353F02CB5ADCD8D002099B1DF7A /* KMPNativeCoroutinesCore-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A0C62779E9F25B9D466FEC7CC23B1D67 /* KMPNativeCoroutinesCore-dummy.m */; };
 		4DC8F1E3DC92D51E273BCEBF689FBE81 /* NativeFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE05ED93C5134B9D56393B182882436A /* NativeFlow.swift */; };
 		67CD9BF971445F04D19C8A3F0E694D03 /* NativeSuspend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611593A13CAA4F1FA1570FF3916625D0 /* NativeSuspend.swift */; };
@@ -69,40 +68,38 @@
 
 /* Begin PBXFileReference section */
 		00E9CDC40C89F2C4236A1FCF1C2C333D /* KMPNativeCoroutinesCombine.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = KMPNativeCoroutinesCombine.debug.xcconfig; sourceTree = "<group>"; };
-		1192783415C3DAB1D0759742CCB1D491 /* shared.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = shared.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		1A024084F66A0D1538735052BA583456 /* Pods-tv-maniac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-tv-maniac.release.xcconfig"; sourceTree = "<group>"; };
+		1A04FCC04C023454B15B38386FB3A2E0 /* shared.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = shared.framework; path = build/cocoapods/framework/shared.framework; sourceTree = "<group>"; };
+		1B91D51B6168D689A4C9D19CAF721A44 /* Pods-tv-maniac-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-tv-maniac-acknowledgements.plist"; sourceTree = "<group>"; };
 		1BC4A026DBC6C2982B828355463B2569 /* libKMPNativeCoroutinesCombine.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libKMPNativeCoroutinesCombine.a; path = libKMPNativeCoroutinesCombine.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		23785D2EF87CC7217936C2A2C05400F6 /* KMPNativeCoroutinesCombine.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = KMPNativeCoroutinesCombine.modulemap; sourceTree = "<group>"; };
 		2ACDC0A0AEEA49523A259A9D243C3EF5 /* Future.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Future.swift; path = KMPNativeCoroutinesCombine/Future.swift; sourceTree = "<group>"; };
 		2CB824F75C95F744CD060A677ADEF508 /* KMPNativeCoroutinesCombine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = KMPNativeCoroutinesCombine.release.xcconfig; sourceTree = "<group>"; };
+		2CDDCB218858E604A0D5ABA34E5DE9B8 /* Pods-tv-maniac-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-tv-maniac-acknowledgements.markdown"; sourceTree = "<group>"; };
 		36CC12E1AB4CF26105A57551B45F158C /* KMPNativeCoroutinesCombine-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "KMPNativeCoroutinesCombine-dummy.m"; sourceTree = "<group>"; };
+		4055FF7A5036EE4EB0F2474E5FB4E4C1 /* shared.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = shared.release.xcconfig; sourceTree = "<group>"; };
 		441594932398928E8B523A7C8A149DDE /* KMPNativeCoroutinesCore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = KMPNativeCoroutinesCore.debug.xcconfig; sourceTree = "<group>"; };
 		44756A68E369D299A81D14A655157263 /* NativeCallback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeCallback.swift; path = KMPNativeCoroutinesCore/NativeCallback.swift; sourceTree = "<group>"; };
+		49D36ACF72EC3D79584BCFE4CF319948 /* Pods-tv-maniac-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-tv-maniac-dummy.m"; sourceTree = "<group>"; };
 		56081C4E77068795768A5CF0E879AE38 /* KMPNativeCoroutinesCombine-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "KMPNativeCoroutinesCombine-prefix.pch"; sourceTree = "<group>"; };
 		56730A2BB8C6B21DC3C1DE2D1D464E68 /* KMPNativeCoroutinesCombine-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "KMPNativeCoroutinesCombine-umbrella.h"; sourceTree = "<group>"; };
 		611593A13CAA4F1FA1570FF3916625D0 /* NativeSuspend.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeSuspend.swift; path = KMPNativeCoroutinesCore/NativeSuspend.swift; sourceTree = "<group>"; };
-		64EC275B70DDF8845F8F8464C100A9F2 /* Pods-tv-maniac-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-tv-maniac-acknowledgements.markdown"; sourceTree = "<group>"; };
-		6BD99E667C32C4987716C7E4E65E99F9 /* shared-copy-dsyms.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "shared-copy-dsyms.sh"; sourceTree = "<group>"; };
 		702E8C690C894B05B2B335B3222E38BE /* KMPNativeCoroutinesCore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = KMPNativeCoroutinesCore.release.xcconfig; sourceTree = "<group>"; };
 		73149DE97EFF466A1568E5444D7CD0D8 /* Publisher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Publisher.swift; path = KMPNativeCoroutinesCombine/Publisher.swift; sourceTree = "<group>"; };
 		75183D40F3E75DC5F1D0B0B070D5B04F /* NativeCancellable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeCancellable.swift; path = KMPNativeCoroutinesCore/NativeCancellable.swift; sourceTree = "<group>"; };
+		76C6AF51EDD6C0279E4FF12F798CADE5 /* Pods-tv-maniac.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-tv-maniac.modulemap"; sourceTree = "<group>"; };
+		78E4C8EE44644CEC036762A44628C714 /* shared.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = shared.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		8467F04D2D129DA89380F1ED04CEF090 /* KMPNativeCoroutinesCore-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "KMPNativeCoroutinesCore-prefix.pch"; sourceTree = "<group>"; };
-		8C79858733E6BECC4D9CD03C15051A72 /* shared.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = shared.framework; path = build/cocoapods/framework/shared.framework; sourceTree = "<group>"; };
+		84DC0794C033F2904B965B25BA5E5644 /* Pods-tv-maniac-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-tv-maniac-umbrella.h"; sourceTree = "<group>"; };
 		935FFB47BC518C20191CB08A3C39EBD9 /* KMPNativeCoroutinesCore.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = KMPNativeCoroutinesCore.modulemap; sourceTree = "<group>"; };
-		9435D0C7EECBE31639F12D89DBC9A6A6 /* Pods-tv-maniac.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-tv-maniac.modulemap"; sourceTree = "<group>"; };
-		97CDD9EF17E1674E212B9C4D41DFAB04 /* Pods-tv-maniac-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-tv-maniac-acknowledgements.plist"; sourceTree = "<group>"; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		A0C62779E9F25B9D466FEC7CC23B1D67 /* KMPNativeCoroutinesCore-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "KMPNativeCoroutinesCore-dummy.m"; sourceTree = "<group>"; };
-		A71632A8667ABC1124CFEEDAC153A0EC /* Pods-tv-maniac-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-tv-maniac-dummy.m"; sourceTree = "<group>"; };
 		ACFB810CB3F989AD9473ADE01957AD7E /* libPods-tv-maniac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-tv-maniac.a"; path = "libPods-tv-maniac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B276657920D376EF3A9EBCE35D0D8F1E /* KMPNativeCoroutinesCore-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "KMPNativeCoroutinesCore-umbrella.h"; sourceTree = "<group>"; };
-		B757ED00904E665E1DB432326C75FA58 /* shared.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = shared.release.xcconfig; sourceTree = "<group>"; };
 		BE05ED93C5134B9D56393B182882436A /* NativeFlow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeFlow.swift; path = KMPNativeCoroutinesCore/NativeFlow.swift; sourceTree = "<group>"; };
-		CAE62AC294960B0192B500B305955EED /* Pods-tv-maniac-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-tv-maniac-umbrella.h"; sourceTree = "<group>"; };
-		DFF55E28F49B49E521495717E58E6D77 /* shared.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = shared.debug.xcconfig; sourceTree = "<group>"; };
-		E076B52131F3B4A3D9B39B1502D37532 /* Pods-tv-maniac-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-tv-maniac-frameworks.sh"; sourceTree = "<group>"; };
-		E2E78BB2D26218B5ED94580DD9243B24 /* Pods-tv-maniac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-tv-maniac.debug.xcconfig"; sourceTree = "<group>"; };
+		BECF2EA1D7EA95CF1B891922B0EC8854 /* shared.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = shared.debug.xcconfig; sourceTree = "<group>"; };
+		D0897DAEADDEA4F59DD84575B9B2C258 /* Pods-tv-maniac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-tv-maniac.debug.xcconfig"; sourceTree = "<group>"; };
 		E32954243B605448566BC0C0B0BCF70D /* libKMPNativeCoroutinesCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libKMPNativeCoroutinesCore.a; path = libKMPNativeCoroutinesCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		EF661E80941294E9E0D5329C1A09B658 /* Pods-tv-maniac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-tv-maniac.release.xcconfig"; sourceTree = "<group>"; };
 		F860A0723C9C947E65E02533615A6529 /* FuturePublisher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FuturePublisher.swift; path = KMPNativeCoroutinesCombine/FuturePublisher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -131,26 +128,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		299747F4D0CFE95E639F5E7B032BB6B1 /* Targets Support Files */ = {
+		13E168C413EBF304B2982464A72DB3DC /* Pods-tv-maniac */ = {
 			isa = PBXGroup;
 			children = (
-				531AC1345B2CA6BD75440AE6FD543308 /* Pods-tv-maniac */,
+				76C6AF51EDD6C0279E4FF12F798CADE5 /* Pods-tv-maniac.modulemap */,
+				2CDDCB218858E604A0D5ABA34E5DE9B8 /* Pods-tv-maniac-acknowledgements.markdown */,
+				1B91D51B6168D689A4C9D19CAF721A44 /* Pods-tv-maniac-acknowledgements.plist */,
+				49D36ACF72EC3D79584BCFE4CF319948 /* Pods-tv-maniac-dummy.m */,
+				84DC0794C033F2904B965B25BA5E5644 /* Pods-tv-maniac-umbrella.h */,
+				D0897DAEADDEA4F59DD84575B9B2C258 /* Pods-tv-maniac.debug.xcconfig */,
+				1A024084F66A0D1538735052BA583456 /* Pods-tv-maniac.release.xcconfig */,
 			);
-			name = "Targets Support Files";
-			sourceTree = "<group>";
-		};
-		2D696F51575A4504A458FD9155B8919F /* Pod */ = {
-			isa = PBXGroup;
-			children = (
-				1192783415C3DAB1D0759742CCB1D491 /* shared.podspec */,
-			);
-			name = Pod;
+			name = "Pods-tv-maniac";
+			path = "Target Support Files/Pods-tv-maniac";
 			sourceTree = "<group>";
 		};
 		313FE5FE915A4A924C55AAC02A910D61 /* Development Pods */ = {
 			isa = PBXGroup;
 			children = (
-				CD6C10345B56CBB7EE822B2D6ED267E2 /* shared */,
+				F2F59B8AE33A942EE4A5586105F350CF /* shared */,
 			);
 			name = "Development Pods";
 			sourceTree = "<group>";
@@ -176,22 +172,6 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		531AC1345B2CA6BD75440AE6FD543308 /* Pods-tv-maniac */ = {
-			isa = PBXGroup;
-			children = (
-				9435D0C7EECBE31639F12D89DBC9A6A6 /* Pods-tv-maniac.modulemap */,
-				64EC275B70DDF8845F8F8464C100A9F2 /* Pods-tv-maniac-acknowledgements.markdown */,
-				97CDD9EF17E1674E212B9C4D41DFAB04 /* Pods-tv-maniac-acknowledgements.plist */,
-				A71632A8667ABC1124CFEEDAC153A0EC /* Pods-tv-maniac-dummy.m */,
-				E076B52131F3B4A3D9B39B1502D37532 /* Pods-tv-maniac-frameworks.sh */,
-				CAE62AC294960B0192B500B305955EED /* Pods-tv-maniac-umbrella.h */,
-				E2E78BB2D26218B5ED94580DD9243B24 /* Pods-tv-maniac.debug.xcconfig */,
-				EF661E80941294E9E0D5329C1A09B658 /* Pods-tv-maniac.release.xcconfig */,
-			);
-			name = "Pods-tv-maniac";
-			path = "Target Support Files/Pods-tv-maniac";
-			sourceTree = "<group>";
-		};
 		5FDACE6DF4ACC2F870346DC9CCB58B8A /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -204,14 +184,6 @@
 			);
 			name = "Support Files";
 			path = "../Target Support Files/KMPNativeCoroutinesCombine";
-			sourceTree = "<group>";
-		};
-		6E2D88EA0A916D116383DAFCE4BC46DD /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				8C79858733E6BECC4D9CD03C15051A72 /* shared.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		79C13BC4ACA87457CAE6DDBD85FA1B5D /* KMPNativeCoroutinesCore */ = {
@@ -227,12 +199,19 @@
 			path = KMPNativeCoroutinesCore;
 			sourceTree = "<group>";
 		};
-		ADB4917C5F0BF0DE84357AC6CEC5B9C5 /* Support Files */ = {
+		83636031188B07840C60C0A0815E46D4 /* Pod */ = {
 			isa = PBXGroup;
 			children = (
-				6BD99E667C32C4987716C7E4E65E99F9 /* shared-copy-dsyms.sh */,
-				DFF55E28F49B49E521495717E58E6D77 /* shared.debug.xcconfig */,
-				B757ED00904E665E1DB432326C75FA58 /* shared.release.xcconfig */,
+				78E4C8EE44644CEC036762A44628C714 /* shared.podspec */,
+			);
+			name = Pod;
+			sourceTree = "<group>";
+		};
+		916F7649068E579A25EBF783AFDA189E /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				BECF2EA1D7EA95CF1B891922B0EC8854 /* shared.debug.xcconfig */,
+				4055FF7A5036EE4EB0F2474E5FB4E4C1 /* shared.release.xcconfig */,
 			);
 			name = "Support Files";
 			path = "../ios/Pods/Target Support Files/shared";
@@ -246,6 +225,14 @@
 				ACFB810CB3F989AD9473ADE01957AD7E /* libPods-tv-maniac.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		C8DC3505E71D3CA27460C4C07F11BE84 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				13E168C413EBF304B2982464A72DB3DC /* Pods-tv-maniac */,
+			);
+			name = "Targets Support Files";
 			sourceTree = "<group>";
 		};
 		CC43999398E46B9480F21D63C0373047 /* Support Files */ = {
@@ -262,17 +249,6 @@
 			path = "../Target Support Files/KMPNativeCoroutinesCore";
 			sourceTree = "<group>";
 		};
-		CD6C10345B56CBB7EE822B2D6ED267E2 /* shared */ = {
-			isa = PBXGroup;
-			children = (
-				6E2D88EA0A916D116383DAFCE4BC46DD /* Frameworks */,
-				2D696F51575A4504A458FD9155B8919F /* Pod */,
-				ADB4917C5F0BF0DE84357AC6CEC5B9C5 /* Support Files */,
-			);
-			name = shared;
-			path = ../../shared;
-			sourceTree = "<group>";
-		};
 		CF1408CF629C7361332E53B88F7BD30C = {
 			isa = PBXGroup;
 			children = (
@@ -281,13 +257,32 @@
 				D89477F20FB1DE18A04690586D7808C4 /* Frameworks */,
 				42C631582119F1E69C50DA48CD0F397F /* Pods */,
 				AF1F009EC099E63AFD765A4B9E5BEC66 /* Products */,
-				299747F4D0CFE95E639F5E7B032BB6B1 /* Targets Support Files */,
+				C8DC3505E71D3CA27460C4C07F11BE84 /* Targets Support Files */,
 			);
 			sourceTree = "<group>";
 		};
 		D89477F20FB1DE18A04690586D7808C4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F2F59B8AE33A942EE4A5586105F350CF /* shared */ = {
+			isa = PBXGroup;
+			children = (
+				FE3B536FB512E3DCB21DB1E76145B8A8 /* Frameworks */,
+				83636031188B07840C60C0A0815E46D4 /* Pod */,
+				916F7649068E579A25EBF783AFDA189E /* Support Files */,
+			);
+			name = shared;
+			path = ../../shared;
+			sourceTree = "<group>";
+		};
+		FE3B536FB512E3DCB21DB1E76145B8A8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1A04FCC04C023454B15B38386FB3A2E0 /* shared.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -434,23 +429,6 @@
 			shellPath = /bin/sh;
 			shellScript = "COMPATIBILITY_HEADER_PATH=\"${BUILT_PRODUCTS_DIR}/Swift Compatibility Header/${PRODUCT_MODULE_NAME}-Swift.h\"\nMODULE_MAP_PATH=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_MODULE_NAME}.modulemap\"\n\nditto \"${DERIVED_SOURCES_DIR}/${PRODUCT_MODULE_NAME}-Swift.h\" \"${COMPATIBILITY_HEADER_PATH}\"\nditto \"${PODS_ROOT}/Headers/Public/KMPNativeCoroutinesCombine/KMPNativeCoroutinesCombine.modulemap\" \"${MODULE_MAP_PATH}\"\nditto \"${PODS_ROOT}/Headers/Public/KMPNativeCoroutinesCombine/KMPNativeCoroutinesCombine-umbrella.h\" \"${BUILT_PRODUCTS_DIR}\"\nprintf \"\\n\\nmodule ${PRODUCT_MODULE_NAME}.Swift {\\n  header \\\"${COMPATIBILITY_HEADER_PATH}\\\"\\n  requires objc\\n}\\n\" >> \"${MODULE_MAP_PATH}\"\n";
 		};
-		75F588BAF0E0741C210BE449D9FBF415 /* [CP] Copy dSYMs */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/shared/shared-copy-dsyms-input-files.xcfilelist",
-			);
-			name = "[CP] Copy dSYMs";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/shared/shared-copy-dsyms-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/shared/shared-copy-dsyms.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7E593ECA3A8E68EB509565C728C28237 /* Copy generated compatibility header */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -475,7 +453,7 @@
 			shellPath = /bin/sh;
 			shellScript = "COMPATIBILITY_HEADER_PATH=\"${BUILT_PRODUCTS_DIR}/Swift Compatibility Header/${PRODUCT_MODULE_NAME}-Swift.h\"\nMODULE_MAP_PATH=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_MODULE_NAME}.modulemap\"\n\nditto \"${DERIVED_SOURCES_DIR}/${PRODUCT_MODULE_NAME}-Swift.h\" \"${COMPATIBILITY_HEADER_PATH}\"\nditto \"${PODS_ROOT}/Headers/Public/KMPNativeCoroutinesCore/KMPNativeCoroutinesCore.modulemap\" \"${MODULE_MAP_PATH}\"\nditto \"${PODS_ROOT}/Headers/Public/KMPNativeCoroutinesCore/KMPNativeCoroutinesCore-umbrella.h\" \"${BUILT_PRODUCTS_DIR}\"\nprintf \"\\n\\nmodule ${PRODUCT_MODULE_NAME}.Swift {\\n  header \\\"${COMPATIBILITY_HEADER_PATH}\\\"\\n  requires objc\\n}\\n\" >> \"${MODULE_MAP_PATH}\"\n";
 		};
-		D43AD522A916FCFEB4B2EB82CC91C5C5 /* [CP-User] Build shared */ = {
+		882AF45D8B8C4938AC461F4FBA0FE197 /* [CP-User] Build shared */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -551,7 +529,7 @@
 /* Begin XCBuildConfiguration section */
 		0E187ABB8D9BE0622E3F9C0D48136BA1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E2E78BB2D26218B5ED94580DD9243B24 /* Pods-tv-maniac.debug.xcconfig */;
+			baseConfigurationReference = D0897DAEADDEA4F59DD84575B9B2C258 /* Pods-tv-maniac.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -621,6 +599,24 @@
 			};
 			name = Debug;
 		};
+		5789EB93299526783682C12EB2881CDD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4055FF7A5036EE4EB0F2474E5FB4E4C1 /* shared.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		593F10BFFA94DAC7D6E17FB8A7F32D72 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -680,41 +676,6 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
-			};
-			name = Release;
-		};
-		74EB2C42A8DB09947C86FA060998D4D8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DFF55E28F49B49E521495717E58E6D77 /* shared.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		9AF5566B6056A03590F26C7558E42608 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B757ED00904E665E1DB432326C75FA58 /* shared.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -810,7 +771,7 @@
 		};
 		A8F977B2980BC89F28E2CB504D7E46A8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EF661E80941294E9E0D5329C1A09B658 /* Pods-tv-maniac.release.xcconfig */;
+			baseConfigurationReference = 1A024084F66A0D1538735052BA583456 /* Pods-tv-maniac.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -830,6 +791,23 @@
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
+		};
+		BF4CF120EB81BB6BACB4935B02205054 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BECF2EA1D7EA95CF1B891922B0EC8854 /* shared.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
 		};
 		F349E68C7E5D99408310875D8C88594F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -896,11 +874,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F440063577969E3524C4FCEF485C7006 /* Build configuration list for PBXAggregateTarget "shared" */ = {
+		C620C7D039745932506464654EABB275 /* Build configuration list for PBXAggregateTarget "shared" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				74EB2C42A8DB09947C86FA060998D4D8 /* Debug */,
-				9AF5566B6056A03590F26C7558E42608 /* Release */,
+				BF4CF120EB81BB6BACB4935B02205054 /* Debug */,
+				5789EB93299526783682C12EB2881CDD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
