@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.MockData.getTvResponse
 import com.thomaskioko.tvmaniac.MockData.makeShowList
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.POPULAR
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepositoryImpl
@@ -13,6 +14,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
 import io.mockk.unmockkAll
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
@@ -35,7 +37,7 @@ internal class TvShowRepositoryTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        repository = TvShowsRepositoryImpl(apiService, cache)
+        repository = TvShowsRepositoryImpl(apiService, cache, mockk())
     }
 
     @AfterTest
@@ -44,7 +46,7 @@ internal class TvShowRepositoryTest {
     }
 
     @Test
-    fun givenDataIsCached_thenGetTvShowIsLoadedFromCache() = runBlocking {
+    fun givenDataIsCached_thenGetCachedTvShowIsLoadedFromCache() = runBlocking {
         every { cache.getTvShow(84958) } returns flowOf(getShow())
 
         repository.getTvShow(84958)
@@ -57,20 +59,19 @@ internal class TvShowRepositoryTest {
     }
 
     @Test
-    fun givenDataIsCached_thenDataIsLoadedFromCache() {
-        every { cache.getTvShowsByCategory(ShowCategory.POPULAR) } returns makeShowList()
+    fun givenDataIsCached_thenDataIsLoadedFromCache() = runBlocking {
+        every { cache.getTvShowsByCategory(POPULAR) } returns makeShowList()
 
         runBlocking {
             repository.getPopularTvShows(1)
         }
 
         verify(exactly = 0) {
-
             runBlocking { apiService.getPopularShows(1) }
             cache.insert(makeShowList())
         }
 
-        verify(exactly = 2) { cache.getTvShowsByCategory(ShowCategory.POPULAR) }
+        verify(exactly = 2) { cache.getTvShowsByCategory(POPULAR) }
     }
 
     @Test
@@ -81,26 +82,26 @@ internal class TvShowRepositoryTest {
 
         verify {
             runBlocking { apiService.getPopularShows(1) }
-            cache.getTvShowsByCategory(ShowCategory.POPULAR)
+            cache.getTvShowsByCategory(POPULAR)
         }
     }
 
     @Test
     fun givenDataIsNotCached_thenGetTrendingShowsInvokesApiService_AndDataIsLoadedFromCache() =
         runBlocking {
-            coEvery { apiService.getTrendingShows(WEEK.window) } answers { getTvResponse() }
+            coEvery { apiService.getTrendingShows(1, WEEK.window) } answers { getTvResponse() }
 
             repository.getTrendingShowsByTime(WEEK)
 
             verify {
-                runBlocking { apiService.getTrendingShows(WEEK.window) }
+                runBlocking { apiService.getTrendingShows(1, WEEK.window) }
                 cache.getTvShows(ShowCategory.TRENDING, WEEK)
             }
         }
 
     @Test
     fun givenDataIsCached_thenWatchlistIsFetched() = runBlocking {
-        every { cache.getTvShows() } returns makeShowList()
+        every { cache.getTvShows() } returns flowOf(makeShowList())
 
         repository.getWatchlist()
 
