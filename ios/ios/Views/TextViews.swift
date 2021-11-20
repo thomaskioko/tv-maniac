@@ -30,6 +30,7 @@ struct LabelText : View {
 			.font(.caption)
 			.bold()
 			.foregroundColor(Color("AccentColor"))
+			.padding(10)
 	}
 }
 

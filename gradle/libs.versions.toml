@@ -1,50 +1,52 @@
 [versions]
-kotlin = "1.5.30"
+kotlin = "1.5.31"
 
 android-compile = "31"
 android-target = "31"
 android-min = "21"
 
-android-gradle = "7.1.0-beta02"
-date-time = "0.2.1"
+android-gradle = "7.1.0-beta03"
+date-time = "0.3.1"
 
-accompanist = "0.19.0"
+accompanist = "0.21.2-beta"
 
-androidx-appCompat = "1.4.0-alpha03"
-androidx-compose = "1.1.0-alpha03"
-androidx-constraintlayout = "1.0.0-rc01"
-androidx-activity = "1.4.0-beta01"
-androidx-navigation = "2.4.0-alpha10"
-androidx-lifecycle = "2.4.0-rc01"
+androidx-appCompat = "1.4.0"
+androidx-compose = "1.1.0-beta03"
+androidx-constraintlayout = "1.0.0-rc02"
+androidx-activity = "1.4.0"
+androidx-navigation = "2.4.0-beta02"
+androidx-lifecycle = "2.4.0"
 androidx-palette = "1.0.0"
-androidx-paging = "3.0.1"
-androidx-composePaging = "1.0.0-alpha13"
+androidx-paging = "3.1.0"
+androidx-composePaging = "1.0.0-alpha14"
 
-coil = "1.3.2"
+coil = "1.4.0"
 coroutines-native = "1.5.2-native-mt"
-hilt = "2.39.1"
+desugar = "1.1.5"
+hilt = "2.40.1"
 hiltNavigation = "1.0.0-alpha03"
 kenburns = "1.0.7"
-ktor = "1.6.4"
-material = "1.5.0-alpha04"
+ktor = "1.6.5"
+material = "1.5.0-beta01"
 multiplatform-paging = "0.4.5"
 napier = "1.5.0"
 squareup-leakcanary = "2.7"
-sqldelight = "1.5.1"
-turbine = "0.6.1"
+sqldelight = "1.5.2"
+turbine = "0.7.0"
 
 testing-arch-core = "2.1.0"
 testing-assertK = "0.25"
 testing-junit = "4.13.2"
 testing-junitext = "1.1.4-alpha03"
 testing-junit5 = "5.8.1"
-testing-kotest = "5.0.0.M2"
-testing-mockk = "1.12.0"
+testing-kotest = "5.0.0.RC"
+testing-mockk = "1.12.1"
 testing-mockito-core = "3.12.4"
 testing-mockito-kotlin = "2.2.0"
 
 plugin-buildkonfig = "0.7.0"
 plugin-gradle-versions = "0.39.0"
+plugin-kmp-native-coroutines = "0.8.0"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle" }
@@ -91,6 +93,7 @@ ktor-serialization = { module = "io.ktor:ktor-client-serialization", version.ref
 ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
@@ -110,6 +113,7 @@ plugin-dependency-check = { module = "com.github.ben-manes:gradle-versions-plugi
 plugin-hilt = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 plugin-buildkonfig = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "plugin-buildkonfig" }
 plugin-squareup-sqldelight = { module = "com.squareup.sqldelight:gradle-plugin", version.ref = "sqldelight" }
+plugin-kmp-native-coroutines = { module = "com.rickclephas.kmp:kmp-nativecoroutines-gradle-plugin", version.ref = "plugin-kmp-native-coroutines" }
 
 testing-androidx-core = { module = "androidx.arch.core:core-testing", version.ref = "testing-arch-core" }
 testing-androidx-junit = { module = "androidx.test.ext:junit", version.ref = "testing-junitext" }

@@ -7,9 +7,39 @@
 //
 
 import SwiftUI
+import shared
 
 struct DiscoverView: View {
+	
+	private let networkModule: NetworkModule
+	private let databaseModule: DatabaseModule
+	private let repositoryModule: RepositoryModule
+	private let datasourceModule: DataSourceModule
+	
+	
+	@ObservedObject var viewModel: DiscoverViewModel
+	
+	init(
+		networkModule: NetworkModule,
+		databaseModule: DatabaseModule
+	){
+		self.networkModule = networkModule
+		self.databaseModule = databaseModule
+		self.repositoryModule = RepositoryModule(
+			networkModule: self.networkModule,
+			databaseModule: self.databaseModule
+		)
+		self.datasourceModule = DataSourceModule(repositoryModule: self.repositoryModule)
+		
+		self.viewModel = DiscoverViewModel(
+			networkModule: self.networkModule,
+			databaseModule: self.databaseModule,
+			getTrendingShowsInteractor: datasourceModule.getTrendingShowsInteractor
+		)
+	}
+	
 	var body: some View {
+		
 		
 		ZStack {
 			Color("Background")
@@ -18,12 +48,24 @@ struct DiscoverView: View {
 			VStack {
 				ScrollView {
 					
-					FeaturedShowsView()
-					
-					
-					HorizontalShowsView()
+					ForEach(viewModel.trendingDataResult, id: \.self) { item in
+						
+						if item.category == ShowCategory.featured {
+							FeaturedShowsView(shows: item.shows)
+						} else {
+							HorizontalShowsView(title: item.category.title, shows: item.shows)
+						}
+						
+					}
+				
 					
 					Spacer()
+				}
+				.onAppear{
+					viewModel.startObservingTrendingShows()
+				}
+				.onDisappear{
+					viewModel.stopObservingTrendingShows()
 				}
 				
 			}
@@ -33,68 +75,71 @@ struct DiscoverView: View {
 }
 
 struct FeaturedShowsView: View {
-	@State private var selectedPage = 0
 	
 	
-	let posters = [
-		"https://image.tmdb.org/t/p/original/lztz5XBMG1x6Y5ubz7CxfPFsAcW.jpg",
-		"https://image.tmdb.org/t/p/original/w21lgYIi9GeUH5dO8l3B9ARZbCB.jpg",
-		"https://image.tmdb.org/t/p/original/xKnUNWFsAOaKIviIYBLei02Bauu.jpg",
-		"https://image.tmdb.org/t/p/original/8DFYmwvmXjUFLPKKOUUaxqTLtwq.jpg",
-		"https://image.tmdb.org/t/p/original/kz14K7vI2KNGyfTyBnYjBpA0pzQ.jpg",
-		"https://image.tmdb.org/t/p/original/m9EDCdjZqrd8L8v03VbIM5x673f.jpg"
-	].map { URL(string: $0)! }
+	@SwiftUI.State var numberOfPages: Int = 0
+	@SwiftUI.State var selectedIndex = 0
+	
+	let shows: [TvShow]
+	
 	
 	var body: some View {
 		
 		VStack {
-			TabView(selection: $selectedPage){
-				
-				ForEach(0..<posters.endIndex) { index in
+			
+			if shows.count != 0 {
+				TabView {
 					
-					let url = posters[index]
-					
-					AsyncImage(
-						url: url,
-						placeholder: { Text("Loading ...") },
-						image: { Image(uiImage: $0).resizable() }
-					)
-					.frame(height: 450) // 2:3 aspect ratio
-					.clipShape(RoundedRectangle(cornerRadius: 10))
-					.padding()
-					
+					ForEach(shows, id:\.self) { item in
+						let url = URL(string: item.posterImageUrl)!
+						
+						AsyncImage(
+							url: url,
+							placeholder: { Text("Loading ...") },
+							image: { Image(uiImage: $0).resizable() }
+						)
+							.frame(height: 450) // 2:3 aspect ratio
+							.clipShape(RoundedRectangle(cornerRadius: 10))
+							.padding()
+					}
 				}
-				
-			}
-			.indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
-			.tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-			.onAppear {
-				UIPageControl.appearance().currentPageIndicatorTintColor = .white
-				UIPageControl.appearance().pageIndicatorTintColor = UIColor.black.withAlphaComponent(0.2)
+				.indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+				.tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+				.onAppear {
+					UIPageControl.appearance().currentPageIndicatorTintColor = .white
+					UIPageControl.appearance().pageIndicatorTintColor = UIColor.black.withAlphaComponent(0.2)
+				}
 			}
 		}
-		.frame(height: 450)
+		.frame(height: 550)
 		.padding(.bottom, 20)
 	}
 }
 
 struct HorizontalShowsView: View {
+	
+	let title: String
+	let shows: [TvShow]
+	
 	var body: some View{
 		VStack {
 			
-			LabelView()
+			LabelView(title: title)
 			
-			HorizontalShowsGridView()
+			HorizontalShowsGridView(shows: shows)
 		}
 	}
 }
 
 struct LabelView: View {
+	
+	let title: String
+
 	var body: some View{
 		HStack {
 			
-			LabelTitleText(text: "Trending This Week")
-
+			LabelTitleText(text: title)
+			
 			Spacer()
 			
 			Button(action: {}){
@@ -106,29 +151,23 @@ struct LabelView: View {
 }
 
 struct HorizontalShowsGridView: View {
-	let posters = [
-		"https://image.tmdb.org/t/p/original/lztz5XBMG1x6Y5ubz7CxfPFsAcW.jpg",
-		"https://image.tmdb.org/t/p/original/w21lgYIi9GeUH5dO8l3B9ARZbCB.jpg",
-		"https://image.tmdb.org/t/p/original/xKnUNWFsAOaKIviIYBLei02Bauu.jpg",
-		"https://image.tmdb.org/t/p/original/8DFYmwvmXjUFLPKKOUUaxqTLtwq.jpg",
-		"https://image.tmdb.org/t/p/original/kz14K7vI2KNGyfTyBnYjBpA0pzQ.jpg",
-		"https://image.tmdb.org/t/p/original/m9EDCdjZqrd8L8v03VbIM5x673f.jpg"
-	].map { URL(string: $0)! }
+	let shows: [TvShow]
+	
 	
 	var body: some View {
 		ScrollView(.horizontal) {
 			LazyHStack {
-				ForEach(0..<posters.endIndex) { index in
+				ForEach(shows, id:\.self) { item in
 					
-					let url = posters[index]
+					let url = URL(string: item.posterImageUrl)!
 					
 					AsyncImage(
 						url: url,
 						placeholder: { Text("Loading ...") },
 						image: { Image(uiImage: $0).resizable() }
 					)
-					.frame(width: 180, height: 180)
-					.clipShape(RoundedRectangle(cornerRadius: 5))
+						.frame(width: 160, height: 160)
+						.clipShape(RoundedRectangle(cornerRadius: 5))
 				}
 			}
 		}
@@ -138,10 +177,13 @@ struct HorizontalShowsGridView: View {
 
 
 struct DiscoverView_Previews: PreviewProvider {
+	static private var networkModule = NetworkModule()
+	static private var databaseModule = DatabaseModule()
+	
 	static var previews: some View {
-		DiscoverView()
+		DiscoverView(networkModule: networkModule, databaseModule: databaseModule)
 		
-		DiscoverView()
+		DiscoverView(networkModule: networkModule, databaseModule: databaseModule)
 			.preferredColorScheme(.dark)
 	}
 }
