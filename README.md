@@ -63,6 +63,7 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
     - [Coroutines Extensions](https://cashapp.github.io/sqldelight/js_sqlite/coroutines/) Consume queries as Flow
 * [Napier](https://github.com/AAkira/Napier) - Logging
 * [Mockk](https://github.com/mockk/mockk) - mocking library for Kotlin.
+* [KMP-NativeCoroutines](https://github.com/rickclephas/KMP-NativeCoroutines) - A library to use Kotlin Coroutines from Swift code in KMP apps.
 
 ## Roadmap
 Android
