@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.datasource.network.model.SeasonsResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
+import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
@@ -272,26 +273,34 @@ object MockData {
         )
     )
 
-    fun getTrendingDataMap(): LinkedHashMap<ShowCategory, List<TvShow>> {
-        val trendingMap = linkedMapOf<ShowCategory, List<TvShow>>()
+    fun getTrendingDataMap(): List<TrendingShowData> {
+        val trendingMap = mutableListOf<TrendingShowData>()
 
-        trendingMap[ShowCategory.TODAY] = getTvResponse().results
-            .map { it.toTvShow() }
-            .map {
-                it.copy(
-                    showCategory = ShowCategory.TRENDING,
-                    timeWindow = TimeWindow.DAY
-                )
-            }
+        trendingMap.add(
+            TrendingShowData(
+                category = ShowCategory.TODAY,
+                shows = getTvResponse().results
+                    .map { it.toTvShow() }
+                    .map {
+                        it.copy(
+                            showCategory = ShowCategory.TRENDING,
+                            timeWindow = TimeWindow.DAY
+                        )
+                    })
+        )
 
-        trendingMap[ShowCategory.THIS_WEEK] = getTvResponse().results
-            .map { it.toTvShow() }
-            .map {
-                it.copy(
-                    showCategory = ShowCategory.TRENDING,
-                    timeWindow = TimeWindow.WEEK
-                )
-            }
+        trendingMap.add(
+            TrendingShowData(
+                category = ShowCategory.THIS_WEEK,
+                shows = getTvResponse().results
+                    .map { it.toTvShow() }
+                    .map {
+                        it.copy(
+                            showCategory = ShowCategory.TRENDING,
+                            timeWindow = TimeWindow.WEEK
+                        )
+                    })
+        )
 
         return trendingMap
     }
@@ -554,4 +563,22 @@ object MockData {
             is_watchlist = false
         ),
     )
+
+    val dayResponse = getTvResponse().results
+        .map { it.toTvShow() }
+        .map {
+            it.copy(
+                showCategory = ShowCategory.TRENDING,
+                timeWindow = TimeWindow.DAY
+            )
+        }
+
+    val weekResponse = getTvResponse().results
+        .map { it.toTvShow() }
+        .map {
+            it.copy(
+                showCategory = ShowCategory.TRENDING,
+                timeWindow = TimeWindow.WEEK
+            )
+        }
 }
