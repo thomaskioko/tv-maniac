@@ -22,7 +22,6 @@ subprojects {
     tasks.withType<KotlinCompile>().configureEach {
         with(kotlinOptions) {
             jvmTarget = JavaVersion.VERSION_1_8.toString()
-            useIR = true
             languageVersion = "1.5"
             apiVersion = "1.5"
             freeCompilerArgs = freeCompilerArgs + listOf(
@@ -37,10 +36,3 @@ subprojects {
         }
     }
 }
-
-/**
- * Disable iosTest Task for now. Using mockk causes the build to fail. Revisit later.
- * Action:
- * - Resolve issue or replace dependency
- */
-project.gradle.startParameter.excludedTaskNames.add("compileTestKotlinIos")

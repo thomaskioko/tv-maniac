@@ -58,7 +58,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.ui.Scaffold
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.showdetails.DetailUiEffect.WatchlistError
@@ -81,7 +80,6 @@ import com.thomaskioko.tvmaniac.presentation.model.GenreModel
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import kotlinx.coroutines.flow.collect
-import java.util.*
 
 @Composable
 fun ShowDetailScreen(
@@ -314,7 +312,7 @@ fun TvShowMetadata(
         append(divider)
         append(resources.getQuantityString(R.plurals.season_count, seasons.size, seasons.size))
         append(divider)
-        append(show.language.toUpperCase(Locale.ENGLISH))
+        append(show.language.uppercase())
         append(divider)
         append("${show.averageVotes}")
         append(divider)
@@ -453,18 +451,20 @@ fun ShowDetailButtons(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SeasonTabs(viewState: ShowDetailViewState, onSeasonSelected: (EpisodeQuery) -> Unit) {
 
     Column {
         val tabs = listOf(Episodes, Casts, Similar)
 
-        val pagerState = rememberPagerState(pageCount = tabs.size)
+        val pagerState = rememberPagerState()
 
         Tabs(tabs = tabs, pagerState = pagerState)
 
-        HorizontalPager(state = pagerState) { page ->
+        HorizontalPager(
+            count = tabs.size,
+            state = pagerState
+        ) { page ->
             when (tabs[page]) {
                 Casts -> SeasonCastScreen()
                 Episodes -> EpisodesScreen(viewState, onSeasonSelected)

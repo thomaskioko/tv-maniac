@@ -17,8 +17,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     buildFeatures {
@@ -26,7 +26,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
 
     composeOptions {
@@ -50,6 +50,7 @@ dependencies {
     api(libs.androidx.compose.constraintlayout)
     api(libs.androidx.compose.activity)
     api(libs.androidx.compose.navigation)
+    api(libs.androidx.compose.paging)
 
     api(libs.material)
     api(libs.kenburns)

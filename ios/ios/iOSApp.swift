@@ -1,10 +1,18 @@
 import SwiftUI
+import shared
 
 @main
 struct iOSApp: App {
+	
+	private let networkModule = NetworkModule()
+	private let databaseModule = DatabaseModule()
+	
 	var body: some Scene {
 		WindowGroup {
-			ContentView()
+			HomeUIView(
+				networkModule: networkModule,
+				databaseModule: databaseModule
+			)
 		}
 	}
 }

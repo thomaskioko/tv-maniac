@@ -1,13 +1,14 @@
 package com.thomaskioko.tvmaniac
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.google.accompanist.insets.statusBarsPadding
@@ -50,9 +52,8 @@ import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
+import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlin.math.absoluteValue
 
@@ -130,7 +131,7 @@ private fun ScreenData(
     ) {
 
         viewState.dataMap.forEach {
-            if (it.key.title == "Featured") {
+            if (it.category.title == "Featured") {
                 FeaturedItems(it, onItemClicked)
             } else {
                 DisplayShowData(it, onItemClicked, moreClicked)
@@ -143,7 +144,7 @@ private fun ScreenData(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun FeaturedItems(
-    resultMap: Map.Entry<ShowCategory, List<TvShow>>,
+    resultMap: TrendingShowData,
     onItemClicked: (Int) -> Unit,
 ) {
 
@@ -155,12 +156,9 @@ fun FeaturedItems(
 
     DynamicThemePrimaryColorsFromImage(dominantColorState) {
 
-        val pagerState = rememberPagerState(
-            pageCount = resultMap.value.size,
-            initialOffscreenLimit = 2,
-        )
+        val pagerState = rememberPagerState()
 
-        val selectedImageUrl = resultMap.value.getOrNull(pagerState.currentPage)
+        val selectedImageUrl = resultMap.shows.getOrNull(pagerState.currentPage)
             ?.posterImageUrl
 
         LaunchedEffect(selectedImageUrl) {
@@ -171,14 +169,8 @@ fun FeaturedItems(
             }
         }
 
-        LaunchedEffect(true) {
-            repeat(Int.MAX_VALUE) {
-                delay(1500)
-                pagerState.animateScrollToPage(
-                    page = it % pagerState.pageCount,
-                    animationSpec = tween(2000)
-                )
-            }
+        LaunchedEffect(Unit) {
+            pagerState.scrollToPage(2)
         }
 
 
@@ -194,7 +186,7 @@ fun FeaturedItems(
 
             ColumnSpacer(value = 24)
 
-            FeaturedHorizontalPager(resultMap.value, pagerState) { tvShowId ->
+            FeaturedHorizontalPager(resultMap.shows, pagerState) { tvShowId ->
                 onItemClicked(tvShowId)
             }
 
@@ -219,7 +211,9 @@ fun FeaturedHorizontalPager(
 ) {
 
     HorizontalPager(
+        count = list.size,
         state = pagerState,
+        contentPadding = PaddingValues(horizontal = 45.dp),
         modifier = Modifier
             .fillMaxSize()
     ) { pageNumber ->
@@ -247,7 +241,8 @@ fun FeaturedHorizontalPager(
                         fraction = 1f - pageOffset.coerceIn(0f, 1f)
                     )
                 }
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth()
+                .aspectRatio(0.7f)
 
         ) {
             Box {
@@ -258,9 +253,16 @@ fun FeaturedHorizontalPager(
                         list[pageNumber].title
                     ),
                     modifier = Modifier
-                        .height(450.dp)
-                        .fillMaxSize()
                         .clip(MaterialTheme.shapes.medium)
+                        .offset {
+                            val pageOffset =
+                                this@HorizontalPager.calculateCurrentOffsetForPage(pageNumber)
+                            // Then use it as a multiplier to apply an offset
+                            IntOffset(
+                                x = (36.dp * pageOffset).roundToPx(),
+                                y = 0
+                            )
+                        }
                 )
             }
         }
@@ -269,20 +271,20 @@ fun FeaturedHorizontalPager(
 
 @Composable
 private fun DisplayShowData(
-    resultMap: Map.Entry<ShowCategory, List<TvShow>>,
+    resultMap: TrendingShowData,
     onItemClicked: (Int) -> Unit,
     moreClicked: (Int) -> Unit,
 ) {
 
     BoxTextItems(
-        title = resultMap.key.title,
+        title = resultMap.category.title,
         moreString = stringResource(id = R.string.str_more),
-        onMoreClicked = { moreClicked(resultMap.key.type) }
+        onMoreClicked = { moreClicked(resultMap.category.type) }
     )
 
 
     LazyRow {
-        itemsIndexed(resultMap.value) { index, tvShow ->
+        itemsIndexed(resultMap.shows) { index, tvShow ->
             TvShowCard(
                 posterImageUrl = tvShow.posterImageUrl,
                 title = tvShow.title,

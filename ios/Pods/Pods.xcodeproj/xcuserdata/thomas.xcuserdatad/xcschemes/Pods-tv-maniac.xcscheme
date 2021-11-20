@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "289D09E6117411C27B0755582A6CC7A8"
-               BuildableName = "Pods-tv-maniac.framework"
+               BuildableName = "libPods-tv-maniac.a"
                BlueprintName = "Pods-tv-maniac"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>

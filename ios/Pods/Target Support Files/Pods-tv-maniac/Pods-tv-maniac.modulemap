@@ -1,4 +1,4 @@
-framework module Pods_tv_maniac {
+module Pods_tv_maniac {
   umbrella header "Pods-tv-maniac-umbrella.h"
 
   export *

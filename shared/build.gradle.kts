@@ -1,5 +1,5 @@
-
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import java.io.FileInputStream
 import java.util.*
@@ -11,26 +11,42 @@ plugins {
     id("com.android.library")
     id("com.codingfeline.buildkonfig")
     id("com.squareup.sqldelight")
+    id("com.rickclephas.kmp.nativecoroutines")
 }
 
 version = "1.0"
 
+android {
+    compileSdk = libs.versions.android.compile.get().toInt()
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+
+    defaultConfig {
+        minSdk = libs.versions.android.min.get().toInt()
+        targetSdk = libs.versions.android.target.get().toInt()
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+}
+
 kotlin {
     android()
 
-    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget =
-        if (System.getenv("SDK_NAME")?.startsWith("iphoneos") == true)
-            ::iosArm64
-        else
-            ::iosX64
-
+    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget = when {
+        System.getenv("SDK_NAME")?.startsWith("iphoneos") == true -> ::iosArm64
+        System.getenv("NATIVE_ARCH")?.startsWith("arm") == true -> ::iosSimulatorArm64
+        else -> ::iosX64
+    }
     iosTarget("ios") {}
 
     cocoapods {
-        summary = "Some description for the Shared Module"
+        summary = "TvManiac"
         homepage = "https://github.com/c0de-wizard/tv-maniac"
+
         ios.deploymentTarget = "14.1"
-        frameworkName = "shared"
         podfile = project.file("../ios/Podfile")
     }
 
@@ -47,15 +63,16 @@ kotlin {
 
         sourceSets["commonMain"].dependencies {
             implementation(libs.kotlin.datetime)
-            implementation(libs.kotlin.coroutines.core)
 
             implementation(libs.ktor.core)
             implementation(libs.ktor.logging)
             implementation(libs.ktor.serialization)
 
             implementation(libs.napier)
+            implementation(libs.multiplatform.paging.core)
             implementation(libs.squareup.sqldelight.extensions)
             implementation(libs.squareup.sqldelight.runtime)
+            implementation(libs.kotlin.coroutines.core)
         }
 
         sourceSets["commonTest"].dependencies {
@@ -64,7 +81,6 @@ kotlin {
 
             implementation(libs.testing.assertK)
             implementation(libs.testing.ktor.mock)
-            implementation(libs.testing.opentest)
             implementation(libs.testing.turbine)
             implementation(libs.testing.kotest.assertions)
 
@@ -87,35 +103,39 @@ kotlin {
 
         sourceSets["iosMain"].dependencies {
             implementation(libs.ktor.ios)
+            implementation(libs.kotlin.coroutines.core)
             implementation(libs.squareup.sqldelight.driver.native)
+
+            val coroutineCore = libs.kotlin.coroutines.core.get()
+
+            @Suppress("UnstableApiUsage")
+            implementation("${coroutineCore.module.group}:${coroutineCore.module.name}:${coroutineCore.versionConstraint.displayName}") {
+                version {
+                    strictly(libs.versions.coroutines.native.get())
+                }
+            }
         }
 
         sourceSets["iosTest"].dependencies {
             implementation(libs.testing.mockk.common)
         }
 
-        sourceSets.matching {
-            it.name.endsWith("Test")
-        }.configureEach {
-            languageSettings.useExperimentalAnnotation("kotlin.time.ExperimentalTime")
+        all {
+            languageSettings.apply {
+                useExperimentalAnnotation("kotlin.RequiresOptIn")
+                useExperimentalAnnotation("kotlin.time.ExperimentalTime")
+                useExperimentalAnnotation("kotlinx.coroutines.FlowPreview")
+                useExperimentalAnnotation("kotlinx.coroutines.ExperimentalCoroutinesApi")
+            }
         }
     }
-}
 
-android {
-    compileSdk = libs.versions.android.compile.get().toInt()
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-
-    defaultConfig {
-        minSdk = libs.versions.android.min.get().toInt()
-        targetSdk = libs.versions.android.target.get().toInt()
+    targets.withType<KotlinNativeTarget> {
+        binaries.withType<Framework> {
+            isStatic = false
+            linkerOpts.add("-lsqlite3")
+        }
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
 }
 
 buildkonfig {

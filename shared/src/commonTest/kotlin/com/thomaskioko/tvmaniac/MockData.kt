@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.datasource.network.model.SeasonsResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
+import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
@@ -272,26 +273,56 @@ object MockData {
         )
     )
 
-    fun getTrendingDataMap(): LinkedHashMap<ShowCategory, List<TvShow>> {
-        val trendingMap = linkedMapOf<ShowCategory, List<TvShow>>()
+    fun getTrendingDataMap(): List<TrendingShowData> {
+        val trendingMap = mutableListOf<TrendingShowData>()
 
-        trendingMap[ShowCategory.TODAY] = getTvResponse().results
-            .map { it.toTvShow() }
-            .map {
-                it.copy(
-                    showCategory = ShowCategory.TRENDING,
-                    timeWindow = TimeWindow.DAY
+        trendingMap.add(
+            TrendingShowData(
+                category = ShowCategory.TODAY,
+                shows = listOf(
+                    TvShow(
+                        id = 84958,
+                        title = "Loki",
+                        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+                                "an alternate version of Loki is brought to the mysterious Time Variance " +
+                                "Authority, a bureaucratic organization that exists outside of time and " +
+                                "space and monitors the timeline. They give Loki a choice: face being " +
+                                "erased from existence due to being a “time variant”or help fix " +
+                                "the timeline and stop a greater threat.",
+                        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+                        backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+                        language = "en",
+                        votes = 4958,
+                        averageVotes = 8.1,
+                        genreIds = listOf(18, 10765),
+                        showCategory = ShowCategory.TODAY,
+                        seasonsList = seasonsList
+                    ),
                 )
-            }
+            )
+        )
 
-        trendingMap[ShowCategory.THIS_WEEK] = getTvResponse().results
-            .map { it.toTvShow() }
-            .map {
-                it.copy(
-                    showCategory = ShowCategory.TRENDING,
-                    timeWindow = TimeWindow.WEEK
+        trendingMap.add(
+            TrendingShowData(
+                category = ShowCategory.THIS_WEEK,
+                shows = listOf(
+                    TvShow(
+                        id = 126280,
+                        title = "Sex/Life",
+                        overview = "A woman's daring sexual past collides with her married-with-kids " +
+                                "present when the bad-boy ex she can't stop fantasizing about crashes " +
+                                "back into her life.",
+                        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+                        backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+                        language = "en",
+                        votes = 4958,
+                        averageVotes = 8.1,
+                        genreIds = listOf(35, 18),
+                        showCategory = ShowCategory.THIS_WEEK
+                    )
                 )
-            }
+            )
+        )
 
         return trendingMap
     }
@@ -554,4 +585,22 @@ object MockData {
             is_watchlist = false
         ),
     )
+
+    val dayResponse = getTvResponse().results
+        .map { it.toTvShow() }
+        .map {
+            it.copy(
+                showCategory = ShowCategory.TRENDING,
+                timeWindow = TimeWindow.DAY
+            )
+        }
+
+    val weekResponse = getTvResponse().results
+        .map { it.toTvShow() }
+        .map {
+            it.copy(
+                showCategory = ShowCategory.TRENDING,
+                timeWindow = TimeWindow.WEEK
+            )
+        }
 }

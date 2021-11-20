@@ -2,11 +2,8 @@ package com.thomaskioko.tvmaniac.interactor
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.MockData.getTrendingDataMap
-import com.thomaskioko.tvmaniac.MockData.getTvResponse
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
-import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.DAY
-import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
-import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.THIS_WEEK
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TODAY
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.runBlocking
@@ -21,27 +18,12 @@ internal class GetTrendingShowsInteractorTest {
     private val interactor = GetTrendingShowsInteractor(repository)
 
     @Test
-    fun wheneverPopularShowsInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {
-        coEvery { repository.getTrendingShowsByTime(DAY) } returns getTvResponse().results
-            .map { it.toTvShow() }
-            .map { it.copy(
-                showCategory = ShowCategory.TRENDING,
-                timeWindow = DAY
-            ) }
+    fun wheneverGetTrendingShowsInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {
+        val trendingTypes = listOf(TODAY, THIS_WEEK)
 
-        coEvery { repository.getTrendingShowsByTime(WEEK) } returns getTvResponse().results
-            .map { it.toTvShow() }
-            .map { it.copy(
-                showCategory = ShowCategory.TRENDING,
-                timeWindow = WEEK
-            ) }
+        coEvery { repository.getTrendingShows(trendingTypes) } returns getTrendingDataMap()
 
-        val trendingTypes = listOf(
-            ShowCategory.TODAY,
-            ShowCategory.THIS_WEEK
-        )
-
-        interactor.invoke(trendingTypes).test {
+        interactor(trendingTypes).test {
             awaitItem() shouldBe DomainResultState.Loading()
             awaitItem() shouldBe DomainResultState.Success(getTrendingDataMap())
             awaitComplete()
@@ -49,12 +31,14 @@ internal class GetTrendingShowsInteractorTest {
     }
 
     @Test
-    fun wheneverPopularShowsInteractorIsInvoked_ErrorIsReturned() = runBlocking {
+    fun wheneverGetTrendingShowsInteractorIsInvoked_ErrorIsReturned() = runBlocking {
         val trendingTypes = listOf(
-            ShowCategory.TODAY,
-            ShowCategory.THIS_WEEK
+            TODAY,
+            THIS_WEEK
         )
-        interactor.invoke(trendingTypes).test {
+        coEvery { repository.getTrendingShows(trendingTypes) }.throws(Exception("Something went wrong"))
+
+        interactor(trendingTypes).test {
             awaitItem() shouldBe DomainResultState.Loading()
             awaitItem() shouldBe DomainResultState.Error("Something went wrong")
             awaitComplete()

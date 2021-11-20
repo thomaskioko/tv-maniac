@@ -13,7 +13,7 @@ interface TvShowCache {
 
     fun getTvShow(showId: Int): Flow<Show>
 
-    fun getTvShows(): List<Show>
+    fun getTvShows(): Flow<List<Show>>
 
     fun getWatchlist(): Flow<List<Show>>
 
