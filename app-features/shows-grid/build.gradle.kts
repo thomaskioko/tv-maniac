@@ -5,5 +5,5 @@ plugins {
 }
 
 dependencies {
-
+    implementation(libs.multiplatform.paging.core)
 }

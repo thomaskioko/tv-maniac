@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.invoke
 import com.thomaskioko.tvmaniac.util.runBlocking
 import io.kotest.matchers.shouldBe
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import kotlin.test.Test
 
@@ -22,11 +22,13 @@ internal class PopularShowsInteractorTest {
     fun wheneverPopularShowsInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {
         val result = getTvResponse().results
             .map { it.toTvShow() }
-            .map { it.copy(
-                showCategory = ShowCategory.POPULAR
-            ) }
+            .map {
+                it.copy(
+                    showCategory = ShowCategory.POPULAR
+                )
+            }
 
-        every { runBlocking { repository.getPopularTvShows(1) } } returns result
+        coEvery { repository.getPopularTvShows(1) } returns result
 
         interactor.invoke().test {
             awaitItem() shouldBe DomainResultState.Loading()
@@ -37,6 +39,8 @@ internal class PopularShowsInteractorTest {
 
     @Test
     fun wheneverPopularShowsInteractorIsInvoked_ErrorIsReturned() = runBlocking {
+
+        coEvery { repository.getPopularTvShows(1) }.throws(Exception("Something went wrong"))
 
         interactor.invoke().test {
             awaitItem() shouldBe DomainResultState.Loading()

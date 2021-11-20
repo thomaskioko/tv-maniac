@@ -18,12 +18,14 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
+
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
 
     buildFeatures {
@@ -38,7 +40,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.get().toString()
+        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.get()
     }
 }
 
@@ -57,6 +59,7 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     implementation(libs.napier)
+    implementation(libs.androidx.paging.runtime)
 
     testImplementation(libs.testing.turbine)
     testImplementation(libs.testing.coroutines.test)

@@ -9,9 +9,9 @@
 /* Begin PBXAggregateTarget section */
 		8777C9F6889E59EFFD631D80AEE9048B /* shared */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = C12F82084A1D789106266CAAF7274FD2 /* Build configuration list for PBXAggregateTarget "shared" */;
+			buildConfigurationList = C620C7D039745932506464654EABB275 /* Build configuration list for PBXAggregateTarget "shared" */;
 			buildPhases = (
-				F2F266D90E96E94E3FEEA4EF908A1753 /* [CP-User] Build shared */,
+				882AF45D8B8C4938AC461F4FBA0FE197 /* [CP-User] Build shared */,
 			);
 			dependencies = (
 			);
@@ -20,57 +20,127 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		2B012F89215792664DA4C908996BBF64 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
-		6E3DE1034070B94EEE032AD3B7F4A072 /* Pods-tv-maniac-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9E23E6B552244449CAF3989F53A539B1 /* Pods-tv-maniac-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		AC148F2F8A6042AC6F90BA1DC74527C8 /* Pods-tv-maniac-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 53967567CD353A65409316CD2B1FA9E4 /* Pods-tv-maniac-dummy.m */; };
+		0B8488F39DB1E295BF8DBADE8031E121 /* Pods-tv-maniac-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 84DC0794C033F2904B965B25BA5E5644 /* Pods-tv-maniac-umbrella.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		3736EF6166F11F146BF0224EF85DCD33 /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73149DE97EFF466A1568E5444D7CD0D8 /* Publisher.swift */; };
+		3860A66BB7034CD8968DAF3BCDF3C3C5 /* Pods-tv-maniac-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D36ACF72EC3D79584BCFE4CF319948 /* Pods-tv-maniac-dummy.m */; };
+		4D058353F02CB5ADCD8D002099B1DF7A /* KMPNativeCoroutinesCore-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A0C62779E9F25B9D466FEC7CC23B1D67 /* KMPNativeCoroutinesCore-dummy.m */; };
+		4DC8F1E3DC92D51E273BCEBF689FBE81 /* NativeFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE05ED93C5134B9D56393B182882436A /* NativeFlow.swift */; };
+		67CD9BF971445F04D19C8A3F0E694D03 /* NativeSuspend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611593A13CAA4F1FA1570FF3916625D0 /* NativeSuspend.swift */; };
+		7E6C22677B35403CD19CD97CF5C9C55B /* NativeCancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75183D40F3E75DC5F1D0B0B070D5B04F /* NativeCancellable.swift */; };
+		81017431C9331986689A0A08AFA75E2B /* FuturePublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F860A0723C9C947E65E02533615A6529 /* FuturePublisher.swift */; };
+		8AD216478639C6A89F4A5681F0167FC2 /* NativeCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44756A68E369D299A81D14A655157263 /* NativeCallback.swift */; };
+		AD6E8E9276C772339C578AF8B668AA82 /* KMPNativeCoroutinesCore-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B276657920D376EF3A9EBCE35D0D8F1E /* KMPNativeCoroutinesCore-umbrella.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		BA5CB03EB636E2CAB97BF33EC29BE249 /* KMPNativeCoroutinesCombine-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 56730A2BB8C6B21DC3C1DE2D1D464E68 /* KMPNativeCoroutinesCombine-umbrella.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		D449674759C5FEEC3D6CC8EB235862CA /* KMPNativeCoroutinesCombine-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 36CC12E1AB4CF26105A57551B45F158C /* KMPNativeCoroutinesCombine-dummy.m */; };
+		F665CC033BA40B1DD8175B0419E51CAF /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACDC0A0AEEA49523A259A9D243C3EF5 /* Future.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1ACB2BC4089A5BE1BFD708D90DA656CB /* PBXContainerItemProxy */ = {
+		5BBA10319B3658676F87A7ECD0439081 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3F9FD9D97D14F53EE028871E5A26555A;
+			remoteInfo = KMPNativeCoroutinesCombine;
+		};
+		9E20461D4B538D890BCF52D5CC17190A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 8777C9F6889E59EFFD631D80AEE9048B;
 			remoteInfo = shared;
 		};
+		A0A09942BB536170555BACB2BE6D6FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FFFB6783B79B68DA14E36A00A348B0B3;
+			remoteInfo = KMPNativeCoroutinesCore;
+		};
+		F72D872819E6482AD42B1A17F7E3BC70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FFFB6783B79B68DA14E36A00A348B0B3;
+			remoteInfo = KMPNativeCoroutinesCore;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		18DEAB512887FF4068486242F49003B0 /* Pods-tv-maniac.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-tv-maniac.modulemap"; sourceTree = "<group>"; };
+		00E9CDC40C89F2C4236A1FCF1C2C333D /* KMPNativeCoroutinesCombine.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = KMPNativeCoroutinesCombine.debug.xcconfig; sourceTree = "<group>"; };
+		1A024084F66A0D1538735052BA583456 /* Pods-tv-maniac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-tv-maniac.release.xcconfig"; sourceTree = "<group>"; };
 		1A04FCC04C023454B15B38386FB3A2E0 /* shared.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = shared.framework; path = build/cocoapods/framework/shared.framework; sourceTree = "<group>"; };
-		1D4F71C67A46D6347B75840328963103 /* Pods-tv-maniac-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-tv-maniac-Info.plist"; sourceTree = "<group>"; };
-		266B6CCB6188482D0AF2F149E90726CD /* Pods-tv-maniac-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-tv-maniac-acknowledgements.markdown"; sourceTree = "<group>"; };
-		2F0CEEFF04FBE2812CAF748AA1C1BC17 /* Pods-tv-maniac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-tv-maniac.release.xcconfig"; sourceTree = "<group>"; };
+		1B91D51B6168D689A4C9D19CAF721A44 /* Pods-tv-maniac-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-tv-maniac-acknowledgements.plist"; sourceTree = "<group>"; };
+		1BC4A026DBC6C2982B828355463B2569 /* libKMPNativeCoroutinesCombine.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libKMPNativeCoroutinesCombine.a; path = libKMPNativeCoroutinesCombine.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		23785D2EF87CC7217936C2A2C05400F6 /* KMPNativeCoroutinesCombine.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = KMPNativeCoroutinesCombine.modulemap; sourceTree = "<group>"; };
+		2ACDC0A0AEEA49523A259A9D243C3EF5 /* Future.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Future.swift; path = KMPNativeCoroutinesCombine/Future.swift; sourceTree = "<group>"; };
+		2CB824F75C95F744CD060A677ADEF508 /* KMPNativeCoroutinesCombine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = KMPNativeCoroutinesCombine.release.xcconfig; sourceTree = "<group>"; };
+		2CDDCB218858E604A0D5ABA34E5DE9B8 /* Pods-tv-maniac-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-tv-maniac-acknowledgements.markdown"; sourceTree = "<group>"; };
+		36CC12E1AB4CF26105A57551B45F158C /* KMPNativeCoroutinesCombine-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "KMPNativeCoroutinesCombine-dummy.m"; sourceTree = "<group>"; };
 		4055FF7A5036EE4EB0F2474E5FB4E4C1 /* shared.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = shared.release.xcconfig; sourceTree = "<group>"; };
-		53967567CD353A65409316CD2B1FA9E4 /* Pods-tv-maniac-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-tv-maniac-dummy.m"; sourceTree = "<group>"; };
-		73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		441594932398928E8B523A7C8A149DDE /* KMPNativeCoroutinesCore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = KMPNativeCoroutinesCore.debug.xcconfig; sourceTree = "<group>"; };
+		44756A68E369D299A81D14A655157263 /* NativeCallback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeCallback.swift; path = KMPNativeCoroutinesCore/NativeCallback.swift; sourceTree = "<group>"; };
+		49D36ACF72EC3D79584BCFE4CF319948 /* Pods-tv-maniac-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-tv-maniac-dummy.m"; sourceTree = "<group>"; };
+		56081C4E77068795768A5CF0E879AE38 /* KMPNativeCoroutinesCombine-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "KMPNativeCoroutinesCombine-prefix.pch"; sourceTree = "<group>"; };
+		56730A2BB8C6B21DC3C1DE2D1D464E68 /* KMPNativeCoroutinesCombine-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "KMPNativeCoroutinesCombine-umbrella.h"; sourceTree = "<group>"; };
+		611593A13CAA4F1FA1570FF3916625D0 /* NativeSuspend.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeSuspend.swift; path = KMPNativeCoroutinesCore/NativeSuspend.swift; sourceTree = "<group>"; };
+		702E8C690C894B05B2B335B3222E38BE /* KMPNativeCoroutinesCore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = KMPNativeCoroutinesCore.release.xcconfig; sourceTree = "<group>"; };
+		73149DE97EFF466A1568E5444D7CD0D8 /* Publisher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Publisher.swift; path = KMPNativeCoroutinesCombine/Publisher.swift; sourceTree = "<group>"; };
+		75183D40F3E75DC5F1D0B0B070D5B04F /* NativeCancellable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeCancellable.swift; path = KMPNativeCoroutinesCore/NativeCancellable.swift; sourceTree = "<group>"; };
+		76C6AF51EDD6C0279E4FF12F798CADE5 /* Pods-tv-maniac.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-tv-maniac.modulemap"; sourceTree = "<group>"; };
 		78E4C8EE44644CEC036762A44628C714 /* shared.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = shared.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		8467F04D2D129DA89380F1ED04CEF090 /* KMPNativeCoroutinesCore-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "KMPNativeCoroutinesCore-prefix.pch"; sourceTree = "<group>"; };
+		84DC0794C033F2904B965B25BA5E5644 /* Pods-tv-maniac-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-tv-maniac-umbrella.h"; sourceTree = "<group>"; };
+		935FFB47BC518C20191CB08A3C39EBD9 /* KMPNativeCoroutinesCore.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = KMPNativeCoroutinesCore.modulemap; sourceTree = "<group>"; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		9E23E6B552244449CAF3989F53A539B1 /* Pods-tv-maniac-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-tv-maniac-umbrella.h"; sourceTree = "<group>"; };
-		A5C7492A248204A2A97BD8ECFC467F64 /* Pods-tv-maniac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-tv-maniac.debug.xcconfig"; sourceTree = "<group>"; };
-		ACFB810CB3F989AD9473ADE01957AD7E /* Pods_tv_maniac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_tv_maniac.framework; path = "Pods-tv-maniac.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0C62779E9F25B9D466FEC7CC23B1D67 /* KMPNativeCoroutinesCore-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "KMPNativeCoroutinesCore-dummy.m"; sourceTree = "<group>"; };
+		ACFB810CB3F989AD9473ADE01957AD7E /* libPods-tv-maniac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-tv-maniac.a"; path = "libPods-tv-maniac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B276657920D376EF3A9EBCE35D0D8F1E /* KMPNativeCoroutinesCore-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "KMPNativeCoroutinesCore-umbrella.h"; sourceTree = "<group>"; };
+		BE05ED93C5134B9D56393B182882436A /* NativeFlow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeFlow.swift; path = KMPNativeCoroutinesCore/NativeFlow.swift; sourceTree = "<group>"; };
 		BECF2EA1D7EA95CF1B891922B0EC8854 /* shared.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = shared.debug.xcconfig; sourceTree = "<group>"; };
-		CFDE75406707B31E5D6981FA126943DD /* Pods-tv-maniac-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-tv-maniac-acknowledgements.plist"; sourceTree = "<group>"; };
+		D0897DAEADDEA4F59DD84575B9B2C258 /* Pods-tv-maniac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-tv-maniac.debug.xcconfig"; sourceTree = "<group>"; };
+		E32954243B605448566BC0C0B0BCF70D /* libKMPNativeCoroutinesCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libKMPNativeCoroutinesCore.a; path = libKMPNativeCoroutinesCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F860A0723C9C947E65E02533615A6529 /* FuturePublisher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FuturePublisher.swift; path = KMPNativeCoroutinesCombine/FuturePublisher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		B0B6D5DCCFE3F27E58EBFAB9618190B4 /* Frameworks */ = {
+		4B30B59C931BBD0DAE68465F7C09BCEE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2B012F89215792664DA4C908996BBF64 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9267A726B52622ED0E999F5C5BEDC1B1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6A23041D604F1E204DEC95A52D6A66E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		299747F4D0CFE95E639F5E7B032BB6B1 /* Targets Support Files */ = {
+		13E168C413EBF304B2982464A72DB3DC /* Pods-tv-maniac */ = {
 			isa = PBXGroup;
 			children = (
-				DAA94AF18E457983B2833A9A971B9B57 /* Pods-tv-maniac */,
+				76C6AF51EDD6C0279E4FF12F798CADE5 /* Pods-tv-maniac.modulemap */,
+				2CDDCB218858E604A0D5ABA34E5DE9B8 /* Pods-tv-maniac-acknowledgements.markdown */,
+				1B91D51B6168D689A4C9D19CAF721A44 /* Pods-tv-maniac-acknowledgements.plist */,
+				49D36ACF72EC3D79584BCFE4CF319948 /* Pods-tv-maniac-dummy.m */,
+				84DC0794C033F2904B965B25BA5E5644 /* Pods-tv-maniac-umbrella.h */,
+				D0897DAEADDEA4F59DD84575B9B2C258 /* Pods-tv-maniac.debug.xcconfig */,
+				1A024084F66A0D1538735052BA583456 /* Pods-tv-maniac.release.xcconfig */,
 			);
-			name = "Targets Support Files";
+			name = "Pods-tv-maniac";
+			path = "Target Support Files/Pods-tv-maniac";
 			sourceTree = "<group>";
 		};
 		313FE5FE915A4A924C55AAC02A910D61 /* Development Pods */ = {
@@ -81,20 +151,52 @@
 			name = "Development Pods";
 			sourceTree = "<group>";
 		};
-		3E320ED363D7E080643FE7F03D6A4A21 /* Products */ = {
+		3771862DC0EABC5A0E74A521F0266C03 /* KMPNativeCoroutinesCombine */ = {
 			isa = PBXGroup;
 			children = (
-				ACFB810CB3F989AD9473ADE01957AD7E /* Pods_tv_maniac.framework */,
+				2ACDC0A0AEEA49523A259A9D243C3EF5 /* Future.swift */,
+				F860A0723C9C947E65E02533615A6529 /* FuturePublisher.swift */,
+				73149DE97EFF466A1568E5444D7CD0D8 /* Publisher.swift */,
+				5FDACE6DF4ACC2F870346DC9CCB58B8A /* Support Files */,
 			);
-			name = Products;
+			name = KMPNativeCoroutinesCombine;
+			path = KMPNativeCoroutinesCombine;
 			sourceTree = "<group>";
 		};
-		578452D2E740E91742655AC8F1636D1F /* iOS */ = {
+		42C631582119F1E69C50DA48CD0F397F /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */,
+				3771862DC0EABC5A0E74A521F0266C03 /* KMPNativeCoroutinesCombine */,
+				79C13BC4ACA87457CAE6DDBD85FA1B5D /* KMPNativeCoroutinesCore */,
 			);
-			name = iOS;
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		5FDACE6DF4ACC2F870346DC9CCB58B8A /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				23785D2EF87CC7217936C2A2C05400F6 /* KMPNativeCoroutinesCombine.modulemap */,
+				36CC12E1AB4CF26105A57551B45F158C /* KMPNativeCoroutinesCombine-dummy.m */,
+				56081C4E77068795768A5CF0E879AE38 /* KMPNativeCoroutinesCombine-prefix.pch */,
+				56730A2BB8C6B21DC3C1DE2D1D464E68 /* KMPNativeCoroutinesCombine-umbrella.h */,
+				00E9CDC40C89F2C4236A1FCF1C2C333D /* KMPNativeCoroutinesCombine.debug.xcconfig */,
+				2CB824F75C95F744CD060A677ADEF508 /* KMPNativeCoroutinesCombine.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/KMPNativeCoroutinesCombine";
+			sourceTree = "<group>";
+		};
+		79C13BC4ACA87457CAE6DDBD85FA1B5D /* KMPNativeCoroutinesCore */ = {
+			isa = PBXGroup;
+			children = (
+				44756A68E369D299A81D14A655157263 /* NativeCallback.swift */,
+				75183D40F3E75DC5F1D0B0B070D5B04F /* NativeCancellable.swift */,
+				BE05ED93C5134B9D56393B182882436A /* NativeFlow.swift */,
+				611593A13CAA4F1FA1570FF3916625D0 /* NativeSuspend.swift */,
+				CC43999398E46B9480F21D63C0373047 /* Support Files */,
+			);
+			name = KMPNativeCoroutinesCore;
+			path = KMPNativeCoroutinesCore;
 			sourceTree = "<group>";
 		};
 		83636031188B07840C60C0A0815E46D4 /* Pod */ = {
@@ -115,39 +217,55 @@
 			path = "../ios/Pods/Target Support Files/shared";
 			sourceTree = "<group>";
 		};
+		AF1F009EC099E63AFD765A4B9E5BEC66 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1BC4A026DBC6C2982B828355463B2569 /* libKMPNativeCoroutinesCombine.a */,
+				E32954243B605448566BC0C0B0BCF70D /* libKMPNativeCoroutinesCore.a */,
+				ACFB810CB3F989AD9473ADE01957AD7E /* libPods-tv-maniac.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C8DC3505E71D3CA27460C4C07F11BE84 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				13E168C413EBF304B2982464A72DB3DC /* Pods-tv-maniac */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		CC43999398E46B9480F21D63C0373047 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				935FFB47BC518C20191CB08A3C39EBD9 /* KMPNativeCoroutinesCore.modulemap */,
+				A0C62779E9F25B9D466FEC7CC23B1D67 /* KMPNativeCoroutinesCore-dummy.m */,
+				8467F04D2D129DA89380F1ED04CEF090 /* KMPNativeCoroutinesCore-prefix.pch */,
+				B276657920D376EF3A9EBCE35D0D8F1E /* KMPNativeCoroutinesCore-umbrella.h */,
+				441594932398928E8B523A7C8A149DDE /* KMPNativeCoroutinesCore.debug.xcconfig */,
+				702E8C690C894B05B2B335B3222E38BE /* KMPNativeCoroutinesCore.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/KMPNativeCoroutinesCore";
+			sourceTree = "<group>";
+		};
 		CF1408CF629C7361332E53B88F7BD30C = {
 			isa = PBXGroup;
 			children = (
 				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
 				313FE5FE915A4A924C55AAC02A910D61 /* Development Pods */,
-				D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */,
-				3E320ED363D7E080643FE7F03D6A4A21 /* Products */,
-				299747F4D0CFE95E639F5E7B032BB6B1 /* Targets Support Files */,
+				D89477F20FB1DE18A04690586D7808C4 /* Frameworks */,
+				42C631582119F1E69C50DA48CD0F397F /* Pods */,
+				AF1F009EC099E63AFD765A4B9E5BEC66 /* Products */,
+				C8DC3505E71D3CA27460C4C07F11BE84 /* Targets Support Files */,
 			);
 			sourceTree = "<group>";
 		};
-		D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */ = {
+		D89477F20FB1DE18A04690586D7808C4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				578452D2E740E91742655AC8F1636D1F /* iOS */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		DAA94AF18E457983B2833A9A971B9B57 /* Pods-tv-maniac */ = {
-			isa = PBXGroup;
-			children = (
-				18DEAB512887FF4068486242F49003B0 /* Pods-tv-maniac.modulemap */,
-				266B6CCB6188482D0AF2F149E90726CD /* Pods-tv-maniac-acknowledgements.markdown */,
-				CFDE75406707B31E5D6981FA126943DD /* Pods-tv-maniac-acknowledgements.plist */,
-				53967567CD353A65409316CD2B1FA9E4 /* Pods-tv-maniac-dummy.m */,
-				1D4F71C67A46D6347B75840328963103 /* Pods-tv-maniac-Info.plist */,
-				9E23E6B552244449CAF3989F53A539B1 /* Pods-tv-maniac-umbrella.h */,
-				A5C7492A248204A2A97BD8ECFC467F64 /* Pods-tv-maniac.debug.xcconfig */,
-				2F0CEEFF04FBE2812CAF748AA1C1BC17 /* Pods-tv-maniac.release.xcconfig */,
-			);
-			name = "Pods-tv-maniac";
-			path = "Target Support Files/Pods-tv-maniac";
 			sourceTree = "<group>";
 		};
 		F2F59B8AE33A942EE4A5586105F350CF /* shared */ = {
@@ -172,11 +290,27 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		BDE7FBB258FF8B5F00897D076D33193D /* Headers */ = {
+		0FA26FA0549E3DD7678951570ACA7554 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E3DE1034070B94EEE032AD3B7F4A072 /* Pods-tv-maniac-umbrella.h in Headers */,
+				0B8488F39DB1E295BF8DBADE8031E121 /* Pods-tv-maniac-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D98F7FBA7911C76B4490172AD63D3E5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BA5CB03EB636E2CAB97BF33EC29BE249 /* KMPNativeCoroutinesCombine-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F45FED5EF8C697E2C7261D7234E7876B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AD6E8E9276C772339C578AF8B668AA82 /* KMPNativeCoroutinesCore-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,22 +319,60 @@
 /* Begin PBXNativeTarget section */
 		289D09E6117411C27B0755582A6CC7A8 /* Pods-tv-maniac */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 96CF84C0F49FD39C07748D2BA9105DAD /* Build configuration list for PBXNativeTarget "Pods-tv-maniac" */;
+			buildConfigurationList = 89E3F45869C188270E4A159BC090BE64 /* Build configuration list for PBXNativeTarget "Pods-tv-maniac" */;
 			buildPhases = (
-				BDE7FBB258FF8B5F00897D076D33193D /* Headers */,
-				3BF756B68B579690F80906502FB679F3 /* Sources */,
-				B0B6D5DCCFE3F27E58EBFAB9618190B4 /* Frameworks */,
-				5D069898195FD20D98B65C55191AEDBE /* Resources */,
+				0FA26FA0549E3DD7678951570ACA7554 /* Headers */,
+				B48186983F2524581A4FD6DAA754B70A /* Sources */,
+				4B30B59C931BBD0DAE68465F7C09BCEE /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				8695E5E1F2582C26DF58BE1C507E9163 /* PBXTargetDependency */,
+				952A0A61746DCDDE5E718751ADD5DA7A /* PBXTargetDependency */,
+				EA99CE2FF7422757F1F359AE3794E933 /* PBXTargetDependency */,
+				865FBDC7081D9955999ABBC823C869A5 /* PBXTargetDependency */,
 			);
 			name = "Pods-tv-maniac";
 			productName = "Pods-tv-maniac";
-			productReference = ACFB810CB3F989AD9473ADE01957AD7E /* Pods_tv_maniac.framework */;
-			productType = "com.apple.product-type.framework";
+			productReference = ACFB810CB3F989AD9473ADE01957AD7E /* libPods-tv-maniac.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		3F9FD9D97D14F53EE028871E5A26555A /* KMPNativeCoroutinesCombine */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2ED9FB6D099CCE4F4978F62F7663ED7C /* Build configuration list for PBXNativeTarget "KMPNativeCoroutinesCombine" */;
+			buildPhases = (
+				8D98F7FBA7911C76B4490172AD63D3E5 /* Headers */,
+				9CEA02A290EF1B802DB096A30846A9F5 /* Sources */,
+				9267A726B52622ED0E999F5C5BEDC1B1 /* Frameworks */,
+				5F73E2D3BBEE7795EBFEEB65642B871D /* Copy generated compatibility header */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DE102CF6445EDDB7EAA484EE0352D047 /* PBXTargetDependency */,
+			);
+			name = KMPNativeCoroutinesCombine;
+			productName = KMPNativeCoroutinesCombine;
+			productReference = 1BC4A026DBC6C2982B828355463B2569 /* libKMPNativeCoroutinesCombine.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		FFFB6783B79B68DA14E36A00A348B0B3 /* KMPNativeCoroutinesCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2B4D7B0804DDDDD535EBCDB2916D5BCB /* Build configuration list for PBXNativeTarget "KMPNativeCoroutinesCore" */;
+			buildPhases = (
+				F45FED5EF8C697E2C7261D7234E7876B /* Headers */,
+				18779BCA9D1123CA855810C0AAE5A6D0 /* Sources */,
+				F6A23041D604F1E204DEC95A52D6A66E /* Frameworks */,
+				7E593ECA3A8E68EB509565C728C28237 /* Copy generated compatibility header */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KMPNativeCoroutinesCore;
+			productName = KMPNativeCoroutinesCore;
+			productReference = E32954243B605448566BC0C0B0BCF70D /* libKMPNativeCoroutinesCore.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
@@ -220,28 +392,68 @@
 				Base,
 			);
 			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
-			productRefGroup = 3E320ED363D7E080643FE7F03D6A4A21 /* Products */;
+			productRefGroup = AF1F009EC099E63AFD765A4B9E5BEC66 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				3F9FD9D97D14F53EE028871E5A26555A /* KMPNativeCoroutinesCombine */,
+				FFFB6783B79B68DA14E36A00A348B0B3 /* KMPNativeCoroutinesCore */,
 				289D09E6117411C27B0755582A6CC7A8 /* Pods-tv-maniac */,
 				8777C9F6889E59EFFD631D80AEE9048B /* shared */,
 			);
 		};
 /* End PBXProject section */
 
-/* Begin PBXResourcesBuildPhase section */
-		5D069898195FD20D98B65C55191AEDBE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
+/* Begin PBXShellScriptBuildPhase section */
+		5F73E2D3BBEE7795EBFEEB65642B871D /* Copy generated compatibility header */ = {
+			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DERIVED_SOURCES_DIR}/${PRODUCT_MODULE_NAME}-Swift.h",
+				"${PODS_ROOT}/Headers/Public/KMPNativeCoroutinesCombine/KMPNativeCoroutinesCombine.modulemap",
+				"${PODS_ROOT}/Headers/Public/KMPNativeCoroutinesCombine/KMPNativeCoroutinesCombine-umbrella.h",
+			);
+			name = "Copy generated compatibility header";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${BUILT_PRODUCTS_DIR}/${PRODUCT_MODULE_NAME}.modulemap",
+				"${BUILT_PRODUCTS_DIR}/KMPNativeCoroutinesCombine-umbrella.h",
+				"${BUILT_PRODUCTS_DIR}/Swift Compatibility Header/${PRODUCT_MODULE_NAME}-Swift.h",
+			);
 			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "COMPATIBILITY_HEADER_PATH=\"${BUILT_PRODUCTS_DIR}/Swift Compatibility Header/${PRODUCT_MODULE_NAME}-Swift.h\"\nMODULE_MAP_PATH=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_MODULE_NAME}.modulemap\"\n\nditto \"${DERIVED_SOURCES_DIR}/${PRODUCT_MODULE_NAME}-Swift.h\" \"${COMPATIBILITY_HEADER_PATH}\"\nditto \"${PODS_ROOT}/Headers/Public/KMPNativeCoroutinesCombine/KMPNativeCoroutinesCombine.modulemap\" \"${MODULE_MAP_PATH}\"\nditto \"${PODS_ROOT}/Headers/Public/KMPNativeCoroutinesCombine/KMPNativeCoroutinesCombine-umbrella.h\" \"${BUILT_PRODUCTS_DIR}\"\nprintf \"\\n\\nmodule ${PRODUCT_MODULE_NAME}.Swift {\\n  header \\\"${COMPATIBILITY_HEADER_PATH}\\\"\\n  requires objc\\n}\\n\" >> \"${MODULE_MAP_PATH}\"\n";
 		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		F2F266D90E96E94E3FEEA4EF908A1753 /* [CP-User] Build shared */ = {
+		7E593ECA3A8E68EB509565C728C28237 /* Copy generated compatibility header */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DERIVED_SOURCES_DIR}/${PRODUCT_MODULE_NAME}-Swift.h",
+				"${PODS_ROOT}/Headers/Public/KMPNativeCoroutinesCore/KMPNativeCoroutinesCore.modulemap",
+				"${PODS_ROOT}/Headers/Public/KMPNativeCoroutinesCore/KMPNativeCoroutinesCore-umbrella.h",
+			);
+			name = "Copy generated compatibility header";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${BUILT_PRODUCTS_DIR}/${PRODUCT_MODULE_NAME}.modulemap",
+				"${BUILT_PRODUCTS_DIR}/KMPNativeCoroutinesCore-umbrella.h",
+				"${BUILT_PRODUCTS_DIR}/Swift Compatibility Header/${PRODUCT_MODULE_NAME}-Swift.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "COMPATIBILITY_HEADER_PATH=\"${BUILT_PRODUCTS_DIR}/Swift Compatibility Header/${PRODUCT_MODULE_NAME}-Swift.h\"\nMODULE_MAP_PATH=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_MODULE_NAME}.modulemap\"\n\nditto \"${DERIVED_SOURCES_DIR}/${PRODUCT_MODULE_NAME}-Swift.h\" \"${COMPATIBILITY_HEADER_PATH}\"\nditto \"${PODS_ROOT}/Headers/Public/KMPNativeCoroutinesCore/KMPNativeCoroutinesCore.modulemap\" \"${MODULE_MAP_PATH}\"\nditto \"${PODS_ROOT}/Headers/Public/KMPNativeCoroutinesCore/KMPNativeCoroutinesCore-umbrella.h\" \"${BUILT_PRODUCTS_DIR}\"\nprintf \"\\n\\nmodule ${PRODUCT_MODULE_NAME}.Swift {\\n  header \\\"${COMPATIBILITY_HEADER_PATH}\\\"\\n  requires objc\\n}\\n\" >> \"${MODULE_MAP_PATH}\"\n";
+		};
+		882AF45D8B8C4938AC461F4FBA0FE197 /* [CP-User] Build shared */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -249,67 +461,161 @@
 			name = "[CP-User] Build shared";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "                set -ev\n                REPO_ROOT=\"$PODS_TARGET_SRCROOT\"\n                \"$REPO_ROOT/../gradlew\" -p \"$REPO_ROOT\" :shared:syncFramework                     -Pkotlin.native.cocoapods.target=$KOTLIN_TARGET                     -Pkotlin.native.cocoapods.configuration=$CONFIGURATION                     -Pkotlin.native.cocoapods.cflags=\"$OTHER_CFLAGS\"                     -Pkotlin.native.cocoapods.paths.headers=\"$HEADER_SEARCH_PATHS\"                     -Pkotlin.native.cocoapods.paths.frameworks=\"$FRAMEWORK_SEARCH_PATHS\"\n";
+			shellScript = "                if [ \"YES\" = \"$COCOAPODS_SKIP_KOTLIN_BUILD\" ]; then\n                  echo \"Skipping Gradle build task invocation due to COCOAPODS_SKIP_KOTLIN_BUILD environment variable set to \"YES\"\"\n                  exit 0\n                fi\n                set -ev\n                REPO_ROOT=\"$PODS_TARGET_SRCROOT\"\n                \"$REPO_ROOT/../gradlew\" -p \"$REPO_ROOT\" $KOTLIN_PROJECT_PATH:syncFramework                     -Pkotlin.native.cocoapods.platform=$PLATFORM_NAME                     -Pkotlin.native.cocoapods.archs=\"$ARCHS\"                     -Pkotlin.native.cocoapods.configuration=$CONFIGURATION                     -Pkotlin.native.cocoapods.cflags=\"$OTHER_CFLAGS\"                     -Pkotlin.native.cocoapods.paths.headers=\"$HEADER_SEARCH_PATHS\"                     -Pkotlin.native.cocoapods.paths.frameworks=\"$FRAMEWORK_SEARCH_PATHS\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		3BF756B68B579690F80906502FB679F3 /* Sources */ = {
+		18779BCA9D1123CA855810C0AAE5A6D0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AC148F2F8A6042AC6F90BA1DC74527C8 /* Pods-tv-maniac-dummy.m in Sources */,
+				4D058353F02CB5ADCD8D002099B1DF7A /* KMPNativeCoroutinesCore-dummy.m in Sources */,
+				8AD216478639C6A89F4A5681F0167FC2 /* NativeCallback.swift in Sources */,
+				7E6C22677B35403CD19CD97CF5C9C55B /* NativeCancellable.swift in Sources */,
+				4DC8F1E3DC92D51E273BCEBF689FBE81 /* NativeFlow.swift in Sources */,
+				67CD9BF971445F04D19C8A3F0E694D03 /* NativeSuspend.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9CEA02A290EF1B802DB096A30846A9F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F665CC033BA40B1DD8175B0419E51CAF /* Future.swift in Sources */,
+				81017431C9331986689A0A08AFA75E2B /* FuturePublisher.swift in Sources */,
+				D449674759C5FEEC3D6CC8EB235862CA /* KMPNativeCoroutinesCombine-dummy.m in Sources */,
+				3736EF6166F11F146BF0224EF85DCD33 /* Publisher.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B48186983F2524581A4FD6DAA754B70A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3860A66BB7034CD8968DAF3BCDF3C3C5 /* Pods-tv-maniac-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		8695E5E1F2582C26DF58BE1C507E9163 /* PBXTargetDependency */ = {
+		865FBDC7081D9955999ABBC823C869A5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = shared;
 			target = 8777C9F6889E59EFFD631D80AEE9048B /* shared */;
-			targetProxy = 1ACB2BC4089A5BE1BFD708D90DA656CB /* PBXContainerItemProxy */;
+			targetProxy = 9E20461D4B538D890BCF52D5CC17190A /* PBXContainerItemProxy */;
+		};
+		952A0A61746DCDDE5E718751ADD5DA7A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = KMPNativeCoroutinesCombine;
+			target = 3F9FD9D97D14F53EE028871E5A26555A /* KMPNativeCoroutinesCombine */;
+			targetProxy = 5BBA10319B3658676F87A7ECD0439081 /* PBXContainerItemProxy */;
+		};
+		DE102CF6445EDDB7EAA484EE0352D047 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = KMPNativeCoroutinesCore;
+			target = FFFB6783B79B68DA14E36A00A348B0B3 /* KMPNativeCoroutinesCore */;
+			targetProxy = A0A09942BB536170555BACB2BE6D6FD1 /* PBXContainerItemProxy */;
+		};
+		EA99CE2FF7422757F1F359AE3794E933 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = KMPNativeCoroutinesCore;
+			target = FFFB6783B79B68DA14E36A00A348B0B3 /* KMPNativeCoroutinesCore */;
+			targetProxy = F72D872819E6482AD42B1A17F7E3BC70 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		17A0C48583B511C47193AEFE773B7A90 /* Debug */ = {
+		0E187ABB8D9BE0622E3F9C0D48136BA1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A5C7492A248204A2A97BD8ECFC467F64 /* Pods-tv-maniac.debug.xcconfig */;
+			baseConfigurationReference = D0897DAEADDEA4F59DD84575B9B2C258 /* Pods-tv-maniac.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-tv-maniac/Pods-tv-maniac-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-tv-maniac/Pods-tv-maniac.modulemap";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
+		};
+		101857C7BC4BA6EE3B3C68BBF5BAB344 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 702E8C690C894B05B2B335B3222E38BE /* KMPNativeCoroutinesCore.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/KMPNativeCoroutinesCore/KMPNativeCoroutinesCore-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MODULEMAP_FILE = Headers/Public/KMPNativeCoroutinesCore/KMPNativeCoroutinesCore.modulemap;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = KMPNativeCoroutinesCore;
+				PRODUCT_NAME = KMPNativeCoroutinesCore;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		2928BCA9AF74E00EDF089ECC8AF05B11 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 00E9CDC40C89F2C4236A1FCF1C2C333D /* KMPNativeCoroutinesCombine.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/KMPNativeCoroutinesCombine/KMPNativeCoroutinesCombine-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MODULEMAP_FILE = Headers/Public/KMPNativeCoroutinesCombine/KMPNativeCoroutinesCombine.modulemap;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = KMPNativeCoroutinesCombine;
+				PRODUCT_NAME = KMPNativeCoroutinesCombine;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5789EB93299526783682C12EB2881CDD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4055FF7A5036EE4EB0F2474E5FB4E4C1 /* shared.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
 		};
 		593F10BFFA94DAC7D6E17FB8A7F32D72 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -370,62 +676,6 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
-			};
-			name = Release;
-		};
-		8D3CE62BF39AD67694AD6D9C12796B95 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4055FF7A5036EE4EB0F2474E5FB4E4C1 /* shared.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		963DBEAF63F166B96F31F6CFE67F3D0C /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2F0CEEFF04FBE2812CAF748AA1C1BC17 /* Pods-tv-maniac.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-tv-maniac/Pods-tv-maniac-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-tv-maniac/Pods-tv-maniac.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
@@ -495,7 +745,54 @@
 			};
 			name = Debug;
 		};
-		CDCC3BDADC08CA648A703CE57218742D /* Debug */ = {
+		A664AF842E53C6C8B24F244CAFB8AD58 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 441594932398928E8B523A7C8A149DDE /* KMPNativeCoroutinesCore.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/KMPNativeCoroutinesCore/KMPNativeCoroutinesCore-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MODULEMAP_FILE = Headers/Public/KMPNativeCoroutinesCore/KMPNativeCoroutinesCore.modulemap;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = KMPNativeCoroutinesCore;
+				PRODUCT_NAME = KMPNativeCoroutinesCore;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A8F977B2980BC89F28E2CB504D7E46A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1A024084F66A0D1538735052BA583456 /* Pods-tv-maniac.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-tv-maniac/Pods-tv-maniac.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		BF4CF120EB81BB6BACB4935B02205054 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BECF2EA1D7EA95CF1B891922B0EC8854 /* shared.debug.xcconfig */;
 			buildSettings = {
@@ -512,9 +809,53 @@
 			};
 			name = Debug;
 		};
+		F349E68C7E5D99408310875D8C88594F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2CB824F75C95F744CD060A677ADEF508 /* KMPNativeCoroutinesCombine.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/KMPNativeCoroutinesCombine/KMPNativeCoroutinesCombine-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MODULEMAP_FILE = Headers/Public/KMPNativeCoroutinesCombine/KMPNativeCoroutinesCombine.modulemap;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = KMPNativeCoroutinesCombine;
+				PRODUCT_NAME = KMPNativeCoroutinesCombine;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2B4D7B0804DDDDD535EBCDB2916D5BCB /* Build configuration list for PBXNativeTarget "KMPNativeCoroutinesCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A664AF842E53C6C8B24F244CAFB8AD58 /* Debug */,
+				101857C7BC4BA6EE3B3C68BBF5BAB344 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2ED9FB6D099CCE4F4978F62F7663ED7C /* Build configuration list for PBXNativeTarget "KMPNativeCoroutinesCombine" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2928BCA9AF74E00EDF089ECC8AF05B11 /* Debug */,
+				F349E68C7E5D99408310875D8C88594F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -524,20 +865,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		96CF84C0F49FD39C07748D2BA9105DAD /* Build configuration list for PBXNativeTarget "Pods-tv-maniac" */ = {
+		89E3F45869C188270E4A159BC090BE64 /* Build configuration list for PBXNativeTarget "Pods-tv-maniac" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				17A0C48583B511C47193AEFE773B7A90 /* Debug */,
-				963DBEAF63F166B96F31F6CFE67F3D0C /* Release */,
+				0E187ABB8D9BE0622E3F9C0D48136BA1 /* Debug */,
+				A8F977B2980BC89F28E2CB504D7E46A8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C12F82084A1D789106266CAAF7274FD2 /* Build configuration list for PBXAggregateTarget "shared" */ = {
+		C620C7D039745932506464654EABB275 /* Build configuration list for PBXAggregateTarget "shared" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CDCC3BDADC08CA648A703CE57218742D /* Debug */,
-				8D3CE62BF39AD67694AD6D9C12796B95 /* Release */,
+				BF4CF120EB81BB6BACB4935B02205054 /* Debug */,
+				5789EB93299526783682C12EB2881CDD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

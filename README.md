@@ -3,7 +3,7 @@ Tv-Maniac 🚧 Under Heavy Development 🚧
 Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows information from
 [TMDB](https://www.themoviedb.org/).
 
-### Screenshots
+### Android - Screenshots
 
 <table>
   <td>
@@ -19,7 +19,19 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
 </tr>
 </table>
 
+### iOS - Screenshots
+
+<table>
+  <td>
+    <p align="center">
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOS-HomeScreen.png?raw=true" alt="Home Screen" width="300"/>
+    </p>
+  </td>
+</tr>
+</table>
+
 ## Environment
+### Android
 - Java 11
 - You require the latest [Android Studio BumbleBee](https://androidstudio.googleblog.com/2021/05/android-studio-bumblebee-canary-1.html) release to be able to build the app.
 
@@ -31,6 +43,11 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
     TMDB_API_URL=https://api.themoviedb.org/3/
     ```
 - Run `./gradlew generateBuildKonfig`
+
+### iOS Setup
+- Navigate to ios Dir & run `pod deintegrate && pod install`
+- Open `.xcworkspace` & not `.xcodeproj`
+
 
 ## Libraries Used
 ### Android
@@ -57,6 +74,7 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
     - [Coroutines Extensions](https://cashapp.github.io/sqldelight/js_sqlite/coroutines/) Consume queries as Flow
 * [Napier](https://github.com/AAkira/Napier) - Logging
 * [Mockk](https://github.com/mockk/mockk) - mocking library for Kotlin.
+* [KMP-NativeCoroutines](https://github.com/rickclephas/KMP-NativeCoroutines) - A library to use Kotlin Coroutines from Swift code in KMP apps.
 
 ## Roadmap
 Android
@@ -70,10 +88,12 @@ Android
 - [ ] Observe Internet connection
 
 iOS
-- [ ] Add HomeScreen: Tabs & Empty UI
-- [ ] Implement Discover UI
+- [x] Add HomeScreen: Tabs & Empty UI
+- [x] Implement Discover UI
+- [ ] Show Detail Screen
 - [ ] Implement Search UI
 - [ ] Implement Watchlist UI
+- [ ] Implement Load more
 
 Core
 - [x] Use SQLDelight extensions to consume queries as Flow
