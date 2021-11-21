@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.compose.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
@@ -34,7 +35,7 @@ fun Tabs(
     TabRow(
         selectedTabIndex = pagerState.currentPage,
         backgroundColor = Color.Transparent,
-        contentColor = Color.White,
+        contentColor = MaterialTheme.colors.onSecondary,
         indicator = { tabPositions ->
             TabRowDefaults.Indicator(
                 Modifier

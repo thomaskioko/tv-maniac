@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -68,7 +69,7 @@ fun TvShowSeasons(
     onSeasonSelected: (EpisodeQuery) -> Unit
 ) {
 
-    var selectedPosition by remember { mutableStateOf(0) }
+    val selectedPosition by remember { mutableStateOf(0) }
     var selectedCategory by remember { mutableStateOf(tvSeasons.first()) }
 
     if (tvSeasons.isNotEmpty() && selectedPosition == 0) {
@@ -115,6 +116,7 @@ private fun ShowSeasonsTabs(
         divider = {}, /* Disable the built-in divider */
         edgePadding = 24.dp,
         indicator = {},
+        backgroundColor = Color.Transparent,
         modifier = modifier
     ) {
         seasonList.forEachIndexed { index, category ->

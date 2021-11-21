@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.compose.theme
 import androidx.compose.material.Colors
 import androidx.compose.material.LocalElevationOverlay
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
@@ -13,22 +15,41 @@ import kotlin.math.min
 
 val yellow = Color(0xFFFFBE0B)
 val yellow300 = Color(0xFFFFD34F)
-val yellow400 = Color(0xFFFFc729)
 val yellow600 = Color(0xFFFFB005)
 val yellow700 = Color(0xFFFF9d06)
-val yellow800 = Color(0xFFFe8c07)
 
 val blue = Color(0xFF0b4CFF)
-val blue600 = Color(0xFF0243F3)
-val blue700 = Color(0xFF0037e6)
 val colorError = Color(0xFFFF440b)
 
 val grey = Color(0xFF131313)
 val grey900 = Color(0xFF202020)
-val grey800 = Color(0xFF414141)
-val grey700 = Color(0xFF515151)
 
-val listGradient = listOf(yellow400, yellow, yellow700)
+
+val LightColors = lightColors(
+    primary = yellow,
+    onPrimary = Color.White,
+    primaryVariant = yellow600,
+    secondary = blue,
+    secondaryVariant = yellow300,
+    onSecondary = Color.Black,
+    error = colorError
+)
+
+val DarkColors = darkColors(
+    primary = grey,
+    onPrimary = Color.White,
+    primaryVariant = grey900,
+    secondary = yellow600,
+    onSecondary = Color.White,
+    secondaryVariant = yellow700,
+    error = colorError
+).withBrandedSurface()
+
+fun Colors.withBrandedSurface() = copy(
+    surface = primary.copy(alpha = 0.08f)
+        .compositeOver(this.surface),
+)
+
 
 
 /**

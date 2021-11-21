@@ -58,6 +58,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.ui.Scaffold
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.showdetails.DetailUiEffect.WatchlistError
@@ -359,7 +360,7 @@ private fun GenreText(
                 TextButton(
                     colors = ButtonDefaults.buttonColors(
                         contentColor = MaterialTheme.colors.onBackground,
-                        backgroundColor = Color(0xFF414141)
+                        backgroundColor = MaterialTheme.colors.background
                     ),
                     onClick = {}
                 ) {
@@ -405,7 +406,7 @@ fun ShowDetailButtons(
                 }
             },
             backgroundColor = Color.Transparent,
-            elevation = FloatingActionButtonDefaults.elevation(),
+            elevation = FloatingActionButtonDefaults.elevation(0.dp),
             onClick = {},
             modifier = Modifier
                 .padding(2.dp)
@@ -442,7 +443,7 @@ fun ShowDetailButtons(
                 }
             },
             backgroundColor = Color.Transparent,
-            elevation = FloatingActionButtonDefaults.elevation(),
+            elevation = FloatingActionButtonDefaults.elevation(0.dp),
             onClick = { onWatchlistClick(UpdateShowParams(show.id, !show.isInWatchlist)) },
             modifier = Modifier
                 .padding(2.dp)
@@ -451,6 +452,7 @@ fun ShowDetailButtons(
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SeasonTabs(viewState: ShowDetailViewState, onSeasonSelected: (EpisodeQuery) -> Unit) {
 
