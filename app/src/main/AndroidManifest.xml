@@ -6,7 +6,7 @@
 
     <application
         android:name=".TvManicApplication"
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:icon="@drawable/ic_app_launcher"
         android:label="Tv Maniac"
         android:supportsRtl="true"
@@ -16,7 +16,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode"
             android:theme="@style/Theme.TvManiac.Home">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
