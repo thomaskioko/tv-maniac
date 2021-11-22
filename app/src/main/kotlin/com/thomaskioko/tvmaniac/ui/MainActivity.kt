@@ -23,13 +23,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             ProvideWindowInsets(consumeWindowInsets = false) {
                 TvManiacTheme(
-                    darkTheme = false
+                    darkTheme = true
                 ) {
                     HomeScreen(composeNavigationFactories)
                 }
             }
         }
     }
-
-
 }

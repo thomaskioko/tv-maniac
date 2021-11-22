@@ -29,7 +29,7 @@ object InteractorsModule {
     @Provides
     fun providePopularShowsInteractor(
         repository: TvShowsRepository
-    ) : PopularShowsInteractor = PopularShowsInteractor(repository)
+    ): PopularShowsInteractor = PopularShowsInteractor(repository)
 
     @Singleton
     @Provides

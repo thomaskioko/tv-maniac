@@ -11,5 +11,4 @@ interface GenreCache {
     fun getGenreById(genreId: Int): Genre
 
     fun getGenres(): List<Genre>
-
 }

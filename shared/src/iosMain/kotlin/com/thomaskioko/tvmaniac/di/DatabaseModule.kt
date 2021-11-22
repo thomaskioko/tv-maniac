@@ -17,7 +17,6 @@ import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCacheImpl
 
-
 class DatabaseModule {
 
     private val driverFactory: DriverFactory by lazy { DriverFactory() }
@@ -36,34 +35,33 @@ class DatabaseModule {
         )
     }
 
-    val episodesCache : EpisodesCache by lazy {
+    val episodesCache: EpisodesCache by lazy {
         EpisodesCacheImpl(
             database = tvManiacDatabase
         )
     }
 
-    val genreCache : GenreCache by lazy {
+    val genreCache: GenreCache by lazy {
         GenreCacheImpl(
             database = tvManiacDatabase
         )
     }
 
-    val seasonsCache : SeasonsCache by lazy {
+    val seasonsCache: SeasonsCache by lazy {
         SeasonsCacheImpl(
             database = tvManiacDatabase
         )
     }
 
-    val trailerCache : TrailerCache by lazy {
+    val trailerCache: TrailerCache by lazy {
         TrailerCacheImpl(
             database = tvManiacDatabase
         )
     }
 
-    val tvShowCache : TvShowCache by lazy {
+    val tvShowCache: TvShowCache by lazy {
         TvShowCacheImpl(
             database = tvManiacDatabase
         )
     }
-
 }

@@ -27,7 +27,7 @@ class TrailerCacheImpl(
     }
 
     override fun getTrailers(showId: Int): List<SelectByShowId> {
-      return trailersQueries.selectByShowId(showId.toLong())
-          .executeAsList()
+        return trailersQueries.selectByShowId(showId.toLong())
+            .executeAsList()
     }
 }

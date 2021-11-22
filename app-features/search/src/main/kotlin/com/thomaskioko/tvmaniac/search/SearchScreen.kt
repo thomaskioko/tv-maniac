@@ -40,7 +40,7 @@ fun SearchScreen(
                 hint = stringResource(id = R.string.msg_search_show_hint),
                 textState = textState
             ) {
-                //TODO:: Add implementation
+                // TODO:: Add implementation
             }
         }
     }

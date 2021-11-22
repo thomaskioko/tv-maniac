@@ -47,7 +47,6 @@ class TvShowCacheImpl(
             .mapToOne()
     }
 
-
     override fun getTvShows(): Flow<List<Show>> {
         return database.tvShowQueries.selectAll()
             .asFlow()

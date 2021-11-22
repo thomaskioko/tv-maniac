@@ -13,7 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun H6(text: String,  modifier: Modifier = Modifier){
+fun H6(text: String, modifier: Modifier = Modifier) {
     Text(text = text, style = MaterialTheme.typography.h6, modifier = modifier)
 }
 
@@ -37,7 +37,8 @@ fun BoxTextItems(
 
         moreString?.let {
             Text(
-                text = moreString, modifier = Modifier
+                text = moreString,
+                modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .clickable { onMoreClicked() }
                     .padding(16.dp),
@@ -46,14 +47,14 @@ fun BoxTextItems(
                 )
             )
         }
-
     }
 }
 
 @Composable
 fun ErrorText(text: String, modifier: Modifier = Modifier) {
     Text(
-        text = text, modifier = modifier
+        text = text,
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 48.dp),
         style = MaterialTheme.typography.body2,

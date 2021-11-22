@@ -22,18 +22,15 @@ internal interface NavigationModule {
     @IntoSet
     fun bindDiscoverNavigation(factory: DiscoverNavigationFactory): ComposeNavigationFactory
 
-
     @Singleton
     @Binds
     @IntoSet
     fun bindSearchNavigation(factory: SearchNavigationFactory): ComposeNavigationFactory
 
-
     @Singleton
     @Binds
     @IntoSet
     fun bindWatchlistNavigation(factory: WatchlistNavigationFactory): ComposeNavigationFactory
-
 
     @Singleton
     @Binds

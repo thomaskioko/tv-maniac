@@ -62,6 +62,5 @@ android {
         debugImplementation(libs.squareup.leakcanary)
 
         coreLibraryDesugaring(libs.desugar)
-
     }
 }

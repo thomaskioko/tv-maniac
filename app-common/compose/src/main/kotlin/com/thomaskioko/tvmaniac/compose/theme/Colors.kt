@@ -24,7 +24,6 @@ val colorError = Color(0xFFFF440b)
 val grey = Color(0xFF131313)
 val grey900 = Color(0xFF202020)
 
-
 val LightColors = lightColors(
     primary = yellow,
     onPrimary = Color.White,
@@ -49,8 +48,6 @@ fun Colors.withBrandedSurface() = copy(
     surface = primary.copy(alpha = 0.08f)
         .compositeOver(this.surface),
 )
-
-
 
 /**
  * Return the fully opaque color that results from compositing [onSurface] atop [surface] with the

@@ -15,64 +15,63 @@ class DataSourceModule(
     private val repositoryModule: RepositoryModule
 ) {
 
-    val episodesInteractor : EpisodesInteractor by lazy {
+    val episodesInteractor: EpisodesInteractor by lazy {
         EpisodesInteractor(
             repository = repositoryModule.episodeRepository
         )
     }
 
-    val getGenresInteractor : GetGenresInteractor by lazy {
+    val getGenresInteractor: GetGenresInteractor by lazy {
         GetGenresInteractor(
             repository = repositoryModule.genreRepository
         )
     }
 
-    val getShowInteractor : GetShowInteractor by lazy {
+    val getShowInteractor: GetShowInteractor by lazy {
         GetShowInteractor(
             repository = repositoryModule.tvShowsRepository
         )
     }
 
-    val getShowsByCategoryInteractor : GetShowsByCategoryInteractor by lazy {
+    val getShowsByCategoryInteractor: GetShowsByCategoryInteractor by lazy {
         GetShowsByCategoryInteractor(
             repository = repositoryModule.tvShowsRepository
         )
     }
 
-    val getTrailersInteractor : GetTrailersInteractor by lazy {
+    val getTrailersInteractor: GetTrailersInteractor by lazy {
         GetTrailersInteractor(
             repository = repositoryModule.trailerRepository
         )
     }
 
-    val getTrendingShowsInteractor : GetTrendingShowsInteractor by lazy {
+    val getTrendingShowsInteractor: GetTrendingShowsInteractor by lazy {
         GetTrendingShowsInteractor(
             repository = repositoryModule.tvShowsRepository
         )
     }
 
-    val getWatchListInteractor : GetWatchListInteractor by lazy {
+    val getWatchListInteractor: GetWatchListInteractor by lazy {
         GetWatchListInteractor(
             repository = repositoryModule.tvShowsRepository
         )
     }
 
-    val popularShowsInteractor : PopularShowsInteractor by lazy {
+    val popularShowsInteractor: PopularShowsInteractor by lazy {
         PopularShowsInteractor(
             repository = repositoryModule.tvShowsRepository
         )
     }
 
-    val seasonsInteractor : SeasonsInteractor by lazy {
+    val seasonsInteractor: SeasonsInteractor by lazy {
         SeasonsInteractor(
             repository = repositoryModule.seasonsRepository
         )
     }
 
-    val updateWatchlistInteractor : UpdateWatchlistInteractor by lazy {
+    val updateWatchlistInteractor: UpdateWatchlistInteractor by lazy {
         UpdateWatchlistInteractor(
             repository = repositoryModule.tvShowsRepository
         )
     }
-
 }

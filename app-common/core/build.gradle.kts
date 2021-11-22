@@ -32,5 +32,4 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.runtime)
     kapt(libs.androidx.lifecycle.compiler)
-
 }

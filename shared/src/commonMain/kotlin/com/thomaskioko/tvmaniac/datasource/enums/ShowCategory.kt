@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.datasource.enums
 
-
 enum class ShowCategory(
     val type: Int,
     val title: String,
@@ -28,4 +27,3 @@ enum class ShowCategory(
         }
     }
 }
-

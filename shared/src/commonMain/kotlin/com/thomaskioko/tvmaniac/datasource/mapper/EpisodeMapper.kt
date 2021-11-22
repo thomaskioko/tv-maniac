@@ -6,7 +6,6 @@ import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.util.StringUtil.formatPosterPath
 import com.thomaskioko.tvmaniac.datasource.cache.Episode as EpisodeCache
 
-
 fun SeasonResponse.toEpisodeCacheList(): List<EpisodeCache> {
     return episodes.map { episodeResponse ->
         EpisodeCache(
@@ -56,7 +55,6 @@ fun EpisodesBySeasonId.toEpisodeEntity(): Episode {
         episodeNumber = episode_number
     )
 }
-
 
 fun EpisodeCache.toEpisodeEntity(): Episode {
     return Episode(

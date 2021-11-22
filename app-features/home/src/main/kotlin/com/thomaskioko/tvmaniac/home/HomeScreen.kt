@@ -45,7 +45,7 @@ fun HomeScreen(
             val currentSelectedItem by navController.currentScreenAsState()
             when {
                 !route.contains(NavigationScreen.ShowDetailsNavScreen.route) &&
-                        !route.contains(NavigationScreen.ShowGridNavScreen.route)
+                    !route.contains(NavigationScreen.ShowGridNavScreen.route)
                 -> {
                     TvManiacBottomNavigation(
                         onNavigationSelected = { selected ->
@@ -105,7 +105,6 @@ private fun TvManiacBottomNavigation(
             selected = currentSelectedItem == NavigationScreen.WatchlistNavScreen,
             onNavigationSelected = onNavigationSelected
         )
-
     }
 }
 

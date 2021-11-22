@@ -12,5 +12,4 @@ val intAdapter = object : ColumnAdapter<List<Int>, String> {
         } else {
             databaseValue.split(",").map { it.toInt() }
         }
-
 }
