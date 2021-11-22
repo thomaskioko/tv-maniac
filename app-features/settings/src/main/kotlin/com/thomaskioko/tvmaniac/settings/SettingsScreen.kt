@@ -172,17 +172,6 @@ fun SettingHeaderTitle(title: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SettingsImage(drawableId: Int, modifier: Modifier = Modifier) {
-    Icon(
-        painter = painterResource(drawableId),
-        tint = MaterialTheme.colors.primary,
-        contentDescription = null,
-        modifier = modifier
-            .size(28.dp)
-    )
-}
-
-@Composable
 fun SettingTitle(title: String) {
     Text(title, style = MaterialTheme.typography.subtitle1)
 }
