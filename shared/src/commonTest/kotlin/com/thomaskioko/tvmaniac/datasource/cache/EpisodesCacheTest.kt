@@ -39,7 +39,6 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         queryResult.size shouldBe 2
     }
 
-
     private fun List<Episode>.insertEpisodeEntityQuery() {
         map { it.insertEpisodeEntityQuery() }
     }

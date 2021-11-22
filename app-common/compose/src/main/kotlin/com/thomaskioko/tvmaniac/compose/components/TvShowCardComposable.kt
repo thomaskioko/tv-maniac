@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.R
 
-
 @Composable
 fun TvShowCard(
     modifier: Modifier = Modifier,
@@ -54,4 +53,3 @@ fun TvShowCard(
 
     RowSpacer(value = 4)
 }
-

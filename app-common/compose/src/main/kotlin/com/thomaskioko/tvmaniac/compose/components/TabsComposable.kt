@@ -18,7 +18,6 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import kotlinx.coroutines.launch
 
-
 sealed class TabItem(var title: String) {
     object Episodes : TabItem("Episodes")
     object Casts : TabItem("Casts")
@@ -46,7 +45,8 @@ fun Tabs(
                     .pagerTabIndicatorOffset(pagerState, tabPositions)
                     .padding(horizontal = 16.dp)
             )
-        }) {
+        }
+    ) {
         tabs.forEachIndexed { index, tab ->
             Tab(
                 text = { Text(tab.title) },

@@ -12,4 +12,3 @@ data class Season(
     val episodeCount: Int,
     val episodeList: List<Episode> = emptyList()
 )
-

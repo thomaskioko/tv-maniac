@@ -117,7 +117,7 @@ fun <T : Any> LazyPagedGridItems(
                 }
                 loadState.refresh is LoadState.Error -> {
                     val exception = lazyPagingItems.loadState.append as LoadState.Error
-                   item {
+                    item {
                         SnackBarErrorRetry(
                             snackBarHostState = hostState,
                             coroutineScope = coroutineScope,
@@ -126,14 +126,13 @@ fun <T : Any> LazyPagedGridItems(
                         )
                     }
                 }
-
             }
         }
     }
 }
 
 @ExperimentalFoundationApi
-fun <T: Any> LazyGridScope.items(
+fun <T : Any> LazyGridScope.items(
     lazyPagingItems: LazyPagingItems<T>,
     itemContent: @Composable LazyItemScope.(value: T?) -> Unit
 ) {

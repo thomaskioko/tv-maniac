@@ -35,7 +35,6 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.elevatedSurface
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 
-
 @Composable
 fun TvManiacTopBar(
     title: @Composable RowScope.() -> Unit,
@@ -99,7 +98,6 @@ fun BackAppBar(
     )
 }
 
-
 @Composable
 fun AppBarHomeIcon(onNavIconPressed: () -> Unit = { }) {
     Image(
@@ -160,7 +158,6 @@ fun CollapsableAppBar(
         modifier = modifier
     )
 }
-
 
 @Preview(
     name = "BackAppBar",

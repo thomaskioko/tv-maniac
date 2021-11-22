@@ -51,7 +51,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         val seasons = tvShowQueries.selectByShowId(84958)
             .executeAsOne().season_ids
 
-        //Verify that the first time the list is empty
+        // Verify that the first time the list is empty
         seasons shouldBe null
 
         tvShowQueries.updateTvShow(
@@ -63,9 +63,8 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         val seasonIds = tvShowQueries.selectByShowId(tvShow.id.toLong())
             .executeAsOne().season_ids
 
-        //Verify that the list has been updated and exists
+        // Verify that the list has been updated and exists
         seasonIds shouldBe listOf(114355, 77680)
-
     }
 
     @Test
@@ -114,7 +113,6 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             .executeAsList()
 
         shows.size shouldBe 1
-
     }
 
     @Test
@@ -127,7 +125,6 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         shows.size shouldBe 1
         shows.first().title shouldBe "Loki"
-
     }
 
     @Test
@@ -166,5 +163,4 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             is_watchlist = false
         )
     }
-
 }

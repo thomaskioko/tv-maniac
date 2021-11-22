@@ -29,5 +29,5 @@ class UpdateWatchlistInteractor constructor(
 
 data class UpdateShowParams(
     val showId: Int,
-    val addToWatchList : Boolean
+    val addToWatchList: Boolean
 )

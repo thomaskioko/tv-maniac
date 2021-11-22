@@ -8,6 +8,6 @@ import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 actual class DriverFactory(private val context: Context) {
 
     actual fun createDriver(): SqlDriver {
-       return AndroidSqliteDriver(TvManiacDatabase.Schema, context, "tvShows.db")
+        return AndroidSqliteDriver(TvManiacDatabase.Schema, context, "tvShows.db")
     }
 }

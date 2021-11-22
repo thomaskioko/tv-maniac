@@ -111,7 +111,6 @@ fun DiscoverScreen(
             )
         }
     )
-
 }
 
 @Composable
@@ -137,7 +136,6 @@ private fun ScreenData(
                 DisplayShowData(it, onItemClicked, moreClicked)
             }
         }
-
     }
 }
 
@@ -172,7 +170,6 @@ fun FeaturedItems(
         LaunchedEffect(Unit) {
             pagerState.scrollToPage(2)
         }
-
 
         Column(
             modifier = Modifier
@@ -282,7 +279,6 @@ private fun DisplayShowData(
         onMoreClicked = { moreClicked(resultMap.category.type) }
     )
 
-
     LazyRow {
         itemsIndexed(resultMap.shows) { index, tvShow ->
             TvShowCard(
@@ -295,4 +291,3 @@ private fun DisplayShowData(
         }
     }
 }
-

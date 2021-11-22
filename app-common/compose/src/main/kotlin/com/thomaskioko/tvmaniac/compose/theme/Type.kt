@@ -9,7 +9,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.thomaskioko.tvmaniac.compose.R
 
-
 private val workSansFontFamily = FontFamily(
     fonts = listOf(
         Font(
@@ -38,7 +37,7 @@ private val workSansFontFamily = FontFamily(
             style = FontStyle.Normal
         ),
 
-        )
+    )
 )
 
 val TvManiacTypography = Typography(
@@ -92,4 +91,3 @@ val TvManiacTypography = Typography(
         fontSize = 12.sp
     )
 )
-

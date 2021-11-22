@@ -10,7 +10,6 @@ pluginManagement {
 
 rootProject.name = "tv-maniac"
 
-
 include(
     ":app",
     ":app-common:core",

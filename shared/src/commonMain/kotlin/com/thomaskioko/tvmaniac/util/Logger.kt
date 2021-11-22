@@ -6,6 +6,6 @@ expect class Logger(
     fun log(msg: String)
 }
 
-fun printLogD(className: String?, message: String ) {
+fun printLogD(className: String?, message: String) {
     println("$className: $message")
 }

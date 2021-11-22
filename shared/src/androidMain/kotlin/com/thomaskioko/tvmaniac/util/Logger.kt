@@ -7,8 +7,7 @@ actual class Logger actual constructor(
     actual fun log(msg: String) {
         if (!BuildConfig().isDebug()) {
             // production logging - Crashlytics or something else
-        }
-        else{
+        } else {
             printLogD(className, msg)
         }
     }

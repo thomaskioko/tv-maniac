@@ -12,7 +12,6 @@ class TrailerRepositoryImpl(
     private val cache: TrailerCache
 ) : TrailerRepository {
 
-
     override suspend fun getTrailers(showId: Int): List<TrailerModel> {
         return if (cache.getTrailers(showId).isEmpty()) {
 

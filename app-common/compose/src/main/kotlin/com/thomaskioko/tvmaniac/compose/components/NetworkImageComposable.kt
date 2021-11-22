@@ -38,6 +38,6 @@ fun KenBurnsViewImage(
     val kenBuns = remember { KenBurnsView(context) }
 
     AndroidView({ kenBuns }, modifier = modifier) {
-        it.load(imageUrl)
-    }
+    it.load(imageUrl)
+}
 }

@@ -13,7 +13,6 @@ class SeasonsRepositoryImpl(
     private val seasonCache: SeasonsCache
 ) : SeasonsRepository {
 
-
     override suspend fun getSeasonListByTvShowId(tvShowId: Int): List<Season> {
         return if (seasonCache.getSeasonsByTvShowId(tvShowId).isEmpty()) {
 
@@ -47,8 +46,7 @@ class SeasonsRepositoryImpl(
             seasonIds = seasonIds
         )
 
-        //Insert Seasons
+        // Insert Seasons
         seasonCache.insert(seasonsEntityList)
     }
-
 }
