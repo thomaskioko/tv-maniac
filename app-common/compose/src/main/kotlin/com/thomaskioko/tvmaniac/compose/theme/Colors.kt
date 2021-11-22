@@ -26,21 +26,21 @@ val grey900 = Color(0xFF202020)
 
 val LightColors = lightColors(
     primary = yellow,
-    onPrimary = Color.White,
     primaryVariant = yellow600,
+    onPrimary = Color.Black,
     secondary = blue,
     secondaryVariant = yellow300,
-    onSecondary = Color.Black,
+    onSecondary = Color.White,
     error = colorError
 )
 
 val DarkColors = darkColors(
     primary = grey,
-    onPrimary = Color.White,
     primaryVariant = grey900,
     secondary = yellow600,
     onSecondary = Color.White,
     secondaryVariant = yellow700,
+    surface = grey900,
     error = colorError
 ).withBrandedSurface()
 
