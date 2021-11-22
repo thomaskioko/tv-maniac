@@ -39,7 +39,7 @@ import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 fun TvManiacTopBar(
     title: @Composable RowScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
-    navigationIcon: @Composable (() -> Unit) = { AppBarHomeIcon() }
+    navigationIcon: @Composable (() -> Unit) = { }
 ) {
     TopAppBar(
         title = { Row { title() } },
@@ -185,7 +185,10 @@ private fun BackAppBarPreview() {
 @Composable
 private fun AppBarDarkPreview() {
     TvManiacTheme {
-        TvManiacTopBar(title = { Text("Tv Maniac") })
+        TvManiacTopBar(
+            title = { Text("Tv Maniac") },
+            navigationIcon = { AppBarHomeIcon() }
+        )
     }
 }
 
