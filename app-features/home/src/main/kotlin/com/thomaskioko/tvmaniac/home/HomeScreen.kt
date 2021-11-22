@@ -105,6 +105,14 @@ private fun TvManiacBottomNavigation(
             selected = currentSelectedItem == NavigationScreen.WatchlistNavScreen,
             onNavigationSelected = onNavigationSelected
         )
+
+        TvManiacBottomNavigationItem(
+            screen = NavigationScreen.SettingsScreen,
+            icon = R.drawable.ic_baseline_more_vert_24,
+            title = stringResource(id = R.string.menu_item_more),
+            selected = currentSelectedItem == NavigationScreen.SettingsScreen,
+            onNavigationSelected = onNavigationSelected
+        )
     }
 }
 
@@ -125,7 +133,7 @@ fun RowScope.TvManiacBottomNavigationItem(
         },
         label = { Text(title) },
         selected = selected,
-        alwaysShowLabel = false,
+        alwaysShowLabel = true,
         selectedContentColor = MaterialTheme.colors.secondary,
         unselectedContentColor = MaterialTheme.colors.onSurface,
         onClick = { onNavigationSelected(screen) }
@@ -159,6 +167,9 @@ private fun NavController.currentScreenAsState(): State<NavigationScreen> {
                 }
                 destination.hierarchy.any { it.route == NavigationScreen.WatchlistNavScreen.route } -> {
                     selectedItem.value = NavigationScreen.WatchlistNavScreen
+                }
+                destination.hierarchy.any { it.route == NavigationScreen.SettingsScreen.route } -> {
+                    selectedItem.value = NavigationScreen.SettingsScreen
                 }
             }
         }
