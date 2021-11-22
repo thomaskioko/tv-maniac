@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title_settings">Settings</string>
+
+    <string name="settings_title_theme_dark">Enable Dark Mode</string>
+    <string name="settings_theme_title_light">Enable Light Mode</string>
+
+    <string name="settings_theme_description">Choose between light and dark color palettes for backgrounds, headers and text</string>
+
+    <string name="settings_title_ui">User Interface</string>
+    <string name="settings_title_info">Info</string>
+    <string name="settings_title_about">About Tv Maniac</string>
+
+    <string name="settings_about_description">Tv-Maniac is a Multiplatform app (Android &amp; iOS) for viewing TV Shows from TMDB.</string>
+
+    <string name="pref_theme_light_value" translatable="false">light</string>
+    <string name="pref_theme_dark_value" translatable="false">dark</string>
+    <string name="pref_theme_system_value" translatable="false">system</string>
+
+    <!-- We default using the system default -->
+    <string name="pref_theme_default_value" translatable="false">@string/pref_theme_system_value</string>
+</resources>
