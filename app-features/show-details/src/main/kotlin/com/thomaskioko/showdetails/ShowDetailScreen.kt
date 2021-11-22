@@ -66,6 +66,7 @@ import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
 import com.thomaskioko.tvmaniac.compose.R
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
+import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.components.TabItem.Casts
@@ -168,7 +169,6 @@ private fun TvShowDetailsScrollingContent(
         item { TvShowHeaderView(detailUiState, listState, onWatchlistClick) }
 
         item { SeasonTabs(detailUiState, onSeasonSelected) }
-
     }
 }
 
@@ -193,7 +193,8 @@ fun TvShowHeaderView(
                         listState.firstVisibleItemScrollOffset / 2
                     } else 0
                 )
-            }) {
+            }
+    ) {
 
         Box {
             KenBurnsViewImage(
@@ -240,30 +241,26 @@ fun TvShowInfo(
     val show = detailUiState.tvShow
 
     ColumnSpacer(16)
-    val padding = Modifier.padding(horizontal = 16.dp)
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
         Text(
             text = show.title,
             style = MaterialTheme.typography.h4,
-            modifier = padding,
+            modifier = Modifier.padding(horizontal = 16.dp),
             maxLines = 1
         )
 
         ColumnSpacer(8)
 
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            Text(
+            ExpandingText(
                 text = show.overview,
-                style = MaterialTheme.typography.body2,
-                maxLines = 4,
-                modifier = padding
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
 
         ColumnSpacer(8)
-
     }
 
     TvShowMetadata(
@@ -294,7 +291,6 @@ fun TvShowMetadata(
         withStyle(tagStyle) {
             append("  •  ")
         }
-
     }
     val text = buildAnnotatedString {
         val tagStyle = MaterialTheme.typography.overline.toSpanStyle().copy(
@@ -336,9 +332,7 @@ fun TvShowMetadata(
         show = show,
         onWatchlistClick = onWatchlistClick
     )
-
 }
-
 
 @Composable
 private fun GenreText(
@@ -372,9 +366,7 @@ private fun GenreText(
             }
         }
     }
-
 }
-
 
 @Composable
 fun ShowDetailButtons(
@@ -474,5 +466,4 @@ fun SeasonTabs(viewState: ShowDetailViewState, onSeasonSelected: (EpisodeQuery) 
             }
         }
     }
-
 }
