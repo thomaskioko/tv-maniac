@@ -15,7 +15,6 @@ class SettingsNavigationFactory @Inject constructor() : ComposeNavigationFactory
             content = {
                 SettingsScreen(
                     viewModel = this,
-                    navController = navController
                 )
             }
         )
