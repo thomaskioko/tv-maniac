@@ -13,34 +13,41 @@ import androidx.compose.ui.unit.Dp
 import kotlin.math.max
 import kotlin.math.min
 
-val yellow = Color(0xFFFFBE0B)
 val yellow300 = Color(0xFFFFD34F)
-val yellow600 = Color(0xFFFFB005)
-val yellow700 = Color(0xFFFF9d06)
+val yellow500 = Color(0xFFFFbe0a)
 
-val blue = Color(0xFF0b4CFF)
+val blue500 = Color(0xFF0b4CFF)
+val blue700 = Color(0xFF002adb)
 val colorError = Color(0xFFFF440b)
 
 val grey = Color(0xFF131313)
 val grey900 = Color(0xFF202020)
 
 val LightColors = lightColors(
-    primary = yellow,
-    primaryVariant = yellow600,
-    onPrimary = Color.Black,
-    secondary = blue,
-    secondaryVariant = yellow300,
-    onSecondary = Color.White,
+    primary = yellow300,
+    primaryVariant = yellow500,
+    secondary = blue500,
+    secondaryVariant = blue700,
+    surface = Color.White,
+    onPrimary = Color.White,
+    background = Color.White,
+    onSecondary = Color.Black,
+    onBackground = Color.Black,
+    onSurface = Color.Black,
     error = colorError
 )
 
 val DarkColors = darkColors(
     primary = grey,
     primaryVariant = grey900,
-    secondary = yellow600,
-    onSecondary = Color.White,
-    secondaryVariant = yellow700,
+    secondary = yellow300,
+    secondaryVariant = yellow500,
+    background = grey900,
     surface = grey900,
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onBackground = Color.White,
+    onSurface = Color.White,
     error = colorError
 ).withBrandedSurface()
 
