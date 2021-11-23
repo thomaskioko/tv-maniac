@@ -294,7 +294,8 @@ fun TvShowMetadata(
     }
     val text = buildAnnotatedString {
         val tagStyle = MaterialTheme.typography.overline.toSpanStyle().copy(
-            background = MaterialTheme.colors.primary.copy(alpha = 0.8f)
+            color = MaterialTheme.colors.secondary,
+            background = MaterialTheme.colors.secondary.copy(alpha = 0.08f)
         )
 
         if (show.status.isNotBlank()) {
@@ -354,7 +355,7 @@ private fun GenreText(
                 TextButton(
                     colors = ButtonDefaults.buttonColors(
                         contentColor = MaterialTheme.colors.onBackground,
-                        backgroundColor = MaterialTheme.colors.background
+                        backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.08f)
                     ),
                     onClick = {}
                 ) {
