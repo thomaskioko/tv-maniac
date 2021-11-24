@@ -20,10 +20,8 @@ import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,10 +31,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.statusBarsPadding
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
+import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.settings.api.TvManiacPreferences.Theme
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel) {
+
+    val themeState by rememberFlowWithLifecycle(viewModel.themeState)
+        .collectAsState(initial = Theme.DARK)
 
     Scaffold(
         topBar = {
@@ -55,6 +58,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             .statusBarsPadding(),
         content = { innerPadding ->
             SettingsList(
+                theme = themeState,
                 onThemeChanged = { viewModel.updateTheme(it) },
                 modifier = Modifier
                     .fillMaxSize()
@@ -66,6 +70,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
 
 @Composable
 fun SettingsList(
+    theme: Theme,
     onThemeChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -74,7 +79,10 @@ fun SettingsList(
         contentPadding = PaddingValues(start = 2.dp, end = 16.dp)
     ) {
         item {
-            ThemeSettingsItem(onThemeChanged)
+            ThemeSettingsItem(
+                theme = theme,
+                onThemeChanged = onThemeChanged
+            )
             AboutSettingsItem()
         }
     }
@@ -82,10 +90,18 @@ fun SettingsList(
 
 @Composable
 private fun ThemeSettingsItem(
+    theme: Theme,
     onThemeChanged: (String) -> Unit,
 ) {
 
-    var checkedState by remember { mutableStateOf(false) }
+    val checkedState = when (theme) {
+        Theme.LIGHT -> false
+        Theme.DARK -> true
+        Theme.SYSTEM -> true
+    }
+
+    val themeTitle = if (checkedState) stringResource(R.string.settings_title_theme_dark)
+    else stringResource(R.string.settings_theme_title_light)
 
     SettingHeaderTitle(
         title = stringResource(R.string.settings_title_ui),
@@ -103,7 +119,8 @@ private fun ThemeSettingsItem(
             painter = painterResource(R.drawable.ic_palette_24),
             tint = MaterialTheme.colors.secondary,
             contentDescription = null,
-            modifier = Modifier.padding(end = 16.dp)
+            modifier = Modifier
+                .padding(end = 16.dp)
                 .size(28.dp)
         )
 
@@ -112,7 +129,7 @@ private fun ThemeSettingsItem(
                 .padding(end = 8.dp, bottom = 8.dp)
                 .weight(1f),
         ) {
-            SettingTitle(stringResource(R.string.settings_title_theme_dark))
+            SettingTitle(themeTitle)
             SettingDescription(stringResource(R.string.settings_theme_description))
         }
 
@@ -122,8 +139,6 @@ private fun ThemeSettingsItem(
             checked = checkedState,
             enabled = true,
             onCheckedChange = {
-                checkedState = it
-
                 when (it) {
                     true -> onThemeChanged(resources.getString(R.string.pref_theme_dark_value))
                     false -> onThemeChanged(resources.getString(R.string.pref_theme_light_value))
@@ -194,10 +209,16 @@ private fun SettingListDivider() {
     )
 }
 
-@Preview("Settings List")
+@Preview(
+    name = "Settings List",
+    showSystemUi = true
+)
 @Composable
 fun SettingsPropertyPreview() {
     TvManiacTheme {
-        SettingsList(onThemeChanged = {})
+        SettingsList(
+            theme = Theme.DARK,
+            onThemeChanged = {}
+        )
     }
 }
