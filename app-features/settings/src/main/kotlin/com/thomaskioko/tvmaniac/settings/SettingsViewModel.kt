@@ -15,6 +15,8 @@ class SettingsViewModel @Inject constructor(
     @DefaultDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
+    val themeState = themePreference.observeTheme()
+
     fun updateTheme(theme: String) {
         viewModelScope.launch(context = ioDispatcher) {
             themePreference.emitTheme(theme)
