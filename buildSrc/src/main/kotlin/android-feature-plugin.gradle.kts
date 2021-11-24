@@ -58,9 +58,6 @@ dependencies {
     implementation(libs.hilt.navigation)
     kapt(libs.hilt.compiler)
 
-    implementation(libs.napier)
-    implementation(libs.androidx.paging.runtime)
-
     testImplementation(libs.testing.turbine)
     testImplementation(libs.testing.coroutines.test)
     testImplementation(libs.testing.kotest.assertions)
