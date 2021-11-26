@@ -21,14 +21,13 @@ internal class TvShowServiceTest : TvShowsServiceMockEngine() {
         val apiClient = givenAMockTvShowsService(
             GET_TV_SHOW_DETAILS,
             httpStatusCode = 200,
-            responseBody = getTvSeasonDetailsResponse() //TODO Read this from json file
+            responseBody = getTvSeasonDetailsResponse() // TODO Read this from json file
         )
 
         apiClient.getTvShowDetails(1)
 
         verifyGetRequest()
         verifyRequestContainsHeader("Accept", "application/json")
-
     }
 
     @Test
@@ -37,14 +36,13 @@ internal class TvShowServiceTest : TvShowsServiceMockEngine() {
         val apiClient = givenAMockTvShowsService(
             endPoint = GET_POPULAR_TV_SHOWS,
             httpStatusCode = 200,
-            responseBody = getPopularTvShows() //TODO Read this from json file
+            responseBody = getPopularTvShows() // TODO Read this from json file
         )
 
         apiClient.getPopularShows(1)
 
         verifyGetRequest()
         verifyRequestContainsHeader("Accept", "application/json")
-
     }
 
     private fun givenAMockTvShowsService(
@@ -56,6 +54,4 @@ internal class TvShowServiceTest : TvShowsServiceMockEngine() {
 
         return TvShowsServiceImpl(httpClient())
     }
-
 }
-

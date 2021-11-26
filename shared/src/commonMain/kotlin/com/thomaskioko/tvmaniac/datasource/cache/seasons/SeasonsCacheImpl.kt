@@ -25,7 +25,6 @@ class SeasonsCacheImpl(
         entityList.forEach { insert(it) }
     }
 
-
     override fun getSeasonBySeasonId(seasonId: Int): Tv_season {
         return seasonQueries.selectBySeasonId(
             id = seasonId.toLong(),
@@ -44,5 +43,4 @@ class SeasonsCacheImpl(
             episode_ids = episodeIds
         )
     }
-
 }

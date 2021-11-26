@@ -47,6 +47,7 @@ import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
+import com.thomaskioko.tvmaniac.compose.theme.grey900
 import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
@@ -111,7 +112,6 @@ fun DiscoverScreen(
             )
         }
     )
-
 }
 
 @Composable
@@ -137,7 +137,6 @@ private fun ScreenData(
                 DisplayShowData(it, onItemClicked, moreClicked)
             }
         }
-
     }
 }
 
@@ -148,7 +147,7 @@ fun FeaturedItems(
     onItemClicked: (Int) -> Unit,
 ) {
 
-    val surfaceColor = MaterialTheme.colors.surface
+    val surfaceColor = grey900
     val dominantColorState = rememberDominantColorState { color ->
         // We want a color which has sufficient contrast against the surface color
         color.contrastAgainst(surfaceColor) >= MinContrastOfPrimaryVsSurface
@@ -172,7 +171,6 @@ fun FeaturedItems(
         LaunchedEffect(Unit) {
             pagerState.scrollToPage(2)
         }
-
 
         Column(
             modifier = Modifier
@@ -282,7 +280,6 @@ private fun DisplayShowData(
         onMoreClicked = { moreClicked(resultMap.category.type) }
     )
 
-
     LazyRow {
         itemsIndexed(resultMap.shows) { index, tvShow ->
             TvShowCard(
@@ -295,4 +292,3 @@ private fun DisplayShowData(
         }
     }
 }
-

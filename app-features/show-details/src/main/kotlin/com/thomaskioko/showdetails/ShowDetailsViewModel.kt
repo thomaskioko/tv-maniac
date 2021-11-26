@@ -36,7 +36,7 @@ class ShowDetailsViewModel @Inject constructor(
     private val updateWatchlistInteractor: UpdateWatchlistInteractor
 ) : ViewModel() {
 
-    //TODO:: Refactor ViewModel to implement BaseViewmodel
+    // TODO:: Refactor ViewModel to implement BaseViewmodel
 
     private val showId: Int = savedStateHandle.get("tvShowId")!!
 
@@ -61,15 +61,13 @@ class ShowDetailsViewModel @Inject constructor(
             genreList = genreList.genreReducer().genreList,
             episodesViewState = episodesState
         )
-
     }
 
-
     fun submitAction(action: ShowDetailAction) {
-            when (action) {
-                is ShowDetailAction.SeasonSelected -> fetchSeasonEpisodes(action)
-                is ShowDetailAction.UpdateWatchlist -> updateWatchlist(action)
-            }
+        when (action) {
+            is ShowDetailAction.SeasonSelected -> fetchSeasonEpisodes(action)
+            is ShowDetailAction.UpdateWatchlist -> updateWatchlist(action)
+        }
     }
 
     private fun updateWatchlist(action: ShowDetailAction.UpdateWatchlist) {
@@ -110,7 +108,6 @@ class ShowDetailsViewModel @Inject constructor(
                             )
                         }
                     }
-
                 }
         }
     }
@@ -177,4 +174,3 @@ internal fun DomainResultState<List<TrailerModel>>.trailersReducer(): TrailersVi
         )
     }
 }
-

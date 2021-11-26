@@ -10,7 +10,6 @@ class GenreRepositoryImpl(
     private val genreCache: GenreCache
 ) : GenreRepository {
 
-
     override suspend fun getGenres(): List<GenreModel> {
         return if (genreCache.getGenres().isEmpty()) {
             val response = apiService.getAllGenres()
@@ -29,7 +28,6 @@ class GenreRepositoryImpl(
         }
     }
 
-
     private fun List<Genre>.toGenreModelList(): List<GenreModel> {
         return map {
             GenreModel(
@@ -38,5 +36,4 @@ class GenreRepositoryImpl(
             )
         }
     }
-
 }

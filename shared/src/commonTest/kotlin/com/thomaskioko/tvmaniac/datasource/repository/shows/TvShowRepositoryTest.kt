@@ -22,9 +22,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-
 internal class TvShowRepositoryTest {
-
 
     @RelaxedMockK
     lateinit var apiService: TvShowsService
@@ -108,6 +106,5 @@ internal class TvShowRepositoryTest {
         verify {
             runBlocking { cache.getWatchlist() }
         }
-
     }
 }

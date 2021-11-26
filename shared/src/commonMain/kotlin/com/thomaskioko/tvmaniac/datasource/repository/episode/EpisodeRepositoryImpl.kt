@@ -43,7 +43,7 @@ class EpisodeRepositoryImpl(
         val episodeEntityList = apiService.getSeasonDetails(tvShowId, seasonNumber)
             .toEpisodeCacheList()
 
-        //Insert episodes
+        // Insert episodes
         episodesCache.insert(episodeEntityList)
 
         val episodesIds = mutableListOf<Int>()
@@ -51,7 +51,7 @@ class EpisodeRepositoryImpl(
             episodesIds.add(episode.id.toInt())
         }
 
-        //Update season episode list
-        seasonCache.updateSeasonEpisodesIds(seasonId =  seasonId, episodeIds = episodesIds)
+        // Update season episode list
+        seasonCache.updateSeasonEpisodesIds(seasonId = seasonId, episodeIds = episodesIds)
     }
 }

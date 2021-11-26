@@ -15,16 +15,14 @@ class TvShowsServiceImpl(
 ) : TvShowsService {
 
     override suspend fun getTopRatedShows(page: Int): TvShowsResponse {
-        return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/top_rated")
-        {
+        return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/top_rated") {
             parameter("page", page)
             parameter("sort_by", "popularity.desc")
         }
     }
 
     override suspend fun getPopularShows(page: Int): TvShowsResponse {
-        return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/popular")
-        {
+        return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/popular") {
             parameter("page", page)
             parameter("sort_by", "popularity.desc")
         }

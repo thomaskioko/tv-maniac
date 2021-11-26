@@ -14,5 +14,4 @@ interface SeasonsCache {
     fun getSeasonsByTvShowId(tvShowId: Int): List<SelectSeasonsByShowId>
 
     fun updateSeasonEpisodesIds(seasonId: Int, episodeIds: List<Int>)
-
 }

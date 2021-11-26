@@ -14,10 +14,9 @@ sealed class ShowDetailAction {
     ) : ShowDetailAction()
 
     data class UpdateWatchlist(
-        val params : UpdateShowParams
+        val params: UpdateShowParams
     ) : ShowDetailAction()
 }
-
 
 data class ShowDetailViewState(
     val isLoading: Boolean = false,
@@ -72,7 +71,6 @@ data class GenreViewState(
         val Empty = GenreViewState()
     }
 }
-
 
 data class TrailersViewState(
     val isLoading: Boolean = false,

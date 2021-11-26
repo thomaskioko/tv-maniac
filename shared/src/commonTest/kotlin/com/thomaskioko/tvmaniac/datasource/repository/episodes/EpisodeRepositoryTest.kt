@@ -25,7 +25,6 @@ import kotlin.test.Test
 
 class EpisodeRepositoryTest {
 
-
     @RelaxedMockK
     lateinit var episodesCache: EpisodesCache
 
@@ -40,7 +39,6 @@ class EpisodeRepositoryTest {
     private val apiService: TvShowsService = mockk {
         coEvery { getSeasonDetails(showId, 1) } answers { getShowSeasonsResponse() }
     }
-
 
     @BeforeTest
     fun setUp() {
@@ -66,7 +64,6 @@ class EpisodeRepositoryTest {
 
         verify { episodesCache.getEpisodeByEpisodeId(episodeNumber) }
     }
-
 
     @Test
     fun givenDataIsCached_thenGetEpisodesBySeasonIdDataIsLoadedFromCache() = runBlocking {
@@ -108,6 +105,4 @@ class EpisodeRepositoryTest {
                 )
             }
         }
-
-
 }

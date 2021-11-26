@@ -1,7 +1,9 @@
+import util.libs
+
 plugins {
     `android-feature-plugin`
 }
 
 dependencies {
-    implementation(project(":app-common:compose"))
+    implementation(libs.androidx.paging.runtime)
 }

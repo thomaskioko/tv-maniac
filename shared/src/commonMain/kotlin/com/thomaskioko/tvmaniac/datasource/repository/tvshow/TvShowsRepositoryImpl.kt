@@ -82,7 +82,7 @@ class TvShowsRepositoryImpl(
     override suspend fun getTrendingShows(
         categoryList: List<ShowCategory>
     ): List<TrendingShowData> {
-        val trendingShowsResult= mutableListOf<TrendingShowData>()
+        val trendingShowsResult = mutableListOf<TrendingShowData>()
 
         categoryList.forEach { category ->
             val result = when (category) {
@@ -162,7 +162,6 @@ class TvShowsRepositoryImpl(
                 }
                 .map { cache.insert(it) }
 
-
             getShowsByCategoryAndWindow(TRENDING, timeWindow)
         } else {
             getShowsByCategoryAndWindow(TRENDING, timeWindow)
@@ -192,7 +191,6 @@ class TvShowsRepositoryImpl(
         return cache.getTvShowsByCategory(category)
             .toTvShowList()
     }
-
 
     override suspend fun getPagedShowsByCategory(category: ShowCategory): CommonFlow<PagingData<TvShow>> {
         val pager = Pager(
@@ -287,5 +285,4 @@ class TvShowsRepositoryImpl(
             }
             .map { cache.insert(it) }
     }
-
 }

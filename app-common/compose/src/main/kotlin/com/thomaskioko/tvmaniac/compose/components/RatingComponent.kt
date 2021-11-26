@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.cos
 import kotlin.math.sin
 
-
 @Composable
 fun RatingBar(
     rating: Float,
@@ -124,6 +123,6 @@ fun RatingBarPreview() {
             rating = 3.8f,
             modifier = Modifier.height(20.dp),
 
-            )
+        )
     }
 }

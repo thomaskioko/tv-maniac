@@ -1,0 +1,48 @@
+package com.thomaskioko.tvmaniac.settings
+
+import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.presentation.contract.SettingsActions
+import com.thomaskioko.tvmaniac.presentation.contract.SettingsState
+import com.thomaskioko.tvmaniac.presentation.contract.Theme
+import com.thomaskioko.tvmaniac.settings.api.TvManiacPreferences
+import com.thomaskioko.tvmaniac.settings.util.MainCoroutineRule
+import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import org.junit.Rule
+import org.junit.Test
+
+@ExperimentalCoroutinesApi
+internal class SettingsViewModelTest {
+
+    @get:Rule
+    val coroutineRule = MainCoroutineRule()
+
+    private val themePreference: TvManiacPreferences = mockk()
+    private val testCoroutineDispatcher = TestCoroutineDispatcher()
+
+    private val viewModel by lazy {
+        SettingsViewModel(
+            themePreference,
+            testCoroutineDispatcher
+        )
+    }
+
+    @Test
+    fun `givenThemeIsChanged verify updatedValueIsEmitted`() = runBlocking {
+        every { themePreference.observeTheme() } returns flowOf(Theme.LIGHT)
+
+        viewModel.observeState().test {
+            viewModel.dispatch(SettingsActions.ThemeSelected("light"))
+            awaitItem() shouldBe SettingsState(
+                theme = Theme.LIGHT,
+                showPopup = false
+            )
+            expectNoEvents()
+        }
+    }
+}

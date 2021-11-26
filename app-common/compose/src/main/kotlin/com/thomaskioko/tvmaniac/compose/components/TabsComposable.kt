@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.compose.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
@@ -16,7 +17,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import kotlinx.coroutines.launch
-
 
 sealed class TabItem(var title: String) {
     object Episodes : TabItem("Episodes")
@@ -34,7 +34,7 @@ fun Tabs(
     TabRow(
         selectedTabIndex = pagerState.currentPage,
         backgroundColor = Color.Transparent,
-        contentColor = Color.White,
+        contentColor = MaterialTheme.colors.onSecondary,
         indicator = { tabPositions ->
             TabRowDefaults.Indicator(
                 Modifier
@@ -45,7 +45,8 @@ fun Tabs(
                     .pagerTabIndicatorOffset(pagerState, tabPositions)
                     .padding(horizontal = 16.dp)
             )
-        }) {
+        }
+    ) {
         tabs.forEachIndexed { index, tab ->
             Tab(
                 text = { Text(tab.title) },

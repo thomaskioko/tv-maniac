@@ -23,18 +23,18 @@ open class ExceptionHandler(
 }
 
 fun Throwable.resolveError() = when (this) {
-        is HttpResponse -> {
-            when (status.value) {
-                400 -> ExceptionHandler.parseException(this)
-                401 -> ExceptionHandler(errorMessage = "Authentication failed!")
-                502 -> ExceptionHandler(errorMessage = "Internal error!")
-                else -> ExceptionHandler.parseException(this)
-            }
+    is HttpResponse -> {
+        when (status.value) {
+            400 -> ExceptionHandler.parseException(this)
+            401 -> ExceptionHandler(errorMessage = "Authentication failed!")
+            502 -> ExceptionHandler(errorMessage = "Internal error!")
+            else -> ExceptionHandler.parseException(this)
         }
-        is ServerResponseException -> ExceptionHandler(errorMessage = getErrorMessage())
-        is NullPointerException -> ExceptionHandler(errorMessage = getErrorMessage())
-        else -> ExceptionHandler(errorMessage = getErrorMessage())
     }
+    is ServerResponseException -> ExceptionHandler(errorMessage = getErrorMessage())
+    is NullPointerException -> ExceptionHandler(errorMessage = getErrorMessage())
+    else -> ExceptionHandler(errorMessage = getErrorMessage())
+}
 
 fun Throwable.getErrorMessage(): String {
     return if (BuildConfig().isDebug()) {

@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.StringUtil.formatPosterPath
 import kotlinx.datetime.toLocalDate
 
-
 fun ShowResponse.toShow(): Show {
     return Show(
         id = id.toLong(),
