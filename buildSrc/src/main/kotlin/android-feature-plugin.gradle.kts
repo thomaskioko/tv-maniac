@@ -67,7 +67,6 @@ dependencies {
 
     testImplementation(libs.testing.androidx.core)
 
-    testImplementation(libs.testing.junit5.api)
     testRuntimeOnly(libs.testing.junit5.jupiter)
     testRuntimeOnly(libs.testing.junit5.engine)
     testRuntimeOnly(libs.testing.junit5.vintage)

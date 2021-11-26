@@ -78,7 +78,6 @@ kotlin {
             implementation(kotlin("test-common"))
             implementation(kotlin("test-annotations-common"))
 
-            implementation(libs.testing.assertK)
             implementation(libs.testing.ktor.mock)
             implementation(libs.testing.turbine)
             implementation(libs.testing.kotest.assertions)
