@@ -45,7 +45,7 @@ fun TvManiacTopBar(
         title = { Row { title() } },
         navigationIcon = navigationIcon,
         actions = actions,
-        backgroundColor = MaterialTheme.colors.primary
+        backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.95f)
     )
 }
 
