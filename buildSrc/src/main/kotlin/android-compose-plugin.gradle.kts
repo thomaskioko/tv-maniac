@@ -57,7 +57,6 @@ dependencies {
 
     api(libs.accompanist.insets)
     api(libs.accompanist.insetsui)
-    api(libs.accompanist.insetsui)
     api(libs.accompanist.pager.core)
     api(libs.accompanist.pager.indicator)
     api(libs.accompanist.systemuicontroller)
