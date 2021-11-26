@@ -5,7 +5,7 @@ android-compile = "31"
 android-target = "31"
 android-min = "21"
 
-android-gradle = "7.1.0-beta03"
+android-gradle = "7.1.0-beta04"
 date-time = "0.3.1"
 
 accompanist = "0.21.2-beta"
@@ -35,7 +35,6 @@ sqldelight = "1.5.2"
 turbine = "0.7.0"
 
 testing-arch-core = "2.1.0"
-testing-assertK = "0.25"
 testing-junit = "4.13.2"
 testing-junitext = "1.1.4-alpha03"
 testing-junit5 = "5.8.1"
@@ -117,9 +116,7 @@ plugin-kmp-native-coroutines = { module = "com.rickclephas.kmp:kmp-nativecorouti
 
 testing-androidx-core = { module = "androidx.arch.core:core-testing", version.ref = "testing-arch-core" }
 testing-androidx-junit = { module = "androidx.test.ext:junit", version.ref = "testing-junitext" }
-testing-androidx-junitktx = { module = "androidx.test.ext:junit-ktx", version.ref = "testing-junitext" }
 
-testing-junit5-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "testing-junit5" }
 testing-junit5-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "testing-junit5" }
 testing-junit5-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "testing-junit5" }
 testing-junit5-vintage = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "testing-junit5" }
@@ -130,7 +127,6 @@ testing-kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref
 testing-mockk-core = { module = "io.mockk:mockk", version.ref = "testing-mockk" }
 testing-mockk-common = { module = "io.mockk:mockk-common", version.ref = "testing-mockk" }
 
-testing-assertK = { module = "com.willowtreeapps.assertk:assertk", version.ref = "testing-assertK" }
 testing-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-native" }
 testing-junit = { module = "junit:junit", version.ref = "testing-junit" }
 testing-mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "testing-mockito-core" }
