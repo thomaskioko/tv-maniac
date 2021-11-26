@@ -1,5 +1,11 @@
 package com.thomaskioko.tvmaniac.settings
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,12 +17,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.RadioButton
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Switch
-import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -24,22 +31,25 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.statusBarsPadding
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.settings.api.TvManiacPreferences.Theme
+import com.thomaskioko.tvmaniac.presentation.contract.SettingsActions.ThemeClicked
+import com.thomaskioko.tvmaniac.presentation.contract.SettingsActions.ThemeSelected
+import com.thomaskioko.tvmaniac.presentation.contract.SettingsState
+import com.thomaskioko.tvmaniac.presentation.contract.Theme
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel) {
 
-    val themeState by rememberFlowWithLifecycle(viewModel.themeState)
-        .collectAsState(initial = Theme.DARK)
+    val themeState by rememberFlowWithLifecycle(viewModel.observeState())
+        .collectAsState(initial = SettingsState.DEFAULT)
 
     Scaffold(
         topBar = {
@@ -58,8 +68,10 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             .statusBarsPadding(),
         content = { innerPadding ->
             SettingsList(
-                theme = themeState,
-                onThemeChanged = { viewModel.updateTheme(it) },
+                settingsState = themeState,
+                onThemeChanged = { viewModel.dispatch(ThemeSelected(it)) },
+                onThemeClicked = { viewModel.dispatch(ThemeClicked) },
+                onDismissTheme = { viewModel.dispatch(ThemeClicked) },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
@@ -70,8 +82,10 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
 
 @Composable
 fun SettingsList(
-    theme: Theme,
+    settingsState: SettingsState,
     onThemeChanged: (String) -> Unit,
+    onThemeClicked: () -> Unit,
+    onDismissTheme: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -80,8 +94,10 @@ fun SettingsList(
     ) {
         item {
             ThemeSettingsItem(
-                theme = theme,
-                onThemeChanged = onThemeChanged
+                settingsState = settingsState,
+                onThemeSelected = onThemeChanged,
+                onThemeClicked = onThemeClicked,
+                onDismissTheme = onDismissTheme
             )
             AboutSettingsItem()
         }
@@ -90,18 +106,17 @@ fun SettingsList(
 
 @Composable
 private fun ThemeSettingsItem(
-    theme: Theme,
-    onThemeChanged: (String) -> Unit,
+    settingsState: SettingsState,
+    onThemeSelected: (String) -> Unit,
+    onThemeClicked: () -> Unit,
+    onDismissTheme: () -> Unit
 ) {
 
-    val checkedState = when (theme) {
-        Theme.LIGHT -> false
-        Theme.DARK -> true
-        Theme.SYSTEM -> true
+    val themeTitle = when (settingsState.theme) {
+        Theme.LIGHT -> stringResource(R.string.settings_title_theme_dark)
+        Theme.DARK -> stringResource(R.string.settings_title_theme_light)
+        Theme.SYSTEM -> stringResource(R.string.settings_title_theme_light)
     }
-
-    val themeTitle = if (checkedState) stringResource(R.string.settings_title_theme_dark)
-    else stringResource(R.string.settings_theme_title_light)
 
     SettingHeaderTitle(
         title = stringResource(R.string.settings_title_ui),
@@ -111,7 +126,8 @@ private fun ThemeSettingsItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp),
+            .padding(start = 16.dp)
+            .clickable { onThemeClicked() },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -133,25 +149,108 @@ private fun ThemeSettingsItem(
             SettingDescription(stringResource(R.string.settings_theme_description))
         }
 
-        val resources = LocalContext.current.resources
-
-        Switch(
-            checked = checkedState,
-            enabled = true,
-            onCheckedChange = {
-                when (it) {
-                    true -> onThemeChanged(resources.getString(R.string.pref_theme_dark_value))
-                    false -> onThemeChanged(resources.getString(R.string.pref_theme_light_value))
-                }
-            },
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = MaterialTheme.colors.secondaryVariant,
-                checkedTrackColor = MaterialTheme.colors.secondaryVariant,
-            ),
+        ThemeMenu(
+            isVisible = settingsState.showPopup,
+            theme = settingsState.theme,
+            onDismissTheme = onDismissTheme,
+            onThemeSelected = onThemeSelected
         )
     }
 
     SettingListDivider()
+}
+
+@Composable
+private fun ThemeMenu(
+    isVisible: Boolean,
+    onDismissTheme: () -> Unit,
+    onThemeSelected: (String) -> Unit,
+    theme: Theme,
+) {
+
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn(
+            // Overwrites the initial value of alpha to 0.4f for fade in, 0 by default
+            initialAlpha = 0.4f
+        ),
+        exit = fadeOut(
+            // Overwrites the default animation with tween
+            animationSpec = tween(durationMillis = 250)
+        )
+    ) {
+
+        DropdownMenu(
+            expanded = isVisible,
+            onDismissRequest = { onDismissTheme() },
+            offset = DpOffset(16.dp, 32.dp),
+            modifier = Modifier
+                .background(MaterialTheme.colors.surface)
+
+        ) {
+            ThemeMenuItem(
+                themeTitle = "Light",
+                themeName = Theme.LIGHT.name,
+                theme,
+                onThemeSelected,
+                onDismissTheme
+            )
+
+            ThemeMenuItem(
+                themeTitle = "Dark",
+                themeName = Theme.DARK.name,
+                theme,
+                onThemeSelected,
+                onDismissTheme
+            )
+
+            ThemeMenuItem(
+                themeTitle = "Use system default",
+                themeName = Theme.SYSTEM.name,
+                theme,
+                onThemeSelected,
+                onDismissTheme
+            )
+        }
+    }
+}
+
+@Composable
+private fun ThemeMenuItem(
+    themeTitle: String,
+    themeName: String,
+    theme: Theme,
+    onThemeSelected: (String) -> Unit,
+    onDismissTheme: () -> Unit
+) {
+    DropdownMenuItem(
+        onClick = {
+            onThemeSelected(themeName.lowercase())
+            onDismissTheme()
+        }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = themeTitle,
+                modifier = Modifier
+                    .weight(1f)
+            )
+
+            RadioButton(
+                selected = theme.name == themeName,
+                onClick = {
+                    onThemeSelected(themeName.lowercase())
+                    onDismissTheme()
+                }
+            )
+        }
+    }
 }
 
 @Composable
@@ -217,8 +316,10 @@ private fun SettingListDivider() {
 fun SettingsPropertyPreview() {
     TvManiacTheme {
         SettingsList(
-            theme = Theme.DARK,
-            onThemeChanged = {}
+            settingsState = SettingsState.DEFAULT,
+            onThemeChanged = {},
+            onThemeClicked = {},
+            onDismissTheme = {}
         )
     }
 }

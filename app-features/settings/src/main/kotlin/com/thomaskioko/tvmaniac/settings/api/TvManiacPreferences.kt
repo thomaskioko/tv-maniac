@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.settings.api
 
+import com.thomaskioko.tvmaniac.presentation.contract.Theme
 import kotlinx.coroutines.flow.Flow
 
 interface TvManiacPreferences {
@@ -7,10 +8,4 @@ interface TvManiacPreferences {
     fun setup()
     fun observeTheme(): Flow<Theme>
     fun emitTheme(themeValue: String)
-
-    enum class Theme {
-        LIGHT,
-        DARK,
-        SYSTEM
-    }
 }
