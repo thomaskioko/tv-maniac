@@ -32,7 +32,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.androidx.compose.get().toString()
     }
-
 }
 
 dependencies {
@@ -57,7 +56,6 @@ dependencies {
     api(libs.coil)
 
     api(libs.accompanist.insets)
-    api(libs.accompanist.insetsui)
     api(libs.accompanist.insetsui)
     api(libs.accompanist.pager.core)
     api(libs.accompanist.pager.indicator)

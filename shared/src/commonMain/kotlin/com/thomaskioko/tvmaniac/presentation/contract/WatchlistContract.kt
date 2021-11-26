@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.core.Effect
 import com.thomaskioko.tvmaniac.core.State
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 
-
 data class WatchlistState(
     val isLoading: Boolean,
     val list: List<TvShow>
@@ -19,7 +18,7 @@ data class WatchlistState(
 }
 
 sealed class WatchlistAction : Action {
-    object LoadWatchlist: WatchlistAction()
+    object LoadWatchlist : WatchlistAction()
     data class Error(val message: String = "") : WatchlistAction()
 }
 

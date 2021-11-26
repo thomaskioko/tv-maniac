@@ -58,6 +58,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.ui.Scaffold
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.showdetails.DetailUiEffect.WatchlistError
@@ -65,6 +66,7 @@ import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
 import com.thomaskioko.tvmaniac.compose.R
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
+import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.components.TabItem.Casts
@@ -167,7 +169,6 @@ private fun TvShowDetailsScrollingContent(
         item { TvShowHeaderView(detailUiState, listState, onWatchlistClick) }
 
         item { SeasonTabs(detailUiState, onSeasonSelected) }
-
     }
 }
 
@@ -192,7 +193,8 @@ fun TvShowHeaderView(
                         listState.firstVisibleItemScrollOffset / 2
                     } else 0
                 )
-            }) {
+            }
+    ) {
 
         Box {
             KenBurnsViewImage(
@@ -239,30 +241,26 @@ fun TvShowInfo(
     val show = detailUiState.tvShow
 
     ColumnSpacer(16)
-    val padding = Modifier.padding(horizontal = 16.dp)
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
         Text(
             text = show.title,
             style = MaterialTheme.typography.h4,
-            modifier = padding,
+            modifier = Modifier.padding(horizontal = 16.dp),
             maxLines = 1
         )
 
         ColumnSpacer(8)
 
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            Text(
+            ExpandingText(
                 text = show.overview,
-                style = MaterialTheme.typography.body2,
-                maxLines = 4,
-                modifier = padding
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
 
         ColumnSpacer(8)
-
     }
 
     TvShowMetadata(
@@ -293,11 +291,11 @@ fun TvShowMetadata(
         withStyle(tagStyle) {
             append("  •  ")
         }
-
     }
     val text = buildAnnotatedString {
         val tagStyle = MaterialTheme.typography.overline.toSpanStyle().copy(
-            background = MaterialTheme.colors.primary.copy(alpha = 0.8f)
+            color = MaterialTheme.colors.secondary,
+            background = MaterialTheme.colors.secondary.copy(alpha = 0.08f)
         )
 
         if (show.status.isNotBlank()) {
@@ -335,9 +333,7 @@ fun TvShowMetadata(
         show = show,
         onWatchlistClick = onWatchlistClick
     )
-
 }
-
 
 @Composable
 private fun GenreText(
@@ -359,7 +355,7 @@ private fun GenreText(
                 TextButton(
                     colors = ButtonDefaults.buttonColors(
                         contentColor = MaterialTheme.colors.onBackground,
-                        backgroundColor = Color(0xFF414141)
+                        backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.08f)
                     ),
                     onClick = {}
                 ) {
@@ -371,9 +367,7 @@ private fun GenreText(
             }
         }
     }
-
 }
-
 
 @Composable
 fun ShowDetailButtons(
@@ -405,7 +399,7 @@ fun ShowDetailButtons(
                 }
             },
             backgroundColor = Color.Transparent,
-            elevation = FloatingActionButtonDefaults.elevation(),
+            elevation = FloatingActionButtonDefaults.elevation(0.dp),
             onClick = {},
             modifier = Modifier
                 .padding(2.dp)
@@ -442,7 +436,7 @@ fun ShowDetailButtons(
                 }
             },
             backgroundColor = Color.Transparent,
-            elevation = FloatingActionButtonDefaults.elevation(),
+            elevation = FloatingActionButtonDefaults.elevation(0.dp),
             onClick = { onWatchlistClick(UpdateShowParams(show.id, !show.isInWatchlist)) },
             modifier = Modifier
                 .padding(2.dp)
@@ -451,6 +445,7 @@ fun ShowDetailButtons(
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SeasonTabs(viewState: ShowDetailViewState, onSeasonSelected: (EpisodeQuery) -> Unit) {
 
@@ -472,5 +467,4 @@ fun SeasonTabs(viewState: ShowDetailViewState, onSeasonSelected: (EpisodeQuery) 
             }
         }
     }
-
 }

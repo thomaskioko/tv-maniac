@@ -2,7 +2,7 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
@@ -29,7 +29,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-
 }
 
 kotlin {
@@ -79,7 +78,6 @@ kotlin {
             implementation(kotlin("test-common"))
             implementation(kotlin("test-annotations-common"))
 
-            implementation(libs.testing.assertK)
             implementation(libs.testing.ktor.mock)
             implementation(libs.testing.turbine)
             implementation(libs.testing.kotest.assertions)
@@ -126,6 +124,7 @@ kotlin {
                 useExperimentalAnnotation("kotlin.time.ExperimentalTime")
                 useExperimentalAnnotation("kotlinx.coroutines.FlowPreview")
                 useExperimentalAnnotation("kotlinx.coroutines.ExperimentalCoroutinesApi")
+                useExperimentalAnnotation("com.google.accompanist.pager.ExperimentalPagerApi")
             }
         }
     }

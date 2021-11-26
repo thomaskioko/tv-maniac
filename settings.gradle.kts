@@ -10,7 +10,6 @@ pluginManagement {
 
 rootProject.name = "tv-maniac"
 
-
 include(
     ":app",
     ":app-common:core",
@@ -22,5 +21,6 @@ include(
     ":app-features:show-details",
     ":app-features:watchlist",
     ":app-features:shows-grid",
+    ":app-features:settings",
     ":shared"
 )

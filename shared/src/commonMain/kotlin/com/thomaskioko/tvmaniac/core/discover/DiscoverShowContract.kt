@@ -6,7 +6,6 @@ import com.thomaskioko.tvmaniac.core.State
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 
-
 data class DiscoverShowState(
     val isLoading: Boolean,
     val dataMap: List<TrendingShowData>

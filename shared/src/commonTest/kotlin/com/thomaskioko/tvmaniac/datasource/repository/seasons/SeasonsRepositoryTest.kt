@@ -25,7 +25,6 @@ import kotlin.test.Test
 
 class SeasonsRepositoryTest {
 
-
     @RelaxedMockK
     lateinit var tvShowCache: TvShowCache
 
@@ -38,7 +37,6 @@ class SeasonsRepositoryTest {
         coEvery { getTvShowDetails(84958) } answers { getShowDetailResponse() }
     }
 
-
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
@@ -49,7 +47,6 @@ class SeasonsRepositoryTest {
     fun tearDownAll() {
         unmockkAll()
     }
-
 
     @Test
     fun givenDataIsCached_thenGetTvShowSeasonsDataIsLoadedFromCache() = runBlocking {

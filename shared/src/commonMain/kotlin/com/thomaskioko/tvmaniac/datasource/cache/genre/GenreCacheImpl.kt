@@ -21,13 +21,12 @@ class GenreCacheImpl(
     }
 
     override fun getGenreById(genreId: Int): Genre {
-      return genresQueries.selectById(genreId.toLong())
-           .executeAsOne()
+        return genresQueries.selectById(genreId.toLong())
+            .executeAsOne()
     }
 
     override fun getGenres(): List<Genre> {
         return genresQueries.selectAll()
             .executeAsList()
     }
-
 }

@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -28,12 +29,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.ChoiceChipContent
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
+import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.LoadingView
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.presentation.model.Season
-
 
 @Composable
 fun EpisodesScreen(
@@ -59,7 +60,6 @@ fun EpisodesScreen(
             ColumnSpacer(16)
         }
     }
-
 }
 
 @Composable
@@ -68,7 +68,7 @@ fun TvShowSeasons(
     onSeasonSelected: (EpisodeQuery) -> Unit
 ) {
 
-    var selectedPosition by remember { mutableStateOf(0) }
+    val selectedPosition by remember { mutableStateOf(0) }
     var selectedCategory by remember { mutableStateOf(tvSeasons.first()) }
 
     if (tvSeasons.isNotEmpty() && selectedPosition == 0) {
@@ -115,6 +115,7 @@ private fun ShowSeasonsTabs(
         divider = {}, /* Disable the built-in divider */
         edgePadding = 24.dp,
         indicator = {},
+        backgroundColor = Color.Transparent,
         modifier = modifier
     ) {
         seasonList.forEachIndexed { index, category ->
@@ -163,7 +164,6 @@ fun EpisodeItem(episode: Episode, index: Int) {
                     start.linkTo(parent.start, 16.dp)
                     top.linkTo(parent.top, margin = 16.dp)
                     bottom.linkTo(parent.bottom, 8.dp)
-
                 }
         ) {
             NetworkImageComposable(
@@ -198,11 +198,8 @@ fun EpisodeItem(episode: Episode, index: Int) {
         )
 
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            Text(
+            ExpandingText(
                 text = episode.overview,
-                style = MaterialTheme.typography.body2,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .constrainAs(overview) {
                         linkTo(

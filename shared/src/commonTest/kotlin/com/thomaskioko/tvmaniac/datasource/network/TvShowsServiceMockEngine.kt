@@ -23,7 +23,6 @@ import io.ktor.http.hostWithPort
 import io.ktor.util.date.GMTDate
 import kotlin.test.assertEquals
 
-
 abstract class TvShowsServiceMockEngine {
 
     private var lastRequest: HttpRequestData? = null
@@ -47,7 +46,6 @@ abstract class TvShowsServiceMockEngine {
                 callContext = coroutineContext
             )
         }
-
     }
 
     protected open fun httpClient() = HttpClient(MockEngine) {
@@ -112,9 +110,7 @@ abstract class TvShowsServiceMockEngine {
     fun verifyDeleteRequest() {
         lastRequest!!.method.value shouldBe HttpMethod.Delete.value
     }
-
 }
 
 private val Url.hostWithPortIfRequired: String get() = if (port == protocol.defaultPort) host else hostWithPort
 private val Url.fullUrl: String get() = "${protocol.name}://$hostWithPortIfRequired$fullPath"
-

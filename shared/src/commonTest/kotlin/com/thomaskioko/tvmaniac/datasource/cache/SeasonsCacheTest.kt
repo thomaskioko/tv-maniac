@@ -41,7 +41,7 @@ internal class SeasonsCacheTest : BaseDatabaseTest() {
 
         val queryResult = tvSeasonQueries.selectBySeasonId(114355).executeAsOne()
 
-        //Verify that the first time the list is empty
+        // Verify that the first time the list is empty
         queryResult.episode_ids shouldBe null
 
         tvSeasonQueries.updateEpisodes(
@@ -52,12 +52,9 @@ internal class SeasonsCacheTest : BaseDatabaseTest() {
         val seasonQueryResult = tvSeasonQueries.selectBySeasonId(114355)
             .executeAsOne()
 
-
-        //Verify that the list has been updated and exists
+        // Verify that the list has been updated and exists
         seasonQueryResult.episode_ids shouldBe listOf(2534997, 2927202)
-
     }
-
 
     private fun List<Season>.insertSeasonsEntityQuery() {
         map { it.insertSeasonsEntityQuery() }

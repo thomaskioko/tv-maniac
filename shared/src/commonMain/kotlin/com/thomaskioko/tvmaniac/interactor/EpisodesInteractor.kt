@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.interactor
 
-import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
+import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.error
 import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.loading

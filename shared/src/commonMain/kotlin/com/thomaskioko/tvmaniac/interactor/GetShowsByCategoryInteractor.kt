@@ -29,8 +29,9 @@ class GetShowsByCategoryInteractor constructor(
             emit(loading())
 
             val list = when (val type = ShowCategory[params]) {
-                TRENDING, TODAY, THIS_WEEK -> repository
-                    .getPagedShowsByCategoryAndWindow(TRENDING, type.timeWindow!!)
+                TRENDING, TODAY, THIS_WEEK ->
+                    repository
+                        .getPagedShowsByCategoryAndWindow(TRENDING, type.timeWindow!!)
                 POPULAR -> repository.getPagedPopularTvShows()
                 TOP_RATED -> repository.getPagedTopRatedTvShows()
                 else -> repository.getPagedShowsByCategory(type)

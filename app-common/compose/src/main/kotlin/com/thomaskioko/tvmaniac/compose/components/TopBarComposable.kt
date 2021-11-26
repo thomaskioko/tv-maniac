@@ -35,18 +35,17 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.elevatedSurface
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 
-
 @Composable
 fun TvManiacTopBar(
     title: @Composable RowScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
-    navigationIcon: @Composable (() -> Unit) = { AppBarHomeIcon() }
+    navigationIcon: @Composable (() -> Unit) = { }
 ) {
     TopAppBar(
         title = { Row { title() } },
         navigationIcon = navigationIcon,
         actions = actions,
-        backgroundColor = MaterialTheme.colors.primary
+        backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.95f)
     )
 }
 
@@ -98,7 +97,6 @@ fun BackAppBar(
         elevation = 3.dp
     )
 }
-
 
 @Composable
 fun AppBarHomeIcon(onNavIconPressed: () -> Unit = { }) {
@@ -161,7 +159,6 @@ fun CollapsableAppBar(
     )
 }
 
-
 @Preview(
     name = "BackAppBar",
     uiMode = Configuration.UI_MODE_NIGHT_NO,
@@ -188,7 +185,10 @@ private fun BackAppBarPreview() {
 @Composable
 private fun AppBarDarkPreview() {
     TvManiacTheme {
-        TvManiacTopBar(title = { Text("Tv Maniac") })
+        TvManiacTopBar(
+            title = { Text("Tv Maniac") },
+            navigationIcon = { AppBarHomeIcon() }
+        )
     }
 }
 

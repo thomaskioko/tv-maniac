@@ -4,6 +4,7 @@
     <string name="menu_item_discover">Discover</string>
     <string name="menu_item_search">Search</string>
     <string name="menu_item_watchlist">Watchlist</string>
+    <string name="menu_item_more">More</string>
 
     <string name="cd_show_poster">Poster image</string>
     <string name="cd_show_poster_image">Poster image for %s</string>

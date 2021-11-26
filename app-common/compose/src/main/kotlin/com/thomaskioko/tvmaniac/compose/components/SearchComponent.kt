@@ -100,7 +100,7 @@ private fun SearchInputText(
                     .padding(start = 16.dp)
                     .align(Alignment.CenterStart)
                     .onFocusEvent { state ->
-                        //TODO:: Handle focus state
+                        // TODO:: Handle focus state
                     },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Search,
