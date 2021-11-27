@@ -54,6 +54,7 @@ dependencies {
     api(libs.material)
     api(libs.kenburns)
     api(libs.coil)
+    api(libs.snapper)
 
     api(libs.accompanist.insets)
     api(libs.accompanist.insetsui)

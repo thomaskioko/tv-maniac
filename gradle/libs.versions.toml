@@ -9,6 +9,7 @@ android-gradle = "7.1.0-beta04"
 date-time = "0.3.1"
 
 accompanist = "0.21.3-beta"
+snapper = "0.1.0"
 
 androidx-appCompat = "1.4.0"
 androidx-compose = "1.1.0-beta03"
@@ -96,6 +97,7 @@ desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desuga
 material = { module = "com.google.android.material:material", version.ref = "material" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
+snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 
 multiplatform-paging-core = { module = "io.github.kuuuurt:multiplatform-paging", version.ref = "multiplatform-paging" }
 multiplatform-paging-ios-x64 = { module = "io.github.kuuuurt:multiplatform-paging-iosX64", version.ref = "multiplatform-paging" }
