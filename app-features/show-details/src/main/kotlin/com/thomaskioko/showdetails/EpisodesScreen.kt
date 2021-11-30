@@ -1,5 +1,6 @@
 package com.thomaskioko.showdetails
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,6 +12,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScrollableTabRow
+import androidx.compose.material.Surface
 import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -32,13 +35,16 @@ import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.LoadingView
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.presentation.model.Season
 
 @Composable
 fun EpisodesScreen(
-    detailUiState: ShowDetailViewState,
+    isLoading: Boolean,
+    tvSeasons: List<Season>,
+    episodeList: List<Episode>,
     onSeasonSelected: (EpisodeQuery) -> Unit
 ) {
 
@@ -46,16 +52,16 @@ fun EpisodesScreen(
 
         ColumnSpacer(8)
 
-        if (detailUiState.tvSeasons.isNotEmpty()) TvShowSeasons(
-            detailUiState.tvSeasons,
+        if (tvSeasons.isNotEmpty()) TvShowSeasons(
+            tvSeasons,
             onSeasonSelected
         )
 
-        if (detailUiState.episodesViewState.isLoading) {
+        if (isLoading) {
             LoadingView()
         }
 
-        detailUiState.episodesViewState.episodeList.forEachIndexed { index, episode ->
+        episodeList.forEachIndexed { index, episode ->
             EpisodeItem(episode, index)
             ColumnSpacer(16)
         }
@@ -182,7 +188,6 @@ fun EpisodeItem(episode: Episode, index: Int) {
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier
-                .padding(top = 8.dp)
                 .constrainAs(episodeTitle) {
                     linkTo(
                         start = image.end,
@@ -228,5 +233,21 @@ fun EpisodeItem(episode: Episode, index: Int) {
                     end.linkTo(parent.end, 16.dp)
                 }
         )
+    }
+}
+
+@Preview("default")
+@Preview("dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun EpisodesScreenPreview() {
+    TvManiacTheme {
+        Surface {
+            EpisodesScreen(
+                isLoading = false,
+                tvSeasons = detailUiState.tvSeasons,
+                episodeList = detailUiState.episodesViewState.episodeList,
+                onSeasonSelected = {}
+            )
+        }
     }
 }

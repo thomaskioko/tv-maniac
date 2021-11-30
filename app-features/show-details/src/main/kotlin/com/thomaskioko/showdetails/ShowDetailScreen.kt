@@ -1,11 +1,11 @@
 package com.thomaskioko.showdetails
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -46,7 +46,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -55,6 +55,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.ui.Scaffold
@@ -74,14 +75,18 @@ import com.thomaskioko.tvmaniac.compose.components.TabItem.Episodes
 import com.thomaskioko.tvmaniac.compose.components.TabItem.Similar
 import com.thomaskioko.tvmaniac.compose.components.Tabs
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.interactor.UpdateShowParams
+import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.presentation.model.GenreModel
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import kotlinx.coroutines.flow.collect
+
+private val HeaderHeight = 550.dp
 
 @Composable
 fun ShowDetailScreen(
@@ -107,46 +112,64 @@ fun ShowDetailScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            var appBarHeight by remember { mutableStateOf(0) }
-            val showAppBarBackground by remember {
-                derivedStateOf {
-                    val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
-                    when {
-                        visibleItemsInfo.isEmpty() -> false
-                        appBarHeight <= 0 -> false
-                        else -> {
-                            val firstVisibleItem = visibleItemsInfo[0]
-                            when {
-                                // If the first visible item is > 0, we want to show the app bar background
-                                firstVisibleItem.index > 0 -> true
-                                // If the first item is visible, only show the app bar background once the only
-                                // remaining part of the item is <= the app bar
-                                else -> firstVisibleItem.size + firstVisibleItem.offset <= appBarHeight
-                            }
-                        }
-                    }
-                }
-            }
-
-            CollapsableAppBar(
+            ShowTopBar(
+                listState = listState,
                 title = viewState.tvShow.title,
-                showAppBarBackground = showAppBarBackground,
-                onNavIconPressed = navigateUp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .onSizeChanged { appBarHeight = it.height }
+                onNavUpClick = navigateUp
             )
         },
         content = { contentPadding ->
-            TvShowDetailsScrollingContent(
-                detailUiState = viewState,
-                listState = listState,
-                onSeasonSelected = { viewModel.submitAction(ShowDetailAction.SeasonSelected(it)) },
-                contentPadding = contentPadding,
-                modifier = Modifier.fillMaxSize(),
-                onWatchlistClick = { viewModel.submitAction(UpdateWatchlist(it)) }
-            )
+
+            Surface(modifier = Modifier.fillMaxWidth()) {
+                TvShowDetailsScrollingContent(
+                    detailUiState = viewState,
+                    listState = listState,
+                    contentPadding = contentPadding,
+                    modifier = Modifier.fillMaxSize(),
+                    onWatchlistClick = { viewModel.submitAction(UpdateWatchlist(it)) },
+                    onSeasonSelected = { viewModel.submitAction(ShowDetailAction.SeasonSelected(it)) },
+                )
+            }
         }
+    )
+}
+
+@Composable
+private fun ShowTopBar(
+    listState: LazyListState,
+    title: String,
+    onNavUpClick: () -> Unit
+) {
+    var appBarHeight by remember { mutableStateOf(0) }
+    val showAppBarBackground by remember {
+        derivedStateOf {
+            val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
+            when {
+                visibleItemsInfo.isEmpty() -> false
+                appBarHeight <= 0 -> false
+                else -> {
+                    val firstVisibleItem = visibleItemsInfo[0]
+                    when {
+                        // If the first visible item is > 0, we want to show the app bar background
+                        firstVisibleItem.index > 0 -> true
+                        // If the first item is visible, only show the app bar background once the only
+                        // remaining part of the item is <= the app bar
+                        else -> firstVisibleItem.size + firstVisibleItem.offset - 5 <= appBarHeight
+                    }
+                }
+            }
+        }
+    }
+
+    CollapsableAppBar(
+        title = title,
+        showAppBarBackground = showAppBarBackground,
+        onNavIconPressed = onNavUpClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .onSizeChanged {
+                appBarHeight = it.height
+            }
     )
 }
 
@@ -154,10 +177,10 @@ fun ShowDetailScreen(
 private fun TvShowDetailsScrollingContent(
     detailUiState: ShowDetailViewState,
     listState: LazyListState,
-    modifier: Modifier = Modifier,
-    onSeasonSelected: (EpisodeQuery) -> Unit,
-    onWatchlistClick: (UpdateShowParams) -> Unit,
     contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+    onSeasonSelected: (EpisodeQuery) -> Unit = {},
+    onWatchlistClick: (UpdateShowParams) -> Unit = {},
 ) {
 
     LazyColumn(
@@ -166,25 +189,35 @@ private fun TvShowDetailsScrollingContent(
         modifier = modifier
     ) {
 
-        item { TvShowHeaderView(detailUiState, listState, onWatchlistClick) }
+        item {
+            HeaderViewContent(
+                detailUiState = detailUiState,
+                listState = listState,
+                onWatchlistClick = onWatchlistClick
+            )
+        }
 
-        item { SeasonTabs(detailUiState, onSeasonSelected) }
+        item {
+            SeasonTabs(
+                isLoading = detailUiState.episodesViewState.isLoading,
+                tvSeasons = detailUiState.tvSeasons,
+                episodeList = detailUiState.episodesViewState.episodeList,
+                onSeasonSelected = onSeasonSelected,
+            )
+        }
     }
 }
 
 @Composable
-fun TvShowHeaderView(
+private fun HeaderViewContent(
     detailUiState: ShowDetailViewState,
     listState: LazyListState,
-    onWatchlistClick: (UpdateShowParams) -> Unit,
+    onWatchlistClick: (UpdateShowParams) -> Unit
 ) {
-
-    val surfaceGradient = backgroundGradient().reversed()
-
-    Surface(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(550.dp)
+            .height(HeaderHeight)
             .clipToBounds()
             .offset {
                 IntOffset(
@@ -195,83 +228,83 @@ fun TvShowHeaderView(
                 )
             }
     ) {
+        HeaderImage(
+            backdropImageUrl = detailUiState.tvShow.backdropImageUrl
+        )
 
-        Box {
-            KenBurnsViewImage(
-                imageUrl = detailUiState.tvShow.backdropImageUrl,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clipToBounds()
-            )
-
-            BoxWithConstraints {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            Brush.verticalGradient(
-                                surfaceGradient,
-                                0F,
-                                constraints.maxHeight.toFloat(),
-                                TileMode.Clamp
-                            )
-                        )
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Bottom
-                    ) {
-                        TvShowInfo(
-                            detailUiState = detailUiState,
-                            onWatchlistClick = onWatchlistClick
-                        )
-                    }
-                }
-            }
-        }
+        Body(
+            show = detailUiState.tvShow,
+            seasons = detailUiState.tvSeasons,
+            genres = detailUiState.genreList,
+            onWatchlistClick
+        )
     }
 }
 
 @Composable
-fun TvShowInfo(
-    detailUiState: ShowDetailViewState,
-    onWatchlistClick: (UpdateShowParams) -> Unit,
+private fun HeaderImage(backdropImageUrl: String) {
+    KenBurnsViewImage(
+        imageUrl = backdropImageUrl,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(HeaderHeight)
+            .clipToBounds()
+    )
+}
+
+@Composable
+private fun Body(
+    show: TvShow,
+    seasons: List<Season>,
+    genres: List<GenreModel>,
+    onWatchlistClick: (UpdateShowParams) -> Unit
 ) {
+    val surfaceGradient = backgroundGradient().reversed()
 
-    val show = detailUiState.tvShow
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(HeaderHeight)
+            .clipToBounds()
+            .background(Brush.verticalGradient(surfaceGradient))
+    ) {
+        ColumnSpacer(16)
 
-    ColumnSpacer(16)
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = show.title,
+                style = MaterialTheme.typography.h4,
+                modifier = Modifier.padding(horizontal = 16.dp),
+                maxLines = 1
+            )
 
-        Text(
-            text = show.title,
-            style = MaterialTheme.typography.h4,
-            modifier = Modifier.padding(horizontal = 16.dp),
-            maxLines = 1
-        )
+            ColumnSpacer(8)
 
-        ColumnSpacer(8)
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                ExpandingText(
+                    text = show.overview,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
 
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            ExpandingText(
-                text = show.overview,
-                modifier = Modifier.padding(horizontal = 16.dp)
+            ColumnSpacer(8)
+
+            TvShowMetadata(
+                show = show,
+                seasons = seasons,
+                genreList = genres,
+                onWatchlistClick = onWatchlistClick,
             )
         }
 
-        ColumnSpacer(8)
+        Spacer(Modifier.height(16.dp))
     }
-
-    TvShowMetadata(
-        show = show,
-        seasons = detailUiState.tvSeasons,
-        genreList = detailUiState.genreList,
-        onWatchlistClick = onWatchlistClick,
-        modifier = Modifier.padding(horizontal = 16.dp)
-    )
-
-    Spacer(Modifier.height(16.dp))
 }
 
 @Composable
@@ -279,7 +312,6 @@ fun TvShowMetadata(
     show: TvShow,
     seasons: List<Season>,
     genreList: List<GenreModel>,
-    modifier: Modifier,
     onWatchlistClick: (UpdateShowParams) -> Unit,
 ) {
     val resources = LocalContext.current.resources
@@ -315,11 +347,14 @@ fun TvShowMetadata(
         append("${show.averageVotes}")
         append(divider)
     }
+
     CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
         Text(
             text = text,
             style = MaterialTheme.typography.body2,
-            modifier = modifier
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
         )
     }
 
@@ -346,7 +381,10 @@ private fun GenreText(
     }
 
     LazyRow(
-        modifier = Modifier.padding(horizontal = 16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+
     ) {
         items(result) { item ->
             RowSpacer(4)
@@ -398,6 +436,7 @@ fun ShowDetailButtons(
                     )
                 }
             },
+            shape = RectangleShape,
             backgroundColor = Color.Transparent,
             elevation = FloatingActionButtonDefaults.elevation(0.dp),
             onClick = {},
@@ -435,6 +474,7 @@ fun ShowDetailButtons(
                     )
                 }
             },
+            shape = RectangleShape,
             backgroundColor = Color.Transparent,
             elevation = FloatingActionButtonDefaults.elevation(0.dp),
             onClick = { onWatchlistClick(UpdateShowParams(show.id, !show.isInWatchlist)) },
@@ -447,7 +487,12 @@ fun ShowDetailButtons(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun SeasonTabs(viewState: ShowDetailViewState, onSeasonSelected: (EpisodeQuery) -> Unit) {
+fun SeasonTabs(
+    isLoading: Boolean,
+    tvSeasons: List<Season>,
+    episodeList: List<Episode>,
+    onSeasonSelected: (EpisodeQuery) -> Unit = {}
+) {
 
     Column {
         val tabs = listOf(Episodes, Casts, Similar)
@@ -462,9 +507,24 @@ fun SeasonTabs(viewState: ShowDetailViewState, onSeasonSelected: (EpisodeQuery) 
         ) { page ->
             when (tabs[page]) {
                 Casts -> SeasonCastScreen()
-                Episodes -> EpisodesScreen(viewState, onSeasonSelected)
+                Episodes -> EpisodesScreen(isLoading, tvSeasons, episodeList, onSeasonSelected)
                 Similar -> SimilarShowsScreen()
             }
+        }
+    }
+}
+
+@Preview("default")
+@Preview("dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun TvShowDetailsScrollingPreview() {
+    TvManiacTheme {
+        Surface {
+            TvShowDetailsScrollingContent(
+                detailUiState = detailUiState,
+                listState = LazyListState(),
+                contentPadding = PaddingValues(),
+            )
         }
     }
 }

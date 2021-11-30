@@ -10,13 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -55,6 +57,8 @@ import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
 import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import dev.chrisbanes.snapper.ExperimentalSnapperApi
+import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.coroutines.flow.collect
 import kotlin.math.absoluteValue
 
@@ -65,6 +69,7 @@ import kotlin.math.absoluteValue
  */
 private const val MinContrastOfPrimaryVsSurface = 3f
 
+@OptIn(ExperimentalSnapperApi::class)
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverViewModel,
@@ -85,6 +90,22 @@ fun DiscoverScreen(
         }
     }
 
+    DiscoverShows(
+        scaffoldState = scaffoldState,
+        discoverViewState = discoverViewState,
+        openShowDetails = openShowDetails,
+        moreClicked = moreClicked
+    )
+}
+
+@OptIn(ExperimentalSnapperApi::class)
+@Composable
+private fun DiscoverShows(
+    scaffoldState: ScaffoldState,
+    discoverViewState: DiscoverShowState,
+    openShowDetails: (showId: Int) -> Unit,
+    moreClicked: (showType: Int) -> Unit
+) {
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = Modifier
@@ -104,37 +125,32 @@ fun DiscoverScreen(
                     .fillMaxWidth()
             )
         },
-        content = {
-            ScreenData(
-                viewState = discoverViewState,
-                onItemClicked = { openShowDetails(it) },
-                moreClicked = { moreClicked(it) }
-            )
-        }
-    )
-}
-
-@Composable
-private fun ScreenData(
-    viewState: DiscoverShowState,
-    onItemClicked: (Int) -> Unit,
-    moreClicked: (Int) -> Unit,
-) {
-    if (viewState.isLoading) LoadingView()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(state = rememberScrollState())
-            .padding(bottom = 54.dp)
-            .animateContentSize()
     ) {
+        if (discoverViewState.isLoading) LoadingView()
 
-        viewState.dataMap.forEach {
-            if (it.category.title == "Featured") {
-                FeaturedItems(it, onItemClicked)
-            } else {
-                DisplayShowData(it, onItemClicked, moreClicked)
+        val lazyListState = rememberLazyListState()
+
+        LazyColumn(
+            state = lazyListState,
+            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+            modifier = Modifier
+                .navigationBarsWithImePadding()
+                .animateContentSize(),
+        ) {
+
+            item {
+                FeaturedItems(
+                    data = discoverViewState.dataMap,
+                    onItemClicked = { openShowDetails(it) }
+                )
+            }
+
+            item {
+                DisplayShowData(
+                    data = discoverViewState.dataMap,
+                    onItemClicked = { openShowDetails(it) },
+                    moreClicked = { moreClicked(it) }
+                )
             }
         }
     }
@@ -143,59 +159,66 @@ private fun ScreenData(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun FeaturedItems(
-    resultMap: TrendingShowData,
+    data: List<TrendingShowData>,
     onItemClicked: (Int) -> Unit,
 ) {
 
-    val surfaceColor = grey900
-    val dominantColorState = rememberDominantColorState { color ->
-        // We want a color which has sufficient contrast against the surface color
-        color.contrastAgainst(surfaceColor) >= MinContrastOfPrimaryVsSurface
-    }
+    data
+        .find { it.category.title == "Featured" }
+        ?.let { show ->
 
-    DynamicThemePrimaryColorsFromImage(dominantColorState) {
-
-        val pagerState = rememberPagerState()
-
-        val selectedImageUrl = resultMap.shows.getOrNull(pagerState.currentPage)
-            ?.posterImageUrl
-
-        LaunchedEffect(selectedImageUrl) {
-            if (selectedImageUrl != null) {
-                dominantColorState.updateColorsFromImageUrl(selectedImageUrl)
-            } else {
-                dominantColorState.reset()
-            }
-        }
-
-        LaunchedEffect(Unit) {
-            pagerState.scrollToPage(2)
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalGradientScrim(
-                    color = MaterialTheme.colors.primary.copy(alpha = 0.38f),
-                    startYPercentage = 1f,
-                    endYPercentage = 0f
-                )
-        ) {
-
-            ColumnSpacer(value = 24)
-
-            FeaturedHorizontalPager(resultMap.shows, pagerState) { tvShowId ->
-                onItemClicked(tvShowId)
+            val surfaceColor = grey900
+            val dominantColorState = rememberDominantColorState { color ->
+                // We want a color which has sufficient contrast against the surface color
+                color.contrastAgainst(surfaceColor) >= MinContrastOfPrimaryVsSurface
             }
 
-            HorizontalPagerIndicator(
-                pagerState = pagerState,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(16.dp),
-            )
+            DynamicThemePrimaryColorsFromImage(dominantColorState) {
+
+                val pagerState = rememberPagerState()
+
+                val selectedImageUrl = show.shows.getOrNull(pagerState.currentPage)
+                    ?.posterImageUrl
+
+                LaunchedEffect(selectedImageUrl) {
+                    if (selectedImageUrl != null) {
+                        dominantColorState.updateColorsFromImageUrl(selectedImageUrl)
+                    } else {
+                        dominantColorState.reset()
+                    }
+                }
+
+                LaunchedEffect(Unit) {
+                    pagerState.scrollToPage(2)
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalGradientScrim(
+                            color = MaterialTheme.colors.primary.copy(alpha = 0.38f),
+                            startYPercentage = 1f,
+                            endYPercentage = 0f
+                        )
+                ) {
+
+                    ColumnSpacer(value = 24)
+
+                    FeaturedHorizontalPager(
+                        list = show.shows,
+                        pagerState = pagerState,
+                        onClick = { onItemClicked(it) }
+                    )
+
+                    HorizontalPagerIndicator(
+                        pagerState = pagerState,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(16.dp),
+                    )
+                }
+            }
         }
-    }
 
     ColumnSpacer(value = 16)
 }
@@ -267,28 +290,38 @@ fun FeaturedHorizontalPager(
     }
 }
 
+@OptIn(ExperimentalSnapperApi::class)
 @Composable
 private fun DisplayShowData(
-    resultMap: TrendingShowData,
+    data: List<TrendingShowData>,
     onItemClicked: (Int) -> Unit,
     moreClicked: (Int) -> Unit,
 ) {
+    val lazyListState = rememberLazyListState()
 
-    BoxTextItems(
-        title = resultMap.category.title,
-        moreString = stringResource(id = R.string.str_more),
-        onMoreClicked = { moreClicked(resultMap.category.type) }
-    )
+    data
+        .filterNot { it.category.title == "Featured" }
+        .forEach { show ->
 
-    LazyRow {
-        itemsIndexed(resultMap.shows) { index, tvShow ->
-            TvShowCard(
-                posterImageUrl = tvShow.posterImageUrl,
-                title = tvShow.title,
-                isFirstCard = index == 0
+            BoxTextItems(
+                title = show.category.title,
+                moreString = stringResource(id = R.string.str_more),
+                onMoreClicked = { moreClicked(show.category.type) }
+            )
+
+            LazyRow(
+                state = lazyListState,
+                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
             ) {
-                onItemClicked(tvShow.id)
+                itemsIndexed(show.shows) { index, tvShow ->
+                    TvShowCard(
+                        posterImageUrl = tvShow.posterImageUrl,
+                        title = tvShow.title,
+                        isFirstCard = index == 0
+                    ) {
+                        onItemClicked(tvShow.id)
+                    }
+                }
             }
         }
-    }
 }
