@@ -1,4 +1,4 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="Platform.Theme.Tivi" parent="android:Theme.Material" />
+    <style name="Platform.Theme.TvManiac" parent="android:Theme.Material" />
 </resources>

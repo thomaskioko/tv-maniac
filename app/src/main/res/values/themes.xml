@@ -6,8 +6,7 @@
         <item name="android:windowActionModeOverlay">true</item>
     </style>
 
-    <style name="Theme.TvManiac" parent="Base.Theme.TvManiac">
-    </style>
+    <style name="Theme.TvManiac" parent="Base.Theme.TvManiac"/>
 
     <style name="Theme.TvManiac.NoActionBar">
         <item name="android:windowActionBar">false</item>
@@ -22,6 +21,7 @@
     </style>
 
     <style name="Theme.TvManiac.Home" parent="Theme.TvManiac.Immerse">
+        <item name="android:windowSplashScreenBackground" tools:targetApi="s">@android:color/white</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">@bool/use_light_status_bar</item>
     </style>
 
