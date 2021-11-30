@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.interactor
 
+import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
@@ -15,6 +16,7 @@ class GetShowInteractor constructor(
 ) : Interactor<Int, TvShow>() {
 
     override fun run(params: Int): Flow<DomainResultState<TvShow>> = repository.getTvShow(params)
+        .map { it.toTvShow() }
         .map { success(it) }
         .catch { emit(error(it)) }
 }

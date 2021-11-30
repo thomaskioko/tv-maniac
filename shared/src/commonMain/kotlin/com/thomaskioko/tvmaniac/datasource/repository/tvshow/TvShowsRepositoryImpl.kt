@@ -5,6 +5,7 @@ import com.kuuurt.paging.multiplatform.PagingConfig
 import com.kuuurt.paging.multiplatform.PagingData
 import com.kuuurt.paging.multiplatform.PagingResult
 import com.kuuurt.paging.multiplatform.helpers.cachedIn
+import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.FEATURED
@@ -16,7 +17,6 @@ import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
 import com.thomaskioko.tvmaniac.datasource.mapper.toShow
-import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowList
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
@@ -35,9 +35,8 @@ class TvShowsRepositoryImpl(
     private val coroutineScope: CoroutineScope,
 ) : TvShowsRepository {
 
-    override fun getTvShow(tvShowId: Int): Flow<TvShow> {
+    override fun getTvShow(tvShowId: Int): Flow<Show> {
         return cache.getTvShow(tvShowId)
-            .map { it.toTvShow() }
     }
 
     override suspend fun getPopularTvShows(page: Int): List<TvShow> {
