@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.datasource.repository.tvshow
 
 import com.kuuurt.paging.multiplatform.PagingData
+import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TvShowsRepository {
 
-    fun getTvShow(tvShowId: Int): Flow<TvShow>
+    fun getTvShow(tvShowId: Int): Flow<Show>
 
     suspend fun getPopularTvShows(page: Int): List<TvShow>
 

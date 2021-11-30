@@ -17,8 +17,7 @@ data class TvShow(
     val isInWatchlist: Boolean = false,
     val genreIds: List<Int> = listOf(),
     val showCategory: ShowCategory = ShowCategory.POPULAR,
-    val timeWindow: TimeWindow = TimeWindow.WEEK,
-    val seasonsList: List<Season> = emptyList()
+    val timeWindow: TimeWindow = TimeWindow.WEEK
 ) {
     companion object {
         val EMPTY_SHOW = TvShow()

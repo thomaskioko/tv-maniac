@@ -245,7 +245,6 @@ object MockData {
         averageVotes = 8.1,
         genreIds = listOf(18, 10765),
         showCategory = ShowCategory.POPULAR,
-        seasonsList = seasonsList
     )
 
     fun getEpisodeList() = listOf(
@@ -296,7 +295,6 @@ object MockData {
                         averageVotes = 8.1,
                         genreIds = listOf(18, 10765),
                         showCategory = ShowCategory.TODAY,
-                        seasonsList = seasonsList
                     ),
                 )
             )

@@ -8,7 +8,8 @@ android-min = "21"
 android-gradle = "7.1.0-beta04"
 date-time = "0.3.1"
 
-accompanist = "0.21.2-beta"
+accompanist = "0.21.3-beta"
+snapper = "0.1.0"
 
 androidx-appCompat = "1.4.0"
 androidx-compose = "1.1.0-beta03"
@@ -23,15 +24,15 @@ androidx-composePaging = "1.0.0-alpha14"
 coil = "1.4.0"
 coroutines-native = "1.5.2-native-mt"
 desugar = "1.1.5"
-hilt = "2.40.1"
-hiltNavigation = "1.0.0-alpha03"
+hilt = "2.40.2"
+hiltNavigation = "1.0.0-beta01"
 kenburns = "1.0.7"
-ktor = "1.6.5"
+ktor = "1.6.6"
 material = "1.5.0-beta01"
 multiplatform-paging = "0.4.5"
 napier = "1.5.0"
 squareup-leakcanary = "2.7"
-sqldelight = "1.5.2"
+sqldelight = "1.5.3"
 turbine = "0.7.0"
 
 testing-arch-core = "2.1.0"
@@ -96,6 +97,7 @@ desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desuga
 material = { module = "com.google.android.material:material", version.ref = "material" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
+snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 
 multiplatform-paging-core = { module = "io.github.kuuuurt:multiplatform-paging", version.ref = "multiplatform-paging" }
 multiplatform-paging-ios-x64 = { module = "io.github.kuuuurt:multiplatform-paging-iosX64", version.ref = "multiplatform-paging" }
