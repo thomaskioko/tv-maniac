@@ -5,92 +5,83 @@ import com.kuuurt.paging.multiplatform.PagingConfig
 import com.kuuurt.paging.multiplatform.PagingData
 import com.kuuurt.paging.multiplatform.PagingResult
 import com.kuuurt.paging.multiplatform.helpers.cachedIn
+import com.thomaskioko.tvmaniac.datasource.cache.Category
 import com.thomaskioko.tvmaniac.datasource.cache.Show
+import com.thomaskioko.tvmaniac.datasource.cache.Show_category
+import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCache
+import com.thomaskioko.tvmaniac.datasource.cache.show_category.ShowCategoryCache
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.FEATURED
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.POPULAR
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.THIS_WEEK
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TODAY
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TOP_RATED
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TRENDING
-import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
-import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
 import com.thomaskioko.tvmaniac.datasource.mapper.toShow
-import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowList
+import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
 import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.CommonFlow
 import com.thomaskioko.tvmaniac.util.asCommonFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
+
+private const val DEFAULT_API_PAGE = 1
+private const val FEATURED_LIST_SIZE = 5
 
 class TvShowsRepositoryImpl(
     private val apiService: TvShowsService,
-    private val cache: TvShowCache,
+    private val tvShowCache: TvShowCache,
+    private val categoryCache: CategoryCache,
+    private val showCategoryCache: ShowCategoryCache,
     private val coroutineScope: CoroutineScope,
 ) : TvShowsRepository {
 
-    override fun getTvShow(tvShowId: Int): Flow<Show> {
-        return cache.getTvShow(tvShowId)
-    }
+    override fun getShow(tvShowId: Int): Flow<Show> = tvShowCache.getTvShow(tvShowId)
 
-    override suspend fun getPopularTvShows(page: Int): List<TvShow> {
-        return if (getShowsByCategory(POPULAR).isEmpty()) {
+    override suspend fun getShowsByCategoryId(page: Int, categoryId: Int): List<Show> {
+        return if (getCachedShowsByCategoryId(categoryId).isEmpty()) {
 
-            mapApiResultAndInsert(apiService.getPopularShows(page), POPULAR)
+            val apiResponse = when (categoryId) {
+                TRENDING.type -> apiService.getTrendingShows(page)
+                POPULAR.type -> apiService.getPopularShows(page)
+                TOP_RATED.type -> apiService.getTopRatedShows(page)
+                else -> apiService.getTopRatedShows(page)
+            }
 
-            getShowsByCategory(POPULAR)
+            mapApiResultAndInsert(apiResponse, ShowCategory[categoryId])
+
+            getCachedShowsByCategoryId(categoryId)
         } else {
-            getShowsByCategory(POPULAR)
+            getCachedShowsByCategoryId(categoryId)
         }
     }
 
-    override suspend fun getPagedPopularTvShows(): CommonFlow<PagingData<TvShow>> {
-        val pager = Pager(
-            clientScope = coroutineScope,
-            config = PagingConfig(
-                pageSize = 30,
-                enablePlaceholders = false
-            ),
-            initialKey = 1,
-            getItems = { currentKey, _ ->
-                val apiResponse = apiService.getPopularShows(currentKey)
-
-                mapApiResultAndInsert(apiResponse, POPULAR)
-
-                val tvShows = getShowsByCategory(POPULAR)
-                PagingResult(
-                    items = tvShows,
-                    currentKey = currentKey,
-                    prevKey = { null },
-                    nextKey = { apiResponse.page + 1 }
-                )
-            }
-        )
-
-        return pager.pagingData
-            .cachedIn(coroutineScope)
-            .asCommonFlow()
-    }
-
-    override suspend fun getTrendingShows(
+    override suspend fun getDiscoverShowList(
         categoryList: List<ShowCategory>
     ): List<TrendingShowData> {
         val trendingShowsResult = mutableListOf<TrendingShowData>()
 
         categoryList.forEach { category ->
             val result = when (category) {
-                FEATURED -> getFeaturedShows()
-                TODAY, THIS_WEEK -> getTrendingShowsByTime(category.timeWindow!!)
-                POPULAR -> getPopularTvShows(1)
-                TOP_RATED -> getTopRatedTvShows(1)
-                TRENDING -> getShowsByCategory(TRENDING)
-            }
+                TRENDING -> getShowsByCategoryId(
+                    page = DEFAULT_API_PAGE,
+                    categoryId = category.type
+                )
+                POPULAR -> getShowsByCategoryId(
+                    page = DEFAULT_API_PAGE,
+                    categoryId = category.type
+                )
+                TOP_RATED -> getShowsByCategoryId(
+                    page = DEFAULT_API_PAGE,
+                    categoryId = category.type
+                )
+                FEATURED -> getShowsByCategoryId(
+                    page = DEFAULT_API_PAGE,
+                    categoryId = category.type
+                ).take(FEATURED_LIST_SIZE)
+            }.map { it.toTvShow() }
 
             trendingShowsResult.add(
                 TrendingShowData(
@@ -103,25 +94,13 @@ class TvShowsRepositoryImpl(
         return trendingShowsResult
     }
 
-    override suspend fun getTopRatedTvShows(page: Int): List<TvShow> {
-        return if (getShowsByCategory(TOP_RATED).isEmpty()) {
-
-            apiService.getTopRatedShows(page).results
-                .map {
-                    it.toShow()
-                        .copy(
-                            show_category = TOP_RATED
-                        )
-                }
-                .map { cache.insert(it) }
-
-            getShowsByCategory(TOP_RATED)
-        } else {
-            getShowsByCategory(TOP_RATED)
-        }
+    override suspend fun updateWatchlist(showId: Int, addToWatchList: Boolean) {
+        tvShowCache.updateWatchlist(showId, addToWatchList)
     }
 
-    override suspend fun getPagedTopRatedTvShows(): CommonFlow<PagingData<TvShow>> {
+    override fun getWatchlist(): Flow<List<Show>> = tvShowCache.getWatchlist()
+
+    override fun getPagedPopularTvShows(): CommonFlow<PagingData<Show>> {
         val pager = Pager(
             clientScope = coroutineScope,
             config = PagingConfig(
@@ -129,16 +108,44 @@ class TvShowsRepositoryImpl(
                 enablePlaceholders = false
             ),
             initialKey = 1,
+            getItems = { currentKey, _ ->
+                val apiResponse = apiService.getPopularShows(currentKey)
+
+                mapApiResultAndInsert(apiResponse, POPULAR)
+
+                val tvShows = getCachedShowsByCategoryId(POPULAR.type)
+                PagingResult(
+                    items = tvShows,
+                    currentKey = currentKey,
+                    prevKey = { null },
+                    nextKey = { apiResponse.page + DEFAULT_API_PAGE }
+                )
+            }
+        )
+
+        return pager.pagingData
+            .cachedIn(coroutineScope)
+            .asCommonFlow()
+    }
+
+    override fun getPagedTopRatedTvShows(): CommonFlow<PagingData<Show>> {
+        val pager = Pager(
+            clientScope = coroutineScope,
+            config = PagingConfig(
+                pageSize = 30,
+                enablePlaceholders = false
+            ),
+            initialKey = DEFAULT_API_PAGE,
             getItems = { currentKey, _ ->
                 val apiResponse = apiService.getTopRatedShows(currentKey)
 
                 mapApiResultAndInsert(apiResponse, TOP_RATED)
 
                 PagingResult(
-                    items = getShowsByCategory(TOP_RATED),
+                    items = getCachedShowsByCategoryId(TOP_RATED.type),
                     currentKey = currentKey,
                     prevKey = { null },
-                    nextKey = { apiResponse.page + 1 }
+                    nextKey = { apiResponse.page + DEFAULT_API_PAGE }
                 )
             }
         )
@@ -148,91 +155,9 @@ class TvShowsRepositoryImpl(
             .asCommonFlow()
     }
 
-    override suspend fun getTrendingShowsByTime(timeWindow: TimeWindow): List<TvShow> {
-        return if (getShowsByCategoryAndWindow(TRENDING, timeWindow).isEmpty()) {
-
-            apiService.getTrendingShows(1, timeWindow.window).results
-                .map {
-                    it.toShow()
-                        .copy(
-                            show_category = TRENDING,
-                            time_window = timeWindow
-                        )
-                }
-                .map { cache.insert(it) }
-
-            getShowsByCategoryAndWindow(TRENDING, timeWindow)
-        } else {
-            getShowsByCategoryAndWindow(TRENDING, timeWindow)
-        }
-    }
-
-    override suspend fun getFeaturedShows(): List<TvShow> {
-        return if (getShowsByCategoryAndWindow(FEATURED, WEEK).isEmpty()) {
-
-            apiService.getTrendingShows(1, WEEK.window).results
-                .map {
-                    it.toShow()
-                        .copy(
-                            show_category = FEATURED,
-                            time_window = WEEK
-                        )
-                }
-                .map { cache.insert(it) }
-
-            cache.getFeaturedTvShows(FEATURED, WEEK).toTvShowList()
-        } else {
-            cache.getFeaturedTvShows(FEATURED, WEEK).toTvShowList()
-        }
-    }
-
-    override suspend fun getShowsByCategory(category: ShowCategory): List<TvShow> {
-        return cache.getTvShowsByCategory(category)
-            .toTvShowList()
-    }
-
-    override suspend fun getPagedShowsByCategory(category: ShowCategory): CommonFlow<PagingData<TvShow>> {
-        val pager = Pager(
-            clientScope = coroutineScope,
-            config = PagingConfig(
-                pageSize = 30,
-                enablePlaceholders = false
-            ),
-            initialKey = 1,
-            getItems = { currentKey, _ ->
-                PagingResult(
-                    items = getShowsByCategory(category),
-                    currentKey = currentKey,
-                    prevKey = { null },
-                    nextKey = { 0 + 1 }
-                )
-            }
-        )
-
-        return pager.pagingData
-            .cachedIn(coroutineScope)
-            .asCommonFlow()
-    }
-
-    override fun getWatchlist(): Flow<List<TvShow>> = cache.getWatchlist()
-        .map { it.toTvShowList() }
-
-    override suspend fun updateWatchlist(showId: Int, addToWatchList: Boolean) {
-        cache.updateWatchlist(showId, addToWatchList)
-    }
-
-    override suspend fun getShowsByCategoryAndWindow(
-        category: ShowCategory,
-        timeWindow: TimeWindow
-    ): List<TvShow> {
-        return cache.getTvShows(category, timeWindow)
-            .toTvShowList()
-    }
-
-    override suspend fun getPagedShowsByCategoryAndWindow(
-        category: ShowCategory,
-        timeWindow: TimeWindow
-    ): CommonFlow<PagingData<TvShow>> {
+    override fun getPagedShowsByCategoryAndWindow(
+        categoryId: Int
+    ): CommonFlow<PagingData<Show>> {
         val pager = Pager(
             clientScope = coroutineScope,
             config = PagingConfig(
@@ -243,28 +168,21 @@ class TvShowsRepositoryImpl(
             initialKey = 2,
             getItems = { currentKey, _ ->
 
-                val apiResponse = when (category) {
-                    FEATURED, TODAY, THIS_WEEK, TRENDING ->
-                        apiService.getTrendingShows(currentKey, timeWindow.window)
-                    TOP_RATED -> apiService.getTopRatedShows(currentKey)
-                    POPULAR -> apiService.getPopularShows(currentKey)
+                val apiResponse = when (categoryId) {
+                    FEATURED.type, TRENDING.type -> apiService.getTrendingShows(currentKey)
+                    TOP_RATED.type -> apiService.getTopRatedShows(currentKey)
+                    POPULAR.type -> apiService.getPopularShows(currentKey)
+                    else -> apiService.getPopularShows(currentKey)
                 }
 
                 apiResponse.results
-                    .map {
-                        it.toShow()
-                            .copy(
-                                show_category = category,
-                                time_window = timeWindow
-                            )
-                    }
-                    .map { cache.insert(it) }
+                    .map { tvShowCache.insert(it.toShow()) }
 
                 PagingResult(
-                    items = getShowsByCategoryAndWindow(category, timeWindow),
+                    items = getCachedShowsByCategoryId(categoryId),
                     currentKey = currentKey,
                     prevKey = { null },
-                    nextKey = { apiResponse.page + 1 }
+                    nextKey = { apiResponse.page + DEFAULT_API_PAGE }
                 )
             }
         )
@@ -275,13 +193,34 @@ class TvShowsRepositoryImpl(
             .asCommonFlow()
     }
 
+    private fun getCachedShowsByCategoryId(categoryId: Int): List<Show> =
+        showCategoryCache.getShowsByCategoryID(categoryId)
+            .map { it.toTvShow() }
+
     private fun mapApiResultAndInsert(apiResponse: TvShowsResponse, category: ShowCategory) {
-        apiResponse.results
-            .map { response ->
-                response
-                    .toShow()
-                    .copy(show_category = category)
-            }
-            .map { cache.insert(it) }
+
+        val cacheList = apiResponse.results
+            .map { it.toShow() }
+
+        // Insert shows
+        tvShowCache.insert(cacheList)
+
+        cacheList.forEach { show ->
+            // Insert Category
+            categoryCache.insert(
+                Category(
+                    id = category.type.toLong(),
+                    name = category.title
+                )
+            )
+
+            // Insert ShowCategory
+            showCategoryCache.insert(
+                Show_category(
+                    category_id = category.type.toLong(),
+                    show_id = show.id
+                )
+            )
+        }
     }
 }

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 
-class GetTrendingShowsInteractor constructor(
+class GetDiscoverShowListInteractor constructor(
     private val repository: TvShowsRepository,
 ) : Interactor<List<ShowCategory>, List<TrendingShowData>>() {
 
@@ -20,7 +20,7 @@ class GetTrendingShowsInteractor constructor(
         flow {
             emit(loading())
 
-            emit(success(repository.getTrendingShows(params)))
+            emit(success(repository.getDiscoverShowList(params)))
         }
             .catch { emit(error(it)) }
 }
