@@ -1,0 +1,17 @@
+CREATE TABLE category (
+id integer NOT NULL PRIMARY KEY,
+name TEXT NOT NULL
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO category(
+id,
+name
+) VALUES (?,?);
+
+selectAll:
+SELECT * FROM category;
+
+selectById:
+SELECT * FROM category
+WHERE id = ?;
