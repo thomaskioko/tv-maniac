@@ -1,5 +1,3 @@
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory;
-import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow;
 import kotlin.collections.List;
 
 
@@ -17,8 +15,6 @@ status TEXT NOT NULL,
 popularity REAL NOT NULL,
 genre_ids TEXT AS List<Int> NOT NULL,
 season_ids TEXT AS List<Int>,
-show_category TEXT AS ShowCategory,
-time_window TEXT AS TimeWindow,
 is_watchlist INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
@@ -34,12 +30,10 @@ backdrop_image_url,
 votes,
 vote_average,
 genre_ids,
-show_category,
-time_window,
 status,
 popularity,
 is_watchlist
-)VALUES(?,?,?,?,?,?,?,?,?,?, ?,?, ?, ?, ?);
+)VALUES(?,?,?,?,?,?,?,?, ?,?, ?, ?, ?);
 
 updateTvShow:
 UPDATE show
@@ -50,21 +44,8 @@ selectByShowId:
 SELECT * FROM show
 WHERE id = ?;
 
-selectByCategory:
-SELECT * FROM show
-WHERE show_category = ?;
-
-selectByShowIdAndWindow:
-SELECT * FROM show
-WHERE show_category = ? AND time_window = ?;
-
 selectAll:
 SELECT * FROM show;
-
-selectFeatured:
-SELECT * FROM show
-WHERE show_category = ? AND time_window = ?
-ORDER BY popularity DESC, RANDOM() LIMIT 5;
 
 updateWatchlist:
 UPDATE show
