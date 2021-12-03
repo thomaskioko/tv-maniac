@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.datasource.cache
 
-import com.squareup.sqldelight.EnumColumnAdapter
 import com.squareup.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.datasource.cache.db.adapter.intAdapter
 import kotlin.test.AfterTest
@@ -20,8 +19,6 @@ abstract class BaseDatabaseTest {
         showAdapter = Show.Adapter(
             genre_idsAdapter = intAdapter,
             season_idsAdapter = intAdapter,
-            show_categoryAdapter = EnumColumnAdapter(),
-            time_windowAdapter = EnumColumnAdapter()
         ),
         tv_seasonAdapter = Tv_season.Adapter(
             episode_idsAdapter = intAdapter
