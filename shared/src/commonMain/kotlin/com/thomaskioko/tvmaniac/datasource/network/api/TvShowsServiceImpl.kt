@@ -36,8 +36,8 @@ class TvShowsServiceImpl(
         return httpClient.get("${BuildKonfig.TMDB_API_URL}tv/$tvShowId/season/$seasonNumber")
     }
 
-    override suspend fun getTrendingShows(page: Int, timeWindow: String): TvShowsResponse {
-        return httpClient.get("${BuildKonfig.TMDB_API_URL}trending/tv/$timeWindow") {
+    override suspend fun getTrendingShows(page: Int): TvShowsResponse {
+        return httpClient.get("${BuildKonfig.TMDB_API_URL}trending/tv/week") {
             parameter("page", page)
         }
     }
