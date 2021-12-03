@@ -25,6 +25,7 @@ subprojects {
             languageVersion = "1.5"
             apiVersion = "1.5"
             freeCompilerArgs = freeCompilerArgs + listOf(
+                "-Xopt-in=kotlin.RequiresOptIn",
                 "-Xopt-in=kotlin.time.ExperimentalTime",
                 "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-Xopt-in=com.google.accompanist.pager.ExperimentalPagerApi",
