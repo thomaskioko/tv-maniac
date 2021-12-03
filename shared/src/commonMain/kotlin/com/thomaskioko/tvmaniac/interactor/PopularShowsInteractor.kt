@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.interactor
 
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
+import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
@@ -17,7 +19,10 @@ class PopularShowsInteractor constructor(
     override fun run(params: Unit): Flow<DomainResultState<List<TvShow>>> = flow {
         emit(loading())
 
-        emit(success(repository.getPopularTvShows(1)))
+        val result = repository.getShowsByCategoryId(1, ShowCategory.POPULAR.type)
+            .map { it.toTvShow() }
+
+        emit(success(result))
     }
         .catch { emit(error(it)) }
 }

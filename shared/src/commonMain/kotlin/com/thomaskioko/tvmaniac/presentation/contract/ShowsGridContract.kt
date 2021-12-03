@@ -6,12 +6,13 @@ import com.thomaskioko.tvmaniac.core.Effect
 import com.thomaskioko.tvmaniac.core.State
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.CommonFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 data class ShowsGridState(
     val isLoading: Boolean,
     val title: String,
-    val list: CommonFlow<PagingData<TvShow>>
+    val list: Flow<PagingData<TvShow>>
 ) : State {
     companion object {
         val Empty: ShowsGridState = ShowsGridState(

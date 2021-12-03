@@ -5,8 +5,6 @@ import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.squareup.sqldelight.runtime.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
-import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import kotlinx.coroutines.flow.Flow
 
 class TvShowCacheImpl(
@@ -14,8 +12,8 @@ class TvShowCacheImpl(
 ) : TvShowCache {
 
     override fun insert(show: Show) {
-        database.tvShowQueries.transaction {
-            database.tvShowQueries.insertOrReplace(
+        database.showQueries.transaction {
+            database.showQueries.insertOrReplace(
                 id = show.id,
                 title = show.title,
                 description = show.description,
@@ -25,8 +23,6 @@ class TvShowCacheImpl(
                 votes = show.votes,
                 vote_average = show.vote_average,
                 genre_ids = show.genre_ids,
-                show_category = show.show_category,
-                time_window = show.time_window,
                 year = show.year,
                 status = show.status,
                 popularity = show.popularity,
@@ -40,7 +36,7 @@ class TvShowCacheImpl(
     }
 
     override fun getTvShow(showId: Int): Flow<Show> {
-        return database.tvShowQueries.selectByShowId(
+        return database.showQueries.selectByShowId(
             id = showId.toLong()
         )
             .asFlow()
@@ -48,39 +44,19 @@ class TvShowCacheImpl(
     }
 
     override fun getTvShows(): Flow<List<Show>> {
-        return database.tvShowQueries.selectAll()
+        return database.showQueries.selectAll()
             .asFlow()
             .mapToList()
-    }
-
-    override fun getTvShows(category: ShowCategory, timeWindow: TimeWindow): List<Show> {
-        return database.tvShowQueries.selectByShowIdAndWindow(
-            show_category = category,
-            time_window = timeWindow
-        ).executeAsList()
     }
 
     override fun getWatchlist(): Flow<List<Show>> {
-        return database.tvShowQueries.selectWatchlist()
+        return database.showQueries.selectWatchlist()
             .asFlow()
             .mapToList()
     }
 
-    override fun getTvShowsByCategory(category: ShowCategory): List<Show> {
-        return database.tvShowQueries.selectByCategory(
-            show_category = category,
-        ).executeAsList()
-    }
-
-    override fun getFeaturedTvShows(category: ShowCategory, timeWindow: TimeWindow): List<Show> {
-        return database.tvShowQueries.selectFeatured(
-            show_category = category,
-            time_window = timeWindow
-        ).executeAsList()
-    }
-
     override fun updateShowDetails(showId: Int, showStatus: String, seasonIds: List<Int>) {
-        database.tvShowQueries.updateTvShow(
+        database.showQueries.updateTvShow(
             id = showId.toLong(),
             season_ids = seasonIds,
             status = showStatus
@@ -88,13 +64,13 @@ class TvShowCacheImpl(
     }
 
     override fun updateWatchlist(showId: Int, isInWatchlist: Boolean) {
-        database.tvShowQueries.updateWatchlist(
+        database.showQueries.updateWatchlist(
             is_watchlist = isInWatchlist,
             id = showId.toLong()
         )
     }
 
     override fun deleteTvShows() {
-        database.tvShowQueries.deleteAll()
+        database.showQueries.deleteAll()
     }
 }
