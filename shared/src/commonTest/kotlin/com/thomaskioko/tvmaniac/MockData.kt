@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.Tv_season
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
-import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
 import com.thomaskioko.tvmaniac.datasource.network.model.EpisodesResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.GenreResponse
@@ -159,41 +158,6 @@ object MockData {
         ),
     )
 
-    fun makeTvShowList() = listOf(
-        TvShow(
-            id = 84958,
-            title = "Loki",
-            overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                "an alternate version of Loki is brought to the mysterious Time Variance " +
-                "Authority, a bureaucratic organization that exists outside of time and " +
-                "space and monitors the timeline. They give Loki a choice: face being " +
-                "erased from existence due to being a “time variant”or help fix " +
-                "the timeline and stop a greater threat.",
-            posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            language = "en",
-            votes = 4958,
-            averageVotes = 8.1,
-            genreIds = listOf(18, 10765),
-            showCategory = ShowCategory.TRENDING,
-            timeWindow = TimeWindow.WEEK
-        ),
-        TvShow(
-            id = 126280,
-            title = "Sex/Life",
-            overview = "A woman's daring sexual past collides with her married-with-kids " +
-                "present when the bad-boy ex she can't stop fantasizing about crashes " +
-                "back into her life.",
-            posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            language = "en",
-            votes = 4958,
-            averageVotes = 8.1,
-            genreIds = listOf(35, 18),
-            showCategory = ShowCategory.POPULAR
-        ),
-    )
-
     val seasonsList = listOf(
         Season(
             seasonId = 114355,
@@ -229,24 +193,6 @@ object MockData {
         )
     )
 
-    val tvShow = TvShow(
-        id = 84958,
-        title = "Loki",
-        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-            "an alternate version of Loki is brought to the mysterious Time Variance " +
-            "Authority, a bureaucratic organization that exists outside of time and " +
-            "space and monitors the timeline. They give Loki a choice: face being " +
-            "erased from existence due to being a “time variant”or help fix " +
-            "the timeline and stop a greater threat.",
-        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        language = "en",
-        votes = 4958,
-        averageVotes = 8.1,
-        genreIds = listOf(18, 10765),
-        showCategory = ShowCategory.POPULAR,
-    )
-
     fun getEpisodeList() = listOf(
         Episode(
             id = 2534997,
@@ -277,7 +223,7 @@ object MockData {
 
         trendingMap.add(
             TrendingShowData(
-                category = ShowCategory.TODAY,
+                category = ShowCategory.TRENDING,
                 shows = listOf(
                     TvShow(
                         id = 84958,
@@ -294,7 +240,6 @@ object MockData {
                         votes = 4958,
                         averageVotes = 8.1,
                         genreIds = listOf(18, 10765),
-                        showCategory = ShowCategory.TODAY,
                     ),
                 )
             )
@@ -302,7 +247,7 @@ object MockData {
 
         trendingMap.add(
             TrendingShowData(
-                category = ShowCategory.THIS_WEEK,
+                category = ShowCategory.FEATURED,
                 shows = listOf(
                     TvShow(
                         id = 126280,
@@ -316,7 +261,6 @@ object MockData {
                         votes = 4958,
                         averageVotes = 8.1,
                         genreIds = listOf(35, 18),
-                        showCategory = ShowCategory.THIS_WEEK
                     )
                 )
             )
@@ -436,12 +380,10 @@ object MockData {
             votes = 4958,
             vote_average = 8.1,
             genre_ids = listOf(18, 10765),
-            show_category = ShowCategory.POPULAR,
             epiosode_count = 1,
             id_ = null,
             description = null,
             year = null,
-            time_window = null,
             season_ids = null,
             episode_ids = null,
             status = null,
@@ -460,11 +402,9 @@ object MockData {
             votes = 4958,
             vote_average = 8.1,
             genre_ids = listOf(18, 10765),
-            show_category = ShowCategory.POPULAR,
             id_ = null,
             description = null,
             year = null,
-            time_window = null,
             season_ids = null,
             episode_ids = null,
             title = null,
@@ -529,10 +469,8 @@ object MockData {
         votes = 4958,
         vote_average = 8.1,
         genre_ids = listOf(18, 10765),
-        show_category = ShowCategory.POPULAR,
         year = "2019",
         season_ids = null,
-        time_window = null,
         status = "Ended",
         popularity = 24.4848,
         is_watchlist = true
@@ -554,10 +492,8 @@ object MockData {
             votes = 4958,
             vote_average = 8.1,
             genre_ids = listOf(18, 10765),
-            show_category = ShowCategory.POPULAR,
             year = "2019",
             season_ids = null,
-            time_window = null,
             status = "Ended",
             popularity = 24.4848,
             is_watchlist = true
@@ -574,10 +510,8 @@ object MockData {
             votes = 4958,
             vote_average = 8.1,
             genre_ids = listOf(35, 18),
-            show_category = ShowCategory.POPULAR,
             year = "2019",
             season_ids = null,
-            time_window = null,
             status = "Ended",
             popularity = 24.4848,
             is_watchlist = false
@@ -586,19 +520,4 @@ object MockData {
 
     val dayResponse = getTvResponse().results
         .map { it.toTvShow() }
-        .map {
-            it.copy(
-                showCategory = ShowCategory.TRENDING,
-                timeWindow = TimeWindow.DAY
-            )
-        }
-
-    val weekResponse = getTvResponse().results
-        .map { it.toTvShow() }
-        .map {
-            it.copy(
-                showCategory = ShowCategory.TRENDING,
-                timeWindow = TimeWindow.WEEK
-            )
-        }
 }

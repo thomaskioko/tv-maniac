@@ -3,15 +3,16 @@ package com.thomaskioko.tvmaniac.datasource.repository.shows
 import com.thomaskioko.tvmaniac.MockData.getShow
 import com.thomaskioko.tvmaniac.MockData.getTvResponse
 import com.thomaskioko.tvmaniac.MockData.makeShowList
+import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCache
+import com.thomaskioko.tvmaniac.datasource.cache.show_category.ShowCategoryCache
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.POPULAR
-import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow.WEEK
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepositoryImpl
 import com.thomaskioko.tvmaniac.util.runBlocking
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
@@ -28,14 +29,26 @@ internal class TvShowRepositoryTest {
     lateinit var apiService: TvShowsService
 
     @RelaxedMockK
-    lateinit var cache: TvShowCache
+    lateinit var tvShowCache: TvShowCache
+
+    @RelaxedMockK
+    lateinit var showCategoryCache: ShowCategoryCache
+
+    @RelaxedMockK
+    lateinit var categoryCache: CategoryCache
 
     private lateinit var repository: TvShowsRepositoryImpl
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        repository = TvShowsRepositoryImpl(apiService, cache, mockk())
+        repository = TvShowsRepositoryImpl(
+            apiService,
+            tvShowCache,
+            categoryCache,
+            showCategoryCache,
+            mockk()
+        )
     }
 
     @AfterTest
@@ -45,66 +58,38 @@ internal class TvShowRepositoryTest {
 
     @Test
     fun givenDataIsCached_thenGetCachedTvShowIsLoadedFromCache() = runBlocking {
-        every { cache.getTvShow(84958) } returns flowOf(getShow())
+        every { tvShowCache.getTvShow(84958) } returns flowOf(getShow())
 
-        repository.getTvShow(84958)
+        repository.getShow(84958)
 
-        verify(exactly = 0) {
-            runBlocking { apiService.getTvShowDetails(1) }
+        coVerify(exactly = 0) {
+            apiService.getTvShowDetails(1)
         }
 
-        verify { cache.getTvShow(84958) }
-    }
-
-    @Test
-    fun givenDataIsCached_thenDataIsLoadedFromCache() = runBlocking {
-        every { cache.getTvShowsByCategory(POPULAR) } returns makeShowList()
-
-        runBlocking {
-            repository.getPopularTvShows(1)
-        }
-
-        verify(exactly = 0) {
-            runBlocking { apiService.getPopularShows(1) }
-            cache.insert(makeShowList())
-        }
-
-        verify(exactly = 2) { cache.getTvShowsByCategory(POPULAR) }
-    }
-
-    @Test
-    fun givenDataIsNotCached_thenApiServiceIsInvoked_AndDataIsLoadedFromCache() = runBlocking {
-        coEvery { apiService.getPopularShows(1) } answers { getTvResponse() }
-
-        repository.getPopularTvShows(1)
-
-        verify {
-            runBlocking { apiService.getPopularShows(1) }
-            cache.getTvShowsByCategory(POPULAR)
-        }
+        verify { tvShowCache.getTvShow(84958) }
     }
 
     @Test
     fun givenDataIsNotCached_thenGetTrendingShowsInvokesApiService_AndDataIsLoadedFromCache() =
         runBlocking {
-            coEvery { apiService.getTrendingShows(1, WEEK.window) } answers { getTvResponse() }
+            coEvery { apiService.getTrendingShows(1) } answers { getTvResponse() }
 
-            repository.getTrendingShowsByTime(WEEK)
+            repository.getDiscoverShowList(listOf(TRENDING))
 
-            verify {
-                runBlocking { apiService.getTrendingShows(1, WEEK.window) }
-                cache.getTvShows(ShowCategory.TRENDING, WEEK)
+            coVerify {
+                // Api is invoked
+                apiService.getTrendingShows(1)
+
+                showCategoryCache.getShowsByCategoryID(TRENDING.type)
             }
         }
 
     @Test
     fun givenDataIsCached_thenWatchlistIsFetched() = runBlocking {
-        every { cache.getTvShows() } returns flowOf(makeShowList())
+        every { tvShowCache.getTvShows() } returns flowOf(makeShowList())
 
         repository.getWatchlist()
 
-        verify {
-            runBlocking { cache.getWatchlist() }
-        }
+        coVerify { tvShowCache.getWatchlist() }
     }
 }

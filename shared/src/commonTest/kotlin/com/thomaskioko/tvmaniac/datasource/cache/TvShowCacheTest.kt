@@ -1,23 +1,19 @@
 package com.thomaskioko.tvmaniac.datasource.cache
 
-import com.thomaskioko.tvmaniac.MockData.makeTvShowList
-import com.thomaskioko.tvmaniac.MockData.tvShow
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.POPULAR
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TRENDING
-import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.MockData.getShow
+import com.thomaskioko.tvmaniac.MockData.makeShowList
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.test.Test
 
 internal class TvShowCacheTest : BaseDatabaseTest() {
 
-    private val tvShowQueries get() = database.tvShowQueries
+    private val tvShowQueries get() = database.showQueries
 
     @Test
     fun insertTvShow() {
 
-        makeTvShowList().insertTvShowsEntityList()
+        makeShowList().insertTvShowsEntityList()
 
         val entities = tvShowQueries.selectAll().executeAsList()
 
@@ -27,26 +23,25 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     @Test
     fun verify_selectByShowId_returnTvShowEntity_afterInsertHasBeenDone() {
 
-        tvShow.insertTvShowQuery()
+        getShow().insertTvShowQuery()
 
-        val entity = tvShowQueries.selectByShowId(tvShow.id.toLong())
+        val entity = tvShowQueries.selectByShowId(getShow().id)
             .executeAsOne()
 
         entity shouldNotBe null
-        entity.title shouldBe tvShow.title
-        entity.description shouldBe tvShow.overview
-        entity.poster_image_url shouldBe tvShow.posterImageUrl
-        entity.backdrop_image_url shouldBe tvShow.backdropImageUrl
-        entity.votes shouldBe tvShow.votes
-        entity.vote_average shouldBe tvShow.averageVotes
-        entity.genre_ids shouldBe tvShow.genreIds
-        entity.show_category shouldBe tvShow.showCategory
+        entity.title shouldBe getShow().title
+        entity.description shouldBe getShow().description
+        entity.poster_image_url shouldBe getShow().poster_image_url
+        entity.backdrop_image_url shouldBe getShow().backdrop_image_url
+        entity.votes shouldBe getShow().votes
+        entity.vote_average shouldBe getShow().vote_average
+        entity.genre_ids shouldBe getShow().genre_ids
     }
 
     @Test
     fun givenTvShowHasSeasons_queryReturnsCorrectData() {
 
-        makeTvShowList().insertTvShowsEntityList()
+        makeShowList().insertTvShowsEntityList()
 
         val seasons = tvShowQueries.selectByShowId(84958)
             .executeAsOne().season_ids
@@ -60,7 +55,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             status = "Returning  Series"
         )
 
-        val seasonIds = tvShowQueries.selectByShowId(tvShow.id.toLong())
+        val seasonIds = tvShowQueries.selectByShowId(getShow().id)
             .executeAsOne().season_ids
 
         // Verify that the list has been updated and exists
@@ -70,20 +65,20 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     @Test
     fun givenTvShowIsUpdated_verifyDataIs_InsertedCorrectly() {
 
-        makeTvShowList().insertTvShowsEntityList()
+        makeShowList().insertTvShowsEntityList()
 
-        val entity = tvShowQueries.selectByShowId(tvShow.id.toLong())
+        val entity = tvShowQueries.selectByShowId(getShow().id)
             .executeAsOne()
 
         entity.season_ids shouldBe null
 
         tvShowQueries.updateTvShow(
-            id = tvShow.id.toLong(),
+            id = getShow().id,
             season_ids = listOf(2534997, 2927202),
             status = "Returning  Series"
         )
 
-        val seasonsIds = tvShowQueries.selectByShowId(tvShow.id.toLong())
+        val seasonsIds = tvShowQueries.selectByShowId(getShow().id)
             .executeAsOne().season_ids
 
         seasonsIds shouldBe listOf(2534997, 2927202)
@@ -92,7 +87,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     @Test
     fun givenTvShowIsAddedToWatchList_verifyDataIs_InsertedCorrectly() {
 
-        makeTvShowList().insertTvShowsEntityList()
+        makeShowList().insertTvShowsEntityList()
 
         tvShowQueries.updateWatchlist(
             id = 84958.toLong(),
@@ -105,58 +100,33 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun getTvShowsByCategory_queryReturnsCorrectData() {
-
-        makeTvShowList().insertTvShowsEntityList()
-
-        val shows = tvShowQueries.selectByCategory(POPULAR)
-            .executeAsList()
-
-        shows.size shouldBe 1
-    }
-
-    @Test
-    fun selectFeatured_queryReturnsCorrectData() {
-
-        makeTvShowList().insertTvShowsEntityList()
-
-        val shows = tvShowQueries.selectFeatured(TRENDING, TimeWindow.WEEK)
-            .executeAsList()
-
-        shows.size shouldBe 1
-        shows.first().title shouldBe "Loki"
-    }
-
-    @Test
     fun verifyDelete_clearsTable() {
 
-        tvShow.insertTvShowQuery()
+        getShow().insertTvShowQuery()
 
         tvShowQueries.deleteAll()
 
-        val entity = tvShowQueries.selectByShowId(tvShow.id.toLong())
+        val entity = tvShowQueries.selectByShowId(getShow().id)
             .executeAsOneOrNull()
 
         entity shouldBe null
     }
 
-    private fun List<TvShow>.insertTvShowsEntityList() {
+    private fun List<Show>.insertTvShowsEntityList() {
         map { it.insertTvShowQuery() }
     }
 
-    private fun TvShow.insertTvShowQuery() {
+    private fun Show.insertTvShowQuery() {
         tvShowQueries.insertOrReplace(
-            id = id.toLong(),
+            id = id,
             title = title,
-            description = overview,
+            description = description,
             language = language,
-            poster_image_url = posterImageUrl,
-            backdrop_image_url = backdropImageUrl,
-            votes = votes.toLong(),
-            vote_average = averageVotes,
-            genre_ids = genreIds,
-            show_category = showCategory,
-            time_window = timeWindow,
+            poster_image_url = poster_image_url,
+            backdrop_image_url = backdrop_image_url,
+            votes = votes,
+            vote_average = vote_average,
+            genre_ids = genre_ids,
             year = year,
             status = status,
             popularity = 0.0,
