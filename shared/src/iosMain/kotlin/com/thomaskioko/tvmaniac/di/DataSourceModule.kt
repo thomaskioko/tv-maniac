@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.di
 
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
+import com.thomaskioko.tvmaniac.interactor.GetDiscoverShowListInteractor
 import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.interactor.GetTrailersInteractor
-import com.thomaskioko.tvmaniac.interactor.GetTrendingShowsInteractor
 import com.thomaskioko.tvmaniac.interactor.GetWatchListInteractor
 import com.thomaskioko.tvmaniac.interactor.PopularShowsInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
@@ -45,8 +45,8 @@ class DataSourceModule(
         )
     }
 
-    val getTrendingShowsInteractor: GetTrendingShowsInteractor by lazy {
-        GetTrendingShowsInteractor(
+    val getDiscoverShowListInteractor: GetDiscoverShowListInteractor by lazy {
+        GetDiscoverShowListInteractor(
             repository = repositoryModule.tvShowsRepository
         )
     }
