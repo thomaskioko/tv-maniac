@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.Tv_season
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
-import com.thomaskioko.tvmaniac.datasource.mapper.toTvShow
 import com.thomaskioko.tvmaniac.datasource.network.model.EpisodesResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.GenreResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.SeasonResponse
@@ -158,7 +157,7 @@ object MockData {
         ),
     )
 
-    val seasonsList = listOf(
+    fun getSeasonsList() = listOf(
         Season(
             seasonId = 114355,
             tvShowId = 84958,
@@ -517,7 +516,4 @@ object MockData {
             is_watchlist = false
         ),
     )
-
-    val dayResponse = getTvResponse().results
-        .map { it.toTvShow() }
 }
