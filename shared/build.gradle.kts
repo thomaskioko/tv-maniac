@@ -124,7 +124,6 @@ kotlin {
                 useExperimentalAnnotation("kotlin.time.ExperimentalTime")
                 useExperimentalAnnotation("kotlinx.coroutines.FlowPreview")
                 useExperimentalAnnotation("kotlinx.coroutines.ExperimentalCoroutinesApi")
-                useExperimentalAnnotation("com.google.accompanist.pager.ExperimentalPagerApi")
             }
         }
     }
