@@ -8,12 +8,12 @@ import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 
 data class DiscoverShowState(
     val isLoading: Boolean,
-    val dataMap: List<TrendingShowData>
+    val list: List<TrendingShowData>
 ) : State {
     companion object {
         val Empty = DiscoverShowState(
             isLoading = true,
-            dataMap = emptyList()
+            list = emptyList()
         )
     }
 }
