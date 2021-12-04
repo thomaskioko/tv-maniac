@@ -136,14 +136,14 @@ private fun DiscoverShows(
 
             item {
                 FeaturedItems(
-                    data = discoverViewState.dataMap,
+                    data = discoverViewState.list,
                     onItemClicked = { openShowDetails(it) }
                 )
             }
 
             item {
                 DisplayShowData(
-                    data = discoverViewState.dataMap,
+                    data = discoverViewState.list,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
