@@ -69,7 +69,7 @@ class DiscoverViewModel @Inject constructor(
                 state.copy(isLoading = false)
             }
             is DomainResultState.Loading -> state.copy(isLoading = true)
-            is DomainResultState.Success -> state.copy(isLoading = false, dataMap = data)
+            is DomainResultState.Success -> state.copy(isLoading = false, list = data)
         }
     }
 }
