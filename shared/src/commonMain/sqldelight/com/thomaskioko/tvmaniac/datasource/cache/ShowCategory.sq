@@ -16,4 +16,5 @@ SELECT *
 FROM show_category
 INNER JOIN show  ON show_category.show_id = show.id
 INNER JOIN category ON show_category.category_id = category.id
-WHERE category_id = ?;
+WHERE category_id = ?
+ORDER BY show.popularity DESC;

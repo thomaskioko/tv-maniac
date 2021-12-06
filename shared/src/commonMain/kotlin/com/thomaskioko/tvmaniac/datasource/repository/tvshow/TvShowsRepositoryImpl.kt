@@ -79,7 +79,7 @@ class TvShowsRepositoryImpl(
                 )
                 FEATURED -> getShowsByCategoryId(
                     page = DEFAULT_API_PAGE,
-                    categoryId = category.type
+                    categoryId = TRENDING.type
                 ).take(FEATURED_LIST_SIZE)
             }.map { it.toTvShow() }
 
