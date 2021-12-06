@@ -59,7 +59,6 @@ android {
         implementation(libs.hilt.navigation)
         kapt(libs.hilt.compiler)
 
-        implementation(libs.androidx.multidex)
         implementation(libs.napier)
         implementation(libs.ktor.android)
 
