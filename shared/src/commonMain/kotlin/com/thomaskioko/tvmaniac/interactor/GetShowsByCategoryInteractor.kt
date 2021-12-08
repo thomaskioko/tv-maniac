@@ -30,9 +30,9 @@ class GetShowsByCategoryInteractor constructor(
             emit(loading())
 
             val list = when (val category = ShowCategory[params]) {
-                TRENDING, FEATURED -> repository.getPagedShowsByCategoryAndWindow(category.type)
-                POPULAR -> repository.getPagedShowsByCategoryAndWindow(category.type)
-                TOP_RATED -> repository.getPagedShowsByCategoryAndWindow(category.type)
+                TRENDING, FEATURED -> repository.getPagedShowsByCategoryID(category.type)
+                POPULAR -> repository.getPagedShowsByCategoryID(category.type)
+                TOP_RATED -> repository.getPagedShowsByCategoryID(category.type)
             }.map { pagingData ->
                 pagingData.map { it.toTvShow() }
             }

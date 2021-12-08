@@ -100,62 +100,7 @@ class TvShowsRepositoryImpl(
 
     override fun getWatchlist(): Flow<List<Show>> = tvShowCache.getWatchlist()
 
-    override fun getPagedPopularTvShows(): CommonFlow<PagingData<Show>> {
-        val pager = Pager(
-            clientScope = coroutineScope,
-            config = PagingConfig(
-                pageSize = 30,
-                enablePlaceholders = false
-            ),
-            initialKey = 1,
-            getItems = { currentKey, _ ->
-                val apiResponse = apiService.getPopularShows(currentKey)
-
-                mapApiResultAndInsert(apiResponse, POPULAR)
-
-                val tvShows = getCachedShowsByCategoryId(POPULAR.type)
-                PagingResult(
-                    items = tvShows,
-                    currentKey = currentKey,
-                    prevKey = { null },
-                    nextKey = { apiResponse.page + DEFAULT_API_PAGE }
-                )
-            }
-        )
-
-        return pager.pagingData
-            .cachedIn(coroutineScope)
-            .asCommonFlow()
-    }
-
-    override fun getPagedTopRatedTvShows(): CommonFlow<PagingData<Show>> {
-        val pager = Pager(
-            clientScope = coroutineScope,
-            config = PagingConfig(
-                pageSize = 30,
-                enablePlaceholders = false
-            ),
-            initialKey = DEFAULT_API_PAGE,
-            getItems = { currentKey, _ ->
-                val apiResponse = apiService.getTopRatedShows(currentKey)
-
-                mapApiResultAndInsert(apiResponse, TOP_RATED)
-
-                PagingResult(
-                    items = getCachedShowsByCategoryId(TOP_RATED.type),
-                    currentKey = currentKey,
-                    prevKey = { null },
-                    nextKey = { apiResponse.page + DEFAULT_API_PAGE }
-                )
-            }
-        )
-
-        return pager.pagingData
-            .cachedIn(coroutineScope)
-            .asCommonFlow()
-    }
-
-    override fun getPagedShowsByCategoryAndWindow(
+    override fun getPagedShowsByCategoryID(
         categoryId: Int
     ): CommonFlow<PagingData<Show>> {
         val pager = Pager(
