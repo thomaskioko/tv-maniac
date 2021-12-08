@@ -32,7 +32,7 @@ class DiscoverViewModel @Inject constructor(
 
     init {
         dispatch(
-            DiscoverShowAction.LoadTvShows(listOf(FEATURED, TRENDING, POPULAR, TOP_RATED))
+            DiscoverShowAction.LoadTvShows(listOf(FEATURED, TRENDING, TOP_RATED, POPULAR))
         )
     }
 

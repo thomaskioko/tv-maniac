@@ -272,7 +272,8 @@ private fun Body(
 
         Column(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -280,7 +281,7 @@ private fun Body(
             Text(
                 text = show.title,
                 style = MaterialTheme.typography.h4,
-                modifier = Modifier.padding(horizontal = 16.dp),
+                overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
 
@@ -289,7 +290,6 @@ private fun Body(
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 ExpandingText(
                     text = show.overview,
-                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
 
@@ -352,9 +352,7 @@ fun TvShowMetadata(
         Text(
             text = text,
             style = MaterialTheme.typography.body2,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+            modifier = Modifier.fillMaxWidth()
         )
     }
 
@@ -381,10 +379,7 @@ private fun GenreText(
     }
 
     LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-
+        modifier = Modifier.fillMaxWidth()
     ) {
         items(result) { item ->
             RowSpacer(4)
@@ -415,9 +410,6 @@ fun ShowDetailButtons(
 
     Row(
         horizontalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
     ) {
 
         ExtendedFloatingActionButton(
