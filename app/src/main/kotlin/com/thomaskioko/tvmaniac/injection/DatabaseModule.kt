@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.injection
 
 import android.content.Context
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCache
+import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.db.DriverFactory
 import com.thomaskioko.tvmaniac.datasource.cache.db.TvManiacDatabaseFactory
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
@@ -10,6 +12,8 @@ import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
 import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCacheImpl
+import com.thomaskioko.tvmaniac.datasource.cache.show_category.ShowCategoryCache
+import com.thomaskioko.tvmaniac.datasource.cache.show_category.ShowCategoryCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
@@ -65,5 +69,17 @@ object DatabaseModule {
     @Provides
     fun provideTrailerCache(database: TvManiacDatabase): TrailerCache {
         return TrailerCacheImpl(database)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCategoryCache(database: TvManiacDatabase): CategoryCache {
+        return CategoryCacheImpl(database)
+    }
+
+    @Singleton
+    @Provides
+    fun provideShowCategoryCache(database: TvManiacDatabase): ShowCategoryCache {
+        return ShowCategoryCacheImpl(database)
     }
 }
