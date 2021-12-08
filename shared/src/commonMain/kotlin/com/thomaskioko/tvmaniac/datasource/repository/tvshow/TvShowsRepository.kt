@@ -21,11 +21,7 @@ interface TvShowsRepository {
 
     fun getWatchlist(): Flow<List<Show>>
 
-    fun getPagedPopularTvShows(): CommonFlow<PagingData<Show>>
-
-    fun getPagedTopRatedTvShows(): CommonFlow<PagingData<Show>>
-
-    fun getPagedShowsByCategoryAndWindow(
+    fun getPagedShowsByCategoryID(
         categoryId: Int
     ): CommonFlow<PagingData<Show>>
 }
