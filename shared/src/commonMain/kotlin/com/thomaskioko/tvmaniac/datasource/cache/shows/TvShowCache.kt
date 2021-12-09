@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.datasource.cache.shows
 
 import com.thomaskioko.tvmaniac.datasource.cache.Show
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
-import com.thomaskioko.tvmaniac.datasource.enums.TimeWindow
 import kotlinx.coroutines.flow.Flow
 
 interface TvShowCache {
@@ -16,12 +14,6 @@ interface TvShowCache {
     fun getTvShows(): Flow<List<Show>>
 
     fun getWatchlist(): Flow<List<Show>>
-
-    fun getTvShows(category: ShowCategory, timeWindow: TimeWindow): List<Show>
-
-    fun getTvShowsByCategory(category: ShowCategory): List<Show>
-
-    fun getFeaturedTvShows(category: ShowCategory, timeWindow: TimeWindow): List<Show>
 
     fun updateShowDetails(showId: Int, showStatus: String, seasonIds: List<Int>)
 

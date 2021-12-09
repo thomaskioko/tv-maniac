@@ -1,28 +1,5 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
-    <style name="Platform.Theme.TvManiac" parent="android:Theme.Material.Light" />
-
-    <style name="Base.Theme.TvManiac" parent="Platform.Theme.TvManiac">
-        <item name="android:windowActionModeOverlay">true</item>
-    </style>
-
-    <style name="Theme.TvManiac" parent="Base.Theme.TvManiac"/>
-
-    <style name="Theme.TvManiac.NoActionBar">
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
-    </style>
-
-    <style name="Theme.TvManiac.Immerse" parent="Theme.TvManiac.NoActionBar">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-
-        <item name="android:navigationBarColor">@color/nav_bar_scrim</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">@bool/use_light_nav_bar</item>
-    </style>
-
-    <style name="Theme.TvManiac.Home" parent="Theme.TvManiac.Immerse">
-        <item name="android:windowSplashScreenBackground" tools:targetApi="s">@android:color/white</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">@bool/use_light_status_bar</item>
-    </style>
+    <style name="Theme.TvManiac" parent="android:Theme.Material.NoActionBar" />
 
 </resources>

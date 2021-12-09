@@ -1,9 +1,11 @@
 package com.thomaskioko.tvmaniac.injection
 
 import com.thomaskioko.tvmaniac.core.annotations.IoCoroutineScope
+import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCache
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
 import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
+import com.thomaskioko.tvmaniac.datasource.cache.show_category.ShowCategoryCache
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
@@ -32,9 +34,18 @@ object RepositoriesModule {
     @Provides
     fun provideTvShowsRepository(
         tvShowsService: TvShowsService,
-        cache: TvShowCache,
+        tvShowCache: TvShowCache,
+        categoryCache: CategoryCache,
+        showCategoryCache: ShowCategoryCache,
         @IoCoroutineScope coroutineScope: CoroutineScope
-    ): TvShowsRepository = TvShowsRepositoryImpl(tvShowsService, cache, coroutineScope)
+    ): TvShowsRepository =
+        TvShowsRepositoryImpl(
+            apiService = tvShowsService,
+            tvShowCache = tvShowCache,
+            categoryCache = categoryCache,
+            showCategoryCache = showCategoryCache,
+            coroutineScope = coroutineScope
+        )
 
     @Singleton
     @Provides

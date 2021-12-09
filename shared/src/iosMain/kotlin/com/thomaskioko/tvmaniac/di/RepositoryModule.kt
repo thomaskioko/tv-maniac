@@ -43,7 +43,9 @@ class RepositoryModule(
     val tvShowsRepository: TvShowsRepository by lazy {
         TvShowsRepositoryImpl(
             apiService = networkModule.tmdbService,
-            cache = databaseModule.tvShowCache,
+            tvShowCache = databaseModule.tvShowCache,
+            categoryCache = databaseModule.categoryCache,
+            showCategoryCache = databaseModule.showCategoryCache,
             coroutineScope = MainScope()
         )
     }

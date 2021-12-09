@@ -3,6 +3,7 @@
     package="com.thomaskioko.tvmaniac">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".TvManicApplication"
@@ -17,7 +18,7 @@
             android:name=".ui.MainActivity"
             android:exported="true"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode"
-            android:theme="@style/Theme.TvManiac.Home">
+            android:theme="@style/Theme.TvManiac">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

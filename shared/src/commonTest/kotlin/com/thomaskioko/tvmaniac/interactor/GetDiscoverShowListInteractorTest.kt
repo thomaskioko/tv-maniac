@@ -2,8 +2,7 @@ package com.thomaskioko.tvmaniac.interactor
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.MockData.getTrendingDataMap
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.THIS_WEEK
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TODAY
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.runBlocking
@@ -12,16 +11,16 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlin.test.Test
 
-internal class GetTrendingShowsInteractorTest {
+internal class GetDiscoverShowListInteractorTest {
 
     private val repository: TvShowsRepository = mockk()
-    private val interactor = GetTrendingShowsInteractor(repository)
+    private val interactor = GetDiscoverShowListInteractor(repository)
 
     @Test
     fun wheneverGetTrendingShowsInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {
-        val trendingTypes = listOf(TODAY, THIS_WEEK)
+        val trendingTypes = listOf(ShowCategory.TRENDING, ShowCategory.FEATURED)
 
-        coEvery { repository.getTrendingShows(trendingTypes) } returns getTrendingDataMap()
+        coEvery { repository.getDiscoverShowList(trendingTypes) } returns getTrendingDataMap()
 
         interactor(trendingTypes).test {
             awaitItem() shouldBe DomainResultState.Loading()
@@ -33,10 +32,10 @@ internal class GetTrendingShowsInteractorTest {
     @Test
     fun wheneverGetTrendingShowsInteractorIsInvoked_ErrorIsReturned() = runBlocking {
         val trendingTypes = listOf(
-            TODAY,
-            THIS_WEEK
+            ShowCategory.TRENDING,
+            ShowCategory.FEATURED
         )
-        coEvery { repository.getTrendingShows(trendingTypes) }.throws(Exception("Something went wrong"))
+        coEvery { repository.getDiscoverShowList(trendingTypes) }.throws(Exception("Something went wrong"))
 
         interactor(trendingTypes).test {
             awaitItem() shouldBe DomainResultState.Loading()

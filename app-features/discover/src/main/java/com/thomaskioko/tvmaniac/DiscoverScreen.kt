@@ -128,11 +128,7 @@ private fun DiscoverShows(
     ) {
         if (discoverViewState.isLoading) LoadingView()
 
-        val lazyListState = rememberLazyListState()
-
         LazyColumn(
-            state = lazyListState,
-            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
             modifier = Modifier
                 .navigationBarsWithImePadding()
                 .animateContentSize(),
@@ -140,14 +136,14 @@ private fun DiscoverShows(
 
             item {
                 FeaturedItems(
-                    data = discoverViewState.dataMap,
+                    data = discoverViewState.list,
                     onItemClicked = { openShowDetails(it) }
                 )
             }
 
             item {
                 DisplayShowData(
-                    data = discoverViewState.dataMap,
+                    data = discoverViewState.list,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -189,7 +185,9 @@ fun FeaturedItems(
                 }
 
                 LaunchedEffect(Unit) {
-                    pagerState.scrollToPage(2)
+                    if (data.size >= 4) {
+                        pagerState.scrollToPage(2)
+                    }
                 }
 
                 Column(
@@ -297,7 +295,6 @@ private fun DisplayShowData(
     onItemClicked: (Int) -> Unit,
     moreClicked: (Int) -> Unit,
 ) {
-    val lazyListState = rememberLazyListState()
 
     data
         .filterNot { it.category.title == "Featured" }
@@ -308,6 +305,8 @@ private fun DisplayShowData(
                 moreString = stringResource(id = R.string.str_more),
                 onMoreClicked = { moreClicked(show.category.type) }
             )
+
+            val lazyListState = rememberLazyListState()
 
             LazyRow(
                 state = lazyListState,

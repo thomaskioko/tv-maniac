@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.datasource.cache
 
-import com.thomaskioko.tvmaniac.MockData.seasonsList
+import com.thomaskioko.tvmaniac.MockData.getSeasonsList
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -13,20 +13,20 @@ internal class SeasonsCacheTest : BaseDatabaseTest() {
     @Test
     fun insertSeason_andSeasonBySeasonId_returnsExpectedData() {
 
-        seasonsList.insertSeasonsEntityQuery()
+        getSeasonsList().insertSeasonsEntityQuery()
 
         val queryResult = tvSeasonQueries.selectBySeasonId(114355).executeAsOne()
 
-        queryResult.id shouldBe seasonsList[0].seasonId
-        queryResult.tv_show_id shouldBe seasonsList[0].tvShowId
-        queryResult.name shouldBe seasonsList[0].name
-        queryResult.season_number shouldBe seasonsList[0].seasonNumber
+        queryResult.id shouldBe getSeasonsList()[0].seasonId
+        queryResult.tv_show_id shouldBe getSeasonsList()[0].tvShowId
+        queryResult.name shouldBe getSeasonsList()[0].name
+        queryResult.season_number shouldBe getSeasonsList()[0].seasonNumber
     }
 
     @Test
     fun insertSeason_andSelectSeasonsByShowId_returnsExpectedData() {
 
-        seasonsList.insertSeasonsEntityQuery()
+        getSeasonsList().insertSeasonsEntityQuery()
 
         val queryResult = tvSeasonQueries.selectSeasonsByShowId(84958).executeAsList()
 
@@ -37,7 +37,7 @@ internal class SeasonsCacheTest : BaseDatabaseTest() {
     @Test
     fun givenUpdateEpisodes_queryReturnsCorrectData() {
 
-        seasonsList.insertSeasonsEntityQuery()
+        getSeasonsList().insertSeasonsEntityQuery()
 
         val queryResult = tvSeasonQueries.selectBySeasonId(114355).executeAsOne()
 

@@ -8,10 +8,10 @@ import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.FEATURED
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.POPULAR
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.THIS_WEEK
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TOP_RATED
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
-import com.thomaskioko.tvmaniac.interactor.GetTrendingShowsInteractor
+import com.thomaskioko.tvmaniac.interactor.GetDiscoverShowListInteractor
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
-    private val interactor: GetTrendingShowsInteractor,
+    private val interactor: GetDiscoverShowListInteractor,
 ) : Store<DiscoverShowState, DiscoverShowAction, DiscoverShowEffect>, ViewModel() {
 
     private val state = MutableStateFlow(DiscoverShowState(false, emptyList()))
@@ -32,7 +32,7 @@ class DiscoverViewModel @Inject constructor(
 
     init {
         dispatch(
-            DiscoverShowAction.LoadTvShows(listOf(FEATURED, THIS_WEEK, TOP_RATED, POPULAR))
+            DiscoverShowAction.LoadTvShows(listOf(FEATURED, TRENDING, TOP_RATED, POPULAR))
         )
     }
 
@@ -69,7 +69,7 @@ class DiscoverViewModel @Inject constructor(
                 state.copy(isLoading = false)
             }
             is DomainResultState.Loading -> state.copy(isLoading = true)
-            is DomainResultState.Success -> state.copy(isLoading = false, dataMap = data)
+            is DomainResultState.Success -> state.copy(isLoading = false, list = data)
         }
     }
 }

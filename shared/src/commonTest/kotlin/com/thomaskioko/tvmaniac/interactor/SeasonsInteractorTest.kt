@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.interactor
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.MockData.seasonsList
+import com.thomaskioko.tvmaniac.MockData.getSeasonsList
 import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepository
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.runBlocking
@@ -17,11 +17,11 @@ internal class SeasonsInteractorTest {
 
     @Test
     fun wheneverInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {
-        coEvery { repository.getSeasonListByTvShowId(84958) } returns seasonsList
+        coEvery { repository.getSeasonListByTvShowId(84958) } returns getSeasonsList()
 
         interactor.invoke(84958).test {
             awaitItem() shouldBe DomainResultState.Loading()
-            awaitItem() shouldBe DomainResultState.Success(seasonsList)
+            awaitItem() shouldBe DomainResultState.Success(getSeasonsList())
             awaitComplete()
         }
     }

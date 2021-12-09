@@ -19,11 +19,14 @@ android {
         targetSdk = libs.versions.android.target.get().toInt()
         versionCode = 1
         versionName = "1.0"
+
+        multiDexEnabled = true
     }
 
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            multiDexEnabled = true
         }
     }
 
