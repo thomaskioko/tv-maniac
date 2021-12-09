@@ -1,9 +1,10 @@
 package com.thomaskioko.tvmaniac.di
 
-import com.squareup.sqldelight.EnumColumnAdapter
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.datasource.cache.Tv_season
+import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCache
+import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.db.DriverFactory
 import com.thomaskioko.tvmaniac.datasource.cache.db.adapter.intAdapter
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
@@ -12,6 +13,8 @@ import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
 import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCacheImpl
+import com.thomaskioko.tvmaniac.datasource.cache.show_category.ShowCategoryCache
+import com.thomaskioko.tvmaniac.datasource.cache.show_category.ShowCategoryCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
@@ -26,8 +29,6 @@ class DatabaseModule {
             showAdapter = Show.Adapter(
                 genre_idsAdapter = intAdapter,
                 season_idsAdapter = intAdapter,
-                show_categoryAdapter = EnumColumnAdapter(),
-                time_windowAdapter = EnumColumnAdapter(),
             ),
             tv_seasonAdapter = Tv_season.Adapter(
                 episode_idsAdapter = intAdapter
@@ -61,6 +62,18 @@ class DatabaseModule {
 
     val tvShowCache: TvShowCache by lazy {
         TvShowCacheImpl(
+            database = tvManiacDatabase
+        )
+    }
+
+    val showCategoryCache: ShowCategoryCache by lazy {
+        ShowCategoryCacheImpl(
+            database = tvManiacDatabase
+        )
+    }
+
+    val categoryCache: CategoryCache by lazy {
+        CategoryCacheImpl(
             database = tvManiacDatabase
         )
     }

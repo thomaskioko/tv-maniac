@@ -34,7 +34,7 @@ struct DiscoverView: View {
 		self.viewModel = DiscoverViewModel(
 			networkModule: self.networkModule,
 			databaseModule: self.databaseModule,
-			getTrendingShowsInteractor: datasourceModule.getTrendingShowsInteractor
+			getDiscoverShowListInteractor: datasourceModule.getDiscoverShowListInteractor
 		)
 	}
 	
@@ -45,30 +45,29 @@ struct DiscoverView: View {
 			Color("Background")
 				.edgesIgnoringSafeArea(.all)
 			
-			VStack {
-				ScrollView {
-					
-					ForEach(viewModel.trendingDataResult, id: \.self) { item in
-						
-						if item.category == ShowCategory.featured {
-							FeaturedShowsView(shows: item.shows)
-						} else {
-							HorizontalShowsView(title: item.category.title, shows: item.shows)
+			if viewModel.state.isLoading {
+				LoadingIndicatorView()
+			} else {
+				VStack {
+					ScrollView {
+						ForEach(viewModel.state.list, id: \.self) { item in
+							
+							if item.category == ShowCategory.featured {
+								FeaturedShowsView(shows: item.shows)
+							} else {
+								HorizontalShowsView(title: item.category.title, shows: item.shows)
+							}
 						}
 						
+						Spacer()
 					}
-				
-					
-					Spacer()
 				}
-				.onAppear{
-					viewModel.startObservingTrendingShows()
-				}
-				.onDisappear{
-					viewModel.stopObservingTrendingShows()
-				}
-				
 			}
+		}.onAppear{
+			viewModel.startObservingTrendingShows()
+		}
+		.onDisappear{
+			viewModel.stopObservingTrendingShows()
 		}
 	}
 	
@@ -98,7 +97,7 @@ struct FeaturedShowsView: View {
 							placeholder: { Text("Loading ...") },
 							image: { Image(uiImage: $0).resizable() }
 						)
-							.frame(height: 450) // 2:3 aspect ratio
+							.frame(height: 500)
 							.clipShape(RoundedRectangle(cornerRadius: 10))
 							.padding()
 					}
@@ -111,7 +110,7 @@ struct FeaturedShowsView: View {
 				}
 			}
 		}
-		.frame(height: 550)
+		.frame(height: 600)
 		.padding(.bottom, 20)
 	}
 }
@@ -134,7 +133,7 @@ struct HorizontalShowsView: View {
 struct LabelView: View {
 	
 	let title: String
-
+	
 	var body: some View{
 		HStack {
 			
@@ -166,7 +165,7 @@ struct HorizontalShowsGridView: View {
 						placeholder: { Text("Loading ...") },
 						image: { Image(uiImage: $0).resizable() }
 					)
-						.frame(width: 160, height: 160)
+						.frame(width: 140, height: 180)
 						.clipShape(RoundedRectangle(cornerRadius: 5))
 				}
 			}

@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.datasource.cache.db
 
-import com.squareup.sqldelight.EnumColumnAdapter
 import com.squareup.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
@@ -17,8 +16,6 @@ class TvManiacDatabaseFactory(
             showAdapter = Show.Adapter(
                 genre_idsAdapter = intAdapter,
                 season_idsAdapter = intAdapter,
-                show_categoryAdapter = EnumColumnAdapter(),
-                time_windowAdapter = EnumColumnAdapter(),
             ),
             tv_seasonAdapter = Tv_season.Adapter(
                 episode_idsAdapter = intAdapter

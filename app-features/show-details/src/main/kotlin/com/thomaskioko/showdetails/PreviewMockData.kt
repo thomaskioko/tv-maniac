@@ -1,6 +1,5 @@
 package com.thomaskioko.showdetails
 
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.presentation.model.GenreModel
 import com.thomaskioko.tvmaniac.presentation.model.Season
@@ -24,7 +23,6 @@ val detailUiState = ShowDetailViewState(
         votes = 4958,
         averageVotes = 8.1,
         genreIds = listOf(18, 10765),
-        showCategory = ShowCategory.TODAY,
     ),
     tvSeasons = getTvSeasons(),
     genreList = getGenres(),

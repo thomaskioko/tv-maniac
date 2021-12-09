@@ -12,7 +12,6 @@ import com.thomaskioko.tvmaniac.presentation.contract.ShowsGridAction.LoadTvShow
 import com.thomaskioko.tvmaniac.presentation.contract.ShowsGridEffect
 import com.thomaskioko.tvmaniac.presentation.contract.ShowsGridState
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
-import com.thomaskioko.tvmaniac.util.CommonFlow
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.DomainResultState.Loading
 import com.thomaskioko.tvmaniac.util.DomainResultState.Success
@@ -60,7 +59,7 @@ class ShowGridViewModel @Inject constructor(
         }
     }
 
-    private fun DomainResultState<CommonFlow<PagingData<TvShow>>>.reducer(
+    private fun DomainResultState<Flow<PagingData<TvShow>>>.reducer(
         state: ShowsGridState
     ): ShowsGridState {
         return when (this) {

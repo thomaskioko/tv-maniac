@@ -33,14 +33,3 @@ fun SelectSeasonsByShowId.toSeasonsEntity(): Season {
         episodeCount = epiosode_count.toInt()
     )
 }
-
-fun Tv_season.toSeasonEntity(): Season {
-    return Season(
-        seasonId = id.toInt(),
-        tvShowId = tv_show_id.toInt(),
-        name = name,
-        overview = overview,
-        seasonNumber = season_number.toInt(),
-        episodeCount = epiosode_count.toInt()
-    )
-}
