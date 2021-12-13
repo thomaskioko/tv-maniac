@@ -59,7 +59,6 @@ import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import kotlinx.coroutines.flow.collect
 import kotlin.math.absoluteValue
 
 /**
@@ -69,7 +68,7 @@ import kotlin.math.absoluteValue
  */
 private const val MinContrastOfPrimaryVsSurface = 3f
 
-@OptIn(ExperimentalSnapperApi::class)
+@OptIn(ExperimentalSnapperApi::class, kotlinx.coroutines.InternalCoroutinesApi::class)
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverViewModel,
