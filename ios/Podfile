@@ -1,5 +1,5 @@
 target 'tv-maniac' do
   platform :ios, '14.1'
   pod 'shared', :path => '../shared'
-  pod 'KMPNativeCoroutinesCombine', '0.8.0'
+  pod 'KMPNativeCoroutinesCombine', '0.9.0'
 end
