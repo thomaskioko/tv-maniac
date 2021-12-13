@@ -62,7 +62,6 @@ dependencies {
     testImplementation(libs.testing.coroutines.test)
     testImplementation(libs.testing.kotest.assertions)
 
-    testImplementation(libs.testing.mockito.inline)
     testImplementation(libs.testing.mockk.core)
 
     testImplementation(libs.testing.androidx.core)
