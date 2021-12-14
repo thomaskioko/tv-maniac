@@ -1,19 +1,19 @@
 [versions]
-kotlin = "1.5.31"
+kotlin = "1.6.0"
 
 android-compile = "31"
 android-target = "31"
 android-min = "21"
 
-android-gradle = "7.1.0-beta04"
+android-gradle = "7.1.0-beta05"
 date-time = "0.3.1"
 
-accompanist = "0.21.3-beta"
+accompanist = "0.21.4-beta"
 snapper = "0.1.0"
 
 androidx-activity = "1.4.0"
 androidx-appCompat = "1.4.0"
-androidx-compose = "1.1.0-beta03"
+androidx-compose = "1.1.0-beta04"
 androidx-composePaging = "1.0.0-alpha14"
 androidx-constraintlayout = "1.0.0-rc02"
 androidx-lifecycle = "2.4.0"
@@ -24,11 +24,11 @@ androidx-paging = "3.1.0"
 coil = "1.4.0"
 coroutines-native = "1.5.2-native-mt"
 desugar = "1.1.5"
-hilt = "2.40.2"
+hilt = "2.40.5"
 hiltNavigation = "1.0.0-beta01"
 kenburns = "1.0.7"
 ktor = "1.6.5"
-material = "1.5.0-beta01"
+material = "1.6.0-alpha01"
 multiplatform-paging = "0.4.5"
 napier = "1.5.0"
 squareup-leakcanary = "2.7"
@@ -38,10 +38,9 @@ turbine = "0.7.0"
 testing-arch-core = "2.1.0"
 testing-junit = "4.13.2"
 testing-junitext = "1.1.4-alpha03"
-testing-junit5 = "5.8.1"
-testing-kotest = "5.0.0.M2"
+testing-junit5 = "5.8.2"
+testing-kotest = "5.0.2"
 testing-mockk = "1.12.1"
-testing-mockito-core = "3.12.4"
 testing-mockito-kotlin = "2.2.0"
 
 plugin-buildkonfig = "0.7.0"
@@ -131,7 +130,6 @@ testing-mockk-common = { module = "io.mockk:mockk-common", version.ref = "testin
 
 testing-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-native" }
 testing-junit = { module = "junit:junit", version.ref = "testing-junit" }
-testing-mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "testing-mockito-core" }
 testing-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 testing-ktor-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
