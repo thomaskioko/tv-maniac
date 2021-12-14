@@ -44,6 +44,7 @@ import com.thomaskioko.tvmaniac.presentation.contract.SettingsActions.ThemeClick
 import com.thomaskioko.tvmaniac.presentation.contract.SettingsActions.ThemeSelected
 import com.thomaskioko.tvmaniac.presentation.contract.SettingsState
 import com.thomaskioko.tvmaniac.presentation.contract.Theme
+import com.thomaskioko.tvmaniac.compose.R as CompR
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel) {
@@ -132,7 +133,7 @@ private fun ThemeSettingsItem(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_palette_24),
+            painter = painterResource(CompR.drawable.ic_palette_24),
             tint = MaterialTheme.colors.secondary,
             contentDescription = null,
             modifier = Modifier

@@ -21,8 +21,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -74,7 +76,7 @@ class ShowDetailsViewModel @Inject constructor(
     private fun updateWatchlist(action: ShowDetailAction.UpdateWatchlist) {
         viewModelScope.launch {
             updateWatchlistInteractor.invoke(action.params)
-                .collect {
+                .onEach {
                     when (it) {
                         is DomainResultState.Error -> _uiEffects.emit(
                             DetailUiEffect.WatchlistError(

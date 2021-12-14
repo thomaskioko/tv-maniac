@@ -59,6 +59,7 @@ import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.coroutines.flow.collect
 import kotlin.math.absoluteValue
 
 /**
