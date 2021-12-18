@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.6.0"
+kotlin = "1.6.10"
 
 android-compile = "31"
 android-target = "31"
@@ -13,23 +13,24 @@ snapper = "0.1.0"
 
 androidx-activity = "1.4.0"
 androidx-appCompat = "1.4.0"
-androidx-compose = "1.1.0-beta04"
+androidx-compose = "1.1.0-rc01"
+compose-compiler = "1.1.0-rc02"
 androidx-composePaging = "1.0.0-alpha14"
 androidx-constraintlayout = "1.0.0-rc02"
 androidx-lifecycle = "2.4.0"
-androidx-navigation = "2.4.0-beta02"
+androidx-navigation = "2.4.0-rc01"
 androidx-palette = "1.0.0"
 androidx-paging = "3.1.0"
 
 coil = "1.4.0"
-coroutines-native = "1.5.2-native-mt"
+coroutines-native = "1.6.0-RC3"
 desugar = "1.1.5"
 hilt = "2.40.5"
 hiltNavigation = "1.0.0-beta01"
 kenburns = "1.0.7"
-ktor = "1.6.5"
+ktor = "1.6.7"
 material = "1.6.0-alpha01"
-multiplatform-paging = "0.4.5"
+multiplatform-paging = "0.4.6"
 napier = "1.5.0"
 squareup-leakcanary = "2.7"
 sqldelight = "1.5.3"
@@ -45,7 +46,7 @@ testing-mockito-kotlin = "2.2.0"
 
 plugin-buildkonfig = "0.7.0"
 plugin-gradle-versions = "0.39.0"
-plugin-kmp-native-coroutines = "0.8.0"
+plugin-kmp-native-coroutines = "0.10.0"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle" }
@@ -63,7 +64,7 @@ accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-
 androidx-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appCompat" }
 androidx-palette = { module = "androidx.palette:palette-ktx", version.ref = "androidx-palette" }
 
-androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "androidx-compose" }
+androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 androidx-compose-ui-runtime = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidx-compose" }
 androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "androidx-compose" }
