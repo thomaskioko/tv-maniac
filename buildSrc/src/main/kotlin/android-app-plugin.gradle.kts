@@ -46,7 +46,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.get()
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     tasks.withType<Test>().configureEach {
