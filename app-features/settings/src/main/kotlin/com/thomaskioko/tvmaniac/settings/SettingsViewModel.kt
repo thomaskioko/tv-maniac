@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.presentation.contract.SettingsState
 import com.thomaskioko.tvmaniac.settings.api.TvManiacPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +39,7 @@ class SettingsViewModel @Inject constructor(
 
     override fun observeSideEffect(): Flow<SettingsEffect> = sideEffect
 
+    @OptIn(InternalCoroutinesApi::class)
     override fun dispatch(action: SettingsActions) {
         when (action) {
             is ThemeSelected -> {

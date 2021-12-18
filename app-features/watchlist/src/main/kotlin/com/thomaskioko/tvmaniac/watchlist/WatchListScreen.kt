@@ -29,8 +29,10 @@ import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.presentation.contract.WatchlistEffect
 import com.thomaskioko.tvmaniac.presentation.contract.WatchlistState
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 
+@OptIn(InternalCoroutinesApi::class)
 @Composable
 fun WatchListScreen(
     viewModel: WatchlistViewModel,

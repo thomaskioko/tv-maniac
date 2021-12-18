@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
-		9280E6D24D2442B4692F6188 /* libPods-tv-maniac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8E4ADD8046C89FCA3F06B23 /* libPods-tv-maniac.a */; };
+		2DC48C9D112EE14CC1C12A10 /* libPods-tv-maniac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DB9E6D59712DC6C413C2303E /* libPods-tv-maniac.a */; };
 		E924E11D272F2BA000C4435F /* HomeUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E924E11C272F2BA000C4435F /* HomeUIView.swift */; };
 		E95C8F452730157C00679C0A /* DiscoverViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95C8F442730157C00679C0A /* DiscoverViewModel.swift */; };
 		E9679706275BFF3E00113F9A /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9679705275BFF3E00113F9A /* LoadingIndicatorView.swift */; };
@@ -24,14 +24,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1BB2D0517423B070434A19F5 /* Pods-tv-maniac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tv-maniac.release.xcconfig"; path = "Target Support Files/Pods-tv-maniac/Pods-tv-maniac.release.xcconfig"; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
-		22EC2F233822C35A65F9FFCD /* Pods-tv-maniac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tv-maniac.debug.xcconfig"; path = "Target Support Files/Pods-tv-maniac/Pods-tv-maniac.debug.xcconfig"; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B2765411B2633F804155B5ED /* Pods-tv-maniac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tv-maniac.release.xcconfig"; path = "Target Support Files/Pods-tv-maniac/Pods-tv-maniac.release.xcconfig"; sourceTree = "<group>"; };
-		D8E4ADD8046C89FCA3F06B23 /* libPods-tv-maniac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-tv-maniac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB9E6D59712DC6C413C2303E /* libPods-tv-maniac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-tv-maniac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E924E11C272F2BA000C4435F /* HomeUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeUIView.swift; sourceTree = "<group>"; };
 		E95C8F442730157C00679C0A /* DiscoverViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverViewModel.swift; sourceTree = "<group>"; };
+		E9644B943CE1779116AE6845 /* Pods-tv-maniac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tv-maniac.debug.xcconfig"; path = "Target Support Files/Pods-tv-maniac/Pods-tv-maniac.debug.xcconfig"; sourceTree = "<group>"; };
 		E9679705275BFF3E00113F9A /* LoadingIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicatorView.swift; sourceTree = "<group>"; };
 		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E9AC835026CEEA1500829A0D /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
@@ -49,20 +49,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9280E6D24D2442B4692F6188 /* libPods-tv-maniac.a in Frameworks */,
+				2DC48C9D112EE14CC1C12A10 /* libPods-tv-maniac.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0AFB7A2B4A206E954B2B3DFD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DB9E6D59712DC6C413C2303E /* libPods-tv-maniac.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
 				7555FF7D242A565900829871 /* ios */,
 				7555FF7C242A565900829871 /* Products */,
 				F57B963061F8E757D1D2A01F /* Pods */,
-				A0307B2D0FAE329D8400AE47 /* Frameworks */,
+				0AFB7A2B4A206E954B2B3DFD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -87,14 +95,6 @@
 				E924E11C272F2BA000C4435F /* HomeUIView.swift */,
 			);
 			path = ios;
-			sourceTree = "<group>";
-		};
-		A0307B2D0FAE329D8400AE47 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				D8E4ADD8046C89FCA3F06B23 /* libPods-tv-maniac.a */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		E924E11B272F2B7000C4435F /* Utils */ = {
@@ -138,8 +138,8 @@
 		F57B963061F8E757D1D2A01F /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				22EC2F233822C35A65F9FFCD /* Pods-tv-maniac.debug.xcconfig */,
-				B2765411B2633F804155B5ED /* Pods-tv-maniac.release.xcconfig */,
+				E9644B943CE1779116AE6845 /* Pods-tv-maniac.debug.xcconfig */,
+				1BB2D0517423B070434A19F5 /* Pods-tv-maniac.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -151,7 +151,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7555FFA5242A565B00829871 /* Build configuration list for PBXNativeTarget "tv-maniac" */;
 			buildPhases = (
-				CE832ABE64E0E1954CD416ED /* [CP] Check Pods Manifest.lock */,
+				F66249856510E60D4499FD16 /* [CP] Check Pods Manifest.lock */,
 				7555FF77242A565900829871 /* Sources */,
 				7555FF79242A565900829871 /* Resources */,
 				9E9525AE31530CCB1C932286 /* Frameworks */,
@@ -210,7 +210,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		CE832ABE64E0E1954CD416ED /* [CP] Check Pods Manifest.lock */ = {
+		F66249856510E60D4499FD16 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -377,7 +377,7 @@
 		};
 		7555FFA6242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 22EC2F233822C35A65F9FFCD /* Pods-tv-maniac.debug.xcconfig */;
+			baseConfigurationReference = E9644B943CE1779116AE6845 /* Pods-tv-maniac.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -409,7 +409,7 @@
 		};
 		7555FFA7242A565B00829871 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B2765411B2633F804155B5ED /* Pods-tv-maniac.release.xcconfig */;
+			baseConfigurationReference = 1BB2D0517423B070434A19F5 /* Pods-tv-maniac.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;

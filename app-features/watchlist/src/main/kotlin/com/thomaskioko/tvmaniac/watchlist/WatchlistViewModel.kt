@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.invoke
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +36,7 @@ class WatchlistViewModel @Inject constructor(
 
     override fun observeSideEffect(): Flow<WatchlistEffect> = sideEffect
 
+    @OptIn(InternalCoroutinesApi::class)
     override fun dispatch(action: WatchlistAction) {
         val oldState = state.value
 

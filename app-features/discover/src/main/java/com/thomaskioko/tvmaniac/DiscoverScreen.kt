@@ -69,7 +69,7 @@ import kotlin.math.absoluteValue
  */
 private const val MinContrastOfPrimaryVsSurface = 3f
 
-@OptIn(ExperimentalSnapperApi::class)
+@OptIn(ExperimentalSnapperApi::class, kotlinx.coroutines.InternalCoroutinesApi::class)
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverViewModel,
