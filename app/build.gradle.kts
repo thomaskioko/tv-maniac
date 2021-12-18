@@ -1,6 +1,5 @@
 plugins {
     `android-app-plugin`
-    kotlin("plugin.serialization") version("1.5.20")
 }
 
 dependencies {
