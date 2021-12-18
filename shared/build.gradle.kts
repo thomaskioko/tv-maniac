@@ -7,7 +7,7 @@ import java.util.Properties
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
-    kotlin("plugin.serialization") version ("1.5.20")
+    kotlin("plugin.serialization") version ("1.6.10")
     id("com.android.library")
     id("com.codingfeline.buildkonfig")
     id("com.squareup.sqldelight")
@@ -50,15 +50,6 @@ kotlin {
     }
 
     sourceSets {
-
-        // Configure separate debug and release source sets.
-        val commonDebug by sourceSets.creating {
-            dependsOn(sourceSets["commonMain"])
-        }
-
-        val commonRelease by sourceSets.creating {
-            dependsOn(sourceSets["commonMain"])
-        }
 
         sourceSets["commonMain"].dependencies {
             implementation(libs.kotlin.datetime)
@@ -120,10 +111,10 @@ kotlin {
 
         all {
             languageSettings.apply {
-                useExperimentalAnnotation("kotlin.RequiresOptIn")
-                useExperimentalAnnotation("kotlin.time.ExperimentalTime")
-                useExperimentalAnnotation("kotlinx.coroutines.FlowPreview")
-                useExperimentalAnnotation("kotlinx.coroutines.ExperimentalCoroutinesApi")
+                optIn("kotlin.RequiresOptIn")
+                optIn("kotlin.time.ExperimentalTime")
+                optIn("kotlinx.coroutines.FlowPreview")
+                optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
             }
         }
     }

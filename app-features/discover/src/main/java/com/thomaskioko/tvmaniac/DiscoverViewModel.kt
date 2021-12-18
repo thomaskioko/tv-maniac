@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
 import com.thomaskioko.tvmaniac.interactor.GetDiscoverShowListInteractor
 import com.thomaskioko.tvmaniac.util.DomainResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,6 +41,7 @@ class DiscoverViewModel @Inject constructor(
 
     override fun observeSideEffect(): Flow<DiscoverShowEffect> = sideEffect
 
+    @OptIn(InternalCoroutinesApi::class)
     override fun dispatch(action: DiscoverShowAction) {
         val oldState = state.value
 
