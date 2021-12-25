@@ -1,7 +1,9 @@
+name: "Publish swift package"
+
 on:
   push:
     tags:
-      - 'release-*'
+      - 'v*'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -16,6 +18,13 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Add App Secrets
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          TMDB_API_URL: ${{ secrets.TMDB_API_URL }}
+        run: |
+          echo -e "\TMDB_API_KEY=$TMDB_API_KEY" >> ./local.properties
+          echo -e "\TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
       - name: Build iOS framework
         id: buildPackage
         run: ./gradlew createSwiftPackage
@@ -37,16 +46,23 @@ jobs:
         with:
           name: swiftpackage
           path: swiftpackage
-      - name: Display structure of downloaded files
-        run: ls -R
-      - name: Access tag name of current workflow
-        run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+      - uses: rymndhng/release-on-push-action@master
+        id: release
+        with:
+          github-token: ${{ secrets.API_TOKEN_GITHUB }}
+          bump_version_scheme: minor
+          tag_prefix: v
+      - name: Check Output Release Parameters
+        run: |
+          echo "Got tag name ${{ steps.release.outputs.tag_name }}"
+          echo "Got release version ${{ steps.release.outputs.version }}"
+
       - name: Create release branch on package repo
         uses: GuillaumeFalourd/create-other-repo-branch-action@v1
         with:
           repository_owner: c0de-wizard
           repository_name: tvmaniac-swift-packages
-          new_branch_name: ${{ env.TAG }}
+          new_branch_name: ${{ steps.release.outputs.tag_name }}
           access_token: ${{ secrets.API_TOKEN_GITHUB}}
       - name: Push directory to another repository
         uses: cpina/github-action-push-to-another-repository@main
@@ -57,4 +73,4 @@ jobs:
           destination-github-username: 'c0de-wizard'
           destination-repository-name: 'tvmaniac-swift-packages'
           user-email: kioko.publish@gmail.com
-          target-branch: ${{ env.TAG }}
+          target-branch: ${{ steps.release.outputs.tag_name }}
