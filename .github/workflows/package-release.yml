@@ -82,5 +82,4 @@ jobs:
           destination-github-username: 'c0de-wizard'
           destination-repository-name: 'tvmaniac-swift-packages'
           user-email: kioko.publish@gmail.com
-          target-branch: ${{ env.RELEASE_VERSION }}
 
