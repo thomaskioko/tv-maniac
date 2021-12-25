@@ -3,7 +3,7 @@ name: "Publish swift package"
 on:
   push:
     tags:
-      - 'v*'
+      - 'release-*'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -38,9 +38,12 @@ jobs:
   push:
     needs: build
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Download directory with swift package
         uses: actions/download-artifact@v2
         with:
@@ -49,21 +52,23 @@ jobs:
       - uses: rymndhng/release-on-push-action@master
         id: release
         with:
-          github-token: ${{ secrets.API_TOKEN_GITHUB }}
           bump_version_scheme: minor
           tag_prefix: v
-      - name: Check Output Release Parameters
+          release_name: "release-<RELEASE_VERSION>"
+
+      - name: Access tag name of current workflow
         run: |
-          echo "Got tag name ${{ steps.release.outputs.tag_name }}"
-          echo "Got release version ${{ steps.release.outputs.version }}"
+          echo "RELEASE_VERSION=${{ steps.release.outputs.version }}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=${{ steps.release.outputs.tag_name }}" >> $GITHUB_ENV
 
       - name: Create release branch on package repo
         uses: GuillaumeFalourd/create-other-repo-branch-action@v1
         with:
-          repository_owner: c0de-wizard
-          repository_name: tvmaniac-swift-packages
-          new_branch_name: ${{ steps.release.outputs.tag_name }}
+          repository_owner: 'c0de-wizard'
+          repository_name: 'tvmaniac-swift-packages'
+          new_branch_name: ${{ env.RELEASE_VERSION }}
           access_token: ${{ secrets.API_TOKEN_GITHUB}}
+
       - name: Push directory to another repository
         uses: cpina/github-action-push-to-another-repository@main
         env:
@@ -73,4 +78,5 @@ jobs:
           destination-github-username: 'c0de-wizard'
           destination-repository-name: 'tvmaniac-swift-packages'
           user-email: kioko.publish@gmail.com
-          target-branch: ${{ steps.release.outputs.tag_name }}
+          target-branch: ${{ env.RELEASE_VERSION }}
+
