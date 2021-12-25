@@ -45,8 +45,7 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
 - Run `./gradlew generateBuildKonfig`
 
 ### iOS Setup
-- Navigate to ios Dir & run `pod deintegrate && pod install`
-- Open `.xcworkspace` & not `.xcodeproj`
+- Navigate to ios directory & open `.xcworkspace` & not `.xcodeproj`
 
 
 ## Libraries Used
@@ -82,8 +81,8 @@ Android
 - [x] Add `More` screen. Shows GridView
 - [ ] Implement Search
 - [ ] Recommended Shows
-- [ ] Implement pagination.
-- [ ] Add Settings panel.
+- [x] Implement pagination.
+- [x] Add Settings panel.
     - Dynamic theme change.
 - [ ] Observe Internet connection
 
