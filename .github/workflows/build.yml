@@ -3,10 +3,10 @@ name: "Share build & Unit test"
 on:
   push:
     branches:
-      - 'feature/*'
+      - main
   pull_request:
-    paths:
-      - 'shared/**'
+    branches:
+      - main
 
 jobs:
   setup:
