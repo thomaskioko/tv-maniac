@@ -6,7 +6,6 @@ import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
-    kotlin("native.cocoapods")
     kotlin("plugin.serialization") version ("1.6.10")
     id("com.android.library")
     id("com.codingfeline.buildkonfig")
@@ -40,15 +39,8 @@ kotlin {
         System.getenv("NATIVE_ARCH")?.startsWith("arm") == true -> ::iosSimulatorArm64
         else -> ::iosX64
     }
+
     iosTarget("ios") {}
-
-    cocoapods {
-        summary = "TvManiac"
-        homepage = "https://github.com/c0de-wizard/tv-maniac"
-
-        ios.deploymentTarget = "14.1"
-        podfile = project.file("../ios/Podfile")
-    }
 
     sourceSets {
 
