@@ -38,6 +38,8 @@ jobs:
   push:
     needs: build
     runs-on: ubuntu-latest
+    env:
+      API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -49,7 +51,6 @@ jobs:
       - uses: rymndhng/release-on-push-action@master
         id: release
         with:
-          github-token: ${{ secrets.API_TOKEN_GITHUB }}
           bump_version_scheme: minor
           tag_prefix: v
       - name: Check Output Release Parameters
