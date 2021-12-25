@@ -54,7 +54,13 @@ jobs:
         with:
           bump_version_scheme: minor
           tag_prefix: v
-          release_name: "release-<RELEASE_VERSION>"
+          release_name: "release_<RELEASE_VERSION>"
+
+      - name: Access tag name of current workflow
+        run: |
+          echo "RELEASE_VERSION=${{ steps.release.outputs.version }}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=${{ steps.release.outputs.tag_name }}" >> $GITHUB_ENV
+          echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
 
       - name: Create release branch on package repo
         uses: GuillaumeFalourd/create-other-repo-branch-action@v1
