@@ -12,6 +12,7 @@ plugins {
     id("com.codingfeline.buildkonfig")
     id("com.squareup.sqldelight")
     id("com.rickclephas.kmp.nativecoroutines")
+    id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
 }
 
 version = "1.0"
@@ -145,5 +146,13 @@ sqldelight {
     database("TvManiacDatabase") {
         packageName = "com.thomaskioko.tvmaniac.datasource.cache"
         sourceFolders = listOf("sqldelight")
+    }
+}
+
+multiplatformSwiftPackage {
+    packageName("TvManiac")
+    swiftToolsVersion("5.3")
+    targetPlatforms {
+        iOS { v("13") }
     }
 }
