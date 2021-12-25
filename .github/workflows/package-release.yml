@@ -56,14 +56,10 @@ jobs:
           tag_prefix: v
           release_name: "release-<RELEASE_VERSION>"
 
-      - name: Check Output Release Parameters
-        run: |
-          echo "Got tag name ${{ steps.release.outputs.tag_name }}"
-          echo "Got release version ${{ steps.release.outputs.version }}"
       - name: Access tag name of current workflow
         run: |
-          echo "RELEASE_VERSION=${{ steps.release.outputs.version }}"" >> $GITHUB_ENV
-          echo "RELEASE_TAG=${{ steps.release.outputs.tag_name }}"" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=${{ steps.release.outputs.version }}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=${{ steps.release.outputs.tag_name }}" >> $GITHUB_ENV
 
       - name: Create release branch on package repo
         uses: GuillaumeFalourd/create-other-repo-branch-action@v1
@@ -82,4 +78,5 @@ jobs:
           destination-github-username: 'c0de-wizard'
           destination-repository-name: 'tvmaniac-swift-packages'
           user-email: kioko.publish@gmail.com
+          target-branch: ${{ env.RELEASE_VERSION }}
 
