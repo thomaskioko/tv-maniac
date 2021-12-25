@@ -23,7 +23,7 @@ androidx-palette = "1.0.0"
 androidx-paging = "3.1.0"
 
 coil = "1.4.0"
-coroutines-native = "1.6.0-RC3"
+coroutines-native = "1.6.0-native-mt"
 desugar = "1.1.5"
 hilt = "2.40.5"
 hiltNavigation = "1.0.0-beta01"
@@ -46,7 +46,7 @@ testing-mockito-kotlin = "2.2.0"
 
 plugin-buildkonfig = "0.7.0"
 plugin-gradle-versions = "0.39.0"
-plugin-kmp-native-coroutines = "0.10.0"
+plugin-kmp-native-coroutines = "0.11.1-new-mm"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle" }

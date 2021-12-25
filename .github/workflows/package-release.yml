@@ -1,0 +1,60 @@
+on:
+  push:
+    tags:
+      - 'release-*'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build iOS framework
+        id: buildPackage
+        run: ./gradlew createSwiftPackage
+      - name: Upload Swift Package directory
+        uses: actions/upload-artifact@v2
+        with:
+          name: swiftpackage
+          path: shared/swiftpackage
+          retention-days: 1
+
+  push:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download directory with swift package
+        uses: actions/download-artifact@v2
+        with:
+          name: swiftpackage
+          path: swiftpackage
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Access tag name of current workflow
+        run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+      - name: Create release branch on package repo
+        uses: GuillaumeFalourd/create-other-repo-branch-action@v1
+        with:
+          repository_owner: c0de-wizard
+          repository_name: tvmaniac-swift-packages
+          new_branch_name: ${{ env.TAG }}
+          access_token: ${{ secrets.API_TOKEN_GITHUB}}
+      - name: Push directory to another repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: 'swiftpackage'
+          destination-github-username: 'c0de-wizard'
+          destination-repository-name: 'tvmaniac-swift-packages'
+          user-email: kioko.publish@gmail.com
+          target-branch: ${{ env.TAG }}
