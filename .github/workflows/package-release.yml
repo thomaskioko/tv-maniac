@@ -46,23 +46,32 @@ jobs:
         with:
           name: swiftpackage
           path: swiftpackage
-      - uses: rymndhng/release-on-push-action@master
-        id: release
+      - name: Create tag
+        uses: actions/github-script@v5
+        id: tag-creation
         with:
           github-token: ${{ secrets.API_TOKEN_GITHUB }}
-          bump_version_scheme: minor
-          tag_prefix: v
-      - name: Check Output Release Parameters
+          script: |
+            const { repo: { owner, repo }, sha } = context;
+            const tag = process.env.GITHUB_REF.split('/').slice(-1)[0];
+            const release = await github.repos.createRelease({
+                owner, repo,
+                tag_name: tag ,
+                prerelease: true
+            });
+            console.log(`Result ${tag} ${release}`)
+            result-encoding: tag
+      - name: Access tag name of current workflow
         run: |
-          echo "Got tag name ${{ steps.release.outputs.tag_name }}"
-          echo "Got release version ${{ steps.release.outputs.version }}"
-
+          echo $RELEASE_VERSION
+          echo ${{ env.GITHUB_ENV }}
+          echo "${{steps.tag-creation.outputs.result}}"
       - name: Create release branch on package repo
         uses: GuillaumeFalourd/create-other-repo-branch-action@v1
         with:
           repository_owner: c0de-wizard
           repository_name: tvmaniac-swift-packages
-          new_branch_name: ${{ steps.release.outputs.tag_name }}
+          new_branch_name: ${{ env.GITHUB_ENV }}
           access_token: ${{ secrets.API_TOKEN_GITHUB}}
       - name: Push directory to another repository
         uses: cpina/github-action-push-to-another-repository@main
@@ -73,4 +82,4 @@ jobs:
           destination-github-username: 'c0de-wizard'
           destination-repository-name: 'tvmaniac-swift-packages'
           user-email: kioko.publish@gmail.com
-          target-branch: ${{ steps.release.outputs.tag_name }}
+          target-branch: ${{ env.GITHUB_ENV }}
