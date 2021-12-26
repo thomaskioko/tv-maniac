@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import shared
+import TvManiac
 
 struct DiscoverView: View {
 	
@@ -25,16 +25,16 @@ struct DiscoverView: View {
 	){
 		self.networkModule = networkModule
 		self.databaseModule = databaseModule
-		self.repositoryModule = RepositoryModule(
+		repositoryModule = RepositoryModule(
 			networkModule: self.networkModule,
 			databaseModule: self.databaseModule
 		)
-		self.datasourceModule = DataSourceModule(repositoryModule: self.repositoryModule)
+		datasourceModule = DataSourceModule(repositoryModule: repositoryModule)
 		
-		self.viewModel = DiscoverViewModel(
+		viewModel = DiscoverViewModel(
 			networkModule: self.networkModule,
 			databaseModule: self.databaseModule,
-			getDiscoverShowListInteractor: datasourceModule.getDiscoverShowListInteractor
+			interactor: datasourceModule.getDiscoverShowListInteractor
 		)
 	}
 	
@@ -64,7 +64,7 @@ struct DiscoverView: View {
 				}
 			}
 		}.onAppear{
-			viewModel.startObservingTrendingShows()
+			viewModel.startObservingDiscoverShows()
 		}
 		.onDisappear{
 			viewModel.stopObservingTrendingShows()
