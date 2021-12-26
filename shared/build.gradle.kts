@@ -1,3 +1,4 @@
+
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -10,11 +11,10 @@ plugins {
     id("com.android.library")
     id("com.codingfeline.buildkonfig")
     id("com.squareup.sqldelight")
-    id("com.rickclephas.kmp.nativecoroutines")
     id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
 }
 
-version = "1.0"
+version = "0.1.0"
 
 android {
     compileSdk = libs.versions.android.compile.get().toInt()
