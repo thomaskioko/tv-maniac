@@ -54,7 +54,7 @@ jobs:
         with:
           bump_version_scheme: minor
           tag_prefix: v
-          release_name: "release_<RELEASE_VERSION>"
+          release_name: "<RELEASE_VERSION>"
 
       - name: Access tag name of current workflow
         run: |
