@@ -8,11 +8,10 @@
 
 import Foundation
 import Combine
-import shared
-import KMPNativeCoroutinesCombine
+import TvManiac
 
-final class DiscoverViewModel : ObservableObject {
-	
+final class DiscoverViewModel : BaseViewModel, ObservableObject {
+
 	private let logger = Logger(className: "DiscoverViewModel")
 	
 	private var showsCancellable: AnyCancellable?
@@ -21,58 +20,53 @@ final class DiscoverViewModel : ObservableObject {
 	private let databaseModule: DatabaseModule
 	private let repositoryModule: RepositoryModule
 	
-	let getDiscoverShowListInteractor: GetDiscoverShowListInteractor
+	let interactor: GetDiscoverShowListInteractor
 	
 	@Published var state : DiscoverShowState = DiscoverShowState.companion.Empty
 	
 	
 	init(
-		networkModule: NetworkModule,
-		databaseModule: DatabaseModule,
-		getDiscoverShowListInteractor: GetDiscoverShowListInteractor
+			networkModule: NetworkModule,
+			databaseModule: DatabaseModule,
+			interactor: GetDiscoverShowListInteractor
 	){
 		self.networkModule = networkModule
 		self.databaseModule = databaseModule
-		self.repositoryModule = RepositoryModule(
+		repositoryModule = RepositoryModule(
 			networkModule: self.networkModule,
 			databaseModule: self.databaseModule
 		)
-		self.getDiscoverShowListInteractor = getDiscoverShowListInteractor
+		self.interactor = interactor
 		
 	}
 	
-	
-	func startObservingTrendingShows(){
+	func startObservingDiscoverShows(){
 		let showCategory: NSArray = [ShowCategory.featured, ShowCategory.trending, ShowCategory.topRated, ShowCategory.popular]
-		
-		
-		showsCancellable = createPublisher(for: getDiscoverShowListInteractor.invokeNative(params: showCategory))
-			.receive(on: DispatchQueue.main)
-			.sink(receiveCompletion: { completion in
-				self.logger.log(msg:"Received completion: \(completion)")
-			}, receiveValue: { [weak self] value in
-				
-				switch value {
-				case is DomainResultStateError<NSArray>:
-					self?.updateState(
-						isLoading: false,
-						list: [TrendingShowData]()
-					)
-				case is DomainResultStateLoading<NSArray>:
-					self?.updateState(
+
+		interactor.execute(self, args: showCategory) {
+			$0.onStart {
+				self.updateState(
 						isLoading: true,
 						list: [TrendingShowData]()
-					)
-				case is DomainResultStateSuccess<NSArray>:
-					self?.updateState(
+				)
+			}
+
+			$0.onNext { list in
+				self.updateState(
 						isLoading: false,
-						list: ((value as! DomainResultStateSuccess).data as! [TrendingShowData])
-					)
-				default:
-					self?.logger.log(msg: "Handle unknown state!")
-				}
-			})
-		
+						list: (list as! [TrendingShowData])
+				)
+			}
+
+			$0.onError { error in
+				self.logger.log(msg: "\(error)")
+
+				self.updateState(
+						isLoading: false,
+						list: [TrendingShowData]()
+				)
+			}
+		}
 	}
 	
 	private func updateState(
@@ -80,7 +74,7 @@ final class DiscoverViewModel : ObservableObject {
 		list: [TrendingShowData]
 	){
 		
-		self.state = DiscoverShowState(
+		state = DiscoverShowState(
 			isLoading: isLoading,
 			list: list
 		)

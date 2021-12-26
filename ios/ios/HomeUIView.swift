@@ -1,5 +1,5 @@
 import SwiftUI
-import shared
+import TvManiac
 
 struct HomeUIView: View {
 	private let networkModule: NetworkModule
@@ -13,19 +13,19 @@ struct HomeUIView: View {
 	){
 		self.networkModule = networkModule
 		self.databaseModule = databaseModule
-		self.repositoryModule = RepositoryModule(
+		repositoryModule = RepositoryModule(
 			networkModule: self.networkModule,
 			databaseModule: self.databaseModule
 		)
-		self.datasourceModule = DataSourceModule(repositoryModule: self.repositoryModule)
+		datasourceModule = DataSourceModule(repositoryModule: repositoryModule)
 	}
 
 	var body: some View {
 	
 		TabView {
 			DiscoverView(
-				networkModule: self.networkModule,
-				databaseModule: self.databaseModule
+				networkModule: networkModule,
+				databaseModule: databaseModule
 			)
 				   .font(.system(size: 30, weight: .bold, design: .rounded))
 				   .tabItem {
@@ -48,7 +48,7 @@ struct HomeUIView: View {
 					   Text("Watchlist")
 				   }
 		}
-		.onAppear(){
+		.onAppear {
 			UITabBar.appearance().barTintColor = UIColor(Color("TabBackgroundColor"))
 		}
 		.accentColor(Color("AccentColor"))

@@ -19,11 +19,4 @@ dependencies {
     implementation(libs.plugin.dependency.check)
     implementation(libs.plugin.hilt)
     implementation(libs.plugin.buildkonfig)
-
-    implementation(libs.plugin.kmp.native.coroutines) {
-        val version = if (libs.versions.kotlin.get() == "1.6.10") "0.10.0-new-mm" else "0.8.0"
-        version {
-            strictly(version)
-        }
-    }
 }
