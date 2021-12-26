@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.interactor
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.MockData.getEpisodeList
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
-import com.thomaskioko.tvmaniac.util.DomainResultState
 import com.thomaskioko.tvmaniac.util.runBlocking
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
@@ -31,25 +30,7 @@ internal class EpisodesInteractorTest {
         } returns getEpisodeList()
 
         interactor.invoke(query).test {
-            awaitItem() shouldBe DomainResultState.Loading()
-            awaitItem() shouldBe DomainResultState.Success(getEpisodeList())
-            awaitComplete()
-        }
-    }
-
-    @Test
-    fun wheneverInteractorIsInvoked_ErrorIsReturned() = runBlocking {
-        coEvery {
-            repository.getEpisodesBySeasonId(
-                tvShowId = query.tvShowId,
-                seasonNumber = query.seasonNumber,
-                seasonId = query.seasonId
-            )
-        }.throws(Exception("Something went wrong"))
-
-        interactor.invoke(query).test {
-            awaitItem() shouldBe DomainResultState.Loading()
-            awaitItem() shouldBe DomainResultState.Error("Something went wrong")
+            awaitItem() shouldBe getEpisodeList()
             awaitComplete()
         }
     }
