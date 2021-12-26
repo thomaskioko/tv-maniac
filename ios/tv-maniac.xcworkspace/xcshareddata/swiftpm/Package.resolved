@@ -2,29 +2,11 @@
   "object": {
     "pins": [
       {
-        "package": "KMPNativeCoroutines",
-        "repositoryURL": "https://github.com/rickclephas/KMP-NativeCoroutines.git",
-        "state": {
-          "branch": null,
-          "revision": "cbc975ed40d412c6d3c9d1d4cd35096165824b88",
-          "version": "0.11.1"
-        }
-      },
-      {
-        "package": "RxSwift",
-        "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
-        "state": {
-          "branch": null,
-          "revision": "7c17a6ccca06b5c107cfa4284e634562ddaf5951",
-          "version": "6.2.0"
-        }
-      },
-      {
         "package": "TvManiac",
         "repositoryURL": "https://github.com/c0de-wizard/tvmaniac-swift-packages",
         "state": {
           "branch": "main",
-          "revision": "dd01d7e662f23675c6cb5dceef31f77837273907",
+          "revision": "44b6b1c5b9a17235976835700aa43ba04609ecb2",
           "version": null
         }
       }

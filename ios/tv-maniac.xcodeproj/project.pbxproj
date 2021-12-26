@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
-		E9097A5B27772904005562BD /* KMPNativeCoroutinesCombine in Frameworks */ = {isa = PBXBuildFile; productRef = E9097A5A27772904005562BD /* KMPNativeCoroutinesCombine */; };
 		E9097A5E277782F5005562BD /* TvManiac in Frameworks */ = {isa = PBXBuildFile; productRef = E9097A5D277782F5005562BD /* TvManiac */; };
 		E924E11D272F2BA000C4435F /* HomeUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E924E11C272F2BA000C4435F /* HomeUIView.swift */; };
 		E95C8F452730157C00679C0A /* DiscoverViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95C8F442730157C00679C0A /* DiscoverViewModel.swift */; };
@@ -47,7 +46,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9097A5B27772904005562BD /* KMPNativeCoroutinesCombine in Frameworks */,
 				E9097A5E277782F5005562BD /* TvManiac in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -141,7 +139,6 @@
 			);
 			name = "tv-maniac";
 			packageProductDependencies = (
-				E9097A5A27772904005562BD /* KMPNativeCoroutinesCombine */,
 				E9097A5D277782F5005562BD /* TvManiac */,
 			);
 			productName = ios;
@@ -173,7 +170,6 @@
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
-				E9097A5927772904005562BD /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */,
 				E9097A5C277782F5005562BD /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
@@ -417,14 +413,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E9097A5927772904005562BD /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/rickclephas/KMP-NativeCoroutines.git";
-			requirement = {
-				kind = exactVersion;
-				version = 0.11.1;
-			};
-		};
 		E9097A5C277782F5005562BD /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/c0de-wizard/tvmaniac-swift-packages";
@@ -436,11 +424,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E9097A5A27772904005562BD /* KMPNativeCoroutinesCombine */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E9097A5927772904005562BD /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */;
-			productName = KMPNativeCoroutinesCombine;
-		};
 		E9097A5D277782F5005562BD /* TvManiac */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E9097A5C277782F5005562BD /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */;
