@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.usecase.FlowInteractor
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
 import com.thomaskioko.tvmaniac.presentation.model.Episode
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 
 class EpisodesInteractor constructor(
@@ -19,7 +20,7 @@ class EpisodesInteractor constructor(
         ).sortedBy { it.episodeNumber }
 
         emit(result)
-    }
+    }.distinctUntilChanged()
 }
 
 data class EpisodeQuery(
