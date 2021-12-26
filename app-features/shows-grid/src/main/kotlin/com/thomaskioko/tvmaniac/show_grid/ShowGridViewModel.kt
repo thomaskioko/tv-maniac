@@ -3,25 +3,20 @@ package com.thomaskioko.tvmaniac.show_grid
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuuurt.paging.multiplatform.PagingData
 import com.thomaskioko.tvmaniac.core.Store
+import com.thomaskioko.tvmaniac.core.usecase.scope.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.interactor.GetShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.presentation.contract.ShowsGridAction
 import com.thomaskioko.tvmaniac.presentation.contract.ShowsGridAction.Error
 import com.thomaskioko.tvmaniac.presentation.contract.ShowsGridAction.LoadTvShows
 import com.thomaskioko.tvmaniac.presentation.contract.ShowsGridEffect
 import com.thomaskioko.tvmaniac.presentation.contract.ShowsGridState
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
-import com.thomaskioko.tvmaniac.util.DomainResultState
-import com.thomaskioko.tvmaniac.util.DomainResultState.Loading
-import com.thomaskioko.tvmaniac.util.DomainResultState.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,7 +24,10 @@ import javax.inject.Inject
 class ShowGridViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val interactor: GetShowsByCategoryInteractor
-) : Store<ShowsGridState, ShowsGridAction, ShowsGridEffect>, ViewModel() {
+) : Store<ShowsGridState, ShowsGridAction, ShowsGridEffect>, CoroutineScopeOwner, ViewModel() {
+
+    override val coroutineScope: CoroutineScope
+        get() = viewModelScope
 
     val showType: Int = savedStateHandle.get("showType")!!
 
@@ -45,6 +43,7 @@ class ShowGridViewModel @Inject constructor(
     override fun observeSideEffect(): Flow<ShowsGridEffect> = sideEffect
 
     override fun dispatch(action: ShowsGridAction) {
+        val oldState = state.value
         when (action) {
             is Error -> {
                 viewModelScope.launch {
@@ -52,23 +51,26 @@ class ShowGridViewModel @Inject constructor(
                 }
             }
             is LoadTvShows -> {
-                interactor.invoke(showType)
-                    .onEach { state.emit(it.reducer(state.value)) }
-                    .launchIn(viewModelScope)
+                with(state) {
+                    interactor.execute(showType) {
+                        onStart { coroutineScope.launch { emit(oldState.copy(isLoading = true)) } }
+                        onNext {
+                            coroutineScope.launch {
+                                emit(
+                                    oldState.copy(
+                                        isLoading = false,
+                                        list = it
+                                    )
+                                )
+                            }
+                        }
+                        onError {
+                            coroutineScope.launch { emit(oldState.copy(isLoading = false)) }
+                            dispatch(Error(it.message ?: "Something went wrong"))
+                        }
+                    }
+                }
             }
-        }
-    }
-
-    private fun DomainResultState<Flow<PagingData<TvShow>>>.reducer(
-        state: ShowsGridState
-    ): ShowsGridState {
-        return when (this) {
-            is DomainResultState.Error -> {
-                dispatch(Error(message))
-                state.copy(isLoading = false)
-            }
-            is Loading -> state.copy(isLoading = true)
-            is Success -> state.copy(isLoading = false, list = data)
         }
     }
 }
