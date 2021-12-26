@@ -53,14 +53,15 @@ fun EpisodesScreen(
 
         ColumnSpacer(8)
 
-        if (tvSeasons.isNotEmpty()) TvShowSeasons(
-            tvSeasons,
-            onSeasonSelected
-        )
-
         if (isLoading) {
             LoadingView()
         }
+
+        TvShowSeasons(
+            tvSeasons,
+            onSeasonSelected,
+            episodeList
+        )
 
         episodeList.forEachIndexed { index, episode ->
             EpisodeItem(episode, index)
@@ -72,13 +73,17 @@ fun EpisodesScreen(
 @Composable
 fun TvShowSeasons(
     tvSeasons: List<Season>,
-    onSeasonSelected: (EpisodeQuery) -> Unit
+    onSeasonSelected: (EpisodeQuery) -> Unit,
+    episodeList: List<Episode>
 ) {
 
     val selectedPosition by remember { mutableStateOf(0) }
     var selectedCategory by remember { mutableStateOf(tvSeasons.first()) }
 
-    if (tvSeasons.isNotEmpty() && selectedPosition == 0) {
+    /**
+     * Invoke fetchEpisode when season is loaded and user has not clicked on anything.
+     */
+    if (tvSeasons.isNotEmpty() && episodeList.isEmpty() && selectedPosition == 0) {
         onSeasonSelected(
             EpisodeQuery(
                 tvShowId = selectedCategory.tvShowId,
