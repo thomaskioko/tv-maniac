@@ -3,7 +3,7 @@ name: "Publish swift package"
 on:
   push:
     tags:
-      - 'release-*'
+      - 'v*.*.*'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -18,22 +18,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Add App Secrets
-        env:
-          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-          TMDB_API_URL: ${{ secrets.TMDB_API_URL }}
-        run: |
-          echo -e "\TMDB_API_KEY=$TMDB_API_KEY" >> ./local.properties
-          echo -e "\TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
-      - name: Build iOS framework
-        id: buildPackage
-        run: ./gradlew createSwiftPackage
-      - name: Upload Swift Package directory
-        uses: actions/upload-artifact@v2
-        with:
-          name: swiftpackage
-          path: shared/swiftpackage
-          retention-days: 1
 
   push:
     needs: build
