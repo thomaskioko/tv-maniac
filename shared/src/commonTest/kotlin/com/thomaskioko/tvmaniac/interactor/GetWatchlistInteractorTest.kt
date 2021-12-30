@@ -23,7 +23,7 @@ internal class GetWatchlistInteractorTest {
         val result = getTvResponse().results
             .map { it.toShow() }
 
-        coEvery { repository.getWatchlist() } returns flowOf(result)
+        coEvery { repository.observeWatchlist() } returns flowOf(result)
 
         interactor.invoke().test {
             awaitItem() shouldBe result.toTvShowList()

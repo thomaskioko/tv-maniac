@@ -1,8 +1,11 @@
 package com.thomaskioko.tvmaniac.datasource.cache.show_category
 
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.thomaskioko.tvmaniac.datasource.cache.SelectShows
 import com.thomaskioko.tvmaniac.datasource.cache.Show_category
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import kotlinx.coroutines.flow.Flow
 
 class ShowCategoryCacheImpl(
     private val database: TvManiacDatabase
@@ -21,5 +24,11 @@ class ShowCategoryCacheImpl(
         return showCategoryQuery.selectShows(
             category_id = id.toLong()
         ).executeAsList()
+    }
+
+    override fun observeShowsByCategoryID(id: Int): Flow<List<SelectShows>> {
+        return showCategoryQuery.selectShows(category_id = id.toLong())
+            .asFlow()
+            .mapToList()
     }
 }

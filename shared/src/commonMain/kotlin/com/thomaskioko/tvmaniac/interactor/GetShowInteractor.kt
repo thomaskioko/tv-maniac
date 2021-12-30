@@ -15,7 +15,7 @@ class GetShowInteractor constructor(
     private val repository: TvShowsRepository,
 ) : FlowInteractor<Int, DomainResultState<TvShow>>() {
 
-    override fun run(params: Int): Flow<DomainResultState<TvShow>> = repository.getShow(params)
+    override fun run(params: Int): Flow<DomainResultState<TvShow>> = repository.observeShow(params)
         .map { it.toTvShow() }
         .map { success(it) }
         .catch { emit(error(it)) }

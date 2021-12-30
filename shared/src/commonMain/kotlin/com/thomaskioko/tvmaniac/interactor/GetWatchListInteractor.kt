@@ -13,7 +13,7 @@ class GetWatchListInteractor constructor(
     private val repository: TvShowsRepository,
 ) : FlowInteractor<Unit, List<TvShow>>() {
 
-    override fun run(params: Unit): Flow<List<TvShow>> = repository.getWatchlist()
+    override fun run(params: Unit): Flow<List<TvShow>> = repository.observeWatchlist()
         .onStart { loading<List<TvShow>>() }
         .map { it.toTvShowList() }
         .map { it }

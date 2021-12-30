@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac
 
+import com.thomaskioko.tvmaniac.core.discover.DiscoverShowsData
 import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.Show
@@ -12,10 +13,11 @@ import com.thomaskioko.tvmaniac.datasource.network.model.SeasonsResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
-import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
+import com.thomaskioko.tvmaniac.datasource.repository.util.Resource
 import com.thomaskioko.tvmaniac.presentation.model.Episode
 import com.thomaskioko.tvmaniac.presentation.model.Season
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import kotlinx.coroutines.flow.flowOf
 import com.thomaskioko.tvmaniac.datasource.cache.Episode as EpisodeCache
 
 object MockData {
@@ -217,56 +219,58 @@ object MockData {
         )
     )
 
-    fun getTrendingDataMap(): List<TrendingShowData> {
-        val trendingMap = mutableListOf<TrendingShowData>()
+    fun getTrendingDataMap(): DiscoverShowsData = DiscoverShowsData(
+        category = ShowCategory.TRENDING,
+        shows = listOf(
+            TvShow(
+                id = 84958,
+                title = "Loki",
+                overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+                    "an alternate version of Loki is brought to the mysterious Time Variance " +
+                    "Authority, a bureaucratic organization that exists outside of time and " +
+                    "space and monitors the timeline. They give Loki a choice: face being " +
+                    "erased from existence due to being a “time variant”or help fix " +
+                    "the timeline and stop a greater threat.",
+                posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+                backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+                language = "en",
+                votes = 4958,
+                averageVotes = 8.1,
+                genreIds = listOf(18, 10765),
+                year = "2019",
+                status = "Ended"
+            ),
+        ),
+        isLoading = false
+    )
 
-        trendingMap.add(
-            TrendingShowData(
-                category = ShowCategory.TRENDING,
-                shows = listOf(
-                    TvShow(
-                        id = 84958,
-                        title = "Loki",
-                        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                            "an alternate version of Loki is brought to the mysterious Time Variance " +
-                            "Authority, a bureaucratic organization that exists outside of time and " +
-                            "space and monitors the timeline. They give Loki a choice: face being " +
-                            "erased from existence due to being a “time variant”or help fix " +
-                            "the timeline and stop a greater threat.",
-                        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                        backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                        language = "en",
-                        votes = 4958,
-                        averageVotes = 8.1,
-                        genreIds = listOf(18, 10765),
-                    ),
+    fun getShowsCache() = flowOf(
+        Resource.success(
+            listOf(
+                Show(
+                    id = 84958,
+                    title = "Loki",
+                    description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+                        "an alternate version of Loki is brought to the mysterious Time Variance " +
+                        "Authority, a bureaucratic organization that exists outside of time and " +
+                        "space and monitors the timeline. They give Loki a choice: face being " +
+                        "erased from existence due to being a “time variant”or help fix " +
+                        "the timeline and stop a greater threat.",
+                    poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+                    backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+                    language = "en",
+                    votes = 4958,
+                    vote_average = 8.1,
+                    genre_ids = listOf(18, 10765),
+                    year = "2019",
+                    season_ids = null,
+                    status = "Ended",
+                    popularity = 24.4848,
+                    is_watchlist = false
                 )
             )
         )
-
-        trendingMap.add(
-            TrendingShowData(
-                category = ShowCategory.FEATURED,
-                shows = listOf(
-                    TvShow(
-                        id = 126280,
-                        title = "Sex/Life",
-                        overview = "A woman's daring sexual past collides with her married-with-kids " +
-                            "present when the bad-boy ex she can't stop fantasizing about crashes " +
-                            "back into her life.",
-                        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                        backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                        language = "en",
-                        votes = 4958,
-                        averageVotes = 8.1,
-                        genreIds = listOf(35, 18),
-                    )
-                )
-            )
-        )
-
-        return trendingMap
-    }
+    )
 
     fun getSeasonCache(): Tv_season {
         return Tv_season(
