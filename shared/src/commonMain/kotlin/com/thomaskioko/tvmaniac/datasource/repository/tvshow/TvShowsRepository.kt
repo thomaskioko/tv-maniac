@@ -2,8 +2,7 @@ package com.thomaskioko.tvmaniac.datasource.repository.tvshow
 
 import com.kuuurt.paging.multiplatform.PagingData
 import com.thomaskioko.tvmaniac.datasource.cache.Show
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
-import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
+import com.thomaskioko.tvmaniac.datasource.repository.util.Resource
 import com.thomaskioko.tvmaniac.util.CommonFlow
 import kotlinx.coroutines.flow.Flow
 
@@ -11,17 +10,15 @@ interface TvShowsRepository {
 
     suspend fun updateWatchlist(showId: Int, addToWatchList: Boolean)
 
-    suspend fun getDiscoverShowList(
-        categoryList: List<ShowCategory>
-    ): List<TrendingShowData>
+    fun observeShow(tvShowId: Int): Flow<Show>
 
-    suspend fun getShowsByCategoryId(page: Int, categoryId: Int): List<Show>
+    fun observeWatchlist(): Flow<List<Show>>
 
-    fun getShow(tvShowId: Int): Flow<Show>
+    fun observeShowsByCategoryID(
+        categoryId: Int
+    ): Flow<Resource<List<Show>>>
 
-    fun getWatchlist(): Flow<List<Show>>
-
-    fun getPagedShowsByCategoryID(
+    fun observePagedShowsByCategoryID(
         categoryId: Int
     ): CommonFlow<PagingData<Show>>
 }

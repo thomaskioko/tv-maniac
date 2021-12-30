@@ -1,17 +1,14 @@
 package com.thomaskioko.tvmaniac.datasource.repository.shows
 
 import com.thomaskioko.tvmaniac.MockData.getShow
-import com.thomaskioko.tvmaniac.MockData.getTvResponse
 import com.thomaskioko.tvmaniac.MockData.makeShowList
 import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCache
 import com.thomaskioko.tvmaniac.datasource.cache.show_category.ShowCategoryCache
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepositoryImpl
 import com.thomaskioko.tvmaniac.util.runBlocking
 import io.mockk.MockKAnnotations
-import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
@@ -60,7 +57,7 @@ internal class TvShowRepositoryTest {
     fun givenDataIsCached_thenGetCachedTvShowIsLoadedFromCache() = runBlocking {
         every { tvShowCache.getTvShow(84958) } returns flowOf(getShow())
 
-        repository.getShow(84958)
+        repository.observeShow(84958)
 
         coVerify(exactly = 0) {
             apiService.getTvShowDetails(1)
@@ -70,25 +67,10 @@ internal class TvShowRepositoryTest {
     }
 
     @Test
-    fun givenDataIsNotCached_thenGetTrendingShowsInvokesApiService_AndDataIsLoadedFromCache() =
-        runBlocking {
-            coEvery { apiService.getTrendingShows(1) } answers { getTvResponse() }
-
-            repository.getDiscoverShowList(listOf(TRENDING))
-
-            coVerify {
-                // Api is invoked
-                apiService.getTrendingShows(1)
-
-                showCategoryCache.getShowsByCategoryID(TRENDING.type)
-            }
-        }
-
-    @Test
     fun givenDataIsCached_thenWatchlistIsFetched() = runBlocking {
         every { tvShowCache.getTvShows() } returns flowOf(makeShowList())
 
-        repository.getWatchlist()
+        repository.observeWatchlist()
 
         coVerify { tvShowCache.getWatchlist() }
     }
