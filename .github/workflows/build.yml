@@ -9,36 +9,46 @@ on:
       - main
 
 jobs:
-  setup:
+  build:
     runs-on: ubuntu-latest
+    env:
+      TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+      TMDB_API_URL: ${{ secrets.TMDB_API_URL }}
+
     steps:
       - name: Set Up JDK
         uses: actions/setup-java@v1
         with:
           java-version: 11
 
-  fields_setup:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
       - uses: actions/checkout@v2
 
-  test:
-    needs: fields_setup
-    name: Run all Unit Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
       - name: Add App Secrets
-        env:
-          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-          TMDB_API_URL: ${{ secrets.TMDB_API_URL }}
         run: |
             echo -e "\TMDB_API_KEY=$TMDB_API_KEY" >> ./local.properties
             echo -e "\TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
 
       - name: Build with Gradle
         run: ./gradlew assembleDebug
+
       - name: Unit Tests
         run: ./gradlew testDebugUnitTest
+
+      - name: Build iOS framework
+        id: buildPackage
+        run: ./gradlew createSwiftPackage
+
+      - name: Upload Swift Package directory
+        uses: actions/upload-artifact@v2
+        with:
+          name: swiftpackage
+          path: shared/swiftpackage
+          retention-days: 1
+
+      - name: Create release for tags
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          files: swiftpackage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
