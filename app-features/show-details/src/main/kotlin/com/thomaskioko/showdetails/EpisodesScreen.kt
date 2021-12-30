@@ -57,11 +57,12 @@ fun EpisodesScreen(
             LoadingView()
         }
 
-        TvShowSeasons(
-            tvSeasons,
-            onSeasonSelected,
-            episodeList
-        )
+        if (tvSeasons.isNotEmpty())
+            TvShowSeasons(
+                tvSeasons,
+                onSeasonSelected,
+                episodeList
+            )
 
         episodeList.forEachIndexed { index, episode ->
             EpisodeItem(episode, index)
@@ -78,7 +79,7 @@ fun TvShowSeasons(
 ) {
 
     val selectedPosition by remember { mutableStateOf(0) }
-    var selectedCategory by remember { mutableStateOf(tvSeasons.first()) }
+    var selectedSeason by remember { mutableStateOf(tvSeasons.first()) }
 
     /**
      * Invoke fetchEpisode when season is loaded and user has not clicked on anything.
@@ -86,9 +87,9 @@ fun TvShowSeasons(
     if (tvSeasons.isNotEmpty() && episodeList.isEmpty() && selectedPosition == 0) {
         onSeasonSelected(
             EpisodeQuery(
-                tvShowId = selectedCategory.tvShowId,
-                seasonId = selectedCategory.seasonId,
-                seasonNumber = selectedCategory.seasonNumber
+                tvShowId = selectedSeason.tvShowId,
+                seasonId = selectedSeason.seasonId,
+                seasonNumber = selectedSeason.seasonNumber
             )
         )
     }
@@ -97,9 +98,9 @@ fun TvShowSeasons(
 
         ShowSeasonsTabs(
             seasonList = tvSeasons,
-            selectedSeason = selectedCategory,
+            selectedSeason = selectedSeason,
             onSeasonSelected = { season ->
-                selectedCategory = season
+                selectedSeason = season
 
                 onSeasonSelected(
                     EpisodeQuery(
