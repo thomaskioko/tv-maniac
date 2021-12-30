@@ -6,13 +6,12 @@ import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepository
 import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepository
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
-import com.thomaskioko.tvmaniac.interactor.GetDiscoverShowListInteractor
 import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.interactor.GetTrailersInteractor
 import com.thomaskioko.tvmaniac.interactor.GetWatchListInteractor
-import com.thomaskioko.tvmaniac.interactor.PopularShowsInteractor
+import com.thomaskioko.tvmaniac.interactor.ObserveShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
 import dagger.Module
@@ -24,12 +23,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object InteractorsModule {
-
-    @Singleton
-    @Provides
-    fun providePopularShowsInteractor(
-        repository: TvShowsRepository
-    ): PopularShowsInteractor = PopularShowsInteractor(repository)
 
     @Singleton
     @Provides
@@ -45,9 +38,9 @@ object InteractorsModule {
 
     @Singleton
     @Provides
-    fun provideGetTrendingShowsInteractor(
+    fun provideObserveShowsByCategoryInteractor(
         repository: TvShowsRepository
-    ): GetDiscoverShowListInteractor = GetDiscoverShowListInteractor(repository)
+    ): ObserveShowsByCategoryInteractor = ObserveShowsByCategoryInteractor(repository)
 
     @Singleton
     @Provides
