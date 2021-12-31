@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac
 
-import com.thomaskioko.tvmaniac.core.discover.DiscoverShowsData
+import com.thomaskioko.tvmaniac.core.discover.DiscoverShowResult
 import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.Show
@@ -219,8 +219,16 @@ object MockData {
         )
     )
 
-    fun getTrendingDataMap(): DiscoverShowsData = DiscoverShowsData(
-        category = ShowCategory.TRENDING,
+    fun getDiscoverShowResult(): DiscoverShowResult =
+        DiscoverShowResult(
+            featuredShows = getDiscoverShowsData(ShowCategory.TRENDING),
+            trendingShows = getDiscoverShowsData(ShowCategory.TRENDING),
+            popularShows = getDiscoverShowsData(ShowCategory.POPULAR),
+            topRatedShows = getDiscoverShowsData(ShowCategory.TOP_RATED)
+        )
+
+    private fun getDiscoverShowsData(category: ShowCategory) = DiscoverShowResult.DiscoverShowsData(
+        category = category,
         shows = listOf(
             TvShow(
                 id = 84958,

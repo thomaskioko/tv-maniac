@@ -55,8 +55,8 @@ import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
+import com.thomaskioko.tvmaniac.core.discover.DiscoverShowResult
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
-import com.thomaskioko.tvmaniac.core.discover.DiscoverShowsData
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.presentation.model.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
@@ -127,7 +127,7 @@ private fun DiscoverShows(
             )
         },
     ) {
-        if (discoverViewState.featuredShows.isLoading) LoadingView()
+        if (discoverViewState.isLoading) LoadingView()
 
         LazyColumn(
             modifier = Modifier
@@ -137,14 +137,14 @@ private fun DiscoverShows(
 
             item {
                 FeaturedItems(
-                    showData = discoverViewState.featuredShows
+                    showData = discoverViewState.showData.featuredShows
                 ) { openShowDetails(it) }
             }
 
             item {
                 DisplayShowData(
-                    category = discoverViewState.trendingShows.category,
-                    shows = discoverViewState.trendingShows.shows,
+                    category = discoverViewState.showData.trendingShows.category,
+                    shows = discoverViewState.showData.trendingShows.shows,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -152,8 +152,8 @@ private fun DiscoverShows(
 
             item {
                 DisplayShowData(
-                    category = discoverViewState.popularShows.category,
-                    shows = discoverViewState.popularShows.shows,
+                    category = discoverViewState.showData.popularShows.category,
+                    shows = discoverViewState.showData.popularShows.shows,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -161,8 +161,8 @@ private fun DiscoverShows(
 
             item {
                 DisplayShowData(
-                    category = discoverViewState.topRatedShows.category,
-                    shows = discoverViewState.topRatedShows.shows,
+                    category = discoverViewState.showData.topRatedShows.category,
+                    shows = discoverViewState.showData.topRatedShows.shows,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -174,7 +174,7 @@ private fun DiscoverShows(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun FeaturedItems(
-    showData: DiscoverShowsData,
+    showData: DiscoverShowResult.DiscoverShowsData,
     onItemClicked: (Int) -> Unit,
 ) {
 

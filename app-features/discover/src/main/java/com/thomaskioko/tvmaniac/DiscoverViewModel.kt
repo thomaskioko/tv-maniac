@@ -6,63 +6,69 @@ import com.thomaskioko.tvmaniac.core.Store
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowAction
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowAction.Error
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
+import com.thomaskioko.tvmaniac.core.discover.DiscoverShowResult
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
 import com.thomaskioko.tvmaniac.core.usecase.scope.CoroutineScopeOwner
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.POPULAR
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TOP_RATED
-import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.interactor.ObserveShowsByCategoryInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
-    observeShow: ObserveShowsByCategoryInteractor,
+    private val observeShow: ObserveShowsByCategoryInteractor,
 ) : Store<DiscoverShowState, DiscoverShowAction, DiscoverShowEffect>, CoroutineScopeOwner,
     ViewModel() {
 
     override val coroutineScope: CoroutineScope
         get() = viewModelScope
 
-    private val uiStateFlow: StateFlow<DiscoverShowState> = combine(
-        observeShow.invoke(TRENDING).distinctUntilChanged(),
-        observeShow.invoke(TOP_RATED).distinctUntilChanged(),
-        observeShow.invoke(POPULAR).distinctUntilChanged()
-    ) { trendingShows, topRatedShows, popularShows ->
-
-        DiscoverShowState(
-            featuredShows = trendingShows.copy(
-                shows = trendingShows.shows
-                    .sortedBy { it.votes }
-                    .take(5)
-            ),
-            trendingShows = trendingShows,
-            topRatedShows = topRatedShows,
-            popularShows = popularShows
-        )
-    }.stateIn(
-        scope = coroutineScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = DiscoverShowState.Empty,
-    )
+    private val state = MutableStateFlow(DiscoverShowState(false, DiscoverShowResult.EMPTY))
 
     private val sideEffect = MutableSharedFlow<DiscoverShowEffect>()
 
-    override fun observeState(): StateFlow<DiscoverShowState> = uiStateFlow
+    init {
+        dispatch(DiscoverShowAction.LoadTvShows)
+    }
+
+    override fun observeState(): StateFlow<DiscoverShowState> = state
 
     override fun observeSideEffect(): Flow<DiscoverShowEffect> = sideEffect
 
     override fun dispatch(action: DiscoverShowAction) {
+        val oldState = state.value
+
         when (action) {
+            is DiscoverShowAction.LoadTvShows -> {
+                with(state) {
+                    observeShow.execute(Unit) {
+                        onStart {
+                            coroutineScope.launch { emit(oldState.copy(isLoading = false)) }
+                        }
+
+                        onNext {
+                            coroutineScope.launch {
+                                emit(
+                                    oldState.copy(
+                                        isLoading = false,
+                                        showData = it
+                                    )
+                                )
+                            }
+                        }
+
+                        onError {
+                            coroutineScope.launch { emit(oldState.copy(isLoading = false)) }
+                            dispatch(Error(it.message ?: "Something went wrong"))
+                        }
+                    }
+                }
+            }
             is Error -> {
                 coroutineScope.launch {
                     sideEffect.emit(DiscoverShowEffect.Error(action.message))
