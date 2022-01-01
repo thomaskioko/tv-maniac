@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.interactor.GetTrailersInteractor
 import com.thomaskioko.tvmaniac.interactor.GetWatchListInteractor
-import com.thomaskioko.tvmaniac.interactor.ObserveShowsByCategoryInteractor
+import com.thomaskioko.tvmaniac.interactor.ObserveDiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
 
@@ -44,8 +44,8 @@ class DataSourceModule(
         )
     }
 
-    val observeShowsByCategoryInteractor: ObserveShowsByCategoryInteractor by lazy {
-        ObserveShowsByCategoryInteractor(
+    val observeDiscoverShowsInteractor: ObserveDiscoverShowsInteractor by lazy {
+        ObserveDiscoverShowsInteractor(
             repository = repositoryModule.tvShowsRepository
         )
     }

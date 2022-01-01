@@ -1,24 +1,16 @@
 package com.thomaskioko.tvmaniac.interactor
 
 import com.thomaskioko.tvmaniac.core.usecase.FlowInteractor
+import com.thomaskioko.tvmaniac.datasource.mapper.toGenreModelList
 import com.thomaskioko.tvmaniac.datasource.repository.genre.GenreRepository
-import com.thomaskioko.tvmaniac.presentation.model.GenreModel
-import com.thomaskioko.tvmaniac.util.DomainResultState
-import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.error
-import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.loading
-import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.success
+import com.thomaskioko.tvmaniac.presentation.model.GenreUIModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class GetGenresInteractor constructor(
     private val repository: GenreRepository,
-) : FlowInteractor<Unit, DomainResultState<List<GenreModel>>>() {
+) : FlowInteractor<Unit, List<GenreUIModel>>() {
 
-    override fun run(params: Unit): Flow<DomainResultState<List<GenreModel>>> = flow {
-        emit(loading())
-
-        emit(success(repository.getGenres()))
-    }
-        .catch { emit(error(it)) }
+    override fun run(params: Unit): Flow<List<GenreUIModel>> = repository.observeGenres()
+        .map { it.data?.toGenreModelList() ?: emptyList() }
 }

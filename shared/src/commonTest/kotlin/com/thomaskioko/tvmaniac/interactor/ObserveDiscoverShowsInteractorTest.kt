@@ -11,10 +11,10 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlin.test.Test
 
-internal class ObserveShowsByCategoryInteractorTest {
+internal class ObserveDiscoverShowsInteractorTest {
 
     private val repository: TvShowsRepository = mockk()
-    private val interactor = ObserveShowsByCategoryInteractor(repository)
+    private val interactor = ObserveDiscoverShowsInteractor(repository)
 
     @Test
     fun wheneverObserveShowsByCategoryInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {

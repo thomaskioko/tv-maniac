@@ -3,9 +3,10 @@ package com.thomaskioko.tvmaniac.datasource.repository.seasons
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonCacheList
-import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonsEntityList
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
-import com.thomaskioko.tvmaniac.presentation.model.Season
+import com.thomaskioko.tvmaniac.datasource.repository.util.networkBoundResource
+import com.thomaskioko.tvmaniac.presentation.model.SeasonUiModel
+import kotlinx.coroutines.flow.Flow
 
 class SeasonsRepositoryImpl(
     private val apiService: TvShowsService,
@@ -13,7 +14,16 @@ class SeasonsRepositoryImpl(
     private val seasonCache: SeasonsCache
 ) : SeasonsRepository {
 
-    override suspend fun getSeasonListByTvShowId(tvShowId: Int): List<Season> {
+    override fun getSeasonListByTvShowId(tvShowId: Int): Flow<Result<List<SeasonUiModel>>> =
+        networkBoundResource(
+            query = {},
+            shouldFetch = {},
+            fetch = {},
+            saveFetchResult = {},
+            onFetchFailed = {}
+        )
+
+    /*{
         return if (seasonCache.getSeasonsByTvShowId(tvShowId).isEmpty()) {
 
             updateTvShowsDetails(tvShowId)
@@ -28,7 +38,7 @@ class SeasonsRepositoryImpl(
                 .filter { it.seasonNumber != 0 }
                 .sortedBy { it.seasonNumber }
         }
-    }
+    }*/
 
     override suspend fun updateTvShowsDetails(tvShowId: Int) {
 

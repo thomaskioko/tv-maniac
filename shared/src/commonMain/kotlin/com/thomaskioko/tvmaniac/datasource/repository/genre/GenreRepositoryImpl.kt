@@ -3,37 +3,33 @@ package com.thomaskioko.tvmaniac.datasource.repository.genre
 import com.thomaskioko.tvmaniac.datasource.cache.Genre
 import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
 import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
-import com.thomaskioko.tvmaniac.presentation.model.GenreModel
+import com.thomaskioko.tvmaniac.datasource.network.model.GenresResponse
+import com.thomaskioko.tvmaniac.datasource.repository.util.Resource
+import com.thomaskioko.tvmaniac.datasource.repository.util.networkBoundResource
+import com.thomaskioko.tvmaniac.util.Logger
+import com.thomaskioko.tvmaniac.util.getErrorMessage
+import kotlinx.coroutines.flow.Flow
 
 class GenreRepositoryImpl(
     private val apiService: TvShowsService,
     private val genreCache: GenreCache
 ) : GenreRepository {
 
-    override suspend fun getGenres(): List<GenreModel> {
-        return if (genreCache.getGenres().isEmpty()) {
-            val response = apiService.getAllGenres()
+    override fun observeGenres(): Flow<Resource<List<Genre>>> = networkBoundResource(
+        query = { genreCache.getGenres() },
+        shouldFetch = { it.isEmpty() },
+        fetch = { apiService.getAllGenres() },
+        saveFetchResult = { mapAndCache(it) },
+        onFetchFailed = { Logger("getGenres").log(it.getErrorMessage()) }
+    )
 
-            response.genres.forEach {
-                genreCache.insert(
-                    Genre(
-                        id = it.id.toLong(),
-                        name = it.name
-                    )
-                )
-            }
-            genreCache.getGenres().toGenreModelList()
-        } else {
-            genreCache.getGenres().toGenreModelList()
-        }
-    }
-
-    private fun List<Genre>.toGenreModelList(): List<GenreModel> {
-        return map {
-            GenreModel(
-                id = it.id.toInt(),
-                name = it.name
+    private fun mapAndCache(it: GenresResponse) {
+        val cacheList = it.genres.map { response ->
+            Genre(
+                id = response.id.toLong(),
+                name = response.name
             )
         }
+        genreCache.insert(cacheList)
     }
 }

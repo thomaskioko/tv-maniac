@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.di
 
+import com.thomaskioko.tvmaniac.datasource.cache.Season
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
-import com.thomaskioko.tvmaniac.datasource.cache.Tv_season
 import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCache
 import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.db.DriverFactory
@@ -30,7 +30,7 @@ class DatabaseModule {
                 genre_idsAdapter = intAdapter,
                 season_idsAdapter = intAdapter,
             ),
-            tv_seasonAdapter = Tv_season.Adapter(
+            seasonAdapter = Season.Adapter(
                 episode_idsAdapter = intAdapter
             )
         )

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.model
 
-data class TvShow(
+data class ShowUiModel(
     val id: Int = 0,
     val title: String = "",
     val overview: String = "",
@@ -15,6 +15,6 @@ data class TvShow(
     val genreIds: List<Int> = listOf(),
 ) {
     companion object {
-        val EMPTY_SHOW = TvShow()
+        val EMPTY_SHOW = ShowUiModel()
     }
 }
