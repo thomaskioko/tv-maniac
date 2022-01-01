@@ -1,16 +1,16 @@
 package com.thomaskioko.tvmaniac.datasource.cache.seasons
 
+import com.thomaskioko.tvmaniac.datasource.cache.Season
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
-import com.thomaskioko.tvmaniac.datasource.cache.Tv_season
 
 class SeasonsCacheImpl(
     private val database: TvManiacDatabase
 ) : SeasonsCache {
 
-    private val seasonQueries get() = database.tvSeasonQueries
+    private val seasonQueries get() = database.seasonQueries
 
-    override fun insert(tvSeason: Tv_season) {
+    override fun insert(tvSeason: Season) {
         seasonQueries.insertOrReplace(
             id = tvSeason.id,
             tv_show_id = tvSeason.tv_show_id,
@@ -21,11 +21,11 @@ class SeasonsCacheImpl(
         )
     }
 
-    override fun insert(entityList: List<Tv_season>) {
+    override fun insert(entityList: List<Season>) {
         entityList.forEach { insert(it) }
     }
 
-    override fun getSeasonBySeasonId(seasonId: Int): Tv_season {
+    override fun getSeasonBySeasonId(seasonId: Int): Season {
         return seasonQueries.selectBySeasonId(
             id = seasonId.toLong(),
         ).executeAsOne()

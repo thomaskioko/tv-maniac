@@ -3,18 +3,14 @@ package com.thomaskioko.tvmaniac.interactor
 import com.thomaskioko.tvmaniac.core.usecase.FlowInteractor
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowList
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
-import com.thomaskioko.tvmaniac.util.DomainResultState.Companion.loading
+import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 
 class GetWatchListInteractor constructor(
     private val repository: TvShowsRepository,
-) : FlowInteractor<Unit, List<TvShow>>() {
+) : FlowInteractor<Unit, List<ShowUiModel>>() {
 
-    override fun run(params: Unit): Flow<List<TvShow>> = repository.observeWatchlist()
-        .onStart { loading<List<TvShow>>() }
+    override fun run(params: Unit): Flow<List<ShowUiModel>> = repository.observeWatchlist()
         .map { it.toTvShowList() }
-        .map { it }
 }

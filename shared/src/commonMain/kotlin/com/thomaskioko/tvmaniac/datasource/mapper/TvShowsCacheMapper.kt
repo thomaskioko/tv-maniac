@@ -2,14 +2,14 @@ package com.thomaskioko.tvmaniac.datasource.mapper
 
 import com.thomaskioko.tvmaniac.datasource.cache.SelectShows
 import com.thomaskioko.tvmaniac.datasource.cache.Show
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
 
-fun List<Show>.toTvShowList(): List<TvShow> {
+fun List<Show>.toTvShowList(): List<ShowUiModel> {
     return map { it.toTvShow() }
 }
 
-fun Show.toTvShow(): TvShow {
-    return TvShow(
+fun Show.toTvShow(): ShowUiModel {
+    return ShowUiModel(
         id = id.toInt(),
         title = title,
         overview = description,

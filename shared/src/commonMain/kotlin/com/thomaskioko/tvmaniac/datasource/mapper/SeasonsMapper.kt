@@ -1,13 +1,13 @@
 package com.thomaskioko.tvmaniac.datasource.mapper
 
+import com.thomaskioko.tvmaniac.datasource.cache.Season
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
-import com.thomaskioko.tvmaniac.datasource.cache.Tv_season
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
-import com.thomaskioko.tvmaniac.presentation.model.Season
+import com.thomaskioko.tvmaniac.presentation.model.SeasonUiModel
 
-fun ShowDetailResponse.toSeasonCacheList(): List<Tv_season> {
+fun ShowDetailResponse.toSeasonCacheList(): List<Season> {
     return seasons.map { seasonResponse ->
-        Tv_season(
+        Season(
             id = seasonResponse.id.toLong(),
             tv_show_id = id.toLong(),
             season_number = seasonResponse.seasonNumber.toLong(),
@@ -19,12 +19,12 @@ fun ShowDetailResponse.toSeasonCacheList(): List<Tv_season> {
     }
 }
 
-fun List<SelectSeasonsByShowId>.toSeasonsEntityList(): List<Season> {
+fun List<SelectSeasonsByShowId>.toSeasonsEntityList(): List<SeasonUiModel> {
     return map { it.toSeasonsEntity() }
 }
 
-fun SelectSeasonsByShowId.toSeasonsEntity(): Season {
-    return Season(
+fun SelectSeasonsByShowId.toSeasonsEntity(): SeasonUiModel {
+    return SeasonUiModel(
         seasonId = id.toInt(),
         tvShowId = tv_show_id.toInt(),
         name = name,

@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.map
 
 private const val FEATURED_LIST_SIZE = 5
 
-class ObserveShowsByCategoryInteractor constructor(
+class ObserveDiscoverShowsInteractor constructor(
     private val repository: TvShowsRepository,
 ) : FlowInteractor<Unit, DiscoverShowResult>() {
 
@@ -29,7 +29,7 @@ class ObserveShowsByCategoryInteractor constructor(
 
         DiscoverShowResult(
             featuredShows = trending.copy(
-                shows = trending.shows
+                showUiModels = trending.showUiModels
                     .sortedBy { it.votes }
                     .take(FEATURED_LIST_SIZE)
             ),
@@ -43,7 +43,7 @@ class ObserveShowsByCategoryInteractor constructor(
         DiscoverShowResult.DiscoverShowsData(
             isLoading = it.status == Status.LOADING,
             category = category,
-            shows = it.data?.toTvShowList() ?: emptyList(),
+            showUiModels = it.data?.toTvShowList() ?: emptyList(),
             errorMessage = it.message
         )
     }
