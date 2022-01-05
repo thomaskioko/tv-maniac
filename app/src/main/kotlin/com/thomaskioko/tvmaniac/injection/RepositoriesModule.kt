@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.injection
 
+import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
 import com.thomaskioko.tvmaniac.core.annotations.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCache
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
@@ -23,6 +24,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
@@ -37,33 +39,38 @@ object RepositoriesModule {
         tvShowCache: TvShowCache,
         categoryCache: CategoryCache,
         showCategoryCache: ShowCategoryCache,
-        @IoCoroutineScope coroutineScope: CoroutineScope
+        @IoCoroutineScope coroutineScope: CoroutineScope,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): TvShowsRepository =
         TvShowsRepositoryImpl(
             apiService = tvShowsService,
             tvShowCache = tvShowCache,
             categoryCache = categoryCache,
             showCategoryCache = showCategoryCache,
-            coroutineScope = coroutineScope
+            coroutineScope = coroutineScope,
+            dispatcher = ioDispatcher
         )
 
     @Singleton
     @Provides
     fun provideGenreRepository(
         tvShowsService: TvShowsService,
-        cache: GenreCache
-    ): GenreRepository = GenreRepositoryImpl(tvShowsService, cache)
+        cache: GenreCache,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
+    ): GenreRepository = GenreRepositoryImpl(tvShowsService, cache, ioDispatcher)
 
     @Singleton
     @Provides
     fun provideTvShowSeasonsRepository(
         tvShowsService: TvShowsService,
         cache: TvShowCache,
-        seasonCache: SeasonsCache
+        seasonCache: SeasonsCache,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): SeasonsRepository = SeasonsRepositoryImpl(
         tvShowsService,
         cache,
-        seasonCache
+        seasonCache,
+        ioDispatcher
     )
 
     @Singleton
@@ -71,11 +78,13 @@ object RepositoriesModule {
     fun provideEpisodeRepository(
         tvShowsService: TvShowsService,
         episodesCache: EpisodesCache,
-        seasonCache: SeasonsCache
+        seasonCache: SeasonsCache,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): EpisodeRepository = EpisodeRepositoryImpl(
         tvShowsService,
         episodesCache,
-        seasonCache
+        seasonCache,
+        ioDispatcher
     )
 
     @Singleton

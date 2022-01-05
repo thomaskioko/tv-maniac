@@ -1,9 +1,18 @@
 package com.thomaskioko.tvmaniac.util
 
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
+import kotlin.coroutines.CoroutineContext
 
-actual fun <T> runBlocking(block: suspend CoroutineScope.() -> T): T {
-    return kotlinx.coroutines.runBlocking {
-        block(this)
-    }
-}
+actual val testCoroutineDispatcher: CoroutineDispatcher =
+    newSingleThreadContext("testRunner")
+
+actual val testCoroutineContext: CoroutineContext =
+    newSingleThreadContext("testRunner")
+
+actual val testCoroutineScope: CoroutineScope = CoroutineScope(testCoroutineContext)
+
+actual fun runBlockingTest(block: suspend CoroutineScope.() -> Unit) =
+    runBlocking(testCoroutineContext) { this.block() }

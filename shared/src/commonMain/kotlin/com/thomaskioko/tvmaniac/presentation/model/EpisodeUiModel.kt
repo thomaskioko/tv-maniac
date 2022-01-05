@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.presentation.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Episode(
+data class EpisodeUiModel(
     val id: Int,
     val seasonId: Int,
     val name: String,

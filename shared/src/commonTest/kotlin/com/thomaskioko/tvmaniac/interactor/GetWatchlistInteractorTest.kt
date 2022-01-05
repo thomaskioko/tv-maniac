@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.core.usecase.invoke
 import com.thomaskioko.tvmaniac.datasource.mapper.toShow
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowList
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
-import com.thomaskioko.tvmaniac.util.runBlocking
+import com.thomaskioko.tvmaniac.util.runBlockingTest
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -19,11 +19,11 @@ internal class GetWatchlistInteractorTest {
     private val interactor = GetWatchListInteractor(repository)
 
     @Test
-    fun wheneverGetWatchlistInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {
+    fun wheneverGetWatchlistInteractorIsInvoked_ExpectedDataIsReturned() = runBlockingTest {
         val result = getTvResponse().results
             .map { it.toShow() }
 
-        coEvery { repository.getWatchlist() } returns flowOf(result)
+        coEvery { repository.observeWatchlist() } returns flowOf(result)
 
         interactor.invoke().test {
             awaitItem() shouldBe result.toTvShowList()

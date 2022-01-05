@@ -4,21 +4,20 @@ import com.kuuurt.paging.multiplatform.PagingData
 import com.thomaskioko.tvmaniac.core.Action
 import com.thomaskioko.tvmaniac.core.Effect
 import com.thomaskioko.tvmaniac.core.State
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
-import com.thomaskioko.tvmaniac.util.CommonFlow
+import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 data class ShowsGridState(
     val isLoading: Boolean,
     val title: String,
-    val list: Flow<PagingData<TvShow>>
+    val list: Flow<PagingData<ShowUiModel>>
 ) : State {
     companion object {
         val Empty: ShowsGridState = ShowsGridState(
             isLoading = true,
             title = "",
-            list = CommonFlow(flowOf())
+            list = flowOf()
         )
     }
 }

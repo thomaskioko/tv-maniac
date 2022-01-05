@@ -1,7 +1,10 @@
 package com.thomaskioko.tvmaniac.datasource.cache.genre
 
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.thomaskioko.tvmaniac.datasource.cache.Genre
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import kotlinx.coroutines.flow.Flow
 
 class GenreCacheImpl(
     private val database: TvManiacDatabase
@@ -25,8 +28,9 @@ class GenreCacheImpl(
             .executeAsOne()
     }
 
-    override fun getGenres(): List<Genre> {
+    override fun getGenres(): Flow<List<Genre>> {
         return genresQueries.selectAll()
-            .executeAsList()
+            .asFlow()
+            .mapToList()
     }
 }

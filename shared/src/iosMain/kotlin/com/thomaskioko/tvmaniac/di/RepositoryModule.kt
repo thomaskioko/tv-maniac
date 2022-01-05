@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepository
 import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepositoryImpl
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepositoryImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 
 class RepositoryModule(
@@ -21,14 +22,16 @@ class RepositoryModule(
         EpisodeRepositoryImpl(
             apiService = networkModule.tmdbService,
             episodesCache = databaseModule.episodesCache,
-            seasonCache = databaseModule.seasonsCache
+            seasonCache = databaseModule.seasonsCache,
+            dispatcher = Dispatchers.Default
         )
     }
 
     val genreRepository: GenreRepository by lazy {
         GenreRepositoryImpl(
             apiService = networkModule.tmdbService,
-            genreCache = databaseModule.genreCache
+            genreCache = databaseModule.genreCache,
+            dispatcher = Dispatchers.Default
         )
     }
 
@@ -36,7 +39,8 @@ class RepositoryModule(
         SeasonsRepositoryImpl(
             apiService = networkModule.tmdbService,
             tvShowCache = databaseModule.tvShowCache,
-            seasonCache = databaseModule.seasonsCache
+            seasonCache = databaseModule.seasonsCache,
+            dispatcher = Dispatchers.Default
         )
     }
 
@@ -46,6 +50,7 @@ class RepositoryModule(
             tvShowCache = databaseModule.tvShowCache,
             categoryCache = databaseModule.categoryCache,
             showCategoryCache = databaseModule.showCategoryCache,
+            dispatcher = Dispatchers.Default,
             coroutineScope = MainScope()
         )
     }

@@ -2,8 +2,9 @@ package com.thomaskioko.tvmaniac.interactor
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.MockData.getEpisodeList
+import com.thomaskioko.tvmaniac.MockData.getEpisodesBySeasonId
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
-import com.thomaskioko.tvmaniac.util.runBlocking
+import com.thomaskioko.tvmaniac.util.runBlockingTest
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -20,14 +21,14 @@ internal class EpisodesInteractorTest {
     )
 
     @Test
-    fun wheneverInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {
+    fun wheneverInteractorIsInvoked_ExpectedDataIsReturned() = runBlockingTest {
         coEvery {
-            repository.getEpisodesBySeasonId(
+            repository.observeSeasonEpisodes(
                 tvShowId = query.tvShowId,
                 seasonNumber = query.seasonNumber,
                 seasonId = query.seasonId
             )
-        } returns getEpisodeList()
+        } returns getEpisodesBySeasonId()
 
         interactor.invoke(query).test {
             awaitItem() shouldBe getEpisodeList()
