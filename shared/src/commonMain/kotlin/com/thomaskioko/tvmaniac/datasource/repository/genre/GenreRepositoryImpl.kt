@@ -8,19 +8,22 @@ import com.thomaskioko.tvmaniac.datasource.repository.util.Resource
 import com.thomaskioko.tvmaniac.datasource.repository.util.networkBoundResource
 import com.thomaskioko.tvmaniac.util.Logger
 import com.thomaskioko.tvmaniac.util.getErrorMessage
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
 class GenreRepositoryImpl(
     private val apiService: TvShowsService,
-    private val genreCache: GenreCache
+    private val genreCache: GenreCache,
+    private val dispatcher: CoroutineDispatcher,
 ) : GenreRepository {
 
     override fun observeGenres(): Flow<Resource<List<Genre>>> = networkBoundResource(
         query = { genreCache.getGenres() },
-        shouldFetch = { it.isEmpty() },
+        shouldFetch = { it.isNullOrEmpty() },
         fetch = { apiService.getAllGenres() },
         saveFetchResult = { mapAndCache(it) },
-        onFetchFailed = { Logger("getGenres").log(it.getErrorMessage()) }
+        onFetchFailed = { Logger("getGenres").log(it.getErrorMessage()) },
+        coroutineDispatcher = dispatcher
     )
 
     private fun mapAndCache(it: GenresResponse) {

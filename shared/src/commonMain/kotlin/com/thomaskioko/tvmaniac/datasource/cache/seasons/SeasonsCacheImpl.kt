@@ -1,8 +1,11 @@
 package com.thomaskioko.tvmaniac.datasource.cache.seasons
 
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.thomaskioko.tvmaniac.datasource.cache.Season
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import kotlinx.coroutines.flow.Flow
 
 class SeasonsCacheImpl(
     private val database: TvManiacDatabase
@@ -31,10 +34,10 @@ class SeasonsCacheImpl(
         ).executeAsOne()
     }
 
-    override fun getSeasonsByTvShowId(tvShowId: Int): List<SelectSeasonsByShowId> {
-        return seasonQueries.selectSeasonsByShowId(
-            tv_show_id = tvShowId.toLong()
-        ).executeAsList()
+    override fun observeSeasons(tvShowId: Int): Flow<List<SelectSeasonsByShowId>> {
+        return seasonQueries.selectSeasonsByShowId(tvShowId.toLong())
+            .asFlow()
+            .mapToList()
     }
 
     override fun updateSeasonEpisodesIds(seasonId: Int, episodeIds: List<Int>) {

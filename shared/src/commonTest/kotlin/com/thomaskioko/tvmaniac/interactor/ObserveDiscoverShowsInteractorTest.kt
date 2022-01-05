@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.MockData.getDiscoverShowResult
 import com.thomaskioko.tvmaniac.MockData.getShowsCache
 import com.thomaskioko.tvmaniac.core.usecase.invoke
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
-import com.thomaskioko.tvmaniac.util.runBlocking
+import com.thomaskioko.tvmaniac.util.runBlockingTest
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -17,15 +17,16 @@ internal class ObserveDiscoverShowsInteractorTest {
     private val interactor = ObserveDiscoverShowsInteractor(repository)
 
     @Test
-    fun wheneverObserveShowsByCategoryInteractorIsInvoked_ExpectedDataIsReturned() = runBlocking {
+    fun wheneverObserveShowsByCategoryInteractorIsInvoked_ExpectedDataIsReturned() =
+        runBlockingTest {
 
-        coEvery {
-            repository.observeShowsByCategoryID(any())
-        } returns getShowsCache()
+            coEvery {
+                repository.observeShowsByCategoryID(any())
+            } returns getShowsCache()
 
-        interactor.invoke().test {
-            awaitItem() shouldBe getDiscoverShowResult()
-            awaitComplete()
+            interactor.invoke().test {
+                awaitItem() shouldBe getDiscoverShowResult()
+                awaitComplete()
+            }
         }
-    }
 }

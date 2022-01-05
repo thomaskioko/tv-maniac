@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.datasource.cache.episode
 
 import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
+import kotlinx.coroutines.flow.Flow
 import com.thomaskioko.tvmaniac.datasource.cache.Episode as EpisodeCache
 
 interface EpisodesCache {
@@ -9,7 +10,5 @@ interface EpisodesCache {
 
     fun insert(list: List<EpisodeCache>)
 
-    fun getEpisodeByEpisodeId(episodeId: Int): EpisodeCache
-
-    fun getEpisodesBySeasonId(seasonId: Int): List<EpisodesBySeasonId>
+    fun observeEpisode(seasonId: Int): Flow<List<EpisodesBySeasonId>>
 }

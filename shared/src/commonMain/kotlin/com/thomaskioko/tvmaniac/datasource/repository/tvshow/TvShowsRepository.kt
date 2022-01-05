@@ -10,7 +10,7 @@ interface TvShowsRepository {
 
     suspend fun updateWatchlist(showId: Int, addToWatchList: Boolean)
 
-    fun observeShow(tvShowId: Int): Flow<Show>
+    fun observeShow(tvShowId: Int): Flow<Resource<Show>>
 
     fun observeWatchlist(): Flow<List<Show>>
 

@@ -25,12 +25,11 @@ import com.thomaskioko.tvmaniac.util.CommonFlow
 import com.thomaskioko.tvmaniac.util.Logger
 import com.thomaskioko.tvmaniac.util.asCommonFlow
 import com.thomaskioko.tvmaniac.util.getErrorMessage
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
 
 private const val DEFAULT_API_PAGE = 1
 
@@ -40,11 +39,16 @@ class TvShowsRepositoryImpl(
     private val categoryCache: CategoryCache,
     private val showCategoryCache: ShowCategoryCache,
     private val coroutineScope: CoroutineScope,
+    private val dispatcher: CoroutineDispatcher,
 ) : TvShowsRepository {
 
-    override fun observeShow(tvShowId: Int): Flow<Show> = merge(
-        tvShowCache.getTvShow(tvShowId),
-        fetchAndCache(tvShowId)
+    override fun observeShow(tvShowId: Int): Flow<Resource<Show>> = networkBoundResource(
+        query = { tvShowCache.getTvShow(tvShowId) },
+        shouldFetch = { it == null },
+        fetch = { apiService.getTvShowDetails(tvShowId) },
+        saveFetchResult = { tvShowCache.insert(it.toShow()) },
+        onFetchFailed = { Logger("observeShow").log(it.getErrorMessage()) },
+        coroutineDispatcher = dispatcher
     )
 
     override suspend fun updateWatchlist(showId: Int, addToWatchList: Boolean) {
@@ -53,20 +57,18 @@ class TvShowsRepositoryImpl(
 
     override fun observeWatchlist(): Flow<List<Show>> = tvShowCache.getWatchlist()
 
-    override fun observeShowsByCategoryID(categoryId: Int): Flow<Resource<List<Show>>> {
-        return networkBoundResource(
+    override fun observeShowsByCategoryID(categoryId: Int): Flow<Resource<List<Show>>> =
+        networkBoundResource(
             query = {
                 showCategoryCache.observeShowsByCategoryID(categoryId)
                     .map { it.toShowList() }
             },
-            shouldFetch = { it.isEmpty() },
+            shouldFetch = { it.isNullOrEmpty() },
             fetch = { fetchShowsApiRequest(categoryId) },
             saveFetchResult = { cacheResult(it, categoryId) },
-            onFetchFailed = {
-                Logger("TvShowsRepository").log(it.getErrorMessage())
-            },
+            onFetchFailed = { Logger("TvShowsRepository").log(it.getErrorMessage()) },
+            coroutineDispatcher = dispatcher
         )
-    }
 
     override fun observePagedShowsByCategoryID(
         categoryId: Int
@@ -104,11 +106,6 @@ class TvShowsRepositoryImpl(
             .distinctUntilChanged()
             .cachedIn(coroutineScope)
             .asCommonFlow()
-    }
-
-    private fun fetchAndCache(tvShowId: Int): Flow<Show> = flow {
-        val cache = apiService.getTvShowDetails(tvShowId).toShow()
-        tvShowCache.insert(cache)
     }
 
     private suspend fun fetchShowsApiRequest(categoryId: Int): TvShowsResponse = when (categoryId) {
