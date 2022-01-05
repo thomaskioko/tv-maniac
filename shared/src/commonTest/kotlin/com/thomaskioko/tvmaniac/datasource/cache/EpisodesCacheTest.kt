@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.datasource.cache
 
-import com.thomaskioko.tvmaniac.MockData.getEpisodeList
-import com.thomaskioko.tvmaniac.presentation.model.Episode
+import com.thomaskioko.tvmaniac.MockData.getEpisodeCacheList
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.test.Test
@@ -13,25 +12,25 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
     @Test
     fun insertEpisodes_andEpisodeByEpisodeId_returnsExpectedData() {
 
-        getEpisodeList().insertEpisodeEntityQuery()
-        val entity = getEpisodeList().first()
+        getEpisodeCacheList().insertEpisodeEntityQuery()
+        val entity = getEpisodeCacheList().first()
 
         val queryResult = episodeQueries.episodeById(2534997).executeAsOne()
 
         queryResult.id shouldBe entity.id
-        queryResult.season_id shouldBe entity.seasonId
+        queryResult.season_id shouldBe entity.season_id
         queryResult.name shouldBe entity.name
         queryResult.overview shouldBe entity.overview
-        queryResult.episode_season_number shouldBe entity.seasonNumber
-        queryResult.image_url shouldBe entity.imageUrl
-        queryResult.vote_average shouldBe entity.voteAverage
-        queryResult.vote_count shouldBe entity.voteCount
+        queryResult.episode_season_number shouldBe entity.episode_season_number
+        queryResult.image_url shouldBe entity.image_url
+        queryResult.vote_average shouldBe entity.vote_average
+        queryResult.vote_count shouldBe entity.vote_count
     }
 
     @Test
     fun insertEpisodes_andSelectEpisodesBySeasonId_returnsExpectedData() {
 
-        getEpisodeList().insertEpisodeEntityQuery()
+        getEpisodeCacheList().insertEpisodeEntityQuery()
 
         val queryResult = episodeQueries.episodesBySeasonId(114355).executeAsList()
 
@@ -45,15 +44,15 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
 
     private fun Episode.insertEpisodeEntityQuery() {
         episodeQueries.insertOrReplace(
-            id = id.toLong(),
-            season_id = seasonId.toLong(),
-            episode_season_number = seasonNumber.toLong(),
+            id = id,
+            season_id = season_id,
+            episode_season_number = episode_season_number,
             name = name,
             overview = overview,
-            image_url = imageUrl,
-            vote_count = voteCount.toLong(),
-            vote_average = voteAverage,
-            episode_number = episodeNumber
+            image_url = image_url,
+            vote_count = vote_count,
+            vote_average = vote_average,
+            episode_number = episode_number
         )
     }
 }

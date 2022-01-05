@@ -1,8 +1,10 @@
 package com.thomaskioko.tvmaniac.datasource.cache.episode
 
-import com.thomaskioko.tvmaniac.datasource.cache.Episode
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import kotlinx.coroutines.flow.Flow
 import com.thomaskioko.tvmaniac.datasource.cache.Episode as EpisodeCache
 
 class EpisodesCacheImpl(
@@ -29,15 +31,8 @@ class EpisodesCacheImpl(
         list.map { insert(it) }
     }
 
-    override fun getEpisodeByEpisodeId(episodeId: Int): Episode {
-        return episodeQueries.episodeById(
-            id = episodeId.toLong()
-        ).executeAsOne()
-    }
-
-    override fun getEpisodesBySeasonId(seasonId: Int): List<EpisodesBySeasonId> {
-        return episodeQueries.episodesBySeasonId(
-            season_id = seasonId.toLong()
-        ).executeAsList()
-    }
+    override fun observeEpisode(seasonId: Int): Flow<List<EpisodesBySeasonId>> =
+        episodeQueries.episodesBySeasonId(seasonId.toLong())
+            .asFlow()
+            .mapToList()
 }

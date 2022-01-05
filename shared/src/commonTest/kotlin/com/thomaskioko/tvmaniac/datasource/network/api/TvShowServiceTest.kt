@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.datasource.network.api
 import com.thomaskioko.tvmaniac.datasource.network.TvShowsServiceMockEngine
 import com.thomaskioko.tvmaniac.datasource.network.mockresponse.getPopularTvShows
 import com.thomaskioko.tvmaniac.datasource.network.mockresponse.getTvSeasonDetailsResponse
-import com.thomaskioko.tvmaniac.util.runBlocking
+import com.thomaskioko.tvmaniac.util.runBlockingTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -16,7 +16,7 @@ internal class TvShowServiceTest : TvShowsServiceMockEngine() {
     }
 
     @Test
-    fun whenGetTvSeasonDetails_correctUrlIsCalled(): Unit = runBlocking {
+    fun whenGetTvSeasonDetails_correctUrlIsCalled(): Unit = runBlockingTest {
 
         val apiClient = givenAMockTvShowsService(
             GET_TV_SHOW_DETAILS,
@@ -31,7 +31,7 @@ internal class TvShowServiceTest : TvShowsServiceMockEngine() {
     }
 
     @Test
-    fun whenPopularShows_correctUrlIsCalled(): Unit = runBlocking {
+    fun whenPopularShows_correctUrlIsCalled(): Unit = runBlockingTest {
 
         val apiClient = givenAMockTvShowsService(
             endPoint = GET_POPULAR_TV_SHOWS,

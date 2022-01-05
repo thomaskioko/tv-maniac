@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.datasource.network
 
-import com.thomaskioko.tvmaniac.util.runBlocking
+import com.thomaskioko.tvmaniac.util.runBlockingTest
 import io.kotest.matchers.shouldBe
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -36,7 +36,7 @@ abstract class TvShowsServiceMockEngine {
     ) {
         apiUrl = endpointSegment
 
-        runBlocking {
+        runBlockingTest {
             mockResponse = HttpResponseData(
                 statusCode = HttpStatusCode.fromValue(httpStatusCode),
                 headers = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString())),

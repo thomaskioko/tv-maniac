@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.network.model.GenreResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowResponse
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
 import com.thomaskioko.tvmaniac.util.StringUtil
 import kotlinx.datetime.toLocalDate
 
@@ -15,9 +15,7 @@ fun ShowResponse.toShow(): Show {
         description = overview,
         language = originalLanguage,
         poster_image_url = StringUtil.formatPosterPath(posterPath),
-        backdrop_image_url = if (backdropPath.isNullOrEmpty()) StringUtil.formatPosterPath(posterPath) else StringUtil.formatPosterPath(
-            backdropPath
-        ),
+        backdrop_image_url = backdropPath.toImageUrl(posterPath),
         votes = voteCount.toLong(),
         vote_average = voteAverage,
         genre_ids = genreIds,
@@ -36,9 +34,7 @@ fun ShowDetailResponse.toShow(): Show {
         description = overview,
         language = originalLanguage,
         poster_image_url = StringUtil.formatPosterPath(posterPath),
-        backdrop_image_url = if (backdropPath.isEmpty()) StringUtil.formatPosterPath(posterPath) else StringUtil.formatPosterPath(
-            backdropPath
-        ),
+        backdrop_image_url = backdropPath.toImageUrl(posterPath),
         votes = voteCount.toLong(),
         vote_average = voteAverage,
         genre_ids = genres.toGenreIds(),
@@ -52,16 +48,14 @@ fun ShowDetailResponse.toShow(): Show {
 
 fun List<GenreResponse>.toGenreIds(): List<Int> = map { it.id }
 
-fun ShowResponse.toTvShow(): TvShow {
-    return TvShow(
+fun ShowResponse.toTvShow(): ShowUiModel {
+    return ShowUiModel(
         id = id,
         title = name,
         overview = overview,
         language = originalLanguage,
         posterImageUrl = StringUtil.formatPosterPath(posterPath),
-        backdropImageUrl = if (backdropPath.isNullOrEmpty()) StringUtil.formatPosterPath(posterPath) else StringUtil.formatPosterPath(
-            backdropPath
-        ),
+        backdropImageUrl = backdropPath.toImageUrl(posterPath),
         votes = voteCount,
         averageVotes = voteAverage,
         genreIds = genreIds,
@@ -75,3 +69,7 @@ private fun formatDate(dateString: String): String {
     else
         dateString
 }
+
+private fun String?.toImageUrl(posterPath: String?) =
+    if (this.isNullOrEmpty()) StringUtil.formatPosterPath(posterPath)
+    else StringUtil.formatPosterPath(this)

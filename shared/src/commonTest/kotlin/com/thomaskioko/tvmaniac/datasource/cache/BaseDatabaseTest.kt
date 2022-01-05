@@ -20,7 +20,7 @@ abstract class BaseDatabaseTest {
             genre_idsAdapter = intAdapter,
             season_idsAdapter = intAdapter,
         ),
-        tv_seasonAdapter = Tv_season.Adapter(
+        seasonAdapter = Season.Adapter(
             episode_idsAdapter = intAdapter
         )
     )

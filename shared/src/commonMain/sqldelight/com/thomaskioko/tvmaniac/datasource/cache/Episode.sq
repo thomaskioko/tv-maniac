@@ -12,7 +12,7 @@ image_url TEXT NOT NULL,
 vote_average REAL NOT NULL,
 vote_count INTEGER NOT NULL,
 episode_number TEXT NOT NULL,
-FOREIGN KEY (season_id) REFERENCES tv_season(id)
+FOREIGN KEY (season_id) REFERENCES season(id)
 );
 
 insertOrReplace:
@@ -32,11 +32,12 @@ VALUES(?,?,?,?,?,?,?,?,?);
 episodeById:
 SELECT *
 FROM episode
-WHERE id = ?;
+WHERE id = ?
+ORDER BY episode_number ASC ;
 
 episodesBySeasonId:
 SELECT *
 FROM episode
-LEFT JOIN tv_season ON tv_season.id = episode.season_id
+LEFT JOIN season ON season.id = episode.season_id
 WHERE season_id = ? ;
 

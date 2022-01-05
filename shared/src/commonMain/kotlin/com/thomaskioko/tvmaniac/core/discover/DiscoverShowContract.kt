@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.core.Action
 import com.thomaskioko.tvmaniac.core.Effect
 import com.thomaskioko.tvmaniac.core.State
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
 
 data class DiscoverShowState(
     val isLoading: Boolean,
@@ -45,7 +45,7 @@ data class DiscoverShowResult(
     data class DiscoverShowsData(
         val isLoading: Boolean,
         val category: ShowCategory,
-        val shows: List<TvShow>,
+        val showUiModels: List<ShowUiModel>,
         val errorMessage: String? = null
     ) {
 
@@ -53,7 +53,7 @@ data class DiscoverShowResult(
             val EMPTY = DiscoverShowsData(
                 isLoading = true,
                 category = ShowCategory.TOP_RATED,
-                shows = emptyList(),
+                showUiModels = emptyList(),
                 errorMessage = null
             )
         }
