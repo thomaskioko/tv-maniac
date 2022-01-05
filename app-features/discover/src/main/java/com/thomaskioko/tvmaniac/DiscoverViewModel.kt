@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowResult
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
 import com.thomaskioko.tvmaniac.core.usecase.scope.CoroutineScopeOwner
-import com.thomaskioko.tvmaniac.interactor.ObserveShowsByCategoryInteractor
+import com.thomaskioko.tvmaniac.interactor.ObserveDiscoverShowsInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
-    private val observeShow: ObserveShowsByCategoryInteractor,
+    private val observeDiscoverShow: ObserveDiscoverShowsInteractor,
 ) : Store<DiscoverShowState, DiscoverShowAction, DiscoverShowEffect>, CoroutineScopeOwner,
     ViewModel() {
 
@@ -46,7 +46,7 @@ class DiscoverViewModel @Inject constructor(
         when (action) {
             is DiscoverShowAction.LoadTvShows -> {
                 with(state) {
-                    observeShow.execute(Unit) {
+                    observeDiscoverShow.execute(Unit) {
                         onStart {
                             coroutineScope.launch { emit(oldState.copy(isLoading = false)) }
                         }
