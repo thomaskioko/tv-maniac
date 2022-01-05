@@ -3,11 +3,11 @@ package com.thomaskioko.tvmaniac.presentation.contract
 import com.thomaskioko.tvmaniac.core.Action
 import com.thomaskioko.tvmaniac.core.Effect
 import com.thomaskioko.tvmaniac.core.State
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
 
 data class WatchlistState(
     val isLoading: Boolean,
-    val list: List<TvShow>
+    val list: List<ShowUiModel>
 ) : State {
     companion object {
         val Empty = WatchlistState(

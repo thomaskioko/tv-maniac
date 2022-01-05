@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.datasource.mapper
 
 import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.datasource.network.model.SeasonResponse
-import com.thomaskioko.tvmaniac.presentation.model.Episode
+import com.thomaskioko.tvmaniac.presentation.model.EpisodeUiModel
 import com.thomaskioko.tvmaniac.util.StringUtil.formatPosterPath
 import com.thomaskioko.tvmaniac.datasource.cache.Episode as EpisodeCache
 
@@ -22,9 +22,9 @@ fun SeasonResponse.toEpisodeCacheList(): List<EpisodeCache> {
     }
 }
 
-fun SeasonResponse.toEpisodeEntityList(): List<Episode> {
+fun SeasonResponse.toEpisodeEntityList(): List<EpisodeUiModel> {
     return episodes.map { episodeResponse ->
-        Episode(
+        EpisodeUiModel(
             id = episodeResponse.id,
             seasonId = id,
             name = episodeResponse.name,
@@ -38,12 +38,12 @@ fun SeasonResponse.toEpisodeEntityList(): List<Episode> {
     }
 }
 
-fun List<EpisodesBySeasonId>.toEpisodeEntityList(): List<Episode> {
+fun List<EpisodesBySeasonId>.toEpisodeEntityList(): List<EpisodeUiModel> {
     return map { it.toEpisodeEntity() }
 }
 
-fun EpisodesBySeasonId.toEpisodeEntity(): Episode {
-    return Episode(
+fun EpisodesBySeasonId.toEpisodeEntity(): EpisodeUiModel {
+    return EpisodeUiModel(
         id = id.toInt(),
         seasonId = season_id.toInt(),
         name = name,
@@ -56,8 +56,8 @@ fun EpisodesBySeasonId.toEpisodeEntity(): Episode {
     )
 }
 
-fun EpisodeCache.toEpisodeEntity(): Episode {
-    return Episode(
+fun EpisodeCache.toEpisodeEntity(): EpisodeUiModel {
+    return EpisodeUiModel(
         id = id.toInt(),
         seasonId = season_id.toInt(),
         name = name,

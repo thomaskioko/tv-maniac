@@ -10,79 +10,64 @@ import Foundation
 import Combine
 import TvManiac
 
-final class DiscoverViewModel : BaseViewModel, ObservableObject {
+final class DiscoverViewModel: BaseViewModel, ObservableObject {
 
-	private let logger = Logger(className: "DiscoverViewModel")
-	
-	private var showsCancellable: AnyCancellable?
-	
-	private let networkModule: NetworkModule
-	private let databaseModule: DatabaseModule
-	private let repositoryModule: RepositoryModule
-	
-	let interactor: GetDiscoverShowListInteractor
-	
-	@Published var state : DiscoverShowState = DiscoverShowState.companion.Empty
-	
-	
-	init(
-			networkModule: NetworkModule,
-			databaseModule: DatabaseModule,
-			interactor: GetDiscoverShowListInteractor
-	){
-		self.networkModule = networkModule
-		self.databaseModule = databaseModule
-		repositoryModule = RepositoryModule(
-			networkModule: self.networkModule,
-			databaseModule: self.databaseModule
-		)
-		self.interactor = interactor
-		
-	}
-	
-	func startObservingDiscoverShows(){
-		let showCategory: NSArray = [ShowCategory.featured, ShowCategory.trending, ShowCategory.topRated, ShowCategory.popular]
+    private let logger = Logger(className: "DiscoverViewModel")
 
-		interactor.execute(self, args: showCategory) {
-			$0.onStart {
-				self.updateState(
-						isLoading: true,
-						list: [TrendingShowData]()
-				)
-			}
+    private var showsCancellable: AnyCancellable?
 
-			$0.onNext { list in
-				self.updateState(
-						isLoading: false,
-						list: (list as! [TrendingShowData])
-				)
-			}
+    private let networkModule: NetworkModule
+    private let databaseModule: DatabaseModule
+    private let repositoryModule: RepositoryModule
 
-			$0.onError { error in
-				self.logger.log(msg: "\(error)")
+    let interactor: ObserveShowsByCategoryInteractor
 
-				self.updateState(
-						isLoading: false,
-						list: [TrendingShowData]()
-				)
-			}
-		}
-	}
-	
-	private func updateState(
-		isLoading: Bool,
-		list: [TrendingShowData]
-	){
-		
+    @Published var state: DiscoverShowState = DiscoverShowState.companion.Empty
+
+
+    init(
+            networkModule: NetworkModule,
+            databaseModule: DatabaseModule,
+            interactor: ObserveShowsByCategoryInteractor
+    ) {
+        self.networkModule = networkModule
+        self.databaseModule = databaseModule
+        repositoryModule = RepositoryModule(
+                networkModule: self.networkModule,
+                databaseModule: self.databaseModule
+        )
+        self.interactor = interactor
+
+    }
+
+    func startObservingDiscoverShows() {
+
+		interactor.execute(self, args: nil) {
+            $0.onNext { result in
+				self.updateState(showResult: result!)
+            }
+
+            $0.onError { error in
+                self.logger.log(msg: "\(error)")
+            }
+        }
+    }
+
+
+    private func updateState(
+            showResult: DiscoverShowResult
+    ) {
+
 		state = DiscoverShowState(
-			isLoading: isLoading,
-			list: list
+			isLoading: showResult.trendingShows.isLoading,
+			showData: showResult
 		)
-	
-	}
-	
-	
-	func stopObservingTrendingShows() {
-		showsCancellable?.cancel()
-	}
+
+    }
+
+
+    func stopObservingTrendingShows() {
+        showsCancellable?.cancel()
+    }
+
 }

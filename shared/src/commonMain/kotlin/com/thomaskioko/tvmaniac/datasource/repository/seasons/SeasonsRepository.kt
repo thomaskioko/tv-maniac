@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.datasource.repository.seasons
 
-import com.thomaskioko.tvmaniac.presentation.model.Season
+import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
+import com.thomaskioko.tvmaniac.datasource.repository.util.Resource
+import kotlinx.coroutines.flow.Flow
 
 interface SeasonsRepository {
 
-    suspend fun getSeasonListByTvShowId(tvShowId: Int): List<Season>
-
-    suspend fun updateTvShowsDetails(tvShowId: Int)
+    fun observeShowSeasons(tvShowId: Int): Flow<Resource<List<SelectSeasonsByShowId>>>
 }

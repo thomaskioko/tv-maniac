@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -54,12 +55,12 @@ import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
+import com.thomaskioko.tvmaniac.core.discover.DiscoverShowResult
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
-import com.thomaskioko.tvmaniac.datasource.repository.TrendingShowData
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
+import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import kotlinx.coroutines.flow.collect
 import kotlin.math.absoluteValue
 
 /**
@@ -136,14 +137,32 @@ private fun DiscoverShows(
 
             item {
                 FeaturedItems(
-                    data = discoverViewState.list,
-                    onItemClicked = { openShowDetails(it) }
+                    showData = discoverViewState.showData.featuredShows
+                ) { openShowDetails(it) }
+            }
+
+            item {
+                DisplayShowData(
+                    category = discoverViewState.showData.trendingShows.category,
+                    showUiModels = discoverViewState.showData.trendingShows.showUiModels,
+                    onItemClicked = { openShowDetails(it) },
+                    moreClicked = { moreClicked(it) }
                 )
             }
 
             item {
                 DisplayShowData(
-                    data = discoverViewState.list,
+                    category = discoverViewState.showData.popularShows.category,
+                    showUiModels = discoverViewState.showData.popularShows.showUiModels,
+                    onItemClicked = { openShowDetails(it) },
+                    moreClicked = { moreClicked(it) }
+                )
+            }
+
+            item {
+                DisplayShowData(
+                    category = discoverViewState.showData.topRatedShows.category,
+                    showUiModels = discoverViewState.showData.topRatedShows.showUiModels,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -155,68 +174,63 @@ private fun DiscoverShows(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun FeaturedItems(
-    data: List<TrendingShowData>,
+    showData: DiscoverShowResult.DiscoverShowsData,
     onItemClicked: (Int) -> Unit,
 ) {
 
-    data
-        .find { it.category.title == "Featured" }
-        ?.let { show ->
+    val surfaceColor = grey900
+    val dominantColorState = rememberDominantColorState { color ->
+        // We want a color which has sufficient contrast against the surface color
+        color.contrastAgainst(surfaceColor) >= MinContrastOfPrimaryVsSurface
+    }
 
-            val surfaceColor = grey900
-            val dominantColorState = rememberDominantColorState { color ->
-                // We want a color which has sufficient contrast against the surface color
-                color.contrastAgainst(surfaceColor) >= MinContrastOfPrimaryVsSurface
-            }
+    DynamicThemePrimaryColorsFromImage(dominantColorState) {
 
-            DynamicThemePrimaryColorsFromImage(dominantColorState) {
+        val pagerState = rememberPagerState()
 
-                val pagerState = rememberPagerState()
+        val selectedImageUrl = showData.showUiModels.getOrNull(pagerState.currentPage)
+            ?.posterImageUrl
 
-                val selectedImageUrl = show.shows.getOrNull(pagerState.currentPage)
-                    ?.posterImageUrl
-
-                LaunchedEffect(selectedImageUrl) {
-                    if (selectedImageUrl != null) {
-                        dominantColorState.updateColorsFromImageUrl(selectedImageUrl)
-                    } else {
-                        dominantColorState.reset()
-                    }
-                }
-
-                LaunchedEffect(Unit) {
-                    if (data.size >= 4) {
-                        pagerState.scrollToPage(2)
-                    }
-                }
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalGradientScrim(
-                            color = MaterialTheme.colors.primary.copy(alpha = 0.38f),
-                            startYPercentage = 1f,
-                            endYPercentage = 0f
-                        )
-                ) {
-
-                    ColumnSpacer(value = 24)
-
-                    FeaturedHorizontalPager(
-                        list = show.shows,
-                        pagerState = pagerState,
-                        onClick = { onItemClicked(it) }
-                    )
-
-                    HorizontalPagerIndicator(
-                        pagerState = pagerState,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(16.dp),
-                    )
-                }
+        LaunchedEffect(selectedImageUrl) {
+            if (selectedImageUrl != null) {
+                dominantColorState.updateColorsFromImageUrl(selectedImageUrl)
+            } else {
+                dominantColorState.reset()
             }
         }
+
+        LaunchedEffect(showData.showUiModels) {
+            if (showData.showUiModels.size >= 4) {
+                pagerState.scrollToPage(2)
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalGradientScrim(
+                    color = MaterialTheme.colors.primary.copy(alpha = 0.38f),
+                    startYPercentage = 1f,
+                    endYPercentage = 0f
+                )
+        ) {
+
+            ColumnSpacer(value = 24)
+
+            FeaturedHorizontalPager(
+                list = showData.showUiModels,
+                pagerState = pagerState,
+                onClick = { onItemClicked(it) }
+            )
+
+            HorizontalPagerIndicator(
+                pagerState = pagerState,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp),
+            )
+        }
+    }
 
     ColumnSpacer(value = 16)
 }
@@ -224,7 +238,7 @@ fun FeaturedItems(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun FeaturedHorizontalPager(
-    list: List<TvShow>,
+    list: List<ShowUiModel>,
     pagerState: PagerState,
     onClick: (Int) -> Unit
 ) {
@@ -291,19 +305,18 @@ fun FeaturedHorizontalPager(
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
 private fun DisplayShowData(
-    data: List<TrendingShowData>,
+    category: ShowCategory,
+    showUiModels: List<ShowUiModel>,
     onItemClicked: (Int) -> Unit,
     moreClicked: (Int) -> Unit,
 ) {
 
-    data
-        .filterNot { it.category.title == "Featured" }
-        .forEach { show ->
-
+    AnimatedVisibility(visible = showUiModels.isNotEmpty()) {
+        Column {
             BoxTextItems(
-                title = show.category.title,
+                title = category.title,
                 moreString = stringResource(id = R.string.str_more),
-                onMoreClicked = { moreClicked(show.category.type) }
+                onMoreClicked = { moreClicked(category.type) }
             )
 
             val lazyListState = rememberLazyListState()
@@ -312,7 +325,7 @@ private fun DisplayShowData(
                 state = lazyListState,
                 flingBehavior = rememberSnapperFlingBehavior(lazyListState),
             ) {
-                itemsIndexed(show.shows) { index, tvShow ->
+                itemsIndexed(showUiModels) { index, tvShow ->
                     TvShowCard(
                         posterImageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,
@@ -323,4 +336,5 @@ private fun DisplayShowData(
                 }
             }
         }
+    }
 }

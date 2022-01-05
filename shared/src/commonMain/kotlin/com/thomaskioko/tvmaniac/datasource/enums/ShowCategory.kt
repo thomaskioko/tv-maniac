@@ -5,15 +5,13 @@ enum class ShowCategory(
     val title: String,
 ) {
 
-    FEATURED(1, "Featured"),
-    TRENDING(2, "Trending"),
-    TOP_RATED(3, "Top Rated"),
-    POPULAR(4, "Popular");
+    TRENDING(1, "Trending"),
+    TOP_RATED(2, "Top Rated"),
+    POPULAR(3, "Popular");
 
     companion object {
         operator fun get(type: Int): ShowCategory {
             return when (type) {
-                FEATURED.type -> FEATURED
                 POPULAR.type -> POPULAR
                 TOP_RATED.type -> TOP_RATED
                 TRENDING.type -> TRENDING

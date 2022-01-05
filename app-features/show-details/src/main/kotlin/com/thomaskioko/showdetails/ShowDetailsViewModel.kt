@@ -3,27 +3,23 @@ package com.thomaskioko.showdetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.showdetails.DetailUiEffect.WatchlistError
-import com.thomaskioko.tvmaniac.core.Effect
-import com.thomaskioko.tvmaniac.core.usecase.invoke
+import com.thomaskioko.showdetails.ShowDetailAction.SeasonSelected
+import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
+import com.thomaskioko.showdetails.ShowDetailEffect.ShowDetailsError
+import com.thomaskioko.tvmaniac.core.Store
 import com.thomaskioko.tvmaniac.core.usecase.scope.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
-import com.thomaskioko.tvmaniac.presentation.model.GenreModel
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
-import com.thomaskioko.tvmaniac.util.DomainResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,84 +27,62 @@ import javax.inject.Inject
 @HiltViewModel
 class ShowDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    getShow: GetShowInteractor,
+    private val getShow: GetShowInteractor,
     private val seasonsInteractor: SeasonsInteractor,
-    genresInteractor: GetGenresInteractor,
+    private val genresInteractor: GetGenresInteractor,
     private val episodeInteractor: EpisodesInteractor,
     private val updateWatchlistInteractor: UpdateWatchlistInteractor
-) : CoroutineScopeOwner, ViewModel() {
+) : Store<ShowDetailViewState, ShowDetailAction, ShowDetailEffect>, CoroutineScopeOwner,
+    ViewModel() {
 
     override val coroutineScope: CoroutineScope
         get() = viewModelScope
 
     private val showId: Int = savedStateHandle.get("tvShowId")!!
 
-    private val episodes = MutableStateFlow(EpisodesViewState())
-    private val seasonViewState = MutableStateFlow(SeasonViewState())
+    private val state = MutableStateFlow(ShowDetailViewState.Empty)
 
-    private val _uiEffects = MutableSharedFlow<DetailUiEffect>(extraBufferCapacity = 100)
-
-    val uiEffects: Flow<DetailUiEffect>
-        get() = _uiEffects.asSharedFlow()
-
-    val uiStateFlow = combine(
-        getShow(showId).distinctUntilChanged(),
-        genresInteractor().distinctUntilChanged(),
-        seasonViewState,
-        episodes
-    ) { showDetails, genreList, showSeasons, episodesState ->
-
-        ShowDetailViewState(
-            isLoading = showDetails.tvShowReducer().isLoading,
-            tvShow = showDetails.tvShowReducer().tvShow,
-            genreList = genreList.genreReducer().genreList,
-            tvSeasons = showSeasons.tvSeasons,
-            episodesViewState = episodesState
-        )
-    }
+    private val uiEffects = MutableSharedFlow<ShowDetailEffect>(extraBufferCapacity = 100)
 
     init {
-        fetchSeason()
+        dispatch(ShowDetailAction.LoadShowDetails)
+        dispatch(ShowDetailAction.LoadSeasons)
+        dispatch(ShowDetailAction.LoadGenres)
     }
 
-    fun submitAction(action: ShowDetailAction) {
+    override fun observeState(): StateFlow<ShowDetailViewState> = state
+
+    override fun observeSideEffect(): Flow<ShowDetailEffect> = uiEffects
+
+    override fun dispatch(action: ShowDetailAction) {
         when (action) {
-            is ShowDetailAction.SeasonSelected -> fetchEpisodes(action)
-            is ShowDetailAction.UpdateWatchlist -> updateWatchlist(action)
-        }
-    }
-
-    private fun updateWatchlist(action: ShowDetailAction.UpdateWatchlist) {
-        updateWatchlistInteractor.execute(action.params) {
-            onError {
+            ShowDetailAction.LoadSeasons -> fetchSeason()
+            ShowDetailAction.LoadGenres -> fetchGenres()
+            ShowDetailAction.LoadShowDetails -> loadShowDetails()
+            is SeasonSelected -> fetchEpisodes(action)
+            is UpdateWatchlist -> updateWatchlist(action)
+            is ShowDetailAction.Error -> {
                 coroutineScope.launch {
-                    _uiEffects.emit(
-                        WatchlistError(it.message ?: "Something went wrong")
-                    )
+                    uiEffects.emit(ShowDetailsError(action.message))
                 }
+            }
+            is ShowDetailAction.LoadEpisodes -> {
             }
         }
     }
 
-    private fun fetchSeason() {
-        val oldState = seasonViewState.value
-        with(seasonViewState) {
-            seasonsInteractor.execute(showId) {
+    private fun loadShowDetails() {
+        with(state) {
+            getShow.execute(showId) {
                 onStart {
-                    coroutineScope.launch {
-                        emit(
-                            oldState.copy(
-                                isLoading = false,
-                            )
-                        )
-                    }
+                    coroutineScope.launch { emit(value.copy(isLoading = false)) }
                 }
                 onNext {
                     coroutineScope.launch {
                         emit(
-                            oldState.copy(
+                            value.copy(
                                 isLoading = false,
-                                tvSeasons = it
+                                showUiModel = it
                             )
                         )
                     }
@@ -116,7 +90,87 @@ class ShowDetailsViewModel @Inject constructor(
                 onError {
                     coroutineScope.launch {
                         emit(
-                            oldState.copy(
+                            value.copy(
+                                isLoading = false,
+                                errorMessage = it.message ?: "Something went wrong"
+                            )
+                        )
+                    }
+                    dispatch(ShowDetailAction.Error(it.message ?: "Something went wrong"))
+                }
+            }
+        }
+    }
+
+    private fun fetchGenres() {
+        with(state) {
+            genresInteractor.execute(Unit) {
+                onStart {
+                    coroutineScope.launch { emit(value.copy(isLoading = false)) }
+                }
+                onNext {
+                    coroutineScope.launch {
+                        emit(
+                            value.copy(
+                                isLoading = false,
+                                genreUIList = it
+                            )
+                        )
+                    }
+                }
+                onError {
+                    coroutineScope.launch {
+                        emit(
+                            value.copy(
+                                isLoading = false,
+                                errorMessage = it.message ?: "Something went wrong"
+                            )
+                        )
+                    }
+                    dispatch(ShowDetailAction.Error(it.message ?: "Something went wrong"))
+                }
+            }
+        }
+    }
+
+    private fun updateWatchlist(action: UpdateWatchlist) {
+        updateWatchlistInteractor.execute(action.params) {
+            onError {
+                coroutineScope.launch {
+                    uiEffects.emit(
+                        ShowDetailEffect.WatchlistError(it.message ?: "Something went wrong")
+                    )
+                }
+            }
+        }
+    }
+
+    private fun fetchSeason() {
+        with(state) {
+            seasonsInteractor.execute(showId) {
+                onStart {
+                    coroutineScope.launch {
+                        emit(
+                            value.copy(
+                                isLoading = true,
+                            )
+                        )
+                    }
+                }
+                onNext {
+                    coroutineScope.launch {
+                        emit(
+                            value.copy(
+                                isLoading = false,
+                                tvSeasonUiModels = it
+                            )
+                        )
+                    }
+                }
+                onError {
+                    coroutineScope.launch {
+                        emit(
+                            value.copy(
                                 isLoading = false,
                                 errorMessage = it.message ?: "Something went wrong"
                             )
@@ -127,61 +181,39 @@ class ShowDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun fetchEpisodes(action: ShowDetailAction.SeasonSelected) {
-        with(episodes) {
+    private fun fetchEpisodes(action: SeasonSelected) {
+        with(state) {
             episodeInteractor.execute(action.query) {
-                onStart { coroutineScope.launch { value = EpisodesViewState(isLoading = true) } }
+                onStart {
+                    coroutineScope.launch {
+                        emit(
+                            value.copy(
+                                isLoading = true,
+                            )
+                        )
+                    }
+                }
                 onNext {
                     coroutineScope.launch {
-                        value = EpisodesViewState(
-                            isLoading = false,
-                            episodeList = it
+                        emit(
+                            value.copy(
+                                isLoading = false,
+                                episodeList = it
+                            )
                         )
                     }
                 }
                 onError {
                     coroutineScope.launch {
-                        value = EpisodesViewState(
-                            isLoading = false,
-                            errorMessage = it.message ?: "Something went wrong"
+                        emit(
+                            value.copy(
+                                isLoading = false,
+                                errorMessage = it.message ?: "Something went wrong"
+                            )
                         )
                     }
                 }
             }
         }
-    }
-}
-
-sealed class DetailUiEffect : Effect {
-    data class WatchlistError(
-        var errorMessage: String
-    ) : DetailUiEffect()
-}
-
-internal fun DomainResultState<TvShow>.tvShowReducer(): TvShowViewState {
-    return when (this) {
-        is DomainResultState.Error -> TvShowViewState(
-            isLoading = false,
-            errorMessage = message
-        )
-        is DomainResultState.Loading -> TvShowViewState(isLoading = true)
-        is DomainResultState.Success -> TvShowViewState(
-            isLoading = false,
-            tvShow = data
-        )
-    }
-}
-
-internal fun DomainResultState<List<GenreModel>>.genreReducer(): GenreViewState {
-    return when (this) {
-        is DomainResultState.Error -> GenreViewState(
-            isLoading = false,
-            errorMessage = message
-        )
-        is DomainResultState.Loading -> GenreViewState(isLoading = true)
-        is DomainResultState.Success -> GenreViewState(
-            isLoading = false,
-            genreList = data
-        )
     }
 }
