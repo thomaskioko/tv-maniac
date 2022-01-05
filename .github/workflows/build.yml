@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     env:
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       TMDB_API_URL: ${{ secrets.TMDB_API_URL }}
