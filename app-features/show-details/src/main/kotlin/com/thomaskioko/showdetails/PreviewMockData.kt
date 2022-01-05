@@ -1,14 +1,14 @@
 package com.thomaskioko.showdetails
 
-import com.thomaskioko.tvmaniac.presentation.model.Episode
-import com.thomaskioko.tvmaniac.presentation.model.GenreModel
-import com.thomaskioko.tvmaniac.presentation.model.Season
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.model.EpisodeUiModel
+import com.thomaskioko.tvmaniac.presentation.model.GenreUIModel
+import com.thomaskioko.tvmaniac.presentation.model.SeasonUiModel
+import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
 
 val detailUiState = ShowDetailViewState(
     isLoading = false,
     errorMessage = "",
-    tvShow = TvShow(
+    showUiModel = ShowUiModel(
         id = 84958,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
@@ -24,18 +24,13 @@ val detailUiState = ShowDetailViewState(
         averageVotes = 8.1,
         genreIds = listOf(18, 10765),
     ),
-    tvSeasons = getTvSeasons(),
-    genreList = getGenres(),
-    episodesViewState = EpisodesViewState(
-        isLoading = false,
-        episodeList = getEpisodeList()
-    ),
-    trailerViewState = TrailersViewState()
-
+    tvSeasonUiModels = getTvSeasons(),
+    genreUIList = getGenres(),
+    episodeList = getEpisodeList(),
 )
 
 private fun getTvSeasons() = listOf(
-    Season(
+    SeasonUiModel(
         seasonId = 114355,
         tvShowId = 84958,
         name = "Season 1",
@@ -51,18 +46,18 @@ private fun getTvSeasons() = listOf(
 )
 
 fun getGenres() = listOf(
-    GenreModel(
+    GenreUIModel(
         id = 18,
         name = "Sci-Fi"
     ),
-    GenreModel(
+    GenreUIModel(
         id = 10765,
         name = "Action"
     )
 )
 
 fun getEpisodeList() = listOf(
-    Episode(
+    EpisodeUiModel(
         id = 2534997,
         seasonId = 114355,
         name = "Glorious Purpose",
@@ -73,7 +68,7 @@ fun getEpisodeList() = listOf(
         seasonNumber = 1,
         episodeNumber = "01"
     ),
-    Episode(
+    EpisodeUiModel(
         id = 2927202,
         seasonId = 114355,
         name = "The Variant",

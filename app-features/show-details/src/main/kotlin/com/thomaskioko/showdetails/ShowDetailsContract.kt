@@ -1,83 +1,52 @@
 package com.thomaskioko.showdetails
 
+import com.thomaskioko.tvmaniac.core.Action
+import com.thomaskioko.tvmaniac.core.Effect
+import com.thomaskioko.tvmaniac.core.State
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.interactor.UpdateShowParams
-import com.thomaskioko.tvmaniac.presentation.model.Episode
-import com.thomaskioko.tvmaniac.presentation.model.GenreModel
-import com.thomaskioko.tvmaniac.presentation.model.Season
-import com.thomaskioko.tvmaniac.presentation.model.TrailerModel
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.model.EpisodeUiModel
+import com.thomaskioko.tvmaniac.presentation.model.GenreUIModel
+import com.thomaskioko.tvmaniac.presentation.model.SeasonUiModel
+import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
 
-sealed class ShowDetailAction {
+sealed class ShowDetailAction : Action {
+    object LoadShowDetails : ShowDetailAction()
+    object LoadSeasons : ShowDetailAction()
+    object LoadGenres : ShowDetailAction()
+
     data class SeasonSelected(
+        val query: EpisodeQuery
+    ) : ShowDetailAction()
+
+    data class LoadEpisodes(
         val query: EpisodeQuery
     ) : ShowDetailAction()
 
     data class UpdateWatchlist(
         val params: UpdateShowParams
     ) : ShowDetailAction()
+
+    data class Error(val message: String = "") : ShowDetailAction()
+}
+
+sealed class ShowDetailEffect : Effect {
+    data class ShowDetailsError(val errorMessage: String = "") : ShowDetailEffect()
+
+    data class WatchlistError(
+        var errorMessage: String
+    ) : ShowDetailEffect()
 }
 
 data class ShowDetailViewState(
     val isLoading: Boolean = false,
     val errorMessage: String = "",
-    val tvShow: TvShow = TvShow.EMPTY_SHOW,
-    val tvSeasons: List<Season> = emptyList(),
-    val genreList: List<GenreModel> = emptyList(),
-    val episodesViewState: EpisodesViewState = EpisodesViewState(),
-    val trailerViewState: TrailersViewState = TrailersViewState()
-) {
+    val showUiModel: ShowUiModel = ShowUiModel.EMPTY_SHOW,
+    val tvSeasonUiModels: List<SeasonUiModel> = emptyList(),
+    val genreUIList: List<GenreUIModel> = emptyList(),
+    val episodeList: List<EpisodeUiModel> = emptyList(),
+) : State {
     companion object {
         val Empty = ShowDetailViewState()
-    }
-}
-
-data class TvShowViewState(
-    val isLoading: Boolean = false,
-    val errorMessage: String = "",
-    val tvShow: TvShow = TvShow.EMPTY_SHOW,
-) {
-    companion object {
-        val Empty = SeasonViewState()
-    }
-}
-
-data class SeasonViewState(
-    val isLoading: Boolean = false,
-    val errorMessage: String = "",
-    val tvSeasons: List<Season> = emptyList(),
-) {
-    companion object {
-        val Empty = SeasonViewState()
-    }
-}
-
-data class EpisodesViewState(
-    val isLoading: Boolean = false,
-    val errorMessage: String = "",
-    val episodeList: List<Episode> = emptyList(),
-) {
-    companion object {
-        val Empty = EpisodesViewState()
-    }
-}
-
-data class GenreViewState(
-    val isLoading: Boolean = false,
-    val errorMessage: String = "",
-    val genreList: List<GenreModel> = emptyList(),
-) {
-    companion object {
-        val Empty = GenreViewState()
-    }
-}
-
-data class TrailersViewState(
-    val isLoading: Boolean = false,
-    val errorMessage: String = "",
-    val trailerList: List<TrailerModel> = emptyList(),
-) {
-    companion object {
-        val Empty = TrailersViewState()
     }
 }

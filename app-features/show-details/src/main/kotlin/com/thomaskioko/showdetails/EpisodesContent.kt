@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Card
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScrollableTabRow
@@ -34,34 +35,32 @@ import com.thomaskioko.tvmaniac.compose.R
 import com.thomaskioko.tvmaniac.compose.components.ChoiceChipContent
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
-import com.thomaskioko.tvmaniac.compose.components.LoadingView
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
-import com.thomaskioko.tvmaniac.presentation.model.Episode
-import com.thomaskioko.tvmaniac.presentation.model.Season
+import com.thomaskioko.tvmaniac.presentation.model.EpisodeUiModel
+import com.thomaskioko.tvmaniac.presentation.model.SeasonUiModel
 
 @Composable
 fun EpisodesScreen(
     isLoading: Boolean,
-    tvSeasons: List<Season>,
-    episodeList: List<Episode>,
-    onSeasonSelected: (EpisodeQuery) -> Unit
+    tvSeasonUiModels: List<SeasonUiModel>,
+    episodeList: List<EpisodeUiModel>,
+    onSeasonSelected: (EpisodeQuery) -> Unit,
+    loadSeasonEpisode: (EpisodeQuery) -> Unit = {}
 ) {
 
     Column {
 
         ColumnSpacer(8)
 
-        if (isLoading) {
-            LoadingView()
-        }
-
-        if (tvSeasons.isNotEmpty())
+        if (tvSeasonUiModels.isNotEmpty())
             TvShowSeasons(
-                tvSeasons,
+                isLoading,
+                tvSeasonUiModels,
+                episodeList,
                 onSeasonSelected,
-                episodeList
+                loadSeasonEpisode
             )
 
         episodeList.forEachIndexed { index, episode ->
@@ -73,19 +72,21 @@ fun EpisodesScreen(
 
 @Composable
 fun TvShowSeasons(
-    tvSeasons: List<Season>,
+    isLoading: Boolean,
+    tvSeasonUiModels: List<SeasonUiModel>,
+    episodeList: List<EpisodeUiModel>,
     onSeasonSelected: (EpisodeQuery) -> Unit,
-    episodeList: List<Episode>
+    loadSeasonEpisode: (EpisodeQuery) -> Unit
 ) {
 
     val selectedPosition by remember { mutableStateOf(0) }
-    var selectedSeason by remember { mutableStateOf(tvSeasons.first()) }
+    var selectedSeason by remember { mutableStateOf(tvSeasonUiModels.first()) }
 
     /**
      * Invoke fetchEpisode when season is loaded and user has not clicked on anything.
      */
-    if (tvSeasons.isNotEmpty() && episodeList.isEmpty() && selectedPosition == 0) {
-        onSeasonSelected(
+    if (tvSeasonUiModels.isNotEmpty() && episodeList.isEmpty() && selectedPosition == 0) {
+        loadSeasonEpisode(
             EpisodeQuery(
                 tvShowId = selectedSeason.tvShowId,
                 seasonId = selectedSeason.seasonId,
@@ -97,8 +98,8 @@ fun TvShowSeasons(
     Column {
 
         ShowSeasonsTabs(
-            seasonList = tvSeasons,
-            selectedSeason = selectedSeason,
+            seasonUiModelList = tvSeasonUiModels,
+            selectedSeasonUiModel = selectedSeason,
             onSeasonSelected = { season ->
                 selectedSeason = season
 
@@ -112,17 +113,27 @@ fun TvShowSeasons(
             },
             modifier = Modifier.fillMaxWidth()
         )
+
+        if (isLoading) {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 16.dp, start = 16.dp),
+                color = MaterialTheme.colors.secondaryVariant,
+                backgroundColor = MaterialTheme.colors.secondaryVariant.copy(alpha = 0.08f)
+            )
+        }
     }
 }
 
 @Composable
 private fun ShowSeasonsTabs(
-    seasonList: List<Season>,
-    selectedSeason: Season?,
-    onSeasonSelected: (Season) -> Unit,
+    seasonUiModelList: List<SeasonUiModel>,
+    selectedSeasonUiModel: SeasonUiModel?,
+    onSeasonSelected: (SeasonUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val selectedIndex = seasonList.indexOfFirst { it == selectedSeason }
+    val selectedIndex = seasonUiModelList.indexOfFirst { it == selectedSeasonUiModel }
     ScrollableTabRow(
         selectedTabIndex = selectedIndex,
         divider = {}, /* Disable the built-in divider */
@@ -131,7 +142,7 @@ private fun ShowSeasonsTabs(
         backgroundColor = Color.Transparent,
         modifier = modifier
     ) {
-        seasonList.forEachIndexed { index, category ->
+        seasonUiModelList.forEachIndexed { index, category ->
             Tab(
                 selected = index == selectedIndex,
                 onClick = { onSeasonSelected(category) }
@@ -147,7 +158,7 @@ private fun ShowSeasonsTabs(
 }
 
 @Composable
-fun EpisodeItem(episode: Episode, index: Int) {
+fun EpisodeItem(episode: EpisodeUiModel, index: Int) {
     ConstraintLayout(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -251,8 +262,8 @@ fun EpisodesScreenPreview() {
         Surface {
             EpisodesScreen(
                 isLoading = false,
-                tvSeasons = detailUiState.tvSeasons,
-                episodeList = detailUiState.episodesViewState.episodeList,
+                tvSeasonUiModels = detailUiState.tvSeasonUiModels,
+                episodeList = detailUiState.episodeList,
                 onSeasonSelected = {}
             )
         }

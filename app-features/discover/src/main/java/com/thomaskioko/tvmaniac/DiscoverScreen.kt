@@ -58,7 +58,7 @@ import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowResult
 import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlin.math.absoluteValue
@@ -144,7 +144,7 @@ private fun DiscoverShows(
             item {
                 DisplayShowData(
                     category = discoverViewState.showData.trendingShows.category,
-                    shows = discoverViewState.showData.trendingShows.shows,
+                    showUiModels = discoverViewState.showData.trendingShows.showUiModels,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -153,7 +153,7 @@ private fun DiscoverShows(
             item {
                 DisplayShowData(
                     category = discoverViewState.showData.popularShows.category,
-                    shows = discoverViewState.showData.popularShows.shows,
+                    showUiModels = discoverViewState.showData.popularShows.showUiModels,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -162,7 +162,7 @@ private fun DiscoverShows(
             item {
                 DisplayShowData(
                     category = discoverViewState.showData.topRatedShows.category,
-                    shows = discoverViewState.showData.topRatedShows.shows,
+                    showUiModels = discoverViewState.showData.topRatedShows.showUiModels,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -188,7 +188,7 @@ fun FeaturedItems(
 
         val pagerState = rememberPagerState()
 
-        val selectedImageUrl = showData.shows.getOrNull(pagerState.currentPage)
+        val selectedImageUrl = showData.showUiModels.getOrNull(pagerState.currentPage)
             ?.posterImageUrl
 
         LaunchedEffect(selectedImageUrl) {
@@ -199,8 +199,8 @@ fun FeaturedItems(
             }
         }
 
-        LaunchedEffect(showData.shows) {
-            if (showData.shows.size >= 4) {
+        LaunchedEffect(showData.showUiModels) {
+            if (showData.showUiModels.size >= 4) {
                 pagerState.scrollToPage(2)
             }
         }
@@ -218,7 +218,7 @@ fun FeaturedItems(
             ColumnSpacer(value = 24)
 
             FeaturedHorizontalPager(
-                list = showData.shows,
+                list = showData.showUiModels,
                 pagerState = pagerState,
                 onClick = { onItemClicked(it) }
             )
@@ -238,7 +238,7 @@ fun FeaturedItems(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun FeaturedHorizontalPager(
-    list: List<TvShow>,
+    list: List<ShowUiModel>,
     pagerState: PagerState,
     onClick: (Int) -> Unit
 ) {
@@ -306,12 +306,12 @@ fun FeaturedHorizontalPager(
 @Composable
 private fun DisplayShowData(
     category: ShowCategory,
-    shows: List<TvShow>,
+    showUiModels: List<ShowUiModel>,
     onItemClicked: (Int) -> Unit,
     moreClicked: (Int) -> Unit,
 ) {
 
-    AnimatedVisibility(visible = shows.isNotEmpty()) {
+    AnimatedVisibility(visible = showUiModels.isNotEmpty()) {
         Column {
             BoxTextItems(
                 title = category.title,
@@ -325,7 +325,7 @@ private fun DisplayShowData(
                 state = lazyListState,
                 flingBehavior = rememberSnapperFlingBehavior(lazyListState),
             ) {
-                itemsIndexed(shows) { index, tvShow ->
+                itemsIndexed(showUiModels) { index, tvShow ->
                     TvShowCard(
                         posterImageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,

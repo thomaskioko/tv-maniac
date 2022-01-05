@@ -62,7 +62,6 @@ import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import com.thomaskioko.showdetails.DetailUiEffect.WatchlistError
 import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
 import com.thomaskioko.tvmaniac.compose.R
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
@@ -80,12 +79,11 @@ import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.interactor.UpdateShowParams
-import com.thomaskioko.tvmaniac.presentation.model.Episode
-import com.thomaskioko.tvmaniac.presentation.model.GenreModel
-import com.thomaskioko.tvmaniac.presentation.model.Season
-import com.thomaskioko.tvmaniac.presentation.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.model.EpisodeUiModel
+import com.thomaskioko.tvmaniac.presentation.model.GenreUIModel
+import com.thomaskioko.tvmaniac.presentation.model.SeasonUiModel
+import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 
 private val HeaderHeight = 550.dp
 
@@ -96,15 +94,20 @@ fun ShowDetailScreen(
     navigateUp: () -> Unit
 ) {
 
-    val viewState by rememberFlowWithLifecycle(viewModel.uiStateFlow)
+    val viewState by rememberFlowWithLifecycle(viewModel.observeState())
         .collectAsState(initial = ShowDetailViewState.Empty)
 
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(viewModel) {
-        viewModel.uiEffects.collect {
+        viewModel.observeSideEffect().collect {
             when (it) {
-                is WatchlistError -> scaffoldState.snackbarHostState.showSnackbar(it.errorMessage)
+                is ShowDetailEffect.WatchlistError ->
+                    scaffoldState.snackbarHostState
+                        .showSnackbar(it.errorMessage)
+                is ShowDetailEffect.ShowDetailsError ->
+                    scaffoldState.snackbarHostState
+                        .showSnackbar(it.errorMessage)
             }
         }
     }
@@ -116,7 +119,7 @@ fun ShowDetailScreen(
         topBar = {
             ShowTopBar(
                 listState = listState,
-                title = viewState.tvShow.title,
+                title = viewState.showUiModel.title,
                 onNavUpClick = navigateUp
             )
         },
@@ -128,8 +131,9 @@ fun ShowDetailScreen(
                     listState = listState,
                     contentPadding = contentPadding,
                     modifier = Modifier.fillMaxSize(),
-                    onWatchlistClick = { viewModel.submitAction(UpdateWatchlist(it)) },
-                    onSeasonSelected = { viewModel.submitAction(ShowDetailAction.SeasonSelected(it)) },
+                    onWatchlistClick = { viewModel.dispatch(UpdateWatchlist(it)) },
+                    onSeasonSelected = { viewModel.dispatch(ShowDetailAction.SeasonSelected(it)) },
+                    loadSeasonEpisode = { viewModel.dispatch(ShowDetailAction.SeasonSelected(it)) },
                 )
             }
         }
@@ -182,6 +186,7 @@ private fun TvShowDetailsScrollingContent(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     onSeasonSelected: (EpisodeQuery) -> Unit = {},
+    loadSeasonEpisode: (EpisodeQuery) -> Unit = {},
     onWatchlistClick: (UpdateShowParams) -> Unit = {},
 ) {
 
@@ -201,10 +206,11 @@ private fun TvShowDetailsScrollingContent(
 
         item {
             SeasonTabs(
-                isLoading = detailUiState.episodesViewState.isLoading,
-                tvSeasons = detailUiState.tvSeasons,
-                episodeList = detailUiState.episodesViewState.episodeList,
+                isLoading = detailUiState.isLoading,
+                tvSeasonUiModels = detailUiState.tvSeasonUiModels,
+                episodeList = detailUiState.episodeList,
                 onSeasonSelected = onSeasonSelected,
+                loadSeasonEpisode = loadSeasonEpisode,
             )
         }
     }
@@ -231,13 +237,13 @@ private fun HeaderViewContent(
             }
     ) {
         HeaderImage(
-            backdropImageUrl = detailUiState.tvShow.backdropImageUrl
+            backdropImageUrl = detailUiState.showUiModel.backdropImageUrl
         )
 
         Body(
-            show = detailUiState.tvShow,
-            seasons = detailUiState.tvSeasons,
-            genres = detailUiState.genreList,
+            showUiModel = detailUiState.showUiModel,
+            seasonUiModels = detailUiState.tvSeasonUiModels,
+            genreUIS = detailUiState.genreUIList,
             onWatchlistClick
         )
     }
@@ -256,9 +262,9 @@ private fun HeaderImage(backdropImageUrl: String) {
 
 @Composable
 private fun Body(
-    show: TvShow,
-    seasons: List<Season>,
-    genres: List<GenreModel>,
+    showUiModel: ShowUiModel,
+    seasonUiModels: List<SeasonUiModel>,
+    genreUIS: List<GenreUIModel>,
     onWatchlistClick: (UpdateShowParams) -> Unit
 ) {
     val surfaceGradient = backgroundGradient().reversed()
@@ -281,7 +287,7 @@ private fun Body(
         ) {
 
             Text(
-                text = show.title,
+                text = showUiModel.title,
                 style = MaterialTheme.typography.h4,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
@@ -291,16 +297,16 @@ private fun Body(
 
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 ExpandingText(
-                    text = show.overview,
+                    text = showUiModel.overview,
                 )
             }
 
             ColumnSpacer(8)
 
             TvShowMetadata(
-                show = show,
-                seasons = seasons,
-                genreList = genres,
+                showUiModel = showUiModel,
+                seasonUiModels = seasonUiModels,
+                genreUIList = genreUIS,
                 onWatchlistClick = onWatchlistClick,
             )
         }
@@ -311,9 +317,9 @@ private fun Body(
 
 @Composable
 fun TvShowMetadata(
-    show: TvShow,
-    seasons: List<Season>,
-    genreList: List<GenreModel>,
+    showUiModel: ShowUiModel,
+    seasonUiModels: List<SeasonUiModel>,
+    genreUIList: List<GenreUIModel>,
     onWatchlistClick: (UpdateShowParams) -> Unit,
 ) {
     val resources = LocalContext.current.resources
@@ -332,21 +338,27 @@ fun TvShowMetadata(
             background = MaterialTheme.colors.secondary.copy(alpha = 0.08f)
         )
 
-        if (show.status.isNotBlank()) {
+        if (showUiModel.status.isNotBlank()) {
             withStyle(tagStyle) {
                 append(" ")
-                append(show.status)
+                append(showUiModel.status)
                 append(" ")
             }
             append(divider)
         }
-        append(show.year)
+        append(showUiModel.year)
         append(divider)
-        append(resources.getQuantityString(R.plurals.season_count, seasons.size, seasons.size))
+        append(
+            resources.getQuantityString(
+                R.plurals.season_count,
+                seasonUiModels.size,
+                seasonUiModels.size
+            )
+        )
         append(divider)
-        append(show.language.uppercase())
+        append(showUiModel.language.uppercase())
         append(divider)
-        append("${show.averageVotes}")
+        append("${showUiModel.averageVotes}")
         append(divider)
     }
 
@@ -360,23 +372,23 @@ fun TvShowMetadata(
 
     ColumnSpacer(8)
 
-    GenreText(genreList, show.genreIds)
+    GenreText(genreUIList, showUiModel.genreIds)
 
     ColumnSpacer(8)
 
     ShowDetailButtons(
-        show = show,
+        showUiModel = showUiModel,
         onWatchlistClick = onWatchlistClick
     )
 }
 
 @Composable
 private fun GenreText(
-    genreList: List<GenreModel>,
+    genreUIList: List<GenreUIModel>,
     genreIds: List<Int>,
 ) {
 
-    val result = genreList.filter { genre ->
+    val result = genreUIList.filter { genre ->
         genreIds.any { id -> genre.id == id }
     }
 
@@ -406,7 +418,7 @@ private fun GenreText(
 
 @Composable
 fun ShowDetailButtons(
-    show: TvShow,
+    showUiModel: ShowUiModel,
     onWatchlistClick: (UpdateShowParams) -> Unit,
 ) {
 
@@ -441,11 +453,11 @@ fun ShowDetailButtons(
 
         RowSpacer(value = 8)
 
-        val message = if (show.isInWatchlist)
+        val message = if (showUiModel.isInWatchlist)
             stringResource(id = R.string.btn_remove_watchlist)
         else stringResource(id = R.string.btn_add_watchlist)
 
-        val imageVector = if (show.isInWatchlist)
+        val imageVector = if (showUiModel.isInWatchlist)
             painterResource(id = R.drawable.ic_baseline_check_box_24)
         else painterResource(id = R.drawable.ic_baseline_add_box_24)
 
@@ -471,7 +483,9 @@ fun ShowDetailButtons(
             shape = RectangleShape,
             backgroundColor = Color.Transparent,
             elevation = FloatingActionButtonDefaults.elevation(0.dp),
-            onClick = { onWatchlistClick(UpdateShowParams(show.id, !show.isInWatchlist)) },
+            onClick = {
+                onWatchlistClick(UpdateShowParams(showUiModel.id, !showUiModel.isInWatchlist))
+            },
             modifier = Modifier
                 .padding(2.dp)
                 .border(1.dp, Color(0xFF414141), RoundedCornerShape(8.dp))
@@ -483,9 +497,10 @@ fun ShowDetailButtons(
 @Composable
 fun SeasonTabs(
     isLoading: Boolean,
-    tvSeasons: List<Season>,
-    episodeList: List<Episode>,
-    onSeasonSelected: (EpisodeQuery) -> Unit = {}
+    tvSeasonUiModels: List<SeasonUiModel>,
+    episodeList: List<EpisodeUiModel>,
+    onSeasonSelected: (EpisodeQuery) -> Unit = {},
+    loadSeasonEpisode: (EpisodeQuery) -> Unit = {}
 ) {
 
     Column {
@@ -501,7 +516,13 @@ fun SeasonTabs(
         ) { page ->
             when (tabs[page]) {
                 Casts -> SeasonCastScreen()
-                Episodes -> EpisodesScreen(isLoading, tvSeasons, episodeList, onSeasonSelected)
+                Episodes -> EpisodesScreen(
+                    isLoading,
+                    tvSeasonUiModels,
+                    episodeList,
+                    onSeasonSelected,
+                    loadSeasonEpisode
+                )
                 Similar -> SimilarShowsScreen()
             }
         }
