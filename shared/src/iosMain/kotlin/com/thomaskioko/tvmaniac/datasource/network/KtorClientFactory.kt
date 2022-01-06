@@ -9,11 +9,11 @@ import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.features.logging.LogLevel
 import io.ktor.client.features.logging.Logger
 import io.ktor.client.features.logging.Logging
+import io.ktor.client.features.logging.SIMPLE
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
-import com.thomaskioko.tvmaniac.util.Logger as UtilLogger
 
 actual class KtorClientFactory {
     actual fun build(): HttpClient {
@@ -27,13 +27,8 @@ actual class KtorClientFactory {
             }
 
             install(Logging) {
+                logger = Logger.SIMPLE
                 level = LogLevel.INFO
-                logger = object : Logger {
-                    override fun log(message: String) {
-                        val log = UtilLogger("KtorClientFactory")
-                        log.log(message)
-                    }
-                }
             }
 
             install(DefaultRequest) {
