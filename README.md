@@ -73,6 +73,7 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
     - [Coroutines Extensions](https://cashapp.github.io/sqldelight/js_sqlite/coroutines/) Consume queries as Flow
 * [Napier](https://github.com/AAkira/Napier) - Logging
 * [Mockk](https://github.com/mockk/mockk) - mocking library for Kotlin.
+* [koin](https://github.com/mockk/mockk) - Injection library.
 
 ## Roadmap
 Android
@@ -96,6 +97,7 @@ iOS
 Shared
 - [x] Use SQLDelight extensions to consume queries as Flow
 - [x] Refactor interactor implementation.
+- [x] Use koin for injection
 - [ ] Modularize `shared` module
 - [ ] Better MVI implementation
     - Have `shared-core` module have most of the implementation.
@@ -109,7 +111,7 @@ Shared
 ## License
 
 ```
-Copyright 2021 Thomas Kioko
+Copyright 2022 Thomas Kioko
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -4,15 +4,18 @@ import TvManiac
 @main
 struct iOSApp: App {
 	
-	private let networkModule = NetworkModule()
-	private let databaseModule = DatabaseModule()
+   @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 	
 	var body: some Scene {
 		WindowGroup {
-			HomeUIView(
-				networkModule: networkModule,
-				databaseModule: databaseModule
-			)
+			HomeUIView()
 		}
+	}
+}
+
+class AppDelegate : NSObject, UIApplicationDelegate {
+	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+		KoinKt.doInitKoin()
+		return true
 	}
 }
