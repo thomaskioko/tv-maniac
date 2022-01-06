@@ -12,33 +12,17 @@ import TvManiac
 
 final class DiscoverViewModel: BaseViewModel, ObservableObject {
 
+	@Published var state: DiscoverShowState = DiscoverShowState.companion.Empty
+	
     private let logger = Logger(className: "DiscoverViewModel")
 
     private var showsCancellable: AnyCancellable?
 
-    private let networkModule: NetworkModule
-    private let databaseModule: DatabaseModule
-    private let repositoryModule: RepositoryModule
-
-    let interactor: ObserveShowsByCategoryInteractor
-
-    @Published var state: DiscoverShowState = DiscoverShowState.companion.Empty
-
-
-    init(
-            networkModule: NetworkModule,
-            databaseModule: DatabaseModule,
-            interactor: ObserveShowsByCategoryInteractor
-    ) {
-        self.networkModule = networkModule
-        self.databaseModule = databaseModule
-        repositoryModule = RepositoryModule(
-                networkModule: self.networkModule,
-                databaseModule: self.databaseModule
-        )
-        self.interactor = interactor
-
-    }
+	private let interactor: ObserveDiscoverShowsInteractor
+    
+	init(interactor: ObserveDiscoverShowsInteractor) {
+		self.interactor = interactor
+	}
 
     func startObservingDiscoverShows() {
 
