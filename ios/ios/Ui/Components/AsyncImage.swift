@@ -1,11 +1,3 @@
-//
-//  AsyncImage.swift
-//  tv-maniac
-//
-//  Created by Thomas Kioko on 20.08.21.
-//  Copyright © 2021 orgName. All rights reserved.
-//
-
 import SwiftUI
 
 struct AsyncImage<Placeholder: View>: View {
