@@ -1,4 +1,3 @@
-
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -56,6 +55,7 @@ kotlin {
             implementation(libs.ktor.core)
             implementation(libs.ktor.logging)
             implementation(libs.ktor.serialization)
+            implementation(libs.koin.core)
 
             implementation(libs.napier)
             implementation(libs.multiplatform.paging.core)
@@ -153,4 +153,12 @@ multiplatformSwiftPackage {
     targetPlatforms {
         iOS { v("13") }
     }
+
+    /**
+     * Uncomment to create local build.
+     distributionMode { local() }
+     outputDirectory(File("$projectDir/../../", "tvmaniac-swift-packages"))
+     **/
+    distributionMode { local() }
+    outputDirectory(File("$projectDir/../../", "tvmaniac-swift-packages"))
 }
