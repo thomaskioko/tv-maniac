@@ -50,7 +50,7 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:core"))
+            api(project(":shared:core"))
 
             implementation(libs.kotlin.datetime)
 
@@ -124,6 +124,10 @@ kotlin {
         binaries.withType<Framework> {
             isStatic = false
             linkerOpts.add("-lsqlite3")
+
+            export(project(":shared:core"))
+
+            transitiveExport = true
         }
     }
 }
