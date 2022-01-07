@@ -441,44 +441,6 @@ object MockData {
         )
     )
 
-    fun getSeasonCacheList() = listOf(
-        Season(
-            id = 114355,
-            tv_show_id = 84958,
-            name = "Season 1",
-            overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                "an alternate version of Loki is brought to the mysterious Time Variance " +
-                "Authority, a bureaucratic organization that exists outside of time and " +
-                "space and monitors the timeline. They give Loki a choice: face being " +
-                "erased from existence due to being a “time variant”or help fix " +
-                "the timeline and stop a greater threat.",
-            season_number = 1,
-            epiosode_count = 6,
-            episode_ids = null
-        ),
-        Season(
-            id = 77680,
-            tv_show_id = 84958,
-            name = "Season 2",
-            overview = "Strange things are afoot in Hawkins, Indiana, where a young boy's " +
-                "sudden disappearance unearths a young girl with otherworldly powers.",
-            season_number = 1,
-            epiosode_count = 4,
-            episode_ids = null
-        ),
-        Season(
-            id = 4355,
-            tv_show_id = 126280,
-            name = "Season 1",
-            overview = "A woman's daring sexual past collides with her married-with-kids " +
-                "present when the bad-boy ex she can't stop fantasizing about crashes " +
-                "back into her life.",
-            season_number = 1,
-            epiosode_count = 6,
-            episode_ids = null
-        )
-    )
-
     fun getShow() = Show(
         id = 84958,
         title = "Loki",
