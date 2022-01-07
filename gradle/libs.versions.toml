@@ -28,6 +28,7 @@ desugar = "1.1.5"
 hilt = "2.40.5"
 hiltNavigation = "1.0.0-rc01"
 kenburns = "1.0.7"
+kermit = "1.0.0"
 koin = "3.1.4"
 ktor = "1.6.7"
 material = "1.6.0-alpha01"
@@ -47,6 +48,8 @@ testing-mockito-kotlin = "2.2.0"
 
 plugin-buildkonfig = "0.7.0"
 plugin-gradle-versions = "0.39.0"
+
+shared-module-version = "0.2.0"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle" }
@@ -96,6 +99,7 @@ ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
