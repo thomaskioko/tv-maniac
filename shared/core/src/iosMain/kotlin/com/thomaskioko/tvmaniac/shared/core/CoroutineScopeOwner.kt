@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.usecase.scope
+package com.thomaskioko.tvmaniac.shared.core
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

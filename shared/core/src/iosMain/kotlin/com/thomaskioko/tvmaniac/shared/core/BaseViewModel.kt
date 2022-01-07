@@ -1,6 +1,5 @@
-package com.thomaskioko.tvmaniac.core.viewmodel
+package com.thomaskioko.tvmaniac.shared.core
 
-import com.thomaskioko.tvmaniac.core.MainDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren

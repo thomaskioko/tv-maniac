@@ -1,14 +1,12 @@
-package com.thomaskioko.tvmaniac.core.viewmodel
+package com.thomaskioko.tvmaniac.shared.core
 
-import com.thomaskioko.tvmaniac.core.usecase.scope.CoroutineScopeOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.core.component.KoinComponent
 
-actual abstract class BaseViewModel : CoroutineScopeOwner, KoinComponent {
+actual abstract class BaseViewModel : CoroutineScopeOwner {
 
     private val job = SupervisorJob()
 

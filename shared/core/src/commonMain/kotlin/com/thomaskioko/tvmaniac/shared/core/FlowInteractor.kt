@@ -1,10 +1,8 @@
-package com.thomaskioko.tvmaniac.core.usecase.scope
+package com.thomaskioko.tvmaniac.shared.core
 
-import com.thomaskioko.tvmaniac.core.usecase.FlowInteractor
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -12,34 +10,33 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 
-actual interface CoroutineScopeOwner {
-    actual val coroutineScope: CoroutineScope
+/**
+ * Abstract interactor that allows us to unwrap the implementation of swift side.
+ * This this a rewrite from kmm-useCases
+ * @see <a href="https://github.com/futuredapp/arkitekt-kmm/">
+ *
+ */
+abstract class FlowInteractor<Arg, ReturnType> {
 
-    actual fun getWorkerDispatcher(): CoroutineDispatcher = Dispatchers.IO
+    var job: Job? = null
 
-    /**
-     * Asynchronously executes use case and consumes data from flow on UI thread.
-     * By default all previous pending executions are canceled, this can be changed
-     * by [config]. When suspend function in use case finishes, onComplete is called
-     * on UI thread. This version is gets initial arguments by [args].
-     *
-     * @param args Arguments used for initial use case initialization.
-     * @param config [FlowUseCaseConfig] used to process results of internal
-     * Flow and to set configuration options.
-     **/
-    fun <ARGS, ReturnType : Any?> FlowInteractor<ARGS, ReturnType>.execute(
-        args: ARGS,
+    abstract fun run(params: Arg): Flow<ReturnType>
+
+    operator fun invoke(params: Arg): Flow<ReturnType> =
+        run(params)
+
+    fun CoroutineScopeOwner.execute(
+        args: Arg,
         config: FlowUseCaseConfig.Builder<ReturnType>.() -> Unit
     ) {
         val flowUseCaseConfig = FlowUseCaseConfig.Builder<ReturnType>().run {
-            config.invoke(this)
+            config(this)
             return@run build()
         }
 
         if (flowUseCaseConfig.disposePrevious) {
             job?.cancel()
         }
-
         job = run(args)
             .flowOn(getWorkerDispatcher())
             .onStart { flowUseCaseConfig.onStart() }
@@ -126,7 +123,7 @@ actual interface CoroutineScopeOwner {
                 this.disposePrevious = disposePrevious
             }
 
-            fun build(): FlowUseCaseConfig<T> {
+            internal fun build(): FlowUseCaseConfig<T> {
                 return FlowUseCaseConfig(
                     onStart ?: { },
                     onNext ?: { },
@@ -138,3 +135,5 @@ actual interface CoroutineScopeOwner {
         }
     }
 }
+
+operator fun <Type> FlowInteractor<Unit, Type>.invoke(): Flow<Type> = this(Unit)
