@@ -1,7 +1,5 @@
 package com.thomaskioko.tvmaniac.interactor
 
-import com.thomaskioko.tvmaniac.core.discover.DiscoverShowResult
-import com.thomaskioko.tvmaniac.core.usecase.FlowInteractor
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory.POPULAR
@@ -11,6 +9,8 @@ import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowList
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
 import com.thomaskioko.tvmaniac.datasource.repository.util.Resource
 import com.thomaskioko.tvmaniac.datasource.repository.util.Status
+import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowResult
+import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map

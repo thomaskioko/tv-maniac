@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.interactor
 
-import com.thomaskioko.tvmaniac.core.usecase.FlowInteractor
 import com.thomaskioko.tvmaniac.datasource.mapper.toGenreModelList
 import com.thomaskioko.tvmaniac.datasource.repository.genre.GenreRepository
 import com.thomaskioko.tvmaniac.presentation.model.GenreUIModel
+import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

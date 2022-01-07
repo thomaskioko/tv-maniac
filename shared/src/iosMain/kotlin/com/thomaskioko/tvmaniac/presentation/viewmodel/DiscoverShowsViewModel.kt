@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.presentation.viewmodel
 
-import com.thomaskioko.tvmaniac.core.discover.DiscoverShowResult.DiscoverShowsData
-import com.thomaskioko.tvmaniac.core.viewmodel.BaseViewModel
-import com.thomaskioko.tvmaniac.core.viewmodel.ViewState
 import com.thomaskioko.tvmaniac.interactor.ObserveDiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowResult.DiscoverShowsData
 import com.thomaskioko.tvmaniac.presentation.viewmodel.DiscoverShowsState.Error
 import com.thomaskioko.tvmaniac.presentation.viewmodel.DiscoverShowsState.Success
+import com.thomaskioko.tvmaniac.shared.core.BaseViewModel
+import com.thomaskioko.tvmaniac.shared.core.ViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch

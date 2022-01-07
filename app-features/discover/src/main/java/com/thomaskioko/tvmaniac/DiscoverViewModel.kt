@@ -2,14 +2,14 @@ package com.thomaskioko.tvmaniac
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.core.Store
-import com.thomaskioko.tvmaniac.core.discover.DiscoverShowAction
-import com.thomaskioko.tvmaniac.core.discover.DiscoverShowAction.Error
-import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
-import com.thomaskioko.tvmaniac.core.discover.DiscoverShowResult
-import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
-import com.thomaskioko.tvmaniac.core.usecase.scope.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.interactor.ObserveDiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowAction
+import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowAction.Error
+import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowEffect
+import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowResult
+import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowState
+import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
+import com.thomaskioko.tvmaniac.shared.core.store.Store
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
     private val observeDiscoverShow: ObserveDiscoverShowsInteractor,
-) : Store<DiscoverShowState, DiscoverShowAction, DiscoverShowEffect>, CoroutineScopeOwner,
+) : Store<DiscoverShowState, DiscoverShowAction, DiscoverShowEffect>,
+    CoroutineScopeOwner,
     ViewModel() {
 
     override val coroutineScope: CoroutineScope

@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.interactor
 
-import com.thomaskioko.tvmaniac.core.usecase.FlowInteractor
 import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepository
 import com.thomaskioko.tvmaniac.presentation.model.TrailerModel
+import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
