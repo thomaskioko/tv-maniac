@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.viewmodel
+package com.thomaskioko.tvmaniac.shared.core
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow

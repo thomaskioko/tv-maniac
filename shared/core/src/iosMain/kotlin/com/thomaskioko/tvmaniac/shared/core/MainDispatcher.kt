@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core
+package com.thomaskioko.tvmaniac.shared.core
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

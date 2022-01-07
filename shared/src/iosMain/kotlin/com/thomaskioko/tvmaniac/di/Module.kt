@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.di
 
-import com.thomaskioko.tvmaniac.core.MainDispatcher
 import com.thomaskioko.tvmaniac.datasource.cache.Season
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
@@ -11,7 +10,6 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 actual fun platformModule(): Module = module {
-    single { MainDispatcher() }
     single { KtorClientFactory().build() }
 
     single {
