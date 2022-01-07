@@ -9,7 +9,6 @@ plugins {
     kotlin("plugin.serialization") version ("1.6.10")
     id("com.android.library")
     id("com.codingfeline.buildkonfig")
-    id("com.squareup.sqldelight")
     id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
 }
 
@@ -51,6 +50,7 @@ kotlin {
 
         sourceSets["commonMain"].dependencies {
             api(project(":shared:core"))
+            implementation(project(":shared:database"))
 
             implementation(libs.kotlin.datetime)
 
@@ -62,7 +62,6 @@ kotlin {
             implementation(libs.napier)
             implementation(libs.multiplatform.paging.core)
             implementation(libs.squareup.sqldelight.extensions)
-            implementation(libs.squareup.sqldelight.runtime)
             implementation(libs.kotlin.coroutines.core)
         }
 
@@ -86,15 +85,12 @@ kotlin {
             implementation(kotlin("test"))
 
             implementation(libs.testing.androidx.junit)
-            implementation(libs.squareup.sqldelight.driver.jvm)
-
             implementation(libs.testing.mockk.core)
         }
 
         sourceSets["iosMain"].dependencies {
             implementation(libs.ktor.ios)
             implementation(libs.kotlin.coroutines.core)
-            implementation(libs.squareup.sqldelight.driver.native)
 
             val coroutineCore = libs.kotlin.coroutines.core.get()
 
@@ -143,13 +139,6 @@ buildkonfig {
     defaultConfigs {
         buildConfigField(STRING, "TMDB_API_KEY", properties["TMDB_API_KEY"] as String)
         buildConfigField(STRING, "TMDB_API_URL", properties["TMDB_API_URL"] as String)
-    }
-}
-
-sqldelight {
-    database("TvManiacDatabase") {
-        packageName = "com.thomaskioko.tvmaniac.datasource.cache"
-        sourceFolders = listOf("sqldelight")
     }
 }
 
