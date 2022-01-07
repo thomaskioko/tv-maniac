@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.injection
 
 import android.content.Context
+import com.thomaskioko.tvmaniac.core.db.DriverFactory
+import com.thomaskioko.tvmaniac.core.db.TvManiacDatabaseFactory
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCache
 import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCacheImpl
-import com.thomaskioko.tvmaniac.datasource.cache.db.DriverFactory
-import com.thomaskioko.tvmaniac.datasource.cache.db.TvManiacDatabaseFactory
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
