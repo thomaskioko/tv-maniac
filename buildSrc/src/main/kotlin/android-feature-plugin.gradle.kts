@@ -50,7 +50,8 @@ tasks.withType<Test>().configureEach {
 
 dependencies {
     implementation(project(":shared"))
-    implementation(project(":app-common:core"))
+    implementation(project(":shared:core"))
+    implementation(project(":app-common:annotations"))
     implementation(project(":app-common:compose"))
     implementation(project(":app-common:navigation"))
 

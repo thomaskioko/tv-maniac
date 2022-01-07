@@ -13,7 +13,7 @@ plugins {
     id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
 }
 
-version = "0.2.0"
+version = libs.versions.shared.module.version.get()
 
 android {
     compileSdk = libs.versions.android.compile.get().toInt()
@@ -50,6 +50,8 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:core"))
+
             implementation(libs.kotlin.datetime)
 
             implementation(libs.ktor.core)
@@ -159,6 +161,4 @@ multiplatformSwiftPackage {
      distributionMode { local() }
      outputDirectory(File("$projectDir/../../", "tvmaniac-swift-packages"))
      **/
-    distributionMode { local() }
-    outputDirectory(File("$projectDir/../../", "tvmaniac-swift-packages"))
 }

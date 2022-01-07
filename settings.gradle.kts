@@ -12,7 +12,7 @@ rootProject.name = "tv-maniac"
 
 include(
     ":app",
-    ":app-common:core",
+    ":app-common:annotations",
     ":app-common:compose",
     ":app-common:navigation",
     ":app-features:discover",
@@ -22,5 +22,6 @@ include(
     ":app-features:watchlist",
     ":app-features:shows-grid",
     ":app-features:settings",
-    ":shared"
+    ":shared",
+    ":shared:core"
 )
