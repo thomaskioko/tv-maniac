@@ -23,5 +23,6 @@ include(
     ":app-features:shows-grid",
     ":app-features:settings",
     ":shared",
-    ":shared:core"
+    ":shared:core",
+    ":shared:database"
 )

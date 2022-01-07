@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.di
 
+import com.thomaskioko.tvmaniac.core.db.di.dbPlatformModule
 import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCache
 import com.thomaskioko.tvmaniac.datasource.cache.category.CategoryCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
@@ -52,7 +53,8 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         repositoryModule,
         dispatcherModule,
         platformModule(),
-        corePlatformModule()
+        corePlatformModule(),
+        dbPlatformModule()
     )
 }
 
