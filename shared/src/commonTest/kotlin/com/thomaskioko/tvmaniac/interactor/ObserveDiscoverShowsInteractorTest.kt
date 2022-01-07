@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.interactor
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.MockData.getDiscoverShowResult
 import com.thomaskioko.tvmaniac.MockData.getShowsCache
-import com.thomaskioko.tvmaniac.core.usecase.invoke
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
+import com.thomaskioko.tvmaniac.shared.core.invoke
 import com.thomaskioko.tvmaniac.util.runBlockingTest
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery

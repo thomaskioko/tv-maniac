@@ -54,10 +54,10 @@ import com.thomaskioko.tvmaniac.compose.theme.grey900
 import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
-import com.thomaskioko.tvmaniac.core.discover.DiscoverShowEffect
-import com.thomaskioko.tvmaniac.core.discover.DiscoverShowResult
-import com.thomaskioko.tvmaniac.core.discover.DiscoverShowState
 import com.thomaskioko.tvmaniac.datasource.enums.ShowCategory
+import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowEffect
+import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowResult
+import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowState
 import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior

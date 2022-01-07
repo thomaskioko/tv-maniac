@@ -1,14 +1,14 @@
 package com.thomaskioko.showdetails
 
-import com.thomaskioko.tvmaniac.core.Action
-import com.thomaskioko.tvmaniac.core.Effect
-import com.thomaskioko.tvmaniac.core.State
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.interactor.UpdateShowParams
 import com.thomaskioko.tvmaniac.presentation.model.EpisodeUiModel
 import com.thomaskioko.tvmaniac.presentation.model.GenreUIModel
 import com.thomaskioko.tvmaniac.presentation.model.SeasonUiModel
 import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
+import com.thomaskioko.tvmaniac.shared.core.store.Action
+import com.thomaskioko.tvmaniac.shared.core.store.Effect
+import com.thomaskioko.tvmaniac.shared.core.store.State
 
 sealed class ShowDetailAction : Action {
     object LoadShowDetails : ShowDetailAction()

@@ -2,10 +2,10 @@ package com.thomaskioko.tvmaniac.interactor
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.MockData.getTvResponse
-import com.thomaskioko.tvmaniac.core.usecase.invoke
 import com.thomaskioko.tvmaniac.datasource.mapper.toShow
 import com.thomaskioko.tvmaniac.datasource.mapper.toTvShowList
 import com.thomaskioko.tvmaniac.datasource.repository.tvshow.TvShowsRepository
+import com.thomaskioko.tvmaniac.shared.core.invoke
 import com.thomaskioko.tvmaniac.util.runBlockingTest
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery

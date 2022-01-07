@@ -6,13 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.thomaskioko.showdetails.ShowDetailAction.SeasonSelected
 import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
 import com.thomaskioko.showdetails.ShowDetailEffect.ShowDetailsError
-import com.thomaskioko.tvmaniac.core.Store
-import com.thomaskioko.tvmaniac.core.usecase.scope.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
+import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
+import com.thomaskioko.tvmaniac.shared.core.store.Store
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -32,7 +32,8 @@ class ShowDetailsViewModel @Inject constructor(
     private val genresInteractor: GetGenresInteractor,
     private val episodeInteractor: EpisodesInteractor,
     private val updateWatchlistInteractor: UpdateWatchlistInteractor
-) : Store<ShowDetailViewState, ShowDetailAction, ShowDetailEffect>, CoroutineScopeOwner,
+) : Store<ShowDetailViewState, ShowDetailAction, ShowDetailEffect>,
+    CoroutineScopeOwner,
     ViewModel() {
 
     override val coroutineScope: CoroutineScope

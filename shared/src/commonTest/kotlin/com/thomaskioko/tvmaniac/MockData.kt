@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac
 
-import com.thomaskioko.tvmaniac.core.discover.DiscoverShowResult
 import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.datasource.cache.Season
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
@@ -14,6 +13,7 @@ import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.ShowResponse
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
 import com.thomaskioko.tvmaniac.datasource.repository.util.Resource
+import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowResult
 import com.thomaskioko.tvmaniac.presentation.model.EpisodeUiModel
 import com.thomaskioko.tvmaniac.presentation.model.SeasonUiModel
 import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
