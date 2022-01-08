@@ -1,6 +1,6 @@
-package com.thomaskioko.tvmaniac.util
+package com.thomaskioko.tvmaniac.remote.util
 
-import io.github.aakira.napier.Napier
+import co.touchlab.kermit.Logger
 import io.ktor.client.features.ResponseException
 import io.ktor.client.features.ServerResponseException
 import io.ktor.client.statement.HttpResponse
@@ -37,18 +37,11 @@ fun Throwable.resolveError() = when (this) {
 }
 
 fun Throwable.getErrorMessage(): String {
-    return if (BuildConfig().isDebug()) {
-        Napier.e("Exception:: $message", this)
-        message ?: "Something went wrong"
-    } else {
-        "Something went wrong"
-    }
+    Logger.e("Exception:: $message", this)
+    return message ?: "Something went wrong"
 }
 
 fun ResponseException.getErrorMessage(): String {
-    return if (BuildConfig().isDebug()) {
-        "Server Error: ${response.status.value} /n $message"
-    } else {
-        "Connection to server failed."
-    }
+    Logger.e("ResponseException:: $message", this)
+    return "Server Error: ${response.status.value} /n $message"
 }
