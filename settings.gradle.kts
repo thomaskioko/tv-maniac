@@ -24,5 +24,6 @@ include(
     ":app-features:settings",
     ":shared",
     ":shared:core",
-    ":shared:database"
+    ":shared:database",
+    ":shared:remote"
 )
