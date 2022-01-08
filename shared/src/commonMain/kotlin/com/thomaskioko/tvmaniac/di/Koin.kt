@@ -36,6 +36,7 @@ import com.thomaskioko.tvmaniac.interactor.GetWatchListInteractor
 import com.thomaskioko.tvmaniac.interactor.ObserveDiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
+import com.thomaskioko.tvmaniac.remote.di.remotePlatformModule
 import com.thomaskioko.tvmaniac.shared.core.di.corePlatformModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -52,9 +53,9 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         cacheModule,
         repositoryModule,
         dispatcherModule,
-        platformModule(),
         corePlatformModule(),
-        dbPlatformModule()
+        dbPlatformModule(),
+        remotePlatformModule()
     )
 }
 
