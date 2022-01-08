@@ -1,10 +1,10 @@
-package com.thomaskioko.tvmaniac.datasource.network.api
+package com.thomaskioko.tvmaniac.remote.api
 
-import com.thomaskioko.tvmaniac.datasource.network.model.GenresResponse
-import com.thomaskioko.tvmaniac.datasource.network.model.SeasonResponse
-import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
-import com.thomaskioko.tvmaniac.datasource.network.model.TrailersResponse
-import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
+import com.thomaskioko.tvmaniac.remote.api.model.GenresResponse
+import com.thomaskioko.tvmaniac.remote.api.model.SeasonResponse
+import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
+import com.thomaskioko.tvmaniac.remote.api.model.TrailersResponse
+import com.thomaskioko.tvmaniac.remote.api.model.TvShowsResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
