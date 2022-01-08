@@ -1,14 +1,10 @@
-import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import java.io.FileInputStream
-import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization") version ("1.6.10")
     id("com.android.library")
-    id("com.codingfeline.buildkonfig")
     id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
 }
 
@@ -50,15 +46,12 @@ kotlin {
 
         sourceSets["commonMain"].dependencies {
             api(project(":shared:core"))
-            implementation(project(":shared:database"))
+            api(project(":shared:database"))
+            api(project(":shared:remote"))
 
             implementation(libs.kotlin.datetime)
-
-            implementation(libs.ktor.core)
-            implementation(libs.ktor.logging)
             implementation(libs.ktor.serialization)
             implementation(libs.koin.core)
-
             implementation(libs.napier)
             implementation(libs.multiplatform.paging.core)
             implementation(libs.squareup.sqldelight.extensions)
@@ -77,7 +70,6 @@ kotlin {
         }
 
         sourceSets["androidMain"].dependencies {
-            implementation(libs.ktor.android)
             implementation(libs.squareup.sqldelight.driver.android)
         }
 
@@ -122,23 +114,11 @@ kotlin {
             linkerOpts.add("-lsqlite3")
 
             export(project(":shared:core"))
+            export(project(":shared:database"))
+            export(project(":shared:remote"))
 
             transitiveExport = true
         }
-    }
-}
-
-buildkonfig {
-    val properties = Properties()
-    val secretsFile = file("../local.properties")
-    if (secretsFile.exists()) {
-        properties.load(FileInputStream(secretsFile))
-    }
-
-    packageName = "com.thomaskioko.tvmaniac.shared"
-    defaultConfigs {
-        buildConfigField(STRING, "TMDB_API_KEY", properties["TMDB_API_KEY"] as String)
-        buildConfigField(STRING, "TMDB_API_URL", properties["TMDB_API_URL"] as String)
     }
 }
 
