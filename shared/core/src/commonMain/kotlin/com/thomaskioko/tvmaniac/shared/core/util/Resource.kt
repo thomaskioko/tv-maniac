@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource.repository.util
+package com.thomaskioko.tvmaniac.shared.core.util
 
 /**
  * A generic class that describes data with a status
