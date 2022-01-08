@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource.network
+package com.thomaskioko.tvmaniac.remote
 
 import io.ktor.client.HttpClient
 

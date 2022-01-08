@@ -21,10 +21,10 @@ import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
 import com.thomaskioko.tvmaniac.datasource.network.model.TvShowsResponse
 import com.thomaskioko.tvmaniac.datasource.repository.util.Resource
 import com.thomaskioko.tvmaniac.datasource.repository.util.networkBoundResource
-import com.thomaskioko.tvmaniac.util.CommonFlow
+import com.thomaskioko.tvmaniac.remote.util.CommonFlow
+import com.thomaskioko.tvmaniac.remote.util.asCommonFlow
+import com.thomaskioko.tvmaniac.remote.util.getErrorMessage
 import com.thomaskioko.tvmaniac.util.Logger
-import com.thomaskioko.tvmaniac.util.asCommonFlow
-import com.thomaskioko.tvmaniac.util.getErrorMessage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
