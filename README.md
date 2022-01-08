@@ -39,7 +39,6 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
 - Create `local.properties` in `root` dir
 - Add the following
     ```
-    TMDB_API_KEY=PUT_API_KEY
     TMDB_API_URL=https://api.themoviedb.org/3/
     ```
 - Run `./gradlew generateBuildKonfig`
