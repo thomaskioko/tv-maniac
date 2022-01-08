@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.datasource.repository.tvshow
 import com.kuuurt.paging.multiplatform.PagingData
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.repository.util.Resource
-import com.thomaskioko.tvmaniac.util.CommonFlow
+import com.thomaskioko.tvmaniac.remote.util.CommonFlow
 import kotlinx.coroutines.flow.Flow
 
 interface TvShowsRepository {
