@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.remote.util
+package com.thomaskioko.tvmaniac.shared.core.util
 
 import io.ktor.utils.io.core.Closeable
 import kotlinx.coroutines.CoroutineScope

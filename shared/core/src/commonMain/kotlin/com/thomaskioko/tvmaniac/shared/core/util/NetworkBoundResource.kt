@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource.repository.util
+package com.thomaskioko.tvmaniac.shared.core.util
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
