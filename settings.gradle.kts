@@ -24,6 +24,9 @@ include(
     ":app-features:settings",
     ":shared",
     ":shared:core",
+    ":shared:core-test",
     ":shared:database",
-    ":shared:remote"
+    ":shared:remote",
+    ":shared:domain:discover:api",
+    ":shared:domain:discover:implementation"
 )
