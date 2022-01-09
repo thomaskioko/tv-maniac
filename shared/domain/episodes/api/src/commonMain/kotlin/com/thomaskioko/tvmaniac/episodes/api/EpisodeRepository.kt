@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource.repository.episode
+package com.thomaskioko.tvmaniac.episodes.api
 
 import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.shared.core.util.Resource

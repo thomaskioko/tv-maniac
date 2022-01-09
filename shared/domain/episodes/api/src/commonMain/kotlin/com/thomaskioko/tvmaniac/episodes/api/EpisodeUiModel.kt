@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.seasons.api.model
+package com.thomaskioko.tvmaniac.episodes.api
 
 
 data class EpisodeUiModel(

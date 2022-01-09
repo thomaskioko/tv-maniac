@@ -1,15 +1,15 @@
-package com.thomaskioko.tvmaniac.datasource.repository.episode
+package com.thomaskioko.tvmaniac.episodes.implementation
 
+import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
-import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
-import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeCacheList
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.model.SeasonResponse
 import com.thomaskioko.tvmaniac.remote.util.getErrorMessage
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.shared.core.util.Resource
 import com.thomaskioko.tvmaniac.shared.core.util.networkBoundResource
-import com.thomaskioko.tvmaniac.util.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
@@ -29,7 +29,7 @@ class EpisodeRepositoryImpl(
         shouldFetch = { it.isNullOrEmpty() },
         fetch = { apiService.getSeasonDetails(tvShowId, seasonNumber) },
         saveFetchResult = { mapAndCache(it, seasonId) },
-        onFetchFailed = { Logger("observeSeasonEpisodes").log(it.getErrorMessage()) },
+        onFetchFailed = { Logger.withTag("observeSeasonEpisodes").e(it.getErrorMessage()) },
         coroutineDispatcher = dispatcher
     )
 
