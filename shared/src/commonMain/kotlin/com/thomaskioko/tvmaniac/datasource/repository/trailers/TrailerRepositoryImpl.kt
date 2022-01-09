@@ -3,9 +3,9 @@ package com.thomaskioko.tvmaniac.datasource.repository.trailers
 import com.thomaskioko.tvmaniac.datasource.cache.SelectByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.Trailers
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
-import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
-import com.thomaskioko.tvmaniac.datasource.network.model.TrailerResponse
 import com.thomaskioko.tvmaniac.presentation.model.TrailerModel
+import com.thomaskioko.tvmaniac.remote.api.TvShowsService
+import com.thomaskioko.tvmaniac.remote.api.model.TrailerResponse
 
 class TrailerRepositoryImpl(
     private val apiService: TvShowsService,

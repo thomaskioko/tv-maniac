@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.datasource.network
 
-import com.thomaskioko.tvmaniac.util.runBlockingTest
+import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import io.kotest.matchers.shouldBe
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine

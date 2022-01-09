@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.datasource.mapper
 
 import com.thomaskioko.tvmaniac.datasource.cache.Season
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
-import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.presentation.model.SeasonUiModel
+import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
 
 fun ShowDetailResponse.toSeasonCacheList(): List<Season> {
     return seasons.map { seasonResponse ->
