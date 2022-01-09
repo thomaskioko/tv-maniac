@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.interactor
 
 import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeEntityList
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
-import com.thomaskioko.tvmaniac.presentation.model.EpisodeUiModel
+import com.thomaskioko.tvmaniac.seasons.api.model.EpisodeUiModel
 import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged

@@ -4,14 +4,11 @@ import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
 import com.thomaskioko.tvmaniac.core.annotations.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
 import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
-import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepositoryImpl
 import com.thomaskioko.tvmaniac.datasource.repository.genre.GenreRepository
 import com.thomaskioko.tvmaniac.datasource.repository.genre.GenreRepositoryImpl
-import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepository
-import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepositoryImpl
 import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepository
 import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepositoryImpl
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
@@ -20,6 +17,9 @@ import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.discover.implementation.repository.TvShowsRepositoryImpl
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
+import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
+import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
+import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

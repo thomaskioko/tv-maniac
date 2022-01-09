@@ -9,8 +9,8 @@ import com.thomaskioko.showdetails.ShowDetailEffect.ShowDetailsError
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
-import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
+import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.shared.core.store.Store
 import dagger.hilt.android.lifecycle.HiltViewModel

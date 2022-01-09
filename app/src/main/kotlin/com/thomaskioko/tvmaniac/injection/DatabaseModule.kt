@@ -8,8 +8,6 @@ import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
 import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCacheImpl
-import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
-import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCacheImpl
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
@@ -18,6 +16,8 @@ import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.discover.implementation.cache.CategoryCacheImpl
 import com.thomaskioko.tvmaniac.discover.implementation.cache.ShowCategoryCacheImpl
 import com.thomaskioko.tvmaniac.discover.implementation.cache.TvShowCacheImpl
+import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
+import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsCacheImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

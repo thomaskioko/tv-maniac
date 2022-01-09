@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.injection
 
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
 import com.thomaskioko.tvmaniac.datasource.repository.genre.GenreRepository
-import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepository
 import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepository
 import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveDiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
@@ -12,8 +11,9 @@ import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.interactor.GetTrailersInteractor
 import com.thomaskioko.tvmaniac.interactor.GetWatchListInteractor
-import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
+import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
+import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
