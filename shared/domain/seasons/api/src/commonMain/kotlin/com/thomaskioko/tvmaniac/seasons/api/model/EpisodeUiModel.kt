@@ -1,8 +1,6 @@
-package com.thomaskioko.tvmaniac.presentation.model
+package com.thomaskioko.tvmaniac.seasons.api.model
 
-import kotlinx.serialization.Serializable
 
-@Serializable
 data class EpisodeUiModel(
     val id: Int,
     val seasonId: Int,

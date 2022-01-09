@@ -1,6 +1,7 @@
-package com.thomaskioko.tvmaniac.datasource.mapper
+package com.thomaskioko.tvmaniac.seasons.implementation
 
-import com.thomaskioko.tvmaniac.MockData.getShowDetailResponse
+import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getShowDetailResponse
+import com.thomaskioko.tvmaniac.seasons.implementation.mapper.toSeasonCacheList
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 

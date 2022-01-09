@@ -1,10 +1,11 @@
-package com.thomaskioko.tvmaniac.interactor
+package com.thomaskioko.tvmaniac.seasons.implementation
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.MockData.getSeasonsList
-import com.thomaskioko.tvmaniac.MockData.getSelectSeasonsByShowId
+import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getSeasonsList
+import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getSelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
-import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepository
+import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
+import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
