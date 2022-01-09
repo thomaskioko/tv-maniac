@@ -132,8 +132,7 @@ fun ShowDetailScreen(
                     contentPadding = contentPadding,
                     modifier = Modifier.fillMaxSize(),
                     onWatchlistClick = { viewModel.dispatch(UpdateWatchlist(it)) },
-                    onSeasonSelected = { viewModel.dispatch(ShowDetailAction.SeasonSelected(it)) },
-                    loadSeasonEpisode = { viewModel.dispatch(ShowDetailAction.SeasonSelected(it)) },
+                    onSeasonSelected = { viewModel.dispatch(ShowDetailAction.SeasonSelected(it)) }
                 )
             }
         }
@@ -186,7 +185,6 @@ private fun TvShowDetailsScrollingContent(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     onSeasonSelected: (EpisodeQuery) -> Unit = {},
-    loadSeasonEpisode: (EpisodeQuery) -> Unit = {},
     onWatchlistClick: (UpdateShowParams) -> Unit = {},
 ) {
 
@@ -209,8 +207,7 @@ private fun TvShowDetailsScrollingContent(
                 isLoading = detailUiState.isLoading,
                 tvSeasonUiModels = detailUiState.tvSeasonUiModels,
                 episodeList = detailUiState.episodeList,
-                onSeasonSelected = onSeasonSelected,
-                loadSeasonEpisode = loadSeasonEpisode,
+                onSeasonSelected = onSeasonSelected
             )
         }
     }
@@ -499,8 +496,7 @@ fun SeasonTabs(
     isLoading: Boolean,
     tvSeasonUiModels: List<SeasonUiModel>,
     episodeList: List<EpisodeUiModel>,
-    onSeasonSelected: (EpisodeQuery) -> Unit = {},
-    loadSeasonEpisode: (EpisodeQuery) -> Unit = {}
+    onSeasonSelected: (EpisodeQuery) -> Unit = {}
 ) {
 
     Column {
@@ -520,8 +516,7 @@ fun SeasonTabs(
                     isLoading,
                     tvSeasonUiModels,
                     episodeList,
-                    onSeasonSelected,
-                    loadSeasonEpisode
+                    onSeasonSelected
                 )
                 Similar -> SimilarShowsScreen()
             }

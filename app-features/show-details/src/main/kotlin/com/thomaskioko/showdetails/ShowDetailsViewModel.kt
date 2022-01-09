@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.thomaskioko.showdetails.ShowDetailAction.SeasonSelected
 import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
 import com.thomaskioko.showdetails.ShowDetailEffect.ShowDetailsError
+import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
 import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
@@ -60,15 +61,14 @@ class ShowDetailsViewModel @Inject constructor(
             ShowDetailAction.LoadSeasons -> fetchSeason()
             ShowDetailAction.LoadGenres -> fetchGenres()
             ShowDetailAction.LoadShowDetails -> loadShowDetails()
-            is SeasonSelected -> fetchEpisodes(action)
+            is SeasonSelected -> fetchEpisodes(action.query)
             is UpdateWatchlist -> updateWatchlist(action)
             is ShowDetailAction.Error -> {
                 coroutineScope.launch {
                     uiEffects.emit(ShowDetailsError(action.message))
                 }
             }
-            is ShowDetailAction.LoadEpisodes -> {
-            }
+            is ShowDetailAction.LoadEpisodes -> fetchEpisodes(action.query)
         }
     }
 
@@ -178,13 +178,29 @@ class ShowDetailsViewModel @Inject constructor(
                         )
                     }
                 }
+                onComplete {
+                    if (state.value.episodeList.isEmpty()) {
+                        val season = state.value.tvSeasonUiModels.first()
+                        coroutineScope.launch {
+                            dispatch(
+                                ShowDetailAction.LoadEpisodes(
+                                    EpisodeQuery(
+                                        tvShowId = showId,
+                                        seasonId = season.seasonId,
+                                        seasonNumber = season.seasonNumber
+                                    )
+                                )
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 
-    private fun fetchEpisodes(action: SeasonSelected) {
+    private fun fetchEpisodes(query: EpisodeQuery) {
         with(state) {
-            episodeInteractor.execute(action.query) {
+            episodeInteractor.execute(query) {
                 onStart {
                     coroutineScope.launch {
                         emit(
