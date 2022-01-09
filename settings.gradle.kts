@@ -28,5 +28,7 @@ include(
     ":shared:database",
     ":shared:remote",
     ":shared:domain:discover:api",
-    ":shared:domain:discover:implementation"
+    ":shared:domain:discover:implementation",
+    ":shared:domain:seasons:api",
+    ":shared:domain:seasons:implementation"
 )

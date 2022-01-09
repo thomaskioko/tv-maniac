@@ -9,6 +9,8 @@ dependencies {
     implementation(project(":shared:remote"))
     implementation(project(":shared:domain:discover:api"))
     implementation(project(":shared:domain:discover:implementation"))
+    implementation(project(":shared:domain:seasons:api"))
+    implementation(project(":shared:domain:seasons:implementation"))
     implementation(project(":app-common:annotations"))
     implementation(project(":app-common:compose"))
     implementation(project(":app-common:navigation"))
