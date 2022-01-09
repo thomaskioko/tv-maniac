@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource.repository.seasons
+package com.thomaskioko.tvmaniac.seasons.api
 
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.shared.core.util.Resource
