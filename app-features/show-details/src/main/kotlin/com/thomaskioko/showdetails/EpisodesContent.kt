@@ -38,8 +38,8 @@ import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
-import com.thomaskioko.tvmaniac.presentation.model.EpisodeUiModel
-import com.thomaskioko.tvmaniac.presentation.model.SeasonUiModel
+import com.thomaskioko.tvmaniac.seasons.api.model.EpisodeUiModel
+import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 
 @Composable
 fun EpisodesScreen(
