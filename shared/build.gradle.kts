@@ -48,6 +48,8 @@ kotlin {
             api(project(":shared:core"))
             api(project(":shared:database"))
             api(project(":shared:remote"))
+            api(project(":shared:domain:discover:api"))
+            implementation(project(":shared:domain:discover:implementation"))
 
             implementation(libs.kotlin.datetime)
             implementation(libs.ktor.serialization)
@@ -59,9 +61,10 @@ kotlin {
         }
 
         sourceSets["commonTest"].dependencies {
-            implementation(kotlin("test-common"))
-            implementation(kotlin("test-annotations-common"))
+            implementation(kotlin("test"))
+            implementation(project(":shared:core-test"))
 
+            implementation(libs.testing.mockk.core)
             implementation(libs.testing.ktor.mock)
             implementation(libs.testing.turbine)
             implementation(libs.testing.kotest.assertions)
@@ -71,13 +74,6 @@ kotlin {
 
         sourceSets["androidMain"].dependencies {
             implementation(libs.squareup.sqldelight.driver.android)
-        }
-
-        sourceSets["androidTest"].dependencies {
-            implementation(kotlin("test"))
-
-            implementation(libs.testing.androidx.junit)
-            implementation(libs.testing.mockk.core)
         }
 
         sourceSets["iosMain"].dependencies {
@@ -92,10 +88,6 @@ kotlin {
                     strictly(libs.versions.coroutines.native.get())
                 }
             }
-        }
-
-        sourceSets["iosTest"].dependencies {
-            implementation(libs.testing.mockk.common)
         }
 
         all {
@@ -116,6 +108,7 @@ kotlin {
             export(project(":shared:core"))
             export(project(":shared:database"))
             export(project(":shared:remote"))
+            export(project(":shared:domain:discover:api"))
 
             transitiveExport = true
         }
