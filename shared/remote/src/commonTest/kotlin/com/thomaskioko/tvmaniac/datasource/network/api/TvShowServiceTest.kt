@@ -8,7 +8,6 @@ import com.thomaskioko.tvmaniac.remote.api.TvShowsServiceImpl
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-// TODO:: Move to remote module
 @Ignore
 internal class TvShowServiceTest : TvShowsServiceMockEngine() {
 
