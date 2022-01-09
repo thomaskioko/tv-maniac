@@ -5,16 +5,12 @@ import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
 import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCacheImpl
-import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
-import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCacheImpl
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepositoryImpl
 import com.thomaskioko.tvmaniac.datasource.repository.genre.GenreRepository
 import com.thomaskioko.tvmaniac.datasource.repository.genre.GenreRepositoryImpl
-import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepository
-import com.thomaskioko.tvmaniac.datasource.repository.seasons.SeasonsRepositoryImpl
 import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepository
 import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepositoryImpl
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
@@ -30,10 +26,10 @@ import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.interactor.GetTrailersInteractor
 import com.thomaskioko.tvmaniac.interactor.GetWatchListInteractor
-import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
 import com.thomaskioko.tvmaniac.remote.di.remotePlatformModule
 import com.thomaskioko.tvmaniac.remote.di.serviceModule
+import com.thomaskioko.tvmaniac.seasons.implementation.di.seasonsDomainModule
 import com.thomaskioko.tvmaniac.shared.core.di.corePlatformModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -51,6 +47,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         repositoryModule,
         dispatcherModule,
         discoverDomainModule,
+        seasonsDomainModule,
         corePlatformModule(),
         dbPlatformModule(),
         remotePlatformModule()
@@ -63,7 +60,6 @@ fun initKoin() = initKoin {}
 val repositoryModule: Module = module {
     single<EpisodeRepository> { EpisodeRepositoryImpl(get(), get(), get(), get()) }
     single<GenreRepository> { GenreRepositoryImpl(get(), get(), get()) }
-    single<SeasonsRepository> { SeasonsRepositoryImpl(get(), get(), get(), get()) }
     single<TrailerRepository> { TrailerRepositoryImpl(get(), get()) }
 }
 
@@ -74,14 +70,12 @@ val interactorModule: Module = module {
     factory { GetShowsByCategoryInteractor(get()) }
     factory { GetTrailersInteractor(get()) }
     factory { GetWatchListInteractor(get()) }
-    factory { SeasonsInteractor(get()) }
     factory { UpdateWatchlistInteractor(get()) }
 }
 
 val cacheModule: Module = module {
     single<EpisodesCache> { EpisodesCacheImpl(get()) }
     single<GenreCache> { GenreCacheImpl(get()) }
-    single<SeasonsCache> { SeasonsCacheImpl(get()) }
     single<TrailerCache> { TrailerCacheImpl(get()) }
     single<TvShowCache> { TvShowCacheImpl(get()) }
     single<ShowCategoryCache> { ShowCategoryCacheImpl(get()) }
