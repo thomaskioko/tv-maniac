@@ -1,12 +1,14 @@
 package com.thomaskioko.tvmaniac.datasource.network.api
 
+import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.datasource.network.TvShowsServiceMockEngine
 import com.thomaskioko.tvmaniac.datasource.network.mockresponse.getPopularTvShows
 import com.thomaskioko.tvmaniac.datasource.network.mockresponse.getTvSeasonDetailsResponse
-import com.thomaskioko.tvmaniac.util.runBlockingTest
+import com.thomaskioko.tvmaniac.remote.api.TvShowsServiceImpl
 import kotlin.test.Ignore
 import kotlin.test.Test
 
+// TODO:: Move to remote module
 @Ignore
 internal class TvShowServiceTest : TvShowsServiceMockEngine() {
 

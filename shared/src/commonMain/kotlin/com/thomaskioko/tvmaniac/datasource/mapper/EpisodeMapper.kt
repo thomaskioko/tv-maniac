@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.datasource.mapper
 
 import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
-import com.thomaskioko.tvmaniac.datasource.network.model.SeasonResponse
 import com.thomaskioko.tvmaniac.presentation.model.EpisodeUiModel
-import com.thomaskioko.tvmaniac.util.StringUtil.formatPosterPath
+import com.thomaskioko.tvmaniac.remote.api.model.SeasonResponse
+import com.thomaskioko.tvmaniac.shared.core.util.StringUtil.formatPosterPath
 import com.thomaskioko.tvmaniac.datasource.cache.Episode as EpisodeCache
 
 fun SeasonResponse.toEpisodeCacheList(): List<EpisodeCache> {

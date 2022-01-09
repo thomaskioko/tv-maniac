@@ -77,12 +77,12 @@ import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
+import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
 import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
 import com.thomaskioko.tvmaniac.interactor.UpdateShowParams
 import com.thomaskioko.tvmaniac.presentation.model.EpisodeUiModel
 import com.thomaskioko.tvmaniac.presentation.model.GenreUIModel
 import com.thomaskioko.tvmaniac.presentation.model.SeasonUiModel
-import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
 import kotlinx.coroutines.InternalCoroutinesApi
 
 private val HeaderHeight = 550.dp

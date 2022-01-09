@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.datasource.repository.episode
 
 import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
-import com.thomaskioko.tvmaniac.datasource.repository.util.Resource
+import com.thomaskioko.tvmaniac.shared.core.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface EpisodeRepository {

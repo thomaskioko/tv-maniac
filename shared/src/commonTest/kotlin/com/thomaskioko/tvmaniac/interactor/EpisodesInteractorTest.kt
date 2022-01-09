@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.interactor
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.MockData.getEpisodeList
 import com.thomaskioko.tvmaniac.MockData.getEpisodesBySeasonId
+import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.datasource.repository.episode.EpisodeRepository
-import com.thomaskioko.tvmaniac.util.runBlockingTest
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk

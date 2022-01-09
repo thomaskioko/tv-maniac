@@ -4,11 +4,11 @@ import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.datasource.cache.episode.EpisodesCache
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
 import com.thomaskioko.tvmaniac.datasource.mapper.toEpisodeCacheList
-import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
-import com.thomaskioko.tvmaniac.datasource.network.model.SeasonResponse
-import com.thomaskioko.tvmaniac.datasource.repository.util.Resource
-import com.thomaskioko.tvmaniac.datasource.repository.util.networkBoundResource
+import com.thomaskioko.tvmaniac.remote.api.TvShowsService
+import com.thomaskioko.tvmaniac.remote.api.model.SeasonResponse
 import com.thomaskioko.tvmaniac.remote.util.getErrorMessage
+import com.thomaskioko.tvmaniac.shared.core.util.Resource
+import com.thomaskioko.tvmaniac.shared.core.util.networkBoundResource
 import com.thomaskioko.tvmaniac.util.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

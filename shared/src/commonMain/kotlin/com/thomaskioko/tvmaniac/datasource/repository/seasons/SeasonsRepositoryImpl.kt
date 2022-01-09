@@ -2,13 +2,13 @@ package com.thomaskioko.tvmaniac.datasource.repository.seasons
 
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.seasons.SeasonsCache
-import com.thomaskioko.tvmaniac.datasource.cache.shows.TvShowCache
 import com.thomaskioko.tvmaniac.datasource.mapper.toSeasonCacheList
-import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
-import com.thomaskioko.tvmaniac.datasource.network.model.ShowDetailResponse
-import com.thomaskioko.tvmaniac.datasource.repository.util.Resource
-import com.thomaskioko.tvmaniac.datasource.repository.util.networkBoundResource
+import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.remote.api.TvShowsService
+import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.remote.util.getErrorMessage
+import com.thomaskioko.tvmaniac.shared.core.util.Resource
+import com.thomaskioko.tvmaniac.shared.core.util.networkBoundResource
 import com.thomaskioko.tvmaniac.util.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

@@ -2,12 +2,12 @@ package com.thomaskioko.tvmaniac
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.interactor.ObserveDiscoverShowsInteractor
-import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowAction
-import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowAction.Error
-import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowEffect
-import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowResult
-import com.thomaskioko.tvmaniac.presentation.contract.DiscoverShowState
+import com.thomaskioko.tvmaniac.discover.api.DiscoverShowAction
+import com.thomaskioko.tvmaniac.discover.api.DiscoverShowAction.Error
+import com.thomaskioko.tvmaniac.discover.api.DiscoverShowEffect
+import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
+import com.thomaskioko.tvmaniac.discover.api.DiscoverShowState
+import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveDiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.shared.core.store.Store
 import dagger.hilt.android.lifecycle.HiltViewModel
