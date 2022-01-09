@@ -49,7 +49,9 @@ kotlin {
             api(project(":shared:database"))
             api(project(":shared:remote"))
             api(project(":shared:domain:discover:api"))
+            api(project(":shared:domain:seasons:api"))
             implementation(project(":shared:domain:discover:implementation"))
+            implementation(project(":shared:domain:seasons:implementation"))
 
             implementation(libs.kotlin.datetime)
             implementation(libs.ktor.serialization)
@@ -109,6 +111,7 @@ kotlin {
             export(project(":shared:database"))
             export(project(":shared:remote"))
             export(project(":shared:domain:discover:api"))
+            export(project(":shared:domain:seasons:api"))
 
             transitiveExport = true
         }
