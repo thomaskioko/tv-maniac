@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.util
+package com.thomaskioko.tvmaniac.core.test
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
