@@ -37,8 +37,8 @@ import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
-import com.thomaskioko.tvmaniac.seasons.api.model.EpisodeUiModel
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeUiModel
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 
 @Composable
