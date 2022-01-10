@@ -26,9 +26,6 @@ kotlin {
         }
 
         sourceSets["commonTest"].dependencies {
-            implementation(kotlin("test-common"))
-            implementation(kotlin("test-annotations-common"))
-
             implementation(libs.testing.kotest.assertions)
         }
 
@@ -45,8 +42,6 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.squareup.sqldelight.driver.native)
         }
-
-        val iosTest by getting
     }
 }
 

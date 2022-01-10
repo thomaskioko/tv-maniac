@@ -29,17 +29,14 @@ kotlin {
         sourceSets["commonMain"].dependencies {
             implementation(libs.kotlin.coroutines.core)
             implementation(libs.koin.core)
+            implementation(libs.ktor.core)
+            implementation(libs.kermit)
         }
 
         sourceSets["iosMain"].dependencies {
             implementation(libs.kotlin.coroutines.core)
             implementation(libs.koin.core)
         }
-
-        val commonTest by getting
-        val androidMain by getting
-        val androidTest by getting
-        val iosTest by getting
     }
 }
 

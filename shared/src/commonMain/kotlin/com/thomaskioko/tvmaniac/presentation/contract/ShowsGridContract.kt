@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.contract
 
 import com.kuuurt.paging.multiplatform.PagingData
-import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
+import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
 import com.thomaskioko.tvmaniac.shared.core.store.Action
 import com.thomaskioko.tvmaniac.shared.core.store.Effect
 import com.thomaskioko.tvmaniac.shared.core.store.State
