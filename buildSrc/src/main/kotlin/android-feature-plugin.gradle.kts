@@ -49,6 +49,7 @@ tasks.withType<Test>().configureEach {
 }
 
 dependencies {
+    // TODO:: Replace shared with specific api modules in @ feature
     implementation(project(":shared"))
     implementation(project(":shared:core"))
     implementation(project(":app-common:annotations"))

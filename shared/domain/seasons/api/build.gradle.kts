@@ -21,7 +21,6 @@ kotlin {
             implementation(project(":shared:core"))
             implementation(project(":shared:database"))
 
-            implementation(libs.multiplatform.paging.core)
             implementation(libs.kotlin.coroutines.core)
         }
     }

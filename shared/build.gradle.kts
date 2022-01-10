@@ -50,6 +50,8 @@ kotlin {
             api(project(":shared:remote"))
             api(project(":shared:domain:discover:api"))
             api(project(":shared:domain:seasons:api"))
+            api(project(":shared:domain:episodes:api"))
+            implementation(project(":shared:domain:episodes:implementation"))
             implementation(project(":shared:domain:discover:implementation"))
             implementation(project(":shared:domain:seasons:implementation"))
 
@@ -112,6 +114,7 @@ kotlin {
             export(project(":shared:remote"))
             export(project(":shared:domain:discover:api"))
             export(project(":shared:domain:seasons:api"))
+            export(project(":shared:domain:episodes:api"))
 
             transitiveExport = true
         }
