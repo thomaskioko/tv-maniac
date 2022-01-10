@@ -24,11 +24,9 @@ kotlin {
             implementation(project(":shared:domain:seasons:api"))
             implementation(project(":shared:domain:discover:api"))
 
-            implementation(libs.kotlin.datetime)
             implementation(libs.ktor.serialization)
             implementation(libs.koin.core)
             implementation(libs.kermit)
-            implementation(libs.multiplatform.paging.core)
             implementation(libs.squareup.sqldelight.extensions)
             implementation(libs.kotlin.coroutines.core)
         }
