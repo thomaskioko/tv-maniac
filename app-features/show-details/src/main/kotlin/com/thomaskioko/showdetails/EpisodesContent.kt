@@ -37,9 +37,9 @@ import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
-import com.thomaskioko.tvmaniac.presentation.model.EpisodeUiModel
-import com.thomaskioko.tvmaniac.presentation.model.SeasonUiModel
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeUiModel
+import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 
 @Composable
 fun EpisodesScreen(
@@ -47,7 +47,6 @@ fun EpisodesScreen(
     tvSeasonUiModels: List<SeasonUiModel>,
     episodeList: List<EpisodeUiModel>,
     onSeasonSelected: (EpisodeQuery) -> Unit,
-    loadSeasonEpisode: (EpisodeQuery) -> Unit = {}
 ) {
 
     Column {
@@ -58,9 +57,7 @@ fun EpisodesScreen(
             TvShowSeasons(
                 isLoading,
                 tvSeasonUiModels,
-                episodeList,
-                onSeasonSelected,
-                loadSeasonEpisode
+                onSeasonSelected
             )
 
         episodeList.forEachIndexed { index, episode ->
@@ -74,26 +71,10 @@ fun EpisodesScreen(
 fun TvShowSeasons(
     isLoading: Boolean,
     tvSeasonUiModels: List<SeasonUiModel>,
-    episodeList: List<EpisodeUiModel>,
     onSeasonSelected: (EpisodeQuery) -> Unit,
-    loadSeasonEpisode: (EpisodeQuery) -> Unit
 ) {
 
-    val selectedPosition by remember { mutableStateOf(0) }
     var selectedSeason by remember { mutableStateOf(tvSeasonUiModels.first()) }
-
-    /**
-     * Invoke fetchEpisode when season is loaded and user has not clicked on anything.
-     */
-    if (tvSeasonUiModels.isNotEmpty() && episodeList.isEmpty() && selectedPosition == 0) {
-        loadSeasonEpisode(
-            EpisodeQuery(
-                tvShowId = selectedSeason.tvShowId,
-                seasonId = selectedSeason.seasonId,
-                seasonNumber = selectedSeason.seasonNumber
-            )
-        )
-    }
 
     Column {
 
