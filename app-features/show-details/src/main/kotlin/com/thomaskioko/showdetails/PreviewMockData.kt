@@ -2,7 +2,7 @@ package com.thomaskioko.showdetails
 
 import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeUiModel
-import com.thomaskioko.tvmaniac.presentation.model.GenreUIModel
+import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 
 val detailUiState = ShowDetailViewState(
@@ -46,11 +46,11 @@ private fun getTvSeasons() = listOf(
 )
 
 fun getGenres() = listOf(
-    GenreUIModel(
+    com.thomaskioko.tvmaniac.genre.api.GenreUIModel(
         id = 18,
         name = "Sci-Fi"
     ),
-    GenreUIModel(
+    com.thomaskioko.tvmaniac.genre.api.GenreUIModel(
         id = 10765,
         name = "Action"
     )

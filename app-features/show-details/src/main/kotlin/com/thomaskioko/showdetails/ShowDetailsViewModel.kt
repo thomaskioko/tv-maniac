@@ -8,7 +8,7 @@ import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
 import com.thomaskioko.showdetails.ShowDetailEffect.ShowDetailsError
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesInteractor
-import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
+import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
 import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
@@ -30,7 +30,7 @@ class ShowDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getShow: GetShowInteractor,
     private val seasonsInteractor: SeasonsInteractor,
-    private val genresInteractor: GetGenresInteractor,
+    private val genresInteractor: com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor,
     private val episodeInteractor: EpisodesInteractor,
     private val updateWatchlistInteractor: UpdateWatchlistInteractor
 ) : Store<ShowDetailViewState, ShowDetailAction, ShowDetailEffect>,

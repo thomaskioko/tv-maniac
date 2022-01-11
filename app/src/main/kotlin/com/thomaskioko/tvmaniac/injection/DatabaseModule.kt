@@ -4,8 +4,6 @@ import android.content.Context
 import com.thomaskioko.tvmaniac.core.db.DriverFactory
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabaseFactory
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
-import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
-import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCacheImpl
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
@@ -16,6 +14,8 @@ import com.thomaskioko.tvmaniac.discover.implementation.cache.ShowCategoryCacheI
 import com.thomaskioko.tvmaniac.discover.implementation.cache.TvShowCacheImpl
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodesCacheImpl
+import com.thomaskioko.tvmaniac.genre.api.GenreCache
+import com.thomaskioko.tvmaniac.genre.implementation.GenreCacheImpl
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsCacheImpl
 import dagger.Module
