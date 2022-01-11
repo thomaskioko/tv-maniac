@@ -1,12 +1,8 @@
 package com.thomaskioko.tvmaniac.di
 
 import com.thomaskioko.tvmaniac.core.db.di.dbPlatformModule
-import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
-import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCacheImpl
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
 import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCacheImpl
-import com.thomaskioko.tvmaniac.datasource.repository.genre.GenreRepository
-import com.thomaskioko.tvmaniac.datasource.repository.genre.GenreRepositoryImpl
 import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepository
 import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepositoryImpl
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
@@ -17,7 +13,7 @@ import com.thomaskioko.tvmaniac.discover.implementation.cache.ShowCategoryCacheI
 import com.thomaskioko.tvmaniac.discover.implementation.cache.TvShowCacheImpl
 import com.thomaskioko.tvmaniac.discover.implementation.di.discoverDomainModule
 import com.thomaskioko.tvmaniac.episodes.implementation.di.episodeDomainModule
-import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
+import com.thomaskioko.tvmaniac.genre.implementation.di.genreModule
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.interactor.GetTrailersInteractor
@@ -45,6 +41,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         discoverDomainModule,
         seasonsDomainModule,
         episodeDomainModule,
+        genreModule,
         corePlatformModule(),
         dbPlatformModule(),
         remotePlatformModule()
@@ -55,12 +52,10 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
 fun initKoin() = initKoin {}
 
 val repositoryModule: Module = module {
-    single<GenreRepository> { GenreRepositoryImpl(get(), get(), get()) }
     single<TrailerRepository> { TrailerRepositoryImpl(get(), get()) }
 }
 
 val interactorModule: Module = module {
-    factory { GetGenresInteractor(get()) }
     factory { GetShowInteractor(get()) }
     factory { GetShowsByCategoryInteractor(get()) }
     factory { GetTrailersInteractor(get()) }
@@ -69,7 +64,6 @@ val interactorModule: Module = module {
 }
 
 val cacheModule: Module = module {
-    single<GenreCache> { GenreCacheImpl(get()) }
     single<TrailerCache> { TrailerCacheImpl(get()) }
     single<TvShowCache> { TvShowCacheImpl(get()) }
     single<ShowCategoryCache> { ShowCategoryCacheImpl(get()) }
