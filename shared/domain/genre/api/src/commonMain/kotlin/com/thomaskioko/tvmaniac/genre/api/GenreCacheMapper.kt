@@ -1,7 +1,6 @@
-package com.thomaskioko.tvmaniac.datasource.mapper
+package com.thomaskioko.tvmaniac.genre.api
 
 import com.thomaskioko.tvmaniac.datasource.cache.Genre
-import com.thomaskioko.tvmaniac.presentation.model.GenreUIModel
 
 fun List<Genre>.toGenreModelList(): List<GenreUIModel> {
     return map {
