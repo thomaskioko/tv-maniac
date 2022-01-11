@@ -2,9 +2,6 @@ package com.thomaskioko.tvmaniac.injection
 
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
 import com.thomaskioko.tvmaniac.core.annotations.IoCoroutineScope
-import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
-import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepository
-import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepositoryImpl
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.discover.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
@@ -86,11 +83,4 @@ object RepositoriesModule {
         seasonCache,
         ioDispatcher
     )
-
-    @Singleton
-    @Provides
-    fun provideTrailerRepository(
-        tvShowsService: TvShowsService,
-        cache: TrailerCache
-    ): TrailerRepository = TrailerRepositoryImpl(tvShowsService, cache)
 }
