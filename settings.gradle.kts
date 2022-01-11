@@ -32,5 +32,7 @@ include(
     ":shared:domain:seasons:api",
     ":shared:domain:seasons:implementation",
     ":shared:domain:episodes:api",
-    ":shared:domain:episodes:implementation"
+    ":shared:domain:episodes:implementation",
+    ":shared:domain:genre:api",
+    ":shared:domain:genre:implementation"
 )

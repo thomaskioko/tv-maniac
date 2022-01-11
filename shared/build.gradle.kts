@@ -51,9 +51,11 @@ kotlin {
             api(project(":shared:domain:discover:api"))
             api(project(":shared:domain:seasons:api"))
             api(project(":shared:domain:episodes:api"))
+            api(project(":shared:domain:genre:api"))
             implementation(project(":shared:domain:episodes:implementation"))
             implementation(project(":shared:domain:discover:implementation"))
             implementation(project(":shared:domain:seasons:implementation"))
+            implementation(project(":shared:domain:genre:implementation"))
 
             implementation(libs.kotlin.datetime)
             implementation(libs.ktor.serialization)
@@ -115,6 +117,7 @@ kotlin {
             export(project(":shared:domain:discover:api"))
             export(project(":shared:domain:seasons:api"))
             export(project(":shared:domain:episodes:api"))
+            export(project(":shared:domain:genre:api"))
 
             transitiveExport = true
         }

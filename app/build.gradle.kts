@@ -13,6 +13,8 @@ dependencies {
     implementation(project(":shared:domain:seasons:implementation"))
     implementation(project(":shared:domain:episodes:api"))
     implementation(project(":shared:domain:episodes:implementation"))
+    implementation(project(":shared:domain:genre:api"))
+    implementation(project(":shared:domain:genre:implementation"))
     implementation(project(":app-common:annotations"))
     implementation(project(":app-common:compose"))
     implementation(project(":app-common:navigation"))
