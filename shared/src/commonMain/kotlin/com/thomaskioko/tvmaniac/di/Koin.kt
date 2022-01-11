@@ -1,10 +1,6 @@
 package com.thomaskioko.tvmaniac.di
 
 import com.thomaskioko.tvmaniac.core.db.di.dbPlatformModule
-import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCache
-import com.thomaskioko.tvmaniac.datasource.cache.trailers.TrailerCacheImpl
-import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepository
-import com.thomaskioko.tvmaniac.datasource.repository.trailers.TrailerRepositoryImpl
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.discover.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
@@ -16,7 +12,6 @@ import com.thomaskioko.tvmaniac.episodes.implementation.di.episodeDomainModule
 import com.thomaskioko.tvmaniac.genre.implementation.di.genreModule
 import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
 import com.thomaskioko.tvmaniac.interactor.GetShowsByCategoryInteractor
-import com.thomaskioko.tvmaniac.interactor.GetTrailersInteractor
 import com.thomaskioko.tvmaniac.interactor.GetWatchListInteractor
 import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
 import com.thomaskioko.tvmaniac.remote.di.remotePlatformModule
@@ -36,7 +31,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         serviceModule,
         interactorModule,
         cacheModule,
-        repositoryModule,
         dispatcherModule,
         discoverDomainModule,
         seasonsDomainModule,
@@ -51,20 +45,14 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
 // IOS
 fun initKoin() = initKoin {}
 
-val repositoryModule: Module = module {
-    single<TrailerRepository> { TrailerRepositoryImpl(get(), get()) }
-}
-
 val interactorModule: Module = module {
     factory { GetShowInteractor(get()) }
     factory { GetShowsByCategoryInteractor(get()) }
-    factory { GetTrailersInteractor(get()) }
     factory { GetWatchListInteractor(get()) }
     factory { UpdateWatchlistInteractor(get()) }
 }
 
 val cacheModule: Module = module {
-    single<TrailerCache> { TrailerCacheImpl(get()) }
     single<TvShowCache> { TvShowCacheImpl(get()) }
     single<ShowCategoryCache> { ShowCategoryCacheImpl(get()) }
     single<CategoryCache> { CategoryCacheImpl(get()) }
