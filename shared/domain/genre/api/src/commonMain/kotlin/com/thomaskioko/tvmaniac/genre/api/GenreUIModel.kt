@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.model
+package com.thomaskioko.tvmaniac.genre.api
 
 data class GenreUIModel(
     val id: Int,

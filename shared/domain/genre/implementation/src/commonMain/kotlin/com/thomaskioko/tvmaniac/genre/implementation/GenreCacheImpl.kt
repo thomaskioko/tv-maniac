@@ -1,9 +1,10 @@
-package com.thomaskioko.tvmaniac.datasource.cache.genre
+package com.thomaskioko.tvmaniac.genre.implementation
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.thomaskioko.tvmaniac.datasource.cache.Genre
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.genre.api.GenreCache
 import kotlinx.coroutines.flow.Flow
 
 class GenreCacheImpl(

@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource.cache.genre
+package com.thomaskioko.tvmaniac.genre.api
 
 import com.thomaskioko.tvmaniac.datasource.cache.Genre
 import kotlinx.coroutines.flow.Flow
