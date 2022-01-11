@@ -80,8 +80,8 @@ import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeUiModel
+import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.interactor.UpdateShowParams
-import com.thomaskioko.tvmaniac.presentation.model.GenreUIModel
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 import kotlinx.coroutines.InternalCoroutinesApi
 
