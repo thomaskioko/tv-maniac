@@ -1,9 +1,6 @@
 package com.thomaskioko.tvmaniac.settings
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.presentation.contract.SettingsActions
-import com.thomaskioko.tvmaniac.presentation.contract.SettingsState
-import com.thomaskioko.tvmaniac.presentation.contract.Theme
 import com.thomaskioko.tvmaniac.settings.api.TvManiacPreferences
 import com.thomaskioko.tvmaniac.settings.util.MainCoroutineRule
 import io.kotest.matchers.shouldBe
