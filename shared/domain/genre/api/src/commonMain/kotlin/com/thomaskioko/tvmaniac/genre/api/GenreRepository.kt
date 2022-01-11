@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datasource.repository.genre
+package com.thomaskioko.tvmaniac.genre.api
 
 import com.thomaskioko.tvmaniac.datasource.cache.Genre
 import com.thomaskioko.tvmaniac.shared.core.util.Resource

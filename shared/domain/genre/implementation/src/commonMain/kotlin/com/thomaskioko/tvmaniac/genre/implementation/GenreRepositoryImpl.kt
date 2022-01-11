@@ -1,13 +1,14 @@
-package com.thomaskioko.tvmaniac.datasource.repository.genre
+package com.thomaskioko.tvmaniac.genre.implementation
 
+import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.datasource.cache.Genre
-import com.thomaskioko.tvmaniac.datasource.cache.genre.GenreCache
+import com.thomaskioko.tvmaniac.genre.api.GenreCache
+import com.thomaskioko.tvmaniac.genre.api.GenreRepository
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.model.GenresResponse
 import com.thomaskioko.tvmaniac.remote.util.getErrorMessage
 import com.thomaskioko.tvmaniac.shared.core.util.Resource
 import com.thomaskioko.tvmaniac.shared.core.util.networkBoundResource
-import com.thomaskioko.tvmaniac.util.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
@@ -22,7 +23,7 @@ class GenreRepositoryImpl(
         shouldFetch = { it.isNullOrEmpty() },
         fetch = { apiService.getAllGenres() },
         saveFetchResult = { mapAndCache(it) },
-        onFetchFailed = { Logger("getGenres").log(it.getErrorMessage()) },
+        onFetchFailed = { Logger.withTag("observeGenres").e(it.getErrorMessage()) },
         coroutineDispatcher = dispatcher
     )
 
