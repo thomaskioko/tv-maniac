@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.contract
+package com.thomaskioko.tvmaniac.interactors
 
 import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
 import com.thomaskioko.tvmaniac.shared.core.store.Action

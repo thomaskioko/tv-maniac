@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.contract
+package com.thomaskioko.tvmaniac.interactors
 
 import com.kuuurt.paging.multiplatform.PagingData
 import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
@@ -28,5 +28,5 @@ sealed class ShowsGridAction : Action {
 }
 
 sealed class ShowsGridEffect : Effect {
-    data class Error(val message: String = "") : ShowsGridEffect()
+    data class Error(val message: String? = "") : ShowsGridEffect()
 }
