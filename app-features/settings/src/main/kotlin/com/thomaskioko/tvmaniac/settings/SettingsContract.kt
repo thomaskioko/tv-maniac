@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.contract
+package com.thomaskioko.tvmaniac.settings
 
 import com.thomaskioko.tvmaniac.shared.core.store.Action
 import com.thomaskioko.tvmaniac.shared.core.store.Effect

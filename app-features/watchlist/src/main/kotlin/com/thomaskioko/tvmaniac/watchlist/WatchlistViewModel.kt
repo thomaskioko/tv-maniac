@@ -2,9 +2,12 @@ package com.thomaskioko.tvmaniac.watchlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thomaskioko.tvmaniac.interactors.GetWatchListInteractor
+import com.thomaskioko.tvmaniac.interactors.WatchlistAction
+import com.thomaskioko.tvmaniac.interactors.WatchlistEffect
+import com.thomaskioko.tvmaniac.interactors.WatchlistState
 import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.shared.core.store.Store
-import com.thomaskioko.tvmaniac.watchlist.domain.GetWatchListInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

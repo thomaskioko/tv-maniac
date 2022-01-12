@@ -9,7 +9,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
@@ -20,7 +20,7 @@ internal class SettingsViewModelTest {
     val coroutineRule = MainCoroutineRule()
 
     private val themePreference: TvManiacPreferences = mockk()
-    private val testCoroutineDispatcher = TestCoroutineDispatcher()
+    private val testCoroutineDispatcher = StandardTestDispatcher()
 
     private val viewModel by lazy {
         SettingsViewModel(
