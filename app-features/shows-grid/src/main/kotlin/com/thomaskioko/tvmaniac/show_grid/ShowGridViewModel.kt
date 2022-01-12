@@ -3,11 +3,12 @@ package com.thomaskioko.tvmaniac.show_grid
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thomaskioko.tvmaniac.interactors.GetShowsByCategoryInteractor
+import com.thomaskioko.tvmaniac.interactors.ShowsGridAction
+import com.thomaskioko.tvmaniac.interactors.ShowsGridEffect
+import com.thomaskioko.tvmaniac.interactors.ShowsGridState
 import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.shared.core.store.Store
-import com.thomaskioko.tvmaniac.show_grid.ShowsGridAction.Error
-import com.thomaskioko.tvmaniac.show_grid.ShowsGridAction.LoadTvShows
-import com.thomaskioko.tvmaniac.show_grid.domain.GetShowsByCategoryInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -33,7 +34,7 @@ class ShowGridViewModel @Inject constructor(
     private val sideEffect = MutableSharedFlow<ShowsGridEffect>()
 
     init {
-        dispatch(LoadTvShows)
+        dispatch(ShowsGridAction.LoadTvShows)
     }
 
     override fun observeState(): StateFlow<ShowsGridState> = state
@@ -43,12 +44,12 @@ class ShowGridViewModel @Inject constructor(
     override fun dispatch(action: ShowsGridAction) {
         val oldState = state.value
         when (action) {
-            is Error -> {
+            is ShowsGridAction.Error -> {
                 viewModelScope.launch {
                     sideEffect.emit(ShowsGridEffect.Error(action.message))
                 }
             }
-            is LoadTvShows -> {
+            is ShowsGridAction.LoadTvShows -> {
                 with(state) {
                     interactor.execute(showType) {
                         onStart { coroutineScope.launch { emit(oldState.copy(isLoading = true)) } }
@@ -64,7 +65,7 @@ class ShowGridViewModel @Inject constructor(
                         }
                         onError {
                             coroutineScope.launch { emit(oldState.copy(isLoading = false)) }
-                            dispatch(Error(it.message ?: "Something went wrong"))
+                            dispatch(ShowsGridAction.Error(it.message ?: "Something went wrong"))
                         }
                     }
                 }

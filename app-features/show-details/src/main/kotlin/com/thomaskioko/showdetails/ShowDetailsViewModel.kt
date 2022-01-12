@@ -6,11 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.thomaskioko.showdetails.ShowDetailAction.SeasonSelected
 import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
 import com.thomaskioko.showdetails.ShowDetailEffect.ShowDetailsError
-import com.thomaskioko.showdetails.domain.GetShowInteractor
-import com.thomaskioko.showdetails.domain.UpdateWatchlistInteractor
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesInteractor
 import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
+import com.thomaskioko.tvmaniac.interactors.GetShowInteractor
+import com.thomaskioko.tvmaniac.interactors.UpdateWatchlistInteractor
 import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.shared.core.store.Store

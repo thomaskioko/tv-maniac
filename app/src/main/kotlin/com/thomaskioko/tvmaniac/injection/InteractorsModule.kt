@@ -1,17 +1,16 @@
 package com.thomaskioko.tvmaniac.injection
 
-import com.thomaskioko.showdetails.domain.GetShowInteractor
-import com.thomaskioko.showdetails.domain.UpdateWatchlistInteractor
 import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveDiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesInteractor
 import com.thomaskioko.tvmaniac.genre.api.GenreRepository
 import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
+import com.thomaskioko.tvmaniac.interactors.GetShowInteractor
+import com.thomaskioko.tvmaniac.interactors.GetWatchListInteractor
+import com.thomaskioko.tvmaniac.interactors.UpdateWatchlistInteractor
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
-import com.thomaskioko.tvmaniac.show_grid.domain.GetShowsByCategoryInteractor
-import com.thomaskioko.tvmaniac.watchlist.domain.GetWatchListInteractor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -68,5 +67,6 @@ object InteractorsModule {
     @Provides
     fun provideGetShowsByTypeInteractor(
         repository: TvShowsRepository
-    ): GetShowsByCategoryInteractor = GetShowsByCategoryInteractor(repository)
+    ): com.thomaskioko.tvmaniac.interactors.GetShowsByCategoryInteractor =
+        com.thomaskioko.tvmaniac.interactors.GetShowsByCategoryInteractor(repository)
 }

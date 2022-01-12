@@ -63,7 +63,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
-import com.thomaskioko.showdetails.domain.UpdateShowParams
 import com.thomaskioko.tvmaniac.compose.R
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
@@ -82,6 +81,7 @@ import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeUiModel
 import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
+import com.thomaskioko.tvmaniac.interactors.UpdateShowParams
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 import kotlinx.coroutines.InternalCoroutinesApi
 
