@@ -34,5 +34,6 @@ include(
     ":shared:domain:episodes:api",
     ":shared:domain:episodes:implementation",
     ":shared:domain:genre:api",
-    ":shared:domain:genre:implementation"
+    ":shared:domain:genre:implementation",
+    ":shared:interactors",
 )
