@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.settings.domain
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import com.thomaskioko.tvmaniac.presentation.contract.Theme
+import com.thomaskioko.tvmaniac.settings.Theme
 import com.thomaskioko.tvmaniac.settings.api.TvManiacPreferences
 
 @Composable

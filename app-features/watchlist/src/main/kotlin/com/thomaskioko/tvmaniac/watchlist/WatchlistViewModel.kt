@@ -2,10 +2,10 @@ package com.thomaskioko.tvmaniac.watchlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.interactor.GetWatchListInteractor
-import com.thomaskioko.tvmaniac.presentation.contract.WatchlistAction
-import com.thomaskioko.tvmaniac.presentation.contract.WatchlistEffect
-import com.thomaskioko.tvmaniac.presentation.contract.WatchlistState
+import com.thomaskioko.tvmaniac.interactors.GetWatchListInteractor
+import com.thomaskioko.tvmaniac.interactors.WatchlistAction
+import com.thomaskioko.tvmaniac.interactors.WatchlistEffect
+import com.thomaskioko.tvmaniac.interactors.WatchlistState
 import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.shared.core.store.Store
 import dagger.hilt.android.lifecycle.HiltViewModel

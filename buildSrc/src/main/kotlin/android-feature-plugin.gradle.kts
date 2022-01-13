@@ -49,8 +49,6 @@ tasks.withType<Test>().configureEach {
 }
 
 dependencies {
-    // TODO:: Replace shared with specific api modules in @ feature
-    implementation(project(":shared"))
     implementation(project(":shared:core"))
     implementation(project(":app-common:annotations"))
     implementation(project(":app-common:compose"))
@@ -63,11 +61,8 @@ dependencies {
     testImplementation(libs.testing.turbine)
     testImplementation(libs.testing.coroutines.test)
     testImplementation(libs.testing.kotest.assertions)
-
     testImplementation(libs.testing.mockk.core)
-
     testImplementation(libs.testing.androidx.core)
-
     testRuntimeOnly(libs.testing.junit5.jupiter)
     testRuntimeOnly(libs.testing.junit5.engine)
     testRuntimeOnly(libs.testing.junit5.vintage)

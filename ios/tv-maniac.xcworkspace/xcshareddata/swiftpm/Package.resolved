@@ -5,9 +5,9 @@
         "package": "TvManiac",
         "repositoryURL": "https://github.com/c0de-wizard/tvmaniac-swift-packages",
         "state": {
-          "branch": "main",
-          "revision": "84066f1e7c25d39a0b20d3836affa81f958beb7a",
-          "version": null
+          "branch": null,
+          "revision": "5e6123580a2e7f4ad3b14227e13d7a12c1800274",
+          "version": "0.3.0"
         }
       }
     ]

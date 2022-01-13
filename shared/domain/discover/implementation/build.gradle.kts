@@ -1,73 +1,26 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
+    `kmm-domain-plugin`
 }
 
-kotlin {
-    android()
-    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget = when {
-        System.getenv("SDK_NAME")?.startsWith("iphoneos") == true -> ::iosArm64
-        System.getenv("NATIVE_ARCH")?.startsWith("arm") == true -> ::iosSimulatorArm64
-        else -> ::iosX64
-    }
+dependencies {
 
-    iosTarget("ios") {}
+    commonMainImplementation(project(":shared:core"))
+    commonMainImplementation(project(":shared:database"))
+    commonMainImplementation(project(":shared:remote"))
+    commonMainImplementation(project(":shared:domain:discover:api"))
 
-    sourceSets {
+    commonMainImplementation(libs.koin.core)
+    commonMainImplementation(libs.kermit)
+    commonMainImplementation(libs.kotlin.datetime)
+    commonMainImplementation(libs.kotlin.coroutines.core)
+    commonMainImplementation(libs.multiplatform.paging.core)
+    commonMainImplementation(libs.squareup.sqldelight.extensions)
 
-        sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:core"))
-            implementation(project(":shared:database"))
-            implementation(project(":shared:remote"))
-            implementation(project(":shared:domain:discover:api"))
+    testImplementation(libs.testing.mockk.core)
 
-            implementation(libs.kotlin.datetime)
-            implementation(libs.ktor.serialization)
-            implementation(libs.koin.core)
-            implementation(libs.kermit)
-            implementation(libs.multiplatform.paging.core)
-            implementation(libs.squareup.sqldelight.extensions)
-            implementation(libs.kotlin.coroutines.core)
-        }
-
-        sourceSets["commonTest"].dependencies {
-            implementation(kotlin("test"))
-            implementation(project(":shared:core-test"))
-
-            implementation(libs.testing.ktor.mock)
-            implementation(libs.testing.mockk.core)
-            implementation(libs.testing.turbine)
-            implementation(libs.testing.kotest.assertions)
-
-            implementation(libs.testing.mockk.common)
-        }
-
-        sourceSets["androidMain"].dependencies {
-        }
-
-        all {
-            languageSettings.apply {
-                optIn("kotlin.RequiresOptIn")
-                optIn("kotlin.time.ExperimentalTime")
-                optIn("kotlinx.coroutines.FlowPreview")
-            }
-        }
-    }
-}
-
-android {
-    compileSdk = libs.versions.android.compile.get().toInt()
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-
-    defaultConfig {
-        minSdk = libs.versions.android.min.get().toInt()
-        targetSdk = libs.versions.android.target.get().toInt()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
+    commonTestImplementation(kotlin("test"))
+    commonTestImplementation(project(":shared:core-test"))
+    commonTestImplementation(libs.testing.turbine)
+    commonTestImplementation(libs.testing.kotest.assertions)
+    commonTestImplementation(libs.testing.mockk.common)
 }

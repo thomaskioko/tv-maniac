@@ -27,7 +27,7 @@ import com.thomaskioko.tvmaniac.compose.components.LazyPagedGridItems
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.presentation.contract.ShowsGridState
+import com.thomaskioko.tvmaniac.interactors.ShowsGridState
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalFoundationApi::class)

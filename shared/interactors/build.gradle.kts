@@ -3,15 +3,13 @@ plugins {
 }
 
 dependencies {
+
     commonMainImplementation(project(":shared:core"))
     commonMainImplementation(project(":shared:database"))
     commonMainImplementation(project(":shared:remote"))
-    commonMainImplementation(project(":shared:domain:genre:api"))
-    commonMainImplementation(libs.kermit)
-    commonMainImplementation(libs.koin.core)
-    commonMainImplementation(libs.kotlin.coroutines.core)
-    commonMainImplementation(libs.squareup.sqldelight.extensions)
+    commonMainImplementation(project(":shared:domain:discover:api"))
 
-    commonTestImplementation(kotlin("test"))
-    commonTestImplementation(project(":shared:core-test"))
+    commonMainImplementation(libs.kermit)
+    commonMainImplementation(libs.multiplatform.paging.core)
+    commonMainImplementation(libs.kotlin.coroutines.core)
 }

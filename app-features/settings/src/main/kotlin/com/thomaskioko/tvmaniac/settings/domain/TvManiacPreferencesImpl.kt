@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.settings.domain
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.thomaskioko.tvmaniac.presentation.contract.Theme
 import com.thomaskioko.tvmaniac.settings.R
+import com.thomaskioko.tvmaniac.settings.Theme
 import com.thomaskioko.tvmaniac.settings.api.TvManiacPreferences
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.settings.api
 
-import com.thomaskioko.tvmaniac.presentation.contract.Theme
+import com.thomaskioko.tvmaniac.settings.Theme
 import kotlinx.coroutines.flow.Flow
 
 interface TvManiacPreferences {
