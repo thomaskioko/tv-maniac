@@ -1,38 +1,19 @@
+import Kmm_domain_plugin_gradle.Utils.getIosTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-    kotlin("multiplatform")
+    `kmm-domain-plugin`
     kotlin("plugin.serialization") version ("1.6.10")
-    id("com.android.library")
     id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
 }
 
 version = libs.versions.shared.module.version.get()
 
-android {
-    compileSdk = libs.versions.android.compile.get().toInt()
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-
-    defaultConfig {
-        minSdk = libs.versions.android.min.get().toInt()
-        targetSdk = libs.versions.android.target.get().toInt()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-}
-
 kotlin {
     android()
 
-    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget = when {
-        System.getenv("SDK_NAME")?.startsWith("iphoneos") == true -> ::iosArm64
-        System.getenv("NATIVE_ARCH")?.startsWith("arm") == true -> ::iosSimulatorArm64
-        else -> ::iosX64
-    }
+    val iosTarget = getIosTarget()
 
     iosTarget("ios") {
         binaries {
@@ -57,52 +38,8 @@ kotlin {
             implementation(project(":shared:domain:seasons:implementation"))
             implementation(project(":shared:domain:genre:implementation"))
 
-            implementation(libs.kotlin.datetime)
-            implementation(libs.ktor.serialization)
             implementation(libs.koin.core)
-            implementation(libs.napier)
-            implementation(libs.multiplatform.paging.core)
-            implementation(libs.squareup.sqldelight.extensions)
             implementation(libs.kotlin.coroutines.core)
-        }
-
-        sourceSets["commonTest"].dependencies {
-            implementation(kotlin("test"))
-            implementation(project(":shared:core-test"))
-
-            implementation(libs.testing.mockk.core)
-            implementation(libs.testing.ktor.mock)
-            implementation(libs.testing.turbine)
-            implementation(libs.testing.kotest.assertions)
-
-            implementation(libs.testing.mockk.common)
-        }
-
-        sourceSets["androidMain"].dependencies {
-            implementation(libs.squareup.sqldelight.driver.android)
-        }
-
-        sourceSets["iosMain"].dependencies {
-            implementation(libs.ktor.ios)
-            implementation(libs.kotlin.coroutines.core)
-
-            val coroutineCore = libs.kotlin.coroutines.core.get()
-
-            @Suppress("UnstableApiUsage")
-            implementation("${coroutineCore.module.group}:${coroutineCore.module.name}:${coroutineCore.versionConstraint.displayName}") {
-                version {
-                    strictly(libs.versions.coroutines.native.get())
-                }
-            }
-        }
-
-        all {
-            languageSettings.apply {
-                optIn("kotlin.RequiresOptIn")
-                optIn("kotlin.time.ExperimentalTime")
-                optIn("kotlinx.coroutines.FlowPreview")
-                optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
-            }
         }
     }
 
@@ -131,9 +68,6 @@ multiplatformSwiftPackage {
         iOS { v("13") }
     }
 
-    /**
-     * Uncomment to create local build.
-     distributionMode { local() }
-     outputDirectory(File("$projectDir/../../", "tvmaniac-swift-packages"))
-     **/
+    distributionMode { local() }
+    outputDirectory(File("$projectDir/../../", "tvmaniac-swift-packages"))
 }

@@ -6,10 +6,9 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesInteractor
 import com.thomaskioko.tvmaniac.genre.api.GenreRepository
 import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
-import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
-import com.thomaskioko.tvmaniac.interactor.GetShowsByCategoryInteractor
-import com.thomaskioko.tvmaniac.interactor.GetWatchListInteractor
-import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
+import com.thomaskioko.tvmaniac.interactors.GetShowInteractor
+import com.thomaskioko.tvmaniac.interactors.GetWatchListInteractor
+import com.thomaskioko.tvmaniac.interactors.UpdateWatchlistInteractor
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
 import dagger.Module
@@ -68,5 +67,6 @@ object InteractorsModule {
     @Provides
     fun provideGetShowsByTypeInteractor(
         repository: TvShowsRepository
-    ): GetShowsByCategoryInteractor = GetShowsByCategoryInteractor(repository)
+    ): com.thomaskioko.tvmaniac.interactors.GetShowsByCategoryInteractor =
+        com.thomaskioko.tvmaniac.interactors.GetShowsByCategoryInteractor(repository)
 }

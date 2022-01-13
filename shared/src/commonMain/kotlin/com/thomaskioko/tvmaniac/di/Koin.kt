@@ -10,10 +10,6 @@ import com.thomaskioko.tvmaniac.discover.implementation.cache.TvShowCacheImpl
 import com.thomaskioko.tvmaniac.discover.implementation.di.discoverDomainModule
 import com.thomaskioko.tvmaniac.episodes.implementation.di.episodeDomainModule
 import com.thomaskioko.tvmaniac.genre.implementation.di.genreModule
-import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
-import com.thomaskioko.tvmaniac.interactor.GetShowsByCategoryInteractor
-import com.thomaskioko.tvmaniac.interactor.GetWatchListInteractor
-import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
 import com.thomaskioko.tvmaniac.remote.di.remotePlatformModule
 import com.thomaskioko.tvmaniac.remote.di.serviceModule
 import com.thomaskioko.tvmaniac.seasons.implementation.di.seasonsDomainModule
@@ -29,7 +25,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     appDeclaration()
     modules(
         serviceModule,
-        interactorModule,
         cacheModule,
         dispatcherModule,
         discoverDomainModule,
@@ -44,13 +39,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
 
 // IOS
 fun initKoin() = initKoin {}
-
-val interactorModule: Module = module {
-    factory { GetShowInteractor(get()) }
-    factory { GetShowsByCategoryInteractor(get()) }
-    factory { GetWatchListInteractor(get()) }
-    factory { UpdateWatchlistInteractor(get()) }
-}
 
 val cacheModule: Module = module {
     single<TvShowCache> { TvShowCacheImpl(get()) }
