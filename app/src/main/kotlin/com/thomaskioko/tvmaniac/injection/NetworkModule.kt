@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.injection
 
-import com.thomaskioko.tvmaniac.datasource.network.KtorClientFactory
-import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsService
-import com.thomaskioko.tvmaniac.datasource.network.api.TvShowsServiceImpl
+import com.thomaskioko.tvmaniac.remote.KtorClientFactory
+import com.thomaskioko.tvmaniac.remote.api.TvShowsService
+import com.thomaskioko.tvmaniac.remote.api.TvShowsServiceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

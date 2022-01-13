@@ -1,43 +1,19 @@
-import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import Kmm_domain_plugin_gradle.Utils.getIosTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import java.io.FileInputStream
-import java.util.Properties
 
 plugins {
-    kotlin("multiplatform")
+    `kmm-domain-plugin`
     kotlin("plugin.serialization") version ("1.6.10")
-    id("com.android.library")
-    id("com.codingfeline.buildkonfig")
-    id("com.squareup.sqldelight")
     id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
 }
 
-version = "0.2.0"
-
-android {
-    compileSdk = libs.versions.android.compile.get().toInt()
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-
-    defaultConfig {
-        minSdk = libs.versions.android.min.get().toInt()
-        targetSdk = libs.versions.android.target.get().toInt()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-}
+version = libs.versions.shared.module.version.get()
 
 kotlin {
     android()
 
-    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget = when {
-        System.getenv("SDK_NAME")?.startsWith("iphoneos") == true -> ::iosArm64
-        System.getenv("NATIVE_ARCH")?.startsWith("arm") == true -> ::iosSimulatorArm64
-        else -> ::iosX64
-    }
+    val iosTarget = getIosTarget()
 
     iosTarget("ios") {
         binaries {
@@ -50,71 +26,20 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
-            implementation(libs.kotlin.datetime)
+            api(project(":shared:core"))
+            api(project(":shared:database"))
+            api(project(":shared:remote"))
+            api(project(":shared:domain:discover:api"))
+            api(project(":shared:domain:seasons:api"))
+            api(project(":shared:domain:episodes:api"))
+            api(project(":shared:domain:genre:api"))
+            implementation(project(":shared:domain:episodes:implementation"))
+            implementation(project(":shared:domain:discover:implementation"))
+            implementation(project(":shared:domain:seasons:implementation"))
+            implementation(project(":shared:domain:genre:implementation"))
 
-            implementation(libs.ktor.core)
-            implementation(libs.ktor.logging)
-            implementation(libs.ktor.serialization)
             implementation(libs.koin.core)
-
-            implementation(libs.napier)
-            implementation(libs.multiplatform.paging.core)
-            implementation(libs.squareup.sqldelight.extensions)
-            implementation(libs.squareup.sqldelight.runtime)
             implementation(libs.kotlin.coroutines.core)
-        }
-
-        sourceSets["commonTest"].dependencies {
-            implementation(kotlin("test-common"))
-            implementation(kotlin("test-annotations-common"))
-
-            implementation(libs.testing.ktor.mock)
-            implementation(libs.testing.turbine)
-            implementation(libs.testing.kotest.assertions)
-
-            implementation(libs.testing.mockk.common)
-        }
-
-        sourceSets["androidMain"].dependencies {
-            implementation(libs.ktor.android)
-            implementation(libs.squareup.sqldelight.driver.android)
-        }
-
-        sourceSets["androidTest"].dependencies {
-            implementation(kotlin("test"))
-
-            implementation(libs.testing.androidx.junit)
-            implementation(libs.squareup.sqldelight.driver.jvm)
-
-            implementation(libs.testing.mockk.core)
-        }
-
-        sourceSets["iosMain"].dependencies {
-            implementation(libs.ktor.ios)
-            implementation(libs.kotlin.coroutines.core)
-            implementation(libs.squareup.sqldelight.driver.native)
-
-            val coroutineCore = libs.kotlin.coroutines.core.get()
-
-            @Suppress("UnstableApiUsage")
-            implementation("${coroutineCore.module.group}:${coroutineCore.module.name}:${coroutineCore.versionConstraint.displayName}") {
-                version {
-                    strictly(libs.versions.coroutines.native.get())
-                }
-            }
-        }
-
-        sourceSets["iosTest"].dependencies {
-            implementation(libs.testing.mockk.common)
-        }
-
-        all {
-            languageSettings.apply {
-                optIn("kotlin.RequiresOptIn")
-                optIn("kotlin.time.ExperimentalTime")
-                optIn("kotlinx.coroutines.FlowPreview")
-                optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
-            }
         }
     }
 
@@ -122,28 +47,17 @@ kotlin {
         binaries.withType<Framework> {
             isStatic = false
             linkerOpts.add("-lsqlite3")
+
+            export(project(":shared:core"))
+            export(project(":shared:database"))
+            export(project(":shared:remote"))
+            export(project(":shared:domain:discover:api"))
+            export(project(":shared:domain:seasons:api"))
+            export(project(":shared:domain:episodes:api"))
+            export(project(":shared:domain:genre:api"))
+
+            transitiveExport = true
         }
-    }
-}
-
-buildkonfig {
-    val properties = Properties()
-    val secretsFile = file("../local.properties")
-    if (secretsFile.exists()) {
-        properties.load(FileInputStream(secretsFile))
-    }
-
-    packageName = "com.thomaskioko.tvmaniac.shared"
-    defaultConfigs {
-        buildConfigField(STRING, "TMDB_API_KEY", properties["TMDB_API_KEY"] as String)
-        buildConfigField(STRING, "TMDB_API_URL", properties["TMDB_API_URL"] as String)
-    }
-}
-
-sqldelight {
-    database("TvManiacDatabase") {
-        packageName = "com.thomaskioko.tvmaniac.datasource.cache"
-        sourceFolders = listOf("sqldelight")
     }
 }
 
@@ -154,11 +68,6 @@ multiplatformSwiftPackage {
         iOS { v("13") }
     }
 
-    /**
-     * Uncomment to create local build.
-     distributionMode { local() }
-     outputDirectory(File("$projectDir/../../", "tvmaniac-swift-packages"))
-     **/
     distributionMode { local() }
     outputDirectory(File("$projectDir/../../", "tvmaniac-swift-packages"))
 }

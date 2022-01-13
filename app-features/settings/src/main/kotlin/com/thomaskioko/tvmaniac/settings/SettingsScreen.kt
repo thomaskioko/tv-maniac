@@ -40,10 +40,8 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.presentation.contract.SettingsActions.ThemeClicked
-import com.thomaskioko.tvmaniac.presentation.contract.SettingsActions.ThemeSelected
-import com.thomaskioko.tvmaniac.presentation.contract.SettingsState
-import com.thomaskioko.tvmaniac.presentation.contract.Theme
+import com.thomaskioko.tvmaniac.settings.SettingsActions.ThemeClicked
+import com.thomaskioko.tvmaniac.settings.SettingsActions.ThemeSelected
 import com.thomaskioko.tvmaniac.compose.R as CompR
 
 @Composable

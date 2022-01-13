@@ -77,12 +77,12 @@ import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
-import com.thomaskioko.tvmaniac.interactor.EpisodeQuery
-import com.thomaskioko.tvmaniac.interactor.UpdateShowParams
-import com.thomaskioko.tvmaniac.presentation.model.EpisodeUiModel
-import com.thomaskioko.tvmaniac.presentation.model.GenreUIModel
-import com.thomaskioko.tvmaniac.presentation.model.SeasonUiModel
-import com.thomaskioko.tvmaniac.presentation.model.ShowUiModel
+import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeUiModel
+import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
+import com.thomaskioko.tvmaniac.interactors.UpdateShowParams
+import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 import kotlinx.coroutines.InternalCoroutinesApi
 
 private val HeaderHeight = 550.dp
@@ -132,8 +132,7 @@ fun ShowDetailScreen(
                     contentPadding = contentPadding,
                     modifier = Modifier.fillMaxSize(),
                     onWatchlistClick = { viewModel.dispatch(UpdateWatchlist(it)) },
-                    onSeasonSelected = { viewModel.dispatch(ShowDetailAction.SeasonSelected(it)) },
-                    loadSeasonEpisode = { viewModel.dispatch(ShowDetailAction.SeasonSelected(it)) },
+                    onSeasonSelected = { viewModel.dispatch(ShowDetailAction.SeasonSelected(it)) }
                 )
             }
         }
@@ -186,7 +185,6 @@ private fun TvShowDetailsScrollingContent(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     onSeasonSelected: (EpisodeQuery) -> Unit = {},
-    loadSeasonEpisode: (EpisodeQuery) -> Unit = {},
     onWatchlistClick: (UpdateShowParams) -> Unit = {},
 ) {
 
@@ -209,8 +207,7 @@ private fun TvShowDetailsScrollingContent(
                 isLoading = detailUiState.isLoading,
                 tvSeasonUiModels = detailUiState.tvSeasonUiModels,
                 episodeList = detailUiState.episodeList,
-                onSeasonSelected = onSeasonSelected,
-                loadSeasonEpisode = loadSeasonEpisode,
+                onSeasonSelected = onSeasonSelected
             )
         }
     }
@@ -499,8 +496,7 @@ fun SeasonTabs(
     isLoading: Boolean,
     tvSeasonUiModels: List<SeasonUiModel>,
     episodeList: List<EpisodeUiModel>,
-    onSeasonSelected: (EpisodeQuery) -> Unit = {},
-    loadSeasonEpisode: (EpisodeQuery) -> Unit = {}
+    onSeasonSelected: (EpisodeQuery) -> Unit = {}
 ) {
 
     Column {
@@ -520,8 +516,7 @@ fun SeasonTabs(
                     isLoading,
                     tvSeasonUiModels,
                     episodeList,
-                    onSeasonSelected,
-                    loadSeasonEpisode
+                    onSeasonSelected
                 )
                 Similar -> SimilarShowsScreen()
             }

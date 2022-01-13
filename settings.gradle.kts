@@ -12,7 +12,7 @@ rootProject.name = "tv-maniac"
 
 include(
     ":app",
-    ":app-common:core",
+    ":app-common:annotations",
     ":app-common:compose",
     ":app-common:navigation",
     ":app-features:discover",
@@ -22,5 +22,18 @@ include(
     ":app-features:watchlist",
     ":app-features:shows-grid",
     ":app-features:settings",
-    ":shared"
+    ":shared",
+    ":shared:core",
+    ":shared:core-test",
+    ":shared:database",
+    ":shared:remote",
+    ":shared:domain:discover:api",
+    ":shared:domain:discover:implementation",
+    ":shared:domain:seasons:api",
+    ":shared:domain:seasons:implementation",
+    ":shared:domain:episodes:api",
+    ":shared:domain:episodes:implementation",
+    ":shared:domain:genre:api",
+    ":shared:domain:genre:implementation",
+    ":shared:interactors",
 )
