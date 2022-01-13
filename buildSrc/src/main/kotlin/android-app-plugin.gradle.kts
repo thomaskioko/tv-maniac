@@ -59,7 +59,7 @@ android {
         implementation(libs.hilt.navigation)
         kapt(libs.hilt.compiler)
 
-        implementation(libs.napier)
+        implementation(libs.kermit)
         implementation(libs.ktor.android)
 
         debugImplementation(libs.squareup.leakcanary)
