@@ -84,7 +84,7 @@ Tvmainic has 3 main directories. I'll break down each module/directory below.
 
 TvManiac uses two different dependencies [Dagger Hilt](https://dagger.dev/hilt) for Android and [koin](https://github.com/mockk/mockk) for the shared module. Using Koin in the shared module allows us to provide dependencies in the iOS app.
 	   
-I'll keep updating & changing things as the I learn
+I'll keep updating & changing things as I learn. 🤓
 
 
 ## Libraries Used
@@ -101,8 +101,6 @@ I'll keep updating & changing things as the I learn
 * [KenBurnsView](https://github.com/flavioarfaria/KenBurnsView) - Immersive image.
 * [Leakcanary](https://github.com/square/leakcanary) - Memory leak detection.
 
-### iOS (Coming Soon)
-
 ### Kmp - Common
 * [Ktor](https://ktor.io/) - Networking
 * [Kotlinx Serialization](https://ktor.io/docs/kotlin-serialization.html) - De/Serializing JSON
@@ -113,6 +111,8 @@ I'll keep updating & changing things as the I learn
 * [Napier](https://github.com/AAkira/Napier) - Logging
 * [Mockk](https://github.com/mockk/mockk) - mocking library for Kotlin.
 * [koin](https://github.com/mockk/mockk) - Injection library.
+
+### iOS (Coming Soon)
 
 ## Roadmap
 Android
@@ -139,6 +139,7 @@ Shared
 - [x] Use koin for injection
 - [x] Modularize `shared` module
 - [ ] Better MVI implementation
+  
     [ ] Have `shared-core` module have most of the implementation.
     [ ] Improve error state, add retry.
 
@@ -146,6 +147,7 @@ Shared
 ### References
 - [Design Inspiration](https://dribbble.com/shots/7591814-HBO-Max-Companion-App-Animation)
 - [Code Snippets](https://github.com/android/compose-samples)
+- [Touchlab KaMPKit project](https://github.com/touchlab/KaMPKit)
 
 ## License
 
