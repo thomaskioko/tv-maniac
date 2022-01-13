@@ -1,43 +1,22 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
+    `kmm-domain-plugin`
 }
 
-kotlin {
-    android()
-    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget = when {
-        System.getenv("SDK_NAME")?.startsWith("iphoneos") == true -> ::iosArm64
-        System.getenv("NATIVE_ARCH")?.startsWith("arm") == true -> ::iosSimulatorArm64
-        else -> ::iosX64
-    }
+dependencies {
+    commonMainImplementation(project(":shared:core"))
+    commonMainImplementation(project(":shared:database"))
+    commonMainImplementation(libs.koin.core)
+    commonMainImplementation(libs.multiplatform.paging.core)
+    commonMainImplementation(libs.kotlin.coroutines.core)
 
-    iosTarget("ios") {}
+    iosMainImplementation(libs.kotlin.coroutines.core)
 
-    sourceSets {
+    val coroutineCore = libs.kotlin.coroutines.core.get()
 
-        sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:core"))
-            implementation(project(":shared:database"))
-
-            implementation(libs.multiplatform.paging.core)
-            implementation(libs.kotlin.coroutines.core)
+    @Suppress("UnstableApiUsage")
+    iosMainImplementation("${coroutineCore.module.group}:${coroutineCore.module.name}:${coroutineCore.versionConstraint.displayName}") {
+        version {
+            strictly(libs.versions.coroutines.native.get())
         }
-    }
-}
-
-android {
-    compileSdk = libs.versions.android.compile.get().toInt()
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-
-    defaultConfig {
-        minSdk = libs.versions.android.min.get().toInt()
-        targetSdk = libs.versions.android.target.get().toInt()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
