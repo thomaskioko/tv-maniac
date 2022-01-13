@@ -6,13 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.thomaskioko.showdetails.ShowDetailAction.SeasonSelected
 import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
 import com.thomaskioko.showdetails.ShowDetailEffect.ShowDetailsError
-import com.thomaskioko.tvmaniac.core.Store
-import com.thomaskioko.tvmaniac.core.usecase.scope.CoroutineScopeOwner
-import com.thomaskioko.tvmaniac.interactor.EpisodesInteractor
-import com.thomaskioko.tvmaniac.interactor.GetGenresInteractor
-import com.thomaskioko.tvmaniac.interactor.GetShowInteractor
-import com.thomaskioko.tvmaniac.interactor.SeasonsInteractor
-import com.thomaskioko.tvmaniac.interactor.UpdateWatchlistInteractor
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
+import com.thomaskioko.tvmaniac.episodes.api.EpisodesInteractor
+import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
+import com.thomaskioko.tvmaniac.interactors.GetShowInteractor
+import com.thomaskioko.tvmaniac.interactors.UpdateWatchlistInteractor
+import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
+import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
+import com.thomaskioko.tvmaniac.shared.core.store.Store
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -32,7 +33,8 @@ class ShowDetailsViewModel @Inject constructor(
     private val genresInteractor: GetGenresInteractor,
     private val episodeInteractor: EpisodesInteractor,
     private val updateWatchlistInteractor: UpdateWatchlistInteractor
-) : Store<ShowDetailViewState, ShowDetailAction, ShowDetailEffect>, CoroutineScopeOwner,
+) : Store<ShowDetailViewState, ShowDetailAction, ShowDetailEffect>,
+    CoroutineScopeOwner,
     ViewModel() {
 
     override val coroutineScope: CoroutineScope
@@ -59,15 +61,14 @@ class ShowDetailsViewModel @Inject constructor(
             ShowDetailAction.LoadSeasons -> fetchSeason()
             ShowDetailAction.LoadGenres -> fetchGenres()
             ShowDetailAction.LoadShowDetails -> loadShowDetails()
-            is SeasonSelected -> fetchEpisodes(action)
+            is SeasonSelected -> fetchEpisodes(action.query)
             is UpdateWatchlist -> updateWatchlist(action)
             is ShowDetailAction.Error -> {
                 coroutineScope.launch {
                     uiEffects.emit(ShowDetailsError(action.message))
                 }
             }
-            is ShowDetailAction.LoadEpisodes -> {
-            }
+            is ShowDetailAction.LoadEpisodes -> fetchEpisodes(action.query)
         }
     }
 
@@ -177,13 +178,29 @@ class ShowDetailsViewModel @Inject constructor(
                         )
                     }
                 }
+                onComplete {
+                    if (state.value.episodeList.isEmpty()) {
+                        val season = state.value.tvSeasonUiModels.first()
+                        coroutineScope.launch {
+                            dispatch(
+                                ShowDetailAction.LoadEpisodes(
+                                    EpisodeQuery(
+                                        tvShowId = showId,
+                                        seasonId = season.seasonId,
+                                        seasonNumber = season.seasonNumber
+                                    )
+                                )
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 
-    private fun fetchEpisodes(action: SeasonSelected) {
+    private fun fetchEpisodes(query: EpisodeQuery) {
         with(state) {
-            episodeInteractor.execute(action.query) {
+            episodeInteractor.execute(query) {
                 onStart {
                     coroutineScope.launch {
                         emit(

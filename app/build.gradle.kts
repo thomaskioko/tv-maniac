@@ -3,8 +3,19 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":shared"))
-    implementation(project(":app-common:core"))
+    implementation(project(":shared:core"))
+    implementation(project(":shared:database"))
+    implementation(project(":shared:remote"))
+    implementation(project(":shared:domain:discover:api"))
+    implementation(project(":shared:domain:discover:implementation"))
+    implementation(project(":shared:domain:seasons:api"))
+    implementation(project(":shared:domain:seasons:implementation"))
+    implementation(project(":shared:domain:episodes:api"))
+    implementation(project(":shared:domain:episodes:implementation"))
+    implementation(project(":shared:domain:genre:api"))
+    implementation(project(":shared:domain:genre:implementation"))
+    implementation(project(":shared:interactors"))
+    implementation(project(":app-common:annotations"))
     implementation(project(":app-common:compose"))
     implementation(project(":app-common:navigation"))
     implementation(project(":app-features:discover"))

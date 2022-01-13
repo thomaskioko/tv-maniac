@@ -5,7 +5,7 @@ android-compile = "31"
 android-target = "31"
 android-min = "21"
 
-android-gradle = "7.1.0-beta05"
+android-gradle = "7.1.0-rc01"
 date-time = "0.3.1"
 
 accompanist = "0.22.0-rc"
@@ -28,12 +28,12 @@ desugar = "1.1.5"
 hilt = "2.40.5"
 hiltNavigation = "1.0.0-rc01"
 kenburns = "1.0.7"
-koin = "3.1.4"
+kermit = "1.0.3"
+koin = "3.1.5"
 ktor = "1.6.7"
 material = "1.6.0-alpha01"
 multiplatform-paging = "0.4.6"
-napier = "2.3.0"
-squareup-leakcanary = "2.8"
+squareup-leakcanary = "2.8.1"
 sqldelight = "1.5.3"
 turbine = "0.7.0"
 
@@ -47,6 +47,8 @@ testing-mockito-kotlin = "2.2.0"
 
 plugin-buildkonfig = "0.7.0"
 plugin-gradle-versions = "0.39.0"
+
+shared-module-version = "0.3.0"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle" }
@@ -96,8 +98,8 @@ ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
-napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
 snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 
