@@ -1,62 +1,17 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
+    `kmm-domain-plugin`
 }
 
-kotlin {
-    android()
-    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget = when {
-        System.getenv("SDK_NAME")?.startsWith("iphoneos") == true -> ::iosArm64
-        System.getenv("NATIVE_ARCH")?.startsWith("arm") == true -> ::iosSimulatorArm64
-        else -> ::iosX64
-    }
+dependencies {
+    commonMainImplementation(project(":shared:core"))
+    commonMainImplementation(project(":shared:database"))
+    commonMainImplementation(project(":shared:remote"))
+    commonMainImplementation(project(":shared:domain:genre:api"))
+    commonMainImplementation(libs.kermit)
+    commonMainImplementation(libs.koin.core)
+    commonMainImplementation(libs.kotlin.coroutines.core)
+    commonMainImplementation(libs.squareup.sqldelight.extensions)
 
-    iosTarget("ios") {}
-
-    sourceSets {
-
-        sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:core"))
-            implementation(project(":shared:database"))
-            implementation(project(":shared:remote"))
-            implementation(project(":shared:domain:genre:api"))
-
-            implementation(libs.koin.core)
-            implementation(libs.kermit)
-            implementation(libs.squareup.sqldelight.extensions)
-            implementation(libs.kotlin.coroutines.core)
-        }
-
-        sourceSets["commonTest"].dependencies {
-            implementation(kotlin("test"))
-            implementation(project(":shared:core-test"))
-        }
-
-        sourceSets["androidMain"].dependencies {}
-
-        all {
-            languageSettings.apply {
-                optIn("kotlin.RequiresOptIn")
-                optIn("kotlin.time.ExperimentalTime")
-                optIn("kotlinx.coroutines.FlowPreview")
-            }
-        }
-    }
-}
-
-android {
-    compileSdk = libs.versions.android.compile.get().toInt()
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-
-    defaultConfig {
-        minSdk = libs.versions.android.min.get().toInt()
-        targetSdk = libs.versions.android.target.get().toInt()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
+    commonTestImplementation(kotlin("test"))
+    commonTestImplementation(project(":shared:core-test"))
 }
