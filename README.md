@@ -112,7 +112,8 @@ I'll keep updating & changing things as I learn. 🤓
 * [Mockk](https://github.com/mockk/mockk) - mocking library for Kotlin.
 * [koin](https://github.com/mockk/mockk) - Injection library.
 
-### iOS (Coming Soon)
+### iOS
+* [Kingfisher](https://github.com/onevcat/Kingfisher) - Image library.
 
 ## Roadmap
 Android
