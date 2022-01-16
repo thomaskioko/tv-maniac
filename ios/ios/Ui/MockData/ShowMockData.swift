@@ -15,7 +15,7 @@ var mockShow = ShowUiModel(
 	overview: "A criminal mastermind who goes by The Professor has a plan to pull off the biggest heist in recorded history -- to print billions of euros in the Royal Mint of Spain. To help him carry out the ambitious plan, he recruits eight people with certain abilities and who have nothing to lose",
 	language: "EN",
 	posterImageUrl: "",
-	backdropImageUrl: "",
+	backdropImageUrl: "https://image.tmdb.org/t/p/original/tayfazRzkhpyKAhKS6PALXKJUj1.jpg",
 	year: "2012",
 	status: "Ended",
 	votes: 21,
