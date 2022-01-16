@@ -2,7 +2,7 @@ import SwiftUI
 
 struct PosterStyle: ViewModifier {
 	enum Size {
-		case small, medium, big, tv
+		case small, medium, big, tv, max
 		
 		func width() -> CGFloat {
 			switch self {
@@ -10,6 +10,7 @@ struct PosterStyle: ViewModifier {
 			case .medium: return 100
 			case .big: return 250
 			case .tv: return 304
+			case .max: return UIScreen.main.bounds.width
 			}
 		}
 		func height() -> CGFloat {
@@ -18,6 +19,7 @@ struct PosterStyle: ViewModifier {
 			case .medium: return 150
 			case .big: return 375
 			case .tv: return 500
+			case .max: return UIScreen.main.bounds.height
 			}
 		}
 	}

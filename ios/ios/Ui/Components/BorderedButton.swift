@@ -30,22 +30,23 @@ public struct BorderedButton : View {
 			HStack(alignment: .center, spacing: 4) {
 				Image(systemName: systemImageName)
 					.resizable()
-								.aspectRatio(contentMode: .fit)
+					.aspectRatio(contentMode: .fit)
 					.foregroundColor(isOn ? .white : color)
 					.frame(width: 24, height: 24)
 					.padding(.trailing, 16)
 				
 				Text(text)
-					.captionStyle()
+					.captionFont(size: 16)
 					.foregroundColor(.white)
 			}
 		})
 			.buttonStyle(BorderlessButtonStyle())
 			.padding(12)
-			.background(RoundedRectangle(cornerRadius: 2)
-							.stroke(color, lineWidth: 1)
-							.background(isOn ? color : .clear)
-							.cornerRadius(2))
+			.background(
+				RoundedRectangle(cornerRadius: 2)
+					.stroke(color, lineWidth: 1)
+					.background(isOn ? color : .clear)
+					.cornerRadius(2))
 	}
 }
 
@@ -54,14 +55,14 @@ struct BorderedButton_Previews : PreviewProvider {
 		VStack {
 			BorderedButton(text: "Watch Trailer",
 						   systemImageName: "film",
-						   color: .maniac_yelllow,
+						   color: .yellow_300,
 						   isOn: false,
 						   action: {
 				
 			})
 			BorderedButton(text: "Add to wishlist",
 						   systemImageName: "film",
-						   color: .maniac_yelllow,
+						   color: .yellow_300,
 						   isOn: true,
 						   action: {
 				
