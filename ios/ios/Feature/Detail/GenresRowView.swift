@@ -19,10 +19,10 @@ struct GenresRowView: View {
 				
 				Button(action: {}){
 					Text(genre.name)
-						.bodyFont(size: 14)
+						.bodyFont(size: 16)
 						.foregroundColor(.white)
-						.padding()
-						.background(Color.maniac_yelllow.opacity(0.2))
+						.padding(10)
+						.background(Color.yellow_300.opacity(0.12))
 				}
 				.cornerRadius(2)
 			
