@@ -12,17 +12,24 @@ import TvManiac
 struct ShowDetailView: View {
 	var show: ShowUiModel
 	
-    var body: some View {
+	var body: some View {
 		ZStack {
-			ScrollView(showsIndicators: false) {
+			ScrollView(.vertical, showsIndicators: false) {
 				HeaderView(show: show)
+					.frame(width: PosterStyle.Size.max.width(), height: PosterStyle.Size.max.height())
+
+				VStack(alignment: .leading, spacing: 15){
+					ShowBodyView(show: show)
+				}
 			}
-		}.edgesIgnoringSafeArea(.all)
-    }
+			.background(Color.grey_900)
+		}
+		.edgesIgnoringSafeArea(.all)
+	}
 }
 
 struct ShowDetailView_Previews: PreviewProvider {
-    static var previews: some View {
+	static var previews: some View {
 		ShowDetailView(show: mockShow)
-    }
+	}
 }
