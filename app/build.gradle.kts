@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":shared:interactors"))
     implementation(project(":app-common:annotations"))
     implementation(project(":app-common:compose"))
+    implementation(project(":app-common:resources"))
     implementation(project(":app-common:navigation"))
     implementation(project(":app-features:discover"))
     implementation(project(":app-features:home"))
