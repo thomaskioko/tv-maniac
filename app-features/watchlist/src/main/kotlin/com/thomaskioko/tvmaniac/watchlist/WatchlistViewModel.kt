@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.watchlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.interactors.GetWatchListInteractor
+import com.thomaskioko.tvmaniac.interactors.ObserveWatchListInteractor
 import com.thomaskioko.tvmaniac.interactors.WatchlistAction
 import com.thomaskioko.tvmaniac.interactors.WatchlistEffect
 import com.thomaskioko.tvmaniac.interactors.WatchlistState
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WatchlistViewModel @Inject constructor(
-    private val interactor: GetWatchListInteractor,
+    private val interactor: ObserveWatchListInteractor,
 ) : Store<WatchlistState, WatchlistAction, WatchlistEffect>,
     CoroutineScopeOwner, ViewModel() {
 

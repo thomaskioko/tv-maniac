@@ -1,14 +1,14 @@
 package com.thomaskioko.tvmaniac.injection
 
 import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveDiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveShowInteractor
+import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateWatchlistInteractor
 import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesInteractor
 import com.thomaskioko.tvmaniac.genre.api.GenreRepository
 import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
-import com.thomaskioko.tvmaniac.interactors.GetShowInteractor
-import com.thomaskioko.tvmaniac.interactors.GetWatchListInteractor
-import com.thomaskioko.tvmaniac.interactors.UpdateWatchlistInteractor
+import com.thomaskioko.tvmaniac.interactors.ObserveWatchListInteractor
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
 import dagger.Module
@@ -41,9 +41,9 @@ object InteractorsModule {
 
     @Singleton
     @Provides
-    fun provideGetShowInteractor(
+    fun provideObserveShowInteractor(
         repository: TvShowsRepository
-    ): GetShowInteractor = GetShowInteractor(repository)
+    ): ObserveShowInteractor = ObserveShowInteractor(repository)
 
     @Singleton
     @Provides
@@ -53,9 +53,9 @@ object InteractorsModule {
 
     @Singleton
     @Provides
-    fun provideGetWatchListInteractor(
+    fun provideObserveWatchListInteractor(
         repository: TvShowsRepository
-    ): GetWatchListInteractor = GetWatchListInteractor(repository)
+    ): ObserveWatchListInteractor = ObserveWatchListInteractor(repository)
 
     @Singleton
     @Provides
