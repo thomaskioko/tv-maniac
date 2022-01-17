@@ -32,7 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.thomaskioko.tvmaniac.compose.R
+import com.thomaskioko.tvmaniac.resources.R
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
