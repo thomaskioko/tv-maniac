@@ -15,7 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.R
+import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun TvShowCard(

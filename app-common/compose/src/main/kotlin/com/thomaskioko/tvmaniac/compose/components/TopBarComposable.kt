@@ -30,10 +30,10 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.TopAppBar
-import com.thomaskioko.tvmaniac.compose.R
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.elevatedSurface
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
+import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun TvManiacTopBar(
