@@ -1,9 +1,9 @@
 package com.thomaskioko.showdetails
 
+import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateShowParams
 import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeUiModel
-import com.thomaskioko.tvmaniac.interactors.UpdateShowParams
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 import com.thomaskioko.tvmaniac.shared.core.store.Action
 import com.thomaskioko.tvmaniac.shared.core.store.Effect

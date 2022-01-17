@@ -21,13 +21,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.insets.statusBarsPadding
-import com.thomaskioko.tvmaniac.compose.R
 import com.thomaskioko.tvmaniac.compose.components.BackAppBar
 import com.thomaskioko.tvmaniac.compose.components.LazyPagedGridItems
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.interactors.ShowsGridState
+import com.thomaskioko.tvmaniac.resources.R
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalFoundationApi::class)

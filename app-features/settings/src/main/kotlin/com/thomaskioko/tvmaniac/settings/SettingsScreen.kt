@@ -40,9 +40,9 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.settings.SettingsActions.ThemeClicked
 import com.thomaskioko.tvmaniac.settings.SettingsActions.ThemeSelected
-import com.thomaskioko.tvmaniac.compose.R as CompR
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel) {
@@ -131,7 +131,7 @@ private fun ThemeSettingsItem(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Icon(
-            painter = painterResource(CompR.drawable.ic_palette_24),
+            painter = painterResource(R.drawable.ic_palette_24),
             tint = MaterialTheme.colors.secondary,
             contentDescription = null,
             modifier = Modifier

@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":shared:domain:discover:api"))
+    implementation(project(":shared:domain:show:api"))
     implementation(project(":shared:interactors"))
     implementation(libs.multiplatform.paging.core)
 }
