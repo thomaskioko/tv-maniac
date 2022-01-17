@@ -15,6 +15,7 @@ include(
     ":app-common:annotations",
     ":app-common:compose",
     ":app-common:navigation",
+    ":app-common:resources",
     ":app-features:discover",
     ":app-features:home",
     ":app-features:search",

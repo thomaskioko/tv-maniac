@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import gradle.kotlin.dsl.accessors._f28201936ac5dc93fbe24b62cb4541cf.implementation
 import util.libs
 
 plugins {
@@ -35,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":app-common:resources"))
 
     api(libs.androidx.appCompat)
     api(libs.androidx.palette)
