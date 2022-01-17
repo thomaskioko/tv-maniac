@@ -5,6 +5,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":shared:domain:discover:api"))
+    implementation(project(":shared:domain:show:api"))
     implementation(libs.androidx.paging.runtime)
 }

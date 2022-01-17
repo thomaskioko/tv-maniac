@@ -31,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.thomaskioko.tvmaniac.compose.R
 import com.thomaskioko.tvmaniac.compose.components.ChoiceChipContent
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -39,6 +38,7 @@ import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeUiModel
+import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 
 @Composable

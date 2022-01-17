@@ -41,7 +41,6 @@ import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
-import com.thomaskioko.tvmaniac.compose.R
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.LoadingView
@@ -59,6 +58,7 @@ import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowState
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
+import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlin.math.absoluteValue

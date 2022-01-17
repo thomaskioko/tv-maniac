@@ -7,7 +7,7 @@ dependencies {
     commonMainImplementation(project(":shared:core"))
     commonMainImplementation(project(":shared:database"))
     commonMainImplementation(project(":shared:remote"))
-    commonMainImplementation(project(":shared:domain:discover:api"))
+    commonMainImplementation(project(":shared:domain:show:api"))
 
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.multiplatform.paging.core)

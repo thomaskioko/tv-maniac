@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.interactors
+package com.thomaskioko.tvmaniac.discover.api.interactor
 
 import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.shared.core.FlowInteractor

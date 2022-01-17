@@ -53,6 +53,7 @@ dependencies {
     implementation(project(":app-common:annotations"))
     implementation(project(":app-common:compose"))
     implementation(project(":app-common:navigation"))
+    implementation(project(":app-common:resources"))
 
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)

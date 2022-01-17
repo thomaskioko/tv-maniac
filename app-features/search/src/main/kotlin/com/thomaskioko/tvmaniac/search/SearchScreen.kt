@@ -14,8 +14,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.accompanist.insets.statusBarsPadding
-import com.thomaskioko.tvmaniac.compose.R
 import com.thomaskioko.tvmaniac.compose.components.SearchBar
+import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun SearchScreen(
