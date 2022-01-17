@@ -6,11 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.thomaskioko.showdetails.ShowDetailAction.SeasonSelected
 import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
 import com.thomaskioko.showdetails.ShowDetailEffect.ShowDetailsError
+import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveShowInteractor
+import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateWatchlistInteractor
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesInteractor
 import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
-import com.thomaskioko.tvmaniac.interactors.GetShowInteractor
-import com.thomaskioko.tvmaniac.interactors.UpdateWatchlistInteractor
 import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
 import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.shared.core.store.Store
@@ -28,7 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ShowDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getShow: GetShowInteractor,
+    private val observeShow: ObserveShowInteractor,
     private val seasonsInteractor: SeasonsInteractor,
     private val genresInteractor: GetGenresInteractor,
     private val episodeInteractor: EpisodesInteractor,
@@ -74,7 +74,7 @@ class ShowDetailsViewModel @Inject constructor(
 
     private fun loadShowDetails() {
         with(state) {
-            getShow.execute(showId) {
+            observeShow.execute(showId) {
                 onStart {
                     coroutineScope.launch { emit(value.copy(isLoading = false)) }
                 }
