@@ -11,7 +11,6 @@ plugins {
 version = libs.versions.shared.module.version.get()
 
 kotlin {
-    android()
 
     val iosTarget = getIosTarget()
 
@@ -20,26 +19,6 @@ kotlin {
             framework {
                 baseName = "TvManiac"
             }
-        }
-    }
-
-    sourceSets {
-
-        sourceSets["commonMain"].dependencies {
-            api(project(":shared:core"))
-            api(project(":shared:database"))
-            api(project(":shared:remote"))
-            api(project(":shared:domain:show:api"))
-            api(project(":shared:domain:seasons:api"))
-            api(project(":shared:domain:episodes:api"))
-            api(project(":shared:domain:genre:api"))
-            implementation(project(":shared:domain:episodes:implementation"))
-            implementation(project(":shared:domain:show:implementation"))
-            implementation(project(":shared:domain:seasons:implementation"))
-            implementation(project(":shared:domain:genre:implementation"))
-
-            implementation(libs.koin.core)
-            implementation(libs.kotlin.coroutines.core)
         }
     }
 
@@ -59,6 +38,24 @@ kotlin {
             transitiveExport = true
         }
     }
+}
+
+dependencies {
+    commonMainApi(project(":shared:core"))
+    commonMainApi(project(":shared:database"))
+    commonMainApi(project(":shared:remote"))
+    commonMainApi(project(":shared:domain:show:api"))
+    commonMainApi(project(":shared:domain:seasons:api"))
+    commonMainApi(project(":shared:domain:episodes:api"))
+    commonMainApi(project(":shared:domain:genre:api"))
+
+    commonMainImplementation(project(":shared:domain:episodes:implementation"))
+    commonMainImplementation(project(":shared:domain:show:implementation"))
+    commonMainImplementation(project(":shared:domain:seasons:implementation"))
+    commonMainImplementation(project(":shared:domain:genre:implementation"))
+
+    commonMainImplementation(libs.koin.core)
+    commonMainImplementation(libs.kotlin.coroutines.core)
 }
 
 multiplatformSwiftPackage {
