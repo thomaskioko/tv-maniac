@@ -3,32 +3,18 @@ plugins {
     id("com.squareup.sqldelight")
 }
 
-kotlin {
-    sourceSets {
+dependencies {
+    commonMainImplementation(libs.koin.core)
+    commonMainImplementation(libs.squareup.sqldelight.runtime)
 
-        sourceSets["commonMain"].dependencies {
-            implementation(libs.koin.core)
-            implementation(libs.squareup.sqldelight.runtime)
-        }
+    androidMainImplementation(libs.squareup.sqldelight.driver.android)
 
-        sourceSets["commonTest"].dependencies {
-            implementation(libs.testing.kotest.assertions)
-        }
+    iosMainImplementation(libs.koin.core)
+    iosMainImplementation(libs.squareup.sqldelight.driver.native)
 
-        sourceSets["androidMain"].dependencies {
-            implementation(libs.squareup.sqldelight.driver.android)
-        }
-
-        sourceSets["androidTest"].dependencies {
-            implementation(kotlin("test"))
-            implementation(libs.squareup.sqldelight.driver.jvm)
-        }
-
-        sourceSets["iosMain"].dependencies {
-            implementation(libs.koin.core)
-            implementation(libs.squareup.sqldelight.driver.native)
-        }
-    }
+    commonTestImplementation(libs.testing.kotest.assertions)
+    androidTestImplementation(kotlin("test"))
+    androidTestImplementation(libs.squareup.sqldelight.driver.jvm)
 }
 
 sqldelight {
