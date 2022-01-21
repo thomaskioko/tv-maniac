@@ -11,10 +11,11 @@ poster_image_url TEXT NOT NULL,
 backdrop_image_url TEXT NOT NULL,
 votes INTEGER NOT NULL,
 vote_average REAL NOT NULL,
-status TEXT NOT NULL,
+number_of_seasons INTEGER DEFAULT NULL,
+number_of_episodes INTEGER DEFAULT NULL,
+status TEXT DEFAULT NULL,
 popularity REAL NOT NULL,
 genre_ids TEXT AS List<Int> NOT NULL,
-season_ids TEXT AS List<Int>,
 is_watchlist INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
@@ -33,11 +34,12 @@ genre_ids,
 status,
 popularity,
 is_watchlist
-)VALUES(?,?,?,?,?,?,?,?, ?,?, ?, ?, ?);
+)
+VALUES(?,?,?,?,?,?,?,?, ?,?, ?, ?, ?);
 
 updateTvShow:
 UPDATE show
-SET season_ids = ?, status = ?
+SET status = ?, number_of_seasons = ?, number_of_episodes = ?
 WHERE id = ?;
 
 selectByShowId:

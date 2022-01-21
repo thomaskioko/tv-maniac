@@ -1,0 +1,42 @@
+CREATE TABLE last_episode (
+id INTEGER NOT NULL PRIMARY KEY,
+show_id INTEGER NOT NULL,
+name TEXT ,
+overview TEXT NOT NULL,
+title TEXT NOT NULL,
+air_date TEXT NOT NULL,
+episode_number INTEGER NOT NULL,
+season_number INTEGER NOT NULL,
+still_path TEXT,
+vote_average REAL ,
+vote_count INTEGER,
+FOREIGN KEY (show_id) REFERENCES show(id)
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO last_episode(
+id,
+show_id,
+name,
+overview,
+title,
+air_date,
+episode_number,
+season_number,
+still_path,
+vote_average,
+vote_count
+)
+VALUES(?,?,?,?, ?,?,?,?,?,?,?);
+
+airEpisodeById:
+SELECT *
+FROM last_episode
+WHERE id = ?;
+
+airEpisodesByShowId:
+SELECT *
+FROM last_episode
+LEFT JOIN show ON show.id = last_episode.show_id
+WHERE show_id = ? ;
+
