@@ -23,6 +23,7 @@ kotlin {
             optIn("kotlinx.coroutines.FlowPreview")
             optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
             optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+            optIn("kotlinx.serialization.ExperimentalSerializationApi")
         }
     }
 }
