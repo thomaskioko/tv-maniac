@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-class SeasonsInteractor constructor(
+class ObserveSeasonsInteractor constructor(
     private val repository: SeasonsRepository,
 ) : FlowInteractor<Int, List<SeasonUiModel>>() {
 

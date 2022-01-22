@@ -5,16 +5,16 @@ import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getSeasonsList
 import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getSelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
-import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
+import com.thomaskioko.tvmaniac.seasons.api.interactor.ObserveSeasonsInteractor
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlin.test.Test
 
-internal class SeasonsInteractorTest {
+internal class ObserveSeasonsInteractorTest {
 
     private val repository: SeasonsRepository = mockk()
-    private val interactor = SeasonsInteractor(repository)
+    private val interactor = ObserveSeasonsInteractor(repository)
 
     @Test
     fun wheneverInteractorIsInvoked_ExpectedDataIsReturned() = runBlockingTest {
