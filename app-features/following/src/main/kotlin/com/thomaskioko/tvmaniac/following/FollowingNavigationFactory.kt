@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.watchlist
+package com.thomaskioko.tvmaniac.following
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -7,10 +7,10 @@ import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import com.thomaskioko.tvmaniac.navigation.viewModelComposable
 import javax.inject.Inject
 
-class WatchlistNavigationFactory @Inject constructor() : ComposeNavigationFactory {
+class FollowingNavigationFactory @Inject constructor() : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
-        builder.viewModelComposable<WatchlistViewModel>(
+        builder.viewModelComposable<FollowingViewModel>(
             route = NavigationScreen.WatchlistNavScreen.route,
             content = {
                 WatchListScreen(

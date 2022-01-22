@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.watchlist
+package com.thomaskioko.tvmaniac.following
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WatchlistViewModel @Inject constructor(
+class FollowingViewModel @Inject constructor(
     private val interactor: ObserveFollowingInteractor,
 ) : Store<WatchlistState, WatchlistAction, WatchlistEffect>,
     CoroutineScopeOwner, ViewModel() {
