@@ -28,7 +28,7 @@ class TvShowCacheImpl(
                 year = show.year,
                 status = show.status,
                 popularity = show.popularity,
-                is_watchlist = show.is_watchlist
+                following = show.following
             )
         }
     }
@@ -37,7 +37,7 @@ class TvShowCacheImpl(
         list.forEach { insert(it) }
     }
 
-    override fun getTvShow(showId: Int): Flow<Show> {
+    override fun observeTvShow(showId: Int): Flow<Show> {
         return database.showQueries.selectByShowId(
             id = showId.toLong()
         )
@@ -45,14 +45,14 @@ class TvShowCacheImpl(
             .mapToOne()
     }
 
-    override fun getTvShows(): Flow<List<Show>> {
+    override fun observeTvShows(): Flow<List<Show>> {
         return database.showQueries.selectAll()
             .asFlow()
             .mapToList()
     }
 
-    override fun getWatchlist(): Flow<List<Show>> {
-        return database.showQueries.selectWatchlist()
+    override fun observeFollowing(): Flow<List<Show>> {
+        return database.showQueries.selectFollowinglist()
             .asFlow()
             .mapToList()
     }
@@ -64,9 +64,9 @@ class TvShowCacheImpl(
             .mapToList()
     }
 
-    override fun updateWatchlist(showId: Int, isInWatchlist: Boolean) {
-        database.showQueries.updateWatchlist(
-            is_watchlist = isInWatchlist,
+    override fun updateFollowingShow(showId: Int, following: Boolean) {
+        database.showQueries.updateFollowinglist(
+            following = following,
             id = showId.toLong()
         )
     }

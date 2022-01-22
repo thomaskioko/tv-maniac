@@ -69,12 +69,12 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         makeShowList().insertTvShowsEntityList()
 
-        tvShowQueries.updateWatchlist(
+        tvShowQueries.updateFollowinglist(
             id = 84958.toLong(),
-            is_watchlist = true
+            following = true
         )
 
-        val watchlist = tvShowQueries.selectWatchlist().executeAsList()
+        val watchlist = tvShowQueries.selectFollowinglist().executeAsList()
 
         watchlist.size shouldBe 1
     }
@@ -110,7 +110,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             year = year,
             status = status,
             popularity = 0.0,
-            is_watchlist = false
+            following = false
         )
     }
 }

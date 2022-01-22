@@ -24,10 +24,10 @@ import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.remote.api.model.TvShowsResponse
-import com.thomaskioko.tvmaniac.remote.util.getErrorMessage
 import com.thomaskioko.tvmaniac.shared.core.util.CommonFlow
 import com.thomaskioko.tvmaniac.shared.core.util.Resource
 import com.thomaskioko.tvmaniac.shared.core.util.asCommonFlow
+import com.thomaskioko.tvmaniac.shared.core.util.getErrorMessage
 import com.thomaskioko.tvmaniac.shared.core.util.networkBoundResource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -48,7 +48,7 @@ class TvShowsRepositoryImpl(
 ) : TvShowsRepository {
 
     override fun observeShow(tvShowId: Int): Flow<Resource<Show>> = networkBoundResource(
-        query = { tvShowCache.getTvShow(tvShowId) },
+        query = { tvShowCache.observeTvShow(tvShowId) },
         shouldFetch = { it?.status.isNullOrBlank() },
         fetch = { apiService.getTvShowDetails(tvShowId) },
         saveFetchResult = { mapAndInsert(tvShowId, it) },
@@ -57,10 +57,10 @@ class TvShowsRepositoryImpl(
     )
 
     override suspend fun updateWatchlist(showId: Int, addToWatchList: Boolean) {
-        tvShowCache.updateWatchlist(showId, addToWatchList)
+        tvShowCache.updateFollowingShow(showId, addToWatchList)
     }
 
-    override fun observeWatchlist(): Flow<List<Show>> = tvShowCache.getWatchlist()
+    override fun observeFollowing(): Flow<List<Show>> = tvShowCache.observeFollowing()
 
     override fun observeShowsByCategoryID(categoryId: Int): Flow<Resource<List<Show>>> =
         networkBoundResource(
@@ -72,7 +72,7 @@ class TvShowsRepositoryImpl(
             fetch = { fetchShowsApiRequest(categoryId) },
             saveFetchResult = { cacheResult(it, categoryId) },
             onFetchFailed = {
-                Logger.withTag("observeShowsByCategoryID").e { it.getErrorMessage() }
+                // Logger.withTag("observeShowsByCategoryID").e { it.getErrorMessage() }
             },
             coroutineDispatcher = dispatcher
         )
