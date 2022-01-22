@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    commonMainImplementation(project(":shared:core"))
-    commonMainImplementation(project(":shared:database"))
-    commonMainImplementation(libs.kotlin.coroutines.core)
+    commonMainApi(project(":shared:core"))
+    commonMainApi(project(":shared:database"))
+    commonMainApi(libs.kotlin.coroutines.core)
 }

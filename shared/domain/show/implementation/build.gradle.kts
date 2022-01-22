@@ -3,9 +3,6 @@ plugins {
 }
 
 dependencies {
-
-    commonMainImplementation(project(":shared:core"))
-    commonMainImplementation(project(":shared:database"))
     commonMainImplementation(project(":shared:remote"))
     commonMainImplementation(project(":shared:domain:show:api"))
     commonMainImplementation(project(":shared:domain:episodes:api"))
@@ -14,7 +11,6 @@ dependencies {
     commonMainImplementation(libs.koin.core)
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.kotlin.datetime)
-    commonMainImplementation(libs.kotlin.coroutines.core)
     commonMainImplementation(libs.multiplatform.paging.core)
     commonMainImplementation(libs.squareup.sqldelight.extensions)
 
