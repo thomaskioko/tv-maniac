@@ -92,7 +92,7 @@ private fun WatchlistContent(
     if (viewState.list.isEmpty())
         EmptyContentView(
             painter = painterResource(id = R.drawable.ic_watchlist_empty),
-            message = stringResource(id = R.string.msg_empty_watchlist)
+            message = stringResource(id = R.string.msg_empty_favorites)
         )
     else
         LazyGridItems(

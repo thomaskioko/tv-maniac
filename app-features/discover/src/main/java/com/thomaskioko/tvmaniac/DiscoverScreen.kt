@@ -43,13 +43,14 @@ import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
-import com.thomaskioko.tvmaniac.compose.components.LoadingView
+import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
 import com.thomaskioko.tvmaniac.compose.theme.grey900
+import com.thomaskioko.tvmaniac.compose.util.DominantColorState
 import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
@@ -127,7 +128,7 @@ private fun DiscoverShows(
             )
         },
     ) {
-        if (discoverViewState.isLoading) LoadingView()
+        if (discoverViewState.isLoading) FullScreenLoading()
 
         LazyColumn(
             modifier = Modifier
@@ -183,27 +184,9 @@ fun FeaturedItems(
         // We want a color which has sufficient contrast against the surface color
         color.contrastAgainst(surfaceColor) >= MinContrastOfPrimaryVsSurface
     }
+    val pagerState = rememberPagerState()
 
     DynamicThemePrimaryColorsFromImage(dominantColorState) {
-
-        val pagerState = rememberPagerState()
-
-        val selectedImageUrl = showData.showUiModels.getOrNull(pagerState.currentPage)
-            ?.posterImageUrl
-
-        LaunchedEffect(selectedImageUrl) {
-            if (selectedImageUrl != null) {
-                dominantColorState.updateColorsFromImageUrl(selectedImageUrl)
-            } else {
-                dominantColorState.reset()
-            }
-        }
-
-        LaunchedEffect(showData.showUiModels) {
-            if (showData.showUiModels.size >= 4) {
-                pagerState.scrollToPage(2)
-            }
-        }
 
         Column(
             modifier = Modifier
@@ -220,6 +203,7 @@ fun FeaturedItems(
             FeaturedHorizontalPager(
                 list = showData.showUiModels,
                 pagerState = pagerState,
+                dominantColorState = dominantColorState,
                 onClick = { onItemClicked(it) }
             )
 
@@ -240,8 +224,26 @@ fun FeaturedItems(
 fun FeaturedHorizontalPager(
     list: List<ShowUiModel>,
     pagerState: PagerState,
+    dominantColorState: DominantColorState,
     onClick: (Int) -> Unit
 ) {
+
+    val selectedImageUrl = list.getOrNull(pagerState.currentPage)
+        ?.posterImageUrl
+
+    LaunchedEffect(selectedImageUrl) {
+        if (selectedImageUrl != null) {
+            dominantColorState.updateColorsFromImageUrl(selectedImageUrl)
+        } else {
+            dominantColorState.reset()
+        }
+    }
+
+    LaunchedEffect(list) {
+        if (list.size >= 4) {
+            pagerState.scrollToPage(2)
+        }
+    }
 
     HorizontalPager(
         count = list.size,

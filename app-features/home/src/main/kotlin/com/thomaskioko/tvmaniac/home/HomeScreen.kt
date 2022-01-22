@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.home
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -8,6 +7,11 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.Movie
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
@@ -16,7 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -85,7 +89,7 @@ private fun TvManiacBottomNavigation(
 
         TvManiacBottomNavigationItem(
             screen = NavigationScreen.DiscoverNavScreen,
-            icon = R.drawable.ic_baseline_discover_24,
+            imageVector = Icons.Outlined.Movie,
             title = stringResource(id = R.string.menu_item_discover),
             selected = currentSelectedItem == NavigationScreen.DiscoverNavScreen,
             onNavigationSelected = onNavigationSelected
@@ -93,7 +97,7 @@ private fun TvManiacBottomNavigation(
 
         TvManiacBottomNavigationItem(
             screen = NavigationScreen.SearchNavScreen,
-            icon = R.drawable.ic_baseline_search_24,
+            imageVector = Icons.Outlined.Search,
             title = stringResource(id = R.string.menu_item_search),
             selected = currentSelectedItem == NavigationScreen.SearchNavScreen,
             onNavigationSelected = onNavigationSelected
@@ -101,15 +105,15 @@ private fun TvManiacBottomNavigation(
 
         TvManiacBottomNavigationItem(
             screen = NavigationScreen.WatchlistNavScreen,
-            icon = R.drawable.ic_baseline_watchlist_24,
-            title = stringResource(id = R.string.menu_item_watchlist),
+            imageVector = Icons.Outlined.Star,
+            title = stringResource(id = R.string.menu_item_follow),
             selected = currentSelectedItem == NavigationScreen.WatchlistNavScreen,
             onNavigationSelected = onNavigationSelected
         )
 
         TvManiacBottomNavigationItem(
             screen = NavigationScreen.SettingsScreen,
-            icon = R.drawable.ic_baseline_more_vert_24,
+            imageVector = Icons.Outlined.MoreVert,
             title = stringResource(id = R.string.menu_item_more),
             selected = currentSelectedItem == NavigationScreen.SettingsScreen,
             onNavigationSelected = onNavigationSelected
@@ -120,7 +124,7 @@ private fun TvManiacBottomNavigation(
 @Composable
 fun RowScope.TvManiacBottomNavigationItem(
     screen: NavigationScreen,
-    @DrawableRes icon: Int,
+    imageVector: ImageVector,
     title: String,
     selected: Boolean,
     onNavigationSelected: (NavigationScreen) -> Unit
@@ -128,7 +132,7 @@ fun RowScope.TvManiacBottomNavigationItem(
     BottomNavigationItem(
         icon = {
             Icon(
-                painter = painterResource(id = icon),
+                imageVector = imageVector,
                 contentDescription = title
             )
         },
