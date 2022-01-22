@@ -28,6 +28,8 @@ fun Show.toTvShow(): ShowUiModel {
         genreIds = genre_ids,
         year = year,
         status = status,
-        isInWatchlist = is_watchlist
+        following = is_watchlist,
+        numberOfEpisodes = number_of_episodes?.toInt(),
+        numberOfSeasons = number_of_episodes?.toInt()
     )
 }

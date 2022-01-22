@@ -12,14 +12,17 @@ import com.thomaskioko.tvmaniac.datasource.cache.Show_category
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.discover.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
-import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
+import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory.POPULAR
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory.TOP_RATED
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory.TRENDING
-import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory.POPULAR
+import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.discover.implementation.mapper.toAirEp
 import com.thomaskioko.tvmaniac.discover.implementation.mapper.toShow
 import com.thomaskioko.tvmaniac.discover.implementation.mapper.toShowList
+import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
+import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.remote.api.model.TvShowsResponse
 import com.thomaskioko.tvmaniac.remote.util.getErrorMessage
 import com.thomaskioko.tvmaniac.shared.core.util.CommonFlow
@@ -37,6 +40,7 @@ private const val DEFAULT_API_PAGE = 1
 class TvShowsRepositoryImpl(
     private val apiService: TvShowsService,
     private val tvShowCache: TvShowCache,
+    private val epAirCacheLast: LastEpisodeAirCache,
     private val categoryCache: CategoryCache,
     private val showCategoryCache: ShowCategoryCache,
     private val coroutineScope: CoroutineScope,
@@ -45,9 +49,9 @@ class TvShowsRepositoryImpl(
 
     override fun observeShow(tvShowId: Int): Flow<Resource<Show>> = networkBoundResource(
         query = { tvShowCache.getTvShow(tvShowId) },
-        shouldFetch = { it == null },
+        shouldFetch = { it?.status.isNullOrBlank() },
         fetch = { apiService.getTvShowDetails(tvShowId) },
-        saveFetchResult = { tvShowCache.insert(it.toShow()) },
+        saveFetchResult = { mapAndInsert(tvShowId, it) },
         onFetchFailed = { Logger.withTag("observeShow").e { it.getErrorMessage() } },
         coroutineDispatcher = dispatcher
     )
@@ -143,6 +147,18 @@ class TvShowsRepositoryImpl(
                     show_id = show.id
                 )
             )
+        }
+    }
+
+    private fun mapAndInsert(tvShowId: Int, response: ShowDetailResponse) {
+        tvShowCache.insert(response.toShow())
+
+        response.lastEpisodeToAir?.let {
+            epAirCacheLast.insert(it.toAirEp(tvShowId))
+        }
+
+        response.nextEpisodeToAir?.let {
+            epAirCacheLast.insert(it.toAirEp(tvShowId))
         }
     }
 }
