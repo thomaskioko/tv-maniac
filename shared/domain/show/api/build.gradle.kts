@@ -3,9 +3,9 @@ plugins {
 }
 
 dependencies {
-    commonMainImplementation(project(":shared:core"))
-    commonMainImplementation(project(":shared:database"))
-    commonMainImplementation(libs.koin.core)
+    commonMainApi(project(":shared:core"))
+    commonMainApi(project(":shared:database"))
+    commonMainApi(libs.koin.core)
     commonMainImplementation(libs.multiplatform.paging.core)
     commonMainImplementation(libs.kotlin.coroutines.core)
 

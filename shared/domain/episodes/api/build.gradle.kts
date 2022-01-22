@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    commonMainImplementation(project(":shared:core"))
-    commonMainImplementation(project(":shared:database"))
-    commonMainImplementation(project(":shared:domain:seasons:api"))
-    commonMainImplementation(libs.kotlin.coroutines.core)
+    commonMainApi(project(":shared:core"))
+    commonMainApi(project(":shared:database"))
+    commonMainApi(project(":shared:domain:seasons:api"))
+    commonMainApi(libs.kotlin.coroutines.core)
 }
