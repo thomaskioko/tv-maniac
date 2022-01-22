@@ -16,7 +16,7 @@ number_of_episodes INTEGER DEFAULT NULL,
 status TEXT DEFAULT NULL,
 popularity REAL NOT NULL,
 genre_ids TEXT AS List<Int> NOT NULL,
-is_watchlist INTEGER AS Boolean NOT NULL DEFAULT 0
+following INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
 insertOrReplace:
@@ -33,7 +33,7 @@ vote_average,
 genre_ids,
 status,
 popularity,
-is_watchlist
+following
 )
 VALUES(?,?,?,?,?,?,?,?, ?,?, ?, ?, ?);
 
@@ -49,14 +49,14 @@ WHERE id = ?;
 selectAll:
 SELECT * FROM show;
 
-updateWatchlist:
+updateFollowinglist:
 UPDATE show
-SET is_watchlist = ?
+SET following = ?
 WHERE id = ?;
 
-selectWatchlist:
+selectFollowinglist:
 SELECT * FROM show
-WHERE is_watchlist = 1;
+WHERE following = 1;
 
 deleteAll:
 DELETE FROM show;
