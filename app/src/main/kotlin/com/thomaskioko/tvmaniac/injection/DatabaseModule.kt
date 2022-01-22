@@ -14,6 +14,8 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodesCacheImpl
 import com.thomaskioko.tvmaniac.genre.api.GenreCache
 import com.thomaskioko.tvmaniac.genre.implementation.GenreCacheImpl
+import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
+import com.thomaskioko.tvmaniac.lastairepisodes.implementation.LastEpisodeAirCacheImpl
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsCacheImpl
 import dagger.Module
@@ -73,5 +75,11 @@ object DatabaseModule {
     @Provides
     fun provideShowCategoryCache(database: TvManiacDatabase): ShowCategoryCache {
         return ShowCategoryCacheImpl(database)
+    }
+
+    @Singleton
+    @Provides
+    fun provideEpisodeAirCache(database: TvManiacDatabase): LastEpisodeAirCache {
+        return LastEpisodeAirCacheImpl(database)
     }
 }
