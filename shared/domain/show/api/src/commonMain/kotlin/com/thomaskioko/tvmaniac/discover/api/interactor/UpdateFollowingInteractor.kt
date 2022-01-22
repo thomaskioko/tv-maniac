@@ -5,12 +5,12 @@ import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class UpdateWatchlistInteractor constructor(
+class UpdateFollowingInteractor constructor(
     private val repository: TvShowsRepository,
 ) : FlowInteractor<UpdateShowParams, Unit>() {
 
     override fun run(params: UpdateShowParams): Flow<Unit> = flow {
-        repository.updateWatchlist(
+        repository.updateFollowing(
             showId = params.showId,
             addToWatchList = params.addToWatchList
         )

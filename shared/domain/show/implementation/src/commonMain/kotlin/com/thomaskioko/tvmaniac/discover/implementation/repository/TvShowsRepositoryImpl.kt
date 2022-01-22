@@ -56,7 +56,7 @@ class TvShowsRepositoryImpl(
         coroutineDispatcher = dispatcher
     )
 
-    override suspend fun updateWatchlist(showId: Int, addToWatchList: Boolean) {
+    override suspend fun updateFollowing(showId: Int, addToWatchList: Boolean) {
         tvShowCache.updateFollowingShow(showId, addToWatchList)
     }
 

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TvShowsRepository {
 
-    suspend fun updateWatchlist(showId: Int, addToWatchList: Boolean)
+    suspend fun updateFollowing(showId: Int, addToWatchList: Boolean)
 
     fun observeShow(tvShowId: Int): Flow<Resource<Show>>
 
