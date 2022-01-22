@@ -24,7 +24,7 @@ fun SelectShows.toShow(): Show {
         genre_ids = genre_ids,
         year = year,
         status = status,
-        is_watchlist = is_watchlist,
+        following = following,
         popularity = popularity,
         number_of_episodes = number_of_episodes,
         number_of_seasons = number_of_seasons

@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.remote.util
+package com.thomaskioko.tvmaniac.shared.core.util
 
 import co.touchlab.kermit.Logger
 import io.ktor.client.features.ResponseException

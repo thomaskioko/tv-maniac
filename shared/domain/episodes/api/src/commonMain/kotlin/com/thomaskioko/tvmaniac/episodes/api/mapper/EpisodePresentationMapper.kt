@@ -1,6 +1,7 @@
-package com.thomaskioko.tvmaniac.episodes.api
+package com.thomaskioko.tvmaniac.episodes.api.mapper
 
 import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
+import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeUiModel
 
 fun List<EpisodesBySeasonId>.toEpisodeEntityList(): List<EpisodeUiModel> {
     return map { it.toEpisodeEntity() }

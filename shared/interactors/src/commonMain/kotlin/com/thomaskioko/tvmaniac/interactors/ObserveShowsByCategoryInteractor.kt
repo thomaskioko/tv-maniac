@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
-class GetShowsByCategoryInteractor constructor(
+class ObserveShowsByCategoryInteractor constructor(
     private val repository: TvShowsRepository,
 ) : FlowInteractor<Int, Flow<PagingData<ShowUiModel>>>() {
 
@@ -42,6 +42,6 @@ fun Show.toTvShow(): ShowUiModel {
         genreIds = genre_ids,
         year = year,
         status = status,
-        isInWatchlist = is_watchlist
+        following = following
     )
 }

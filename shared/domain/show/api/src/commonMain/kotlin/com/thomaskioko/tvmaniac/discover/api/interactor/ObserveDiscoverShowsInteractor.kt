@@ -65,7 +65,7 @@ class ObserveDiscoverShowsInteractor constructor(
             genreIds = genre_ids,
             year = year,
             status = status,
-            following = is_watchlist
+            following = following
         )
     }
 }

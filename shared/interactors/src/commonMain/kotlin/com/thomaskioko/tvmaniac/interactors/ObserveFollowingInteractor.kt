@@ -7,11 +7,11 @@ import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class ObserveWatchListInteractor constructor(
+class ObserveFollowingInteractor constructor(
     private val repository: TvShowsRepository,
 ) : FlowInteractor<Unit, List<ShowUiModel>>() {
 
-    override fun run(params: Unit): Flow<List<ShowUiModel>> = repository.observeWatchlist()
+    override fun run(params: Unit): Flow<List<ShowUiModel>> = repository.observeFollowing()
         .map { it.toTvShowList() }
 }
 
@@ -29,7 +29,7 @@ fun List<Show>.toTvShowList(): List<ShowUiModel> {
             genreIds = it.genre_ids,
             year = it.year,
             status = it.status,
-            isInWatchlist = it.is_watchlist
+            following = it.following
         )
     }
 }

@@ -10,15 +10,15 @@ interface TvShowCache {
 
     fun insert(list: List<Show>)
 
-    fun getTvShow(showId: Int): Flow<Show>
+    fun observeTvShow(showId: Int): Flow<Show>
 
-    fun getTvShows(): Flow<List<Show>>
+    fun observeTvShows(): Flow<List<Show>>
 
-    fun getWatchlist(): Flow<List<Show>>
+    fun observeFollowing(): Flow<List<Show>>
 
     fun getShowAirEpisodes(showId: Long): Flow<List<AirEpisodesByShowId>>
 
-    fun updateWatchlist(showId: Int, isInWatchlist: Boolean)
+    fun updateFollowingShow(showId: Int, following: Boolean)
 
     fun deleteTvShows()
 }

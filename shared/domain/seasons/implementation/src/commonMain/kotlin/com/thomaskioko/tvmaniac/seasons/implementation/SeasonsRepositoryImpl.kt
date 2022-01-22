@@ -4,11 +4,11 @@ import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
-import com.thomaskioko.tvmaniac.remote.util.getErrorMessage
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.seasons.implementation.mapper.toSeasonCacheList
 import com.thomaskioko.tvmaniac.shared.core.util.Resource
+import com.thomaskioko.tvmaniac.shared.core.util.getErrorMessage
 import com.thomaskioko.tvmaniac.shared.core.util.networkBoundResource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

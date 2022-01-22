@@ -12,7 +12,7 @@ interface TvShowsRepository {
 
     fun observeShow(tvShowId: Int): Flow<Resource<Show>>
 
-    fun observeWatchlist(): Flow<List<Show>>
+    fun observeFollowing(): Flow<List<Show>>
 
     fun observeShowsByCategoryID(
         categoryId: Int
