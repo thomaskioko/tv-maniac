@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.core.db
 
+import com.thomaskioko.tvmaniac.datasource.cache.Last_episode
 import com.thomaskioko.tvmaniac.datasource.cache.Season
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.Episode as EpisodeCache
@@ -85,10 +86,11 @@ object MockData {
         vote_average = 8.1,
         genre_ids = listOf(18, 10765),
         year = "2019",
-        season_ids = null,
         status = "Ended",
         popularity = 24.4848,
-        is_watchlist = true
+        is_watchlist = true,
+        number_of_seasons = 2,
+        number_of_episodes = 12
     )
 
     fun makeShowList() = listOf(
@@ -108,10 +110,11 @@ object MockData {
             vote_average = 8.1,
             genre_ids = listOf(18, 10765),
             year = "2019",
-            season_ids = null,
-            status = "Ended",
+            status = null,
             popularity = 24.4848,
-            is_watchlist = true
+            is_watchlist = true,
+            number_of_seasons = 2,
+            number_of_episodes = 12
         ),
         Show(
             id = 126280,
@@ -126,10 +129,44 @@ object MockData {
             vote_average = 8.1,
             genre_ids = listOf(35, 18),
             year = "2019",
-            season_ids = null,
             status = "Ended",
             popularity = 24.4848,
-            is_watchlist = false
+            is_watchlist = false,
+            number_of_seasons = 2,
+            number_of_episodes = 12
         ),
+    )
+
+    fun makeLastEpisodeList(): List<Last_episode> = listOf(
+        Last_episode(
+            id = 126280,
+            show_id = 84958,
+            name = "Follow the Leader?",
+            overview = "A woman's daring sexual past collides with her married-with-kids " +
+                "present when the bad-boy ex she can't stop fantasizing about crashes " +
+                "back into her life.",
+            title = "Latest",
+            air_date = "2014-03-28",
+            episode_number = 3,
+            season_number = 1,
+            still_path = null,
+            vote_count = 0,
+            vote_average = 12.2
+        ),
+        Last_episode(
+            id = 12628,
+            show_id = 84958,
+            name = "Follow the Leader?",
+            overview = "A woman's daring sexual past collides with her married-with-kids " +
+                "present when the bad-boy ex she can't stop fantasizing about crashes " +
+                "back into her life.",
+            title = "Coming soon",
+            air_date = "2014-03-28",
+            episode_number = 3,
+            season_number = 1,
+            still_path = null,
+            vote_count = 0,
+            vote_average = 12.2
+        )
     )
 }
