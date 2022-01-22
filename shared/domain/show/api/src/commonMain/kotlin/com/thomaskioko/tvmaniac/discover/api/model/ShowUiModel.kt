@@ -8,10 +8,12 @@ data class ShowUiModel(
     val posterImageUrl: String = "",
     val backdropImageUrl: String = "",
     val year: String = "",
-    val status: String = "",
+    val status: String? = null,
     val votes: Int = 0,
+    val numberOfSeasons: Int? = null,
+    val numberOfEpisodes: Int? = null,
     val averageVotes: Double = 0.0,
-    val isInWatchlist: Boolean = false,
+    val following: Boolean = false,
     val genreIds: List<Int> = listOf(),
 ) {
     companion object {

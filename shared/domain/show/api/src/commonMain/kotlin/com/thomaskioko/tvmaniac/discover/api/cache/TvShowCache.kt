@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.discover.api.cache
 
+import com.thomaskioko.tvmaniac.datasource.cache.AirEpisodesByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import kotlinx.coroutines.flow.Flow
 
@@ -15,7 +16,7 @@ interface TvShowCache {
 
     fun getWatchlist(): Flow<List<Show>>
 
-    fun updateShowDetails(showId: Int, showStatus: String, seasonIds: List<Int>)
+    fun getShowAirEpisodes(showId: Long): Flow<List<AirEpisodesByShowId>>
 
     fun updateWatchlist(showId: Int, isInWatchlist: Boolean)
 

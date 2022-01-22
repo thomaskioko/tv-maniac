@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.discover.implementation.mapper
 
 import com.thomaskioko.tvmaniac.datasource.cache.Show
-import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
 import com.thomaskioko.tvmaniac.remote.api.model.GenreResponse
 import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.remote.api.model.ShowResponse
@@ -20,10 +19,11 @@ fun ShowResponse.toShow(): Show {
         vote_average = voteAverage,
         genre_ids = genreIds,
         year = formatDate(firstAirDate),
-        season_ids = null,
         status = "",
         popularity = popularity,
-        is_watchlist = false
+        is_watchlist = false,
+        number_of_seasons = numberOfSeasons?.toLong(),
+        number_of_episodes = numberOfEpisodes?.toLong()
     )
 }
 
@@ -39,29 +39,15 @@ fun ShowDetailResponse.toShow(): Show {
         vote_average = voteAverage,
         genre_ids = genres.toGenreIds(),
         year = formatDate(firstAirDate),
-        season_ids = null,
         status = status,
         popularity = popularity,
-        is_watchlist = false
+        is_watchlist = false,
+        number_of_seasons = numberOfSeasons.toLong(),
+        number_of_episodes = numberOfEpisodes.toLong()
     )
 }
 
 fun List<GenreResponse>.toGenreIds(): List<Int> = map { it.id }
-
-fun ShowResponse.toTvShow(): ShowUiModel {
-    return ShowUiModel(
-        id = id,
-        title = name,
-        overview = overview,
-        language = originalLanguage,
-        posterImageUrl = formatPosterPath(posterPath),
-        backdropImageUrl = backdropPath.toImageUrl(posterPath),
-        votes = voteCount,
-        averageVotes = voteAverage,
-        genreIds = genreIds,
-        year = formatDate(firstAirDate)
-    )
-}
 
 private fun formatDate(dateString: String): String {
     return if (dateString.isNotBlank() && !dateString.contains("N/A"))

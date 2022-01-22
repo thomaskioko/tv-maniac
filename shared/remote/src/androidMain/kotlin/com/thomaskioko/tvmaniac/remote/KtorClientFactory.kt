@@ -29,6 +29,7 @@ actual class KtorClientFactory {
                         ignoreUnknownKeys = true
                         prettyPrint = true
                         isLenient = true
+                        explicitNulls = false
                     }
                 )
 

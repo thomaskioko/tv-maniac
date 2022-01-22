@@ -1,8 +1,11 @@
 package com.thomaskioko.tvmaniac.discover.implementation.mapper
 
+import com.thomaskioko.tvmaniac.datasource.cache.Last_episode
 import com.thomaskioko.tvmaniac.datasource.cache.SelectShows
 import com.thomaskioko.tvmaniac.datasource.cache.Show
-
+import com.thomaskioko.tvmaniac.remote.api.model.LastEpisodeToAir
+import com.thomaskioko.tvmaniac.remote.api.model.NextEpisodeToAir
+import com.thomaskioko.tvmaniac.shared.core.util.StringUtil
 
 fun List<SelectShows>.toShowList(): List<Show> {
     return map { it.toShow() }
@@ -23,6 +26,35 @@ fun SelectShows.toShow(): Show {
         status = status,
         is_watchlist = is_watchlist,
         popularity = popularity,
-        season_ids = season_ids,
+        number_of_episodes = number_of_episodes,
+        number_of_seasons = number_of_seasons
     )
 }
+
+fun NextEpisodeToAir.toAirEp(tvShowId: Int) = Last_episode(
+    id = id!!.toLong(),
+    show_id = tvShowId.toLong(),
+    name = name,
+    overview = if (!overview.isNullOrEmpty()) overview!! else "TBA",
+    air_date = StringUtil.formatDate(airDate),
+    episode_number = episodeNumber!!.toLong(),
+    season_number = seasonNumber!!.toLong(),
+    still_path = stillPath,
+    vote_average = voteAverage,
+    vote_count = voteCount?.toLong(),
+    title = "Upcoming"
+)
+
+fun LastEpisodeToAir.toAirEp(tvShowId: Int) = Last_episode(
+    id = id!!.toLong(),
+    show_id = tvShowId.toLong(),
+    name = name,
+    overview = if (!overview.isNullOrEmpty()) overview!! else "TBA",
+    air_date = StringUtil.formatDate(airDate),
+    episode_number = episodeNumber!!.toLong(),
+    season_number = seasonNumber!!.toLong(),
+    still_path = stillPath,
+    vote_average = voteAverage,
+    vote_count = voteCount?.toLong(),
+    title = "Latest Release"
+)
