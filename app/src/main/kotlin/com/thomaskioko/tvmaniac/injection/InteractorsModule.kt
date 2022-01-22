@@ -8,7 +8,10 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesInteractor
 import com.thomaskioko.tvmaniac.genre.api.GenreRepository
 import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
+import com.thomaskioko.tvmaniac.interactors.GetShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.interactors.ObserveWatchListInteractor
+import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisodeRepository
+import com.thomaskioko.tvmaniac.lastairepisodes.api.ObserveAirEpisodesInteractor
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
 import dagger.Module
@@ -65,8 +68,13 @@ object InteractorsModule {
 
     @Singleton
     @Provides
+    fun provideObserveAirEpisodesInteractor(
+        repository: LastAirEpisodeRepository
+    ): ObserveAirEpisodesInteractor = ObserveAirEpisodesInteractor(repository)
+
+    @Singleton
+    @Provides
     fun provideGetShowsByTypeInteractor(
         repository: TvShowsRepository
-    ): com.thomaskioko.tvmaniac.interactors.GetShowsByCategoryInteractor =
-        com.thomaskioko.tvmaniac.interactors.GetShowsByCategoryInteractor(repository)
+    ): GetShowsByCategoryInteractor = GetShowsByCategoryInteractor(repository)
 }

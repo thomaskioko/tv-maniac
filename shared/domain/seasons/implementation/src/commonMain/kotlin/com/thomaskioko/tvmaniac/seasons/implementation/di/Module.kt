@@ -9,7 +9,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val seasonsDomainModule: Module = module {
-    single<SeasonsRepository> { SeasonsRepositoryImpl(get(), get(), get(), get()) }
+    single<SeasonsRepository> { SeasonsRepositoryImpl(get(), get(), get()) }
     single<SeasonsCache> { SeasonsCacheImpl(get()) }
 
     factory { SeasonsInteractor(get()) }
