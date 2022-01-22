@@ -24,6 +24,9 @@ actual class KtorClientFactory {
                 serializer = KotlinxSerializer(
                     kotlinx.serialization.json.Json {
                         ignoreUnknownKeys = true
+                        prettyPrint = true
+                        isLenient = true
+                        explicitNulls = false
                     }
                 )
             }
