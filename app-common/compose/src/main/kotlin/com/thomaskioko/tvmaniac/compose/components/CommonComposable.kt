@@ -114,6 +114,20 @@ fun CircularLoadingView() {
     }
 }
 
+/**
+ * Full screen circular progress indicator
+ */
+@Composable
+fun FullScreenLoading() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.Center)
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
 @Composable
 fun LoadingItem() {
     CircularProgressIndicator(
