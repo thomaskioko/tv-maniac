@@ -9,4 +9,5 @@ dependencies {
     implementation(project(":shared:domain:episodes:api"))
     implementation(project(":shared:domain:genre:api"))
     implementation(project(":shared:domain:seasons:api"))
+    implementation(project(":shared:domain:last-air-episodes:api"))
 }
