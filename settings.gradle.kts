@@ -20,7 +20,7 @@ include(
     ":app-features:home",
     ":app-features:search",
     ":app-features:show-details",
-    ":app-features:watchlist",
+    ":app-features:following",
     ":app-features:shows-grid",
     ":app-features:settings",
     ":shared",

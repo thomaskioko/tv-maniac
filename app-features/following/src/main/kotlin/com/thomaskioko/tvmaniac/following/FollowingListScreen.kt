@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.watchlist
+package com.thomaskioko.tvmaniac.following
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -34,7 +34,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 @OptIn(InternalCoroutinesApi::class)
 @Composable
 fun WatchListScreen(
-    viewModel: WatchlistViewModel,
+    viewModel: FollowingViewModel,
     openShowDetails: (showId: Int) -> Unit,
 ) {
 

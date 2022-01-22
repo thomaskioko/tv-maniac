@@ -26,6 +26,6 @@ dependencies {
     implementation(project(":app-features:search"))
     implementation(project(":app-features:show-details"))
     implementation(project(":app-features:shows-grid"))
-    implementation(project(":app-features:watchlist"))
+    implementation(project(":app-features:following"))
     implementation(project(":app-features:settings"))
 }
