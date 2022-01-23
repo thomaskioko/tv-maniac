@@ -10,5 +10,5 @@ interface EpisodesCache {
 
     fun insert(list: List<EpisodeCache>)
 
-    fun observeEpisode(seasonId: Int): Flow<List<EpisodesBySeasonId>>
+    fun observeEpisode(seasonId: Long): Flow<List<EpisodesBySeasonId>>
 }

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.interactors
 
 import com.thomaskioko.tvmaniac.datasource.cache.Show
-import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
+import com.thomaskioko.tvmaniac.discover.api.model.TvShow
 import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import kotlinx.coroutines.flow.Flow
@@ -9,16 +9,16 @@ import kotlinx.coroutines.flow.map
 
 class ObserveFollowingInteractor constructor(
     private val repository: TvShowsRepository,
-) : FlowInteractor<Unit, List<ShowUiModel>>() {
+) : FlowInteractor<Unit, List<TvShow>>() {
 
-    override fun run(params: Unit): Flow<List<ShowUiModel>> = repository.observeFollowing()
+    override fun run(params: Unit): Flow<List<TvShow>> = repository.observeFollowing()
         .map { it.toTvShowList() }
 }
 
-fun List<Show>.toTvShowList(): List<ShowUiModel> {
+fun List<Show>.toTvShowList(): List<TvShow> {
     return map {
-        ShowUiModel(
-            id = it.id.toInt(),
+        TvShow(
+            id = it.id,
             title = it.title,
             overview = it.description,
             language = it.language,
@@ -33,4 +33,3 @@ fun List<Show>.toTvShowList(): List<ShowUiModel> {
         )
     }
 }
-

@@ -58,7 +58,7 @@ import com.thomaskioko.tvmaniac.discover.api.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowState
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
+import com.thomaskioko.tvmaniac.discover.api.model.TvShow
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -75,7 +75,7 @@ private const val MinContrastOfPrimaryVsSurface = 3f
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverViewModel,
-    openShowDetails: (showId: Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
     moreClicked: (showType: Int) -> Unit,
 ) {
 
@@ -105,7 +105,7 @@ fun DiscoverScreen(
 private fun DiscoverShows(
     scaffoldState: ScaffoldState,
     discoverViewState: DiscoverShowState,
-    openShowDetails: (showId: Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
     moreClicked: (showType: Int) -> Unit
 ) {
     Scaffold(
@@ -138,14 +138,15 @@ private fun DiscoverShows(
 
             item {
                 FeaturedItems(
-                    showData = discoverViewState.showData.featuredShows
-                ) { openShowDetails(it) }
+                    showData = discoverViewState.showData.featuredShows,
+                    onItemClicked = { openShowDetails(it) }
+                )
             }
 
             item {
                 DisplayShowData(
                     category = discoverViewState.showData.trendingShows.category,
-                    showUiModels = discoverViewState.showData.trendingShows.showUiModels,
+                    tvShows = discoverViewState.showData.trendingShows.tvShows,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -154,7 +155,7 @@ private fun DiscoverShows(
             item {
                 DisplayShowData(
                     category = discoverViewState.showData.popularShows.category,
-                    showUiModels = discoverViewState.showData.popularShows.showUiModels,
+                    tvShows = discoverViewState.showData.popularShows.tvShows,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -163,7 +164,7 @@ private fun DiscoverShows(
             item {
                 DisplayShowData(
                     category = discoverViewState.showData.topRatedShows.category,
-                    showUiModels = discoverViewState.showData.topRatedShows.showUiModels,
+                    tvShows = discoverViewState.showData.topRatedShows.tvShows,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -176,7 +177,7 @@ private fun DiscoverShows(
 @Composable
 fun FeaturedItems(
     showData: DiscoverShowResult.DiscoverShowsData,
-    onItemClicked: (Int) -> Unit,
+    onItemClicked: (Long) -> Unit,
 ) {
 
     val surfaceColor = grey900
@@ -201,7 +202,7 @@ fun FeaturedItems(
             ColumnSpacer(value = 24)
 
             FeaturedHorizontalPager(
-                list = showData.showUiModels,
+                list = showData.tvShows,
                 pagerState = pagerState,
                 dominantColorState = dominantColorState,
                 onClick = { onItemClicked(it) }
@@ -222,10 +223,10 @@ fun FeaturedItems(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun FeaturedHorizontalPager(
-    list: List<ShowUiModel>,
+    list: List<TvShow>,
     pagerState: PagerState,
     dominantColorState: DominantColorState,
-    onClick: (Int) -> Unit
+    onClick: (Long) -> Unit
 ) {
 
     val selectedImageUrl = list.getOrNull(pagerState.currentPage)
@@ -308,12 +309,12 @@ fun FeaturedHorizontalPager(
 @Composable
 private fun DisplayShowData(
     category: ShowCategory,
-    showUiModels: List<ShowUiModel>,
-    onItemClicked: (Int) -> Unit,
+    tvShows: List<TvShow>,
+    onItemClicked: (Long) -> Unit,
     moreClicked: (Int) -> Unit,
 ) {
 
-    AnimatedVisibility(visible = showUiModels.isNotEmpty()) {
+    AnimatedVisibility(visible = tvShows.isNotEmpty()) {
         Column {
             BoxTextItems(
                 title = category.title,
@@ -327,7 +328,7 @@ private fun DisplayShowData(
                 state = lazyListState,
                 flingBehavior = rememberSnapperFlingBehavior(lazyListState),
             ) {
-                itemsIndexed(showUiModels) { index, tvShow ->
+                itemsIndexed(tvShows) { index, tvShow ->
                     TvShowCard(
                         posterImageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,

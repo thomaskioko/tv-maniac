@@ -1,4 +1,4 @@
-package com.thomaskioko.showdetails
+package com.thomaskioko.tvmaniac.seasons
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
@@ -37,7 +37,7 @@ import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeUiModel
+import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeUiModel
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 
@@ -123,13 +123,13 @@ private fun ShowSeasonsTabs(
         backgroundColor = Color.Transparent,
         modifier = modifier
     ) {
-        seasonUiModelList.forEachIndexed { index, category ->
+        seasonUiModelList.forEachIndexed { index, episode ->
             Tab(
                 selected = index == selectedIndex,
-                onClick = { onSeasonSelected(category) }
+                onClick = { onSeasonSelected(episode) }
             ) {
                 ChoiceChipContent(
-                    text = category.name,
+                    text = episode.name,
                     selected = index == selectedIndex,
                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
                 )
@@ -243,8 +243,8 @@ fun EpisodesScreenPreview() {
         Surface {
             EpisodesScreen(
                 isLoading = false,
-                tvSeasonUiModels = detailUiState.tvSeasonUiModels,
-                episodeList = detailUiState.episodeList,
+                tvSeasonUiModels = seasons,
+                episodeList = episodes,
                 onSeasonSelected = {}
             )
         }

@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.map
 
 class ObserveSeasonsInteractor constructor(
     private val repository: SeasonsRepository,
-) : FlowInteractor<Int, List<SeasonUiModel>>() {
+) : FlowInteractor<Long, List<SeasonUiModel>>() {
 
-    override fun run(params: Int): Flow<List<SeasonUiModel>> =
+    override fun run(params: Long): Flow<List<SeasonUiModel>> =
         repository.observeShowSeasons(params)
             .map { it.data?.toSeasonsEntityList() ?: emptyList() }
             .distinctUntilChanged()
@@ -24,8 +24,8 @@ fun List<SelectSeasonsByShowId>.toSeasonsEntityList(): List<SeasonUiModel> {
 
 fun SelectSeasonsByShowId.toSeasonsEntity(): SeasonUiModel {
     return SeasonUiModel(
-        seasonId = id.toInt(),
-        tvShowId = tv_show_id.toInt(),
+        seasonId = id,
+        tvShowId = tv_show_id,
         name = name,
         overview = overview,
         seasonNumber = season_number.toInt(),

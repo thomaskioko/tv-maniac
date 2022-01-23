@@ -37,9 +37,9 @@ class TvShowCacheImpl(
         list.forEach { insert(it) }
     }
 
-    override fun observeTvShow(showId: Int): Flow<Show> {
+    override fun observeTvShow(showId: Long): Flow<Show> {
         return database.showQueries.selectByShowId(
-            id = showId.toLong()
+            id = showId
         )
             .asFlow()
             .mapToOne()
@@ -64,10 +64,10 @@ class TvShowCacheImpl(
             .mapToList()
     }
 
-    override fun updateFollowingShow(showId: Int, following: Boolean) {
+    override fun updateFollowingShow(showId: Long, following: Boolean) {
         database.showQueries.updateFollowinglist(
             following = following,
-            id = showId.toLong()
+            id = showId
         )
     }
 

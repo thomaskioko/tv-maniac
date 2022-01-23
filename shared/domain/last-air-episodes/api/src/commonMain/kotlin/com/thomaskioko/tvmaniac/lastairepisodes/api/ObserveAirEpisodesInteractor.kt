@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.map
 
 class ObserveAirEpisodesInteractor constructor(
     private val repository: LastAirEpisodeRepository,
-) : FlowInteractor<Int, List<LastAirEpisode>>() {
+) : FlowInteractor<Long, List<LastAirEpisode>>() {
 
-    override fun run(params: Int): Flow<List<LastAirEpisode>> =
+    override fun run(params: Long): Flow<List<LastAirEpisode>> =
         repository.observeAirEpisodes(params)
             .map { it.toLastAirEpisodeList() }
             .distinctUntilChanged()

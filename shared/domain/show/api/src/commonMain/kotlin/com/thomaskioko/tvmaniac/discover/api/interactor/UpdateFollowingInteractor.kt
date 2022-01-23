@@ -19,6 +19,6 @@ class UpdateFollowingInteractor constructor(
 }
 
 data class UpdateShowParams(
-    val showId: Int,
+    val showId: Long,
     val addToWatchList: Boolean
 )

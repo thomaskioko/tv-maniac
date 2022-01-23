@@ -1,15 +1,15 @@
 package com.thomaskioko.tvmaniac.discover.api.mapper
 
 import com.thomaskioko.tvmaniac.datasource.cache.Show
-import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
+import com.thomaskioko.tvmaniac.discover.api.model.TvShow
 
-fun List<Show>.toTvShowList(): List<ShowUiModel> {
+fun List<Show>.toTvShowList(): List<TvShow> {
     return map { it.toTvShow() }
 }
 
-fun Show.toTvShow(): ShowUiModel {
-    return ShowUiModel(
-        id = id.toInt(),
+fun Show.toTvShow(): TvShow {
+    return TvShow(
+        id = id,
         title = title,
         overview = description,
         language = language,

@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 interface EpisodeRepository {
 
     fun observeSeasonEpisodes(
-        tvShowId: Int,
-        seasonId: Int,
+        tvShowId: Long,
+        seasonId: Long,
         seasonNumber: Int
     ): Flow<Resource<List<EpisodesBySeasonId>>>
 }

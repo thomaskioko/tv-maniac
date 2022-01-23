@@ -13,7 +13,7 @@ class FollowingNavigationFactory @Inject constructor() : ComposeNavigationFactor
         builder.viewModelComposable<FollowingViewModel>(
             route = NavigationScreen.WatchlistNavScreen.route,
             content = {
-                WatchListScreen(
+                FollowingContent(
                     viewModel = this,
                     openShowDetails = { tvShowId ->
                         navController.navigate("${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId")

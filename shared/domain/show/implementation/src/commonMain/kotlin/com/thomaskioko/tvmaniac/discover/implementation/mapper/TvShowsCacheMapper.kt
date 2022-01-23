@@ -31,9 +31,9 @@ fun SelectShows.toShow(): Show {
     )
 }
 
-fun NextEpisodeToAir.toAirEp(tvShowId: Int) = Last_episode(
+fun NextEpisodeToAir.toAirEp(tvShowId: Long) = Last_episode(
     id = id!!.toLong(),
-    show_id = tvShowId.toLong(),
+    show_id = tvShowId,
     name = name,
     overview = if (!overview.isNullOrEmpty()) overview!! else "TBA",
     air_date = StringUtil.formatDate(airDate),
@@ -45,9 +45,9 @@ fun NextEpisodeToAir.toAirEp(tvShowId: Int) = Last_episode(
     title = "Upcoming"
 )
 
-fun LastEpisodeToAir.toAirEp(tvShowId: Int) = Last_episode(
+fun LastEpisodeToAir.toAirEp(tvShowId: Long) = Last_episode(
     id = id!!.toLong(),
-    show_id = tvShowId.toLong(),
+    show_id = tvShowId,
     name = name,
     overview = if (!overview.isNullOrEmpty()) overview!! else "TBA",
     air_date = StringUtil.formatDate(airDate),

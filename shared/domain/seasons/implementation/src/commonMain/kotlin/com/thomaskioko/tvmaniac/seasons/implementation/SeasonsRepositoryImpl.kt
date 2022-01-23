@@ -19,7 +19,7 @@ class SeasonsRepositoryImpl(
     private val dispatcher: CoroutineDispatcher,
 ) : SeasonsRepository {
 
-    override fun observeShowSeasons(tvShowId: Int): Flow<Resource<List<SelectSeasonsByShowId>>> =
+    override fun observeShowSeasons(tvShowId: Long): Flow<Resource<List<SelectSeasonsByShowId>>> =
         networkBoundResource(
             query = { seasonCache.observeSeasons(tvShowId) },
             shouldFetch = { it.isNullOrEmpty() },
