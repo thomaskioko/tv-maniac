@@ -33,9 +33,9 @@ import kotlinx.coroutines.InternalCoroutinesApi
 
 @OptIn(InternalCoroutinesApi::class)
 @Composable
-fun WatchListScreen(
+fun FollowingContent(
     viewModel: FollowingViewModel,
-    openShowDetails: (showId: Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
 ) {
 
     val watchlistViewState by rememberFlowWithLifecycle(viewModel.observeState())
@@ -85,7 +85,7 @@ fun WatchListScreen(
 @Composable
 private fun WatchlistContent(
     viewState: WatchlistState,
-    onItemClicked: (Int) -> Unit,
+    onItemClicked: (Long) -> Unit,
 ) {
     val listState = rememberLazyListState()
 

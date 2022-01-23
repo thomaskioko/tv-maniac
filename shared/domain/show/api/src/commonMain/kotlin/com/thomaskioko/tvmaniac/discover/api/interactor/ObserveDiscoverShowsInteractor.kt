@@ -29,7 +29,7 @@ class ObserveDiscoverShowsInteractor constructor(
 
         DiscoverShowResult(
             featuredShows = trending.copy(
-                showUiModels = trending.showUiModels
+                tvShows = trending.tvShows
                     .sortedBy { it.votes }
                     .take(FEATURED_LIST_SIZE)
             ),
@@ -43,7 +43,7 @@ class ObserveDiscoverShowsInteractor constructor(
         DiscoverShowResult.DiscoverShowsData(
             isLoading = it.status == Status.LOADING,
             category = category,
-            showUiModels = it.data?.toTvShowList() ?: emptyList(),
+            tvShows = it.data?.toTvShowList() ?: emptyList(),
             errorMessage = it.message
         )
     }

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.api
 
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
+import com.thomaskioko.tvmaniac.discover.api.model.TvShow
 import com.thomaskioko.tvmaniac.shared.core.store.Action
 import com.thomaskioko.tvmaniac.shared.core.store.Effect
 import com.thomaskioko.tvmaniac.shared.core.store.State
@@ -45,7 +45,7 @@ data class DiscoverShowResult(
     data class DiscoverShowsData(
         val isLoading: Boolean,
         val category: ShowCategory,
-        val showUiModels: List<ShowUiModel>,
+        val tvShows: List<TvShow>,
         val errorMessage: String? = null
     ) {
 
@@ -53,7 +53,7 @@ data class DiscoverShowResult(
             val EMPTY = DiscoverShowsData(
                 isLoading = true,
                 category = ShowCategory.TOP_RATED,
-                showUiModels = emptyList(),
+                tvShows = emptyList(),
                 errorMessage = null
             )
         }

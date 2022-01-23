@@ -47,7 +47,7 @@ class TvShowsRepositoryImpl(
     private val dispatcher: CoroutineDispatcher,
 ) : TvShowsRepository {
 
-    override fun observeShow(tvShowId: Int): Flow<Resource<Show>> = networkBoundResource(
+    override fun observeShow(tvShowId: Long): Flow<Resource<Show>> = networkBoundResource(
         query = { tvShowCache.observeTvShow(tvShowId) },
         shouldFetch = { it?.status.isNullOrBlank() },
         fetch = { apiService.getTvShowDetails(tvShowId) },
@@ -56,7 +56,7 @@ class TvShowsRepositoryImpl(
         coroutineDispatcher = dispatcher
     )
 
-    override suspend fun updateFollowing(showId: Int, addToWatchList: Boolean) {
+    override suspend fun updateFollowing(showId: Long, addToWatchList: Boolean) {
         tvShowCache.updateFollowingShow(showId, addToWatchList)
     }
 
@@ -150,7 +150,7 @@ class TvShowsRepositoryImpl(
         }
     }
 
-    private fun mapAndInsert(tvShowId: Int, response: ShowDetailResponse) {
+    private fun mapAndInsert(tvShowId: Long, response: ShowDetailResponse) {
         tvShowCache.insert(response.toShow())
 
         response.lastEpisodeToAir?.let {

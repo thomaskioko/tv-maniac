@@ -10,9 +10,9 @@ interface SeasonsCache {
 
     fun insert(entityList: List<Season>)
 
-    fun getSeasonBySeasonId(seasonId: Int): Season
+    fun getSeasonBySeasonId(seasonId: Long): Season
 
-    fun observeSeasons(tvShowId: Int): Flow<List<SelectSeasonsByShowId>>
+    fun observeSeasons(tvShowId: Long): Flow<List<SelectSeasonsByShowId>>
 
-    fun updateSeasonEpisodesIds(seasonId: Int, episodeIds: List<Int>)
+    fun updateSeasonEpisodesIds(seasonId: Long, episodeIds: List<Int>)
 }

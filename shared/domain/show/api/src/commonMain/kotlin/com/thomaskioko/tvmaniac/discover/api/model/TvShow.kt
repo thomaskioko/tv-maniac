@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.api.model
 
-data class ShowUiModel(
-    val id: Int = 0,
+data class TvShow(
+    val id: Long = 0,
     val title: String = "",
     val overview: String = "",
     val language: String = "",
@@ -17,6 +17,6 @@ data class ShowUiModel(
     val genreIds: List<Int> = listOf(),
 ) {
     companion object {
-        val EMPTY_SHOW = ShowUiModel()
+        val EMPTY_SHOW = TvShow()
     }
 }
