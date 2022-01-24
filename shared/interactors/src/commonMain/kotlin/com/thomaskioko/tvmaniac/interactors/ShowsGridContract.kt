@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.interactors
 
 import com.kuuurt.paging.multiplatform.PagingData
-import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
+import com.thomaskioko.tvmaniac.discover.api.model.TvShow
 import com.thomaskioko.tvmaniac.shared.core.store.Action
 import com.thomaskioko.tvmaniac.shared.core.store.Effect
 import com.thomaskioko.tvmaniac.shared.core.store.State
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flowOf
 data class ShowsGridState(
     val isLoading: Boolean,
     val title: String,
-    val list: Flow<PagingData<ShowUiModel>>
+    val list: Flow<PagingData<TvShow>>
 ) : State {
     companion object {
         val Empty: ShowsGridState = ShowsGridState(

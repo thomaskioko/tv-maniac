@@ -2,19 +2,15 @@ plugins {
     `kmm-domain-plugin`
 }
 
-kotlin {
+dependencies {
 
-    sourceSets {
-        sourceSets["commonMain"].dependencies {
-            implementation(libs.kotlin.coroutines.core)
-            implementation(libs.koin.core)
-            implementation(libs.ktor.core)
-            implementation(libs.kermit)
-        }
+    commonMainImplementation(libs.kotlin.coroutines.core)
+    commonMainImplementation(libs.koin.core)
+    commonMainImplementation(libs.ktor.core)
+    commonMainImplementation(libs.kermit)
+    commonMainImplementation(libs.kotlin.datetime)
 
-        sourceSets["iosMain"].dependencies {
-            implementation(libs.kotlin.coroutines.core)
-            implementation(libs.koin.core)
-        }
-    }
+    iosMainImplementation(libs.kotlin.coroutines.core)
+    iosMainImplementation(libs.koin.core)
+    iosMainImplementation(libs.kotlin.datetime)
 }

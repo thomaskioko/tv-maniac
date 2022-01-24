@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <plurals name="season_count">
-        <item quantity="one">%1$d Season</item>
-        <item quantity="other">%1$d  Seasons</item>
+        <item quantity="one">%d Season</item>
+        <item quantity="other">%d Seasons</item>
     </plurals>
 </resources>

@@ -40,6 +40,8 @@ internal object MockData {
         tagline = "It only gets stranger…",
         status = "Returning  Series",
         genres = getGenreResponse(),
+        lastEpisodeToAir = null,
+        nextEpisodeToAir = null
     )
 
     private fun getGenreResponse() = listOf(
@@ -116,11 +118,12 @@ internal object MockData {
                     id_ = null,
                     description = null,
                     year = null,
-                    season_ids = null,
                     episode_ids = null,
                     status = null,
                     popularity = null,
-                    is_watchlist = false
+                    following = false,
+                    number_of_seasons = 2,
+                    number_of_episodes = 21
                 ),
                 SelectSeasonsByShowId(
                     id = 77680,
@@ -137,14 +140,15 @@ internal object MockData {
                     id_ = null,
                     description = null,
                     year = null,
-                    season_ids = null,
                     episode_ids = null,
                     title = null,
                     poster_image_url = null,
                     backdrop_image_url = null,
                     status = null,
                     popularity = null,
-                    is_watchlist = false
+                    following = false,
+                    number_of_seasons = 2,
+                    number_of_episodes = 21
                 )
             )
         )
@@ -166,9 +170,10 @@ internal object MockData {
         vote_average = 8.1,
         genre_ids = listOf(18, 10765),
         year = "2019",
-        season_ids = null,
         status = "Ended",
         popularity = 24.4848,
-        is_watchlist = true
+        following = true,
+        number_of_seasons = 2,
+        number_of_episodes = 21
     )
 }

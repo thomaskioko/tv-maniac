@@ -29,21 +29,21 @@ class SeasonsCacheImpl(
         entityList.forEach { insert(it) }
     }
 
-    override fun getSeasonBySeasonId(seasonId: Int): Season {
+    override fun getSeasonBySeasonId(seasonId: Long): Season {
         return seasonQueries.selectBySeasonId(
-            id = seasonId.toLong(),
+            id = seasonId,
         ).executeAsOne()
     }
 
-    override fun observeSeasons(tvShowId: Int): Flow<List<SelectSeasonsByShowId>> {
-        return seasonQueries.selectSeasonsByShowId(tvShowId.toLong())
+    override fun observeSeasons(tvShowId: Long): Flow<List<SelectSeasonsByShowId>> {
+        return seasonQueries.selectSeasonsByShowId(tvShowId)
             .asFlow()
             .mapToList()
     }
 
-    override fun updateSeasonEpisodesIds(seasonId: Int, episodeIds: List<Int>) {
+    override fun updateSeasonEpisodesIds(seasonId: Long, episodeIds: List<Int>) {
         seasonQueries.updateEpisodes(
-            id = seasonId.toLong(),
+            id = seasonId,
             episode_ids = episodeIds
         )
     }

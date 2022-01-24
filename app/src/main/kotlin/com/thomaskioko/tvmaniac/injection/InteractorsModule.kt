@@ -2,15 +2,20 @@ package com.thomaskioko.tvmaniac.injection
 
 import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveDiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveShowInteractor
-import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateWatchlistInteractor
+import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateFollowingInteractor
 import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesInteractor
 import com.thomaskioko.tvmaniac.genre.api.GenreRepository
 import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
-import com.thomaskioko.tvmaniac.interactors.ObserveWatchListInteractor
+import com.thomaskioko.tvmaniac.interactors.ObserveFollowingInteractor
+import com.thomaskioko.tvmaniac.interactors.ObserveShowsByCategoryInteractor
+import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisodeRepository
+import com.thomaskioko.tvmaniac.lastairepisodes.api.ObserveAirEpisodesInteractor
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
-import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
+import com.thomaskioko.tvmaniac.seasons.api.interactor.ObserveSeasonsInteractor
+import com.thomaskioko.tvmaniac.similar.api.ObserveSimilarShowsInteractor
+import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,7 +30,7 @@ object InteractorsModule {
     @Provides
     fun provideTvShowSeasonsInteractor(
         repository: SeasonsRepository
-    ): SeasonsInteractor = SeasonsInteractor(repository)
+    ): ObserveSeasonsInteractor = ObserveSeasonsInteractor(repository)
 
     @Singleton
     @Provides
@@ -55,18 +60,29 @@ object InteractorsModule {
     @Provides
     fun provideObserveWatchListInteractor(
         repository: TvShowsRepository
-    ): ObserveWatchListInteractor = ObserveWatchListInteractor(repository)
+    ): ObserveFollowingInteractor = ObserveFollowingInteractor(repository)
 
     @Singleton
     @Provides
-    fun provideUpdateWatchlistInteractor(
+    fun provideUpdateFollowingInteractor(
         repository: TvShowsRepository
-    ): UpdateWatchlistInteractor = UpdateWatchlistInteractor(repository)
+    ): UpdateFollowingInteractor = UpdateFollowingInteractor(repository)
+
+    @Singleton
+    @Provides
+    fun provideObserveAirEpisodesInteractor(
+        repository: LastAirEpisodeRepository
+    ): ObserveAirEpisodesInteractor = ObserveAirEpisodesInteractor(repository)
 
     @Singleton
     @Provides
     fun provideGetShowsByTypeInteractor(
         repository: TvShowsRepository
-    ): com.thomaskioko.tvmaniac.interactors.GetShowsByCategoryInteractor =
-        com.thomaskioko.tvmaniac.interactors.GetShowsByCategoryInteractor(repository)
+    ): ObserveShowsByCategoryInteractor = ObserveShowsByCategoryInteractor(repository)
+
+    @Singleton
+    @Provides
+    fun provideObserveObserveSimilarShowsInteractor(
+        repository: SimilarShowsRepository
+    ): ObserveSimilarShowsInteractor = ObserveSimilarShowsInteractor(repository)
 }

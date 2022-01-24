@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.discover.implementation.cache
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.squareup.sqldelight.runtime.coroutines.mapToOne
+import com.thomaskioko.tvmaniac.datasource.cache.AirEpisodesByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
@@ -27,7 +28,7 @@ class TvShowCacheImpl(
                 year = show.year,
                 status = show.status,
                 popularity = show.popularity,
-                is_watchlist = show.is_watchlist
+                following = show.following
             )
         }
     }
@@ -36,38 +37,37 @@ class TvShowCacheImpl(
         list.forEach { insert(it) }
     }
 
-    override fun getTvShow(showId: Int): Flow<Show> {
+    override fun observeTvShow(showId: Long): Flow<Show> {
         return database.showQueries.selectByShowId(
-            id = showId.toLong()
+            id = showId
         )
             .asFlow()
             .mapToOne()
     }
 
-    override fun getTvShows(): Flow<List<Show>> {
+    override fun observeTvShows(): Flow<List<Show>> {
         return database.showQueries.selectAll()
             .asFlow()
             .mapToList()
     }
 
-    override fun getWatchlist(): Flow<List<Show>> {
-        return database.showQueries.selectWatchlist()
+    override fun observeFollowing(): Flow<List<Show>> {
+        return database.showQueries.selectFollowinglist()
             .asFlow()
             .mapToList()
     }
 
-    override fun updateShowDetails(showId: Int, showStatus: String, seasonIds: List<Int>) {
-        database.showQueries.updateTvShow(
-            id = showId.toLong(),
-            season_ids = seasonIds,
-            status = showStatus
-        )
+    override fun getShowAirEpisodes(showId: Long): Flow<List<AirEpisodesByShowId>> {
+        return database.lastAirEpisodeQueries.airEpisodesByShowId(
+            show_id = showId
+        ).asFlow()
+            .mapToList()
     }
 
-    override fun updateWatchlist(showId: Int, isInWatchlist: Boolean) {
-        database.showQueries.updateWatchlist(
-            is_watchlist = isInWatchlist,
-            id = showId.toLong()
+    override fun updateFollowingShow(showId: Long, following: Boolean) {
+        database.showQueries.updateFollowinglist(
+            following = following,
+            id = showId
         )
     }
 

@@ -39,13 +39,14 @@ import com.thomaskioko.tvmaniac.resources.R
 fun TvManiacTopBar(
     title: @Composable RowScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
-    navigationIcon: @Composable (() -> Unit) = { }
+    navigationIcon: @Composable (() -> Unit) = { },
+    backgroundColor: Color = MaterialTheme.colors.primary
 ) {
     TopAppBar(
         title = { Row { title() } },
         navigationIcon = navigationIcon,
         actions = actions,
-        backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.95f)
+        backgroundColor = backgroundColor
     )
 }
 
@@ -54,10 +55,9 @@ fun AppBarScaffold(
     title: @Composable RowScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
     navigationIcon: @Composable (() -> Unit) = { AppBarHomeIcon() },
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
+    backgroundColor: Color = MaterialTheme.colors.elevatedSurface(3.dp)
 ) {
-
-    val backgroundColor = MaterialTheme.colors.elevatedSurface(3.dp)
 
     Column(
         Modifier.background(backgroundColor.copy(alpha = 0.95f))

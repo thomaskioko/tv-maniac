@@ -17,5 +17,7 @@ data class ShowResponse(
     @SerialName("popularity") val popularity: Double,
     @SerialName("poster_path") val posterPath: String?,
     @SerialName("vote_average") val voteAverage: Double,
-    @SerialName("vote_count") val voteCount: Int
+    @SerialName("vote_count") val voteCount: Int,
+    @SerialName("number_of_episodes") var numberOfEpisodes: Int? = null,
+    @SerialName("number_of_seasons") var numberOfSeasons: Int? = null,
 )

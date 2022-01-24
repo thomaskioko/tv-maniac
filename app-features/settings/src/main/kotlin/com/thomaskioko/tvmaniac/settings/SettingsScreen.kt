@@ -114,7 +114,7 @@ private fun ThemeSettingsItem(
     val themeTitle = when (settingsState.theme) {
         Theme.LIGHT -> stringResource(R.string.settings_title_theme_dark)
         Theme.DARK -> stringResource(R.string.settings_title_theme_light)
-        Theme.SYSTEM -> stringResource(R.string.settings_title_theme_light)
+        Theme.SYSTEM -> stringResource(R.string.settings_title_theme_system)
     }
 
     SettingHeaderTitle(

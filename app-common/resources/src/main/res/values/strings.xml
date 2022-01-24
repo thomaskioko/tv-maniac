@@ -3,7 +3,7 @@
 
     <string name="menu_item_discover">Discover</string>
     <string name="menu_item_search">Search</string>
-    <string name="menu_item_watchlist">Watchlist</string>
+    <string name="menu_item_follow">Following</string>
     <string name="menu_item_more">More</string>
 
     <string name="cd_show_poster">Poster image</string>
@@ -14,15 +14,17 @@
     <string name="details_episodes">Episodes</string>
     <string name="details_cast">Casts</string>
 
-    <string name="btn_add_watchlist">Add to Watchlist</string>
-    <string name="btn_remove_watchlist">Remove Show</string>
+    <string name="following">Follow show</string>
+    <string name="unfollow">Unfollow Show</string>
     <string name="btn_trailer">Watch Trailer</string>
+    <string name="title_similar">More like this</string>
+    <string name="title_seasons">Browse Seasons</string>
 
     <string name="tab_episodes">Episodes</string>
     <string name="tab_trailer">Trailers</string>
     <string name="tab_casts">Casts</string>
 
-    <string name="msg_empty_watchlist">You haven\'t added any shows to your watchlist.</string>
+    <string name="msg_empty_favorites">You haven\'t added any favorites.</string>
     <string name="msg_empty_category">Could not load show category data!</string>
     <string name="msg_search_show_hint">Search TV Shows</string>
 

@@ -43,13 +43,14 @@ import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
-import com.thomaskioko.tvmaniac.compose.components.LoadingView
+import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
 import com.thomaskioko.tvmaniac.compose.theme.grey900
+import com.thomaskioko.tvmaniac.compose.util.DominantColorState
 import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
@@ -57,7 +58,7 @@ import com.thomaskioko.tvmaniac.discover.api.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowState
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
+import com.thomaskioko.tvmaniac.discover.api.model.TvShow
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -74,7 +75,7 @@ private const val MinContrastOfPrimaryVsSurface = 3f
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverViewModel,
-    openShowDetails: (showId: Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
     moreClicked: (showType: Int) -> Unit,
 ) {
 
@@ -104,7 +105,7 @@ fun DiscoverScreen(
 private fun DiscoverShows(
     scaffoldState: ScaffoldState,
     discoverViewState: DiscoverShowState,
-    openShowDetails: (showId: Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
     moreClicked: (showType: Int) -> Unit
 ) {
     Scaffold(
@@ -127,7 +128,7 @@ private fun DiscoverShows(
             )
         },
     ) {
-        if (discoverViewState.isLoading) LoadingView()
+        if (discoverViewState.isLoading) FullScreenLoading()
 
         LazyColumn(
             modifier = Modifier
@@ -137,14 +138,15 @@ private fun DiscoverShows(
 
             item {
                 FeaturedItems(
-                    showData = discoverViewState.showData.featuredShows
-                ) { openShowDetails(it) }
+                    showData = discoverViewState.showData.featuredShows,
+                    onItemClicked = { openShowDetails(it) }
+                )
             }
 
             item {
                 DisplayShowData(
                     category = discoverViewState.showData.trendingShows.category,
-                    showUiModels = discoverViewState.showData.trendingShows.showUiModels,
+                    tvShows = discoverViewState.showData.trendingShows.tvShows,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -153,7 +155,7 @@ private fun DiscoverShows(
             item {
                 DisplayShowData(
                     category = discoverViewState.showData.popularShows.category,
-                    showUiModels = discoverViewState.showData.popularShows.showUiModels,
+                    tvShows = discoverViewState.showData.popularShows.tvShows,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -162,7 +164,7 @@ private fun DiscoverShows(
             item {
                 DisplayShowData(
                     category = discoverViewState.showData.topRatedShows.category,
-                    showUiModels = discoverViewState.showData.topRatedShows.showUiModels,
+                    tvShows = discoverViewState.showData.topRatedShows.tvShows,
                     onItemClicked = { openShowDetails(it) },
                     moreClicked = { moreClicked(it) }
                 )
@@ -175,7 +177,7 @@ private fun DiscoverShows(
 @Composable
 fun FeaturedItems(
     showData: DiscoverShowResult.DiscoverShowsData,
-    onItemClicked: (Int) -> Unit,
+    onItemClicked: (Long) -> Unit,
 ) {
 
     val surfaceColor = grey900
@@ -183,27 +185,9 @@ fun FeaturedItems(
         // We want a color which has sufficient contrast against the surface color
         color.contrastAgainst(surfaceColor) >= MinContrastOfPrimaryVsSurface
     }
+    val pagerState = rememberPagerState()
 
     DynamicThemePrimaryColorsFromImage(dominantColorState) {
-
-        val pagerState = rememberPagerState()
-
-        val selectedImageUrl = showData.showUiModels.getOrNull(pagerState.currentPage)
-            ?.posterImageUrl
-
-        LaunchedEffect(selectedImageUrl) {
-            if (selectedImageUrl != null) {
-                dominantColorState.updateColorsFromImageUrl(selectedImageUrl)
-            } else {
-                dominantColorState.reset()
-            }
-        }
-
-        LaunchedEffect(showData.showUiModels) {
-            if (showData.showUiModels.size >= 4) {
-                pagerState.scrollToPage(2)
-            }
-        }
 
         Column(
             modifier = Modifier
@@ -218,8 +202,9 @@ fun FeaturedItems(
             ColumnSpacer(value = 24)
 
             FeaturedHorizontalPager(
-                list = showData.showUiModels,
+                list = showData.tvShows,
                 pagerState = pagerState,
+                dominantColorState = dominantColorState,
                 onClick = { onItemClicked(it) }
             )
 
@@ -238,10 +223,28 @@ fun FeaturedItems(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun FeaturedHorizontalPager(
-    list: List<ShowUiModel>,
+    list: List<TvShow>,
     pagerState: PagerState,
-    onClick: (Int) -> Unit
+    dominantColorState: DominantColorState,
+    onClick: (Long) -> Unit
 ) {
+
+    val selectedImageUrl = list.getOrNull(pagerState.currentPage)
+        ?.posterImageUrl
+
+    LaunchedEffect(selectedImageUrl) {
+        if (selectedImageUrl != null) {
+            dominantColorState.updateColorsFromImageUrl(selectedImageUrl)
+        } else {
+            dominantColorState.reset()
+        }
+    }
+
+    LaunchedEffect(list) {
+        if (list.size >= 4) {
+            pagerState.scrollToPage(2)
+        }
+    }
 
     HorizontalPager(
         count = list.size,
@@ -306,12 +309,12 @@ fun FeaturedHorizontalPager(
 @Composable
 private fun DisplayShowData(
     category: ShowCategory,
-    showUiModels: List<ShowUiModel>,
-    onItemClicked: (Int) -> Unit,
+    tvShows: List<TvShow>,
+    onItemClicked: (Long) -> Unit,
     moreClicked: (Int) -> Unit,
 ) {
 
-    AnimatedVisibility(visible = showUiModels.isNotEmpty()) {
+    AnimatedVisibility(visible = tvShows.isNotEmpty()) {
         Column {
             BoxTextItems(
                 title = category.title,
@@ -324,8 +327,9 @@ private fun DisplayShowData(
             LazyRow(
                 state = lazyListState,
                 flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+                modifier = Modifier.padding(horizontal = 16.dp)
             ) {
-                itemsIndexed(showUiModels) { index, tvShow ->
+                itemsIndexed(tvShows) { index, tvShow ->
                     TvShowCard(
                         posterImageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,

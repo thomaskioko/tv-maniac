@@ -1,9 +1,9 @@
 package com.thomaskioko.showdetails
 
 import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateShowParams
-import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeUiModel
+import com.thomaskioko.tvmaniac.discover.api.model.TvShow
+import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
+import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 import com.thomaskioko.tvmaniac.shared.core.store.Action
 import com.thomaskioko.tvmaniac.shared.core.store.Effect
@@ -13,17 +13,15 @@ sealed class ShowDetailAction : Action {
     object LoadShowDetails : ShowDetailAction()
     object LoadSeasons : ShowDetailAction()
     object LoadGenres : ShowDetailAction()
+    object LoadEpisodes : ShowDetailAction()
+    object LoadSimilarShows : ShowDetailAction()
 
-    data class SeasonSelected(
-        val query: EpisodeQuery
-    ) : ShowDetailAction()
-
-    data class LoadEpisodes(
-        val query: EpisodeQuery
-    ) : ShowDetailAction()
-
-    data class UpdateWatchlist(
+    data class UpdateFavorite(
         val params: UpdateShowParams
+    ) : ShowDetailAction()
+
+    data class BookmarkEpisode(
+        val episodeNumber: Long
     ) : ShowDetailAction()
 
     data class Error(val message: String = "") : ShowDetailAction()
@@ -40,10 +38,11 @@ sealed class ShowDetailEffect : Effect {
 data class ShowDetailViewState(
     val isLoading: Boolean = false,
     val errorMessage: String = "",
-    val showUiModel: ShowUiModel = ShowUiModel.EMPTY_SHOW,
+    val tvShow: TvShow = TvShow.EMPTY_SHOW,
+    val similarShowList: List<TvShow> = emptyList(),
     val tvSeasonUiModels: List<SeasonUiModel> = emptyList(),
-    val genreUIList: List<com.thomaskioko.tvmaniac.genre.api.GenreUIModel> = emptyList(),
-    val episodeList: List<EpisodeUiModel> = emptyList(),
+    val genreUIList: List<GenreUIModel> = emptyList(),
+    val lastAirEpList: List<LastAirEpisode> = emptyList(),
 ) : State {
     companion object {
         val Empty = ShowDetailViewState()

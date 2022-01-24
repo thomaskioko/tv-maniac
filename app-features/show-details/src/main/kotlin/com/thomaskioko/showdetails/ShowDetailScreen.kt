@@ -1,6 +1,7 @@
 package com.thomaskioko.showdetails
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,7 +28,9 @@ import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.FloatingActionButtonDefaults
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Surface
+import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.rememberScaffoldState
@@ -59,27 +62,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.ui.Scaffold
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
-import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
+import com.thomaskioko.showdetails.ShowDetailAction.UpdateFavorite
+import com.thomaskioko.tvmaniac.compose.components.ChoiceChipContent
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
-import com.thomaskioko.tvmaniac.compose.components.TabItem.Casts
-import com.thomaskioko.tvmaniac.compose.components.TabItem.Episodes
-import com.thomaskioko.tvmaniac.compose.components.TabItem.Similar
-import com.thomaskioko.tvmaniac.compose.components.Tabs
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateShowParams
-import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeUiModel
+import com.thomaskioko.tvmaniac.discover.api.model.TvShow
 import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
@@ -91,7 +86,10 @@ private val HeaderHeight = 550.dp
 @Composable
 fun ShowDetailScreen(
     viewModel: ShowDetailsViewModel,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    onShowClicked: (Long) -> Unit,
+    onSeasonClicked: (Long, Int) -> Unit = { _, _ -> },
+    onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> }
 ) {
 
     val viewState by rememberFlowWithLifecycle(viewModel.observeState())
@@ -119,7 +117,7 @@ fun ShowDetailScreen(
         topBar = {
             ShowTopBar(
                 listState = listState,
-                title = viewState.showUiModel.title,
+                title = viewState.tvShow.title,
                 onNavUpClick = navigateUp
             )
         },
@@ -130,9 +128,11 @@ fun ShowDetailScreen(
                     detailUiState = viewState,
                     listState = listState,
                     contentPadding = contentPadding,
-                    modifier = Modifier.fillMaxSize(),
-                    onWatchlistClick = { viewModel.dispatch(UpdateWatchlist(it)) },
-                    onSeasonSelected = { viewModel.dispatch(ShowDetailAction.SeasonSelected(it)) }
+                    onSeasonClicked = onSeasonClicked,
+                    onEpisodeClicked = onEpisodeClicked,
+                    onShowClicked = onShowClicked,
+                    onUpdateFavoriteClicked = { viewModel.dispatch(UpdateFavorite(it)) },
+                    onBookmarkEpClicked = { viewModel.dispatch(ShowDetailAction.BookmarkEpisode(it)) }
                 )
             }
         }
@@ -183,31 +183,42 @@ private fun TvShowDetailsScrollingContent(
     detailUiState: ShowDetailViewState,
     listState: LazyListState,
     contentPadding: PaddingValues,
-    modifier: Modifier = Modifier,
-    onSeasonSelected: (EpisodeQuery) -> Unit = {},
-    onWatchlistClick: (UpdateShowParams) -> Unit = {},
+    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit = {},
+    onSeasonClicked: (Long, Int) -> Unit = { _, _ -> },
+    onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> },
+    onBookmarkEpClicked: (Long) -> Unit = { },
+    onShowClicked: (Long) -> Unit = {}
 ) {
 
     LazyColumn(
         state = listState,
         contentPadding = contentPadding.copy(copyTop = false),
-        modifier = modifier
     ) {
 
         item {
             HeaderViewContent(
                 detailUiState = detailUiState,
                 listState = listState,
-                onWatchlistClick = onWatchlistClick
+                onUpdateFavoriteClicked = onUpdateFavoriteClicked
             )
         }
 
         item {
-            SeasonTabs(
-                isLoading = detailUiState.isLoading,
-                tvSeasonUiModels = detailUiState.tvSeasonUiModels,
-                episodeList = detailUiState.episodeList,
-                onSeasonSelected = onSeasonSelected
+            SeasonsContent(detailUiState, onSeasonClicked)
+        }
+
+        item {
+            EpisodesReleaseContent(
+                episodeList = detailUiState.lastAirEpList,
+                onEpisodeClicked = onEpisodeClicked,
+                onBookmarkEpClicked = onBookmarkEpClicked
+            )
+        }
+
+        item {
+            SimilarShowsShowsContent(
+                similarShows = detailUiState.similarShowList,
+                onShowClicked = onShowClicked
             )
         }
     }
@@ -217,7 +228,7 @@ private fun TvShowDetailsScrollingContent(
 private fun HeaderViewContent(
     detailUiState: ShowDetailViewState,
     listState: LazyListState,
-    onWatchlistClick: (UpdateShowParams) -> Unit
+    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -234,14 +245,13 @@ private fun HeaderViewContent(
             }
     ) {
         HeaderImage(
-            backdropImageUrl = detailUiState.showUiModel.backdropImageUrl
+            backdropImageUrl = detailUiState.tvShow.backdropImageUrl
         )
 
         Body(
-            showUiModel = detailUiState.showUiModel,
-            seasonUiModels = detailUiState.tvSeasonUiModels,
+            tvShow = detailUiState.tvShow,
             genreUIS = detailUiState.genreUIList,
-            onWatchlistClick
+            onUpdateFavoriteClicked = onUpdateFavoriteClicked
         )
     }
 }
@@ -259,10 +269,9 @@ private fun HeaderImage(backdropImageUrl: String) {
 
 @Composable
 private fun Body(
-    showUiModel: ShowUiModel,
-    seasonUiModels: List<SeasonUiModel>,
+    tvShow: TvShow,
     genreUIS: List<GenreUIModel>,
-    onWatchlistClick: (UpdateShowParams) -> Unit
+    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit
 ) {
     val surfaceGradient = backgroundGradient().reversed()
 
@@ -272,19 +281,19 @@ private fun Body(
             .height(HeaderHeight)
             .clipToBounds()
             .background(Brush.verticalGradient(surfaceGradient))
+            .padding(horizontal = 16.dp)
     ) {
         ColumnSpacer(16)
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             Text(
-                text = showUiModel.title,
+                text = tvShow.title,
                 style = MaterialTheme.typography.h4,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
@@ -294,17 +303,16 @@ private fun Body(
 
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 ExpandingText(
-                    text = showUiModel.overview,
+                    text = tvShow.overview,
                 )
             }
 
             ColumnSpacer(8)
 
             TvShowMetadata(
-                showUiModel = showUiModel,
-                seasonUiModels = seasonUiModels,
+                tvShow = tvShow,
                 genreUIList = genreUIS,
-                onWatchlistClick = onWatchlistClick,
+                onWatchlistClick = onUpdateFavoriteClicked,
             )
         }
 
@@ -314,8 +322,7 @@ private fun Body(
 
 @Composable
 fun TvShowMetadata(
-    showUiModel: ShowUiModel,
-    seasonUiModels: List<SeasonUiModel>,
+    tvShow: TvShow,
     genreUIList: List<GenreUIModel>,
     onWatchlistClick: (UpdateShowParams) -> Unit,
 ) {
@@ -335,27 +342,29 @@ fun TvShowMetadata(
             background = MaterialTheme.colors.secondary.copy(alpha = 0.08f)
         )
 
-        if (showUiModel.status.isNotBlank()) {
-            withStyle(tagStyle) {
-                append(" ")
-                append(showUiModel.status)
-                append(" ")
+        AnimatedVisibility(visible = !tvShow.status.isNullOrBlank()) {
+            tvShow.status?.let {
+                withStyle(tagStyle) {
+                    append(" ")
+                    append(it)
+                    append(" ")
+                }
+                append(divider)
             }
-            append(divider)
         }
-        append(showUiModel.year)
+        append(tvShow.year)
+
+        AnimatedVisibility(visible = tvShow.numberOfSeasons != null) {
+            tvShow.numberOfSeasons?.let {
+                append(divider)
+                append(resources.getQuantityString(R.plurals.season_count, it, it))
+            }
+        }
+
         append(divider)
-        append(
-            resources.getQuantityString(
-                R.plurals.season_count,
-                seasonUiModels.size,
-                seasonUiModels.size
-            )
-        )
+        append(tvShow.language.uppercase())
         append(divider)
-        append(showUiModel.language.uppercase())
-        append(divider)
-        append("${showUiModel.averageVotes}")
+        append("${tvShow.averageVotes}")
         append(divider)
     }
 
@@ -369,12 +378,12 @@ fun TvShowMetadata(
 
     ColumnSpacer(8)
 
-    GenreText(genreUIList, showUiModel.genreIds)
+    GenreText(genreUIList, tvShow.genreIds)
 
     ColumnSpacer(8)
 
     ShowDetailButtons(
-        showUiModel = showUiModel,
+        tvShow = tvShow,
         onWatchlistClick = onWatchlistClick
     )
 }
@@ -415,7 +424,7 @@ private fun GenreText(
 
 @Composable
 fun ShowDetailButtons(
-    showUiModel: ShowUiModel,
+    tvShow: TvShow,
     onWatchlistClick: (UpdateShowParams) -> Unit,
 ) {
 
@@ -450,11 +459,11 @@ fun ShowDetailButtons(
 
         RowSpacer(value = 8)
 
-        val message = if (showUiModel.isInWatchlist)
-            stringResource(id = R.string.btn_remove_watchlist)
-        else stringResource(id = R.string.btn_add_watchlist)
+        val message = if (tvShow.following)
+            stringResource(id = R.string.unfollow)
+        else stringResource(id = R.string.following)
 
-        val imageVector = if (showUiModel.isInWatchlist)
+        val imageVector = if (tvShow.following)
             painterResource(id = R.drawable.ic_baseline_check_box_24)
         else painterResource(id = R.drawable.ic_baseline_add_box_24)
 
@@ -481,7 +490,7 @@ fun ShowDetailButtons(
             backgroundColor = Color.Transparent,
             elevation = FloatingActionButtonDefaults.elevation(0.dp),
             onClick = {
-                onWatchlistClick(UpdateShowParams(showUiModel.id, !showUiModel.isInWatchlist))
+                onWatchlistClick(UpdateShowParams(tvShow.id, !tvShow.following))
             },
             modifier = Modifier
                 .padding(2.dp)
@@ -490,35 +499,61 @@ fun ShowDetailButtons(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun SeasonTabs(
-    isLoading: Boolean,
-    tvSeasonUiModels: List<SeasonUiModel>,
-    episodeList: List<EpisodeUiModel>,
-    onSeasonSelected: (EpisodeQuery) -> Unit = {}
+private fun SeasonsContent(
+    detailUiState: ShowDetailViewState,
+    onSeasonClicked: (Long, Int) -> Unit
 ) {
 
-    Column {
-        val tabs = listOf(Episodes, Casts, Similar)
+    ColumnSpacer(16)
 
-        val pagerState = rememberPagerState()
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = stringResource(id = R.string.title_seasons),
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
 
-        Tabs(tabs = tabs, pagerState = pagerState)
+        ShowSeasonsTabs(
+            seasonUiModelList = detailUiState.tvSeasonUiModels,
+            onSeasonClicked = onSeasonClicked,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
 
-        HorizontalPager(
-            count = tabs.size,
-            state = pagerState
-        ) { page ->
-            when (tabs[page]) {
-                Casts -> SeasonCastScreen()
-                Episodes -> EpisodesScreen(
-                    isLoading,
-                    tvSeasonUiModels,
-                    episodeList,
-                    onSeasonSelected
+@Composable
+private fun ShowSeasonsTabs(
+    seasonUiModelList: List<SeasonUiModel>,
+    modifier: Modifier,
+    onSeasonClicked: (Long, Int) -> Unit = { _, _ -> }
+) {
+    val selectedIndex by remember { mutableStateOf(0) }
+
+    ScrollableTabRow(
+        selectedTabIndex = selectedIndex,
+        divider = {}, /* Disable the built-in divider */
+        indicator = {},
+        edgePadding = 0.dp,
+        backgroundColor = Color.Transparent,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        seasonUiModelList.forEach { season ->
+            Tab(
+                selected = true,
+                onClick = { onSeasonClicked(season.tvShowId, season.seasonNumber) }
+            ) {
+                ChoiceChipContent(
+                    text = season.name,
+                    selected = true,
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp, vertical = 8.dp)
                 )
-                Similar -> SimilarShowsScreen()
             }
         }
     }

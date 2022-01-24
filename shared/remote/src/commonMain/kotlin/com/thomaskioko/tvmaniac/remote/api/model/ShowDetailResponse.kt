@@ -27,5 +27,7 @@ data class ShowDetailResponse(
     @SerialName("status") val status: String,
     @SerialName("tagline") val tagline: String,
     @SerialName("vote_average") val voteAverage: Double,
-    @SerialName("vote_count") val voteCount: Int
+    @SerialName("vote_count") val voteCount: Int,
+    @SerialName("last_episode_to_air") var lastEpisodeToAir: LastEpisodeToAir?,
+    @SerialName("next_episode_to_air") var nextEpisodeToAir: NextEpisodeToAir?,
 )

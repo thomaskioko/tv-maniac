@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.core.db
 
-import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.core.db.MockData.getShow
 import com.thomaskioko.tvmaniac.core.db.MockData.makeShowList
+import com.thomaskioko.tvmaniac.datasource.cache.Show
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.test.Test
@@ -44,45 +44,24 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         makeShowList().insertTvShowsEntityList()
 
-        val seasons = tvShowQueries.selectByShowId(84958)
-            .executeAsOne().season_ids
+        val status = tvShowQueries.selectByShowId(84958)
+            .executeAsOne().status
 
         // Verify that the first time the list is empty
-        seasons shouldBe null
+        status shouldBe null
 
         tvShowQueries.updateTvShow(
             id = 84958,
-            season_ids = listOf(114355, 77680),
-            status = "Returning  Series"
+            status = "Returning  Series",
+            number_of_episodes = 12,
+            number_of_seasons = 2
         )
 
-        val seasonIds = tvShowQueries.selectByShowId(getShow().id)
-            .executeAsOne().season_ids
+        val updatedStatus = tvShowQueries.selectByShowId(84958)
+            .executeAsOne().status
 
         // Verify that the list has been updated and exists
-        seasonIds shouldBe listOf(114355, 77680)
-    }
-
-    @Test
-    fun givenTvShowIsUpdated_verifyDataIs_InsertedCorrectly() {
-
-        makeShowList().insertTvShowsEntityList()
-
-        val entity = tvShowQueries.selectByShowId(getShow().id)
-            .executeAsOne()
-
-        entity.season_ids shouldBe null
-
-        tvShowQueries.updateTvShow(
-            id = getShow().id,
-            season_ids = listOf(2534997, 2927202),
-            status = "Returning  Series"
-        )
-
-        val seasonsIds = tvShowQueries.selectByShowId(getShow().id)
-            .executeAsOne().season_ids
-
-        seasonsIds shouldBe listOf(2534997, 2927202)
+        updatedStatus shouldBe "Returning  Series"
     }
 
     @Test
@@ -90,12 +69,12 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         makeShowList().insertTvShowsEntityList()
 
-        tvShowQueries.updateWatchlist(
+        tvShowQueries.updateFollowinglist(
             id = 84958.toLong(),
-            is_watchlist = true
+            following = true
         )
 
-        val watchlist = tvShowQueries.selectWatchlist().executeAsList()
+        val watchlist = tvShowQueries.selectFollowinglist().executeAsList()
 
         watchlist.size shouldBe 1
     }
@@ -131,7 +110,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             year = year,
             status = status,
             popularity = 0.0,
-            is_watchlist = false
+            following = false
         )
     }
 }
