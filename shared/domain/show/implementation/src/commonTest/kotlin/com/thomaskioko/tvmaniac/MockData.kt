@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
+import com.thomaskioko.tvmaniac.discover.api.model.TvShow
 import com.thomaskioko.tvmaniac.remote.api.model.EpisodesResponse
 import com.thomaskioko.tvmaniac.remote.api.model.GenreResponse
 import com.thomaskioko.tvmaniac.remote.api.model.SeasonResponse
@@ -131,8 +131,8 @@ object MockData {
 
     private fun getDiscoverShowsData(category: ShowCategory) = DiscoverShowResult.DiscoverShowsData(
         category = category,
-        showUiModels = listOf(
-            ShowUiModel(
+        tvShows = listOf(
+            TvShow(
                 id = 84958,
                 title = "Loki",
                 overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
