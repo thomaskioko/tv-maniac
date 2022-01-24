@@ -35,6 +35,7 @@ kotlin {
             export(project(":shared:domain:episodes:api"))
             export(project(":shared:domain:genre:api"))
             export(project(":shared:domain:last-air-episodes:api"))
+            export(project(":shared:domain:similar:api"))
 
             transitiveExport = true
         }
@@ -50,12 +51,14 @@ dependencies {
     commonMainApi(project(":shared:domain:episodes:api"))
     commonMainApi(project(":shared:domain:genre:api"))
     commonMainApi(project(":shared:domain:last-air-episodes:api"))
+    commonMainApi(project(":shared:domain:similar:api"))
 
     commonMainImplementation(project(":shared:domain:episodes:implementation"))
     commonMainImplementation(project(":shared:domain:show:implementation"))
     commonMainImplementation(project(":shared:domain:seasons:implementation"))
     commonMainImplementation(project(":shared:domain:genre:implementation"))
     commonMainImplementation(project(":shared:domain:last-air-episodes:implementation"))
+    commonMainImplementation(project(":shared:domain:similar:implementation"))
 
     commonMainImplementation(libs.koin.core)
     commonMainImplementation(libs.kotlin.coroutines.core)
