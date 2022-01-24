@@ -50,7 +50,8 @@ fun HomeScreen(
             val currentSelectedItem by navController.currentScreenAsState()
             when {
                 !route.contains(NavigationScreen.ShowDetailsNavScreen.route) &&
-                    !route.contains(NavigationScreen.ShowGridNavScreen.route)
+                    !route.contains(NavigationScreen.ShowGridNavScreen.route) &&
+                    !route.contains(NavigationScreen.SeasonsNavScreen.route)
                 -> {
                     TvManiacBottomNavigation(
                         onNavigationSelected = { selected ->
