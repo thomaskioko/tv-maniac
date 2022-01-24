@@ -27,11 +27,19 @@ class TvShowsServiceImpl(
         }
     }
 
-    override suspend fun getTvShowDetails(showId: Int): ShowDetailResponse {
+    override suspend fun getSimilarShows(showId: Long): TvShowsResponse {
+        return httpClient.get("3/tv/$showId/recommendations")
+    }
+
+    override suspend fun getRecommendations(showId: Long): TvShowsResponse {
+        return httpClient.get("3/tv/$showId/recommendations")
+    }
+
+    override suspend fun getTvShowDetails(showId: Long): ShowDetailResponse {
         return httpClient.get("3/tv/$showId")
     }
 
-    override suspend fun getSeasonDetails(tvShowId: Int, seasonNumber: Int): SeasonResponse {
+    override suspend fun getSeasonDetails(tvShowId: Long, seasonNumber: Int): SeasonResponse {
         return httpClient.get("3/tv/$tvShowId/season/$seasonNumber")
     }
 
