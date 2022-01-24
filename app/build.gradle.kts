@@ -16,6 +16,8 @@ dependencies {
     implementation(project(":shared:domain:genre:implementation"))
     implementation(project(":shared:domain:last-air-episodes:api"))
     implementation(project(":shared:domain:last-air-episodes:implementation"))
+    implementation(project(":shared:domain:similar:api"))
+    implementation(project(":shared:domain:similar:implementation"))
     implementation(project(":shared:interactors"))
     implementation(project(":app-common:annotations"))
     implementation(project(":app-common:compose"))
@@ -28,4 +30,5 @@ dependencies {
     implementation(project(":app-features:shows-grid"))
     implementation(project(":app-features:following"))
     implementation(project(":app-features:settings"))
+    implementation(project(":app-features:seasons"))
 }
