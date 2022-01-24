@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.DiscoverNavigationFactory
 import com.thomaskioko.tvmaniac.following.FollowingNavigationFactory
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.search.SearchNavigationFactory
+import com.thomaskioko.tvmaniac.seasons.SeasonsNavigationFactory
 import com.thomaskioko.tvmaniac.settings.SettingsNavigationFactory
 import com.thomaskioko.tvmaniac.show_grid.ShowsGridNavigationFactory
 import dagger.Binds
@@ -47,4 +48,9 @@ internal interface NavigationModule {
     @Binds
     @IntoSet
     fun bindSettingsNavigationFactory(factory: SettingsNavigationFactory): ComposeNavigationFactory
+
+    @Singleton
+    @Binds
+    @IntoSet
+    fun bindSeasonsNavigationFactory(factory: SeasonsNavigationFactory): ComposeNavigationFactory
 }

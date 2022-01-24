@@ -18,6 +18,8 @@ import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
 import com.thomaskioko.tvmaniac.lastairepisodes.implementation.LastEpisodeAirCacheImpl
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsCacheImpl
+import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
+import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowCacheImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -81,5 +83,11 @@ object DatabaseModule {
     @Provides
     fun provideEpisodeAirCache(database: TvManiacDatabase): LastEpisodeAirCache {
         return LastEpisodeAirCacheImpl(database)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSimilarShowCache(database: TvManiacDatabase): SimilarShowCache {
+        return SimilarShowCacheImpl(database)
     }
 }

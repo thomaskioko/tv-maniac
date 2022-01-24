@@ -20,6 +20,9 @@ import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsRepositoryImpl
+import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
+import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
+import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -92,4 +95,19 @@ object RepositoriesModule {
     fun provideLastAirEpisodeRepository(
         cache: LastEpisodeAirCache,
     ): LastAirEpisodeRepository = LastAirEpisodeRepositoryImpl(cache)
+
+    @Singleton
+    @Provides
+    fun provideRelatedShowsRepository(
+        tvShowsService: TvShowsService,
+        similarShowCache: SimilarShowCache,
+        tvShowCache: TvShowCache,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
+    ): SimilarShowsRepository =
+        SimilarShowsRepositoryImpl(
+            apiService = tvShowsService,
+            similarShowCache = similarShowCache,
+            tvShowCache = tvShowCache,
+            dispatcher = ioDispatcher
+        )
 }
