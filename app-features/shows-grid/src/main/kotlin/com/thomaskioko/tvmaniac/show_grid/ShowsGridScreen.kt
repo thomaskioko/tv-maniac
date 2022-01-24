@@ -34,7 +34,7 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 fun ShowsGridScreen(
     viewModel: ShowGridViewModel,
-    openShowDetails: (showId: Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
     navigateUp: () -> Unit
 ) {
 
@@ -71,7 +71,7 @@ fun ShowsGridContent(
     hostState: SnackbarHostState,
     coroutineScope: CoroutineScope,
     viewState: ShowsGridState,
-    onItemClicked: (Int) -> Unit,
+    onItemClicked: (Long) -> Unit,
 ) {
 
     val listState = rememberLazyListState()

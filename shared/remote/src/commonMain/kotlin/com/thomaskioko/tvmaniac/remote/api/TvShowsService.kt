@@ -12,9 +12,13 @@ interface TvShowsService {
 
     suspend fun getPopularShows(page: Int): TvShowsResponse
 
-    suspend fun getTvShowDetails(showId: Int): ShowDetailResponse
+    suspend fun getSimilarShows(showId: Long): TvShowsResponse
 
-    suspend fun getSeasonDetails(tvShowId: Int, seasonNumber: Int): SeasonResponse
+    suspend fun getRecommendations(showId: Long): TvShowsResponse
+
+    suspend fun getTvShowDetails(showId: Long): ShowDetailResponse
+
+    suspend fun getSeasonDetails(tvShowId: Long, seasonNumber: Int): SeasonResponse
 
     suspend fun getTrendingShows(page: Int): TvShowsResponse
 

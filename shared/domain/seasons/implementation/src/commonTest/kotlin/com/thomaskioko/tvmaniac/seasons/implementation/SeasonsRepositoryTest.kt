@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.seasons.implementation
 
-import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getShow
-import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getShowDetailResponse
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.core.test.testCoroutineDispatcher
-import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
+import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
+import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getShow
+import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getShowDetailResponse
 import com.thomaskioko.tvmaniac.seasons.implementation.mapper.toSeasonCacheList
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -26,7 +26,6 @@ internal class SeasonsRepositoryTest {
 
     private var repository = SeasonsRepositoryImpl(
         mockApiService,
-        tvShowCache,
         seasonCache,
         testCoroutineDispatcher
     )
@@ -40,7 +39,7 @@ internal class SeasonsRepositoryTest {
     @Test
     fun givenDataIsNotCached_shouldInvokeNetworkCallAndCache() = runBlockingTest {
 
-        every { tvShowCache.getTvShow(showId = 84958) } returns flowOf(getShow())
+        every { tvShowCache.observeTvShow(showId = 84958) } returns flowOf(getShow())
         coEvery { mockApiService.getTvShowDetails(84958) } answers { getShowDetailResponse() }
 
         val seasonList = getShowDetailResponse().toSeasonCacheList()
@@ -49,12 +48,6 @@ internal class SeasonsRepositoryTest {
 
         coVerify {
             mockApiService.getTvShowDetails(84958)
-
-            tvShowCache.updateShowDetails(
-                showId = 84958,
-                seasonIds = listOf(114355),
-                showStatus = "Returning  Series"
-            )
 
             seasonCache.insert(seasonList)
             seasonCache.observeSeasons(84958)

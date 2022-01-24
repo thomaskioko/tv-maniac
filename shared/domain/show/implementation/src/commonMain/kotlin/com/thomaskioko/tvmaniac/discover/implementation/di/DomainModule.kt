@@ -14,7 +14,7 @@ import org.koin.dsl.module
 
 val discoverDomainModule: Module = module {
     single<TvShowsRepository> {
-        TvShowsRepositoryImpl(get(), get(), get(), get(), get(), get())
+        TvShowsRepositoryImpl(get(), get(), get(), get(), get(), get(), get())
     }
 
     factory { ObserveDiscoverShowsInteractor(get()) }

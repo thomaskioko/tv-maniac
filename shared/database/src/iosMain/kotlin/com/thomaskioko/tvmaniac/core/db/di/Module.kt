@@ -15,7 +15,6 @@ actual fun dbPlatformModule(): Module = module {
             driver = DriverFactory().createDriver(),
             showAdapter = Show.Adapter(
                 genre_idsAdapter = intAdapter,
-                season_idsAdapter = intAdapter,
             ),
             seasonAdapter = Season.Adapter(
                 episode_idsAdapter = intAdapter

@@ -2,12 +2,12 @@ package com.thomaskioko.tvmaniac.discover.api.interactor
 
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
-import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.discover.api.mapper.toTvShowList
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory.POPULAR
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory.TOP_RATED
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory.TRENDING
-import com.thomaskioko.tvmaniac.discover.api.model.ShowUiModel
+import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import com.thomaskioko.tvmaniac.shared.core.util.Resource
 import com.thomaskioko.tvmaniac.shared.core.util.Status
@@ -29,7 +29,7 @@ class ObserveDiscoverShowsInteractor constructor(
 
         DiscoverShowResult(
             featuredShows = trending.copy(
-                showUiModels = trending.showUiModels
+                tvShows = trending.tvShows
                     .sortedBy { it.votes }
                     .take(FEATURED_LIST_SIZE)
             ),
@@ -43,29 +43,8 @@ class ObserveDiscoverShowsInteractor constructor(
         DiscoverShowResult.DiscoverShowsData(
             isLoading = it.status == Status.LOADING,
             category = category,
-            showUiModels = it.data?.toTvShowList() ?: emptyList(),
+            tvShows = it.data?.toTvShowList() ?: emptyList(),
             errorMessage = it.message
-        )
-    }
-
-    private fun List<Show>.toTvShowList(): List<ShowUiModel> {
-        return map { it.toTvShow() }
-    }
-
-    private fun Show.toTvShow(): ShowUiModel {
-        return ShowUiModel(
-            id = id.toInt(),
-            title = title,
-            overview = description,
-            language = language,
-            posterImageUrl = poster_image_url,
-            backdropImageUrl = backdrop_image_url,
-            votes = votes.toInt(),
-            averageVotes = vote_average,
-            genreIds = genre_ids,
-            year = year,
-            status = status,
-            isInWatchlist = is_watchlist
         )
     }
 }

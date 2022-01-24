@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.show_grid
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.interactors.GetShowsByCategoryInteractor
+import com.thomaskioko.tvmaniac.interactors.ObserveShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.interactors.ShowsGridAction
 import com.thomaskioko.tvmaniac.interactors.ShowsGridEffect
 import com.thomaskioko.tvmaniac.interactors.ShowsGridState
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ShowGridViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val interactor: GetShowsByCategoryInteractor
+    private val interactor: ObserveShowsByCategoryInteractor
 ) : Store<ShowsGridState, ShowsGridAction, ShowsGridEffect>,
     CoroutineScopeOwner, ViewModel() {
 

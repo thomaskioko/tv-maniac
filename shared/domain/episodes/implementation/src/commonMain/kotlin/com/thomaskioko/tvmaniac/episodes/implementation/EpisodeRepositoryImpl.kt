@@ -6,9 +6,9 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.model.SeasonResponse
-import com.thomaskioko.tvmaniac.remote.util.getErrorMessage
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.shared.core.util.Resource
+import com.thomaskioko.tvmaniac.shared.core.util.getErrorMessage
 import com.thomaskioko.tvmaniac.shared.core.util.networkBoundResource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -21,8 +21,8 @@ class EpisodeRepositoryImpl(
 ) : EpisodeRepository {
 
     override fun observeSeasonEpisodes(
-        tvShowId: Int,
-        seasonId: Int,
+        tvShowId: Long,
+        seasonId: Long,
         seasonNumber: Int
     ): Flow<Resource<List<EpisodesBySeasonId>>> = networkBoundResource(
         query = { episodesCache.observeEpisode(seasonId) },
@@ -35,7 +35,7 @@ class EpisodeRepositoryImpl(
 
     private fun mapAndCache(
         response: SeasonResponse,
-        seasonId: Int
+        seasonId: Long
     ) {
         val episodeEntityList = response.toEpisodeCacheList()
 

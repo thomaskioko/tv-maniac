@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
+import com.thomaskioko.tvmaniac.episodes.api.mapper.toEpisodeEntityList
+import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeUiModel
 import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -20,7 +22,7 @@ class EpisodesInteractor constructor(
 }
 
 data class EpisodeQuery(
-    val tvShowId: Int,
-    val seasonId: Int,
+    val tvShowId: Long,
+    val seasonId: Long,
     val seasonNumber: Int
 )

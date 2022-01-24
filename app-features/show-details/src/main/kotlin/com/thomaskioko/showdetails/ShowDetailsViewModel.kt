@@ -3,17 +3,16 @@ package com.thomaskioko.showdetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.showdetails.ShowDetailAction.SeasonSelected
-import com.thomaskioko.showdetails.ShowDetailAction.UpdateWatchlist
+import com.thomaskioko.showdetails.ShowDetailAction.UpdateFavorite
 import com.thomaskioko.showdetails.ShowDetailEffect.ShowDetailsError
 import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveShowInteractor
-import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateWatchlistInteractor
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
-import com.thomaskioko.tvmaniac.episodes.api.EpisodesInteractor
+import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateFollowingInteractor
 import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
-import com.thomaskioko.tvmaniac.seasons.api.interactor.SeasonsInteractor
+import com.thomaskioko.tvmaniac.lastairepisodes.api.ObserveAirEpisodesInteractor
+import com.thomaskioko.tvmaniac.seasons.api.interactor.ObserveSeasonsInteractor
 import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.shared.core.store.Store
+import com.thomaskioko.tvmaniac.similar.api.ObserveSimilarShowsInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -29,18 +28,18 @@ import javax.inject.Inject
 class ShowDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val observeShow: ObserveShowInteractor,
-    private val seasonsInteractor: SeasonsInteractor,
+    private val observeSimilarShows: ObserveSimilarShowsInteractor,
+    private val observeSeasonsInteractor: ObserveSeasonsInteractor,
     private val genresInteractor: GetGenresInteractor,
-    private val episodeInteractor: EpisodesInteractor,
-    private val updateWatchlistInteractor: UpdateWatchlistInteractor
-) : Store<ShowDetailViewState, ShowDetailAction, ShowDetailEffect>,
-    CoroutineScopeOwner,
+    private val observeAirEpisodesInteractor: ObserveAirEpisodesInteractor,
+    private val updateFollowingInteractor: UpdateFollowingInteractor
+) : Store<ShowDetailViewState, ShowDetailAction, ShowDetailEffect>, CoroutineScopeOwner,
     ViewModel() {
 
     override val coroutineScope: CoroutineScope
         get() = viewModelScope
 
-    private val showId: Int = savedStateHandle.get("tvShowId")!!
+    private val showId: Long = savedStateHandle.get("tvShowId")!!
 
     private val state = MutableStateFlow(ShowDetailViewState.Empty)
 
@@ -50,6 +49,8 @@ class ShowDetailsViewModel @Inject constructor(
         dispatch(ShowDetailAction.LoadShowDetails)
         dispatch(ShowDetailAction.LoadSeasons)
         dispatch(ShowDetailAction.LoadGenres)
+        dispatch(ShowDetailAction.LoadEpisodes)
+        dispatch(ShowDetailAction.LoadSimilarShows)
     }
 
     override fun observeState(): StateFlow<ShowDetailViewState> = state
@@ -61,14 +62,17 @@ class ShowDetailsViewModel @Inject constructor(
             ShowDetailAction.LoadSeasons -> fetchSeason()
             ShowDetailAction.LoadGenres -> fetchGenres()
             ShowDetailAction.LoadShowDetails -> loadShowDetails()
-            is SeasonSelected -> fetchEpisodes(action.query)
-            is UpdateWatchlist -> updateWatchlist(action)
+            ShowDetailAction.LoadSimilarShows -> fetchSimilarShows()
+            is UpdateFavorite -> updateWatchlist(action)
             is ShowDetailAction.Error -> {
                 coroutineScope.launch {
                     uiEffects.emit(ShowDetailsError(action.message))
                 }
             }
-            is ShowDetailAction.LoadEpisodes -> fetchEpisodes(action.query)
+            is ShowDetailAction.LoadEpisodes -> fetchEpisodes()
+            is ShowDetailAction.BookmarkEpisode -> {
+                // TODO:: Update episode watchlist
+            }
         }
     }
 
@@ -83,7 +87,7 @@ class ShowDetailsViewModel @Inject constructor(
                         emit(
                             value.copy(
                                 isLoading = false,
-                                showUiModel = it
+                                tvShow = it
                             )
                         )
                     }
@@ -134,8 +138,9 @@ class ShowDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun updateWatchlist(action: UpdateWatchlist) {
-        updateWatchlistInteractor.execute(action.params) {
+    private fun updateWatchlist(action: UpdateFavorite) {
+        updateFollowingInteractor.execute(action.params) {
+            onComplete { dispatch(ShowDetailAction.LoadShowDetails) }
             onError {
                 coroutineScope.launch {
                     uiEffects.emit(
@@ -148,7 +153,7 @@ class ShowDetailsViewModel @Inject constructor(
 
     private fun fetchSeason() {
         with(state) {
-            seasonsInteractor.execute(showId) {
+            observeSeasonsInteractor.execute(showId) {
                 onStart {
                     coroutineScope.launch {
                         emit(
@@ -178,29 +183,13 @@ class ShowDetailsViewModel @Inject constructor(
                         )
                     }
                 }
-                onComplete {
-                    if (state.value.episodeList.isEmpty()) {
-                        val season = state.value.tvSeasonUiModels.first()
-                        coroutineScope.launch {
-                            dispatch(
-                                ShowDetailAction.LoadEpisodes(
-                                    EpisodeQuery(
-                                        tvShowId = showId,
-                                        seasonId = season.seasonId,
-                                        seasonNumber = season.seasonNumber
-                                    )
-                                )
-                            )
-                        }
-                    }
-                }
             }
         }
     }
 
-    private fun fetchEpisodes(query: EpisodeQuery) {
+    private fun fetchEpisodes() {
         with(state) {
-            episodeInteractor.execute(query) {
+            observeAirEpisodesInteractor.execute(showId) {
                 onStart {
                     coroutineScope.launch {
                         emit(
@@ -215,7 +204,7 @@ class ShowDetailsViewModel @Inject constructor(
                         emit(
                             value.copy(
                                 isLoading = false,
-                                episodeList = it
+                                lastAirEpList = it
                             )
                         )
                     }
@@ -229,6 +218,37 @@ class ShowDetailsViewModel @Inject constructor(
                             )
                         )
                     }
+                }
+            }
+        }
+    }
+
+    private fun fetchSimilarShows() {
+        with(state) {
+            observeSimilarShows.execute(showId) {
+                onStart {
+                    coroutineScope.launch { emit(value.copy(isLoading = false)) }
+                }
+                onNext {
+                    coroutineScope.launch {
+                        emit(
+                            value.copy(
+                                isLoading = false,
+                                similarShowList = it
+                            )
+                        )
+                    }
+                }
+                onError {
+                    coroutineScope.launch {
+                        emit(
+                            value.copy(
+                                isLoading = false,
+                                errorMessage = it.message ?: "Something went wrong"
+                            )
+                        )
+                    }
+                    dispatch(ShowDetailAction.Error(it.message ?: "Something went wrong"))
                 }
             }
         }

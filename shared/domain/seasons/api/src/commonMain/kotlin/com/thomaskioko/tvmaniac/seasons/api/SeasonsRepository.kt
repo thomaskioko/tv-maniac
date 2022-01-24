@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface SeasonsRepository {
 
-    fun observeShowSeasons(tvShowId: Int): Flow<Resource<List<SelectSeasonsByShowId>>>
+    fun observeShowSeasons(tvShowId: Long): Flow<Resource<List<SelectSeasonsByShowId>>>
 }

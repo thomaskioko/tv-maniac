@@ -1,73 +1,35 @@
-import Kmm_domain_plugin_gradle.Utils.getIosTarget
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    kotlin("multiplatform")
+    `kmm-domain-plugin`
     kotlin("plugin.serialization")
-    id("com.android.library")
     id("com.codingfeline.buildkonfig")
 }
 
-kotlin {
-    android()
+dependencies {
+    commonMainImplementation(libs.ktor.core)
+    commonMainImplementation(libs.ktor.logging)
+    commonMainImplementation(libs.ktor.serialization)
+    commonMainImplementation(libs.koin.core)
+    commonMainImplementation(libs.kermit)
 
-    val iosTarget = getIosTarget()
+    androidMainImplementation(libs.ktor.android)
+    androidMainImplementation(libs.squareup.sqldelight.driver.android)
 
-    iosTarget("ios") {}
+    iosMainImplementation(libs.ktor.ios)
 
-    sourceSets {
+    commonTestImplementation(kotlin("test"))
+    commonTestImplementation(project(":shared:core-test"))
 
-        sourceSets["commonMain"].dependencies {
-            implementation(libs.ktor.core)
-            implementation(libs.ktor.logging)
-            implementation(libs.ktor.serialization)
-            implementation(libs.koin.core)
-            implementation(libs.kermit)
-        }
+    commonTestImplementation(libs.testing.ktor.mock)
+    commonTestImplementation(libs.testing.turbine)
+    commonTestImplementation(libs.testing.kotest.assertions)
+    commonTestImplementation(libs.testing.mockk.common)
 
-        sourceSets["commonTest"].dependencies {
-            implementation(kotlin("test"))
-            implementation(project(":shared:core-test"))
-
-            implementation(libs.testing.ktor.mock)
-            implementation(libs.testing.turbine)
-            implementation(libs.testing.kotest.assertions)
-
-            implementation(libs.testing.mockk.common)
-        }
-
-        sourceSets["androidMain"].dependencies {
-            implementation(libs.ktor.android)
-            implementation(libs.squareup.sqldelight.driver.android)
-        }
-
-        sourceSets["androidTest"].dependencies {
-            implementation(kotlin("test"))
-
-            implementation(libs.testing.androidx.junit)
-        }
-
-        sourceSets["iosMain"].dependencies {
-            implementation(libs.ktor.ios)
-        }
-    }
-}
-
-android {
-    compileSdk = libs.versions.android.compile.get().toInt()
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-
-    defaultConfig {
-        minSdk = libs.versions.android.min.get().toInt()
-        targetSdk = libs.versions.android.target.get().toInt()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
+    androidTestImplementation(kotlin("test"))
+    androidTestImplementation(libs.testing.androidx.junit)
 }
 
 buildkonfig {

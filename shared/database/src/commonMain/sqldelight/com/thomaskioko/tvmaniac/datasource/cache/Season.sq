@@ -31,11 +31,12 @@ WHERE id = ?;
 selectBySeasonId:
 SELECT *
 FROM season
-WHERE id = ? AND season_number != 0;
+WHERE id = ?;
 
 selectSeasonsByShowId:
 SELECT *
 FROM season
 LEFT JOIN show ON show.id = season.tv_show_id
-WHERE tv_show_id = ?;
+WHERE tv_show_id = ?
+ORDER BY season_number ASC;
 

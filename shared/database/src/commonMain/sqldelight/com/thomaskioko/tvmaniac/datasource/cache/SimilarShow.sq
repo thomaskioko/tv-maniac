@@ -1,0 +1,19 @@
+CREATE TABLE similar_show (
+id INTEGER DEFAULT NULL PRIMARY KEY,
+show_id INTEGER NOT NULL,
+FOREIGN KEY (show_id) REFERENCES show(id)
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO similar_show(
+id,
+show_id
+)
+VALUES(?,?);
+
+selectSimilarShows:
+SELECT *
+FROM similar_show
+INNER JOIN show  ON show.id = similar_show.id
+WHERE show_id = ?
+ORDER BY show.popularity DESC;

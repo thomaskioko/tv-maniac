@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.discover.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.discover.implementation.repository.TvShowsRepositoryImpl
+import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import io.mockk.coVerify
 import io.mockk.every
@@ -25,10 +26,12 @@ internal class TvShowRepositoryTest {
     private var tvShowCache = spyk<TvShowCache>()
     private var showCategoryCache = spyk<ShowCategoryCache>()
     private var categoryCache = spyk<CategoryCache>()
+    private var lastEpisodeAirCache = spyk<LastEpisodeAirCache>()
 
     private val repository: TvShowsRepositoryImpl = TvShowsRepositoryImpl(
         apiService,
         tvShowCache,
+        lastEpisodeAirCache,
         categoryCache,
         showCategoryCache,
         testCoroutineScope,
@@ -43,7 +46,7 @@ internal class TvShowRepositoryTest {
     @Ignore
     @Test
     fun givenDataIsCached_thenGetCachedTvShowIsLoadedFromCache() = runBlockingTest {
-        every { tvShowCache.getTvShow(any()) } returns flowOf(getShow())
+        every { tvShowCache.observeTvShow(any()) } returns flowOf(getShow())
 
         repository.observeShow(84958)
 
@@ -51,13 +54,13 @@ internal class TvShowRepositoryTest {
             apiService.getTvShowDetails(any())
         }
 
-        coVerify { tvShowCache.getTvShow(84958) }
+        coVerify { tvShowCache.observeTvShow(84958) }
     }
 
     @Test
     fun givenDataIsCached_thenWatchlistIsFetched() = runBlockingTest {
-        repository.observeWatchlist()
+        repository.observeFollowing()
 
-        coVerify { tvShowCache.getWatchlist() }
+        coVerify { tvShowCache.observeFollowing() }
     }
 }

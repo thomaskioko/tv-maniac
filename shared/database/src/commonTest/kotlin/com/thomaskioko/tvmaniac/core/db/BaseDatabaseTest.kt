@@ -19,7 +19,6 @@ abstract class BaseDatabaseTest {
         driver = sqlDriver,
         showAdapter = Show.Adapter(
             genre_idsAdapter = intAdapter,
-            season_idsAdapter = intAdapter,
         ),
         seasonAdapter = Season.Adapter(
             episode_idsAdapter = intAdapter

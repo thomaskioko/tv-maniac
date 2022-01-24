@@ -1,8 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
-import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
+import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeUiModel
 import com.thomaskioko.tvmaniac.remote.api.model.SeasonResponse
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeUiModel
 import com.thomaskioko.tvmaniac.shared.core.util.StringUtil.formatPosterPath
 import com.thomaskioko.tvmaniac.datasource.cache.Episode as EpisodeCache
 
@@ -36,18 +35,4 @@ fun SeasonResponse.toEpisodeEntityList(): List<EpisodeUiModel> {
             episodeNumber = episodeResponse.episode_number.toString().padStart(2, '0')
         )
     }
-}
-
-fun EpisodeCache.toEpisodeEntity(): EpisodeUiModel {
-    return EpisodeUiModel(
-        id = id.toInt(),
-        seasonId = season_id.toInt(),
-        name = name,
-        overview = overview,
-        seasonNumber = episode_season_number.toInt(),
-        imageUrl = image_url,
-        voteAverage = vote_average,
-        voteCount = vote_count.toInt(),
-        episodeNumber = episode_number
-    )
 }

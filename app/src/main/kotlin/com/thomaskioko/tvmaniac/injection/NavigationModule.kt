@@ -2,11 +2,12 @@ package com.thomaskioko.tvmaniac.injection
 
 import com.thomaskioko.showdetails.ShowDetailNavigationFactory
 import com.thomaskioko.tvmaniac.DiscoverNavigationFactory
+import com.thomaskioko.tvmaniac.following.FollowingNavigationFactory
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.search.SearchNavigationFactory
+import com.thomaskioko.tvmaniac.seasons.SeasonsNavigationFactory
 import com.thomaskioko.tvmaniac.settings.SettingsNavigationFactory
 import com.thomaskioko.tvmaniac.show_grid.ShowsGridNavigationFactory
-import com.thomaskioko.tvmaniac.watchlist.WatchlistNavigationFactory
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -31,7 +32,7 @@ internal interface NavigationModule {
     @Singleton
     @Binds
     @IntoSet
-    fun bindWatchlistNavigation(factory: WatchlistNavigationFactory): ComposeNavigationFactory
+    fun bindWatchlistNavigation(factory: FollowingNavigationFactory): ComposeNavigationFactory
 
     @Singleton
     @Binds
@@ -47,4 +48,9 @@ internal interface NavigationModule {
     @Binds
     @IntoSet
     fun bindSettingsNavigationFactory(factory: SettingsNavigationFactory): ComposeNavigationFactory
+
+    @Singleton
+    @Binds
+    @IntoSet
+    fun bindSeasonsNavigationFactory(factory: SeasonsNavigationFactory): ComposeNavigationFactory
 }
