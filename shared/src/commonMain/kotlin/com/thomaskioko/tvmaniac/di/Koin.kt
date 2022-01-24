@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.remote.di.remotePlatformModule
 import com.thomaskioko.tvmaniac.remote.di.serviceModule
 import com.thomaskioko.tvmaniac.seasons.implementation.di.seasonsDomainModule
 import com.thomaskioko.tvmaniac.shared.core.di.corePlatformModule
+import com.thomaskioko.tvmaniac.similar.implementation.di.similarDomainModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import org.koin.core.context.startKoin
@@ -33,6 +34,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         episodeDomainModule,
         genreModule,
         lastAirEpisodeDomainModule,
+        similarDomainModule,
         corePlatformModule(),
         dbPlatformModule(),
         remotePlatformModule()
