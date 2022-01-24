@@ -23,6 +23,7 @@ include(
     ":app-features:following",
     ":app-features:shows-grid",
     ":app-features:settings",
+    ":app-features:seasons",
     ":shared",
     ":shared:core",
     ":shared:core-test",
@@ -39,4 +40,6 @@ include(
     ":shared:interactors",
     ":shared:domain:last-air-episodes:api",
     ":shared:domain:last-air-episodes:implementation",
+    ":shared:domain:similar:api",
+    ":shared:domain:similar:implementation",
 )
