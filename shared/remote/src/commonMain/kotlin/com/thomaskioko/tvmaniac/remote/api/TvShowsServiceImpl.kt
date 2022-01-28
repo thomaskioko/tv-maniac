@@ -39,7 +39,7 @@ class TvShowsServiceImpl(
         return httpClient.get("3/tv/$showId")
     }
 
-    override suspend fun getSeasonDetails(tvShowId: Long, seasonNumber: Int): SeasonResponse {
+    override suspend fun getSeasonDetails(tvShowId: Long, seasonNumber: Long): SeasonResponse {
         return httpClient.get("3/tv/$tvShowId/season/$seasonNumber")
     }
 
