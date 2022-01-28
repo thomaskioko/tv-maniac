@@ -11,19 +11,17 @@ internal class EpisodeMapperTest {
     fun givenApiResponse_VerifyResponse_isMappedToEntity() {
 
         val response = getShowSeasonsResponse()
-        val mappedData = response.toEpisodeEntityList()
-
         val episodeResponse = response.episodes.first()
+
+        val mappedData = response.toEpisodeCacheList()
         val mappedEpisode = mappedData.first()
 
-        mappedEpisode.seasonId shouldBe response.id
         mappedEpisode.id shouldBe episodeResponse.id
-        mappedEpisode.seasonNumber shouldBe episodeResponse.season_number
         mappedEpisode.name shouldBe episodeResponse.name
-        mappedEpisode.imageUrl shouldBe formatPosterPath(episodeResponse.still_path)
-        mappedEpisode.episodeNumber shouldBe episodeResponse.episode_number.toString().padStart(2, '0')
-        mappedEpisode.voteAverage shouldBe episodeResponse.vote_average
-        mappedEpisode.voteCount shouldBe episodeResponse.vote_count
+        mappedEpisode.image_url shouldBe formatPosterPath(episodeResponse.still_path)
+        mappedEpisode.episode_number shouldBe episodeResponse.episode_number.toString().padStart(2, '0')
+        mappedEpisode.vote_average shouldBe episodeResponse.vote_average
+        mappedEpisode.vote_count shouldBe episodeResponse.vote_count
         mappedEpisode.overview shouldBe episodeResponse.overview
     }
 }
