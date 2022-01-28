@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.core.db
 
-import com.thomaskioko.tvmaniac.datasource.cache.Season
 import com.thomaskioko.tvmaniac.core.db.MockData.getSeasonCacheList
+import com.thomaskioko.tvmaniac.datasource.cache.Season
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.test.Test
@@ -32,28 +32,6 @@ internal class SeasonsCacheTest : BaseDatabaseTest() {
 
         queryResult shouldNotBe null
         queryResult.size shouldBe 2
-    }
-
-    @Test
-    fun givenUpdateEpisodes_queryReturnsCorrectData() {
-
-        getSeasonCacheList().insertSeasonsEntityQuery()
-
-        val queryResult = tvSeasonQueries.selectBySeasonId(114355).executeAsOne()
-
-        // Verify that the first time the list is empty
-        queryResult.episode_ids shouldBe null
-
-        tvSeasonQueries.updateEpisodes(
-            id = 114355,
-            episode_ids = listOf(2534997, 2927202)
-        )
-
-        val seasonQueryResult = tvSeasonQueries.selectBySeasonId(114355)
-            .executeAsOne()
-
-        // Verify that the list has been updated and exists
-        seasonQueryResult.episode_ids shouldBe listOf(2534997, 2927202)
     }
 
     private fun List<Season>.insertSeasonsEntityQuery() {
