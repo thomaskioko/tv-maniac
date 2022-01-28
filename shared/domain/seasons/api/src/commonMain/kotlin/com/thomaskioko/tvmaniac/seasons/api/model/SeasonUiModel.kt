@@ -5,6 +5,6 @@ data class SeasonUiModel(
     val tvShowId: Long,
     val name: String,
     val overview: String,
-    val seasonNumber: Int,
+    val seasonNumber: Long,
     val episodeCount: Int
 )

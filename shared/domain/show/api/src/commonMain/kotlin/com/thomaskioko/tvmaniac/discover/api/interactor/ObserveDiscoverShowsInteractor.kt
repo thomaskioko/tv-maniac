@@ -44,7 +44,7 @@ class ObserveDiscoverShowsInteractor constructor(
             isLoading = it.status == Status.LOADING,
             category = category,
             tvShows = it.data?.toTvShowList() ?: emptyList(),
-            errorMessage = it.message
+            errorMessage = it.throwable?.message
         )
     }
 }

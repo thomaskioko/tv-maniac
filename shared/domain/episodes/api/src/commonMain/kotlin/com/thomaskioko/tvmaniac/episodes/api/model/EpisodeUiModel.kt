@@ -1,12 +1,10 @@
 package com.thomaskioko.tvmaniac.episodes.api.model
 
-
 data class EpisodeUiModel(
-    val id: Int,
-    val seasonId: Int,
+    val id: Long,
+    val seasonId: Long,
     val name: String,
     val overview: String,
-    val seasonNumber: Int,
     val imageUrl: String,
     val voteAverage: Double,
     val voteCount: Int,

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-class EpisodesInteractor constructor(
+class ObserveEpisodesInteractor constructor(
     private val repository: EpisodeRepository,
 ) : FlowInteractor<EpisodeQuery, List<EpisodeUiModel>>() {
 
@@ -24,5 +24,5 @@ class EpisodesInteractor constructor(
 data class EpisodeQuery(
     val tvShowId: Long,
     val seasonId: Long,
-    val seasonNumber: Int
+    val seasonNumber: Long
 )
