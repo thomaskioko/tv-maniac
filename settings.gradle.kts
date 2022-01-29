@@ -42,4 +42,6 @@ include(
     ":shared:domain:last-air-episodes:implementation",
     ":shared:domain:similar:api",
     ":shared:domain:similar:implementation",
+    ":shared:domain:season-episodes:api",
+    ":shared:domain:season-episodes:implementation"
 )
