@@ -18,5 +18,5 @@ SELECT *
 FROM show
 JOIN season ON  season.tv_show_id = show.id
 JOIN episode ON  episode.season_id = season.id
-WHERE show.id = ?
+WHERE show.id = ? AND season_number != 0
 ORDER BY season.season_number, episode_number ASC;
