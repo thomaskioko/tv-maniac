@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.map
 class ObserveSeasonWithEpisodesInteractor(
     private val repository: SeasonWithEpisodesRepository,
     private val dispatcher: CoroutineDispatcher,
-) : FlowInteractor<Long, List<SeasonWithEpisodes>>() {
+) : FlowInteractor<Long, List<SeasonWithEpisodes>?>() {
 
-    override fun run(params: Long): Flow<List<SeasonWithEpisodes>> =
+    override fun run(params: Long): Flow<List<SeasonWithEpisodes>?> =
         repository.observeSeasonWithEpisodes(showId = params)
-            .map { it.data?.toSeasonWithEpisodes() ?: emptyList() }
+            .map { it.data?.toSeasonWithEpisodes() }
             .flowOn(dispatcher)
 }
