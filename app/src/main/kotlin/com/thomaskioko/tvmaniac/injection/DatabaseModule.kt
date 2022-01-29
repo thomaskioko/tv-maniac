@@ -16,6 +16,8 @@ import com.thomaskioko.tvmaniac.genre.api.GenreCache
 import com.thomaskioko.tvmaniac.genre.implementation.GenreCacheImpl
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
 import com.thomaskioko.tvmaniac.lastairepisodes.implementation.LastEpisodeAirCacheImpl
+import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesCache
+import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodesCacheImpl
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsCacheImpl
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
@@ -89,5 +91,11 @@ object DatabaseModule {
     @Provides
     fun provideSimilarShowCache(database: TvManiacDatabase): SimilarShowCache {
         return SimilarShowCacheImpl(database)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSeasonWithEpisodesCache(database: TvManiacDatabase): SeasonWithEpisodesCache {
+        return SeasonWithEpisodesCacheImpl(database)
     }
 }
