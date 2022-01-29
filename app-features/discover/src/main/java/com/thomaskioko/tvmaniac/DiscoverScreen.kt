@@ -208,12 +208,13 @@ fun FeaturedItems(
                 onClick = { onItemClicked(it) }
             )
 
-            HorizontalPagerIndicator(
-                pagerState = pagerState,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(16.dp),
-            )
+            if (showData.tvShows.isNotEmpty())
+                HorizontalPagerIndicator(
+                    pagerState = pagerState,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(16.dp),
+                )
         }
     }
 
