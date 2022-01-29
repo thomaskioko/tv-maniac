@@ -17,6 +17,9 @@ import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisodeRepository
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
 import com.thomaskioko.tvmaniac.lastairepisodes.implementation.LastAirEpisodeRepositoryImpl
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
+import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesCache
+import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesRepository
+import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodesRepositoryImpl
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsRepositoryImpl
@@ -81,12 +84,10 @@ object RepositoriesModule {
     fun provideEpisodeRepository(
         tvShowsService: TvShowsService,
         episodesCache: EpisodesCache,
-        seasonCache: SeasonsCache,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): EpisodeRepository = EpisodeRepositoryImpl(
         tvShowsService,
         episodesCache,
-        seasonCache,
         ioDispatcher
     )
 
@@ -110,4 +111,20 @@ object RepositoriesModule {
             tvShowCache = tvShowCache,
             dispatcher = ioDispatcher
         )
+
+    @Singleton
+    @Provides
+    fun provideSeasonWithEpisodesRepository(
+        apiService: TvShowsService,
+        episodesCache: EpisodesCache,
+        seasonWithEpisodesCache: SeasonWithEpisodesCache,
+        seasonsCache: SeasonsCache,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
+    ): SeasonWithEpisodesRepository = SeasonWithEpisodesRepositoryImpl(
+        apiService,
+        episodesCache,
+        seasonsCache,
+        seasonWithEpisodesCache,
+        ioDispatcher
+    )
 }
