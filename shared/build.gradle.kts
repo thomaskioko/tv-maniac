@@ -1,4 +1,5 @@
 import Kmm_domain_plugin_gradle.Utils.getIosTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
@@ -36,6 +37,8 @@ kotlin {
             export(project(":shared:domain:genre:api"))
             export(project(":shared:domain:last-air-episodes:api"))
             export(project(":shared:domain:similar:api"))
+            export(project(":shared:domain:season-episodes:api"))
+            embedBitcode(BitcodeEmbeddingMode.BITCODE)
 
             transitiveExport = true
         }
@@ -52,6 +55,7 @@ dependencies {
     commonMainApi(project(":shared:domain:genre:api"))
     commonMainApi(project(":shared:domain:last-air-episodes:api"))
     commonMainApi(project(":shared:domain:similar:api"))
+    commonMainApi(project(":shared:domain:season-episodes:api"))
 
     commonMainImplementation(project(":shared:domain:episodes:implementation"))
     commonMainImplementation(project(":shared:domain:show:implementation"))
@@ -59,6 +63,7 @@ dependencies {
     commonMainImplementation(project(":shared:domain:genre:implementation"))
     commonMainImplementation(project(":shared:domain:last-air-episodes:implementation"))
     commonMainImplementation(project(":shared:domain:similar:implementation"))
+    commonMainImplementation(project(":shared:domain:season-episodes:implementation"))
 
     commonMainImplementation(libs.koin.core)
     commonMainImplementation(libs.kotlin.coroutines.core)
