@@ -80,7 +80,7 @@ class ShowDetailsViewModel @Inject constructor(
         with(state) {
             observeShow.execute(showId) {
                 onStart {
-                    coroutineScope.launch { emit(value.copy(isLoading = false)) }
+                    coroutineScope.launch { emit(value.copy(isLoading = true)) }
                 }
                 onNext {
                     coroutineScope.launch {
