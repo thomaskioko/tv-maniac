@@ -109,7 +109,6 @@ fun <T : Any> LazyPagedGridItems(
                     item {
                         SnackBarErrorRetry(
                             snackBarHostState = hostState,
-                            coroutineScope = coroutineScope,
                             errorMessage = exception.error.localizedMessage!!,
                             onErrorAction = { retry() }
                         )
@@ -120,7 +119,6 @@ fun <T : Any> LazyPagedGridItems(
                     item {
                         SnackBarErrorRetry(
                             snackBarHostState = hostState,
-                            coroutineScope = coroutineScope,
                             errorMessage = exception.error.localizedMessage!!,
                             onErrorAction = { retry() }
                         )
