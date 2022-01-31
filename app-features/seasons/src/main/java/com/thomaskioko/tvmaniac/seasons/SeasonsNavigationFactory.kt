@@ -15,13 +15,17 @@ class SeasonsNavigationFactory @Inject constructor() : ComposeNavigationFactory 
         builder.viewModelComposable<SeasonsViewModel>(
             arguments = listOf(
                 navArgument("showId") { type = NavType.LongType },
-                navArgument("seasonNumber") { type = NavType.IntType }
+                navArgument("seasonName") { type = NavType.StringType }
             ),
-            route = "${NavigationScreen.SeasonsNavScreen.route}/{showId}/{seasonNumber}",
+            route = "${NavigationScreen.SeasonsNavScreen.route}/{showId}/{seasonName}",
             content = {
                 SeasonsScreen(
                     viewModel = this,
                     navigateUp = { navController.popBackStack() },
+                    initialSeasonName = navController.currentBackStackEntry?.arguments?.getString("seasonName"),
+                    onEpisodeClicked = {
+                        // TODO:: Navigate to Episode detail module
+                    }
                 )
             }
         )

@@ -1,25 +1,8 @@
 package com.thomaskioko.tvmaniac.seasons
 
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeUiModel
+import com.thomaskioko.tvmaniac.seasonepisodes.api.model.Episode
+import com.thomaskioko.tvmaniac.seasonepisodes.api.model.SeasonWithEpisodes
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
-
-class EpisodeUiModelProvider : PreviewParameterProvider<EpisodeUiModel> {
-    override val values: Sequence<EpisodeUiModel>
-        get() = sequenceOf(
-            EpisodeUiModel(
-                id = 2534997,
-                name = "Glorious Purpose",
-                overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
-                voteCount = 42,
-                voteAverage = 6.429,
-                seasonNumber = 1,
-                seasonId = 4654,
-                imageUrl = "",
-                episodeNumber = "01"
-            )
-        )
-}
 
 val seasons = listOf(
     SeasonUiModel(
@@ -37,28 +20,28 @@ val seasons = listOf(
     )
 )
 
-val episodes = listOf(
-    EpisodeUiModel(
-        id = 2534997,
-        name = "Glorious Purpose",
-        overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
-        voteCount = 42,
-        voteAverage = 6.429,
-        seasonNumber = 1,
-        seasonId = 4654,
-        imageUrl = "",
-        episodeNumber = "01"
-    ),
-    EpisodeUiModel(
-        id = 2534997,
-        name = "Glorious Purpose",
-        overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
-        voteCount = 42,
-        voteAverage = 6.429,
-        seasonNumber = 1,
-        seasonId = 46524,
-        imageUrl = "",
-        episodeNumber = "02"
-    ),
+val episode = Episode(
+    id = 2534997,
+    episodeNumberTitle = "E01 • Glorious Purpose",
+    overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
+    voteCount = 42,
+    voteAverage = 6.429,
+    seasonId = 4654,
+    imageUrl = "",
+    episodeNumber = "01",
+    episodeTitle = "Glorious Purpose",
+    seasonEpisodeNumber = "S01 | E01"
+)
 
+val seasonsEpList: List<SeasonWithEpisodes> = listOf(
+    SeasonWithEpisodes(
+        seasonName = "Specials",
+        episodeCount = 8,
+        watchProgress = 0.4f,
+        episodes = listOf(
+            episode,
+            episode,
+            episode
+        )
+    )
 )
