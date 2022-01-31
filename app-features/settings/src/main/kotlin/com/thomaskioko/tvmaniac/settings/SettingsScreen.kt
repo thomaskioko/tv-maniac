@@ -20,11 +20,14 @@ import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -37,15 +40,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.statusBarsPadding
+import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.settings.SettingsActions.ThemeClicked
 import com.thomaskioko.tvmaniac.settings.SettingsActions.ThemeSelected
 
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel) {
+fun SettingsScreen(
+    viewModel: SettingsViewModel,
+    navigateUp: () -> Unit
+) {
 
     val themeState by rememberFlowWithLifecycle(viewModel.observeState())
         .collectAsState(initial = SettingsState.DEFAULT)
@@ -61,6 +69,18 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                         )
                     }
                 },
+                navigationIcon = {
+                    IconButton(
+                        onClick = navigateUp,
+                        modifier = Modifier.iconButtonBackgroundScrim()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = null,
+                        )
+                    }
+                },
+                backgroundColor = MaterialTheme.colors.background
             )
         },
         modifier = Modifier
@@ -89,7 +109,7 @@ fun SettingsList(
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(start = 2.dp, end = 16.dp)
+        contentPadding = PaddingValues(16.dp)
     ) {
         item {
             ThemeSettingsItem(
@@ -98,8 +118,11 @@ fun SettingsList(
                 onThemeClicked = onThemeClicked,
                 onDismissTheme = onDismissTheme
             )
-            AboutSettingsItem()
         }
+
+        item { ColumnSpacer(value = 16) }
+
+        item { AboutSettingsItem() }
     }
 }
 
@@ -117,15 +140,15 @@ private fun ThemeSettingsItem(
         Theme.SYSTEM -> stringResource(R.string.settings_title_theme_system)
     }
 
+    ColumnSpacer(value = 16)
+
     SettingHeaderTitle(
         title = stringResource(R.string.settings_title_ui),
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp)
     )
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp)
             .clickable { onThemeClicked() },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -255,17 +278,26 @@ private fun ThemeMenuItem(
 @Composable
 private fun AboutSettingsItem() {
 
+    SettingHeaderTitle(title = stringResource(R.string.settings_title_info))
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .clickable { }
     ) {
 
-        SettingHeaderTitle(title = stringResource(R.string.settings_title_info))
+        ColumnSpacer(value = 8)
 
         SettingTitle(title = stringResource(R.string.settings_title_about))
 
-        SettingDescription(description = stringResource(R.string.settings_about_description))
+        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+            Text(
+                text = stringResource(R.string.settings_about_description),
+                style = MaterialTheme.typography.body2,
+            )
+        }
+
+        ColumnSpacer(value = 8)
     }
 
     SettingListDivider()
@@ -279,8 +311,7 @@ fun SettingHeaderTitle(title: String, modifier: Modifier = Modifier) {
             color = MaterialTheme.colors.secondary
         ),
         modifier = modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp),
+            .fillMaxWidth(),
     )
 }
 
@@ -302,7 +333,6 @@ fun SettingDescription(description: String) {
 @Composable
 private fun SettingListDivider() {
     Divider(
-        modifier = Modifier.padding(horizontal = 14.dp),
         color = MaterialTheme.colors.onSurface.copy(alpha = 0.08f)
     )
 }
