@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.core.db
 
-import com.thomaskioko.tvmaniac.datasource.cache.Episode
 import com.thomaskioko.tvmaniac.core.db.MockData.getEpisodeCacheList
+import com.thomaskioko.tvmaniac.datasource.cache.Episode
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.test.Test
@@ -22,7 +22,6 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         queryResult.season_id shouldBe entity.season_id
         queryResult.name shouldBe entity.name
         queryResult.overview shouldBe entity.overview
-        queryResult.episode_season_number shouldBe entity.episode_season_number
         queryResult.image_url shouldBe entity.image_url
         queryResult.vote_average shouldBe entity.vote_average
         queryResult.vote_count shouldBe entity.vote_count
@@ -47,7 +46,6 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         episodeQueries.insertOrReplace(
             id = id,
             season_id = season_id,
-            episode_season_number = episode_season_number,
             name = name,
             overview = overview,
             image_url = image_url,

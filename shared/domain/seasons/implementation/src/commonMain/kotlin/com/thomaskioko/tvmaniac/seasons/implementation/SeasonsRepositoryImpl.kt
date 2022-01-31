@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.seasons.implementation
 import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
-import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.seasons.implementation.mapper.toSeasonCacheList
@@ -24,20 +23,8 @@ class SeasonsRepositoryImpl(
             query = { seasonCache.observeSeasons(tvShowId) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = { apiService.getTvShowDetails(tvShowId) },
-            saveFetchResult = { mapAndCache(it) },
+            saveFetchResult = { seasonCache.insert(it.toSeasonCacheList()) },
             onFetchFailed = { Logger.withTag("observeShowSeasons").e(it.getErrorMessage()) },
             coroutineDispatcher = dispatcher
         )
-
-    private fun mapAndCache(response: ShowDetailResponse) {
-        val seasonsEntityList = response.toSeasonCacheList()
-
-        val seasonIds = mutableListOf<Int>()
-        for (season in seasonsEntityList) {
-            seasonIds.add(season.id.toInt())
-        }
-
-        // Insert Seasons
-        seasonCache.insert(seasonsEntityList)
-    }
 }

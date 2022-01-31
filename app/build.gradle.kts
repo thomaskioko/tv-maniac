@@ -18,6 +18,8 @@ dependencies {
     implementation(project(":shared:domain:last-air-episodes:implementation"))
     implementation(project(":shared:domain:similar:api"))
     implementation(project(":shared:domain:similar:implementation"))
+    implementation(project(":shared:domain:season-episodes:api"))
+    implementation(project(":shared:domain:season-episodes:implementation"))
     implementation(project(":shared:interactors"))
     implementation(project(":app-common:annotations"))
     implementation(project(":app-common:compose"))

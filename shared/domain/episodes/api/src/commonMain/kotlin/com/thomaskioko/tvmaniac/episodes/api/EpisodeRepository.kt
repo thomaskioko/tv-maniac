@@ -9,6 +9,6 @@ interface EpisodeRepository {
     fun observeSeasonEpisodes(
         tvShowId: Long,
         seasonId: Long,
-        seasonNumber: Int
+        seasonNumber: Long
     ): Flow<Resource<List<EpisodesBySeasonId>>>
 }

@@ -12,7 +12,7 @@ interface SeasonsCache {
 
     fun getSeasonBySeasonId(seasonId: Long): Season
 
-    fun observeSeasons(tvShowId: Long): Flow<List<SelectSeasonsByShowId>>
+    fun getSeasonsByShowId(showId: Long): List<SelectSeasonsByShowId>
 
-    fun updateSeasonEpisodesIds(seasonId: Long, episodeIds: List<Int>)
+    fun observeSeasons(tvShowId: Long): Flow<List<SelectSeasonsByShowId>>
 }

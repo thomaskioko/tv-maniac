@@ -1,6 +1,3 @@
-import kotlin.collections.List;
-
-
 CREATE TABLE season (
 id INTEGER NOT NULL PRIMARY KEY,
 tv_show_id INTEGER NOT NULL,
@@ -8,7 +5,6 @@ season_number INTEGER NOT NULL,
 epiosode_count INTEGER NOT NULL,
 name TEXT NOT NULL,
 overview TEXT NOT NULL,
-episode_ids TEXT AS List<Int>,
 FOREIGN KEY (tv_show_id) REFERENCES show(id)
 );
 
@@ -23,11 +19,6 @@ overview
 )
 VALUES(?,?,?,?,?,?);
 
-updateEpisodes:
-UPDATE season
-SET episode_ids = ?
-WHERE id = ?;
-
 selectBySeasonId:
 SELECT *
 FROM season
@@ -37,6 +28,6 @@ selectSeasonsByShowId:
 SELECT *
 FROM season
 LEFT JOIN show ON show.id = season.tv_show_id
-WHERE tv_show_id = ?
+WHERE tv_show_id = ? AND season_number != 0
 ORDER BY season_number ASC;
 

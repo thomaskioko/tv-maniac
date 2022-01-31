@@ -13,15 +13,18 @@ import androidx.compose.ui.unit.Dp
 import kotlin.math.max
 import kotlin.math.min
 
-val yellow300 = Color(0xFFFFD34F)
-val yellow500 = Color(0xFFFFbe0a)
+val yellow300 = Color(0xFFFEC804)
+val yellow500 = Color(0xFFFFBe0A)
 
-val blue500 = Color(0xFF0b4CFF)
-val blue700 = Color(0xFF002adb)
-val colorError = Color(0xFFFF440b)
+val blue500 = Color(0xFF1473FB)
+val blue700 = Color(0xFF0049c7)
+val colorError = Color(0xFFFE043A)
 
-val grey = Color(0xFF131313)
-val grey900 = Color(0xFF202020)
+val grey = Color(0xFF1f2123)
+val grey500: Color = Color(0xFFA1A5AB)
+val grey900 = Color(0xFF2c2c30)
+
+val green = Color(0xFF00b300)
 
 val LightColors = lightColors(
     primary = yellow300,

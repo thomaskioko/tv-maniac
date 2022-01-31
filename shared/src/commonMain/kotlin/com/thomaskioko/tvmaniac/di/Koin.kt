@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.genre.implementation.di.genreModule
 import com.thomaskioko.tvmaniac.lastairepisodes.implementation.di.lastAirEpisodeDomainModule
 import com.thomaskioko.tvmaniac.remote.di.remotePlatformModule
 import com.thomaskioko.tvmaniac.remote.di.serviceModule
+import com.thomaskioko.tvmaniac.seasonepisodes.implementation.seasonEpisodesDomainModule
 import com.thomaskioko.tvmaniac.seasons.implementation.di.seasonsDomainModule
 import com.thomaskioko.tvmaniac.shared.core.di.corePlatformModule
 import com.thomaskioko.tvmaniac.similar.implementation.di.similarDomainModule
@@ -35,14 +36,12 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         genreModule,
         lastAirEpisodeDomainModule,
         similarDomainModule,
+        seasonEpisodesDomainModule,
         corePlatformModule(),
         dbPlatformModule(),
         remotePlatformModule()
     )
 }
-
-// IOS
-fun initKoin() = initKoin {}
 
 val cacheModule: Module = module {
     single<TvShowCache> { TvShowCacheImpl(get()) }

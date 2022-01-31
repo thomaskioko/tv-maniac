@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.core.db
 
 import com.squareup.sqldelight.db.SqlDriver
-import com.thomaskioko.tvmaniac.datasource.cache.Season
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import kotlin.test.AfterTest
@@ -20,9 +19,6 @@ abstract class BaseDatabaseTest {
         showAdapter = Show.Adapter(
             genre_idsAdapter = intAdapter,
         ),
-        seasonAdapter = Season.Adapter(
-            episode_idsAdapter = intAdapter
-        )
     )
 
     @AfterTest

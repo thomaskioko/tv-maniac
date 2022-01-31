@@ -68,6 +68,7 @@ import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
+import com.thomaskioko.tvmaniac.compose.components.LoadingItem
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -88,7 +89,7 @@ fun ShowDetailScreen(
     viewModel: ShowDetailsViewModel,
     navigateUp: () -> Unit,
     onShowClicked: (Long) -> Unit,
-    onSeasonClicked: (Long, Int) -> Unit = { _, _ -> },
+    onSeasonClicked: (Long, String) -> Unit = { _, _ -> },
     onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> }
 ) {
 
@@ -184,7 +185,7 @@ private fun TvShowDetailsScrollingContent(
     listState: LazyListState,
     contentPadding: PaddingValues,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit = {},
-    onSeasonClicked: (Long, Int) -> Unit = { _, _ -> },
+    onSeasonClicked: (Long, String) -> Unit = { _, _ -> },
     onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> },
     onBookmarkEpClicked: (Long) -> Unit = { },
     onShowClicked: (Long) -> Unit = {}
@@ -204,22 +205,16 @@ private fun TvShowDetailsScrollingContent(
         }
 
         item {
-            SeasonsContent(detailUiState, onSeasonClicked)
-        }
-
-        item {
-            EpisodesReleaseContent(
-                episodeList = detailUiState.lastAirEpList,
+            MoreBodyContent(
+                detailUiState = detailUiState,
+                onSeasonClicked = onSeasonClicked,
                 onEpisodeClicked = onEpisodeClicked,
-                onBookmarkEpClicked = onBookmarkEpClicked
-            )
-        }
-
-        item {
-            SimilarShowsShowsContent(
-                similarShows = detailUiState.similarShowList,
+                onBookmarkEpClicked = onBookmarkEpClicked,
                 onShowClicked = onShowClicked
             )
+        }
+
+        item {
         }
     }
 }
@@ -500,29 +495,46 @@ fun ShowDetailButtons(
 }
 
 @Composable
-private fun SeasonsContent(
+private fun MoreBodyContent(
     detailUiState: ShowDetailViewState,
-    onSeasonClicked: (Long, Int) -> Unit
+    onSeasonClicked: (Long, String) -> Unit,
+    onBookmarkEpClicked: (Long) -> Unit,
+    onEpisodeClicked: (Long, Long) -> Unit,
+    onShowClicked: (Long) -> Unit
 ) {
-
-    ColumnSpacer(16)
-
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth()
+    LoadingItem(
+        isLoading = detailUiState.tvSeasonUiModels.isEmpty()
     ) {
-        Text(
-            text = stringResource(id = R.string.title_seasons),
-            style = MaterialTheme.typography.h6,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
+        ColumnSpacer(16)
 
-        ShowSeasonsTabs(
-            seasonUiModelList = detailUiState.tvSeasonUiModels,
-            onSeasonClicked = onSeasonClicked,
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(id = R.string.title_seasons),
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+
+            ShowSeasonsTabs(
+                seasonUiModelList = detailUiState.tvSeasonUiModels,
+                onSeasonClicked = onSeasonClicked,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            EpisodesReleaseContent(
+                episodeList = detailUiState.lastAirEpList,
+                onEpisodeClicked = onEpisodeClicked,
+                onBookmarkEpClicked = onBookmarkEpClicked
+            )
+        }
+
+        SimilarShowsShowsContent(
+            similarShows = detailUiState.similarShowList,
+            onShowClicked = onShowClicked
         )
     }
 }
@@ -531,7 +543,7 @@ private fun SeasonsContent(
 private fun ShowSeasonsTabs(
     seasonUiModelList: List<SeasonUiModel>,
     modifier: Modifier,
-    onSeasonClicked: (Long, Int) -> Unit = { _, _ -> }
+    onSeasonClicked: (Long, String) -> Unit = { _, _ -> }
 ) {
     val selectedIndex by remember { mutableStateOf(0) }
 
@@ -546,7 +558,7 @@ private fun ShowSeasonsTabs(
         seasonUiModelList.forEach { season ->
             Tab(
                 selected = true,
-                onClick = { onSeasonClicked(season.tvShowId, season.seasonNumber) }
+                onClick = { onSeasonClicked(season.tvShowId, season.name) }
             ) {
                 ChoiceChipContent(
                     text = season.name,
@@ -569,6 +581,9 @@ fun TvShowDetailsScrollingPreview() {
                 detailUiState = detailUiState,
                 listState = LazyListState(),
                 contentPadding = PaddingValues(),
+                onUpdateFavoriteClicked = {},
+                onShowClicked = {},
+                onSeasonClicked = { _, _ -> }
             )
         }
     }

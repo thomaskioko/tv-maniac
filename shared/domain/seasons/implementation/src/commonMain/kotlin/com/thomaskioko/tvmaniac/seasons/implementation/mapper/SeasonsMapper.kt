@@ -11,8 +11,7 @@ fun ShowDetailResponse.toSeasonCacheList(): List<Season> {
             season_number = seasonResponse.seasonNumber.toLong(),
             name = seasonResponse.name,
             overview = seasonResponse.overview,
-            epiosode_count = seasonResponse.episodeCount.toLong(),
-            episode_ids = null
+            epiosode_count = seasonResponse.episodeCount.toLong()
         )
     }
 }

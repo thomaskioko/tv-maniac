@@ -16,7 +16,6 @@ object MockData {
             image_url = "https://image.tmdb.org/t/p/original/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
             vote_count = 42,
             vote_average = 6.429,
-            episode_season_number = 1,
             episode_number = "01"
         ),
         EpisodeCache(
@@ -27,7 +26,6 @@ object MockData {
             image_url = "https://image.tmdb.org/t/p/original/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
             vote_count = 23,
             vote_average = 7.6,
-            episode_season_number = 1,
             episode_number = "02"
         )
     )
@@ -45,7 +43,6 @@ object MockData {
                 "the timeline and stop a greater threat.",
             season_number = 1,
             epiosode_count = 6,
-            episode_ids = null
         ),
         Season(
             id = 77680,
@@ -55,7 +52,6 @@ object MockData {
                 "sudden disappearance unearths a young girl with otherworldly powers.",
             season_number = 1,
             epiosode_count = 4,
-            episode_ids = null
         ),
         Season(
             id = 4355,
@@ -66,7 +62,6 @@ object MockData {
                 "back into her life.",
             season_number = 1,
             epiosode_count = 6,
-            episode_ids = null
         )
     )
 

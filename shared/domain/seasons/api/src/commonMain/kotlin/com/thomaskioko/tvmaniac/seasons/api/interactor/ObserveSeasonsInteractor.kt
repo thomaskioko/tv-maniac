@@ -28,7 +28,7 @@ fun SelectSeasonsByShowId.toSeasonsEntity(): SeasonUiModel {
         tvShowId = tv_show_id,
         name = name,
         overview = overview,
-        seasonNumber = season_number.toInt(),
+        seasonNumber = season_number,
         episodeCount = epiosode_count.toInt()
     )
 }

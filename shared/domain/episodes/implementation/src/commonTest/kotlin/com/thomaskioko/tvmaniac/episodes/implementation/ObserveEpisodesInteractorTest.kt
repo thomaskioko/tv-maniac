@@ -6,16 +6,16 @@ import com.thomaskioko.tvmaniac.episodes.implementation.MockData.getEpisodesBySe
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeQuery
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
-import com.thomaskioko.tvmaniac.episodes.api.EpisodesInteractor
+import com.thomaskioko.tvmaniac.episodes.api.ObserveEpisodesInteractor
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlin.test.Test
 
-internal class EpisodesInteractorTest {
+internal class ObserveEpisodesInteractorTest {
 
     private val repository: EpisodeRepository = mockk()
-    private val interactor = EpisodesInteractor(repository)
+    private val interactor = ObserveEpisodesInteractor(repository)
     private val query: EpisodeQuery = EpisodeQuery(
         tvShowId = 84958,
         seasonId = 114355,

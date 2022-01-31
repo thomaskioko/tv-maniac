@@ -1,17 +1,20 @@
 package com.thomaskioko.tvmaniac.injection
 
+import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
 import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveDiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveShowInteractor
 import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateFollowingInteractor
 import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
-import com.thomaskioko.tvmaniac.episodes.api.EpisodesInteractor
+import com.thomaskioko.tvmaniac.episodes.api.ObserveEpisodesInteractor
 import com.thomaskioko.tvmaniac.genre.api.GenreRepository
 import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
 import com.thomaskioko.tvmaniac.interactors.ObserveFollowingInteractor
 import com.thomaskioko.tvmaniac.interactors.ObserveShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisodeRepository
 import com.thomaskioko.tvmaniac.lastairepisodes.api.ObserveAirEpisodesInteractor
+import com.thomaskioko.tvmaniac.seasonepisodes.api.ObserveSeasonWithEpisodesInteractor
+import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.seasons.api.interactor.ObserveSeasonsInteractor
 import com.thomaskioko.tvmaniac.similar.api.ObserveSimilarShowsInteractor
@@ -20,6 +23,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 @Module
@@ -36,7 +40,7 @@ object InteractorsModule {
     @Provides
     fun provideEpisodesInteractor(
         repository: EpisodeRepository
-    ): EpisodesInteractor = EpisodesInteractor(repository)
+    ): ObserveEpisodesInteractor = ObserveEpisodesInteractor(repository)
 
     @Singleton
     @Provides
@@ -85,4 +89,11 @@ object InteractorsModule {
     fun provideObserveObserveSimilarShowsInteractor(
         repository: SimilarShowsRepository
     ): ObserveSimilarShowsInteractor = ObserveSimilarShowsInteractor(repository)
+
+    @Singleton
+    @Provides
+    fun provideObserveSeasonWithEpisodesInteractor(
+        repository: SeasonWithEpisodesRepository,
+        @DefaultDispatcher computationDispatcher: CoroutineDispatcher
+    ): ObserveSeasonWithEpisodesInteractor = ObserveSeasonWithEpisodesInteractor(repository, computationDispatcher)
 }

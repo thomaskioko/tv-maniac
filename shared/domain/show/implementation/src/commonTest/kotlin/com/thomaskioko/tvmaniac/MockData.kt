@@ -4,10 +4,6 @@ import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.discover.api.model.TvShow
-import com.thomaskioko.tvmaniac.remote.api.model.EpisodesResponse
-import com.thomaskioko.tvmaniac.remote.api.model.GenreResponse
-import com.thomaskioko.tvmaniac.remote.api.model.SeasonResponse
-import com.thomaskioko.tvmaniac.remote.api.model.SeasonsResponse
 import com.thomaskioko.tvmaniac.remote.api.model.ShowResponse
 import com.thomaskioko.tvmaniac.remote.api.model.TvShowsResponse
 import com.thomaskioko.tvmaniac.shared.core.util.Resource
@@ -58,67 +54,6 @@ object MockData {
         ),
         totalPages = 100,
         totalResults = 5
-    )
-
-    private fun getGenreResponse() = listOf(
-        GenreResponse(
-            id = 12,
-            name = "Mystery"
-        )
-    )
-
-    private fun getSeasonsListResponse() = listOf(
-        SeasonsResponse(
-            id = 114355,
-            name = "Season 1",
-            overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                "an alternate version of Loki is brought to the mysterious Time Variance " +
-                "Authority, a bureaucratic organization that exists outside of time and " +
-                "space and monitors the timeline. They give Loki a choice: face being " +
-                "erased from existence due to being a “time variant”or help fix " +
-                "the timeline and stop a greater threat.",
-            seasonNumber = 1,
-            episodeCount = 6,
-            airDate = "2016-07-15",
-            posterPath = "/zka9GTG4QQhLmN4NR18KEjxICtt.jpg"
-        )
-    )
-
-    fun getShowSeasonsResponse() = SeasonResponse(
-        air_date = "2021-06-09",
-        name = "Season 1",
-        overview = "",
-        id = 114355,
-        poster_path = "/8uVqe9ThcuYVNdh4O0kuijIWMLL.jpg",
-        season_number = 1,
-        episodes = getEpisodesResponse()
-    )
-
-    private fun getEpisodesResponse() = listOf(
-        EpisodesResponse(
-            id = 2534997,
-            air_date = "2021-06-09",
-            episode_number = 1,
-            name = "Glorious Purpose",
-            overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
-            production_code = "",
-            season_number = 1,
-            still_path = "/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
-            vote_average = 6.429,
-            vote_count = 42,
-        ),
-        EpisodesResponse(
-            id = 2927202,
-            air_date = "2021-06-09",
-            episode_number = 2,
-            name = "The Variant",
-            overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
-            still_path = "/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
-            production_code = "",
-            season_number = 1,
-            vote_average = 7.6,
-            vote_count = 23,
-        ),
     )
 
     fun getDiscoverShowResult(): DiscoverShowResult =
@@ -204,49 +139,5 @@ object MockData {
         following = true,
         number_of_episodes = 30,
         number_of_seasons = 2
-    )
-
-    fun makeShowList() = listOf(
-        Show(
-            id = 84958,
-            title = "Loki",
-            description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                "an alternate version of Loki is brought to the mysterious Time Variance " +
-                "Authority, a bureaucratic organization that exists outside of time and " +
-                "space and monitors the timeline. They give Loki a choice: face being " +
-                "erased from existence due to being a “time variant”or help fix " +
-                "the timeline and stop a greater threat.",
-            poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            language = "en",
-            votes = 4958,
-            vote_average = 8.1,
-            genre_ids = listOf(18, 10765),
-            year = "2019",
-            status = "Ended",
-            popularity = 24.4848,
-            following = true,
-            number_of_episodes = 30,
-            number_of_seasons = 2
-        ),
-        Show(
-            id = 126280,
-            title = "Sex/Life",
-            description = "A woman's daring sexual past collides with her married-with-kids " +
-                "present when the bad-boy ex she can't stop fantasizing about crashes " +
-                "back into her life.",
-            poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            language = "en",
-            votes = 4958,
-            vote_average = 8.1,
-            genre_ids = listOf(35, 18),
-            year = "2019",
-            status = "Ended",
-            popularity = 24.4848,
-            following = false,
-            number_of_episodes = 30,
-            number_of_seasons = 2
-        ),
     )
 }
