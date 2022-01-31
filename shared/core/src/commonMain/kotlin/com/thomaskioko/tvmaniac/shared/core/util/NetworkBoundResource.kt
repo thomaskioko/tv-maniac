@@ -40,8 +40,9 @@ inline fun <ResultType, RequestType> networkBoundResource(
     emit(Resource.success(updatedData))
 }
     .onStart { emit(Resource.loading(null)) }
-    .catch { exception ->
-        onFetchFailed(exception)
-        emit(Resource.error("Something went wrong! $exception", null))
+    .catch { throwable ->
+        onFetchFailed(throwable)
+        emit(Resource.error(throwable, null))
+        throw Throwable(throwable.resolveError().errorMessage)
     }
     .flowOn(coroutineDispatcher)

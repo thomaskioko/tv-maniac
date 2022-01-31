@@ -35,16 +35,13 @@ class SeasonsCacheImpl(
         ).executeAsOne()
     }
 
+    override fun getSeasonsByShowId(showId: Long): List<SelectSeasonsByShowId> {
+        return seasonQueries.selectSeasonsByShowId(showId).executeAsList()
+    }
+
     override fun observeSeasons(tvShowId: Long): Flow<List<SelectSeasonsByShowId>> {
         return seasonQueries.selectSeasonsByShowId(tvShowId)
             .asFlow()
             .mapToList()
-    }
-
-    override fun updateSeasonEpisodesIds(seasonId: Long, episodeIds: List<Int>) {
-        seasonQueries.updateEpisodes(
-            id = seasonId,
-            episode_ids = episodeIds
-        )
     }
 }

@@ -10,6 +10,5 @@ data class SeasonResponse(
     @SerialName("name") val name: String,
     @SerialName("overview") val overview: String,
     @SerialName("id") val id: Int,
-    @SerialName("poster_path") val poster_path: String,
     @SerialName("season_number") val season_number: Int
 )

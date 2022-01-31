@@ -9,11 +9,10 @@ fun List<EpisodesBySeasonId>.toEpisodeEntityList(): List<EpisodeUiModel> {
 
 fun EpisodesBySeasonId.toEpisodeEntity(): EpisodeUiModel {
     return EpisodeUiModel(
-        id = id.toInt(),
-        seasonId = season_id.toInt(),
+        id = id,
+        seasonId = season_id,
         name = name,
         overview = overview,
-        seasonNumber = episode_season_number.toInt(),
         imageUrl = image_url,
         voteAverage = vote_average,
         voteCount = vote_count.toInt(),
