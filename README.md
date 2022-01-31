@@ -118,12 +118,14 @@ I'll keep updating & changing things as I learn. 🤓
 Android
 - [x] Implement Watchlist
 - [x] Add `More` screen. Shows GridView
-- [ ] Implement Search
-- [ ] Recommended Shows
+- [x] Recommended Shows
 - [x] Implement pagination.
 - [x] Add Settings panel.
     - Dynamic theme change.
-- [ ] Observe Internet connection
+- [x] Add Seasons UI
+- [ ] Add Episode detail screen
+- [ ] Add Watchlist
+- [ ] Implement Search
 
 iOS
 - [x] Add HomeScreen: Tabs & Empty UI
@@ -138,10 +140,9 @@ Shared
 - [x] Refactor interactor implementation.
 - [x] Use koin for injection
 - [x] Modularize `shared` module
+- [ ] Improve error handling, add retry.
 - [ ] Better MVI implementation
-  
-    [ ] Have `shared-core` module have most of the implementation.
-    [ ] Improve error state, add retry.
+- [ ] Observe Internet connection
 
 
 ### References
