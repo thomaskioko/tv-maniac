@@ -86,10 +86,11 @@ fun SeasonEpisodeList(
                 modifier = Modifier
                     .constrainAs(episodeTitle) {
                         start.linkTo(image.end, 8.dp)
+                        end.linkTo(episodeCount.start)
                         top.linkTo(parent.top)
                         bottom.linkTo(watchlistProgress.top)
 
-                        width = Dimension.preferredWrapContent
+                        width = Dimension.fillToConstraints
                     }
             )
 

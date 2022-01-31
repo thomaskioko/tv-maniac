@@ -79,7 +79,7 @@ fun EpisodeListItem(
                 modifier = Modifier
                     .constrainAs(episodeTitle) {
                         start.linkTo(image.end, 8.dp)
-                        end.linkTo(parent.end)
+                        end.linkTo(watchedStatusIcon.start)
                         top.linkTo(parent.top, 8.dp)
 
                         width = Dimension.fillToConstraints
