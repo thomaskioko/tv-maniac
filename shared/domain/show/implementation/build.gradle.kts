@@ -7,9 +7,9 @@ dependencies {
     commonMainImplementation(project(":shared:domain:show:api"))
     commonMainImplementation(project(":shared:domain:episodes:api"))
     commonMainImplementation(project(":shared:domain:last-air-episodes:api"))
+    commonMainImplementation(project(":shared:domain:show-common:api"))
 
     commonMainImplementation(libs.koin.core)
-    commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.kotlin.datetime)
     commonMainImplementation(libs.multiplatform.paging.core)
     commonMainImplementation(libs.squareup.sqldelight.extensions)

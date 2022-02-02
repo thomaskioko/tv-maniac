@@ -38,6 +38,7 @@ kotlin {
             export(project(":shared:domain:last-air-episodes:api"))
             export(project(":shared:domain:similar:api"))
             export(project(":shared:domain:season-episodes:api"))
+            export(project(":shared:domain:show-common:api"))
             embedBitcode(BitcodeEmbeddingMode.BITCODE)
 
             transitiveExport = true
@@ -56,6 +57,7 @@ dependencies {
     commonMainApi(project(":shared:domain:last-air-episodes:api"))
     commonMainApi(project(":shared:domain:similar:api"))
     commonMainApi(project(":shared:domain:season-episodes:api"))
+    commonMainApi(project(":shared:domain:show-common:api"))
 
     commonMainImplementation(project(":shared:domain:episodes:implementation"))
     commonMainImplementation(project(":shared:domain:show:implementation"))

@@ -8,5 +8,5 @@ dependencies {
     commonMainApi(libs.kotlin.coroutines.core)
     commonMainApi(libs.kermit)
 
-    commonMainImplementation(project(":shared:domain:show:api"))
+    commonMainImplementation(project(":shared:domain:show-common:api"))
 }

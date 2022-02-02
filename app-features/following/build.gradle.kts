@@ -6,4 +6,5 @@ dependencies {
     implementation(project(":app-common:compose"))
     implementation(project(":shared:interactors"))
     implementation(project(":shared:domain:show:api"))
+    implementation(project(":shared:domain:show-common:api"))
 }
