@@ -42,10 +42,10 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
-import com.thomaskioko.tvmaniac.discover.api.model.TvShow
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsViewState
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.Episode
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.SeasonWithEpisodes
+import com.thomaskioko.tvmaniac.showcommon.api.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 

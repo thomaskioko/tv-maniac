@@ -3,10 +3,13 @@ package com.thomaskioko.showdetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.showdetails.ShowDetailAction.UpdateFavorite
-import com.thomaskioko.showdetails.ShowDetailEffect.ShowDetailsError
 import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveShowInteractor
 import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateFollowingInteractor
+import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailAction
+import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailAction.UpdateFavorite
+import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailEffect
+import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailEffect.ShowDetailsError
+import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailViewState
 import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
 import com.thomaskioko.tvmaniac.lastairepisodes.api.ObserveAirEpisodesInteractor
 import com.thomaskioko.tvmaniac.seasons.api.interactor.ObserveSeasonsInteractor
@@ -46,10 +49,10 @@ class ShowDetailsViewModel @Inject constructor(
     private val uiEffects = MutableSharedFlow<ShowDetailEffect>(extraBufferCapacity = 100)
 
     init {
-        dispatch(ShowDetailAction.LoadShowDetails)
-        dispatch(ShowDetailAction.LoadSeasons)
+        dispatch(ShowDetailAction.LoadShowDetails(showId))
+        dispatch(ShowDetailAction.LoadSeasons(showId))
         dispatch(ShowDetailAction.LoadGenres)
-        dispatch(ShowDetailAction.LoadEpisodes)
+        dispatch(ShowDetailAction.LoadEpisodes(showId))
         dispatch(ShowDetailAction.LoadSimilarShows)
     }
 
@@ -59,10 +62,10 @@ class ShowDetailsViewModel @Inject constructor(
 
     override fun dispatch(action: ShowDetailAction) {
         when (action) {
-            ShowDetailAction.LoadSeasons -> fetchSeason()
             ShowDetailAction.LoadGenres -> fetchGenres()
-            ShowDetailAction.LoadShowDetails -> loadShowDetails()
             ShowDetailAction.LoadSimilarShows -> fetchSimilarShows()
+            is ShowDetailAction.LoadSeasons -> fetchSeason()
+            is ShowDetailAction.LoadShowDetails -> loadShowDetails()
             is UpdateFavorite -> updateWatchlist(action)
             is ShowDetailAction.Error -> {
                 coroutineScope.launch {
@@ -140,7 +143,7 @@ class ShowDetailsViewModel @Inject constructor(
 
     private fun updateWatchlist(action: UpdateFavorite) {
         updateFollowingInteractor.execute(action.params) {
-            onComplete { dispatch(ShowDetailAction.LoadShowDetails) }
+            onComplete { dispatch(ShowDetailAction.LoadShowDetails(showId)) }
             onError {
                 coroutineScope.launch {
                     uiEffects.emit(

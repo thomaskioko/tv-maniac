@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
 import com.thomaskioko.tvmaniac.core.annotations.IoCoroutineScope
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.discover.api.cache.ShowCategoryCache
-import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.discover.implementation.repository.TvShowsRepositoryImpl
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
@@ -23,6 +22,7 @@ import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodes
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsRepositoryImpl
+import com.thomaskioko.tvmaniac.showcommon.api.TvShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsRepositoryImpl

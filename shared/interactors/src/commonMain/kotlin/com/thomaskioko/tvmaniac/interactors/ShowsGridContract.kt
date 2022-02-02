@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.interactors
 
 import com.kuuurt.paging.multiplatform.PagingData
-import com.thomaskioko.tvmaniac.discover.api.model.TvShow
 import com.thomaskioko.tvmaniac.shared.core.store.Action
 import com.thomaskioko.tvmaniac.shared.core.store.Effect
 import com.thomaskioko.tvmaniac.shared.core.store.State
+import com.thomaskioko.tvmaniac.showcommon.api.TvShow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 

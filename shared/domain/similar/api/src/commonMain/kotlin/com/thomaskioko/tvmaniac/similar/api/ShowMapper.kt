@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.similar.api
 
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSimilarShows
-import com.thomaskioko.tvmaniac.discover.api.model.TvShow
+import com.thomaskioko.tvmaniac.showcommon.api.TvShow
 
 fun List<SelectSimilarShows>.toTvShowList(): List<TvShow> {
     return map { it.toTvShow() }
