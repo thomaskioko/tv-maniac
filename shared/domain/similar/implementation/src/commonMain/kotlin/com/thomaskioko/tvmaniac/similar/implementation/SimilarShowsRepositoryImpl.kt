@@ -2,12 +2,12 @@ package com.thomaskioko.tvmaniac.similar.implementation
 
 import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSimilarShows
-import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.model.TvShowsResponse
 import com.thomaskioko.tvmaniac.shared.core.util.Resource
 import com.thomaskioko.tvmaniac.shared.core.util.getErrorMessage
 import com.thomaskioko.tvmaniac.shared.core.util.networkBoundResource
+import com.thomaskioko.tvmaniac.showcommon.api.TvShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import kotlinx.coroutines.CoroutineDispatcher

@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.di
 import com.thomaskioko.tvmaniac.core.db.di.dbPlatformModule
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.discover.api.cache.ShowCategoryCache
-import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.discover.implementation.cache.CategoryCacheImpl
 import com.thomaskioko.tvmaniac.discover.implementation.cache.ShowCategoryCacheImpl
 import com.thomaskioko.tvmaniac.discover.implementation.cache.TvShowCacheImpl
@@ -16,6 +15,7 @@ import com.thomaskioko.tvmaniac.remote.di.serviceModule
 import com.thomaskioko.tvmaniac.seasonepisodes.implementation.seasonEpisodesDomainModule
 import com.thomaskioko.tvmaniac.seasons.implementation.di.seasonsDomainModule
 import com.thomaskioko.tvmaniac.shared.core.di.corePlatformModule
+import com.thomaskioko.tvmaniac.showcommon.api.TvShowCache
 import com.thomaskioko.tvmaniac.similar.implementation.di.similarDomainModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -44,7 +44,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
 }
 
 val cacheModule: Module = module {
-    single<TvShowCache> { TvShowCacheImpl(get()) }
+    single<com.thomaskioko.tvmaniac.showcommon.api.TvShowCache> { TvShowCacheImpl(get()) }
     single<ShowCategoryCache> { ShowCategoryCacheImpl(get()) }
     single<CategoryCache> { CategoryCacheImpl(get()) }
 }
