@@ -1,16 +1,15 @@
 package com.thomaskioko.tvmaniac.discover.api.interactor
 
-import com.thomaskioko.tvmaniac.discover.api.mapper.toTvShow
-import com.thomaskioko.tvmaniac.discover.api.model.TvShow
 import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
+import com.thomaskioko.tvmaniac.showcommon.api.toTvShow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class ObserveShowInteractor constructor(
     private val repository: TvShowsRepository,
-) : FlowInteractor<Long, TvShow>() {
+) : FlowInteractor<Long, com.thomaskioko.tvmaniac.showcommon.api.TvShow>() {
 
-    override fun run(params: Long): Flow<TvShow> = repository.observeShow(params)
-        .map { it.data?.toTvShow() ?: TvShow.EMPTY_SHOW }
+    override fun run(params: Long): Flow<com.thomaskioko.tvmaniac.showcommon.api.TvShow> = repository.observeShow(params)
+        .map { it.data?.toTvShow() ?: com.thomaskioko.tvmaniac.showcommon.api.TvShow.EMPTY_SHOW }
 }
