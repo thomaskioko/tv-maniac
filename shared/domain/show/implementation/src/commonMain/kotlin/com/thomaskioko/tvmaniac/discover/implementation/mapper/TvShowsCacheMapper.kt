@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.datasource.cache.SelectShows
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.remote.api.model.LastEpisodeToAir
 import com.thomaskioko.tvmaniac.remote.api.model.NextEpisodeToAir
-import com.thomaskioko.tvmaniac.shared.core.util.StringUtil
+import com.thomaskioko.tvmaniac.shared.core.util.DateUtil.formatDateString
 
 fun List<SelectShows>.toShowList(): List<Show> {
     return map { it.toShow() }
@@ -36,7 +36,7 @@ fun NextEpisodeToAir.toAirEp(tvShowId: Long) = Last_episode(
     show_id = tvShowId,
     name = name,
     overview = if (!overview.isNullOrEmpty()) overview!! else "TBA",
-    air_date = StringUtil.formatDate(airDate),
+    air_date = formatDateString(dateString = airDate),
     episode_number = episodeNumber!!.toLong(),
     season_number = seasonNumber!!.toLong(),
     still_path = stillPath,
@@ -50,7 +50,7 @@ fun LastEpisodeToAir.toAirEp(tvShowId: Long) = Last_episode(
     show_id = tvShowId,
     name = name,
     overview = if (!overview.isNullOrEmpty()) overview!! else "TBA",
-    air_date = StringUtil.formatDate(airDate),
+    air_date = formatDateString(dateString = airDate),
     episode_number = episodeNumber!!.toLong(),
     season_number = seasonNumber!!.toLong(),
     still_path = stillPath,
