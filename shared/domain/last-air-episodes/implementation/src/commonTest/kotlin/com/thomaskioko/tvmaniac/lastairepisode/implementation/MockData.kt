@@ -73,7 +73,7 @@ fun makeLastEpisodeList(): List<AirEpisodesByShowId> = listOf(
 fun makeLastAirEpisode(): List<LastAirEpisode> = listOf(
     LastAirEpisode(
         id = 126280,
-        name = "S1.E3 • Follow the Leader?",
+        name = "S1.E03 • Follow the Leader?",
         overview = "A woman's daring sexual past collides with her married-with-kids " +
             "present when the bad-boy ex she can't stop fantasizing about crashes " +
             "back into her life.",
@@ -88,7 +88,7 @@ fun makeLastAirEpisode(): List<LastAirEpisode> = listOf(
     ),
     LastAirEpisode(
         id = 12628,
-        name = "S1.E3 • Follow the Leader?",
+        name = "S1.E03 • Follow the Leader?",
         overview = "A woman's daring sexual past collides with her married-with-kids " +
             "present when the bad-boy ex she can't stop fantasizing about crashes " +
             "back into her life.",
