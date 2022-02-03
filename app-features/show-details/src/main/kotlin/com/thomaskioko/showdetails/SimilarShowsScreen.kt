@@ -36,14 +36,13 @@ fun SimilarShowsShowsContent(
 
         Column(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
                 .fillMaxWidth()
         ) {
             Text(
                 text = stringResource(id = R.string.title_similar),
                 style = MaterialTheme.typography.h6,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             )
 
             ColumnSpacer(4)

@@ -328,7 +328,6 @@ private fun DisplayShowData(
             LazyRow(
                 state = lazyListState,
                 flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-                modifier = Modifier.padding(horizontal = 16.dp)
             ) {
                 itemsIndexed(tvShows) { index, tvShow ->
                     TvShowCard(
