@@ -28,21 +28,21 @@ struct DiscoverView: View {
 
                             if let result = observable.state as? DiscoverShowsState.Success {
 
-                                FeaturedShowsView(shows: result.data.featuredShows.showUiModels)
+								FeaturedShowsView(shows: result.data.featuredShows.tvShows)
 
                                 ShowRow(
-                                        catagoryName: result.data.trendingShows.category.title,
-                                        shows: result.data.trendingShows.showUiModels
+                                        categoryName: result.data.trendingShows.category.title,
+                                        shows: result.data.trendingShows.tvShows
                                 )
 
                                 ShowRow(
-                                        catagoryName: result.data.topRatedShows.category.title,
-                                        shows: result.data.topRatedShows.showUiModels
+                                        categoryName: result.data.topRatedShows.category.title,
+                                        shows: result.data.topRatedShows.tvShows
                                 )
 
                                 ShowRow(
-                                        catagoryName: result.data.popularShows.category.title,
-                                        shows: result.data.popularShows.showUiModels
+                                        categoryName: result.data.popularShows.category.title,
+                                        shows: result.data.popularShows.tvShows
                                 )
                             }
                             Spacer()
@@ -66,9 +66,9 @@ struct DiscoverView: View {
 
 struct FeaturedShowsView: View {
 
-    @SwiftUI.State var currentIndex: Int = 0
+    @SwiftUI.State var currentIndex: Int = 2
 
-    let shows: [ShowUiModel]
+    let shows: [TvShow]
     let resizingProcessor = ResizingImageProcessor(
             referenceSize: CGSize(width: PosterStyle.Size.big.width(), height: PosterStyle.Size.big.height())
     ) |> RoundCornerImageProcessor(cornerRadius: 5)
@@ -77,8 +77,9 @@ struct FeaturedShowsView: View {
 
         ZStack {
             if shows.count != 0 {
+				
                 TabView(selection: $currentIndex) {
-                    NavigationLink(destination: ShowDetailView(show: shows[currentIndex])) {
+                    NavigationLink(destination: ShowDetailView(showId: shows[currentIndex].id)) {
                         SnapCarousel(
                                 spacing: getRect().height < 750 ? 15 : 20,
                                 trailingSpace: getRect().height < 750 ? 100 : 150,
@@ -89,7 +90,7 @@ struct FeaturedShowsView: View {
                         }
                                 .offset(y: getRect().height / 5.5)
                     }
-                }
+				}
                         .ignoresSafeArea()
                         .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
@@ -103,7 +104,7 @@ struct FeaturedShowsView: View {
     }
 
     @ViewBuilder
-    func CardView(show: ShowUiModel) -> some View {
+    func CardView(show: TvShow) -> some View {
 
         VStack(spacing: 10) {
             GeometryReader { proxy in
