@@ -72,7 +72,7 @@ androidx-compose-ui-runtime = { module = "androidx.compose.ui:ui", version.ref =
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidx-compose" }
 androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "androidx-compose" }
 androidx-compose-runtime-core = { module = "androidx.compose.runtime:runtime", version.ref = "androidx-compose" }
-androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "androidx-compose" }
+androidx-compose-material-core = { module = "androidx.compose.material:material", version.ref = "androidx-compose" }
 androidx-compose-material-icons = { module = "androidx.compose.material:material-icons-extended", version.ref = "androidx-compose" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose" }
 androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "androidx-constraintlayout" }
