@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.shared.core.store
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
+open class ViewState
 interface State
 interface Action
 interface Effect
