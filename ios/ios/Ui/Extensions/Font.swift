@@ -117,6 +117,10 @@ extension View {
 		return ModifiedContent(content: self, modifier: TitleFont(size: size))
 	}
 	
+	func titleBoldFont(size: CGFloat) -> some View {
+		return ModifiedContent(content: self, modifier: TitleBoldFont(size: size))
+	}
+	
 	func titleSemiBoldFont(size: CGFloat) -> some View {
 		return ModifiedContent(content: self, modifier: TitleSemiBoldFont(size: size))
 	}

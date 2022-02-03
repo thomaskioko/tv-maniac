@@ -10,26 +10,45 @@ import SwiftUI
 import TvManiac
 
 struct ShowDetailView: View {
-	var show: ShowUiModel
+	
+	@ObservedObject var observable = ObservableViewModel<ShowDetailsViewModel, ShowDetailUiViewState>(
+		viewModel: ShowDetailsViewModel()
+	)
+	
+	var showId: Int64
+	
+	init(showId: Int64) {
+		self.showId = showId
+	}
 	
 	var body: some View {
 		ZStack {
+			
 			ScrollView(.vertical, showsIndicators: false) {
-				HeaderView(show: show)
-					.frame(width: PosterStyle.Size.max.width(), height: PosterStyle.Size.max.height())
-
-				VStack(alignment: .leading, spacing: 15){
-					ShowBodyView(show: show)
-				}
+				
+				HeaderView(viewState: observable.state)
+					.frame(width: PosterStyle.Size.max.width(), height: PosterStyle.Size.tv.height())
+				
+				
+				ShowBodyView(viewState: observable.state)
+				
 			}
-			.background(Color.grey_900)
+			
 		}
+		.onAppear {
+			observable.viewModel.attach()
+			observable.viewModel.dispatch(action: ShowDetailAction.LoadShowDetails(showId: self.showId))
+		}
+		.onDisappear {
+			observable.viewModel.detach()
+		}
+		.background(Color.background)
 		.edgesIgnoringSafeArea(.all)
 	}
 }
 
 struct ShowDetailView_Previews: PreviewProvider {
 	static var previews: some View {
-		ShowDetailView(show: mockShow)
+		ShowDetailView(showId: 1234)
 	}
 }

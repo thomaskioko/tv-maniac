@@ -11,61 +11,66 @@ import TvManiac
 
 struct ShowInfoRow: View {
 	
-	var show: ShowUiModel
+	var show: TvShow
 	
 	var body: some View {
 		HStack {
 			
-			if show.status.isEmpty != true {
-				Text(show.status)
+			if show.status?.isEmpty != true {
+				Text(show.status ?? "")
 					.captionFont(size: 16)
-					.foregroundColor(.yellow_300)
+					.foregroundColor(.accent)
 					.padding(2)
-					.background(Color.yellow_300.opacity(0.2))
+					.background(Color.accent.opacity(0.2))
 				
 				Text("•")
 					.bodyFont(size: 16)
-					.foregroundColor(.yellow_300)
+					.foregroundColor(.accent)
 			}
 			
 			if let year = show.year {
 				Text(year)
 					.captionFont(size: 16)
-					.foregroundColor(.white)
+					.foregroundColor(Color.text_color_bg)
 			}
 			
 			Text("•")
 				.bodyFont(size: 16)
-				.foregroundColor(.yellow_300)
+				.foregroundColor(.accent)
 			
 			if let language = show.language {
 				Text(language)
 					.captionFont(size: 16)
 					.textCase(.uppercase)
-					.foregroundColor(.white)
+					.foregroundColor(Color.text_color_bg)
 			}
 			
 			Text("•")
 				.bodyFont(size: 16)
-				.foregroundColor(.yellow_300)
+				.foregroundColor(.accent)
 			
 			if let averageVotes = show.averageVotes {
 				Text(String(format: "%.1f", averageVotes))
 					.captionFont(size: 16)
+					.foregroundColor(Color.text_color_bg)
 			}
 			
 			Text("•")
 				.bodyFont(size: 16)
-				.foregroundColor(.yellow_300)
+				.foregroundColor(.accent)
+				.foregroundColor(Color.text_color_bg)
 			
-		
+			
 		}
-		.foregroundColor(.white)
+		.foregroundColor(Color.text_color_bg)
 	}
 }
 
 struct ShowInfoRow_Previews: PreviewProvider {
 	static var previews: some View {
-		ShowInfoRow(show: mockShow).background(Color.black)
+		ShowInfoRow(show: mockShow)
+		
+		ShowInfoRow(show: mockShow)
+			.preferredColorScheme(.dark)
 	}
 }
