@@ -3,28 +3,43 @@ Tv-Maniac 🚧 Under Heavy Development 🚧
 Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows information from
 [TMDB](https://www.themoviedb.org/).
 
-### Android - Screenshots
+### Android Screenshots
 
 <table>
   <td>
     <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/HomeScreen.png?raw=true" alt="Home Screen" width="300"/>
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AndroidHomeLight.png?raw=true" alt="Home Screen Light" width="500"/>
+    </p>
+  </td>
+    <td>
+    <p align="center">
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AndroidDetailLight.png?raw=true" alt="Home Screen Light" width="500"/>
+    </p>
+  </td>
+    <td>
+    <p align="center">
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AnroidHomeDark.png?raw=true" alt="Home Screen Dark" width="500"/>
     </p>
   </td>
   <td>
     <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/ShowDetail.png?raw=true" alt="Show Details Screen" width="300"/>
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AnroidDetailDark.png?raw=true" alt="Show Details Dark" width="500"/>
     </p>
   </td>
 </tr>
 </table>
 
-### iOS - Screenshots
+### iOS Light Theme Screenshots
 
 <table>
   <td>
     <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOS-HomeScreen.png?raw=true" alt="Home Screen" width="300"/>
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOSHomeLight.png?raw=true" alt="Home Screen" width="300"/>
+    </p>
+  </td>
+    <td>
+    <p align="center">
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOSDetailLight.png?raw=true" alt="Home Screen" width="300"/>
     </p>
   </td>
 </tr>
@@ -48,7 +63,13 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
 
 
 ### Opening iOS Project
-- Navigate to ios directory & open `.xcworkspace` & not `.xcodeproj`
+- Navigate to ios directory & open `.xcworkspace` & not `.xcodeproj` 
+
+### Genereating Swift Package Locally
+In case you make changes to the `shared` module and want to test out the changes, you can generate the swift package locally by:
+
+1. Execute `./gradle createSwiftPackage`. This will generate a swift package outside the root directory.
+2. Add the generated package in XCode.
 
 
 ## Project Structure & Architecture
@@ -114,6 +135,7 @@ I'll keep updating & changing things as I learn. 🤓
 
 ### iOS
 * [Kingfisher](https://github.com/onevcat/Kingfisher) - Image library.
+* [TvManiac](https://github.com/c0de-wizard/tvmaniac-swift-packages) - TvManiac SwiftPackage.
 
 ## Roadmap
 Android
@@ -131,7 +153,8 @@ Android
 iOS
 - [x] Add HomeScreen: Tabs & Empty UI
 - [x] Implement Discover UI
-- [ ] Show Detail Screen
+- [x] Show Detail Screen
+- [ ] Add Seasons UI
 - [ ] Implement Search UI
 - [ ] Implement Watchlist UI
 - [ ] Implement Load more
