@@ -12,7 +12,7 @@ import TvManiac
 // See my Custom Snap Carousel Video...
 // Link in Description...
 
-struct SnapCarousel<Content: View, T: ShowUiModel>: View {
+struct SnapCarousel<Content: View, T: TvShow>: View {
     var content: (T) -> Content
     var list: [T]
 
@@ -38,7 +38,7 @@ struct SnapCarousel<Content: View, T: ShowUiModel>: View {
 
     // Offset...
     @GestureState var offset: CGFloat = 0
-    @SwiftUI.State var currentIndex: Int = 0
+    @SwiftUI.State var currentIndex: Int = 2
 
     var body: some View {
 

@@ -4,8 +4,8 @@ import Kingfisher
 
 struct ShowRow: View {
 
-    var catagoryName: String
-    var shows: [ShowUiModel]
+    var categoryName: String
+    var shows: [TvShow]
     let processor = DownsamplingImageProcessor(size: CGSize(width: PosterStyle.Size.medium.width(), height: PosterStyle.Size.medium.height()))
             |> RoundCornerImageProcessor(cornerRadius: 5)
 
@@ -13,15 +13,14 @@ struct ShowRow: View {
         VStack(alignment: .leading) {
 
             HStack {
-                Text(self.catagoryName)
-                        .bodyMediumFont(size: 23)
-                        .foregroundColor(.yellow_300)
+                Text(self.categoryName)
+                        .titleSemiBoldFont(size: 23)
                         .padding(.top, 8)
 
                 Spacer()
 
                 NavigationLink(destination: ShowGridView()
-                        .navigationBarTitle(self.catagoryName),
+                        .navigationBarTitle(self.categoryName),
                         label: {
                             Spacer()
                             Text("More")
@@ -34,7 +33,7 @@ struct ShowRow: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top) {
                     ForEach(self.shows, id: \.title) { show in
-                        NavigationLink(destination: ShowDetailView(show: show)) {
+                        NavigationLink(destination: ShowDetailView(showId: show.id)) {
                             ShowPosterImage(
                                     processor: processor,
                                     posterSize: .medium,
@@ -54,8 +53,8 @@ struct ShowRow: View {
 
 struct ShowRow_Previews: PreviewProvider {
     static var previews: some View {
-        ShowRow(catagoryName: "Trending", shows: [
-            ShowUiModel(
+        ShowRow(categoryName: "Trending", shows: [
+			TvShow(
                     id: 1,
                     title: "",
                     overview: "",
@@ -65,12 +64,13 @@ struct ShowRow_Previews: PreviewProvider {
                     year: "",
                     status: "",
                     votes: 21,
-
+                    numberOfSeasons: 2,
+                    numberOfEpisodes: 12,
                     averageVotes: 233.0,
-                    isInWatchlist: false,
+					following: false,
                     genreIds: [12, 15]
             ),
-            ShowUiModel(
+			TvShow(
                     id: 2,
                     title: "",
                     overview: "",
@@ -80,11 +80,13 @@ struct ShowRow_Previews: PreviewProvider {
                     year: "",
                     status: "",
                     votes: 21,
+                    numberOfSeasons: 2,
+                    numberOfEpisodes: 12,
                     averageVotes: 233.0,
-                    isInWatchlist: false,
+					following: false,
                     genreIds: [12, 15]
             ),
-            ShowUiModel(
+			TvShow(
                     id: 3,
                     title: "",
                     overview: "",
@@ -94,8 +96,10 @@ struct ShowRow_Previews: PreviewProvider {
                     year: "",
                     status: "",
                     votes: 21,
+                    numberOfSeasons: 2,
+                    numberOfEpisodes: 12,
                     averageVotes: 233.0,
-                    isInWatchlist: false,
+					following: false,
                     genreIds: [12, 15]
             )])
     }
