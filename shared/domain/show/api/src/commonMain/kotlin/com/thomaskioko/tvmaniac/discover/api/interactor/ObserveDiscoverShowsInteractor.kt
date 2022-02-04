@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.discover.api.interactor
 
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
-import com.thomaskioko.tvmaniac.discover.api.mapper.toTvShowList
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory.POPULAR
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory.TOP_RATED
@@ -11,6 +10,7 @@ import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import com.thomaskioko.tvmaniac.shared.core.util.Resource
 import com.thomaskioko.tvmaniac.shared.core.util.Status
+import com.thomaskioko.tvmaniac.showcommon.api.toTvShowList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map

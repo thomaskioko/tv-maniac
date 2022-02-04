@@ -15,6 +15,7 @@ class SettingsNavigationFactory @Inject constructor() : ComposeNavigationFactory
             content = {
                 SettingsScreen(
                     viewModel = this,
+                    navigateUp = { navController.popBackStack() }
                 )
             }
         )

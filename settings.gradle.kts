@@ -43,5 +43,6 @@ include(
     ":shared:domain:similar:api",
     ":shared:domain:similar:implementation",
     ":shared:domain:season-episodes:api",
-    ":shared:domain:season-episodes:implementation"
+    ":shared:domain:season-episodes:implementation",
+    ":shared:domain:show-common:api",
 )

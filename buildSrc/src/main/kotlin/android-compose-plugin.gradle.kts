@@ -42,7 +42,7 @@ dependencies {
     api(libs.androidx.palette)
 
     api(libs.androidx.compose.runtime.core)
-    api(libs.androidx.compose.material)
+    api(libs.androidx.compose.material.core)
     api(libs.androidx.compose.material.icons)
     api(libs.androidx.compose.ui.runtime)
     api(libs.androidx.compose.ui.tooling)

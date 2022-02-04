@@ -11,7 +11,6 @@ import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.Show_category
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.discover.api.cache.ShowCategoryCache
-import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory.POPULAR
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory.TOP_RATED
@@ -29,6 +28,7 @@ import com.thomaskioko.tvmaniac.shared.core.util.Resource
 import com.thomaskioko.tvmaniac.shared.core.util.asCommonFlow
 import com.thomaskioko.tvmaniac.shared.core.util.getErrorMessage
 import com.thomaskioko.tvmaniac.shared.core.util.networkBoundResource
+import com.thomaskioko.tvmaniac.showcommon.api.TvShowCache
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

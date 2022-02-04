@@ -2,12 +2,12 @@
   "object": {
     "pins": [
       {
-        "package": "TvManiac",
-        "repositoryURL": "https://github.com/c0de-wizard/tvmaniac-swift-packages",
+        "package": "Kingfisher",
+        "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
         "state": {
           "branch": null,
-          "revision": "5e6123580a2e7f4ad3b14227e13d7a12c1800274",
-          "version": "0.3.0"
+          "revision": "0c02c46cfdc0656ce74fd0963a75e5000a0b7f23",
+          "version": "7.1.2"
         }
       }
     ]

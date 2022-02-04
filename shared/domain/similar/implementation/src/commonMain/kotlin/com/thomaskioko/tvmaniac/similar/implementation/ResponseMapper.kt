@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.similar.implementation
 
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.remote.api.model.ShowResponse
+import com.thomaskioko.tvmaniac.shared.core.util.DateUtil.formatDateString
 import com.thomaskioko.tvmaniac.shared.core.util.StringUtil
-import com.thomaskioko.tvmaniac.shared.core.util.StringUtil.formatDate
 
 fun ShowResponse.toShow(): Show {
     return Show(
@@ -16,7 +16,7 @@ fun ShowResponse.toShow(): Show {
         votes = voteCount.toLong(),
         vote_average = voteAverage,
         genre_ids = genreIds,
-        year = formatDate(firstAirDate),
+        year = formatDateString(dateString = firstAirDate),
         status = "",
         popularity = popularity,
         following = false,

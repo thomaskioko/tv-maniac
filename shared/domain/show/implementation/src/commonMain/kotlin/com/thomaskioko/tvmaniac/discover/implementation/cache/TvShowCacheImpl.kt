@@ -6,7 +6,7 @@ import com.squareup.sqldelight.runtime.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.datasource.cache.AirEpisodesByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
-import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.showcommon.api.TvShowCache
 import kotlinx.coroutines.flow.Flow
 
 class TvShowCacheImpl(

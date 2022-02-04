@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.discover.api.model.TvShow
 import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.showcommon.api.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
@@ -36,14 +36,13 @@ fun SimilarShowsShowsContent(
 
         Column(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
                 .fillMaxWidth()
         ) {
             Text(
                 text = stringResource(id = R.string.title_similar),
                 style = MaterialTheme.typography.h6,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             )
 
             ColumnSpacer(4)

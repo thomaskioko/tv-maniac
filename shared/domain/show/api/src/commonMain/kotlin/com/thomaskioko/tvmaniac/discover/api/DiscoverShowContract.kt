@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.discover.api
 
 import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.discover.api.model.TvShow
 import com.thomaskioko.tvmaniac.shared.core.store.Action
 import com.thomaskioko.tvmaniac.shared.core.store.Effect
 import com.thomaskioko.tvmaniac.shared.core.store.State
+import com.thomaskioko.tvmaniac.showcommon.api.TvShow
 
 data class DiscoverShowState(
     val isLoading: Boolean,
@@ -45,7 +45,7 @@ data class DiscoverShowResult(
     data class DiscoverShowsData(
         val isLoading: Boolean,
         val category: ShowCategory,
-        val tvShows: List<TvShow>,
+        val tvShows: List<com.thomaskioko.tvmaniac.showcommon.api.TvShow>,
         val errorMessage: String? = null
     ) {
 
