@@ -27,7 +27,7 @@ fun TvShowCard(
     rowSpacer: Int = 4,
     onClick: () -> Unit = {}
 ) {
-    RowSpacer(value = if (isFirstCard) 0 else 4)
+    RowSpacer(value = if (isFirstCard) 16 else 4)
 
     Column(
         modifier = modifier

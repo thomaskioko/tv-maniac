@@ -1,11 +1,10 @@
 package com.thomaskioko.tvmaniac.discover.api
 
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult.DiscoverShowsData
-import com.thomaskioko.tvmaniac.discover.api.DiscoverShowsState.Error
-import com.thomaskioko.tvmaniac.discover.api.DiscoverShowsState.Success
 import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveDiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.shared.core.BaseViewModel
-import com.thomaskioko.tvmaniac.shared.core.ViewState
+import com.thomaskioko.tvmaniac.shared.core.store.Action
+import com.thomaskioko.tvmaniac.shared.core.store.ViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -23,20 +22,35 @@ class DiscoverShowsViewModel : BaseViewModel(), KoinComponent {
     override val state: StateFlow<DiscoverShowsState> = _uiState
 
     override fun attach() {
-        observeDiscoverShow.invoke(Unit)
-            .onEach {
-                _uiState.value = Success(
-                    data = DiscoverShowsState.DiscoverShowResult(
-                        featuredShows = it.featuredShows,
-                        trendingShows = it.trendingShows,
-                        topRatedShows = it.topRatedShows,
-                        popularShows = it.popularShows
-                    )
-                )
-            }
-            .catch { _uiState.value = Error(it.message ?: "Something went wrong") }
-            .launchIn(vmScope)
+        dispatch(DiscoverShowActions.LoadShow)
     }
+
+    override fun dispatch(action: Action) {
+        when (action) {
+            DiscoverShowActions.LoadShow -> {
+                observeDiscoverShow.invoke(Unit)
+                    .onEach {
+                        _uiState.value = DiscoverShowsState.Success(
+                            data = DiscoverShowsState.DiscoverShowResult(
+                                featuredShows = it.featuredShows,
+                                trendingShows = it.trendingShows,
+                                topRatedShows = it.topRatedShows,
+                                popularShows = it.popularShows
+                            )
+                        )
+                    }
+                    .catch {
+                        _uiState.value =
+                            DiscoverShowsState.Error(it.message ?: "Something went wrong")
+                    }
+                    .launchIn(vmScope)
+            }
+        }
+    }
+}
+
+sealed class DiscoverShowActions : Action {
+    object LoadShow : DiscoverShowActions()
 }
 
 sealed class DiscoverShowsState : ViewState() {

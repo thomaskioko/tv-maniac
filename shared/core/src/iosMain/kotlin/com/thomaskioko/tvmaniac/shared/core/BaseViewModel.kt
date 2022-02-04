@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.shared.core
 
+import com.thomaskioko.tvmaniac.shared.core.store.Action
+import com.thomaskioko.tvmaniac.shared.core.store.ViewState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
@@ -22,6 +24,8 @@ actual abstract class BaseViewModel : KoinComponent {
         get() = CoroutineScope(job + mainDispatcher.main)
 
     actual abstract fun attach()
+
+    actual abstract fun dispatch(action: Action)
 
     actual open fun detach() {
         job.cancelChildren()

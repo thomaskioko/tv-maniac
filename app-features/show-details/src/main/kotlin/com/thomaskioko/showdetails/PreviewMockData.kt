@@ -1,9 +1,10 @@
 package com.thomaskioko.showdetails
 
-import com.thomaskioko.tvmaniac.discover.api.model.TvShow
+import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailViewState
 import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
+import com.thomaskioko.tvmaniac.showcommon.api.TvShow
 
 val detailUiState = ShowDetailViewState(
     isLoading = false,

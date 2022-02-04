@@ -2,12 +2,12 @@ package com.thomaskioko.tvmaniac.seasons.implementation
 
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.core.test.testCoroutineDispatcher
-import com.thomaskioko.tvmaniac.discover.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getShow
 import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getShowDetailResponse
 import com.thomaskioko.tvmaniac.seasons.implementation.mapper.toSeasonCacheList
+import com.thomaskioko.tvmaniac.showcommon.api.TvShowCache
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

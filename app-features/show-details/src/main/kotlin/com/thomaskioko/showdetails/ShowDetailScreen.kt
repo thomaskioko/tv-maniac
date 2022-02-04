@@ -62,7 +62,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.ui.Scaffold
-import com.thomaskioko.showdetails.ShowDetailAction.UpdateFavorite
 import com.thomaskioko.tvmaniac.compose.components.ChoiceChipContent
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
@@ -75,10 +74,14 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateShowParams
-import com.thomaskioko.tvmaniac.discover.api.model.TvShow
+import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailAction
+import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailAction.UpdateFavorite
+import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailEffect
+import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailViewState
 import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
+import com.thomaskioko.tvmaniac.showcommon.api.TvShow
 import kotlinx.coroutines.InternalCoroutinesApi
 
 private val HeaderHeight = 550.dp
@@ -264,7 +267,7 @@ private fun HeaderImage(backdropImageUrl: String) {
 
 @Composable
 private fun Body(
-    tvShow: TvShow,
+    tvShow: com.thomaskioko.tvmaniac.showcommon.api.TvShow,
     genreUIS: List<GenreUIModel>,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit
 ) {

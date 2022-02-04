@@ -7,6 +7,7 @@ dependencies {
     implementation(project(":shared:database"))
     implementation(project(":shared:remote"))
     implementation(project(":shared:domain:show:api"))
+    implementation(project(":shared:domain:show-common:api"))
     implementation(project(":shared:domain:show:implementation"))
     implementation(project(":shared:domain:seasons:api"))
     implementation(project(":shared:domain:seasons:implementation"))
