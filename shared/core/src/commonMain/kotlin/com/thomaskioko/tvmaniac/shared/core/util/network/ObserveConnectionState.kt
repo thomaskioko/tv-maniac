@@ -11,6 +11,6 @@ expect class ObserveConnectionState actual constructor(context: AppContext) {
 }
 
 sealed class ConnectionState {
-    object Available : ConnectionState()
-    object Unavailable : ConnectionState()
+    object ConnectionAvailable : ConnectionState()
+    object NoConnection : ConnectionState()
 }
