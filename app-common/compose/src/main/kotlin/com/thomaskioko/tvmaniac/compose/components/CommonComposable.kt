@@ -2,12 +2,16 @@ package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,16 +28,24 @@ import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.outlined.SignalWifi4Bar
+import androidx.compose.material.icons.outlined.SignalWifiOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.thomaskioko.tvmaniac.compose.theme.colorError
+import com.thomaskioko.tvmaniac.compose.theme.green
+import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun ErrorView(
@@ -183,6 +195,36 @@ fun SnackBarErrorRetry(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ConnectionStatus(isConnected: Boolean) {
+    val backgroundColor by animateColorAsState(if (isConnected) green else colorError)
+    val message = if (isConnected) stringResource(id = R.string.status_connected)
+    else stringResource(id = R.string.status_no_connection)
+    val icon = if (isConnected) Icons.Outlined.SignalWifi4Bar else Icons.Outlined.SignalWifiOff
+
+    Box(
+        modifier = Modifier
+            .background(backgroundColor)
+            .fillMaxWidth()
+            .padding(10.dp),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = icon,
+                contentDescription = "Connectivity Icon",
+                tint = Color.White
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                message,
+                color = Color.White,
+                style = MaterialTheme.typography.caption,
+            )
         }
     }
 }
