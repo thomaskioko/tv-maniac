@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import util.libs
 
 plugins {
@@ -23,8 +24,17 @@ android {
         multiDexEnabled = true
     }
 
+    applicationVariants.all {
+        val variant = this
+        variant.outputs
+            .map { it as BaseVariantOutputImpl }
+            .forEach { output ->
+                output.outputFileName = "app-${variant.baseName}-${variant.buildType.name}-${variant.versionName}.apk"
+            }
+    }
+
     buildTypes {
-        getByName("release") {
+        getByName("debug") {
             isMinifyEnabled = false
             multiDexEnabled = true
         }

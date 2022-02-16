@@ -12,12 +12,33 @@ on:
 jobs:
   build:
     runs-on: macos-latest
+    env:
+      TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+      TMDB_API_URL: ${{ secrets.TMDB_API_URL }}
+
     steps:
       - uses: actions/checkout@v2
+
       - name: set up JDK 11
         uses: actions/setup-java@v1
         with:
           java-version: 11
+
+      - name: Add App Secrets
+        run: |
+          echo -e "\TMDB_API_KEY=$TMDB_API_KEY" >> ./local.properties
+          echo -e "\TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
+
+      - name: Build iOS framework
+        id: buildPackage
+        run: ./gradlew createSwiftPackage
+
+      - name: Upload Swift Package directory
+        uses: actions/upload-artifact@v2
+        with:
+          name: swiftpackage
+          path: shared/swiftpackage
+          retention-days: 1
 
   push:
     needs: build
