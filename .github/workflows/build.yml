@@ -1,4 +1,4 @@
-name: "Share build & Unit test"
+name: "Android Build Check"
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     env:
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       TMDB_API_URL: ${{ secrets.TMDB_API_URL }}
@@ -28,27 +28,31 @@ jobs:
             echo -e "\TMDB_API_KEY=$TMDB_API_KEY" >> ./local.properties
             echo -e "\TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
 
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug
+      - name: Build all artifacts
+        id: buildAllApks
+        uses: eskatos/gradle-command-action@v1.3.3
+        with:
+          gradle-version: current
+          wrapper-cache-enabled: true
+          dependencies-cache-enabled: true
+          configuration-cache-enabled: true
+          arguments: assembleDebug
 
       - name: Unit Tests
         run: ./gradlew testDebugUnitTest
 
-      - name: Build iOS framework
-        id: buildPackage
-        run: ./gradlew createSwiftPackage
-
-      - name: Upload Swift Package directory
-        uses: actions/upload-artifact@v2
-        with:
-          name: swiftpackage
-          path: shared/swiftpackage
-          retention-days: 1
-
-      - name: Create release for tags
+      - name: Create release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: swiftpackage
+          draft: true
+          files: app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload build outputs
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: build-outputs
+          path: app/build/outputs
