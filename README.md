@@ -1,7 +1,17 @@
-Tv-Maniac 🚧 Under Heavy Development 🚧
+TvManiac
 -------------------------
-Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows information from
-[TMDB](https://www.themoviedb.org/).
+![Check](https://github.com/c0de-wizard/tv-maniac/actions/workflows/build.yml/badge.svg)  ![android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat) ![ios](http://img.shields.io/badge/platform-ios-CDCDCD.svg?style=flat)
+
+**TvManiac** is a Multiplatform app (Android & iOS) for viewing TV Shows information from
+[TMDB](https://www.themoviedb.org/). The aim of this project is do demonstrate KMM development capabilities.
+
+You can Install and test latest android app from below 👇
+
+[![TvManiac Debug](https://img.shields.io/badge/Debug--Apk-download-green?style=for-the-badge&logo=android)](https://github.com/c0de-wizard/tv-maniac/releases/latest/download/app-debug.apk)
+
+
+## 🚧 Under Heavy Development 🚧
+This is my playground for learning Kotlin Multiplatform. With that said, I'm sure it's filled bugs are crawling everywhere, and I'm probably doing a couple of things wrong. So a lot is changing, but that shouldn't stop you from checking it out.
 
 ### Android Screenshots
 
@@ -29,7 +39,7 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
 </tr>
 </table>
 
-### iOS Light Theme Screenshots
+### 🔆 iOS Light Theme Screenshots
 
 <table>
   <td>
@@ -45,7 +55,7 @@ Tv-Maniac is a Multiplatform app (Android & iOS) for viewing TV Shows informatio
 </tr>
 </table>
 
-## Project Setup & Environment
+## 🖥 Project Setup & Environment
 
 ### TMDB Api
 - Create `local.properties` in `root` dir
@@ -73,39 +83,7 @@ In case you make changes to the `shared` module and want to test out the changes
 
 
 ## Project Structure & Architecture
-Tvmainic has 3 main directories. I'll break down each module/directory below.
-
-1. **app**: Anrdoid Code
-2. **ios**: iOS Workspace
-3. **shared**: Kotlin multiplatform code.
-
-	
-* **app**: This contains the entry point to the android app. `MainActivity`. There are various modules that are used across the app.
-	* **app-common**: This contaions common code used in features.
-		* **compose**: Common jetpack compose components and code used by every feature. eg `theme`, `colors`, `ui-components` e.t.c
-		* **navigation**: Core navigation logic
-		* **annotation**: Coroutine scope and dispatcher annotation used in feature modules.
-	* **app-feature**: This `module` contains feature module of the Android app. Each feature has 3 main classes
-		* `FeatureNavigationFactory`: Allows us to add the screen to the navGraph
-		* `ComposableScreen`: UI Screen built using compose
-		* `Viewmodule`: Allows us to manage UI related data 
-* **ios**: This directory contains the iOS workspace.
-* **shared**: This is where the realm of the shared logic. It contains both iOS and Android implementation. I also used a modular architecture in the shared module. This prevents us from having a huge shared module. It also becomes easy to modify and add more feature. Here's an overview of how shared is modularised.
-	* **core**: Contains common classes & functions or utility classes that are used but other modules.
-	* **core-test**: Contains test util classes. We then add this module to each module that has tests.
-	* **database**: Contains [SQLDelight](https://github.com/cashapp/sqldelight/) implementation & Sql files. 
-	* **remote**: Contails [Ktor](https://ktor.io/) implementation
-	* **domain**: This module uses a feature like approach. So we can have `domain-discover` with has two modules:
-		* `api`: Contains domain interfaces/abstract classes. This module is also exported for iOS and what android feature modules depend on.
-		* `implementation`: Contains domain implementation logic e.g fetch & cache data.
-	* **interactors**: This is more of a limbo module of interactor classes that don't have complete features. I didn't want to have them in the Android feature modules that why this exists. As we improve on the app, we will move these classes to the domain module and get rid of this module.
-
-	
-### Dependency Injection
-
-TvManiac uses two different dependencies [Dagger Hilt](https://dagger.dev/hilt) for Android and [koin](https://github.com/mockk/mockk) for the shared module. Using Koin in the shared module allows us to provide dependencies in the iOS app.
-	   
-I'll keep updating & changing things as I learn. 🤓
+I wrote an article, [Going Modular — The Kotlin Multiplatform Way](https://medium.com/better-programming/going-modular-the-kotlin-multiplatform-way-132c3dee6c95) detailing the modularization process and thinking behind the structure of the shared module.
 
 
 ## Libraries Used
@@ -167,6 +145,8 @@ Shared
 - [ ] Improve error handling, add retry.
 - [ ] Better MVI implementation
 - [ ] Observe Internet connection
+    - [x] Android
+    - [ ] iOS
 
 
 ### References
