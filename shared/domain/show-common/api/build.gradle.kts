@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    commonMainImplementation(project(":shared:database"))
+    commonMainApi(projects.shared.database)
 
     commonMainImplementation(libs.kotlin.coroutines.core)
     iosMainImplementation(libs.kotlin.coroutines.core)

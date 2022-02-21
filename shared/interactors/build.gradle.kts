@@ -4,11 +4,11 @@ plugins {
 
 dependencies {
 
-    commonMainImplementation(project(":shared:core"))
-    commonMainImplementation(project(":shared:database"))
-    commonMainImplementation(project(":shared:remote"))
-    commonMainImplementation(project(":shared:domain:show:api"))
-    commonMainImplementation(project(":shared:domain:show-common:api"))
+    commonMainImplementation(projects.shared.core)
+    commonMainImplementation(projects.shared.database)
+    commonMainImplementation(projects.shared.remote)
+    commonMainImplementation(projects.shared.domain.show.api)
+    commonMainImplementation(projects.shared.domain.showCommon.api)
 
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.multiplatform.paging.core)

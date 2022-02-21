@@ -5,12 +5,12 @@ plugins {
 }
 
 dependencies {
-    commonMainApi(project(":shared:core"))
-    commonMainApi(project(":shared:domain:genre:api"))
-    commonMainApi(project(":shared:domain:seasons:api"))
-    commonMainApi(project(":shared:domain:last-air-episodes:api"))
-    commonMainImplementation(project(":shared:domain:similar:api"))
-    commonMainImplementation(project(":shared:domain:show-common:api"))
+    commonMainApi(projects.shared.core)
+    commonMainApi(projects.shared.domain.genre.api)
+    commonMainApi(projects.shared.domain.seasons.api)
+    commonMainApi(projects.shared.domain.lastAirEpisodes.api)
+    commonMainImplementation(projects.shared.domain.similar.api)
+    commonMainImplementation(projects.shared.domain.showCommon.api)
 
     commonMainApi(libs.koin.core)
     commonMainApi(libs.kermit)
