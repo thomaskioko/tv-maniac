@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":shared:domain:show:api"))
-    implementation(project(":shared:domain:show-common:api"))
+    implementation(projects.shared.domain.show.api)
+    implementation(projects.shared.domain.showCommon.api)
     implementation(libs.androidx.paging.runtime)
 }

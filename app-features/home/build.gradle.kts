@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":app-common:compose"))
+    implementation(projects.appCommon.compose)
 }

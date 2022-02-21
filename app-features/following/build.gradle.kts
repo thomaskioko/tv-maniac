@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":app-common:compose"))
-    implementation(project(":shared:interactors"))
-    implementation(project(":shared:domain:show:api"))
-    implementation(project(":shared:domain:show-common:api"))
+    implementation(projects.appCommon.compose)
+    implementation(projects.shared.interactors)
+    implementation(projects.shared.domain.show.api)
+    implementation(projects.shared.domain.showCommon.api)
 }
