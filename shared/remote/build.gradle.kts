@@ -21,7 +21,7 @@ dependencies {
     iosMainImplementation(libs.ktor.ios)
 
     commonTestImplementation(kotlin("test"))
-    commonTestImplementation(project(":shared:core-test"))
+    commonTestImplementation(projects.shared.coreTest)
 
     commonTestImplementation(libs.testing.ktor.mock)
     commonTestImplementation(libs.testing.turbine)

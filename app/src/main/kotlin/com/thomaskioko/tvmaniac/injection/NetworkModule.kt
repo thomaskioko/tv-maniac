@@ -1,18 +1,22 @@
 package com.thomaskioko.tvmaniac.injection
 
+import android.content.Context
 import com.thomaskioko.tvmaniac.remote.KtorClientFactory
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.TvShowsServiceImpl
+import com.thomaskioko.tvmaniac.shared.core.AppContext
+import com.thomaskioko.tvmaniac.shared.core.util.network.ObserveConnectionState
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkModule {
+object NetworkModule {
 
     @Singleton
     @Provides
@@ -25,4 +29,10 @@ class NetworkModule {
     fun provideTvShowService(
         httpClient: HttpClient
     ): TvShowsService = TvShowsServiceImpl(httpClient)
+
+    @Singleton
+    @Provides
+    fun provideObserveConnectionState(
+        @ApplicationContext context: Context
+    ) = ObserveConnectionState(context as AppContext)
 }

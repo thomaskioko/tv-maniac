@@ -3,10 +3,10 @@ plugins {
 }
 
 dependencies {
-    commonMainApi(project(":shared:core"))
-    commonMainApi(project(":shared:database"))
+    commonMainApi(projects.shared.core)
+    commonMainApi(projects.shared.database)
     commonMainApi(libs.kotlin.coroutines.core)
     commonMainApi(libs.kermit)
 
-    commonMainImplementation(project(":shared:domain:show-common:api"))
+    commonMainImplementation(projects.shared.domain.showCommon.api)
 }
