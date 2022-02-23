@@ -5,6 +5,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":shared:domain:show:api"))
-    implementation(project(":shared:domain:similar:api"))
+    implementation(projects.shared.domain.show.api)
+    implementation(projects.shared.domain.similar.api)
 }

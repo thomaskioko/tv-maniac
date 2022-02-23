@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":shared:domain:show:api"))
-    implementation(project(":shared:domain:seasons:api"))
-    implementation(project(":shared:domain:show-common:api"))
-    implementation(project(":shared:domain:season-episodes:api"))
+    implementation(projects.shared.domain.show.api)
+    implementation(projects.shared.domain.seasons.api)
+    implementation(projects.shared.domain.showCommon.api)
+    implementation(projects.shared.domain.seasonEpisodes.api)
 }
