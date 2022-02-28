@@ -14,32 +14,36 @@ jobs:
     env:
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       TMDB_API_URL: ${{ secrets.TMDB_API_URL }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+      - name: Generate build number
+        shell: bash
+        run: echo "BUILD_NUMBER=$(( $GITHUB_RUN_NUMBER + 6000 + (($GITHUB_RUN_NUMBER - 980) * 3) ))" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v2
+
       - name: Set Up JDK
         uses: actions/setup-java@v1
         with:
           java-version: 11
 
-      - uses: actions/checkout@v2
-
       - name: Add App Secrets
         run: |
-            echo -e "\TMDB_API_KEY=$TMDB_API_KEY" >> ./local.properties
-            echo -e "\TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
+          echo -e "\TMDB_API_KEY=$TMDB_API_KEY" >> ./local.properties
+          echo -e "\TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
 
-      - name: Build all artifacts
-        id: buildAllApks
-        uses: eskatos/gradle-command-action@v1.3.3
+      - uses: burrunan/gradle-cache-action@v1
+        name: Build and check
+        env:
+          ORG_GRADLE_PROJECT_TVMANIAC_VERSIONCODE: ${{ env.BUILD_NUMBER }}
         with:
-          gradle-version: current
-          wrapper-cache-enabled: true
-          dependencies-cache-enabled: true
-          configuration-cache-enabled: true
-          arguments: assembleDebug
-
-      - name: Unit Tests
-        run: ./gradlew testDebugUnitTest
+          gradle-dependencies-cache-key: |
+            gradle/libs.versions.toml
+          arguments: |
+            bundle
+            testDebugUnitTest
+            assembleDebug
 
       - name: Create release
         uses: softprops/action-gh-release@v1
