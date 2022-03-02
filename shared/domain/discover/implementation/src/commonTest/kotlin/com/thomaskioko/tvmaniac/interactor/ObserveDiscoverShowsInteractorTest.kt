@@ -4,8 +4,8 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.MockData.getDiscoverShowResult
 import com.thomaskioko.tvmaniac.MockData.getShowsCache
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
-import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveDiscoverShowsInteractor
-import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.discover.api.ObserveDiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.discover.api.repository.DiscoverRepository
 import com.thomaskioko.tvmaniac.shared.core.invoke
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
@@ -14,7 +14,7 @@ import kotlin.test.Test
 
 internal class ObserveDiscoverShowsInteractorTest {
 
-    private val repository: TvShowsRepository = mockk()
+    private val repository: DiscoverRepository = mockk()
     private val interactor = ObserveDiscoverShowsInteractor(repository)
 
     @Test

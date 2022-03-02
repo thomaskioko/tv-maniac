@@ -1,6 +1,7 @@
-package com.thomaskioko.tvmaniac.showcommon.api
+package com.thomaskioko.tvmaniac.showcommon.api.mapper
 
 import com.thomaskioko.tvmaniac.datasource.cache.Show
+import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 
 fun List<Show>.toTvShowList(): List<TvShow> {
     return map { it.toTvShow() }

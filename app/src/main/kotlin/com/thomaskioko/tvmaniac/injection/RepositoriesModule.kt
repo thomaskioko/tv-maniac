@@ -2,10 +2,13 @@ package com.thomaskioko.tvmaniac.injection
 
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
 import com.thomaskioko.tvmaniac.core.annotations.IoCoroutineScope
+import com.thomaskioko.tvmaniac.details.api.cache.ShowCategoryCache
+import com.thomaskioko.tvmaniac.details.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.details.implementation.repository.TvShowsRepositoryImpl
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
-import com.thomaskioko.tvmaniac.discover.api.cache.ShowCategoryCache
-import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
-import com.thomaskioko.tvmaniac.discover.implementation.repository.TvShowsRepositoryImpl
+import com.thomaskioko.tvmaniac.discover.api.cache.DiscoverCategoryCache
+import com.thomaskioko.tvmaniac.discover.api.repository.DiscoverRepository
+import com.thomaskioko.tvmaniac.discover.implementation.DiscoverRepositoryImpl
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeRepositoryImpl
@@ -22,7 +25,7 @@ import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodes
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsRepositoryImpl
-import com.thomaskioko.tvmaniac.showcommon.api.TvShowCache
+import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsRepositoryImpl
@@ -43,7 +46,6 @@ object RepositoriesModule {
     fun provideTvShowsRepository(
         tvShowsService: TvShowsService,
         tvShowCache: TvShowCache,
-        categoryCache: CategoryCache,
         showCategoryCache: ShowCategoryCache,
         epAirCacheLast: LastEpisodeAirCache,
         @IoCoroutineScope coroutineScope: CoroutineScope,
@@ -52,10 +54,26 @@ object RepositoriesModule {
         TvShowsRepositoryImpl(
             apiService = tvShowsService,
             tvShowCache = tvShowCache,
-            categoryCache = categoryCache,
             showCategoryCache = showCategoryCache,
             epAirCacheLast = epAirCacheLast,
             coroutineScope = coroutineScope,
+            dispatcher = ioDispatcher
+        )
+
+    @Singleton
+    @Provides
+    fun provideDiscoverRepository(
+        tvShowsService: TvShowsService,
+        tvShowCache: TvShowCache,
+        categoryCache: CategoryCache,
+        discoverCategoryCache: DiscoverCategoryCache,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
+    ): DiscoverRepository =
+        DiscoverRepositoryImpl(
+            apiService = tvShowsService,
+            tvShowCache = tvShowCache,
+            categoryCache = categoryCache,
+            discoverCategoryCache = discoverCategoryCache,
             dispatcher = ioDispatcher
         )
 

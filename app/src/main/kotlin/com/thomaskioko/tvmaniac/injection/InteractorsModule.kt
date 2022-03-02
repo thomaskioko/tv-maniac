@@ -1,10 +1,11 @@
 package com.thomaskioko.tvmaniac.injection
 
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
-import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveDiscoverShowsInteractor
-import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveShowInteractor
-import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateFollowingInteractor
-import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.details.api.interactor.ObserveShowInteractor
+import com.thomaskioko.tvmaniac.details.api.interactor.UpdateFollowingInteractor
+import com.thomaskioko.tvmaniac.details.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.discover.api.ObserveDiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.discover.api.repository.DiscoverRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.ObserveEpisodesInteractor
 import com.thomaskioko.tvmaniac.genre.api.GenreRepository
@@ -45,7 +46,7 @@ object InteractorsModule {
     @Singleton
     @Provides
     fun provideObserveShowsByCategoryInteractor(
-        repository: TvShowsRepository
+        repository: DiscoverRepository
     ): ObserveDiscoverShowsInteractor = ObserveDiscoverShowsInteractor(repository)
 
     @Singleton

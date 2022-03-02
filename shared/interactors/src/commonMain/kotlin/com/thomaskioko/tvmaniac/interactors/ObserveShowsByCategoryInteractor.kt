@@ -3,10 +3,10 @@ package com.thomaskioko.tvmaniac.interactors
 import com.kuuurt.paging.multiplatform.PagingData
 import com.kuuurt.paging.multiplatform.map
 import com.thomaskioko.tvmaniac.datasource.cache.Show
-import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.details.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
-import com.thomaskioko.tvmaniac.showcommon.api.TvShow
+import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
+import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow

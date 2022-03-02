@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.discover.api.model
+package com.thomaskioko.tvmaniac.showcommon.api.model
 
 enum class ShowCategory(
     val type: Int,
