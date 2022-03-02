@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.seasons
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveShowInteractor
+import com.thomaskioko.tvmaniac.details.api.interactor.ObserveShowInteractor
 import com.thomaskioko.tvmaniac.seasonepisodes.api.ObserveSeasonWithEpisodesInteractor
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsAction
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsAction.Error

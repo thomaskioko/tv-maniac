@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getShow
 import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getShowDetailResponse
 import com.thomaskioko.tvmaniac.seasons.implementation.mapper.toSeasonCacheList
-import com.thomaskioko.tvmaniac.showcommon.api.TvShowCache
+import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

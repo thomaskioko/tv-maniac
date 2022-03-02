@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.discover.api.DiscoverShowAction.Error
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowState
-import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveDiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.discover.api.ObserveDiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.shared.core.store.Store
 import dagger.hilt.android.lifecycle.HiltViewModel

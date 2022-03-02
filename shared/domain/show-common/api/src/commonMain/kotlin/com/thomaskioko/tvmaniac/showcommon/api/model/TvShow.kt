@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.showcommon.api
+package com.thomaskioko.tvmaniac.showcommon.api.model
 
 data class TvShow(
     val id: Long = 0,

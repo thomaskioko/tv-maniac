@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.showcommon.api
+package com.thomaskioko.tvmaniac.showcommon.api.cache
 
 import com.thomaskioko.tvmaniac.datasource.cache.AirEpisodesByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.Show

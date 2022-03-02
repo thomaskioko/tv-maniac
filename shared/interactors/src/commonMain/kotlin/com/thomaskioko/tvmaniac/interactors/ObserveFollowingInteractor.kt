@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.interactors
 
 import com.thomaskioko.tvmaniac.datasource.cache.Show
-import com.thomaskioko.tvmaniac.discover.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.details.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
-import com.thomaskioko.tvmaniac.showcommon.api.TvShow
+import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
