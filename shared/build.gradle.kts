@@ -12,6 +12,10 @@ plugins {
 
 version = libs.versions.shared.module.version.get()
 
+android {
+    namespace = "com.thomaskioko.tvmaniac.shared"
+}
+
 kotlin {
 
     val iosTarget = getIosTarget()

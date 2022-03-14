@@ -1,4 +1,5 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import util.libs
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -6,6 +7,10 @@ plugins {
     `kmm-domain-plugin`
     kotlin("plugin.serialization")
     id("com.codingfeline.buildkonfig")
+}
+
+android {
+    namespace = "com.thomaskioko.tvmaniac.remote"
 }
 
 dependencies {
