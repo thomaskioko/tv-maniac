@@ -30,8 +30,8 @@ include(
     ":shared:core-test",
     ":shared:database",
     ":shared:remote",
-    ":shared:domain:show:api",
-    ":shared:domain:show:implementation",
+    ":shared:domain:show-details:api",
+    ":shared:domain:show-details:implementation",
     ":shared:domain:seasons:api",
     ":shared:domain:seasons:implementation",
     ":shared:domain:episodes:api",
@@ -46,4 +46,6 @@ include(
     ":shared:domain:season-episodes:api",
     ":shared:domain:season-episodes:implementation",
     ":shared:domain:show-common:api",
+    ":shared:domain:discover:api",
+    ":shared:domain:discover:implementation"
 )
