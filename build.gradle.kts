@@ -24,11 +24,9 @@ tasks.withType<Test>().configureEach {
 subprojects {
     tasks.withType<KotlinCompile>().configureEach {
         with(kotlinOptions) {
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
-            languageVersion = "1.5"
-            apiVersion = "1.5"
             freeCompilerArgs = freeCompilerArgs + listOf(
                 "-Xopt-in=kotlin.RequiresOptIn",
+                "-Xopt-in=kotlin.OptIn",
                 "-Xopt-in=kotlin.time.ExperimentalTime",
                 "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
             )
