@@ -2,5 +2,6 @@ plugins {
     `android-compose-plugin`
 }
 
-dependencies {
+android {
+    namespace = "com.thomaskioko.tvmaniac.compose"
 }
