@@ -1,11 +1,17 @@
+import util.libs
+
 plugins {
     `kmm-domain-plugin`
 }
 
+android {
+    namespace = "com.thomaskioko.tvmaniac.discover.implementation"
+}
+
 dependencies {
-    commonMainImplementation(project(":shared:remote"))
-    commonMainImplementation(project(":shared:domain:discover:api"))
-    commonMainImplementation(project(":shared:domain:show-common:api"))
+    commonMainImplementation(projects.shared.remote)
+    commonMainImplementation(projects.shared.domain.discover.api)
+    commonMainImplementation(projects.shared.domain.showCommon.api)
 
     commonMainImplementation(libs.koin.core)
     commonMainImplementation(libs.kotlin.datetime)
@@ -15,7 +21,7 @@ dependencies {
     testImplementation(libs.testing.mockk.core)
 
     commonTestImplementation(kotlin("test"))
-    commonTestImplementation(project(":shared:core-test"))
+    commonTestImplementation(projects.shared.coreTest)
     commonTestImplementation(libs.testing.turbine)
     commonTestImplementation(libs.testing.kotest.assertions)
     commonTestImplementation(libs.testing.coroutines.test)

@@ -1,6 +1,12 @@
+import util.libs
+
 plugins {
     `kmm-domain-plugin`
     id("com.squareup.sqldelight")
+}
+
+android {
+    namespace = "com.thomaskioko.tvmaniac.core.db"
 }
 
 dependencies {

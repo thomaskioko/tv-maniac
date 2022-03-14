@@ -1,5 +1,12 @@
+import util.libs
+
 plugins {
     `kmm-domain-plugin`
+}
+
+android {
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    namespace = "com.thomaskioko.tvmaniac.shared.core"
 }
 
 dependencies {

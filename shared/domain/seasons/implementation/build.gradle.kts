@@ -1,12 +1,18 @@
+import util.libs
+
 plugins {
     `kmm-domain-plugin`
 }
 
+android {
+    namespace = "com.thomaskioko.tvmaniac.implementation"
+}
+
 dependencies {
-    commonMainImplementation(project(":shared:remote"))
-    commonMainImplementation(project(":shared:domain:seasons:api"))
-    commonMainImplementation(project(":shared:domain:show:api"))
-    commonMainImplementation(project(":shared:domain:show-common:api"))
+    commonMainImplementation(projects.shared.remote)
+    commonMainImplementation(projects.shared.domain.seasons.api)
+    commonMainImplementation(projects.shared.domain.showDetails.implementation)
+    commonMainImplementation(projects.shared.domain.showCommon.api)
 
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin.core)
@@ -15,7 +21,7 @@ dependencies {
     testImplementation(libs.testing.mockk.core)
 
     commonTestImplementation(kotlin("test"))
-    commonTestImplementation(project(":shared:core-test"))
+    commonTestImplementation(projects.shared.coreTest)
     commonTestImplementation(libs.testing.turbine)
     commonTestImplementation(libs.testing.mockk.common)
     commonTestImplementation(libs.testing.kotest.assertions)

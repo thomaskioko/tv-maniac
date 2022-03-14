@@ -1,5 +1,11 @@
+import util.libs
+
 plugins {
     `kmm-domain-plugin`
+}
+
+android {
+    namespace = "com.thomaskioko.tvmaniac.similar.api"
 }
 
 dependencies {
