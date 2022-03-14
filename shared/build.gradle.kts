@@ -2,6 +2,7 @@ import Kmm_domain_plugin_gradle.Utils.getIosTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import util.libs
 
 plugins {
     `kmm-domain-plugin`
@@ -31,7 +32,7 @@ kotlin {
             export(projects.shared.core)
             export(projects.shared.database)
             export(projects.shared.remote)
-            export(projects.shared.domain.show.api)
+            export(projects.shared.domain.showDetails.api)
             export(projects.shared.domain.seasons.api)
             export(projects.shared.domain.episodes.api)
             export(projects.shared.domain.genre.api)
@@ -39,6 +40,7 @@ kotlin {
             export(projects.shared.domain.similar.api)
             export(projects.shared.domain.seasonEpisodes.api)
             export(projects.shared.domain.showCommon.api)
+            export(projects.shared.domain.discover.api)
             embedBitcode(BitcodeEmbeddingMode.BITCODE)
 
             transitiveExport = true
@@ -50,7 +52,7 @@ dependencies {
     commonMainApi(projects.shared.core)
     commonMainApi(projects.shared.database)
     commonMainApi(projects.shared.remote)
-    commonMainApi(projects.shared.domain.show.api)
+    commonMainApi(projects.shared.domain.showDetails.api)
     commonMainApi(projects.shared.domain.seasons.api)
     commonMainApi(projects.shared.domain.episodes.api)
     commonMainApi(projects.shared.domain.genre.api)
@@ -58,14 +60,16 @@ dependencies {
     commonMainApi(projects.shared.domain.similar.api)
     commonMainApi(projects.shared.domain.seasonEpisodes.api)
     commonMainApi(projects.shared.domain.showCommon.api)
+    commonMainApi(projects.shared.domain.discover.api)
 
     commonMainImplementation(projects.shared.domain.episodes.implementation)
-    commonMainImplementation(projects.shared.domain.show.implementation)
+    commonMainImplementation(projects.shared.domain.showDetails.implementation)
     commonMainImplementation(projects.shared.domain.seasons.implementation)
     commonMainImplementation(projects.shared.domain.genre.implementation)
     commonMainImplementation(projects.shared.domain.lastAirEpisodes.implementation)
     commonMainImplementation(projects.shared.domain.similar.implementation)
     commonMainImplementation(projects.shared.domain.seasonEpisodes.implementation)
+    commonMainImplementation(projects.shared.domain.discover.implementation)
 
     commonMainImplementation(libs.koin.core)
     commonMainImplementation(libs.kotlin.coroutines.core)
