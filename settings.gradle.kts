@@ -25,7 +25,7 @@ include(
     ":app-features:shows-grid",
     ":app-features:settings",
     ":app-features:seasons",
-    ":shared",
+    ":shared:shared",
     ":shared:core",
     ":shared:core-test",
     ":shared:database",
