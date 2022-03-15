@@ -1,6 +1,5 @@
-package com.thomaskioko.tvmaniac
+package com.thomaskioko.tvmaniac.shared.di
 
-import com.thomaskioko.tvmaniac.di.initKoin
 import org.koin.core.KoinApplication
 
 fun initKoinIos(): KoinApplication = initKoin {}

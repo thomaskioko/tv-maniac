@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.di
+package com.thomaskioko.tvmaniac.shared.di
 
 import com.thomaskioko.tvmaniac.core.db.di.dbPlatformModule
 import com.thomaskioko.tvmaniac.details.api.cache.ShowCategoryCache
