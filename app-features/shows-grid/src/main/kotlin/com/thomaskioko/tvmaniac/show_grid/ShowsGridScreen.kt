@@ -25,7 +25,6 @@ import com.thomaskioko.tvmaniac.compose.components.BackAppBar
 import com.thomaskioko.tvmaniac.compose.components.LazyPagedGridItems
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
-import com.thomaskioko.tvmaniac.interactors.ShowsGridState
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
 import kotlinx.coroutines.CoroutineScope

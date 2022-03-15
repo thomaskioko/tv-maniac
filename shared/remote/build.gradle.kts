@@ -5,7 +5,6 @@ import java.util.Properties
 
 plugins {
     `kmm-domain-plugin`
-    kotlin("plugin.serialization")
     id("com.codingfeline.buildkonfig")
 }
 

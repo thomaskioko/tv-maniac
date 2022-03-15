@@ -2,10 +2,6 @@ package com.thomaskioko.tvmaniac.following
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.interactors.ObserveFollowingInteractor
-import com.thomaskioko.tvmaniac.interactors.WatchlistAction
-import com.thomaskioko.tvmaniac.interactors.WatchlistEffect
-import com.thomaskioko.tvmaniac.interactors.WatchlistState
 import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.shared.core.store.Store
 import dagger.hilt.android.lifecycle.HiltViewModel
