@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.interactors
+package com.thomaskioko.tvmaniac.show_grid.domain
 
 import com.kuuurt.paging.multiplatform.PagingData
 import com.kuuurt.paging.multiplatform.map

@@ -12,6 +12,5 @@ android {
 dependencies {
     implementation(projects.shared.domain.showDetails.api)
     implementation(projects.shared.domain.showCommon.api)
-    implementation(projects.shared.interactors)
     implementation(libs.multiplatform.paging.core)
 }

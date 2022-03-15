@@ -26,4 +26,13 @@ dependencies {
     commonTestImplementation(libs.testing.kotest.assertions)
     commonTestImplementation(libs.testing.coroutines.test)
     commonTestImplementation(libs.testing.mockk.common)
+
+    val coroutineCore = libs.kotlin.coroutines.core.get()
+
+    @Suppress("UnstableApiUsage")
+    iosMainImplementation("${coroutineCore.module.group}:${coroutineCore.module.name}:${coroutineCore.versionConstraint.displayName}") {
+        version {
+            strictly(libs.versions.coroutines.native.get())
+        }
+    }
 }

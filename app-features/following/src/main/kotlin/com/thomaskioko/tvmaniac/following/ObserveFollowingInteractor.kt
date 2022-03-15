@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.interactors
+package com.thomaskioko.tvmaniac.following
 
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.details.api.repository.TvShowsRepository

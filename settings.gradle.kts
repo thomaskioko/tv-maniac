@@ -38,7 +38,6 @@ include(
     ":shared:domain:episodes:implementation",
     ":shared:domain:genre:api",
     ":shared:domain:genre:implementation",
-    ":shared:interactors",
     ":shared:domain:last-air-episodes:api",
     ":shared:domain:last-air-episodes:implementation",
     ":shared:domain:similar:api",

@@ -27,7 +27,6 @@ dependencies {
     implementation(projects.shared.domain.seasonEpisodes.implementation)
     implementation(projects.shared.domain.discover.api)
     implementation(projects.shared.domain.discover.implementation)
-    implementation(projects.shared.interactors)
     implementation(projects.appCommon.annotations)
     implementation(projects.appCommon.compose)
     implementation(projects.appCommon.resources)
