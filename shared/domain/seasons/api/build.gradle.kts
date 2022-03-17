@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    commonMainApi(projects.shared.core)
+    commonMainApi(projects.shared.core.util)
     commonMainApi(projects.shared.database)
     commonMainApi(libs.kotlin.coroutines.core)
 }

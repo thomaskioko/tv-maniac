@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.settings.SettingsActions.LoadTheme
 import com.thomaskioko.tvmaniac.settings.SettingsActions.ThemeClicked
 import com.thomaskioko.tvmaniac.settings.SettingsActions.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.api.TvManiacPreferences
-import com.thomaskioko.tvmaniac.shared.core.store.Store
+import com.thomaskioko.tvmaniac.shared.core.ui.Store
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.InternalCoroutinesApi

@@ -9,7 +9,8 @@ android {
 }
 
 dependencies {
-    commonMainApi(projects.shared.core)
+    commonMainApi(projects.shared.core.ui)
+    commonMainApi(projects.shared.core.util)
     commonMainApi(projects.shared.domain.genre.api)
     commonMainApi(projects.shared.domain.seasons.api)
     commonMainApi(projects.shared.domain.lastAirEpisodes.api)

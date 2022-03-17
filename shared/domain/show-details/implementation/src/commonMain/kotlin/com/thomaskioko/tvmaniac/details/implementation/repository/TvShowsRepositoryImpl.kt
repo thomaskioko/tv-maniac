@@ -6,11 +6,13 @@ import com.kuuurt.paging.multiplatform.PagingConfig
 import com.kuuurt.paging.multiplatform.PagingData
 import com.kuuurt.paging.multiplatform.PagingResult
 import com.kuuurt.paging.multiplatform.helpers.cachedIn
+import com.thomaskioko.tvmaniac.core.util.CommonFlow
+import com.thomaskioko.tvmaniac.core.util.asCommonFlow
+import com.thomaskioko.tvmaniac.core.util.getErrorMessage
+import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.details.api.cache.ShowCategoryCache
-import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.POPULAR
-import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.TOP_RATED
-import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.details.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.details.implementation.mapper.toAirEp
 import com.thomaskioko.tvmaniac.details.implementation.mapper.toShow
@@ -18,12 +20,10 @@ import com.thomaskioko.tvmaniac.details.implementation.mapper.toShowList
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
-import com.thomaskioko.tvmaniac.shared.core.util.CommonFlow
-import com.thomaskioko.tvmaniac.shared.core.util.Resource
-import com.thomaskioko.tvmaniac.shared.core.util.asCommonFlow
-import com.thomaskioko.tvmaniac.shared.core.util.getErrorMessage
-import com.thomaskioko.tvmaniac.shared.core.util.networkBoundResource
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.POPULAR
+import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.TOP_RATED
+import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.TRENDING
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -92,8 +92,6 @@ class TvShowsRepositoryImpl(
             .cachedIn(coroutineScope)
             .asCommonFlow()
     }
-
-
 
     private fun mapAndInsert(tvShowId: Long, response: ShowDetailResponse) {
         tvShowCache.insert(response.toShow())

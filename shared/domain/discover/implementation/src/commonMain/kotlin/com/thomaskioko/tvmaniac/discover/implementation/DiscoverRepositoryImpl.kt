@@ -1,6 +1,9 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
 import co.touchlab.kermit.Logger
+import com.thomaskioko.tvmaniac.core.util.getErrorMessage
+import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.datasource.cache.Category
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.datasource.cache.Show_category
@@ -9,9 +12,6 @@ import com.thomaskioko.tvmaniac.discover.api.cache.DiscoverCategoryCache
 import com.thomaskioko.tvmaniac.discover.api.repository.DiscoverRepository
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.model.TvShowsResponse
-import com.thomaskioko.tvmaniac.shared.core.util.Resource
-import com.thomaskioko.tvmaniac.shared.core.util.getErrorMessage
-import com.thomaskioko.tvmaniac.shared.core.util.networkBoundResource
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
 import kotlinx.coroutines.CoroutineDispatcher

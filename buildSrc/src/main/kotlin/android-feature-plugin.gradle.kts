@@ -49,7 +49,8 @@ tasks.withType<Test>().configureEach {
 }
 
 dependencies {
-    implementation(project(":shared:core"))
+    implementation(project(":shared:core:ui"))
+    implementation(project(":shared:core:util"))
     implementation(project(":app-common:annotations"))
     implementation(project(":app-common:compose"))
     implementation(project(":app-common:navigation"))

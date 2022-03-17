@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.details.implementation.mapper
 
+import com.thomaskioko.tvmaniac.core.util.DateUtil.formatDateString
 import com.thomaskioko.tvmaniac.datasource.cache.Last_episode
 import com.thomaskioko.tvmaniac.datasource.cache.SelectShows
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.remote.api.model.LastEpisodeToAir
 import com.thomaskioko.tvmaniac.remote.api.model.NextEpisodeToAir
-import com.thomaskioko.tvmaniac.shared.core.util.DateUtil.formatDateString
 
 fun List<SelectShows>.toShowList(): List<Show> {
     return map { it.toShow() }

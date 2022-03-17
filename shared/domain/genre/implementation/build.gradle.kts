@@ -16,5 +16,5 @@ dependencies {
     commonMainImplementation(libs.squareup.sqldelight.extensions)
 
     commonTestImplementation(kotlin("test"))
-    commonTestImplementation(projects.shared.coreTest)
+    commonTestImplementation(projects.shared.core.test)
 }

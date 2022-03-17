@@ -1,13 +1,13 @@
 package com.thomaskioko.tvmaniac.details.api.presentation
 
 import com.thomaskioko.tvmaniac.details.api.interactor.UpdateShowParams
-import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
-import com.thomaskioko.tvmaniac.shared.core.store.Action
-import com.thomaskioko.tvmaniac.shared.core.store.Effect
-import com.thomaskioko.tvmaniac.shared.core.store.State
+import com.thomaskioko.tvmaniac.shared.core.ui.Action
+import com.thomaskioko.tvmaniac.shared.core.ui.Effect
+import com.thomaskioko.tvmaniac.shared.core.ui.State
+import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 
 sealed class ShowDetailAction : Action {
     object LoadGenres : ShowDetailAction()

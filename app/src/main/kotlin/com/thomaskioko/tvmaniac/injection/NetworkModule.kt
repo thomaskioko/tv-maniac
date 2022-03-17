@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.injection
 
 import android.content.Context
+import com.thomaskioko.tvmaniac.core.util.AppContext
+import com.thomaskioko.tvmaniac.core.util.network.ObserveConnectionState
 import com.thomaskioko.tvmaniac.remote.KtorClientFactory
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.TvShowsServiceImpl
-import com.thomaskioko.tvmaniac.shared.core.AppContext
-import com.thomaskioko.tvmaniac.shared.core.util.network.ObserveConnectionState
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

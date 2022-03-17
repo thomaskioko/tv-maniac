@@ -18,7 +18,7 @@ dependencies {
     testImplementation(libs.testing.mockk.core)
 
     commonTestImplementation(kotlin("test"))
-    commonTestImplementation(projects.shared.coreTest)
+    commonTestImplementation(projects.shared.core.test)
     commonTestImplementation(libs.testing.turbine)
     commonTestImplementation(libs.testing.kotest.assertions)
     commonTestImplementation(libs.testing.mockk.common)

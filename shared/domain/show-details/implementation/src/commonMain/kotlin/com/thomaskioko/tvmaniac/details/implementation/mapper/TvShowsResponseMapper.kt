@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.details.implementation.mapper
 
+import com.thomaskioko.tvmaniac.core.util.StringUtil.formatPosterPath
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.remote.api.model.GenreResponse
 import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.remote.api.model.ShowResponse
-import com.thomaskioko.tvmaniac.shared.core.util.StringUtil.formatPosterPath
 import kotlinx.datetime.toLocalDate
 
 fun ShowResponse.toShow(): Show {

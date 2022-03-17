@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.settings
 
-import com.thomaskioko.tvmaniac.shared.core.store.Action
-import com.thomaskioko.tvmaniac.shared.core.store.Effect
-import com.thomaskioko.tvmaniac.shared.core.store.State
+import com.thomaskioko.tvmaniac.shared.core.ui.Action
+import com.thomaskioko.tvmaniac.shared.core.ui.Effect
+import com.thomaskioko.tvmaniac.shared.core.ui.State
 
 data class SettingsState(
     val theme: Theme,
