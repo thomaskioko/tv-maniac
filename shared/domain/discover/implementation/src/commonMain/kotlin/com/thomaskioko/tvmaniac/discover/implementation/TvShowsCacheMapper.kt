@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
+import com.thomaskioko.tvmaniac.core.util.StringUtil
 import com.thomaskioko.tvmaniac.datasource.cache.SelectShows
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.remote.api.model.ShowResponse
-import com.thomaskioko.tvmaniac.shared.core.util.StringUtil
 import kotlinx.datetime.toLocalDate
 
 fun List<SelectShows>.toShowList(): List<Show> {

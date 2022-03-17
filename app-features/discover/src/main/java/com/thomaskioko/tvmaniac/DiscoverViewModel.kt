@@ -2,14 +2,14 @@ package com.thomaskioko.tvmaniac
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thomaskioko.tvmaniac.core.util.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowAction
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowAction.Error
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowState
 import com.thomaskioko.tvmaniac.discover.api.ObserveDiscoverShowsInteractor
-import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
-import com.thomaskioko.tvmaniac.shared.core.store.Store
+import com.thomaskioko.tvmaniac.shared.core.ui.Store
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

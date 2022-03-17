@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.discover.api
 
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult.DiscoverShowsData
-import com.thomaskioko.tvmaniac.shared.core.BaseViewModel
-import com.thomaskioko.tvmaniac.shared.core.store.Action
-import com.thomaskioko.tvmaniac.shared.core.store.ViewState
+import com.thomaskioko.tvmaniac.shared.core.ui.Action
+import com.thomaskioko.tvmaniac.shared.core.ui.BaseViewModel
+import com.thomaskioko.tvmaniac.shared.core.ui.ViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch

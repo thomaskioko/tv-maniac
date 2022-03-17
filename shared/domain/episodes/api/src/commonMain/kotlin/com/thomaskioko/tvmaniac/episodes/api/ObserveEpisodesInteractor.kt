@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
+import com.thomaskioko.tvmaniac.core.util.FlowInteractor
 import com.thomaskioko.tvmaniac.episodes.api.mapper.toEpisodeEntityList
 import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeUiModel
-import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map

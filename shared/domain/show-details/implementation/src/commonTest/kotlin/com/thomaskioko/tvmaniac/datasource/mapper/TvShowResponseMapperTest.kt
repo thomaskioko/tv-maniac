@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.datasource.mapper
 
 import com.thomaskioko.tvmaniac.MockData.getTvResponse
+import com.thomaskioko.tvmaniac.core.util.StringUtil.formatPosterPath
 import com.thomaskioko.tvmaniac.details.implementation.mapper.toShow
-import com.thomaskioko.tvmaniac.shared.core.util.StringUtil.formatPosterPath
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 

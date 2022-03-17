@@ -1,14 +1,14 @@
 package com.thomaskioko.tvmaniac.genre.implementation
 
 import co.touchlab.kermit.Logger
+import com.thomaskioko.tvmaniac.core.util.getErrorMessage
+import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.datasource.cache.Genre
 import com.thomaskioko.tvmaniac.genre.api.GenreCache
 import com.thomaskioko.tvmaniac.genre.api.GenreRepository
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.model.GenresResponse
-import com.thomaskioko.tvmaniac.shared.core.util.Resource
-import com.thomaskioko.tvmaniac.shared.core.util.getErrorMessage
-import com.thomaskioko.tvmaniac.shared.core.util.networkBoundResource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 

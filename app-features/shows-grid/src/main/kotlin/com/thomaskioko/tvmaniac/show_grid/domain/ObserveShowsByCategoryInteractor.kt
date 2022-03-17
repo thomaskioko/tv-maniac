@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.show_grid.domain
 
 import com.kuuurt.paging.multiplatform.PagingData
 import com.kuuurt.paging.multiplatform.map
+import com.thomaskioko.tvmaniac.core.util.FlowInteractor
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.details.api.repository.TvShowsRepository
-import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 import kotlinx.coroutines.flow.Flow

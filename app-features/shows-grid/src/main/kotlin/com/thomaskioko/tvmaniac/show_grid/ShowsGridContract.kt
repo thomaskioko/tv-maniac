@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.show_grid
 
 import com.kuuurt.paging.multiplatform.PagingData
-import com.thomaskioko.tvmaniac.shared.core.store.Action
-import com.thomaskioko.tvmaniac.shared.core.store.Effect
-import com.thomaskioko.tvmaniac.shared.core.store.State
+import com.thomaskioko.tvmaniac.shared.core.ui.Action
+import com.thomaskioko.tvmaniac.shared.core.ui.Effect
+import com.thomaskioko.tvmaniac.shared.core.ui.State
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf

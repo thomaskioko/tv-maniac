@@ -7,7 +7,8 @@ android {
 }
 
 dependencies {
-    implementation(projects.shared.core)
+    implementation(projects.shared.core.ui)
+    implementation(projects.shared.core.util)
     implementation(projects.shared.database)
     implementation(projects.shared.remote)
     implementation(projects.shared.domain.showDetails.api)
