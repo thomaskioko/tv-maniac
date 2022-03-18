@@ -42,6 +42,7 @@ jobs:
             gradle/libs.versions.toml
           arguments: |
             bundle
+            detekt
             testDebugUnitTest
             assembleDebug
 

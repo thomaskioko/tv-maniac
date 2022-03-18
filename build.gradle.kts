@@ -11,6 +11,7 @@ allprojects {
     repositories.applyDefault()
 
     plugins.apply("checks.dependency-updates")
+    plugins.apply("checks.detekt")
 }
 
 tasks.register("clean", Delete::class) {
