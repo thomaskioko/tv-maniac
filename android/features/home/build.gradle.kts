@@ -7,5 +7,5 @@ android {
 }
 
 dependencies {
-    implementation(projects.appCommon.compose)
+    implementation(projects.android.common.compose)
 }
