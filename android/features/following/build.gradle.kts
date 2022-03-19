@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.appCommon.compose)
+    implementation(projects.android.common.compose)
     implementation(projects.shared.domain.showDetails.api)
     implementation(projects.shared.domain.showCommon.api)
 }
