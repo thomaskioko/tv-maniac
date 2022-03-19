@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.seasons.implementation
 
+import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.remote.api.model.GenreResponse
 import com.thomaskioko.tvmaniac.remote.api.model.SeasonsResponse
 import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
-import com.thomaskioko.tvmaniac.shared.core.util.Resource
 import kotlinx.coroutines.flow.flowOf
 
 internal object MockData {

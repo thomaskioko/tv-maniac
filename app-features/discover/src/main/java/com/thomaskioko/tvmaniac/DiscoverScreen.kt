@@ -57,9 +57,9 @@ import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowState
-import com.thomaskioko.tvmaniac.discover.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.showcommon.api.TvShow
+import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
+import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlin.math.absoluteValue
@@ -70,8 +70,6 @@ import kotlin.math.absoluteValue
  * 3:1 which is the minimum for user-interface components.
  */
 private const val MinContrastOfPrimaryVsSurface = 3f
-
-@OptIn(ExperimentalSnapperApi::class, kotlinx.coroutines.InternalCoroutinesApi::class)
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverViewModel,
@@ -100,7 +98,6 @@ fun DiscoverScreen(
     )
 }
 
-@OptIn(ExperimentalSnapperApi::class)
 @Composable
 private fun DiscoverShows(
     scaffoldState: ScaffoldState,

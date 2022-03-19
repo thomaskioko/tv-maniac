@@ -1,10 +1,16 @@
+import util.libs
+
 plugins {
     `kmm-domain-plugin`
 }
 
+android {
+    namespace = "com.thomaskioko.tvmaniac.lastairepisodes.implementation"
+}
+
 dependencies {
-    commonMainImplementation(project(":shared:remote"))
-    commonMainImplementation(project(":shared:domain:last-air-episodes:api"))
+    commonMainImplementation(projects.shared.remote)
+    commonMainImplementation(projects.shared.domain.lastAirEpisodes.api)
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin.core)
     commonMainImplementation(libs.squareup.sqldelight.extensions)
@@ -12,7 +18,7 @@ dependencies {
     testImplementation(libs.testing.mockk.core)
 
     commonTestImplementation(kotlin("test"))
-    commonTestImplementation(project(":shared:core-test"))
+    commonTestImplementation(projects.shared.core.test)
     commonTestImplementation(libs.testing.turbine)
     commonTestImplementation(libs.testing.kotest.assertions)
     commonTestImplementation(libs.testing.mockk.common)

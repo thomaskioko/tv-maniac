@@ -3,18 +3,18 @@ package com.thomaskioko.showdetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveShowInteractor
-import com.thomaskioko.tvmaniac.discover.api.interactor.UpdateFollowingInteractor
-import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailAction
-import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailAction.UpdateFavorite
-import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailEffect
-import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailEffect.ShowDetailsError
-import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailViewState
+import com.thomaskioko.tvmaniac.core.util.CoroutineScopeOwner
+import com.thomaskioko.tvmaniac.details.api.interactor.ObserveShowInteractor
+import com.thomaskioko.tvmaniac.details.api.interactor.UpdateFollowingInteractor
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.UpdateFavorite
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailEffect
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailEffect.ShowDetailsError
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
 import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
 import com.thomaskioko.tvmaniac.lastairepisodes.api.ObserveAirEpisodesInteractor
 import com.thomaskioko.tvmaniac.seasons.api.interactor.ObserveSeasonsInteractor
-import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
-import com.thomaskioko.tvmaniac.shared.core.store.Store
+import com.thomaskioko.tvmaniac.shared.core.ui.Store
 import com.thomaskioko.tvmaniac.similar.api.ObserveSimilarShowsInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -74,7 +74,7 @@ class ShowDetailsViewModel @Inject constructor(
             }
             is ShowDetailAction.LoadEpisodes -> fetchEpisodes()
             is ShowDetailAction.BookmarkEpisode -> {
-                // TODO:: Update episode watchlist
+                // TODO Update episode watchlist
             }
         }
     }

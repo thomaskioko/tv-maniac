@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import com.thomaskioko.tvmaniac.core.util.StringUtil.formatPosterPath
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.getShowSeasonsResponse
-import com.thomaskioko.tvmaniac.shared.core.util.StringUtil.formatPosterPath
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 

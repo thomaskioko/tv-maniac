@@ -26,12 +26,12 @@ import com.thomaskioko.tvmaniac.compose.components.ConnectionStatus
 import com.thomaskioko.tvmaniac.compose.theme.DarkColors
 import com.thomaskioko.tvmaniac.compose.theme.LightColors
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.core.util.network.ConnectionState
+import com.thomaskioko.tvmaniac.core.util.network.ObserveConnectionState
 import com.thomaskioko.tvmaniac.home.HomeScreen
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.settings.api.TvManiacPreferences
 import com.thomaskioko.tvmaniac.settings.domain.shouldUseDarkColors
-import com.thomaskioko.tvmaniac.shared.core.util.network.ConnectionState
-import com.thomaskioko.tvmaniac.shared.core.util.network.ObserveConnectionState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay

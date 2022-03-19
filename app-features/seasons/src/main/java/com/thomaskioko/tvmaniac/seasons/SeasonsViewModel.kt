@@ -3,7 +3,8 @@ package com.thomaskioko.tvmaniac.seasons
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.discover.api.interactor.ObserveShowInteractor
+import com.thomaskioko.tvmaniac.core.util.CoroutineScopeOwner
+import com.thomaskioko.tvmaniac.details.api.interactor.ObserveShowInteractor
 import com.thomaskioko.tvmaniac.seasonepisodes.api.ObserveSeasonWithEpisodesInteractor
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsAction
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsAction.Error
@@ -11,8 +12,7 @@ import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsAction.LoadSeasons
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsAction.LoadShowDetails
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsEffect
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsViewState
-import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
-import com.thomaskioko.tvmaniac.shared.core.store.Store
+import com.thomaskioko.tvmaniac.shared.core.ui.Store
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

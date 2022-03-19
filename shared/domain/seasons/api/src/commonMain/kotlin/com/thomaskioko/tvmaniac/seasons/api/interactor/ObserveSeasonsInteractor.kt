@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.seasons.api.interactor
 
+import com.thomaskioko.tvmaniac.core.util.FlowInteractor
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
-import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map

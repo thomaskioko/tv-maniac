@@ -1,10 +1,10 @@
 package com.thomaskioko.showdetails
 
-import com.thomaskioko.tvmaniac.discover.api.presentation.ShowDetailViewState
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
 import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
-import com.thomaskioko.tvmaniac.showcommon.api.TvShow
+import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 
 val detailUiState = ShowDetailViewState(
     isLoading = false,
@@ -63,7 +63,8 @@ fun getEpisodeList() = listOf(
     LastAirEpisode(
         id = 2534997,
         name = "Glorious Purpose",
-        overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
+        overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time" +
+            " Variance Authority.",
         posterPath = "https://image.tmdb.org/t/p/original/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
         voteCount = 42,
         voteAverage = 6.429,
@@ -75,7 +76,8 @@ fun getEpisodeList() = listOf(
     LastAirEpisode(
         id = 2927202,
         name = "The Variant",
-        overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
+        overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of " +
+            "Mischief's presence.",
         posterPath = "https://image.tmdb.org/t/p/original/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
         voteCount = 23,
         voteAverage = 7.6,

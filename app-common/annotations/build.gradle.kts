@@ -9,6 +9,7 @@ plugins {
 
 android {
     compileSdk = libs.versions.android.compile.get().toInt()
+    namespace = "com.thomaskioko.tvmaniac.annotations"
 
     defaultConfig {
         minSdk = libs.versions.android.min.get().toInt()
