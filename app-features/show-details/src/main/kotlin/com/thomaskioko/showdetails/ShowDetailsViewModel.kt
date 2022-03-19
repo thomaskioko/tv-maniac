@@ -74,7 +74,7 @@ class ShowDetailsViewModel @Inject constructor(
             }
             is ShowDetailAction.LoadEpisodes -> fetchEpisodes()
             is ShowDetailAction.BookmarkEpisode -> {
-                // TODO:: Update episode watchlist
+                // TODO Update episode watchlist
             }
         }
     }

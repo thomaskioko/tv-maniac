@@ -2,9 +2,7 @@ package com.thomaskioko.showdetails
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,11 +19,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
-import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.FloatingActionButtonDefaults
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScrollableTabRow
@@ -48,14 +43,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,6 +58,7 @@ import com.thomaskioko.tvmaniac.compose.components.ChoiceChipContent
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
+import com.thomaskioko.tvmaniac.compose.components.ExtendedFab
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.LoadingItem
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
@@ -82,11 +75,9 @@ import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
-import kotlinx.coroutines.InternalCoroutinesApi
 
 private val HeaderHeight = 550.dp
 
-@OptIn(InternalCoroutinesApi::class)
 @Composable
 fun ShowDetailScreen(
     viewModel: ShowDetailsViewModel,
@@ -430,34 +421,14 @@ fun ShowDetailButtons(
         horizontalArrangement = Arrangement.Center,
     ) {
 
-        ExtendedFloatingActionButton(
-            icon = {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_trailer_24),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colors.secondary.copy(alpha = 0.8F)),
-                )
-            },
-            text = {
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                    Text(
-                        text = stringResource(id = R.string.btn_trailer),
-                        style = MaterialTheme.typography.body2,
-                    )
-                }
-            },
-            shape = RectangleShape,
-            backgroundColor = Color.Transparent,
-            elevation = FloatingActionButtonDefaults.elevation(0.dp),
-            onClick = {},
-            modifier = Modifier
-                .padding(2.dp)
-                .border(1.dp, Color(0xFF414141), RoundedCornerShape(8.dp))
+        ExtendedFab(
+            painter = painterResource(id = R.drawable.ic_trailer_24),
+            text = stringResource(id = R.string.btn_trailer)
         )
 
         RowSpacer(value = 8)
 
-        val message = if (tvShow.following)
+        val buttonText = if (tvShow.following)
             stringResource(id = R.string.unfollow)
         else stringResource(id = R.string.following)
 
@@ -465,34 +436,9 @@ fun ShowDetailButtons(
             painterResource(id = R.drawable.ic_baseline_check_box_24)
         else painterResource(id = R.drawable.ic_baseline_add_box_24)
 
-        ExtendedFloatingActionButton(
-            icon = {
-                Image(
-                    painter = imageVector,
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colors.secondary.copy(alpha = 0.8F)),
-                )
-            },
-            text = {
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                    Text(
-                        text = message,
-                        style = MaterialTheme.typography.body2,
-                        textAlign = TextAlign.Center,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                }
-            },
-            shape = RectangleShape,
-            backgroundColor = Color.Transparent,
-            elevation = FloatingActionButtonDefaults.elevation(0.dp),
-            onClick = {
-                onWatchlistClick(UpdateShowParams(tvShow.id, !tvShow.following))
-            },
-            modifier = Modifier
-                .padding(2.dp)
-                .border(1.dp, Color(0xFF414141), RoundedCornerShape(8.dp))
+        ExtendedFab(
+            painter = imageVector,
+            text = buttonText
         )
     }
 }

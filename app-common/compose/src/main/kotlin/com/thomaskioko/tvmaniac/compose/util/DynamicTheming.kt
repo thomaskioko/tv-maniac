@@ -24,6 +24,9 @@ import coil.size.Scale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+private const val COVER_IMAGE_SIZE = 128
+private const val MAC_COLOR_COUNT = 8
+
 @Composable
 fun rememberDominantColorState(
     context: Context = LocalContext.current,
@@ -139,7 +142,7 @@ private suspend fun calculateSwatchesInImage(
     val r = ImageRequest.Builder(context)
         .data(imageUrl)
         // We scale the image to cover 128px x 128px (i.e. min dimension == 128px)
-        .size(128).scale(Scale.FILL)
+        .size(COVER_IMAGE_SIZE).scale(Scale.FILL)
         // Disable hardware bitmaps, since Palette uses Bitmap.getPixels()
         .allowHardware(false)
         .build()
@@ -158,7 +161,7 @@ private suspend fun calculateSwatchesInImage(
                 // Clear any built-in filters. We want the unfiltered dominant color
                 .clearFilters()
                 // We reduce the maximum color count down to 8
-                .maximumColorCount(8)
+                .maximumColorCount(MAC_COLOR_COUNT)
                 .generate()
 
             palette.swatches
