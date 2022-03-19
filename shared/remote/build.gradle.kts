@@ -1,3 +1,4 @@
+
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import util.libs
 import java.io.FileInputStream
@@ -5,6 +6,7 @@ import java.util.Properties
 
 plugins {
     `kmm-domain-plugin`
+    kotlin("plugin.serialization") version ("1.6.10")
     id("com.codingfeline.buildkonfig")
 }
 
