@@ -3,12 +3,9 @@ package com.thomaskioko.tvmaniac.show_grid
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.interactors.ObserveShowsByCategoryInteractor
-import com.thomaskioko.tvmaniac.interactors.ShowsGridAction
-import com.thomaskioko.tvmaniac.interactors.ShowsGridEffect
-import com.thomaskioko.tvmaniac.interactors.ShowsGridState
-import com.thomaskioko.tvmaniac.shared.core.CoroutineScopeOwner
-import com.thomaskioko.tvmaniac.shared.core.store.Store
+import com.thomaskioko.tvmaniac.core.util.CoroutineScopeOwner
+import com.thomaskioko.tvmaniac.shared.core.ui.Store
+import com.thomaskioko.tvmaniac.show_grid.domain.ObserveShowsByCategoryInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

@@ -4,11 +4,13 @@ import android.content.Context
 import com.thomaskioko.tvmaniac.core.db.DriverFactory
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabaseFactory
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.details.api.cache.ShowCategoryCache
+import com.thomaskioko.tvmaniac.details.implementation.cache.ShowCategoryCacheImpl
+import com.thomaskioko.tvmaniac.details.implementation.cache.TvShowCacheImpl
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
-import com.thomaskioko.tvmaniac.discover.api.cache.ShowCategoryCache
-import com.thomaskioko.tvmaniac.discover.implementation.cache.CategoryCacheImpl
-import com.thomaskioko.tvmaniac.discover.implementation.cache.ShowCategoryCacheImpl
-import com.thomaskioko.tvmaniac.discover.implementation.cache.TvShowCacheImpl
+import com.thomaskioko.tvmaniac.discover.api.cache.DiscoverCategoryCache
+import com.thomaskioko.tvmaniac.discover.implementation.CategoryCacheImpl
+import com.thomaskioko.tvmaniac.discover.implementation.DiscoverCategoryCacheImpl
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodesCacheImpl
 import com.thomaskioko.tvmaniac.genre.api.GenreCache
@@ -19,7 +21,7 @@ import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesCache
 import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodesCacheImpl
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsCacheImpl
-import com.thomaskioko.tvmaniac.showcommon.api.TvShowCache
+import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowCacheImpl
 import dagger.Module
@@ -97,5 +99,11 @@ object DatabaseModule {
     @Provides
     fun provideSeasonWithEpisodesCache(database: TvManiacDatabase): SeasonWithEpisodesCache {
         return SeasonWithEpisodesCacheImpl(database)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSeasonWithDiscoverCategoryCache(database: TvManiacDatabase): DiscoverCategoryCache {
+        return DiscoverCategoryCacheImpl(database)
     }
 }

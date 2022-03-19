@@ -19,4 +19,5 @@ dependencies {
     implementation(libs.plugin.dependency.check)
     implementation(libs.plugin.hilt)
     implementation(libs.plugin.buildkonfig)
+    implementation(libs.plugin.detekt)
 }

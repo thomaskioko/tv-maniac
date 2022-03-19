@@ -4,6 +4,10 @@ plugins {
     `kmm-domain-plugin`
 }
 
+android {
+    namespace = "com.thomaskioko.tvmaniac.show_common.api"
+}
+
 dependencies {
     commonMainApi(projects.shared.database)
 

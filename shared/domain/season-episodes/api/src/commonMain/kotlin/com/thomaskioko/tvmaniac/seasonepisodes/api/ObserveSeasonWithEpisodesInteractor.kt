@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.seasonepisodes.api
 
+import com.thomaskioko.tvmaniac.core.util.FlowInteractor
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.SeasonWithEpisodes
-import com.thomaskioko.tvmaniac.shared.core.FlowInteractor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
