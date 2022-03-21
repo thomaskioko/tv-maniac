@@ -46,8 +46,9 @@ import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.settings.SettingsActions.ThemeClicked
-import com.thomaskioko.tvmaniac.settings.SettingsActions.ThemeSelected
+import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
+import com.thomaskioko.tvmaniac.shared.persistance.SettingsState
+import com.thomaskioko.tvmaniac.shared.persistance.Theme
 
 @Composable
 fun SettingsScreen(
@@ -88,9 +89,9 @@ fun SettingsScreen(
         content = { innerPadding ->
             SettingsList(
                 settingsState = themeState,
-                onThemeChanged = { viewModel.dispatch(ThemeSelected(it)) },
-                onThemeClicked = { viewModel.dispatch(ThemeClicked) },
-                onDismissTheme = { viewModel.dispatch(ThemeClicked) },
+                onThemeChanged = { viewModel.dispatch(SettingsActions.ThemeSelected(it)) },
+                onThemeClicked = { viewModel.dispatch(SettingsActions.ThemeClicked) },
+                onDismissTheme = { viewModel.dispatch(SettingsActions.ThemeClicked) },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
