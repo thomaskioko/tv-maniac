@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.settings
+package com.thomaskioko.tvmaniac.shared.persistance
 
 import com.thomaskioko.tvmaniac.shared.core.ui.Action
 import com.thomaskioko.tvmaniac.shared.core.ui.Effect
