@@ -3,9 +3,7 @@ package com.thomaskioko.tvmaniac.settings.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import com.thomaskioko.tvmaniac.settings.api.TvManiacPreferences
-import com.thomaskioko.tvmaniac.settings.domain.TvManiacPreferencesImpl
-import dagger.Binds
+import com.thomaskioko.tvmaniac.shared.persistance.TvManiacPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,12 +23,10 @@ object SettingsModule {
     ): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(context)
     }
-}
 
-@InstallIn(SingletonComponent::class)
-@Module
-internal abstract class SettingsModuleBinds {
     @Singleton
-    @Binds
-    abstract fun providePreferences(bind: TvManiacPreferencesImpl): TvManiacPreferences
+    @Provides
+    fun provideTvManiacPreferences(
+        @Named("app") preference: SharedPreferences
+    ): TvManiacPreferences = TvManiacPreferences(preference)
 }
