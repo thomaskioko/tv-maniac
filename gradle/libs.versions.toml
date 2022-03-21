@@ -17,6 +17,7 @@ androidx-compose = "1.1.0-rc01"
 compose-compiler = "1.1.0-rc02"
 androidx-composePaging = "1.0.0-alpha14"
 androidx-constraintlayout = "1.0.0-rc02"
+androidx-datastore = "1.0.0"
 androidx-lifecycle = "2.4.0"
 androidx-navigation = "2.4.0-rc01"
 androidx-palette = "1.0.0"
@@ -66,6 +67,7 @@ accompanist-insetsui = { module = "com.google.accompanist:accompanist-insets-ui"
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 
 androidx-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appCompat" }
+androidx-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
 androidx-palette = { module = "androidx.palette:palette-ktx", version.ref = "androidx-palette" }
 
 androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
