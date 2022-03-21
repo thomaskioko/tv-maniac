@@ -1,8 +1,11 @@
 package com.thomaskioko.tvmaniac.settings
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.settings.api.TvManiacPreferences
 import com.thomaskioko.tvmaniac.settings.util.MainCoroutineRule
+import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
+import com.thomaskioko.tvmaniac.shared.persistance.SettingsState
+import com.thomaskioko.tvmaniac.shared.persistance.Theme
+import com.thomaskioko.tvmaniac.shared.persistance.TvManiacPreferences
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
