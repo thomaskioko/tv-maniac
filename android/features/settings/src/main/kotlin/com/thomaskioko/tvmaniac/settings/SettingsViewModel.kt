@@ -3,14 +3,13 @@ package com.thomaskioko.tvmaniac.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
-import com.thomaskioko.tvmaniac.settings.SettingsActions.LoadTheme
-import com.thomaskioko.tvmaniac.settings.SettingsActions.ThemeClicked
-import com.thomaskioko.tvmaniac.settings.SettingsActions.ThemeSelected
-import com.thomaskioko.tvmaniac.settings.api.TvManiacPreferences
 import com.thomaskioko.tvmaniac.shared.core.ui.Store
+import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
+import com.thomaskioko.tvmaniac.shared.persistance.SettingsEffect
+import com.thomaskioko.tvmaniac.shared.persistance.SettingsState
+import com.thomaskioko.tvmaniac.shared.persistance.TvManiacPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,22 +27,21 @@ class SettingsViewModel @Inject constructor(
     private val sideEffect = MutableSharedFlow<SettingsEffect>()
 
     init {
-        dispatch(LoadTheme)
+        dispatch(SettingsActions.LoadTheme)
     }
 
     override fun observeState(): StateFlow<SettingsState> = state
 
     override fun observeSideEffect(): Flow<SettingsEffect> = sideEffect
 
-    @OptIn(InternalCoroutinesApi::class)
     override fun dispatch(action: SettingsActions) {
         when (action) {
-            is ThemeSelected -> {
+            is SettingsActions.ThemeSelected -> {
                 viewModelScope.launch(context = ioDispatcher) {
                     themePreference.emitTheme(action.theme)
                 }
             }
-            ThemeClicked -> {
+            SettingsActions.ThemeClicked -> {
                 viewModelScope.launch {
                     val newState = state.value.copy(
                         showPopup = !state.value.showPopup
@@ -51,7 +49,7 @@ class SettingsViewModel @Inject constructor(
                     state.emit(newState)
                 }
             }
-            LoadTheme -> {
+            SettingsActions.LoadTheme -> {
                 viewModelScope.launch {
                     themePreference.observeTheme()
                         .collect {
