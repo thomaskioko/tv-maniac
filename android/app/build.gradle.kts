@@ -28,6 +28,7 @@ dependencies {
     implementation(projects.shared.domain.seasonEpisodes.implementation)
     implementation(projects.shared.domain.discover.api)
     implementation(projects.shared.domain.discover.implementation)
+    implementation(projects.shared.domain.persistence)
     implementation(projects.android.common.annotations)
     implementation(projects.android.common.compose)
     implementation(projects.android.common.resources)

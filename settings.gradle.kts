@@ -47,5 +47,6 @@ include(
     ":shared:domain:season-episodes:implementation",
     ":shared:domain:show-common:api",
     ":shared:domain:discover:api",
-    ":shared:domain:discover:implementation"
+    ":shared:domain:discover:implementation",
+    ":shared:domain:persistence",
 )
