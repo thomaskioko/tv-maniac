@@ -46,6 +46,7 @@ kotlin {
             export(projects.shared.domain.seasonEpisodes.api)
             export(projects.shared.domain.showCommon.api)
             export(projects.shared.domain.discover.api)
+            export(projects.shared.domain.persistence)
             embedBitcode(BitcodeEmbeddingMode.BITCODE)
 
             transitiveExport = true
@@ -67,6 +68,7 @@ dependencies {
     commonMainApi(projects.shared.domain.seasonEpisodes.api)
     commonMainApi(projects.shared.domain.showCommon.api)
     commonMainApi(projects.shared.domain.discover.api)
+    commonMainApi(projects.shared.domain.persistence)
 
     commonMainImplementation(projects.shared.domain.episodes.implementation)
     commonMainImplementation(projects.shared.domain.showDetails.implementation)

@@ -51,10 +51,10 @@ tasks.withType<Test>().configureEach {
 dependencies {
     implementation(project(":shared:core:ui"))
     implementation(project(":shared:core:util"))
-    implementation(project(":app-common:annotations"))
-    implementation(project(":app-common:compose"))
-    implementation(project(":app-common:navigation"))
-    implementation(project(":app-common:resources"))
+    implementation(project(":android:common:annotations"))
+    implementation(project(":android:common:compose"))
+    implementation(project(":android:common:navigation"))
+    implementation(project(":android:common:resources"))
 
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)

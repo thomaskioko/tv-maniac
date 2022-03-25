@@ -35,7 +35,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":app-common:resources"))
+    implementation(project(":android:common:resources"))
 
     api(libs.androidx.appCompat)
     api(libs.androidx.palette)
