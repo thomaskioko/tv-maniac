@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.genre.api"
+    namespace = "com.thomaskioko.tvmaniac.shared.domain.genre.api"
 }
 
 dependencies {
     commonMainApi(projects.shared.core.util)
-    commonMainApi(projects.shared.database)
-    commonMainApi(libs.kotlin.coroutines.core)
+    commonMainImplementation(projects.shared.database)
+    commonMainImplementation(libs.kotlin.coroutines.core)
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.shared.persistence"
+    namespace = "com.thomaskioko.tvmaniac.shared.domain.persistence"
 }
 
 dependencies {

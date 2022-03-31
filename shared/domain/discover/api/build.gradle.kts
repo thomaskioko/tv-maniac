@@ -5,20 +5,15 @@ plugins {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.discover.api"
+    namespace = "com.thomaskioko.tvmaniac.shared.domain.discover.api"
 }
 
 dependencies {
-    commonMainApi(projects.shared.core.ui)
-    commonMainApi(projects.shared.core.util)
-    commonMainApi(projects.shared.domain.genre.api)
-    commonMainApi(projects.shared.domain.seasons.api)
-    commonMainApi(projects.shared.domain.lastAirEpisodes.api)
-    commonMainImplementation(projects.shared.domain.similar.api)
+    commonMainImplementation(projects.shared.database)
+    commonMainImplementation(projects.shared.database)
+    commonMainImplementation(projects.shared.core.ui)
+    commonMainImplementation(projects.shared.core.util)
     commonMainImplementation(projects.shared.domain.showCommon.api)
-
-    commonMainApi(libs.koin.core)
-    commonMainApi(libs.kermit)
 
     commonMainImplementation(libs.multiplatform.paging.core)
     commonMainImplementation(libs.kotlin.coroutines.core)

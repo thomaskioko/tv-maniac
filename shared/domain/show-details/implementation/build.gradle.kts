@@ -5,16 +5,18 @@ plugins {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.details.implementation"
+    namespace = "com.thomaskioko.tvmaniac.shared.domain.details.implementation"
 }
 
 dependencies {
+    commonMainImplementation(projects.shared.database)
     commonMainImplementation(projects.shared.remote)
     commonMainImplementation(projects.shared.domain.showDetails.api)
     commonMainImplementation(projects.shared.domain.episodes.api)
     commonMainImplementation(projects.shared.domain.lastAirEpisodes.api)
     commonMainImplementation(projects.shared.domain.showCommon.api)
 
+    commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin.core)
     commonMainImplementation(libs.kotlin.datetime)
     commonMainImplementation(libs.multiplatform.paging.core)

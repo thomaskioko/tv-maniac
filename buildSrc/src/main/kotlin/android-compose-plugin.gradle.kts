@@ -5,7 +5,6 @@ import util.libs
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
 }
 
 android {
@@ -37,34 +36,18 @@ android {
 dependencies {
     implementation(project(":android:common:resources"))
 
-    api(libs.androidx.appCompat)
+    implementation(libs.androidx.core)
     api(libs.androidx.palette)
-
-    api(libs.androidx.compose.runtime.core)
-    api(libs.androidx.compose.material.core)
-    api(libs.androidx.compose.material.icons)
+    api(libs.androidx.compose.runtime)
+    api(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material.icons)
     api(libs.androidx.compose.ui.runtime)
-    api(libs.androidx.compose.ui.tooling)
-    api(libs.androidx.compose.ui.util)
-    api(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.foundation)
     api(libs.androidx.compose.compiler)
-    api(libs.androidx.compose.constraintlayout)
-    api(libs.androidx.compose.activity)
-    api(libs.androidx.compose.navigation)
-    api(libs.androidx.compose.paging)
-
-    api(libs.material)
-    api(libs.kenburns)
-    api(libs.coil)
-    api(libs.snapper)
-
-    api(libs.accompanist.insets)
-    api(libs.accompanist.insetsui)
-    api(libs.accompanist.pager.core)
-    api(libs.accompanist.pager.indicator)
-    api(libs.accompanist.systemuicontroller)
-
-    implementation(libs.androidx.lifecycle.viewmodel)
+    api(libs.kotlinx.coroutines.jvm)
+    api(libs.androidx.compose.ui.tooling)
+    implementation(libs.kenburns)
+    implementation(libs.coil)
+    implementation(libs.accompanist.insets)
     implementation(libs.androidx.lifecycle.runtime)
-    kapt(libs.androidx.lifecycle.compiler)
 }
