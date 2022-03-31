@@ -10,6 +10,6 @@ android {
 
 dependencies {
     commonMainApi(projects.shared.database)
-    commonMainImplementation(projects.shared.core.util)
+    commonMainApi(projects.shared.core.util)
     commonMainImplementation(libs.kotlin.coroutines.core)
 }
