@@ -1,3 +1,5 @@
+import util.libs
+
 plugins {
     `android-feature-plugin`
 }
@@ -8,4 +10,6 @@ android {
 
 dependencies {
     implementation(projects.android.common.compose)
+    implementation(libs.accompanist.insetsui)
+    implementation(libs.androidx.compose.material.icons)
 }

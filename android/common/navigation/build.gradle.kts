@@ -5,8 +5,6 @@ import util.libs
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("dagger.hilt.android.plugin")
-    kotlin("kapt")
 }
 
 android {
@@ -38,10 +36,11 @@ android {
 
 dependencies {
 
-    implementation(libs.androidx.compose.navigation)
-    implementation(libs.androidx.compose.runtime.core)
+    api(libs.androidx.navigation.common)
+    api(libs.androidx.navigation.runtime)
 
-    implementation(libs.hilt.android)
+    implementation(libs.androidx.compose.navigation)
     implementation(libs.hilt.navigation)
-    kapt(libs.hilt.compiler)
+
+    releaseImplementation(libs.androidx.compose.runtime)
 }

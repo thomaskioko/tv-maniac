@@ -1,3 +1,5 @@
+import util.libs
+
 plugins {
     `android-app-plugin`
 }
@@ -7,7 +9,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.shared.core.ui)
     implementation(projects.shared.core.util)
     implementation(projects.shared.database)
     implementation(projects.shared.remote)
@@ -31,7 +32,6 @@ dependencies {
     implementation(projects.shared.domain.persistence)
     implementation(projects.android.common.annotations)
     implementation(projects.android.common.compose)
-    implementation(projects.android.common.resources)
     implementation(projects.android.common.navigation)
     implementation(projects.android.features.discover)
     implementation(projects.android.features.home)
@@ -41,4 +41,8 @@ dependencies {
     implementation(projects.android.features.following)
     implementation(projects.android.features.settings)
     implementation(projects.android.features.seasons)
+
+    implementation(libs.accompanist.insets)
+    implementation(libs.androidx.compose.activity)
+    implementation(libs.accompanist.systemuicontroller)
 }
