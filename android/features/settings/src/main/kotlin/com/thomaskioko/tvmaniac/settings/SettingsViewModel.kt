@@ -2,14 +2,12 @@ package com.thomaskioko.tvmaniac.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
 import com.thomaskioko.tvmaniac.shared.core.ui.Store
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsEffect
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsState
 import com.thomaskioko.tvmaniac.shared.persistance.TvManiacPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val themePreference: TvManiacPreferences,
-    @DefaultDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val themePreference: TvManiacPreferences
 ) : Store<SettingsState, SettingsActions, SettingsEffect>, ViewModel() {
 
     private val state = MutableStateFlow(SettingsState.DEFAULT)
@@ -37,7 +34,7 @@ class SettingsViewModel @Inject constructor(
     override fun dispatch(action: SettingsActions) {
         when (action) {
             is SettingsActions.ThemeSelected -> {
-                viewModelScope.launch(context = ioDispatcher) {
+                viewModelScope.launch {
                     themePreference.emitTheme(action.theme)
                 }
             }

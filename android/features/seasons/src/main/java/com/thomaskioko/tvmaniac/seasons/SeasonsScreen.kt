@@ -32,7 +32,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.statusBarsPadding
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ErrorView
 import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
@@ -42,6 +41,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
+import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsViewState
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.Episode
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.SeasonWithEpisodes
@@ -49,7 +49,6 @@ import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SeasonsScreen(
     viewModel: SeasonsViewModel,
