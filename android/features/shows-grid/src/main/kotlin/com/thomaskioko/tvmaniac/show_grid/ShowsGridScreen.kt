@@ -15,7 +15,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -26,7 +25,6 @@ import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
-import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -37,7 +35,6 @@ fun ShowsGridScreen(
 ) {
 
     val scaffoldState = rememberScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
 
     val gridViewState by rememberFlowWithLifecycle(viewModel.observeState())
         .collectAsState(initial = ShowsGridState.Empty)
@@ -56,7 +53,6 @@ fun ShowsGridScreen(
 
         ShowsGridContent(
             hostState = scaffoldState.snackbarHostState,
-            coroutineScope = coroutineScope,
             viewState = gridViewState,
             onItemClicked = { openShowDetails(it) }
         )
@@ -67,7 +63,6 @@ fun ShowsGridScreen(
 @Composable
 fun ShowsGridContent(
     hostState: SnackbarHostState,
-    coroutineScope: CoroutineScope,
     viewState: ShowsGridState,
     onItemClicked: (Long) -> Unit,
 ) {
@@ -79,7 +74,6 @@ fun ShowsGridContent(
         listState = listState,
         lazyPagingItems = lazyShowList,
         hostState = hostState,
-        coroutineScope = coroutineScope
     ) { show ->
         Column(
             modifier = Modifier
