@@ -12,7 +12,7 @@ class UpdateFollowingInteractor constructor(
     override fun run(params: UpdateShowParams): Flow<Unit> = flow {
         repository.updateFollowing(
             showId = params.showId,
-            addToWatchList = params.addToWatchList
+            addToWatchList = !params.addToWatchList
         )
         emit(Unit)
     }
