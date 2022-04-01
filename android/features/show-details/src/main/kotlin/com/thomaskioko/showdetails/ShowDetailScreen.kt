@@ -301,7 +301,7 @@ private fun Body(
             TvShowMetadata(
                 tvShow = tvShow,
                 genreUIList = genreUIS,
-                onWatchlistClick = onUpdateFavoriteClicked,
+                onUpdateFavoriteClicked = onUpdateFavoriteClicked,
             )
         }
 
@@ -313,7 +313,8 @@ private fun Body(
 fun TvShowMetadata(
     tvShow: TvShow,
     genreUIList: List<GenreUIModel>,
-    onWatchlistClick: (UpdateShowParams) -> Unit,
+    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
+    onWatchTrailerClicked: () -> Unit = {},
 ) {
     val resources = LocalContext.current.resources
 
@@ -373,7 +374,8 @@ fun TvShowMetadata(
 
     ShowDetailButtons(
         tvShow = tvShow,
-        onWatchlistClick = onWatchlistClick
+        onUpdateFavoriteClicked = onUpdateFavoriteClicked,
+        onWatchTrailerClicked = onWatchTrailerClicked
     )
 }
 
@@ -414,7 +416,8 @@ private fun GenreText(
 @Composable
 fun ShowDetailButtons(
     tvShow: TvShow,
-    onWatchlistClick: (UpdateShowParams) -> Unit,
+    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
+    onWatchTrailerClicked: () -> Unit = {},
 ) {
 
     Row(
@@ -423,7 +426,8 @@ fun ShowDetailButtons(
 
         ExtendedFab(
             painter = painterResource(id = R.drawable.ic_trailer_24),
-            text = stringResource(id = R.string.btn_trailer)
+            text = stringResource(id = R.string.btn_trailer),
+            onClick = { onWatchTrailerClicked() }
         )
 
         RowSpacer(value = 8)
@@ -438,7 +442,15 @@ fun ShowDetailButtons(
 
         ExtendedFab(
             painter = imageVector,
-            text = buttonText
+            text = buttonText,
+            onClick = {
+                onUpdateFavoriteClicked(
+                    UpdateShowParams(
+                        showId = tvShow.id,
+                        addToWatchList = tvShow.following
+                    )
+                )
+            }
         )
     }
 }

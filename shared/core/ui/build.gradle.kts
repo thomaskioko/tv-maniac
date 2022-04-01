@@ -10,7 +10,7 @@ android {
 
 dependencies {
 
-    commonMainImplementation(projects.shared.core.util)
+    androidMainImplementation(projects.shared.core.util)
     commonMainImplementation(libs.kotlin.coroutines.core)
     commonMainImplementation(libs.koin.core)
 

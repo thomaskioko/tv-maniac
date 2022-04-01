@@ -1,7 +1,8 @@
-import Kmm_domain_plugin_gradle.Utils.getIosTarget
+
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import util.libs
 
 plugins {
@@ -18,13 +19,11 @@ android {
 
 kotlin {
 
-    val iosTarget = getIosTarget()
-
-    iosTarget("ios") {
-        binaries {
-            framework {
-                baseName = "TvManiac"
-            }
+    val xcf = XCFramework()
+    ios {
+        binaries.framework {
+            baseName = "TvManiac"
+            xcf.add(this)
         }
     }
 
@@ -91,5 +90,5 @@ multiplatformSwiftPackage {
     }
 
     distributionMode { local() }
-    outputDirectory(File("$projectDir/../../", "tvmaniac-swift-packages"))
+    outputDirectory(File("$projectDir/../../../", "tvmaniac-swift-packages"))
 }

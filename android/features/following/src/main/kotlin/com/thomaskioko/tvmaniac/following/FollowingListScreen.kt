@@ -22,14 +22,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.statusBarsPadding
 import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
-import com.thomaskioko.tvmaniac.compose.components.LazyGridItems
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.resources.R
-import kotlinx.coroutines.InternalCoroutinesApi
 
-@OptIn(InternalCoroutinesApi::class)
 @Composable
 fun FollowingContent(
     viewModel: FollowingViewModel,

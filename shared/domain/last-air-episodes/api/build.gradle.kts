@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.lastairepisodes.api"
+    namespace = "com.thomaskioko.tvmaniac.shared.domain.lastairepisodes.api"
 }
 
 dependencies {
-    commonMainApi(projects.shared.core.util)
     commonMainApi(projects.shared.database)
-    commonMainApi(libs.kotlin.coroutines.core)
+    commonMainApi(projects.shared.core.util)
+    commonMainImplementation(libs.kotlin.coroutines.core)
 }

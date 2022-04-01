@@ -65,12 +65,11 @@ android {
 
     dependencies {
 
-        implementation(libs.hilt.android)
-        implementation(libs.hilt.navigation)
-        kapt(libs.hilt.compiler)
-
+        implementation(libs.inject)
         implementation(libs.kermit)
+        implementation(libs.hilt.android)
         implementation(libs.ktor.android)
+        kapt(libs.hilt.compiler)
 
         debugImplementation(libs.squareup.leakcanary)
 

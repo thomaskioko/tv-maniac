@@ -5,10 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.implementation"
+    namespace = "com.thomaskioko.tvmaniac.shared.domain.seasons.implementation"
 }
 
 dependencies {
+    commonMainImplementation(projects.shared.database)
     commonMainImplementation(projects.shared.remote)
     commonMainImplementation(projects.shared.domain.seasons.api)
     commonMainImplementation(projects.shared.domain.showDetails.implementation)

@@ -5,15 +5,14 @@ plugins {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.seasonepisodes.api"
+    namespace = "com.thomaskioko.tvmaniac.shared.domain.seasonepisodes.api"
 }
 
 dependencies {
-    commonMainApi(projects.shared.core.ui)
     commonMainApi(projects.shared.core.util)
-    commonMainApi(projects.shared.database)
-    commonMainApi(libs.kotlin.coroutines.core)
-    commonMainApi(libs.kermit)
-
+    commonMainImplementation(projects.shared.core.ui)
+    commonMainImplementation(projects.shared.database)
     commonMainImplementation(projects.shared.domain.showCommon.api)
+
+    commonMainImplementation(libs.kotlin.coroutines.core)
 }

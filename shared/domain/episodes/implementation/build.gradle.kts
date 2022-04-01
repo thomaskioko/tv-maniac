@@ -5,12 +5,14 @@ plugins {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.episodes.implementation"
+    namespace = "com.thomaskioko.tvmaniac.shared.domain.episodes.implementation"
 }
 
 dependencies {
+    commonMainImplementation(projects.shared.database)
     commonMainImplementation(projects.shared.remote)
     commonMainImplementation(projects.shared.domain.episodes.api)
+
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin.core)
     commonMainImplementation(libs.squareup.sqldelight.extensions)

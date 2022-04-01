@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.show_common.api"
+    namespace = "com.thomaskioko.tvmaniac.shared.domain.show_common.api"
 }
 
 dependencies {
-    commonMainApi(projects.shared.database)
-
+    commonMainImplementation(projects.shared.database)
     commonMainImplementation(libs.kotlin.coroutines.core)
+
     iosMainImplementation(libs.kotlin.coroutines.core)
 
     val coroutineCore = libs.kotlin.coroutines.core.get()
