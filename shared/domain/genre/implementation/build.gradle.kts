@@ -5,10 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.genre.implementation"
+    namespace = "com.thomaskioko.tvmaniac.shared.domain.genre.implementation"
 }
 
 dependencies {
+    commonMainImplementation(projects.shared.database)
     commonMainImplementation(projects.shared.remote)
     commonMainImplementation(projects.shared.domain.genre.api)
     commonMainImplementation(libs.kermit)

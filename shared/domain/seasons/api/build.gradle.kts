@@ -4,11 +4,12 @@ plugins {
     `kmm-domain-plugin`
 }
 
+android {
+    namespace = "com.thomaskioko.tvmaniac.shared.domain.seasons.api"
+}
+
 dependencies {
     commonMainApi(projects.shared.core.util)
-    commonMainApi(projects.shared.database)
-    commonMainApi(libs.kotlin.coroutines.core)
-}
-android {
-    namespace = "com.thomaskioko.tvmaniac.seasons.api"
+    commonMainImplementation(projects.shared.database)
+    commonMainImplementation(libs.kotlin.coroutines.core)
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.lastairepisodes.implementation"
+    namespace = "com.thomaskioko.tvmaniac.shared.domain.lastairepisodes.implementation"
 }
 
 dependencies {

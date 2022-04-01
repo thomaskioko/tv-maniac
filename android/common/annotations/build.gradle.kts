@@ -24,5 +24,5 @@ android {
 
 dependencies {
 
-    implementation(libs.hilt.android)
+    implementation(libs.inject)
 }

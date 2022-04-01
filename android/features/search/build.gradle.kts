@@ -9,5 +9,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.paging.runtime)
+    implementation(projects.android.common.compose)
+    implementation(libs.accompanist.insetsui)
 }

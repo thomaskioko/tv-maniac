@@ -1,3 +1,5 @@
+import util.libs
+
 plugins {
     `android-feature-plugin`
 }
@@ -7,5 +9,12 @@ android {
 }
 
 dependencies {
-    implementation(projects.shared.domain.persistence)
+    api(projects.shared.core.ui)
+    api(projects.shared.domain.persistence)
+    implementation(projects.android.common.compose)
+
+    implementation(libs.accompanist.insetsui)
+
+    testImplementation(libs.testing.junit)
+    testImplementation(libs.testing.mockk.core)
 }

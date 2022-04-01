@@ -4,9 +4,9 @@ import util.libs
 
 plugins {
     id("com.android.library")
+    id("dagger.hilt.android.plugin")
     kotlin("android")
     kotlin("kapt")
-    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -49,11 +49,7 @@ tasks.withType<Test>().configureEach {
 }
 
 dependencies {
-    implementation(project(":shared:core:ui"))
-    implementation(project(":shared:core:util"))
-    implementation(project(":android:common:annotations"))
-    implementation(project(":android:common:compose"))
-    implementation(project(":android:common:navigation"))
+    api(project(":android:common:navigation"))
     implementation(project(":android:common:resources"))
 
     implementation(libs.hilt.android)
@@ -63,8 +59,6 @@ dependencies {
     testImplementation(libs.testing.turbine)
     testImplementation(libs.testing.coroutines.test)
     testImplementation(libs.testing.kotest.assertions)
-    testImplementation(libs.testing.mockk.core)
-    testImplementation(libs.testing.androidx.core)
     testRuntimeOnly(libs.testing.junit5.jupiter)
     testRuntimeOnly(libs.testing.junit5.engine)
     testRuntimeOnly(libs.testing.junit5.vintage)
