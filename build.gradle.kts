@@ -39,13 +39,6 @@ subprojects {
     }
 }
 
-/**
- * Disable iosTest Task for now. Using mockk causes the build to fail. Revisit later.
- * Action:
- * - Resolve issue or replace dependency
- */
-project.gradle.startParameter.excludedTaskNames.add("compileTestKotlinIos")
-
 dependencyAnalysis {
     issues {
         all {
@@ -124,3 +117,15 @@ dependencyAnalysis {
         }
     }
 }
+
+/**
+ * Disable iosTest Task for now. Using mockk causes the build to fail. Revisit later.
+ * Action:
+ * - Resolve issue or replace dependency
+ */
+project.gradle.startParameter.excludedTaskNames.addAll(
+    listOf(
+        "compileTestKotlinIosArm64",
+        "compileTestKotlinIosX64"
+    )
+)
