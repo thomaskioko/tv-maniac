@@ -13,7 +13,7 @@ struct ShowRow: View {
         VStack(alignment: .leading) {
 
             HStack {
-                Text(self.categoryName)
+                Text(categoryName)
                         .titleSemiBoldFont(size: 23)
                         .padding(.top, 8)
 
@@ -32,7 +32,7 @@ struct ShowRow: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top) {
-                    ForEach(self.shows, id: \.title) { show in
+                    ForEach(shows, id: \.title) { show in
                         NavigationLink(destination: ShowDetailView(showId: show.id)) {
                             ShowPosterImage(
                                     processor: processor,
