@@ -69,7 +69,6 @@ struct ShowBodyView: View {
         }
                 .padding(.trailing, 16)
                 .padding(.leading, 16)
-                .padding(.bottom, 16)
                 .background(BackgroundView())
 
         VStack(alignment: .leading) {
@@ -148,7 +147,6 @@ struct ShowBodyView: View {
                 }
             }
         }
-
                 .background(Color.background)
 
     }
@@ -161,6 +159,7 @@ struct ShowBodyView: View {
                 .fill(.ultraThinMaterial)
                 .blur(radius: 50)
                 .mask(Color.linearGradient)
+                .padding(-20)
 
     }
 
