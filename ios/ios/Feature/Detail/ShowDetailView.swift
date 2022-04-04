@@ -29,9 +29,8 @@ struct ShowDetailView: View {
             HeaderImageView(viewState: observable.state)
 
             ShowBodyView(viewState: observable.state)
-                    .offset(y: -180)
+                    .offset(y: -170)
 
-            Spacer()
 
         }
                 .onAppear {
@@ -42,7 +41,7 @@ struct ShowDetailView: View {
                     observable.viewModel.detach()
                 }
                 .edgesIgnoringSafeArea(.all)
-//                .background(Color.background.edgesIgnoringSafeArea(.all))
+                .background(Color.background)
     }
 }
 
