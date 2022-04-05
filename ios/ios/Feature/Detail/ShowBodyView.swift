@@ -8,15 +8,12 @@
 
 import SwiftUI
 import TvManiac
-import Kingfisher
 
 struct ShowBodyView: View {
 
     @Environment(\.colorScheme) var scheme
 
     var viewState: ShowDetailUiViewState
-    let processor = DownsamplingImageProcessor(size: CGSize(width: PosterStyle.Size.medium.width(), height: PosterStyle.Size.medium.height()))
-            |> RoundCornerImageProcessor(cornerRadius: 5)
 
 
     var body: some View {
@@ -135,7 +132,6 @@ struct ShowBodyView: View {
                         ForEach(viewState.similarShowList, id: \.self) { show in
                             NavigationLink(destination: ShowDetailView(showId: show.id)) {
                                 ShowPosterImage(
-                                        processor: processor,
                                         posterSize: .medium,
                                         imageUrl: show.posterImageUrl
                                 )
