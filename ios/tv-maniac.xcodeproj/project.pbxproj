@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		E910A40427F754AB0038E209 /* TvManiac in Frameworks */ = {isa = PBXBuildFile; productRef = E910A40327F754AB0038E209 /* TvManiac */; };
-		E910A40927F755BE0038E209 /* OffsetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E910A40827F755BE0038E209 /* OffsetModifier.swift */; };
 		E924E11D272F2BA000C4435F /* HomeUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E924E11C272F2BA000C4435F /* HomeUIView.swift */; };
 		E983816D2793697B0039CB08 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98381692793697B0039CB08 /* ColorExtension.swift */; };
 		E983816E2793697B0039CB08 /* ContentHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983816A2793697B0039CB08 /* ContentHostingController.swift */; };
@@ -53,7 +52,6 @@
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E910A40827F755BE0038E209 /* OffsetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetModifier.swift; sourceTree = "<group>"; };
 		E924E11C272F2BA000C4435F /* HomeUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeUIView.swift; sourceTree = "<group>"; };
 		E98381692793697B0039CB08 /* ColorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		E983816A2793697B0039CB08 /* ContentHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentHostingController.swift; sourceTree = "<group>"; };
@@ -259,7 +257,6 @@
 				E983818A27936BB00039CB08 /* ShowRow.swift */,
 				E983818C27936BB10039CB08 /* TextViews.swift */,
 				E98381E027943F940039CB08 /* SnapCarousel.swift */,
-				E910A40827F755BE0038E209 /* OffsetModifier.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -374,7 +371,6 @@
 				E9CD0B2527AC7D140021516B /* PrintExtension.swift in Sources */,
 				E98381A527936E150039CB08 /* ShowMockData.swift in Sources */,
 				E9AC835126CEEA1500829A0D /* DiscoverView.swift in Sources */,
-				E910A40927F755BE0038E209 /* OffsetModifier.swift in Sources */,
 				E983819327936BB10039CB08 /* Font.swift in Sources */,
 				E983819527936BB10039CB08 /* ShowRow.swift in Sources */,
 				E983819127936BB10039CB08 /* ShowPosterImage.swift in Sources */,
