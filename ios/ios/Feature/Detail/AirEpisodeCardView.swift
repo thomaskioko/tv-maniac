@@ -8,7 +8,6 @@
 
 import SwiftUI
 import TvManiac
-import Kingfisher
 
 struct AirEpisodeCardView: View {
 
@@ -43,6 +42,7 @@ struct AirEpisodeCardView: View {
                             .titleBoldFont(size: 23)
                             .foregroundColor(.white)
                             .background(Color.accent_color)
+                            .cornerRadius(5)
 
 
                     Text(episode.airDate)

@@ -1,13 +1,10 @@
 import SwiftUI
 import TvManiac
-import Kingfisher
 
 struct ShowRow: View {
 
     var categoryName: String
     var shows: [TvShow]
-    let processor = DownsamplingImageProcessor(size: CGSize(width: PosterStyle.Size.medium.width(), height: PosterStyle.Size.medium.height()))
-            |> RoundCornerImageProcessor(cornerRadius: 5)
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -35,7 +32,6 @@ struct ShowRow: View {
                     ForEach(shows, id: \.title) { show in
                         NavigationLink(destination: ShowDetailView(showId: show.id)) {
                             ShowPosterImage(
-                                    processor: processor,
                                     posterSize: .medium,
                                     imageUrl: show.posterImageUrl
                             )
