@@ -21,8 +21,9 @@ struct ShowInfoRow: View {
 					Text(show.status ?? "")
 							.captionFont(size: 16)
 							.foregroundColor(.accent)
-							.padding(2)
+							.padding(3)
 							.background(Color.accent.opacity(0.2))
+							.cornerRadius(2)
 
 					Text("•")
 							.bodyFont(size: 16)
