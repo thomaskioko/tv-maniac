@@ -16,7 +16,7 @@ extension Color {
 	public static var linearGradient = LinearGradient(
 		gradient: Gradient(stops: [
 			.init(color: .gradient_background, location: 0),
-			.init(color: .clear, location: 1.5)
+			.init(color: .clear, location: 0.8)
 		]),
 		startPoint: .bottom,
 		endPoint: .top
