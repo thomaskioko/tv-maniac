@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		E910A40427F754AB0038E209 /* TvManiac in Frameworks */ = {isa = PBXBuildFile; productRef = E910A40327F754AB0038E209 /* TvManiac */; };
-		E910A40727F755290038E209 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E910A40627F755290038E209 /* Kingfisher */; };
 		E910A40927F755BE0038E209 /* OffsetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E910A40827F755BE0038E209 /* OffsetModifier.swift */; };
 		E924E11D272F2BA000C4435F /* HomeUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E924E11C272F2BA000C4435F /* HomeUIView.swift */; };
 		E983816D2793697B0039CB08 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98381692793697B0039CB08 /* ColorExtension.swift */; };
@@ -99,7 +98,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E910A40727F755290038E209 /* Kingfisher in Frameworks */,
 				E910A40427F754AB0038E209 /* TvManiac in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -292,7 +290,6 @@
 			name = "tv-maniac";
 			packageProductDependencies = (
 				E910A40327F754AB0038E209 /* TvManiac */,
-				E910A40627F755290038E209 /* Kingfisher */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -324,7 +321,6 @@
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
 				E910A40227F754AB0038E209 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */,
-				E910A40527F755290038E209 /* XCRemoteSwiftPackageReference "Kingfisher.git" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -603,14 +599,6 @@
 				version = 0.4.0;
 			};
 		};
-		E910A40527F755290038E209 /* XCRemoteSwiftPackageReference "Kingfisher.git" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 7.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -618,11 +606,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E910A40227F754AB0038E209 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */;
 			productName = TvManiac;
-		};
-		E910A40627F755290038E209 /* Kingfisher */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E910A40527F755290038E209 /* XCRemoteSwiftPackageReference "Kingfisher.git" */;
-			productName = Kingfisher;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
