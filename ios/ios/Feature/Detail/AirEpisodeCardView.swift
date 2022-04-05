@@ -72,8 +72,8 @@ struct AirEpisodeCardView: View {
                 .frame(width: 330, height: 210)
                 .background(
                         RoundedRectangle(cornerRadius: 5)
-                                .fill(Color.grey_900)
-//                                .shadow(color: .grey_900, radius: 5, x: 0, y: 5)
+                                .fill(Color.gradient_background)
+                                .shadow(color: .grey_900, radius: 5, x: 5, y: 5)
 
                 )
     }
