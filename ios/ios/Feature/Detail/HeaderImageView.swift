@@ -8,21 +8,16 @@
 
 import SwiftUI
 import TvManiac
-import Kingfisher
 
 struct HeaderImageView: View {
 
     var viewState: ShowDetailUiViewState
 
     var body: some View {
-        let resizingProcessor = ResizingImageProcessor(
-                referenceSize: CGSize(width: PosterStyle.Size.max.width(), height: (PosterStyle.Size.tv.height() + 200))
-        )
 
         GeometryReader { geometry in
 
             ShowPosterImage(
-                    processor: resizingProcessor,
                     posterSize: .max,
                     imageUrl: viewState.tvShow.backdropImageUrl
             )
@@ -30,12 +25,10 @@ struct HeaderImageView: View {
                     .overlay(
                             ZStack(alignment: .bottom) {
                                 ShowPosterImage(
-                                        processor: resizingProcessor,
                                         posterSize: .max,
                                         imageUrl: viewState.tvShow.backdropImageUrl
                                 )
                                         .blur(radius: 50) /// blur the image
-                                        .padding(-20) /// expand the blur a bit to cover the edges
                                         .clipped() /// prevent blur overflow
                                         .mask(Color.linearGradient) /// mask the blurred image using the gradient's alpha values
                                 Color.linearGradient
