@@ -13,17 +13,21 @@ struct ShowRow: View {
                 Text(categoryName)
                         .titleSemiBoldFont(size: 23)
                         .padding(.top, 8)
+                        .padding(.trailing, 16)
+                        .padding(.leading, 16)
 
                 Spacer()
 
                 NavigationLink(destination: ShowGridView()
-                        .navigationBarTitle(self.categoryName),
+                        .navigationBarTitle(categoryName),
                         label: {
                             Spacer()
                             Text("More")
                                     .bodyMediumFont(size: 16)
                                     .foregroundColor(.accent_color)
                                     .padding(.top, 18)
+                                    .padding(.trailing, 16)
+                                    .padding(.leading, 16)
                         })
             }
 
@@ -40,10 +44,10 @@ struct ShowRow: View {
                         }
                     }
                 }
+                        .padding(.trailing, 16)
+                        .padding(.leading, 16)
             }
         }
-                .padding(.trailing, 16)
-                .padding(.leading, 16)
     }
 }
 
