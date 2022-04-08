@@ -19,7 +19,7 @@ struct PosterStyle: ViewModifier {
 			case .medium: return 180
 			case .big: return 460
 			case .tv: return 600
-			case .max: return UIScreen.main.bounds.height
+			case .max: return 720
 			}
 		}
 	}

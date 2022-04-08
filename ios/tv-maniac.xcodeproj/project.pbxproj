@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
+		CBDFC5CAEA5938940871491E /* OffsetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC8F86D71D33205E42D7F /* OffsetModifier.swift */; };
+		CBDFC60AF859A44365A90BA5 /* TopNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC4463ABF8E9F9AEB156C /* TopNavBar.swift */; };
+		CBDFCA9D24126097D232D988 /* BlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC78A5C2441FF7F2BB401 /* BlurView.swift */; };
 		E910A40427F754AB0038E209 /* TvManiac in Frameworks */ = {isa = PBXBuildFile; productRef = E910A40327F754AB0038E209 /* TvManiac */; };
 		E924E11D272F2BA000C4435F /* HomeUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E924E11C272F2BA000C4435F /* HomeUIView.swift */; };
 		E983816D2793697B0039CB08 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98381692793697B0039CB08 /* ColorExtension.swift */; };
@@ -21,7 +24,7 @@
 		E983819427936BB10039CB08 /* PosterStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983818927936BB00039CB08 /* PosterStyle.swift */; };
 		E983819527936BB10039CB08 /* ShowRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983818A27936BB00039CB08 /* ShowRow.swift */; };
 		E983819727936BB10039CB08 /* TextViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983818C27936BB10039CB08 /* TextViews.swift */; };
-		E98381A027936DC90039CB08 /* HeaderImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983819D27936DC90039CB08 /* HeaderImageView.swift */; };
+		E98381A027936DC90039CB08 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983819D27936DC90039CB08 /* HeaderView.swift */; };
 		E98381A127936DC90039CB08 /* ShowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983819E27936DC90039CB08 /* ShowDetailView.swift */; };
 		E98381A227936DC90039CB08 /* GenresRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983819F27936DC90039CB08 /* GenresRowView.swift */; };
 		E98381A527936E150039CB08 /* ShowMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98381A427936E150039CB08 /* ShowMockData.swift */; };
@@ -44,6 +47,7 @@
 		E9AC835326CEEA9800829A0D /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835226CEEA9800829A0D /* SearchView.swift */; };
 		E9AC835526CEEAB800829A0D /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835426CEEAB800829A0D /* WatchlistView.swift */; };
 		E9B6867227871CEA001698B7 /* ObservableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B6867127871CEA001698B7 /* ObservableViewModel.swift */; };
+		E9C6114E27FF863600F8A23F /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E9C6114D27FF863600F8A23F /* Kingfisher */; };
 		E9CD0B2327AAF5620021516B /* AirEpisodeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD0B2227AAF5620021516B /* AirEpisodeCardView.swift */; };
 		E9CD0B2527AC7D140021516B /* PrintExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD0B2427AC7D140021516B /* PrintExtension.swift */; };
 /* End PBXBuildFile section */
@@ -52,6 +56,9 @@
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CBDFC4463ABF8E9F9AEB156C /* TopNavBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopNavBar.swift; sourceTree = "<group>"; };
+		CBDFC78A5C2441FF7F2BB401 /* BlurView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlurView.swift; sourceTree = "<group>"; };
+		CBDFC8F86D71D33205E42D7F /* OffsetModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OffsetModifier.swift; sourceTree = "<group>"; };
 		E924E11C272F2BA000C4435F /* HomeUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeUIView.swift; sourceTree = "<group>"; };
 		E98381692793697B0039CB08 /* ColorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		E983816A2793697B0039CB08 /* ContentHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentHostingController.swift; sourceTree = "<group>"; };
@@ -64,7 +71,7 @@
 		E983818927936BB00039CB08 /* PosterStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PosterStyle.swift; sourceTree = "<group>"; };
 		E983818A27936BB00039CB08 /* ShowRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowRow.swift; sourceTree = "<group>"; };
 		E983818C27936BB10039CB08 /* TextViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextViews.swift; sourceTree = "<group>"; };
-		E983819D27936DC90039CB08 /* HeaderImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderImageView.swift; sourceTree = "<group>"; };
+		E983819D27936DC90039CB08 /* HeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		E983819E27936DC90039CB08 /* ShowDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDetailView.swift; sourceTree = "<group>"; };
 		E983819F27936DC90039CB08 /* GenresRowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenresRowView.swift; sourceTree = "<group>"; };
 		E98381A427936E150039CB08 /* ShowMockData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowMockData.swift; sourceTree = "<group>"; };
@@ -96,6 +103,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9C6114E27FF863600F8A23F /* Kingfisher in Frameworks */,
 				E910A40427F754AB0038E209 /* TvManiac in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -166,11 +174,12 @@
 			isa = PBXGroup;
 			children = (
 				E983819F27936DC90039CB08 /* GenresRowView.swift */,
-				E983819D27936DC90039CB08 /* HeaderImageView.swift */,
+				E983819D27936DC90039CB08 /* HeaderView.swift */,
 				E983819E27936DC90039CB08 /* ShowDetailView.swift */,
 				E98381AA2793720C0039CB08 /* ShowInfoRow.swift */,
 				E98381D127942D720039CB08 /* ShowBodyView.swift */,
 				E9CD0B2227AAF5620021516B /* AirEpisodeCardView.swift */,
+				CBDFC4463ABF8E9F9AEB156C /* TopNavBar.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -257,6 +266,8 @@
 				E983818A27936BB00039CB08 /* ShowRow.swift */,
 				E983818C27936BB10039CB08 /* TextViews.swift */,
 				E98381E027943F940039CB08 /* SnapCarousel.swift */,
+				CBDFC78A5C2441FF7F2BB401 /* BlurView.swift */,
+				CBDFC8F86D71D33205E42D7F /* OffsetModifier.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -287,6 +298,7 @@
 			name = "tv-maniac";
 			packageProductDependencies = (
 				E910A40327F754AB0038E209 /* TvManiac */,
+				E9C6114D27FF863600F8A23F /* Kingfisher */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -318,6 +330,7 @@
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
 				E910A40227F754AB0038E209 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */,
+				E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher.git" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -380,7 +393,10 @@
 				E983816E2793697B0039CB08 /* ContentHostingController.swift in Sources */,
 				E983819427936BB10039CB08 /* PosterStyle.swift in Sources */,
 				E983816D2793697B0039CB08 /* ColorExtension.swift in Sources */,
-				E98381A027936DC90039CB08 /* HeaderImageView.swift in Sources */,
+				E98381A027936DC90039CB08 /* HeaderView.swift in Sources */,
+				CBDFCA9D24126097D232D988 /* BlurView.swift in Sources */,
+				CBDFC5CAEA5938940871491E /* OffsetModifier.swift in Sources */,
+				CBDFC60AF859A44365A90BA5 /* TopNavBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -595,6 +611,14 @@
 				version = 0.4.0;
 			};
 		};
+		E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher.git" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -602,6 +626,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E910A40227F754AB0038E209 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */;
 			productName = TvManiac;
+		};
+		E9C6114D27FF863600F8A23F /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher.git" */;
+			productName = Kingfisher;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
