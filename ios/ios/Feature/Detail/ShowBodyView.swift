@@ -12,64 +12,11 @@ import TvManiac
 struct ShowBodyView: View {
 
     @Environment(\.colorScheme) var scheme
-
     var viewState: ShowDetailUiViewState
-
 
     var body: some View {
 
-
-        VStack {
-
-            Text(viewState.tvShow.title)
-                    .titleFont(size: 30)
-                    .foregroundColor(Color.text_color_bg)
-                    .lineLimit(1)
-                    .padding(.top, 8)
-
-            Text(viewState.tvShow.overview)
-                    .bodyFont(size: 18)
-                    .foregroundColor(Color.text_color_bg)
-                    .lineLimit(3)
-                    .padding(.top, 1)
-
-            ShowInfoRow(show: viewState.tvShow)
-                    .padding(.top, 1)
-
-            GenresRowView(genres: viewState.genreList)
-
-            HStack(alignment: .center, spacing: 8) {
-
-                BorderedButton(
-                        text: "Watch Trailer",
-                        systemImageName: "film.fill",
-                        color: .accent,
-                        borderColor: .grey_200,
-                        isOn: false,
-                        action: {
-
-                        })
-
-                BorderedButton(
-                        text: "Follow Show",
-                        systemImageName: "plus.app.fill",
-                        color: .accent,
-                        borderColor: .grey_200,
-                        isOn: false,
-                        action: {
-
-                        })
-            }
-                    .padding(.bottom, 16)
-                    .padding(.top, 10)
-
-        }
-                .padding(.trailing, 16)
-                .padding(.leading, 16)
-                .background(BackgroundView())
-
         VStack(alignment: .leading) {
-
 
             Text("Browse Seasons")
                     .titleSemiBoldFont(size: 23)
@@ -143,20 +90,8 @@ struct ShowBodyView: View {
                 }
             }
         }
+                .padding(.bottom, 220)
                 .background(Color.background)
-
-    }
-
-    @ViewBuilder
-    func BackgroundView() -> some View {
-
-        // Blurred Overlay
-        Rectangle()
-                .fill(.ultraThinMaterial)
-                .blur(radius: 50)
-                .mask(Color.linearGradient)
-                .padding(-20)
-
     }
 
 }

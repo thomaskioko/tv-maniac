@@ -1,4 +1,5 @@
 import SwiftUI
+import Kingfisher
 
 struct ShowPosterImage: View {
 
@@ -7,21 +8,25 @@ struct ShowPosterImage: View {
 
     var body: some View {
 
-        AsyncImage(url: URL(string: imageUrl)) { image in
-            image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .cornerRadius(CGFloat(5))
-        } placeholder: {
-            ProgressView()
-                    .progressViewStyle(.circular)
-                    .tint(Color.accent_color)
+        let processor: ImageProcessor = DownsamplingImageProcessor(size: CGSize(width: posterSize.width(), height: posterSize.height())) |> RoundCornerImageProcessor(cornerRadius: 5)
 
-            Rectangle()
-                    .foregroundColor(.gray)
-                    .posterStyle(loaded: false, size: posterSize)
-        }
+        KFImage.url(URL(string: imageUrl))
+                .resizable()
+                .loadDiskFileSynchronously()
+                .cacheMemoryOnly()
+                .fade(duration: 0.25)
+                .setProcessor(processor)
+                .placeholder {
+                    ProgressView()
+                            .progressViewStyle(.circular)
+                            .tint(Color.accent_color)
+
+                    Rectangle()
+                            .foregroundColor(.gray)
+                            .posterStyle(loaded: false, size: posterSize)
+                }
+                .aspectRatio(contentMode: .fill)
+                .cornerRadius(5)
                 .frame(width: posterSize.width(), height: posterSize.height())
-
     }
 }
