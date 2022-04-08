@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher.git",
+      "state" : {
+        "revision" : "8c65ddf756c633d01d9ae01092bf72f0c66dfc60",
+        "version" : "7.0.0"
+      }
+    },
+    {
       "identity" : "tvmaniac-swift-packages",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/c0de-wizard/tvmaniac-swift-packages",

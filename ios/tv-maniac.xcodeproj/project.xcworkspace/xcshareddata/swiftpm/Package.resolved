@@ -1,25 +1,23 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "Kingfisher",
-        "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
-        "state": {
-          "branch": null,
-          "revision": "0c02c46cfdc0656ce74fd0963a75e5000a0b7f23",
-          "version": "7.1.2"
-        }
-      },
-      {
-        "package": "TvManiac",
-        "repositoryURL": "https://github.com/c0de-wizard/tvmaniac-swift-packages",
-        "state": {
-          "branch": null,
-          "revision": "e0684d2a3fad23909383dc1f631736bc5a34c30f",
-          "version": "0.4.0"
-        }
+  "pins" : [
+    {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher.git",
+      "state" : {
+        "revision" : "8c65ddf756c633d01d9ae01092bf72f0c66dfc60",
+        "version" : "7.0.0"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "tvmaniac-swift-packages",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/c0de-wizard/tvmaniac-swift-packages",
+      "state" : {
+        "revision" : "e0684d2a3fad23909383dc1f631736bc5a34c30f",
+        "version" : "0.4.0"
+      }
+    }
+  ],
+  "version" : 2
 }
