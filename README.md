@@ -39,21 +39,32 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 </tr>
 </table>
 
-### 🔆 iOS Light Theme Screenshots
+### 🔆 iOS Screenshots
 
 <table>
   <td>
     <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOSHomeLight.png?raw=true" alt="Home Screen" width="300"/>
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOSHomeLight.png?raw=true" alt="Home Screen Light" width="500"/>
     </p>
   </td>
     <td>
     <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOSDetailLight.png?raw=true" alt="Home Screen" width="300"/>
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOSDetailLight.png?raw=true" alt="Home Screen Light" width="500"/>
+    </p>
+  </td>
+    <td>
+    <p align="center">
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOSHomeDark.png?raw=true" alt="Home Screen Dark" width="500"/>
+    </p>
+  </td>
+  <td>
+    <p align="center">
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOSDetailDark.png?raw=true" alt="Show Details Dark" width="500"/>
     </p>
   </td>
 </tr>
 </table>
+
 
 ## 🖥 Project Setup & Environment
 
