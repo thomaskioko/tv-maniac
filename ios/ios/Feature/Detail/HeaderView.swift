@@ -12,10 +12,11 @@ import TvManiac
 struct HeaderView: View {
 
     var viewState: ShowDetailUiViewState
-
     var topEdge: CGFloat
     var maxHeight: CGFloat
+
     @Binding var offset: CGFloat
+    let onFollowShowClicked: (Int64) -> Void
 
     var body: some View {
 
@@ -76,8 +77,9 @@ struct HeaderView: View {
                             borderColor: .grey_200,
                             isOn: false,
                             action: {
-
-                            })
+                                onFollowShowClicked(viewState.tvShow.id)
+                            }
+                    )
                 }
                         .padding(.bottom, 16)
                         .padding(.top, 10)
@@ -85,7 +87,7 @@ struct HeaderView: View {
                     .padding(.horizontal)
 
         }
-                .frame(width: .infinity, height: maxHeight, alignment: .center)
+                .frame(width: getRect().width, height: maxHeight, alignment: .center)
                 .opacity(getOpacity())
 
     }
@@ -113,6 +115,7 @@ struct HeaderView_Previews: PreviewProvider {
                 topEdge: 10,
                 maxHeight: 720,
                 offset: offset
-        )
+        ) { (int64: Int64) -> () in
+        }
     }
 }
