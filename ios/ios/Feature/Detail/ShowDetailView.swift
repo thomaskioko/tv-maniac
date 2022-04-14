@@ -39,13 +39,15 @@ struct ShowDetailView: View {
                             viewState: observable.state,
                             topEdge: topEdge,
                             maxHeight: maxHeight,
-                            offset: $offset
+                            offset: $offset,
+                            onFollowShowClicked: { id in
+                                print(id)
+                            }
                     )
                             .frame(maxWidth: .infinity)
                             .frame(height: getHeaderHeight(), alignment: .bottom)
                             .background(BackgroundView())
                             .overlay(
-
                                     TopNavBar(
                                             offset: $offset,
                                             viewState: observable.state,

@@ -24,6 +24,9 @@ struct TopNavBar: View {
             } label: {
                 Image(systemName: "arrow.left")
                         .font(.body.bold())
+                        .padding(.top)
+                        .padding(.bottom)
+                        .padding(.trailing)
             }
 
             Spacer()
