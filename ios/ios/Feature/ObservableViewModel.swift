@@ -10,13 +10,13 @@ class ObservableViewModel<ViewModel: BaseViewModel, State: ViewState> : Observab
 	init(viewModel: ViewModel){
 		self.viewModel = viewModel
 		self.state = State()
-		
+
 		viewModel.observe(
 			viewModel.state,
 			onChange: { state in
 				self.state = state as! State
 			})
-		
+
 	}
 	
 	deinit {

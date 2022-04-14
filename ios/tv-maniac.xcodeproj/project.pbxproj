@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		CBDFC5CAEA5938940871491E /* OffsetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC8F86D71D33205E42D7F /* OffsetModifier.swift */; };
+		CBDFC6080D5D5C0A50FBB09D /* BodyContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC45034CC5E690622E0DF /* BodyContentView.swift */; };
 		CBDFC60AF859A44365A90BA5 /* TopNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC4463ABF8E9F9AEB156C /* TopNavBar.swift */; };
 		CBDFCA9D24126097D232D988 /* BlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC78A5C2441FF7F2BB401 /* BlurView.swift */; };
 		E910A40427F754AB0038E209 /* TvManiac in Frameworks */ = {isa = PBXBuildFile; productRef = E910A40327F754AB0038E209 /* TvManiac */; };
@@ -57,6 +58,7 @@
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CBDFC4463ABF8E9F9AEB156C /* TopNavBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopNavBar.swift; sourceTree = "<group>"; };
+		CBDFC45034CC5E690622E0DF /* BodyContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BodyContentView.swift; sourceTree = "<group>"; };
 		CBDFC78A5C2441FF7F2BB401 /* BlurView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlurView.swift; sourceTree = "<group>"; };
 		CBDFC8F86D71D33205E42D7F /* OffsetModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OffsetModifier.swift; sourceTree = "<group>"; };
 		E924E11C272F2BA000C4435F /* HomeUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeUIView.swift; sourceTree = "<group>"; };
@@ -225,6 +227,7 @@
 			isa = PBXGroup;
 			children = (
 				E9AC835026CEEA1500829A0D /* DiscoverView.swift */,
+				CBDFC45034CC5E690622E0DF /* BodyContentView.swift */,
 			);
 			path = Discover;
 			sourceTree = "<group>";
@@ -397,6 +400,7 @@
 				CBDFCA9D24126097D232D988 /* BlurView.swift in Sources */,
 				CBDFC5CAEA5938940871491E /* OffsetModifier.swift in Sources */,
 				CBDFC60AF859A44365A90BA5 /* TopNavBar.swift in Sources */,
+				CBDFC6080D5D5C0A50FBB09D /* BodyContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
