@@ -30,8 +30,7 @@ jobs:
           echo -e "\TMDB_API_KEY=$TMDB_API_KEY" >> ./local.properties
           echo -e "\TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
 
-      - uses: burrunan/gradle-cache-action@v1
-        name: Build with gradle
+      - name: Build with gradle
         run: ./gradlew build
 
   checks:
@@ -87,8 +86,7 @@ jobs:
           echo -e "\TMDB_API_KEY=$TMDB_API_KEY" >> ./local.properties
           echo -e "\TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
 
-      - uses: burrunan/gradle-cache-action@v1
-        name: Build and check
+      - name: Build and check
         run: ./gradlew assembleDebug
 
       - name: Create release
