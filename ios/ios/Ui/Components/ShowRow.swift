@@ -1,41 +1,41 @@
 import SwiftUI
 import TvManiac
-import Kingfisher
 
 struct ShowRow: View {
 
     var categoryName: String
     var shows: [TvShow]
-    let processor = DownsamplingImageProcessor(size: CGSize(width: PosterStyle.Size.medium.width(), height: PosterStyle.Size.medium.height()))
-            |> RoundCornerImageProcessor(cornerRadius: 5)
 
     var body: some View {
         VStack(alignment: .leading) {
 
             HStack {
-                Text(self.categoryName)
+                Text(categoryName)
                         .titleSemiBoldFont(size: 23)
                         .padding(.top, 8)
+                        .padding(.trailing, 16)
+                        .padding(.leading, 16)
 
                 Spacer()
 
                 NavigationLink(destination: ShowGridView()
-                        .navigationBarTitle(self.categoryName),
+                        .navigationBarTitle(categoryName),
                         label: {
                             Spacer()
                             Text("More")
                                     .bodyMediumFont(size: 16)
                                     .foregroundColor(.accent_color)
                                     .padding(.top, 18)
+                                    .padding(.trailing, 16)
+                                    .padding(.leading, 16)
                         })
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top) {
-                    ForEach(self.shows, id: \.title) { show in
+                    ForEach(shows, id: \.title) { show in
                         NavigationLink(destination: ShowDetailView(showId: show.id)) {
                             ShowPosterImage(
-                                    processor: processor,
                                     posterSize: .medium,
                                     imageUrl: show.posterImageUrl
                             )
@@ -44,10 +44,10 @@ struct ShowRow: View {
                         }
                     }
                 }
+                        .padding(.trailing, 16)
+                        .padding(.leading, 16)
             }
         }
-                .padding(.trailing, 16)
-                .padding(.leading, 16)
     }
 }
 

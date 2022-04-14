@@ -54,7 +54,7 @@ plugin-buildkonfig = "0.7.0"
 plugin-gradle-versions = "0.39.0"
 plugin-detekt = "1.19.0"
 
-shared-module-version = "0.3.1"
+shared-module-version = "0.4.0"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle" }

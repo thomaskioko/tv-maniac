@@ -14,39 +14,39 @@ extension Font {
 	
 
 	public static func WorkSansBlack(size: CGFloat) -> Font {
-		return Font.custom("WorkSans-Black", size: size)
+		Font.custom("WorkSans-Black", size: size)
 	}
 	
 	public static func WorkSansBold(size: CGFloat) -> Font {
-		return Font.custom("WorkSans-Bold", size: size)
+		Font.custom("WorkSans-Bold", size: size).weight(.regular)
 	}
 	
 	public static func WorkSansExtraBold(size: CGFloat) -> Font {
-		return Font.custom("WorkSans-ExtraBold", size: size)
+		Font.custom("WorkSans-ExtraBold", size: size)
 	}
 	
 	public static func WorkSansLight(size: CGFloat) -> Font {
-		return Font.custom("WorkSans-Light", size: size)
+		Font.custom("WorkSans-Light", size: size)
 	}
 	
 	public static func WorkSansExtraLight(size: CGFloat) -> Font {
-		return Font.custom("WorkSans-ExtraLight", size: size)
+		Font.custom("WorkSans-ExtraLight", size: size)
 	}
 	
 	public static func WorkSansMedium(size: CGFloat) -> Font {
-		return Font.custom("WorkSans-Medium", size: size)
+		Font.custom("WorkSans-Medium", size: size)
 	}
 	
 	public static func WorkSansRegular(size: CGFloat) -> Font {
-		return Font.custom("WorkSans-Regular", size: size)
+		Font.custom("WorkSans-Regular", size: size)
 	}
 
 	public static func WorkSansSemiBold(size: CGFloat) -> Font {
-		return Font.custom("WorkSans-Semibold", size: size)
+		Font.custom("WorkSans-Semibold", size: size)
 	}
 	
 	public static func WorkSansThin(size: CGFloat) -> Font {
-		return Font.custom("WorkSans-Thin", size: size)
+		Font.custom("WorkSans-Thin", size: size)
 	}
 
 }
@@ -55,7 +55,7 @@ struct TitleFont: ViewModifier {
 	let size: CGFloat
 	
 	func body(content: Content) -> some View {
-		return content.font(.WorkSansBlack(size: size))
+		content.font(.WorkSansBlack(size: size))
 	}
 }
 
@@ -64,7 +64,7 @@ struct TitleBlackFont: ViewModifier {
 	let size: CGFloat
 	
 	func body(content: Content) -> some View {
-		return content.font(.WorkSansSemiBold(size: size))
+		content.font(.WorkSansSemiBold(size: size))
 	}
 }
 
@@ -72,7 +72,7 @@ struct TitleSemiBoldFont: ViewModifier {
 	let size: CGFloat
 	
 	func body(content: Content) -> some View {
-		return content.font(.WorkSansBlack(size: size))
+		content.font(.WorkSansBlack(size: size))
 	}
 }
 
@@ -82,7 +82,7 @@ struct TitleBoldFont: ViewModifier {
 	let size: CGFloat
 	
 	func body(content: Content) -> some View {
-		return content.font(.WorkSansBold(size: size))
+		content.font(.WorkSansBold(size: size))
 	}
 }
 
@@ -90,7 +90,7 @@ struct BodyFont: ViewModifier {
 	let size: CGFloat
 	
 	func body(content: Content) -> some View {
-		return content.font(.WorkSansRegular(size: size))
+		content.font(.WorkSansRegular(size: size))
 	}
 }
 
@@ -106,7 +106,7 @@ struct CaptionFont: ViewModifier {
 	let size: CGFloat
 	
 	func body(content: Content) -> some View {
-		return content.font(.WorkSansLight(size: size))
+		content.font(.WorkSansLight(size: size))
 	}
 }
 
@@ -114,35 +114,35 @@ struct CaptionFont: ViewModifier {
 
 extension View {
 	func titleFont(size: CGFloat) -> some View {
-		return ModifiedContent(content: self, modifier: TitleFont(size: size))
+		ModifiedContent(content: self, modifier: TitleFont(size: size))
 	}
 	
 	func titleBoldFont(size: CGFloat) -> some View {
-		return ModifiedContent(content: self, modifier: TitleBoldFont(size: size))
+		ModifiedContent(content: self, modifier: TitleBoldFont(size: size))
 	}
 	
 	func titleSemiBoldFont(size: CGFloat) -> some View {
-		return ModifiedContent(content: self, modifier: TitleSemiBoldFont(size: size))
+		ModifiedContent(content: self, modifier: TitleSemiBoldFont(size: size))
 	}
 	
 	func titleStyle() -> some View {
-		return ModifiedContent(content: self, modifier: TitleFont(size: 16))
+		ModifiedContent(content: self, modifier: TitleFont(size: 16))
 	}
 	
 	func bodyFont(size: CGFloat) -> some View {
-		return ModifiedContent(content: self, modifier: BodyFont(size: size))
+		ModifiedContent(content: self, modifier: BodyFont(size: size))
 	}
 	
 	func bodyMediumFont(size: CGFloat) -> some View {
-		return ModifiedContent(content: self, modifier: BodyMediumFont(size: size))
+		ModifiedContent(content: self, modifier: BodyMediumFont(size: size))
 	}
 	
 	func captionStyle() -> some View {
-		return ModifiedContent(content: self, modifier: CaptionFont(size: 16))
+		ModifiedContent(content: self, modifier: CaptionFont(size: 16))
 	}
 	
 	func captionFont(size: CGFloat) -> some View {
-		return ModifiedContent(content: self, modifier: CaptionFont(size: size))
+		ModifiedContent(content: self, modifier: CaptionFont(size: size))
 	}
 	
 }
