@@ -8,8 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
+		CBDFC5CAEA5938940871491E /* OffsetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC8F86D71D33205E42D7F /* OffsetModifier.swift */; };
+		CBDFC6080D5D5C0A50FBB09D /* BodyContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC45034CC5E690622E0DF /* BodyContentView.swift */; };
+		CBDFC60AF859A44365A90BA5 /* TopNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC4463ABF8E9F9AEB156C /* TopNavBar.swift */; };
+		CBDFCA9D24126097D232D988 /* BlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC78A5C2441FF7F2BB401 /* BlurView.swift */; };
+		E910A40427F754AB0038E209 /* TvManiac in Frameworks */ = {isa = PBXBuildFile; productRef = E910A40327F754AB0038E209 /* TvManiac */; };
 		E924E11D272F2BA000C4435F /* HomeUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E924E11C272F2BA000C4435F /* HomeUIView.swift */; };
-		E94ECECC27AC9B57007D5B26 /* TvManiac in Frameworks */ = {isa = PBXBuildFile; productRef = E94ECECB27AC9B57007D5B26 /* TvManiac */; };
 		E983816D2793697B0039CB08 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98381692793697B0039CB08 /* ColorExtension.swift */; };
 		E983816E2793697B0039CB08 /* ContentHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983816A2793697B0039CB08 /* ContentHostingController.swift */; };
 		E983816F2793697B0039CB08 /* OverlayExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983816B2793697B0039CB08 /* OverlayExtension.swift */; };
@@ -21,7 +25,6 @@
 		E983819427936BB10039CB08 /* PosterStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983818927936BB00039CB08 /* PosterStyle.swift */; };
 		E983819527936BB10039CB08 /* ShowRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983818A27936BB00039CB08 /* ShowRow.swift */; };
 		E983819727936BB10039CB08 /* TextViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983818C27936BB10039CB08 /* TextViews.swift */; };
-		E983819C27936DAB0039CB08 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E983819B27936DAB0039CB08 /* Kingfisher */; };
 		E98381A027936DC90039CB08 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983819D27936DC90039CB08 /* HeaderView.swift */; };
 		E98381A127936DC90039CB08 /* ShowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983819E27936DC90039CB08 /* ShowDetailView.swift */; };
 		E98381A227936DC90039CB08 /* GenresRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983819F27936DC90039CB08 /* GenresRowView.swift */; };
@@ -45,6 +48,7 @@
 		E9AC835326CEEA9800829A0D /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835226CEEA9800829A0D /* SearchView.swift */; };
 		E9AC835526CEEAB800829A0D /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835426CEEAB800829A0D /* WatchlistView.swift */; };
 		E9B6867227871CEA001698B7 /* ObservableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B6867127871CEA001698B7 /* ObservableViewModel.swift */; };
+		E9C6114E27FF863600F8A23F /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E9C6114D27FF863600F8A23F /* Kingfisher */; };
 		E9CD0B2327AAF5620021516B /* AirEpisodeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD0B2227AAF5620021516B /* AirEpisodeCardView.swift */; };
 		E9CD0B2527AC7D140021516B /* PrintExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD0B2427AC7D140021516B /* PrintExtension.swift */; };
 /* End PBXBuildFile section */
@@ -53,6 +57,10 @@
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CBDFC4463ABF8E9F9AEB156C /* TopNavBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopNavBar.swift; sourceTree = "<group>"; };
+		CBDFC45034CC5E690622E0DF /* BodyContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BodyContentView.swift; sourceTree = "<group>"; };
+		CBDFC78A5C2441FF7F2BB401 /* BlurView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlurView.swift; sourceTree = "<group>"; };
+		CBDFC8F86D71D33205E42D7F /* OffsetModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OffsetModifier.swift; sourceTree = "<group>"; };
 		E924E11C272F2BA000C4435F /* HomeUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeUIView.swift; sourceTree = "<group>"; };
 		E98381692793697B0039CB08 /* ColorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		E983816A2793697B0039CB08 /* ContentHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentHostingController.swift; sourceTree = "<group>"; };
@@ -97,8 +105,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E983819C27936DAB0039CB08 /* Kingfisher in Frameworks */,
-				E94ECECC27AC9B57007D5B26 /* TvManiac in Frameworks */,
+				E9C6114E27FF863600F8A23F /* Kingfisher in Frameworks */,
+				E910A40427F754AB0038E209 /* TvManiac in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,6 +181,7 @@
 				E98381AA2793720C0039CB08 /* ShowInfoRow.swift */,
 				E98381D127942D720039CB08 /* ShowBodyView.swift */,
 				E9CD0B2227AAF5620021516B /* AirEpisodeCardView.swift */,
+				CBDFC4463ABF8E9F9AEB156C /* TopNavBar.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -218,6 +227,7 @@
 			isa = PBXGroup;
 			children = (
 				E9AC835026CEEA1500829A0D /* DiscoverView.swift */,
+				CBDFC45034CC5E690622E0DF /* BodyContentView.swift */,
 			);
 			path = Discover;
 			sourceTree = "<group>";
@@ -259,6 +269,8 @@
 				E983818A27936BB00039CB08 /* ShowRow.swift */,
 				E983818C27936BB10039CB08 /* TextViews.swift */,
 				E98381E027943F940039CB08 /* SnapCarousel.swift */,
+				CBDFC78A5C2441FF7F2BB401 /* BlurView.swift */,
+				CBDFC8F86D71D33205E42D7F /* OffsetModifier.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -288,8 +300,8 @@
 			);
 			name = "tv-maniac";
 			packageProductDependencies = (
-				E983819B27936DAB0039CB08 /* Kingfisher */,
-				E94ECECB27AC9B57007D5B26 /* TvManiac */,
+				E910A40327F754AB0038E209 /* TvManiac */,
+				E9C6114D27FF863600F8A23F /* Kingfisher */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -320,8 +332,8 @@
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
-				E983819A27936DAB0039CB08 /* XCRemoteSwiftPackageReference "Kingfisher" */,
-				E94ECECA27AC9B57007D5B26 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */,
+				E910A40227F754AB0038E209 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */,
+				E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher.git" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -385,6 +397,10 @@
 				E983819427936BB10039CB08 /* PosterStyle.swift in Sources */,
 				E983816D2793697B0039CB08 /* ColorExtension.swift in Sources */,
 				E98381A027936DC90039CB08 /* HeaderView.swift in Sources */,
+				CBDFCA9D24126097D232D988 /* BlurView.swift in Sources */,
+				CBDFC5CAEA5938940871491E /* OffsetModifier.swift in Sources */,
+				CBDFC60AF859A44365A90BA5 /* TopNavBar.swift in Sources */,
+				CBDFC6080D5D5C0A50FBB09D /* BodyContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -443,7 +459,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -499,7 +515,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -591,7 +607,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E94ECECA27AC9B57007D5B26 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */ = {
+		E910A40227F754AB0038E209 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/c0de-wizard/tvmaniac-swift-packages";
 			requirement = {
@@ -599,25 +615,25 @@
 				version = 0.4.0;
 			};
 		};
-		E983819A27936DAB0039CB08 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+		E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
 			requirement = {
-				kind = exactVersion;
-				version = 7.1.2;
+				kind = upToNextMinorVersion;
+				minimumVersion = 7.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E94ECECB27AC9B57007D5B26 /* TvManiac */ = {
+		E910A40327F754AB0038E209 /* TvManiac */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E94ECECA27AC9B57007D5B26 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */;
+			package = E910A40227F754AB0038E209 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */;
 			productName = TvManiac;
 		};
-		E983819B27936DAB0039CB08 /* Kingfisher */ = {
+		E9C6114D27FF863600F8A23F /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E983819A27936DAB0039CB08 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			package = E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher.git" */;
 			productName = Kingfisher;
 		};
 /* End XCSwiftPackageProductDependency section */

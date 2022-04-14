@@ -12,6 +12,7 @@ dependencies {
     api(projects.shared.core.ui)
     api(projects.shared.domain.persistence)
     implementation(projects.android.common.compose)
+    implementation(projects.android.common.annotations)
 
     implementation(libs.accompanist.insetsui)
 
