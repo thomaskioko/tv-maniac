@@ -14,7 +14,6 @@ kotlin {
     sourceSets.all {
         languageSettings.apply {
             optIn("kotlin.RequiresOptIn")
-            optIn("kotlin.time.ExperimentalTime")
             optIn("kotlinx.serialization.ExperimentalSerializationApi")
         }
     }
