@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.autonomousapps.dependency-analysis") version ("1.0.0-rc05")
+    id("com.autonomousapps.dependency-analysis") version ("1.0.0")
 }
 
 buildscript {
@@ -32,7 +32,6 @@ subprojects {
             freeCompilerArgs = freeCompilerArgs + listOf(
                 "-Xopt-in=kotlin.RequiresOptIn",
                 "-Xopt-in=kotlin.OptIn",
-                "-Xopt-in=kotlin.time.ExperimentalTime",
                 "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
             )
         }
