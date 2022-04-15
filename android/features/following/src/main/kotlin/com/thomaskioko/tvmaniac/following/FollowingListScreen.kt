@@ -3,9 +3,11 @@ package com.thomaskioko.tvmaniac.following
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
@@ -20,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.insets.statusBarsPadding
 import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
@@ -66,9 +67,10 @@ fun FollowingContent(
                     .fillMaxWidth()
             )
         },
-        content = {
-            WatchlistContent(
+        content = { contentPadding ->
+            FollowingGridContent(
                 viewState = watchlistViewState,
+                paddingValues = contentPadding,
                 onItemClicked = { tvShowId ->
                     openShowDetails(tvShowId)
                 }
@@ -78,8 +80,9 @@ fun FollowingContent(
 }
 
 @Composable
-private fun WatchlistContent(
+private fun FollowingGridContent(
     viewState: WatchlistState,
+    paddingValues: PaddingValues,
     onItemClicked: (Long) -> Unit,
 ) {
     val listState = rememberLazyListState()
@@ -92,7 +95,8 @@ private fun WatchlistContent(
     else
         LazyGridItems(
             listState = listState,
-            items = viewState.list
+            items = viewState.list,
+            paddingValues = paddingValues,
         ) { show ->
             Column(
                 modifier = Modifier

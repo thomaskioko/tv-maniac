@@ -4,9 +4,11 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -19,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.google.accompanist.insets.statusBarsPadding
 import com.thomaskioko.tvmaniac.compose.components.BackAppBar
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
@@ -49,11 +50,12 @@ fun ShowsGridScreen(
         },
         modifier = Modifier
             .statusBarsPadding(),
-    ) {
+    ) { contentPadding ->
 
         ShowsGridContent(
             hostState = scaffoldState.snackbarHostState,
             viewState = gridViewState,
+            paddingValues = contentPadding,
             onItemClicked = { openShowDetails(it) }
         )
     }
@@ -64,16 +66,18 @@ fun ShowsGridScreen(
 fun ShowsGridContent(
     hostState: SnackbarHostState,
     viewState: ShowsGridState,
+    paddingValues: PaddingValues,
     onItemClicked: (Long) -> Unit,
 ) {
 
-    val listState = rememberLazyListState()
+    val listState = rememberLazyGridState()
     val lazyShowList = viewState.list.collectAsLazyPagingItems()
 
     LazyPagedGridItems(
         listState = listState,
         lazyPagingItems = lazyShowList,
         hostState = hostState,
+        paddingValues = paddingValues
     ) { show ->
         Column(
             modifier = Modifier

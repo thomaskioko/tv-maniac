@@ -3,8 +3,10 @@ package com.thomaskioko.tvmaniac.seasons
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -31,7 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.insets.statusBarsPadding
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ErrorView
 import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
@@ -40,6 +41,7 @@ import com.thomaskioko.tvmaniac.compose.components.SnackBarErrorRetry
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsViewState
@@ -75,7 +77,7 @@ fun SeasonsScreen(
                 errorMessage = viewState.errorMessage,
             )
         },
-        content = {
+        content = { contentPadding ->
             when {
                 viewState.isLoading -> FullScreenLoading()
                 !viewState.errorMessage.isNullOrBlank() -> ErrorView()
@@ -83,7 +85,8 @@ fun SeasonsScreen(
                     seasonsEpList = viewState.seasonsWithEpisodes,
                     initialSeasonName = initialSeasonName,
                     onEpisodeClicked = onEpisodeClicked,
-                    listState = listState
+                    listState = listState,
+                    paddingValues = contentPadding,
                 )
             }
         }
@@ -123,6 +126,7 @@ private fun SeasonsScrollingContent(
     seasonsEpList: List<SeasonWithEpisodes>?,
     initialSeasonName: String?,
     listState: LazyListState,
+    paddingValues: PaddingValues,
     onEpisodeClicked: (Long) -> Unit = {}
 ) {
     seasonsEpList?.let {
@@ -143,7 +147,8 @@ private fun SeasonsScrollingContent(
 
         LazyColumn(
             state = listState,
-            modifier = Modifier.fillMaxWidth()
+            contentPadding = paddingValues.copy(copyTop = false),
+            modifier = Modifier.fillMaxWidth(),
         ) {
 
             item { ColumnSpacer(16) }
@@ -239,7 +244,8 @@ fun SeasonsContentPreview() {
                 seasonsEpList = seasonsEpList,
                 initialSeasonName = "Specials",
                 onEpisodeClicked = {},
-                listState = LazyListState()
+                listState = LazyListState(),
+                paddingValues = PaddingValues()
             )
         }
     }
