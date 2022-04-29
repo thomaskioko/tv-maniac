@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
+import com.thomaskioko.tvmaniac.core.annotations.IoDispatcher
 import com.thomaskioko.tvmaniac.shared.core.ui.Store
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsEffect
@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val themePreference: TvManiacPreferences,
-    @DefaultDispatcher private val ioDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : Store<SettingsState, SettingsActions, SettingsEffect>, ViewModel() {
 
     private val state = MutableStateFlow(SettingsState.DEFAULT)
