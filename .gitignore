@@ -79,4 +79,4 @@ DerivedData/
 *.perspectivev3
 !default.perspectivev3
 
-*.xcuserstate
+/android/app/google-services.json
