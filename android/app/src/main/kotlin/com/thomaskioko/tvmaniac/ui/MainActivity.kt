@@ -20,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.core.view.WindowCompat
-import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.thomaskioko.tvmaniac.compose.components.ConnectionStatus
 import com.thomaskioko.tvmaniac.compose.theme.DarkColors
@@ -55,13 +54,10 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            ProvideWindowInsets(consumeWindowInsets = false) {
-                TvManiacTheme(darkTheme = themePreference.shouldUseDarkColors()) {
-                    SetupTheme()
-                    HomeScreen(composeNavigationFactories)
-                }
+            TvManiacTheme(darkTheme = themePreference.shouldUseDarkColors()) {
+                SetupTheme()
+                HomeScreen(composeNavigationFactories)
             }
-
             ConnectivityStatus(observeNetwork)
         }
     }
