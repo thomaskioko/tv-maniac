@@ -24,55 +24,60 @@ struct BodyContentView: View {
             ScrollView(showsIndicators: false) {
 
                 VStack {
+					
+					if let shows = showResult.featuredShows.tvShows, !shows.isEmpty {
+						
+						/**
+						 * This is a temporary implementation for navigation to the detail view. The problem is NavigationView
+						 * does not support MatchedGeometry effect. The other alternative would be to use an overlay
+						 * for the detailView.
+						 */
+						NavigationLink(
+								destination: ShowDetailView(showId: shows[currentIndex].id)
+						) {
+							SnapCarousel(
+									spacing: 30,
+									trailingSpace: 90,
+									index: $currentIndex,
+									items: shows
+							) { show in
 
-                    /**
-                     * This is a temporary implementation for navigation to the detail view. The problem is NavigationView
-                     * does not support MatchedGeometry effect. The other alternative would be to use an overlay
-                     * for the detailView.
-                     */
-                    NavigationLink(
-                            destination: ShowDetailView(showId: showResult.featuredShows.tvShows[currentIndex].id)
-                    ) {
-                        SnapCarousel(
-                                spacing: 10,
-                                trailingSpace: 110,
-                                index: $currentIndex,
-                                items: showResult.featuredShows.tvShows
-                        ) { show in
+								GeometryReader { proxy in
+									let size = proxy.size
 
-                            GeometryReader { proxy in
-                                let size = proxy.size
+									ShowPosterImage(
+											posterSize: .big,
+											imageUrl: show.posterImageUrl
+									)
+											.frame(width: size.width, height: size.height)
+											.matchedGeometryEffect(id: show.id, in: animation)
+								}
+							}
+						}
+								.frame(height: 450)
+								.padding(.top, 120)
 
-                                ShowPosterImage(
-                                        posterSize: .big,
-                                        imageUrl: show.posterImageUrl
-                                )
-                                        .frame(width: size.width, height: size.height)
-                                        .matchedGeometryEffect(id: show.id, in: animation)
-                            }
-                        }
-                    }
-                            .frame(height: 450)
-                            .padding(.top, 120)
+						CustomIndicator()
 
-                    CustomIndicator()
+						//Trending
+						ShowRow(
+								categoryName: showResult.trendingShows.category.title,
+								shows: showResult.trendingShows.tvShows
+						)
 
-                    //Trending
-                    ShowRow(
-                            categoryName: showResult.trendingShows.category.title,
-                            shows: showResult.trendingShows.tvShows
-                    )
+						//Top Rated
+						ShowRow(
+								categoryName: showResult.topRatedShows.category.title,
+								shows: showResult.topRatedShows.tvShows
+						)
+						//Popular
+						ShowRow(
+								categoryName: showResult.popularShows.category.title,
+								shows: showResult.popularShows.tvShows
+						)
+					}
 
-                    //Top Rated
-                    ShowRow(
-                            categoryName: showResult.topRatedShows.category.title,
-                            shows: showResult.topRatedShows.tvShows
-                    )
-                    //Popular
-                    ShowRow(
-                            categoryName: showResult.popularShows.category.title,
-                            shows: showResult.popularShows.tvShows
-                    )
+
 
                 }
                         .padding(.bottom, 90)
