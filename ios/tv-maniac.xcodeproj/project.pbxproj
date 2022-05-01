@@ -51,6 +51,7 @@
 		E9C6114E27FF863600F8A23F /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E9C6114D27FF863600F8A23F /* Kingfisher */; };
 		E9CD0B2327AAF5620021516B /* AirEpisodeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD0B2227AAF5620021516B /* AirEpisodeCardView.swift */; };
 		E9CD0B2527AC7D140021516B /* PrintExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD0B2427AC7D140021516B /* PrintExtension.swift */; };
+		E9FDA73F281DEF7300762BB1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E9FDA73E281DEF7300762BB1 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -98,6 +99,7 @@
 		E9B6867127871CEA001698B7 /* ObservableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableViewModel.swift; sourceTree = "<group>"; };
 		E9CD0B2227AAF5620021516B /* AirEpisodeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirEpisodeCardView.swift; sourceTree = "<group>"; };
 		E9CD0B2427AC7D140021516B /* PrintExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintExtension.swift; sourceTree = "<group>"; };
+		E9FDA73E281DEF7300762BB1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +139,7 @@
 				E9B6868F278736FA001698B7 /* Feature */,
 				E9AC834B26CEE00D00829A0D /* Assets.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
+				E9FDA73E281DEF7300762BB1 /* GoogleService-Info.plist */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 			);
 			path = ios;
@@ -333,7 +336,7 @@
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
 				E910A40227F754AB0038E209 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */,
-				E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher.git" */,
+				E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -349,6 +352,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9FDA73F281DEF7300762BB1 /* GoogleService-Info.plist in Resources */,
 				E98381AD27937ABF0039CB08 /* FjallaOne-Regular.ttf in Resources */,
 				E98381CC2793A0A50039CB08 /* WorkSans-ExtraBold.ttf in Resources */,
 				E98381CF2793A0A50039CB08 /* WorkSans-SemiBold.ttf in Resources */,
@@ -615,7 +619,7 @@
 				version = 0.4.0;
 			};
 		};
-		E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher.git" */ = {
+		E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
 			requirement = {
@@ -633,7 +637,7 @@
 		};
 		E9C6114D27FF863600F8A23F /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher.git" */;
+			package = E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
 		};
 /* End XCSwiftPackageProductDependency section */
