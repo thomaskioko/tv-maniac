@@ -32,6 +32,7 @@ kotlin {
             isStatic = false
             linkerOpts.add("-lsqlite3")
 
+            export(project(":shared:core:firebase-config:api"))
             export(projects.shared.core.ui)
             export(projects.shared.core.util)
             export(projects.shared.database)
@@ -56,6 +57,7 @@ kotlin {
 dependencies {
     commonMainApi(projects.shared.core.ui)
     commonMainApi(projects.shared.core.util)
+    commonMainApi(project(":shared:core:firebase-config:api"))
     commonMainApi(projects.shared.database)
     commonMainApi(projects.shared.remote)
     commonMainApi(projects.shared.domain.showDetails.api)
@@ -70,6 +72,7 @@ dependencies {
     commonMainApi(projects.shared.domain.persistence)
 
     commonMainImplementation(projects.shared.domain.episodes.implementation)
+    commonMainImplementation(project(":shared:core:firebase-config:implementation"))
     commonMainImplementation(projects.shared.domain.showDetails.implementation)
     commonMainImplementation(projects.shared.domain.seasons.implementation)
     commonMainImplementation(projects.shared.domain.genre.implementation)

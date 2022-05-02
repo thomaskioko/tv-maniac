@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.remote.di.remotePlatformModule
 import com.thomaskioko.tvmaniac.remote.di.serviceModule
 import com.thomaskioko.tvmaniac.seasonepisodes.implementation.seasonEpisodesDomainModule
 import com.thomaskioko.tvmaniac.seasons.implementation.di.seasonsDomainModule
+import com.thomaskioko.tvmaniac.shared.core.firebaseconfig.implementation.di.fireBaseConfigPlatformModule
 import com.thomaskioko.tvmaniac.shared.core.ui.di.coreUiPlatformModule
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.similar.implementation.di.similarDomainModule
@@ -39,7 +40,8 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         discoverDomainModule,
         coreUiPlatformModule(),
         dbPlatformModule(),
-        remotePlatformModule()
+        remotePlatformModule(),
+        fireBaseConfigPlatformModule()
     )
 }
 

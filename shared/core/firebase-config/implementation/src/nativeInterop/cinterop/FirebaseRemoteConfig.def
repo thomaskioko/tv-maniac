@@ -1,0 +1,4 @@
+language = Objective-C
+package = cocoapods.FirebaseRemoteConfig
+modules = FirebaseRemoteConfig
+compilerOpts = -framework FirebaseRemoteConfig
