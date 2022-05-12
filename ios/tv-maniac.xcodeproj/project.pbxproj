@@ -52,6 +52,8 @@
 		E9CD0B2327AAF5620021516B /* AirEpisodeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD0B2227AAF5620021516B /* AirEpisodeCardView.swift */; };
 		E9CD0B2527AC7D140021516B /* PrintExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD0B2427AC7D140021516B /* PrintExtension.swift */; };
 		E9FDA73F281DEF7300762BB1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E9FDA73E281DEF7300762BB1 /* GoogleService-Info.plist */; };
+		E9FDA7462820435800762BB1 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E9FDA7452820435800762BB1 /* FirebaseAnalytics */; };
+		E9FDA7482820435800762BB1 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = E9FDA7472820435800762BB1 /* FirebaseRemoteConfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -109,6 +111,8 @@
 			files = (
 				E9C6114E27FF863600F8A23F /* Kingfisher in Frameworks */,
 				E910A40427F754AB0038E209 /* TvManiac in Frameworks */,
+				E9FDA7462820435800762BB1 /* FirebaseAnalytics in Frameworks */,
+				E9FDA7482820435800762BB1 /* FirebaseRemoteConfig in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,6 +309,8 @@
 			packageProductDependencies = (
 				E910A40327F754AB0038E209 /* TvManiac */,
 				E9C6114D27FF863600F8A23F /* Kingfisher */,
+				E9FDA7452820435800762BB1 /* FirebaseAnalytics */,
+				E9FDA7472820435800762BB1 /* FirebaseRemoteConfig */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -337,6 +343,7 @@
 			packageReferences = (
 				E910A40227F754AB0038E209 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */,
 				E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				E9FDA7442820435800762BB1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -627,6 +634,14 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		E9FDA7442820435800762BB1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -639,6 +654,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		E9FDA7452820435800762BB1 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E9FDA7442820435800762BB1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		E9FDA7472820435800762BB1 /* FirebaseRemoteConfig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E9FDA7442820435800762BB1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfig;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
