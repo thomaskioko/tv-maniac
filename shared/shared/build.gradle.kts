@@ -24,6 +24,9 @@ kotlin {
         binaries.framework {
             baseName = "TvManiac"
             xcf.add(this)
+
+            linkerOpts("-F${rootProject.projectDir}/ios/Carthage/Build/iOS/")
+            linkerOpts("-ObjC")
         }
     }
 

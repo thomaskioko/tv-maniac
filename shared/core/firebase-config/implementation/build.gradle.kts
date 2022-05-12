@@ -53,7 +53,9 @@ kotlin {
             }
         }
     }
+
     ios(configure = nativeTargetConfig())
+    iosSimulatorArm64(configure = nativeTargetConfig())
 }
 
 dependencies {
@@ -103,3 +105,9 @@ tasks {
         )
     }
 }
+
+/*afterEvaluate {
+    tasks.named(":shared:shared:linkDebugFrameworkIosArm64").configure {
+        dependsOn(tasks.named("carthageBootstrap"))
+    }
+}*/
