@@ -49,4 +49,6 @@ include(
     ":shared:domain:discover:api",
     ":shared:domain:discover:implementation",
     ":shared:domain:persistence",
+    ":shared:core:firebase-config:api",
+    ":shared:core:firebase-config:implementation",
 )

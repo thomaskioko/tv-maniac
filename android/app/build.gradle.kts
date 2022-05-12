@@ -2,6 +2,7 @@ import util.libs
 
 plugins {
     `android-app-plugin`
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -30,6 +31,9 @@ dependencies {
     implementation(projects.shared.domain.discover.api)
     implementation(projects.shared.domain.discover.implementation)
     implementation(projects.shared.domain.persistence)
+    implementation(projects.shared.core.firebaseConfig.api)
+    implementation(projects.shared.core.firebaseConfig.implementation)
+
     implementation(projects.android.common.annotations)
     implementation(projects.android.common.compose)
     implementation(projects.android.common.navigation)
@@ -42,7 +46,6 @@ dependencies {
     implementation(projects.android.features.settings)
     implementation(projects.android.features.seasons)
 
-    implementation(libs.accompanist.insets)
     implementation(libs.androidx.compose.activity)
     implementation(libs.accompanist.systemuicontroller)
 }
