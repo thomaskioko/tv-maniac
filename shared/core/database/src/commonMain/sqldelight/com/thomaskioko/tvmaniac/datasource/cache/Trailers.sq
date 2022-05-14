@@ -1,0 +1,28 @@
+CREATE TABLE trailers (
+id INTEGER NOT NULL PRIMARY KEY,
+show_id INTEGER NOT NULL,
+key TEXT NOT NULL,
+name TEXT NOT NULL,
+site TEXT NOT NULL,
+size INTEGER NOT NULL,
+type TEXT NOT NULL,
+FOREIGN KEY (show_id) REFERENCES show(id)
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO trailers(
+id,
+show_id,
+key,
+name,
+site,
+size,
+type
+)
+VALUES(?,?,?,?,?,?,?);
+
+selectByShowId:
+SELECT *
+FROM trailers
+LEFT JOIN show ON show.id = trailers.show_id
+WHERE show_id = ?;

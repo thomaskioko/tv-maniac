@@ -1,0 +1,62 @@
+import kotlin.collections.List;
+
+
+CREATE TABLE show(
+id INTEGER NOT NULL PRIMARY KEY,
+title TEXT NOT NULL,
+description TEXT NOT NULL,
+language TEXT NOT NULL,
+year TEXT NOT NULL,
+poster_image_url TEXT NOT NULL,
+backdrop_image_url TEXT NOT NULL,
+votes INTEGER NOT NULL,
+vote_average REAL NOT NULL,
+number_of_seasons INTEGER DEFAULT NULL,
+number_of_episodes INTEGER DEFAULT NULL,
+status TEXT DEFAULT NULL,
+popularity REAL NOT NULL,
+genre_ids TEXT AS List<Int> NOT NULL,
+following INTEGER AS Boolean NOT NULL DEFAULT 0
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO show(
+id,
+title,
+description,
+language,
+year,
+poster_image_url,
+backdrop_image_url,
+votes,
+vote_average,
+genre_ids,
+status,
+popularity,
+following
+)
+VALUES(?,?,?,?,?,?,?,?, ?,?, ?, ?, ?);
+
+updateTvShow:
+UPDATE show
+SET status = ?, number_of_seasons = ?, number_of_episodes = ?
+WHERE id = ?;
+
+selectByShowId:
+SELECT * FROM show
+WHERE id = ?;
+
+selectAll:
+SELECT * FROM show;
+
+updateFollowinglist:
+UPDATE show
+SET following = ?
+WHERE id = ?;
+
+selectFollowinglist:
+SELECT * FROM show
+WHERE following = 1;
+
+deleteAll:
+DELETE FROM show;
