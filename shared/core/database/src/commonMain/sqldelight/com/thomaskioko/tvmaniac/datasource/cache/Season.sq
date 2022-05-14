@@ -1,0 +1,33 @@
+CREATE TABLE season (
+id INTEGER NOT NULL PRIMARY KEY,
+tv_show_id INTEGER NOT NULL,
+season_number INTEGER NOT NULL,
+epiosode_count INTEGER NOT NULL,
+name TEXT NOT NULL,
+overview TEXT NOT NULL,
+FOREIGN KEY (tv_show_id) REFERENCES show(id)
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO season(
+id,
+tv_show_id,
+season_number,
+epiosode_count,
+name,
+overview
+)
+VALUES(?,?,?,?,?,?);
+
+selectBySeasonId:
+SELECT *
+FROM season
+WHERE id = ?;
+
+selectSeasonsByShowId:
+SELECT *
+FROM season
+LEFT JOIN show ON show.id = season.tv_show_id
+WHERE tv_show_id = ? AND season_number != 0
+ORDER BY season_number ASC;
+

@@ -11,6 +11,6 @@ android {
 dependencies {
     androidMainImplementation(libs.androidx.datastore)
 
-    commonMainImplementation(projects.shared.core.ui)
+    commonMainImplementation(project(":shared:core:ui"))
     commonMainImplementation(libs.kotlin.coroutines.core)
 }

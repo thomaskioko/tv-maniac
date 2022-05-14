@@ -1,0 +1,20 @@
+CREATE TABLE show_category (
+show_id integer DEFAULT NULL PRIMARY KEY,
+category_id integer DEFAULT NULL,
+FOREIGN KEY (category_id) REFERENCES category(id),
+FOREIGN KEY (show_id) REFERENCES show(id)
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO show_category(
+category_id,
+show_id)
+VALUES(?,?);
+
+selectShows:
+SELECT *
+FROM show_category
+INNER JOIN show  ON show_category.show_id = show.id
+INNER JOIN category ON show_category.category_id = category.id
+WHERE category_id = ?
+ORDER BY show.popularity DESC;
