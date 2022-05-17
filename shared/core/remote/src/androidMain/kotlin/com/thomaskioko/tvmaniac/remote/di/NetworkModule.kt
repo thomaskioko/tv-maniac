@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.injection
+package com.thomaskioko.tvmaniac.remote.di
 
 import android.content.Context
 import com.thomaskioko.tvmaniac.core.util.AppContext
