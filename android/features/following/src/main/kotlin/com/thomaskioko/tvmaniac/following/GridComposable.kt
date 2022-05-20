@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.following
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,7 +20,8 @@ fun <T> LazyGridItems(
     rows: Int = 3,
     hPadding: Int = 8,
     listState: LazyListState,
-    itemContent: @Composable LazyItemScope.(T) -> Unit
+    paddingValues: PaddingValues,
+    itemContent: @Composable() (LazyItemScope.(T) -> Unit)
 ) {
     val chunkedList = items.chunked(rows)
     LazyColumn(
