@@ -1,7 +1,5 @@
 package com.thomaskioko.tvmaniac.details.implementation.di
 
-import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
-import com.thomaskioko.tvmaniac.core.annotations.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.details.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.details.api.interactor.ObserveFollowingInteractor
@@ -13,6 +11,8 @@ import com.thomaskioko.tvmaniac.details.implementation.cache.TvShowCacheImpl
 import com.thomaskioko.tvmaniac.details.implementation.repository.TvShowsRepositoryImpl
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
+import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
+import com.thomaskioko.tvmaniac.shared.core.ui.di.IoCoroutineScope
 import com.thomaskioko.tvmaniac.show_grid.domain.ObserveShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import dagger.Module
