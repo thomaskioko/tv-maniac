@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.seasonepisodes.implementation.di
 
-import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
@@ -10,6 +9,7 @@ import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesRepository
 import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodesCacheImpl
 import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodesRepositoryImpl
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
+import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

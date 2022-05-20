@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.annotations
+package com.thomaskioko.tvmaniac.shared.core.ui.di
 
 import javax.inject.Qualifier
 

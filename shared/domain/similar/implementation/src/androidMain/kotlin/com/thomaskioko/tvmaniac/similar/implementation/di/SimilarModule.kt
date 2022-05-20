@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.similar.implementation.di
 
-import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
+import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.similar.api.ObserveSimilarShowsInteractor
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
