@@ -9,12 +9,12 @@ android {
 }
 
 dependencies {
-    api(projects.shared.core.ui)
-    api(projects.shared.core.util)
-    api(projects.shared.domain.showDetails.api)
-    api(projects.shared.domain.showCommon.api)
+    api(project(":shared:core:ui"))
+    api(project(":shared:core:util"))
+    api(project(":shared:domain:show-details:api"))
+    api(project(":shared:domain:show-common:api"))
 
-    implementation(projects.shared.database)
+    implementation(project(":shared:core:database"))
     implementation(projects.android.common.compose)
 
     implementation(libs.accompanist.insetsui)
