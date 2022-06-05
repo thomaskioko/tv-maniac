@@ -9,10 +9,9 @@ android {
 }
 
 dependencies {
-    api(projects.shared.core.ui)
-    api(projects.shared.domain.persistence)
-    implementation(projects.android.common.compose)
-    implementation(projects.android.common.annotations)
+    api(project(":shared:core:ui"))
+    api(project(":shared:core:persistence"))
+    implementation(project(":android:common:compose"))
 
     implementation(libs.accompanist.insetsui)
 

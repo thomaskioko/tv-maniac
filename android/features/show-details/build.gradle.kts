@@ -11,15 +11,15 @@ android {
 }
 
 dependencies {
-    api(projects.shared.core.ui)
-    api(projects.shared.core.util)
+    api(project(":shared:core:ui"))
+    api(project(":shared:core:util"))
     api(projects.shared.domain.showDetails.api)
-    api(projects.shared.domain.similar.api)
-    api(projects.shared.domain.genre.api)
+    api(project(":shared:domain:similar:api"))
+    api(project(":shared:domain:genre:api"))
     api(projects.shared.domain.seasons.api)
-    api(projects.shared.domain.showCommon.api)
-    api(projects.shared.domain.lastAirEpisodes.api)
-    implementation(projects.android.common.compose)
+    api(project(":shared:domain:show-common:api"))
+    api(project(":shared:domain:last-air-episodes:api"))
+    implementation(project(":android:common:compose"))
 
     implementation(libs.snapper)
     implementation(libs.accompanist.insetsui)

@@ -24,6 +24,7 @@ dependencies {
 
     commonTestImplementation(kotlin("test"))
     commonTestImplementation(libs.testing.kotest.assertions)
+
     androidTestImplementation(kotlin("test"))
     androidTestImplementation(libs.squareup.sqldelight.driver.jvm)
 }

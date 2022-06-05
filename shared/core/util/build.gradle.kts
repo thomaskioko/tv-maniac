@@ -17,7 +17,6 @@ dependencies {
     commonMainImplementation(libs.kotlin.datetime)
     commonMainImplementation(libs.kotlin.coroutines.core)
 
-    iosMainImplementation(libs.kotlin.coroutines.core)
     iosMainImplementation(libs.koin.core)
     iosMainImplementation(libs.kotlin.datetime)
 }
