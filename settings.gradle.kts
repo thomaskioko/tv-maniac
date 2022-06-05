@@ -13,7 +13,6 @@ rootProject.name = "tv-maniac"
 
 include(
     ":android:app",
-    ":android:common:annotations",
     ":android:common:compose",
     ":android:common:navigation",
     ":android:common:resources",
