@@ -5,68 +5,66 @@ android-compile = "31"
 android-target = "31"
 android-min = "23"
 
-android-gradle = "7.1.2"
-date-time = "0.3.1"
+android-gradle = "7.2.0"
+date-time = "0.3.2"
 
-accompanist = "0.22.0-rc"
-snapper = "0.1.0"
+accompanist = "0.24.6-alpha"
+snapper = "0.2.0"
 
 androidx-activity = "1.4.0"
 androidx-appCompat = "1.4.0"
-androidx-core = "1.7.0"
-androidx-compose = "1.1.0-rc01"
-compose-compiler = "1.1.0-rc02"
+androidx-core = "1.9.0-alpha02"
+androidx-compose = "1.2.0-alpha07"
+compose-compiler = "1.2.0-alpha07"
 androidx-composePaging = "1.0.0-alpha14"
-androidx-constraintlayout = "1.0.0-rc02"
+androidx-constraintlayout = "1.0.0"
 androidx-datastore = "1.0.0"
-androidx-lifecycle = "2.4.0"
-androidx-navigation = "2.4.0-rc01"
+androidx-lifecycle = "2.5.0-alpha06"
+androidx-navigation = "2.5.0-alpha04"
 androidx-palette = "1.0.0"
 androidx-paging = "3.1.0"
 
 coil = "1.4.0"
-coroutines-native = "1.6.0-native-mt"
-coroutines-core = "1.6.0"
+coroutines = "1.6.1"
 dagger = "2.41"
 desugar = "1.1.5"
-hilt = "2.40.5"
-hiltNavigation = "1.0.0-rc01"
+hilt = "2.41"
+hiltNavigation = "1.0.0"
 inject = "1"
 kenburns = "1.0.7"
 kermit = "1.0.3"
-koin = "3.1.5"
+koin = "3.2.0"
 ktor = "1.6.7"
 material = "1.6.0-alpha01"
-multiplatform-paging = "0.4.6"
+multiplatform-paging = "0.4.7"
 squareup-leakcanary = "2.8.1"
 sqldelight = "1.5.3"
 turbine = "0.7.0"
 
 testing-arch-core = "2.1.0"
 testing-junit = "4.13.2"
-testing-junitext = "1.1.4-alpha03"
+testing-junitext = "1.1.4-alpha05"
 testing-junit5 = "5.8.2"
-testing-kotest = "5.0.3"
-testing-mockk = "1.12.2"
+testing-kotest = "5.2.3"
+testing-mockk = "1.12.3"
 testing-mockito-kotlin = "2.2.0"
 
 plugin-buildkonfig = "0.7.0"
 plugin-gradle-versions = "0.39.0"
 plugin-detekt = "1.19.0"
 
-shared-module-version = "0.4.0"
+shared-module-version = "0.5.0"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle" }
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "date-time" }
 
-kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines-native" }
-kotlinx-coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines-native" }
+kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
 
 accompanist-pager-core = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompanist-pager-indicator = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
-accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
 accompanist-insetsui = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 
@@ -152,7 +150,7 @@ testing-kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref
 testing-mockk-core = { module = "io.mockk:mockk", version.ref = "testing-mockk" }
 testing-mockk-common = { module = "io.mockk:mockk-common", version.ref = "testing-mockk" }
 
-testing-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-core" }
+testing-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 testing-junit = { module = "junit:junit", version.ref = "testing-junit" }
 testing-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 

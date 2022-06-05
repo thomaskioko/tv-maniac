@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.injection
 
-import com.thomaskioko.tvmaniac.core.annotations.IoCoroutineScope
-import com.thomaskioko.tvmaniac.core.annotations.MainCoroutineScope
+import com.thomaskioko.tvmaniac.shared.core.ui.di.IoCoroutineScope
+import com.thomaskioko.tvmaniac.shared.core.ui.di.MainCoroutineScope
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -13,7 +13,6 @@ rootProject.name = "tv-maniac"
 
 include(
     ":android:app",
-    ":android:common:annotations",
     ":android:common:compose",
     ":android:common:navigation",
     ":android:common:resources",
@@ -29,8 +28,9 @@ include(
     ":shared:core:ui",
     ":shared:core:util",
     ":shared:core:test",
-    ":shared:database",
-    ":shared:remote",
+    ":shared:core:persistence",
+    ":shared:core:database",
+    ":shared:core:remote",
     ":shared:domain:show-details:api",
     ":shared:domain:show-details:implementation",
     ":shared:domain:seasons:api",
@@ -48,5 +48,4 @@ include(
     ":shared:domain:show-common:api",
     ":shared:domain:discover:api",
     ":shared:domain:discover:implementation",
-    ":shared:domain:persistence",
 )
