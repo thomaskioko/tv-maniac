@@ -25,7 +25,6 @@ androidx-palette = "1.0.0"
 androidx-paging = "3.1.0"
 
 coil = "1.4.0"
-coroutines-native = "1.6.1-native-mt"
 coroutines = "1.6.1"
 dagger = "2.41"
 desugar = "1.1.5"
@@ -34,7 +33,7 @@ hiltNavigation = "1.0.0"
 inject = "1"
 kenburns = "1.0.7"
 kermit = "1.0.3"
-koin = "3.2.0-beta-1"
+koin = "3.2.0"
 ktor = "1.6.7"
 material = "1.6.0-alpha01"
 multiplatform-paging = "0.4.7"
@@ -61,8 +60,8 @@ android-gradle = { module = "com.android.tools.build:gradle", version.ref = "and
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "date-time" }
 
-kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines-native" }
-kotlinx-coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines-native" }
+kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
 
 accompanist-pager-core = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompanist-pager-indicator = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
