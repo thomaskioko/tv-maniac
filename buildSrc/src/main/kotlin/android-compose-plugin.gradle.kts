@@ -48,6 +48,5 @@ dependencies {
     api(libs.androidx.compose.ui.tooling)
     implementation(libs.kenburns)
     implementation(libs.coil)
-    implementation(libs.accompanist.insets)
     implementation(libs.androidx.lifecycle.runtime)
 }

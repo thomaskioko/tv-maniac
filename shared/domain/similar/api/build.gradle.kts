@@ -9,8 +9,9 @@ android {
 }
 
 dependencies {
-    commonMainApi(projects.shared.core.util)
-    commonMainImplementation(projects.shared.database)
-    commonMainImplementation(projects.shared.domain.showCommon.api)
+    commonMainApi(project(":shared:core:util"))
+    commonMainImplementation(project(":shared:core:database"))
+    commonMainImplementation(project(":shared:domain:show-common:api"))
+
     commonMainImplementation(libs.kotlin.coroutines.core)
 }

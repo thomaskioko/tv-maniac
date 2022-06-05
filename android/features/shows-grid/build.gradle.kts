@@ -10,13 +10,13 @@ android {
 }
 
 dependencies {
-    api(projects.shared.core.ui)
-    api(projects.shared.core.util)
+    api(project(":shared:core:ui"))
+    api(project(":shared:core:util"))
     api(projects.shared.domain.showDetails.api)
 
-    implementation(projects.shared.database)
-    implementation(projects.shared.domain.showCommon.api)
-    implementation(projects.android.common.compose)
+    implementation(project(":shared:core:database"))
+    implementation(project(":shared:domain:show-common:api"))
+    implementation(project(":android:common:compose"))
 
     api(libs.androidx.compose.paging)
     api(libs.multiplatform.paging.core)

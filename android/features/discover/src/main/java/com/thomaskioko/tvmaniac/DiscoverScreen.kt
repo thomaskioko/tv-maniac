@@ -6,9 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,8 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import com.google.accompanist.insets.navigationBarsWithImePadding
-import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
@@ -52,6 +53,7 @@ import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
 import com.thomaskioko.tvmaniac.compose.theme.grey900
 import com.thomaskioko.tvmaniac.compose.util.DominantColorState
 import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
+import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowEffect
@@ -107,8 +109,6 @@ private fun DiscoverShows(
 ) {
     Scaffold(
         scaffoldState = scaffoldState,
-        modifier = Modifier
-            .statusBarsPadding(),
         snackbarHost = { snackBarHostState ->
             SnackbarHost(
                 hostState = snackBarHostState,
@@ -124,12 +124,13 @@ private fun DiscoverShows(
                     .fillMaxWidth()
             )
         },
-    ) {
+    ) { contentPadding ->
         if (discoverViewState.isLoading) FullScreenLoading()
 
         LazyColumn(
+            contentPadding = contentPadding.copy(copyTop = false),
             modifier = Modifier
-                .navigationBarsWithImePadding()
+                .imePadding()
                 .animateContentSize(),
         ) {
 
@@ -195,6 +196,8 @@ fun FeaturedItems(
                     endYPercentage = 0f
                 )
         ) {
+
+            Spacer(modifier = Modifier.height(32.dp))
 
             ColumnSpacer(value = 24)
 

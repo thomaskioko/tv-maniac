@@ -2,6 +2,8 @@ import util.libs
 
 plugins {
     `kmm-domain-plugin`
+    kotlin("kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -9,14 +11,18 @@ android {
 }
 
 dependencies {
-    commonMainImplementation(projects.shared.core.util)
-    commonMainImplementation(projects.shared.remote)
-    commonMainImplementation(projects.shared.database)
-    commonMainImplementation(projects.shared.domain.discover.api)
-    commonMainImplementation(projects.shared.domain.showCommon.api)
+    androidMainImplementation(project(":shared:core:ui"))
+    androidMainImplementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+
+    commonMainImplementation(project(":shared:core:util"))
+    commonMainImplementation(project(":shared:core:remote"))
+    commonMainImplementation(project(":shared:core:database"))
+    commonMainImplementation(project(":shared:domain:discover:api"))
+    commonMainImplementation(project(":shared:domain:show-common:api"))
+
 
     commonMainImplementation(libs.kermit)
-    commonMainImplementation(libs.koin.core)
     commonMainImplementation(libs.koin.core)
     commonMainImplementation(libs.kotlin.datetime)
     commonMainImplementation(libs.multiplatform.paging.core)
@@ -25,18 +31,10 @@ dependencies {
     testImplementation(libs.testing.mockk.core)
 
     commonTestImplementation(kotlin("test"))
-    commonTestImplementation(projects.shared.core.test)
+    commonTestImplementation(project(":shared:core:test"))
     commonTestImplementation(libs.testing.turbine)
     commonTestImplementation(libs.testing.kotest.assertions)
     commonTestImplementation(libs.testing.coroutines.test)
     commonTestImplementation(libs.testing.mockk.common)
 
-    val coroutineCore = libs.kotlin.coroutines.core.get()
-
-    @Suppress("UnstableApiUsage")
-    iosMainImplementation("${coroutineCore.module.group}:${coroutineCore.module.name}:${coroutineCore.versionConstraint.displayName}") {
-        version {
-            strictly(libs.versions.coroutines.native.get())
-        }
-    }
 }

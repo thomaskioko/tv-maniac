@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.injection
 
-import com.thomaskioko.tvmaniac.core.annotations.DefaultDispatcher
-import com.thomaskioko.tvmaniac.core.annotations.IoDispatcher
-import com.thomaskioko.tvmaniac.core.annotations.MainDispatcher
+import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
+import com.thomaskioko.tvmaniac.shared.core.ui.di.IoDispatcher
+import com.thomaskioko.tvmaniac.shared.core.ui.di.MainDispatcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

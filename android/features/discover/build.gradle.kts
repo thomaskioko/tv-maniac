@@ -9,8 +9,8 @@ android {
 }
 
 dependencies {
-    api(projects.shared.core.ui)
-    api(projects.shared.core.util)
+    api(project(":shared:core:ui"))
+    api(project(":shared:core:util"))
     api(projects.android.common.compose)
 
     api(libs.inject)
@@ -20,9 +20,8 @@ dependencies {
     api(libs.accompanist.pager.core)
 
     api(projects.shared.domain.discover.api)
-    api(projects.shared.domain.showCommon.api)
+    api(project(":shared:domain:show-common:api"))
 
-    implementation(libs.accompanist.insets)
     implementation(libs.snapper)
 
     implementation(libs.accompanist.pager.indicator)

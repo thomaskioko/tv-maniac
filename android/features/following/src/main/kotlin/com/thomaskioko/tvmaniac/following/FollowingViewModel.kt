@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.following
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thomaskioko.tvmaniac.core.util.CoroutineScopeOwner
+import com.thomaskioko.tvmaniac.details.api.interactor.ObserveFollowingInteractor
 import com.thomaskioko.tvmaniac.shared.core.ui.Store
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
