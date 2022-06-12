@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.details.api.repository
+package com.thomaskioko.tvmaniac.showcommon.api.repository
 
 import com.kuuurt.paging.multiplatform.PagingData
 import com.thomaskioko.tvmaniac.core.util.CommonFlow

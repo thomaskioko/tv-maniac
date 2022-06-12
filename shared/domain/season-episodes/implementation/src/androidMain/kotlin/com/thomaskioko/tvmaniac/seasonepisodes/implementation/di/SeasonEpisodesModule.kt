@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodes
 import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodesRepositoryImpl
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
+import com.thomaskioko.tvmaniac.showcommon.api.repository.TvShowsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,8 +47,9 @@ object SeasonEpisodesModule {
     @Singleton
     @Provides
     fun provideObserveSeasonWithEpisodesInteractor(
+        tvShowsRepository: TvShowsRepository,
         repository: SeasonWithEpisodesRepository,
         @DefaultDispatcher computationDispatcher: CoroutineDispatcher
     ): ObserveSeasonWithEpisodesInteractor =
-        ObserveSeasonWithEpisodesInteractor(repository, computationDispatcher)
+        ObserveSeasonWithEpisodesInteractor(tvShowsRepository, repository, computationDispatcher)
 }

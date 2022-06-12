@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.shared.domain.genre.implementation.di
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.genre.api.GenreCache
 import com.thomaskioko.tvmaniac.genre.api.GenreRepository
-import com.thomaskioko.tvmaniac.genre.api.GetGenresInteractor
 import com.thomaskioko.tvmaniac.genre.implementation.GenreCacheImpl
 import com.thomaskioko.tvmaniac.genre.implementation.GenreRepositoryImpl
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
@@ -31,10 +30,4 @@ object GenreModule {
         cache: GenreCache,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): GenreRepository = GenreRepositoryImpl(tvShowsService, cache, ioDispatcher)
-
-    @Singleton
-    @Provides
-    fun provideGenreInteractir(
-        repository: GenreRepository
-    ): GetGenresInteractor = GetGenresInteractor(repository)
 }

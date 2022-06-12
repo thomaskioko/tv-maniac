@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.genre.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.core.util.getErrorMessage
+import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.datasource.cache.Genre
@@ -23,7 +23,7 @@ class GenreRepositoryImpl(
         shouldFetch = { it.isNullOrEmpty() },
         fetch = { apiService.getAllGenres() },
         saveFetchResult = { mapAndCache(it) },
-        onFetchFailed = { Logger.withTag("observeGenres").e(it.getErrorMessage()) },
+        onFetchFailed = { Logger.withTag("observeGenres").e(it.resolveError()) },
         coroutineDispatcher = dispatcher
     )
 
