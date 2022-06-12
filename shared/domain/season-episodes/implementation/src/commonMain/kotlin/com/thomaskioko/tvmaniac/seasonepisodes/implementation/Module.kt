@@ -7,7 +7,15 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val seasonEpisodesDomainModule: Module = module {
-    single<SeasonWithEpisodesRepository> { SeasonWithEpisodesRepositoryImpl(get(), get(), get(), get(), get()) }
+    single<SeasonWithEpisodesRepository> {
+        SeasonWithEpisodesRepositoryImpl(
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    }
     single<SeasonWithEpisodesCache> { SeasonWithEpisodesCacheImpl(get()) }
-    factory { ObserveSeasonWithEpisodesInteractor(get(), get()) }
+    factory { ObserveSeasonWithEpisodesInteractor(get(), get(), get()) }
 }

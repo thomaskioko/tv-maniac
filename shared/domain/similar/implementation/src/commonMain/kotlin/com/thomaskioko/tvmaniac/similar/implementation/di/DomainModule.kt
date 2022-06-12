@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.similar.implementation.di
 
-import com.thomaskioko.tvmaniac.similar.api.ObserveSimilarShowsInteractor
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowCacheImpl
@@ -15,5 +14,4 @@ val similarDomainModule: Module = module {
 
     single<SimilarShowCache> { SimilarShowCacheImpl(get()) }
 
-    factory { ObserveSimilarShowsInteractor(get()) }
 }

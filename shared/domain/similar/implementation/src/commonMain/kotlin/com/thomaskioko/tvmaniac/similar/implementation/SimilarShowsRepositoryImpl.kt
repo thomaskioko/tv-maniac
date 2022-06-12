@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.similar.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.core.util.getErrorMessage
+import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.datasource.cache.SelectSimilarShows
@@ -26,7 +26,7 @@ class SimilarShowsRepositoryImpl(
             shouldFetch = { it.isNullOrEmpty() },
             fetch = { apiService.getSimilarShows(showId) },
             saveFetchResult = { mapAndInsert(showId, it) },
-            onFetchFailed = { Logger.withTag("observeSimilarShows").e { it.getErrorMessage() } },
+            onFetchFailed = { Logger.withTag("observeSimilarShows").e { it.resolveError() } },
             coroutineDispatcher = dispatcher
         )
 
