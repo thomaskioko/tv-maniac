@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.details.api.interactor
 
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
-import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailsResult
 import com.thomaskioko.tvmaniac.showcommon.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.details.api.toGenreModelList
 import com.thomaskioko.tvmaniac.details.api.toLastAirEpisodeList
@@ -21,22 +21,22 @@ class ObserveShowInteractor constructor(
     private val seasonsRepository: SeasonsRepository,
     private val genreRepository: GenreRepository,
     private val lastAirRepository: LastAirEpisodeRepository,
-) : FlowInteractor<Long, ShowDetailViewState>() {
+) : FlowInteractor<Long, ShowDetailsResult>() {
 
-    override fun run(params: Long): Flow<ShowDetailViewState> = combine(
+    override fun run(params: Long): Flow<ShowDetailsResult> = combine(
         tvShowsRepository.observeShow(params),
         similarShowsRepository.observeSimilarShows(params),
         seasonsRepository.observeShowSeasons(params),
         genreRepository.observeGenres(),
-        lastAirRepository.observeAirEpisodes(params),
+        lastAirRepository.observeAirEpisodes(params)
     ) { show, similarShows, seasons, genre, lastAirEp ->
 
-        ShowDetailViewState(
+        ShowDetailsResult(
             tvShow = show.toTvShow(),
             similarShowList = similarShows.toSimilarShowList(),
             tvSeasonUiModels = seasons.toSeasonsEntityList(),
             genreUIList = genre.toGenreModelList(),
-            lastAirEpList = lastAirEp.toLastAirEpisodeList(),
+            lastAirEpList = lastAirEp.toLastAirEpisodeList()
         )
     }
 }
