@@ -4,12 +4,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 open class ViewState
-interface State
 interface Action
 interface Effect
 
-interface Store<S : State, A : Action, E : Effect> {
-    fun observeState(): StateFlow<S>
+interface Store<State : Any, Action : Any, E : Effect> {
+
+    val state: StateFlow<State>
+
+    fun observeState(): StateFlow<State>
     fun observeSideEffect(): Flow<E>
-    fun dispatch(action: A)
+    fun dispatch(action: Action)
 }
