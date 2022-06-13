@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.core.util.network
 
-import com.thomaskioko.tvmaniac.core.util.resolveError
+import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -44,6 +44,6 @@ inline fun <ResultType, RequestType> networkBoundResource(
     .catch { throwable ->
         onFetchFailed(throwable)
         emit(Resource.error(throwable, null))
-        throw Throwable(throwable.resolveError().errorMessage)
+        throw Throwable(throwable.resolveError())
     }
     .flowOn(coroutineDispatcher)
