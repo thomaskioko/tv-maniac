@@ -6,22 +6,10 @@ import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 import com.thomaskioko.tvmaniac.shared.core.ui.Action
 import com.thomaskioko.tvmaniac.shared.core.ui.Effect
-import com.thomaskioko.tvmaniac.shared.core.ui.State
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 
 sealed class ShowDetailAction : Action {
-    object LoadGenres : ShowDetailAction()
-    object LoadSimilarShows : ShowDetailAction()
-
     data class LoadShowDetails(
-        val showId: Long
-    ) : ShowDetailAction()
-
-    data class LoadSeasons(
-        val showId: Long
-    ) : ShowDetailAction()
-
-    data class LoadEpisodes(
         val showId: Long
     ) : ShowDetailAction()
 
@@ -52,7 +40,7 @@ data class ShowDetailViewState(
     val tvSeasonUiModels: List<SeasonUiModel> = emptyList(),
     val genreUIList: List<GenreUIModel> = emptyList(),
     val lastAirEpList: List<LastAirEpisode> = emptyList(),
-) : State {
+)  {
     companion object {
         val Empty = ShowDetailViewState()
     }
