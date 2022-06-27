@@ -86,7 +86,6 @@ object MockData {
                 status = "Ended"
             ),
         ),
-        isLoading = false
     )
 
     fun getShowsCache() = flowOf(

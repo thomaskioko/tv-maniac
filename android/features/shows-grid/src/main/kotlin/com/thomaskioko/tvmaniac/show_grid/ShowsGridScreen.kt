@@ -38,7 +38,7 @@ fun ShowsGridScreen(
     val scaffoldState = rememberScaffoldState()
 
     val gridViewState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = ShowsGridState.Empty)
+        .collectAsState(initial = ShowsLoaded.Empty)
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -65,7 +65,7 @@ fun ShowsGridScreen(
 @Composable
 fun ShowsGridContent(
     hostState: SnackbarHostState,
-    viewState: ShowsGridState,
+    viewState: ShowsLoaded,
     paddingValues: PaddingValues,
     onItemClicked: (Long) -> Unit,
 ) {
