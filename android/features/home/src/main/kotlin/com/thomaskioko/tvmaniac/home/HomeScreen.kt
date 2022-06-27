@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.home
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -36,7 +36,6 @@ import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import com.thomaskioko.tvmaniac.navigation.addNavigation
 import com.thomaskioko.tvmaniac.resources.R
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     composeNavigationFactories: Set<ComposeNavigationFactory>
@@ -71,10 +70,11 @@ fun HomeScreen(
                 }
             }
         }
-    ) {
+    ) { contentPadding ->
         NavHost(
             navController = navController,
-            startDestination = NavigationScreen.DiscoverNavScreen.route
+            startDestination = NavigationScreen.DiscoverNavScreen.route,
+            modifier = Modifier.padding(contentPadding)
         ) {
             composeNavigationFactories.addNavigation(this, navController)
         }

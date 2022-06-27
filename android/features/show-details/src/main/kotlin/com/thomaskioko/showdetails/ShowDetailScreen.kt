@@ -68,7 +68,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.details.api.interactor.UpdateShowParams
-import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.BookmarkEpisode
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.UpdateFavorite
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailEffect
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
@@ -128,7 +128,7 @@ fun ShowDetailScreen(
                     onEpisodeClicked = onEpisodeClicked,
                     onShowClicked = onShowClicked,
                     onUpdateFavoriteClicked = { viewModel.dispatch(UpdateFavorite(it)) },
-                    onBookmarkEpClicked = { viewModel.dispatch(ShowDetailAction.BookmarkEpisode(it)) }
+                    onBookmarkEpClicked = { viewModel.dispatch(BookmarkEpisode(it)) }
                 )
             }
         }

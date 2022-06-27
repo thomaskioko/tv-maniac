@@ -16,6 +16,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -34,16 +35,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
-import com.thomaskioko.tvmaniac.compose.components.ErrorView
 import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
-import com.thomaskioko.tvmaniac.compose.components.SnackBarErrorRetry
+import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.seasonepisodes.api.Loading
+import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsEffect
+import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsEffect.Error
+import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsLoaded
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsViewState
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.Episode
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.SeasonWithEpisodes
@@ -60,38 +64,67 @@ fun SeasonsScreen(
 ) {
 
     val viewState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = SeasonsViewState.Empty)
+        .collectAsState(initial = Loading)
+
 
     val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
 
+    LaunchedEffect(Unit) {
+        viewModel.observeSideEffect().collect {
+            when (it) {
+                is Error -> scaffoldState.snackbarHostState.showSnackbar(it.errorMessage)
+            }
+        }
+    }
+
+
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar(viewState.tvShow, navigateUp) },
+        topBar = {
+            TopBar(
+                show = getShow(viewState = viewState),
+                navigateUp = navigateUp
+            )
+        },
         modifier = Modifier
             .background(color = MaterialTheme.colors.background)
             .statusBarsPadding(),
-        snackbarHost = {
-            SnackBarErrorRetry(
-                snackBarHostState = it,
-                errorMessage = viewState.errorMessage,
+        snackbarHost = { snackBarHostState ->
+            SnackbarHost(
+                hostState = snackBarHostState,
+                snackbar = { snackBarData ->
+                    SwipeDismissSnackbar(
+                        data = snackBarData,
+                        onDismiss = { }
+                    )
+                },
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
             )
         },
         content = { contentPadding ->
-            when {
-                viewState.isLoading -> FullScreenLoading()
-                !viewState.errorMessage.isNullOrBlank() -> ErrorView()
-                !viewState.seasonsWithEpisodes.isNullOrEmpty() -> SeasonsScrollingContent(
-                    seasonsEpList = viewState.seasonsWithEpisodes,
-                    initialSeasonName = initialSeasonName,
-                    onEpisodeClicked = onEpisodeClicked,
-                    listState = listState,
-                    contentPadding = contentPadding,
-                )
+            when (viewState) {
+                Loading -> FullScreenLoading()
+                is SeasonsLoaded -> {
+                    SeasonsScrollingContent(
+                        seasonsEpList = (viewState as SeasonsLoaded).result.seasonsWithEpisodes,
+                        initialSeasonName = initialSeasonName,
+                        onEpisodeClicked = onEpisodeClicked,
+                        listState = listState,
+                        contentPadding = contentPadding,
+                    )
+                }
             }
         }
     )
 }
+
+@Composable
+private fun getShow(viewState: SeasonsViewState) =
+    if (viewState is SeasonsLoaded) viewState.result.tvShow else TvShow.EMPTY_SHOW
+
 
 @Composable
 private fun TopBar(
