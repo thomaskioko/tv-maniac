@@ -15,6 +15,7 @@ dependencies {
     androidMainImplementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
+    commonMainImplementation(project(":shared:domain:show-common:api"))
     commonMainImplementation(project(":shared:core:database"))
     commonMainImplementation(project(":shared:core:remote"))
     commonMainImplementation(project(":shared:domain:episodes:api"))
