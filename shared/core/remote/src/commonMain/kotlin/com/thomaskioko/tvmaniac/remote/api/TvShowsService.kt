@@ -24,5 +24,5 @@ interface TvShowsService {
 
     suspend fun getAllGenres(): GenresResponse
 
-    suspend fun getTrailers(showId: Int): TrailersResponse
+    suspend fun getTrailers(showId: Long): TrailersResponse
 }
