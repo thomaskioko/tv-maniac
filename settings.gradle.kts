@@ -48,4 +48,6 @@ include(
     ":shared:domain:show-common:api",
     ":shared:domain:discover:api",
     ":shared:domain:discover:implementation",
+    ":shared:domain:trailers:api",
+    ":shared:domain:trailers:implementation"
 )

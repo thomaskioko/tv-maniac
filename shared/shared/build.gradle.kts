@@ -36,6 +36,7 @@ kotlin {
             export(project(":shared:core:util"))
             export(project(":shared:core:database"))
             export(project(":shared:core:remote"))
+            export(project(":shared:core:persistence"))
             export(project(":shared:domain:show-details:api"))
             export(project(":shared:domain:seasons:api"))
             export(project(":shared:domain:episodes:api"))
@@ -45,7 +46,7 @@ kotlin {
             export(project(":shared:domain:season-episodes:api"))
             export(project(":shared:domain:show-common:api"))
             export(project(":shared:domain:discover:api"))
-            export(project(":shared:core:persistence"))
+            export(project(":shared:domain:trailers:api"))
             embedBitcode(BitcodeEmbeddingMode.BITCODE)
 
             transitiveExport = true
@@ -67,6 +68,7 @@ dependencies {
     commonMainApi(project(":shared:domain:season-episodes:api"))
     commonMainApi(project(":shared:domain:show-common:api"))
     commonMainApi(project(":shared:domain:discover:api"))
+    commonMainApi(project(":shared:domain:trailers:api"))
     commonMainApi(project(":shared:core:persistence"))
 
     commonMainImplementation(project(":shared:domain:episodes:implementation"))
@@ -77,6 +79,7 @@ dependencies {
     commonMainImplementation(project(":shared:domain:similar:implementation"))
     commonMainImplementation(project(":shared:domain:season-episodes:implementation"))
     commonMainImplementation(project(":shared:domain:discover:implementation"))
+    commonMainImplementation(project(":shared:domain:trailers:implementation"))
 
     commonMainImplementation(libs.koin.core)
     commonMainImplementation(libs.kotlin.coroutines.core)
