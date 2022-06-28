@@ -16,6 +16,7 @@ dependencies {
     commonMainImplementation(project(":shared:domain:last-air-episodes:api"))
     commonMainImplementation(project(":shared:domain:similar:api"))
     commonMainImplementation(project(":shared:domain:show-common:api"))
+    commonMainImplementation(project(":shared:domain:trailers:api"))
 
     commonMainImplementation(libs.multiplatform.paging.core)
     commonMainImplementation(libs.kotlin.coroutines.core)
