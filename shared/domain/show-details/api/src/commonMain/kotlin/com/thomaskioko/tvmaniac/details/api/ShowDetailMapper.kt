@@ -10,6 +10,8 @@ import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 import com.thomaskioko.tvmaniac.datasource.cache.AirEpisodesByShowId
+import com.thomaskioko.tvmaniac.datasource.cache.SelectByShowId
+import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
 
 fun Resource<List<SelectSimilarShows>>.toSimilarShowList(): List<TvShow> {
     return data?.map {
@@ -90,4 +92,13 @@ fun List<AirEpisodesByShowId>.toLastAirEpisodeList(): List<LastAirEpisode> = map
         voteCount = it.vote_count,
         title = it.title
     )
+}
+
+fun Resource<List<SelectByShowId>>.toTrailerList(): List<Trailer> {
+    return data?.map {
+        Trailer(
+            showId = it.show_id,
+            key = it.key
+        )
+    } ?: emptyList()
 }

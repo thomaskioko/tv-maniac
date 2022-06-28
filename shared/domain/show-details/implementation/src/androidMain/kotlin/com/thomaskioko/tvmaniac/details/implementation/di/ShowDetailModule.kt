@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
 import com.thomaskioko.tvmaniac.shared.core.ui.di.IoCoroutineScope
 import com.thomaskioko.tvmaniac.details.api.interactor.ObserveShowsByCategoryInteractor
+import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerRepository
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import dagger.Module
@@ -70,12 +71,14 @@ object ShowDetailModule {
         seasonsRepository: SeasonsRepository,
         genreRepository: GenreRepository,
         lastAirRepository: LastAirEpisodeRepository,
+        trailerRepository: TrailerRepository
     ): ObserveShowInteractor = ObserveShowInteractor(
         showsRepository,
         similarShowsRepository,
         seasonsRepository,
         genreRepository,
-        lastAirRepository
+        lastAirRepository,
+        trailerRepository
     )
 
     @Singleton

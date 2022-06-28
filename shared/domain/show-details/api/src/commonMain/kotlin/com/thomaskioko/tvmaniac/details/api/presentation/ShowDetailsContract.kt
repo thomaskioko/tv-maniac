@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 import com.thomaskioko.tvmaniac.shared.core.ui.Action
 import com.thomaskioko.tvmaniac.shared.core.ui.Effect
+import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 
 sealed class ShowDetailAction : Action {
@@ -40,6 +41,7 @@ data class ShowDetailViewState(
     val tvSeasonUiModels: List<SeasonUiModel> = emptyList(),
     val genreUIList: List<GenreUIModel> = emptyList(),
     val lastAirEpList: List<LastAirEpisode> = emptyList(),
+    val trailersList: List<Trailer> = emptyList(),
 )  {
     companion object {
         val Empty = ShowDetailViewState()
