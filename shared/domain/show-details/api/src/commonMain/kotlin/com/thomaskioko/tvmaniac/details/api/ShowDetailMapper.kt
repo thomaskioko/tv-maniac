@@ -10,7 +10,7 @@ import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 import com.thomaskioko.tvmaniac.datasource.cache.AirEpisodesByShowId
-import com.thomaskioko.tvmaniac.datasource.cache.SelectByShowId
+import com.thomaskioko.tvmaniac.datasource.cache.Trailers
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
 
 fun Resource<List<SelectSimilarShows>>.toSimilarShowList(): List<TvShow> {
@@ -94,11 +94,13 @@ fun List<AirEpisodesByShowId>.toLastAirEpisodeList(): List<LastAirEpisode> = map
     )
 }
 
-fun Resource<List<SelectByShowId>>.toTrailerList(): List<Trailer> {
+fun Resource<List<Trailers>>.toTrailerList(): List<Trailer> {
     return data?.map {
         Trailer(
             showId = it.show_id,
-            key = it.key
+            key = it.key,
+            name = it.name,
+            youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg"
         )
     } ?: emptyList()
 }

@@ -4,7 +4,6 @@ import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
-import com.thomaskioko.tvmaniac.datasource.cache.SelectByShowId
 import com.thomaskioko.tvmaniac.datasource.cache.Trailers
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.model.TrailersResponse
@@ -19,7 +18,7 @@ class TrailerRepositoryImpl(
     private val dispatcher: CoroutineDispatcher,
 ) : TrailerRepository {
 
-    override fun observeTrailersByShowId(showId: Long): Flow<Resource<List<SelectByShowId>>> =
+    override fun observeTrailersByShowId(showId: Long): Flow<Resource<List<Trailers>>> =
         networkBoundResource(
             query = { trailerCache.getTrailersByShowId(showId) },
             shouldFetch = { it.isNullOrEmpty() },
