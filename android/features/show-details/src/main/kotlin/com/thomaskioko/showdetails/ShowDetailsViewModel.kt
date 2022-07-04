@@ -55,11 +55,6 @@ class ShowDetailsViewModel @Inject constructor(
                     uiEffects.emit(ShowDetailsError(action.message))
                 }
             }
-      /*      is ShowDetailAction.ShowDetailsLoaded -> {
-                coroutineScope.launch {
-                    state.emit(ShowDetailsLoadedState( action.result))
-                }
-            }*/
             is ShowDetailAction.BookmarkEpisode -> {
                 // TODO Update episode watchlist
             }
@@ -81,7 +76,8 @@ class ShowDetailsViewModel @Inject constructor(
                                 similarShowList = it.similarShowList,
                                 tvSeasonUiModels = it.tvSeasonUiModels,
                                 genreUIList = it.genreUIList,
-                                lastAirEpList = it.lastAirEpList
+                                lastAirEpList = it.lastAirEpList,
+                                trailersList = it.trailersList
                             )
                         )
                     }
