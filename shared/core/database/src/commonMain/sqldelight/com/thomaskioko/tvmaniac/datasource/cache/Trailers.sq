@@ -24,5 +24,4 @@ VALUES(?,?,?,?,?,?,?);
 selectByShowId:
 SELECT *
 FROM trailers
-LEFT JOIN show ON show.id = trailers.show_id
 WHERE show_id = ?;
