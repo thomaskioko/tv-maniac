@@ -201,7 +201,7 @@ private fun TvShowDetailsScrollingContent(
         }
 
         item {
-            MoreBodyContent(
+            BodyContent(
                 detailUiState = detailUiState,
                 onSeasonClicked = onSeasonClicked,
                 onEpisodeClicked = onEpisodeClicked,
@@ -458,7 +458,7 @@ fun ShowDetailButtons(
 }
 
 @Composable
-private fun MoreBodyContent(
+private fun BodyContent(
     detailUiState: ShowDetailViewState,
     onSeasonClicked: (Long, String) -> Unit,
     onBookmarkEpClicked: (Long) -> Unit,
@@ -470,30 +470,21 @@ private fun MoreBodyContent(
     ) {
         ColumnSpacer(16)
 
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(id = R.string.title_seasons),
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+        SeasonsContent(
+            seasonUiModelList = detailUiState.tvSeasonUiModels,
+            onSeasonClicked = onSeasonClicked,
+            modifier = Modifier.fillMaxWidth()
+        )
 
-            ShowSeasonsTabs(
-                seasonUiModelList = detailUiState.tvSeasonUiModels,
-                onSeasonClicked = onSeasonClicked,
-                modifier = Modifier.fillMaxWidth()
-            )
+        EpisodesReleaseContent(
+            episodeList = detailUiState.lastAirEpList,
+            onEpisodeClicked = onEpisodeClicked,
+            onBookmarkEpClicked = onBookmarkEpClicked
+        )
 
-            EpisodesReleaseContent(
-                episodeList = detailUiState.lastAirEpList,
-                onEpisodeClicked = onEpisodeClicked,
-                onBookmarkEpClicked = onBookmarkEpClicked
-            )
-        }
+        TrailersContent(
+            detailUiState.trailersList
+        )
 
         SimilarShowsShowsContent(
             similarShows = detailUiState.similarShowList,
@@ -503,32 +494,46 @@ private fun MoreBodyContent(
 }
 
 @Composable
-private fun ShowSeasonsTabs(
+private fun SeasonsContent(
     seasonUiModelList: List<SeasonUiModel>,
     modifier: Modifier,
     onSeasonClicked: (Long, String) -> Unit = { _, _ -> }
 ) {
-    val selectedIndex by remember { mutableStateOf(0) }
-
-    ScrollableTabRow(
-        selectedTabIndex = selectedIndex,
-        divider = {}, /* Disable the built-in divider */
-        indicator = {},
-        edgePadding = 0.dp,
-        backgroundColor = Color.Transparent,
-        modifier = modifier.fillMaxWidth()
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
     ) {
-        seasonUiModelList.forEach { season ->
-            Tab(
-                selected = true,
-                onClick = { onSeasonClicked(season.tvShowId, season.name) }
-            ) {
-                ChoiceChipContent(
-                    text = season.name,
+
+        Text(
+            text = stringResource(id = R.string.title_seasons),
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+
+        val selectedIndex by remember { mutableStateOf(0) }
+
+        ScrollableTabRow(
+            selectedTabIndex = selectedIndex,
+            divider = {}, /* Disable the built-in divider */
+            indicator = {},
+            edgePadding = 0.dp,
+            backgroundColor = Color.Transparent,
+            modifier = modifier.fillMaxWidth()
+        ) {
+            seasonUiModelList.forEach { season ->
+                Tab(
                     selected = true,
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp, vertical = 8.dp)
-                )
+                    onClick = { onSeasonClicked(season.tvShowId, season.name) }
+                ) {
+                    ChoiceChipContent(
+                        text = season.name,
+                        selected = true,
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp, vertical = 8.dp)
+                    )
+                }
             }
         }
     }

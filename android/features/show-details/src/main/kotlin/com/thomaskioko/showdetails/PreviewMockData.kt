@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
 import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
+import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 
 val detailUiState = ShowDetailViewState(
@@ -28,6 +29,20 @@ val detailUiState = ShowDetailViewState(
     tvSeasonUiModels = getTvSeasons(),
     genreUIList = getGenres(),
     lastAirEpList = getEpisodeList(),
+    trailersList = listOf(
+        Trailer(
+            showId = 1232,
+            key = "",
+            name = "",
+            youtubeThumbnailUrl = ""
+        ),
+        Trailer(
+            showId = 1232,
+            key = "",
+            name = "",
+            youtubeThumbnailUrl = ""
+        ),
+    )
 )
 
 private fun getTvSeasons() = listOf(

@@ -26,6 +26,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,7 @@ import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
+import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
@@ -51,10 +53,11 @@ fun EpisodesReleaseContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 16.dp)
     ) {
 
         Text(
-            text = "Episodes",
+            text =  stringResource(id = R.string.title_release),
             style = MaterialTheme.typography.h6,
             modifier = Modifier
                 .fillMaxWidth()
