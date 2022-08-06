@@ -40,6 +40,7 @@ multiplatform-paging = "0.4.7"
 squareup-leakcanary = "2.8.1"
 sqldelight = "1.5.3"
 turbine = "0.7.0"
+youtubePlayer = "11.0.1"
 
 testing-arch-core = "2.1.0"
 testing-junit = "4.13.2"
@@ -67,6 +68,7 @@ accompanist-pager-core = { module = "com.google.accompanist:accompanist-pager", 
 accompanist-pager-indicator = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 accompanist-insetsui = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
+accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
 
 androidx-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appCompat" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
@@ -119,6 +121,7 @@ kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
 snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
+youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "youtubePlayer" }
 
 multiplatform-paging-core = { module = "io.github.kuuuurt:multiplatform-paging", version.ref = "multiplatform-paging" }
 multiplatform-paging-ios-x64 = { module = "io.github.kuuuurt:multiplatform-paging-iosX64", version.ref = "multiplatform-paging" }
