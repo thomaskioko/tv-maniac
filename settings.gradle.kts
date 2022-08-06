@@ -24,6 +24,7 @@ include(
     ":android:features:shows-grid",
     ":android:features:settings",
     ":android:features:seasons",
+    ":android:features:video-player",
     ":shared:shared",
     ":shared:core:ui",
     ":shared:core:util",
