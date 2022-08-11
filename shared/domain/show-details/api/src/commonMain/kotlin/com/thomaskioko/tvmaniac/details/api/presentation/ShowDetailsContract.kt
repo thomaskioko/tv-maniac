@@ -35,7 +35,8 @@ sealed class ShowDetailEffect : Effect {
 
 data class ShowDetailViewState(
     val isLoading: Boolean = false,
-    val errorMessage: String = "",
+    val selectedVideoKey: String? = null,
+    val errorMessage: String? = null,
     val tvShow: TvShow = TvShow.EMPTY_SHOW,
     val similarShowList: List<TvShow> = emptyList(),
     val tvSeasonUiModels: List<SeasonUiModel> = emptyList(),
