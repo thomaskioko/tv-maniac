@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.shared.domain.trailers.implementation.di
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
+import com.thomaskioko.tvmaniac.shared.domain.trailers.api.ObserveTrailerInteractor
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerCache
 import com.thomaskioko.tvmaniac.shared.domain.trailers.implementation.TrailerCacheImpl
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerRepository
@@ -28,4 +29,10 @@ object TrailersModule {
         cache: TrailerCache,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): TrailerRepository = TrailerRepositoryImpl(tvShowsService, cache, ioDispatcher)
+
+    @Singleton
+    @Provides
+    fun provideObserveTrailerInteractor(
+        repository: TrailerRepository
+    ): ObserveTrailerInteractor = ObserveTrailerInteractor(repository)
 }
