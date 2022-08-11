@@ -35,11 +35,12 @@ class ObserveShowInteractor constructor(
         trailerRepository.observeTrailersByShowId(params),
     ) { show, similarShows, seasons, genre, lastAirEp, trailers ->
 
+        val tvShow = show.toTvShow()
         ShowDetailViewState(
-            tvShow = show.toTvShow(),
+            tvShow = tvShow,
             similarShowList = similarShows.toSimilarShowList(),
             tvSeasonUiModels = seasons.toSeasonsEntityList(),
-            genreUIList = genre.toGenreModelList(),
+            genreUIList = genre.toGenreModelList(tvShow.genreIds),
             lastAirEpList = lastAirEp.toLastAirEpisodeList(),
             trailersList = trailers.toTrailerList()
         )
