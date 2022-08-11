@@ -29,8 +29,10 @@
     <string name="empty_list">Could\'nt load seasons.</string>
     <string name="msg_empty_category">Could not load show category data!</string>
     <string name="msg_search_show_hint">Search TV Shows</string>
+    <string name="generic_error_message">"Oops! Something went wrong!"</string>
 
     <string name="str_more">More</string>
+    <string name="str_more_trailers">More Trailers</string>
 
     <string name="title_settings">Settings</string>
     <string name="title_all_seasons">All Seasons</string>
