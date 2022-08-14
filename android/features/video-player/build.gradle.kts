@@ -13,7 +13,7 @@ dependencies {
     api(project(":shared:core:util"))
     api(project(":shared:domain:trailers:api"))
 
-    implementation(projects.android.common.compose)
+    implementation(projects.android.core.compose)
 
     implementation(libs.coil)
     implementation(libs.youtubePlayer)

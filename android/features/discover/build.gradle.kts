@@ -11,7 +11,7 @@ android {
 dependencies {
     api(project(":shared:core:ui"))
     api(project(":shared:core:util"))
-    api(projects.android.common.compose)
+    api(projects.android.core.compose)
 
     api(libs.inject)
     api(libs.androidx.compose.material)
