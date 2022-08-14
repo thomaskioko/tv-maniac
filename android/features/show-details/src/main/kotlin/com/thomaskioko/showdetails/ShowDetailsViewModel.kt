@@ -34,7 +34,8 @@ class ShowDetailsViewModel @Inject constructor(
     override val coroutineScope: CoroutineScope
         get() = viewModelScope
 
-    override val state: MutableStateFlow<ShowDetailViewState> = MutableStateFlow(ShowDetailViewState.Empty)
+    override val state: MutableStateFlow<ShowDetailViewState> =
+        MutableStateFlow(ShowDetailViewState.Empty)
 
     private val uiEffects = MutableSharedFlow<ShowDetailEffect>(extraBufferCapacity = 100)
 
@@ -91,7 +92,9 @@ class ShowDetailsViewModel @Inject constructor(
                             )
                         )
                     }
-                    dispatch(ShowDetailAction.Error(it.message ?: "Something went wrong"))
+                    coroutineScope.launch {
+                        dispatch(ShowDetailAction.Error(it.message ?: "Something went wrong"))
+                    }
                 }
             }
         }
@@ -99,7 +102,9 @@ class ShowDetailsViewModel @Inject constructor(
 
     private fun updateWatchlist(action: UpdateFavorite) {
         updateFollowingInteractor.execute(action.params) {
-            onComplete { dispatch(ShowDetailAction.LoadShowDetails(showId)) }
+            onComplete {
+                coroutineScope.launch { dispatch(ShowDetailAction.LoadShowDetails(showId)) }
+            }
             onError {
                 coroutineScope.launch {
                     uiEffects.emit(

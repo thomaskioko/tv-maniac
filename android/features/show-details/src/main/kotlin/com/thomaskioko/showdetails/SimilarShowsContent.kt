@@ -25,7 +25,7 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
-fun SimilarShowsShowsContent(
+fun SimilarShowsContent(
     similarShows: List<TvShow>,
     onShowClicked: (Long) -> Unit = {}
 ) {
@@ -72,7 +72,7 @@ fun SimilarShowsShowsContent(
 fun SimilarShowsShowsContentPreview() {
     TvManiacTheme {
         Surface {
-            SimilarShowsShowsContent(
+            SimilarShowsContent(
                 similarShows = showList,
             )
         }
