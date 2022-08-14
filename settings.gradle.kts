@@ -13,9 +13,9 @@ rootProject.name = "tv-maniac"
 
 include(
     ":android:app",
-    ":android:common:compose",
-    ":android:common:navigation",
-    ":android:common:resources",
+    ":android:core:compose",
+    ":android:core:navigation",
+    ":android:core:resources",
     ":android:features:discover",
     ":android:features:home",
     ":android:features:search",

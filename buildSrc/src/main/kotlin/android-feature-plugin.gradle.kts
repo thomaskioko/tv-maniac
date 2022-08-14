@@ -49,8 +49,8 @@ tasks.withType<Test>().configureEach {
 }
 
 dependencies {
-    api(project(":android:common:navigation"))
-    implementation(project(":android:common:resources"))
+    api(project(":android:core:navigation"))
+    implementation(project(":android:core:resources"))
 
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)
