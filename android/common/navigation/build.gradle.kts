@@ -40,6 +40,7 @@ dependencies {
     api(libs.androidx.navigation.runtime)
 
     implementation(libs.androidx.compose.navigation)
+    implementation(libs.accompanist.navigation.material)
     implementation(libs.hilt.navigation)
 
     releaseImplementation(libs.androidx.compose.runtime)

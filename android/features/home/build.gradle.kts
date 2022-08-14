@@ -11,5 +11,6 @@ android {
 dependencies {
     implementation(projects.android.common.compose)
     implementation(libs.accompanist.insetsui)
+    implementation(libs.accompanist.navigation.material)
     implementation(libs.androidx.compose.material.icons)
 }
