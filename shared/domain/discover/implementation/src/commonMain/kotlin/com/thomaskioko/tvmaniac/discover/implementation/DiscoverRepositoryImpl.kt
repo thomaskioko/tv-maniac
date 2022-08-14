@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.core.util.getErrorMessage
+import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.datasource.cache.Category
@@ -38,7 +38,7 @@ class DiscoverRepositoryImpl(
             fetch = { fetchShowsApiRequest(categoryId) },
             saveFetchResult = { cacheResult(it, categoryId) },
             onFetchFailed = {
-                Logger.withTag("observeShowsByCategoryID").e { it.getErrorMessage() }
+                Logger.withTag("observeShowsByCategoryID").e { it.resolveError() }
             },
             coroutineDispatcher = dispatcher
         )

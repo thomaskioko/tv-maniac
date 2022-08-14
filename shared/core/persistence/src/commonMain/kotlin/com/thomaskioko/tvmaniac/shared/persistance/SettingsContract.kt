@@ -2,14 +2,15 @@ package com.thomaskioko.tvmaniac.shared.persistance
 
 import com.thomaskioko.tvmaniac.shared.core.ui.Action
 import com.thomaskioko.tvmaniac.shared.core.ui.Effect
-import com.thomaskioko.tvmaniac.shared.core.ui.State
 
-data class SettingsState(
+sealed class SettingsState
+
+data class SettingsContent(
     val theme: Theme,
     val showPopup: Boolean
-) : State {
+) : SettingsState() {
     companion object {
-        val DEFAULT = SettingsState(
+        val DEFAULT = SettingsContent(
             theme = Theme.SYSTEM,
             showPopup = false
         )

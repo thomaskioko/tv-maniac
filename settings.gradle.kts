@@ -24,6 +24,7 @@ include(
     ":android:features:shows-grid",
     ":android:features:settings",
     ":android:features:seasons",
+    ":android:features:video-player",
     ":shared:shared",
     ":shared:core:ui",
     ":shared:core:util",
@@ -48,4 +49,6 @@ include(
     ":shared:domain:show-common:api",
     ":shared:domain:discover:api",
     ":shared:domain:discover:implementation",
+    ":shared:domain:trailers:api",
+    ":shared:domain:trailers:implementation"
 )

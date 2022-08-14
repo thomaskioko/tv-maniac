@@ -8,6 +8,8 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.google.accompanist.navigation.material.bottomSheet
 
 inline fun <reified VM> NavGraphBuilder.viewModelComposable(
     route: String,
@@ -20,3 +22,18 @@ inline fun <reified VM> NavGraphBuilder.viewModelComposable(
         content(hiltViewModel(), navBackStackEntry)
     }
 }
+
+
+@OptIn(ExperimentalMaterialNavigationApi::class)
+inline fun <reified VM> NavGraphBuilder.viewModelBottomSheetComposable(
+    route: String,
+    arguments: List<NamedNavArgument> = emptyList(),
+    deepLinks: List<NavDeepLink> = emptyList(),
+    crossinline content: @Composable VM.(NavBackStackEntry) -> Unit
+) where VM : ViewModel {
+
+    bottomSheet(route, arguments, deepLinks) { navBackStackEntry ->
+            content(hiltViewModel(), navBackStackEntry)
+    }
+}
+

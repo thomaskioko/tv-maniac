@@ -13,7 +13,7 @@ data class ShowDetailResponse(
     @SerialName("homepage") val homepage: String,
     @SerialName("in_production") val in_production: Boolean,
     @SerialName("languages") val languages: List<String>,
-    @SerialName("last_air_date") val lastAirDate: String,
+    @SerialName("last_air_date") val lastAirDate: String?,
     @SerialName("name") val name: String,
     @SerialName("number_of_episodes") val numberOfEpisodes: Int,
     @SerialName("number_of_seasons") val numberOfSeasons: Int,

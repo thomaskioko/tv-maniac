@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -35,7 +36,7 @@ fun FollowingContent(
 ) {
 
     val watchlistViewState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = WatchlistState.Empty)
+        .collectAsState(initial = WatchlistLoaded.Empty)
 
     val scaffoldState = rememberScaffoldState()
 
@@ -51,7 +52,7 @@ fun FollowingContent(
         scaffoldState = scaffoldState,
         modifier = Modifier
             .statusBarsPadding()
-            .padding(bottom = 64.dp),
+            .navigationBarsPadding(),
         snackbarHost = { snackBarHostState ->
             SnackbarHost(
                 hostState = snackBarHostState,
@@ -63,7 +64,6 @@ fun FollowingContent(
                 },
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 64.dp)
                     .fillMaxWidth()
             )
         },
@@ -81,7 +81,7 @@ fun FollowingContent(
 
 @Composable
 private fun FollowingGridContent(
-    viewState: WatchlistState,
+    viewState: WatchlistLoaded,
     paddingValues: PaddingValues,
     onItemClicked: (Long) -> Unit,
 ) {

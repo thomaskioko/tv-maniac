@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.settings
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.settings.util.MainCoroutineRule
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsState
+import com.thomaskioko.tvmaniac.shared.persistance.SettingsContent
 import com.thomaskioko.tvmaniac.shared.persistance.Theme
 import com.thomaskioko.tvmaniac.shared.persistance.TvManiacPreferences
 import io.kotest.matchers.shouldBe
@@ -35,7 +35,7 @@ internal class SettingsViewModelTest {
 
         viewModel.observeState().test {
             viewModel.dispatch(SettingsActions.ThemeSelected("light"))
-            awaitItem() shouldBe SettingsState(
+            awaitItem() shouldBe SettingsContent(
                 theme = Theme.LIGHT,
                 showPopup = false
             )

@@ -7,13 +7,13 @@ import com.kuuurt.paging.multiplatform.PagingData
 import com.kuuurt.paging.multiplatform.PagingResult
 import com.kuuurt.paging.multiplatform.helpers.cachedIn
 import com.thomaskioko.tvmaniac.core.util.CommonFlow
+import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.asCommonFlow
-import com.thomaskioko.tvmaniac.core.util.getErrorMessage
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.details.api.cache.ShowCategoryCache
-import com.thomaskioko.tvmaniac.details.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.showcommon.api.repository.TvShowsRepository
 import com.thomaskioko.tvmaniac.details.implementation.mapper.toAirEp
 import com.thomaskioko.tvmaniac.details.implementation.mapper.toShow
 import com.thomaskioko.tvmaniac.details.implementation.mapper.toShowList
@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 
 private const val DEFAULT_API_PAGE = 1
 
+//TODO:: Move this to common implementation module
 class TvShowsRepositoryImpl(
     private val apiService: TvShowsService,
     private val tvShowCache: TvShowCache,
@@ -45,7 +46,7 @@ class TvShowsRepositoryImpl(
         shouldFetch = { it?.status.isNullOrBlank() },
         fetch = { apiService.getTvShowDetails(tvShowId) },
         saveFetchResult = { mapAndInsert(tvShowId, it) },
-        onFetchFailed = { Logger.withTag("observeShow").e { it.getErrorMessage() } },
+        onFetchFailed = { Logger.withTag("observeShow").e { it.resolveError() } },
         coroutineDispatcher = dispatcher
     )
 
