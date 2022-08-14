@@ -24,7 +24,9 @@ dependencies {
 
     implementation(libs.coil)
     implementation(libs.snapper)
+    implementation(libs.youtubePlayer)
     implementation(libs.accompanist.insetsui)
+    implementation(libs.accompanist.navigation.material)
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.compose.material.icons)
 }
