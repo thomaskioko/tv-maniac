@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
-import com.thomaskioko.tvmaniac.seasons.api.interactor.ObserveSeasonsInteractor
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsCacheImpl
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsRepositoryImpl
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
@@ -36,10 +35,4 @@ object SeasonsModule {
         seasonCache,
         ioDispatcher
     )
-
-    @Singleton
-    @Provides
-    fun provideTvShowSeasonsInteractor(
-        repository: SeasonsRepository
-    ): ObserveSeasonsInteractor = ObserveSeasonsInteractor(repository)
 }

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thomaskioko.tvmaniac.core.util.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.shared.core.ui.Store
-import com.thomaskioko.tvmaniac.show_grid.domain.ObserveShowsByCategoryInteractor
+import com.thomaskioko.tvmaniac.details.api.interactor.ObserveShowsByCategoryInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -19,22 +19,22 @@ import javax.inject.Inject
 class ShowGridViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val interactor: ObserveShowsByCategoryInteractor
-) : Store<ShowsGridState, ShowsGridAction, ShowsGridEffect>,
+) : Store<ShowsLoaded, ShowsGridAction, ShowsGridEffect>,
     CoroutineScopeOwner, ViewModel() {
+
+    private val sideEffect = MutableSharedFlow<ShowsGridEffect>()
+    val showType: Int = savedStateHandle["showType"]!!
 
     override val coroutineScope: CoroutineScope
         get() = viewModelScope
 
-    val showType: Int = savedStateHandle.get("showType")!!
-
-    private val state = MutableStateFlow(ShowsGridState.Empty)
-    private val sideEffect = MutableSharedFlow<ShowsGridEffect>()
+    override val state = MutableStateFlow(ShowsLoaded.Empty)
 
     init {
         dispatch(ShowsGridAction.LoadTvShows)
     }
 
-    override fun observeState(): StateFlow<ShowsGridState> = state
+    override fun observeState(): StateFlow<ShowsLoaded> = state
 
     override fun observeSideEffect(): Flow<ShowsGridEffect> = sideEffect
 

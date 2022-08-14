@@ -2,15 +2,16 @@ package com.thomaskioko.tvmaniac.following
 
 import com.thomaskioko.tvmaniac.shared.core.ui.Action
 import com.thomaskioko.tvmaniac.shared.core.ui.Effect
-import com.thomaskioko.tvmaniac.shared.core.ui.State
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 
-data class WatchlistState(
+sealed class WatchlistState
+
+data class WatchlistLoaded(
     val isLoading: Boolean,
     val list: List<TvShow>
-) : State {
+) : WatchlistState() {
     companion object {
-        val Empty = WatchlistState(
+        val Empty = WatchlistLoaded(
             isLoading = true,
             list = emptyList()
         )

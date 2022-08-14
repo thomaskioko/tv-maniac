@@ -58,6 +58,7 @@ import com.google.accompanist.insets.ui.Scaffold
 import com.thomaskioko.tvmaniac.compose.components.ChoiceChipContent
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
+import com.thomaskioko.tvmaniac.compose.components.ErrorView
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.ExtendedFab
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
@@ -68,13 +69,14 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.details.api.interactor.UpdateShowParams
-import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.BookmarkEpisode
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.UpdateFavorite
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailEffect
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
 import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
+import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 
 private val HeaderHeight = 550.dp
@@ -85,13 +87,15 @@ fun ShowDetailScreen(
     navigateUp: () -> Unit,
     onShowClicked: (Long) -> Unit,
     onSeasonClicked: (Long, String) -> Unit = { _, _ -> },
-    onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> }
+    onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> },
+    onWatchTrailerClicked: (Long, String?) -> Unit = { _, _ -> }
 ) {
 
     val viewState by rememberFlowWithLifecycle(viewModel.observeState())
         .collectAsState(initial = ShowDetailViewState.Empty)
 
     val scaffoldState = rememberScaffoldState()
+    val listState = rememberLazyListState()
 
     LaunchedEffect(viewModel) {
         viewModel.observeSideEffect().collect {
@@ -106,7 +110,6 @@ fun ShowDetailScreen(
         }
     }
 
-    val listState = rememberLazyListState()
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -120,16 +123,21 @@ fun ShowDetailScreen(
         content = { contentPadding ->
 
             Surface(modifier = Modifier.fillMaxWidth()) {
-                TvShowDetailsScrollingContent(
-                    detailUiState = viewState,
-                    listState = listState,
-                    contentPadding = contentPadding,
-                    onSeasonClicked = onSeasonClicked,
-                    onEpisodeClicked = onEpisodeClicked,
-                    onShowClicked = onShowClicked,
-                    onUpdateFavoriteClicked = { viewModel.dispatch(UpdateFavorite(it)) },
-                    onBookmarkEpClicked = { viewModel.dispatch(ShowDetailAction.BookmarkEpisode(it)) }
-                )
+                if (viewState.errorMessage.isNullOrEmpty()) {
+                    TvShowDetailsScrollingContent(
+                        detailUiState = viewState,
+                        listState = listState,
+                        contentPadding = contentPadding,
+                        onSeasonClicked = onSeasonClicked,
+                        onEpisodeClicked = onEpisodeClicked,
+                        onShowClicked = onShowClicked,
+                        onUpdateFavoriteClicked = { viewModel.dispatch(UpdateFavorite(it)) },
+                        onBookmarkEpClicked = { viewModel.dispatch(BookmarkEpisode(it)) },
+                        onWatchTrailerClicked = onWatchTrailerClicked
+                    )
+                } else {
+                    ErrorView()
+                }
             }
         }
     )
@@ -184,7 +192,8 @@ private fun TvShowDetailsScrollingContent(
     onSeasonClicked: (Long, String) -> Unit = { _, _ -> },
     onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> },
     onBookmarkEpClicked: (Long) -> Unit = { },
-    onShowClicked: (Long) -> Unit = {}
+    onShowClicked: (Long) -> Unit = {},
+    onWatchTrailerClicked: (Long, String?) -> Unit = { _, _ -> },
 ) {
 
     LazyColumn(
@@ -196,17 +205,19 @@ private fun TvShowDetailsScrollingContent(
             HeaderViewContent(
                 detailUiState = detailUiState,
                 listState = listState,
-                onUpdateFavoriteClicked = onUpdateFavoriteClicked
+                onUpdateFavoriteClicked = onUpdateFavoriteClicked,
+                onWatchTrailerClicked = onWatchTrailerClicked
             )
         }
 
         item {
-            MoreBodyContent(
+            BodyContent(
                 detailUiState = detailUiState,
                 onSeasonClicked = onSeasonClicked,
                 onEpisodeClicked = onEpisodeClicked,
                 onBookmarkEpClicked = onBookmarkEpClicked,
-                onShowClicked = onShowClicked
+                onShowClicked = onShowClicked,
+                onWatchTrailerClicked = onWatchTrailerClicked
             )
         }
 
@@ -219,7 +230,8 @@ private fun TvShowDetailsScrollingContent(
 private fun HeaderViewContent(
     detailUiState: ShowDetailViewState,
     listState: LazyListState,
-    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit
+    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
+    onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -241,8 +253,10 @@ private fun HeaderViewContent(
 
         Body(
             tvShow = detailUiState.tvShow,
-            genreUIS = detailUiState.genreUIList,
-            onUpdateFavoriteClicked = onUpdateFavoriteClicked
+            trailerList = detailUiState.trailersList,
+            genreList = detailUiState.genreUIList,
+            onUpdateFavoriteClicked = onUpdateFavoriteClicked,
+            onWatchTrailerClicked = onWatchTrailerClicked
         )
     }
 }
@@ -261,8 +275,10 @@ private fun HeaderImage(backdropImageUrl: String) {
 @Composable
 private fun Body(
     tvShow: TvShow,
-    genreUIS: List<GenreUIModel>,
-    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit
+    trailerList: List<Trailer>,
+    genreList: List<GenreUIModel>,
+    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
+    onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
     val surfaceGradient = backgroundGradient().reversed()
 
@@ -302,8 +318,10 @@ private fun Body(
 
             TvShowMetadata(
                 tvShow = tvShow,
-                genreUIList = genreUIS,
+                trailerList = trailerList,
+                genreUIList = genreList,
                 onUpdateFavoriteClicked = onUpdateFavoriteClicked,
+                onWatchTrailerClicked = onWatchTrailerClicked
             )
         }
 
@@ -314,9 +332,10 @@ private fun Body(
 @Composable
 fun TvShowMetadata(
     tvShow: TvShow,
+    trailerList: List<Trailer>,
     genreUIList: List<GenreUIModel>,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
-    onWatchTrailerClicked: () -> Unit = {},
+    onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
     val resources = LocalContext.current.resources
 
@@ -370,31 +389,25 @@ fun TvShowMetadata(
 
     ColumnSpacer(8)
 
-    GenreText(genreUIList, tvShow.genreIds)
+    GenreText(genreUIList)
 
     ColumnSpacer(8)
 
     ShowDetailButtons(
         tvShow = tvShow,
+        trailerList = trailerList,
         onUpdateFavoriteClicked = onUpdateFavoriteClicked,
         onWatchTrailerClicked = onWatchTrailerClicked
     )
 }
 
 @Composable
-private fun GenreText(
-    genreUIList: List<GenreUIModel>,
-    genreIds: List<Int>,
-) {
-
-    val result = genreUIList.filter { genre ->
-        genreIds.any { id -> genre.id == id }
-    }
+private fun GenreText(genreUIList: List<GenreUIModel>) {
 
     LazyRow(
         modifier = Modifier.fillMaxWidth()
     ) {
-        items(result) { item ->
+        items(genreUIList) { item ->
             RowSpacer(4)
 
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
@@ -418,8 +431,9 @@ private fun GenreText(
 @Composable
 fun ShowDetailButtons(
     tvShow: TvShow,
+    trailerList: List<Trailer>,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
-    onWatchTrailerClicked: () -> Unit = {},
+    onWatchTrailerClicked: (Long, String?) -> Unit = { _, _ -> },
 ) {
 
     Row(
@@ -429,7 +443,7 @@ fun ShowDetailButtons(
         ExtendedFab(
             painter = painterResource(id = R.drawable.ic_trailer_24),
             text = stringResource(id = R.string.btn_trailer),
-            onClick = { onWatchTrailerClicked() }
+            onClick = { onWatchTrailerClicked(tvShow.id, trailerList.firstOrNull()?.key) }
         )
 
         RowSpacer(value = 8)
@@ -458,44 +472,39 @@ fun ShowDetailButtons(
 }
 
 @Composable
-private fun MoreBodyContent(
+private fun BodyContent(
     detailUiState: ShowDetailViewState,
     onSeasonClicked: (Long, String) -> Unit,
     onBookmarkEpClicked: (Long) -> Unit,
     onEpisodeClicked: (Long, Long) -> Unit,
-    onShowClicked: (Long) -> Unit
+    onShowClicked: (Long) -> Unit,
+    onWatchTrailerClicked: (Long, String) -> Unit
 ) {
     LoadingItem(
         isLoading = detailUiState.tvSeasonUiModels.isEmpty()
     ) {
         ColumnSpacer(16)
 
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(id = R.string.title_seasons),
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+        SeasonsContent(
+            seasonUiModelList = detailUiState.tvSeasonUiModels,
+            onSeasonClicked = onSeasonClicked,
+            modifier = Modifier.fillMaxWidth()
+        )
 
-            ShowSeasonsTabs(
-                seasonUiModelList = detailUiState.tvSeasonUiModels,
-                onSeasonClicked = onSeasonClicked,
-                modifier = Modifier.fillMaxWidth()
-            )
+        EpisodesReleaseContent(
+            episodeList = detailUiState.lastAirEpList,
+            onEpisodeClicked = onEpisodeClicked,
+            onBookmarkEpClicked = onBookmarkEpClicked
+        )
 
-            EpisodesReleaseContent(
-                episodeList = detailUiState.lastAirEpList,
-                onEpisodeClicked = onEpisodeClicked,
-                onBookmarkEpClicked = onBookmarkEpClicked
-            )
-        }
+        TrailersContent(
+            trailersList = detailUiState.trailersList,
+            onTrailerClicked = { videoKey ->
+                onWatchTrailerClicked(detailUiState.tvShow.id, videoKey)
+            }
+        )
 
-        SimilarShowsShowsContent(
+        SimilarShowsContent(
             similarShows = detailUiState.similarShowList,
             onShowClicked = onShowClicked
         )
@@ -503,32 +512,46 @@ private fun MoreBodyContent(
 }
 
 @Composable
-private fun ShowSeasonsTabs(
+private fun SeasonsContent(
     seasonUiModelList: List<SeasonUiModel>,
     modifier: Modifier,
     onSeasonClicked: (Long, String) -> Unit = { _, _ -> }
 ) {
-    val selectedIndex by remember { mutableStateOf(0) }
-
-    ScrollableTabRow(
-        selectedTabIndex = selectedIndex,
-        divider = {}, /* Disable the built-in divider */
-        indicator = {},
-        edgePadding = 0.dp,
-        backgroundColor = Color.Transparent,
-        modifier = modifier.fillMaxWidth()
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
     ) {
-        seasonUiModelList.forEach { season ->
-            Tab(
-                selected = true,
-                onClick = { onSeasonClicked(season.tvShowId, season.name) }
-            ) {
-                ChoiceChipContent(
-                    text = season.name,
+
+        Text(
+            text = stringResource(id = R.string.title_seasons),
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+
+        val selectedIndex by remember { mutableStateOf(0) }
+
+        ScrollableTabRow(
+            selectedTabIndex = selectedIndex,
+            divider = {}, /* Disable the built-in divider */
+            indicator = {},
+            edgePadding = 0.dp,
+            backgroundColor = Color.Transparent,
+            modifier = modifier.fillMaxWidth()
+        ) {
+            seasonUiModelList.forEach { season ->
+                Tab(
                     selected = true,
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp, vertical = 8.dp)
-                )
+                    onClick = { onSeasonClicked(season.tvShowId, season.name) }
+                ) {
+                    ChoiceChipContent(
+                        text = season.name,
+                        selected = true,
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp, vertical = 8.dp)
+                    )
+                }
             }
         }
     }
@@ -546,7 +569,7 @@ fun TvShowDetailsScrollingPreview() {
                 contentPadding = PaddingValues(),
                 onUpdateFavoriteClicked = {},
                 onShowClicked = {},
-                onSeasonClicked = { _, _ -> }
+                onSeasonClicked = { _, _ -> },
             )
         }
     }

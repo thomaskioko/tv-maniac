@@ -17,20 +17,21 @@ import javax.inject.Inject
 @HiltViewModel
 class FollowingViewModel @Inject constructor(
     private val interactor: ObserveFollowingInteractor,
-) : Store<WatchlistState, WatchlistAction, WatchlistEffect>,
+) : Store<WatchlistLoaded, WatchlistAction, WatchlistEffect>,
     CoroutineScopeOwner, ViewModel() {
 
     override val coroutineScope: CoroutineScope
         get() = viewModelScope
 
-    private val state = MutableStateFlow(WatchlistState.Empty)
+    override val state: MutableStateFlow<WatchlistLoaded> = MutableStateFlow(WatchlistLoaded.Empty)
+
     private val sideEffect = MutableSharedFlow<WatchlistEffect>()
 
     init {
         dispatch(WatchlistAction.LoadWatchlist)
     }
 
-    override fun observeState(): StateFlow<WatchlistState> = state
+    override fun observeState(): StateFlow<WatchlistLoaded> = state
 
     override fun observeSideEffect(): Flow<WatchlistEffect> = sideEffect
 

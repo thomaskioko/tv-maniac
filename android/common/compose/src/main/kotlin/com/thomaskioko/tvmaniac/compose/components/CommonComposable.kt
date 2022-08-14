@@ -49,7 +49,7 @@ import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun ErrorView(
-    message: String = "Oops! Something went wrong!"
+    message: String? = null
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -65,7 +65,7 @@ fun ErrorView(
         ColumnSpacer(value = 12)
 
         Text(
-            text = message,
+            text = message ?: stringResource(id = R.string.generic_error_message),
             style = MaterialTheme.typography.overline,
             textAlign = TextAlign.Center,
             lineHeight = 20.sp,
@@ -106,6 +106,8 @@ fun EmptyContentView(
                     .padding(horizontal = 48.dp),
             )
         }
+
+        //TODO:: Add Retry
     }
 }
 

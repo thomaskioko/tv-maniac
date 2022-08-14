@@ -110,6 +110,7 @@ I wrote an article, [Going Modular — The Kotlin Multiplatform Way](https://med
 * [Dagger Hilt](https://dagger.dev/hilt) - dependency injection.
 * [KenBurnsView](https://github.com/flavioarfaria/KenBurnsView) - Immersive image.
 * [Leakcanary](https://github.com/square/leakcanary) - Memory leak detection.
+* [Android-youtube-player](https://github.com/PierfrancescoSoffritti/android-youtube-player) - Youtube Player
 
 ### Kmp - Common
 * [Ktor](https://ktor.io/) - Networking

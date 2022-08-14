@@ -1,8 +1,9 @@
 package com.thomaskioko.tvmaniac.home
 
-import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -31,12 +32,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.plusAssign
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.google.accompanist.navigation.material.ModalBottomSheetLayout
+import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import com.thomaskioko.tvmaniac.navigation.addNavigation
 import com.thomaskioko.tvmaniac.resources.R
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun HomeScreen(
     composeNavigationFactories: Set<ComposeNavigationFactory>
@@ -44,39 +49,46 @@ fun HomeScreen(
 
     val navController = rememberNavController()
     val route = currentRoute(navController)
+    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    navController.navigatorProvider += bottomSheetNavigator
 
     Scaffold(
         modifier = Modifier
             .navigationBarsPadding(),
         bottomBar = {
             val currentSelectedItem by navController.currentScreenAsState()
-            when {
-                !route.contains(NavigationScreen.ShowDetailsNavScreen.route) &&
-                    !route.contains(NavigationScreen.ShowGridNavScreen.route) &&
-                    !route.contains(NavigationScreen.SeasonsNavScreen.route)
-                -> {
-                    TvManiacBottomNavigation(
-                        onNavigationSelected = { selected ->
-                            navController.navigate(selected.route) {
-                                launchSingleTop = true
-                                restoreState = true
+            val showBottomBar = route in listOf(
+                NavigationScreen.DiscoverNavScreen.route,
+                NavigationScreen.SettingsScreen.route,
+                NavigationScreen.WatchlistNavScreen.route,
+                NavigationScreen.SearchNavScreen.route,
+                NavigationScreen.SettingsScreen.route,
+            )
+            AnimatedVisibility(visible = showBottomBar) {
+                TvManiacBottomNavigation(
+                    onNavigationSelected = { selected ->
+                        navController.navigate(selected.route) {
+                            launchSingleTop = true
+                            restoreState = true
 
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
                             }
-                        },
-                        currentSelectedItem = currentSelectedItem
-                    )
-                }
+                        }
+                    },
+                    currentSelectedItem = currentSelectedItem
+                )
             }
         }
-    ) {
-        NavHost(
-            navController = navController,
-            startDestination = NavigationScreen.DiscoverNavScreen.route
-        ) {
-            composeNavigationFactories.addNavigation(this, navController)
+    ) { contentPadding ->
+        ModalBottomSheetLayout(bottomSheetNavigator) {
+            NavHost(
+                navController = navController,
+                startDestination = NavigationScreen.DiscoverNavScreen.route,
+                modifier = Modifier.padding(contentPadding)
+            ) {
+                composeNavigationFactories.addNavigation(this, navController)
+            }
         }
     }
 }

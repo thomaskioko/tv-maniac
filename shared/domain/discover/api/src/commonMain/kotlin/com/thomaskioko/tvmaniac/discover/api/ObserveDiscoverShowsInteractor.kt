@@ -2,10 +2,9 @@ package com.thomaskioko.tvmaniac.discover.api
 
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.core.util.network.Status
 import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.discover.api.repository.DiscoverRepository
-import com.thomaskioko.tvmaniac.showcommon.api.mapper.toTvShowList
+import com.thomaskioko.tvmaniac.discover.api.mapper.toTvShowList
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.POPULAR
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.TOP_RATED
@@ -40,7 +39,6 @@ class ObserveDiscoverShowsInteractor constructor(
 
     private fun Flow<Resource<List<Show>>>.toShowData(category: ShowCategory) = map {
         DiscoverShowResult.DiscoverShowsData(
-            isLoading = it.status == Status.LOADING,
             category = category,
             tvShows = it.data?.toTvShowList() ?: emptyList(),
             errorMessage = it.throwable?.message

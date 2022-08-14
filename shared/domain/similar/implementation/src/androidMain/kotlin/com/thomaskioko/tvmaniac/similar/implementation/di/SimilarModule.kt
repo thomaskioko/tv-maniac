@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
-import com.thomaskioko.tvmaniac.similar.api.ObserveSimilarShowsInteractor
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowCacheImpl
@@ -41,9 +40,4 @@ object SimilarModule {
             dispatcher = ioDispatcher
         )
 
-    @Singleton
-    @Provides
-    fun provideObserveObserveSimilarShowsInteractor(
-        repository: SimilarShowsRepository
-    ): ObserveSimilarShowsInteractor = ObserveSimilarShowsInteractor(repository)
 }

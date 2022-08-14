@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -44,6 +46,7 @@ import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
+import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
 import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
 import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
@@ -56,9 +59,12 @@ import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
+import com.thomaskioko.tvmaniac.discover.api.DataLoaded
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowState
+import com.thomaskioko.tvmaniac.discover.api.ErrorState
+import com.thomaskioko.tvmaniac.discover.api.Loading
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
@@ -72,6 +78,7 @@ import kotlin.math.absoluteValue
  * 3:1 which is the minimum for user-interface components.
  */
 private const val MinContrastOfPrimaryVsSurface = 3f
+
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverViewModel,
@@ -82,7 +89,7 @@ fun DiscoverScreen(
     val scaffoldState = rememberScaffoldState()
 
     val discoverViewState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = DiscoverShowState.Empty)
+        .collectAsState(initial = Loading)
 
     LaunchedEffect(Unit) {
         viewModel.observeSideEffect().collect {
@@ -120,53 +127,79 @@ private fun DiscoverShows(
                 },
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 64.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
         },
     ) { contentPadding ->
-        if (discoverViewState.isLoading) FullScreenLoading()
 
-        LazyColumn(
-            contentPadding = contentPadding.copy(copyTop = false),
-            modifier = Modifier
-                .imePadding()
-                .animateContentSize(),
-        ) {
-
-            item {
-                FeaturedItems(
-                    showData = discoverViewState.showData.featuredShows,
-                    onItemClicked = { openShowDetails(it) }
+        when (discoverViewState) {
+            Loading -> FullScreenLoading()
+            is ErrorState -> {
+                EmptyContentView(
+                    painter = painterResource(id = R.drawable.ic_watchlist_empty),
+                    message = discoverViewState.message
+                )
+            }
+            is DataLoaded -> {
+                DiscoverViewScrollingContent(
+                    contentPadding,
+                    discoverViewState,
+                    openShowDetails,
+                    moreClicked
                 )
             }
 
-            item {
-                DisplayShowData(
-                    category = discoverViewState.showData.trendingShows.category,
-                    tvShows = discoverViewState.showData.trendingShows.tvShows,
-                    onItemClicked = { openShowDetails(it) },
-                    moreClicked = { moreClicked(it) }
-                )
-            }
+        }
+    }
+}
 
-            item {
-                DisplayShowData(
-                    category = discoverViewState.showData.popularShows.category,
-                    tvShows = discoverViewState.showData.popularShows.tvShows,
-                    onItemClicked = { openShowDetails(it) },
-                    moreClicked = { moreClicked(it) }
-                )
-            }
+@Composable
+private fun DiscoverViewScrollingContent(
+    contentPadding: PaddingValues,
+    discoverViewState: DataLoaded,
+    openShowDetails: (showId: Long) -> Unit,
+    moreClicked: (showType: Int) -> Unit
+) {
+    LazyColumn(
+        contentPadding = contentPadding.copy(copyTop = false),
+        modifier = Modifier
+            .imePadding()
+            .navigationBarsPadding()
+            .animateContentSize(),
+    ) {
 
-            item {
-                DisplayShowData(
-                    category = discoverViewState.showData.topRatedShows.category,
-                    tvShows = discoverViewState.showData.topRatedShows.tvShows,
-                    onItemClicked = { openShowDetails(it) },
-                    moreClicked = { moreClicked(it) }
-                )
-            }
+        item {
+            FeaturedItems(
+                showData = discoverViewState.showData.featuredShows,
+                onItemClicked = { openShowDetails(it) }
+            )
+        }
+
+        item {
+            DisplayShowData(
+                category = discoverViewState.showData.trendingShows.category,
+                tvShows = discoverViewState.showData.trendingShows.tvShows,
+                onItemClicked = { openShowDetails(it) },
+                moreClicked = { moreClicked(it) }
+            )
+        }
+
+        item {
+            DisplayShowData(
+                category = discoverViewState.showData.popularShows.category,
+                tvShows = discoverViewState.showData.popularShows.tvShows,
+                onItemClicked = { openShowDetails(it) },
+                moreClicked = { moreClicked(it) }
+            )
+        }
+
+        item {
+            DisplayShowData(
+                category = discoverViewState.showData.topRatedShows.category,
+                tvShows = discoverViewState.showData.topRatedShows.tvShows,
+                onItemClicked = { openShowDetails(it) },
+                moreClicked = { moreClicked(it) }
+            )
         }
     }
 }

@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.shared.domain.lastairepisodes.implementation.di
 import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisodeRepository
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
-import com.thomaskioko.tvmaniac.lastairepisodes.api.ObserveAirEpisodesInteractor
 import com.thomaskioko.tvmaniac.lastairepisodes.implementation.LastAirEpisodeRepositoryImpl
 import com.thomaskioko.tvmaniac.lastairepisodes.implementation.LastEpisodeAirCacheImpl
 import dagger.Module
@@ -27,10 +26,4 @@ object LastAirEpisodeModule {
     fun provideLastAirEpisodeRepository(
         cache: LastEpisodeAirCache,
     ): LastAirEpisodeRepository = LastAirEpisodeRepositoryImpl(cache)
-
-    @Singleton
-    @Provides
-    fun provideObserveAirEpisodesInteractor(
-        repository: LastAirEpisodeRepository
-    ): ObserveAirEpisodesInteractor = ObserveAirEpisodesInteractor(repository)
 }

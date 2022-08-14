@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
@@ -39,7 +40,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.insets.statusBarsPadding
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
@@ -47,7 +47,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsState
+import com.thomaskioko.tvmaniac.shared.persistance.SettingsContent
 import com.thomaskioko.tvmaniac.shared.persistance.Theme
 
 @Composable
@@ -57,7 +57,7 @@ fun SettingsScreen(
 ) {
 
     val themeState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = SettingsState.DEFAULT)
+        .collectAsState(initial = SettingsContent.DEFAULT)
 
     Scaffold(
         topBar = {
@@ -102,7 +102,7 @@ fun SettingsScreen(
 
 @Composable
 fun SettingsList(
-    settingsState: SettingsState,
+    settingsState: SettingsContent,
     onThemeChanged: (String) -> Unit,
     onThemeClicked: () -> Unit,
     onDismissTheme: () -> Unit,
@@ -129,7 +129,7 @@ fun SettingsList(
 
 @Composable
 private fun ThemeSettingsItem(
-    settingsState: SettingsState,
+    settingsState: SettingsContent,
     onThemeSelected: (String) -> Unit,
     onThemeClicked: () -> Unit,
     onDismissTheme: () -> Unit
@@ -346,7 +346,7 @@ private fun SettingListDivider() {
 fun SettingsPropertyPreview() {
     TvManiacTheme {
         SettingsList(
-            settingsState = SettingsState.DEFAULT,
+            settingsState = SettingsContent.DEFAULT,
             onThemeChanged = {},
             onThemeClicked = {},
             onDismissTheme = {}

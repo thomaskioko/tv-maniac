@@ -19,10 +19,14 @@ dependencies {
     api(projects.shared.domain.seasons.api)
     api(project(":shared:domain:show-common:api"))
     api(project(":shared:domain:last-air-episodes:api"))
+    api(project(":shared:domain:trailers:api"))
     implementation(project(":android:common:compose"))
 
+    implementation(libs.coil)
     implementation(libs.snapper)
+    implementation(libs.youtubePlayer)
     implementation(libs.accompanist.insetsui)
+    implementation(libs.accompanist.navigation.material)
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.compose.material.icons)
 }

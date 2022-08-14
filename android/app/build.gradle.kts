@@ -21,6 +21,7 @@ dependencies {
     implementation(projects.android.features.following)
     implementation(projects.android.features.settings)
     implementation(projects.android.features.seasons)
+    implementation(projects.android.features.videoPlayer)
 
     implementation(libs.androidx.compose.activity)
     implementation(libs.accompanist.systemuicontroller)

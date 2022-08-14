@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.core.util.getErrorMessage
+import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
@@ -26,7 +26,7 @@ class EpisodeRepositoryImpl(
         shouldFetch = { it.isNullOrEmpty() },
         fetch = { apiService.getSeasonDetails(tvShowId, seasonNumber) },
         saveFetchResult = { episodesCache.insert(it.toEpisodeCacheList()) },
-        onFetchFailed = { Logger.withTag("observeSeasonEpisodes").e(it.getErrorMessage()) },
+        onFetchFailed = { Logger.withTag("observeSeasonEpisodes").e(it.resolveError()) },
         coroutineDispatcher = dispatcher
     )
 }

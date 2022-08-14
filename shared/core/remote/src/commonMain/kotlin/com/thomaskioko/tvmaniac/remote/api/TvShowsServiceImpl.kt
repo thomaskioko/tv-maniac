@@ -53,7 +53,7 @@ class TvShowsServiceImpl(
         return httpClient.get("3/genre/tv/list")
     }
 
-    override suspend fun getTrailers(showId: Int): TrailersResponse {
+    override suspend fun getTrailers(showId: Long): TrailersResponse {
         return httpClient.get("3/tv/$showId/videos")
     }
 }

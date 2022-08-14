@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.shared.core.ui.Store
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsEffect
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsState
+import com.thomaskioko.tvmaniac.shared.persistance.SettingsContent
 import com.thomaskioko.tvmaniac.shared.persistance.TvManiacPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -21,16 +21,17 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val themePreference: TvManiacPreferences,
     @DefaultDispatcher private val ioDispatcher: CoroutineDispatcher
-) : Store<SettingsState, SettingsActions, SettingsEffect>, ViewModel() {
+) : Store<SettingsContent, SettingsActions, SettingsEffect>, ViewModel() {
 
-    private val state = MutableStateFlow(SettingsState.DEFAULT)
+    override val state = MutableStateFlow(SettingsContent.DEFAULT)
+
     private val sideEffect = MutableSharedFlow<SettingsEffect>()
 
     init {
         dispatch(SettingsActions.LoadTheme)
     }
 
-    override fun observeState(): StateFlow<SettingsState> = state
+    override fun observeState(): StateFlow<SettingsContent> = state
 
     override fun observeSideEffect(): Flow<SettingsEffect> = sideEffect
 
