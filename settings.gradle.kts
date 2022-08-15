@@ -16,6 +16,7 @@ include(
     ":android:core:compose",
     ":android:core:navigation",
     ":android:core:resources",
+    ":android:core:workmanager",
     ":android:features:discover",
     ":android:features:home",
     ":android:features:search",
