@@ -13,6 +13,7 @@ dependencies {
 
     implementation(projects.android.core.compose)
     implementation(projects.android.core.navigation)
+    implementation(projects.android.core.workmanager)
     implementation(projects.android.features.discover)
     implementation(projects.android.features.home)
     implementation(projects.android.features.search)
