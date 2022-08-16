@@ -141,11 +141,13 @@ private fun ThemeSettingsItem(
         Theme.SYSTEM -> stringResource(R.string.settings_title_theme_system)
     }
 
-    ColumnSpacer(value = 16)
+    ColumnSpacer(value = 8)
 
     SettingHeaderTitle(
         title = stringResource(R.string.settings_title_ui),
     )
+
+    ColumnSpacer(value = 8)
 
     Row(
         modifier = Modifier
