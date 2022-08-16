@@ -1,11 +1,11 @@
 [versions]
 kotlin = "1.6.10"
 
-android-compile = "31"
+android-compile = "33"
 android-target = "31"
 android-min = "23"
 
-android-gradle = "7.2.0"
+android-gradle = "7.4.0-alpha09"
 date-time = "0.3.2"
 
 accompanist = "0.24.6-alpha"
@@ -13,7 +13,7 @@ snapper = "0.2.0"
 
 androidx-activity = "1.4.0"
 androidx-appCompat = "1.4.0"
-androidx-core = "1.9.0-alpha02"
+androidx-core = "1.8.0"
 androidx-compose = "1.2.0-alpha07"
 compose-compiler = "1.2.0-alpha07"
 androidx-composePaging = "1.0.0-alpha14"
@@ -23,13 +23,15 @@ androidx-lifecycle = "2.5.0-alpha06"
 androidx-navigation = "2.5.0-alpha04"
 androidx-palette = "1.0.0"
 androidx-paging = "3.1.0"
+androidx-workManager = "2.7.1"
 
 coil = "1.4.0"
 coroutines = "1.6.1"
 dagger = "2.41"
 desugar = "1.1.5"
-hilt = "2.41"
+hilt = "2.43.2"
 hiltNavigation = "1.0.0"
+hiltWork = "1.0.0"
 inject = "1"
 kenburns = "1.0.7"
 kermit = "1.0.3"
@@ -74,6 +76,7 @@ androidx-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "a
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
 androidx-palette = { module = "androidx.palette:palette-ktx", version.ref = "androidx-palette" }
+androidx-workmanager = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-workManager" }
 
 androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 androidx-compose-ui-runtime = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose" }
@@ -101,8 +104,10 @@ androidx-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidx-paging" }
 
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-androidx-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltWork" }
 hilt-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigation" }
+hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
 
 inject = { module = "javax.inject:javax.inject", version.ref = "inject" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
