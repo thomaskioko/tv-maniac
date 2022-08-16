@@ -104,6 +104,7 @@ I wrote an article, [Going Modular — The Kotlin Multiplatform Way](https://med
     * [Navigation](https://developer.android.com/jetpack/compose/navigation) - Navigation
 * [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) UI related data holder, lifecycle
   aware.
+* [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager?gclsrc=ds&gclsrc=ds) Handle persistent work
 * [Accompanist](https://github.com/google/accompanist)
     * [Insets](https://google.github.io/accompanist/insets/)
     * [Pager Layouts](https://google.github.io/accompanist/pager/)
