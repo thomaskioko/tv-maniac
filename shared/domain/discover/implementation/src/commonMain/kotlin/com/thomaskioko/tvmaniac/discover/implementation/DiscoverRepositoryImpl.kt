@@ -45,6 +45,18 @@ class DiscoverRepositoryImpl(
         return networkBoundResource
     }
 
+    override suspend fun fetchDiscoverShows() {
+        val response = fetchShowsApiRequest(ShowCategory.TRENDING.type)
+        cacheResult(response, ShowCategory.TRENDING.type)
+
+        val topRatedResponse = fetchShowsApiRequest(ShowCategory.TOP_RATED.type)
+        cacheResult(topRatedResponse, ShowCategory.TOP_RATED.type)
+
+        val popularResponse = fetchShowsApiRequest(ShowCategory.POPULAR.type)
+        cacheResult(popularResponse, ShowCategory.POPULAR.type)
+
+    }
+
     private suspend fun fetchShowsApiRequest(categoryId: Int): TvShowsResponse = when (categoryId) {
         ShowCategory.TRENDING.type -> apiService.getTrendingShows(DEFAULT_API_PAGE)
         ShowCategory.POPULAR.type -> apiService.getPopularShows(DEFAULT_API_PAGE)
