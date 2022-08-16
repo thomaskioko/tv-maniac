@@ -9,4 +9,6 @@ interface DiscoverRepository {
     fun observeShowsByCategoryID(
         categoryId: Int
     ): Flow<Resource<List<Show>>>
+
+    suspend fun fetchDiscoverShows()
 }
