@@ -24,6 +24,7 @@ dependencies {
     implementation(projects.android.features.seasons)
     implementation(projects.android.features.videoPlayer)
 
+    implementation(libs.hilt.work)
     implementation(libs.androidx.compose.activity)
     implementation(libs.accompanist.systemuicontroller)
 }
