@@ -17,7 +17,7 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     commonMainImplementation(project(":shared:core:database"))
-    commonMainImplementation(project(":shared:core:remote"))
+    commonMainImplementation(project(":shared:domain:tmdb:api"))
     commonMainImplementation(project(":shared:domain:episodes:api"))
 
     commonMainImplementation(libs.kermit)
