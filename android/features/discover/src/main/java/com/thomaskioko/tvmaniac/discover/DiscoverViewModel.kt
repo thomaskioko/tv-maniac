@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac
+package com.thomaskioko.tvmaniac.discover
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
