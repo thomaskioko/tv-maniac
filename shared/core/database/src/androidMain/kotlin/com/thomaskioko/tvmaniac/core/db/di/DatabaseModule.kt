@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.core.db.di
 import android.content.Context
 import com.thomaskioko.tvmaniac.core.db.DriverFactory
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabaseFactory
-import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

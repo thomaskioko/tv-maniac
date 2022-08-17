@@ -79,7 +79,7 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 
 ### Android
 - Java 11
-- You require the latest [Android Studio BumbleBee](https://androidstudio.googleblog.com/2021/05/android-studio-bumblebee-canary-1.html) release to be able to build the app.
+- You require the latest [Android Studio Dolphin](https://developer.android.com/studio/preview) release to be able to build the app.
 - Install Kmm Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/kmm-setup.html).
 
 
@@ -104,6 +104,7 @@ I wrote an article, [Going Modular — The Kotlin Multiplatform Way](https://med
     * [Navigation](https://developer.android.com/jetpack/compose/navigation) - Navigation
 * [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) UI related data holder, lifecycle
   aware.
+* [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager?gclsrc=ds&gclsrc=ds) Handle persistent work
 * [Accompanist](https://github.com/google/accompanist)
     * [Insets](https://google.github.io/accompanist/insets/)
     * [Pager Layouts](https://google.github.io/accompanist/pager/)

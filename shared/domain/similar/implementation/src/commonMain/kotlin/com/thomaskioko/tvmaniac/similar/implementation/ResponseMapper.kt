@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.similar.implementation
 
+import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.DateUtil.formatDateString
 import com.thomaskioko.tvmaniac.core.util.StringUtil
-import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.remote.api.model.ShowResponse
 
 fun ShowResponse.toShow(): Show {

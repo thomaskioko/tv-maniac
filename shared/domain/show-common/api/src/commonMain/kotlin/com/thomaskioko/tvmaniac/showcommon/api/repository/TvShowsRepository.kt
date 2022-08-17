@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.showcommon.api.repository
 
 import com.kuuurt.paging.multiplatform.PagingData
+import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.CommonFlow
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.datasource.cache.Show
 import kotlinx.coroutines.flow.Flow
 
 interface TvShowsRepository {

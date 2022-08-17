@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.shared.domain.trailers.api
 
+import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.datasource.cache.Trailers
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

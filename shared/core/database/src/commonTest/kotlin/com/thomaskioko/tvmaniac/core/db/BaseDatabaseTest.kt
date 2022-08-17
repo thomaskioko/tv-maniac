@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.core.db
 
 import com.squareup.sqldelight.db.SqlDriver
-import com.thomaskioko.tvmaniac.datasource.cache.Show
-import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.db.Show
+import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import kotlin.test.AfterTest
 
 expect fun inMemorySqlDriver(): SqlDriver

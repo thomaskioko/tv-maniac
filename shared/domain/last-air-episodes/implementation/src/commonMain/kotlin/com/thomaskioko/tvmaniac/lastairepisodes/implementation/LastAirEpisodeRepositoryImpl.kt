@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.lastairepisodes.implementation
 
-import com.thomaskioko.tvmaniac.datasource.cache.AirEpisodesByShowId
+import com.thomaskioko.tvmaniac.core.db.AirEpisodesByShowId
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisodeRepository
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
 import kotlinx.coroutines.flow.Flow

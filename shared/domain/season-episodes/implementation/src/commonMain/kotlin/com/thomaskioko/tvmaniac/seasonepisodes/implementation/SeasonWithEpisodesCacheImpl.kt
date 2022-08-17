@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.seasonepisodes.implementation
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
-import com.thomaskioko.tvmaniac.datasource.cache.Season_with_episodes
-import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonWithEpisodes
-import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.db.Season_with_episodes
+import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
+import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesCache
 import kotlinx.coroutines.flow.Flow
 

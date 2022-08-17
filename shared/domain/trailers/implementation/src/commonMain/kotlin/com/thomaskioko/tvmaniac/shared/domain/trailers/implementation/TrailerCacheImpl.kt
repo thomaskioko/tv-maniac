@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.shared.domain.trailers.implementation
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
-import com.thomaskioko.tvmaniac.datasource.cache.Trailers
-import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.db.Trailers
+import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerCache
 import kotlinx.coroutines.flow.Flow
 

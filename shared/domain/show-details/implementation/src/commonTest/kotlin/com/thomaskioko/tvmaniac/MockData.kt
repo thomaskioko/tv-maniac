@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac
 
-import com.thomaskioko.tvmaniac.datasource.cache.Show
+import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.remote.api.model.ShowResponse
 import com.thomaskioko.tvmaniac.remote.api.model.TvShowsResponse
 

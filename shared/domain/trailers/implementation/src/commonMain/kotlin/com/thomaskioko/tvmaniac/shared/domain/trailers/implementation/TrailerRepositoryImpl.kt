@@ -1,19 +1,19 @@
 package com.thomaskioko.tvmaniac.shared.domain.trailers.implementation
 
 import co.touchlab.kermit.Logger
+import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
-import com.thomaskioko.tvmaniac.datasource.cache.Trailers
-import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.model.TrailersResponse
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerCache
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerRepository
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
 class TrailerRepositoryImpl(
-    private val apiService: TvShowsService,
+    private val apiService: TmdbService,
     private val trailerCache: TrailerCache,
     private val dispatcher: CoroutineDispatcher,
 ) : TrailerRepository {
