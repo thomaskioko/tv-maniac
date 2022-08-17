@@ -15,7 +15,7 @@ dependencies {
     androidMainImplementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    commonMainImplementation(project(":shared:core:remote"))
+    commonMainImplementation(project(":shared:core:network"))
     commonMainImplementation(project(":shared:domain:last-air-episodes:api"))
     commonMainImplementation(libs.squareup.sqldelight.extensions)
     commonMainImplementation(libs.kermit)
