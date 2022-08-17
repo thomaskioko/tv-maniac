@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac
 
+import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
 import com.thomaskioko.tvmaniac.remote.api.model.ShowResponse
 import com.thomaskioko.tvmaniac.remote.api.model.TvShowsResponse
@@ -115,28 +115,5 @@ object MockData {
                 )
             )
         )
-    )
-
-    fun getShow() = Show(
-        id = 84958,
-        title = "Loki",
-        description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-            "an alternate version of Loki is brought to the mysterious Time Variance " +
-            "Authority, a bureaucratic organization that exists outside of time and " +
-            "space and monitors the timeline. They give Loki a choice: face being " +
-            "erased from existence due to being a “time variant”or help fix " +
-            "the timeline and stop a greater threat.",
-        poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        language = "en",
-        votes = 4958,
-        vote_average = 8.1,
-        genre_ids = listOf(18, 10765),
-        year = "2019",
-        status = "Ended",
-        popularity = 24.4848,
-        following = true,
-        number_of_episodes = 30,
-        number_of_seasons = 2
     )
 }

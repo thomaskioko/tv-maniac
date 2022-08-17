@@ -2,12 +2,12 @@ package com.thomaskioko.tvmaniac.seasons.implementation
 
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.core.test.testCoroutineDispatcher
-import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getShow
 import com.thomaskioko.tvmaniac.seasons.implementation.MockData.getShowDetailResponse
 import com.thomaskioko.tvmaniac.seasons.implementation.mapper.toSeasonCacheList
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -22,7 +22,7 @@ internal class SeasonsRepositoryTest {
 
     private val tvShowCache = mockk<TvShowCache>()
     private val seasonCache = mockk<SeasonsCache>()
-    private val mockApiService = mockk<TvShowsService>()
+    private val mockApiService = mockk<TmdbService>()
 
     private var repository = SeasonsRepositoryImpl(
         mockApiService,
