@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.discover.api
 
+import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.discover.api.repository.DiscoverRepository
 import com.thomaskioko.tvmaniac.discover.api.mapper.toTvShowList
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory

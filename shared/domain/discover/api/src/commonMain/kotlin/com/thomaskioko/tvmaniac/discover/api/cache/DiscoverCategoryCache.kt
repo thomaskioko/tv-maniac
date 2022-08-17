@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.api.cache
 
-import com.thomaskioko.tvmaniac.datasource.cache.SelectShows
-import com.thomaskioko.tvmaniac.datasource.cache.Show_category
+import com.thomaskioko.tvmaniac.core.db.SelectShows
+import com.thomaskioko.tvmaniac.core.db.Show_category
 import kotlinx.coroutines.flow.Flow
 
 interface DiscoverCategoryCache {

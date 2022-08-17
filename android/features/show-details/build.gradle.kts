@@ -20,7 +20,7 @@ dependencies {
     api(project(":shared:domain:show-common:api"))
     api(project(":shared:domain:last-air-episodes:api"))
     api(project(":shared:domain:trailers:api"))
-    implementation(project(":android:common:compose"))
+    implementation(project(":android:core:compose"))
 
     implementation(libs.coil)
     implementation(libs.snapper)

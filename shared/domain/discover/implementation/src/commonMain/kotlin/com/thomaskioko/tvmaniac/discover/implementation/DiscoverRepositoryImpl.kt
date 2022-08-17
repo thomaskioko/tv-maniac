@@ -1,19 +1,19 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
 import co.touchlab.kermit.Logger
+import com.thomaskioko.tvmaniac.core.db.Category
+import com.thomaskioko.tvmaniac.core.db.Show
+import com.thomaskioko.tvmaniac.core.db.Show_category
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
-import com.thomaskioko.tvmaniac.datasource.cache.Category
-import com.thomaskioko.tvmaniac.datasource.cache.Show
-import com.thomaskioko.tvmaniac.datasource.cache.Show_category
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.discover.api.cache.DiscoverCategoryCache
 import com.thomaskioko.tvmaniac.discover.api.repository.DiscoverRepository
-import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.model.TvShowsResponse
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.map
 private const val DEFAULT_API_PAGE = 1
 
 class DiscoverRepositoryImpl(
-    private val apiService: TvShowsService,
+    private val apiService: TmdbService,
     private val tvShowCache: TvShowCache,
     private val discoverCategoryCache: DiscoverCategoryCache,
     private val categoryCache: CategoryCache,
@@ -43,6 +43,18 @@ class DiscoverRepositoryImpl(
             coroutineDispatcher = dispatcher
         )
         return networkBoundResource
+    }
+
+    override suspend fun fetchDiscoverShows() {
+        val response = fetchShowsApiRequest(ShowCategory.TRENDING.type)
+        cacheResult(response, ShowCategory.TRENDING.type)
+
+        val topRatedResponse = fetchShowsApiRequest(ShowCategory.TOP_RATED.type)
+        cacheResult(topRatedResponse, ShowCategory.TOP_RATED.type)
+
+        val popularResponse = fetchShowsApiRequest(ShowCategory.POPULAR.type)
+        cacheResult(popularResponse, ShowCategory.POPULAR.type)
+
     }
 
     private suspend fun fetchShowsApiRequest(categoryId: Int): TvShowsResponse = when (categoryId) {

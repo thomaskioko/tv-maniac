@@ -1,19 +1,19 @@
 package com.thomaskioko.tvmaniac.seasons.implementation
 
 import co.touchlab.kermit.Logger
+import com.thomaskioko.tvmaniac.core.db.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
-import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
-import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.seasons.implementation.mapper.toSeasonCacheList
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
 class SeasonsRepositoryImpl(
-    private val apiService: TvShowsService,
+    private val apiService: TmdbService,
     private val seasonCache: SeasonsCache,
     private val dispatcher: CoroutineDispatcher,
 ) : SeasonsRepository {

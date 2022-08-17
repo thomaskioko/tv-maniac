@@ -34,7 +34,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":android:common:resources"))
+    implementation(project(":android:core:resources"))
 
     implementation(libs.androidx.core)
     api(libs.androidx.palette)
@@ -43,7 +43,6 @@ dependencies {
     implementation(libs.androidx.compose.material.icons)
     api(libs.androidx.compose.ui.runtime)
     implementation(libs.androidx.compose.foundation)
-    api(libs.androidx.compose.compiler)
     api(libs.kotlinx.coroutines.jvm)
     api(libs.androidx.compose.ui.tooling)
     implementation(libs.kenburns)

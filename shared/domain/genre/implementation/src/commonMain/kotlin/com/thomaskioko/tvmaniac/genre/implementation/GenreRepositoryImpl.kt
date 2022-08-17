@@ -1,19 +1,19 @@
 package com.thomaskioko.tvmaniac.genre.implementation
 
 import co.touchlab.kermit.Logger
+import com.thomaskioko.tvmaniac.core.db.Genre
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
-import com.thomaskioko.tvmaniac.datasource.cache.Genre
 import com.thomaskioko.tvmaniac.genre.api.GenreCache
 import com.thomaskioko.tvmaniac.genre.api.GenreRepository
-import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.remote.api.model.GenresResponse
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
 class GenreRepositoryImpl(
-    private val apiService: TvShowsService,
+    private val apiService: TmdbService,
     private val genreCache: GenreCache,
     private val dispatcher: CoroutineDispatcher,
 ) : GenreRepository {

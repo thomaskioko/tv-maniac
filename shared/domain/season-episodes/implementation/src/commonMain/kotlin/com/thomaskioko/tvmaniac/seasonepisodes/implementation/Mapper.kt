@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.seasonepisodes.implementation
 
+import com.thomaskioko.tvmaniac.core.db.Episode
 import com.thomaskioko.tvmaniac.core.util.StringUtil
-import com.thomaskioko.tvmaniac.datasource.cache.Episode
 import com.thomaskioko.tvmaniac.remote.api.model.SeasonResponse
 
 fun SeasonResponse.toEpisodeCacheList(): List<Episode> {

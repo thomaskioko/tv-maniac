@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.lastairepisodes.implementation
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
-import com.thomaskioko.tvmaniac.datasource.cache.AirEpisodesByShowId
-import com.thomaskioko.tvmaniac.datasource.cache.Last_episode
-import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.db.AirEpisodesByShowId
+import com.thomaskioko.tvmaniac.core.db.Last_episode
+import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
 import kotlinx.coroutines.flow.Flow
 

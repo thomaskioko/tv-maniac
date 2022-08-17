@@ -9,6 +9,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.android.common.compose)
+    implementation(projects.android.core.compose)
     implementation(libs.accompanist.insetsui)
 }

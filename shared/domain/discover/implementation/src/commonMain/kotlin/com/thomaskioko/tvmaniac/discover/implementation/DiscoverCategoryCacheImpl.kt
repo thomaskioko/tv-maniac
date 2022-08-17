@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.discover.implementation
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
-import com.thomaskioko.tvmaniac.datasource.cache.SelectShows
-import com.thomaskioko.tvmaniac.datasource.cache.Show_category
-import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.db.SelectShows
+import com.thomaskioko.tvmaniac.core.db.Show_category
+import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.discover.api.cache.DiscoverCategoryCache
 import kotlinx.coroutines.flow.Flow
 

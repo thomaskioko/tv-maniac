@@ -11,8 +11,9 @@ android {
 dependencies {
     implementation(project(":shared:shared"))
 
-    implementation(projects.android.common.compose)
-    implementation(projects.android.common.navigation)
+    implementation(projects.android.core.compose)
+    implementation(projects.android.core.navigation)
+    implementation(projects.android.core.workmanager)
     implementation(projects.android.features.discover)
     implementation(projects.android.features.home)
     implementation(projects.android.features.search)
@@ -23,6 +24,7 @@ dependencies {
     implementation(projects.android.features.seasons)
     implementation(projects.android.features.videoPlayer)
 
+    implementation(libs.hilt.work)
     implementation(libs.androidx.compose.activity)
     implementation(libs.accompanist.systemuicontroller)
 }

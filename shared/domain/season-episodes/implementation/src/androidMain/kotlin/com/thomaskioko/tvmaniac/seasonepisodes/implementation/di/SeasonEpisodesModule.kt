@@ -1,8 +1,7 @@
 package com.thomaskioko.tvmaniac.seasonepisodes.implementation.di
 
-import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
-import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.seasonepisodes.api.ObserveSeasonWithEpisodesInteractor
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesCache
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesRepository
@@ -11,6 +10,7 @@ import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodes
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
 import com.thomaskioko.tvmaniac.showcommon.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,7 +31,7 @@ object SeasonEpisodesModule {
     @Singleton
     @Provides
     fun provideSeasonWithEpisodesRepository(
-        apiService: TvShowsService,
+        apiService: TmdbService,
         episodesCache: EpisodesCache,
         seasonWithEpisodesCache: SeasonWithEpisodesCache,
         seasonsCache: SeasonsCache,

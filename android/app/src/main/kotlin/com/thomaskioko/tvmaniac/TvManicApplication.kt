@@ -1,12 +1,30 @@
 package com.thomaskioko.tvmaniac
 
 import android.app.Application
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
+import com.thomaskioko.tvmaniac.initializers.AppInitializers
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @HiltAndroidApp
-class TvManicApplication : Application() {
+class TvManicApplication : Application(), Configuration.Provider {
+
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+
+    @Inject lateinit var initializers: AppInitializers
 
     override fun onCreate() {
         super.onCreate()
+        initializers.init()
     }
+
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .setMinimumLoggingLevel(android.util.Log.INFO)
+            .build()
+    }
+
 }

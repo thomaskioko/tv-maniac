@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.api.cache
 
-import com.thomaskioko.tvmaniac.datasource.cache.Category
+import com.thomaskioko.tvmaniac.core.db.Category
+
 
 interface CategoryCache {
 

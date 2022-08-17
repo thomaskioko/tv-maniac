@@ -1,14 +1,18 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 import util.libs
 
 plugins {
     `kmm-domain-plugin`
     kotlin("kapt")
     id("com.squareup.sqldelight")
-    id("dagger.hilt.android.plugin")
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.core.db"
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 dependencies {
@@ -31,7 +35,7 @@ dependencies {
 
 sqldelight {
     database("TvManiacDatabase") {
-        packageName = "com.thomaskioko.tvmaniac.datasource.cache"
+        packageName = "com.thomaskioko.tvmaniac.core.db"
         sourceFolders = listOf("sqldelight")
     }
 }

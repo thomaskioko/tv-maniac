@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.showcommon.api.cache
 
-import com.thomaskioko.tvmaniac.datasource.cache.AirEpisodesByShowId
-import com.thomaskioko.tvmaniac.datasource.cache.Show
+import com.thomaskioko.tvmaniac.core.db.AirEpisodesByShowId
+import com.thomaskioko.tvmaniac.core.db.Show
 import kotlinx.coroutines.flow.Flow
 
 interface TvShowCache {

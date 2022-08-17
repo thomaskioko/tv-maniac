@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
+import com.thomaskioko.tvmaniac.core.db.SelectShows
+import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.StringUtil
-import com.thomaskioko.tvmaniac.datasource.cache.SelectShows
-import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.remote.api.model.ShowResponse
 import kotlinx.datetime.toLocalDate
 
