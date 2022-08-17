@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac
+package com.thomaskioko.tvmaniac.discover
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
