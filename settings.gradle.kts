@@ -32,7 +32,7 @@ include(
     ":shared:core:test",
     ":shared:core:persistence",
     ":shared:core:database",
-    ":shared:core:remote",
+    ":shared:core:network",
     ":shared:domain:show-details:api",
     ":shared:domain:show-details:implementation",
     ":shared:domain:seasons:api",
@@ -51,5 +51,7 @@ include(
     ":shared:domain:discover:api",
     ":shared:domain:discover:implementation",
     ":shared:domain:trailers:api",
-    ":shared:domain:trailers:implementation"
+    ":shared:domain:trailers:implementation",
+    ":shared:domain:tmdb:api",
+    ":shared:domain:tmdb:implementation"
 )
