@@ -1,15 +1,15 @@
 package checks
 
+import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektPlugin
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 
 apply<DetektPlugin>()
 
-configure<DetektExtension> {
 
+tasks.withType<Detekt>().configureEach {
     parallel = true
-    source = project.files("src/main/kotlin")
-    config = files("${rootProject.projectDir}/tooling/config/detekt.yml")
+    setSource(files("src/main/kotlin"))
+    config.setFrom(files("${rootProject.projectDir}/tooling/config/detekt.yml"))
 
     reports {
         html.required.set(true)
@@ -18,4 +18,7 @@ configure<DetektExtension> {
         xml.required.set(true)
         xml.outputLocation.set(rootProject.file("build/reports/detekt/report.xml"))
     }
+
+    exclude("resources/")
+    exclude("build/")
 }
