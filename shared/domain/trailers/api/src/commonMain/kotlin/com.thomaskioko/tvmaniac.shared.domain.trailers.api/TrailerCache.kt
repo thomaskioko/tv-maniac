@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.shared.domain.trailers.api
 
-import com.thomaskioko.tvmaniac.datasource.cache.Trailers
+import com.thomaskioko.tvmaniac.core.db.Trailers
 import kotlinx.coroutines.flow.Flow
 
 interface TrailerCache {

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.details.implementation.cache
 
-import com.thomaskioko.tvmaniac.datasource.cache.SelectShows
-import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.db.SelectShows
+import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.details.api.cache.ShowCategoryCache
 
 class ShowCategoryCacheImpl(

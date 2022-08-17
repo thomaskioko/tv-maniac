@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.core.db
 
 import com.thomaskioko.tvmaniac.core.db.MockData.getSeasonCacheList
-import com.thomaskioko.tvmaniac.datasource.cache.Season
+import com.thomaskioko.tvmaniac.core.db.Season
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.test.Test
