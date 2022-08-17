@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.core.db
 
-import com.thomaskioko.tvmaniac.datasource.cache.Last_episode
-import com.thomaskioko.tvmaniac.datasource.cache.Season
-import com.thomaskioko.tvmaniac.datasource.cache.Show
-import com.thomaskioko.tvmaniac.datasource.cache.Episode as EpisodeCache
+import com.thomaskioko.tvmaniac.core.db.Last_episode
+import com.thomaskioko.tvmaniac.core.db.Season
+import com.thomaskioko.tvmaniac.core.db.Show
+import com.thomaskioko.tvmaniac.core.db.Episode as EpisodeCache
 
 object MockData {
 

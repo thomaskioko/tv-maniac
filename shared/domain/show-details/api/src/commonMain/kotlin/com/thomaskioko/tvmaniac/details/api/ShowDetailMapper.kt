@@ -1,16 +1,16 @@
 package com.thomaskioko.tvmaniac.details.api
 
-import com.thomaskioko.tvmaniac.datasource.cache.SelectSeasonsByShowId
+import com.thomaskioko.tvmaniac.core.db.AirEpisodesByShowId
+import com.thomaskioko.tvmaniac.core.db.Genre
+import com.thomaskioko.tvmaniac.core.db.SelectSeasonsByShowId
+import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
+import com.thomaskioko.tvmaniac.core.db.Show
+import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
-import com.thomaskioko.tvmaniac.datasource.cache.SelectSimilarShows
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.datasource.cache.Genre
-import com.thomaskioko.tvmaniac.datasource.cache.Show
 import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
-import com.thomaskioko.tvmaniac.datasource.cache.AirEpisodesByShowId
-import com.thomaskioko.tvmaniac.datasource.cache.Trailers
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
 
 fun Resource<List<SelectSimilarShows>>.toSimilarShowList(): List<TvShow> = data?.map {

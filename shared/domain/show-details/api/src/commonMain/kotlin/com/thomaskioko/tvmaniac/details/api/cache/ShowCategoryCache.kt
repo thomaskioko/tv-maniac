@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.details.api.cache
 
-import com.thomaskioko.tvmaniac.datasource.cache.SelectShows
+import com.thomaskioko.tvmaniac.core.db.SelectShows
 
 interface ShowCategoryCache {
 

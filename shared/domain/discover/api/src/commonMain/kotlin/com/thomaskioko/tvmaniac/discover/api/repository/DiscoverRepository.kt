@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.api.repository
 
+import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.datasource.cache.Show
 import kotlinx.coroutines.flow.Flow
 
 interface DiscoverRepository {

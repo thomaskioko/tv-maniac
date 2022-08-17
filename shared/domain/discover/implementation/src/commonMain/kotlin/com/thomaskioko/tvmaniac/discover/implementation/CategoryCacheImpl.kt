@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
-import com.thomaskioko.tvmaniac.datasource.cache.Category
-import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.db.Category
+import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
 
 class CategoryCacheImpl(

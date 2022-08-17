@@ -1,13 +1,13 @@
 package com.thomaskioko.tvmaniac.shared.domain.episodes.implementation.di
 
-import com.thomaskioko.tvmaniac.datasource.cache.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.episodes.api.ObserveEpisodesInteractor
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeRepositoryImpl
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodesCacheImpl
-import com.thomaskioko.tvmaniac.remote.api.TvShowsService
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,11 +28,11 @@ object EpisodeModule {
     @Singleton
     @Provides
     fun provideEpisodeRepository(
-        tvShowsService: TvShowsService,
+        tmdbService: TmdbService,
         episodesCache: EpisodesCache,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): EpisodeRepository = EpisodeRepositoryImpl(
-        tvShowsService,
+        tmdbService,
         episodesCache,
         ioDispatcher
     )

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.genre.api
 
-import com.thomaskioko.tvmaniac.datasource.cache.Genre
+import com.thomaskioko.tvmaniac.core.db.Genre
 import kotlinx.coroutines.flow.Flow
 
 interface GenreCache {

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.seasons.implementation.mapper
 
-import com.thomaskioko.tvmaniac.datasource.cache.Season
+import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
 
 fun ShowDetailResponse.toSeasonCacheList(): List<Season> {
