@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.lastairepisode.implementation
 
-import com.thomaskioko.tvmaniac.datasource.cache.AirEpisodesByShowId
+import com.thomaskioko.tvmaniac.core.db.AirEpisodesByShowId
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 
 fun makeLastEpisodeList(): List<AirEpisodesByShowId> = listOf(

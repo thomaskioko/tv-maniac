@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import com.thomaskioko.tvmaniac.core.db.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.datasource.cache.EpisodesBySeasonId
 import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeUiModel
 import com.thomaskioko.tvmaniac.remote.api.model.EpisodesResponse
 import com.thomaskioko.tvmaniac.remote.api.model.SeasonResponse
