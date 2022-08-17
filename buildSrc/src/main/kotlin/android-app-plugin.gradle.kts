@@ -70,7 +70,6 @@ android {
         implementation(libs.hilt.android)
         implementation(libs.ktor.android)
         kapt(libs.hilt.compiler)
-        kapt(libs.hilt.androidx.compiler)
 
         debugImplementation(libs.squareup.leakcanary)
 
