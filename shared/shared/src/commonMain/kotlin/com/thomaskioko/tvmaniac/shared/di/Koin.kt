@@ -16,7 +16,7 @@ import com.thomaskioko.tvmaniac.shared.core.ui.di.coreUiPlatformModule
 import com.thomaskioko.tvmaniac.shared.domain.trailers.implementation.di.trailersModule
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.similar.implementation.di.similarDomainModule
-import com.thomaskioko.tvmaniac.tmdb.implementation.tmdbServiceModule
+import com.thomaskioko.tvmaniac.tmdb.implementation.tmdbPlatformModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import org.koin.core.context.startKoin
@@ -27,7 +27,6 @@ import org.koin.dsl.module
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     appDeclaration()
     modules(
-        tmdbServiceModule,
         cacheModule,
         dispatcherModule,
         detailDomainModule,
@@ -41,7 +40,8 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         trailersModule,
         coreUiPlatformModule(),
         dbPlatformModule(),
-        networkPlatformModule()
+        networkPlatformModule(),
+        tmdbPlatformModule()
     )
 }
 
