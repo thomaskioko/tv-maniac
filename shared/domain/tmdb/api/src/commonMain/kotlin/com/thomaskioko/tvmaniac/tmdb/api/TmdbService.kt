@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.tmdb.api
 
 import com.thomaskioko.tvmaniac.remote.api.model.GenresResponse
-import com.thomaskioko.tvmaniac.remote.api.model.SeasonResponse
-import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
-import com.thomaskioko.tvmaniac.remote.api.model.TrailersResponse
-import com.thomaskioko.tvmaniac.remote.api.model.TvShowsResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.SeasonResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.TvShowsResponse
 
 interface TmdbService {
 
