@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.tmdb.implementation
 
 import com.thomaskioko.tvmaniac.network.KtorClientFactory
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
+import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbHttpClient.tmdbHttpClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,21 +16,19 @@ import javax.inject.Singleton
 object NetworkModule {
 
     @Provides
-    @Named("tmdb-url")
-    fun provideTmdbUrl(): String = "https://api.themoviedb.org"
+    fun provideTmdbInterceptor(): TmdbInterceptor = TmdbInterceptor()
 
     @Singleton
     @Provides
+    @Named("tmdb-http-client")
     fun provideHttpClient(
-        @Named("tmdb-url") url: String
-    ): HttpClient {
-        return KtorClientFactory().build(url)
-    }
+        tmdbInterceptor: TmdbInterceptor
+    ): HttpClient = KtorClientFactory().httpClient(tmdbHttpClient(tmdbInterceptor))
 
     @Singleton
     @Provides
     fun provideTvShowService(
-        httpClient: HttpClient
+        @Named("tmdb-http-client") httpClient: HttpClient
     ): TmdbService = TmdbServiceImpl(httpClient)
 
 }
