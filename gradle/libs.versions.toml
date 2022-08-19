@@ -1,48 +1,30 @@
 [versions]
-kotlin = "1.6.10"
+kotlin = "1.6.21"
+agp = "7.3.0-rc01"
+compose = "1.2.0-beta01"
+accompanist = "0.24.6-alpha"
+coroutines = "1.6.1"
+hilt = "2.43.2"
+hiltNavigation = "1.0.0"
+hiltWork = "1.0.0"
+ktor = "2.1.0"
+multiplatform-paging = "0.4.7"
+sqldelight = "1.5.3"
+turbine = "0.7.0"
 
 android-compile = "33"
 android-target = "31"
 android-min = "23"
 
-android-gradle = "7.3.0-rc01"
-date-time = "0.3.2"
-
-accompanist = "0.24.6-alpha"
-snapper = "0.2.0"
-
 androidx-activity = "1.4.0"
 androidx-appCompat = "1.4.0"
 androidx-core = "1.8.0"
-androidx-compose = "1.2.0-alpha07"
-compose-compiler = "1.2.0-alpha07"
-androidx-composePaging = "1.0.0-alpha14"
-androidx-constraintlayout = "1.0.0"
+compose-compiler = "1.2.0-beta01"
 androidx-datastore = "1.0.0"
 androidx-lifecycle = "2.5.0-alpha06"
 androidx-navigation = "2.5.0-alpha04"
 androidx-palette = "1.0.0"
-androidx-paging = "3.1.0"
 androidx-workManager = "2.7.1"
-
-coil = "1.4.0"
-coroutines = "1.6.1"
-dagger = "2.41"
-desugar = "1.1.5"
-hilt = "2.43.2"
-hiltNavigation = "1.0.0"
-hiltWork = "1.0.0"
-inject = "1"
-kenburns = "1.0.7"
-kermit = "1.0.3"
-koin = "3.2.0-beta-1"
-ktor = "2.1.0"
-material = "1.6.0-alpha01"
-multiplatform-paging = "0.4.7"
-squareup-leakcanary = "2.8.1"
-sqldelight = "1.5.3"
-turbine = "0.7.0"
-youtubePlayer = "11.0.1"
 
 testing-arch-core = "2.1.0"
 testing-junit = "4.13.2"
@@ -59,12 +41,8 @@ plugin-detekt = "1.21.0"
 shared-module-version = "0.5.0"
 
 [libraries]
-android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle" }
-kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-kotlin-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "date-time" }
-
-kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlinx-coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
 
 accompanist-pager-core = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompanist-pager-indicator = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
@@ -77,36 +55,31 @@ androidx-datastore = { module = "androidx.datastore:datastore-preferences", vers
 androidx-palette = { module = "androidx.palette:palette-ktx", version.ref = "androidx-palette" }
 androidx-workmanager = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-workManager" }
 
-androidx-compose-ui-runtime = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose" }
-androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidx-compose" }
-androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "androidx-compose" }
-androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "androidx-compose" }
-androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "androidx-compose" }
-androidx-compose-material-icons = { module = "androidx.compose.material:material-icons-extended", version.ref = "androidx-compose" }
-androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose" }
-androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "androidx-constraintlayout" }
+androidx-compose-ui-runtime = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "compose" }
+androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
+androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
+androidx-compose-material-icons = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
+androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
-androidx-compose-paging = { module = "androidx.paging:paging-compose", version.ref = "androidx-composePaging" }
+androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version = "1.0.0" }
+androidx-compose-paging = { module = "androidx.paging:paging-compose", version = "1.0.0-alpha14" }
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version = "3.1.0" }
 
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
+androidx-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 
 androidx-navigation-common = { module = "androidx.navigation:navigation-common-ktx", version.ref = "androidx-navigation" }
 androidx-navigation-runtime = { module = "androidx.navigation:navigation-runtime-ktx", version.ref = "androidx-navigation" }
-
-androidx-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
-
-androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidx-paging" }
 
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 hilt-androidx-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltWork" }
 hilt-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigation" }
 hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
-
-inject = { module = "javax.inject:javax.inject", version.ref = "inject" }
-koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 
 ktor-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -116,27 +89,30 @@ ktor-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
-
-coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
-desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
-material = { module = "com.google.android.material:material", version.ref = "material" }
-kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
-snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
-youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "youtubePlayer" }
+coil = { module = "io.coil-kt:coil-compose", version = "1.4.0" }
+datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.3.2" }
+desugar = { module = "com.android.tools:desugar_jdk_libs", version = "1.1.5" }
+inject = { module = "javax.inject:javax.inject", version = "1" }
+kenburns = { module = "com.flaviofaria:kenburnsview", version = "1.0.7" }
+kermit = { module = "co.touchlab:kermit", version = "1.0.3" }
+koin = { module = "io.insert-koin:koin-core", version = "3.2.0-beta-1" }
+leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version = "2.8.1" }
+material = { module = "com.google.android.material:material", version = "1.6.0-alpha01" }
+snapper = { module = "dev.chrisbanes.snapper:snapper", version = "0.2.0" }
+youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version = "11.0.1" }
 
 multiplatform-paging-core = { module = "io.github.kuuuurt:multiplatform-paging", version.ref = "multiplatform-paging" }
 multiplatform-paging-ios-x64 = { module = "io.github.kuuuurt:multiplatform-paging-iosX64", version.ref = "multiplatform-paging" }
 multiplatform-paging-ios-arm64 = { module = "io.github.kuuuurt:multiplatform-paging-iosArm64", version.ref = "multiplatform-paging" }
 
-squareup-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "squareup-leakcanary" }
 squareup-sqldelight-extensions = { module = "com.squareup.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 squareup-sqldelight-runtime = { module = "com.squareup.sqldelight:runtime", version.ref = "sqldelight" }
 squareup-sqldelight-driver-android = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqldelight" }
 squareup-sqldelight-driver-jvm = { module = "com.squareup.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 squareup-sqldelight-driver-native = { module = "com.squareup.sqldelight:native-driver", version.ref = "sqldelight" }
 
+plugin-android = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+plugin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 plugin-dependency-check = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "plugin-gradle-versions" }
 plugin-hilt = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 plugin-buildkonfig = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "plugin-buildkonfig" }
