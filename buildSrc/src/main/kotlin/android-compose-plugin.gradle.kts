@@ -43,7 +43,7 @@ dependencies {
     implementation(libs.androidx.compose.material.icons)
     api(libs.androidx.compose.ui.runtime)
     implementation(libs.androidx.compose.foundation)
-    api(libs.kotlinx.coroutines.jvm)
+    api(libs.coroutines.jvm)
     api(libs.androidx.compose.ui.tooling)
     implementation(libs.kenburns)
     implementation(libs.coil)

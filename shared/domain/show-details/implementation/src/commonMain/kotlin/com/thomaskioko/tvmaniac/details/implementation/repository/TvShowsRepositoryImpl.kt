@@ -18,7 +18,7 @@ import com.thomaskioko.tvmaniac.details.implementation.mapper.toAirEp
 import com.thomaskioko.tvmaniac.details.implementation.mapper.toShow
 import com.thomaskioko.tvmaniac.details.implementation.mapper.toShowList
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
-import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.POPULAR
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.TOP_RATED

@@ -13,8 +13,8 @@ repositories {
 
 dependencies {
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
-    implementation(libs.kotlin.gradle)
-    implementation(libs.android.gradle)
+    implementation(libs.plugin.android)
+    implementation(libs.plugin.gradle)
     implementation(libs.plugin.squareup.sqldelight)
     implementation(libs.plugin.dependency.check)
     implementation(libs.plugin.hilt)

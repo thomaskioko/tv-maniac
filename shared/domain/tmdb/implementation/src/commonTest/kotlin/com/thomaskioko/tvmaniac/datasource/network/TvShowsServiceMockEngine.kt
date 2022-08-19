@@ -5,9 +5,8 @@ import io.kotest.matchers.shouldBe
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
-import io.ktor.client.features.defaultRequest
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.HttpRequestData
 import io.ktor.client.request.HttpResponseData
 import io.ktor.content.TextContent
@@ -20,7 +19,9 @@ import io.ktor.http.Url
 import io.ktor.http.fullPath
 import io.ktor.http.headersOf
 import io.ktor.http.hostWithPort
+import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.date.GMTDate
+import kotlinx.serialization.json.Json
 import kotlin.test.assertEquals
 
 abstract class TvShowsServiceMockEngine {
@@ -49,9 +50,8 @@ abstract class TvShowsServiceMockEngine {
     }
 
     protected open fun httpClient() = HttpClient(MockEngine) {
-        install(JsonFeature) {
-            serializer = KotlinxSerializer(
-                kotlinx.serialization.json.Json {
+        install(ContentNegotiation) {
+            json(Json {
                     ignoreUnknownKeys = true
                     prettyPrint = true
                     isLenient = true

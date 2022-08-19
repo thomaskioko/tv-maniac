@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.discover.implementation
 import com.thomaskioko.tvmaniac.core.db.SelectShows
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.StringUtil
-import com.thomaskioko.tvmaniac.remote.api.model.ShowResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.ShowResponse
 import kotlinx.datetime.toLocalDate
 
 fun List<SelectShows>.toShowList(): List<Show> {

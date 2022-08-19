@@ -17,13 +17,13 @@ dependencies {
 
     commonMainImplementation(project(":shared:core:database"))
     commonMainImplementation(project(":shared:domain:tmdb:api"))
-    commonMainImplementation(projects.shared.domain.seasons.api)
-    commonMainImplementation(projects.shared.domain.showDetails.implementation)
+    commonMainImplementation(project(":shared:domain:seasons:api"))
+    commonMainImplementation(project(":shared:domain:show-details:implementation"))
     commonMainImplementation(project(":shared:domain:show-common:api"))
 
     commonMainImplementation(libs.kermit)
-    commonMainImplementation(libs.koin.core)
-    commonMainImplementation(libs.kotlin.coroutines.core)
+    commonMainImplementation(libs.koin)
+    commonMainImplementation(libs.coroutines.core)
     commonMainImplementation(libs.squareup.sqldelight.extensions)
 
     testImplementation(libs.testing.mockk.core)
