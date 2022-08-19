@@ -22,5 +22,5 @@ dependencies {
 
     commonMainImplementation(libs.squareup.sqldelight.extensions)
     commonMainImplementation(libs.kermit)
-    commonMainImplementation(libs.koin.core)
+    commonMainImplementation(libs.koin)
 }

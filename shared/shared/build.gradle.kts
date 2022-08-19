@@ -84,8 +84,8 @@ dependencies {
     commonMainImplementation(project(":shared:domain:trailers:implementation"))
     commonMainImplementation(project(":shared:domain:tmdb:implementation"))
 
-    commonMainImplementation(libs.koin.core)
-    commonMainImplementation(libs.kotlin.coroutines.core)
+    commonMainImplementation(libs.koin)
+    commonMainImplementation(libs.coroutines.core)
 }
 
 multiplatformSwiftPackage {

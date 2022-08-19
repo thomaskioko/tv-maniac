@@ -11,5 +11,5 @@ android {
 dependencies {
     commonMainApi(project(":shared:core:util"))
     commonMainImplementation(project(":shared:core:database"))
-    commonMainImplementation(libs.kotlin.coroutines.core)
+    commonMainImplementation(libs.coroutines.core)
 }
