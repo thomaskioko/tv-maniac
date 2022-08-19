@@ -36,7 +36,7 @@ inject = "1"
 kenburns = "1.0.7"
 kermit = "1.0.3"
 koin = "3.2.0-beta-1"
-ktor = "1.6.8"
+ktor = "2.1.0"
 material = "1.6.0-alpha01"
 multiplatform-paging = "0.4.7"
 squareup-leakcanary = "2.8.1"
@@ -108,10 +108,12 @@ hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
 inject = { module = "javax.inject:javax.inject", version.ref = "inject" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 
-ktor-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktor-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ktor-ios = { module = "io.ktor:ktor-client-ios", version.ref = "ktor" }
+ktor-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktor" }
+ktor-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
