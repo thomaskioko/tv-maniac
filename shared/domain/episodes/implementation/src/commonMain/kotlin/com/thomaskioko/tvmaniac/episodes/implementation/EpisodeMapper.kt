@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.core.util.StringUtil.formatPosterPath
-import com.thomaskioko.tvmaniac.remote.api.model.SeasonResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.SeasonResponse
 import com.thomaskioko.tvmaniac.core.db.Episode as EpisodeCache
 
 fun SeasonResponse.toEpisodeCacheList(): List<EpisodeCache> {

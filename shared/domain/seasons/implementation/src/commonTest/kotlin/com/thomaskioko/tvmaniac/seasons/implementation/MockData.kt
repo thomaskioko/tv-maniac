@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.seasons.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Show
-import com.thomaskioko.tvmaniac.remote.api.model.GenreResponse
-import com.thomaskioko.tvmaniac.remote.api.model.SeasonsResponse
-import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.GenreResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.SeasonsResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
 
 internal object MockData {
 
