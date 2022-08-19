@@ -19,9 +19,13 @@ android {
 dependencies {
 
     androidMainImplementation(project(":shared:core:network"))
-    androidMainImplementation(libs.ktor.android)
     androidMainImplementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+
+    iosMainImplementation(project(":shared:core:network"))
+    iosMainImplementation(libs.ktor.negotiation)
+    iosMainImplementation(libs.ktor.logging)
+    iosMainImplementation(libs.ktor.darwin)
 
     commonMainImplementation(project(":shared:domain:tmdb:api"))
     commonMainImplementation(libs.ktor.core)
@@ -31,13 +35,13 @@ dependencies {
     commonTestImplementation(project(":shared:core:test"))
     commonTestImplementation(libs.ktor.serialization)
 
+    commonTestImplementation(libs.ktor.negotiation)
+    commonTestImplementation(libs.ktor.serialization.json)
     commonTestImplementation(libs.testing.ktor.mock)
     commonTestImplementation(libs.testing.turbine)
     commonTestImplementation(libs.testing.kotest.assertions)
     commonTestImplementation(libs.testing.mockk.common)
 
-    androidTestImplementation(kotlin("test"))
-    androidTestImplementation(libs.testing.androidx.junit)
 }
 
 buildkonfig {

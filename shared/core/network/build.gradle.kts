@@ -16,27 +16,20 @@ android {
 dependencies {
     commonMainImplementation(libs.ktor.core)
     commonMainImplementation(libs.ktor.logging)
-    commonMainImplementation(libs.ktor.serialization)
     commonMainImplementation(libs.koin.core)
-    commonMainImplementation(libs.kermit)
+    commonMainApi(libs.ktor.serialization)
+    commonMainApi(libs.ktor.serialization.json)
+    commonMainApi(libs.kermit)
 
     androidMainImplementation(project(":shared:core:util"))
 
-    androidMainImplementation(libs.ktor.android)
+    androidMainApi(libs.ktor.okhttp)
+    androidMainApi(libs.ktor.negotiation)
+    androidMainApi(libs.ktor.logging)
     androidMainImplementation(libs.squareup.sqldelight.driver.android)
     androidMainImplementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    iosMainImplementation(libs.ktor.ios)
-
-    commonTestImplementation(kotlin("test"))
-    commonTestImplementation(project(":shared:core:test"))
-
-    commonTestImplementation(libs.testing.ktor.mock)
-    commonTestImplementation(libs.testing.turbine)
-    commonTestImplementation(libs.testing.kotest.assertions)
-    commonTestImplementation(libs.testing.mockk.common)
-
-    androidTestImplementation(kotlin("test"))
-    androidTestImplementation(libs.testing.androidx.junit)
+    iosMainApi(libs.ktor.serialization.json)
+    iosMainApi(libs.kermit)
 }
