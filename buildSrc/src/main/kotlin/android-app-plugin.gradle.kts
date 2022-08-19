@@ -70,7 +70,7 @@ android {
         implementation(libs.hilt.android)
         kapt(libs.hilt.compiler)
 
-        debugImplementation(libs.squareup.leakcanary)
+        debugImplementation(libs.leakcanary)
 
         coreLibraryDesugaring(libs.desugar)
     }

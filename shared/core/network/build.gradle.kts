@@ -14,9 +14,9 @@ android {
 }
 
 dependencies {
+    commonMainImplementation(libs.koin)
     commonMainImplementation(libs.ktor.core)
     commonMainImplementation(libs.ktor.logging)
-    commonMainImplementation(libs.koin.core)
     commonMainApi(libs.ktor.serialization)
     commonMainApi(libs.ktor.serialization.json)
     commonMainApi(libs.kermit)

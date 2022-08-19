@@ -21,7 +21,7 @@ dependencies {
     commonMainImplementation(project(":shared:domain:episodes:api"))
 
     commonMainImplementation(libs.kermit)
-    commonMainImplementation(libs.koin.core)
+    commonMainImplementation(libs.koin)
     commonMainImplementation(libs.squareup.sqldelight.extensions)
 
     testImplementation(libs.testing.mockk.core)

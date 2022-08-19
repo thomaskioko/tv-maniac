@@ -29,7 +29,7 @@ dependencies {
 
     commonMainImplementation(project(":shared:domain:tmdb:api"))
     commonMainImplementation(libs.ktor.core)
-    commonMainImplementation(libs.koin.core)
+    commonMainImplementation(libs.koin)
 
     commonTestImplementation(kotlin("test"))
     commonTestImplementation(project(":shared:core:test"))

@@ -15,6 +15,6 @@ dependencies {
     commonMainImplementation(project(":shared:domain:show-common:api"))
 
     commonMainImplementation(libs.multiplatform.paging.core)
-    commonMainImplementation(libs.kotlin.coroutines.core)
+    commonMainImplementation(libs.coroutines.core)
 
 }

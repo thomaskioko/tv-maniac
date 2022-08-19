@@ -9,5 +9,5 @@ android {
 }
 
 dependencies {
-    commonMainImplementation(libs.kotlin.coroutines.core)
+    commonMainImplementation(libs.coroutines.core)
 }

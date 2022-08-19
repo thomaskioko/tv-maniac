@@ -19,7 +19,7 @@ dependencies {
     commonMainImplementation(project(":shared:domain:last-air-episodes:api"))
     commonMainImplementation(libs.squareup.sqldelight.extensions)
     commonMainImplementation(libs.kermit)
-    commonMainImplementation(libs.koin.core)
+    commonMainImplementation(libs.koin)
 
     testImplementation(libs.testing.mockk.core)
 

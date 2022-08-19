@@ -11,12 +11,12 @@ android {
 
 dependencies {
 
+    commonMainImplementation(libs.koin)
     commonMainImplementation(libs.kermit)
-    commonMainImplementation(libs.koin.core)
     commonMainImplementation(libs.ktor.core)
-    commonMainImplementation(libs.kotlin.datetime)
-    commonMainImplementation(libs.kotlin.coroutines.core)
+    commonMainImplementation(libs.datetime)
+    commonMainImplementation(libs.coroutines.core)
 
-    iosMainImplementation(libs.koin.core)
-    iosMainImplementation(libs.kotlin.datetime)
+    iosMainImplementation(libs.koin)
+    iosMainImplementation(libs.datetime)
 }

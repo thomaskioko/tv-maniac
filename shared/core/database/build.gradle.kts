@@ -16,14 +16,14 @@ kapt {
 }
 
 dependencies {
-    commonMainImplementation(libs.koin.core)
+    commonMainImplementation(libs.koin)
     commonMainImplementation(libs.squareup.sqldelight.runtime)
 
     androidMainImplementation(libs.squareup.sqldelight.driver.android)
     androidMainImplementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    iosMainImplementation(libs.koin.core)
+    iosMainImplementation(libs.koin)
     iosMainImplementation(libs.squareup.sqldelight.driver.native)
 
     commonTestImplementation(kotlin("test"))
