@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.remote.api.model
+package com.thomaskioko.tvmaniac.tmdb.api.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

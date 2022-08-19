@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.details.implementation.mapper
 
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.StringUtil.formatPosterPath
-import com.thomaskioko.tvmaniac.remote.api.model.GenreResponse
-import com.thomaskioko.tvmaniac.remote.api.model.ShowDetailResponse
-import com.thomaskioko.tvmaniac.remote.api.model.ShowResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.GenreResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.ShowResponse
 import kotlinx.datetime.toLocalDate
 
 fun ShowResponse.toShow(): Show {

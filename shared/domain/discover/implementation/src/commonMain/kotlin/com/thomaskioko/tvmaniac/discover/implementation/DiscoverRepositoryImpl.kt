@@ -10,7 +10,7 @@ import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.discover.api.cache.DiscoverCategoryCache
 import com.thomaskioko.tvmaniac.discover.api.repository.DiscoverRepository
-import com.thomaskioko.tvmaniac.remote.api.model.TvShowsResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.TvShowsResponse
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
