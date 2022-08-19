@@ -1,8 +1,7 @@
 package com.thomaskioko.tvmaniac.core.util
 
 import co.touchlab.kermit.Logger
-import io.ktor.client.features.ResponseException
-import io.ktor.client.features.ServerResponseException
+import io.ktor.client.plugins.ServerResponseException
 import java.net.UnknownHostException
 
 actual object ExceptionHandler : Exception() {
@@ -19,10 +18,5 @@ actual object ExceptionHandler : Exception() {
     private fun Throwable.getErrorMessage(): String {
         Logger.e("Exception:: $message", this)
         return message ?: "Something went wrong"
-    }
-
-    private fun ResponseException.getErrorMessage(): String {
-        Logger.e("ResponseException:: $message", this)
-        return "Server Error: ${response.status.value} /n $message"
     }
 }
