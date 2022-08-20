@@ -16,7 +16,9 @@ import javax.inject.Singleton
 object NetworkModule {
 
     @Provides
-    fun provideTmdbInterceptor(): TmdbInterceptor = TmdbInterceptor()
+    fun provideTmdbInterceptor(
+        @Named("tmdb-api-key") tmdbApiKey : String
+    ): TmdbInterceptor = TmdbInterceptor(tmdbApiKey)
 
     @Singleton
     @Provides
