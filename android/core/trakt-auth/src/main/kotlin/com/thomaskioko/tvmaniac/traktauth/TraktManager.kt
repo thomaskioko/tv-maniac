@@ -1,10 +1,8 @@
-package com.thomaskioko.tvmaniac.trakt.implementation
+package com.thomaskioko.tvmaniac.traktauth
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
-import com.thomaskioko.tvmaniac.trakt.api.TraktAuthState
-import com.thomaskioko.tvmaniac.trakt.api.TraktManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -14,20 +12,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthState
+import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
 @OptIn(DelicateCoroutinesApi::class)
 @Singleton
-class TraktManagerImpl constructor(
+class TraktManager @Inject constructor(
     @DefaultDispatcher private val ioDispatcher: CoroutineDispatcher,
     @DefaultDispatcher private val mainDispatcher: CoroutineDispatcher,
     @Named("auth") private val authPrefs: SharedPreferences,
-) : TraktManager {
+) {
     private val authState = MutableStateFlow(EmptyAuthState)
 
     private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
-    override val state: StateFlow<TraktAuthState>
+    val state: StateFlow<TraktAuthState>
         get() = _state.asStateFlow()
 
     init {
@@ -51,12 +50,12 @@ class TraktManagerImpl constructor(
         }
     }
 
-    override fun clearAuth() {
+     fun clearAuth() {
         authState.value = EmptyAuthState
         clearPersistedAuthState()
     }
 
-    override fun onNewAuthState(newState: AuthState) {
+     fun onNewAuthState(newState: AuthState) {
         GlobalScope.launch(mainDispatcher) {
             authState.value = newState
         }
@@ -93,5 +92,3 @@ class TraktManagerImpl constructor(
         private const val PreferenceAuthKey = "stateJson"
     }
 }
-
-

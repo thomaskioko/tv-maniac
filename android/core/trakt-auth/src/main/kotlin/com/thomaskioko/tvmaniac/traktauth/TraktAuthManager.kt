@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.trakt.api
+package com.thomaskioko.tvmaniac.traktauth
 
 import android.content.Context
 import android.content.Intent

@@ -1,11 +1,8 @@
-package com.thomaskioko.tvmaniac.trakt.implementation
+package com.thomaskioko.tvmaniac.traktauth
 
 import android.content.Context
 import android.content.Intent
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.trakt.api.LoginTrakt
-import com.thomaskioko.tvmaniac.trakt.api.TraktAuthManager
-import com.thomaskioko.tvmaniac.trakt.api.TraktManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationRequest

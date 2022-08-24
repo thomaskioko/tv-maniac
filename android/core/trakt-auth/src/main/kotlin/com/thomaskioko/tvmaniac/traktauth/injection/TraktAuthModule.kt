@@ -1,19 +1,16 @@
-package com.thomaskioko.tvmaniac.trakt.implementation.injection
+package com.thomaskioko.tvmaniac.traktauth.injection
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.core.net.toUri
-import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
-import com.thomaskioko.tvmaniac.trakt.api.TraktAuthState
-import com.thomaskioko.tvmaniac.trakt.api.TraktManager
-import com.thomaskioko.tvmaniac.trakt.implementation.TraktManagerImpl
+import com.thomaskioko.tvmaniac.traktauth.TraktAuthState
+import com.thomaskioko.tvmaniac.traktauth.TraktManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthorizationRequest
@@ -36,13 +33,6 @@ object TraktAuthModule {
     ): SharedPreferences {
         return context.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
     }
-
-    @Provides
-    fun provideTraktManager(
-        @DefaultDispatcher ioDispatcher: CoroutineDispatcher,
-        @DefaultDispatcher mainDispatcher: CoroutineDispatcher,
-        @Named("auth") authPrefs: SharedPreferences,
-    ): TraktManager = TraktManagerImpl(ioDispatcher, mainDispatcher, authPrefs)
 
     @Provides
     fun provideAuthState(traktManager: TraktManager): TraktAuthState = runBlocking {

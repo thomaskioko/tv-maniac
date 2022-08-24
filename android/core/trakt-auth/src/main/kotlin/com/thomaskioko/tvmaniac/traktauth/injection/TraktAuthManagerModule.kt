@@ -1,7 +1,7 @@
-package com.thomaskioko.tvmaniac.trakt.implementation.injection
+package com.thomaskioko.tvmaniac.traktauth.injection
 
-import com.thomaskioko.tvmaniac.trakt.api.TraktAuthManager
-import com.thomaskioko.tvmaniac.trakt.implementation.ActivityTraktAuthManager
+import com.thomaskioko.tvmaniac.traktauth.ActivityTraktAuthManager
+import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
