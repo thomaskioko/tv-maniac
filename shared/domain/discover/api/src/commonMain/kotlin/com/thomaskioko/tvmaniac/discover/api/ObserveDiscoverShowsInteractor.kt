@@ -28,7 +28,7 @@ class ObserveDiscoverShowsInteractor constructor(
         DiscoverShowResult(
             featuredShows = trending.copy(
                 tvShows = trending.tvShows
-                    .sortedBy { it.votes }
+                    .sortedBy { it.averageVotes }
                     .take(FEATURED_LIST_SIZE)
             ),
             trendingShows = trending,
