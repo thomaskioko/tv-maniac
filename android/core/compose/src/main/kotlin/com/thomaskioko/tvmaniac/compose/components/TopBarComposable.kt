@@ -42,7 +42,7 @@ import com.thomaskioko.tvmaniac.resources.R
 fun TvManiacTopBar(
     title: @Composable RowScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
-    navigationIcon: @Composable (() -> Unit) = { },
+    navigationIcon: @Composable (() -> Unit)? = null,
     backgroundColor: Color = MaterialTheme.colors.primary
 ) {
     TopAppBar(

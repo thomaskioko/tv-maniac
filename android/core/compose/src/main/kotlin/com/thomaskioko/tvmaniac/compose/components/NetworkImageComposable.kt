@@ -15,8 +15,8 @@ import com.flaviofaria.kenburnsview.KenBurnsView
 @Composable
 fun NetworkImageComposable(
     imageUrl: String,
-    modifier: Modifier,
-    contentDescription: String
+    contentDescription: String,
+    modifier: Modifier
 ) {
     Image(
         painter = rememberImagePainter(data = imageUrl) {
@@ -38,6 +38,6 @@ fun KenBurnsViewImage(
     val kenBuns = remember { KenBurnsView(context) }
 
     AndroidView({ kenBuns }, modifier = modifier) {
-    it.load(imageUrl)
-}
+        it.load(imageUrl)
+    }
 }
