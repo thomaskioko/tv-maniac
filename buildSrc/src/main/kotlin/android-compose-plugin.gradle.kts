@@ -36,16 +36,17 @@ android {
 dependencies {
     implementation(project(":android:core:resources"))
 
-    implementation(libs.androidx.core)
     api(libs.androidx.palette)
     api(libs.androidx.compose.runtime)
     api(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.material.icons)
     api(libs.androidx.compose.ui.runtime)
-    implementation(libs.androidx.compose.foundation)
     api(libs.coroutines.jvm)
     api(libs.androidx.compose.ui.tooling)
+    api(libs.coil)
     implementation(libs.kenburns)
-    implementation(libs.coil)
+    implementation(libs.accompanist.insetsui)
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.lifecycle.runtime)
 }

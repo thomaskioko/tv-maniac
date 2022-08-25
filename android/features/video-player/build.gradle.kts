@@ -15,7 +15,6 @@ dependencies {
 
     implementation(projects.android.core.compose)
 
-    implementation(libs.coil)
     implementation(libs.youtubePlayer)
     implementation(libs.accompanist.insetsui)
     implementation(libs.accompanist.navigation.material)

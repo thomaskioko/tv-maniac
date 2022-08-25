@@ -22,7 +22,6 @@ dependencies {
     api(project(":shared:domain:trailers:api"))
     implementation(project(":android:core:compose"))
 
-    implementation(libs.coil)
     implementation(libs.snapper)
     implementation(libs.youtubePlayer)
     implementation(libs.accompanist.insetsui)
