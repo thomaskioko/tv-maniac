@@ -48,6 +48,7 @@ kotlin {
             export(project(":shared:domain:discover:api"))
             export(project(":shared:domain:trailers:api"))
             export(project(":shared:domain:tmdb:api"))
+            export(project(":shared:domain:trakt:api"))
             embedBitcode(BitcodeEmbeddingMode.BITCODE)
 
             transitiveExport = true
@@ -60,6 +61,7 @@ dependencies {
     commonMainApi(project(":shared:core:util"))
     commonMainApi(project(":shared:core:database"))
     commonMainApi(project(":shared:core:network"))
+    commonMainApi(project(":shared:core:persistence"))
     commonMainApi(project(":shared:domain:show-details:api"))
     commonMainApi(project(":shared:domain:seasons:api"))
     commonMainApi(project(":shared:domain:episodes:api"))
@@ -71,7 +73,7 @@ dependencies {
     commonMainApi(project(":shared:domain:discover:api"))
     commonMainApi(project(":shared:domain:trailers:api"))
     commonMainApi(project(":shared:domain:tmdb:api"))
-    commonMainApi(project(":shared:core:persistence"))
+    commonMainApi(project(":shared:domain:trakt:api"))
 
     commonMainImplementation(project(":shared:domain:episodes:implementation"))
     commonMainImplementation(project(":shared:domain:show-details:implementation"))
@@ -83,6 +85,7 @@ dependencies {
     commonMainImplementation(project(":shared:domain:discover:implementation"))
     commonMainImplementation(project(":shared:domain:trailers:implementation"))
     commonMainImplementation(project(":shared:domain:tmdb:implementation"))
+    commonMainImplementation(project(":shared:domain:trakt:implementation"))
 
     commonMainImplementation(libs.koin)
     commonMainImplementation(libs.coroutines.core)
