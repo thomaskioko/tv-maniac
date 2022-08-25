@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.trakt.implementation.injection
 
 import com.thomaskioko.tvmaniac.network.KtorClientFactory
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
+import com.thomaskioko.tvmaniac.trakt.implementation.TraktAuthInterceptor
+import com.thomaskioko.tvmaniac.trakt.implementation.TraktHttpClient.traktHttpClient
 import com.thomaskioko.tvmanic.trakt.implementation.TraktServiceImpl
 import dagger.Module
 import dagger.Provides
@@ -15,6 +17,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object TraktNetworkModule {
 
+    @Singleton
     @Provides
     @Named("trakt-url")
     fun provideTraktUrl(): String = "https://api.trakt.tv/"
@@ -23,10 +26,9 @@ object TraktNetworkModule {
     @Provides
     @Named("trakt-http-client")
     fun provideHttpClient(
-        httpClient: HttpClient
-    ): HttpClient {
-        return KtorClientFactory().httpClient(httpClient)
-    }
+        @Named("trakt-url") httpUrl: String,
+        interceptor: TraktAuthInterceptor
+    ): HttpClient = KtorClientFactory().httpClient(traktHttpClient(httpUrl, interceptor))
 
     @Singleton
     @Provides

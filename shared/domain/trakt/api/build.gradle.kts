@@ -11,9 +11,14 @@ android {
 }
 
 dependencies {
+    commonMainImplementation(project(":shared:core:util"))
+    commonMainImplementation(project(":shared:core:database"))
     commonMainImplementation(libs.ktor.serialization)
 
+
     androidMainImplementation(project(":shared:core:ui"))
+    androidMainImplementation(project(":shared:core:util"))
+    androidMainImplementation(libs.inject)
     androidMainImplementation(libs.appauth)
     androidMainImplementation(libs.androidx.activity)
     androidMainImplementation(libs.androidx.core)
