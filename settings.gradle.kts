@@ -17,6 +17,7 @@ include(
     ":android:core:navigation",
     ":android:core:resources",
     ":android:core:workmanager",
+    ":android:core:trakt-auth",
     ":android:features:discover",
     ":android:features:home",
     ":android:features:search",
@@ -53,5 +54,7 @@ include(
     ":shared:domain:trailers:api",
     ":shared:domain:trailers:implementation",
     ":shared:domain:tmdb:api",
-    ":shared:domain:tmdb:implementation"
+    ":shared:domain:tmdb:implementation",
+    ":shared:domain:trakt:api",
+    ":shared:domain:trakt:implementation",
 )
