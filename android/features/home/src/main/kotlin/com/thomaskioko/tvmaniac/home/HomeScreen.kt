@@ -11,7 +11,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Star
@@ -128,8 +128,8 @@ private fun TvManiacBottomNavigation(
 
         TvManiacBottomNavigationItem(
             screen = NavigationScreen.SettingsScreen,
-            imageVector = Icons.Outlined.MoreVert,
-            title = stringResource(id = R.string.menu_item_more),
+            imageVector = Icons.Filled.Settings,
+            title = stringResource(id = R.string.menu_item_settings),
             selected = currentSelectedItem == NavigationScreen.SettingsScreen,
             onNavigationSelected = onNavigationSelected
         )
