@@ -4,10 +4,11 @@ import io.ktor.http.HttpHeaders
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
+import javax.inject.Named
 
 
 class TmdbInterceptor @Inject constructor(
-    private val tmdbApiKey: String
+    @Named("tmdb-api-key") private val tmdbApiKey: String
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
