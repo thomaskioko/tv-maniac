@@ -20,6 +20,7 @@ import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerRepository
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
+import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -84,8 +85,9 @@ object ShowDetailModule {
     @Singleton
     @Provides
     fun provideUpdateFollowingInteractor(
-        repository: TvShowsRepository
-    ): UpdateFollowingInteractor = UpdateFollowingInteractor(repository)
+        repository: TvShowsRepository,
+        traktRepository: TraktRepository
+    ): UpdateFollowingInteractor = UpdateFollowingInteractor(repository, traktRepository)
 
     @Singleton
     @Provides
