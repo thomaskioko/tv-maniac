@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.settings
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -21,14 +22,13 @@ import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -40,11 +40,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
+import com.thomaskioko.tvmaniac.compose.components.UserProfileButton
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsContent
@@ -53,11 +54,19 @@ import com.thomaskioko.tvmaniac.shared.persistance.Theme
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
-    navigateUp: () -> Unit
+    onProfileClicked: () -> Unit
 ) {
 
-    val themeState by rememberFlowWithLifecycle(viewModel.observeState())
+    val settingsState by rememberFlowWithLifecycle(viewModel.observeState())
         .collectAsState(initial = SettingsContent.DEFAULT)
+
+    val loginLauncher = rememberLauncherForActivityResult(
+        viewModel.buildLoginActivityResult()
+    ) { result ->
+        if (result != null) {
+            viewModel.onLoginResult(result)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -70,28 +79,38 @@ fun SettingsScreen(
                         )
                     }
                 },
-                navigationIcon = {
-                    IconButton(
-                        onClick = navigateUp,
-                        modifier = Modifier.iconButtonBackgroundScrim()
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = null,
-                        )
-                    }
-                },
-                backgroundColor = MaterialTheme.colors.background
+                backgroundColor = MaterialTheme.colors.background,
+                actions = {
+                    UserProfileButton(
+                        loggedIn = settingsState.loggedIn,
+                        avatarUrl = settingsState.traktUserPicUrl,
+                        fullName = settingsState.traktFullName,
+                        userName = settingsState.traktUserName,
+                        onClick = onProfileClicked,
+                        modifier = Modifier
+                            .clickable(
+                                enabled = false,
+                                onClick = onProfileClicked
+                            )
+                    )
+                }
             )
         },
         modifier = Modifier
             .statusBarsPadding(),
         content = { innerPadding ->
             SettingsList(
-                settingsState = themeState,
+                settingsState = settingsState,
                 onThemeChanged = { viewModel.dispatch(SettingsActions.ThemeSelected(it)) },
                 onThemeClicked = { viewModel.dispatch(SettingsActions.ThemeClicked) },
                 onDismissTheme = { viewModel.dispatch(SettingsActions.ThemeClicked) },
+                onLoginClicked = {
+                    loginLauncher.launch(Unit)
+                    viewModel.dispatch(SettingsActions.DismissTraktDialog)
+                },
+                onLogoutClicked = { viewModel.dispatch(SettingsActions.TraktLoginLogout) },
+                onConnectClicked = { viewModel.dispatch(SettingsActions.ShowTraktDialog) },
+                onDismissDialogClicked = { viewModel.dispatch(SettingsActions.DismissTraktDialog) },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
@@ -106,12 +125,27 @@ fun SettingsList(
     onThemeChanged: (String) -> Unit,
     onThemeClicked: () -> Unit,
     onDismissTheme: () -> Unit,
+    onConnectClicked: () -> Unit,
+    onLoginClicked: () -> Unit,
+    onLogoutClicked: () -> Unit,
+    onDismissDialogClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(16.dp)
     ) {
+
+        item {
+            TraktProfileSettingsItem(
+                settingsState = settingsState,
+                onLoginClicked = onLoginClicked,
+                onLogoutClicked = onLogoutClicked,
+                onDismissDialogClicked = onDismissDialogClicked,
+                onConnectClicked = onConnectClicked
+            )
+        }
+
         item {
             ThemeSettingsItem(
                 settingsState = settingsState,
@@ -124,6 +158,92 @@ fun SettingsList(
         item { ColumnSpacer(value = 16) }
 
         item { AboutSettingsItem() }
+    }
+}
+
+@Composable
+private fun TraktProfileSettingsItem(
+    settingsState: SettingsContent,
+    onConnectClicked: () -> Unit,
+    onLoginClicked: () -> Unit,
+    onLogoutClicked: () -> Unit,
+    onDismissDialogClicked: () -> Unit
+) {
+    val titleId = if(settingsState.loggedIn){
+        stringResource(R.string.settings_title_disconnect_trakt, settingsState.traktUserName)
+    } else {
+        stringResource( R.string.settings_title_connect_trakt)
+    }
+
+    ColumnSpacer(value = 8)
+
+    SettingHeaderTitle(title = stringResource(R.string.settings_title_trakt))
+
+    ColumnSpacer(value = 8)
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onConnectClicked() },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Person,
+            tint = MaterialTheme.colors.secondary,
+            contentDescription = null,
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .size(28.dp)
+        )
+
+        Column(
+            modifier = Modifier
+                .padding(end = 8.dp, bottom = 8.dp)
+                .weight(1f),
+        ) {
+            SettingTitle(titleId)
+            SettingDescription(stringResource(R.string.settings_trakt_description))
+        }
+
+        TrackDialog(
+            isVisible = settingsState.showTraktDialog,
+            onLoginClicked = onLoginClicked,
+            onLogoutClicked = onLogoutClicked,
+            onDismissDialog = onDismissDialogClicked
+        )
+    }
+
+    SettingListDivider()
+}
+
+@Composable
+fun TrackDialog(
+    isVisible: Boolean,
+    onLoginClicked: () -> Unit,
+    onLogoutClicked: () -> Unit,
+    onDismissDialog: () -> Unit,
+) {
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn(
+            initialAlpha = 0.4f
+        ),
+        exit = fadeOut(
+            // Overwrites the default animation with tween
+            animationSpec = tween(durationMillis = 250)
+        )
+    ) {
+
+        BasicDialog(
+            dialogTitle = stringResource(id = R.string.settings_title_trakt_app),
+            dialogMessage = stringResource(id = R.string.settings_trakt_description),
+            confirmButtonText = stringResource(id = R.string.login),
+            dismissButtonText = stringResource(id = R.string.logout),
+            onDismissDialog = onDismissDialog,
+            confirmButtonClicked = onLoginClicked,
+            dismissButtonClicked = onLogoutClicked
+        )
     }
 }
 
@@ -351,7 +471,11 @@ fun SettingsPropertyPreview() {
             settingsState = SettingsContent.DEFAULT,
             onThemeChanged = {},
             onThemeClicked = {},
-            onDismissTheme = {}
+            onDismissTheme = {},
+            onLogoutClicked = {},
+            onLoginClicked = {},
+            onDismissDialogClicked = {},
+            onConnectClicked = {}
         )
     }
 }
