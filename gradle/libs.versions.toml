@@ -1,6 +1,7 @@
 [versions]
 kotlin = "1.6.21"
 agp = "7.3.0-rc01"
+appauth = "0.8.1"
 compose = "1.2.0-beta01"
 accompanist = "0.24.6-alpha"
 coroutines = "1.6.1"
@@ -50,6 +51,7 @@ accompanist-insetsui = { module = "com.google.accompanist:accompanist-insets-ui"
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
 
+androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activity" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
 androidx-palette = { module = "androidx.palette:palette-ktx", version.ref = "androidx-palette" }
@@ -91,6 +93,7 @@ ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
 coil = { module = "io.coil-kt:coil-compose", version = "1.4.0" }
 datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.3.2" }
+appauth = { module = "net.openid:appauth", version.ref = "appauth" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version = "1.1.5" }
 inject = { module = "javax.inject:javax.inject", version = "1" }
 kenburns = { module = "com.flaviofaria:kenburnsview", version = "1.0.7" }
