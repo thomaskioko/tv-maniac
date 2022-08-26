@@ -8,7 +8,9 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.http.ContentType
 import io.ktor.http.URLBuilder
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -29,6 +31,7 @@ object TraktHttpClient {
                     prettyPrint = true
                     isLenient = true
                     explicitNulls = false
+                    encodeDefaults = true
                 }
             )
         }
@@ -54,6 +57,7 @@ object TraktHttpClient {
                 host = endpointUrlBuilder.host
                 protocol = endpointUrlBuilder.protocol
             }
+            contentType(ContentType.Application.Json)
         }
 
         engine {
