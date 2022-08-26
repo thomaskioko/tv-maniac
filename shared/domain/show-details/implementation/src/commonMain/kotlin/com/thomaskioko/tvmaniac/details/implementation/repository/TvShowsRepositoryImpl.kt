@@ -95,7 +95,7 @@ class TvShowsRepositoryImpl(
     }
 
     private fun mapAndInsert(tvShowId: Long, response: ShowDetailResponse) {
-        tvShowCache.insert(response.toShow())
+        tvShowCache.updateShow(response.toShow())
 
         response.lastEpisodeToAir?.let {
             epAirCacheLast.insert(it.toAirEp(tvShowId))

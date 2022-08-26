@@ -37,6 +37,17 @@ class TvShowCacheImpl(
         list.forEach { insert(it) }
     }
 
+    override fun updateShow(show: Show) {
+        database.transaction {
+            database.showQueries.updateTvShow(
+                id = show.id,
+                status = show.status,
+                number_of_seasons = show.number_of_seasons,
+                number_of_episodes = show.number_of_episodes
+            )
+        }
+    }
+
     override fun observeTvShow(showId: Long): Flow<Show> {
         return database.showQueries.selectByShowId(
             id = showId
@@ -65,10 +76,12 @@ class TvShowCacheImpl(
     }
 
     override fun updateFollowingShow(showId: Long, following: Boolean) {
-        database.showQueries.updateFollowinglist(
-            following = following,
-            id = showId
-        )
+        database.transaction {
+            database.showQueries.updateFollowinglist(
+                following = following,
+                id = showId
+            )
+        }
     }
 
     override fun deleteTvShows() {

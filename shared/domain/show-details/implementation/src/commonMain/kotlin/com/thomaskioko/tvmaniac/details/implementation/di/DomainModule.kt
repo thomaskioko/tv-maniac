@@ -17,7 +17,7 @@ val detailDomainModule: Module = module {
     }
 
     factory { ObserveShowInteractor(get(), get(), get(), get(), get(), get()) }
-    factory { UpdateFollowingInteractor(get()) }
+    factory { UpdateFollowingInteractor(get(), get()) }
 
     single<TvShowCache> { TvShowCacheImpl(get()) }
     single<ShowCategoryCache> { ShowCategoryCacheImpl(get()) }
