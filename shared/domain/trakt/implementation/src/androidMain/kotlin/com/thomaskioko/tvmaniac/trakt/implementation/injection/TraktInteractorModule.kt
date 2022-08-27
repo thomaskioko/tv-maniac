@@ -2,13 +2,16 @@ package com.thomaskioko.tvmaniac.trakt.implementation.injection
 
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
+import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.trakt.api.ObserveTraktUserInteractor
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFavoriteListCache
+import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
 import com.thomaskioko.tvmanic.trakt.implementation.TraktRepositoryImpl
 import com.thomaskioko.tvmanic.trakt.implementation.cache.TraktFavoriteListCacheImpl
+import com.thomaskioko.tvmanic.trakt.implementation.cache.TraktFollowedCacheImpl
 import com.thomaskioko.tvmanic.trakt.implementation.cache.TraktUserCacheImpl
 import dagger.Module
 import dagger.Provides
@@ -35,12 +38,27 @@ object TraktInteractorModule {
 
     @Singleton
     @Provides
+    fun provideTraktFollowedCache(database: TvManiacDatabase): TraktFollowedCache =
+        TraktFollowedCacheImpl(database)
+
+    @Singleton
+    @Provides
     fun provideTraktRepository(
         cache: TraktUserCache,
+        followedCache: TraktFollowedCache,
         favoriteCache: TraktFavoriteListCache,
         traktService: TraktService,
+        tmdbRepository: TmdbRepository,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
-    ): TraktRepository = TraktRepositoryImpl(cache, favoriteCache, traktService, ioDispatcher)
+    ): TraktRepository =
+        TraktRepositoryImpl(
+            cache,
+            followedCache,
+            favoriteCache,
+            traktService,
+            tmdbRepository,
+            ioDispatcher
+        )
 
     @Singleton
     @Provides

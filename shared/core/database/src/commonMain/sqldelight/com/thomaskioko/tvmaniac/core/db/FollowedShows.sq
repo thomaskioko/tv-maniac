@@ -1,0 +1,29 @@
+CREATE TABLE followed_shows (
+show_id INTEGER PRIMARY KEY,
+synced INTEGER AS Boolean NOT NULL DEFAULT 0,
+FOREIGN KEY (show_id) REFERENCES show(id) ON DELETE CASCADE
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO followed_shows(
+show_id,
+synced
+)
+VALUES(?, ?);
+
+selectUnsyncedShows:
+SELECT * FROM followed_shows
+WHERE synced != 1;
+
+selectFollowedShows:
+SELECT *
+FROM followed_shows;
+
+removeShow:
+DELETE FROM followed_shows
+WHERE show_id = ?;
+
+updateFollowedState:
+UPDATE followed_shows
+SET synced = ?
+WHERE show_id = ?;

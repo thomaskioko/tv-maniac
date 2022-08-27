@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.traktauth
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
+import com.thomaskioko.tvmaniac.workmanager.ShowTasks
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -19,6 +20,7 @@ import javax.inject.Singleton
 @OptIn(DelicateCoroutinesApi::class)
 @Singleton
 class TraktManager @Inject constructor(
+    private val showTasks: ShowTasks,
     @DefaultDispatcher private val ioDispatcher: CoroutineDispatcher,
     @DefaultDispatcher private val mainDispatcher: CoroutineDispatcher,
     @Named("auth") private val authPrefs: SharedPreferences,
@@ -50,12 +52,12 @@ class TraktManager @Inject constructor(
         }
     }
 
-     fun clearAuth() {
+    fun clearAuth() {
         authState.value = EmptyAuthState
         clearPersistedAuthState()
     }
 
-     fun onNewAuthState(newState: AuthState) {
+    fun onNewAuthState(newState: AuthState) {
         GlobalScope.launch(mainDispatcher) {
             authState.value = newState
         }
@@ -63,8 +65,7 @@ class TraktManager @Inject constructor(
             persistAuthState(newState)
         }
 
-        //TODO:: Trigger Sync Data.
-
+        showTasks.syncTraktFollowedShows()
     }
 
     private fun readAuthState(): AuthState {

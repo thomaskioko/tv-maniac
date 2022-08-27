@@ -22,6 +22,10 @@ interface TraktRepository {
         tmdbShowId: Long
     ): Flow<Resource<Unit>>
 
+    fun observeFollowedShows(listId: Int, userSlug: String,) : Flow<Resource<Unit>>
+
+    suspend fun syncFollowedShows()
+
     fun getLocalTraktUser(): Trakt_user?
 
     fun getFavoriteList(): Trakt_favorite_list?

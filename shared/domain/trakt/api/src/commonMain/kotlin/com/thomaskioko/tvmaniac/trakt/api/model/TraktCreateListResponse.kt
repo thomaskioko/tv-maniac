@@ -14,6 +14,6 @@ data class TraktCreateListResponse(
 
 @Serializable
 data class ListIds(
-    @SerialName("trakt") val trakt: Long,
+    @SerialName("trakt") val trakt: Int,
     @SerialName("slug") val slug: String
 )

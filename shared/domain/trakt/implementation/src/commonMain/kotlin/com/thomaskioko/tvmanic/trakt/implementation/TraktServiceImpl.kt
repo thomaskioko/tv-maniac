@@ -8,6 +8,8 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowRequest
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowToListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListRequest
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShow
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
@@ -74,10 +76,19 @@ class TraktServiceImpl(
             parameter("extended", "full")
         }.body()
 
+    override suspend fun getUserList(userId: String): List<TraktPersonalListsResponse> =
+        httpClient.get("users/$userId/lists").body()
+
     override suspend fun createFavoriteList(userSlug: String): TraktCreateListResponse =
         httpClient.post("users/$userSlug/lists") {
             setBody(TraktCreateListRequest())
         }.body()
+
+    override suspend fun getFollowedList(
+        listId: Int,
+        userSlug: String
+    ): List<TraktFollowedShowResponse> =
+        httpClient.get("users/$userSlug/lists/$listId/items/shows").body()
 
     override suspend fun addShowToList(
         userSlug: String,
