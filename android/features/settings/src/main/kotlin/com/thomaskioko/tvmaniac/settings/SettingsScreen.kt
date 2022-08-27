@@ -9,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -133,8 +132,9 @@ fun SettingsList(
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(16.dp)
     ) {
+
+        item { ColumnSpacer(value = 16) }
 
         item {
             TraktProfileSettingsItem(
@@ -169,52 +169,57 @@ private fun TraktProfileSettingsItem(
     onLogoutClicked: () -> Unit,
     onDismissDialogClicked: () -> Unit
 ) {
-    val titleId = if(settingsState.loggedIn){
+    val titleId = if (settingsState.loggedIn) {
         stringResource(R.string.settings_title_disconnect_trakt, settingsState.traktUserName)
     } else {
-        stringResource( R.string.settings_title_connect_trakt)
+        stringResource(R.string.settings_title_connect_trakt)
     }
 
-    ColumnSpacer(value = 8)
-
-    SettingHeaderTitle(title = stringResource(R.string.settings_title_trakt))
-
-    ColumnSpacer(value = 8)
-
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onConnectClicked() },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+            .clickable { onConnectClicked() }
+            .padding(start = 16.dp, end = 16.dp),
     ) {
-        Icon(
-            imageVector = Icons.Filled.Person,
-            tint = MaterialTheme.colors.secondary,
-            contentDescription = null,
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .size(28.dp)
-        )
+        ColumnSpacer(value = 8)
 
-        Column(
-            modifier = Modifier
-                .padding(end = 8.dp, bottom = 8.dp)
-                .weight(1f),
+        SettingHeaderTitle(title = stringResource(R.string.settings_title_trakt))
+
+        ColumnSpacer(value = 8)
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            SettingTitle(titleId)
-            SettingDescription(stringResource(R.string.settings_trakt_description))
+            Icon(
+                imageVector = Icons.Filled.Person,
+                tint = MaterialTheme.colors.secondary,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .size(28.dp)
+            )
+
+            Column(
+                modifier = Modifier
+                    .weight(1f),
+            ) {
+                SettingTitle(titleId)
+                SettingDescription(stringResource(R.string.settings_trakt_description))
+            }
+
+            TrackDialog(
+                isVisible = settingsState.showTraktDialog,
+                onLoginClicked = onLoginClicked,
+                onLogoutClicked = onLogoutClicked,
+                onDismissDialog = onDismissDialogClicked
+            )
         }
 
-        TrackDialog(
-            isVisible = settingsState.showTraktDialog,
-            onLoginClicked = onLoginClicked,
-            onLogoutClicked = onLogoutClicked,
-            onDismissDialog = onDismissDialogClicked
-        )
-    }
+        ColumnSpacer(value = 8)
 
-    SettingListDivider()
+        SettingListDivider()
+    }
 }
 
 @Composable
@@ -261,48 +266,56 @@ private fun ThemeSettingsItem(
         Theme.SYSTEM -> stringResource(R.string.settings_title_theme_system)
     }
 
-    ColumnSpacer(value = 8)
-
-    SettingHeaderTitle(
-        title = stringResource(R.string.settings_title_ui),
-    )
-
-    ColumnSpacer(value = 8)
-
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onThemeClicked() },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+            .clickable { onThemeClicked() }
+            .padding(start = 16.dp, end = 16.dp)
     ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_palette_24),
-            tint = MaterialTheme.colors.secondary,
-            contentDescription = null,
+
+        ColumnSpacer(value = 8)
+
+        SettingHeaderTitle(
+            title = stringResource(R.string.settings_title_ui),
             modifier = Modifier
-                .padding(end = 16.dp)
-                .size(28.dp)
         )
 
-        Column(
-            modifier = Modifier
-                .padding(end = 8.dp, bottom = 8.dp)
-                .weight(1f),
+        ColumnSpacer(value = 8)
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            SettingTitle(themeTitle)
-            SettingDescription(stringResource(R.string.settings_theme_description))
+            Icon(
+                painter = painterResource(R.drawable.ic_palette_24),
+                tint = MaterialTheme.colors.secondary,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .size(28.dp)
+            )
+
+            Column(
+                modifier = Modifier
+                    .padding(end = 8.dp, bottom = 8.dp)
+                    .weight(1f),
+            ) {
+                SettingTitle(themeTitle)
+                SettingDescription(stringResource(R.string.settings_theme_description))
+            }
+
+            ThemeMenu(
+                isVisible = settingsState.showPopup,
+                theme = settingsState.theme,
+                onDismissTheme = onDismissTheme,
+                onThemeSelected = onThemeSelected
+            )
         }
 
-        ThemeMenu(
-            isVisible = settingsState.showPopup,
-            theme = settingsState.theme,
-            onDismissTheme = onDismissTheme,
-            onThemeSelected = onThemeSelected
-        )
-    }
+        ColumnSpacer(value = 8)
 
-    SettingListDivider()
+        SettingListDivider()
+    }
 }
 
 @Composable
@@ -401,13 +414,13 @@ private fun ThemeMenuItem(
 @Composable
 private fun AboutSettingsItem() {
 
-    SettingHeaderTitle(title = stringResource(R.string.settings_title_info))
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .clickable { }
+            .padding(start = 16.dp, end = 16.dp)
     ) {
+        SettingHeaderTitle(title = stringResource(R.string.settings_title_info))
 
         ColumnSpacer(value = 8)
 
@@ -421,9 +434,9 @@ private fun AboutSettingsItem() {
         }
 
         ColumnSpacer(value = 8)
-    }
 
-    SettingListDivider()
+        SettingListDivider()
+    }
 }
 
 @Composable
