@@ -43,7 +43,7 @@ class TmdbRepositoryImpl(
 
     override fun observeShow(tvShowId: Long): Flow<Resource<Show>> = networkBoundResource(
         query = { tvShowCache.observeTvShow(tvShowId) },
-        shouldFetch = { it?.status.isNullOrBlank() },
+        shouldFetch = { it == null || it.status.isNullOrBlank() },
         fetch = { apiService.getTvShowDetails(tvShowId) },
         saveFetchResult = { mapAndInsert(tvShowId, it) },
         onFetchFailed = { Logger.withTag("observeShow").e { it.resolveError() } },
@@ -95,7 +95,7 @@ class TmdbRepositoryImpl(
     }
 
     private fun mapAndInsert(tvShowId: Long, response: ShowDetailResponse) {
-        tvShowCache.updateShow(response.toShow())
+        tvShowCache.insert(response.toShow())
 
         response.lastEpisodeToAir?.let {
             epAirCacheLast.insert(it.toAirEp(tvShowId))

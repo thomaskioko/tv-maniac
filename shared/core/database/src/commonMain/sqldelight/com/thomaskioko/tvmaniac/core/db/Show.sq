@@ -20,7 +20,7 @@ following INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
 insertOrReplace:
-INSERT OR IGNORE INTO show(
+INSERT OR REPLACE INTO show(
 id,
 title,
 description,

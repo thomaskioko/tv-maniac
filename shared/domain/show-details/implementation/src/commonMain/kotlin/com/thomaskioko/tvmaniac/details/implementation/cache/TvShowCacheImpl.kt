@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.details.implementation.cache
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
-import com.squareup.sqldelight.runtime.coroutines.mapToOne
+import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.db.AirEpisodesByShowId
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
@@ -48,12 +48,10 @@ class TvShowCacheImpl(
         }
     }
 
-    override fun observeTvShow(showId: Long): Flow<Show> {
-        return database.showQueries.selectByShowId(
-            id = showId
-        )
+    override fun observeTvShow(showId: Long): Flow<Show?> {
+        return database.showQueries.selectByShowId(showId)
             .asFlow()
-            .mapToOne()
+            .mapToOneOrNull()
     }
 
     override fun observeTvShows(): Flow<List<Show>> {
