@@ -2,13 +2,13 @@ package com.thomaskioko.tvmaniac.details.api.interactor
 
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class ObserveFollowingInteractor constructor(
-    private val repository: TvShowsRepository,
+    private val repository: TmdbRepository,
 ) : FlowInteractor<Unit, List<TvShow>>() {
 
     override fun run(params: Unit): Flow<List<TvShow>> = repository.observeFollowing()

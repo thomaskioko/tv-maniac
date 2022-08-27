@@ -1,14 +1,14 @@
 package com.thomaskioko.tvmaniac.details.api.interactor
 
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
 class UpdateFollowingInteractor constructor(
-    private val repository: TvShowsRepository,
+    private val repository: TmdbRepository,
     private val traktRepository: TraktRepository
 ) : FlowInteractor<UpdateShowParams, Unit>() {
 

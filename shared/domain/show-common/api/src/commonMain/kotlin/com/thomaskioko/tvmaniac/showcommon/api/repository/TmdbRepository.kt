@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.core.util.CommonFlow
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import kotlinx.coroutines.flow.Flow
 
-interface TvShowsRepository {
+interface TmdbRepository {
 
     suspend fun updateFollowing(showId: Long, addToWatchList: Boolean)
 

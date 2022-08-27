@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.details.api.interactor
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
 import com.thomaskioko.tvmaniac.core.util.combine
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.details.api.toGenreModelList
 import com.thomaskioko.tvmaniac.details.api.toLastAirEpisodeList
 import com.thomaskioko.tvmaniac.details.api.toSeasonsEntityList
@@ -18,7 +18,7 @@ import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import kotlinx.coroutines.flow.Flow
 
 class ObserveShowInteractor constructor(
-    private val tvShowsRepository: TvShowsRepository,
+    private val tmdbRepository: TmdbRepository,
     private val similarShowsRepository: SimilarShowsRepository,
     private val seasonsRepository: SeasonsRepository,
     private val genreRepository: GenreRepository,
@@ -27,7 +27,7 @@ class ObserveShowInteractor constructor(
 ) : FlowInteractor<Long, ShowDetailViewState>() {
 
     override fun run(params: Long): Flow<ShowDetailViewState> = combine(
-        tvShowsRepository.observeShow(params),
+        tmdbRepository.observeShow(params),
         similarShowsRepository.observeSimilarShows(params),
         seasonsRepository.observeShowSeasons(params),
         genreRepository.observeGenres(),
