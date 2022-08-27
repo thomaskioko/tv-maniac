@@ -60,6 +60,7 @@ import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ErrorView
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.ExtendedFab
+import com.thomaskioko.tvmaniac.compose.components.ExtendedLoadingFab
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.LoadingItem
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
@@ -69,7 +70,7 @@ import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.details.api.interactor.UpdateShowParams
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.BookmarkEpisode
-import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.UpdateFavorite
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.UpdateFollowing
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailEffect
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
 import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
@@ -130,7 +131,7 @@ fun ShowDetailScreen(
                         onSeasonClicked = onSeasonClicked,
                         onEpisodeClicked = onEpisodeClicked,
                         onShowClicked = onShowClicked,
-                        onUpdateFavoriteClicked = { viewModel.dispatch(UpdateFavorite(it)) },
+                        onUpdateFavoriteClicked = { viewModel.dispatch(UpdateFollowing(it)) },
                         onBookmarkEpClicked = { viewModel.dispatch(BookmarkEpisode(it)) },
                         onWatchTrailerClicked = onWatchTrailerClicked
                     )
@@ -248,9 +249,7 @@ private fun HeaderViewContent(
         )
 
         Body(
-            tvShow = detailUiState.tvShow,
-            trailerList = detailUiState.trailersList,
-            genreList = detailUiState.genreUIList,
+            detailUiState = detailUiState,
             onUpdateFavoriteClicked = onUpdateFavoriteClicked,
             onWatchTrailerClicked = onWatchTrailerClicked
         )
@@ -270,9 +269,7 @@ private fun HeaderImage(backdropImageUrl: String) {
 
 @Composable
 private fun Body(
-    tvShow: TvShow,
-    trailerList: List<Trailer>,
-    genreList: List<GenreUIModel>,
+    detailUiState: ShowDetailViewState,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
     onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
@@ -296,7 +293,7 @@ private fun Body(
         ) {
 
             Text(
-                text = tvShow.title,
+                text = detailUiState.tvShow.title,
                 style = MaterialTheme.typography.h4,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
@@ -306,16 +303,14 @@ private fun Body(
 
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 ExpandingText(
-                    text = tvShow.overview,
+                    text = detailUiState.tvShow.overview,
                 )
             }
 
             ColumnSpacer(8)
 
             TvShowMetadata(
-                tvShow = tvShow,
-                trailerList = trailerList,
-                genreUIList = genreList,
+                detailUiState = detailUiState,
                 onUpdateFavoriteClicked = onUpdateFavoriteClicked,
                 onWatchTrailerClicked = onWatchTrailerClicked
             )
@@ -327,9 +322,7 @@ private fun Body(
 
 @Composable
 fun TvShowMetadata(
-    tvShow: TvShow,
-    trailerList: List<Trailer>,
-    genreUIList: List<GenreUIModel>,
+    detailUiState: ShowDetailViewState,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
     onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
@@ -349,8 +342,8 @@ fun TvShowMetadata(
             background = MaterialTheme.colors.secondary.copy(alpha = 0.08f)
         )
 
-        AnimatedVisibility(visible = !tvShow.status.isNullOrBlank()) {
-            tvShow.status?.let {
+        AnimatedVisibility(visible = !detailUiState.tvShow.status.isNullOrBlank()) {
+            detailUiState.tvShow.status?.let {
                 withStyle(tagStyle) {
                     append(" ")
                     append(it)
@@ -359,19 +352,19 @@ fun TvShowMetadata(
                 append(divider)
             }
         }
-        append(tvShow.year)
+        append(detailUiState.tvShow.year)
 
-        AnimatedVisibility(visible = tvShow.numberOfSeasons != null) {
-            tvShow.numberOfSeasons?.let {
+        AnimatedVisibility(visible = detailUiState.tvShow.numberOfSeasons != null) {
+            detailUiState.tvShow.numberOfSeasons?.let {
                 append(divider)
                 append(resources.getQuantityString(R.plurals.season_count, it, it))
             }
         }
 
         append(divider)
-        append(tvShow.language.uppercase())
+        append(detailUiState.tvShow.language.uppercase())
         append(divider)
-        append("${tvShow.averageVotes}")
+        append("${detailUiState.tvShow.averageVotes}")
         append(divider)
     }
 
@@ -385,13 +378,14 @@ fun TvShowMetadata(
 
     ColumnSpacer(8)
 
-    GenreText(genreUIList)
+    GenreText(detailUiState.genreUIList)
 
     ColumnSpacer(8)
 
     ShowDetailButtons(
-        tvShow = tvShow,
-        trailerList = trailerList,
+        tvShow = detailUiState.tvShow,
+        trailerList = detailUiState.trailersList,
+        isFollowUpdating = detailUiState.isFollowUpdating,
         onUpdateFavoriteClicked = onUpdateFavoriteClicked,
         onWatchTrailerClicked = onWatchTrailerClicked
     )
@@ -426,6 +420,7 @@ private fun GenreText(genreUIList: List<GenreUIModel>) {
 
 @Composable
 fun ShowDetailButtons(
+    isFollowUpdating: Boolean,
     tvShow: TvShow,
     trailerList: List<Trailer>,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
@@ -452,7 +447,8 @@ fun ShowDetailButtons(
             painterResource(id = R.drawable.ic_baseline_check_box_24)
         else painterResource(id = R.drawable.ic_baseline_add_box_24)
 
-        ExtendedFab(
+        ExtendedLoadingFab(
+            isLoading = isFollowUpdating,
             painter = imageVector,
             text = buttonText,
             onClick = {

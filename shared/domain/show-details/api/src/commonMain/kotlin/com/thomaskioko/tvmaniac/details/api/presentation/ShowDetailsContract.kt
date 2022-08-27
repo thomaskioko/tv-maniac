@@ -14,7 +14,7 @@ sealed class ShowDetailAction : Action {
         val showId: Long
     ) : ShowDetailAction()
 
-    data class UpdateFavorite(
+    data class UpdateFollowing(
         val params: UpdateShowParams
     ) : ShowDetailAction()
 
@@ -35,6 +35,7 @@ sealed class ShowDetailEffect : Effect {
 
 data class ShowDetailViewState(
     val isLoading: Boolean = false,
+    val isFollowUpdating: Boolean = false,
     val selectedVideoKey: String? = null,
     val errorMessage: String? = null,
     val tvShow: TvShow = TvShow.EMPTY_SHOW,
