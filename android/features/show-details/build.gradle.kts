@@ -21,6 +21,7 @@ dependencies {
     api(project(":shared:domain:last-air-episodes:api"))
     api(project(":shared:domain:trailers:api"))
     implementation(project(":android:core:compose"))
+    implementation(project( ":android:core:trakt-auth"))
 
     implementation(libs.snapper)
     implementation(libs.accompanist.insetsui)

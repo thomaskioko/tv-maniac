@@ -387,6 +387,7 @@ fun TvShowMetadata(
         trailerList = detailUiState.trailersList,
         isFollowUpdating = detailUiState.isFollowUpdating,
         isFollowed = detailUiState.isFollowed,
+        isLoggedIn = detailUiState.isLoggedIn,
         onUpdateFavoriteClicked = onUpdateFavoriteClicked,
         onWatchTrailerClicked = onWatchTrailerClicked
     )
@@ -423,6 +424,7 @@ private fun GenreText(genreUIList: List<GenreUIModel>) {
 fun ShowDetailButtons(
     isFollowUpdating: Boolean,
     isFollowed: Boolean,
+    isLoggedIn: Boolean,
     tvShow: TvShow,
     trailerList: List<Trailer>,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
@@ -457,7 +459,8 @@ fun ShowDetailButtons(
                 onUpdateFavoriteClicked(
                     UpdateShowParams(
                         showId = tvShow.id,
-                        addToWatchList = isFollowed
+                        addToWatchList = isFollowed,
+                        isLoggedIn = isLoggedIn
                     )
                 )
             }

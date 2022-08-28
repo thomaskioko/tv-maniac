@@ -31,6 +31,8 @@ interface TraktRepository {
 
     fun observeUpdateFollowedShow(showId: Long, addToWatchList: Boolean) : Flow<Resource<Unit>>
 
+    suspend fun updateFollowedShow(showId: Long, addToWatchList: Boolean)
+
     suspend fun syncFollowedShows()
 
 }

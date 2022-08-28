@@ -165,6 +165,18 @@ class TraktRepositoryImpl constructor(
         coroutineDispatcher = dispatcher
     )
 
+    override suspend fun updateFollowedShow(showId: Long, addToWatchList: Boolean) {
+        when {
+            addToWatchList -> followedCache.insert(
+                Followed_shows(
+                    show_id = showId,
+                    synced = false
+                )
+            )
+            else -> followedCache.removeShow(showId)
+        }
+    }
+
     private suspend fun getOrCreateTraktList(
         user: Trakt_user
     ): Long {
@@ -183,7 +195,7 @@ class TraktRepositoryImpl constructor(
 
     override fun observeFollowedShow(showId: Long): Flow<Boolean> =
         followedCache.observeFollowedShow(showId)
-            .map { it?.synced ?: false }
+            .map { it?.show_id == showId }
 
     private fun TraktUserResponse.mapAndCache(slug: String) {
         traktUserCache.insert(

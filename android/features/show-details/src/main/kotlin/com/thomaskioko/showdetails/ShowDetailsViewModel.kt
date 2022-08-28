@@ -12,6 +12,8 @@ import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailEffect
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailEffect.ShowDetailsError
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
 import com.thomaskioko.tvmaniac.shared.core.ui.Store
+import com.thomaskioko.tvmaniac.traktauth.ObserveTraktAuthStateInteractor
+import com.thomaskioko.tvmaniac.traktauth.TraktAuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +27,8 @@ import javax.inject.Inject
 class ShowDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val observeShow: ObserveShowInteractor,
-    private val updateFollowingInteractor: UpdateFollowingInteractor
+    private val updateFollowingInteractor: UpdateFollowingInteractor,
+    private val traktAuthInteractor: ObserveTraktAuthStateInteractor,
 ) : Store<ShowDetailViewState, ShowDetailAction, ShowDetailEffect>, CoroutineScopeOwner,
     ViewModel() {
 
@@ -41,6 +44,16 @@ class ShowDetailsViewModel @Inject constructor(
 
     init {
         dispatch(ShowDetailAction.LoadShowDetails(showId))
+
+        viewModelScope.launch {
+            traktAuthInteractor.invoke(Unit)
+                .collect {
+                    val newState = state.value.copy(
+                        isLoggedIn = it == TraktAuthState.LOGGED_IN
+                    )
+                    state.emit(newState)
+                }
+        }
     }
 
     override fun observeState(): StateFlow<ShowDetailViewState> = state
@@ -111,7 +124,8 @@ class ShowDetailsViewModel @Inject constructor(
                 onComplete {
                     coroutineScope.launch {
                         emit(value.copy(isFollowUpdating = false))
-                        dispatch(ShowDetailAction.LoadShowDetails(showId)) }
+                        dispatch(ShowDetailAction.LoadShowDetails(showId))
+                    }
                 }
                 onError {
                     coroutineScope.launch {
