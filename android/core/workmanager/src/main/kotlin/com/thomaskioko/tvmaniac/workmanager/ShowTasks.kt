@@ -4,4 +4,6 @@ interface ShowTasks {
     fun setupDiscoverDailySyncs()
 
     fun syncTraktFollowedShows()
+
+    fun syncTraktFollowedShowsWhenIdle()
 }

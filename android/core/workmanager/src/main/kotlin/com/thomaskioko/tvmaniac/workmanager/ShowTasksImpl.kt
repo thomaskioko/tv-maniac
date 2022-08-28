@@ -36,4 +36,16 @@ class ShowTasksImpl @Inject constructor(
             .build()
         workManager.enqueue(request)
     }
+
+    override fun syncTraktFollowedShowsWhenIdle() {
+        val request = OneTimeWorkRequestBuilder<SyncFollowedShows>()
+            .addTag(SyncFollowedShows.TAG)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiresDeviceIdle(true)
+                    .build()
+            )
+            .build()
+        workManager.enqueue(request)
+    }
 }
