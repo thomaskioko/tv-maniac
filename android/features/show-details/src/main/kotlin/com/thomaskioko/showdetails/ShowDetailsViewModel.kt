@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.core.util.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.details.api.interactor.ObserveShowInteractor
 import com.thomaskioko.tvmaniac.details.api.interactor.UpdateFollowingInteractor
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction
-import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.UpdateFavorite
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.UpdateFollowing
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailEffect
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailEffect.ShowDetailsError
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
@@ -50,7 +50,7 @@ class ShowDetailsViewModel @Inject constructor(
     override fun dispatch(action: ShowDetailAction) {
         when (action) {
             is ShowDetailAction.LoadShowDetails -> loadShowDetails()
-            is UpdateFavorite -> updateWatchlist(action)
+            is UpdateFollowing -> updateFollowing(action)
             is ShowDetailAction.Error -> {
                 coroutineScope.launch {
                     uiEffects.emit(ShowDetailsError(action.message))
@@ -73,6 +73,7 @@ class ShowDetailsViewModel @Inject constructor(
                         emit(
                             value.copy(
                                 isLoading = false,
+                                isFollowed = it.isFollowed,
                                 tvShow = it.tvShow,
                                 similarShowList = it.similarShowList,
                                 tvSeasonUiModels = it.tvSeasonUiModels,
@@ -100,16 +101,25 @@ class ShowDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun updateWatchlist(action: UpdateFavorite) {
-        updateFollowingInteractor.execute(action.params) {
-            onComplete {
-                coroutineScope.launch { dispatch(ShowDetailAction.LoadShowDetails(showId)) }
-            }
-            onError {
-                coroutineScope.launch {
-                    uiEffects.emit(
-                        ShowDetailEffect.WatchlistError(it.message ?: "Something went wrong")
-                    )
+    private fun updateFollowing(action: UpdateFollowing) {
+        with(state) {
+            updateFollowingInteractor.execute(action.params) {
+                onStart {
+                    coroutineScope.launch { emit(value.copy(isFollowUpdating = true)) }
+                }
+
+                onComplete {
+                    coroutineScope.launch {
+                        emit(value.copy(isFollowUpdating = false))
+                        dispatch(ShowDetailAction.LoadShowDetails(showId)) }
+                }
+                onError {
+                    coroutineScope.launch {
+                        emit(value.copy(isFollowUpdating = false))
+                        uiEffects.emit(
+                            ShowDetailEffect.WatchlistError(it.message ?: "Something went wrong")
+                        )
+                    }
                 }
             }
         }

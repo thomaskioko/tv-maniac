@@ -26,7 +26,6 @@ fun Resource<List<SelectSimilarShows>>.toSimilarShowList(): List<TvShow> = data?
         genreIds = it.genre_ids,
         year = it.year,
         status = it.status,
-        following = it.following
     )
 } ?: emptyList()
 
@@ -44,7 +43,6 @@ fun Resource<Show>.toTvShow(): TvShow = data?.let {
         genreIds = it.genre_ids,
         year = it.year,
         status = it.status,
-        following = it.following
     )
 } ?: TvShow.EMPTY_SHOW
 

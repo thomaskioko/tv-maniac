@@ -22,7 +22,6 @@ fun Resource<Show>.toTvShow(): TvShow {
             genreIds = it.genre_ids,
             year = it.year,
             status = it.status,
-            following = it.following
         )
     } ?: TvShow.EMPTY_SHOW
 }

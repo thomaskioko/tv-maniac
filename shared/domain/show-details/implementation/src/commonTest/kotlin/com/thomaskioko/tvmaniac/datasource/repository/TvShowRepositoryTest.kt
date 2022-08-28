@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.core.test.testCoroutineDispatcher
 import com.thomaskioko.tvmaniac.core.test.testCoroutineScope
 import com.thomaskioko.tvmaniac.details.api.cache.ShowCategoryCache
-import com.thomaskioko.tvmaniac.details.implementation.repository.TvShowsRepositoryImpl
+import com.thomaskioko.tvmaniac.details.implementation.repository.TmdbRepositoryImpl
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
@@ -22,7 +22,7 @@ internal class TvShowRepositoryTest {
     private var showCategoryCache = spyk<ShowCategoryCache>()
     private var lastEpisodeAirCache = spyk<LastEpisodeAirCache>()
 
-    private val repository: TvShowsRepositoryImpl = TvShowsRepositoryImpl(
+    private val repository: TmdbRepositoryImpl = TmdbRepositoryImpl(
         apiService,
         tvShowCache,
         lastEpisodeAirCache,

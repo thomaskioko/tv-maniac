@@ -5,10 +5,10 @@ import com.thomaskioko.tvmaniac.details.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.details.api.interactor.ObserveFollowingInteractor
 import com.thomaskioko.tvmaniac.details.api.interactor.ObserveShowInteractor
 import com.thomaskioko.tvmaniac.details.api.interactor.UpdateFollowingInteractor
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.details.implementation.cache.ShowCategoryCacheImpl
 import com.thomaskioko.tvmaniac.details.implementation.cache.TvShowCacheImpl
-import com.thomaskioko.tvmaniac.details.implementation.repository.TvShowsRepositoryImpl
+import com.thomaskioko.tvmaniac.details.implementation.repository.TmdbRepositoryImpl
 import com.thomaskioko.tvmaniac.genre.api.GenreRepository
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisodeRepository
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
@@ -20,6 +20,7 @@ import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerRepository
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
+import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,8 +54,8 @@ object ShowDetailModule {
         epAirCacheLast: LastEpisodeAirCache,
         @IoCoroutineScope coroutineScope: CoroutineScope,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
-    ): TvShowsRepository =
-        TvShowsRepositoryImpl(
+    ): TmdbRepository =
+        TmdbRepositoryImpl(
             apiService = tmdbService,
             tvShowCache = tvShowCache,
             showCategoryCache = showCategoryCache,
@@ -66,14 +67,16 @@ object ShowDetailModule {
     @Singleton
     @Provides
     fun provideObserveShowInteractor(
-        showsRepository: TvShowsRepository,
+        tmdbRepository: TmdbRepository,
+        traktRepository: TraktRepository,
         similarShowsRepository: SimilarShowsRepository,
         seasonsRepository: SeasonsRepository,
         genreRepository: GenreRepository,
         lastAirRepository: LastAirEpisodeRepository,
         trailerRepository: TrailerRepository
     ): ObserveShowInteractor = ObserveShowInteractor(
-        showsRepository,
+        tmdbRepository,
+        traktRepository,
         similarShowsRepository,
         seasonsRepository,
         genreRepository,
@@ -84,18 +87,18 @@ object ShowDetailModule {
     @Singleton
     @Provides
     fun provideUpdateFollowingInteractor(
-        repository: TvShowsRepository
-    ): UpdateFollowingInteractor = UpdateFollowingInteractor(repository)
+        traktRepository: TraktRepository
+    ): UpdateFollowingInteractor = UpdateFollowingInteractor(traktRepository)
 
     @Singleton
     @Provides
     fun provideObserveWatchListInteractor(
-        repository: TvShowsRepository
+        repository: TraktRepository
     ): ObserveFollowingInteractor = ObserveFollowingInteractor(repository)
 
     @Singleton
     @Provides
     fun provideGetShowsByTypeInteractor(
-        repository: TvShowsRepository
+        repository: TmdbRepository
     ): ObserveShowsByCategoryInteractor = ObserveShowsByCategoryInteractor(repository)
 }

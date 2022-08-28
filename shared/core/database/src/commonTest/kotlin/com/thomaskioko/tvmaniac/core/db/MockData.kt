@@ -83,7 +83,6 @@ object MockData {
         year = "2019",
         status = "Ended",
         popularity = 24.4848,
-        following = true,
         number_of_seasons = 2,
         number_of_episodes = 12
     )
@@ -107,7 +106,6 @@ object MockData {
             year = "2019",
             status = null,
             popularity = 24.4848,
-            following = true,
             number_of_seasons = 2,
             number_of_episodes = 12
         ),
@@ -126,7 +124,6 @@ object MockData {
             year = "2019",
             status = "Ended",
             popularity = 24.4848,
-            following = false,
             number_of_seasons = 2,
             number_of_episodes = 12
         ),

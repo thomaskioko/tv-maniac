@@ -22,6 +22,7 @@ android {
         versionName = "1.0"
 
         multiDexEnabled = true
+        manifestPlaceholders["appAuthRedirectScheme"] = "empty"
     }
 
     applicationVariants.all {

@@ -19,7 +19,6 @@ fun ShowResponse.toShow(): Show {
         year = formatDateString(dateString = firstAirDate),
         status = "",
         popularity = popularity,
-        following = false,
         number_of_seasons = numberOfSeasons?.toLong(),
         number_of_episodes = numberOfEpisodes?.toLong()
     )

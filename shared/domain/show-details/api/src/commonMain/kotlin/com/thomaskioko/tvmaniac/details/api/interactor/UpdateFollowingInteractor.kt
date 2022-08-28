@@ -1,21 +1,19 @@
 package com.thomaskioko.tvmaniac.details.api.interactor
 
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class UpdateFollowingInteractor constructor(
-    private val repository: TvShowsRepository,
+    private val traktRepository: TraktRepository
 ) : FlowInteractor<UpdateShowParams, Unit>() {
 
-    override fun run(params: UpdateShowParams): Flow<Unit> = flow {
-        repository.updateFollowing(
+    override fun run(params: UpdateShowParams): Flow<Unit> =
+        traktRepository.observeUpdateFollowedShow(
             showId = params.showId,
             addToWatchList = !params.addToWatchList
-        )
-        emit(Unit)
-    }
+        ).map { it.data }
 }
 
 data class UpdateShowParams(

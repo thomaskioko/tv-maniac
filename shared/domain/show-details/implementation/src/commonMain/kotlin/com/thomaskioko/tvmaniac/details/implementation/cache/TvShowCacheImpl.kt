@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.details.implementation.cache
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
-import com.squareup.sqldelight.runtime.coroutines.mapToOne
+import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.db.AirEpisodesByShowId
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
@@ -27,8 +27,7 @@ class TvShowCacheImpl(
                 genre_ids = show.genre_ids,
                 year = show.year,
                 status = show.status,
-                popularity = show.popularity,
-                following = show.following
+                popularity = show.popularity
             )
         }
     }
@@ -37,22 +36,25 @@ class TvShowCacheImpl(
         list.forEach { insert(it) }
     }
 
-    override fun observeTvShow(showId: Long): Flow<Show> {
-        return database.showQueries.selectByShowId(
-            id = showId
-        )
+    override fun updateShow(show: Show) {
+        database.transaction {
+            database.showQueries.updateTvShow(
+                id = show.id,
+                status = show.status,
+                number_of_seasons = show.number_of_seasons,
+                number_of_episodes = show.number_of_episodes
+            )
+        }
+    }
+
+    override fun observeTvShow(showId: Long): Flow<Show?> {
+        return database.showQueries.selectByShowId(showId)
             .asFlow()
-            .mapToOne()
+            .mapToOneOrNull()
     }
 
     override fun observeTvShows(): Flow<List<Show>> {
         return database.showQueries.selectAll()
-            .asFlow()
-            .mapToList()
-    }
-
-    override fun observeFollowing(): Flow<List<Show>> {
-        return database.showQueries.selectFollowinglist()
             .asFlow()
             .mapToList()
     }
@@ -62,13 +64,6 @@ class TvShowCacheImpl(
             show_id = showId
         ).asFlow()
             .mapToList()
-    }
-
-    override fun updateFollowingShow(showId: Long, following: Boolean) {
-        database.showQueries.updateFollowinglist(
-            following = following,
-            id = showId
-        )
     }
 
     override fun deleteTvShows() {

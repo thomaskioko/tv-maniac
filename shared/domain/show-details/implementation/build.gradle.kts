@@ -25,6 +25,7 @@ dependencies {
     commonMainImplementation(project(":shared:domain:seasons:api"))
     commonMainImplementation(project(":shared:domain:genre:api"))
     commonMainImplementation(project(":shared:domain:trailers:api"))
+    commonMainImplementation(project(":shared:domain:trakt:api"))
 
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin)

@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodes
 import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodesRepositoryImpl
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TvShowsRepository
+import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import dagger.Module
 import dagger.Provides
@@ -47,9 +47,9 @@ object SeasonEpisodesModule {
     @Singleton
     @Provides
     fun provideObserveSeasonWithEpisodesInteractor(
-        tvShowsRepository: TvShowsRepository,
+        tmdbRepository: TmdbRepository,
         repository: SeasonWithEpisodesRepository,
         @DefaultDispatcher computationDispatcher: CoroutineDispatcher
     ): ObserveSeasonWithEpisodesInteractor =
-        ObserveSeasonWithEpisodesInteractor(tvShowsRepository, repository, computationDispatcher)
+        ObserveSeasonWithEpisodesInteractor(tmdbRepository, repository, computationDispatcher)
 }
