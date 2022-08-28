@@ -21,7 +21,6 @@ fun ShowResponse.toShow(): Show {
         year = formatDate(firstAirDate),
         status = "",
         popularity = popularity,
-        following = false,
         number_of_seasons = numberOfSeasons?.toLong(),
         number_of_episodes = numberOfEpisodes?.toLong()
     )
@@ -41,7 +40,6 @@ fun ShowDetailResponse.toShow(): Show {
         year = formatDate(firstAirDate),
         status = status,
         popularity = popularity,
-        following = false,
         number_of_seasons = numberOfSeasons.toLong(),
         number_of_episodes = numberOfEpisodes.toLong()
     )

@@ -12,15 +12,11 @@ interface TvShowCache {
 
     fun updateShow(show: Show)
 
-    fun observeTvShow(showId: Long): Flow<Show>
+    fun observeTvShow(showId: Long): Flow<Show?>
 
     fun observeTvShows(): Flow<List<Show>>
 
-    fun observeFollowing(): Flow<List<Show>>
-
     fun getShowAirEpisodes(showId: Long): Flow<List<AirEpisodesByShowId>>
-
-    fun updateFollowingShow(showId: Long, following: Boolean)
 
     fun deleteTvShows()
 }

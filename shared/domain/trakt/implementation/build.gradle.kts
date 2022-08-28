@@ -22,8 +22,9 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     commonMainImplementation(project(":shared:core:database"))
-    commonMainImplementation(project(":shared:domain:trakt:api"))
     commonMainImplementation(project(":shared:core:util"))
+    commonMainImplementation(project(":shared:domain:trakt:api"))
+    commonMainImplementation(project(":shared:domain:show-common:api"))
     commonMainImplementation(libs.squareup.sqldelight.extensions)
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin)

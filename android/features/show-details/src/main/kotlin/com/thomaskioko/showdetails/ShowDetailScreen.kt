@@ -386,6 +386,7 @@ fun TvShowMetadata(
         tvShow = detailUiState.tvShow,
         trailerList = detailUiState.trailersList,
         isFollowUpdating = detailUiState.isFollowUpdating,
+        isFollowed = detailUiState.isFollowed,
         onUpdateFavoriteClicked = onUpdateFavoriteClicked,
         onWatchTrailerClicked = onWatchTrailerClicked
     )
@@ -421,6 +422,7 @@ private fun GenreText(genreUIList: List<GenreUIModel>) {
 @Composable
 fun ShowDetailButtons(
     isFollowUpdating: Boolean,
+    isFollowed: Boolean,
     tvShow: TvShow,
     trailerList: List<Trailer>,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
@@ -439,11 +441,11 @@ fun ShowDetailButtons(
 
         RowSpacer(value = 8)
 
-        val buttonText = if (tvShow.following)
+        val buttonText = if (isFollowed)
             stringResource(id = R.string.unfollow)
         else stringResource(id = R.string.following)
 
-        val imageVector = if (tvShow.following)
+        val imageVector = if (isFollowed)
             painterResource(id = R.drawable.ic_baseline_check_box_24)
         else painterResource(id = R.drawable.ic_baseline_add_box_24)
 
@@ -455,7 +457,7 @@ fun ShowDetailButtons(
                 onUpdateFavoriteClicked(
                     UpdateShowParams(
                         showId = tvShow.id,
-                        addToWatchList = tvShow.following
+                        addToWatchList = isFollowed
                     )
                 )
             }

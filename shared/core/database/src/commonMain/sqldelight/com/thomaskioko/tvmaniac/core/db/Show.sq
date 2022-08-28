@@ -15,12 +15,11 @@ number_of_seasons INTEGER DEFAULT NULL,
 number_of_episodes INTEGER DEFAULT NULL,
 status TEXT DEFAULT NULL,
 popularity REAL NOT NULL,
-genre_ids TEXT AS List<Int> NOT NULL,
-following INTEGER AS Boolean NOT NULL DEFAULT 0
+genre_ids TEXT AS List<Int> NOT NULL
 );
 
 insertOrReplace:
-INSERT OR IGNORE INTO show(
+INSERT OR REPLACE INTO show(
 id,
 title,
 description,
@@ -32,10 +31,9 @@ votes,
 vote_average,
 genre_ids,
 status,
-popularity,
-following
+popularity
 )
-VALUES(?,?,?,?,?,?,?,?, ?,?, ?, ?, ?);
+VALUES(?,?,?,?,?,?,?,?, ?,?, ?, ?);
 
 updateTvShow:
 UPDATE show
@@ -48,15 +46,6 @@ WHERE id = ?;
 
 selectAll:
 SELECT * FROM show;
-
-updateFollowinglist:
-UPDATE show
-SET following = ?
-WHERE id = ?;
-
-selectFollowinglist:
-SELECT * FROM show
-WHERE following = 1;
 
 deleteAll:
 DELETE FROM show;

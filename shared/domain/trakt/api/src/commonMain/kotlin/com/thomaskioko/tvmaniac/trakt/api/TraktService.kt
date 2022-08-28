@@ -5,6 +5,8 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessTokenResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddRemoveShowFromListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowToListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 
 interface TraktService {
@@ -17,7 +19,11 @@ interface TraktService {
 
     suspend fun getUserProfile(userId: String): TraktUserResponse
 
+    suspend fun getUserList(userId: String): List<TraktPersonalListsResponse>
+
     suspend fun createFavoriteList(userSlug: String): TraktCreateListResponse
+
+    suspend fun getFollowedList(listId: Int, userSlug: String): List<TraktFollowedShowResponse>
 
     suspend fun addShowToList(
         userSlug: String,

@@ -16,6 +16,7 @@ android {
     defaultConfig {
         minSdk = libs.versions.android.min.get().toInt()
         targetSdk = libs.versions.android.target.get().toInt()
+        manifestPlaceholders["appAuthRedirectScheme"] = "empty"
     }
 }
 
@@ -25,6 +26,7 @@ dependencies {
     api(libs.androidx.workmanager)
 
     implementation(project(":shared:domain:discover:api"))
+    implementation(project(":shared:domain:trakt:api"))
     implementation(libs.kermit)
 
     implementation(libs.hilt.android)

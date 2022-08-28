@@ -34,6 +34,6 @@ data class TraktListResponse(
 
 @Serializable
 data class TraktNotFoundShows(
-    @SerialName("trakt") val trakt: Long,
-    @SerialName("tmdb") val tmdb: Long,
+    @SerialName("trakt") val trakt: Int,
+    @SerialName("tmdb") val tmdb: Int,
 )
