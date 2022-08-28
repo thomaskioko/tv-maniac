@@ -73,6 +73,7 @@ class ShowDetailsViewModel @Inject constructor(
                         emit(
                             value.copy(
                                 isLoading = false,
+                                isFollowed = it.isFollowed,
                                 tvShow = it.tvShow,
                                 similarShowList = it.similarShowList,
                                 tvSeasonUiModels = it.tvSeasonUiModels,
@@ -114,6 +115,7 @@ class ShowDetailsViewModel @Inject constructor(
                 }
                 onError {
                     coroutineScope.launch {
+                        emit(value.copy(isFollowUpdating = false))
                         uiEffects.emit(
                             ShowDetailEffect.WatchlistError(it.message ?: "Something went wrong")
                         )

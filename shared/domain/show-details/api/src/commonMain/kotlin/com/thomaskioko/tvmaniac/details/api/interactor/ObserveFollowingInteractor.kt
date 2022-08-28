@@ -1,21 +1,21 @@
 package com.thomaskioko.tvmaniac.details.api.interactor
 
-import com.thomaskioko.tvmaniac.core.db.Show
+import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
+import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class ObserveFollowingInteractor constructor(
-    private val repository: TmdbRepository,
+    private val repository: TraktRepository,
 ) : FlowInteractor<Unit, List<TvShow>>() {
 
-    override fun run(params: Unit): Flow<List<TvShow>> = repository.observeFollowing()
+    override fun run(params: Unit): Flow<List<TvShow>> = repository.observeFollowedShows()
         .map { it.toTvShowList() }
 }
 
-fun List<Show>.toTvShowList(): List<TvShow> {
+fun List<SelectFollowedShows>.toTvShowList(): List<TvShow> {
     return map {
         TvShow(
             id = it.id,
@@ -29,7 +29,6 @@ fun List<Show>.toTvShowList(): List<TvShow> {
             genreIds = it.genre_ids,
             year = it.year,
             status = it.status,
-            following = it.following
         )
     }
 }

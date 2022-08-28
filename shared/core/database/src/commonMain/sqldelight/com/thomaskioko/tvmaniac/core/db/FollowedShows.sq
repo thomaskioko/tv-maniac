@@ -17,7 +17,14 @@ WHERE synced != 1;
 
 selectFollowedShows:
 SELECT *
-FROM followed_shows;
+FROM followed_shows
+INNER JOIN show  ON show.id = followed_shows.show_id;
+
+selectFollowedShow:
+SELECT *
+FROM followed_shows
+INNER JOIN show  ON show.id = followed_shows.show_id
+WHERE show_id = ?;
 
 removeShow:
 DELETE FROM followed_shows

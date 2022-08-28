@@ -27,8 +27,7 @@ class TvShowCacheImpl(
                 genre_ids = show.genre_ids,
                 year = show.year,
                 status = show.status,
-                popularity = show.popularity,
-                following = show.following
+                popularity = show.popularity
             )
         }
     }
@@ -60,26 +59,11 @@ class TvShowCacheImpl(
             .mapToList()
     }
 
-    override fun observeFollowing(): Flow<List<Show>> {
-        return database.showQueries.selectFollowinglist()
-            .asFlow()
-            .mapToList()
-    }
-
     override fun getShowAirEpisodes(showId: Long): Flow<List<AirEpisodesByShowId>> {
         return database.lastAirEpisodeQueries.airEpisodesByShowId(
             show_id = showId
         ).asFlow()
             .mapToList()
-    }
-
-    override fun updateFollowingShow(showId: Long, following: Boolean) {
-        database.transaction {
-            database.showQueries.updateFollowinglist(
-                following = following,
-                id = showId
-            )
-        }
     }
 
     override fun deleteTvShows() {

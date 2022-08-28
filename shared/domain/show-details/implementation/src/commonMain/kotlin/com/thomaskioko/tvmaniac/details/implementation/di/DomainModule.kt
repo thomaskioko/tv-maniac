@@ -16,8 +16,8 @@ val detailDomainModule: Module = module {
         TmdbRepositoryImpl(get(), get(), get(), get(), get(), get())
     }
 
-    factory { ObserveShowInteractor(get(), get(), get(), get(), get(), get()) }
-    factory { UpdateFollowingInteractor(get(), get()) }
+    factory { ObserveShowInteractor(get(), get(), get(), get(), get(), get(), get()) }
+    factory { UpdateFollowingInteractor(get()) }
 
     single<TvShowCache> { TvShowCacheImpl(get()) }
     single<ShowCategoryCache> { ShowCategoryCacheImpl(get()) }

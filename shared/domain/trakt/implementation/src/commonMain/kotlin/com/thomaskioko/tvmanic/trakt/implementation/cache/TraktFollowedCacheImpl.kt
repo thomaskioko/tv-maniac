@@ -2,7 +2,10 @@ package com.thomaskioko.tvmanic.trakt.implementation.cache
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
+import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
+import com.thomaskioko.tvmaniac.core.db.SelectFollowedShow
+import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +21,7 @@ class TraktFollowedCacheImpl(
         )
     }
 
-    override fun getFollowedShows(): List<Followed_shows> =
+    override fun getFollowedShows(): List<SelectFollowedShows> =
         database.followedShowsQueries.selectFollowedShows()
             .executeAsList()
 
@@ -26,10 +29,15 @@ class TraktFollowedCacheImpl(
         database.followedShowsQueries.selectUnsyncedShows()
             .executeAsList()
 
-    override fun observeFollowedShows(): Flow<List<Followed_shows>> =
+    override fun observeFollowedShows(): Flow<List<SelectFollowedShows>> =
         database.followedShowsQueries.selectFollowedShows()
             .asFlow()
             .mapToList()
+
+    override fun observeFollowedShow(showId: Long): Flow<SelectFollowedShow?> =
+       database.followedShowsQueries.selectFollowedShow(showId)
+           .asFlow()
+           .mapToOneOrNull()
 
     override fun updateShowSyncState(showId: Long) {
         database.followedShowsQueries.updateFollowedState(

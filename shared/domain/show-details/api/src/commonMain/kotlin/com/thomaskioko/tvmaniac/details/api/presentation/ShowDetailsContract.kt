@@ -35,6 +35,7 @@ sealed class ShowDetailEffect : Effect {
 
 data class ShowDetailViewState(
     val isLoading: Boolean = false,
+    val isFollowed: Boolean = false,
     val isFollowUpdating: Boolean = false,
     val selectedVideoKey: String? = null,
     val errorMessage: String? = null,

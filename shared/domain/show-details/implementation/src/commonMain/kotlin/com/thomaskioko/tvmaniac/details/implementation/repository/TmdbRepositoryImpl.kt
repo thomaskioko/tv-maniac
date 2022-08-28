@@ -50,12 +50,6 @@ class TmdbRepositoryImpl(
         coroutineDispatcher = dispatcher
     )
 
-    override suspend fun updateFollowing(showId: Long, addToWatchList: Boolean) {
-        tvShowCache.updateFollowingShow(showId, addToWatchList)
-    }
-
-    override fun observeFollowing(): Flow<List<Show>> = tvShowCache.observeFollowing()
-
     override fun observePagedShowsByCategoryID(
         categoryId: Int
     ): CommonFlow<PagingData<Show>> {

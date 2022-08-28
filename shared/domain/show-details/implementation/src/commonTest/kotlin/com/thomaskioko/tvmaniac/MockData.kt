@@ -69,7 +69,6 @@ object MockData {
         year = "2019",
         status = "Ended",
         popularity = 24.4848,
-        following = true,
         number_of_episodes = 30,
         number_of_seasons = 2
     )

@@ -8,11 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TmdbRepository {
 
-    suspend fun updateFollowing(showId: Long, addToWatchList: Boolean)
-
     fun observeShow(tvShowId: Long): Flow<Resource<Show>>
-
-    fun observeFollowing(): Flow<List<Show>>
 
     fun observePagedShowsByCategoryID(
         categoryId: Int

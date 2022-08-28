@@ -23,7 +23,6 @@ fun SelectShows.toShow(): Show {
         genre_ids = genre_ids,
         year = year,
         status = status,
-        following = following,
         popularity = popularity,
         number_of_episodes = number_of_episodes,
         number_of_seasons = number_of_seasons
@@ -44,7 +43,6 @@ fun ShowResponse.toShow(): Show {
         year = formatDate(firstAirDate),
         status = "",
         popularity = popularity,
-        following = false,
         number_of_seasons = numberOfSeasons?.toLong(),
         number_of_episodes = numberOfEpisodes?.toLong()
     )

@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.trakt.api
 
+import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.Trakt_favorite_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
 import com.thomaskioko.tvmaniac.core.util.network.Resource
@@ -22,11 +23,14 @@ interface TraktRepository {
         tmdbShowId: Long
     ): Flow<Resource<Unit>>
 
-    fun observeFollowedShows(listId: Int, userSlug: String,) : Flow<Resource<Unit>>
+    fun observeFollowedShows(listId: Int, userSlug: String): Flow<Resource<Unit>>
+
+    fun observeFollowedShows(): Flow<List<SelectFollowedShows>>
+
+    fun observeFollowedShow(showId: Long): Flow<Boolean>
+
+    fun observeUpdateFollowedShow(showId: Long, addToWatchList: Boolean) : Flow<Resource<Unit>>
 
     suspend fun syncFollowedShows()
 
-    fun getLocalTraktUser(): Trakt_user?
-
-    fun getFavoriteList(): Trakt_favorite_list?
 }

@@ -67,14 +67,16 @@ object ShowDetailModule {
     @Singleton
     @Provides
     fun provideObserveShowInteractor(
-        showsRepository: TmdbRepository,
+        tmdbRepository: TmdbRepository,
+        traktRepository: TraktRepository,
         similarShowsRepository: SimilarShowsRepository,
         seasonsRepository: SeasonsRepository,
         genreRepository: GenreRepository,
         lastAirRepository: LastAirEpisodeRepository,
         trailerRepository: TrailerRepository
     ): ObserveShowInteractor = ObserveShowInteractor(
-        showsRepository,
+        tmdbRepository,
+        traktRepository,
         similarShowsRepository,
         seasonsRepository,
         genreRepository,
@@ -85,14 +87,13 @@ object ShowDetailModule {
     @Singleton
     @Provides
     fun provideUpdateFollowingInteractor(
-        repository: TmdbRepository,
         traktRepository: TraktRepository
-    ): UpdateFollowingInteractor = UpdateFollowingInteractor(repository, traktRepository)
+    ): UpdateFollowingInteractor = UpdateFollowingInteractor(traktRepository)
 
     @Singleton
     @Provides
     fun provideObserveWatchListInteractor(
-        repository: TmdbRepository
+        repository: TraktRepository
     ): ObserveFollowingInteractor = ObserveFollowingInteractor(repository)
 
     @Singleton

@@ -13,7 +13,6 @@ data class TvShow(
     val numberOfSeasons: Int? = null,
     val numberOfEpisodes: Int? = null,
     val averageVotes: Double = 0.0,
-    val following: Boolean = false,
     val genreIds: List<Int> = listOf(),
 ) {
     companion object {

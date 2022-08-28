@@ -43,6 +43,5 @@ fun Show.toTvShow(): TvShow {
         genreIds = genre_ids,
         year = year,
         status = status,
-        following = following
     )
 }
