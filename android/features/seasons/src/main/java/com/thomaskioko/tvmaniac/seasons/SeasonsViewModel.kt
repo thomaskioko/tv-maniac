@@ -28,7 +28,7 @@ class SeasonsViewModel @Inject constructor(
     private val observeSeasonsInteractor: ObserveSeasonWithEpisodesInteractor,
 ) : Store<SeasonsViewState, SeasonsAction, SeasonsEffect>, CoroutineScopeOwner, ViewModel() {
 
-    private val showId: Long = savedStateHandle["showId"]!!
+    private val showId: Int = savedStateHandle["showId"]!!
 
     override val state: MutableStateFlow<SeasonsViewState> = MutableStateFlow(Loading)
 

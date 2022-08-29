@@ -73,7 +73,6 @@ import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.Bookma
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.UpdateFollowing
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailEffect
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
-import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
@@ -85,10 +84,10 @@ private val HeaderHeight = 550.dp
 fun ShowDetailScreen(
     viewModel: ShowDetailsViewModel,
     navigateUp: () -> Unit,
-    onShowClicked: (Long) -> Unit,
-    onSeasonClicked: (Long, String) -> Unit = { _, _ -> },
+    onShowClicked: (Int) -> Unit,
+    onSeasonClicked: (Int, String) -> Unit = { _, _ -> },
     onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> },
-    onWatchTrailerClicked: (Long, String?) -> Unit = { _, _ -> }
+    onWatchTrailerClicked: (Int, String?) -> Unit = { _, _ -> }
 ) {
 
     val viewState by rememberFlowWithLifecycle(viewModel.observeState())
@@ -186,11 +185,11 @@ private fun TvShowDetailsScrollingContent(
     listState: LazyListState,
     contentPadding: PaddingValues,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit = {},
-    onSeasonClicked: (Long, String) -> Unit = { _, _ -> },
+    onSeasonClicked: (Int, String) -> Unit = { _, _ -> },
     onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> },
-    onBookmarkEpClicked: (Long) -> Unit = { },
-    onShowClicked: (Long) -> Unit = {},
-    onWatchTrailerClicked: (Long, String?) -> Unit = { _, _ -> },
+    onBookmarkEpClicked: (Int) -> Unit = { },
+    onShowClicked: (Int) -> Unit = {},
+    onWatchTrailerClicked: (Int, String?) -> Unit = { _, _ -> },
 ) {
 
     LazyColumn(
@@ -228,7 +227,7 @@ private fun HeaderViewContent(
     detailUiState: ShowDetailViewState,
     listState: LazyListState,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
-    onWatchTrailerClicked: (Long, String?) -> Unit,
+    onWatchTrailerClicked: (Int, String?) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -257,7 +256,7 @@ private fun HeaderViewContent(
 }
 
 @Composable
-private fun HeaderImage(backdropImageUrl: String) {
+private fun HeaderImage(backdropImageUrl: String?) {
     KenBurnsViewImage(
         imageUrl = backdropImageUrl,
         modifier = Modifier
@@ -271,7 +270,7 @@ private fun HeaderImage(backdropImageUrl: String) {
 private fun Body(
     detailUiState: ShowDetailViewState,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
-    onWatchTrailerClicked: (Long, String?) -> Unit,
+    onWatchTrailerClicked: (Int, String?) -> Unit,
 ) {
     val surfaceGradient = backgroundGradient().reversed()
 
@@ -324,7 +323,7 @@ private fun Body(
 fun TvShowMetadata(
     detailUiState: ShowDetailViewState,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
-    onWatchTrailerClicked: (Long, String?) -> Unit,
+    onWatchTrailerClicked: (Int, String?) -> Unit,
 ) {
     val resources = LocalContext.current.resources
 
@@ -362,9 +361,11 @@ fun TvShowMetadata(
         }
 
         append(divider)
-        append(detailUiState.tvShow.language.uppercase())
-        append(divider)
-        append("${detailUiState.tvShow.averageVotes}")
+        detailUiState.tvShow.language?.let { language ->
+            append(language)
+            append(divider)
+        }
+        append("${detailUiState.tvShow.rating}")
         append(divider)
     }
 
@@ -378,7 +379,7 @@ fun TvShowMetadata(
 
     ColumnSpacer(8)
 
-    GenreText(detailUiState.genreUIList)
+    GenreText(detailUiState.tvShow.genres)
 
     ColumnSpacer(8)
 
@@ -394,12 +395,12 @@ fun TvShowMetadata(
 }
 
 @Composable
-private fun GenreText(genreUIList: List<GenreUIModel>) {
+private fun GenreText(genreList: List<String>) {
 
     LazyRow(
         modifier = Modifier.fillMaxWidth()
     ) {
-        items(genreUIList) { item ->
+        items(genreList) { genre ->
             RowSpacer(4)
 
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
@@ -411,7 +412,7 @@ private fun GenreText(genreUIList: List<GenreUIModel>) {
                     onClick = {}
                 ) {
                     Text(
-                        text = item.name,
+                        text = genre,
                         style = MaterialTheme.typography.body2,
                     )
                 }
@@ -428,7 +429,7 @@ fun ShowDetailButtons(
     tvShow: TvShow,
     trailerList: List<Trailer>,
     onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
-    onWatchTrailerClicked: (Long, String?) -> Unit = { _, _ -> },
+    onWatchTrailerClicked: (Int, String?) -> Unit = { _, _ -> },
 ) {
 
     Row(
@@ -438,7 +439,7 @@ fun ShowDetailButtons(
         ExtendedFab(
             painter = painterResource(id = R.drawable.ic_trailer_24),
             text = stringResource(id = R.string.btn_trailer),
-            onClick = { onWatchTrailerClicked(tvShow.id, trailerList.firstOrNull()?.key) }
+            onClick = { onWatchTrailerClicked(tvShow.traktId, trailerList.firstOrNull()?.key) }
         )
 
         RowSpacer(value = 8)
@@ -458,7 +459,7 @@ fun ShowDetailButtons(
             onClick = {
                 onUpdateFavoriteClicked(
                     UpdateShowParams(
-                        showId = tvShow.id,
+                        traktId = tvShow.traktId,
                         addToWatchList = isFollowed,
                         isLoggedIn = isLoggedIn
                     )
@@ -471,11 +472,11 @@ fun ShowDetailButtons(
 @Composable
 private fun BodyContent(
     detailUiState: ShowDetailViewState,
-    onSeasonClicked: (Long, String) -> Unit,
-    onBookmarkEpClicked: (Long) -> Unit,
+    onSeasonClicked: (Int, String) -> Unit,
+    onBookmarkEpClicked: (Int) -> Unit,
     onEpisodeClicked: (Long, Long) -> Unit,
-    onShowClicked: (Long) -> Unit,
-    onWatchTrailerClicked: (Long, String) -> Unit
+    onShowClicked: (Int) -> Unit,
+    onWatchTrailerClicked: (Int, String) -> Unit
 ) {
     LoadingItem(
         isLoading = detailUiState.tvSeasonUiModels.isEmpty()
@@ -488,16 +489,19 @@ private fun BodyContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        EpisodesReleaseContent(
-            episodeList = detailUiState.lastAirEpList,
-            onEpisodeClicked = onEpisodeClicked,
-            onBookmarkEpClicked = onBookmarkEpClicked
-        )
+
+        AnimatedVisibility(visible = detailUiState.lastAirEpList.isNotEmpty()) {
+            EpisodesReleaseContent(
+                episodeList = detailUiState.lastAirEpList,
+                onEpisodeClicked = onEpisodeClicked,
+                onBookmarkEpClicked = onBookmarkEpClicked
+            )
+        }
 
         TrailersContent(
             trailersList = detailUiState.trailersList,
             onTrailerClicked = { videoKey ->
-                onWatchTrailerClicked(detailUiState.tvShow.id, videoKey)
+                onWatchTrailerClicked(detailUiState.tvShow.traktId, videoKey)
             }
         )
 
@@ -512,7 +516,7 @@ private fun BodyContent(
 private fun SeasonsContent(
     seasonUiModelList: List<SeasonUiModel>,
     modifier: Modifier,
-    onSeasonClicked: (Long, String) -> Unit = { _, _ -> }
+    onSeasonClicked: (Int, String) -> Unit = { _, _ -> }
 ) {
     Column(
         modifier = Modifier

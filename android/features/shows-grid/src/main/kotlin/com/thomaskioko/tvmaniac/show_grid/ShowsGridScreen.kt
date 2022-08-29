@@ -31,7 +31,7 @@ import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
 @Composable
 fun ShowsGridScreen(
     viewModel: ShowGridViewModel,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Int) -> Unit,
     navigateUp: () -> Unit
 ) {
 
@@ -67,7 +67,7 @@ fun ShowsGridContent(
     hostState: SnackbarHostState,
     viewState: ShowsLoaded,
     paddingValues: PaddingValues,
-    onItemClicked: (Long) -> Unit,
+    onItemClicked: (Int) -> Unit,
 ) {
 
     val listState = rememberLazyGridState()
@@ -86,7 +86,7 @@ fun ShowsGridContent(
             show?.let {
                 Card(
                     elevation = 4.dp,
-                    modifier = Modifier.clickable { onItemClicked(show.id) },
+                    modifier = Modifier.clickable { onItemClicked(show.traktId) },
                     shape = MaterialTheme.shapes.medium
                 ) {
                     NetworkImageComposable(

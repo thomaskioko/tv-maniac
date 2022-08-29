@@ -35,7 +35,7 @@ import com.thomaskioko.tvmaniac.seasonepisodes.api.model.Episode
 @Composable
 fun EpisodeListItem(
     episode: Episode,
-    onEpisodeClicked: (Long) -> Unit = {}
+    onEpisodeClicked: (Int) -> Unit = {}
 ) {
 
     ColumnSpacer(8)

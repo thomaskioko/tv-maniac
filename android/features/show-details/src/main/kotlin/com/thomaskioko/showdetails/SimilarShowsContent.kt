@@ -27,7 +27,7 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 @Composable
 fun SimilarShowsContent(
     similarShows: List<TvShow>,
-    onShowClicked: (Long) -> Unit = {}
+    onShowClicked: (Int) -> Unit = {}
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -56,7 +56,7 @@ fun SimilarShowsContent(
                         posterImageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,
                         isFirstCard = index == 0,
-                        onClick = { onShowClicked(tvShow.id) },
+                        onClick = { onShowClicked(tvShow.traktId) },
                         imageWidth = 84.dp,
                         rowSpacer = 0
                     )

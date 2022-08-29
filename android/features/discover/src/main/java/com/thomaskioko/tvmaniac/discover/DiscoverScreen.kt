@@ -82,7 +82,7 @@ private const val MinContrastOfPrimaryVsSurface = 3f
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverViewModel,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Int) -> Unit,
     moreClicked: (showType: Int) -> Unit,
 ) {
 
@@ -111,7 +111,7 @@ fun DiscoverScreen(
 private fun DiscoverShows(
     scaffoldState: ScaffoldState,
     discoverViewState: DiscoverShowState,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Int) -> Unit,
     moreClicked: (showType: Int) -> Unit
 ) {
     Scaffold(
@@ -157,7 +157,7 @@ private fun DiscoverShows(
 private fun DiscoverViewScrollingContent(
     contentPadding: PaddingValues,
     discoverViewState: DataLoaded,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Int) -> Unit,
     moreClicked: (showType: Int) -> Unit
 ) {
     LazyColumn(
@@ -186,8 +186,8 @@ private fun DiscoverViewScrollingContent(
 
         item {
             DisplayShowData(
-                category = discoverViewState.showData.popularShows.category,
-                tvShows = discoverViewState.showData.popularShows.tvShows,
+                category = discoverViewState.showData.recommendedShows.category,
+                tvShows = discoverViewState.showData.recommendedShows.tvShows,
                 onItemClicked = { openShowDetails(it) },
                 moreClicked = { moreClicked(it) }
             )
@@ -195,8 +195,17 @@ private fun DiscoverViewScrollingContent(
 
         item {
             DisplayShowData(
-                category = discoverViewState.showData.topRatedShows.category,
-                tvShows = discoverViewState.showData.topRatedShows.tvShows,
+                category = discoverViewState.showData.anticipatedShows.category,
+                tvShows = discoverViewState.showData.anticipatedShows.tvShows,
+                onItemClicked = { openShowDetails(it) },
+                moreClicked = { moreClicked(it) }
+            )
+        }
+
+        item {
+            DisplayShowData(
+                category = discoverViewState.showData.popularShows.category,
+                tvShows = discoverViewState.showData.popularShows.tvShows,
                 onItemClicked = { openShowDetails(it) },
                 moreClicked = { moreClicked(it) }
             )
@@ -208,7 +217,7 @@ private fun DiscoverViewScrollingContent(
 @Composable
 fun FeaturedItems(
     showData: DiscoverShowResult.DiscoverShowsData,
-    onItemClicked: (Long) -> Unit,
+    onItemClicked: (Int) -> Unit,
 ) {
 
     val surfaceColor = grey900
@@ -260,7 +269,7 @@ fun FeaturedHorizontalPager(
     list: List<TvShow>,
     pagerState: PagerState,
     dominantColorState: DominantColorState,
-    onClick: (Long) -> Unit
+    onClick: (Int) -> Unit
 ) {
 
     val selectedImageUrl = list.getOrNull(pagerState.currentPage)
@@ -290,7 +299,7 @@ fun FeaturedHorizontalPager(
 
         Card(
             Modifier
-                .clickable { onClick(list[pageNumber].id) }
+                .clickable { onClick(list[pageNumber].traktId) }
                 .graphicsLayer {
                     val pageOffset = calculateCurrentOffsetForPage(pageNumber).absoluteValue
 
@@ -344,7 +353,7 @@ fun FeaturedHorizontalPager(
 private fun DisplayShowData(
     category: ShowCategory,
     tvShows: List<TvShow>,
-    onItemClicked: (Long) -> Unit,
+    onItemClicked: (Int) -> Unit,
     moreClicked: (Int) -> Unit,
 ) {
 
@@ -368,7 +377,7 @@ private fun DisplayShowData(
                         title = tvShow.title,
                         isFirstCard = index == 0
                     ) {
-                        onItemClicked(tvShow.id)
+                        onItemClicked(tvShow.traktId)
                     }
                 }
             }

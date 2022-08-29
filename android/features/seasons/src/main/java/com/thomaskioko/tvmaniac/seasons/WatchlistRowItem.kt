@@ -35,7 +35,7 @@ import com.thomaskioko.tvmaniac.seasonepisodes.api.model.Episode
 @Composable
 fun WatchlistRowItem(
     episode: Episode,
-    onEpisodeClicked: (Long) -> Unit = {}
+    onEpisodeClicked: (Int) -> Unit = {}
 ) {
 
     Card(

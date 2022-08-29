@@ -32,7 +32,7 @@ class ShowDetailsViewModel @Inject constructor(
 ) : Store<ShowDetailViewState, ShowDetailAction, ShowDetailEffect>, CoroutineScopeOwner,
     ViewModel() {
 
-    private val showId: Long = savedStateHandle["tvShowId"]!!
+    private val showId: Int = savedStateHandle["tvShowId"]!!
 
     override val coroutineScope: CoroutineScope
         get() = viewModelScope
@@ -90,7 +90,6 @@ class ShowDetailsViewModel @Inject constructor(
                                 tvShow = it.tvShow,
                                 similarShowList = it.similarShowList,
                                 tvSeasonUiModels = it.tvSeasonUiModels,
-                                genreUIList = it.genreUIList,
                                 lastAirEpList = it.lastAirEpList,
                                 trailersList = it.trailersList
                             )

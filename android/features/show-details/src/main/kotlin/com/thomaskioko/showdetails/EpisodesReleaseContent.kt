@@ -45,7 +45,7 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 fun EpisodesReleaseContent(
     episodeList: List<LastAirEpisode>,
     onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> },
-    onBookmarkEpClicked: (Long) -> Unit = { }
+    onBookmarkEpClicked: (Int) -> Unit = { }
 ) {
 
     ColumnSpacer(8)
@@ -91,7 +91,7 @@ fun EpisodesReleaseContent(
 fun EpisodeItem(
     episode: LastAirEpisode,
     onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> },
-    onBookmarkEpClicked: (Long) -> Unit = { }
+    onBookmarkEpClicked: (Int) -> Unit = { }
 ) {
 
     Card(

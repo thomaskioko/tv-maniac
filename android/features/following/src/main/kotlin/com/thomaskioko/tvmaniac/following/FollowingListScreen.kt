@@ -32,7 +32,7 @@ import com.thomaskioko.tvmaniac.resources.R
 @Composable
 fun FollowingContent(
     viewModel: FollowingViewModel,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Int) -> Unit,
 ) {
 
     val watchlistViewState by rememberFlowWithLifecycle(viewModel.observeState())
@@ -83,7 +83,7 @@ fun FollowingContent(
 private fun FollowingGridContent(
     viewState: WatchlistLoaded,
     paddingValues: PaddingValues,
-    onItemClicked: (Long) -> Unit,
+    onItemClicked: (Int) -> Unit,
 ) {
     val listState = rememberLazyListState()
 
@@ -105,7 +105,7 @@ private fun FollowingGridContent(
             ) {
                 Card(
                     elevation = 4.dp,
-                    modifier = Modifier.clickable { onItemClicked(show.id) },
+                    modifier = Modifier.clickable { onItemClicked(show.traktId) },
                     shape = MaterialTheme.shapes.medium
                 ) {
                     NetworkImageComposable(

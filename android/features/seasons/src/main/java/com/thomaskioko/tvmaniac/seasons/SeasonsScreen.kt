@@ -45,7 +45,6 @@ import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasonepisodes.api.Loading
-import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsEffect
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsEffect.Error
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsLoaded
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsViewState
@@ -60,7 +59,7 @@ fun SeasonsScreen(
     viewModel: SeasonsViewModel,
     navigateUp: () -> Unit,
     initialSeasonName: String? = null,
-    onEpisodeClicked: (Long) -> Unit = {}
+    onEpisodeClicked: (Int) -> Unit = {}
 ) {
 
     val viewState by rememberFlowWithLifecycle(viewModel.observeState())
@@ -160,7 +159,7 @@ private fun SeasonsScrollingContent(
     initialSeasonName: String?,
     listState: LazyListState,
     contentPadding: PaddingValues,
-    onEpisodeClicked: (Long) -> Unit = {}
+    onEpisodeClicked: (Int) -> Unit = {}
 ) {
     seasonsEpList?.let {
         val initialIndex = seasonsEpList
