@@ -6,4 +6,6 @@ interface ShowTasks {
     fun syncTraktFollowedShows()
 
     fun syncTraktFollowedShowsWhenIdle()
+
+    fun syncTmdbArtWorkWhenIdle()
 }
