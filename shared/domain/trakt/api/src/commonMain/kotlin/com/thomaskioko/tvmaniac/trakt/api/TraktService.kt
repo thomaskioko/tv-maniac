@@ -5,8 +5,12 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessTokenResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddRemoveShowFromListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowToListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 
 interface TraktService {
@@ -27,14 +31,27 @@ interface TraktService {
 
     suspend fun addShowToList(
         userSlug: String,
-        listId: Long,
-        tmdbShowId: Long
+        listId: Int,
+        traktShowId: Int
     ): TraktAddShowToListResponse
 
     suspend fun deleteShowFromList(
         userSlug: String,
-        listId: Long,
-        tmdbShowId: Long
+        listId: Int,
+        traktShowId: Int
     ): TraktAddRemoveShowFromListResponse
 
+    suspend fun getTrendingShows(page: Int) : List<TraktShowsResponse>
+
+    suspend fun getRecommendedShows(page: Int, period: String) : List<TraktShowsResponse>
+
+    suspend fun getAnticipatedShows(page: Int) : List<TraktShowsResponse>
+
+    suspend fun getSimilarShows(traktId: Int) : List<TraktShowResponse>
+
+    suspend fun getPopularShows(page: Int) : List<TraktShowResponse>
+
+    suspend fun getShowSeasons(traktId: Int) : List<TraktSeasonsResponse>
+
+    suspend fun getSeasonWithEpisodes(traktId: Int) : List<TraktSeasonEpisodesResponse>
 }

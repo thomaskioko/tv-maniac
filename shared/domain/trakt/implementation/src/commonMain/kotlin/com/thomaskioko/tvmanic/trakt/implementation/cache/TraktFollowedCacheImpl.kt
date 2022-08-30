@@ -16,7 +16,7 @@ class TraktFollowedCacheImpl(
 
     override fun insert(followedShows: Followed_shows) {
         database.followedShowsQueries.insertOrReplace(
-            show_id = followedShows.show_id,
+            id = followedShows.id,
             synced = followedShows.synced
         )
     }
@@ -34,19 +34,19 @@ class TraktFollowedCacheImpl(
             .asFlow()
             .mapToList()
 
-    override fun observeFollowedShow(showId: Long): Flow<SelectFollowedShow?> =
-       database.followedShowsQueries.selectFollowedShow(showId)
+    override fun observeFollowedShow(traktId: Int): Flow<SelectFollowedShow?> =
+       database.followedShowsQueries.selectFollowedShow(traktId)
            .asFlow()
            .mapToOneOrNull()
 
-    override fun updateShowSyncState(showId: Long) {
+    override fun updateShowSyncState(traktId: Int) {
         database.followedShowsQueries.updateFollowedState(
-            show_id = showId,
+            id = traktId,
             synced = true
         )
     }
 
-    override fun removeShow(showId: Long) {
-       database.followedShowsQueries.removeShow(showId)
+    override fun removeShow(traktId: Int) {
+       database.followedShowsQueries.removeShow(traktId)
     }
 }
