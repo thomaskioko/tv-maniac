@@ -2,50 +2,59 @@ import kotlin.collections.List;
 
 
 CREATE TABLE show(
-id INTEGER NOT NULL PRIMARY KEY,
+trakt_id INTEGER AS Int NOT NULL PRIMARY KEY,
+tmdb_id INTEGER AS Int,
 title TEXT NOT NULL,
-description TEXT NOT NULL,
-language TEXT NOT NULL,
+overview TEXT NOT NULL,
+language TEXT,
 year TEXT NOT NULL,
-poster_image_url TEXT NOT NULL,
-backdrop_image_url TEXT NOT NULL,
-votes INTEGER NOT NULL,
-vote_average REAL NOT NULL,
-number_of_seasons INTEGER DEFAULT NULL,
-number_of_episodes INTEGER DEFAULT NULL,
-status TEXT DEFAULT NULL,
-popularity REAL NOT NULL,
-genre_ids TEXT AS List<Int> NOT NULL
+rating REAL NOT NULL,
+status TEXT NOT NULL,
+runtime INTEGER AS Int NOT NULL,
+votes INTEGER  AS Int NOT NULL,
+aired_episodes INTEGER AS Int DEFAULT NULL,
+poster_image_url TEXT DEFAULT NULL,
+backdrop_image_url TEXT DEFAULT NULL,
+genres TEXT AS List<String> NOT NULL
 );
 
 insertOrReplace:
 INSERT OR REPLACE INTO show(
-id,
+trakt_id,
+tmdb_id,
 title,
-description,
+overview,
 language,
 year,
 poster_image_url,
 backdrop_image_url,
 votes,
-vote_average,
-genre_ids,
-status,
-popularity
+runtime,
+rating,
+genres,
+status
 )
-VALUES(?,?,?,?,?,?,?,?, ?,?, ?, ?);
+VALUES(?, ?,?, ?,?,?,?,?,?,?, ?,?, ?);
 
 updateTvShow:
 UPDATE show
-SET status = ?, number_of_seasons = ?, number_of_episodes = ?
-WHERE id = ?;
+SET poster_image_url = ?, backdrop_image_url = ?
+WHERE tmdb_id = ?;
 
 selectByShowId:
 SELECT * FROM show
-WHERE id = ?;
+WHERE trakt_id = ?;
+
+selectShowByTmdbId:
+SELECT * FROM show
+WHERE tmdb_id = ?;
 
 selectAll:
 SELECT * FROM show;
+
+selectShows:
+SELECT * FROM show
+WHERE poster_image_url IS NULL OR backdrop_image_url IS NULL;
 
 deleteAll:
 DELETE FROM show;

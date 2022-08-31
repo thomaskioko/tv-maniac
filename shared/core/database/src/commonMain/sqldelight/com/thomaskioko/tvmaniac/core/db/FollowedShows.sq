@@ -1,12 +1,12 @@
 CREATE TABLE followed_shows (
-show_id INTEGER PRIMARY KEY,
+id INTEGER AS Int PRIMARY KEY,
 synced INTEGER AS Boolean NOT NULL DEFAULT 0,
-FOREIGN KEY (show_id) REFERENCES show(id) ON DELETE CASCADE
+FOREIGN KEY (id) REFERENCES show(trakt_id) ON DELETE CASCADE
 );
 
 insertOrReplace:
 INSERT OR REPLACE INTO followed_shows(
-show_id,
+id,
 synced
 )
 VALUES(?, ?);
@@ -18,19 +18,19 @@ WHERE synced != 1;
 selectFollowedShows:
 SELECT *
 FROM followed_shows
-INNER JOIN show  ON show.id = followed_shows.show_id;
+INNER JOIN show  ON show.trakt_id = followed_shows.id;
 
 selectFollowedShow:
 SELECT *
 FROM followed_shows
-INNER JOIN show  ON show.id = followed_shows.show_id
-WHERE show_id = ?;
+INNER JOIN show  ON show.trakt_id = followed_shows.id
+WHERE id = ?;
 
 removeShow:
 DELETE FROM followed_shows
-WHERE show_id = ?;
+WHERE id = ?;
 
 updateFollowedState:
 UPDATE followed_shows
 SET synced = ?
-WHERE show_id = ?;
+WHERE id = ?;

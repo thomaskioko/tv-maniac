@@ -1,5 +1,5 @@
 CREATE TABLE category (
-id integer NOT NULL PRIMARY KEY,
+id INTEGER AS Int NOT NULL PRIMARY KEY,
 name TEXT NOT NULL
 );
 

@@ -1,11 +1,12 @@
 CREATE TABLE episode (
-id INTEGER NOT NULL PRIMARY KEY,
-season_id INTEGER NOT NULL,
-name TEXT NOT NULL,
+id INTEGER AS Int NOT NULL PRIMARY KEY,
+season_id INTEGER AS Int NOT NULL,
+tmdb_id INTEGER AS Int,
+title TEXT NOT NULL,
 overview TEXT NOT NULL,
-image_url TEXT NOT NULL,
+image_url TEXT,
 vote_average REAL NOT NULL,
-vote_count INTEGER NOT NULL,
+votes INTEGER AS Int NOT NULL,
 episode_number TEXT NOT NULL,
 FOREIGN KEY (season_id) REFERENCES season(id)
 );
@@ -14,14 +15,15 @@ insertOrReplace:
 INSERT OR REPLACE INTO episode(
 id,
 season_id,
-name,
+tmdb_id,
+title,
 overview,
 image_url,
 vote_average,
-vote_count,
+votes,
 episode_number
 )
-VALUES(?,?,?,?,?,?,?,?);
+VALUES(?,?,?,?,?,?,?,?,?);
 
 episodeById:
 SELECT *
@@ -34,4 +36,9 @@ SELECT *
 FROM episode
 LEFT JOIN season ON season.id = episode.season_id
 WHERE season_id = ?;
+
+updateEpisode:
+UPDATE episode
+SET image_url = ?
+WHERE tmdb_id = ?;
 
