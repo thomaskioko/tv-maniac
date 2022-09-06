@@ -12,7 +12,7 @@ import org.koin.dsl.module
 
 val discoverDomainModule: Module = module {
     single<DiscoverRepository> {
-        DiscoverRepositoryImpl(get(), get(), get(), get(), get())
+        DiscoverRepositoryImpl(get(), get(), get(), get(), get(), get())
     }
 
     factory { ObserveDiscoverShowsInteractor(get()) }

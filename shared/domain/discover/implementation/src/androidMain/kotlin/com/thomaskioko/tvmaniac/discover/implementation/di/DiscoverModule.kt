@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.discover.implementation.DiscoverRepositoryImpl
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
+import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,6 +26,7 @@ object DiscoverModule {
     @Singleton
     @Provides
     fun provideDiscoverRepository(
+        traktService: TraktService,
         tmdbService: TmdbService,
         tvShowCache: TvShowCache,
         categoryCache: CategoryCache,
@@ -32,7 +34,8 @@ object DiscoverModule {
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): DiscoverRepository =
         DiscoverRepositoryImpl(
-            apiService = tmdbService,
+            traktService = traktService,
+            tmdbService = tmdbService,
             tvShowCache = tvShowCache,
             categoryCache = categoryCache,
             discoverCategoryCache = discoverCategoryCache,

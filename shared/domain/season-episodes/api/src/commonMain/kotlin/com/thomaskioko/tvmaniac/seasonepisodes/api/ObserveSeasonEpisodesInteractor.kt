@@ -7,15 +7,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 
-class ObserveSeasonWithEpisodesInteractor(
+class ObserveSeasonEpisodesInteractor(
     private val tmdbRepository: TmdbRepository,
     private val repository: SeasonWithEpisodesRepository,
     private val dispatcher: CoroutineDispatcher,
-) : FlowInteractor<Long, SeasonsResult>() {
+) : FlowInteractor<Int, SeasonsResult>() {
 
-    override fun run(params: Long): Flow<SeasonsResult> = combine(
+    override fun run(params: Int): Flow<SeasonsResult> = combine(
         tmdbRepository.observeShow(params),
-        repository.observeSeasonWithEpisodes(showId = params)
+        repository.observeSeasonEpisodes(showId = params)
     ) { show, seasons ->
         SeasonsResult(
             tvShow = show.toTvShow(),

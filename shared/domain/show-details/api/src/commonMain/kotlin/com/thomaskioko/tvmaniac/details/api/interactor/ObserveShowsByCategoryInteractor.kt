@@ -4,9 +4,9 @@ import com.kuuurt.paging.multiplatform.PagingData
 import com.kuuurt.paging.multiplatform.map
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
+import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.map
 
 //TODO:: move to grid module
 class ObserveShowsByCategoryInteractor constructor(
-    private val repository: TmdbRepository,
+    private val repository: TmdbRepository, //TODO:: User trakt repository
 ) : FlowInteractor<Int, Flow<PagingData<TvShow>>>() {
 
     override fun run(params: Int): Flow<Flow<PagingData<TvShow>>> =
@@ -32,16 +32,17 @@ class ObserveShowsByCategoryInteractor constructor(
 
 fun Show.toTvShow(): TvShow {
     return TvShow(
-        id = id,
+        traktId = trakt_id,
+        tmdbId = tmdb_id,
         title = title,
-        overview = description,
-        language = language,
+        overview = overview,
+        language = language?.uppercase(),
         posterImageUrl = poster_image_url,
         backdropImageUrl = backdrop_image_url,
-        votes = votes.toInt(),
-        averageVotes = vote_average,
-        genreIds = genre_ids,
+        votes = votes,
+        rating = rating,
+        genres = genres,
         year = year,
-        status = status,
+        status = status.replaceFirstChar { it.uppercase() },
     )
 }

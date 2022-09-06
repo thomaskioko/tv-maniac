@@ -13,13 +13,13 @@ class UpdateFollowingInteractor constructor(
     override fun run(params: UpdateShowParams): Flow<Unit> =
         if (params.isLoggedIn) {
             traktRepository.observeUpdateFollowedShow(
-                showId = params.showId,
+                traktId = params.traktId,
                 addToWatchList = !params.addToWatchList
             ).map { }
         } else {
             flow {
                 traktRepository.updateFollowedShow(
-                    showId = params.showId,
+                    traktId = params.traktId,
                     addToWatchList = !params.addToWatchList
                 )
                 emit(Unit)
@@ -28,7 +28,7 @@ class UpdateFollowingInteractor constructor(
 }
 
 data class UpdateShowParams(
-    val showId: Long,
+    val traktId: Int,
     val addToWatchList: Boolean,
     val isLoggedIn: Boolean
 )

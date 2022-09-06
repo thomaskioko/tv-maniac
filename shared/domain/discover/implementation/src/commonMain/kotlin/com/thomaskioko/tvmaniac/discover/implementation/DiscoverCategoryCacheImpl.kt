@@ -16,13 +16,13 @@ class DiscoverCategoryCacheImpl(
 
     override fun insert(category: Show_category) {
         showCategoryQuery.insertOrReplace(
-            show_id = category.show_id,
+            id = category.id,
             category_id = category.category_id
         )
     }
 
     override fun observeShowsByCategoryID(id: Int): Flow<List<SelectShows>> {
-        return showCategoryQuery.selectShows(category_id = id.toLong())
+        return showCategoryQuery.selectShows(id)
             .asFlow()
             .mapToList()
     }

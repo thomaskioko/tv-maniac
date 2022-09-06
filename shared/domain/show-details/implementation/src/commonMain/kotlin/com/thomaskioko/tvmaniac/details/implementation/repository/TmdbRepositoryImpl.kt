@@ -13,17 +13,19 @@ import com.thomaskioko.tvmaniac.core.util.asCommonFlow
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.details.api.cache.ShowCategoryCache
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.details.implementation.mapper.toAirEp
+import com.thomaskioko.tvmaniac.details.implementation.mapper.toImageUrl
 import com.thomaskioko.tvmaniac.details.implementation.mapper.toShow
 import com.thomaskioko.tvmaniac.details.implementation.mapper.toShowList
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
-import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.POPULAR
-import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.TOP_RATED
+import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.RECOMMENDED
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.TRENDING
+import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
+import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
+import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -36,19 +38,39 @@ class TmdbRepositoryImpl(
     private val apiService: TmdbService,
     private val tvShowCache: TvShowCache,
     private val epAirCacheLast: LastEpisodeAirCache,
+    private val similarShowCache: SimilarShowCache,
     private val showCategoryCache: ShowCategoryCache,
     private val coroutineScope: CoroutineScope,
     private val dispatcher: CoroutineDispatcher,
 ) : TmdbRepository {
 
-    override fun observeShow(tvShowId: Long): Flow<Resource<Show>> = networkBoundResource(
-        query = { tvShowCache.observeTvShow(tvShowId) },
-        shouldFetch = { it == null || it.status.isNullOrBlank() },
-        fetch = { apiService.getTvShowDetails(tvShowId) },
-        saveFetchResult = { mapAndInsert(tvShowId, it) },
+    override fun observeShow(tmdbId: Int): Flow<Resource<Show>> = networkBoundResource(
+        query = { tvShowCache.observeTvShow(tmdbId) },
+        shouldFetch = { it == null || it.status.isBlank() },
+        fetch = { apiService.getTvShowDetails(tmdbId) },
+        saveFetchResult = { mapAndInsert(tmdbId, it) },
         onFetchFailed = { Logger.withTag("observeShow").e { it.resolveError() } },
         coroutineDispatcher = dispatcher
     )
+
+    override suspend fun syncShowArtWork() {
+        tvShowCache.observeTvShowsArt()
+            .collect { shows ->
+                shows.forEach { show ->
+                    show.tmdb_id?.let { tmdbId ->
+                        val response = apiService.getTvShowDetails(tmdbId)
+
+                        tvShowCache.updateShow(
+                            tmdbId = response.id,
+                            posterUrl = response.posterPath.toImageUrl(),
+                            backdropUrl = response.backdropPath.toImageUrl()
+                        )
+
+                        similarShowCache.updateShow(show.trakt_id)
+                    }
+                }
+            }
+    }
 
     override fun observePagedShowsByCategoryID(
         categoryId: Int
@@ -65,7 +87,7 @@ class TmdbRepositoryImpl(
 
                 val apiResponse = when (categoryId) {
                     TRENDING.type -> apiService.getTrendingShows(currentKey)
-                    TOP_RATED.type -> apiService.getTopRatedShows(currentKey)
+                    RECOMMENDED.type -> apiService.getTopRatedShows(currentKey)
                     POPULAR.type -> apiService.getPopularShows(currentKey)
                     else -> apiService.getTrendingShows(currentKey)
                 }
@@ -88,8 +110,8 @@ class TmdbRepositoryImpl(
             .asCommonFlow()
     }
 
-    private fun mapAndInsert(tvShowId: Long, response: ShowDetailResponse) {
-        tvShowCache.insert(response.toShow())
+    private fun mapAndInsert(tvShowId: Int, response: ShowDetailResponse) {
+        tvShowCache.insert(response.toShow(tvShowId))
 
         response.lastEpisodeToAir?.let {
             epAirCacheLast.insert(it.toAirEp(tvShowId))

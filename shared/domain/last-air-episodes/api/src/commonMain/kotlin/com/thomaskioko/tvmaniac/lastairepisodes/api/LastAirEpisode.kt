@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.lastairepisodes.api
 
 data class LastAirEpisode(
-    val id: Long,
+    val id: Int,
     val name: String?,
     val overview: String,
     val airDate: String,

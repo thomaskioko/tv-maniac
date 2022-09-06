@@ -17,7 +17,7 @@ class SeasonsCacheImpl(
     override fun insert(tvSeason: Season) {
         seasonQueries.insertOrReplace(
             id = tvSeason.id,
-            tv_show_id = tvSeason.tv_show_id,
+            trakt_id = tvSeason.trakt_id,
             season_number = tvSeason.season_number,
             epiosode_count = tvSeason.epiosode_count,
             name = tvSeason.name,
@@ -29,18 +29,18 @@ class SeasonsCacheImpl(
         entityList.forEach { insert(it) }
     }
 
-    override fun getSeasonBySeasonId(seasonId: Long): Season {
+    override fun getSeasonBySeasonId(seasonId: Int): Season {
         return seasonQueries.selectBySeasonId(
             id = seasonId,
         ).executeAsOne()
     }
 
-    override fun getSeasonsByShowId(showId: Long): List<SelectSeasonsByShowId> {
-        return seasonQueries.selectSeasonsByShowId(showId).executeAsList()
+    override fun getSeasonsByShowId(traktId: Int): List<SelectSeasonsByShowId> {
+        return seasonQueries.selectSeasonsByShowId(traktId).executeAsList()
     }
 
-    override fun observeSeasons(tvShowId: Long): Flow<List<SelectSeasonsByShowId>> {
-        return seasonQueries.selectSeasonsByShowId(tvShowId)
+    override fun observeSeasons(traktId: Int): Flow<List<SelectSeasonsByShowId>> {
+        return seasonQueries.selectSeasonsByShowId(traktId)
             .asFlow()
             .mapToList()
     }

@@ -10,13 +10,23 @@ interface TvShowCache {
 
     fun insert(list: List<Show>)
 
-    fun updateShow(show: Show)
+    fun updateShow(
+        tmdbId: Int,
+        posterUrl: String?,
+        backdropUrl: String?
+    )
 
-    fun observeTvShow(showId: Long): Flow<Show?>
+    fun observeTvShow(showId: Int): Flow<Show?>
 
     fun observeTvShows(): Flow<List<Show>>
 
-    fun getShowAirEpisodes(showId: Long): Flow<List<AirEpisodesByShowId>>
+    fun observeShowAirEpisodes(showId: Int): Flow<List<AirEpisodesByShowId>>
+
+    fun getTvShow(traktId: Int): Show?
+
+    fun getTvShowByTmdbId(tmdbId: Int?): Show?
+
+    fun observeTvShowsArt(): Flow<List<Show>>
 
     fun deleteTvShows()
 }

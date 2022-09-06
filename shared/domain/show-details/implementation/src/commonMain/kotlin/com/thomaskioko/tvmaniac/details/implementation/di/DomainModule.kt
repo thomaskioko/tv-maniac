@@ -13,10 +13,10 @@ import org.koin.dsl.module
 
 val detailDomainModule: Module = module {
     single<TmdbRepository> {
-        TmdbRepositoryImpl(get(), get(), get(), get(), get(), get())
+        TmdbRepositoryImpl(get(), get(), get(), get(), get(), get(), get())
     }
 
-    factory { ObserveShowInteractor(get(), get(), get(), get(), get(), get(), get()) }
+    factory { ObserveShowInteractor(get(), get(), get(), get(), get(), get()) }
     factory { UpdateFollowingInteractor(get()) }
 
     single<TvShowCache> { TvShowCacheImpl(get()) }

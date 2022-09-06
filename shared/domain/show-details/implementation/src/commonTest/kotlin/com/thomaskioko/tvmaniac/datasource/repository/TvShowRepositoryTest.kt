@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.details.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.details.implementation.repository.TmdbRepositoryImpl
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import io.mockk.*
 import kotlinx.coroutines.flow.flowOf
@@ -20,12 +21,14 @@ internal class TvShowRepositoryTest {
     private var apiService = mockk<TmdbService>()
     private var tvShowCache = spyk<TvShowCache>()
     private var showCategoryCache = spyk<ShowCategoryCache>()
+    private var similarShowCache = spyk<SimilarShowCache>()
     private var lastEpisodeAirCache = spyk<LastEpisodeAirCache>()
 
     private val repository: TmdbRepositoryImpl = TmdbRepositoryImpl(
         apiService,
         tvShowCache,
         lastEpisodeAirCache,
+        similarShowCache,
         showCategoryCache,
         testCoroutineScope,
         testCoroutineDispatcher
@@ -50,10 +53,4 @@ internal class TvShowRepositoryTest {
         coVerify { tvShowCache.observeTvShow(84958) }
     }
 
-    @Test
-    fun givenDataIsCached_thenWatchlistIsFetched() = runBlockingTest {
-        repository.observeFollowing()
-
-        coVerify { tvShowCache.observeFollowing() }
-    }
 }

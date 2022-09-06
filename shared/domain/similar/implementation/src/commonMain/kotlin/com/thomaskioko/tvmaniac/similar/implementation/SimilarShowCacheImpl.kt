@@ -11,17 +11,23 @@ class SimilarShowCacheImpl(
     private val database: TvManiacDatabase
 ) : SimilarShowCache {
 
-    override fun insert(showId: Long, similarShowId: Long) {
-        database.showQueries.transaction {
+    override fun insert(traktId: Int, similarShowId: Int) {
+        database.similarShowQueries.transaction {
             database.similarShowQueries.insertOrReplace(
                 id = similarShowId,
-                show_id = showId
+                trakt_id = traktId
             )
         }
     }
 
-    override fun observeSimilarShows(showId: Long): Flow<List<SelectSimilarShows>> {
-        return database.similarShowQueries.selectSimilarShows(show_id = showId)
+    override fun updateShow(traktId: Int) {
+       database.similarShowQueries.transaction {
+           database.similarShowQueries.updateFollowedState(traktId)
+       }
+    }
+
+    override fun observeSimilarShows(traktId: Int): Flow<List<SelectSimilarShows>> {
+        return database.similarShowQueries.selectSimilarShows(trakt_id = traktId)
             .asFlow()
             .mapToList()
     }

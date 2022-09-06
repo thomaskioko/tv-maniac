@@ -9,15 +9,15 @@ fun List<Show>.toTvShowList(): List<TvShow> {
 
 fun Show.toTvShow(): TvShow {
     return TvShow(
-        id = id,
+        traktId = trakt_id,
         title = title,
-        overview = description,
+        overview = overview,
         language = language,
         posterImageUrl = poster_image_url,
         backdropImageUrl = backdrop_image_url,
-        votes = votes.toInt(),
-        averageVotes = vote_average,
-        genreIds = genre_ids,
+        votes = votes,
+        rating = rating,
+        genres = genres,
         year = year,
         status = status,
     )

@@ -19,6 +19,7 @@ dependencies {
     commonMainImplementation(project(":shared:domain:tmdb:api"))
     commonMainImplementation(project(":shared:core:database"))
     commonMainImplementation(project(":shared:domain:discover:api"))
+    commonMainImplementation(project(":shared:domain:trakt:api"))
     commonMainImplementation(project(":shared:domain:show-common:api"))
 
 

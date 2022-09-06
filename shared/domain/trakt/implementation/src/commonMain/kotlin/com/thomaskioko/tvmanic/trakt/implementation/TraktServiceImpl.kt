@@ -177,6 +177,11 @@ class TraktServiceImpl(
             parameter("extended", "full,episodes")
         }.body()
 
+    override suspend fun getSeasonDetails(traktId: Int): TraktShowResponse =
+        httpClient.get("shows/$traktId") {
+            parameter("extended", "full")
+        }.body()
+
     companion object {
         const val PAGE_SIZE = "20"
     }

@@ -4,9 +4,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TvShowsResponse(
+data class TmdbResponse(
     @SerialName("page") val page: Int,
-    @SerialName("results") val results: List<ShowResponse>,
+    @SerialName("results") val results: List<TmdbShowResponse>,
     @SerialName("total_pages") val totalPages: Int,
     @SerialName("total_results") val totalResults: Int
 )

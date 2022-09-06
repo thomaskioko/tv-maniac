@@ -31,11 +31,13 @@ sealed class DiscoverShowEffect : Effect {
 data class DiscoverShowResult(
     val featuredShows: DiscoverShowsData,
     val trendingShows: DiscoverShowsData,
-    val topRatedShows: DiscoverShowsData,
+    val recommendedShows: DiscoverShowsData,
     val popularShows: DiscoverShowsData,
+    val anticipatedShows: DiscoverShowsData,
 ) {
 
     data class DiscoverShowsData(
+        val isLoading: Boolean = false,
         val category: ShowCategory,
         val tvShows: List<TvShow>,
         val errorMessage: String? = null

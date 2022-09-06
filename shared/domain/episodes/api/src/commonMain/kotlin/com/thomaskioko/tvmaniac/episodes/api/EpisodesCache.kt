@@ -10,5 +10,9 @@ interface EpisodesCache {
 
     fun insert(list: List<EpisodeCache>)
 
-    fun observeEpisode(seasonId: Long): Flow<List<EpisodesBySeasonId>>
+    fun updatePoster(episodeId : Int,posterPath: String?)
+
+    fun observeEpisode(seasonId: Int): Flow<List<EpisodesBySeasonId>>
+
+    fun getEpisode(seasonId: Int): List<EpisodesBySeasonId>
 }

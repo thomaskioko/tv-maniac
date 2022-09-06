@@ -22,7 +22,7 @@ data class ShowDetailResponse(
     @SerialName("original_name") val originalName: String,
     @SerialName("overview") val overview: String,
     @SerialName("popularity") val popularity: Double,
-    @SerialName("poster_path") val posterPath: String,
+    @SerialName("poster_path") val posterPath: String?,
     @SerialName("seasons") val seasons: List<SeasonsResponse>,
     @SerialName("status") val status: String,
     @SerialName("tagline") val tagline: String,

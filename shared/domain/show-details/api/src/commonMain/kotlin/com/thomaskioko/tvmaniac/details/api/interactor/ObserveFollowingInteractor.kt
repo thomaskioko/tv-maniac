@@ -18,15 +18,15 @@ class ObserveFollowingInteractor constructor(
 fun List<SelectFollowedShows>.toTvShowList(): List<TvShow> {
     return map {
         TvShow(
-            id = it.id,
+            traktId = it.id,
             title = it.title,
-            overview = it.description,
+            overview = it.overview,
             language = it.language,
             posterImageUrl = it.poster_image_url,
             backdropImageUrl = it.backdrop_image_url,
-            votes = it.votes.toInt(),
-            averageVotes = it.vote_average,
-            genreIds = it.genre_ids,
+            votes = it.votes,
+            rating = it.rating,
+            genres = it.genres,
             year = it.year,
             status = it.status,
         )

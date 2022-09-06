@@ -54,4 +54,6 @@ interface TraktService {
     suspend fun getShowSeasons(traktId: Int) : List<TraktSeasonsResponse>
 
     suspend fun getSeasonWithEpisodes(traktId: Int) : List<TraktSeasonEpisodesResponse>
+
+    suspend fun getSeasonDetails(traktId: Int) : TraktShowResponse
 }

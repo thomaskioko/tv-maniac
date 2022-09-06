@@ -16,18 +16,19 @@ class TvShowCacheImpl(
     override fun insert(show: Show) {
         database.showQueries.transaction {
             database.showQueries.insertOrReplace(
-                id = show.id,
+                trakt_id = show.trakt_id,
+                tmdb_id = show.tmdb_id,
                 title = show.title,
-                description = show.description,
+                overview = show.overview,
                 language = show.language,
                 poster_image_url = show.poster_image_url,
                 backdrop_image_url = show.backdrop_image_url,
                 votes = show.votes,
-                vote_average = show.vote_average,
-                genre_ids = show.genre_ids,
                 year = show.year,
                 status = show.status,
-                popularity = show.popularity
+                runtime = show.runtime,
+                rating = show.rating,
+                genres = show.genres
             )
         }
     }
@@ -36,18 +37,21 @@ class TvShowCacheImpl(
         list.forEach { insert(it) }
     }
 
-    override fun updateShow(show: Show) {
+    override fun updateShow(
+        tmdbId: Int,
+        posterUrl: String?,
+        backdropUrl: String?
+    ) {
         database.transaction {
             database.showQueries.updateTvShow(
-                id = show.id,
-                status = show.status,
-                number_of_seasons = show.number_of_seasons,
-                number_of_episodes = show.number_of_episodes
+                tmdb_id = tmdbId,
+                poster_image_url = posterUrl,
+                backdrop_image_url = backdropUrl
             )
         }
     }
 
-    override fun observeTvShow(showId: Long): Flow<Show?> {
+    override fun observeTvShow(showId: Int): Flow<Show?> {
         return database.showQueries.selectByShowId(showId)
             .asFlow()
             .mapToOneOrNull()
@@ -59,12 +63,25 @@ class TvShowCacheImpl(
             .mapToList()
     }
 
-    override fun getShowAirEpisodes(showId: Long): Flow<List<AirEpisodesByShowId>> {
+    override fun observeShowAirEpisodes(showId: Int): Flow<List<AirEpisodesByShowId>> {
         return database.lastAirEpisodeQueries.airEpisodesByShowId(
             show_id = showId
         ).asFlow()
             .mapToList()
     }
+
+    override fun getTvShow(traktId: Int): Show? =
+        database.showQueries.selectByShowId(traktId)
+            .executeAsOneOrNull()
+
+    override fun getTvShowByTmdbId(tmdbId: Int?): Show? =
+        database.showQueries.selectShowByTmdbId(tmdbId)
+            .executeAsOneOrNull()
+
+    override fun observeTvShowsArt(): Flow<List<Show>> =
+        database.showQueries.selectShows()
+            .asFlow()
+            .mapToList()
 
     override fun deleteTvShows() {
         database.showQueries.deleteAll()

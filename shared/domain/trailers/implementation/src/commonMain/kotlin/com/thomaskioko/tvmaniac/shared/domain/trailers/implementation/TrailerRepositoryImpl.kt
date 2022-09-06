@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerCache
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerRepository
+import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -15,24 +16,31 @@ import kotlinx.coroutines.flow.Flow
 class TrailerRepositoryImpl(
     private val apiService: TmdbService,
     private val trailerCache: TrailerCache,
+    private val tvShowCache: TvShowCache,
     private val dispatcher: CoroutineDispatcher,
 ) : TrailerRepository {
 
-    override fun observeTrailersByShowId(showId: Long): Flow<Resource<List<Trailers>>> =
+    override fun observeTrailersByShowId(traktId: Int): Flow<Resource<List<Trailers>>> =
         networkBoundResource(
-            query = { trailerCache.getTrailersByShowId(showId) },
+            query = { trailerCache.getTrailersByShowId(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
-            fetch = { apiService.getTrailers(showId) },
-            saveFetchResult = { it.mapAndCache(showId) },
+            fetch = {
+                tvShowCache.getTvShow(traktId)?.let {
+                    it.tmdb_id?.let { tmdbId ->
+                        apiService.getTrailers(tmdbId)
+                    }
+                }
+            },
+            saveFetchResult = { it?.mapAndCache(traktId) },
             onFetchFailed = { Logger.withTag("observeTrailersByShowId").e(it.resolveError()) },
             coroutineDispatcher = dispatcher
         )
 
-    private fun TrailersResponse.mapAndCache(showId: Long) {
+    private fun TrailersResponse.mapAndCache(showId: Int) {
         val cacheList = results.map { response ->
             Trailers(
                 id = response.id,
-                show_id = showId,
+                trakt_id = showId,
                 key = response.key,
                 name = response.name,
                 site = response.site,

@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.util.network.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface SeasonWithEpisodesRepository {
-    fun observeSeasonWithEpisodes(
-        showId: Long
+    fun observeSeasonEpisodes(
+        showId: Int,
     ): Flow<Resource<List<SelectSeasonWithEpisodes>>>
 }

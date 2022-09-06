@@ -6,8 +6,9 @@ import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.discover.api.repository.DiscoverRepository
 import com.thomaskioko.tvmaniac.discover.api.mapper.toTvShowList
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
+import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.ANTICIPATED
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.POPULAR
-import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.TOP_RATED
+import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.RECOMMENDED
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.TRENDING
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -21,19 +22,20 @@ class ObserveDiscoverShowsInteractor constructor(
 
     override fun run(params: Unit): Flow<DiscoverShowResult> = combine(
         repository.observeShowsByCategoryID(TRENDING.type).toShowData(TRENDING),
-        repository.observeShowsByCategoryID(TOP_RATED.type).toShowData(TOP_RATED),
+        repository.observeShowsByCategoryID(RECOMMENDED.type).toShowData(RECOMMENDED),
         repository.observeShowsByCategoryID(POPULAR.type).toShowData(POPULAR),
-    ) { trending, topRated, popular ->
+        repository.observeShowsByCategoryID(ANTICIPATED.type).toShowData(ANTICIPATED),
+    ) { trending, recommended, popular, anticipated ->
 
         DiscoverShowResult(
-            featuredShows = trending.copy(
-                tvShows = trending.tvShows
-                    .sortedBy { it.averageVotes }
+            featuredShows = recommended.copy(
+                tvShows = recommended.tvShows
                     .take(FEATURED_LIST_SIZE)
             ),
             trendingShows = trending,
             popularShows = popular,
-            topRatedShows = topRated
+            recommendedShows = recommended,
+            anticipatedShows = anticipated
         )
     }
 

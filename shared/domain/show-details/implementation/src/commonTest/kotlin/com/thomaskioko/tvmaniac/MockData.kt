@@ -1,15 +1,15 @@
 package com.thomaskioko.tvmaniac
 
 import com.thomaskioko.tvmaniac.core.db.Show
-import com.thomaskioko.tvmaniac.tmdb.api.model.ShowResponse
-import com.thomaskioko.tvmaniac.tmdb.api.model.TvShowsResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbResponse
 
 object MockData {
 
-    fun getTvResponse() = TvShowsResponse(
+    fun getTvResponse() = TmdbResponse(
         page = 1,
         results = listOf(
-            ShowResponse(
+            TmdbShowResponse(
                 backdropPath = "/wr7nrzDrpGCEgYnw15jyAB59PtZ.jpg",
                 firstAirDate = "2021-06-09",
                 genreIds = listOf(18, 10765),
@@ -29,7 +29,7 @@ object MockData {
                 voteAverage = 8.1,
                 voteCount = 4958,
             ),
-            ShowResponse(
+            TmdbShowResponse(
                 backdropPath = "/9nBVkNBe4x9HKDAzxjxlIqecxCW.jpg",
                 firstAirDate = "2021-06-25",
                 genreIds = listOf(35, 18),
@@ -52,9 +52,9 @@ object MockData {
     )
 
     fun getShow() = Show(
-        id = 84958,
+        trakt_id = 84958,
         title = "Loki",
-        description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
             "an alternate version of Loki is brought to the mysterious Time Variance " +
             "Authority, a bureaucratic organization that exists outside of time and " +
             "space and monitors the timeline. They give Loki a choice: face being " +
@@ -64,12 +64,12 @@ object MockData {
         backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         language = "en",
         votes = 4958,
-        vote_average = 8.1,
-        genre_ids = listOf(18, 10765),
+        rating = 8.1,
+        genres = listOf("Horror", "Action"),
         year = "2019",
         status = "Ended",
-        popularity = 24.4848,
-        number_of_episodes = 30,
-        number_of_seasons = 2
+        aired_episodes = 54,
+        tmdb_id = 123,
+        runtime = 0
     )
 }

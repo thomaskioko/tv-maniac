@@ -3,11 +3,13 @@ package com.thomaskioko.tvmanic.trakt.implementation
 import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
+import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.Trakt_favorite_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
+import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
@@ -18,6 +20,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
+import com.thomaskioko.tvmanic.trakt.implementation.mapper.toShow
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -25,6 +28,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 class TraktRepositoryImpl constructor(
+    private val tvShowCache: TvShowCache,
     private val traktUserCache: TraktUserCache,
     private val followedCache: TraktFollowedCache,
     private val favoriteCache: TraktFavoriteListCache,
@@ -129,6 +133,15 @@ class TraktRepositoryImpl constructor(
             }
             Logger.withTag("observeUpdateFollowedShow").e(it.resolveError())
         },
+        coroutineDispatcher = dispatcher
+    )
+
+    override fun observeShow(traktId: Int): Flow<Resource<Show>> = networkBoundResource(
+        query = { tvShowCache.observeTvShow(traktId) },
+        shouldFetch = { it == null },
+        fetch = { traktService.getSeasonDetails(traktId) },
+        saveFetchResult = { response -> tvShowCache.insert(response.toShow()) },
+        onFetchFailed = { Logger.withTag("observeShow").e { it.resolveError() } },
         coroutineDispatcher = dispatcher
     )
 

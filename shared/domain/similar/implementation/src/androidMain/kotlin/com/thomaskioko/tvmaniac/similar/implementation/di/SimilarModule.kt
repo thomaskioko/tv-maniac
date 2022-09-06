@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowCacheImpl
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsRepositoryImpl
-import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
+import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,13 +28,13 @@ object SimilarModule {
     @Singleton
     @Provides
     fun provideRelatedShowsRepository(
-        tmdbService: TmdbService,
+        traktService: TraktService,
         similarShowCache: SimilarShowCache,
         tvShowCache: TvShowCache,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): SimilarShowsRepository =
         SimilarShowsRepositoryImpl(
-            apiService = tmdbService,
+            traktService = traktService,
             similarShowCache = similarShowCache,
             tvShowCache = tvShowCache,
             dispatcher = ioDispatcher

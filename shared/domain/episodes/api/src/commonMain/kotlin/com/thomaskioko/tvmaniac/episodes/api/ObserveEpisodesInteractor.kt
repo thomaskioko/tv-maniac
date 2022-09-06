@@ -22,7 +22,7 @@ class ObserveEpisodesInteractor constructor(
 }
 
 data class EpisodeQuery(
-    val tvShowId: Long,
-    val seasonId: Long,
-    val seasonNumber: Long
+    val tvShowId: Int,
+    val seasonId: Int,
+    val seasonNumber: Int
 )

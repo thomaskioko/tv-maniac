@@ -1,17 +1,17 @@
 package com.thomaskioko.tvmaniac.seasons.implementation.mapper
 
 import com.thomaskioko.tvmaniac.core.db.Season
-import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
 
-fun ShowDetailResponse.toSeasonCacheList(): List<Season> {
-    return seasons.map { seasonResponse ->
+fun List<TraktSeasonsResponse>.toSeasonCacheList(traktId : Int): List<Season> {
+    return map { seasonResponse ->
         Season(
-            id = seasonResponse.id.toLong(),
-            tv_show_id = id.toLong(),
-            season_number = seasonResponse.seasonNumber.toLong(),
-            name = seasonResponse.name,
+            id = seasonResponse.ids.trakt,
+            trakt_id = traktId,
+            season_number = seasonResponse.number,
+            name = seasonResponse.title,
             overview = seasonResponse.overview,
-            epiosode_count = seasonResponse.episodeCount.toLong()
+            epiosode_count = seasonResponse.episodeCount
         )
     }
 }

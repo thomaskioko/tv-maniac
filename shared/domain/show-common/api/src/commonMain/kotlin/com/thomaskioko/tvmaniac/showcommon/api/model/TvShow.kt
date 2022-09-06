@@ -1,19 +1,20 @@
 package com.thomaskioko.tvmaniac.showcommon.api.model
 
 data class TvShow(
-    val id: Long = 0,
+    val traktId: Int = 0,
+    val tmdbId: Int? = 0,
     val title: String = "",
     val overview: String = "",
-    val language: String = "",
-    val posterImageUrl: String = "",
-    val backdropImageUrl: String = "",
+    val language: String? = null,
+    val posterImageUrl: String? = null,
+    val backdropImageUrl: String? = null,
     val year: String = "",
     val status: String? = null,
     val votes: Int = 0,
     val numberOfSeasons: Int? = null,
     val numberOfEpisodes: Int? = null,
-    val averageVotes: Double = 0.0,
-    val genreIds: List<Int> = listOf(),
+    val rating: Double = 0.0,
+    val genres: List<String> = listOf(),
 ) {
     companion object {
         val EMPTY_SHOW = TvShow()

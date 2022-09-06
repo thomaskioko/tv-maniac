@@ -3,8 +3,6 @@ package com.thomaskioko.tvmaniac.details.api.interactor
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
 import com.thomaskioko.tvmaniac.core.util.combine
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
-import com.thomaskioko.tvmaniac.details.api.toGenreModelList
 import com.thomaskioko.tvmaniac.details.api.toLastAirEpisodeList
 import com.thomaskioko.tvmaniac.details.api.toSeasonsEntityList
 import com.thomaskioko.tvmaniac.details.api.toSimilarShowList
@@ -19,24 +17,23 @@ import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.flow.Flow
 
 class ObserveShowInteractor constructor(
-    private val tmdbRepository: TmdbRepository,
     private val traktRepository: TraktRepository,
     private val similarShowsRepository: SimilarShowsRepository,
     private val seasonsRepository: SeasonsRepository,
     private val genreRepository: GenreRepository,
     private val lastAirRepository: LastAirEpisodeRepository,
     private val trailerRepository: TrailerRepository
-) : FlowInteractor<Long, ShowDetailViewState>() {
+) : FlowInteractor<Int, ShowDetailViewState>() {
 
-    override fun run(params: Long): Flow<ShowDetailViewState> = combine(
-        tmdbRepository.observeShow(params),
+    override fun run(params: Int): Flow<ShowDetailViewState> = combine(
+        traktRepository.observeShow(params),
         traktRepository.observeFollowedShow(params),
         similarShowsRepository.observeSimilarShows(params),
         seasonsRepository.observeShowSeasons(params),
-        genreRepository.observeGenres(),
         lastAirRepository.observeAirEpisodes(params),
         trailerRepository.observeTrailersByShowId(params),
-    ) { show, isFollowed, similarShows, seasons, genre, lastAirEp, trailers ->
+        genreRepository.observeGenres(),
+    ) { show, isFollowed, similarShows, seasons, lastAirEp, trailers, _ ->
 
         val tvShow = show.toTvShow()
         ShowDetailViewState(
@@ -44,7 +41,6 @@ class ObserveShowInteractor constructor(
             isFollowed = isFollowed,
             similarShowList = similarShows.toSimilarShowList(),
             tvSeasonUiModels = seasons.toSeasonsEntityList(),
-            genreUIList = genre.toGenreModelList(tvShow.genreIds),
             lastAirEpList = lastAirEp.toLastAirEpisodeList(),
             trailersList = trailers.toTrailerList()
         )

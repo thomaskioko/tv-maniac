@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.trakt.implementation.injection
 
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
+import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.trakt.api.ObserveTraktUserInteractor
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
@@ -45,6 +46,7 @@ object TraktInteractorModule {
     @Provides
     fun provideTraktRepository(
         cache: TraktUserCache,
+        tvShowCache: TvShowCache,
         followedCache: TraktFollowedCache,
         favoriteCache: TraktFavoriteListCache,
         traktService: TraktService,
@@ -52,6 +54,7 @@ object TraktInteractorModule {
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): TraktRepository =
         TraktRepositoryImpl(
+            tvShowCache,
             cache,
             followedCache,
             favoriteCache,

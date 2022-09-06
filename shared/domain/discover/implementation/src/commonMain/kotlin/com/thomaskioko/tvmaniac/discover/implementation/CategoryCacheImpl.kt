@@ -11,10 +11,12 @@ class CategoryCacheImpl(
     private val categoryQueries get() = database.categoryQueries
 
     override fun insert(category: Category) {
-        categoryQueries.insertOrReplace(
-            id = category.id,
-            name = category.name
-        )
+        database.transaction {
+            categoryQueries.insertOrReplace(
+                id = category.id,
+                name = category.name
+            )
+        }
     }
 
     override fun insert(categoryList: List<Category>) {

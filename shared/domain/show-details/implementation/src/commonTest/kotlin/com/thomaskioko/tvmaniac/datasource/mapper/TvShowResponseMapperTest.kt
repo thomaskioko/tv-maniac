@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.datasource.mapper
 
 import com.thomaskioko.tvmaniac.MockData.getTvResponse
-import com.thomaskioko.tvmaniac.core.util.StringUtil.formatPosterPath
+import com.thomaskioko.tvmaniac.core.util.FormatterUtil.formatPosterPath
 import com.thomaskioko.tvmaniac.details.implementation.mapper.toShow
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
@@ -19,12 +19,10 @@ internal class TvShowResponseMapperTest {
         val mappedShow = mappedData.first()
 
         mappedData.size shouldBe response.results.size
-        mappedShow.id shouldBe showResponse.id
+        mappedShow.tmdb_id shouldBe showResponse.id
         mappedShow.title shouldBe showResponse.name
-        mappedShow.description shouldBe showResponse.overview
+        mappedShow.overview shouldBe showResponse.overview
         mappedShow.poster_image_url shouldBe formatPosterPath(showResponse.posterPath)
         mappedShow.votes shouldBe showResponse.voteCount
-        mappedShow.vote_average shouldBe showResponse.voteAverage
-        mappedShow.genre_ids shouldBe showResponse.genreIds
     }
 }

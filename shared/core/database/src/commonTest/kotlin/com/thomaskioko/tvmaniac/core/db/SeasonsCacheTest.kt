@@ -18,7 +18,7 @@ internal class SeasonsCacheTest : BaseDatabaseTest() {
         val queryResult = tvSeasonQueries.selectBySeasonId(114355).executeAsOne()
 
         queryResult.id shouldBe getSeasonCacheList()[0].id
-        queryResult.tv_show_id shouldBe getSeasonCacheList()[0].tv_show_id
+        queryResult.trakt_id shouldBe getSeasonCacheList()[0].trakt_id
         queryResult.name shouldBe getSeasonCacheList()[0].name
         queryResult.season_number shouldBe getSeasonCacheList()[0].season_number
     }
@@ -41,7 +41,7 @@ internal class SeasonsCacheTest : BaseDatabaseTest() {
     private fun Season.insertSeasonsEntityQuery() {
         tvSeasonQueries.insertOrReplace(
             id = id,
-            tv_show_id = tv_show_id,
+            trakt_id = trakt_id,
             season_number = season_number,
             epiosode_count = epiosode_count,
             name = name,

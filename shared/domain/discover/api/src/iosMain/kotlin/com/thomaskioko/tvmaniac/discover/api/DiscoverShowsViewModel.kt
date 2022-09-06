@@ -33,7 +33,7 @@ class DiscoverShowsViewModel : BaseViewModel(), KoinComponent {
                             data = DiscoverShowsState.DiscoverShowResult(
                                 featuredShows = it.featuredShows,
                                 trendingShows = it.trendingShows,
-                                topRatedShows = it.topRatedShows,
+                                topRatedShows = it.recommendedShows,
                                 popularShows = it.popularShows
                             )
                         )

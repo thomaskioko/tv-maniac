@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.db.Last_episode
 import com.thomaskioko.tvmaniac.core.db.SelectShows
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.DateUtil.formatDateString
+import com.thomaskioko.tvmaniac.core.util.FormatterUtil
 import com.thomaskioko.tvmaniac.tmdb.api.model.LastEpisodeToAir
 import com.thomaskioko.tvmaniac.tmdb.api.model.NextEpisodeToAir
 
@@ -13,25 +14,27 @@ fun List<SelectShows>.toShowList(): List<Show> {
 
 fun SelectShows.toShow(): Show {
     return Show(
-        id = id,
+        trakt_id = trakt_id,
+        tmdb_id = tmdb_id,
         title = title,
-        description = description,
+        overview = overview,
         language = language,
-        poster_image_url = poster_image_url,
-        backdrop_image_url = backdrop_image_url,
         votes = votes,
-        vote_average = vote_average,
-        genre_ids = genre_ids,
+        rating = rating,
+        genres = genres,
         year = year,
         status = status,
-        popularity = popularity,
-        number_of_episodes = number_of_episodes,
-        number_of_seasons = number_of_seasons
+        aired_episodes = aired_episodes,
+        runtime = runtime,
+        poster_image_url = poster_image_url.toImageUrl(),
+        backdrop_image_url = backdrop_image_url.toImageUrl()
     )
 }
 
-fun NextEpisodeToAir.toAirEp(tvShowId: Long) = Last_episode(
-    id = id!!.toLong(),
+
+
+fun NextEpisodeToAir.toAirEp(tvShowId: Int) = Last_episode(
+    id = id!!,
     show_id = tvShowId,
     name = name,
     overview = if (!overview.isNullOrEmpty()) overview!! else "TBA",
@@ -44,8 +47,8 @@ fun NextEpisodeToAir.toAirEp(tvShowId: Long) = Last_episode(
     title = "Upcoming"
 )
 
-fun LastEpisodeToAir.toAirEp(tvShowId: Long) = Last_episode(
-    id = id!!.toLong(),
+fun LastEpisodeToAir.toAirEp(tvShowId: Int) = Last_episode(
+    id = id!!,
     show_id = tvShowId,
     name = name,
     overview = if (!overview.isNullOrEmpty()) overview!! else "TBA",
@@ -57,3 +60,9 @@ fun LastEpisodeToAir.toAirEp(tvShowId: Long) = Last_episode(
     vote_count = voteCount?.toLong(),
     title = "Latest Release"
 )
+
+fun String?.toImageUrl() = FormatterUtil.formatPosterPath(this)
+
+fun String?.toTmdbImageUrl(posterPath: String?) =
+    if (this.isNullOrEmpty()) FormatterUtil.formatPosterPath(posterPath)
+    else FormatterUtil.formatPosterPath(this)

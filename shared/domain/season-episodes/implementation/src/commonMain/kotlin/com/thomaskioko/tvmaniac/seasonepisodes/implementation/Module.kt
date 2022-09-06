@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.seasonepisodes.implementation
 
-import com.thomaskioko.tvmaniac.seasonepisodes.api.ObserveSeasonWithEpisodesInteractor
+import com.thomaskioko.tvmaniac.seasonepisodes.api.ObserveSeasonEpisodesInteractor
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesCache
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesRepository
 import org.koin.core.module.Module
@@ -13,9 +13,11 @@ val seasonEpisodesDomainModule: Module = module {
             get(),
             get(),
             get(),
-            get()
+            get(),
+            get(),
+            get(),
         )
     }
     single<SeasonWithEpisodesCache> { SeasonWithEpisodesCacheImpl(get()) }
-    factory { ObserveSeasonWithEpisodesInteractor(get(), get(), get()) }
+    factory { ObserveSeasonEpisodesInteractor(get(), get(), get()) }
 }

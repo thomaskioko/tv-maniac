@@ -19,6 +19,7 @@ dependencies {
     commonMainImplementation(project(":shared:core:database"))
     commonMainImplementation(project(":shared:domain:tmdb:api"))
     commonMainImplementation(project(":shared:domain:trailers:api"))
+    commonMainImplementation(project(":shared:domain:show-common:api"))
 
     commonMainImplementation(libs.squareup.sqldelight.extensions)
     commonMainImplementation(libs.kermit)

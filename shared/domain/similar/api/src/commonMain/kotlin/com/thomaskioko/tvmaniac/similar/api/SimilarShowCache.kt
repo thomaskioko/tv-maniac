@@ -5,7 +5,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface SimilarShowCache {
 
-    fun insert(showId: Long, similarShowId: Long)
+    fun insert(traktId: Int, similarShowId: Int)
 
-    fun observeSimilarShows(showId: Long): Flow<List<SelectSimilarShows>>
+    fun updateShow(traktId: Int)
+
+    fun observeSimilarShows(traktId: Int): Flow<List<SelectSimilarShows>>
 }

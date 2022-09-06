@@ -1,51 +1,48 @@
 package com.thomaskioko.tvmaniac.details.implementation.mapper
 
 import com.thomaskioko.tvmaniac.core.db.Show
-import com.thomaskioko.tvmaniac.core.util.StringUtil.formatPosterPath
-import com.thomaskioko.tvmaniac.tmdb.api.model.GenreResponse
+import com.thomaskioko.tvmaniac.core.util.FormatterUtil.formatPosterPath
 import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
-import com.thomaskioko.tvmaniac.tmdb.api.model.ShowResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
 import kotlinx.datetime.toLocalDate
 
-fun ShowResponse.toShow(): Show {
+fun TmdbShowResponse.toShow(): Show {
     return Show(
-        id = id.toLong(),
+        tmdb_id = id,
+        trakt_id = id,
         title = name,
-        description = overview,
+        overview = overview,
         language = originalLanguage,
-        poster_image_url = formatPosterPath(posterPath),
+        poster_image_url = posterPath.toImageUrl(),
         backdrop_image_url = backdropPath.toImageUrl(posterPath),
-        votes = voteCount.toLong(),
-        vote_average = voteAverage,
-        genre_ids = genreIds,
+        votes = voteCount,
+        genres = genreIds.map { it.toString() },
         year = formatDate(firstAirDate),
+        aired_episodes = numberOfEpisodes,
+        rating = popularity,
         status = "",
-        popularity = popularity,
-        number_of_seasons = numberOfSeasons?.toLong(),
-        number_of_episodes = numberOfEpisodes?.toLong()
+        runtime = 0
     )
 }
 
-fun ShowDetailResponse.toShow(): Show {
+fun ShowDetailResponse.toShow(tvShowId: Int): Show {
     return Show(
-        id = id.toLong(),
+        tmdb_id = id,
+        trakt_id = tvShowId,
         title = name,
-        description = overview,
+        overview = overview,
         language = originalLanguage,
         poster_image_url = formatPosterPath(posterPath),
         backdrop_image_url = backdropPath.toImageUrl(posterPath),
-        votes = voteCount.toLong(),
-        vote_average = voteAverage,
-        genre_ids = genres.toGenreIds(),
+        votes = voteCount,
+        genres = genres.map { it.name },
         year = formatDate(firstAirDate),
+        aired_episodes = numberOfEpisodes,
+        rating = popularity,
         status = status,
-        popularity = popularity,
-        number_of_seasons = numberOfSeasons.toLong(),
-        number_of_episodes = numberOfEpisodes.toLong()
+        runtime = 0
     )
 }
-
-fun List<GenreResponse>.toGenreIds(): List<Int> = map { it.id }
 
 private fun formatDate(dateString: String): String {
     return if (dateString.isNotBlank() && !dateString.contains("N/A"))

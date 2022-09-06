@@ -15,15 +15,16 @@ import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
 
 fun Resource<List<SelectSimilarShows>>.toSimilarShowList(): List<TvShow> = data?.map {
     TvShow(
-        id = it.id,
+        traktId = it.trakt_id_,
+        tmdbId = it.tmdb_id,
         title = it.title,
-        overview = it.description,
+        overview = it.overview,
         language = it.language,
         posterImageUrl = it.poster_image_url,
         backdropImageUrl = it.backdrop_image_url,
-        votes = it.votes.toInt(),
-        averageVotes = it.vote_average,
-        genreIds = it.genre_ids,
+        votes = it.votes,
+        rating = it.rating,
+        genres = it.genres,
         year = it.year,
         status = it.status,
     )
@@ -32,15 +33,16 @@ fun Resource<List<SelectSimilarShows>>.toSimilarShowList(): List<TvShow> = data?
 
 fun Resource<Show>.toTvShow(): TvShow = data?.let {
     TvShow(
-        id = it.id,
+        traktId = it.trakt_id,
+        tmdbId = it.tmdb_id,
         title = it.title,
-        overview = it.description,
+        overview = it.overview,
         language = it.language,
         posterImageUrl = it.poster_image_url,
         backdropImageUrl = it.backdrop_image_url,
-        votes = it.votes.toInt(),
-        averageVotes = it.vote_average,
-        genreIds = it.genre_ids,
+        votes = it.votes,
+        rating = it.rating,
+        genres = it.genres,
         year = it.year,
         status = it.status,
     )
@@ -60,11 +62,11 @@ fun Resource<List<Genre>>.toGenreModelList(genreIds: List<Int>): List<GenreUIMod
 fun Resource<List<SelectSeasonsByShowId>>.toSeasonsEntityList(): List<SeasonUiModel> = data?.map {
     SeasonUiModel(
         seasonId = it.id,
-        tvShowId = it.tv_show_id,
+        tvShowId = it.trakt_id,
         name = it.name,
         overview = it.overview,
         seasonNumber = it.season_number,
-        episodeCount = it.epiosode_count.toInt()
+        episodeCount = it.epiosode_count
     )
 } ?: emptyList()
 
@@ -89,7 +91,7 @@ fun List<AirEpisodesByShowId>.toLastAirEpisodeList(): List<LastAirEpisode> = map
 
 fun Resource<List<Trailers>>.toTrailerList(): List<Trailer> = data?.map {
     Trailer(
-        showId = it.show_id,
+        showId = it.trakt_id,
         key = it.key,
         name = it.name,
         youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg"

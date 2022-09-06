@@ -8,9 +8,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface TmdbRepository {
 
-    fun observeShow(tvShowId: Long): Flow<Resource<Show>>
+    fun observeShow(tmdbId: Int): Flow<Resource<Show>>
 
     fun observePagedShowsByCategoryID(
         categoryId: Int
     ): CommonFlow<PagingData<Show>>
+
+    suspend fun syncShowArtWork()
 }

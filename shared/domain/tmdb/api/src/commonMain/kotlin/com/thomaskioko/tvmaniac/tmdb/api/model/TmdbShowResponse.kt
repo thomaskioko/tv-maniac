@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ShowResponse(
+data class TmdbShowResponse(
     @SerialName("backdrop_path") val backdropPath: String?,
     @SerialName("first_air_date") val firstAirDate: String = "N/A",
     @SerialName("genre_ids") val genreIds: List<Int>,

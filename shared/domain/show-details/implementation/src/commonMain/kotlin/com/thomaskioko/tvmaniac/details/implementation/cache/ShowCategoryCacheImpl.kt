@@ -12,7 +12,7 @@ class ShowCategoryCacheImpl(
 
     override fun getShowsByCategoryID(id: Int): List<SelectShows> {
         return showCategoryQuery.selectShows(
-            category_id = id.toLong()
+            category_id = id
         ).executeAsList()
     }
 }
