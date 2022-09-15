@@ -55,8 +55,8 @@ internal class SettingsViewModelTest {
                 showPopup = false,
                 loggedIn = false,
                 showTraktDialog = false,
-                traktFullName = null,
-                traktUserPicUrl = null,
+                traktFullName = "",
+                traktUserPicUrl = "",
                 traktUserName = ""
             )
             expectNoEvents()

@@ -3,8 +3,6 @@ package com.thomaskioko.tvmaniac
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
-import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
-import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbResponse
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
 import kotlinx.coroutines.flow.flowOf
@@ -13,7 +11,7 @@ object MockData {
 
     fun getDiscoverShowResult(): DiscoverShowResult =
         DiscoverShowResult(
-            featuredShows = getDiscoverShowsData(ShowCategory.RECOMMENDED),
+            featuredShows = getDiscoverShowsData(ShowCategory.FEATURED),
             trendingShows = getDiscoverShowsData(ShowCategory.TRENDING),
             popularShows = getDiscoverShowsData(ShowCategory.POPULAR),
             recommendedShows = getDiscoverShowsData(ShowCategory.RECOMMENDED),
