@@ -1,16 +1,16 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
-import com.thomaskioko.tvmaniac.core.db.SelectShows
+import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.FormatterUtil
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 
-fun List<SelectShows>.toShowList(): List<Show> {
+fun List<SelectShowsByCategory>.toShowList(): List<Show> {
     return map { it.toShow() }
 }
 
-fun SelectShows.toShow(): Show {
+fun SelectShowsByCategory.toShow(): Show {
     return Show(
         trakt_id = trakt_id,
         tmdb_id = tmdb_id,

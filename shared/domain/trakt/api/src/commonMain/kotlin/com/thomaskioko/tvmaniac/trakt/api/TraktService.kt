@@ -13,6 +13,8 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 
+private const val DEFAULT_API_PAGE = 1
+
 interface TraktService {
 
     suspend fun getAccessToken(authCode: String): TraktAccessTokenResponse
@@ -41,19 +43,24 @@ interface TraktService {
         traktShowId: Int
     ): TraktAddRemoveShowFromListResponse
 
-    suspend fun getTrendingShows(page: Int) : List<TraktShowsResponse>
+    suspend fun getTrendingShows(page: Int = DEFAULT_API_PAGE): List<TraktShowsResponse>
 
-    suspend fun getRecommendedShows(page: Int, period: String) : List<TraktShowsResponse>
+    suspend fun getRecommendedShows(page: Int = DEFAULT_API_PAGE, period: String) : List<TraktShowsResponse>
 
-    suspend fun getAnticipatedShows(page: Int) : List<TraktShowsResponse>
+    suspend fun getAnticipatedShows(page: Int = DEFAULT_API_PAGE): List<TraktShowsResponse>
 
-    suspend fun getSimilarShows(traktId: Int) : List<TraktShowResponse>
+    suspend fun getPopularShows(page: Int = DEFAULT_API_PAGE): List<TraktShowResponse>
 
-    suspend fun getPopularShows(page: Int) : List<TraktShowResponse>
+    suspend fun getSimilarShows(traktId: Int): List<TraktShowResponse>
 
-    suspend fun getShowSeasons(traktId: Int) : List<TraktSeasonsResponse>
+    suspend fun getShowSeasons(traktId: Int): List<TraktSeasonsResponse>
 
-    suspend fun getSeasonWithEpisodes(traktId: Int) : List<TraktSeasonEpisodesResponse>
+    suspend fun getSeasonWithEpisodes(traktId: Int): List<TraktSeasonEpisodesResponse>
 
-    suspend fun getSeasonDetails(traktId: Int) : TraktShowResponse
+    suspend fun getSeasonDetails(traktId: Int): TraktShowResponse
+
+
+    companion object {
+        const val PAGE_SIZE = 20
+    }
 }

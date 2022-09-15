@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmanic.trakt.implementation
 
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
+import com.thomaskioko.tvmaniac.trakt.api.TraktService.Companion.PAGE_SIZE
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessRefreshTokenResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessTokenResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddRemoveShowFromListResponse
@@ -181,8 +182,4 @@ class TraktServiceImpl(
         httpClient.get("shows/$traktId") {
             parameter("extended", "full")
         }.body()
-
-    companion object {
-        const val PAGE_SIZE = "20"
-    }
 }

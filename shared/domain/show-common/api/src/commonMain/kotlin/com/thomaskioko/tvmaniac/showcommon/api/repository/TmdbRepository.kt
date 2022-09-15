@@ -15,4 +15,6 @@ interface TmdbRepository {
     ): CommonFlow<PagingData<Show>>
 
     suspend fun syncShowArtWork()
+
+    fun observeUpdateShowArtWork() : Flow<Unit>
 }

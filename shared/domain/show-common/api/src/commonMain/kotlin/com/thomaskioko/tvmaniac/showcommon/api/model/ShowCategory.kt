@@ -8,7 +8,8 @@ enum class ShowCategory(
     TRENDING(1, "Being Watched"),
     RECOMMENDED(2, "Recommended"),
     POPULAR(3, "Popular"),
-    ANTICIPATED(4, "Anticipated");
+    ANTICIPATED(4, "Anticipated"),
+    FEATURED(5, "Featured");
 
     companion object {
         operator fun get(type: Int): ShowCategory {
@@ -17,6 +18,7 @@ enum class ShowCategory(
                 RECOMMENDED.type -> RECOMMENDED
                 TRENDING.type -> TRENDING
                 ANTICIPATED.type -> ANTICIPATED
+                FEATURED.type -> FEATURED
                 else -> RECOMMENDED
             }
         }

@@ -4,6 +4,7 @@ import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.db.AirEpisodesByShowId
+import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
@@ -70,6 +71,12 @@ class TvShowCacheImpl(
             .mapToList()
     }
 
+    override fun observeShowsByCategoryID(categoryId: Int): Flow<List<SelectShowsByCategory>> {
+        return database.showQueries.selectShowsByCategory(categoryId)
+            .asFlow()
+            .mapToList()
+    }
+
     override fun getTvShow(traktId: Int): Show? =
         database.showQueries.selectByShowId(traktId)
             .executeAsOneOrNull()
@@ -86,4 +93,8 @@ class TvShowCacheImpl(
     override fun deleteTvShows() {
         database.showQueries.deleteAll()
     }
+
+    override fun getShowsByCategoryID(categoryId: Int): List<SelectShowsByCategory> =
+        database.showQueries.selectShowsByCategory(categoryId)
+            .executeAsList()
 }

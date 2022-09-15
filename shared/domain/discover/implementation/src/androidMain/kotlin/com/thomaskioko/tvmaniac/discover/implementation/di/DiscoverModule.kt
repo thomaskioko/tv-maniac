@@ -2,14 +2,16 @@ package com.thomaskioko.tvmaniac.discover.implementation.di
 
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.discover.api.ObserveDiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.discover.api.ObserveSyncImages
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
-import com.thomaskioko.tvmaniac.discover.api.cache.DiscoverCategoryCache
+import com.thomaskioko.tvmaniac.discover.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.discover.api.repository.DiscoverRepository
 import com.thomaskioko.tvmaniac.discover.implementation.CategoryCacheImpl
-import com.thomaskioko.tvmaniac.discover.implementation.DiscoverCategoryCacheImpl
 import com.thomaskioko.tvmaniac.discover.implementation.DiscoverRepositoryImpl
+import com.thomaskioko.tvmaniac.discover.implementation.ShowCategoryCacheImpl
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import dagger.Module
@@ -30,7 +32,7 @@ object DiscoverModule {
         tmdbService: TmdbService,
         tvShowCache: TvShowCache,
         categoryCache: CategoryCache,
-        discoverCategoryCache: DiscoverCategoryCache,
+        showCategoryCache: ShowCategoryCache,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): DiscoverRepository =
         DiscoverRepositoryImpl(
@@ -38,7 +40,7 @@ object DiscoverModule {
             tmdbService = tmdbService,
             tvShowCache = tvShowCache,
             categoryCache = categoryCache,
-            discoverCategoryCache = discoverCategoryCache,
+            showCategoryCache = showCategoryCache,
             dispatcher = ioDispatcher
         )
 
@@ -50,13 +52,19 @@ object DiscoverModule {
 
     @Singleton
     @Provides
-    fun provideSeasonWithDiscoverCategoryCache(database: TvManiacDatabase): DiscoverCategoryCache {
-        return DiscoverCategoryCacheImpl(database)
+    fun provideSeasonWithDiscoverCategoryCache(database: TvManiacDatabase): ShowCategoryCache {
+        return ShowCategoryCacheImpl(database)
     }
 
     @Singleton
     @Provides
     fun provideObserveShowsByCategoryInteractor(
-        repository: DiscoverRepository
+        repository: DiscoverRepository,
     ): ObserveDiscoverShowsInteractor = ObserveDiscoverShowsInteractor(repository)
+
+    @Singleton
+    @Provides
+    fun provideObserveSyncImages(
+        tmdbRepository: TmdbRepository
+    ): ObserveSyncImages = ObserveSyncImages(tmdbRepository)
 }

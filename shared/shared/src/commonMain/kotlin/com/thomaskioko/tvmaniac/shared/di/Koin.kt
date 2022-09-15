@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.shared.di
 
 import com.thomaskioko.tvmaniac.core.db.di.dbPlatformModule
-import com.thomaskioko.tvmaniac.details.api.cache.ShowCategoryCache
-import com.thomaskioko.tvmaniac.details.implementation.cache.ShowCategoryCacheImpl
 import com.thomaskioko.tvmaniac.details.implementation.cache.TvShowCacheImpl
 import com.thomaskioko.tvmaniac.details.implementation.di.detailDomainModule
 import com.thomaskioko.tvmaniac.discover.implementation.di.discoverDomainModule
@@ -47,7 +45,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
 
 val cacheModule: Module = module {
     single<TvShowCache> { TvShowCacheImpl(get()) }
-    single<ShowCategoryCache> { ShowCategoryCacheImpl(get()) }
 }
 
 val dispatcherModule = module {

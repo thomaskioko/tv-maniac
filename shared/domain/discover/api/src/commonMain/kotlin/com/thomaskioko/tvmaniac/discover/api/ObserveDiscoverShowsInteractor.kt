@@ -3,10 +3,11 @@ package com.thomaskioko.tvmaniac.discover.api
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.discover.api.repository.DiscoverRepository
 import com.thomaskioko.tvmaniac.discover.api.mapper.toTvShowList
+import com.thomaskioko.tvmaniac.discover.api.repository.DiscoverRepository
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.ANTICIPATED
+import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.FEATURED
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.POPULAR
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.RECOMMENDED
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory.TRENDING
@@ -17,25 +18,26 @@ import kotlinx.coroutines.flow.map
 private const val FEATURED_LIST_SIZE = 5
 
 class ObserveDiscoverShowsInteractor constructor(
-    private val repository: DiscoverRepository,
+    private val discoverRepository: DiscoverRepository,
 ) : FlowInteractor<Unit, DiscoverShowResult>() {
 
     override fun run(params: Unit): Flow<DiscoverShowResult> = combine(
-        repository.observeShowsByCategoryID(TRENDING.type).toShowData(TRENDING),
-        repository.observeShowsByCategoryID(RECOMMENDED.type).toShowData(RECOMMENDED),
-        repository.observeShowsByCategoryID(POPULAR.type).toShowData(POPULAR),
-        repository.observeShowsByCategoryID(ANTICIPATED.type).toShowData(ANTICIPATED),
-    ) { trending, recommended, popular, anticipated ->
+        discoverRepository.observeShowsByCategoryID(TRENDING.type).toShowData(TRENDING),
+        discoverRepository.observeShowsByCategoryID(RECOMMENDED.type).toShowData(RECOMMENDED),
+        discoverRepository.observeShowsByCategoryID(POPULAR.type).toShowData(POPULAR),
+        discoverRepository.observeShowsByCategoryID(ANTICIPATED.type).toShowData(ANTICIPATED),
+        discoverRepository.observeShowsByCategoryID(FEATURED.type).toShowData(FEATURED),
+    ) { trending, recommended, popular, anticipated, featured ->
 
         DiscoverShowResult(
-            featuredShows = recommended.copy(
-                tvShows = recommended.tvShows
+            trendingShows = trending,
+            recommendedShows = recommended,
+            popularShows = popular,
+            anticipatedShows = anticipated,
+            featuredShows = featured.copy(
+                tvShows = featured.tvShows
                     .take(FEATURED_LIST_SIZE)
             ),
-            trendingShows = trending,
-            popularShows = popular,
-            recommendedShows = recommended,
-            anticipatedShows = anticipated
         )
     }
 

@@ -15,6 +15,10 @@ version = libs.versions.shared.module.version.get()
 
 android {
     namespace = "com.thomaskioko.tvmaniac.shared"
+
+    defaultConfig {
+        manifestPlaceholders["appAuthRedirectScheme"] = "empty"
+    }
 }
 
 kotlin {

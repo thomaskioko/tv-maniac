@@ -1,18 +1,18 @@
 package com.thomaskioko.tvmaniac.details.implementation.mapper
 
 import com.thomaskioko.tvmaniac.core.db.Last_episode
-import com.thomaskioko.tvmaniac.core.db.SelectShows
+import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.DateUtil.formatDateString
 import com.thomaskioko.tvmaniac.core.util.FormatterUtil
 import com.thomaskioko.tvmaniac.tmdb.api.model.LastEpisodeToAir
 import com.thomaskioko.tvmaniac.tmdb.api.model.NextEpisodeToAir
 
-fun List<SelectShows>.toShowList(): List<Show> {
+fun List<SelectShowsByCategory>.toShowList(): List<Show> {
     return map { it.toShow() }
 }
 
-fun SelectShows.toShow(): Show {
+fun SelectShowsByCategory.toShow(): Show {
     return Show(
         trakt_id = trakt_id,
         tmdb_id = tmdb_id,
@@ -62,7 +62,3 @@ fun LastEpisodeToAir.toAirEp(tvShowId: Int) = Last_episode(
 )
 
 fun String?.toImageUrl() = FormatterUtil.formatPosterPath(this)
-
-fun String?.toTmdbImageUrl(posterPath: String?) =
-    if (this.isNullOrEmpty()) FormatterUtil.formatPosterPath(posterPath)
-    else FormatterUtil.formatPosterPath(this)

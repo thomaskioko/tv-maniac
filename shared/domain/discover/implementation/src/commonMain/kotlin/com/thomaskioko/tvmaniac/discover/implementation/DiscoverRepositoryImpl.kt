@@ -8,7 +8,7 @@ import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.discover.api.cache.CategoryCache
-import com.thomaskioko.tvmaniac.discover.api.cache.DiscoverCategoryCache
+import com.thomaskioko.tvmaniac.discover.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.discover.api.repository.DiscoverRepository
 import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
@@ -20,13 +20,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-private const val DEFAULT_API_PAGE = 1
-
 class DiscoverRepositoryImpl(
     private val traktService: TraktService,
     private val tmdbService: TmdbService,
     private val tvShowCache: TvShowCache,
-    private val discoverCategoryCache: DiscoverCategoryCache,
+    private val showCategoryCache: ShowCategoryCache,
     private val categoryCache: CategoryCache,
     private val dispatcher: CoroutineDispatcher,
 ) : DiscoverRepository {
@@ -34,7 +32,7 @@ class DiscoverRepositoryImpl(
     override fun observeShowsByCategoryID(categoryId: Int): Flow<Resource<List<Show>>> {
         val networkBoundResource = networkBoundResource(
             query = {
-                discoverCategoryCache.observeShowsByCategoryID(categoryId)
+                tvShowCache.observeShowsByCategoryID(categoryId)
                     .map { it.toShowList() }
             },
             shouldFetch = { it.isNullOrEmpty() },
@@ -47,33 +45,35 @@ class DiscoverRepositoryImpl(
     }
 
     override suspend fun fetchDiscoverShows() {
-        val trending = traktService.getTrendingShows(DEFAULT_API_PAGE)
+        val trending = traktService.getTrendingShows()
         trending.mapAndCacheShows(ShowCategory.TRENDING.type)
 
-        val anticipated = traktService.getAnticipatedShows(DEFAULT_API_PAGE)
+        val anticipated = traktService.getAnticipatedShows()
         anticipated.mapAndCacheShows(ShowCategory.ANTICIPATED.type)
 
-        val topRatedResponse = traktService.getRecommendedShows(DEFAULT_API_PAGE, "weekely")
+        val topRatedResponse = traktService.getRecommendedShows(period = "weekely")
         topRatedResponse.mapAndCacheShows(ShowCategory.RECOMMENDED.type)
 
-        val popularResponse = traktService.getPopularShows(DEFAULT_API_PAGE)
+        val popularResponse = traktService.getPopularShows()
         popularResponse.mapAndCacheShow(ShowCategory.POPULAR.type)
+
+        val featuredResponse = traktService.getRecommendedShows(period = "monthly",)
+        featuredResponse.mapAndCacheShows(ShowCategory.FEATURED.type)
 
     }
 
     private suspend fun fetchShowsApiRequest(categoryId: Int): List<Show> = when (categoryId) {
-        ShowCategory.TRENDING.type -> traktService.getTrendingShows(DEFAULT_API_PAGE)
+        ShowCategory.TRENDING.type -> traktService.getTrendingShows()
             .map { it.toShow() }
-        ShowCategory.POPULAR.type -> traktService.getPopularShows(DEFAULT_API_PAGE)
+        ShowCategory.POPULAR.type -> traktService.getPopularShows()
             .map { it.toShow() }
-        ShowCategory.ANTICIPATED.type -> traktService.getAnticipatedShows(DEFAULT_API_PAGE)
+        ShowCategory.ANTICIPATED.type -> traktService.getAnticipatedShows()
             .map { it.toShow() }
-        ShowCategory.RECOMMENDED.type -> traktService.getRecommendedShows(
-            DEFAULT_API_PAGE,
-            "weekely"
-        )
+        ShowCategory.RECOMMENDED.type -> traktService.getRecommendedShows(period = "weekely")
             .map { it.toShow() }
-        else -> traktService.getTrendingShows(DEFAULT_API_PAGE).map { it.toShow() }
+        ShowCategory.FEATURED.type -> traktService.getRecommendedShows(period = "monthly")
+            .map { it.toShow() }
+        else -> traktService.getTrendingShows().map { it.toShow() }
     }
 
     private suspend fun cacheResult(
@@ -83,7 +83,6 @@ class DiscoverRepositoryImpl(
         tvShowCache.insert(result)
 
         result.forEach { show ->
-
 
             //TODO:: Move this out of here
            show.tmdb_id?.let { tmdbId ->
@@ -105,10 +104,10 @@ class DiscoverRepositoryImpl(
             )
 
             // Insert ShowCategory
-            discoverCategoryCache.insert(
+            showCategoryCache.insert(
                 Show_category(
-                    id = show.trakt_id,
-                    category_id = categoryId
+                    category_id = categoryId,
+                    trakt_id = show.trakt_id
                 )
             )
         }
@@ -141,10 +140,10 @@ class DiscoverRepositoryImpl(
             )
 
             // Insert ShowCategory
-            discoverCategoryCache.insert(
+            showCategoryCache.insert(
                 Show_category(
                     category_id = categoryId,
-                    id = show.trakt_id
+                    trakt_id = show.trakt_id
                 )
             )
         }
@@ -177,10 +176,10 @@ class DiscoverRepositoryImpl(
             )
 
             // Insert ShowCategory
-            discoverCategoryCache.insert(
+            showCategoryCache.insert(
                 Show_category(
                     category_id = categoryId,
-                    id = show.trakt_id
+                    trakt_id = show.trakt_id
                 )
             )
         }
