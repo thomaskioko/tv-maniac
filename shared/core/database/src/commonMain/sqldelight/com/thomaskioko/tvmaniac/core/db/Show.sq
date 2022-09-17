@@ -58,3 +58,11 @@ WHERE poster_image_url IS NULL OR backdrop_image_url IS NULL;
 
 deleteAll:
 DELETE FROM show;
+
+selectShowsByCategory:
+SELECT *
+FROM show_category
+INNER JOIN show  ON show_category.trakt_id = show.trakt_id
+INNER JOIN category ON show_category.category_id = category.id
+WHERE category_id = ?
+ORDER BY show.year DESC;
