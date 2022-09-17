@@ -33,7 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -44,11 +44,10 @@ import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
-import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
 import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
-import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
@@ -59,12 +58,9 @@ import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
-import com.thomaskioko.tvmaniac.discover.api.DataLoaded
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowState
-import com.thomaskioko.tvmaniac.discover.api.ErrorState
-import com.thomaskioko.tvmaniac.discover.api.Loading
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
@@ -89,7 +85,7 @@ fun DiscoverScreen(
     val scaffoldState = rememberScaffoldState()
 
     val discoverViewState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = Loading)
+        .collectAsState(initial = DiscoverShowState.Empty)
 
     LaunchedEffect(Unit) {
         viewModel.observeSideEffect().collect {
@@ -132,23 +128,15 @@ private fun DiscoverShows(
         },
     ) { contentPadding ->
 
-        when (discoverViewState) {
-            Loading -> FullScreenLoading()
-            is ErrorState -> {
-                EmptyContentView(
-                    painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                    message = discoverViewState.message
-                )
-            }
-            is DataLoaded -> {
-                DiscoverViewScrollingContent(
-                    contentPadding,
-                    discoverViewState,
-                    openShowDetails,
-                    moreClicked
-                )
-            }
-
+        if (discoverViewState.isLoading){
+            FullScreenLoading()
+        } else {
+            DiscoverViewScrollingContent(
+                contentPadding,
+                discoverViewState,
+                openShowDetails,
+                moreClicked
+            )
         }
     }
 }
@@ -156,7 +144,7 @@ private fun DiscoverShows(
 @Composable
 private fun DiscoverViewScrollingContent(
     contentPadding: PaddingValues,
-    discoverViewState: DataLoaded,
+    discoverViewState: DiscoverShowState,
     openShowDetails: (showId: Int) -> Unit,
     moreClicked: (showType: Int) -> Unit
 ) {
@@ -170,15 +158,15 @@ private fun DiscoverViewScrollingContent(
 
         item {
             FeaturedItems(
-                showData = discoverViewState.showData.featuredShows,
+                showData = discoverViewState.featuredShows,
                 onItemClicked = { openShowDetails(it) }
             )
         }
 
         item {
             DisplayShowData(
-                category = discoverViewState.showData.trendingShows.category,
-                tvShows = discoverViewState.showData.trendingShows.tvShows,
+                category = discoverViewState.trendingShows.category,
+                tvShows = discoverViewState.trendingShows.tvShows,
                 onItemClicked = { openShowDetails(it) },
                 moreClicked = { moreClicked(it) }
             )
@@ -186,8 +174,8 @@ private fun DiscoverViewScrollingContent(
 
         item {
             DisplayShowData(
-                category = discoverViewState.showData.recommendedShows.category,
-                tvShows = discoverViewState.showData.recommendedShows.tvShows,
+                category = discoverViewState.recommendedShows.category,
+                tvShows = discoverViewState.recommendedShows.tvShows,
                 onItemClicked = { openShowDetails(it) },
                 moreClicked = { moreClicked(it) }
             )
@@ -195,8 +183,8 @@ private fun DiscoverViewScrollingContent(
 
         item {
             DisplayShowData(
-                category = discoverViewState.showData.anticipatedShows.category,
-                tvShows = discoverViewState.showData.anticipatedShows.tvShows,
+                category = discoverViewState.anticipatedShows.category,
+                tvShows = discoverViewState.anticipatedShows.tvShows,
                 onItemClicked = { openShowDetails(it) },
                 moreClicked = { moreClicked(it) }
             )
@@ -204,8 +192,8 @@ private fun DiscoverViewScrollingContent(
 
         item {
             DisplayShowData(
-                category = discoverViewState.showData.popularShows.category,
-                tvShows = discoverViewState.showData.popularShows.tvShows,
+                category = discoverViewState.popularShows.category,
+                tvShows = discoverViewState.popularShows.tvShows,
                 onItemClicked = { openShowDetails(it) },
                 moreClicked = { moreClicked(it) }
             )
@@ -325,8 +313,9 @@ fun FeaturedHorizontalPager(
 
         ) {
             Box {
-                NetworkImageComposable(
-                    imageUrl = list[pageNumber].posterImageUrl,
+                AsyncImageComposable(
+                    model = list[pageNumber].posterImageUrl,
+                    contentScale = ContentScale.Crop,
                     contentDescription = stringResource(
                         R.string.cd_show_poster,
                         list[pageNumber].title
@@ -338,7 +327,7 @@ fun FeaturedHorizontalPager(
                                 this@HorizontalPager.calculateCurrentOffsetForPage(pageNumber)
                             // Then use it as a multiplier to apply an offset
                             IntOffset(
-                                x = (36.dp * pageOffset).roundToPx(),
+                                x = (37.dp * pageOffset).roundToPx(),
                                 y = 0
                             )
                         }
