@@ -21,8 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BackAppBar
-import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
@@ -89,8 +89,8 @@ fun ShowsGridContent(
                     modifier = Modifier.clickable { onItemClicked(show.traktId) },
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    NetworkImageComposable(
-                        imageUrl = show.posterImageUrl,
+                    AsyncImageComposable(
+                        model = show.posterImageUrl,
                         contentDescription = stringResource(
                             R.string.cd_show_poster,
                             show.title

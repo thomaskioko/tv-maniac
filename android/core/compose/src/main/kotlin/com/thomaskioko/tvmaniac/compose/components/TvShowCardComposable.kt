@@ -20,7 +20,7 @@ import com.thomaskioko.tvmaniac.resources.R
 @Composable
 fun TvShowCard(
     modifier: Modifier = Modifier,
-    posterImageUrl: String,
+    posterImageUrl: String?,
     title: String,
     isFirstCard: Boolean = false,
     imageWidth: Dp = 120.dp,
@@ -39,8 +39,8 @@ fun TvShowCard(
             modifier = Modifier.clickable { onClick() },
             shape = MaterialTheme.shapes.medium
         ) {
-            NetworkImageComposable(
-                imageUrl = posterImageUrl,
+            AsyncImageComposable(
+                model = posterImageUrl,
                 contentDescription = stringResource(R.string.cd_show_poster, title),
                 modifier = Modifier
                     .weight(1f)

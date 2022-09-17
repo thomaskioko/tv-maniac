@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.Episode
@@ -50,8 +50,8 @@ fun WatchlistRowItem(
 
             val (episodeTitle, image, overview, watchedStatusIcon) = createRefs()
 
-            NetworkImageComposable(
-                imageUrl = episode.imageUrl,
+            AsyncImageComposable(
+                model = episode.imageUrl,
                 contentDescription = stringResource(
                     R.string.cd_show_poster,
                     episode.episodeNumberTitle
