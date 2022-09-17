@@ -37,8 +37,6 @@ testing-mockk = "1.12.3"
 testing-mockito-kotlin = "2.2.0"
 
 plugin-buildkonfig = "0.7.0"
-plugin-gradle-versions = "0.39.0"
-plugin-detekt = "1.21.0"
 
 shared-module-version = "0.5.0"
 
@@ -95,7 +93,7 @@ ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 coil-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.3.2" }
+datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.4.0" }
 appauth = { module = "net.openid:appauth", version.ref = "appauth" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version = "1.1.5" }
 inject = { module = "javax.inject:javax.inject", version = "1" }
@@ -119,11 +117,11 @@ squareup-sqldelight-driver-native = { module = "com.squareup.sqldelight:native-d
 
 plugin-android = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 plugin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-plugin-dependency-check = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "plugin-gradle-versions" }
 plugin-hilt = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
-plugin-buildkonfig = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "plugin-buildkonfig" }
 plugin-squareup-sqldelight = { module = "com.squareup.sqldelight:gradle-plugin", version.ref = "sqldelight" }
-plugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "plugin-detekt" }
+plugin-dependency-check = { module = "com.github.ben-manes:gradle-versions-plugin", version = "0.42.0" }
+plugin-buildkonfig = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version = "0.7.0" }
+plugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version = "1.21.0" }
 
 testing-androidx-core = { module = "androidx.arch.core:core-testing", version.ref = "testing-arch-core" }
 testing-androidx-junit = { module = "androidx.test.ext:junit", version.ref = "testing-junitext" }
