@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesCache
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
-import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse

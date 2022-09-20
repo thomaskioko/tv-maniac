@@ -9,8 +9,8 @@ import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodes
 import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodesRepositoryImpl
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
-import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
+import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import dagger.Module

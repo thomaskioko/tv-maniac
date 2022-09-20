@@ -5,7 +5,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
+import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 

@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.core.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.Episode
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.SeasonWithEpisodes
-import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
+import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
 
 fun Resource<Show>.toTvShow(): TvShow {

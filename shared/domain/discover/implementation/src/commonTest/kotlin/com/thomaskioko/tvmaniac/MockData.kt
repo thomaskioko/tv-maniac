@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
-import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
+import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
+import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 import kotlinx.coroutines.flow.flowOf
 
 object MockData {

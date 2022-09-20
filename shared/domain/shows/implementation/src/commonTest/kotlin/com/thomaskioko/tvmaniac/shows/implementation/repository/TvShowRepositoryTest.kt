@@ -1,12 +1,11 @@
-package com.thomaskioko.tvmaniac.datasource.repository
+package com.thomaskioko.tvmaniac.shows.implementation.repository
 
-import com.thomaskioko.tvmaniac.MockData.getShow
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.core.test.testCoroutineDispatcher
 import com.thomaskioko.tvmaniac.core.test.testCoroutineScope
-import com.thomaskioko.tvmaniac.details.implementation.repository.TmdbRepositoryImpl
-import com.thomaskioko.tvmaniac.lastairepisodes.api.LastEpisodeAirCache
-import com.thomaskioko.tvmaniac.showcommon.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.shows.implementation.MockData.getShow
+import com.thomaskioko.tvmaniac.shows.implementation.TmdbRepositoryImpl
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import io.mockk.coVerify
 import io.mockk.every
@@ -22,12 +21,10 @@ internal class TvShowRepositoryTest {
 
     private var apiService = mockk<TmdbService>()
     private var tvShowCache = spyk<TvShowCache>()
-    private var lastEpisodeAirCache = spyk<LastEpisodeAirCache>()
 
     private val repository: TmdbRepositoryImpl = TmdbRepositoryImpl(
         apiService,
         tvShowCache,
-        lastEpisodeAirCache,
         testCoroutineScope,
         testCoroutineDispatcher,
         testCoroutineDispatcher

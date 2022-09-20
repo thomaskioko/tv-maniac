@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.api
 
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
+import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository
 import kotlinx.coroutines.flow.Flow
 
 

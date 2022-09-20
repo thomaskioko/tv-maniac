@@ -50,7 +50,7 @@ import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsLoaded
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsViewState
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.Episode
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.SeasonWithEpisodes
-import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
+import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 

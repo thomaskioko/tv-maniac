@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.discover.api
 import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult.DiscoverShowsData
 import com.thomaskioko.tvmaniac.shared.core.ui.Action
 import com.thomaskioko.tvmaniac.shared.core.ui.Effect
-import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
+import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
+import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
 
 data class DiscoverShowState(

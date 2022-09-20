@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac
+package com.thomaskioko.tvmaniac.shows.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse

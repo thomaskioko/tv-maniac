@@ -1,11 +1,10 @@
 package com.thomaskioko.showdetails
 
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
-import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
-import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
+import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
 val detailUiState = ShowDetailViewState(
     tvShow = TvShow(
@@ -57,17 +56,6 @@ private fun getTvSeasons() = listOf(
                 "the timeline and stop a greater threat.",
         seasonNumber = 1,
         episodeCount = 6
-    )
-)
-
-fun getGenres() = listOf(
-    GenreUIModel(
-        id = 18,
-        name = "Sci-Fi"
-    ),
-    GenreUIModel(
-        id = 10765,
-        name = "Action"
     )
 )
 
