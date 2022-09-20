@@ -20,7 +20,7 @@ dependencies {
     commonMainImplementation(project(":shared:core:database"))
     commonMainImplementation(project(":shared:domain:discover:api"))
     commonMainImplementation(project(":shared:domain:trakt:api"))
-    commonMainImplementation(project(":shared:domain:show-common:api"))
+    commonMainImplementation(project(":shared:domain:shows:api"))
 
 
     commonMainImplementation(libs.kermit)

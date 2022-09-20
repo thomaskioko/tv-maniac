@@ -27,7 +27,7 @@ dependencies {
 
     implementation(project(":shared:domain:discover:api"))
     implementation(project(":shared:domain:trakt:api"))
-    implementation(project(":shared:domain:show-common:api"))
+    implementation(project(":shared:domain:shows:api"))
     implementation(libs.kermit)
 
     implementation(libs.hilt.android)

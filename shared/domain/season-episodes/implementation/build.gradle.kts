@@ -15,7 +15,7 @@ dependencies {
     androidMainImplementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    commonMainImplementation(project(":shared:domain:show-common:api"))
+    commonMainImplementation(project(":shared:domain:shows:api"))
     commonMainImplementation(project(":shared:core:database"))
     commonMainImplementation(project(":shared:domain:tmdb:api"))
     commonMainImplementation(project(":shared:domain:trakt:api"))

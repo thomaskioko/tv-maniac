@@ -20,7 +20,7 @@ dependencies {
     commonMainImplementation(project( ":shared:domain:show-details:api"))
     commonMainImplementation(project(":shared:domain:episodes:api"))
     commonMainImplementation(project(":shared:domain:last-air-episodes:api"))
-    commonMainImplementation(project(":shared:domain:show-common:api"))
+    commonMainImplementation(project(":shared:domain:shows:api"))
     commonMainImplementation(project(":shared:domain:similar:api"))
     commonMainImplementation(project(":shared:domain:seasons:api"))
     commonMainImplementation(project(":shared:domain:genre:api"))
