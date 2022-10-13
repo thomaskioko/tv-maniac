@@ -19,7 +19,6 @@ dependencies {
     api(libs.androidx.navigation.runtime)
     api(libs.accompanist.pager.core)
 
-    api(projects.shared.domain.discover.api)
     api(project(":shared:domain:shows:api"))
 
     implementation(libs.snapper)
