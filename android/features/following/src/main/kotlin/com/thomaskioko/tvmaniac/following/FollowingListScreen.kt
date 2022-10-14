@@ -17,16 +17,15 @@ import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
 import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
-import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
@@ -35,8 +34,7 @@ fun FollowingContent(
     openShowDetails: (showId: Int) -> Unit,
 ) {
 
-    val watchlistViewState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = WatchlistLoaded.Empty)
+    val watchlistViewState by viewModel.observeState().collectAsStateWithLifecycle()
 
     val scaffoldState = rememberScaffoldState()
 

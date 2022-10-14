@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.seasons
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Card
@@ -21,6 +20,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.LightGray
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,8 +56,8 @@ fun WatchlistRowItem(
                     R.string.cd_show_poster,
                     episode.episodeNumberTitle
                 ),
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .height(64.dp)
                     .width(84.dp)
                     .clip(MaterialTheme.shapes.medium)
                     .constrainAs(image) {

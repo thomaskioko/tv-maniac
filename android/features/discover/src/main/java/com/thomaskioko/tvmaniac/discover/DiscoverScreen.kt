@@ -27,7 +27,7 @@ import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +50,6 @@ import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
 import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
-import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
 import com.thomaskioko.tvmaniac.compose.theme.grey900
 import com.thomaskioko.tvmaniac.compose.util.DominantColorState
@@ -58,9 +57,9 @@ import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
-import com.thomaskioko.tvmaniac.discover.api.DiscoverShowEffect
-import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
-import com.thomaskioko.tvmaniac.discover.api.DiscoverShowState
+import com.thomaskioko.tvmaniac.shows.api.DiscoverShowEffect
+import com.thomaskioko.tvmaniac.shows.api.DiscoverShowResult
+import com.thomaskioko.tvmaniac.shows.api.DiscoverShowState
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.shows.api.model.TvShow
@@ -84,8 +83,7 @@ fun DiscoverScreen(
 
     val scaffoldState = rememberScaffoldState()
 
-    val discoverViewState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = DiscoverShowState.Empty)
+    val discoverViewState by viewModel.observeState().collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.observeSideEffect().collect {

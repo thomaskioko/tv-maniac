@@ -35,6 +35,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
@@ -44,8 +45,8 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 @Composable
 fun EpisodesReleaseContent(
     episodeList: List<LastAirEpisode>,
-    onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> },
-    onBookmarkEpClicked: (Int) -> Unit = { }
+    onEpisodeClicked: (Int) -> Unit = { },
+    onBookmarkEpClicked: (ShowDetailAction) -> Unit = { }
 ) {
 
     ColumnSpacer(8)
@@ -57,7 +58,7 @@ fun EpisodesReleaseContent(
     ) {
 
         Text(
-            text =  stringResource(id = R.string.title_release),
+            text = stringResource(id = R.string.title_release),
             style = MaterialTheme.typography.h6,
             modifier = Modifier
                 .fillMaxWidth()
@@ -90,8 +91,8 @@ fun EpisodesReleaseContent(
 @Composable
 fun EpisodeItem(
     episode: LastAirEpisode,
-    onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> },
-    onBookmarkEpClicked: (Int) -> Unit = { }
+    onEpisodeClicked: (Int) -> Unit = { },
+    onBookmarkEpClicked: (ShowDetailAction) -> Unit = { }
 ) {
 
     Card(
@@ -99,9 +100,7 @@ fun EpisodeItem(
         modifier = Modifier
             .size(width = 320.dp, height = 200.dp)
             .padding(start = 2.dp, top = 2.dp, bottom = 16.dp)
-            .clickable {
-                onEpisodeClicked(episode.seasonNumber, episode.episodeNumber)
-            },
+            .clickable { onEpisodeClicked(episode.id) },
     ) {
         ConstraintLayout {
 
@@ -117,7 +116,7 @@ fun EpisodeItem(
                         start.linkTo(parent.start)
                         top.linkTo(parent.top, 8.dp)
                     }
-                    .clickable { onBookmarkEpClicked(episode.id) }
+                    .clickable { onBookmarkEpClicked(ShowDetailAction.BookmarkEpisode(episode.id)) }
             )
 
             Image(

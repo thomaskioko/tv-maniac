@@ -27,7 +27,7 @@ class ShowDetailNavigationFactory @Inject constructor() : ComposeNavigationFacto
                     onSeasonClicked = { showId, seasonName ->
                         navController.navigate("${NavigationScreen.SeasonsNavScreen.route}/$showId/$seasonName")
                     },
-                    onEpisodeClicked = { episodeNumber, seasonNumber ->
+                    onEpisodeClicked = {
                         // Navigate to episode detail screen
                     },
                     onWatchTrailerClicked = { showId, videoKey ->

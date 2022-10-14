@@ -32,7 +32,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +52,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.insets.ui.Scaffold
 import com.thomaskioko.tvmaniac.compose.components.ChoiceChipContent
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
@@ -64,12 +64,11 @@ import com.thomaskioko.tvmaniac.compose.components.ExtendedLoadingFab
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.LoadingItem
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
-import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.details.api.interactor.UpdateShowParams
-import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.BookmarkEpisode
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.UpdateFollowing
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailEffect
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
@@ -85,13 +84,12 @@ fun ShowDetailScreen(
     viewModel: ShowDetailsViewModel,
     navigateUp: () -> Unit,
     onShowClicked: (Int) -> Unit,
-    onSeasonClicked: (Int, String) -> Unit = { _, _ -> },
-    onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> },
+    onSeasonClicked: (Int, String) -> Unit,
+    onEpisodeClicked: (Int) -> Unit = { },
     onWatchTrailerClicked: (Int, String?) -> Unit = { _, _ -> }
 ) {
 
-    val viewState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = ShowDetailViewState.Empty)
+    val viewState by viewModel.observeState().collectAsStateWithLifecycle()
 
     val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
@@ -102,6 +100,7 @@ fun ShowDetailScreen(
                 is ShowDetailEffect.WatchlistError ->
                     scaffoldState.snackbarHostState
                         .showSnackbar(it.errorMessage)
+
                 is ShowDetailEffect.ShowDetailsError ->
                     scaffoldState.snackbarHostState
                         .showSnackbar(it.errorMessage)
@@ -130,8 +129,8 @@ fun ShowDetailScreen(
                         onSeasonClicked = onSeasonClicked,
                         onEpisodeClicked = onEpisodeClicked,
                         onShowClicked = onShowClicked,
-                        onUpdateFavoriteClicked = { viewModel.dispatch(UpdateFollowing(it)) },
-                        onBookmarkEpClicked = { viewModel.dispatch(BookmarkEpisode(it)) },
+                        onUpdateFavoriteClicked = viewModel::dispatch,
+                        onBookmarkEpClicked = viewModel::dispatch,
                         onWatchTrailerClicked = onWatchTrailerClicked
                     )
                 } else {
@@ -184,10 +183,10 @@ private fun TvShowDetailsScrollingContent(
     detailUiState: ShowDetailViewState,
     listState: LazyListState,
     contentPadding: PaddingValues,
-    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit = {},
-    onSeasonClicked: (Int, String) -> Unit = { _, _ -> },
-    onEpisodeClicked: (Long, Long) -> Unit = { _, _ -> },
-    onBookmarkEpClicked: (Int) -> Unit = { },
+    onUpdateFavoriteClicked: (ShowDetailAction) -> Unit = {},
+    onSeasonClicked: (Int, String) -> Unit,
+    onEpisodeClicked: (Int) -> Unit = { },
+    onBookmarkEpClicked: (ShowDetailAction) -> Unit = { },
     onShowClicked: (Int) -> Unit = {},
     onWatchTrailerClicked: (Int, String?) -> Unit = { _, _ -> },
 ) {
@@ -226,7 +225,7 @@ private fun TvShowDetailsScrollingContent(
 private fun HeaderViewContent(
     detailUiState: ShowDetailViewState,
     listState: LazyListState,
-    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
+    onUpdateFavoriteClicked: (ShowDetailAction) -> Unit,
     onWatchTrailerClicked: (Int, String?) -> Unit,
 ) {
     Box(
@@ -269,7 +268,7 @@ private fun HeaderImage(backdropImageUrl: String?) {
 @Composable
 private fun Body(
     detailUiState: ShowDetailViewState,
-    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
+    onUpdateFavoriteClicked: (ShowDetailAction) -> Unit,
     onWatchTrailerClicked: (Int, String?) -> Unit,
 ) {
     val surfaceGradient = backgroundGradient().reversed()
@@ -322,7 +321,7 @@ private fun Body(
 @Composable
 fun TvShowMetadata(
     detailUiState: ShowDetailViewState,
-    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
+    onUpdateFavoriteClicked: (ShowDetailAction) -> Unit,
     onWatchTrailerClicked: (Int, String?) -> Unit,
 ) {
     val resources = LocalContext.current.resources
@@ -428,7 +427,7 @@ fun ShowDetailButtons(
     isLoggedIn: Boolean,
     tvShow: TvShow,
     trailerList: List<Trailer>,
-    onUpdateFavoriteClicked: (UpdateShowParams) -> Unit,
+    onUpdateFavoriteClicked: (ShowDetailAction) -> Unit,
     onWatchTrailerClicked: (Int, String?) -> Unit = { _, _ -> },
 ) {
 
@@ -458,10 +457,12 @@ fun ShowDetailButtons(
             text = buttonText,
             onClick = {
                 onUpdateFavoriteClicked(
-                    UpdateShowParams(
-                        traktId = tvShow.traktId,
-                        addToWatchList = isFollowed,
-                        isLoggedIn = isLoggedIn
+                    UpdateFollowing(
+                        UpdateShowParams(
+                            traktId = tvShow.traktId,
+                            addToWatchList = isFollowed,
+                            isLoggedIn = isLoggedIn
+                        )
                     )
                 )
             }
@@ -473,8 +474,8 @@ fun ShowDetailButtons(
 private fun BodyContent(
     detailUiState: ShowDetailViewState,
     onSeasonClicked: (Int, String) -> Unit,
-    onBookmarkEpClicked: (Int) -> Unit,
-    onEpisodeClicked: (Long, Long) -> Unit,
+    onBookmarkEpClicked: (ShowDetailAction) -> Unit,
+    onEpisodeClicked: (Int) -> Unit = { },
     onShowClicked: (Int) -> Unit,
     onWatchTrailerClicked: (Int, String) -> Unit
 ) {
@@ -516,7 +517,7 @@ private fun BodyContent(
 private fun SeasonsContent(
     seasonUiModelList: List<SeasonUiModel>,
     modifier: Modifier,
-    onSeasonClicked: (Int, String) -> Unit = { _, _ -> }
+    onSeasonClicked: (Int, String) -> Unit
 ) {
     Column(
         modifier = Modifier
