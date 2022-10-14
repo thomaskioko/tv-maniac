@@ -50,8 +50,6 @@ include(
     ":shared:domain:season-episodes:implementation",
     ":shared:domain:shows:api",
     ":shared:domain:shows:implementation",
-    ":shared:domain:discover:api",
-    ":shared:domain:discover:implementation",
     ":shared:domain:trailers:api",
     ":shared:domain:trailers:implementation",
     ":shared:domain:tmdb:api",
