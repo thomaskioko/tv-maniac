@@ -14,7 +14,7 @@ data class TraktShowResponse(
     @SerialName("title") val title: String,
     @SerialName("year") val year: String,
     @SerialName("ids") val ids: ShowIds,
-    @SerialName("overview") val overview: String,
+    @SerialName("overview") val overview: String?,
     @SerialName("language") val language: String?,
     @SerialName("first_aired") val firstAirDate: String,
     @SerialName("runtime") val runtime: Int,

@@ -43,7 +43,7 @@ class TmdbRepositoryImpl(
 
     override fun observeShow(tmdbId: Int): Flow<Resource<Show>> = networkBoundResource(
         query = { tvShowCache.observeTvShow(tmdbId) },
-        shouldFetch = { it == null || it.status.isBlank() },
+        shouldFetch = { it == null || it.backdrop_image_url.isNullOrBlank() },
         fetch = { apiService.getTvShowDetails(tmdbId) },
         saveFetchResult = { tvShowCache.insert(it.toShow(tmdbId)) },
         onFetchFailed = { Logger.withTag("observeShow").e { it.resolveError() } },

@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.discover.api.mapper
+package com.thomaskioko.tvmaniac.shows.api
 
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.shows.api.model.TvShow

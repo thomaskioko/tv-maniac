@@ -22,8 +22,12 @@ interface TraktRepository {
 
     fun observeShow(traktId: Int): Flow<Resource<Show>>
 
+    fun observeShowsByCategoryID(categoryId: Int): Flow<Resource<List<Show>>>
+
     suspend fun updateFollowedShow(traktId: Int, addToWatchList: Boolean)
 
     suspend fun syncFollowedShows()
+
+    suspend fun syncDiscoverShows()
 
 }

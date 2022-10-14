@@ -1,6 +1,6 @@
-package com.thomaskioko.tvmaniac.discover.api
+package com.thomaskioko.tvmaniac.shows.api
 
-import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult.DiscoverShowsData
+import com.thomaskioko.tvmaniac.shows.api.DiscoverShowResult.DiscoverShowsData
 import com.thomaskioko.tvmaniac.shared.core.ui.Action
 import com.thomaskioko.tvmaniac.shared.core.ui.Effect
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory

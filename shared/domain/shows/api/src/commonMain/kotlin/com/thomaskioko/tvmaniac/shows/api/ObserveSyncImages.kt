@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.discover.api
+package com.thomaskioko.tvmaniac.shows.api
 
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
 import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository

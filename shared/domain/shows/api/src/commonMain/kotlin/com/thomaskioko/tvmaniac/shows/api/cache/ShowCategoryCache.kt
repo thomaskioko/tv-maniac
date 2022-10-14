@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.discover.api.cache
+package com.thomaskioko.tvmaniac.shows.api.cache
 
 import com.thomaskioko.tvmaniac.core.db.Show_category
 

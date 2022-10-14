@@ -8,7 +8,7 @@ fun TraktShowResponse.toShow(): Show {
         trakt_id = ids.trakt,
         tmdb_id = ids.tmdb,
         title = title,
-        overview = overview,
+        overview = overview ?: "",
         language = language,
         votes = votes,
         rating = rating,

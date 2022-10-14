@@ -1,8 +1,8 @@
-package com.thomaskioko.tvmaniac.discover.implementation
+package com.thomaskioko.tvmaniac.shows.implementation.cache
 
 import com.thomaskioko.tvmaniac.core.db.Show_category
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.discover.api.cache.ShowCategoryCache
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 
 class ShowCategoryCacheImpl(
     private val database: TvManiacDatabase
