@@ -31,6 +31,7 @@ fun Resource<Show>.toTvShow(): TvShow {
 fun Resource<List<SelectSeasonWithEpisodes>>.toSeasonWithEpisodes(): List<SeasonWithEpisodes> {
     return data?.groupBy { it.name }?.map { groupMap ->
         SeasonWithEpisodes(
+            seasonId = groupMap.value.first().season_id,
             seasonName = groupMap.key,
             episodes = groupMap.value.map { it.toEpisode() },
             episodeCount = groupMap.value.size,
