@@ -11,7 +11,6 @@ android {
 dependencies {
     commonMainImplementation(project(":shared:core:ui"))
     commonMainImplementation(project(":shared:core:util"))
-    commonMainImplementation(project(":shared:domain:genre:api"))
     commonMainImplementation(project(":shared:domain:seasons:api"))
     commonMainImplementation(project(":shared:domain:last-air-episodes:api"))
     commonMainImplementation(project(":shared:domain:similar:api"))

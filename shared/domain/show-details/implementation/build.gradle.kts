@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 import util.libs
 
 plugins {
@@ -23,7 +24,6 @@ dependencies {
     commonMainImplementation(project(":shared:domain:shows:api"))
     commonMainImplementation(project(":shared:domain:similar:api"))
     commonMainImplementation(project(":shared:domain:seasons:api"))
-    commonMainImplementation(project(":shared:domain:genre:api"))
     commonMainImplementation(project(":shared:domain:trailers:api"))
     commonMainImplementation(project(":shared:domain:trakt:api"))
 

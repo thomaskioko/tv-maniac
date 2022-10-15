@@ -15,7 +15,6 @@ dependencies {
     api(project(":shared:core:util"))
     api(project(":shared:domain:show-details:api"))
     api(project(":shared:domain:similar:api"))
-    api(project(":shared:domain:genre:api"))
     api(project(":shared:domain:seasons:api"))
     api(project(":shared:domain:shows:api"))
     api(project(":shared:domain:last-air-episodes:api"))
