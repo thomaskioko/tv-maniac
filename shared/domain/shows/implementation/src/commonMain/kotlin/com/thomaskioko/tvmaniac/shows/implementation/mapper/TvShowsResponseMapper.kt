@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.shows.implementation.mapper
 
 import com.thomaskioko.tvmaniac.core.db.Show
-import com.thomaskioko.tvmaniac.core.util.FormatterUtil.formatPosterPath
 import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
 import kotlinx.datetime.toLocalDate
@@ -13,8 +12,6 @@ fun TmdbShowResponse.toShow(): Show {
         title = name,
         overview = overview,
         language = originalLanguage,
-        poster_image_url = posterPath.toImageUrl(),
-        backdrop_image_url = backdropPath.toImageUrl(posterPath),
         votes = voteCount,
         genres = genreIds.map { it.toString() },
         year = formatDate(firstAirDate),
@@ -32,8 +29,6 @@ fun ShowDetailResponse.toShow(tvShowId: Int): Show {
         title = name,
         overview = overview,
         language = originalLanguage,
-        poster_image_url = formatPosterPath(posterPath),
-        backdrop_image_url = backdropPath.toImageUrl(posterPath),
         votes = voteCount,
         genres = genres.map { it.name },
         year = formatDate(firstAirDate),
@@ -50,7 +45,3 @@ private fun formatDate(dateString: String): String {
     else
         dateString
 }
-
-private fun String?.toImageUrl(posterPath: String?) =
-    if (this.isNullOrEmpty()) formatPosterPath(posterPath)
-    else formatPosterPath(this)

@@ -17,7 +17,5 @@ fun TraktShowResponse.toShow(): Show {
         status = status,
         aired_episodes = airedEpisodes,
         runtime = runtime,
-        poster_image_url = null,
-        backdrop_image_url = null
     )
 }
