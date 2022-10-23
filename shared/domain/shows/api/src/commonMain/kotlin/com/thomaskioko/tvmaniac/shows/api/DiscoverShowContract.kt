@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
 data class DiscoverShowState(
     val isLoading: Boolean = false,
+    val isEmpty: Boolean = false,
     val featuredShows: DiscoverShowsData = DiscoverShowsData.Empty,
     val trendingShows: DiscoverShowsData = DiscoverShowsData.Empty,
     val recommendedShows: DiscoverShowsData = DiscoverShowsData.Empty,
@@ -31,6 +32,7 @@ sealed class DiscoverShowEffect : Effect {
 }
 
 data class DiscoverShowResult(
+    val isEmpty: Boolean = false,
     val featuredShows: DiscoverShowsData,
     val trendingShows: DiscoverShowsData,
     val recommendedShows: DiscoverShowsData,

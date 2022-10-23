@@ -13,7 +13,7 @@ class ShowImageCacheImpl(
 
     override fun insert(image: Show_image) {
         database.transaction {
-            database.showImagesQueries.insertOrReplace(
+            database.showImageQueries.insertOrReplace(
                 trakt_id = image.trakt_id,
                 poster_url = image.poster_url,
                 backdrop_url = image.backdrop_url
@@ -22,7 +22,7 @@ class ShowImageCacheImpl(
     }
 
     override fun observeShowArt(traktId: Int): Flow<Show_image> =
-        database.showImagesQueries.selectById(traktId)
+        database.showImageQueries.selectById(traktId)
             .asFlow()
             .mapToOne()
 }

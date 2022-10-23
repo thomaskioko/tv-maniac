@@ -8,10 +8,12 @@ import com.thomaskioko.tvmaniac.shared.core.ui.di.IoDispatcher
 import com.thomaskioko.tvmaniac.shows.api.ObserveDiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.shows.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowImageCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.shows.implementation.cache.CategoryCacheImpl
 import com.thomaskioko.tvmaniac.shows.implementation.cache.ShowCategoryCacheImpl
+import com.thomaskioko.tvmaniac.shows.implementation.cache.ShowImageCacheImpl
 import com.thomaskioko.tvmaniac.shows.implementation.cache.TvShowCacheImpl
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
@@ -47,9 +49,16 @@ object ShowsModule {
 
     @Singleton
     @Provides
+    fun provideShowImageCache(database: TvManiacDatabase): ShowImageCache {
+        return ShowImageCacheImpl(database)
+    }
+
+    @Singleton
+    @Provides
     fun provideObserveShowsByCategoryInteractor(
         repository: TraktRepository,
-    ): ObserveDiscoverShowsInteractor = ObserveDiscoverShowsInteractor(repository)
+        tmdbRepository: TmdbRepository
+    ): ObserveDiscoverShowsInteractor = ObserveDiscoverShowsInteractor(repository,tmdbRepository)
 
     @Singleton
     @Provides
@@ -62,14 +71,14 @@ object ShowsModule {
     fun provideTvShowsRepository(
         tmdbService: TmdbService,
         tvShowCache: TvShowCache,
-        @IoCoroutineScope coroutineScope: CoroutineScope,
+        imageCache: ShowImageCache,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
         @DefaultDispatcher computationDispatcher: CoroutineDispatcher
     ): TmdbRepository =
         TmdbRepositoryImpl(
             apiService = tmdbService,
             tvShowCache = tvShowCache,
-            coroutineScope = coroutineScope,
+            imageCache = imageCache,
             dispatcher = ioDispatcher,
             computationDispatcher = computationDispatcher
         )

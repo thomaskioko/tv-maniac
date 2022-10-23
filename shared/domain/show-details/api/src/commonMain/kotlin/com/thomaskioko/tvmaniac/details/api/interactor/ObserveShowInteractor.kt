@@ -8,7 +8,6 @@ import com.thomaskioko.tvmaniac.details.api.toSeasonsEntityList
 import com.thomaskioko.tvmaniac.details.api.toSimilarShowList
 import com.thomaskioko.tvmaniac.details.api.toTrailerList
 import com.thomaskioko.tvmaniac.details.api.toTvShow
-import com.thomaskioko.tvmaniac.genre.api.GenreRepository
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisodeRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerRepository
@@ -20,7 +19,6 @@ class ObserveShowInteractor constructor(
     private val traktRepository: TraktRepository,
     private val similarShowsRepository: SimilarShowsRepository,
     private val seasonsRepository: SeasonsRepository,
-    private val genreRepository: GenreRepository,
     private val lastAirRepository: LastAirEpisodeRepository,
     private val trailerRepository: TrailerRepository
 ) : FlowInteractor<Int, ShowDetailViewState>() {
@@ -32,12 +30,10 @@ class ObserveShowInteractor constructor(
         seasonsRepository.observeShowSeasons(params),
         lastAirRepository.observeAirEpisodes(params),
         trailerRepository.observeTrailersByShowId(params),
-        genreRepository.observeGenres(),
-    ) { show, isFollowed, similarShows, seasons, lastAirEp, trailers, _ ->
+    ) { show, isFollowed, similarShows, seasons, lastAirEp, trailers ->
 
-        val tvShow = show.toTvShow()
         ShowDetailViewState(
-            tvShow = tvShow,
+            tvShow = show.toTvShow(),
             isFollowed = isFollowed,
             similarShowList = similarShows.toSimilarShowList(),
             tvSeasonUiModels = seasons.toSeasonsEntityList(),

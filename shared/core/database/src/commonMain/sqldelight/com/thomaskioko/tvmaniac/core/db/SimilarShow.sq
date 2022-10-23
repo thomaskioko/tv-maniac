@@ -15,7 +15,8 @@ VALUES(?,?);
 selectSimilarShows:
 SELECT *
 FROM similar_show
-INNER JOIN show  ON show.trakt_id = similar_show.id
+INNER JOIN show ON show.trakt_id = similar_show.id
+INNER JOIN show_image ON show_image.trakt_id = similar_show.id
 WHERE similar_show.trakt_id = ?
 ORDER BY show.rating DESC;
 

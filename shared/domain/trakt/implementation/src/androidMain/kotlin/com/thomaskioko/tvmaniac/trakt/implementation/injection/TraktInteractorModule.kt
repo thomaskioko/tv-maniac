@@ -1,7 +1,8 @@
 package com.thomaskioko.tvmaniac.trakt.implementation.injection
 
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
+import com.thomaskioko.tvmaniac.shared.core.ui.di.IoCoroutineScope
+import com.thomaskioko.tvmaniac.shared.core.ui.di.IoDispatcher
 import com.thomaskioko.tvmaniac.shows.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
@@ -21,6 +22,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 
@@ -55,7 +57,8 @@ object TraktInteractorModule {
         showCategoryCache: ShowCategoryCache,
         traktService: TraktService,
         tmdbRepository: TmdbRepository,
-        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
+        @IoCoroutineScope coroutineScope: CoroutineScope,
     ): TraktRepository =
         TraktRepositoryImpl(
             tvShowCache,
@@ -66,7 +69,8 @@ object TraktInteractorModule {
             showCategoryCache,
             traktService,
             tmdbRepository,
-            ioDispatcher
+            ioDispatcher,
+            coroutineScope
         )
 
     @Singleton

@@ -17,6 +17,5 @@ dependencies {
     commonMainImplementation(project(":shared:domain:trakt:api"))
 
     commonMainImplementation(libs.coroutines.core)
-    commonMainImplementation(libs.multiplatform.paging.core)
 
 }

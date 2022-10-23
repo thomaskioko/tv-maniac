@@ -58,9 +58,4 @@ interface TraktService {
     suspend fun getSeasonWithEpisodes(traktId: Int): List<TraktSeasonEpisodesResponse>
 
     suspend fun getSeasonDetails(traktId: Int): TraktShowResponse
-
-
-    companion object {
-        const val PAGE_SIZE = 20
-    }
 }
