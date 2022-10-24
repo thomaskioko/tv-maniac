@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Show
-import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
+import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
 
 object MockData {
 
@@ -51,7 +51,7 @@ object MockData {
         totalResults = 5
     )
 
-    fun getShow() = Show(
+    fun getShow() = SelectByShowId(
         trakt_id = 84958,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
@@ -60,8 +60,6 @@ object MockData {
             "space and monitors the timeline. They give Loki a choice: face being " +
             "erased from existence due to being a “time variant”or help fix " +
             "the timeline and stop a greater threat.",
-        poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         language = "en",
         votes = 4958,
         rating = 8.1,
@@ -70,6 +68,9 @@ object MockData {
         status = "Ended",
         aired_episodes = 54,
         tmdb_id = 123,
-        runtime = 0
+        runtime = 0,
+        backdrop_url = null,
+        poster_url = null,
+        trakt_id_ = null
     )
 }

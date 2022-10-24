@@ -14,4 +14,6 @@ expect object DateUtil {
         datePattern: String = DATE_PATTERN,
         dateString: String?
     ): String
+
+    fun getTimestampMilliseconds(): Long
 }

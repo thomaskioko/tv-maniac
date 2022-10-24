@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.shows.api.model
 
 enum class ShowCategory(
-    val type: Int,
+    val id: Int,
     val title: String,
 ) {
 
@@ -14,11 +14,11 @@ enum class ShowCategory(
     companion object {
         operator fun get(type: Int): ShowCategory {
             return when (type) {
-                POPULAR.type -> POPULAR
-                RECOMMENDED.type -> RECOMMENDED
-                TRENDING.type -> TRENDING
-                ANTICIPATED.type -> ANTICIPATED
-                FEATURED.type -> FEATURED
+                POPULAR.id -> POPULAR
+                RECOMMENDED.id -> RECOMMENDED
+                TRENDING.id -> TRENDING
+                ANTICIPATED.id -> ANTICIPATED
+                FEATURED.id -> FEATURED
                 else -> RECOMMENDED
             }
         }

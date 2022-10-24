@@ -22,7 +22,6 @@ class TvManicApplication : Application(), Configuration.Provider {
         super.onCreate()
         initializers.init()
 
-        showTasks.syncTmdbArtWorkWhenIdle()
         showTasks.syncTraktFollowedShowsWhenIdle()
     }
 

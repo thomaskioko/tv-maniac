@@ -1,50 +1,65 @@
 package com.thomaskioko.tvmanic.trakt.implementation
 
 import co.touchlab.kermit.Logger
+import com.kuuurt.paging.multiplatform.Pager
+import com.kuuurt.paging.multiplatform.PagingConfig
+import com.kuuurt.paging.multiplatform.PagingData
+import com.kuuurt.paging.multiplatform.PagingResult
+import com.kuuurt.paging.multiplatform.helpers.cachedIn
 import com.thomaskioko.tvmaniac.core.db.Category
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.Show_category
-import com.thomaskioko.tvmaniac.core.db.Trakt_favorite_list
+import com.thomaskioko.tvmaniac.core.db.SelectByShowId
+import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
+import com.thomaskioko.tvmaniac.core.db.Trakt_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
+import com.thomaskioko.tvmaniac.core.util.CommonFlow
+import com.thomaskioko.tvmaniac.core.util.DateUtil
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
+import com.thomaskioko.tvmaniac.core.util.asCommonFlow
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.shows.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
-import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFavoriteListCache
+import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmanic.trakt.implementation.mapper.toShow
-import com.thomaskioko.tvmanic.trakt.implementation.mapper.toShowList
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
+
+private const val DEFAULT_API_PAGE = 2
+
+@OptIn(FlowPreview::class)
 class TraktRepositoryImpl constructor(
     private val tvShowCache: TvShowCache,
     private val traktUserCache: TraktUserCache,
     private val followedCache: TraktFollowedCache,
-    private val favoriteCache: TraktFavoriteListCache,
+    private val favoriteCache: TraktListCache,
     private val categoryCache: CategoryCache,
     private val showCategoryCache: ShowCategoryCache,
     private val traktService: TraktService,
-    private val tmdbRepository: TmdbRepository,
     private val dispatcher: CoroutineDispatcher,
+    private val coroutineScope: CoroutineScope,
 ) : TraktRepository {
 
     override fun observeMe(slug: String): Flow<Resource<Trakt_user>> =
@@ -57,69 +72,15 @@ class TraktRepositoryImpl constructor(
             coroutineDispatcher = dispatcher
         )
 
-    override fun observeCreateTraktFavoriteList(userSlug: String): Flow<Resource<Trakt_favorite_list>> =
+    override fun observeCreateTraktList(userSlug: String): Flow<Resource<Trakt_list>> =
         networkBoundResource(
-            query = { favoriteCache.observeFavoriteList() },
+            query = { favoriteCache.observeTraktList() },
             shouldFetch = { it == null },
-            fetch = { traktService.createFavoriteList(userSlug) },
+            fetch = { traktService.createFollowingList(userSlug) },
             saveFetchResult = { it.mapAndCache() },
             onFetchFailed = { Logger.withTag("createTraktFavoriteList").e(it.resolveError()) },
             coroutineDispatcher = dispatcher
         )
-
-    override fun observeFollowedShows(listId: Int, userSlug: String): Flow<Resource<Unit>> =
-        networkBoundResource(
-            query = { flowOf(Unit) },
-            shouldFetch = { true },
-            fetch = { traktService.getFollowedList(listId, userSlug) },
-            saveFetchResult = { it.mapAndCache() },
-            onFetchFailed = { Logger.withTag("observeFollowedShows").e(it.resolveError()) },
-            coroutineDispatcher = dispatcher
-        )
-
-    override suspend fun syncFollowedShows() {
-        traktUserCache.observeMe()
-            .flowOn(dispatcher)
-            .collect { user ->
-                user?.let {
-                    traktService.getUserList(user.slug)
-                        .firstOrNull()?.let { listResponse ->
-                            listResponse.mapAndCache()
-
-                            traktService.getFollowedList(listResponse.ids.trakt, user.slug)
-                                .mapAndCache()
-                        }
-
-                    followedCache.getUnsyncedFollowedShows()
-                        .map {
-                            tmdbRepository.observeShow(it.id)
-                                .collect { showResource ->
-                                    showResource.data?.let { show ->
-                                        followedCache.updateShowSyncState(show.trakt_id)
-                                    }
-                                }
-                        }
-                }
-            }
-    }
-
-    override suspend fun syncDiscoverShows() {
-        val trending = traktService.getTrendingShows()
-        trending.mapAndCacheShows(ShowCategory.TRENDING.type)
-
-        val anticipated = traktService.getAnticipatedShows()
-        anticipated.mapAndCacheShows(ShowCategory.ANTICIPATED.type)
-
-        val topRatedResponse = traktService.getRecommendedShows(period = "weekely")
-        topRatedResponse.mapAndCacheShows(ShowCategory.RECOMMENDED.type)
-
-        val popularResponse = traktService.getPopularShows()
-        popularResponse.mapAndCacheShow(ShowCategory.POPULAR.type)
-
-        val featuredResponse = traktService.getRecommendedShows(period = "monthly")
-        featuredResponse.mapAndCacheShows(ShowCategory.FEATURED.type)
-
-    }
 
     override fun observeUpdateFollowedShow(
         traktId: Int,
@@ -129,12 +90,13 @@ class TraktRepositoryImpl constructor(
         shouldFetch = { traktUserCache.getMe() != null },
         fetch = {
             val user = traktUserCache.getMe()
-            val listId: Int = getOrCreateTraktList(user!!)
 
-            if (addToWatchList) {
-                traktService.addShowToList(user.slug, listId, traktId).added.shows
-            } else {
-                traktService.deleteShowFromList(user.slug, listId, traktId).deleted.shows
+            if (user != null) {
+                if (addToWatchList) {
+                    traktService.addShowToWatchList(traktId).added.shows
+                } else {
+                    traktService.removeShowFromWatchList(traktId).deleted.shows
+                }
             }
         },
         saveFetchResult = {
@@ -142,7 +104,8 @@ class TraktRepositoryImpl constructor(
                 addToWatchList -> followedCache.insert(
                     Followed_shows(
                         id = traktId,
-                        synced = true
+                        synced = true,
+                        created_at = DateUtil.getTimestampMilliseconds()
                     )
                 )
                 else -> followedCache.removeShow(traktId)
@@ -154,7 +117,8 @@ class TraktRepositoryImpl constructor(
                 addToWatchList -> followedCache.insert(
                     Followed_shows(
                         id = traktId,
-                        synced = false
+                        synced = false,
+                        created_at = DateUtil.getTimestampMilliseconds()
                     )
                 )
                 else -> followedCache.removeShow(traktId)
@@ -164,7 +128,7 @@ class TraktRepositoryImpl constructor(
         coroutineDispatcher = dispatcher
     )
 
-    override fun observeShow(traktId: Int): Flow<Resource<Show>> = networkBoundResource(
+    override fun observeShow(traktId: Int): Flow<Resource<SelectByShowId>> = networkBoundResource(
         query = { tvShowCache.observeTvShow(traktId) },
         shouldFetch = { it == null },
         fetch = { traktService.getSeasonDetails(traktId) },
@@ -173,12 +137,9 @@ class TraktRepositoryImpl constructor(
         coroutineDispatcher = dispatcher
     )
 
-    override fun observeShowsByCategoryID(categoryId: Int): Flow<Resource<List<Show>>> =
+    override fun fetchShowsByCategoryID(categoryId: Int): Flow<Resource<List<SelectShowsByCategory>>> =
         networkBoundResource(
-            query = {
-                tvShowCache.observeShowsByCategoryID(categoryId)
-                    .map { it.toShowList() }
-            },
+            query = { tvShowCache.observeShowsByCategoryID(categoryId) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = { fetchShowsApiRequest(categoryId) },
             saveFetchResult = { cacheResult(it, categoryId) },
@@ -186,13 +147,101 @@ class TraktRepositoryImpl constructor(
             coroutineDispatcher = dispatcher
         )
 
+    override fun observeShowsByCategoryId(categoryId: Int): Flow<List<SelectShowsByCategory>> =
+        tvShowCache.observeShowsByCategoryID(categoryId)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun observePagedShowsByCategoryID(
+        categoryId: Int
+    ): CommonFlow<PagingData<SelectShowsByCategory>> {
+        val pager = Pager(
+            clientScope = coroutineScope,
+            config = PagingConfig(
+                pageSize = 30,
+                enablePlaceholders = false,
+                initialLoadSize = 30
+            ),
+            initialKey = 2,
+            getItems = { currentKey, _ ->
+
+                val mappedData = fetchShowsApiRequest(categoryId)
+
+                cacheResult(mappedData, categoryId)
+
+                PagingResult(
+                    items = tvShowCache.getShowsByCategoryID(categoryId),
+                    currentKey = currentKey,
+                    prevKey = { null },
+                    nextKey = { DEFAULT_API_PAGE }
+                )
+            }
+        )
+
+        return pager.pagingData
+            .distinctUntilChanged()
+            .cachedIn(coroutineScope)
+            .asCommonFlow()
+    }
+
+    override suspend fun fetchTraktWatchlistShows() {
+        traktUserCache.observeMe()
+            .flowOn(dispatcher)
+            .collect { user ->
+                user?.let {
+                    traktService.getWatchList()
+                        .mapAndCache()
+                }
+            }
+    }
+
+    override suspend fun syncDiscoverShows() {
+        val trending = traktService.getTrendingShows()
+        trending.mapAndCacheShows(ShowCategory.TRENDING.id)
+
+        val anticipated = traktService.getAnticipatedShows()
+        anticipated.mapAndCacheShows(ShowCategory.ANTICIPATED.id)
+
+        val topRatedResponse = traktService.getRecommendedShows(period = "weekely")
+        topRatedResponse.mapAndCacheShows(ShowCategory.RECOMMENDED.id)
+
+        val popularResponse = traktService.getPopularShows()
+        popularResponse.mapAndCacheShow(ShowCategory.POPULAR.id)
+
+        val featuredResponse = traktService.getRecommendedShows(period = "monthly")
+        featuredResponse.mapAndCacheShows(ShowCategory.FEATURED.id)
+
+    }
+
+    override suspend fun syncFollowedShows() {
+        traktUserCache.observeMe()
+            .flowOn(dispatcher)
+            .collect { user ->
+                user?.let {
+
+                    followedCache.getUnsyncedFollowedShows()
+                        .map {
+
+                            traktService.addShowToWatchList(it.id)
+
+                            followedCache.insert(
+                                Followed_shows(
+                                    id = it.id,
+                                    synced = true,
+                                    created_at = DateUtil.getTimestampMilliseconds()
+                                )
+                            )
+                        }
+                }
+            }
+    }
 
     override suspend fun updateFollowedShow(traktId: Int, addToWatchList: Boolean) {
         when {
             addToWatchList -> followedCache.insert(
                 Followed_shows(
                     id = traktId,
-                    synced = false
+                    synced = false,
+                    created_at = DateUtil.getTimestampMilliseconds()
                 )
             )
             else -> followedCache.removeShow(traktId)
@@ -200,28 +249,14 @@ class TraktRepositoryImpl constructor(
     }
 
     private suspend fun fetchShowsApiRequest(categoryId: Int): List<Show> = when (categoryId) {
-        ShowCategory.TRENDING.type -> traktService.getTrendingShows().map { it.toShow() }
-        ShowCategory.POPULAR.type -> traktService.getPopularShows().map { it.toShow() }
-        ShowCategory.ANTICIPATED.type -> traktService.getAnticipatedShows().map { it.toShow() }
-        ShowCategory.RECOMMENDED.type -> traktService.getRecommendedShows(period = "weekely")
+        ShowCategory.TRENDING.id -> traktService.getTrendingShows().map { it.toShow() }
+        ShowCategory.POPULAR.id -> traktService.getPopularShows().map { it.toShow() }
+        ShowCategory.ANTICIPATED.id -> traktService.getAnticipatedShows().map { it.toShow() }
+        ShowCategory.RECOMMENDED.id -> traktService.getRecommendedShows(period = "weekely")
             .map { it.toShow() }
-        ShowCategory.FEATURED.type -> traktService.getRecommendedShows(period = "monthly")
+        ShowCategory.FEATURED.id -> traktService.getRecommendedShows(period = "monthly")
             .map { it.toShow() }
         else -> traktService.getTrendingShows().map { it.toShow() }
-    }
-
-
-    private suspend fun getOrCreateTraktList(
-        user: Trakt_user
-    ): Int {
-        val traktFollowedList = favoriteCache.getFavoriteList()
-
-        return if (traktFollowedList == null) {
-            val listResponse = traktService.createFavoriteList(user.slug)
-            listResponse.ids.trakt
-        } else {
-            traktFollowedList.id
-        }
     }
 
     override fun observeFollowedShows(): Flow<List<SelectFollowedShows>> =
@@ -245,17 +280,7 @@ class TraktRepositoryImpl constructor(
 
     private fun TraktCreateListResponse.mapAndCache() {
         favoriteCache.insert(
-            Trakt_favorite_list(
-                id = ids.trakt,
-                slug = ids.slug,
-                description = description
-            )
-        )
-    }
-
-    private fun TraktPersonalListsResponse.mapAndCache() {
-        favoriteCache.insert(
-            Trakt_favorite_list(
+            Trakt_list(
                 id = ids.trakt,
                 slug = ids.slug,
                 description = description
@@ -268,7 +293,8 @@ class TraktRepositoryImpl constructor(
             followedCache.insert(
                 Followed_shows(
                     id = it.show.ids.trakt,
-                    synced = false
+                    synced = true,
+                    created_at = DateUtil.getTimestampMilliseconds()
                 )
             )
         }

@@ -73,8 +73,6 @@ object MockData {
             "space and monitors the timeline. They give Loki a choice: face being " +
             "erased from existence due to being a “time variant”or help fix " +
             "the timeline and stop a greater threat.",
-        poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         language = "en",
         votes = 4958,
         rating = 8.1,
@@ -96,8 +94,6 @@ object MockData {
                 "space and monitors the timeline. They give Loki a choice: face being " +
                 "erased from existence due to being a “time variant”or help fix " +
                 "the timeline and stop a greater threat.",
-            poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             language = "en",
             votes = 4958,
             rating = 8.1,
@@ -114,8 +110,6 @@ object MockData {
             overview = "A woman's daring sexual past collides with her married-with-kids " +
                 "present when the bad-boy ex she can't stop fantasizing about crashes " +
                 "back into her life.",
-            poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             language = "en",
             votes = 4958,
             rating = 8.1,

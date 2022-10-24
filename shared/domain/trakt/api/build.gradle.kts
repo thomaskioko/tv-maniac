@@ -14,6 +14,7 @@ dependencies {
     commonMainImplementation(project(":shared:core:util"))
     commonMainImplementation(project(":shared:core:database"))
     commonMainImplementation(libs.ktor.serialization)
+    commonMainImplementation(libs.multiplatform.paging.core)
 
 
     androidMainImplementation(project(":shared:core:ui"))

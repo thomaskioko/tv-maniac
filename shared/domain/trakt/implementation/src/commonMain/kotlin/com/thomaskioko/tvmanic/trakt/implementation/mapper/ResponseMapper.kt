@@ -19,8 +19,6 @@ fun TraktShowResponse.toShow(): Show {
         rating = rating.toTwoDecimalPoint(),
         genres = genres.map { it.replaceFirstChar { it.uppercase() } },
         status = status.replaceFirstChar { it.uppercase() },
-        poster_image_url = null,
-        backdrop_image_url = null
     )
 }
 
@@ -38,8 +36,6 @@ fun TraktShowsResponse.toShow(): Show {
         rating = show.rating.toTwoDecimalPoint(),
         genres = show.genres.map { it.replaceFirstChar { it.uppercase() } },
         status = show.status.replaceFirstChar { it.uppercase() },
-        poster_image_url = null,
-        backdrop_image_url = null
     )
 }
 

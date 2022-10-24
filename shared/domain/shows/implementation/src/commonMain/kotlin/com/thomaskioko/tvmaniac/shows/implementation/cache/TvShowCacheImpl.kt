@@ -3,7 +3,8 @@ package com.thomaskioko.tvmaniac.shows.implementation.cache
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
-import com.thomaskioko.tvmaniac.core.db.AirEpisodesByShowId
+import com.thomaskioko.tvmaniac.core.db.SelectByShowId
+import com.thomaskioko.tvmaniac.core.db.SelectShows
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
@@ -22,8 +23,6 @@ class TvShowCacheImpl(
                 title = show.title,
                 overview = show.overview,
                 language = show.language,
-                poster_image_url = show.poster_image_url,
-                backdrop_image_url = show.backdrop_image_url,
                 votes = show.votes,
                 year = show.year,
                 status = show.status,
@@ -38,36 +37,15 @@ class TvShowCacheImpl(
         list.forEach { insert(it) }
     }
 
-    override fun updateShow(
-        tmdbId: Int,
-        posterUrl: String?,
-        backdropUrl: String?
-    ) {
-        database.transaction {
-            database.showQueries.updateTvShow(
-                tmdb_id = tmdbId,
-                poster_image_url = posterUrl,
-                backdrop_image_url = backdropUrl
-            )
-        }
-    }
-
-    override fun observeTvShow(showId: Int): Flow<Show?> {
+    override fun observeTvShow(showId: Int): Flow<SelectByShowId?> {
         return database.showQueries.selectByShowId(showId)
             .asFlow()
             .mapToOneOrNull()
     }
 
-    override fun observeTvShows(): Flow<List<Show>> {
-        return database.showQueries.selectAll()
+    override fun observeTvShows(): Flow<List<SelectShows>> {
+        return database.showQueries.selectShows()
             .asFlow()
-            .mapToList()
-    }
-
-    override fun observeShowAirEpisodes(showId: Int): Flow<List<AirEpisodesByShowId>> {
-        return database.lastAirEpisodeQueries.airEpisodesByShowId(
-            show_id = showId
-        ).asFlow()
             .mapToList()
     }
 
@@ -77,7 +55,7 @@ class TvShowCacheImpl(
             .mapToList()
     }
 
-    override fun getTvShow(traktId: Int): Show? =
+    override fun getTvShow(traktId: Int): SelectByShowId? =
         database.showQueries.selectByShowId(traktId)
             .executeAsOneOrNull()
 
@@ -85,10 +63,7 @@ class TvShowCacheImpl(
         database.showQueries.selectShowByTmdbId(tmdbId)
             .executeAsOneOrNull()
 
-    override fun observeTvShowsArt(): Flow<List<Show>> =
-        database.showQueries.selectShows()
-            .asFlow()
-            .mapToList()
+
 
     override fun deleteTvShows() {
         database.showQueries.deleteAll()

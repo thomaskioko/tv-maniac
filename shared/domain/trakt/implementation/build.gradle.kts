@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 import util.libs
 
 plugins {
@@ -25,6 +26,7 @@ dependencies {
     commonMainImplementation(project(":shared:core:util"))
     commonMainImplementation(project(":shared:domain:trakt:api"))
     commonMainImplementation(project(":shared:domain:shows:api"))
+    commonMainImplementation(libs.multiplatform.paging.core)
     commonMainImplementation(libs.squareup.sqldelight.extensions)
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin)

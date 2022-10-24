@@ -15,7 +15,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         makeShowList().insertTvShowsEntityList()
 
-        val entities = tvShowQueries.selectAll().executeAsList()
+        val entities = tvShowQueries.selectShows().executeAsList()
 
         entities.size shouldBe 2
     }
@@ -31,8 +31,6 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         entity shouldNotBe null
         entity.title shouldBe getShow().title
         entity.overview shouldBe getShow().overview
-        entity.poster_image_url shouldBe getShow().poster_image_url
-        entity.backdrop_image_url shouldBe getShow().backdrop_image_url
         entity.votes shouldBe getShow().votes
         entity.votes shouldBe getShow().votes
         entity.genres shouldBe getShow().genres
@@ -62,8 +60,6 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             title = title,
             overview = overview,
             language = language,
-            poster_image_url = poster_image_url,
-            backdrop_image_url = backdrop_image_url,
             votes = votes,
             runtime = runtime,
             genres = genres,

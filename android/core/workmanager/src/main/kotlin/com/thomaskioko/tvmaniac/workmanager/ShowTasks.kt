@@ -7,5 +7,4 @@ interface ShowTasks {
 
     fun syncTraktFollowedShowsWhenIdle()
 
-    fun syncTmdbArtWorkWhenIdle()
 }

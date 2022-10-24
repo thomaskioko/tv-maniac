@@ -34,14 +34,14 @@ fun FollowingContent(
     openShowDetails: (showId: Int) -> Unit,
 ) {
 
-    val watchlistViewState by viewModel.observeState().collectAsStateWithLifecycle()
+    val followedViewState by viewModel.observeState().collectAsStateWithLifecycle()
 
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(Unit) {
         viewModel.observeSideEffect().collect {
             when (it) {
-                is WatchlistEffect.Error -> scaffoldState.snackbarHostState.showSnackbar(it.message)
+                is FollowingEffect.Error -> scaffoldState.snackbarHostState.showSnackbar(it.message)
             }
         }
     }
@@ -67,11 +67,9 @@ fun FollowingContent(
         },
         content = { contentPadding ->
             FollowingGridContent(
-                viewState = watchlistViewState,
+                viewState = followedViewState,
                 paddingValues = contentPadding,
-                onItemClicked = { tvShowId ->
-                    openShowDetails(tvShowId)
-                }
+                onItemClicked = openShowDetails
             )
         }
     )
@@ -79,7 +77,7 @@ fun FollowingContent(
 
 @Composable
 private fun FollowingGridContent(
-    viewState: WatchlistLoaded,
+    viewState: FollowingState,
     paddingValues: PaddingValues,
     onItemClicked: (Int) -> Unit,
 ) {

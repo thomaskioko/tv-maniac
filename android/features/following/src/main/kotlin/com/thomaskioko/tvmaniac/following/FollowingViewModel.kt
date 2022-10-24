@@ -17,34 +17,34 @@ import javax.inject.Inject
 @HiltViewModel
 class FollowingViewModel @Inject constructor(
     private val interactor: ObserveFollowingInteractor,
-) : Store<WatchlistLoaded, WatchlistAction, WatchlistEffect>,
+) : Store<FollowingState, FollowingAction, FollowingEffect>,
     CoroutineScopeOwner, ViewModel() {
 
     override val coroutineScope: CoroutineScope
         get() = viewModelScope
 
-    override val state: MutableStateFlow<WatchlistLoaded> = MutableStateFlow(WatchlistLoaded.Empty)
+    override val state: MutableStateFlow<FollowingState> = MutableStateFlow(FollowingState.Empty)
 
-    private val sideEffect = MutableSharedFlow<WatchlistEffect>()
+    private val sideEffect = MutableSharedFlow<FollowingEffect>()
 
     init {
-        dispatch(WatchlistAction.LoadWatchlist)
+        dispatch(FollowingAction.LoadFollowedShows)
     }
 
-    override fun observeState(): StateFlow<WatchlistLoaded> = state
+    override fun observeState(): StateFlow<FollowingState> = state
 
-    override fun observeSideEffect(): Flow<WatchlistEffect> = sideEffect
+    override fun observeSideEffect(): Flow<FollowingEffect> = sideEffect
 
-    override fun dispatch(action: WatchlistAction) {
+    override fun dispatch(action: FollowingAction) {
         val oldState = state.value
 
         when (action) {
-            is WatchlistAction.Error -> {
+            is FollowingAction.Error -> {
                 coroutineScope.launch {
-                    sideEffect.emit(WatchlistEffect.Error(action.message))
+                    sideEffect.emit(FollowingEffect.Error(action.message))
                 }
             }
-            WatchlistAction.LoadWatchlist -> {
+            FollowingAction.LoadFollowedShows -> {
                 with(state) {
                     interactor.execute(Unit) {
                         onStart {
@@ -64,7 +64,7 @@ class FollowingViewModel @Inject constructor(
 
                         onError {
                             coroutineScope.launch { emit(oldState.copy(isLoading = false)) }
-                            dispatch(WatchlistAction.Error(it.message ?: "Something went wrong"))
+                            dispatch(FollowingAction.Error(it.message ?: "Something went wrong"))
                         }
                     }
                 }
