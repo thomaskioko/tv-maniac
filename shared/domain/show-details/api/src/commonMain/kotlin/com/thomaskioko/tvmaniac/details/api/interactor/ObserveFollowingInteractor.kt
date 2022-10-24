@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.details.api.interactor
 
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
-import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
+import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -18,15 +18,15 @@ class ObserveFollowingInteractor constructor(
 fun List<SelectFollowedShows>.toTvShowList(): List<TvShow> {
     return map {
         TvShow(
-            id = it.id,
+            traktId = it.id,
             title = it.title,
-            overview = it.description,
+            overview = it.overview,
             language = it.language,
-            posterImageUrl = it.poster_image_url,
-            backdropImageUrl = it.backdrop_image_url,
-            votes = it.votes.toInt(),
-            averageVotes = it.vote_average,
-            genreIds = it.genre_ids,
+            posterImageUrl = it.poster_url,
+            backdropImageUrl = it.backdrop_url,
+            votes = it.votes,
+            rating = it.rating,
+            genres = it.genres,
             year = it.year,
             status = it.status,
         )

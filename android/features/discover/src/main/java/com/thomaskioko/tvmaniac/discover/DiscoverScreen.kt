@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.discover
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -19,15 +18,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarHost
+import androidx.compose.material.Surface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,9 +33,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
@@ -48,10 +48,9 @@ import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
 import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
-import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
+import com.thomaskioko.tvmaniac.compose.components.PosterImage
 import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
-import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
 import com.thomaskioko.tvmaniac.compose.theme.grey900
 import com.thomaskioko.tvmaniac.compose.util.DominantColorState
@@ -59,15 +58,12 @@ import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
-import com.thomaskioko.tvmaniac.discover.api.DataLoaded
-import com.thomaskioko.tvmaniac.discover.api.DiscoverShowEffect
-import com.thomaskioko.tvmaniac.discover.api.DiscoverShowResult
-import com.thomaskioko.tvmaniac.discover.api.DiscoverShowState
-import com.thomaskioko.tvmaniac.discover.api.ErrorState
-import com.thomaskioko.tvmaniac.discover.api.Loading
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
+import com.thomaskioko.tvmaniac.shows.api.DiscoverShowEffect
+import com.thomaskioko.tvmaniac.shows.api.DiscoverShowResult
+import com.thomaskioko.tvmaniac.shows.api.DiscoverShowState
+import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
+import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlin.math.absoluteValue
@@ -82,14 +78,13 @@ private const val MinContrastOfPrimaryVsSurface = 3f
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverViewModel,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Int) -> Unit,
     moreClicked: (showType: Int) -> Unit,
 ) {
 
     val scaffoldState = rememberScaffoldState()
 
-    val discoverViewState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = Loading)
+    val discoverViewState by viewModel.observeState().collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.observeSideEffect().collect {
@@ -111,7 +106,7 @@ fun DiscoverScreen(
 private fun DiscoverShows(
     scaffoldState: ScaffoldState,
     discoverViewState: DiscoverShowState,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Int) -> Unit,
     moreClicked: (showType: Int) -> Unit
 ) {
     Scaffold(
@@ -132,23 +127,20 @@ private fun DiscoverShows(
         },
     ) { contentPadding ->
 
-        when (discoverViewState) {
-            Loading -> FullScreenLoading()
-            is ErrorState -> {
+        //TODO:: Improve Ui state.
+        when {
+            discoverViewState.isLoading -> FullScreenLoading()
+            discoverViewState.isEmpty ->
                 EmptyContentView(
                     painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                    message = discoverViewState.message
+                    message = stringResource(id = R.string.generic_error_message)
                 )
-            }
-            is DataLoaded -> {
-                DiscoverViewScrollingContent(
-                    contentPadding,
-                    discoverViewState,
-                    openShowDetails,
-                    moreClicked
-                )
-            }
-
+            else -> DiscoverViewScrollingContent(
+                contentPadding,
+                discoverViewState,
+                openShowDetails,
+                moreClicked
+            )
         }
     }
 }
@@ -156,8 +148,8 @@ private fun DiscoverShows(
 @Composable
 private fun DiscoverViewScrollingContent(
     contentPadding: PaddingValues,
-    discoverViewState: DataLoaded,
-    openShowDetails: (showId: Long) -> Unit,
+    discoverViewState: DiscoverShowState,
+    openShowDetails: (showId: Int) -> Unit,
     moreClicked: (showType: Int) -> Unit
 ) {
     LazyColumn(
@@ -170,35 +162,44 @@ private fun DiscoverViewScrollingContent(
 
         item {
             FeaturedItems(
-                showData = discoverViewState.showData.featuredShows,
-                onItemClicked = { openShowDetails(it) }
+                showData = discoverViewState.featuredShows,
+                onItemClicked = openShowDetails
             )
         }
 
         item {
             DisplayShowData(
-                category = discoverViewState.showData.trendingShows.category,
-                tvShows = discoverViewState.showData.trendingShows.tvShows,
-                onItemClicked = { openShowDetails(it) },
-                moreClicked = { moreClicked(it) }
+                category = discoverViewState.trendingShows.category,
+                tvShows = discoverViewState.trendingShows.tvShows,
+                onItemClicked = openShowDetails,
+                moreClicked = moreClicked
             )
         }
 
         item {
             DisplayShowData(
-                category = discoverViewState.showData.popularShows.category,
-                tvShows = discoverViewState.showData.popularShows.tvShows,
-                onItemClicked = { openShowDetails(it) },
-                moreClicked = { moreClicked(it) }
+                category = discoverViewState.recommendedShows.category,
+                tvShows = discoverViewState.recommendedShows.tvShows,
+                onItemClicked = openShowDetails,
+                moreClicked = moreClicked
             )
         }
 
         item {
             DisplayShowData(
-                category = discoverViewState.showData.topRatedShows.category,
-                tvShows = discoverViewState.showData.topRatedShows.tvShows,
-                onItemClicked = { openShowDetails(it) },
-                moreClicked = { moreClicked(it) }
+                category = discoverViewState.anticipatedShows.category,
+                tvShows = discoverViewState.anticipatedShows.tvShows,
+                onItemClicked = openShowDetails,
+                moreClicked = moreClicked
+            )
+        }
+
+        item {
+            DisplayShowData(
+                category = discoverViewState.popularShows.category,
+                tvShows = discoverViewState.popularShows.tvShows,
+                onItemClicked = openShowDetails,
+                moreClicked = moreClicked
             )
         }
     }
@@ -208,7 +209,7 @@ private fun DiscoverViewScrollingContent(
 @Composable
 fun FeaturedItems(
     showData: DiscoverShowResult.DiscoverShowsData,
-    onItemClicked: (Long) -> Unit,
+    onItemClicked: (Int) -> Unit,
 ) {
 
     val surfaceColor = grey900
@@ -238,7 +239,7 @@ fun FeaturedItems(
                 list = showData.tvShows,
                 pagerState = pagerState,
                 dominantColorState = dominantColorState,
-                onClick = { onItemClicked(it) }
+                onClick = onItemClicked
             )
 
             if (showData.tvShows.isNotEmpty())
@@ -260,7 +261,7 @@ fun FeaturedHorizontalPager(
     list: List<TvShow>,
     pagerState: PagerState,
     dominantColorState: DominantColorState,
-    onClick: (Long) -> Unit
+    onClick: (Int) -> Unit
 ) {
 
     val selectedImageUrl = list.getOrNull(pagerState.currentPage)
@@ -288,9 +289,11 @@ fun FeaturedHorizontalPager(
             .fillMaxSize()
     ) { pageNumber ->
 
-        Card(
-            Modifier
-                .clickable { onClick(list[pageNumber].id) }
+        PosterImage(
+            title = list[pageNumber].title,
+            posterImageUrl = list[pageNumber].posterImageUrl,
+            modifier = Modifier
+                .clickable { onClick(list[pageNumber].traktId) }
                 .graphicsLayer {
                     val pageOffset = calculateCurrentOffsetForPage(pageNumber).absoluteValue
 
@@ -312,30 +315,19 @@ fun FeaturedHorizontalPager(
                     )
                 }
                 .fillMaxWidth()
-                .aspectRatio(0.7f)
-
-        ) {
-            Box {
-                NetworkImageComposable(
-                    imageUrl = list[pageNumber].posterImageUrl,
-                    contentDescription = stringResource(
-                        R.string.cd_show_poster,
-                        list[pageNumber].title
-                    ),
-                    modifier = Modifier
-                        .clip(MaterialTheme.shapes.medium)
-                        .offset {
-                            val pageOffset =
-                                this@HorizontalPager.calculateCurrentOffsetForPage(pageNumber)
-                            // Then use it as a multiplier to apply an offset
-                            IntOffset(
-                                x = (36.dp * pageOffset).roundToPx(),
-                                y = 0
-                            )
-                        }
-                )
-            }
-        }
+                .aspectRatio(0.7f),
+            posterModifier = Modifier
+                .clip(MaterialTheme.shapes.medium)
+                .offset {
+                    val pageOffset =
+                        this@HorizontalPager.calculateCurrentOffsetForPage(pageNumber)
+                    // Then use it as a multiplier to apply an offset
+                    IntOffset(
+                        x = (37.dp * pageOffset).roundToPx(),
+                        y = 0
+                    )
+                }
+        )
     }
 }
 
@@ -344,7 +336,7 @@ fun FeaturedHorizontalPager(
 private fun DisplayShowData(
     category: ShowCategory,
     tvShows: List<TvShow>,
-    onItemClicked: (Long) -> Unit,
+    onItemClicked: (Int) -> Unit,
     moreClicked: (Int) -> Unit,
 ) {
 
@@ -353,7 +345,7 @@ private fun DisplayShowData(
             BoxTextItems(
                 title = category.title,
                 moreString = stringResource(id = R.string.str_more),
-                onMoreClicked = { moreClicked(category.type) }
+                onMoreClicked = { moreClicked(category.id) }
             )
 
             val lazyListState = rememberLazyListState()
@@ -366,12 +358,24 @@ private fun DisplayShowData(
                     TvShowCard(
                         posterImageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,
-                        isFirstCard = index == 0
-                    ) {
-                        onItemClicked(tvShow.id)
-                    }
+                        isFirstCard = index == 0,
+                        onClick = { onItemClicked(tvShow.traktId) }
+                    )
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun DiscoverScreenPreview() {
+    Surface(Modifier.fillMaxWidth()) {
+        DiscoverViewScrollingContent(
+            contentPadding = PaddingValues(0.dp),
+            discoverViewState = discoverStatePreview,
+            openShowDetails = {},
+            moreClicked = {}
+        )
     }
 }

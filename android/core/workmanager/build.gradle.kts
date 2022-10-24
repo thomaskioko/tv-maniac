@@ -25,8 +25,8 @@ dependencies {
     api(project(":shared:core:util"))
     api(libs.androidx.workmanager)
 
-    implementation(project(":shared:domain:discover:api"))
     implementation(project(":shared:domain:trakt:api"))
+    implementation(project(":shared:domain:shows:api"))
     implementation(libs.kermit)
 
     implementation(libs.hilt.android)

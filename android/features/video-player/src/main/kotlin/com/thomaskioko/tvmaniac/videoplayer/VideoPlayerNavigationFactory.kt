@@ -14,7 +14,7 @@ class VideoPlayerNavigationFactory @Inject constructor() : ComposeNavigationFact
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
         builder.viewModelBottomSheetComposable<VideoPlayerViewModel>(
             arguments = listOf(
-                navArgument("showId") { type = NavType.LongType },
+                navArgument("showId") { type = NavType.IntType },
                 navArgument("videoKey") { type = NavType.StringType },
             ),
             route = "${NavigationScreen.VideoPlayerNavScreen.route}/{showId}/{videoKey}",

@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.map
 
 class ObserveTrailerInteractor constructor(
     private val trailerRepository: TrailerRepository
-) : FlowInteractor<Long, List<Trailer>>() {
+) : FlowInteractor<Int, List<Trailer>>() {
 
-    override fun run(params: Long): Flow<List<Trailer>> =
+    override fun run(params: Int): Flow<List<Trailer>> =
         trailerRepository.observeTrailersByShowId(params)
             .map { it.toTrailerList() }
 
@@ -20,7 +20,7 @@ class ObserveTrailerInteractor constructor(
 fun Resource<List<Trailers>>.toTrailerList(): List<Trailer> {
     return data?.map {
         Trailer(
-            showId = it.show_id,
+            showId = it.trakt_id,
             key = it.key,
             name = it.name,
             youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg"

@@ -1,9 +1,9 @@
 CREATE TABLE season_with_episodes (
-show_id integer DEFAULT NULL PRIMARY KEY,
-season_id integer DEFAULT NULL,
-season_number integer DEFAULT NULL,
+show_id INTEGER AS Int DEFAULT NULL PRIMARY KEY,
+season_id INTEGER AS Int  DEFAULT NULL,
+season_number INTEGER AS Int  DEFAULT NULL,
 FOREIGN KEY (season_id) REFERENCES season(id),
-FOREIGN KEY (show_id) REFERENCES show(id)
+FOREIGN KEY (show_id) REFERENCES show(trakt_id)
 );
 
 insertOrReplace:
@@ -16,7 +16,7 @@ season_number
 selectSeasonWithEpisodes:
 SELECT *
 FROM show
-JOIN season ON  season.tv_show_id = show.id
+JOIN season ON  season.trakt_id = show.trakt_id
 JOIN episode ON  episode.season_id = season.id
-WHERE show.id = ? AND season_number != 0
+WHERE show.trakt_id = ? AND season_number != 0
 ORDER BY season.season_number, episode_number ASC;

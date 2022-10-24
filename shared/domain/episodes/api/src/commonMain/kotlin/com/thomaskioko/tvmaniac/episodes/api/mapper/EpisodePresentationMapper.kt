@@ -11,11 +11,11 @@ fun EpisodesBySeasonId.toEpisodeEntity(): EpisodeUiModel {
     return EpisodeUiModel(
         id = id,
         seasonId = season_id,
-        name = name,
+        name = title,
         overview = overview,
         imageUrl = image_url,
         voteAverage = vote_average,
-        voteCount = vote_count.toInt(),
+        voteCount = votes,
         episodeNumber = episode_number
     )
 }

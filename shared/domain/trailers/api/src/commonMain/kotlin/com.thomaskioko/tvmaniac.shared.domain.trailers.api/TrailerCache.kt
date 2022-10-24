@@ -9,6 +9,6 @@ interface TrailerCache {
 
     fun insert(trailerList: List<Trailers>)
 
-    fun getTrailersByShowId(showId: Long): Flow<List<Trailers>>
+    fun getTrailersByShowId(showId: Int): Flow<List<Trailers>>
 
 }

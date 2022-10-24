@@ -2,15 +2,17 @@ package com.thomaskioko.tvmaniac.seasonepisodes.implementation.di
 
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
-import com.thomaskioko.tvmaniac.seasonepisodes.api.ObserveSeasonWithEpisodesInteractor
+import com.thomaskioko.tvmaniac.seasonepisodes.api.ObserveSeasonEpisodesInteractor
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesCache
-import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesRepository
+import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonEpisodesRepository
 import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodesCacheImpl
-import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodesRepositoryImpl
+import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonEpisodesRepositoryImpl
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsCache
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
-import com.thomaskioko.tvmaniac.showcommon.api.repository.TmdbRepository
+import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
+import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,13 +33,17 @@ object SeasonEpisodesModule {
     @Singleton
     @Provides
     fun provideSeasonWithEpisodesRepository(
-        apiService: TmdbService,
+        tmdbService: TmdbService,
+        traktService: TraktService,
+        tvShowCache: TvShowCache,
         episodesCache: EpisodesCache,
         seasonWithEpisodesCache: SeasonWithEpisodesCache,
         seasonsCache: SeasonsCache,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
-    ): SeasonWithEpisodesRepository = SeasonWithEpisodesRepositoryImpl(
-        apiService,
+    ): SeasonEpisodesRepository = SeasonEpisodesRepositoryImpl(
+        tmdbService,
+        traktService,
+        tvShowCache,
         episodesCache,
         seasonsCache,
         seasonWithEpisodesCache,
@@ -47,9 +53,8 @@ object SeasonEpisodesModule {
     @Singleton
     @Provides
     fun provideObserveSeasonWithEpisodesInteractor(
-        tmdbRepository: TmdbRepository,
-        repository: SeasonWithEpisodesRepository,
-        @DefaultDispatcher computationDispatcher: CoroutineDispatcher
-    ): ObserveSeasonWithEpisodesInteractor =
-        ObserveSeasonWithEpisodesInteractor(tmdbRepository, repository, computationDispatcher)
+        traktRepository: TraktRepository,
+        repository: SeasonEpisodesRepository,
+    ): ObserveSeasonEpisodesInteractor =
+        ObserveSeasonEpisodesInteractor(traktRepository, repository)
 }

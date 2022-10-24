@@ -14,7 +14,7 @@ class TrailerCacheImpl(
     override fun insert(trailer: Trailers) {
         database.trailersQueries.insertOrReplace(
             id = trailer.id,
-            show_id = trailer.show_id,
+            trakt_id = trailer.trakt_id,
             key = trailer.key,
             name = trailer.name,
             site = trailer.site,
@@ -27,7 +27,7 @@ class TrailerCacheImpl(
         trailerList.forEach { insert(it) }
     }
 
-    override fun getTrailersByShowId(showId: Long): Flow<List<Trailers>> {
+    override fun getTrailersByShowId(showId: Int): Flow<List<Trailers>> {
         return database.trailersQueries.selectByShowId(showId)
             .asFlow()
             .mapToList()

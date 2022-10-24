@@ -10,5 +10,5 @@ interface SeasonWithEpisodesCache {
 
     fun insert(list: List<Season_with_episodes>)
 
-    fun observeShowEpisodes(showId: Long): Flow<List<SelectSeasonWithEpisodes>>
+    fun observeShowEpisodes(showId: Int): Flow<List<SelectSeasonWithEpisodes>>
 }

@@ -38,7 +38,7 @@ import com.thomaskioko.tvmaniac.seasonepisodes.api.model.SeasonWithEpisodes
 @Composable
 fun SeasonEpisodeList(
     season: SeasonWithEpisodes,
-    onEpisodeClicked: (Long) -> Unit = {},
+    onEpisodeClicked: (Int) -> Unit = {},
     index: Int,
     collapsedState: SnapshotStateList<Boolean>
 ) {

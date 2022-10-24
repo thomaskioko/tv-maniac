@@ -15,5 +15,5 @@ data class TraktShow(
 
 @Serializable
 data class TraktShowIds(
-    @SerialName("tmdb") val tmdbId: Long
+    @SerialName("trakt") val traktId: Int
 )

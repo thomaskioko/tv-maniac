@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thomaskioko.tvmaniac.core.util.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.seasonepisodes.api.Loading
-import com.thomaskioko.tvmaniac.seasonepisodes.api.ObserveSeasonWithEpisodesInteractor
+import com.thomaskioko.tvmaniac.seasonepisodes.api.ObserveSeasonEpisodesInteractor
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsAction
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsAction.Error
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsAction.LoadSeasons
@@ -25,10 +25,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SeasonsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val observeSeasonsInteractor: ObserveSeasonWithEpisodesInteractor,
+    private val observeSeasonsInteractor: ObserveSeasonEpisodesInteractor,
 ) : Store<SeasonsViewState, SeasonsAction, SeasonsEffect>, CoroutineScopeOwner, ViewModel() {
 
-    private val showId: Long = savedStateHandle["showId"]!!
+    private val showId: Int = savedStateHandle["showId"]!!
 
     override val state: MutableStateFlow<SeasonsViewState> = MutableStateFlow(Loading)
 

@@ -18,11 +18,12 @@ class EpisodesCacheImpl(
         episodeQueries.insertOrReplace(
             id = entity.id,
             season_id = entity.season_id,
-            name = entity.name,
+            tmdb_id = entity.tmdb_id,
+            title = entity.title,
             overview = entity.overview,
             image_url = entity.image_url,
             vote_average = entity.vote_average,
-            vote_count = entity.vote_count,
+            votes = entity.votes,
             episode_number = entity.episode_number
         )
     }
@@ -31,8 +32,19 @@ class EpisodesCacheImpl(
         list.map { insert(it) }
     }
 
-    override fun observeEpisode(seasonId: Long): Flow<List<EpisodesBySeasonId>> =
+    override fun updatePoster(episodeId: Int, posterPath: String?) {
+        episodeQueries.updateEpisode(
+            tmdb_id = episodeId,
+            image_url = posterPath
+        )
+    }
+
+    override fun observeEpisode(seasonId: Int): Flow<List<EpisodesBySeasonId>> =
         episodeQueries.episodesBySeasonId(seasonId)
             .asFlow()
             .mapToList()
+
+    override fun getEpisode(seasonId: Int): List<EpisodesBySeasonId> =
+        episodeQueries.episodesBySeasonId(seasonId)
+            .executeAsList()
 }

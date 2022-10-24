@@ -15,6 +15,10 @@ version = libs.versions.shared.module.version.get()
 
 android {
     namespace = "com.thomaskioko.tvmaniac.shared"
+
+    defaultConfig {
+        manifestPlaceholders["appAuthRedirectScheme"] = "empty"
+    }
 }
 
 kotlin {
@@ -40,12 +44,10 @@ kotlin {
             export(project(":shared:domain:show-details:api"))
             export(project(":shared:domain:seasons:api"))
             export(project(":shared:domain:episodes:api"))
-            export(project(":shared:domain:genre:api"))
             export(project(":shared:domain:last-air-episodes:api"))
             export(project(":shared:domain:similar:api"))
             export(project(":shared:domain:season-episodes:api"))
-            export(project(":shared:domain:show-common:api"))
-            export(project(":shared:domain:discover:api"))
+            export(project(":shared:domain:shows:api"))
             export(project(":shared:domain:trailers:api"))
             export(project(":shared:domain:tmdb:api"))
             export(project(":shared:domain:trakt:api"))
@@ -65,12 +67,10 @@ dependencies {
     commonMainApi(project(":shared:domain:show-details:api"))
     commonMainApi(project(":shared:domain:seasons:api"))
     commonMainApi(project(":shared:domain:episodes:api"))
-    commonMainApi(project(":shared:domain:genre:api"))
     commonMainApi(project(":shared:domain:last-air-episodes:api"))
     commonMainApi(project(":shared:domain:similar:api"))
     commonMainApi(project(":shared:domain:season-episodes:api"))
-    commonMainApi(project(":shared:domain:show-common:api"))
-    commonMainApi(project(":shared:domain:discover:api"))
+    commonMainApi(project(":shared:domain:shows:api"))
     commonMainApi(project(":shared:domain:trailers:api"))
     commonMainApi(project(":shared:domain:tmdb:api"))
     commonMainApi(project(":shared:domain:trakt:api"))
@@ -78,14 +78,13 @@ dependencies {
     commonMainImplementation(project(":shared:domain:episodes:implementation"))
     commonMainImplementation(project(":shared:domain:show-details:implementation"))
     commonMainImplementation(project(":shared:domain:seasons:implementation"))
-    commonMainImplementation(project(":shared:domain:genre:implementation"))
     commonMainImplementation(project(":shared:domain:last-air-episodes:implementation"))
     commonMainImplementation(project(":shared:domain:similar:implementation"))
     commonMainImplementation(project(":shared:domain:season-episodes:implementation"))
-    commonMainImplementation(project(":shared:domain:discover:implementation"))
     commonMainImplementation(project(":shared:domain:trailers:implementation"))
     commonMainImplementation(project(":shared:domain:tmdb:implementation"))
     commonMainImplementation(project(":shared:domain:trakt:implementation"))
+    commonMainImplementation(project(":shared:domain:shows:implementation"))
 
     commonMainImplementation(libs.koin)
     commonMainImplementation(libs.coroutines.core)

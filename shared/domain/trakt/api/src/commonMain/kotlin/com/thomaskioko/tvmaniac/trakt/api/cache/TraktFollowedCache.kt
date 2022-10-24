@@ -15,9 +15,9 @@ interface TraktFollowedCache {
 
     fun observeFollowedShows(): Flow<List<SelectFollowedShows>>
 
-    fun observeFollowedShow(showId: Long): Flow<SelectFollowedShow?>
+    fun observeFollowedShow(traktId: Int): Flow<SelectFollowedShow?>
 
-    fun updateShowSyncState(showId: Long)
+    fun updateShowSyncState(traktId: Int)
 
-    fun removeShow(showId: Long)
+    fun removeShow(traktId: Int)
 }

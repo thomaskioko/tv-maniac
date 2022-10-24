@@ -29,7 +29,7 @@ class VideoPlayerViewModel @Inject constructor(
 ) : Store<TrailerListState, TrailerListAction, TrailerListEffect>, CoroutineScopeOwner,
     ViewModel() {
 
-    private val showId: Long = savedStateHandle["showId"]!!
+    private val showId: Int = savedStateHandle["showId"]!!
     private val videoKey: String? = savedStateHandle["videoKey"]
 
     private val uiEffects = MutableSharedFlow<TrailerListEffect>(extraBufferCapacity = 100)

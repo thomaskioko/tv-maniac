@@ -35,6 +35,7 @@ val episode = Episode(
 
 val seasonsEpList: List<SeasonWithEpisodes> = listOf(
     SeasonWithEpisodes(
+        seasonId = 1,
         seasonName = "Specials",
         episodeCount = 8,
         watchProgress = 0.4f,

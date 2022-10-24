@@ -17,26 +17,24 @@ import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
-import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
-import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun FollowingContent(
     viewModel: FollowingViewModel,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Int) -> Unit,
 ) {
 
-    val watchlistViewState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = WatchlistLoaded.Empty)
+    val watchlistViewState by viewModel.observeState().collectAsStateWithLifecycle()
 
     val scaffoldState = rememberScaffoldState()
 
@@ -83,7 +81,7 @@ fun FollowingContent(
 private fun FollowingGridContent(
     viewState: WatchlistLoaded,
     paddingValues: PaddingValues,
-    onItemClicked: (Long) -> Unit,
+    onItemClicked: (Int) -> Unit,
 ) {
     val listState = rememberLazyListState()
 
@@ -105,11 +103,11 @@ private fun FollowingGridContent(
             ) {
                 Card(
                     elevation = 4.dp,
-                    modifier = Modifier.clickable { onItemClicked(show.id) },
+                    modifier = Modifier.clickable { onItemClicked(show.traktId) },
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    NetworkImageComposable(
-                        imageUrl = show.posterImageUrl,
+                    AsyncImageComposable(
+                        model = show.posterImageUrl,
                         contentDescription = stringResource(
                             R.string.cd_show_poster,
                             show.title

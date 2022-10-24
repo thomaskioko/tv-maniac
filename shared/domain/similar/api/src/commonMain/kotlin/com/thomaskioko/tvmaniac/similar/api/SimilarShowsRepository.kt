@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface SimilarShowsRepository {
 
-    fun observeSimilarShows(showId: Long): Flow<Resource<List<SelectSimilarShows>>>
+    fun observeSimilarShows(traktId: Int): Flow<Resource<List<SelectSimilarShows>>>
 }

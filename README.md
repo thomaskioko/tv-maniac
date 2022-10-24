@@ -146,6 +146,7 @@ Android
     - Dynamic theme change.
 - [x] Add Seasons UI
 - [x] Implement trakt auth & sign in
+- [ ] UI State improvement.
 - [ ] Add Episode detail screen
 - [ ] Add Watchlist
 - [ ] Implement Search
@@ -154,8 +155,8 @@ iOS
 - [x] Add HomeScreen: Tabs & Empty UI
 - [x] Implement Discover UI
 - [x] Show Detail Screen
-- [ ] Add Seasons UI
 - [ ] Implement trakt auth & sign in
+- [ ] Add Seasons UI
 - [ ] Implement Search UI
 - [ ] Implement Watchlist UI
 - [ ] Implement Load more
@@ -165,7 +166,10 @@ Shared
 - [x] Refactor interactor implementation.
 - [x] Use koin for injection
 - [x] Modularize `shared` module
+- [ ] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux) 
 - [ ] Improve error handling, add retry.
+- [ ] Add test cases.
+- [ ] Fix paging
 - [ ] Better MVI implementation
 - [ ] Observe Internet connection
     - [x] Android

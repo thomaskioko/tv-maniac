@@ -34,7 +34,7 @@ class LastEpisodeAirCacheImpl(
         list.forEach { insert(it) }
     }
 
-    override fun getShowAirEpisodes(showId: Long): Flow<List<AirEpisodesByShowId>> =
+    override fun getShowAirEpisodes(showId: Int): Flow<List<AirEpisodesByShowId>> =
         database.lastAirEpisodeQueries.airEpisodesByShowId(show_id = showId)
             .asFlow()
             .mapToList()

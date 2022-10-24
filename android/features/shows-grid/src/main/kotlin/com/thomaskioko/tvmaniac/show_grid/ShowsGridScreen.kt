@@ -15,30 +15,28 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BackAppBar
-import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
-import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.showcommon.api.model.ShowCategory
+import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ShowsGridScreen(
     viewModel: ShowGridViewModel,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Int) -> Unit,
     navigateUp: () -> Unit
 ) {
 
     val scaffoldState = rememberScaffoldState()
 
-    val gridViewState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = ShowsLoaded.Empty)
+    val gridViewState by viewModel.observeState().collectAsStateWithLifecycle()
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -67,7 +65,7 @@ fun ShowsGridContent(
     hostState: SnackbarHostState,
     viewState: ShowsLoaded,
     paddingValues: PaddingValues,
-    onItemClicked: (Long) -> Unit,
+    onItemClicked: (Int) -> Unit,
 ) {
 
     val listState = rememberLazyGridState()
@@ -86,11 +84,11 @@ fun ShowsGridContent(
             show?.let {
                 Card(
                     elevation = 4.dp,
-                    modifier = Modifier.clickable { onItemClicked(show.id) },
+                    modifier = Modifier.clickable { onItemClicked(show.traktId) },
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    NetworkImageComposable(
-                        imageUrl = show.posterImageUrl,
+                    AsyncImageComposable(
+                        model = show.posterImageUrl,
                         contentDescription = stringResource(
                             R.string.cd_show_poster,
                             show.title

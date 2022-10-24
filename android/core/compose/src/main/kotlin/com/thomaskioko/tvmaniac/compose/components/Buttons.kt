@@ -128,8 +128,8 @@ fun UserProfileButton(
     ) {
         when {
             loggedIn && avatarUrl != null -> {
-                NetworkImageComposable(
-                    imageUrl = avatarUrl,
+                AsyncImageComposable(
+                    model = avatarUrl,
                     contentDescription = stringResource(
                         R.string.cd_profile_pic, fullName ?: userName
                     ),

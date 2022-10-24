@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.seasonepisodes.api
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.SeasonWithEpisodes
 import com.thomaskioko.tvmaniac.shared.core.ui.Action
 import com.thomaskioko.tvmaniac.shared.core.ui.Effect
-import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
+import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
 sealed class SeasonsAction : Action {
     object LoadSeasons : SeasonsAction()

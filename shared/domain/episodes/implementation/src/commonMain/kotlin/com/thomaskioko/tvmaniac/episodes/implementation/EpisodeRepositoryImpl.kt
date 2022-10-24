@@ -18,9 +18,9 @@ class EpisodeRepositoryImpl(
 ) : EpisodeRepository {
 
     override fun observeSeasonEpisodes(
-        tvShowId: Long,
-        seasonId: Long,
-        seasonNumber: Long
+        tvShowId: Int,
+        seasonId: Int,
+        seasonNumber: Int
     ): Flow<Resource<List<EpisodesBySeasonId>>> = networkBoundResource(
         query = { episodesCache.observeEpisode(seasonId) },
         shouldFetch = { it.isNullOrEmpty() },

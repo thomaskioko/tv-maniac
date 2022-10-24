@@ -13,7 +13,7 @@ dependencies {
     api(project(":shared:core:util"))
     api(project(":shared:domain:seasons:api"))
     api(project(":shared:domain:season-episodes:api"))
-    implementation(project(":shared:domain:show-common:api"))
+    implementation(project(":shared:domain:shows:api"))
     implementation(project(":android:core:compose"))
 
     implementation(libs.snapper)

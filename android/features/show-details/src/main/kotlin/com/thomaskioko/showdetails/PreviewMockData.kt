@@ -1,15 +1,14 @@
 package com.thomaskioko.showdetails
 
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
-import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
-import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
+import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
 val detailUiState = ShowDetailViewState(
     tvShow = TvShow(
-        id = 84958,
+        traktId = 84958,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
@@ -21,13 +20,12 @@ val detailUiState = ShowDetailViewState(
         backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         language = "en",
         votes = 4958,
-        averageVotes = 8.1,
-        genreIds = listOf(18, 10765),
+        rating = 8.1,
+        genres = listOf("Horror", "Action"),
         status = "Returning Series",
         year = "2024"
     ),
     tvSeasonUiModels = getTvSeasons(),
-    genreUIList = getGenres(),
     lastAirEpList = getEpisodeList(),
     trailersList = listOf(
         Trailer(
@@ -58,17 +56,6 @@ private fun getTvSeasons() = listOf(
                 "the timeline and stop a greater threat.",
         seasonNumber = 1,
         episodeCount = 6
-    )
-)
-
-fun getGenres() = listOf(
-    GenreUIModel(
-        id = 18,
-        name = "Sci-Fi"
-    ),
-    GenreUIModel(
-        id = 10765,
-        name = "Action"
     )
 )
 
@@ -103,7 +90,7 @@ fun getEpisodeList() = listOf(
 
 val showList = listOf(
     TvShow(
-        id = 84958,
+        traktId = 84958,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
@@ -115,13 +102,13 @@ val showList = listOf(
         backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         language = "en",
         votes = 4958,
-        averageVotes = 8.1,
-        genreIds = listOf(18, 10765),
+        rating = 8.1,
+        genres = listOf("Horror", "Action"),
         status = "Returning Series",
         year = "2024"
     ),
     TvShow(
-        id = 84958,
+        traktId = 84958,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
@@ -133,8 +120,8 @@ val showList = listOf(
         backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         language = "en",
         votes = 4958,
-        averageVotes = 8.1,
-        genreIds = listOf(18, 10765),
+        rating = 8.1,
+        genres = listOf("Horror", "Action"),
         status = "Returning Series",
         year = "2024"
     )
