@@ -48,16 +48,4 @@ class ShowTasksImpl @Inject constructor(
             .build()
         workManager.enqueue(request)
     }
-
-    override fun syncTmdbArtWorkWhenIdle() {
-        val request = OneTimeWorkRequestBuilder<SyncTmdbArtWorker>()
-            .addTag(SyncTmdbArtWorker.TAG)
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiresDeviceIdle(true)
-                    .build()
-            )
-            .build()
-        workManager.enqueue(request)
-    }
 }
