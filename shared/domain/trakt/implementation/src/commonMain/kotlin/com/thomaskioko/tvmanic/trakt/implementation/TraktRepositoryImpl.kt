@@ -136,7 +136,7 @@ class TraktRepositoryImpl constructor(
         coroutineDispatcher = dispatcher
     )
 
-    override fun observeShowsByCategoryID(categoryId: Int): Flow<Resource<List<SelectShowsByCategory>>> =
+    override fun fetchShowsByCategoryID(categoryId: Int): Flow<Resource<List<SelectShowsByCategory>>> =
         networkBoundResource(
             query = { tvShowCache.observeShowsByCategoryID(categoryId) },
             shouldFetch = { it.isNullOrEmpty() },
@@ -145,6 +145,9 @@ class TraktRepositoryImpl constructor(
             onFetchFailed = { Logger.withTag("observeShowsByCategoryID").e { it.resolveError() } },
             coroutineDispatcher = dispatcher
         )
+
+    override fun observeShowsByCategoryId(categoryId: Int): Flow<List<SelectShowsByCategory>> =
+        tvShowCache.observeShowsByCategoryID(categoryId)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observePagedShowsByCategoryID(
@@ -207,19 +210,19 @@ class TraktRepositoryImpl constructor(
 
     override suspend fun syncDiscoverShows() {
         val trending = traktService.getTrendingShows()
-        trending.mapAndCacheShows(ShowCategory.TRENDING.type)
+        trending.mapAndCacheShows(ShowCategory.TRENDING.id)
 
         val anticipated = traktService.getAnticipatedShows()
-        anticipated.mapAndCacheShows(ShowCategory.ANTICIPATED.type)
+        anticipated.mapAndCacheShows(ShowCategory.ANTICIPATED.id)
 
         val topRatedResponse = traktService.getRecommendedShows(period = "weekely")
-        topRatedResponse.mapAndCacheShows(ShowCategory.RECOMMENDED.type)
+        topRatedResponse.mapAndCacheShows(ShowCategory.RECOMMENDED.id)
 
         val popularResponse = traktService.getPopularShows()
-        popularResponse.mapAndCacheShow(ShowCategory.POPULAR.type)
+        popularResponse.mapAndCacheShow(ShowCategory.POPULAR.id)
 
         val featuredResponse = traktService.getRecommendedShows(period = "monthly")
-        featuredResponse.mapAndCacheShows(ShowCategory.FEATURED.type)
+        featuredResponse.mapAndCacheShows(ShowCategory.FEATURED.id)
 
     }
 
@@ -236,12 +239,12 @@ class TraktRepositoryImpl constructor(
     }
 
     private suspend fun fetchShowsApiRequest(categoryId: Int): List<Show> = when (categoryId) {
-        ShowCategory.TRENDING.type -> traktService.getTrendingShows().map { it.toShow() }
-        ShowCategory.POPULAR.type -> traktService.getPopularShows().map { it.toShow() }
-        ShowCategory.ANTICIPATED.type -> traktService.getAnticipatedShows().map { it.toShow() }
-        ShowCategory.RECOMMENDED.type -> traktService.getRecommendedShows(period = "weekely")
+        ShowCategory.TRENDING.id -> traktService.getTrendingShows().map { it.toShow() }
+        ShowCategory.POPULAR.id -> traktService.getPopularShows().map { it.toShow() }
+        ShowCategory.ANTICIPATED.id -> traktService.getAnticipatedShows().map { it.toShow() }
+        ShowCategory.RECOMMENDED.id -> traktService.getRecommendedShows(period = "weekely")
             .map { it.toShow() }
-        ShowCategory.FEATURED.type -> traktService.getRecommendedShows(period = "monthly")
+        ShowCategory.FEATURED.id -> traktService.getRecommendedShows(period = "monthly")
             .map { it.toShow() }
         else -> traktService.getTrendingShows().map { it.toShow() }
     }

@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.shows.api
 
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.util.FormatterUtil
+import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
 fun List<SelectShowsByCategory>.toTvShowList(): List<TvShow> {
@@ -25,3 +26,16 @@ fun SelectShowsByCategory.toTvShow(): TvShow {
 }
 
 fun String.toImageUrl() = FormatterUtil.formatPosterPath(this)
+
+fun List<SelectShowsByCategory>.toShowData(category: ShowCategory) =
+    DiscoverShowResult.DiscoverShowsData(
+        category = category,
+        tvShows = toTvShowList()
+    )
+
+fun List<SelectShowsByCategory>.toShowData(
+    category: ShowCategory, resultLimit: Int) = DiscoverShowResult.DiscoverShowsData(
+    category = category,
+    tvShows = toTvShowList().take(resultLimit),
+
+)

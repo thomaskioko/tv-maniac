@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.shows.implementation.repository
 
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.core.test.testCoroutineDispatcher
-import com.thomaskioko.tvmaniac.core.test.testCoroutineScope
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowImageCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.shows.implementation.MockData.getShow
 import com.thomaskioko.tvmaniac.shows.implementation.TmdbRepositoryImpl
@@ -21,13 +21,13 @@ internal class TvShowRepositoryTest {
 
     private var apiService = mockk<TmdbService>()
     private var tvShowCache = spyk<TvShowCache>()
+    private var showImageCache = spyk<ShowImageCache>()
 
     private val repository: TmdbRepositoryImpl = TmdbRepositoryImpl(
         apiService,
         tvShowCache,
-        testCoroutineScope,
+        showImageCache,
         testCoroutineDispatcher,
-        testCoroutineDispatcher
     )
 
     @AfterTest

@@ -20,7 +20,7 @@ class ObservePagedShowsByCategoryInteractor constructor(
     override fun run(params: Int): Flow<Flow<PagingData<TvShow>>> =
         flow {
 
-            val list = repository.observePagedShowsByCategoryID(ShowCategory[params].type)
+            val list = repository.observePagedShowsByCategoryID(ShowCategory[params].id)
                 .map { pagingData ->
                     pagingData.map { it.toTvShow() }
                 }

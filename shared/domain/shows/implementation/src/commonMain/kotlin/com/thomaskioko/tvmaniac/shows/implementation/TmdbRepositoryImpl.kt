@@ -23,7 +23,6 @@ class TmdbRepositoryImpl(
     private val tvShowCache: TvShowCache,
     private val imageCache: ShowImageCache,
     private val dispatcher: CoroutineDispatcher,
-    private val computationDispatcher: CoroutineDispatcher,
 ) : TmdbRepository {
 
     override fun observeShow(tmdbId: Int): Flow<Resource<SelectByShowId>> = networkBoundResource(
@@ -55,7 +54,7 @@ class TmdbRepositoryImpl(
                     }
                 }
         }
-        .flowOn(computationDispatcher)
+        .flowOn(dispatcher)
 }
 
 fun String?.toImageUrl() = formatPosterPath(this)

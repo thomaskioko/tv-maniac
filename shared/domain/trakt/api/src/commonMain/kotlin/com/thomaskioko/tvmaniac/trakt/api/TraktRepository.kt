@@ -23,7 +23,9 @@ interface TraktRepository {
 
     fun observeShow(traktId: Int): Flow<Resource<SelectByShowId>>
 
-    fun observeShowsByCategoryID(categoryId: Int): Flow<Resource<List<SelectShowsByCategory>>>
+    fun fetchShowsByCategoryID(categoryId: Int): Flow<Resource<List<SelectShowsByCategory>>>
+
+    fun observeShowsByCategoryId(categoryId: Int): Flow<List<SelectShowsByCategory>>
 
     fun observePagedShowsByCategoryID(categoryId: Int): CommonFlow<PagingData<SelectShowsByCategory>>
 

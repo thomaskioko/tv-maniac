@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.shows.implementation.mapper
 
 import com.thomaskioko.tvmaniac.shows.implementation.MockData.getTvResponse
-import com.thomaskioko.tvmaniac.core.util.FormatterUtil.formatPosterPath
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
@@ -21,7 +20,6 @@ internal class TvShowResponseMapperTest {
         mappedShow.tmdb_id shouldBe showResponse.id
         mappedShow.title shouldBe showResponse.name
         mappedShow.overview shouldBe showResponse.overview
-        mappedShow.poster_image_url shouldBe formatPosterPath(showResponse.posterPath)
         mappedShow.votes shouldBe showResponse.voteCount
     }
 }
