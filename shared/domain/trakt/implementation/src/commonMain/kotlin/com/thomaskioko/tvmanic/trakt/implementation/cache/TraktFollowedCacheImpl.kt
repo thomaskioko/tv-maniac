@@ -17,7 +17,8 @@ class TraktFollowedCacheImpl(
     override fun insert(followedShows: Followed_shows) {
         database.followedShowsQueries.insertOrReplace(
             id = followedShows.id,
-            synced = followedShows.synced
+            synced = followedShows.synced,
+            created_at = followedShows.created_at
         )
     }
 

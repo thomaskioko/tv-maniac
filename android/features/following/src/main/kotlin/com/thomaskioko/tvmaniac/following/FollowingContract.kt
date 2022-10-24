@@ -6,23 +6,23 @@ import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
 sealed class WatchlistState
 
-data class WatchlistLoaded(
+data class FollowingState(
     val isLoading: Boolean,
     val list: List<TvShow>
 ) : WatchlistState() {
     companion object {
-        val Empty = WatchlistLoaded(
+        val Empty = FollowingState(
             isLoading = true,
             list = emptyList()
         )
     }
 }
 
-sealed class WatchlistAction : Action {
-    object LoadWatchlist : WatchlistAction()
-    data class Error(val message: String = "") : WatchlistAction()
+sealed class FollowingAction : Action {
+    object LoadFollowedShows : FollowingAction()
+    data class Error(val message: String = "") : FollowingAction()
 }
 
-sealed class WatchlistEffect : Effect {
-    data class Error(val message: String = "") : WatchlistEffect()
+sealed class FollowingEffect : Effect {
+    data class Error(val message: String = "") : FollowingEffect()
 }

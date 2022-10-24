@@ -21,7 +21,7 @@ class SyncFollowedShows @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         Logger.d("$tags worker running")
-        traktRepository.syncFollowedShows()
+        traktRepository.fetchTraktWatchlistShows()
 
         return Result.success()
     }

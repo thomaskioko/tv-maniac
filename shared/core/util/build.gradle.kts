@@ -18,6 +18,8 @@ dependencies {
     commonMainImplementation(libs.datetime)
     commonMainImplementation(libs.coroutines.core)
 
+    androidMainImplementation(libs.datetime)
+
     iosMainImplementation(libs.koin)
     iosMainImplementation(libs.datetime)
 }

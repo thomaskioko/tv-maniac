@@ -27,9 +27,15 @@ interface TraktService {
 
     suspend fun getUserList(userId: String): List<TraktPersonalListsResponse>
 
-    suspend fun createFavoriteList(userSlug: String): TraktCreateListResponse
+    suspend fun createFollowingList(userSlug: String): TraktCreateListResponse
 
     suspend fun getFollowedList(listId: Int, userSlug: String): List<TraktFollowedShowResponse>
+
+    suspend fun getWatchList(): List<TraktFollowedShowResponse>
+
+    suspend fun addShowToWatchList(showId: Int): TraktAddShowToListResponse
+
+    suspend fun removeShowFromWatchList(showId: Int): TraktAddRemoveShowFromListResponse
 
     suspend fun addShowToList(
         userSlug: String,

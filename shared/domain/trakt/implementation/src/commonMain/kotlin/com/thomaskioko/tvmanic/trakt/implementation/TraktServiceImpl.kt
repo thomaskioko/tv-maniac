@@ -85,7 +85,7 @@ class TraktServiceImpl(
     override suspend fun getUserList(userId: String): List<TraktPersonalListsResponse> =
         httpClient.get("users/$userId/lists").body()
 
-    override suspend fun createFavoriteList(userSlug: String): TraktCreateListResponse =
+    override suspend fun createFollowingList(userSlug: String): TraktCreateListResponse =
         httpClient.post("users/$userSlug/lists") {
             setBody(TraktCreateListRequest())
         }.body()
@@ -94,7 +94,45 @@ class TraktServiceImpl(
         listId: Int,
         userSlug: String
     ): List<TraktFollowedShowResponse> =
-        httpClient.get("users/$userSlug/lists/$listId/items/shows").body()
+        httpClient.get("users/$userSlug/lists/$listId/items/shows") {
+            parameter("sort_by", "added")
+        }.body()
+
+    override suspend fun getWatchList(): List<TraktFollowedShowResponse> =
+        httpClient.get("sync/watchlist/shows") {
+            parameter("sort_by", "added")
+        }.body()
+
+    override suspend fun addShowToWatchList(showId: Int): TraktAddShowToListResponse =
+        httpClient.post("sync/watchlist") {
+            setBody(
+                TraktAddShowRequest(
+                    shows = listOf(
+                        TraktShow(
+                            ids = TraktShowIds(
+                                traktId = showId
+                            )
+                        )
+                    )
+                )
+            )
+        }.body()
+
+    override suspend fun removeShowFromWatchList(showId: Int): TraktAddRemoveShowFromListResponse =
+        httpClient.post("sync/watchlist/remove") {
+            contentType(ContentType.Application.Json)
+            setBody(
+                TraktAddShowRequest(
+                    shows = listOf(
+                        TraktShow(
+                            ids = TraktShowIds(
+                                traktId = showId
+                            )
+                        )
+                    )
+                )
+            )
+        }.body()
 
     override suspend fun addShowToList(
         userSlug: String,

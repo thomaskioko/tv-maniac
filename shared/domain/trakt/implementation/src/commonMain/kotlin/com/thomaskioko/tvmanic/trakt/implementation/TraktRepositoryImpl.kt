@@ -13,9 +13,10 @@ import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.Show_category
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
-import com.thomaskioko.tvmaniac.core.db.Trakt_favorite_list
+import com.thomaskioko.tvmaniac.core.db.Trakt_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
 import com.thomaskioko.tvmaniac.core.util.CommonFlow
+import com.thomaskioko.tvmaniac.core.util.DateUtil
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.asCommonFlow
 import com.thomaskioko.tvmaniac.core.util.network.Resource
@@ -24,15 +25,13 @@ import com.thomaskioko.tvmaniac.shows.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
-import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFavoriteListCache
+import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
@@ -55,11 +54,10 @@ class TraktRepositoryImpl constructor(
     private val tvShowCache: TvShowCache,
     private val traktUserCache: TraktUserCache,
     private val followedCache: TraktFollowedCache,
-    private val favoriteCache: TraktFavoriteListCache,
+    private val favoriteCache: TraktListCache,
     private val categoryCache: CategoryCache,
     private val showCategoryCache: ShowCategoryCache,
     private val traktService: TraktService,
-    private val tmdbRepository: TmdbRepository,
     private val dispatcher: CoroutineDispatcher,
     private val coroutineScope: CoroutineScope,
 ) : TraktRepository {
@@ -74,11 +72,11 @@ class TraktRepositoryImpl constructor(
             coroutineDispatcher = dispatcher
         )
 
-    override fun observeCreateTraktFavoriteList(userSlug: String): Flow<Resource<Trakt_favorite_list>> =
+    override fun observeCreateTraktList(userSlug: String): Flow<Resource<Trakt_list>> =
         networkBoundResource(
-            query = { favoriteCache.observeFavoriteList() },
+            query = { favoriteCache.observeTraktList() },
             shouldFetch = { it == null },
-            fetch = { traktService.createFavoriteList(userSlug) },
+            fetch = { traktService.createFollowingList(userSlug) },
             saveFetchResult = { it.mapAndCache() },
             onFetchFailed = { Logger.withTag("createTraktFavoriteList").e(it.resolveError()) },
             coroutineDispatcher = dispatcher
@@ -92,12 +90,13 @@ class TraktRepositoryImpl constructor(
         shouldFetch = { traktUserCache.getMe() != null },
         fetch = {
             val user = traktUserCache.getMe()
-            val listId: Int = getOrCreateTraktList(user!!)
 
-            if (addToWatchList) {
-                traktService.addShowToList(user.slug, listId, traktId).added.shows
-            } else {
-                traktService.deleteShowFromList(user.slug, listId, traktId).deleted.shows
+            if (user != null) {
+                if (addToWatchList) {
+                    traktService.addShowToWatchList(traktId).added.shows
+                } else {
+                    traktService.removeShowFromWatchList(traktId).deleted.shows
+                }
             }
         },
         saveFetchResult = {
@@ -105,7 +104,8 @@ class TraktRepositoryImpl constructor(
                 addToWatchList -> followedCache.insert(
                     Followed_shows(
                         id = traktId,
-                        synced = true
+                        synced = true,
+                        created_at = DateUtil.getTimestampMilliseconds()
                     )
                 )
                 else -> followedCache.removeShow(traktId)
@@ -117,7 +117,8 @@ class TraktRepositoryImpl constructor(
                 addToWatchList -> followedCache.insert(
                     Followed_shows(
                         id = traktId,
-                        synced = false
+                        synced = false,
+                        created_at = DateUtil.getTimestampMilliseconds()
                     )
                 )
                 else -> followedCache.removeShow(traktId)
@@ -182,28 +183,13 @@ class TraktRepositoryImpl constructor(
             .asCommonFlow()
     }
 
-    override suspend fun syncFollowedShows() {
+    override suspend fun fetchTraktWatchlistShows() {
         traktUserCache.observeMe()
             .flowOn(dispatcher)
             .collect { user ->
                 user?.let {
-                    traktService.getUserList(user.slug)
-                        .firstOrNull()?.let { listResponse ->
-                            listResponse.mapAndCache()
-
-                            traktService.getFollowedList(listResponse.ids.trakt, user.slug)
-                                .mapAndCache()
-                        }
-
-                    followedCache.getUnsyncedFollowedShows()
-                        .map {
-                            tmdbRepository.observeShow(it.id)
-                                .collect { showResource ->
-                                    showResource.data?.let { show ->
-                                        followedCache.updateShowSyncState(show.trakt_id)
-                                    }
-                                }
-                        }
+                    traktService.getWatchList()
+                        .mapAndCache()
                 }
             }
     }
@@ -226,12 +212,36 @@ class TraktRepositoryImpl constructor(
 
     }
 
+    override suspend fun syncFollowedShows() {
+        traktUserCache.observeMe()
+            .flowOn(dispatcher)
+            .collect { user ->
+                user?.let {
+
+                    followedCache.getUnsyncedFollowedShows()
+                        .map {
+
+                            traktService.addShowToWatchList(it.id)
+
+                            followedCache.insert(
+                                Followed_shows(
+                                    id = it.id,
+                                    synced = true,
+                                    created_at = DateUtil.getTimestampMilliseconds()
+                                )
+                            )
+                        }
+                }
+            }
+    }
+
     override suspend fun updateFollowedShow(traktId: Int, addToWatchList: Boolean) {
         when {
             addToWatchList -> followedCache.insert(
                 Followed_shows(
                     id = traktId,
-                    synced = false
+                    synced = false,
+                    created_at = DateUtil.getTimestampMilliseconds()
                 )
             )
             else -> followedCache.removeShow(traktId)
@@ -247,20 +257,6 @@ class TraktRepositoryImpl constructor(
         ShowCategory.FEATURED.id -> traktService.getRecommendedShows(period = "monthly")
             .map { it.toShow() }
         else -> traktService.getTrendingShows().map { it.toShow() }
-    }
-
-
-    private suspend fun getOrCreateTraktList(
-        user: Trakt_user
-    ): Int {
-        val traktFollowedList = favoriteCache.getFavoriteList()
-
-        return if (traktFollowedList == null) {
-            val listResponse = traktService.createFavoriteList(user.slug)
-            listResponse.ids.trakt
-        } else {
-            traktFollowedList.id
-        }
     }
 
     override fun observeFollowedShows(): Flow<List<SelectFollowedShows>> =
@@ -284,17 +280,7 @@ class TraktRepositoryImpl constructor(
 
     private fun TraktCreateListResponse.mapAndCache() {
         favoriteCache.insert(
-            Trakt_favorite_list(
-                id = ids.trakt,
-                slug = ids.slug,
-                description = description
-            )
-        )
-    }
-
-    private fun TraktPersonalListsResponse.mapAndCache() {
-        favoriteCache.insert(
-            Trakt_favorite_list(
+            Trakt_list(
                 id = ids.trakt,
                 slug = ids.slug,
                 description = description
@@ -307,7 +293,8 @@ class TraktRepositoryImpl constructor(
             followedCache.insert(
                 Followed_shows(
                     id = it.show.ids.trakt,
-                    synced = false
+                    synced = true,
+                    created_at = DateUtil.getTimestampMilliseconds()
                 )
             )
         }
