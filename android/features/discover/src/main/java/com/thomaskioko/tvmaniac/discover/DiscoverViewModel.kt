@@ -3,13 +3,13 @@ package com.thomaskioko.tvmaniac.discover
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thomaskioko.tvmaniac.core.util.CoroutineScopeOwner
+import com.thomaskioko.tvmaniac.shared.core.ui.Store
 import com.thomaskioko.tvmaniac.shows.api.DiscoverShowAction
 import com.thomaskioko.tvmaniac.shows.api.DiscoverShowAction.Error
 import com.thomaskioko.tvmaniac.shows.api.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.shows.api.DiscoverShowState
-import com.thomaskioko.tvmaniac.shows.api.ObserveDiscoverShowsInteractor
-import com.thomaskioko.tvmaniac.shared.core.ui.Store
-import com.thomaskioko.tvmaniac.shows.api.ObserveSyncImages
+import com.thomaskioko.tvmaniac.shows.api.FetchShowsInteractor
+import com.thomaskioko.tvmaniac.shows.api.ObserveShowsInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -23,8 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
-    private val observeDiscoverShow: ObserveDiscoverShowsInteractor,
-    private val observeSyncImages: ObserveSyncImages
+    private val observeDiscoverShow: FetchShowsInteractor,
+    private val observeShowsInteractor: ObserveShowsInteractor,
 ) : Store<DiscoverShowState, DiscoverShowAction, DiscoverShowEffect>,
     CoroutineScopeOwner,
     ViewModel() {
@@ -41,6 +41,8 @@ class DiscoverViewModel @Inject constructor(
         coroutineScope.launch {
             dispatch(DiscoverShowAction.LoadTvShows)
         }
+
+        observeShowResult()
     }
 
     override fun observeState(): StateFlow<DiscoverShowState> = state
@@ -55,48 +57,46 @@ class DiscoverViewModel @Inject constructor(
 
     override fun dispatch(action: DiscoverShowAction) {
         when (action) {
-            is DiscoverShowAction.LoadTvShows -> {
-                with(state) {
-                    observeDiscoverShow.execute(Unit) {
-                        onStart {
-                            coroutineScope.launch {
-                                emit(
-                                    value.copy(isLoading = true)
-                                )
-                            }
-                        }
-
-                        onNext {
-                            coroutineScope.launch {
-                                val newState = value.copy(
-                                    isLoading = it.anticipatedShows.tvShows.isEmpty(),
-                                    featuredShows = it.featuredShows,
-                                    trendingShows = it.trendingShows,
-                                    recommendedShows = it.recommendedShows,
-                                    popularShows = it.popularShows,
-                                    anticipatedShows = it.anticipatedShows
-                                )
-
-                                emit(newState)
-                            }
-                        }
-
-                        onError {
-                            dispatch(Error(it.message ?: "Something went wrong"))
-                        }
-
-                        onComplete {
-                            observeSyncImages.execute(Unit) {
-
-                            }
-                        }
-                    }
-                }
-            }
+            is DiscoverShowAction.LoadTvShows -> observeDiscoverShow.execute(Unit) {}
             is Error -> {
                 coroutineScope.launch {
                     sideEffect.emit(DiscoverShowEffect.Error(action.message))
                 }
+            }
+        }
+    }
+
+    private fun observeShowResult(){
+        with(state) {
+            observeShowsInteractor.execute(Unit) {
+                onStart {
+                    coroutineScope.launch {
+                        emit(
+                            value.copy(isLoading = true)
+                        )
+                    }
+                }
+
+                onNext {
+                    coroutineScope.launch {
+                        val newState = value.copy(
+                            isLoading = false,
+                            isEmpty = it.isEmpty,
+                            featuredShows = it.featuredShows,
+                            trendingShows = it.trendingShows,
+                            recommendedShows = it.recommendedShows,
+                            popularShows = it.popularShows,
+                            anticipatedShows = it.anticipatedShows
+                        )
+
+                        emit(newState)
+                    }
+                }
+
+                onError {
+                    dispatch(Error(it.message ?: "Something went wrong"))
+                }
+
             }
         }
     }
