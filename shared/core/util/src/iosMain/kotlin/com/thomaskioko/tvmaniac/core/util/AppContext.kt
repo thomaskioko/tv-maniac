@@ -1,3 +1,5 @@
 package com.thomaskioko.tvmaniac.core.util
 
-actual typealias AppContext = Any
+import platform.darwin.NSObject
+
+actual typealias AppContext = NSObject

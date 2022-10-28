@@ -14,12 +14,18 @@ class TraktFollowedCacheImpl(
     private val database: TvManiacDatabase
 ) : TraktFollowedCache {
 
-    override fun insert(followedShows: Followed_shows) {
-        database.followedShowsQueries.insertOrReplace(
-            id = followedShows.id,
-            synced = followedShows.synced,
-            created_at = followedShows.created_at
-        )
+    override fun insert(followedShow: Followed_shows) {
+        database.transaction {
+            database.followedShowsQueries.insertOrReplace(
+                id = followedShow.id,
+                synced = followedShow.synced,
+                created_at = followedShow.created_at
+            )
+        }
+    }
+
+    override fun insert(followedShows: List<Followed_shows>) {
+        followedShows.forEach { insert(it) }
     }
 
     override fun getFollowedShows(): List<SelectFollowedShows> =
@@ -36,9 +42,9 @@ class TraktFollowedCacheImpl(
             .mapToList()
 
     override fun observeFollowedShow(traktId: Int): Flow<SelectFollowedShow?> =
-       database.followedShowsQueries.selectFollowedShow(traktId)
-           .asFlow()
-           .mapToOneOrNull()
+        database.followedShowsQueries.selectFollowedShow(traktId)
+            .asFlow()
+            .mapToOneOrNull()
 
     override fun updateShowSyncState(traktId: Int) {
         database.followedShowsQueries.updateFollowedState(
@@ -48,6 +54,6 @@ class TraktFollowedCacheImpl(
     }
 
     override fun removeShow(traktId: Int) {
-       database.followedShowsQueries.removeShow(traktId)
+        database.followedShowsQueries.removeShow(traktId)
     }
 }

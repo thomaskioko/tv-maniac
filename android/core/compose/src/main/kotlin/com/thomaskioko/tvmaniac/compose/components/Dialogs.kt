@@ -14,11 +14,11 @@ fun BasicDialog(
     dialogTitle: String,
     dialogMessage: String,
     confirmButtonText: String,
-    dismissButtonText: String,
-    onDismissDialog : () -> Unit,
-    confirmButtonClicked : () -> Unit,
-    dismissButtonClicked : () -> Unit
-){
+    onDismissDialog: () -> Unit = {},
+    confirmButtonClicked: () -> Unit = {},
+    dismissButtonClicked: () -> Unit = {},
+    dismissButtonText: String? = null
+) {
 
     AlertDialog(
         onDismissRequest = { onDismissDialog() },
@@ -43,13 +43,15 @@ fun BasicDialog(
             }
         },
         dismissButton = {
-            OutlinedButton(onClick = dismissButtonClicked) {
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                    Text(
-                        text = dismissButtonText,
-                        style = MaterialTheme.typography.caption,
-                        color = MaterialTheme.colors.onSurface
-                    )
+            dismissButtonText?.let {
+                OutlinedButton(onClick = dismissButtonClicked) {
+                    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                        Text(
+                            text = dismissButtonText,
+                            style = MaterialTheme.typography.caption,
+                            color = MaterialTheme.colors.onSurface
+                        )
+                    }
                 }
             }
         }

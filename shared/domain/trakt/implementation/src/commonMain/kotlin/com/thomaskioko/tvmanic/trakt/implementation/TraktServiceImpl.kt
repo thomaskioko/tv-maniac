@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
 import com.thomaskioko.tvmanic.trakt.implementation.model.AccessTokenBody
 import com.thomaskioko.tvmanic.trakt.implementation.model.RefreshAccessTokenBody
 import io.ktor.client.HttpClient
@@ -84,6 +85,9 @@ class TraktServiceImpl(
 
     override suspend fun getUserList(userId: String): List<TraktPersonalListsResponse> =
         httpClient.get("users/$userId/lists").body()
+
+    override suspend fun getUserStats(userId: String): TraktUserStatsResponse =
+        httpClient.get("users/$userId/stats").body()
 
     override suspend fun createFollowingList(userSlug: String): TraktCreateListResponse =
         httpClient.post("users/$userSlug/lists") {

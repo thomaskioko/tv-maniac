@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.settings
+package com.thomaskioko.tvmaniac.profile
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -7,15 +7,16 @@ import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import com.thomaskioko.tvmaniac.navigation.viewModelComposable
 import javax.inject.Inject
 
-class SettingsNavigationFactory @Inject constructor() : ComposeNavigationFactory {
-
+class ProfileNavigationFactory @Inject constructor() : ComposeNavigationFactory{
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
-        builder.viewModelComposable<SettingsViewModel>(
-            route = NavigationScreen.SettingsScreen.route,
+        builder.viewModelComposable<ProfileViewModel>(
+            route = NavigationScreen.ProfileNavScreen.route,
             content = {
-                SettingsScreen(
+                ProfileScreen(
                     viewModel = this,
-                    navigateUp = { navController.popBackStack() },
+                    settingsClicked = {
+                        navController.navigate(NavigationScreen.SettingsScreen.route)
+                    }
                 )
             }
         )

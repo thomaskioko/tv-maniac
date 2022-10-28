@@ -1,20 +1,21 @@
-package com.thomaskioko.tvmaniac.settings
+package com.thomaskioko.tvmaniac.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thomaskioko.tvmaniac.core.util.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.shared.core.ui.Store
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsContent
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsEffect
-import com.thomaskioko.tvmaniac.shared.persistance.TvManiacPreferences
+import com.thomaskioko.tvmaniac.trakt.api.ObserveStatsInteractor
 import com.thomaskioko.tvmaniac.trakt.api.ObserveTraktUserInteractor
+import com.thomaskioko.tvmaniac.trakt.api.StatsParam
+import com.thomaskioko.tvmaniac.trakt.api.TraktUiUser
 import com.thomaskioko.tvmaniac.traktauth.ObserveTraktAuthStateInteractor
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.TraktManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,23 +24,24 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
-    private val themePreference: TvManiacPreferences,
+class ProfileViewModel @Inject constructor(
     private val traktManager: TraktManager,
     private val traktAuthManager: TraktAuthManager,
     private val traktAuthInteractor: ObserveTraktAuthStateInteractor,
     private val observeTraktUserInteractor: ObserveTraktUserInteractor,
+    private val observeStatsInteractor: ObserveStatsInteractor,
     @DefaultDispatcher private val ioDispatcher: CoroutineDispatcher
-) : Store<SettingsContent, SettingsActions, SettingsEffect>, ViewModel(),
+) : Store<ProfileStateContent, ProfileActions, ProfileEffect>, CoroutineScopeOwner, ViewModel(),
     TraktAuthManager by traktAuthManager {
 
-    override val state = MutableStateFlow(SettingsContent.DEFAULT)
+    private val sideEffect = MutableSharedFlow<ProfileEffect>()
 
-    private val sideEffect = MutableSharedFlow<SettingsEffect>()
+    override val state = MutableStateFlow(ProfileStateContent.EMPTY)
+
+    override val coroutineScope: CoroutineScope
+        get() = viewModelScope
 
     init {
-        dispatch(SettingsActions.LoadTheme)
-
         viewModelScope.launch {
             traktAuthInteractor.invoke(Unit)
                 .collect {
@@ -50,34 +52,21 @@ class SettingsViewModel @Inject constructor(
                     state.emit(newState)
 
                     when (it) {
-                        TraktAuthState.LOGGED_IN -> dispatch(SettingsActions.FetchTraktUserProfile)
-                        TraktAuthState.LOGGED_OUT -> dispatch(SettingsActions.RefreshTraktAuthToken)
+                        TraktAuthState.LOGGED_IN -> dispatch(ProfileActions.FetchTraktUserProfile)
+                        TraktAuthState.LOGGED_OUT -> dispatch(ProfileActions.RefreshTraktAuthToken)
                     }
+
                 }
         }
     }
 
-    override fun observeState(): StateFlow<SettingsContent> = state
+    override fun observeState(): StateFlow<ProfileStateContent> = state
 
-    override fun observeSideEffect(): Flow<SettingsEffect> = sideEffect
+    override fun observeSideEffect(): Flow<ProfileEffect> = sideEffect
 
-    override fun dispatch(action: SettingsActions) {
+    override fun dispatch(action: ProfileActions) {
         when (action) {
-            is SettingsActions.ThemeSelected -> {
-                viewModelScope.launch(context = ioDispatcher) {
-                    themePreference.emitTheme(action.theme)
-                }
-            }
-            SettingsActions.ThemeClicked -> {
-                viewModelScope.launch(context = ioDispatcher) {
-                    val newState = state.value.copy(
-                        showPopup = !state.value.showPopup
-                    )
-                    state.emit(newState)
-                }
-            }
-
-            SettingsActions.DismissTraktDialog -> {
+            ProfileActions.DismissTraktDialog -> {
                 viewModelScope.launch(context = ioDispatcher) {
                     val newState = state.value.copy(
                         showTraktDialog = false
@@ -85,7 +74,8 @@ class SettingsViewModel @Inject constructor(
                     state.emit(newState)
                 }
             }
-            SettingsActions.ShowTraktDialog -> {
+
+            ProfileActions.ShowTraktDialog -> {
                 viewModelScope.launch(context = ioDispatcher) {
                     val newState = state.value.copy(
                         showTraktDialog = true
@@ -94,36 +84,23 @@ class SettingsViewModel @Inject constructor(
                 }
             }
 
-            SettingsActions.TraktLogin -> {
+            ProfileActions.TraktLogin -> {
                 viewModelScope.launch {
                     val newState = state.value.copy(
                         showTraktDialog = false
                     )
                     state.emit(newState)
-                    traktManager.clearAuth()
                 }
             }
 
-            SettingsActions.LoadTheme -> updateTheme()
-            SettingsActions.TraktLogout -> logoutOfTrakt()
-            SettingsActions.FetchTraktUserProfile -> fetchUserInfo()
-            SettingsActions.RefreshTraktAuthToken -> {
+            ProfileActions.TraktLogout -> logoutOfTrakt()
+            ProfileActions.FetchTraktUserProfile -> fetchUserInfo()
+            ProfileActions.RefreshTraktAuthToken -> {
 
             }
         }
     }
 
-    private fun updateTheme() {
-        viewModelScope.launch {
-            themePreference.observeTheme()
-                .collect {
-                    val newState = state.value.copy(
-                        theme = it,
-                    )
-                    state.emit(newState)
-                }
-        }
-    }
 
     private fun logoutOfTrakt() {
         viewModelScope.launch {
@@ -140,12 +117,39 @@ class SettingsViewModel @Inject constructor(
             observeTraktUserInteractor.invoke("me")
                 .collect {
                     val newState = state.value.copy(
-                        traktUserName = it.userName,
-                        traktFullName = it.fullName,
-                        traktUserPicUrl = it.profilePicUrl
+                        traktUser = ProfileStateContent.TraktUser(
+                            userName = it.userName,
+                            fullName = it.fullName,
+                            userPicUrl = it.profilePicUrl,
+                        )
                     )
                     state.emit(newState)
+
+                    fetchUserStats(it)
                 }
         }
     }
+
+    private suspend fun fetchUserStats(it: TraktUiUser) {
+        observeStatsInteractor.execute(StatsParam(slug = it.slug)) {
+            onNext {
+                viewModelScope.launch {
+                    it?.let {
+                        val updatedState = state.value.copy(
+                            profileStats = ProfileStateContent.ProfileStats(
+                                showMonths = it.showMonths,
+                                showDays = it.showDays,
+                                showHours = it.showHours,
+                                collectedShows = it.collectedShows,
+                                episodesWatched = it.episodesWatched
+                            )
+                        )
+
+                        state.emit(updatedState)
+                    }
+                }
+            }
+        }
+    }
 }
+
