@@ -1,4 +1,3 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import util.libs
 
 plugins {
@@ -8,19 +7,11 @@ plugins {
 android {
     namespace = "com.thomaskioko.tvmaniac"
 
-    buildTypes {
-        getByName("debug") {
-            val properties = gradleLocalProperties(rootDir)
-            val traktClientId: String = properties.getProperty("TRAKT_CLIENT_ID")
-            val traktClientSecret: String = properties.getProperty("TRAKT_CLIENT_SECRET")
-            val traktRedirectUri: String = properties.getProperty("TRAKT_REDIRECT_URI")
-            val tmdbApiKey: String = properties.getProperty("TMDB_API_KEY")
-
-            buildConfigField("String", "TRAKT_CLIENT_ID", traktClientId)
-            buildConfigField("String", "TRAKT_CLIENT_SECRET", traktClientSecret)
-            buildConfigField("String", "TRAKT_REDIRECT_URI", traktRedirectUri)
-            buildConfigField("String", "TMDB_API_KEY", tmdbApiKey)
-        }
+    defaultConfig {
+        buildConfigField("String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TRAKT_CLIENT_ID", "") + "\"")
+        buildConfigField("String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TRAKT_CLIENT_SECRET", "") + "\"")
+        buildConfigField("String", "TRAKT_REDIRECT_URI", "\"" + propOrDef("TRAKT_REDIRECT_URI", "") + "\"")
+        buildConfigField("String", "TMDB_API_KEY", "\"" + propOrDef("TMDB_API_KEY", "") + "\"")
     }
 }
 
@@ -46,4 +37,10 @@ dependencies {
     implementation(libs.hilt.work)
     implementation(libs.androidx.compose.activity)
     implementation(libs.accompanist.systemuicontroller)
+}
+
+fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
+    @Suppress("UNCHECKED_CAST")
+    val propertyValue = project.properties[propertyName] as T?
+    return propertyValue ?: defaultValue
 }
