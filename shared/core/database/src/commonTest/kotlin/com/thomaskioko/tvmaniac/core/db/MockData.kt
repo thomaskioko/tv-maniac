@@ -10,9 +10,9 @@ object MockData {
             season_id = 114355,
             title = "Glorious Purpose",
             overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
-            image_url = "https://image.tmdb.org/t/p/original/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
             votes = 42,
-            vote_average = 6.429,
+            ratings = 6.429,
+            runtime = 45,
             episode_number = "01",
             tmdb_id = 1
         ),
@@ -21,9 +21,9 @@ object MockData {
             season_id = 114355,
             title = "The Variant",
             overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
-            image_url = "https://image.tmdb.org/t/p/original/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
             votes = 23,
-            vote_average = 7.6,
+            ratings = 7.6,
+            runtime = 45,
             episode_number = "02",
             tmdb_id = 1
         )
@@ -32,7 +32,7 @@ object MockData {
     fun getSeasonCacheList() = listOf(
         Season(
             id = 114355,
-            trakt_id = 84958,
+            show_id = 84958,
             name = "Season 1",
             overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
@@ -45,7 +45,7 @@ object MockData {
         ),
         Season(
             id = 77680,
-            trakt_id = 84958,
+            show_id = 84958,
             name = "Season 2",
             overview = "Strange things are afoot in Hawkins, Indiana, where a young boy's " +
                 "sudden disappearance unearths a young girl with otherworldly powers.",
@@ -54,7 +54,7 @@ object MockData {
         ),
         Season(
             id = 4355,
-            trakt_id = 126280,
+            show_id = 126280,
             name = "Season 1",
             overview = "A woman's daring sexual past collides with her married-with-kids " +
                 "present when the bad-boy ex she can't stop fantasizing about crashes " +

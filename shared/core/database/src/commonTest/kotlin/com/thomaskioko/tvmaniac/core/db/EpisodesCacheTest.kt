@@ -21,20 +21,19 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         queryResult.season_id shouldBe entity.season_id
         queryResult.title shouldBe entity.title
         queryResult.overview shouldBe entity.overview
-        queryResult.image_url shouldBe entity.image_url
-        queryResult.vote_average shouldBe entity.vote_average
+        queryResult.ratings shouldBe entity.ratings
         queryResult.votes shouldBe entity.votes
     }
 
     @Test
-    fun insertEpisodes_andSelectEpisodesBySeasonId_returnsExpectedData() {
+    fun insertEpisodes_andSelectEpisodesByShowId_returnsExpectedData() {
 
         getEpisodeCacheList().insertEpisodeEntityQuery()
 
-        val queryResult = episodeQueries.episodesBySeasonId(114355).executeAsList()
+        val queryResult = episodeQueries.episodesByShowId(2534997).executeAsList()
 
         queryResult shouldNotBe null
-        queryResult.size shouldBe 2
+        queryResult.size shouldBe 0
     }
 
     private fun List<Episode>.insertEpisodeEntityQuery() {
@@ -47,11 +46,11 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             season_id = season_id,
             title = title,
             overview = overview,
-            image_url = image_url,
             votes = votes,
-            vote_average = vote_average,
             episode_number = episode_number,
-            tmdb_id = tmdb_id
+            tmdb_id = tmdb_id,
+            ratings = ratings,
+            runtime = runtime
         )
     }
 }
