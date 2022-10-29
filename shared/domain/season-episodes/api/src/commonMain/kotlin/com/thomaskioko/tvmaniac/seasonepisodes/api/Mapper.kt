@@ -28,8 +28,8 @@ fun Resource<SelectByShowId>.toTvShow(): TvShow {
     } ?: TvShow.EMPTY_SHOW
 }
 
-fun Resource<List<SelectSeasonWithEpisodes>>.toSeasonWithEpisodes(): List<SeasonWithEpisodes> {
-    return data?.groupBy { it.name }?.map { groupMap ->
+fun List<SelectSeasonWithEpisodes>.toSeasonWithEpisodes(): List<SeasonWithEpisodes> {
+    return groupBy { it.name }.map { groupMap ->
         SeasonWithEpisodes(
             seasonId = groupMap.value.first().season_id,
             seasonName = groupMap.key,
@@ -37,7 +37,7 @@ fun Resource<List<SelectSeasonWithEpisodes>>.toSeasonWithEpisodes(): List<Season
             episodeCount = groupMap.value.size,
             watchProgress = 0f // TODO:: Fetch watch progress
         )
-    } ?: emptyList()
+    }
 }
 
 fun SelectSeasonWithEpisodes.toEpisode(): Episode {
@@ -48,7 +48,7 @@ fun SelectSeasonWithEpisodes.toEpisode(): Episode {
         episodeNumberTitle = "E$episode_number • $title_",
         overview = overview__,
         imageUrl = image_url.toImageUrl(),
-        voteAverage = vote_average,
+        runtime = runtime,
         voteCount = votes,
         episodeNumber = episode_number,
         seasonEpisodeNumber = "S${

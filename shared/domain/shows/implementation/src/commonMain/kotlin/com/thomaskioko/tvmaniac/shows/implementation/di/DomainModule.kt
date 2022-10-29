@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.shows.implementation.di
 
 import com.thomaskioko.tvmaniac.shows.api.ObserveSyncImages
-import com.thomaskioko.tvmaniac.shows.api.FetchShowsInteractor
+import com.thomaskioko.tvmaniac.shows.api.UpdateShowsInteractor
 import com.thomaskioko.tvmaniac.shows.api.ObserveShowsInteractor
 import com.thomaskioko.tvmaniac.shows.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
@@ -24,7 +24,7 @@ val showDomainModule: Module = module {
     single<ShowCategoryCache> { ShowCategoryCacheImpl(get()) }
     single<ShowImageCache> { ShowImageCacheImpl(get()) }
 
-    factory { FetchShowsInteractor(get(), get()) }
+    factory { UpdateShowsInteractor(get(), get()) }
     factory { ObserveShowsInteractor(get(), get()) }
     factory { ObserveSyncImages(get(), get()) }
 }

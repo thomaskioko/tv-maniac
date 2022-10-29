@@ -14,6 +14,7 @@ dependencies {
     commonMainImplementation(project(":shared:core:database"))
     commonMainImplementation(project(":shared:domain:trakt:api"))
     commonMainImplementation(project(":shared:domain:shows:api"))
+    commonMainImplementation(project(":shared:domain:episodes:api"))
 
     commonMainImplementation(libs.coroutines.core)
 }

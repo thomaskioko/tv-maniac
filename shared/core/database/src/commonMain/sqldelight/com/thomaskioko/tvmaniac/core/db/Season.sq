@@ -1,17 +1,17 @@
 CREATE TABLE season (
 id INTEGER AS Int NOT NULL PRIMARY KEY,
-trakt_id INTEGER AS Int NOT NULL,
+show_id INTEGER AS Int NOT NULL,
 season_number INTEGER AS Int NOT NULL,
 epiosode_count INTEGER AS Int NOT NULL,
 name TEXT NOT NULL,
 overview TEXT,
-FOREIGN KEY (trakt_id) REFERENCES show(trakt_id)
+FOREIGN KEY (show_id) REFERENCES show(trakt_id)
 );
 
 insertOrReplace:
 INSERT OR REPLACE INTO season(
 id,
-trakt_id,
+show_id,
 season_number,
 epiosode_count,
 name,
@@ -22,12 +22,12 @@ VALUES(?,?,?,?,?,?);
 selectBySeasonId:
 SELECT *
 FROM season
-WHERE id = ?;
+WHERE show_id = ?;
 
 selectSeasonsByShowId:
 SELECT *
 FROM season
-LEFT JOIN show ON show.trakt_id = season.trakt_id
-WHERE season.trakt_id = ? AND season_number != 0
+LEFT JOIN show ON show.trakt_id = season.show_id
+WHERE season.show_id = ? AND season_number != 0
 ORDER BY season_number ASC;
 

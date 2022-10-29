@@ -1,8 +1,10 @@
 package com.thomaskioko.tvmaniac.seasonepisodes.implementation.di
 
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.seasonepisodes.api.ObserveSeasonEpisodesInteractor
+import com.thomaskioko.tvmaniac.seasonepisodes.api.UpdateSeasonEpisodesInteractor
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonWithEpisodesCache
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonEpisodesRepository
 import com.thomaskioko.tvmaniac.seasonepisodes.implementation.SeasonWithEpisodesCacheImpl
@@ -33,28 +35,34 @@ object SeasonEpisodesModule {
     @Singleton
     @Provides
     fun provideSeasonWithEpisodesRepository(
-        tmdbService: TmdbService,
         traktService: TraktService,
-        tvShowCache: TvShowCache,
         episodesCache: EpisodesCache,
         seasonWithEpisodesCache: SeasonWithEpisodesCache,
-        seasonsCache: SeasonsCache,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): SeasonEpisodesRepository = SeasonEpisodesRepositoryImpl(
-        tmdbService,
         traktService,
-        tvShowCache,
         episodesCache,
-        seasonsCache,
         seasonWithEpisodesCache,
         ioDispatcher
     )
 
     @Singleton
     @Provides
-    fun provideObserveSeasonWithEpisodesInteractor(
+    fun provideUpdateSeasonEpisodesInteractor(
+        traktRepository: TraktRepository,
+        repository: SeasonEpisodesRepository,
+        episodeRepository: EpisodeRepository
+    ): UpdateSeasonEpisodesInteractor =
+        UpdateSeasonEpisodesInteractor(traktRepository, repository, episodeRepository)
+
+    @Singleton
+    @Provides
+    fun provideObserveSeasonEpisodesInteractor(
         traktRepository: TraktRepository,
         repository: SeasonEpisodesRepository,
     ): ObserveSeasonEpisodesInteractor =
-        ObserveSeasonEpisodesInteractor(traktRepository, repository)
+        ObserveSeasonEpisodesInteractor(
+            traktRepository,
+            repository,
+        )
 }

@@ -17,10 +17,6 @@ sealed class ShowDetailAction : Action {
         val params: UpdateShowParams
     ) : ShowDetailAction()
 
-    data class BookmarkEpisode(
-        val episodeNumber: Int
-    ) : ShowDetailAction()
-
     data class Error(val message: String = "") : ShowDetailAction()
 }
 
@@ -42,7 +38,6 @@ data class ShowDetailViewState(
     val tvShow: TvShow = TvShow.EMPTY_SHOW,
     val similarShowList: List<TvShow> = emptyList(),
     val tvSeasonUiModels: List<SeasonUiModel> = emptyList(),
-    val lastAirEpList: List<LastAirEpisode> = emptyList(),
     val trailersList: List<Trailer> = emptyList(),
 )  {
     companion object {

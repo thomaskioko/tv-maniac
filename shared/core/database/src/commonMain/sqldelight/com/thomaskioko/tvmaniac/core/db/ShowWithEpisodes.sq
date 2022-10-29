@@ -16,7 +16,8 @@ season_number
 selectSeasonWithEpisodes:
 SELECT *
 FROM show
-JOIN season ON  season.trakt_id = show.trakt_id
+JOIN season ON  season.show_id = show.trakt_id
 JOIN episode ON  episode.season_id = season.id
+LEFT OUTER JOIN episodeImage ON episodeImage.id = episode.id
 WHERE show.trakt_id = ? AND season_number != 0
 ORDER BY season.season_number, episode_number ASC;

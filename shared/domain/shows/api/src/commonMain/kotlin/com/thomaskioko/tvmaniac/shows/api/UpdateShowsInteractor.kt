@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.flow.Flow
 
-class FetchShowsInteractor constructor(
+class UpdateShowsInteractor constructor(
     private val traktRepository: TraktRepository,
     private val tmdbRepository: TmdbRepository
 ) : FlowInteractor<Unit, Unit>() {

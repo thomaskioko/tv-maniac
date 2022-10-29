@@ -5,9 +5,9 @@ import com.thomaskioko.tvmaniac.core.util.network.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface SeasonEpisodesRepository {
-    fun observeSeasonEpisodes(
+    fun updateSeasonEpisodes(
         showId: Int,
     ): Flow<Resource<List<SelectSeasonWithEpisodes>>>
 
-   fun syncSeasonEpisodeArtWork(traktId: Int) : Flow<Unit>
+    fun observeSeasonEpisodes(showId: Int): Flow<List<SelectSeasonWithEpisodes>>
 }

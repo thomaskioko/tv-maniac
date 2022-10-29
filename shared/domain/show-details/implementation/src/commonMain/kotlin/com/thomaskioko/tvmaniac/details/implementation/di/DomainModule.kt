@@ -6,7 +6,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val detailDomainModule: Module = module {
-    factory { ObserveShowInteractor(get(), get(), get(), get(), get()) }
+    factory { ObserveShowInteractor(get(), get(), get(), get()) }
     factory { UpdateFollowingInteractor(get()) }
 
 }
