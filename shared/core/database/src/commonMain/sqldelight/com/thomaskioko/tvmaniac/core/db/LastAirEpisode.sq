@@ -1,6 +1,6 @@
 CREATE TABLE last_episode (
-id INTEGER NOT NULL PRIMARY KEY,
-show_id INTEGER NOT NULL,
+id INTEGER AS Int NOT NULL PRIMARY KEY,
+show_id INTEGER AS Int NOT NULL,
 name TEXT ,
 overview TEXT NOT NULL,
 title TEXT NOT NULL,
@@ -10,7 +10,7 @@ season_number INTEGER NOT NULL,
 still_path TEXT,
 vote_average REAL ,
 vote_count INTEGER,
-FOREIGN KEY (show_id) REFERENCES show(id)
+FOREIGN KEY (show_id) REFERENCES show(trakt_id)
 );
 
 insertOrReplace:
@@ -37,6 +37,6 @@ WHERE id = ?;
 airEpisodesByShowId:
 SELECT *
 FROM last_episode
-LEFT JOIN show ON show.id = last_episode.show_id
+LEFT JOIN show ON show.trakt_id = last_episode.show_id
 WHERE show_id = ? ;
 

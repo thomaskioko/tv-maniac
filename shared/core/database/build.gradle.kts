@@ -1,9 +1,7 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 import util.libs
 
 plugins {
     `kmm-domain-plugin`
-    kotlin("kapt")
     id("com.squareup.sqldelight")
 }
 
@@ -11,18 +9,11 @@ android {
     namespace = "com.thomaskioko.tvmaniac.core.db"
 }
 
-kapt {
-    correctErrorTypes = true
-}
-
 dependencies {
     commonMainImplementation(libs.koin)
     commonMainImplementation(libs.squareup.sqldelight.runtime)
 
     androidMainImplementation(libs.squareup.sqldelight.driver.android)
-    androidMainImplementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-
     iosMainImplementation(libs.koin)
     iosMainImplementation(libs.squareup.sqldelight.driver.native)
 

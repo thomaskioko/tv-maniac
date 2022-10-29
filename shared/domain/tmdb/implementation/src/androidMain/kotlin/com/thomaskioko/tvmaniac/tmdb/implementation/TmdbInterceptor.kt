@@ -3,16 +3,20 @@ package com.thomaskioko.tvmaniac.tmdb.implementation
 import io.ktor.http.HttpHeaders
 import okhttp3.Interceptor
 import okhttp3.Response
+import javax.inject.Inject
+import javax.inject.Named
 
 
-class TmdbInterceptor : Interceptor {
+class TmdbInterceptor @Inject constructor(
+    @Named("tmdb-api-key") private val tmdbApiKey: String
+) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
         val urlBuilder = request.url.newBuilder()
             .scheme("https")
             .host("api.themoviedb.org")
-            .addQueryParameter("api_key", BuildKonfig.TMDB_API_KEY)
+            .addQueryParameter("api_key", tmdbApiKey)
             .build()
 
 

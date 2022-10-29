@@ -15,15 +15,18 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    @Singleton
     @Provides
-    fun provideTmdbInterceptor(): TmdbInterceptor = TmdbInterceptor()
+    @Named("tmdb-url")
+    fun provideTmdbUrl(): String = "https://api.themoviedb.org/"
 
     @Singleton
     @Provides
     @Named("tmdb-http-client")
     fun provideHttpClient(
+        @Named("tmdb-url") httpUrl: String,
         tmdbInterceptor: TmdbInterceptor
-    ): HttpClient = KtorClientFactory().httpClient(tmdbHttpClient(tmdbInterceptor))
+    ): HttpClient = KtorClientFactory().httpClient(tmdbHttpClient(httpUrl, tmdbInterceptor))
 
     @Singleton
     @Provides

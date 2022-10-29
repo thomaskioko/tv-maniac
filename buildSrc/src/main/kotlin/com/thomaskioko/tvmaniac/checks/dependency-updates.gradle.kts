@@ -6,7 +6,7 @@ plugins {
     id("com.github.ben-manes.versions")
 }
 
-tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
+tasks.withType<DependencyUpdatesTask> {
     checkForGradleUpdate = true
     outputFormatter = "json"
     outputDir = "build/dependencyUpdates"

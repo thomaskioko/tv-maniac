@@ -14,6 +14,7 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.android.min.get().toInt()
+        manifestPlaceholders["appAuthRedirectScheme"] = "empty"
     }
 
     compileOptions {
@@ -28,6 +29,7 @@ android {
     }
 
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 

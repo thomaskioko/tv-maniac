@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 import util.libs
 
 plugins {
@@ -19,6 +18,7 @@ dependencies {
     commonMainImplementation(project(":shared:core:database"))
     commonMainImplementation(project(":shared:domain:tmdb:api"))
     commonMainImplementation(project(":shared:domain:trailers:api"))
+    commonMainImplementation(project(":shared:domain:shows:api"))
 
     commonMainImplementation(libs.squareup.sqldelight.extensions)
     commonMainImplementation(libs.kermit)

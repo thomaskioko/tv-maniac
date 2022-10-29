@@ -29,6 +29,24 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="net.openid.appauth.RedirectUriReceiverActivity"
+            android:exported="true"
+            tools:node="replace">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="callback"
+                    android:scheme="tvmaniac" />
+
+            </intent-filter>
+        </activity>
+
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
@@ -40,4 +58,9 @@
                 tools:node="remove" />
         </provider>
     </application>
+    <queries>
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent>
+    </queries>
 </manifest> 

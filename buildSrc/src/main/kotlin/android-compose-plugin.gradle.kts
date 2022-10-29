@@ -21,6 +21,7 @@ android {
     }
 
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 
@@ -36,16 +37,20 @@ android {
 dependencies {
     implementation(project(":android:core:resources"))
 
-    implementation(libs.androidx.core)
+    api(libs.coroutines.jvm)
+    api(libs.coil.coil)
+    api(libs.coil.compose)
+    api(libs.androidx.compose.ui.tooling)
     api(libs.androidx.palette)
     api(libs.androidx.compose.runtime)
     api(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.material.icons)
     api(libs.androidx.compose.ui.runtime)
-    implementation(libs.androidx.compose.foundation)
-    api(libs.coroutines.jvm)
-    api(libs.androidx.compose.ui.tooling)
+    api(libs.androidx.lifecycle.runtime.compose)
+    api(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.kenburns)
-    implementation(libs.coil)
+    implementation(libs.accompanist.insetsui)
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.lifecycle.runtime)
 }

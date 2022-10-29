@@ -11,7 +11,7 @@ android {
 dependencies {
     commonMainApi(project(":shared:core:util"))
     commonMainImplementation(project(":shared:core:database"))
-    commonMainImplementation(project(":shared:domain:show-common:api"))
+    commonMainImplementation(project(":shared:domain:shows:api"))
 
     commonMainImplementation(libs.coroutines.core)
 }

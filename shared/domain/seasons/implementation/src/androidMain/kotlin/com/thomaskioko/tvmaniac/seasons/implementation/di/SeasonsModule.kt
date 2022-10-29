@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsCacheImpl
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsRepositoryImpl
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
+import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,11 +28,11 @@ object SeasonsModule {
     @Singleton
     @Provides
     fun provideTvShowSeasonsRepository(
-        tmdbService: TmdbService,
+        traktService: TraktService,
         seasonCache: SeasonsCache,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): SeasonsRepository = SeasonsRepositoryImpl(
-        tmdbService,
+        traktService,
         seasonCache,
         ioDispatcher
     )

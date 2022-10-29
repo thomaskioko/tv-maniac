@@ -1,72 +1,59 @@
 package com.thomaskioko.tvmaniac.details.api
 
 import com.thomaskioko.tvmaniac.core.db.AirEpisodesByShowId
-import com.thomaskioko.tvmaniac.core.db.Genre
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
-import com.thomaskioko.tvmaniac.core.db.Show
+import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
-import com.thomaskioko.tvmaniac.showcommon.api.model.TvShow
+import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.genre.api.GenreUIModel
 import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
 
 fun Resource<List<SelectSimilarShows>>.toSimilarShowList(): List<TvShow> = data?.map {
     TvShow(
-        id = it.id,
+        traktId = it.trakt_id_,
+        tmdbId = it.tmdb_id,
         title = it.title,
-        overview = it.description,
+        overview = it.overview,
         language = it.language,
-        posterImageUrl = it.poster_image_url,
-        backdropImageUrl = it.backdrop_image_url,
-        votes = it.votes.toInt(),
-        averageVotes = it.vote_average,
-        genreIds = it.genre_ids,
+        posterImageUrl = it.poster_url,
+        backdropImageUrl = it.backdrop_url,
+        votes = it.votes,
+        rating = it.rating,
+        genres = it.genres,
         year = it.year,
         status = it.status,
-        following = it.following
     )
 } ?: emptyList()
 
 
-fun Resource<Show>.toTvShow(): TvShow = data?.let {
+fun Resource<SelectByShowId>.toTvShow(): TvShow = data?.let {
     TvShow(
-        id = it.id,
+        traktId = it.trakt_id,
+        tmdbId = it.tmdb_id,
         title = it.title,
-        overview = it.description,
+        overview = it.overview,
         language = it.language,
-        posterImageUrl = it.poster_image_url,
-        backdropImageUrl = it.backdrop_image_url,
-        votes = it.votes.toInt(),
-        averageVotes = it.vote_average,
-        genreIds = it.genre_ids,
+        posterImageUrl = it.poster_url,
+        backdropImageUrl = it.backdrop_url,
+        votes = it.votes,
+        rating = it.rating,
+        genres = it.genres,
         year = it.year,
         status = it.status,
-        following = it.following
     )
 } ?: TvShow.EMPTY_SHOW
-
-fun Resource<List<Genre>>.toGenreModelList(genreIds: List<Int>): List<GenreUIModel> =
-    data?.filter { genre ->
-        genreIds.any { id -> genre.id == id.toLong() }
-    }?.map {
-        GenreUIModel(
-            id = it.id.toInt(),
-            name = it.name
-        )
-    } ?: emptyList()
-
 
 fun Resource<List<SelectSeasonsByShowId>>.toSeasonsEntityList(): List<SeasonUiModel> = data?.map {
     SeasonUiModel(
         seasonId = it.id,
-        tvShowId = it.tv_show_id,
+        tvShowId = it.show_id,
         name = it.name,
         overview = it.overview,
         seasonNumber = it.season_number,
-        episodeCount = it.epiosode_count.toInt()
+        episodeCount = it.epiosode_count
     )
 } ?: emptyList()
 
@@ -91,7 +78,7 @@ fun List<AirEpisodesByShowId>.toLastAirEpisodeList(): List<LastAirEpisode> = map
 
 fun Resource<List<Trailers>>.toTrailerList(): List<Trailer> = data?.map {
     Trailer(
-        showId = it.show_id,
+        showId = it.trakt_id,
         key = it.key,
         name = it.name,
         youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg"

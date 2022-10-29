@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 import util.libs
 
 plugins {
@@ -16,15 +17,14 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     commonMainImplementation(project(":shared:core:database"))
-    commonMainImplementation(project(":shared:domain:tmdb:api"))
     commonMainImplementation(project( ":shared:domain:show-details:api"))
     commonMainImplementation(project(":shared:domain:episodes:api"))
     commonMainImplementation(project(":shared:domain:last-air-episodes:api"))
-    commonMainImplementation(project(":shared:domain:show-common:api"))
+    commonMainImplementation(project(":shared:domain:shows:api"))
     commonMainImplementation(project(":shared:domain:similar:api"))
     commonMainImplementation(project(":shared:domain:seasons:api"))
-    commonMainImplementation(project(":shared:domain:genre:api"))
     commonMainImplementation(project(":shared:domain:trailers:api"))
+    commonMainImplementation(project(":shared:domain:trakt:api"))
 
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin)

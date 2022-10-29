@@ -14,7 +14,7 @@ class ShowsGridNavigationFactory @Inject constructor() : ComposeNavigationFactor
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
         builder.viewModelComposable<ShowGridViewModel>(
             arguments = listOf(
-                navArgument("showType") { type = NavType.LongType },
+                navArgument("showType") { type = NavType.IntType },
             ),
             route = "${NavigationScreen.ShowGridNavScreen.route}/{showType}",
             content = {

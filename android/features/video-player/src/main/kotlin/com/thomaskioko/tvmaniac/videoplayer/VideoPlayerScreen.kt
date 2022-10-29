@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.videoplayer
 
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +20,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,16 +35,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.rememberImagePainter
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
-import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerListAction
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
-import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun VideoPlayerScreen(
@@ -54,8 +52,7 @@ fun VideoPlayerScreen(
 ) {
 
     val listState = rememberLazyListState()
-    val viewState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = TrailerListState.Empty)
+    val viewState by viewModel.observeState().collectAsStateWithLifecycle()
 
 
     LaunchedEffect(viewState.youTubePlayer) {
@@ -155,9 +152,8 @@ private fun TrailerList(
             ) {
                 val (episodeTitle, image) = createRefs()
 
-
-                Image(
-                    painter = rememberImagePainter(data = trailer.youtubeThumbnailUrl),
+                AsyncImageComposable(
+                    model = trailer.youtubeThumbnailUrl,
                     contentDescription = trailer.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
