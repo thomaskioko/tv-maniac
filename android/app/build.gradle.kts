@@ -40,6 +40,7 @@ dependencies {
     implementation(projects.android.features.settings)
     implementation(projects.android.features.seasons)
     implementation(projects.android.features.videoPlayer)
+    implementation(projects.android.features.profile)
 
     implementation(libs.appauth)
     implementation(libs.hilt.work)

@@ -8,8 +8,8 @@ import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsContent
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsEffect
 import com.thomaskioko.tvmaniac.shared.persistance.TvManiacPreferences
-import com.thomaskioko.tvmaniac.traktauth.ObserveTraktAuthStateInteractor
 import com.thomaskioko.tvmaniac.trakt.api.ObserveTraktUserInteractor
+import com.thomaskioko.tvmaniac.traktauth.ObserveTraktAuthStateInteractor
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.TraktManager
@@ -100,10 +100,12 @@ class SettingsViewModel @Inject constructor(
                         showTraktDialog = false
                     )
                     state.emit(newState)
+                    traktManager.clearAuth()
                 }
             }
+
             SettingsActions.LoadTheme -> updateTheme()
-            SettingsActions.TraktLoginLogout -> logoutOfTrakt()
+            SettingsActions.TraktLogout -> logoutOfTrakt()
             SettingsActions.FetchTraktUserProfile -> fetchUserInfo()
             SettingsActions.RefreshTraktAuthToken -> {
 

@@ -7,7 +7,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface TraktFollowedCache {
 
-    fun insert(followedShows: Followed_shows)
+    fun insert(followedShow: Followed_shows)
+
+    fun insert(followedShows: List<Followed_shows>)
 
     fun getFollowedShows(): List<SelectFollowedShows>
 

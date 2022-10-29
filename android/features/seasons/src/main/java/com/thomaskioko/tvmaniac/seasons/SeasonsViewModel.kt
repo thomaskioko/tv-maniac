@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.thomaskioko.tvmaniac.core.util.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.seasonepisodes.api.Loading
 import com.thomaskioko.tvmaniac.seasonepisodes.api.ObserveSeasonEpisodesInteractor
+import com.thomaskioko.tvmaniac.seasonepisodes.api.UpdateSeasonEpisodesInteractor
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsAction
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsAction.Error
 import com.thomaskioko.tvmaniac.seasonepisodes.api.SeasonsAction.LoadSeasons
@@ -25,7 +26,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SeasonsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val observeSeasonsInteractor: ObserveSeasonEpisodesInteractor,
+    private val updateSeasonEpisodesInteractor: UpdateSeasonEpisodesInteractor,
+    private val observeSeasonEpisodesInteractor: ObserveSeasonEpisodesInteractor,
 ) : Store<SeasonsViewState, SeasonsAction, SeasonsEffect>, CoroutineScopeOwner, ViewModel() {
 
     private val showId: Int = savedStateHandle["showId"]!!
@@ -36,6 +38,8 @@ class SeasonsViewModel @Inject constructor(
 
     init {
         dispatch(LoadSeasons)
+
+        observeSeasonEpisodes()
     }
 
     override val coroutineScope: CoroutineScope
@@ -47,7 +51,7 @@ class SeasonsViewModel @Inject constructor(
 
     override fun dispatch(action: SeasonsAction) {
         when (action) {
-            LoadSeasons -> fetchSeason()
+            LoadSeasons -> updateSeasonEpisodesInteractor.execute(showId) {}
             is Error -> {
                 coroutineScope.launch {
                     uiEffects.emit(SeasonsEffect.Error(action.message))
@@ -56,9 +60,9 @@ class SeasonsViewModel @Inject constructor(
         }
     }
 
-    private fun fetchSeason() {
+    private fun observeSeasonEpisodes() {
         with(state) {
-            observeSeasonsInteractor.execute(showId) {
+            observeSeasonEpisodesInteractor.execute(showId) {
                 onStart {
                     coroutineScope.launch { emit(Loading) }
                 }

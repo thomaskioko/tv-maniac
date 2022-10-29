@@ -36,7 +36,7 @@ sealed class SettingsActions : Action {
     object ThemeClicked : SettingsActions()
     object ShowTraktDialog : SettingsActions()
     object DismissTraktDialog : SettingsActions()
-    object TraktLoginLogout : SettingsActions()
+    object TraktLogout : SettingsActions()
     object TraktLogin : SettingsActions()
     object RefreshTraktAuthToken : SettingsActions()
     object FetchTraktUserProfile : SettingsActions()

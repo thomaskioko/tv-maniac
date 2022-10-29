@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.core.util
 
 import platform.Foundation.NSNumber
 import platform.Foundation.NSNumberFormatter
+import kotlin.math.abs
+import kotlin.math.sign
 
 const val POSTER_PATH = "https://image.tmdb.org/t/p/original"
 const val DEFAULT_IMAGE_URL =
@@ -21,6 +23,18 @@ actual object FormatterUtil {
             number != null -> formatter.stringFromNumber(NSNumber(number))?.toDouble() ?: 0.0
             else -> 0.0
         }
+    }
+
+    actual fun formatDuration(number: Int): String {
+        val formatter = NSNumberFormatter()
+        formatter.minimumFractionDigits = 0u
+        formatter.maximumFractionDigits = 1u
+        formatter.numberStyle = 1u //Decimal
+
+        val num = NSNumber((abs(number) / 1000))
+
+        return if (abs(number) > 999) "${(sign(number.toDouble()) * num.doubleValue) / 10.0} k"
+        else (sign(number.toDouble()) * abs(number)).toString()
     }
 
 }

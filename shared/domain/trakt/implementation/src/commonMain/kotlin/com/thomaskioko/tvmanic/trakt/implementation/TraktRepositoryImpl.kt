@@ -8,17 +8,17 @@ import com.kuuurt.paging.multiplatform.PagingResult
 import com.kuuurt.paging.multiplatform.helpers.cachedIn
 import com.thomaskioko.tvmaniac.core.db.Category
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
-import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
-import com.thomaskioko.tvmaniac.core.db.Show
-import com.thomaskioko.tvmaniac.core.db.Show_category
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
+import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
+import com.thomaskioko.tvmaniac.core.db.Show
+import com.thomaskioko.tvmaniac.core.db.TraktStats
 import com.thomaskioko.tvmaniac.core.db.Trakt_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
 import com.thomaskioko.tvmaniac.core.util.CommonFlow
-import com.thomaskioko.tvmaniac.core.util.DateUtil
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.asCommonFlow
+import com.thomaskioko.tvmaniac.core.util.helper.DateUtilHelper
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.shows.api.cache.CategoryCache
@@ -27,15 +27,17 @@ import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
-import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
+import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
+import com.thomaskioko.tvmaniac.trakt.api.cache.TraktStatsCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
+import com.thomaskioko.tvmanic.trakt.implementation.mapper.toCache
+import com.thomaskioko.tvmanic.trakt.implementation.mapper.toCategoryCache
+import com.thomaskioko.tvmanic.trakt.implementation.mapper.toFollowedCache
 import com.thomaskioko.tvmanic.trakt.implementation.mapper.toShow
+import com.thomaskioko.tvmanic.trakt.implementation.mapper.toShowList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -57,7 +59,9 @@ class TraktRepositoryImpl constructor(
     private val favoriteCache: TraktListCache,
     private val categoryCache: CategoryCache,
     private val showCategoryCache: ShowCategoryCache,
+    private val statsCache: TraktStatsCache,
     private val traktService: TraktService,
+    private val dateUtilHelper: DateUtilHelper,
     private val dispatcher: CoroutineDispatcher,
     private val coroutineScope: CoroutineScope,
 ) : TraktRepository {
@@ -67,17 +71,28 @@ class TraktRepositoryImpl constructor(
             query = { traktUserCache.observeMe() },
             shouldFetch = { it == null },
             fetch = { traktService.getUserProfile(slug) },
-            saveFetchResult = { it.mapAndCache(slug) },
+            saveFetchResult = { traktUserCache.insert(it.toCache(slug)) },
             onFetchFailed = { Logger.withTag("observeMe").e(it.resolveError()) },
             coroutineDispatcher = dispatcher
         )
+
+    override fun observeStats(slug: String, refresh: Boolean): Flow<Resource<TraktStats>> =
+        networkBoundResource(
+            query = { statsCache.observeStats() },
+            shouldFetch = { it == null || refresh },
+            fetch = { traktService.getUserStats(slug) },
+            saveFetchResult = { statsCache.insert(it.toCache(slug)) },
+            onFetchFailed = { Logger.withTag("observeStats").e(it.resolveError()) },
+            coroutineDispatcher = dispatcher
+        )
+
 
     override fun observeCreateTraktList(userSlug: String): Flow<Resource<Trakt_list>> =
         networkBoundResource(
             query = { favoriteCache.observeTraktList() },
             shouldFetch = { it == null },
             fetch = { traktService.createFollowingList(userSlug) },
-            saveFetchResult = { it.mapAndCache() },
+            saveFetchResult = { favoriteCache.insert(it.toCache()) },
             onFetchFailed = { Logger.withTag("createTraktFavoriteList").e(it.resolveError()) },
             coroutineDispatcher = dispatcher
         )
@@ -105,9 +120,10 @@ class TraktRepositoryImpl constructor(
                     Followed_shows(
                         id = traktId,
                         synced = true,
-                        created_at = DateUtil.getTimestampMilliseconds()
+                        created_at = dateUtilHelper.getTimestampMilliseconds()
                     )
                 )
+
                 else -> followedCache.removeShow(traktId)
             }
         },
@@ -118,9 +134,10 @@ class TraktRepositoryImpl constructor(
                     Followed_shows(
                         id = traktId,
                         synced = false,
-                        created_at = DateUtil.getTimestampMilliseconds()
+                        created_at = dateUtilHelper.getTimestampMilliseconds()
                     )
                 )
+
                 else -> followedCache.removeShow(traktId)
             }
             Logger.withTag("observeUpdateFollowedShow").e(it.resolveError())
@@ -188,8 +205,7 @@ class TraktRepositoryImpl constructor(
             .flowOn(dispatcher)
             .collect { user ->
                 user?.let {
-                    traktService.getWatchList()
-                        .mapAndCache()
+                    followedCache.insert(traktService.getWatchList().toFollowedCache())
                 }
             }
     }
@@ -227,7 +243,7 @@ class TraktRepositoryImpl constructor(
                                 Followed_shows(
                                     id = it.id,
                                     synced = true,
-                                    created_at = DateUtil.getTimestampMilliseconds()
+                                    created_at = dateUtilHelper.getTimestampMilliseconds()
                                 )
                             )
                         }
@@ -241,22 +257,21 @@ class TraktRepositoryImpl constructor(
                 Followed_shows(
                     id = traktId,
                     synced = false,
-                    created_at = DateUtil.getTimestampMilliseconds()
+                    created_at = dateUtilHelper.getTimestampMilliseconds()
                 )
             )
+
             else -> followedCache.removeShow(traktId)
         }
     }
 
     private suspend fun fetchShowsApiRequest(categoryId: Int): List<Show> = when (categoryId) {
-        ShowCategory.TRENDING.id -> traktService.getTrendingShows().map { it.toShow() }
-        ShowCategory.POPULAR.id -> traktService.getPopularShows().map { it.toShow() }
-        ShowCategory.ANTICIPATED.id -> traktService.getAnticipatedShows().map { it.toShow() }
-        ShowCategory.RECOMMENDED.id -> traktService.getRecommendedShows(period = "weekely")
-            .map { it.toShow() }
-        ShowCategory.FEATURED.id -> traktService.getRecommendedShows(period = "monthly")
-            .map { it.toShow() }
-        else -> traktService.getTrendingShows().map { it.toShow() }
+        ShowCategory.POPULAR.id -> traktService.getPopularShows().toShowList()
+        ShowCategory.TRENDING.id -> traktService.getTrendingShows().toShow()
+        ShowCategory.ANTICIPATED.id -> traktService.getAnticipatedShows().toShow()
+        ShowCategory.RECOMMENDED.id -> traktService.getRecommendedShows(period = "weekely").toShow()
+        ShowCategory.FEATURED.id -> traktService.getRecommendedShows(period = "monthly").toShow()
+        else -> traktService.getTrendingShows().toShow()
     }
 
     override fun observeFollowedShows(): Flow<List<SelectFollowedShows>> =
@@ -266,39 +281,6 @@ class TraktRepositoryImpl constructor(
         followedCache.observeFollowedShow(traktId)
             .map { it?.id == traktId }
 
-    private fun TraktUserResponse.mapAndCache(slug: String) {
-        traktUserCache.insert(
-            Trakt_user(
-                slug = ids.slug,
-                full_name = name,
-                user_name = userName,
-                profile_picture = images.avatar.full,
-                is_me = slug == "me"
-            )
-        )
-    }
-
-    private fun TraktCreateListResponse.mapAndCache() {
-        favoriteCache.insert(
-            Trakt_list(
-                id = ids.trakt,
-                slug = ids.slug,
-                description = description
-            )
-        )
-    }
-
-    private fun List<TraktFollowedShowResponse>.mapAndCache() {
-        map {
-            followedCache.insert(
-                Followed_shows(
-                    id = it.show.ids.trakt,
-                    synced = true,
-                    created_at = DateUtil.getTimestampMilliseconds()
-                )
-            )
-        }
-    }
 
     private fun cacheResult(result: List<Show>, categoryId: Int) {
         tvShowCache.insert(result)
@@ -311,15 +293,7 @@ class TraktRepositoryImpl constructor(
             )
         )
 
-        result.forEach { show ->
-            // Insert ShowCategory
-            showCategoryCache.insert(
-                Show_category(
-                    category_id = categoryId,
-                    trakt_id = show.trakt_id
-                )
-            )
-        }
+        showCategoryCache.insert(result.toCategoryCache(categoryId))
     }
 
     private fun List<TraktShowsResponse>.mapAndCacheShows(
@@ -336,14 +310,7 @@ class TraktRepositoryImpl constructor(
             )
         )
 
-        result.forEach { show ->
-            showCategoryCache.insert(
-                Show_category(
-                    category_id = categoryId,
-                    trakt_id = show.trakt_id
-                )
-            )
-        }
+        showCategoryCache.insert(result.toCategoryCache(categoryId))
     }
 
     private fun List<TraktShowResponse>.mapAndCacheShow(
@@ -360,14 +327,6 @@ class TraktRepositoryImpl constructor(
             )
         )
 
-        result.forEach { show ->
-            // Insert ShowCategory
-            showCategoryCache.insert(
-                Show_category(
-                    category_id = categoryId,
-                    trakt_id = show.trakt_id
-                )
-            )
-        }
+        showCategoryCache.insert(result.toCategoryCache(categoryId))
     }
 }

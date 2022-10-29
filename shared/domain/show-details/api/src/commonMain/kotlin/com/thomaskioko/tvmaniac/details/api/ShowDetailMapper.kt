@@ -49,7 +49,7 @@ fun Resource<SelectByShowId>.toTvShow(): TvShow = data?.let {
 fun Resource<List<SelectSeasonsByShowId>>.toSeasonsEntityList(): List<SeasonUiModel> = data?.map {
     SeasonUiModel(
         seasonId = it.id,
-        tvShowId = it.trakt_id,
+        tvShowId = it.show_id,
         name = it.name,
         overview = it.overview,
         seasonNumber = it.season_number,

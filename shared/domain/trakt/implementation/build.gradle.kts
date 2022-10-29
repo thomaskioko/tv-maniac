@@ -15,6 +15,7 @@ android {
 dependencies {
 
     androidMainImplementation(project(":shared:core:ui"))
+    androidMainImplementation(project(":shared:core:util"))
     androidMainImplementation(project(":shared:core:network"))
     androidMainImplementation(libs.appauth)
     androidMainImplementation(libs.kermit)

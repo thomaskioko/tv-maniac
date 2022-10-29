@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
 
 private const val DEFAULT_API_PAGE = 1
 
@@ -26,6 +27,8 @@ interface TraktService {
     suspend fun getUserProfile(userId: String): TraktUserResponse
 
     suspend fun getUserList(userId: String): List<TraktPersonalListsResponse>
+
+    suspend fun getUserStats(userId: String): TraktUserStatsResponse
 
     suspend fun createFollowingList(userSlug: String): TraktCreateListResponse
 

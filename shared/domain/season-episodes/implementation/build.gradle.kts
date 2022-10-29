@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 import util.libs
 
 plugins {
@@ -26,8 +27,6 @@ dependencies {
     commonMainImplementation(libs.squareup.sqldelight.extensions)
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin)
-
-    testImplementation(libs.testing.mockk.core)
 
     commonTestImplementation(kotlin("test"))
     commonTestImplementation(project(":shared:core:test"))

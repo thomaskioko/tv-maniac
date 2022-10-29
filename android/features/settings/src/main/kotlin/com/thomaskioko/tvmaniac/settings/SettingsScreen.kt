@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.settings
 
+import android.content.res.Configuration
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -21,12 +22,15 @@ import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -42,8 +46,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
-import com.thomaskioko.tvmaniac.compose.components.UserProfileButton
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
 import com.thomaskioko.tvmaniac.shared.persistance.SettingsContent
@@ -52,7 +56,7 @@ import com.thomaskioko.tvmaniac.shared.persistance.Theme
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
-    onProfileClicked: () -> Unit
+    navigateUp: () -> Unit
 ) {
 
     val settingsState by viewModel.observeState().collectAsStateWithLifecycle()
@@ -77,20 +81,17 @@ fun SettingsScreen(
                     }
                 },
                 backgroundColor = MaterialTheme.colors.background,
-                actions = {
-                    UserProfileButton(
-                        loggedIn = settingsState.loggedIn,
-                        avatarUrl = settingsState.traktUserPicUrl,
-                        fullName = settingsState.traktFullName,
-                        userName = settingsState.traktUserName,
-                        onClick = onProfileClicked,
-                        modifier = Modifier
-                            .clickable(
-                                enabled = false,
-                                onClick = onProfileClicked
-                            )
-                    )
-                }
+                navigationIcon = {
+                    IconButton(
+                        onClick = navigateUp,
+                        modifier = Modifier.iconButtonBackgroundScrim()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = null,
+                        )
+                    }
+                },
             )
         },
         modifier = Modifier
@@ -101,11 +102,11 @@ fun SettingsScreen(
                 onThemeChanged = { viewModel.dispatch(SettingsActions.ThemeSelected(it)) },
                 onThemeClicked = { viewModel.dispatch(SettingsActions.ThemeClicked) },
                 onDismissTheme = { viewModel.dispatch(SettingsActions.ThemeClicked) },
+                onLogoutClicked = { viewModel.dispatch(SettingsActions.TraktLogout) },
                 onLoginClicked = {
                     loginLauncher.launch(Unit)
                     viewModel.dispatch(SettingsActions.DismissTraktDialog)
                 },
-                onLogoutClicked = { viewModel.dispatch(SettingsActions.TraktLoginLogout) },
                 onConnectClicked = { viewModel.dispatch(SettingsActions.ShowTraktDialog) },
                 onDismissDialogClicked = { viewModel.dispatch(SettingsActions.DismissTraktDialog) },
                 modifier = Modifier
@@ -135,21 +136,21 @@ fun SettingsList(
         item { ColumnSpacer(value = 16) }
 
         item {
+            ThemeSettingsItem(
+                settingsState = settingsState,
+                onThemeSelected = onThemeChanged,
+                onThemeClicked = onThemeClicked,
+                onDismissTheme = onDismissTheme
+            )
+        }
+
+        item {
             TraktProfileSettingsItem(
                 settingsState = settingsState,
                 onLoginClicked = onLoginClicked,
                 onLogoutClicked = onLogoutClicked,
                 onDismissDialogClicked = onDismissDialogClicked,
                 onConnectClicked = onConnectClicked
-            )
-        }
-
-        item {
-            ThemeSettingsItem(
-                settingsState = settingsState,
-                onThemeSelected = onThemeChanged,
-                onThemeClicked = onThemeClicked,
-                onDismissTheme = onDismissTheme
             )
         }
 
@@ -473,20 +474,22 @@ private fun SettingListDivider() {
 
 @Preview(
     name = "Settings List",
-    showSystemUi = true
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
 fun SettingsPropertyPreview() {
     TvManiacTheme {
-        SettingsList(
-            settingsState = SettingsContent.DEFAULT,
-            onThemeChanged = {},
-            onThemeClicked = {},
-            onDismissTheme = {},
-            onLogoutClicked = {},
-            onLoginClicked = {},
-            onDismissDialogClicked = {},
-            onConnectClicked = {}
-        )
+        Surface {
+            SettingsList(
+                settingsState = SettingsContent.DEFAULT,
+                onThemeChanged = {},
+                onThemeClicked = {},
+                onDismissTheme = {},
+                onLogoutClicked = {},
+                onLoginClicked = {},
+                onDismissDialogClicked = {},
+                onConnectClicked = {}
+            )
+        }
     }
 }

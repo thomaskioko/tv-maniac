@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.shared.di
 
 import com.thomaskioko.tvmaniac.core.db.di.dbPlatformModule
+import com.thomaskioko.tvmaniac.core.util.di.coreUtilModule
 import com.thomaskioko.tvmaniac.details.implementation.di.detailDomainModule
 import com.thomaskioko.tvmaniac.episodes.implementation.di.episodeDomainModule
 import com.thomaskioko.tvmaniac.lastairepisodes.implementation.di.lastAirEpisodeDomainModule
@@ -33,7 +34,8 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         coreUiPlatformModule(),
         dbPlatformModule(),
         networkPlatformModule(),
-        tmdbModule()
+        tmdbModule(),
+        coreUtilModule()
     )
 }
 

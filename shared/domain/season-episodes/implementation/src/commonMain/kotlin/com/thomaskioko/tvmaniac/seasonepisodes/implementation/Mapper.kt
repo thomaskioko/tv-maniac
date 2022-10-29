@@ -11,10 +11,10 @@ fun TraktSeasonEpisodesResponse.toEpisodeCacheList(): List<Episode> {
             tmdb_id = episodeResponse.ids.tmdb,
             title = episodeResponse.title,
             overview = episodeResponse.overview ?: "TBA",
-            vote_average = episodeResponse.ratings,
+            ratings = episodeResponse.ratings,
+            runtime = episodeResponse.runtime,
             votes = episodeResponse.votes,
             episode_number = episodeResponse.episodeNumber.toString().padStart(2, '0'),
-            image_url = null,
         )
     }
 }

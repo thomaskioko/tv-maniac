@@ -17,16 +17,17 @@ allprojects {
     // https://discuss.kotlinlang.org/t/disabling-androidandroidtestrelease-source-set-in-gradle-kotlin-dsl-script/21448/5
     afterEvaluate {
         // Remove log pollution until Android support in KMP improves.
-        project.extensions.findByType<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension>()?.let { kmpExt ->
-            kmpExt.sourceSets.removeAll {
-                setOf(
-                    "androidAndroidTestRelease",
-                    "androidTestFixtures",
-                    "androidTestFixturesDebug",
-                    "androidTestFixturesRelease",
-                ).contains(it.name)
+        project.extensions.findByType<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension>()
+            ?.let { kmpExt ->
+                kmpExt.sourceSets.removeAll {
+                    setOf(
+                        "androidAndroidTestRelease",
+                        "androidTestFixtures",
+                        "androidTestFixturesDebug",
+                        "androidTestFixturesRelease",
+                    ).contains(it.name)
+                }
             }
-        }
     }
 }
 
@@ -89,6 +90,12 @@ dependencyAnalysis {
                     "androidx.compose.runtime:runtime",
                 )
             }
+
+            onUnusedAnnotationProcessors {
+                exclude(
+                    "com.google.dagger:hilt-android-compiler",
+                )
+            }
         }
     }
 
@@ -126,7 +133,9 @@ dependencyAnalysis {
 
         bundle("dagger") {
             includeDependency("javax.inject:javax.inject")
+            includeDependency("com.google.dagger:dagger")
             includeDependency("com.google.dagger:hilt-android")
+            includeDependency("com.google.dagger:hilt-core")
         }
     }
 }

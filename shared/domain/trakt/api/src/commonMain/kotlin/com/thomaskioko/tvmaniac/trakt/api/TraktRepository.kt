@@ -4,6 +4,7 @@ import com.kuuurt.paging.multiplatform.PagingData
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
+import com.thomaskioko.tvmaniac.core.db.TraktStats
 import com.thomaskioko.tvmaniac.core.db.Trakt_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
 import com.thomaskioko.tvmaniac.core.util.CommonFlow
@@ -12,6 +13,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface TraktRepository {
     fun observeMe(slug: String): Flow<Resource<Trakt_user>>
+
+    fun observeStats(slug: String, refresh : Boolean = false): Flow<Resource<TraktStats>>
 
     fun observeCreateTraktList(userSlug: String): Flow<Resource<Trakt_list>>
 

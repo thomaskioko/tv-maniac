@@ -69,9 +69,6 @@ class ShowDetailsViewModel @Inject constructor(
                     uiEffects.emit(ShowDetailsError(action.message))
                 }
             }
-            is ShowDetailAction.BookmarkEpisode -> {
-                // TODO Update episode watchlist
-            }
         }
     }
 
@@ -90,7 +87,6 @@ class ShowDetailsViewModel @Inject constructor(
                                 tvShow = it.tvShow,
                                 similarShowList = it.similarShowList,
                                 tvSeasonUiModels = it.tvSeasonUiModels,
-                                lastAirEpList = it.lastAirEpList,
                                 trailersList = it.trailersList
                             )
                         )

@@ -8,7 +8,7 @@ import com.thomaskioko.tvmaniac.shows.api.DiscoverShowAction
 import com.thomaskioko.tvmaniac.shows.api.DiscoverShowAction.Error
 import com.thomaskioko.tvmaniac.shows.api.DiscoverShowEffect
 import com.thomaskioko.tvmaniac.shows.api.DiscoverShowState
-import com.thomaskioko.tvmaniac.shows.api.FetchShowsInteractor
+import com.thomaskioko.tvmaniac.shows.api.UpdateShowsInteractor
 import com.thomaskioko.tvmaniac.shows.api.ObserveShowsInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
-    private val observeDiscoverShow: FetchShowsInteractor,
+    private val updateShowsInteractor: UpdateShowsInteractor,
     private val observeShowsInteractor: ObserveShowsInteractor,
 ) : Store<DiscoverShowState, DiscoverShowAction, DiscoverShowEffect>,
     CoroutineScopeOwner,
@@ -57,7 +57,7 @@ class DiscoverViewModel @Inject constructor(
 
     override fun dispatch(action: DiscoverShowAction) {
         when (action) {
-            is DiscoverShowAction.LoadTvShows -> observeDiscoverShow.execute(Unit) {}
+            is DiscoverShowAction.LoadTvShows -> updateShowsInteractor.execute(Unit) {}
             is Error -> {
                 coroutineScope.launch {
                     sideEffect.emit(DiscoverShowEffect.Error(action.message))
