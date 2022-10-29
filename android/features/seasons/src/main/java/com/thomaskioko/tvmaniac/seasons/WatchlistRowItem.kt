@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.seasons
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Card
@@ -21,13 +20,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.LightGray
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasonepisodes.api.model.Episode
@@ -35,7 +35,7 @@ import com.thomaskioko.tvmaniac.seasonepisodes.api.model.Episode
 @Composable
 fun WatchlistRowItem(
     episode: Episode,
-    onEpisodeClicked: (Long) -> Unit = {}
+    onEpisodeClicked: (Int) -> Unit = {}
 ) {
 
     Card(
@@ -50,14 +50,14 @@ fun WatchlistRowItem(
 
             val (episodeTitle, image, overview, watchedStatusIcon) = createRefs()
 
-            NetworkImageComposable(
-                imageUrl = episode.imageUrl,
+            AsyncImageComposable(
+                model = episode.imageUrl,
                 contentDescription = stringResource(
                     R.string.cd_show_poster,
                     episode.episodeNumberTitle
                 ),
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .height(64.dp)
                     .width(84.dp)
                     .clip(MaterialTheme.shapes.medium)
                     .constrainAs(image) {

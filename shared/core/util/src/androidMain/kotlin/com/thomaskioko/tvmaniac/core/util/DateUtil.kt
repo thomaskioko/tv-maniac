@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.core.util
 
 import co.touchlab.kermit.Logger
+import kotlinx.datetime.Clock
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -23,4 +24,6 @@ actual object DateUtil {
         }
         return result
     }
+
+    actual fun getTimestampMilliseconds(): Long = Clock.System.now().toEpochMilliseconds()
 }

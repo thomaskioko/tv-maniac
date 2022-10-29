@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.autonomousapps.dependency-analysis") version ("1.12.0")
+    id("com.autonomousapps.dependency-analysis") version ("1.13.1")
 }
 
 buildscript {
@@ -17,16 +17,17 @@ allprojects {
     // https://discuss.kotlinlang.org/t/disabling-androidandroidtestrelease-source-set-in-gradle-kotlin-dsl-script/21448/5
     afterEvaluate {
         // Remove log pollution until Android support in KMP improves.
-        project.extensions.findByType<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension>()?.let { kmpExt ->
-            kmpExt.sourceSets.removeAll {
-                setOf(
-                    "androidAndroidTestRelease",
-                    "androidTestFixtures",
-                    "androidTestFixturesDebug",
-                    "androidTestFixturesRelease",
-                ).contains(it.name)
+        project.extensions.findByType<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension>()
+            ?.let { kmpExt ->
+                kmpExt.sourceSets.removeAll {
+                    setOf(
+                        "androidAndroidTestRelease",
+                        "androidTestFixtures",
+                        "androidTestFixturesDebug",
+                        "androidTestFixturesRelease",
+                    ).contains(it.name)
+                }
             }
-        }
     }
 }
 
@@ -46,6 +47,7 @@ subprojects {
                 "-Xopt-in=kotlin.OptIn",
                 "-Xopt-in=kotlin.time.ExperimentalTime",
                 "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-Xopt-in=androidx.lifecycle.compose.ExperimentalLifecycleComposeApi",
             )
         }
     }
@@ -88,6 +90,12 @@ dependencyAnalysis {
                     "androidx.compose.runtime:runtime",
                 )
             }
+
+            onUnusedAnnotationProcessors {
+                exclude(
+                    "com.google.dagger:hilt-android-compiler",
+                )
+            }
         }
     }
 
@@ -125,7 +133,9 @@ dependencyAnalysis {
 
         bundle("dagger") {
             includeDependency("javax.inject:javax.inject")
+            includeDependency("com.google.dagger:dagger")
             includeDependency("com.google.dagger:hilt-android")
+            includeDependency("com.google.dagger:hilt-core")
         }
     }
 }

@@ -12,7 +12,7 @@ dependencies {
     api(project(":shared:core:ui"))
     api(project(":shared:core:util"))
     api(project(":shared:domain:show-details:api"))
-    api(project(":shared:domain:show-common:api"))
+    api(project(":shared:domain:shows:api"))
 
     implementation(project(":shared:core:database"))
     implementation(projects.android.core.compose)

@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.core.db
 
 import com.squareup.sqldelight.db.SqlDriver
-import com.thomaskioko.tvmaniac.core.db.Show
-import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import kotlin.test.AfterTest
 
 expect fun inMemorySqlDriver(): SqlDriver
@@ -17,7 +15,7 @@ abstract class BaseDatabaseTest {
     protected open val database: TvManiacDatabase = TvManiacDatabase(
         driver = sqlDriver,
         showAdapter = Show.Adapter(
-            genre_idsAdapter = intAdapter,
+            genresAdapter = stringColumnAdapter,
         ),
     )
 

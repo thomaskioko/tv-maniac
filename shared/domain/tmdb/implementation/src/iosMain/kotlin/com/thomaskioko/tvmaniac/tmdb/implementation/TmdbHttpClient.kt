@@ -57,6 +57,7 @@ object TmdbHttpClient {
                     host = endpointUrlBuilder.host
                 }
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
+                header("api_key", BuildKonfig.TMDB_API_KEY)
             }
         }
     }

@@ -17,33 +17,31 @@ import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
-import com.thomaskioko.tvmaniac.compose.components.NetworkImageComposable
 import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
-import com.thomaskioko.tvmaniac.compose.rememberFlowWithLifecycle
 import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun FollowingContent(
     viewModel: FollowingViewModel,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Int) -> Unit,
 ) {
 
-    val watchlistViewState by rememberFlowWithLifecycle(viewModel.observeState())
-        .collectAsState(initial = WatchlistLoaded.Empty)
+    val followedViewState by viewModel.observeState().collectAsStateWithLifecycle()
 
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(Unit) {
         viewModel.observeSideEffect().collect {
             when (it) {
-                is WatchlistEffect.Error -> scaffoldState.snackbarHostState.showSnackbar(it.message)
+                is FollowingEffect.Error -> scaffoldState.snackbarHostState.showSnackbar(it.message)
             }
         }
     }
@@ -69,11 +67,9 @@ fun FollowingContent(
         },
         content = { contentPadding ->
             FollowingGridContent(
-                viewState = watchlistViewState,
+                viewState = followedViewState,
                 paddingValues = contentPadding,
-                onItemClicked = { tvShowId ->
-                    openShowDetails(tvShowId)
-                }
+                onItemClicked = openShowDetails
             )
         }
     )
@@ -81,9 +77,9 @@ fun FollowingContent(
 
 @Composable
 private fun FollowingGridContent(
-    viewState: WatchlistLoaded,
+    viewState: FollowingState,
     paddingValues: PaddingValues,
-    onItemClicked: (Long) -> Unit,
+    onItemClicked: (Int) -> Unit,
 ) {
     val listState = rememberLazyListState()
 
@@ -105,11 +101,11 @@ private fun FollowingGridContent(
             ) {
                 Card(
                     elevation = 4.dp,
-                    modifier = Modifier.clickable { onItemClicked(show.id) },
+                    modifier = Modifier.clickable { onItemClicked(show.traktId) },
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    NetworkImageComposable(
-                        imageUrl = show.posterImageUrl,
+                    AsyncImageComposable(
+                        model = show.posterImageUrl,
                         contentDescription = stringResource(
                             R.string.cd_show_poster,
                             show.title

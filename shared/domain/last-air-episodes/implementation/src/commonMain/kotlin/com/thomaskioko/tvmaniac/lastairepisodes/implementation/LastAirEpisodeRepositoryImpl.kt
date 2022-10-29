@@ -9,6 +9,6 @@ class LastAirEpisodeRepositoryImpl(
     private val epAirCacheLast: LastEpisodeAirCache
 ) : LastAirEpisodeRepository {
 
-    override fun observeAirEpisodes(tvShowId: Long): Flow<List<AirEpisodesByShowId>> =
+    override fun observeAirEpisodes(tvShowId: Int): Flow<List<AirEpisodesByShowId>> =
         epAirCacheLast.getShowAirEpisodes(showId = tvShowId)
 }

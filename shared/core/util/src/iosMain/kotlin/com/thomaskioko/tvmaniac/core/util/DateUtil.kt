@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.core.util
 
+import kotlinx.datetime.Clock
 import platform.Foundation.NSDateFormatter
 import platform.Foundation.NSLocale
 import platform.Foundation.currentLocale
@@ -26,4 +27,6 @@ actual object DateUtil {
 
         return date
     }
+
+    actual fun getTimestampMilliseconds(): Long = Clock.System.now().toEpochMilliseconds()
 }

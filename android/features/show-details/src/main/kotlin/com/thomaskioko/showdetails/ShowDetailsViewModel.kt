@@ -7,11 +7,13 @@ import com.thomaskioko.tvmaniac.core.util.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.details.api.interactor.ObserveShowInteractor
 import com.thomaskioko.tvmaniac.details.api.interactor.UpdateFollowingInteractor
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction
-import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.UpdateFavorite
+import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailAction.UpdateFollowing
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailEffect
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailEffect.ShowDetailsError
 import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
 import com.thomaskioko.tvmaniac.shared.core.ui.Store
+import com.thomaskioko.tvmaniac.traktauth.ObserveTraktAuthStateInteractor
+import com.thomaskioko.tvmaniac.traktauth.TraktAuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -25,11 +27,12 @@ import javax.inject.Inject
 class ShowDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val observeShow: ObserveShowInteractor,
-    private val updateFollowingInteractor: UpdateFollowingInteractor
+    private val updateFollowingInteractor: UpdateFollowingInteractor,
+    private val traktAuthInteractor: ObserveTraktAuthStateInteractor,
 ) : Store<ShowDetailViewState, ShowDetailAction, ShowDetailEffect>, CoroutineScopeOwner,
     ViewModel() {
 
-    private val showId: Long = savedStateHandle["tvShowId"]!!
+    private val showId: Int = savedStateHandle["tvShowId"]!!
 
     override val coroutineScope: CoroutineScope
         get() = viewModelScope
@@ -41,6 +44,16 @@ class ShowDetailsViewModel @Inject constructor(
 
     init {
         dispatch(ShowDetailAction.LoadShowDetails(showId))
+
+        viewModelScope.launch {
+            traktAuthInteractor.invoke(Unit)
+                .collect {
+                    val newState = state.value.copy(
+                        isLoggedIn = it == TraktAuthState.LOGGED_IN
+                    )
+                    state.emit(newState)
+                }
+        }
     }
 
     override fun observeState(): StateFlow<ShowDetailViewState> = state
@@ -50,14 +63,11 @@ class ShowDetailsViewModel @Inject constructor(
     override fun dispatch(action: ShowDetailAction) {
         when (action) {
             is ShowDetailAction.LoadShowDetails -> loadShowDetails()
-            is UpdateFavorite -> updateWatchlist(action)
+            is UpdateFollowing -> updateFollowing(action)
             is ShowDetailAction.Error -> {
                 coroutineScope.launch {
                     uiEffects.emit(ShowDetailsError(action.message))
                 }
-            }
-            is ShowDetailAction.BookmarkEpisode -> {
-                // TODO Update episode watchlist
             }
         }
     }
@@ -73,11 +83,10 @@ class ShowDetailsViewModel @Inject constructor(
                         emit(
                             value.copy(
                                 isLoading = false,
+                                isFollowed = it.isFollowed,
                                 tvShow = it.tvShow,
                                 similarShowList = it.similarShowList,
                                 tvSeasonUiModels = it.tvSeasonUiModels,
-                                genreUIList = it.genreUIList,
-                                lastAirEpList = it.lastAirEpList,
                                 trailersList = it.trailersList
                             )
                         )
@@ -100,16 +109,26 @@ class ShowDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun updateWatchlist(action: UpdateFavorite) {
-        updateFollowingInteractor.execute(action.params) {
-            onComplete {
-                coroutineScope.launch { dispatch(ShowDetailAction.LoadShowDetails(showId)) }
-            }
-            onError {
-                coroutineScope.launch {
-                    uiEffects.emit(
-                        ShowDetailEffect.WatchlistError(it.message ?: "Something went wrong")
-                    )
+    private fun updateFollowing(action: UpdateFollowing) {
+        with(state) {
+            updateFollowingInteractor.execute(action.params) {
+                onStart {
+                    coroutineScope.launch { emit(value.copy(isFollowUpdating = true)) }
+                }
+
+                onComplete {
+                    coroutineScope.launch {
+                        emit(value.copy(isFollowUpdating = false))
+                        dispatch(ShowDetailAction.LoadShowDetails(showId))
+                    }
+                }
+                onError {
+                    coroutineScope.launch {
+                        emit(value.copy(isFollowUpdating = false))
+                        uiEffects.emit(
+                            ShowDetailEffect.WatchlistError(it.message ?: "Something went wrong")
+                        )
+                    }
                 }
             }
         }

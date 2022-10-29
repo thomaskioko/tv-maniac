@@ -10,5 +10,5 @@ interface LastEpisodeAirCache {
 
     fun insert(list: List<Last_episode>)
 
-    fun getShowAirEpisodes(showId: Long): Flow<List<AirEpisodesByShowId>>
+    fun getShowAirEpisodes(showId: Int): Flow<List<AirEpisodesByShowId>>
 }

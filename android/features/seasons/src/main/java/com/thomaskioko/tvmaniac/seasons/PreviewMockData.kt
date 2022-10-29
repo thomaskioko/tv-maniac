@@ -25,7 +25,7 @@ val episode = Episode(
     episodeNumberTitle = "E01 • Glorious Purpose",
     overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
     voteCount = 42,
-    voteAverage = 6.429,
+    runtime = 21,
     seasonId = 4654,
     imageUrl = "",
     episodeNumber = "01",
@@ -35,6 +35,7 @@ val episode = Episode(
 
 val seasonsEpList: List<SeasonWithEpisodes> = listOf(
     SeasonWithEpisodes(
+        seasonId = 1,
         seasonName = "Specials",
         episodeCount = 8,
         watchProgress = 0.4f,

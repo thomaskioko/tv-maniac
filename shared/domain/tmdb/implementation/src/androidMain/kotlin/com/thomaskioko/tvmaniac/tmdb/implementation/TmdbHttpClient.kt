@@ -2,11 +2,13 @@ package com.thomaskioko.tvmaniac.tmdb.implementation
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.http.URLBuilder
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -16,7 +18,10 @@ import co.touchlab.kermit.Logger.Companion as KermitLogger
 object TmdbHttpClient {
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun tmdbHttpClient(tmdbInterceptor: TmdbInterceptor) = HttpClient(OkHttp) {
+    fun tmdbHttpClient(
+        httpUrl: String,
+        tmdbInterceptor: TmdbInterceptor
+    ) = HttpClient(OkHttp) {
         install(ContentNegotiation) {
             json(
                 Json {
@@ -40,6 +45,14 @@ object TmdbHttpClient {
                 override fun log(message: String) {
                     KermitLogger.d { message }
                 }
+            }
+        }
+
+        install(DefaultRequest) {
+            val endpointUrlBuilder = URLBuilder(httpUrl)
+            url {
+                host = endpointUrlBuilder.host
+                protocol = endpointUrlBuilder.protocol
             }
         }
 

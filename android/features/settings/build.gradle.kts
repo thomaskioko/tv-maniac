@@ -9,9 +9,12 @@ android {
 }
 
 dependencies {
-    api(project(":shared:core:ui"))
     api(project(":shared:core:persistence"))
+    api(project(":shared:core:util"))
+    implementation(project(":shared:core:ui"))
+    implementation(project(":shared:domain:trakt:api"))
     implementation(project(":android:core:compose"))
+    implementation(project( ":android:core:trakt-auth"))
 
     implementation(libs.accompanist.insetsui)
 

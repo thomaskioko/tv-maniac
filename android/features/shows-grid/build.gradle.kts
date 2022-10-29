@@ -15,7 +15,7 @@ dependencies {
     api(projects.shared.domain.showDetails.api)
 
     implementation(project(":shared:core:database"))
-    implementation(project(":shared:domain:show-common:api"))
+    implementation(project(":shared:domain:shows:api"))
     implementation(project(":android:core:compose"))
 
     api(libs.androidx.compose.paging)

@@ -18,7 +18,7 @@ val yellow500 = Color(0xFFFFBe0A)
 
 val blue500 = Color(0xFF1473FB)
 val blue700 = Color(0xFF0049c7)
-val colorError = Color(0xFFFE043A)
+val colorError = Color(0xFFED2224)
 
 val grey = Color(0xFF1f2123)
 val grey500: Color = Color(0xFFA1A5AB)

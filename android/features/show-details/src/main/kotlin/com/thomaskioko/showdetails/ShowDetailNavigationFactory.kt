@@ -14,7 +14,7 @@ class ShowDetailNavigationFactory @Inject constructor() : ComposeNavigationFacto
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
         builder.viewModelComposable<ShowDetailsViewModel>(
             arguments = listOf(
-                navArgument("tvShowId") { type = NavType.LongType }
+                navArgument("tvShowId") { type = NavType.IntType }
             ),
             route = "${NavigationScreen.ShowDetailsNavScreen.route}/{tvShowId}",
             content = {
@@ -26,9 +26,6 @@ class ShowDetailNavigationFactory @Inject constructor() : ComposeNavigationFacto
                     },
                     onSeasonClicked = { showId, seasonName ->
                         navController.navigate("${NavigationScreen.SeasonsNavScreen.route}/$showId/$seasonName")
-                    },
-                    onEpisodeClicked = { episodeNumber, seasonNumber ->
-                        // Navigate to episode detail screen
                     },
                     onWatchTrailerClicked = { showId, videoKey ->
                         navController.navigate("${NavigationScreen.VideoPlayerNavScreen.route}/$showId/$videoKey")

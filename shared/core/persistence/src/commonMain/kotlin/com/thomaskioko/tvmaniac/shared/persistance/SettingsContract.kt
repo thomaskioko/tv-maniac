@@ -7,12 +7,22 @@ sealed class SettingsState
 
 data class SettingsContent(
     val theme: Theme,
-    val showPopup: Boolean
+    val showPopup: Boolean,
+    val showTraktDialog: Boolean,
+    val loggedIn: Boolean,
+    val traktUserName: String,
+    val traktFullName: String?,
+    val traktUserPicUrl: String?,
 ) : SettingsState() {
     companion object {
         val DEFAULT = SettingsContent(
             theme = Theme.SYSTEM,
-            showPopup = false
+            showPopup = false,
+            showTraktDialog = false,
+            loggedIn = false,
+            traktUserName = "",
+            traktFullName = "",
+            traktUserPicUrl = ""
         )
     }
 }
@@ -24,6 +34,12 @@ sealed class SettingsActions : Action {
 
     object LoadTheme : SettingsActions()
     object ThemeClicked : SettingsActions()
+    object ShowTraktDialog : SettingsActions()
+    object DismissTraktDialog : SettingsActions()
+    object TraktLogout : SettingsActions()
+    object TraktLogin : SettingsActions()
+    object RefreshTraktAuthToken : SettingsActions()
+    object FetchTraktUserProfile : SettingsActions()
 }
 
 sealed class SettingsEffect : Effect

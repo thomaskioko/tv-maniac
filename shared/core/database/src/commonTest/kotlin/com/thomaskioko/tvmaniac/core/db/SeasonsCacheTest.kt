@@ -10,18 +10,6 @@ internal class SeasonsCacheTest : BaseDatabaseTest() {
 
     private val tvSeasonQueries get() = database.seasonQueries
 
-    @Test
-    fun insertSeason_andSeasonBySeasonId_returnsExpectedData() {
-
-        getSeasonCacheList().insertSeasonsEntityQuery()
-
-        val queryResult = tvSeasonQueries.selectBySeasonId(114355).executeAsOne()
-
-        queryResult.id shouldBe getSeasonCacheList()[0].id
-        queryResult.tv_show_id shouldBe getSeasonCacheList()[0].tv_show_id
-        queryResult.name shouldBe getSeasonCacheList()[0].name
-        queryResult.season_number shouldBe getSeasonCacheList()[0].season_number
-    }
 
     @Test
     fun insertSeason_andSelectSeasonsByShowId_returnsExpectedData() {
@@ -41,7 +29,7 @@ internal class SeasonsCacheTest : BaseDatabaseTest() {
     private fun Season.insertSeasonsEntityQuery() {
         tvSeasonQueries.insertOrReplace(
             id = id,
-            tv_show_id = tv_show_id,
+            show_id = show_id,
             season_number = season_number,
             epiosode_count = epiosode_count,
             name = name,

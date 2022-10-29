@@ -11,7 +11,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Star
@@ -61,8 +61,7 @@ fun HomeScreen(
                 NavigationScreen.DiscoverNavScreen.route,
                 NavigationScreen.SettingsScreen.route,
                 NavigationScreen.WatchlistNavScreen.route,
-                NavigationScreen.SearchNavScreen.route,
-                NavigationScreen.SettingsScreen.route,
+                NavigationScreen.ProfileNavScreen.route,
             )
             AnimatedVisibility(visible = showBottomBar) {
                 TvManiacBottomNavigation(
@@ -95,8 +94,8 @@ fun HomeScreen(
 
 @Composable
 private fun TvManiacBottomNavigation(
-    onNavigationSelected: (NavigationScreen) -> Unit,
-    currentSelectedItem: NavigationScreen
+    currentSelectedItem: NavigationScreen,
+    onNavigationSelected: (NavigationScreen) -> Unit
 ) {
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.primary
@@ -127,10 +126,10 @@ private fun TvManiacBottomNavigation(
         )
 
         TvManiacBottomNavigationItem(
-            screen = NavigationScreen.SettingsScreen,
-            imageVector = Icons.Outlined.MoreVert,
-            title = stringResource(id = R.string.menu_item_more),
-            selected = currentSelectedItem == NavigationScreen.SettingsScreen,
+            screen = NavigationScreen.ProfileNavScreen,
+            imageVector = Icons.Filled.AccountCircle,
+            title = stringResource(id = R.string.menu_item_profile),
+            selected = currentSelectedItem == NavigationScreen.ProfileNavScreen,
             onNavigationSelected = onNavigationSelected
         )
     }
@@ -188,8 +187,8 @@ private fun NavController.currentScreenAsState(): State<NavigationScreen> {
                 destination.hierarchy.any { it.route == NavigationScreen.WatchlistNavScreen.route } -> {
                     selectedItem.value = NavigationScreen.WatchlistNavScreen
                 }
-                destination.hierarchy.any { it.route == NavigationScreen.SettingsScreen.route } -> {
-                    selectedItem.value = NavigationScreen.SettingsScreen
+                destination.hierarchy.any { it.route == NavigationScreen.ProfileNavScreen.route } -> {
+                    selectedItem.value = NavigationScreen.ProfileNavScreen
                 }
             }
         }

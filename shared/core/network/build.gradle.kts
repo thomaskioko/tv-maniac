@@ -26,6 +26,7 @@ dependencies {
     androidMainApi(libs.ktor.okhttp)
     androidMainApi(libs.ktor.negotiation)
     androidMainApi(libs.ktor.logging)
+    androidMainImplementation(libs.ktor.okhttp)
     androidMainImplementation(libs.squareup.sqldelight.driver.android)
     androidMainImplementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

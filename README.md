@@ -68,11 +68,18 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 
 ## 🖥 Project Setup & Environment
 
-### TMDB Api
+### Api Keys
+
+You need to add API keys from [Trakt.tv](https://trakt.docs.apiary.io) & [TMDb](https://developers.themoviedb.org). To do so:
+
 - Create `local.properties` in `root` dir
 - Add the following
     ```
     TMDB_API_URL=https://api.themoviedb.org/3/
+    TMDB_API_KEY=ENTER_URI
+    TRAKT_CLIENT_ID=ENTER_KEY
+    TRAKT_CLIENT_SECRET=ENTER_KEY
+    TRAKT_REDIRECT_URI=ENTER_KEY
     ```
 - Run `./gradlew generateBuildKonfig`
 
@@ -112,6 +119,7 @@ I wrote an article, [Going Modular — The Kotlin Multiplatform Way](https://med
 * [KenBurnsView](https://github.com/flavioarfaria/KenBurnsView) - Immersive image.
 * [Leakcanary](https://github.com/square/leakcanary) - Memory leak detection.
 * [Android-youtube-player](https://github.com/PierfrancescoSoffritti/android-youtube-player) - Youtube Player
+* [AppAuth](https://openid.github.io/AppAuth-Android/) - AppAuth for Android is a client SDK for communicating with OAuth 2.0 and OpenID Connect providers.
 
 ### Kmp - Common
 * [Ktor](https://ktor.io/) - Networking
@@ -137,6 +145,8 @@ Android
 - [x] Add Settings panel.
     - Dynamic theme change.
 - [x] Add Seasons UI
+- [x] Implement trakt auth & sign in
+- [ ] UI State improvement.
 - [ ] Add Episode detail screen
 - [ ] Add Watchlist
 - [ ] Implement Search
@@ -145,6 +155,7 @@ iOS
 - [x] Add HomeScreen: Tabs & Empty UI
 - [x] Implement Discover UI
 - [x] Show Detail Screen
+- [ ] Implement trakt auth & sign in
 - [ ] Add Seasons UI
 - [ ] Implement Search UI
 - [ ] Implement Watchlist UI
@@ -155,7 +166,10 @@ Shared
 - [x] Refactor interactor implementation.
 - [x] Use koin for injection
 - [x] Modularize `shared` module
+- [ ] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux) 
 - [ ] Improve error handling, add retry.
+- [ ] Add test cases.
+- [ ] Fix paging
 - [ ] Better MVI implementation
 - [ ] Observe Internet connection
     - [x] Android

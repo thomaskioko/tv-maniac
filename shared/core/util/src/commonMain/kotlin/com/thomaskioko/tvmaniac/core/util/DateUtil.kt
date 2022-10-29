@@ -14,4 +14,11 @@ expect object DateUtil {
         datePattern: String = DATE_PATTERN,
         dateString: String?
     ): String
+
+    /**
+     * Returns the current time in milliseconds
+     *
+     * @return timestamp
+     */
+    fun getTimestampMilliseconds(): Long
 }

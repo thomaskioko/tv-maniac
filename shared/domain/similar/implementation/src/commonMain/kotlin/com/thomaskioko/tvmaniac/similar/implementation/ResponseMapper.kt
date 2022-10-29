@@ -1,30 +1,21 @@
 package com.thomaskioko.tvmaniac.similar.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Show
-import com.thomaskioko.tvmaniac.core.util.DateUtil.formatDateString
-import com.thomaskioko.tvmaniac.core.util.StringUtil
-import com.thomaskioko.tvmaniac.tmdb.api.model.ShowResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 
-fun ShowResponse.toShow(): Show {
+fun TraktShowResponse.toShow(): Show {
     return Show(
-        id = id.toLong(),
-        title = name,
-        description = overview,
-        language = originalLanguage,
-        poster_image_url = StringUtil.formatPosterPath(posterPath),
-        backdrop_image_url = backdropPath.toImageUrl(posterPath),
-        votes = voteCount.toLong(),
-        vote_average = voteAverage,
-        genre_ids = genreIds,
-        year = formatDateString(dateString = firstAirDate),
-        status = "",
-        popularity = popularity,
-        following = false,
-        number_of_seasons = numberOfSeasons?.toLong(),
-        number_of_episodes = numberOfEpisodes?.toLong()
+        trakt_id = ids.trakt,
+        tmdb_id = ids.tmdb,
+        title = title,
+        overview = overview ?: "",
+        language = language,
+        votes = votes,
+        rating = rating,
+        genres = genres,
+        year = year,
+        status = status,
+        aired_episodes = airedEpisodes,
+        runtime = runtime,
     )
 }
-
-private fun String?.toImageUrl(posterPath: String?) =
-    if (this.isNullOrEmpty()) StringUtil.formatPosterPath(posterPath)
-    else StringUtil.formatPosterPath(this)

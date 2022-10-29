@@ -28,7 +28,7 @@ class SeasonWithEpisodesCacheImpl(
         list.map { insert(it) }
     }
 
-    override fun observeShowEpisodes(showId: Long): Flow<List<SelectSeasonWithEpisodes>> =
+    override fun observeShowEpisodes(showId: Int): Flow<List<SelectSeasonWithEpisodes>> =
         query.selectSeasonWithEpisodes(showId)
             .asFlow()
             .mapToList()

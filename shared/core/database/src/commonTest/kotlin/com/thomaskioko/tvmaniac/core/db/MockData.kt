@@ -1,8 +1,5 @@
 package com.thomaskioko.tvmaniac.core.db
 
-import com.thomaskioko.tvmaniac.core.db.Last_episode
-import com.thomaskioko.tvmaniac.core.db.Season
-import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.Episode as EpisodeCache
 
 object MockData {
@@ -11,29 +8,31 @@ object MockData {
         EpisodeCache(
             id = 2534997,
             season_id = 114355,
-            name = "Glorious Purpose",
+            title = "Glorious Purpose",
             overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
-            image_url = "https://image.tmdb.org/t/p/original/gxh0k3aADsYkt9tgkfm2kGn2qQj.jpg",
-            vote_count = 42,
-            vote_average = 6.429,
-            episode_number = "01"
+            votes = 42,
+            ratings = 6.429,
+            runtime = 45,
+            episode_number = "01",
+            tmdb_id = 1
         ),
         EpisodeCache(
             id = 2927202,
             season_id = 114355,
-            name = "The Variant",
+            title = "The Variant",
             overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
-            image_url = "https://image.tmdb.org/t/p/original/gqpcfkdmSsm6xiX2EsLkwUvA8g8.jpg",
-            vote_count = 23,
-            vote_average = 7.6,
-            episode_number = "02"
+            votes = 23,
+            ratings = 7.6,
+            runtime = 45,
+            episode_number = "02",
+            tmdb_id = 1
         )
     )
 
     fun getSeasonCacheList() = listOf(
         Season(
             id = 114355,
-            tv_show_id = 84958,
+            show_id = 84958,
             name = "Season 1",
             overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
@@ -46,7 +45,7 @@ object MockData {
         ),
         Season(
             id = 77680,
-            tv_show_id = 84958,
+            show_id = 84958,
             name = "Season 2",
             overview = "Strange things are afoot in Hawkins, Indiana, where a young boy's " +
                 "sudden disappearance unearths a young girl with otherworldly powers.",
@@ -55,7 +54,7 @@ object MockData {
         ),
         Season(
             id = 4355,
-            tv_show_id = 126280,
+            show_id = 126280,
             name = "Season 1",
             overview = "A woman's daring sexual past collides with her married-with-kids " +
                 "present when the bad-boy ex she can't stop fantasizing about crashes " +
@@ -66,69 +65,60 @@ object MockData {
     )
 
     fun getShow() = Show(
-        id = 84958,
+        trakt_id = 84958,
         title = "Loki",
-        description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
             "an alternate version of Loki is brought to the mysterious Time Variance " +
             "Authority, a bureaucratic organization that exists outside of time and " +
             "space and monitors the timeline. They give Loki a choice: face being " +
             "erased from existence due to being a “time variant”or help fix " +
             "the timeline and stop a greater threat.",
-        poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         language = "en",
         votes = 4958,
-        vote_average = 8.1,
-        genre_ids = listOf(18, 10765),
+        rating = 8.1,
+        genres = listOf("Horror"),
         year = "2019",
         status = "Ended",
-        popularity = 24.4848,
-        following = true,
-        number_of_seasons = 2,
-        number_of_episodes = 12
+        tmdb_id = 126280,
+        runtime = 0,
+        aired_episodes = 12
     )
 
     fun makeShowList() = listOf(
         Show(
-            id = 84958,
+            trakt_id = 84958,
             title = "Loki",
-            description = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+            overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
                 "Authority, a bureaucratic organization that exists outside of time and " +
                 "space and monitors the timeline. They give Loki a choice: face being " +
                 "erased from existence due to being a “time variant”or help fix " +
                 "the timeline and stop a greater threat.",
-            poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             language = "en",
             votes = 4958,
-            vote_average = 8.1,
-            genre_ids = listOf(18, 10765),
-            year = "2019",
-            status = null,
-            popularity = 24.4848,
-            following = true,
-            number_of_seasons = 2,
-            number_of_episodes = 12
-        ),
-        Show(
-            id = 126280,
-            title = "Sex/Life",
-            description = "A woman's daring sexual past collides with her married-with-kids " +
-                "present when the bad-boy ex she can't stop fantasizing about crashes " +
-                "back into her life.",
-            poster_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            backdrop_image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            language = "en",
-            votes = 4958,
-            vote_average = 8.1,
-            genre_ids = listOf(35, 18),
+            rating = 8.1,
+            genres = listOf("Horror"),
             year = "2019",
             status = "Ended",
-            popularity = 24.4848,
-            following = false,
-            number_of_seasons = 2,
-            number_of_episodes = 12
+            tmdb_id = 126280,
+            runtime = 0,
+            aired_episodes = 12
+        ),
+        Show(
+            trakt_id = 126280,
+            title = "Sex/Life",
+            overview = "A woman's daring sexual past collides with her married-with-kids " +
+                "present when the bad-boy ex she can't stop fantasizing about crashes " +
+                "back into her life.",
+            language = "en",
+            votes = 4958,
+            rating = 8.1,
+            genres = listOf("Horror"),
+            year = "2019",
+            status = "Ended",
+            tmdb_id = 126280,
+            runtime = 0,
+            aired_episodes = 12
         ),
     )
 

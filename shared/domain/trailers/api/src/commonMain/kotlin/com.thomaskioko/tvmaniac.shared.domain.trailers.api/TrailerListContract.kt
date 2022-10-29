@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.shared.core.ui.Effect
 
 sealed class TrailerListAction : Action {
     data class LoadTrailers(
-        val showId: Long
+        val showId: Int
     ) : TrailerListAction()
 
     data class TrailerSelected(

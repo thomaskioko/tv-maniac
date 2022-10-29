@@ -18,8 +18,9 @@ dependencies {
     commonMainImplementation(project(":shared:core:database"))
     commonMainImplementation(project(":shared:domain:tmdb:api"))
     commonMainImplementation(project(":shared:domain:seasons:api"))
+    commonMainImplementation(project(":shared:domain:trakt:api"))
     commonMainImplementation(project(":shared:domain:show-details:implementation"))
-    commonMainImplementation(project(":shared:domain:show-common:api"))
+    commonMainImplementation(project(":shared:domain:shows:api"))
 
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin)

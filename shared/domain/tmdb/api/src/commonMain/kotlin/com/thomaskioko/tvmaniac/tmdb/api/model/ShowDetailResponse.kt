@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ShowDetailResponse(
     @SerialName("id") val id: Int,
-    @SerialName("backdrop_path") val backdropPath: String,
+    @SerialName("backdrop_path") val backdropPath: String?,
     @SerialName("episode_run_time") val episodeRunTime: List<Int>,
     @SerialName("first_air_date") val firstAirDate: String,
     @SerialName("genres") val genres: List<GenreResponse>,
@@ -22,7 +22,7 @@ data class ShowDetailResponse(
     @SerialName("original_name") val originalName: String,
     @SerialName("overview") val overview: String,
     @SerialName("popularity") val popularity: Double,
-    @SerialName("poster_path") val posterPath: String,
+    @SerialName("poster_path") val posterPath: String?,
     @SerialName("seasons") val seasons: List<SeasonsResponse>,
     @SerialName("status") val status: String,
     @SerialName("tagline") val tagline: String,

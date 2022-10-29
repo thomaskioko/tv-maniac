@@ -5,5 +5,5 @@ import com.thomaskioko.tvmaniac.core.util.network.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface TrailerRepository {
-    fun observeTrailersByShowId(showId: Long): Flow<Resource<List<Trailers>>>
+    fun observeTrailersByShowId(traktId: Int): Flow<Resource<List<Trailers>>>
 }

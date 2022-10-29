@@ -11,7 +11,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -27,8 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.TopAppBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.elevatedSurface
@@ -39,7 +42,7 @@ import com.thomaskioko.tvmaniac.resources.R
 fun TvManiacTopBar(
     title: @Composable RowScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
-    navigationIcon: @Composable (() -> Unit) = { },
+    navigationIcon: @Composable (() -> Unit)? = null,
     backgroundColor: Color = MaterialTheme.colors.primary
 ) {
     TopAppBar(
@@ -138,10 +141,9 @@ fun CollapsableAppBar(
                 if (show) Text(text = title!!)
             }
         },
-        contentPadding = rememberInsetsPaddingValues(
-            LocalWindowInsets.current.systemBars,
-            applyBottom = false
-        ),
+        contentPadding = WindowInsets.systemBars
+            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+            .asPaddingValues(),
         navigationIcon = {
             IconButton(
                 onClick = onNavIconPressed,

@@ -15,6 +15,9 @@ jobs:
     env:
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       TMDB_API_URL: ${{ secrets.TMDB_API_URL }}
+      TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
+      TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
+      TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
     steps:
       - uses: actions/checkout@v2
@@ -28,6 +31,9 @@ jobs:
         run: |
           echo -e "\TMDB_API_KEY=$TMDB_API_KEY" >> ./local.properties
           echo -e "\TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
+          echo -e "\TRAKT_CLIENT_ID=$TRAKT_CLIENT_ID" >> ./local.properties
+          echo -e "\TRAKT_CLIENT_SECRET=$TRAKT_CLIENT_SECRET" >> ./local.properties
+          echo -e "\TRAKT_REDIRECT_URI=$TRAKT_REDIRECT_URI" >> ./local.properties
 
       - name: Build iOS framework
         id: buildPackage
