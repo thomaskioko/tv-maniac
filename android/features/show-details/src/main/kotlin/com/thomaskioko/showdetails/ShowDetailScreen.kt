@@ -85,7 +85,6 @@ fun ShowDetailScreen(
     navigateUp: () -> Unit,
     onShowClicked: (Int) -> Unit,
     onSeasonClicked: (Int, String) -> Unit,
-    onEpisodeClicked: (Int) -> Unit = { },
     onWatchTrailerClicked: (Int, String?) -> Unit = { _, _ -> }
 ) {
 
@@ -127,10 +126,8 @@ fun ShowDetailScreen(
                         listState = listState,
                         contentPadding = contentPadding,
                         onSeasonClicked = onSeasonClicked,
-                        onEpisodeClicked = onEpisodeClicked,
                         onShowClicked = onShowClicked,
                         onUpdateFavoriteClicked = viewModel::dispatch,
-                        onBookmarkEpClicked = viewModel::dispatch,
                         onWatchTrailerClicked = onWatchTrailerClicked
                     )
                 } else {
@@ -185,8 +182,6 @@ private fun TvShowDetailsScrollingContent(
     contentPadding: PaddingValues,
     onUpdateFavoriteClicked: (ShowDetailAction) -> Unit = {},
     onSeasonClicked: (Int, String) -> Unit,
-    onEpisodeClicked: (Int) -> Unit = { },
-    onBookmarkEpClicked: (ShowDetailAction) -> Unit = { },
     onShowClicked: (Int) -> Unit = {},
     onWatchTrailerClicked: (Int, String?) -> Unit = { _, _ -> },
 ) {
@@ -209,8 +204,6 @@ private fun TvShowDetailsScrollingContent(
             BodyContent(
                 detailUiState = detailUiState,
                 onSeasonClicked = onSeasonClicked,
-                onEpisodeClicked = onEpisodeClicked,
-                onBookmarkEpClicked = onBookmarkEpClicked,
                 onShowClicked = onShowClicked,
                 onWatchTrailerClicked = onWatchTrailerClicked
             )
@@ -474,8 +467,6 @@ fun ShowDetailButtons(
 private fun BodyContent(
     detailUiState: ShowDetailViewState,
     onSeasonClicked: (Int, String) -> Unit,
-    onBookmarkEpClicked: (ShowDetailAction) -> Unit,
-    onEpisodeClicked: (Int) -> Unit = { },
     onShowClicked: (Int) -> Unit,
     onWatchTrailerClicked: (Int, String) -> Unit
 ) {
@@ -489,15 +480,7 @@ private fun BodyContent(
             onSeasonClicked = onSeasonClicked,
             modifier = Modifier.fillMaxWidth()
         )
-
-
-        AnimatedVisibility(visible = detailUiState.lastAirEpList.isNotEmpty()) {
-            EpisodesReleaseContent(
-                episodeList = detailUiState.lastAirEpList,
-                onEpisodeClicked = onEpisodeClicked,
-                onBookmarkEpClicked = onBookmarkEpClicked
-            )
-        }
+    }
 
         TrailersContent(
             trailersList = detailUiState.trailersList,
@@ -510,7 +493,7 @@ private fun BodyContent(
             similarShows = detailUiState.similarShowList,
             onShowClicked = onShowClicked
         )
-    }
+
 }
 
 @Composable

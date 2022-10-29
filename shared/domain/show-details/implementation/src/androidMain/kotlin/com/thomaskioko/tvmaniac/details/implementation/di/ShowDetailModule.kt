@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.details.api.interactor.ObserveFollowingInteracto
 import com.thomaskioko.tvmaniac.details.api.interactor.ObservePagedShowsByCategoryInteractor
 import com.thomaskioko.tvmaniac.details.api.interactor.ObserveShowInteractor
 import com.thomaskioko.tvmaniac.details.api.interactor.UpdateFollowingInteractor
-import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisodeRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
@@ -25,13 +24,11 @@ object ShowDetailModule {
         traktRepository: TraktRepository,
         similarShowsRepository: SimilarShowsRepository,
         seasonsRepository: SeasonsRepository,
-        lastAirRepository: LastAirEpisodeRepository,
-        trailerRepository: TrailerRepository
+        trailerRepository: TrailerRepository,
     ): ObserveShowInteractor = ObserveShowInteractor(
         traktRepository,
         similarShowsRepository,
         seasonsRepository,
-        lastAirRepository,
         trailerRepository
     )
 

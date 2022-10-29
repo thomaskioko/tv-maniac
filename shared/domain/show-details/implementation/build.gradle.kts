@@ -17,7 +17,6 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     commonMainImplementation(project(":shared:core:database"))
-    commonMainImplementation(project(":shared:domain:tmdb:api"))
     commonMainImplementation(project( ":shared:domain:show-details:api"))
     commonMainImplementation(project(":shared:domain:episodes:api"))
     commonMainImplementation(project(":shared:domain:last-air-episodes:api"))

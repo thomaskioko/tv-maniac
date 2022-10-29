@@ -6,7 +6,8 @@ data class EpisodeUiModel(
     val name: String,
     val overview: String,
     val imageUrl: String?,
-    val voteAverage: Double,
+    val ratings: Double,
+    val runtime: Int,
     val voteCount: Int,
     val episodeNumber: String,
 )

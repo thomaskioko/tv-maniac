@@ -7,14 +7,13 @@ import kotlinx.coroutines.flow.combine
 
 class ObserveSeasonEpisodesInteractor(
     private val traktRepository: TraktRepository,
-    private val repository: SeasonEpisodesRepository,
+    private val seasonEpisodesRepository: SeasonEpisodesRepository
 ) : FlowInteractor<Int, SeasonsResult>() {
 
     override fun run(params: Int): Flow<SeasonsResult> = combine(
         traktRepository.observeShow(params),
-        repository.observeSeasonEpisodes(showId = params),
-        repository.syncSeasonEpisodeArtWork(params)
-    ) { show, seasons, _->
+        seasonEpisodesRepository.observeSeasonEpisodes(showId = params),
+    ) { show, seasons ->
         SeasonsResult(
             tvShow = show.toTvShow(),
             seasonsWithEpisodes = seasons.toSeasonWithEpisodes()
