@@ -17,5 +17,6 @@ dependencies {
     commonMainImplementation(project(":shared:domain:trakt:api"))
 
     commonMainImplementation(libs.coroutines.core)
+    commonMainApi(libs.flowredux)
 
 }
