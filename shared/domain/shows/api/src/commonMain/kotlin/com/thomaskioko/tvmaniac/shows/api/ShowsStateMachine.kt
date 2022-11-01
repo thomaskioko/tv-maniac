@@ -22,11 +22,11 @@ import kotlinx.coroutines.launch
 class ShowsStateMachine constructor(
     private val traktRepository: TraktRepository,
     private val tmdbRepository: TmdbRepository
-) : FlowReduxStateMachine<ShowsState, ShowsAction>(initialState = FetchShows) {
+) : FlowReduxStateMachine<ShowsState, ShowsAction>(initialState = Loading) {
 
     init {
         spec {
-            inState<FetchShows> {
+            inState<Loading> {
                 onEnter { fetchShowData(it) }
             }
 
@@ -59,17 +59,22 @@ class ShowsStateMachine constructor(
                     /** No need to do anything. Just trigger artwork download. **/
                 }
 
+                on<ReloadCategory> { action, state ->
+                    // TODO:: Implement reloading category data
+                    state.noChange()
+                }
+
             }
 
             inState<LoadingError> {
                 on<RetryLoading> { _, state ->
-                    state.override { FetchShows }
+                    state.override { Loading }
                 }
             }
         }
     }
 
-    private suspend fun fetchShowData(state: State<FetchShows>): ChangedState<ShowsState> {
+    private suspend fun fetchShowData(state: State<Loading>): ChangedState<ShowsState> {
         var nextState: ShowsState = state.snapshot
 
         combine(
@@ -95,8 +100,8 @@ class ShowsStateMachine constructor(
             traktRepository.observeCachedShows(FEATURED.id),
         ) { trending, popular, anticipated, featured ->
 
-            val isEmpty = trending.isEmpty() && popular.isEmpty() && anticipated.isEmpty()
-                    && featured.isEmpty()
+            val isEmpty = trending.data.isNullOrEmpty() && popular.data.isNullOrEmpty() &&
+                    anticipated.data.isNullOrEmpty() && featured.data.isNullOrEmpty()
             ShowResult(
                 trendingShows = trending.toShowData(TRENDING),
                 popularShows = popular.toShowData(POPULAR),
