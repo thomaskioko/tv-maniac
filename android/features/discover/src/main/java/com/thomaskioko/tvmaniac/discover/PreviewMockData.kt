@@ -28,20 +28,28 @@ val shows = TvShow(
 val showsLoaded = ShowsLoaded(
     result = ShowResult(
         featuredShows = ShowResult.ShowCategoryData(
-            category = ShowCategory.FEATURED,
-            tvShows = List(5) { shows }
+            categoryState = ShowResult.CategorySuccess(
+                category = ShowCategory.FEATURED,
+                tvShows = List(5) { shows }
+            )
         ),
         trendingShows = ShowResult.ShowCategoryData(
-            category = ShowCategory.TRENDING,
-            tvShows = List(10) { shows }
+            categoryState = ShowResult.CategorySuccess(
+                category = ShowCategory.TRENDING,
+                tvShows = List(10) { shows }
+            )
         ),
         popularShows = ShowResult.ShowCategoryData(
-            category = ShowCategory.POPULAR,
-            tvShows = List(10) { shows }
+            categoryState = ShowResult.CategorySuccess(
+                category = ShowCategory.POPULAR,
+                tvShows = List(10) { shows }
+            )
         ),
         anticipatedShows = ShowResult.ShowCategoryData(
-            category = ShowCategory.POPULAR,
-            tvShows = List(10) { shows }
+            categoryState = ShowResult.CategorySuccess(
+                category = ShowCategory.ANTICIPATED,
+                tvShows = List(10) { shows }
+            )
         ),
     )
 )
