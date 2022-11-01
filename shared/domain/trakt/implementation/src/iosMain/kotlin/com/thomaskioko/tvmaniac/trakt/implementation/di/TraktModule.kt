@@ -16,11 +16,11 @@ import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktUserCacheImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.traktHttpClient
 import io.ktor.client.engine.darwin.Darwin
 import io.ktor.http.HttpHeaders
-import io.ktor.http.headersOf
 import kotlinx.serialization.json.Json
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import platform.Foundation.setValue
 
 actual fun traktModule(): Module = module {
 
@@ -31,9 +31,11 @@ actual fun traktModule(): Module = module {
     single(named("trakt-json")) { createJson() }
     single(named("trakt-engine")) {
         Darwin.create {
-            headersOf(HttpHeaders.Accept, "application/json")
-            headersOf("trakt-api-key", BuildKonfig.TRAKT_CLIENT_ID)
-            headersOf("trakt-api-version", "2")
+            configureRequest {
+                setValue("application/json", HttpHeaders.Accept)
+                setValue("2", "trakt-api-version")
+                setValue(BuildKonfig.TRAKT_CLIENT_ID, "trakt-api-key")
+            }
         }
     }
 
