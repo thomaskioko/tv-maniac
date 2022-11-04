@@ -29,7 +29,6 @@ dependencies {
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin)
     commonMainImplementation(libs.datetime)
-    commonMainImplementation(libs.multiplatform.paging.core)
     commonMainImplementation(libs.squareup.sqldelight.extensions)
 
     testImplementation(libs.testing.mockk.core)

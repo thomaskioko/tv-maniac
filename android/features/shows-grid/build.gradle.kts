@@ -19,6 +19,5 @@ dependencies {
     implementation(project(":android:core:compose"))
 
     api(libs.androidx.compose.paging)
-    api(libs.multiplatform.paging.core)
     implementation(libs.accompanist.insetsui)
 }
