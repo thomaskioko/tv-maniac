@@ -11,5 +11,7 @@ android {
 }
 
 dependencies {
+    commonMainApi(project(":shared:core:database"))
+
     commonMainImplementation(libs.ktor.serialization)
 }

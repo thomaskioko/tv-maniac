@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.shows.implementation.repository
 
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.core.test.testCoroutineDispatcher
-import com.thomaskioko.tvmaniac.shows.api.cache.ShowImageCache
+import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.shows.implementation.MockData.getShow
 import com.thomaskioko.tvmaniac.shows.implementation.TmdbRepositoryImpl
