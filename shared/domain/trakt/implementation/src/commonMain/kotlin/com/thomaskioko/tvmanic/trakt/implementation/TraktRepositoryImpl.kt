@@ -1,11 +1,6 @@
 package com.thomaskioko.tvmanic.trakt.implementation
 
 import co.touchlab.kermit.Logger
-import com.kuuurt.paging.multiplatform.Pager
-import com.kuuurt.paging.multiplatform.PagingConfig
-import com.kuuurt.paging.multiplatform.PagingData
-import com.kuuurt.paging.multiplatform.PagingResult
-import com.kuuurt.paging.multiplatform.helpers.cachedIn
 import com.thomaskioko.tvmaniac.core.db.Category
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
@@ -15,9 +10,7 @@ import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.TraktStats
 import com.thomaskioko.tvmaniac.core.db.Trakt_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
-import com.thomaskioko.tvmaniac.core.util.CommonFlow
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
-import com.thomaskioko.tvmaniac.core.util.asCommonFlow
 import com.thomaskioko.tvmaniac.core.util.helper.DateUtilHelper
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
@@ -39,19 +32,12 @@ import com.thomaskioko.tvmanic.trakt.implementation.mapper.toFollowedCache
 import com.thomaskioko.tvmanic.trakt.implementation.mapper.toShow
 import com.thomaskioko.tvmanic.trakt.implementation.mapper.toShowList
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 
-private const val DEFAULT_API_PAGE = 2
-
-@OptIn(FlowPreview::class)
 class TraktRepositoryImpl constructor(
     private val tvShowCache: TvShowCache,
     private val traktUserCache: TraktUserCache,
@@ -63,7 +49,6 @@ class TraktRepositoryImpl constructor(
     private val traktService: TraktService,
     private val dateUtilHelper: DateUtilHelper,
     private val dispatcher: CoroutineDispatcher,
-    private val coroutineScope: CoroutineScope,
 ) : TraktRepository {
 
     override fun observeMe(slug: String): Flow<Resource<Trakt_user>> =
@@ -166,39 +151,6 @@ class TraktRepositoryImpl constructor(
 
     override fun observeShowsByCategoryId(categoryId: Int): Flow<List<SelectShowsByCategory>> =
         tvShowCache.observeShowsByCategoryID(categoryId)
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override fun observePagedShowsByCategoryID(
-        categoryId: Int
-    ): CommonFlow<PagingData<SelectShowsByCategory>> {
-        val pager = Pager(
-            clientScope = coroutineScope,
-            config = PagingConfig(
-                pageSize = 30,
-                enablePlaceholders = false,
-                initialLoadSize = 30
-            ),
-            initialKey = 2,
-            getItems = { currentKey, _ ->
-
-                val mappedData = fetchShowsApiRequest(categoryId)
-
-                cacheResult(mappedData, categoryId)
-
-                PagingResult(
-                    items = tvShowCache.getShowsByCategoryID(categoryId),
-                    currentKey = currentKey,
-                    prevKey = { null },
-                    nextKey = { DEFAULT_API_PAGE }
-                )
-            }
-        )
-
-        return pager.pagingData
-            .distinctUntilChanged()
-            .cachedIn(coroutineScope)
-            .asCommonFlow()
-    }
 
     override suspend fun fetchTraktWatchlistShows() {
         traktUserCache.observeMe()
