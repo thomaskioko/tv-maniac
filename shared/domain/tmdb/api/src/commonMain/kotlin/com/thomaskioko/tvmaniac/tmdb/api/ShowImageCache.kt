@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shows.api.cache
+package com.thomaskioko.tvmaniac.tmdb.api
 
 import com.thomaskioko.tvmaniac.core.db.Show_image
 import kotlinx.coroutines.flow.Flow

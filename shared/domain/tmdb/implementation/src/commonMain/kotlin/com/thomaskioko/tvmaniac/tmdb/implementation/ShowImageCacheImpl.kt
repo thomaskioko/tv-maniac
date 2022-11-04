@@ -1,10 +1,10 @@
-package com.thomaskioko.tvmaniac.shows.implementation.cache
+package com.thomaskioko.tvmaniac.tmdb.implementation
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.db.Show_image
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.shows.api.cache.ShowImageCache
+import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
 import kotlinx.coroutines.flow.Flow
 
 class ShowImageCacheImpl(
