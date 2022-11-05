@@ -98,7 +98,7 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.4.0" }
 appauth = { module = "net.openid:appauth", version.ref = "appauth" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version = "1.1.5" }
-flowredux = { module = "com.freeletics.flowredux:flowredux", version = "1.0.0" }
+flowredux = { module = "com.freeletics.flowredux:flowredux", version = "1.0.1" }
 inject = { module = "javax.inject:javax.inject", version = "1" }
 kenburns = { module = "com.flaviofaria:kenburnsview", version = "1.0.7" }
 kermit = { module = "co.touchlab:kermit", version = "1.1.3" }
@@ -108,9 +108,6 @@ material = { module = "com.google.android.material:material", version = "1.6.0-a
 snapper = { module = "dev.chrisbanes.snapper:snapper", version = "0.2.0" }
 youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version = "11.0.1" }
 
-multiplatform-paging-core = { module = "io.github.kuuuurt:multiplatform-paging", version.ref = "multiplatform-paging" }
-multiplatform-paging-ios-x64 = { module = "io.github.kuuuurt:multiplatform-paging-iosX64", version.ref = "multiplatform-paging" }
-multiplatform-paging-ios-arm64 = { module = "io.github.kuuuurt:multiplatform-paging-iosArm64", version.ref = "multiplatform-paging" }
 
 squareup-sqldelight-extensions = { module = "com.squareup.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 squareup-sqldelight-runtime = { module = "com.squareup.sqldelight:runtime", version.ref = "sqldelight" }
