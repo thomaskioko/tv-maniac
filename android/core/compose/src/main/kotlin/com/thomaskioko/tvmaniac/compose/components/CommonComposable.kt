@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -128,15 +129,21 @@ fun CircularLoadingView() {
  * Full screen circular progress indicator
  */
 @Composable
-fun FullScreenLoading() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center)
+fun FullScreenLoading(
+    isVisible: Boolean = true
+) {
+    AnimatedVisibility(
+        visible = isVisible,
     ) {
-        CircularProgressIndicator(
-            color = MaterialTheme.colors.secondary
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.Center)
+        ) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colors.secondary
+            )
+        }
     }
 }
 
@@ -168,7 +175,6 @@ fun LoadingItem(
         content()
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SnackBarErrorRetry(
     snackBarHostState: SnackbarHostState,
@@ -228,5 +234,32 @@ fun ConnectionStatus(isConnected: Boolean) {
                 style = MaterialTheme.typography.caption,
             )
         }
+    }
+}
+
+@Composable
+fun ErrorUi(onRetry: () -> Unit) {
+    Box(Modifier.fillMaxSize()) {
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .wrapContentSize()
+                .clickable { onRetry() },
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_watchlist_empty),
+                colorFilter = ColorFilter.tint(MaterialTheme.colors.onSurface.copy(alpha = 0.8F)),
+                modifier = Modifier.size(96.dp),
+                contentDescription = null
+            )
+
+            Text(
+                textAlign = TextAlign.Center,
+                text = stringResource(R.string.unexpected_error_retry)
+            )
+        }
+
     }
 }
