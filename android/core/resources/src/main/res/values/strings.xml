@@ -33,6 +33,7 @@
     <string name="msg_empty_category">Could not load show category data!</string>
     <string name="msg_search_show_hint">Search TV Shows</string>
     <string name="generic_error_message">"Oops! Something went wrong!"</string>
+    <string name="generic_empty_content">"Looks like your stash is empty"</string>
 
     <string name="str_more">More</string>
     <string name="str_more_trailers">More Trailers</string>
@@ -80,4 +81,6 @@
 
     <!-- We default using the system default -->
     <string name="pref_theme_default_value" translatable="false">@string/pref_theme_system_value</string>
+
+    <string name="unexpected_error_retry">An unexpected Error has occurred.\nClick here to retry</string>
 </resources>
