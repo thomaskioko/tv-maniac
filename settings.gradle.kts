@@ -55,4 +55,5 @@ include(
     ":shared:domain:tmdb:implementation",
     ":shared:domain:trakt:api",
     ":shared:domain:trakt:implementation",
+    ":shared:domain:trakt:testing"
 )
