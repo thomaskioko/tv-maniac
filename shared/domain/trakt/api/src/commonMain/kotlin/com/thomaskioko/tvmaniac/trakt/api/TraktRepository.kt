@@ -24,15 +24,15 @@ interface TraktRepository {
 
     fun observeShow(traktId: Int): Flow<Resource<SelectByShowId>>
 
-    fun fetchShowsByCategoryID(categoryId: Int): Flow<Resource<List<SelectShowsByCategory>>>
+    fun fetchShowsByCategoryId(categoryId: Int): Flow<Resource<List<SelectShowsByCategory>>>
 
-    fun observeShowsByCategoryId(categoryId: Int): Flow<List<SelectShowsByCategory>>
+    fun observeCachedShows(categoryId: Int): Flow<List<SelectShowsByCategory>>
 
     suspend fun updateFollowedShow(traktId: Int, addToWatchList: Boolean)
 
     suspend fun fetchTraktWatchlistShows()
 
-    suspend fun syncDiscoverShows()
+    suspend fun fetchShows()
 
     suspend fun syncFollowedShows()
 

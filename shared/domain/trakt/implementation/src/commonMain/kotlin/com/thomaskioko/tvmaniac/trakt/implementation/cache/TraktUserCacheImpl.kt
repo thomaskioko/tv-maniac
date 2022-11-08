@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmanic.trakt.implementation.cache
+package com.thomaskioko.tvmaniac.trakt.implementation.cache
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull

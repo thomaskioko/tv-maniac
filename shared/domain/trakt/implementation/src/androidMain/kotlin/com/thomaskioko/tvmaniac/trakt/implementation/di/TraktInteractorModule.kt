@@ -1,10 +1,8 @@
-package com.thomaskioko.tvmaniac.trakt.implementation.injection
+package com.thomaskioko.tvmaniac.trakt.implementation.di
 
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.util.helper.DateUtilHelper
-import com.thomaskioko.tvmaniac.shared.core.ui.di.IoCoroutineScope
 import com.thomaskioko.tvmaniac.shared.core.ui.di.IoDispatcher
-import com.thomaskioko.tvmaniac.shows.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.trakt.api.ObserveStatsInteractor
@@ -15,17 +13,16 @@ import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktStatsCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
-import com.thomaskioko.tvmanic.trakt.implementation.TraktRepositoryImpl
-import com.thomaskioko.tvmanic.trakt.implementation.cache.TraktFollowedCacheImpl
-import com.thomaskioko.tvmanic.trakt.implementation.cache.TraktListCacheImpl
-import com.thomaskioko.tvmanic.trakt.implementation.cache.TraktStatsCacheImpl
-import com.thomaskioko.tvmanic.trakt.implementation.cache.TraktUserCacheImpl
+import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktFollowedCacheImpl
+import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktListCacheImpl
+import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktStatsCacheImpl
+import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktUserCacheImpl
+import com.thomaskioko.tvmaniac.trakt.implementation.TraktRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 
@@ -61,26 +58,22 @@ object TraktInteractorModule {
         tvShowCache: TvShowCache,
         followedCache: TraktFollowedCache,
         favoriteCache: TraktListCache,
-        categoryCache: CategoryCache,
         showCategoryCache: ShowCategoryCache,
         dateUtilHelper: DateUtilHelper,
         statsCache: TraktStatsCache,
         traktService: TraktService,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
-        @IoCoroutineScope coroutineScope: CoroutineScope,
     ): TraktRepository =
         TraktRepositoryImpl(
             tvShowCache,
             cache,
             followedCache,
             favoriteCache,
-            categoryCache,
             showCategoryCache,
             statsCache,
             traktService,
             dateUtilHelper,
             ioDispatcher,
-            coroutineScope
         )
 
     @Singleton

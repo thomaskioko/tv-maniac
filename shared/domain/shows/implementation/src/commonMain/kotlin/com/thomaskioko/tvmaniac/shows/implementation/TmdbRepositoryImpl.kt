@@ -34,25 +34,35 @@ class TmdbRepositoryImpl(
         coroutineDispatcher = dispatcher
     )
 
-    override fun observeUpdateShowArtWork(): Flow<Unit> = tvShowCache.observeTvShows()
+    override fun updateShowArtWork(): Flow<Resource<Unit>> = tvShowCache.observeTvShows()
         .map { shows ->
-            shows
-                .filter {
-                    it.poster_url.isNullOrEmpty() || it.backdrop_url.isNullOrEmpty()
-                }
+            shows.filter {
+                it.poster_url.isNullOrEmpty() || it.backdrop_url.isNullOrEmpty()
+            }
                 .forEach { show ->
                     show.tmdb_id?.let { tmdbId ->
-                        val response = apiService.getTvShowDetails(tmdbId)
+                        //TODO:: Improve error handling.
+                        try {
+                            val response = apiService.getTvShowDetails(tmdbId)
 
-                        imageCache.insert(
-                            Show_image(
-                                trakt_id = show.trakt_id,
-                                poster_url = response.posterPath.toImageUrl(),
-                                backdrop_url = response.backdropPath.toImageUrl()
+                            imageCache.insert(
+                                Show_image(
+                                    trakt_id = show.trakt_id,
+                                    poster_url = response.posterPath.toImageUrl(),
+                                    backdrop_url = response.backdropPath.toImageUrl()
+                                )
                             )
-                        )
+
+                            Resource.Success(Unit)
+
+                        } catch (e: Throwable) {
+                            Logger.e { "${e.message}" }
+                            Resource.Error(e.resolveError())
+                        }
                     }
                 }
+
+            Resource.Success(Unit)
         }
         .flowOn(dispatcher)
 }

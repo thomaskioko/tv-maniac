@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmanic.trakt.implementation.mapper
+package com.thomaskioko.tvmaniac.trakt.implementation.mapper
 
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.Show
@@ -17,9 +17,9 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
 import kotlin.math.roundToInt
 
-fun List<TraktShowResponse>.toShowList() = map { it.toShow() }
+fun List<TraktShowResponse>.showResponseToCacheList() = map { it.responseToCache() }
 
-fun TraktShowResponse.toShow() = Show(
+fun TraktShowResponse.responseToCache() = Show(
     trakt_id = ids.trakt,
     tmdb_id = ids.tmdb,
     title = title,
@@ -34,9 +34,9 @@ fun TraktShowResponse.toShow() = Show(
     status = status.replaceFirstChar { it.uppercase() },
 )
 
-fun List<TraktShowsResponse>.toShow() = map { it.toShow() }
+fun List<TraktShowsResponse>.showsResponseToCacheList() = map { it.showResponseToCacheList() }
 
-fun TraktShowsResponse.toShow(): Show = Show(
+fun TraktShowsResponse.showResponseToCacheList(): Show = Show(
     trakt_id = show.ids.trakt,
     tmdb_id = show.ids.tmdb,
     title = show.title,
@@ -60,7 +60,7 @@ fun TraktUserStatsResponse.toCache(slug: String) = TraktStats(
     hours = formatDuration(episodes.minutes / 60),
     episodes_watched = formatDuration(episodes.watched)
 )
-//((episodes.minutes % 525600) / 1440)
+
 fun TraktCreateListResponse.toCache() = Trakt_list(
     id = ids.trakt,
     slug = ids.slug,
@@ -82,7 +82,7 @@ fun List<Show>.toCategoryCache(categoryId: Int) = map {
     )
 }
 
-fun List<TraktFollowedShowResponse>.toFollowedCache() = map {
+fun List<TraktFollowedShowResponse>.responseToCache() = map {
     Followed_shows(
         id = it.show.ids.trakt,
         synced = true,

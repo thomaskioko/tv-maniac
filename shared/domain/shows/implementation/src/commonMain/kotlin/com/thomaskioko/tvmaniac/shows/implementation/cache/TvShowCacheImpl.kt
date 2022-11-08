@@ -49,7 +49,7 @@ class TvShowCacheImpl(
             .mapToList()
     }
 
-    override fun observeShowsByCategoryID(categoryId: Int): Flow<List<SelectShowsByCategory>> {
+    override fun observeCachedShows(categoryId: Int): Flow<List<SelectShowsByCategory>> {
         return database.showQueries.selectShowsByCategory(categoryId)
             .asFlow()
             .mapToList()

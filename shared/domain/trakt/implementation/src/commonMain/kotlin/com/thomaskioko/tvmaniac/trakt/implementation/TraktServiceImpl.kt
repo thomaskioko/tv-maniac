@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmanic.trakt.implementation
+package com.thomaskioko.tvmaniac.trakt.implementation
 
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessRefreshTokenResponse
@@ -8,9 +8,9 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowRequest
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowToListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListRequest
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShow
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
@@ -18,8 +18,8 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
-import com.thomaskioko.tvmanic.trakt.implementation.model.AccessTokenBody
-import com.thomaskioko.tvmanic.trakt.implementation.model.RefreshAccessTokenBody
+import com.thomaskioko.tvmaniac.trakt.implementation.model.AccessTokenBody
+import com.thomaskioko.tvmaniac.trakt.implementation.model.RefreshAccessTokenBody
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

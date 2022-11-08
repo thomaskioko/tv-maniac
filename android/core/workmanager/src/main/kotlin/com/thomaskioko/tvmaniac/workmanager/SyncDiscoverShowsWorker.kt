@@ -23,7 +23,7 @@ class SyncDiscoverShowsWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         Logger.d("$tags worker running")
-        traktRepository.syncDiscoverShows()
+        traktRepository.fetchShows()
         return Result.success()
     }
 }
