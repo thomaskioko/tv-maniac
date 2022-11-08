@@ -14,7 +14,7 @@ class ObservePagedShowsByCategoryInteractor constructor(
 ) : FlowInteractor<Int, List<TvShow>>() {
 
     override fun run(params: Int): Flow<List<TvShow>> =
-        repository.observeShowsByCategoryId(ShowCategory[params].id)
+        repository.observeCachedShows(ShowCategory[params].id)
         .map { it.toTvShowList() }
 
 }

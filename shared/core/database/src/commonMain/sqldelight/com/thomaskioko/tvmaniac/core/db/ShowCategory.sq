@@ -1,7 +1,6 @@
 CREATE TABLE show_category (
 trakt_id INTEGER AS Int DEFAULT NULL PRIMARY KEY,
 category_id INTEGER AS Int DEFAULT NULL,
-FOREIGN KEY (category_id) REFERENCES category(id),
 FOREIGN KEY (trakt_id) REFERENCES show(trakt_id)
 );
 

@@ -1,4 +1,7 @@
 import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import java.io.FileInputStream
+import java.util.*
 import util.libs
 
 plugins {
@@ -6,6 +9,7 @@ plugins {
     kotlin("plugin.serialization") version ("1.6.10")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
+    id("com.codingfeline.buildkonfig")
 }
 
 android {
@@ -18,10 +22,13 @@ dependencies {
     androidMainImplementation(project(":shared:core:util"))
     androidMainImplementation(project(":shared:core:network"))
     androidMainImplementation(libs.appauth)
-    androidMainImplementation(libs.kermit)
     androidMainImplementation(libs.ktor.okhttp)
     androidMainImplementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+
+    iosMainImplementation(project(":shared:core:network"))
+    iosMainImplementation(libs.ktor.logging)
+    iosMainImplementation(libs.ktor.darwin)
 
     commonMainImplementation(project(":shared:core:database"))
     commonMainImplementation(project(":shared:core:util"))
@@ -31,6 +38,25 @@ dependencies {
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin)
     commonMainImplementation(libs.ktor.core)
+    commonMainImplementation(libs.ktor.negotiation)
+    commonMainImplementation(libs.ktor.logging)
+    commonMainImplementation(libs.ktor.serialization.json)
     commonMainImplementation(libs.ktor.serialization)
 
+}
+
+buildkonfig {
+    packageName = "com.thomaskioko.tvmaniac.trakt.auth.implementation"
+
+    val properties = Properties()
+    val secretsFile = file("../../../../local.properties")
+    if (secretsFile.exists()) {
+        properties.load(FileInputStream(secretsFile))
+    }
+
+    defaultConfigs {
+        buildConfigField(STRING, "TRAKT_CLIENT_ID", properties["TRAKT_CLIENT_ID"] as String)
+        buildConfigField(STRING, "TRAKT_CLIENT_SECRET", properties["TRAKT_CLIENT_SECRET"] as String)
+        buildConfigField(STRING, "TRAKT_REDIRECT_URI", properties["TRAKT_REDIRECT_URI"] as String)
+    }
 }

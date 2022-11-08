@@ -16,7 +16,7 @@ interface TvShowCache {
 
     fun observeTvShows(): Flow<List<SelectShows>>
 
-    fun observeShowsByCategoryID(categoryId: Int): Flow<List<SelectShowsByCategory>>
+    fun observeCachedShows(categoryId: Int): Flow<List<SelectShowsByCategory>>
 
     fun getTvShow(traktId: Int): SelectByShowId?
 
