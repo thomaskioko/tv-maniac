@@ -13,7 +13,6 @@ internal class TvShowServiceTest : TvShowsServiceMockEngine() {
 
     companion object {
         const val GET_TV_SHOW_DETAILS = "https://api.themoviedb.org/3/tv/1"
-        const val GET_POPULAR_TV_SHOWS = "https://api.themoviedb.org/3/tv/popular?page=1&sort_by=popularity.desc"
     }
 
     @Test
@@ -26,21 +25,6 @@ internal class TvShowServiceTest : TvShowsServiceMockEngine() {
         )
 
         apiClient.getTvShowDetails(1)
-
-        verifyGetRequest()
-        verifyRequestContainsHeader("Accept", "application/json")
-    }
-
-    @Test
-    fun whenPopularShows_correctUrlIsCalled(): Unit = runBlockingTest {
-
-        val apiClient = givenAMockTvShowsService(
-            endPoint = GET_POPULAR_TV_SHOWS,
-            httpStatusCode = 200,
-            responseBody = getPopularTvShows() // TODO Read this from json file
-        )
-
-        apiClient.getPopularShows(1)
 
         verifyGetRequest()
         verifyRequestContainsHeader("Accept", "application/json")
