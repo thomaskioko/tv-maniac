@@ -1,5 +1,6 @@
 
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 import util.libs
 import java.io.FileInputStream
 import java.util.*
@@ -28,8 +29,13 @@ dependencies {
     iosMainImplementation(libs.ktor.darwin)
 
     commonMainImplementation(project(":shared:domain:tmdb:api"))
-    commonMainImplementation(libs.ktor.core)
+    commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin)
+    commonMainImplementation(libs.ktor.core)
+    commonMainImplementation(libs.ktor.negotiation)
+    commonMainImplementation(libs.ktor.logging)
+    commonMainImplementation(libs.ktor.serialization.json)
+    commonMainImplementation(libs.squareup.sqldelight.extensions)
 
     commonTestImplementation(kotlin("test"))
     commonTestImplementation(project(":shared:core:test"))
