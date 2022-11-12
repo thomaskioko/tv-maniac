@@ -9,7 +9,7 @@ import TvManiac
 struct TopNavBar: View {
 
     @Binding var offset: CGFloat
-    var viewState: ShowDetailUiViewState
+    var viewState: ShowDetailUiViewState //TODO User state from stateMachine
     var maxHeight: CGFloat
     var topEdge: CGFloat
 

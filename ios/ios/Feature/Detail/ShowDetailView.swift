@@ -10,10 +10,11 @@ import SwiftUI
 import TvManiac
 
 struct ShowDetailView: View {
-
-    @ObservedObject var observable = ObservableViewModel<ShowDetailsViewModel, ShowDetailUiViewState>(
-            viewModel: ShowDetailsViewModel()
-    )
+	
+	//TODO User state from stateMachine and replace viewState reference
+//    @ObservedObject var observable = ObservableViewModel<ShowDetailsViewModel, ShowDetailUiViewState>(
+//            viewModel: ShowDetailsViewModel()
+//    )
 
     @SwiftUI.State var topEdge: CGFloat = 0
     @SwiftUI.State var offset: CGFloat = 0
@@ -23,10 +24,10 @@ struct ShowDetailView: View {
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     @GestureState private var dragOffset = CGSize.zero
 
-    var showId: Int64
+    var showId: Int32
     let maxHeight = CGFloat(520)
 
-    init(showId: Int64) {
+    init(showId: Int32) {
         self.showId = showId
     }
 
@@ -36,7 +37,7 @@ struct ShowDetailView: View {
             VStack {
                 GeometryReader { proxy in
                     HeaderView(
-                            viewState: observable.state,
+                            viewState: viewState,
                             topEdge: topEdge,
                             maxHeight: maxHeight,
                             offset: $offset,
@@ -50,7 +51,7 @@ struct ShowDetailView: View {
                             .overlay(
                                     TopNavBar(
                                             offset: $offset,
-                                            viewState: observable.state,
+                                            viewState: viewState,
                                             maxHeight: maxHeight,
                                             topEdge: topEdge
                                     )
@@ -66,18 +67,12 @@ struct ShowDetailView: View {
                         .zIndex(1)
 
 
-                ShowBodyView(viewState: observable.state)
+                ShowBodyView(viewState: viewState)
                         .offset(y: 100)
                         .zIndex(0)
             }
                     .modifier(OffsetModifier(offset: $offset))
-                    .onAppear {
-                        observable.viewModel.attach()
-                        observable.viewModel.dispatch(action: ShowDetailAction.LoadShowDetails(showId: showId))
-                    }
-                    .onDisappear {
-                        observable.viewModel.detach()
-                    }
+				
         }
                 .background(Color.background)
                 .coordinateSpace(name: "SCROLL")

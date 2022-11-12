@@ -11,12 +11,14 @@ import TvManiac
 
 struct HeaderView: View {
 
+	
+	//TODO User state from stateMachine and replace viewState reference
     var viewState: ShowDetailUiViewState
     var topEdge: CGFloat
     var maxHeight: CGFloat
 
     @Binding var offset: CGFloat
-    let onFollowShowClicked: (Int64) -> Void
+    let onFollowShowClicked: (Int32) -> Void
 
     var body: some View {
 
@@ -56,7 +58,7 @@ struct HeaderView: View {
                 ShowInfoRow(show: viewState.tvShow)
                         .padding(.top, 1)
 
-                GenresRowView(genres: viewState.genreList)
+				GenresRowView(genres: viewState.tvShow.genres)
 
                 HStack(alignment: .center, spacing: 8) {
 
@@ -77,7 +79,7 @@ struct HeaderView: View {
                             borderColor: .grey_200,
                             isOn: false,
                             action: {
-                                onFollowShowClicked(viewState.tvShow.id)
+                                onFollowShowClicked(viewState.tvShow.traktId)
                             }
                     )
                 }
@@ -115,7 +117,7 @@ struct HeaderView_Previews: PreviewProvider {
                 topEdge: 10,
                 maxHeight: 720,
                 offset: offset
-        ) { (int64: Int64) -> () in
+        ) { (int64: Int32) -> () in
         }
     }
 }
