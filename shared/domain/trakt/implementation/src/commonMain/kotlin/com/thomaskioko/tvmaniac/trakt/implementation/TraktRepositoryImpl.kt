@@ -218,14 +218,21 @@ class TraktRepositoryImpl constructor(
             .map { it?.id == traktId }
 
     private suspend fun fetchShowsAndMapResult(categoryId: Int): List<Show> =
-        when (categoryId) {
-            POPULAR.id -> traktService.getPopularShows().showResponseToCacheList()
-            TRENDING.id -> traktService.getTrendingShows().showsResponseToCacheList()
-            ANTICIPATED.id -> traktService.getAnticipatedShows().showsResponseToCacheList()
-            FEATURED.id -> traktService.getRecommendedShows(period = "daily")
-                .showsResponseToCacheList()
-            else -> throw Throwable("Unsupported type sunny")
+        //TODO:: Improve error handling
+        try {
+            when (categoryId) {
+                POPULAR.id -> traktService.getPopularShows().showResponseToCacheList()
+                TRENDING.id -> traktService.getTrendingShows().showsResponseToCacheList()
+                ANTICIPATED.id -> traktService.getAnticipatedShows().showsResponseToCacheList()
+                FEATURED.id -> traktService.getRecommendedShows(period = "daily")
+                    .showsResponseToCacheList()
+                else -> throw Throwable("Unsupported type sunny")
+            }
+        } catch (exception: Throwable){
+            Logger.withTag("fetchShowsAndMapResult").e(exception.resolveError(), exception)
+            emptyList()
         }
+
 
     private fun cacheResult(result: List<Show>, categoryId: Int) {
         tvShowCache.insert(result)
