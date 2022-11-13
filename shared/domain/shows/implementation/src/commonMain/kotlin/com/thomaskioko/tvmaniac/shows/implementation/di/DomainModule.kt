@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.shows.implementation.di
 
+import com.thomaskioko.tvmaniac.shows.api.ShowsStateMachine
+import com.thomaskioko.tvmaniac.shows.api.ShowsStateMachineWrapper
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository
@@ -13,4 +15,6 @@ val showDomainModule: Module = module {
     single<TmdbRepository> { TmdbRepositoryImpl(get(), get(), get(), get()) }
     single<TvShowCache> { TvShowCacheImpl(get()) }
     single<ShowCategoryCache> { ShowCategoryCacheImpl(get()) }
+    single { ShowsStateMachine(get(), get()) }
+    single { ShowsStateMachineWrapper(get(), get()) }
 }

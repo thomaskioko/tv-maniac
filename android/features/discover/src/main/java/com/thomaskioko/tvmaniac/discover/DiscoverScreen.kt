@@ -21,7 +21,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.Surface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -47,9 +47,9 @@ import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
+import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
 import com.thomaskioko.tvmaniac.compose.components.PosterImage
-import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
 import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
 import com.thomaskioko.tvmaniac.compose.theme.grey900
@@ -59,13 +59,19 @@ import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.shows.api.DiscoverShowEffect
-import com.thomaskioko.tvmaniac.shows.api.DiscoverShowResult
-import com.thomaskioko.tvmaniac.shows.api.DiscoverShowState
+import com.thomaskioko.tvmaniac.shows.api.FetchShows
+import com.thomaskioko.tvmaniac.shows.api.LoadShows
+import com.thomaskioko.tvmaniac.shows.api.LoadingError
+import com.thomaskioko.tvmaniac.shows.api.RetryLoading
+import com.thomaskioko.tvmaniac.shows.api.ShowResult
+import com.thomaskioko.tvmaniac.shows.api.ShowUpdateState
+import com.thomaskioko.tvmaniac.shows.api.ShowsLoaded
+import com.thomaskioko.tvmaniac.shows.api.ShowsState
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 /**
@@ -84,63 +90,63 @@ fun DiscoverScreen(
 
     val scaffoldState = rememberScaffoldState()
 
-    val discoverViewState by viewModel.observeState().collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.observeSideEffect().collect {
-            when (it) {
-                is DiscoverShowEffect.Error -> scaffoldState.snackbarHostState.showSnackbar(it.message)
-            }
-        }
-    }
+    val discoverViewState by viewModel.state.collectAsStateWithLifecycle()
 
     DiscoverShows(
         scaffoldState = scaffoldState,
-        discoverViewState = discoverViewState,
+        showsState = discoverViewState,
         openShowDetails = openShowDetails,
-        moreClicked = moreClicked
+        moreClicked = moreClicked,
+        onRetry = { viewModel.dispatch(RetryLoading) }
     )
 }
 
 @Composable
 private fun DiscoverShows(
     scaffoldState: ScaffoldState,
-    discoverViewState: DiscoverShowState,
+    showsState: ShowsState,
     openShowDetails: (showId: Int) -> Unit,
-    moreClicked: (showType: Int) -> Unit
+    moreClicked: (showType: Int) -> Unit,
+    onRetry: () -> Unit
 ) {
     Scaffold(
         scaffoldState = scaffoldState,
-        snackbarHost = { snackBarHostState ->
-            SnackbarHost(
-                hostState = snackBarHostState,
-                snackbar = { snackBarData ->
-                    SwipeDismissSnackbar(
-                        data = snackBarData,
-                        onDismiss = { }
-                    )
-                },
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-            )
-        },
     ) { contentPadding ->
 
-        //TODO:: Improve Ui state.
-        when {
-            discoverViewState.isLoading -> FullScreenLoading()
-            discoverViewState.isEmpty ->
-                EmptyContentView(
-                    painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                    message = stringResource(id = R.string.generic_error_message)
+        when (showsState) {
+            FetchShows, LoadShows -> FullScreenLoading()
+            is ShowsLoaded -> {
+                DiscoverViewScrollingContent(
+                    contentPadding,
+                    showsState,
+                    openShowDetails,
+                    moreClicked,
                 )
-            else -> DiscoverViewScrollingContent(
-                contentPadding,
-                discoverViewState,
-                openShowDetails,
-                moreClicked
-            )
+
+                when (showsState.result.updateState) {
+                    ShowUpdateState.EMPTY -> {
+                        EmptyContentView(
+                            painter = painterResource(id = R.drawable.ic_watchlist_empty),
+                            message = stringResource(id = R.string.generic_empty_content)
+                        )
+                    }
+                    ShowUpdateState.IDLE -> {
+                        //Do nothing
+                    }
+                    ShowUpdateState.ERROR -> {
+                        val errorMessage = stringResource(R.string.generic_error_message)
+                        LaunchedEffect(scaffoldState.snackbarHostState) {
+                            launch {
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    errorMessage,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            is LoadingError -> ErrorUi(onRetry = onRetry)
         }
     }
 }
@@ -148,7 +154,7 @@ private fun DiscoverShows(
 @Composable
 private fun DiscoverViewScrollingContent(
     contentPadding: PaddingValues,
-    discoverViewState: DiscoverShowState,
+    state: ShowsLoaded,
     openShowDetails: (showId: Int) -> Unit,
     moreClicked: (showType: Int) -> Unit
 ) {
@@ -162,15 +168,15 @@ private fun DiscoverViewScrollingContent(
 
         item {
             FeaturedItems(
-                showData = discoverViewState.featuredShows,
+                showData = state.result.featuredShows,
                 onItemClicked = openShowDetails
             )
         }
 
         item {
             DisplayShowData(
-                category = discoverViewState.trendingShows.category,
-                tvShows = discoverViewState.trendingShows.tvShows,
+                category = state.result.trendingShows.category,
+                tvShows = state.result.trendingShows.tvShows,
                 onItemClicked = openShowDetails,
                 moreClicked = moreClicked
             )
@@ -178,8 +184,8 @@ private fun DiscoverViewScrollingContent(
 
         item {
             DisplayShowData(
-                category = discoverViewState.recommendedShows.category,
-                tvShows = discoverViewState.recommendedShows.tvShows,
+                category = state.result.anticipatedShows.category,
+                tvShows = state.result.anticipatedShows.tvShows,
                 onItemClicked = openShowDetails,
                 moreClicked = moreClicked
             )
@@ -187,17 +193,8 @@ private fun DiscoverViewScrollingContent(
 
         item {
             DisplayShowData(
-                category = discoverViewState.anticipatedShows.category,
-                tvShows = discoverViewState.anticipatedShows.tvShows,
-                onItemClicked = openShowDetails,
-                moreClicked = moreClicked
-            )
-        }
-
-        item {
-            DisplayShowData(
-                category = discoverViewState.popularShows.category,
-                tvShows = discoverViewState.popularShows.tvShows,
+                category = state.result.popularShows.category,
+                tvShows = state.result.popularShows.tvShows,
                 onItemClicked = openShowDetails,
                 moreClicked = moreClicked
             )
@@ -208,7 +205,7 @@ private fun DiscoverViewScrollingContent(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun FeaturedItems(
-    showData: DiscoverShowResult.DiscoverShowsData,
+    showData: ShowResult.ShowCategoryData,
     onItemClicked: (Int) -> Unit,
 ) {
 
@@ -373,7 +370,7 @@ fun DiscoverScreenPreview() {
     Surface(Modifier.fillMaxWidth()) {
         DiscoverViewScrollingContent(
             contentPadding = PaddingValues(0.dp),
-            discoverViewState = discoverStatePreview,
+            state = showsLoaded,
             openShowDetails = {},
             moreClicked = {}
         )

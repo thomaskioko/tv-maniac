@@ -1,6 +1,5 @@
 
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 import util.libs
 import java.io.FileInputStream
 import java.util.*

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TmdbRepository {
 
-    fun observeShow(tmdbId: Int): Flow<Resource<out SelectByShowId?>>
+    fun observeShow(tmdbId: Int): Flow<Resource<SelectByShowId>>
 
     fun updateShowArtWork() : Flow<Resource<Unit>>
 
