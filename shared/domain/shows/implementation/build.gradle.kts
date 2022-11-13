@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 import util.libs
 
 plugins {
@@ -32,5 +33,4 @@ dependencies {
     commonTestImplementation(libs.testing.turbine)
     commonTestImplementation(libs.testing.kotest.assertions)
     commonTestImplementation(libs.testing.coroutines.test)
-    commonTestImplementation(libs.testing.mockk.common)
 }

@@ -14,8 +14,8 @@ struct BodyContentView: View {
 
     @SwiftUI.State var currentIndex: Int = 2
 
-    let showResult: DiscoverShowsState.DiscoverShowResult
-
+	let contentState: ShowsLoaded
+	
 
     var body: some View {
         ZStack {
@@ -25,54 +25,64 @@ struct BodyContentView: View {
 
                 VStack {
 
-                    /**
-                     * This is a temporary implementation for navigation to the detail view. The problem is NavigationView
-                     * does not support MatchedGeometry effect. The other alternative would be to use an overlay
-                     * for the detailView.
-                     */
-                    NavigationLink(
-                            destination: ShowDetailView(showId: showResult.featuredShows.tvShows[currentIndex].id)
-                    ) {
-                        SnapCarousel(
-                                spacing: 10,
-                                trailingSpace: 110,
-                                index: $currentIndex,
-                                items: showResult.featuredShows.tvShows
-                        ) { show in
+					if contentState.result.featuredShows.tvShows.isEmpty == false {
+						/**
+						 * This is a temporary implementation for navigation to the detail view. The problem is NavigationView
+						 * does not support MatchedGeometry effect. The other alternative would be to use an overlay
+						 * for the detailView.
+						 */
+						NavigationLink(
+							destination: ShowDetailView(showId: contentState.result.featuredShows.tvShows[currentIndex].traktId)
+						) {
+							SnapCarousel(
+									spacing: 10,
+									trailingSpace: 70,
+									index: $currentIndex,
+									items: contentState.result.featuredShows.tvShows
+							) { show in
 
-                            GeometryReader { proxy in
-                                let size = proxy.size
+								GeometryReader { proxy in
+									let size = proxy.size
 
-                                ShowPosterImage(
-                                        posterSize: .big,
-                                        imageUrl: show.posterImageUrl
-                                )
-                                        .frame(width: size.width, height: size.height)
-                                        .matchedGeometryEffect(id: show.id, in: animation)
-                            }
-                        }
-                    }
-                            .frame(height: 450)
-                            .padding(.top, 120)
+									ShowPosterImage(
+											posterSize: .big,
+											imageUrl: show.posterImageUrl
+									)
+											.frame(width: size.width, height: size.height)
+											.matchedGeometryEffect(id: show.traktId, in: animation)
+								}
+							}
+						}
+								.frame(height: 450)
+								.padding(.top, 120)
 
-                    CustomIndicator()
+						CustomIndicator()
 
-                    //Trending
-                    ShowRow(
-                            categoryName: showResult.trendingShows.category.title,
-                            shows: showResult.trendingShows.tvShows
-                    )
+					}
 
-                    //Top Rated
-                    ShowRow(
-                            categoryName: showResult.topRatedShows.category.title,
-                            shows: showResult.topRatedShows.tvShows
-                    )
-                    //Popular
-                    ShowRow(
-                            categoryName: showResult.popularShows.category.title,
-                            shows: showResult.popularShows.tvShows
-                    )
+					if contentState.result.trendingShows.tvShows.isEmpty == false {
+						//Trending
+						ShowRow(
+							categoryName: contentState.result.trendingShows.category.title,
+							shows: contentState.result.trendingShows.tvShows
+						)
+					}
+
+					if contentState.result.popularShows.tvShows.isEmpty == false {
+						//Popular
+						ShowRow(
+							categoryName: contentState.result.popularShows.category.title,
+							shows: contentState.result.popularShows.tvShows
+						)
+					}
+					
+					if contentState.result.anticipatedShows.tvShows.isEmpty == false {
+						//Popular
+						ShowRow(
+							categoryName: contentState.result.anticipatedShows.category.title,
+							shows: contentState.result.anticipatedShows.tvShows
+						)
+					}
 
                 }
                         .padding(.bottom, 90)
@@ -86,10 +96,10 @@ struct BodyContentView: View {
             let size = proxy.size
 
             TabView(selection: $currentIndex) {
-                ForEach(showResult.featuredShows.tvShows.indices, id: \.self) { index in
+                ForEach(contentState.result.featuredShows.tvShows.indices, id: \.self) { index in
                     ShowPosterImage(
                             posterSize: .big,
-                            imageUrl: showResult.featuredShows.tvShows[index].posterImageUrl
+                            imageUrl: contentState.result.featuredShows.tvShows[index].posterImageUrl
                     )
                             .frame(width: size.width, height: size.height)
                             .clipped()
@@ -121,7 +131,7 @@ struct BodyContentView: View {
     @ViewBuilder
     func CustomIndicator() -> some View {
         HStack(spacing: 5) {
-            ForEach(showResult.featuredShows.tvShows.indices, id: \.self) { index in
+            ForEach(contentState.result.featuredShows.tvShows.indices, id: \.self) { index in
                 Circle()
                         .fill(currentIndex == index ? Color.accent_color : .gray.opacity(0.5))
                         .frame(width: currentIndex == index ? 10 : 6, height: currentIndex == index ? 10 : 6)

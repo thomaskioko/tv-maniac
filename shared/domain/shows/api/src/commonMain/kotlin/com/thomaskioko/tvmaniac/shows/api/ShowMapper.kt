@@ -12,6 +12,7 @@ fun List<SelectShowsByCategory>.toTvShowList(): List<TvShow> {
 fun SelectShowsByCategory.toTvShow(): TvShow {
     return TvShow(
         traktId = trakt_id,
+        tmdbId = tmdb_id,
         title = title,
         overview = overview,
         language = language,
@@ -28,13 +29,13 @@ fun SelectShowsByCategory.toTvShow(): TvShow {
 fun String.toImageUrl() = FormatterUtil.formatPosterPath(this)
 
 fun List<SelectShowsByCategory>.toShowData(category: ShowCategory) =
-    DiscoverShowResult.DiscoverShowsData(
+    ShowResult.ShowCategoryData(
         category = category,
         tvShows = toTvShowList()
     )
 
 fun List<SelectShowsByCategory>.toShowData(
-    category: ShowCategory, resultLimit: Int) = DiscoverShowResult.DiscoverShowsData(
+    category: ShowCategory, resultLimit: Int) = ShowResult.ShowCategoryData(
     category = category,
     tvShows = toTvShowList().take(resultLimit),
 

@@ -10,14 +10,23 @@ import com.thomaskioko.tvmaniac.seasonepisodes.implementation.seasonEpisodesDoma
 import com.thomaskioko.tvmaniac.seasons.implementation.di.seasonsDomainModule
 import com.thomaskioko.tvmaniac.shared.core.ui.di.coreUiPlatformModule
 import com.thomaskioko.tvmaniac.shared.domain.trailers.implementation.di.trailersModule
+import com.thomaskioko.tvmaniac.shows.api.ShowsStateMachineWrapper
 import com.thomaskioko.tvmaniac.shows.implementation.di.showDomainModule
 import com.thomaskioko.tvmaniac.similar.implementation.di.similarDomainModule
 import com.thomaskioko.tvmaniac.tmdb.implementation.tmdbModule
+import com.thomaskioko.tvmaniac.trakt.implementation.di.traktModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import org.koin.core.Koin
+import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
+
+fun KoinApplication.Companion.start(): KoinApplication = initKoin {}
+
+val Koin.showStateMachine: ShowsStateMachineWrapper
+    get() = ShowsStateMachineWrapper(get(), get())
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     appDeclaration()
@@ -31,6 +40,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         seasonEpisodesDomainModule,
         trailersModule,
         showDomainModule,
+        traktModule(),
         coreUiPlatformModule(),
         dbPlatformModule(),
         networkPlatformModule(),

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.discover
 
-import com.thomaskioko.tvmaniac.shows.api.DiscoverShowResult
-import com.thomaskioko.tvmaniac.shows.api.DiscoverShowState
+import com.thomaskioko.tvmaniac.shows.api.ShowResult
+import com.thomaskioko.tvmaniac.shows.api.ShowsLoaded
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
@@ -25,22 +25,24 @@ val shows = TvShow(
 )
 
 
-val discoverStatePreview = DiscoverShowState(
-    featuredShows = DiscoverShowResult.DiscoverShowsData(
-        category = ShowCategory.FEATURED,
-        tvShows = List(5) { shows }
-    ),
-    trendingShows = DiscoverShowResult.DiscoverShowsData(
-        category = ShowCategory.TRENDING,
-        tvShows = List(10) { shows }
-    ),
-    recommendedShows = DiscoverShowResult.DiscoverShowsData(
-        category = ShowCategory.RECOMMENDED,
-        tvShows = List(10) { shows }
-    ),
-    popularShows = DiscoverShowResult.DiscoverShowsData(
-        category = ShowCategory.POPULAR,
-        tvShows = List(10) { shows }
-    ),
+val showsLoaded = ShowsLoaded(
+    result = ShowResult(
+        featuredShows = ShowResult.ShowCategoryData(
+            category = ShowCategory.FEATURED,
+            tvShows = List(5) { shows }
+        ),
+        trendingShows = ShowResult.ShowCategoryData(
+            category = ShowCategory.TRENDING,
+            tvShows = List(10) { shows }
+        ),
+        popularShows = ShowResult.ShowCategoryData(
+            category = ShowCategory.POPULAR,
+            tvShows = List(10) { shows }
+        ),
+        anticipatedShows = ShowResult.ShowCategoryData(
+            category = ShowCategory.POPULAR,
+            tvShows = List(10) { shows }
+        ),
+    )
 )
 
