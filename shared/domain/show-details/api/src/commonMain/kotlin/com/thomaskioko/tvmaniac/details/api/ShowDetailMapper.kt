@@ -1,15 +1,13 @@
 package com.thomaskioko.tvmaniac.details.api
 
-import com.thomaskioko.tvmaniac.core.db.AirEpisodesByShowId
+import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
-import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
-import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.lastairepisodes.api.LastAirEpisode
+import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
+import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
 fun Resource<List<SelectSimilarShows>>.toSimilarShowList(): List<TvShow> = data?.map {
     TvShow(
@@ -56,25 +54,6 @@ fun Resource<List<SelectSeasonsByShowId>>.toSeasonsEntityList(): List<SeasonUiMo
         episodeCount = it.epiosode_count
     )
 } ?: emptyList()
-
-
-fun List<AirEpisodesByShowId>.toLastAirEpisodeList(): List<LastAirEpisode> = map {
-    LastAirEpisode(
-        id = it.id,
-        name = "S${it.season_number}.E${
-            it.episode_number.toString()
-                .padStart(2, '0')
-        } • ${it.name}",
-        overview = it.overview,
-        airDate = it.air_date,
-        episodeNumber = it.episode_number,
-        seasonNumber = it.season_number,
-        posterPath = it.still_path,
-        voteAverage = it.vote_average,
-        voteCount = it.vote_count,
-        title = it.title
-    )
-}
 
 fun Resource<List<Trailers>>.toTrailerList(): List<Trailer> = data?.map {
     Trailer(
