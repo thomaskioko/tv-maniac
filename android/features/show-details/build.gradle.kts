@@ -17,7 +17,6 @@ dependencies {
     api(project(":shared:domain:similar:api"))
     api(project(":shared:domain:seasons:api"))
     api(project(":shared:domain:shows:api"))
-    api(project(":shared:domain:last-air-episodes:api"))
     api(project(":shared:domain:trailers:api"))
     implementation(project(":android:core:compose"))
     implementation(project( ":android:core:trakt-auth"))

@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.core.db.di.dbPlatformModule
 import com.thomaskioko.tvmaniac.core.util.di.coreUtilModule
 import com.thomaskioko.tvmaniac.details.implementation.di.detailDomainModule
 import com.thomaskioko.tvmaniac.episodes.implementation.di.episodeDomainModule
-import com.thomaskioko.tvmaniac.lastairepisodes.implementation.di.lastAirEpisodeDomainModule
 import com.thomaskioko.tvmaniac.network.di.networkPlatformModule
 import com.thomaskioko.tvmaniac.seasonepisodes.implementation.seasonEpisodesDomainModule
 import com.thomaskioko.tvmaniac.seasons.implementation.di.seasonsDomainModule
@@ -35,7 +34,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         detailDomainModule,
         seasonsDomainModule,
         episodeDomainModule,
-        lastAirEpisodeDomainModule,
         similarDomainModule,
         seasonEpisodesDomainModule,
         trailersModule,
