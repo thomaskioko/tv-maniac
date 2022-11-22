@@ -15,6 +15,7 @@ dependencies {
     api(project(":shared:domain:shows:api"))
 
     implementation(project(":shared:core:database"))
+    implementation(project(":shared:domain:trakt:api"))
     implementation(projects.android.core.compose)
 
     implementation(libs.accompanist.insetsui)

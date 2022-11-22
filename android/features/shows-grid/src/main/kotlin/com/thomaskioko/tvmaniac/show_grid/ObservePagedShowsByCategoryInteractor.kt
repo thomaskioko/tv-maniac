@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.details.api.interactor
+package com.thomaskioko.tvmaniac.show_grid
 
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
