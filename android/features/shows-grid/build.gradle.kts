@@ -16,6 +16,7 @@ dependencies {
 
     implementation(project(":shared:core:database"))
     implementation(project(":shared:domain:shows:api"))
+    implementation(project(":shared:domain:trakt:api"))
     implementation(project(":android:core:compose"))
 
     api(libs.androidx.compose.paging)
