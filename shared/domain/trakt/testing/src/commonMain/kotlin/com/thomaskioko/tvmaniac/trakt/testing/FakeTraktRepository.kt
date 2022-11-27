@@ -82,8 +82,6 @@ class FakeTraktRepository : TraktRepository {
             )
         )
 
-    override fun observeFollowedShow(traktId: Int): Flow<Boolean> = flowOf(false)
-
     override fun observeUpdateFollowedShow(
         traktId: Int,
         addToWatchList: Boolean
@@ -112,7 +110,10 @@ class FakeTraktRepository : TraktRepository {
                     poster_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
                     backdrop_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
                     aired_episodes = 12,
-                    trakt_id_ = 1234
+                    trakt_id_ = 1234,
+                    id = 12345,
+                    created_at = null,
+                    synced = false
                 )
             )
         )
