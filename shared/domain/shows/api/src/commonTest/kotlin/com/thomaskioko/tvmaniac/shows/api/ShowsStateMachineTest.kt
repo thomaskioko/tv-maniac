@@ -1,12 +1,12 @@
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
-import com.thomaskioko.tvmaniac.shows.api.FakeTmdbRepository
 import com.thomaskioko.tvmaniac.shows.api.FetchShows
 import com.thomaskioko.tvmaniac.shows.api.LoadShows
 import com.thomaskioko.tvmaniac.shows.api.ShowUpdateState
 import com.thomaskioko.tvmaniac.shows.api.ShowsLoaded
 import com.thomaskioko.tvmaniac.shows.api.ShowsStateMachine
 import com.thomaskioko.tvmaniac.shows.api.showResult
+import com.thomaskioko.tvmaniac.tmdb.testing.FakeTmdbRepository
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktRepository
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test

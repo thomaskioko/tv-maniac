@@ -1,14 +1,13 @@
-package com.thomaskioko.tvmaniac.shows.api
+package com.thomaskioko.tvmaniac.tmdb.testing
 
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 
-//TODO:: Move this to tmdb module
-internal class FakeTmdbRepository : TmdbRepository {
+class FakeTmdbRepository : TmdbRepository {
     override fun observeShow(tmdbId: Int): Flow<Resource<SelectByShowId>> =
         flowOf(
             Resource.Success(
@@ -32,7 +31,10 @@ internal class FakeTmdbRepository : TmdbRepository {
                     poster_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
                     backdrop_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
                     aired_episodes = 12,
-                    trakt_id_ = null
+                    trakt_id_ = null,
+                    id = 84958,
+                    synced = false,
+                    created_at = null
                 )
             )
         )

@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.ANTICIPATED
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.FEATURED
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.POPULAR
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.TRENDING
-import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
