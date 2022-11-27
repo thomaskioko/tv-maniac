@@ -18,8 +18,6 @@ interface TraktRepository {
 
     fun observeFollowedShows(): Flow<List<SelectFollowedShows>>
 
-    fun observeFollowedShow(traktId: Int): Flow<Boolean>
-
     fun observeUpdateFollowedShow(traktId: Int, addToWatchList: Boolean) : Flow<Resource<Unit>>
 
     fun observeShow(traktId: Int): Flow<Resource<SelectByShowId>>

@@ -13,7 +13,7 @@ fun TraktShowResponse.toShow(): Show {
         votes = votes,
         rating = rating,
         genres = genres,
-        year = year,
+        year = year ?: "--",
         status = status,
         aired_episodes = airedEpisodes,
         runtime = runtime,
