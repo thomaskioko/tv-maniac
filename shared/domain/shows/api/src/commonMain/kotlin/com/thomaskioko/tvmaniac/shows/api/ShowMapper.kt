@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.shows.api
 
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.util.FormatterUtil
+import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
@@ -28,15 +29,30 @@ fun SelectShowsByCategory.toTvShow(): TvShow {
 
 fun String.toImageUrl() = FormatterUtil.formatPosterPath(this)
 
-fun List<SelectShowsByCategory>.toShowData(category: ShowCategory) =
-    ShowResult.ShowCategoryData(
-        category = category,
-        tvShows = toTvShowList()
+fun Resource<List<SelectShowsByCategory>>.toShowData(category: ShowCategory) =
+    when (this) {
+        is Resource.Error -> ShowResult.ShowCategoryData(
+            ShowResult.CategoryError(category, errorMessage)
+        )
+        is Resource.Success -> ShowResult.ShowCategoryData(
+            categoryState = ShowResult.CategorySuccess(
+                category = category,
+                tvShows = data?.toTvShowList() ?: emptyList()
+            ),
+        )
+    }
+
+fun Resource<List<SelectShowsByCategory>>.toShowData(
+    category: ShowCategory,
+    resultLimit: Int
+) = when (this) {
+    is Resource.Error -> ShowResult.ShowCategoryData(
+        ShowResult.CategoryError(category, errorMessage)
     )
-
-fun List<SelectShowsByCategory>.toShowData(
-    category: ShowCategory, resultLimit: Int) = ShowResult.ShowCategoryData(
-    category = category,
-    tvShows = toTvShowList().take(resultLimit),
-
-)
+    is Resource.Success -> ShowResult.ShowCategoryData(
+        categoryState = ShowResult.CategorySuccess(
+            category = category,
+            tvShows = data?.toTvShowList()?.take(resultLimit) ?: emptyList()
+        ),
+    )
+}

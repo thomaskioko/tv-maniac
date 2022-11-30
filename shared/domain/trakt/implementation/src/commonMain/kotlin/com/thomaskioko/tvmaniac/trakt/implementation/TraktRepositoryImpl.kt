@@ -32,8 +32,10 @@ import com.thomaskioko.tvmaniac.trakt.implementation.mapper.toCache
 import com.thomaskioko.tvmaniac.trakt.implementation.mapper.toCategoryCache
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 
 
 class TraktRepositoryImpl constructor(
@@ -146,8 +148,10 @@ class TraktRepositoryImpl constructor(
             coroutineDispatcher = dispatcher
         )
 
-    override fun observeCachedShows(categoryId: Int): Flow<List<SelectShowsByCategory>> =
+    override fun observeCachedShows(categoryId: Int): Flow<Resource<List<SelectShowsByCategory>>> =
         tvShowCache.observeCachedShows(categoryId)
+            .map { Resource.Success(it) }
+            .catch { Resource.Error<List<SelectShowsByCategory>>(it.resolveError()) }
 
     override suspend fun fetchTraktWatchlistShows() {
         traktUserCache.observeMe()
