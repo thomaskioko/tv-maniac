@@ -3,57 +3,54 @@ import TvManiac
 import os.log
 
 struct DiscoverView: View {
-	
-	@ObservedObject var viewModel: DiscoverShowsViewModel = DiscoverShowsViewModel(showState: FetchShows())
-	
-	var body: some View {
-		NavigationView {
-			
-			VStack {
 
-				if viewModel.showState is FetchShows {
-					LoadingIndicatorView()
-				} else if viewModel.showState is LoadShows {
-					LoadingIndicatorView()
-				}else if let state = viewModel.showState as? LoadingError {
-					ErrorView(errorMessage:  state.errorMessage ?? "Opps!! Something went wrong")
-				} else if let state = viewModel.showState as? ShowsLoaded {
-					
-					if state.result.updateState == ShowUpdateState.empty {
-						//TODO:: Show empty view
-					} else if state.result.updateState == ShowUpdateState.error {
-						//TODO:: Show "Snackbar"
-					}
-					BodyContentView(contentState: state)
-				}
-			}
-			.ignoresSafeArea()
-			.navigationBarHidden(true)
-		}  .onAppear {
+    @ObservedObject var viewModel: DiscoverShowsViewModel = DiscoverShowsViewModel(showState: Loading_())
 
-			viewModel.startStateMachine()
-		}
-		.accentColor(Color.background)
-		.navigationViewStyle(StackNavigationViewStyle())
-	}
-	
+    var body: some View {
+        NavigationView {
+
+            VStack {
+
+                switch viewModel.showState {
+                case is Loading_:
+                    LoadingIndicatorView()
+                case is LoadShows:
+                    LoadingIndicatorView()
+                case is LoadingError:
+                    let state = viewModel.showState as! LoadingError
+                    ErrorView(errorMessage: state.errorMessage ?? "Opps!! Something went wrong")
+                case is ShowsLoaded:
+                    let state = viewModel.showState as! ShowsLoaded
+                    BodyContentView(contentState: state)
+                default:
+                    fatalError("Unhandled case: \(viewModel.showState)")
+                }
+            }
+                    .ignoresSafeArea()
+                    .navigationBarHidden(true)
+        }
+                .onAppear {
+                    viewModel.startStateMachine()
+                }
+                .accentColor(Color.background)
+                .navigationViewStyle(StackNavigationViewStyle())
+    }
+
+
 }
 
-
-// Screen Bounds...
 extension View {
-	func getRect() -> CGRect {
-		UIScreen.main.bounds
-	}
+    func getRect() -> CGRect {
+        UIScreen.main.bounds
+    }
 }
 
 
 struct DiscoverView_Previews: PreviewProvider {
+    static var previews: some View {
+        DiscoverView()
 
-	static var previews: some View {
-		DiscoverView()
-
-		DiscoverView()
-			.preferredColorScheme(.dark)
-	}
+        DiscoverView()
+                .preferredColorScheme(.dark)
+    }
 }
