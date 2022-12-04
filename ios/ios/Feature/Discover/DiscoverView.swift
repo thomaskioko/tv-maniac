@@ -14,8 +14,6 @@ struct DiscoverView: View {
                 switch viewModel.showState {
                 case is Loading_:
                     LoadingIndicatorView()
-                case is LoadShows:
-                    LoadingIndicatorView()
                 case is LoadingError:
                     let state = viewModel.showState as! LoadingError
                     ErrorView(errorMessage: state.errorMessage ?? "Opps!! Something went wrong")
@@ -29,11 +27,14 @@ struct DiscoverView: View {
                     .ignoresSafeArea()
                     .navigationBarHidden(true)
         }
+                .accentColor(Color.background)
+                .navigationViewStyle(StackNavigationViewStyle())
                 .onAppear {
                     viewModel.startStateMachine()
                 }
-                .accentColor(Color.background)
-                .navigationViewStyle(StackNavigationViewStyle())
+                .onDisappear {
+                    viewModel.dismiss()
+                }
     }
 
 

@@ -60,7 +60,6 @@ import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.shows.api.LoadShows
 import com.thomaskioko.tvmaniac.shows.api.Loading
 import com.thomaskioko.tvmaniac.shows.api.LoadingError
 import com.thomaskioko.tvmaniac.shows.api.ReloadCategory
@@ -119,7 +118,7 @@ private fun DiscoverShows(
     ) { contentPadding ->
 
         when (showsState) {
-            Loading, LoadShows -> FullScreenLoading()
+            Loading -> FullScreenLoading()
             is ShowsLoaded -> {
                 DiscoverViewScrollingContent(
                     contentPadding,
