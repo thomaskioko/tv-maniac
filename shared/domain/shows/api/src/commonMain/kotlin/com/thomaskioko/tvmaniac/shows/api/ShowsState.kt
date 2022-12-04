@@ -7,8 +7,6 @@ sealed interface ShowsState
 
 object Loading : ShowsState
 
-object LoadShows : ShowsState
-
 data class LoadingError(val errorMessage: String?) : ShowsState
 
 data class ShowsLoaded(

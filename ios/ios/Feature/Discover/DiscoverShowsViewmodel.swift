@@ -23,4 +23,8 @@ class DiscoverShowsViewModel: ObservableObject {
             self.showState = state
         })
     }
+
+    func dismiss(){
+        stateMachine.cancel()
+    }
 }
