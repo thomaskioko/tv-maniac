@@ -56,9 +56,9 @@ var seasonList = [
 
 var detailState = ShowDetailsStateShowDetailsLoaded(
 		show: mockShow,
-		similarShowsState: SimilarShowsStateLoadingSimilarShowsError(errorMessage: ""),
-		seasonState: SeasonStateLoadingSeasonsError(errorMessage: ""),
-		trailerState: TrailersStateLoadingTrailersError(errorMessage: ""),
+		similarShowsState: SimilarShowsStateSimilarShowsError(errorMessage: ""),
+		seasonState: SeasonStateSeasonsError(errorMessage: ""),
+		trailerState: TrailersStateTrailersError(errorMessage: ""),
 		followShowState: FollowShowsStateIdle()
 )
 

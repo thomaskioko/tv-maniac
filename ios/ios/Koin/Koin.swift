@@ -10,37 +10,43 @@ import TvManiac
 import Foundation
 
 extension KoinApplication {
-	static let shared = companion.start()
-	
-	@discardableResult
-	static func start() -> KoinApplication {
-		shared
-	}
+    static let shared = companion.start()
+
+    @discardableResult
+    static func start() -> KoinApplication {
+        shared
+    }
 }
 
 
 extension KoinApplication {
-  private static let keyPaths: [PartialKeyPath<Koin>] = [
-	\.showStateMachine
-  ]
+    private static let keyPaths: [PartialKeyPath<Koin>] = [
+        \.showStateMachine,
+        \.showDetailsStateMachine
+    ]
 
-  static func inject<T>() -> T {
-	shared.inject()
-  }
+    static func inject<T>() -> T {
+        shared.inject()
+    }
 
-  func inject<T>() -> T {
-	for partialKeyPath in Self.keyPaths {
-	  guard let keyPath = partialKeyPath as? KeyPath<Koin, T> else { continue }
-	  return koin[keyPath: keyPath]
-	}
+    func inject<T>() -> T {
+        for partialKeyPath in Self.keyPaths {
+            guard let keyPath = partialKeyPath as? KeyPath<Koin, T> else {
+                continue
+            }
+            return koin[keyPath: keyPath]
+        }
 
-	fatalError("\(T.self) is not registered with KoinApplication")
-  }
+        fatalError("\(T.self) is not registered with KoinApplication")
+    }
 }
 
 @propertyWrapper
 struct LazyKoin<T> {
-  lazy var wrappedValue: T = { KoinApplication.shared.inject() }()
+    lazy var wrappedValue: T = {
+        KoinApplication.shared.inject()
+    }()
 
-  init() { }
+    init() {
+    }
 }
