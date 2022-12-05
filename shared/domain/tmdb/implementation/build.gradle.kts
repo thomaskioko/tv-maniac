@@ -1,8 +1,6 @@
 
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import util.libs
-import java.io.FileInputStream
-import java.util.*
 
 plugins {
     `kmm-domain-plugin`
@@ -50,14 +48,19 @@ dependencies {
 }
 
 buildkonfig {
-    val properties = Properties()
-    val secretsFile = file("../../../../local.properties")
-    if (secretsFile.exists()) {
-        properties.load(FileInputStream(secretsFile))
-    }
 
     packageName = "com.thomaskioko.tvmaniac.tmdb.implementation"
     defaultConfigs {
-        buildConfigField(STRING, "TMDB_API_KEY", properties["TMDB_API_KEY"] as String)
+        buildConfigField(
+            STRING,
+            "TRAKT_CLIENT_ID",
+            "\"" + propOrDef("TMDB_API_KEY", "") + "\""
+        )
     }
+}
+
+fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
+    @Suppress("UNCHECKED_CAST")
+    val propertyValue = project.properties[propertyName] as T?
+    return propertyValue ?: defaultValue
 }
