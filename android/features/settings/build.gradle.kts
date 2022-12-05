@@ -9,8 +9,8 @@ android {
 }
 
 dependencies {
-    api(project(":shared:core:persistence"))
     api(project(":shared:core:util"))
+    api(project(":shared:domain:settings"))
     implementation(project(":shared:core:ui"))
     implementation(project(":shared:domain:trakt:api"))
     implementation(project(":android:core:compose"))
