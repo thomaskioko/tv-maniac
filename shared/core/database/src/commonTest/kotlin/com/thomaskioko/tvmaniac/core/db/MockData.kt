@@ -121,37 +121,4 @@ object MockData {
             aired_episodes = 12
         ),
     )
-
-    fun makeLastEpisodeList(): List<Last_episode> = listOf(
-        Last_episode(
-            id = 126280,
-            show_id = 84958,
-            name = "Follow the Leader?",
-            overview = "A woman's daring sexual past collides with her married-with-kids " +
-                "present when the bad-boy ex she can't stop fantasizing about crashes " +
-                "back into her life.",
-            title = "Latest",
-            air_date = "2014-03-28",
-            episode_number = 3,
-            season_number = 1,
-            still_path = null,
-            vote_count = 0,
-            vote_average = 12.2
-        ),
-        Last_episode(
-            id = 12628,
-            show_id = 84958,
-            name = "Follow the Leader?",
-            overview = "A woman's daring sexual past collides with her married-with-kids " +
-                "present when the bad-boy ex she can't stop fantasizing about crashes " +
-                "back into her life.",
-            title = "Coming soon",
-            air_date = "2014-03-28",
-            episode_number = 3,
-            season_number = 1,
-            still_path = null,
-            vote_count = 0,
-            vote_average = 12.2
-        )
-    )
 }
