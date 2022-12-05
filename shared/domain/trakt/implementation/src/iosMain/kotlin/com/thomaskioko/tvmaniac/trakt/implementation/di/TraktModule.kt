@@ -34,7 +34,7 @@ actual fun traktModule(): Module = module {
             configureRequest {
                 setValue("application/json", HttpHeaders.Accept)
                 setValue("2", "trakt-api-version")
-                setValue(BuildKonfig.TRAKT_CLIENT_ID, "trakt-api-key")
+                setValue(BuildKonfig.TRAKT_CLIENT_ID.replace("\"", ""), "trakt-api-key")
             }
         }
     }
