@@ -71,6 +71,9 @@ object MockData {
         runtime = 0,
         backdrop_url = null,
         poster_url = null,
-        trakt_id_ = null
+        trakt_id_ = null,
+        id = null,
+        synced = null,
+        created_at = null
     )
 }

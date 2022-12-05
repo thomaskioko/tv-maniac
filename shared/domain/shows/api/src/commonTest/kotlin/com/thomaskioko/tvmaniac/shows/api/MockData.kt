@@ -20,8 +20,8 @@ val show = TvShow(
     genres = listOf("Horror", "Action"),
     status = "Returning Series",
     year = "2024",
-    posterImageUrl = "https://image.tmdb.org/t/p/original/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-    backdropImageUrl = "https://image.tmdb.org/t/p/original/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+    posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+    backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
 )
 
 val showResult = ShowResult(
