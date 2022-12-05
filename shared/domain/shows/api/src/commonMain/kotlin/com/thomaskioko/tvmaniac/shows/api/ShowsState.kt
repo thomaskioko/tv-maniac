@@ -3,12 +3,9 @@ package com.thomaskioko.tvmaniac.shows.api
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
-
 sealed interface ShowsState
 
-object FetchShows  : ShowsState
-
-object LoadShows : ShowsState
+object Loading : ShowsState
 
 data class LoadingError(val errorMessage: String?) : ShowsState
 
@@ -23,15 +20,29 @@ data class ShowResult(
     val anticipatedShows: ShowCategoryData,
     val updateState: ShowUpdateState = ShowUpdateState.EMPTY
 ) {
+
+    sealed interface CategoryState
+
+    data class CategoryError(
+        val category: ShowCategory,
+        val errorMessage: String?
+    ) : CategoryState
+
+    data class CategorySuccess(
+        val category: ShowCategory,
+        val tvShows: List<TvShow>,
+    ) : CategoryState
+
+
     data class ShowCategoryData(
-        val category: ShowCategory = ShowCategory.FEATURED,
-        val tvShows: List<TvShow> = emptyList(),
+        val categoryState: CategoryState
     )
 }
 
 
 enum class ShowUpdateState {
     IDLE,
+
     /**
      *
      */
@@ -42,7 +53,3 @@ enum class ShowUpdateState {
      */
     ERROR,
 }
-
-sealed interface ShowsAction
-
-object RetryLoading : ShowsAction

@@ -5,10 +5,10 @@ import com.thomaskioko.tvmaniac.shared.core.ui.di.IoDispatcher
 import com.thomaskioko.tvmaniac.shows.api.ShowsStateMachine
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
-import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository
 import com.thomaskioko.tvmaniac.shows.implementation.cache.ShowCategoryCacheImpl
 import com.thomaskioko.tvmaniac.shows.implementation.cache.TvShowCacheImpl
 import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import dagger.Module

@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.details.api.interactor
+package com.thomaskioko.tvmaniac.show_grid
 
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
@@ -15,7 +15,7 @@ class ObservePagedShowsByCategoryInteractor constructor(
 
     override fun run(params: Int): Flow<List<TvShow>> =
         repository.observeCachedShows(ShowCategory[params].id)
-        .map { it.toTvShowList() }
+        .map { it.data?.toTvShowList() ?: emptyList() }
 
 }
 

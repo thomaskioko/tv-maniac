@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shows.api.repository
+package com.thomaskioko.tvmaniac.tmdb.api
 
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.util.network.Resource

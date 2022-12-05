@@ -4,13 +4,13 @@ import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.Show_image
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
-import com.thomaskioko.tvmaniac.core.util.FormatterUtil.formatPosterPath
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
-import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
-import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository
+import com.thomaskioko.tvmaniac.shows.api.toImageUrl
 import com.thomaskioko.tvmaniac.shows.implementation.mapper.toShow
+import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -48,8 +48,8 @@ class TmdbRepositoryImpl(
                             imageCache.insert(
                                 Show_image(
                                     trakt_id = show.trakt_id,
-                                    poster_url = response.posterPath.toImageUrl(),
-                                    backdrop_url = response.backdropPath.toImageUrl()
+                                    poster_url = response.posterPath?.toImageUrl(),
+                                    backdrop_url = response.backdropPath?.toImageUrl()
                                 )
                             )
 
@@ -66,5 +66,3 @@ class TmdbRepositoryImpl(
         }
         .flowOn(dispatcher)
 }
-
-fun String?.toImageUrl() = formatPosterPath(this)

@@ -32,6 +32,7 @@ import com.thomaskioko.tvmaniac.trakt.implementation.mapper.toCache
 import com.thomaskioko.tvmaniac.trakt.implementation.mapper.toCategoryCache
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -147,8 +148,10 @@ class TraktRepositoryImpl constructor(
             coroutineDispatcher = dispatcher
         )
 
-    override fun observeCachedShows(categoryId: Int): Flow<List<SelectShowsByCategory>> =
+    override fun observeCachedShows(categoryId: Int): Flow<Resource<List<SelectShowsByCategory>>> =
         tvShowCache.observeCachedShows(categoryId)
+            .map { Resource.Success(it) }
+            .catch { Resource.Error<List<SelectShowsByCategory>>(it.resolveError()) }
 
     override suspend fun fetchTraktWatchlistShows() {
         traktUserCache.observeMe()
@@ -197,6 +200,7 @@ class TraktRepositoryImpl constructor(
     }
 
     override suspend fun updateFollowedShow(traktId: Int, addToWatchList: Boolean) {
+        //TODO:: Check if user is signed into trakt and sync followed shows.
         when {
             addToWatchList -> followedCache.insert(
                 Followed_shows(
@@ -212,10 +216,6 @@ class TraktRepositoryImpl constructor(
 
     override fun observeFollowedShows(): Flow<List<SelectFollowedShows>> =
         followedCache.observeFollowedShows()
-
-    override fun observeFollowedShow(traktId: Int): Flow<Boolean> =
-        followedCache.observeFollowedShow(traktId)
-            .map { it?.id == traktId }
 
     private suspend fun fetchShowsAndMapResult(categoryId: Int): List<Show> =
         //TODO:: Improve error handling

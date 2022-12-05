@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.details.api.interactor
+package com.thomaskioko.tvmaniac.following
 
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.util.FlowInteractor

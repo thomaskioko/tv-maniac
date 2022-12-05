@@ -9,7 +9,7 @@ import TvManiac
 struct TopNavBar: View {
 
     @Binding var offset: CGFloat
-    var viewState: ShowDetailUiViewState //TODO User state from stateMachine
+    var title: String
     var maxHeight: CGFloat
     var topEdge: CGFloat
 
@@ -32,7 +32,7 @@ struct TopNavBar: View {
             Spacer()
 
             VStack(alignment: .leading, spacing: 8) {
-                Text(viewState.tvShow.title)
+                Text(title)
                         .titleFont(size: 24)
                         .foregroundColor(Color.text_color_bg)
                         .lineLimit(1)

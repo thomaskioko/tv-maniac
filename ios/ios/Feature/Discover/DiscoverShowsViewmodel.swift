@@ -10,19 +10,21 @@ import Foundation
 import TvManiac
 
 
-class DiscoverShowsViewModel : ObservableObject {
-	@LazyKoin private var stateMachine: ShowsStateMachineWrapper
-	@Published private(set) var showState: ShowsState
+class DiscoverShowsViewModel: ObservableObject {
+    @LazyKoin private var stateMachine: ShowsStateMachineWrapper
+    @Published private(set) var showState: ShowsState
 
-	init(showState: ShowsState) {
-			self.showState = showState
-	}
-	
-	func startStateMachine() {
+    init(showState: ShowsState) {
+        self.showState = showState
+    }
 
-		stateMachine.start(stateChangeListener: { (state: ShowsState) -> Void in
-			self.showState = state
-		})
+    func startStateMachine() {
+        stateMachine.start(stateChangeListener: { (state: ShowsState) -> Void in
+            self.showState = state
+        })
+    }
 
-	}
+    func dismiss(){
+        stateMachine.cancel()
+    }
 }

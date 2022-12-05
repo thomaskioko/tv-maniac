@@ -43,6 +43,7 @@ include(
     ":shared:domain:episodes:implementation",
     ":shared:domain:similar:api",
     ":shared:domain:similar:implementation",
+    ":shared:domain:similar:testing",
     ":shared:domain:season-episodes:api",
     ":shared:domain:season-episodes:implementation",
     ":shared:domain:shows:api",
@@ -51,6 +52,7 @@ include(
     ":shared:domain:trailers:implementation",
     ":shared:domain:tmdb:api",
     ":shared:domain:tmdb:implementation",
+    ":shared:domain:tmdb:testing",
     ":shared:domain:trakt:api",
     ":shared:domain:trakt:implementation",
     ":shared:domain:trakt:testing"
