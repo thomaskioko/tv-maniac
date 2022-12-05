@@ -11,7 +11,7 @@ struct ShowRow: View {
 			
 			HStack {
 				Text(categoryName)
-					.titleSemiBoldFont(size: 23)
+					.titleSemiBoldFont(size: 20)
 					.padding(.top, 8)
 					.padding(.trailing, 16)
 					.padding(.leading, 16)
@@ -51,6 +51,6 @@ struct ShowRow: View {
 
 struct ShowRow_Previews: PreviewProvider {
 	static var previews: some View {
-		ShowRow(categoryName: "Trending", shows: [mockShow,mockShow,mockShow])
+		ShowRow(categoryName: "Trending", shows: [mockTvShow,mockTvShow,mockTvShow])
 	}
 }

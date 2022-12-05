@@ -1,12 +1,16 @@
 package com.thomaskioko.showdetails
 
-import com.thomaskioko.tvmaniac.details.api.presentation.ShowDetailViewState
-import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
-import com.thomaskioko.tvmaniac.shows.api.model.TvShow
+import com.thomaskioko.tvmaniac.details.api.FollowShowsState
+import com.thomaskioko.tvmaniac.details.api.SeasonState
+import com.thomaskioko.tvmaniac.details.api.ShowDetailsState
+import com.thomaskioko.tvmaniac.details.api.SimilarShowsState
+import com.thomaskioko.tvmaniac.details.api.TrailersState
+import com.thomaskioko.tvmaniac.details.api.model.Season
+import com.thomaskioko.tvmaniac.details.api.model.Show
+import com.thomaskioko.tvmaniac.details.api.model.Trailer
 
-val detailUiState = ShowDetailViewState(
-    tvShow = TvShow(
+val detailUiState = ShowDetailsState.ShowDetailsLoaded(
+    show = Show(
         traktId = 84958,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
@@ -24,25 +28,36 @@ val detailUiState = ShowDetailViewState(
         status = "Returning Series",
         year = "2024"
     ),
-    tvSeasonUiModels = getTvSeasons(),
-    trailersList = listOf(
-        Trailer(
-            showId = 1232,
-            key = "",
-            name = "",
-            youtubeThumbnailUrl = ""
-        ),
-        Trailer(
-            showId = 1232,
-            key = "",
-            name = "",
-            youtubeThumbnailUrl = ""
-        ),
-    )
+    seasonState = SeasonState.SeasonsLoaded(
+        isLoading = false,
+        seasonsList = getTvSeasons(),
+    ),
+    trailerState = TrailersState.TrailersLoaded(
+        isLoading = true,
+        trailersList = listOf(
+            Trailer(
+                showId = 1232,
+                key = "",
+                name = "",
+                youtubeThumbnailUrl = ""
+            ),
+            Trailer(
+                showId = 1232,
+                key = "",
+                name = "",
+                youtubeThumbnailUrl = ""
+            ),
+        )
+    ),
+    similarShowsState = SimilarShowsState.SimilarShowsLoaded(
+        isLoading = false,
+        similarShows = emptyList()
+    ),
+    followShowState = FollowShowsState.Idle
 )
 
 private fun getTvSeasons() = listOf(
-    SeasonUiModel(
+    Season(
         seasonId = 114355,
         tvShowId = 84958,
         name = "Season 1",
@@ -58,7 +73,7 @@ private fun getTvSeasons() = listOf(
 )
 
 val showList = listOf(
-    TvShow(
+    Show(
         traktId = 84958,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
@@ -76,7 +91,7 @@ val showList = listOf(
         status = "Returning Series",
         year = "2024"
     ),
-    TvShow(
+    Show(
         traktId = 84958,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +

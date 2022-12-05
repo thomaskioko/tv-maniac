@@ -37,7 +37,7 @@ testing-kotest = "5.2.3"
 testing-mockk = "1.12.3"
 testing-mockito-kotlin = "2.2.0"
 
-plugin-buildkonfig = "0.7.0"
+plugin-buildkonfig = "0.13.3"
 
 shared-module-version = "0.6.0"
 

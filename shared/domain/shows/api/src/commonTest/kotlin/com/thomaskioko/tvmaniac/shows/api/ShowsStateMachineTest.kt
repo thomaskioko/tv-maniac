@@ -1,12 +1,9 @@
+package com.thomaskioko.tvmaniac.shows.api
+
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
-import com.thomaskioko.tvmaniac.shows.api.FakeTmdbRepository
-import com.thomaskioko.tvmaniac.shows.api.FetchShows
-import com.thomaskioko.tvmaniac.shows.api.LoadShows
-import com.thomaskioko.tvmaniac.shows.api.ShowUpdateState
-import com.thomaskioko.tvmaniac.shows.api.ShowsLoaded
-import com.thomaskioko.tvmaniac.shows.api.ShowsStateMachine
-import com.thomaskioko.tvmaniac.shows.api.showResult
+import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.tmdb.testing.FakeTmdbRepository
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktRepository
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
@@ -20,9 +17,11 @@ internal class ShowsStateMachineTest {
     @Test
     fun initial_state_emits_expected_result() = runBlockingTest {
 
+        traktRepository.setCategoryResult(
+            result = Resource.Success(data = categoryResult)
+        )
         stateMachine.state.test {
-            awaitItem() shouldBe FetchShows
-            awaitItem() shouldBe LoadShows
+            awaitItem() shouldBe Loading
             awaitItem() shouldBe ShowsLoaded(
                 result = showResult.copy(
                     updateState = ShowUpdateState.IDLE
@@ -33,6 +32,19 @@ internal class ShowsStateMachineTest {
                     updateState = ShowUpdateState.IDLE
                 )
             )
+        }
+    }
+
+    @Test
+    fun on_category_error_emits_expected_result() = runBlockingTest {
+
+        traktRepository.setCategoryResult(
+            result = Resource.Error(errorMessage = "Something went wrong")
+        )
+        stateMachine.state.test {
+            awaitItem() shouldBe Loading
+            awaitItem() shouldBe ShowsLoaded(emptyShowResult)
+            awaitItem() shouldBe ShowsLoaded(emptyShowResult)
         }
     }
 }

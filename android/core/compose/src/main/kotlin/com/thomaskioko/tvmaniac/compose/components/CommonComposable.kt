@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
@@ -26,6 +28,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.SignalWifi4Bar
@@ -262,4 +265,83 @@ fun ErrorUi(onRetry: () -> Unit) {
         }
 
     }
+}
+
+@Composable
+fun RowError(onRetry: () -> Unit) {
+    Box(Modifier.fillMaxSize()) {
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .wrapContentSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_watchlist_empty),
+                colorFilter = ColorFilter.tint(MaterialTheme.colors.onSurface.copy(alpha = 0.8F)),
+                modifier = Modifier.size(24.dp),
+                contentDescription = null
+            )
+
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                TextButton(
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = MaterialTheme.colors.onBackground,
+                        backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.08f)
+                    ),
+                    onClick = { onRetry() }
+                ) {
+                    Text(
+                        text = stringResource(R.string.unexpected_error_retry),
+                        style = MaterialTheme.typography.body2,
+                    )
+                }
+            }
+        }
+
+    }
+}
+
+@Composable
+fun LoadingRowContent(
+    isLoading: Boolean,
+    text: String,
+    content: @Composable () -> Unit,
+) {
+    ColumnSpacer(8)
+
+    Column {
+        Box(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
+        ) {
+
+            Text(
+                text = text,
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+            )
+
+            this@Column.AnimatedVisibility(
+                visible = isLoading,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(32.dp),
+                    color = MaterialTheme.colors.secondary
+                )
+            }
+        }
+    }
+
+    ColumnSpacer(4)
+
+    content()
+
 }

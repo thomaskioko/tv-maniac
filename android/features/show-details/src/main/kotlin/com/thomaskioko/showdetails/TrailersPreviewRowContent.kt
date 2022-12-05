@@ -1,14 +1,10 @@
 package com.thomaskioko.showdetails
 
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -17,7 +13,6 @@ import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.runtime.Composable
@@ -31,39 +26,29 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
+import com.thomaskioko.tvmaniac.compose.components.LoadingRowContent
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.details.api.TrailersState
+import com.thomaskioko.tvmaniac.details.api.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
 fun TrailersContent(
+    isLoading: Boolean,
     trailersList: List<Trailer>,
     onTrailerClicked: (String) -> Unit = {}
 ) {
 
-    ColumnSpacer(8)
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+    LoadingRowContent(
+        isLoading = isLoading,
+        text = stringResource(id = R.string.title_trailer)
     ) {
-
-        Text(
-            text = stringResource(id = R.string.title_trailer),
-            style = MaterialTheme.typography.h6,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-
-        ColumnSpacer(8)
-
         val lazyListState = rememberLazyListState()
 
         LazyRow(
@@ -72,7 +57,7 @@ fun TrailersContent(
         ) {
             itemsIndexed(trailersList) { index, trailer ->
 
-                RowSpacer(value = if (index == 0) 0 else 8)
+                RowSpacer(value = if (index == 0) 16 else 8)
 
                 Card(
                     elevation = 4.dp,
@@ -82,9 +67,8 @@ fun TrailersContent(
                 ) {
 
                     Box {
-
-                        Image(
-                            painter = rememberImagePainter(data = trailer.youtubeThumbnailUrl),
+                        AsyncImageComposable(
+                            model = trailer.youtubeThumbnailUrl,
                             contentDescription = trailer.name,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -117,9 +101,8 @@ fun TrailersContent(
 
         }
 
+        ColumnSpacer(8)
     }
-
-    ColumnSpacer(8)
 }
 
 @Preview("default")
@@ -129,7 +112,8 @@ fun TrailersContentPreview() {
     TvManiacTheme {
         Surface {
             TrailersContent(
-                trailersList = detailUiState.trailersList,
+                isLoading = false,
+                trailersList = (detailUiState.trailerState as TrailersState.TrailersLoaded).trailersList,
             )
         }
     }
