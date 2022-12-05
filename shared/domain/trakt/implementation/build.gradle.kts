@@ -1,7 +1,5 @@
 import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
-import java.io.FileInputStream
-import java.util.*
 import util.libs
 
 plugins {
@@ -49,15 +47,27 @@ dependencies {
 buildkonfig {
     packageName = "com.thomaskioko.tvmaniac.trakt.auth.implementation"
 
-    val properties = Properties()
-    val secretsFile = file("../../../../local.properties")
-    if (secretsFile.exists()) {
-        properties.load(FileInputStream(secretsFile))
-    }
-
     defaultConfigs {
-        buildConfigField(STRING, "TRAKT_CLIENT_ID", properties["TRAKT_CLIENT_ID"] as String)
-        buildConfigField(STRING, "TRAKT_CLIENT_SECRET", properties["TRAKT_CLIENT_SECRET"] as String)
-        buildConfigField(STRING, "TRAKT_REDIRECT_URI", properties["TRAKT_REDIRECT_URI"] as String)
+        buildConfigField(
+            STRING,
+            "TRAKT_CLIENT_ID",
+            "\"" + propOrDef("TRAKT_CLIENT_ID", "") + "\""
+        )
+        buildConfigField(
+            STRING,
+            "TRAKT_CLIENT_SECRET",
+            "\"" + propOrDef("TRAKT_CLIENT_SECRET", "") + "\""
+        )
+        buildConfigField(
+            STRING,
+            "TRAKT_REDIRECT_URI",
+            "\"" + propOrDef("TRAKT_REDIRECT_URI", "") + "\""
+        )
     }
+}
+
+fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
+    @Suppress("UNCHECKED_CAST")
+    val propertyValue = project.properties[propertyName] as T?
+    return propertyValue ?: defaultValue
 }
