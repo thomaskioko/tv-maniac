@@ -27,6 +27,7 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     iosMainImplementation(project(":shared:core:network"))
+    iosMainImplementation(project(":shared:domain:trakt:api"))
     iosMainImplementation(libs.ktor.logging)
     iosMainImplementation(libs.ktor.darwin)
 
