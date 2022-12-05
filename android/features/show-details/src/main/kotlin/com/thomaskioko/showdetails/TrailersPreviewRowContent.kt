@@ -1,7 +1,6 @@
 package com.thomaskioko.showdetails
 
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -27,7 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.LoadingRowContent
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
@@ -68,9 +67,8 @@ fun TrailersContent(
                 ) {
 
                     Box {
-
-                        Image(
-                            painter = rememberImagePainter(data = trailer.youtubeThumbnailUrl),
+                        AsyncImageComposable(
+                            model = trailer.youtubeThumbnailUrl,
                             contentDescription = trailer.name,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
