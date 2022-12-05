@@ -11,7 +11,7 @@ import TvManiac
 
 struct ShowInfoRow: View {
 	
-	var show: TvShow
+	var show: Show
 	
 	var body: some View {
 		ScrollView(.horizontal, showsIndicators: false) {

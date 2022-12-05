@@ -5,12 +5,12 @@ import com.thomaskioko.tvmaniac.core.db.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.seasons.api.model.SeasonUiModel
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.model.Trailer
-import com.thomaskioko.tvmaniac.shows.api.model.TvShow
+import com.thomaskioko.tvmaniac.details.api.model.Season
+import com.thomaskioko.tvmaniac.details.api.model.Show
+import com.thomaskioko.tvmaniac.details.api.model.Trailer
 
-fun Resource<List<SelectSimilarShows>>.toSimilarShowList(): List<TvShow> = data?.map {
-    TvShow(
+fun Resource<List<SelectSimilarShows>>.toSimilarShowList(): List<Show> = data?.map {
+    Show(
         traktId = it.trakt_id_,
         tmdbId = it.tmdb_id,
         title = it.title,
@@ -27,8 +27,8 @@ fun Resource<List<SelectSimilarShows>>.toSimilarShowList(): List<TvShow> = data?
 } ?: emptyList()
 
 
-fun Resource<SelectByShowId>.toTvShow(): TvShow = data?.let {
-    TvShow(
+fun Resource<SelectByShowId>.toTvShow(): Show = data?.let {
+    Show(
         traktId = it.trakt_id,
         tmdbId = it.tmdb_id,
         title = it.title,
@@ -41,11 +41,12 @@ fun Resource<SelectByShowId>.toTvShow(): TvShow = data?.let {
         genres = it.genres,
         year = it.year,
         status = it.status,
+        isFollowed = it.id != null && it.id == it.trakt_id
     )
-} ?: TvShow.EMPTY_SHOW
+} ?: Show.EMPTY_SHOW
 
-fun Resource<List<SelectSeasonsByShowId>>.toSeasonsEntityList(): List<SeasonUiModel> = data?.map {
-    SeasonUiModel(
+fun Resource<List<SelectSeasonsByShowId>>.toSeasonsEntityList(): List<Season> = data?.map {
+    Season(
         seasonId = it.id,
         tvShowId = it.show_id,
         name = it.name,

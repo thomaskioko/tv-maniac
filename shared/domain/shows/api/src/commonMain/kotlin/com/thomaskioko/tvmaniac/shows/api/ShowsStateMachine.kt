@@ -7,11 +7,14 @@ import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.ANTICIPATED
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.FEATURED
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.POPULAR
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.TRENDING
-import com.thomaskioko.tvmaniac.shows.api.repository.TmdbRepository
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.MainCoroutineDispatcher
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -22,22 +25,12 @@ import kotlinx.coroutines.launch
 class ShowsStateMachine constructor(
     private val traktRepository: TraktRepository,
     private val tmdbRepository: TmdbRepository
-) : FlowReduxStateMachine<ShowsState, ShowsAction>(initialState = FetchShows) {
+) : FlowReduxStateMachine<ShowsState, ShowsAction>(initialState = Loading) {
 
     init {
         spec {
-            inState<FetchShows> {
+            inState<Loading> {
                 onEnter { fetchShowData(it) }
-            }
-
-            inState<LoadShows> {
-                collectWhileInState(observeShowData()) { result, state ->
-                    state.override {
-                        ShowsLoaded(
-                            result = result,
-                        )
-                    }
-                }
             }
 
             inState<ShowsLoaded> {
@@ -59,17 +52,22 @@ class ShowsStateMachine constructor(
                     /** No need to do anything. Just trigger artwork download. **/
                 }
 
+                on<ReloadCategory> { action, state ->
+                    // TODO:: Implement reloading category data
+                    state.noChange()
+                }
+
             }
 
             inState<LoadingError> {
                 on<RetryLoading> { _, state ->
-                    state.override { FetchShows }
+                    state.override { Loading }
                 }
             }
         }
     }
 
-    private suspend fun fetchShowData(state: State<FetchShows>): ChangedState<ShowsState> {
+    private suspend fun fetchShowData(state: State<Loading>): ChangedState<ShowsState> {
         var nextState: ShowsState = state.snapshot
 
         combine(
@@ -77,11 +75,21 @@ class ShowsStateMachine constructor(
             traktRepository.fetchShowsByCategoryId(POPULAR.id),
             traktRepository.fetchShowsByCategoryId(ANTICIPATED.id),
             traktRepository.fetchShowsByCategoryId(FEATURED.id),
-        ) { _, _, _, _ ->
+        ) { trending, popular, anticipated, featured ->
+
+            val isEmpty = trending.data.isNullOrEmpty() && popular.data.isNullOrEmpty() &&
+                    anticipated.data.isNullOrEmpty() && featured.data.isNullOrEmpty()
+            ShowResult(
+                trendingShows = trending.toShowData(TRENDING),
+                popularShows = popular.toShowData(POPULAR),
+                anticipatedShows = anticipated.toShowData(ANTICIPATED),
+                featuredShows = featured.toShowData(FEATURED, 5),
+                updateState = if (isEmpty) ShowUpdateState.EMPTY else ShowUpdateState.IDLE
+            )
         }
             .catch { nextState = LoadingError(it.message ?: "Something went wrong") }
             .collect {
-                nextState = LoadShows
+                nextState = ShowsLoaded(result = it)
             }
 
         return state.override { nextState }
@@ -95,8 +103,8 @@ class ShowsStateMachine constructor(
             traktRepository.observeCachedShows(FEATURED.id),
         ) { trending, popular, anticipated, featured ->
 
-            val isEmpty = trending.isEmpty() && popular.isEmpty() && anticipated.isEmpty()
-                    && featured.isEmpty()
+            val isEmpty = trending.data.isNullOrEmpty() && popular.data.isNullOrEmpty() &&
+                    anticipated.data.isNullOrEmpty() && featured.data.isNullOrEmpty()
             ShowResult(
                 trendingShows = trending.toShowData(TRENDING),
                 popularShows = popular.toShowData(POPULAR),
@@ -116,8 +124,11 @@ class ShowsStateMachine constructor(
  */
 class ShowsStateMachineWrapper(
     private val stateMachine: ShowsStateMachine,
-    private val scope: CoroutineScope,
+    dispatcher: MainCoroutineDispatcher,
 ) {
+    private val job = SupervisorJob()
+    private val scope = CoroutineScope(job + dispatcher)
+
     fun dispatch(action: ShowsAction) {
         scope.launch {
             stateMachine.dispatch(action)
@@ -130,5 +141,9 @@ class ShowsStateMachineWrapper(
                 stateChangeListener(it)
             }
         }
+    }
+
+    fun cancel() {
+        job.cancelChildren()
     }
 }

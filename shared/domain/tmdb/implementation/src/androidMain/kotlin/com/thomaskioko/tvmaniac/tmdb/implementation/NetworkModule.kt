@@ -19,11 +19,6 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    @Named("tmdb-url")
-    fun provideTmdbUrl(): String = "https://api.themoviedb.org/"
-
-    @Singleton
-    @Provides
     fun provideJson(): Json = Json {
         ignoreUnknownKeys = true
         prettyPrint = true

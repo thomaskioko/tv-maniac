@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thomaskioko.tvmaniac.core.util.CoroutineScopeOwner
 import com.thomaskioko.tvmaniac.shared.core.ui.Store
-import com.thomaskioko.tvmaniac.details.api.interactor.ObservePagedShowsByCategoryInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

@@ -10,11 +10,10 @@ import SwiftUI
 import TvManiac
 
 struct ShowDetailView: View {
-	
-	//TODO User state from stateMachine and replace viewState reference
-//    @ObservedObject var observable = ObservableViewModel<ShowDetailsViewModel, ShowDetailUiViewState>(
-//            viewModel: ShowDetailsViewModel()
-//    )
+
+    @ObservedObject var viewModel: ShowDetailsViewModel = ShowDetailsViewModel(
+            detailState: ShowDetailsStateLoading()
+    )
 
     @SwiftUI.State var topEdge: CGFloat = 0
     @SwiftUI.State var offset: CGFloat = 0
@@ -35,44 +34,76 @@ struct ShowDetailView: View {
         ScrollView(.vertical, showsIndicators: false) {
 
             VStack {
-                GeometryReader { proxy in
-                    HeaderView(
-                            viewState: viewState,
-                            topEdge: topEdge,
-                            maxHeight: maxHeight,
+                switch viewModel.detailState {
+                case is ShowDetailsStateLoading:
+                    TopNavBar(
                             offset: $offset,
-                            onFollowShowClicked: { id in
-                                print(id)
-                            }
+                            title: "",
+                            maxHeight: maxHeight,
+                            topEdge: topEdge
                     )
-                            .frame(maxWidth: .infinity)
-                            .frame(height: getHeaderHeight(), alignment: .bottom)
-                            .background(BackgroundView())
-                            .overlay(
-                                    TopNavBar(
-                                            offset: $offset,
-                                            viewState: viewState,
-                                            maxHeight: maxHeight,
-                                            topEdge: topEdge
-                                    )
-                                            .padding(.horizontal)
-                                            .frame(height: 160)
-                                            .foregroundColor(.white)
-                                            .padding(.top, topEdge)
-                                    , alignment: .top
-                            )
+                            .padding(.horizontal)
+                            .frame(height: 120)
+                            .foregroundColor(.accent)
+                            .padding(.top, topEdge)
+
+                    LoadingIndicatorView()
+                case is ShowDetailsStateShowDetailsLoaded:
+                    let state = viewModel.detailState as! ShowDetailsStateShowDetailsLoaded
+                    GeometryReader { proxy in
+                        HeaderView(
+                                show: state.show,
+                                topEdge: topEdge,
+                                maxHeight: maxHeight,
+                                offset: $offset,
+                                onFollowShowClicked: { id in
+                                    print(id)
+                                }
+                        )
+                                .frame(maxWidth: .infinity)
+                                .frame(height: getHeaderHeight(), alignment: .bottom)
+                                .background(BackgroundView())
+                                .overlay(
+                                        TopNavBar(
+                                                offset: $offset,
+                                                title: state.show.title,
+                                                maxHeight: maxHeight,
+                                                topEdge: topEdge
+                                        )
+                                                .padding(.horizontal)
+                                                .frame(height: 160)
+                                                .foregroundColor(.white)
+                                                .padding(.top, topEdge)
+                                        , alignment: .top
+                                )
+                    }
+                            .frame(height: maxHeight)
+                            .offset(y: -offset)
+                            .zIndex(1)
+
+                    ShowBodyView(detailLoadedState: state)
+                            .offset(y: 100)
+                            .zIndex(0)
+                case is ShowDetailsStateShowDetailsError:
+                    let state = viewModel.detailState as! ShowDetailsStateShowDetailsError
+                    TopNavBar(
+                            offset: $offset,
+                            title: "",
+                            maxHeight: maxHeight,
+                            topEdge: topEdge
+                    )
+                            .padding(.horizontal)
+                            .frame(height: 160)
+                            .background(Color.accent.opacity(0.12))
+                            .foregroundColor(.accent)
+                            .padding(.top, topEdge)
+
+                    ErrorView(errorMessage: state.errorMessage ?? "Opps!! Something went wrong")
+                default:
+                    let _ = print("Unhandled case: \(viewModel.detailState)")
                 }
-                        .frame(height: maxHeight)
-                        .offset(y: -offset)
-                        .zIndex(1)
-
-
-                ShowBodyView(viewState: viewState)
-                        .offset(y: 100)
-                        .zIndex(0)
             }
                     .modifier(OffsetModifier(offset: $offset))
-				
         }
                 .background(Color.background)
                 .coordinateSpace(name: "SCROLL")
@@ -83,6 +114,12 @@ struct ShowDetailView: View {
                         mode.wrappedValue.dismiss()
                     }
                 }))
+                .onAppear {
+                    viewModel.startStateMachine(action: LoadShowDetails(traktId: showId))
+                }
+                .onDisappear {
+                    viewModel.dismiss()
+                }
     }
 
     @ViewBuilder

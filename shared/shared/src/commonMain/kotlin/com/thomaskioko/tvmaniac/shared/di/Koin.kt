@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.shared.di
 
 import com.thomaskioko.tvmaniac.core.db.di.dbPlatformModule
 import com.thomaskioko.tvmaniac.core.util.di.coreUtilModule
+import com.thomaskioko.tvmaniac.details.api.ShowDetailsStateMachineWrapper
 import com.thomaskioko.tvmaniac.details.implementation.di.detailDomainModule
 import com.thomaskioko.tvmaniac.episodes.implementation.di.episodeDomainModule
 import com.thomaskioko.tvmaniac.network.di.networkPlatformModule
@@ -19,13 +20,17 @@ import kotlinx.coroutines.MainScope
 import org.koin.core.Koin
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
+import org.koin.core.qualifier.named
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
 fun KoinApplication.Companion.start(): KoinApplication = initKoin {}
 
 val Koin.showStateMachine: ShowsStateMachineWrapper
-    get() = ShowsStateMachineWrapper(get(), get())
+    get() = ShowsStateMachineWrapper(get(), get(named("main-dispatcher")))
+
+val Koin.showDetailsStateMachine: ShowDetailsStateMachineWrapper
+    get() = ShowDetailsStateMachineWrapper(get(), get(named("main-dispatcher")))
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     appDeclaration()
@@ -49,5 +54,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
 
 val dispatcherModule = module {
     factory { Dispatchers.Default }
+    single(named("main-dispatcher")) { Dispatchers.Main }
     factory { MainScope() }
 }

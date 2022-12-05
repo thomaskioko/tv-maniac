@@ -62,7 +62,7 @@ fun ExtendedFab(
 
 @Composable
 fun ExtendedLoadingFab(
-    isLoading: Boolean,
+    isLoading: Boolean = false,
     painter: Painter,
     text: String,
     onClick: () -> Unit = {}

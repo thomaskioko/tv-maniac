@@ -10,7 +10,6 @@ android {
 
 dependencies {
     commonMainImplementation(project(":shared:core:util"))
-    commonMainImplementation(project(":shared:core:test"))
     commonMainImplementation(project(":shared:domain:trakt:api"))
     commonMainImplementation(project(":shared:core:database"))
     commonMainImplementation(libs.coroutines.core)

@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.discover
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.shows.api.FetchShows
+import com.thomaskioko.tvmaniac.shows.api.Loading
 import com.thomaskioko.tvmaniac.shows.api.ShowsAction
 import com.thomaskioko.tvmaniac.shows.api.ShowsState
 import com.thomaskioko.tvmaniac.shows.api.ShowsStateMachine
@@ -16,7 +16,7 @@ class DiscoverViewModel @Inject constructor(
     private val stateMachine: ShowsStateMachine
 ) : ViewModel() {
 
-    val state: MutableStateFlow<ShowsState> = MutableStateFlow(FetchShows)
+    val state: MutableStateFlow<ShowsState> = MutableStateFlow(Loading)
 
     init {
         viewModelScope.launch {
