@@ -49,9 +49,9 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsContent
-import com.thomaskioko.tvmaniac.shared.persistance.Theme
+import com.thomaskioko.tvmaniac.settings.api.SettingsActions
+import com.thomaskioko.tvmaniac.settings.api.SettingsContent
+import com.thomaskioko.tvmaniac.settings.api.Theme
 
 @Composable
 fun SettingsScreen(
