@@ -2,12 +2,12 @@ package com.thomaskioko.tvmaniac.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thomaskioko.tvmaniac.settings.api.SettingsActions
+import com.thomaskioko.tvmaniac.settings.api.SettingsContent
+import com.thomaskioko.tvmaniac.settings.api.SettingsEffect
+import com.thomaskioko.tvmaniac.settings.api.SettingsRepository
 import com.thomaskioko.tvmaniac.shared.core.ui.Store
 import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsContent
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsEffect
-import com.thomaskioko.tvmaniac.shared.persistance.TvManiacPreferences
 import com.thomaskioko.tvmaniac.trakt.api.ObserveTraktUserInteractor
 import com.thomaskioko.tvmaniac.traktauth.ObserveTraktAuthStateInteractor
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val themePreference: TvManiacPreferences,
+    private val settingsRepository: SettingsRepository,
     private val traktManager: TraktManager,
     private val traktAuthManager: TraktAuthManager,
     private val traktAuthInteractor: ObserveTraktAuthStateInteractor,
@@ -65,7 +65,7 @@ class SettingsViewModel @Inject constructor(
         when (action) {
             is SettingsActions.ThemeSelected -> {
                 viewModelScope.launch(context = ioDispatcher) {
-                    themePreference.emitTheme(action.theme)
+                    settingsRepository.saveTheme(action.theme)
                 }
             }
             SettingsActions.ThemeClicked -> {
@@ -115,7 +115,7 @@ class SettingsViewModel @Inject constructor(
 
     private fun updateTheme() {
         viewModelScope.launch {
-            themePreference.observeTheme()
+            settingsRepository.observeTheme()
                 .collect {
                     val newState = state.value.copy(
                         theme = it,

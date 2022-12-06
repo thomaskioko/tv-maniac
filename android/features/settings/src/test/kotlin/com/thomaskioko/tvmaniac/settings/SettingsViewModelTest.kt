@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.settings
 
 import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.settings.api.SettingsActions
+import com.thomaskioko.tvmaniac.settings.api.SettingsContent
+import com.thomaskioko.tvmaniac.settings.api.SettingsRepository
+import com.thomaskioko.tvmaniac.settings.api.Theme
 import com.thomaskioko.tvmaniac.settings.util.MainCoroutineRule
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsContent
-import com.thomaskioko.tvmaniac.shared.persistance.Theme
-import com.thomaskioko.tvmaniac.shared.persistance.TvManiacPreferences
 import com.thomaskioko.tvmaniac.trakt.api.ObserveTraktUserInteractor
 import com.thomaskioko.tvmaniac.traktauth.ObserveTraktAuthStateInteractor
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
@@ -26,7 +26,7 @@ internal class SettingsViewModelTest {
     @get:Rule
     val coroutineRule = MainCoroutineRule()
 
-    private val themePreference: TvManiacPreferences = mockk()
+    private val settingsRepository: SettingsRepository = mockk()
     private val traktManager: TraktManager = mockk()
     private val traktAuthManager: TraktAuthManager = mockk()
     private val traktAuthInteractor: ObserveTraktAuthStateInteractor = mockk()
@@ -35,7 +35,7 @@ internal class SettingsViewModelTest {
 
     private val viewModel by lazy {
         SettingsViewModel(
-            themePreference,
+            settingsRepository,
             traktManager,
             traktAuthManager,
             traktAuthInteractor,
@@ -46,7 +46,7 @@ internal class SettingsViewModelTest {
 
     @Test
     fun `givenThemeIsChanged verify updatedValueIsEmitted`() = runBlocking {
-        every { themePreference.observeTheme() } returns flowOf(Theme.LIGHT)
+        every { settingsRepository.observeTheme() } returns flowOf(Theme.LIGHT)
 
         viewModel.observeState().test {
             viewModel.dispatch(SettingsActions.ThemeSelected("light"))

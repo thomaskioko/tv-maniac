@@ -29,8 +29,8 @@ import com.thomaskioko.tvmaniac.core.util.network.ConnectionState
 import com.thomaskioko.tvmaniac.core.util.network.ObserveConnectionState
 import com.thomaskioko.tvmaniac.home.HomeScreen
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
+import com.thomaskioko.tvmaniac.settings.api.SettingsRepository
 import com.thomaskioko.tvmaniac.settings.domain.shouldUseDarkColors
-import com.thomaskioko.tvmaniac.shared.persistance.TvManiacPreferences
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
     lateinit var composeNavigationFactories: @JvmSuppressWildcards Set<ComposeNavigationFactory>
 
     @Inject
-    lateinit var themePreference: TvManiacPreferences
+    lateinit var settingsRepository: SettingsRepository
 
     @Inject
     lateinit var observeNetwork: ObserveConnectionState
@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            TvManiacTheme(darkTheme = themePreference.shouldUseDarkColors()) {
+            TvManiacTheme(darkTheme = settingsRepository.shouldUseDarkColors()) {
                 SetupTheme()
                 HomeScreen(composeNavigationFactories)
             }
@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun SetupTheme() {
         val systemUiController = rememberSystemUiController()
-        val isLightTheme = !themePreference.shouldUseDarkColors()
+        val isLightTheme = !settingsRepository.shouldUseDarkColors()
 
         val systemBarColor = MaterialTheme.colors.surface.copy(alpha = 0.0f)
         val transparentColor: (Color) -> Color = { original ->
