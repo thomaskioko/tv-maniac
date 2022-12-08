@@ -13,7 +13,7 @@ actual fun tmdbModule(): Module = module {
     single { Darwin.create() }
     single {
         tmdbHttpClient(
-            isDebug = true, //TODO:: provide buildType
+            isDebug = false, //TODO:: provide buildType
             json = get(),
             httpClientEngine = get(),
             tmdbApiKey = BuildKonfig.TMDB_API_KEY.replace("\"", "")
