@@ -30,7 +30,7 @@ import com.thomaskioko.tvmaniac.core.util.network.ObserveConnectionState
 import com.thomaskioko.tvmaniac.home.HomeScreen
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.settings.api.SettingsRepository
-import com.thomaskioko.tvmaniac.settings.domain.shouldUseDarkColors
+import com.thomaskioko.tvmaniac.settings.shouldUseDarkColors
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
