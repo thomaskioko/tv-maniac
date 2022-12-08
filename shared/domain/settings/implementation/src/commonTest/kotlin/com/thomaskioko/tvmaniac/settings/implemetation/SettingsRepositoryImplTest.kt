@@ -51,7 +51,7 @@ class SettingsRepositoryImplTest {
 
         repository.observeTheme().test {
 
-            repository.saveTheme("dark")
+            repository.saveTheme(Theme.DARK)
             awaitItem() shouldBe Theme.SYSTEM //Default theme
             awaitItem() shouldBe Theme.DARK
         }
