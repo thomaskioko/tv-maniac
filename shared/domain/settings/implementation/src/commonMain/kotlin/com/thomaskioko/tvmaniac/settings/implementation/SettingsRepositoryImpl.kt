@@ -16,18 +16,18 @@ class SettingsRepositoryImpl(
     private val coroutineScope: CoroutineScope
 ) : SettingsRepository {
 
-    override fun saveTheme(theme: String) {
+    override fun saveTheme(theme: Theme) {
         coroutineScope.launch {
             dataStore.edit { settings ->
-                settings[KEY_THEME] = theme
+                settings[KEY_THEME] = theme.name
             }
         }
     }
 
     override fun observeTheme(): Flow<Theme> = dataStore.data.map { theme ->
         when (theme[KEY_THEME]) {
-            "light" -> Theme.LIGHT
-            "dark" -> Theme.DARK
+            Theme.LIGHT.name -> Theme.LIGHT
+            Theme.DARK.name -> Theme.DARK
             else -> Theme.SYSTEM
         }
     }

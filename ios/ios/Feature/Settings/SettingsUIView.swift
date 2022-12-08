@@ -7,12 +7,13 @@
 //
 
 import SwiftUI
+import TvManiac
 
 struct SettingsUIView: View {
 
-	@ObservedObject var viewModel: SettingsViewModel = SettingsViewModel()
+	@ObservedObject var viewModel: SettingsViewModel = SettingsViewModel(settingsState: SettingsContent.companion.EMPTY)
 	@Environment(\.openURL) var openURL
-	@State private var showingAlert = false
+	@SwiftUI.State private var showingAlert: Bool = false
 
 	var body: some View {
 		Form {
@@ -37,6 +38,9 @@ struct SettingsUIView: View {
 
 							}
 						})
+						.onChange(of: viewModel.appTheme) { theme in
+							viewModel.dispatchAction(action: ThemeSelected(theme: theme.toTheme()))
+						}
 
 			}
 
