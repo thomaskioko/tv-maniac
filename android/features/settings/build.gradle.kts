@@ -18,6 +18,4 @@ dependencies {
 
     implementation(libs.accompanist.insetsui)
 
-    testImplementation(libs.testing.junit)
-    testImplementation(libs.testing.mockk.core)
 }

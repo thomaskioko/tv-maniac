@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.episodes.implementation.di.episodeDomainModule
 import com.thomaskioko.tvmaniac.network.di.networkPlatformModule
 import com.thomaskioko.tvmaniac.seasonepisodes.implementation.seasonEpisodesDomainModule
 import com.thomaskioko.tvmaniac.seasons.implementation.di.seasonsDomainModule
+import com.thomaskioko.tvmaniac.settings.api.SettingsStateMachineWrapper
 import com.thomaskioko.tvmaniac.settings.implementation.di.settingsModule
 import com.thomaskioko.tvmaniac.shared.core.ui.di.coreUiPlatformModule
 import com.thomaskioko.tvmaniac.shared.domain.trailers.implementation.di.trailersModule
@@ -33,6 +34,9 @@ val Koin.showStateMachine: ShowsStateMachineWrapper
 val Koin.showDetailsStateMachine: ShowDetailsStateMachineWrapper
     get() = ShowDetailsStateMachineWrapper(get(), get(named("main-dispatcher")))
 
+val Koin.settingsStateMachine: SettingsStateMachineWrapper
+    get() = SettingsStateMachineWrapper(get(), get(named("main-dispatcher")))
+
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     appDeclaration()
     modules(
@@ -55,7 +59,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
 }
 
 val dispatcherModule = module {
-    factory { Dispatchers.Default }
+    single { MainScope() }
+    single { Dispatchers.Default }
     single(named("main-dispatcher")) { Dispatchers.Main }
-    factory { MainScope() }
 }

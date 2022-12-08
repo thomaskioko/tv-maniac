@@ -7,23 +7,13 @@
 //
 
 import Foundation
+import TvManiac
 import UIKit
 
 enum AppTheme: Int, CaseIterable {
 	case Light = 0
 	case Dark = 1
 	case System = 2
-
-	func getTheme(value: Int) -> AppTheme {
-		switch value {
-		case 1:
-			return AppTheme.Dark
-		case 0:
-			return AppTheme.Light
-		default:
-			return AppTheme.System
-		}
-	}
 
 	func getName() -> String {
 		switch self {
@@ -36,4 +26,25 @@ enum AppTheme: Int, CaseIterable {
 		}
 	}
 
+	func toTheme() -> Theme {
+		switch self {
+		case .System:
+			return Theme.system
+		case .Light:
+			return Theme.light
+		case .Dark:
+			return Theme.dark
+		}
+	}
+}
+
+func toAppTheme(theme: Theme) -> AppTheme {
+	switch theme {
+	case Theme.dark:
+		return AppTheme.Dark
+	case Theme.light:
+		return AppTheme.Light
+	default:
+		return AppTheme.System
+	}
 }
