@@ -72,8 +72,7 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 
 You need to add API keys from [Trakt.tv](https://trakt.docs.apiary.io) & [TMDb](https://developers.themoviedb.org). To do so:
 
-- Create `local.properties` in `root` dir
-- Add the following
+- Add the following keys to `~/.gradle/gradle.properties`
     ```
     TMDB_API_URL=https://api.themoviedb.org/3/
     TMDB_API_KEY=ENTER_URI
@@ -131,6 +130,7 @@ I wrote an article, [Going Modular — The Kotlin Multiplatform Way](https://med
 * [Napier](https://github.com/AAkira/Napier) - Logging
 * [Mockk](https://github.com/mockk/mockk) - mocking library for Kotlin.
 * [koin](https://github.com/mockk/mockk) - Injection library.
+* [DataStore Preferences](https://android-developers.googleblog.com/2022/10/announcing-experimental-preview-of-jetpack-multiplatform-libraries.html) - Data storage
 
 ### iOS
 * [Kingfisher](https://github.com/onevcat/Kingfisher) - Image library.
@@ -155,6 +155,7 @@ iOS
 - [x] Add HomeScreen: Tabs & Empty UI
 - [x] Implement Discover UI
 - [x] Show Detail Screen
+- [x] Add Settings panel.
 - [ ] Implement trakt auth & sign in
 - [ ] Add Seasons UI
 - [ ] Implement Search UI
@@ -170,7 +171,6 @@ Shared
 - [ ] Improve error handling, add retry.
 - [ ] Add test cases.
 - [ ] Fix paging
-- [ ] Better MVI implementation
 - [ ] Observe Internet connection
     - [x] Android
     - [ ] iOS
