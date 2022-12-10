@@ -53,7 +53,7 @@ buildkonfig {
     defaultConfigs {
         buildConfigField(
             STRING,
-            "TRAKT_CLIENT_ID",
+            "TMDB_API_KEY",
             "\"" + propOrDef("TMDB_API_KEY", "") + "\""
         )
     }

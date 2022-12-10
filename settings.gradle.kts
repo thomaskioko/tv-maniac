@@ -32,7 +32,6 @@ include(
     ":shared:core:ui",
     ":shared:core:util",
     ":shared:core:test",
-    ":shared:core:persistence",
     ":shared:core:database",
     ":shared:core:network",
     ":shared:domain:show-details:api",
@@ -41,6 +40,7 @@ include(
     ":shared:domain:seasons:implementation",
     ":shared:domain:episodes:api",
     ":shared:domain:episodes:implementation",
+    ":shared:domain:settings",
     ":shared:domain:similar:api",
     ":shared:domain:similar:implementation",
     ":shared:domain:similar:testing",
@@ -55,5 +55,7 @@ include(
     ":shared:domain:tmdb:testing",
     ":shared:domain:trakt:api",
     ":shared:domain:trakt:implementation",
-    ":shared:domain:trakt:testing"
+    ":shared:domain:trakt:testing",
+    ":shared:domain:settings:api",
+    ":shared:domain:settings:implementation",
 )
