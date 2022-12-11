@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shared.domain.trailers.implementation
+package com.thomaskioko.tvmaniac.domain.trailers.implementation
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList

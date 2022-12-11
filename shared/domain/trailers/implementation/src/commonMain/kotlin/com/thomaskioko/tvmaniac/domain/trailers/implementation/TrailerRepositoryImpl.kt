@@ -1,8 +1,9 @@
-package com.thomaskioko.tvmaniac.shared.domain.trailers.implementation
+package com.thomaskioko.tvmaniac.domain.trailers.implementation
 
 import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
+import com.thomaskioko.tvmaniac.core.util.AppUtils
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
@@ -17,8 +18,11 @@ class TrailerRepositoryImpl(
     private val apiService: TmdbService,
     private val trailerCache: TrailerCache,
     private val tvShowCache: TvShowCache,
+    private val appUtils: AppUtils,
     private val dispatcher: CoroutineDispatcher,
 ) : TrailerRepository {
+
+    override fun isWebViewInstalled(): Flow<Boolean> = appUtils.isYoutubePlayerInstalled()
 
     override fun observeTrailersByShowId(traktId: Int): Flow<Resource<List<Trailers>>> =
         networkBoundResource(

@@ -50,6 +50,7 @@ include(
     ":shared:domain:shows:implementation",
     ":shared:domain:trailers:api",
     ":shared:domain:trailers:implementation",
+    ":shared:domain:trailers:testing",
     ":shared:domain:tmdb:api",
     ":shared:domain:tmdb:implementation",
     ":shared:domain:tmdb:testing",

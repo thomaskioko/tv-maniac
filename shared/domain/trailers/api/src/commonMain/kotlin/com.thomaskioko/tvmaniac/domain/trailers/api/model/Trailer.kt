@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shared.domain.trailers.api.model
+package com.thomaskioko.tvmaniac.domain.trailers.api.model
 
 data class Trailer(
     val showId : Int,
