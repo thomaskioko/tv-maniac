@@ -39,7 +39,7 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
-fun TrailersContent(
+fun TrailersRowContent(
     isLoading: Boolean,
     trailersList: List<Trailer>,
     onTrailerClicked: (String) -> Unit = {}
@@ -90,6 +90,7 @@ fun TrailersContent(
                         Icon(
                             imageVector = Icons.Filled.PlayCircle,
                             contentDescription = trailer.name,
+                            tint = MaterialTheme.colors.secondary,
                             modifier = Modifier
                                 .align(Alignment.Center)
                                 .size(48.dp)
@@ -111,7 +112,7 @@ fun TrailersContent(
 fun TrailersContentPreview() {
     TvManiacTheme {
         Surface {
-            TrailersContent(
+            TrailersRowContent(
                 isLoading = false,
                 trailersList = (detailUiState.trailerState as TrailersState.TrailersLoaded).trailersList,
             )

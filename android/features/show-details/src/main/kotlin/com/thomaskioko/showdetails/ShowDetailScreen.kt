@@ -24,6 +24,7 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScrollableTabRow
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Tab
 import androidx.compose.material.Text
@@ -64,15 +65,18 @@ import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.LoadingRowContent
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
+import com.thomaskioko.tvmaniac.compose.components.SnackBarErrorRetry
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
+import com.thomaskioko.tvmaniac.details.api.DismissWebViewError
 import com.thomaskioko.tvmaniac.details.api.FollowShow
 import com.thomaskioko.tvmaniac.details.api.SeasonState
 import com.thomaskioko.tvmaniac.details.api.ShowDetailsAction
 import com.thomaskioko.tvmaniac.details.api.ShowDetailsState
 import com.thomaskioko.tvmaniac.details.api.SimilarShowsState
 import com.thomaskioko.tvmaniac.details.api.TrailersState
+import com.thomaskioko.tvmaniac.details.api.WebViewError
 import com.thomaskioko.tvmaniac.details.api.model.Season
 import com.thomaskioko.tvmaniac.details.api.model.Show
 import com.thomaskioko.tvmaniac.details.api.model.Trailer
@@ -107,15 +111,29 @@ fun ShowDetailScreen(
         },
         content = { contentPadding ->
 
-            ShowDetailContent(
-                viewState,
-                listState,
-                contentPadding,
-                onSeasonClicked,
-                onShowClicked,
-                onWatchTrailerClicked,
-                onUpdateFavoriteClicked = { viewModel.dispatch(it) }
-            )
+            when (viewState) {
+                ShowDetailsState.Loading -> FullScreenLoading()
+                is ShowDetailsState.ShowDetailsError -> ErrorUi(onRetry = {})
+                is ShowDetailsState.ShowDetailsLoaded -> {
+                    ShowDetailContent(
+                        contentPadding = contentPadding,
+                        snackBarHostState = scaffoldState.snackbarHostState,
+                        viewState = viewState as ShowDetailsState.ShowDetailsLoaded,
+                        listState = listState,
+                        onSeasonClicked = onSeasonClicked,
+                        onShowClicked = onShowClicked,
+                        onWatchTrailerClicked = { canPlay, traktId, trailerKey ->
+                            if (canPlay)
+                                onWatchTrailerClicked(traktId, trailerKey)
+                            else
+                                viewModel.dispatch(WebViewError)
+                        },
+                        onUpdateFavoriteClicked = { viewModel.dispatch(it) },
+                        onDismissTrailerErrorClicked = { viewModel.dispatch(DismissWebViewError) }
+                    )
+                }
+            }
+
         }
     )
 }
@@ -159,79 +177,114 @@ private fun ShowTopBar(
 
 @Composable
 private fun ShowDetailContent(
-    viewState: ShowDetailsState,
     listState: LazyListState,
+    snackBarHostState: SnackbarHostState,
     contentPadding: PaddingValues,
+    viewState: ShowDetailsState.ShowDetailsLoaded,
     onSeasonClicked: (Int, String) -> Unit,
     onShowClicked: (Int) -> Unit,
-    onWatchTrailerClicked: (Int, String?) -> Unit,
+    onWatchTrailerClicked: (Boolean, Int, String?) -> Unit,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
+    onDismissTrailerErrorClicked: () -> Unit,
 ) {
     LazyColumn(
         state = listState,
         contentPadding = contentPadding.copy(copyTop = false),
     ) {
-        when (viewState) {
-            ShowDetailsState.Loading -> item { FullScreenLoading() }
-            is ShowDetailsState.ShowDetailsLoaded -> {
-                item {
-                    HeaderViewContent(
-                        listState = listState,
-                        show = viewState.show,
-                        trailersList = (detailUiState.trailerState as? TrailersState.TrailersLoaded)?.trailersList,
-                        onUpdateFavoriteClicked = onUpdateFavoriteClicked,
-                        onWatchTrailerClicked = onWatchTrailerClicked
+
+        item {
+            val trailerState = (detailUiState.trailerState as? TrailersState.TrailersLoaded)
+
+            HeaderViewContent(
+                listState = listState,
+                show = viewState.show,
+                trailerKey = trailerState?.trailersList?.firstOrNull()?.key,
+                onUpdateFavoriteClicked = onUpdateFavoriteClicked,
+                onWatchTrailerClicked = { showId, key ->
+                    val hasWebView = trailerState?.hasWebViewInstalled ?: false
+                    onWatchTrailerClicked(hasWebView, showId, key)
+                }
+            )
+        }
+
+        item {
+            when (viewState.seasonState) {
+                is SeasonState.SeasonsLoaded -> {
+                    val state = (viewState.seasonState as SeasonState.SeasonsLoaded)
+                    SeasonsUi(
+                        isLoading = state.isLoading,
+                        seasonsList = state.seasonsList,
+                        onSeasonClicked = onSeasonClicked
                     )
                 }
 
-                when (viewState.seasonState) {
-                    is SeasonState.SeasonsLoaded -> item {
-                        val state = (viewState.seasonState as SeasonState.SeasonsLoaded)
-                        SeasonsUi(
-                            isLoading = state.isLoading,
-                            seasonsList = state.seasonsList,
-                            onSeasonClicked = onSeasonClicked
-                        )
-                    }
-                    is SeasonState.SeasonsError -> {
-                        //TODO:: Show Error view with retry
-                    }
-                }
-
-                when (viewState.trailerState) {
-                    is TrailersState.TrailersError -> {
-                        //TODO:: Show Error view with retry
-                    }
-                    is TrailersState.TrailersLoaded -> item {
-                        val state = (viewState.trailerState as TrailersState.TrailersLoaded)
-                        TrailersContent(
-                            isLoading = state.isLoading,
-                            trailersList = state.trailersList,
-                            onTrailerClicked = { videoKey ->
-                                onWatchTrailerClicked(detailUiState.show.traktId, videoKey)
-                            }
-                        )
-                    }
-                }
-
-                when (viewState.similarShowsState) {
-                    is SimilarShowsState.SimilarShowsError -> {
-                        //TODO:: Show Error view with retry
-                    }
-                    is SimilarShowsState.SimilarShowsLoaded -> item {
-                        val state =
-                            viewState.similarShowsState as SimilarShowsState.SimilarShowsLoaded
-                        SimilarShowsUi(
-                            isLoading = state.isLoading,
-                            similarShows = state.similarShows,
-                            onShowClicked = onShowClicked
-                        )
-                    }
+                is SeasonState.SeasonsError -> {
+                    //TODO:: Show Error view with retry
                 }
             }
+        }
 
-            is ShowDetailsState.ShowDetailsError -> item { ErrorUi(onRetry = {}) }
+        //Trailers
+        item {
+            TrailersConent(
+                trailersState = viewState.trailerState,
+                snackBarHostState = snackBarHostState,
+                onDismissTrailerErrorClicked = onDismissTrailerErrorClicked,
+                onWatchTrailerClicked = onWatchTrailerClicked
+            )
+        }
 
+        item {
+            when (viewState.similarShowsState) {
+                is SimilarShowsState.SimilarShowsError -> {
+                    //TODO:: Show Error view with retry
+                }
+
+                is SimilarShowsState.SimilarShowsLoaded -> {
+                    val state =
+                        viewState.similarShowsState as SimilarShowsState.SimilarShowsLoaded
+                    SimilarShowsUi(
+                        isLoading = state.isLoading,
+                        similarShows = state.similarShows,
+                        onShowClicked = onShowClicked
+                    )
+                }
+            }
+        }
+    }
+}
+@Composable
+private fun TrailersConent(
+    trailersState: TrailersState,
+    snackBarHostState: SnackbarHostState,
+    onDismissTrailerErrorClicked: () -> Unit,
+    onWatchTrailerClicked: (Boolean, Int, String?) -> Unit
+) {
+    when (trailersState) {
+        is TrailersState.TrailersError -> {
+            //TODO:: Show Error view with retry
+        }
+
+        is TrailersState.TrailersLoaded -> {
+
+            SnackBarErrorRetry(
+                snackBarHostState = snackBarHostState,
+                errorMessage = trailersState.playerErrorMessage,
+                onErrorAction = onDismissTrailerErrorClicked,
+                actionLabel = "Dismiss"
+            )
+
+            TrailersRowContent(
+                isLoading = trailersState.isLoading,
+                trailersList = trailersState.trailersList,
+                onTrailerClicked = { videoKey ->
+                    onWatchTrailerClicked(
+                        trailersState.hasWebViewInstalled,
+                        detailUiState.show.traktId,
+                        videoKey
+                    )
+                }
+            )
         }
     }
 }
@@ -284,7 +337,7 @@ private fun SeasonsUi(
 @Composable
 private fun HeaderViewContent(
     show: Show,
-    trailersList: List<Trailer>?,
+    trailerKey: String?,
     listState: LazyListState,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
     onWatchTrailerClicked: (Int, String?) -> Unit,
@@ -309,7 +362,7 @@ private fun HeaderViewContent(
 
         Body(
             show = show,
-            trailersList = trailersList,
+            trailerKey = trailerKey,
             onUpdateFavoriteClicked = onUpdateFavoriteClicked,
             onWatchTrailerClicked = onWatchTrailerClicked
         )
@@ -330,7 +383,7 @@ private fun HeaderImage(backdropImageUrl: String?) {
 @Composable
 private fun Body(
     show: Show,
-    trailersList: List<Trailer>?,
+    trailerKey: String?,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
     onWatchTrailerClicked: (Int, String?) -> Unit,
 ) {
@@ -370,7 +423,7 @@ private fun Body(
 
             TvShowMetadata(
                 show = show,
-                trailersList = trailersList,
+                trailerKey = trailerKey,
                 onUpdateFavoriteClicked = onUpdateFavoriteClicked,
                 onWatchTrailerClicked = onWatchTrailerClicked
             )
@@ -383,7 +436,7 @@ private fun Body(
 @Composable
 fun TvShowMetadata(
     show: Show,
-    trailersList: List<Trailer>?,
+    trailerKey: String?,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
     onWatchTrailerClicked: (Int, String?) -> Unit,
 ) {
@@ -447,7 +500,7 @@ fun TvShowMetadata(
 
     ShowDetailButtons(
         traktId = show.traktId,
-        trailersList = trailersList,
+        trailerKey = trailerKey,
         isFollowed = show.isFollowed,
         onUpdateFavoriteClicked = onUpdateFavoriteClicked,
         onWatchTrailerClicked = onWatchTrailerClicked
@@ -487,12 +540,10 @@ private fun GenreText(genreList: List<String>) {
 fun ShowDetailButtons(
     isFollowed: Boolean,
     traktId: Int,
-    trailersList: List<Trailer>?,
+    trailerKey: String?,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
-    onWatchTrailerClicked: (Int, String?) -> Unit = { _, _ -> },
+    onWatchTrailerClicked: (Int, String?) -> Unit,
 ) {
-
-    val trailerKey = trailersList?.firstOrNull()?.key
 
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -536,14 +587,17 @@ fun ShowDetailButtons(
 fun TvShowDetailsScrollingPreview() {
     TvManiacTheme {
         Surface {
+            val scaffoldState = rememberScaffoldState()
             ShowDetailContent(
+                snackBarHostState = scaffoldState.snackbarHostState,
                 viewState = detailUiState,
                 listState = LazyListState(),
                 contentPadding = PaddingValues(),
-                onShowClicked = {},
                 onSeasonClicked = { _, _ -> },
-                onWatchTrailerClicked = { _, _ -> },
-                onUpdateFavoriteClicked = {}
+                onShowClicked = {},
+                onWatchTrailerClicked = { _, _, _ -> },
+                onUpdateFavoriteClicked = {},
+                onDismissTrailerErrorClicked = {}
             )
         }
     }
