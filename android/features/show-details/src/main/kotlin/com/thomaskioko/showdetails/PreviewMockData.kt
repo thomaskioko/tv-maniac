@@ -34,6 +34,8 @@ val detailUiState = ShowDetailsState.ShowDetailsLoaded(
     ),
     trailerState = TrailersState.TrailersLoaded(
         isLoading = true,
+        hasWebViewInstalled = false,
+        playerErrorMessage = null,
         trailersList = listOf(
             Trailer(
                 showId = 1232,

@@ -9,8 +9,6 @@ android {
 }
 
 dependencies {
-    api(project(":shared:core:ui"))
-    api(project(":shared:core:util"))
     api(project(":shared:domain:trailers:api"))
 
     implementation(projects.android.core.compose)

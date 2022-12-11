@@ -10,7 +10,16 @@ android {
 
 dependencies {
     commonMainApi(project(":shared:core:util"))
-    commonMainImplementation(project(":shared:core:ui"))
-    commonMainImplementation(project(":shared:core:database"))
+    commonMainApi(project(":shared:core:database"))
+    commonMainApi(libs.flowredux)
+
     commonMainImplementation(libs.coroutines.core)
+
+    commonTestImplementation(kotlin("test"))
+    commonTestImplementation(project(":shared:core:test"))
+    commonTestImplementation(project(":shared:domain:trailers:testing"))
+
+    commonTestImplementation(libs.testing.coroutines.test)
+    commonTestImplementation(libs.testing.kotest.assertions)
+    commonTestImplementation(libs.testing.turbine)
 }

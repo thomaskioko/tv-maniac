@@ -9,9 +9,12 @@ import com.thomaskioko.tvmaniac.details.api.SeasonState.SeasonsLoaded.Companion.
 import com.thomaskioko.tvmaniac.details.api.ShowDetailsState.ShowDetailsError
 import com.thomaskioko.tvmaniac.details.api.ShowDetailsState.ShowDetailsLoaded
 import com.thomaskioko.tvmaniac.details.api.SimilarShowsState.SimilarShowsLoaded.Companion.EmptyShows
+import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersError
+import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersLoaded
 import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersLoaded.Companion.EmptyTrailers
+import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersLoaded.Companion.playerErrorMessage
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerRepository
+import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.CoroutineScope
@@ -58,10 +61,36 @@ class ShowDetailsStateMachine constructor(
                     loadSimilarShows(id, state)
                 }
 
+                collectWhileInState(trailerRepository.isWebViewInstalled()) { result, state ->
+                    state.mutate {
+                        copy(
+                            trailerState = (trailerState as? TrailersLoaded)
+                                ?.copy(hasWebViewInstalled = result) ?: TrailersError(null)
+                        )
+                    }
+                }
+
                 on<FollowShow> { action, state ->
                     updateFollowState(action, state)
                 }
 
+                on<WebViewError> { _, state ->
+                    state.mutate {
+                        copy(
+                            trailerState = (trailerState as TrailersLoaded)
+                                .copy(playerErrorMessage = playerErrorMessage)
+                        )
+                    }
+                }
+
+                on<DismissWebViewError> { _, state ->
+                    state.mutate {
+                        copy(
+                            trailerState = (trailerState as TrailersLoaded)
+                                .copy(playerErrorMessage = null)
+                        )
+                    }
+                }
             }
 
             inState<ShowDetailsError> {
@@ -178,6 +207,7 @@ class ShowDetailsStateMachine constructor(
                             seasonState = SeasonState.SeasonsError(resource.errorMessage)
                         )
                     }
+
                     is Resource.Success -> state.mutate {
                         copy(
                             seasonState = (seasonState as SeasonState.SeasonsLoaded).copy(
@@ -201,7 +231,7 @@ class ShowDetailsStateMachine constructor(
             .catch {
                 nextState = state.mutate {
                     copy(
-                        trailerState = TrailersState.TrailersError(it.resolveError())
+                        trailerState = TrailersError(it.resolveError())
                     )
                 }
             }
@@ -209,12 +239,13 @@ class ShowDetailsStateMachine constructor(
                 nextState = when (resource) {
                     is Resource.Error -> state.mutate {
                         copy(
-                            trailerState = TrailersState.TrailersError(resource.errorMessage)
+                            trailerState = TrailersError(resource.errorMessage)
                         )
                     }
+
                     is Resource.Success -> state.mutate {
                         copy(
-                            trailerState = (trailerState as TrailersState.TrailersLoaded).copy(
+                            trailerState = (trailerState as TrailersLoaded).copy(
                                 isLoading = false,
                                 trailersList = resource.toTrailerList()
                             )
@@ -246,6 +277,7 @@ class ShowDetailsStateMachine constructor(
                             similarShowsState = SimilarShowsState.SimilarShowsError(resource.errorMessage)
                         )
                     }
+
                     is Resource.Success -> state.mutate {
                         copy(
                             similarShowsState = (similarShowsState as SimilarShowsState.SimilarShowsLoaded).copy(

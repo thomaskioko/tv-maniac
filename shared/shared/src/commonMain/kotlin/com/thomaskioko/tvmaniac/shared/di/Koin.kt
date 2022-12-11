@@ -11,7 +11,8 @@ import com.thomaskioko.tvmaniac.seasons.implementation.di.seasonsDomainModule
 import com.thomaskioko.tvmaniac.settings.api.SettingsStateMachineWrapper
 import com.thomaskioko.tvmaniac.settings.implementation.di.settingsModule
 import com.thomaskioko.tvmaniac.shared.core.ui.di.coreUiPlatformModule
-import com.thomaskioko.tvmaniac.shared.domain.trailers.implementation.di.trailersModule
+import com.thomaskioko.tvmaniac.domain.trailers.api.TrailersStateMachineWrapper
+import com.thomaskioko.tvmaniac.domain.trailers.implementation.di.trailersModule
 import com.thomaskioko.tvmaniac.shows.api.ShowsStateMachineWrapper
 import com.thomaskioko.tvmaniac.shows.implementation.di.showDomainModule
 import com.thomaskioko.tvmaniac.similar.implementation.di.similarDomainModule
@@ -36,6 +37,9 @@ val Koin.showDetailsStateMachine: ShowDetailsStateMachineWrapper
 
 val Koin.settingsStateMachine: SettingsStateMachineWrapper
     get() = SettingsStateMachineWrapper(get(), get(named("main-dispatcher")))
+
+val Koin.trailersStateMachine: TrailersStateMachineWrapper
+    get() = TrailersStateMachineWrapper(get(), get(named("main-dispatcher")))
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     appDeclaration()

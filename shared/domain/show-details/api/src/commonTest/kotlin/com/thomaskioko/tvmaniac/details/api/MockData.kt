@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.details.api
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
-import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.details.api.model.Season
 import com.thomaskioko.tvmaniac.details.api.model.Show
 import com.thomaskioko.tvmaniac.details.api.model.Trailer
@@ -63,6 +62,8 @@ val initialShowDetailsLoaded = ShowDetailsState.ShowDetailsLoaded(
     ),
     trailerState = TrailersState.TrailersLoaded(
         isLoading = true,
+        hasWebViewInstalled = false,
+        playerErrorMessage = null,
         trailersList = emptyList()
     ),
     followShowState = FollowShowsState.Idle
@@ -90,6 +91,8 @@ val trailerShowDetailsLoaded = seasonsShowDetailsLoaded.copy(
     ),
     trailerState = TrailersState.TrailersLoaded(
         isLoading = false,
+        hasWebViewInstalled = false,
+        playerErrorMessage = null,
         trailersList = listOf(
             Trailer(
                 showId = 84958,
@@ -99,6 +102,18 @@ val trailerShowDetailsLoaded = seasonsShowDetailsLoaded.copy(
             )
         )
     )
+)
+
+val trailerErrorState = trailerShowDetailsLoaded.copy(
+    similarShowsState = SimilarShowsState.SimilarShowsLoaded(
+        isLoading = false,
+        similarShows = similarShows
+    ),
+    trailerState = TrailersState.TrailersError("Oppsy. Something went wrong")
+)
+
+val similarShowsErrorState = trailerShowDetailsLoaded.copy(
+    similarShowsState = SimilarShowsState.SimilarShowsError("Oppsy. Something went wrong"),
 )
 
 
@@ -159,18 +174,6 @@ val similarShowResult = listOf(
         synced = false,
         trakt_id_ = 184958,
         trakt_id__ = 284958,
-    )
-)
-
-val trailers = listOf(
-    Trailers(
-        id = "1231",
-        trakt_id = 84958,
-        key = "Fd43V",
-        name = "Some title",
-        site = "Youtube",
-        size = 1231,
-        type = "type"
     )
 )
 

@@ -4,11 +4,11 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.details.api.SeasonState.SeasonsError
-import com.thomaskioko.tvmaniac.details.api.SimilarShowsState.SimilarShowsError
 import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersError
 import com.thomaskioko.tvmaniac.details.api.fakes.FakeSeasonsRepository
-import com.thomaskioko.tvmaniac.details.api.fakes.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
+import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
+import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktRepository
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
@@ -43,6 +43,7 @@ internal class ShowDetailsStateMachineTest {
             awaitItem() shouldBe seasonsShowDetailsLoaded //Seasons content updated
             awaitItem() shouldBe similarShowDetailsLoaded //Similar Shows content updated
             awaitItem() shouldBe trailerShowDetailsLoaded //Trailer content updated
+            awaitItem() shouldBe trailerShowDetailsLoaded //Trailer content updated
         }
     }
 
@@ -62,10 +63,8 @@ internal class ShowDetailsStateMachineTest {
             awaitItem() shouldBe initialShowDetailsLoaded // Show data loaded
             awaitItem() shouldBe seasonsShowDetailsLoaded //Seasons content updated
             awaitItem() shouldBe similarShowDetailsLoaded //Similar Shows content updated
-            awaitItem() shouldBe trailerShowDetailsLoaded //Trailer content updated
-                .copy(
-                    similarShowsState = SimilarShowsError(errorMessage)
-                )
+            awaitItem() shouldBe similarShowsErrorState //Trailer content updated
+            awaitItem() shouldBe similarShowsErrorState //Similar shows content updated
         }
     }
 
@@ -85,13 +84,10 @@ internal class ShowDetailsStateMachineTest {
             awaitItem() shouldBe initialShowDetailsLoaded // Show data loaded
             awaitItem() shouldBe seasonsShowDetailsLoaded //Seasons content updated
             awaitItem() shouldBe similarShowDetailsLoaded //Similar Shows content updated
-                .copy(
-                    trailerState = TrailersError(errorMessage)
-                )
+                .copy(trailerState = TrailersError(errorMessage))
+            awaitItem() shouldBe trailerErrorState //Trailer content updated
             awaitItem() shouldBe trailerShowDetailsLoaded //Trailer content updated
-                .copy(
-                    trailerState = TrailersError(errorMessage)
-                )
+                .copy(trailerState = TrailersError(null))
         }
     }
 
@@ -114,6 +110,10 @@ internal class ShowDetailsStateMachineTest {
                     seasonState = SeasonsError(errorMessage)
                 )
             awaitItem() shouldBe similarShowDetailsLoaded //Similar Shows content updated
+                .copy(
+                    seasonState = SeasonsError(errorMessage)
+                )
+            awaitItem() shouldBe trailerShowDetailsLoaded //Trailer content updated
                 .copy(
                     seasonState = SeasonsError(errorMessage)
                 )
