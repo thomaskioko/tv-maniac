@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import org.gradle.api.JavaVersion
 import util.libs
 
 plugins {
@@ -15,6 +16,8 @@ kotlin {
         languageSettings.apply {
             optIn("kotlin.RequiresOptIn")
             optIn("kotlin.time.ExperimentalTime")
+            optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+            optIn("kotlinx.coroutines.FlowPreview")
         }
     }
 }
@@ -28,7 +31,7 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }

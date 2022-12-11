@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.details.implementation.di
 
 import com.thomaskioko.tvmaniac.details.api.ShowDetailsStateMachine
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerRepository
+import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import dagger.Module

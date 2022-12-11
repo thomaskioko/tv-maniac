@@ -162,26 +162,10 @@ fun LoadingItem() {
 }
 
 @Composable
-fun LoadingItem(
-    isLoading: Boolean,
-    content: @Composable () -> Unit,
-) {
-    if (isLoading)
-        CircularProgressIndicator(
-            color = MaterialTheme.colors.secondary,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .wrapContentWidth(Alignment.CenterHorizontally)
-        )
-    else
-        content()
-}
-
-@Composable
 fun SnackBarErrorRetry(
     snackBarHostState: SnackbarHostState,
     errorMessage: String?,
+    actionLabel: String?,
     showError: Boolean = !errorMessage.isNullOrBlank(),
     onErrorAction: () -> Unit = { },
 ) {
@@ -195,15 +179,12 @@ fun SnackBarErrorRetry(
             LaunchedEffect(errorMessage) {
                 val actionResult = snackBarHostState.showSnackbar(
                     message = errorMessage,
-                    actionLabel = "Retry"
+                    actionLabel = actionLabel
                 )
 
                 when (actionResult) {
-                    SnackbarResult.ActionPerformed -> {
-                        onErrorAction()
-                    }
-                    SnackbarResult.Dismissed -> {
-                    }
+                    SnackbarResult.ActionPerformed -> onErrorAction()
+                    SnackbarResult.Dismissed -> onErrorAction()
                 }
             }
         }
@@ -299,7 +280,6 @@ fun RowError(onRetry: () -> Unit) {
                 }
             }
         }
-
     }
 }
 
