@@ -39,13 +39,20 @@ sealed interface TrailersState {
     data class TrailersError(val errorMessage: String?) : TrailersState
     data class TrailersLoaded(
         val isLoading: Boolean,
+        val hasWebViewInstalled: Boolean,
+        val playerErrorMessage: String?,
         val trailersList: List<Trailer>,
     ) : TrailersState {
         companion object {
             val EmptyTrailers = TrailersLoaded(
                 isLoading = true,
+                hasWebViewInstalled = false,
+                playerErrorMessage = null,
                 trailersList = emptyList()
             )
+
+            const val playerErrorMessage: String =
+                "Please make sure you have Android WebView installed or enabled."
         }
     }
 }
