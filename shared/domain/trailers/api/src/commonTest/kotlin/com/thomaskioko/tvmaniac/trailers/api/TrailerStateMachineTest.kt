@@ -4,9 +4,9 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.domain.trailers.api.LoadTrailers
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.LoadingTrailers
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailersLoaded
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailersStateMachine
+import com.thomaskioko.tvmaniac.domain.trailers.api.LoadingTrailers
+import com.thomaskioko.tvmaniac.domain.trailers.api.TrailersLoaded
+import com.thomaskioko.tvmaniac.domain.trailers.api.TrailersStateMachine
 import com.thomaskioko.tvmaniac.domain.trailers.api.model.Trailer
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers

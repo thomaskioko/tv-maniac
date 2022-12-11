@@ -8,7 +8,7 @@ import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerCache
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerRepository
+import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerRepository
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import kotlinx.coroutines.CoroutineDispatcher

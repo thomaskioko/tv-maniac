@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.trailers.testing
 
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerRepository
+import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf

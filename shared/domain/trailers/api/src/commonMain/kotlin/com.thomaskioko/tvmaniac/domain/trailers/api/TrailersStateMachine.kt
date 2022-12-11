@@ -6,7 +6,6 @@ import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.domain.trailers.api.model.Trailer
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainCoroutineDispatcher
 import kotlinx.coroutines.SupervisorJob
