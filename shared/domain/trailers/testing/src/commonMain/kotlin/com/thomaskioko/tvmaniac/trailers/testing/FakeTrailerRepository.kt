@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.details.api.fakes
+package com.thomaskioko.tvmaniac.trailers.testing
 
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.util.network.Resource
@@ -15,6 +15,7 @@ class FakeTrailerRepository : TrailerRepository {
         trailersResult = flow { emit(result) }
     }
 
+    override fun isWebViewInstalled(): Flow<Boolean> = flowOf(false)
 
     override fun observeTrailersByShowId(traktId: Int): Flow<Resource<List<Trailers>>> =
         trailersResult
