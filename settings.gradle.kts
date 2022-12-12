@@ -59,4 +59,5 @@ include(
     ":shared:domain:trakt:testing",
     ":shared:domain:settings:api",
     ":shared:domain:settings:implementation",
+    ":shared:domain:following:api",
 )
