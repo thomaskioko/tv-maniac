@@ -33,6 +33,7 @@ import com.thomaskioko.tvmaniac.trakt.implementation.mapper.toCategoryCache
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -214,8 +215,13 @@ class TraktRepositoryImpl constructor(
         }
     }
 
-    override fun observeFollowedShows(): Flow<List<SelectFollowedShows>> =
+    override fun observeFollowedShows(): Flow<Resource<List<SelectFollowedShows>>> =
         followedCache.observeFollowedShows()
+            .distinctUntilChanged()
+            .map { Resource.Success(it) }
+            .catch { Resource.Error<List<SelectFollowedShows>>(it.resolveError()) }
+
+    override fun getFollowedShows(): List<SelectFollowedShows> = followedCache.getFollowedShows()
 
     private suspend fun fetchShowsAndMapResult(categoryId: Int): List<Show> =
         //TODO:: Improve error handling
