@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.following.di
 
-import com.thomaskioko.tvmaniac.following.ObserveFollowingInteractor
+import com.thomaskioko.tvmaniac.domain.following.api.FollowingStateMachine
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import dagger.Module
 import dagger.Provides
@@ -10,12 +10,12 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object InteractorModule {
+object FollowingModule {
 
     @Singleton
     @Provides
-    fun provideObserveFollowingInteractor(
+    fun provideFollowingStateMachine(
         repository: TraktRepository
-    ): ObserveFollowingInteractor = ObserveFollowingInteractor(repository)
+    ): FollowingStateMachine = FollowingStateMachine(repository)
 
 }

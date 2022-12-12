@@ -9,12 +9,7 @@ android {
 }
 
 dependencies {
-    api(project(":shared:core:ui"))
-    api(project(":shared:core:util"))
-    api(project(":shared:domain:show-details:api"))
-    api(project(":shared:domain:shows:api"))
-
-    implementation(project(":shared:core:database"))
+    implementation(project(":shared:domain:following:api"))
     implementation(project(":shared:domain:trakt:api"))
     implementation(projects.android.core.compose)
 
