@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.details.api.SeasonState.SeasonsError
 import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersError
-import com.thomaskioko.tvmaniac.details.api.fakes.FakeSeasonsRepository
+import com.thomaskioko.tvmaniac.details.api.fakes.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
@@ -15,7 +15,7 @@ import kotlin.test.Test
 
 internal class ShowDetailsStateMachineTest {
 
-    private val seasonsRepository = FakeSeasonsRepository()
+    private val seasonsRepository = FakeSeasonDetailsRepository()
     private val trailerRepository = FakeTrailerRepository()
     private val traktRepository = FakeTraktRepository()
     private val similarShowsRepository = FakeSimilarShowsRepository()
@@ -23,7 +23,7 @@ internal class ShowDetailsStateMachineTest {
     private val stateMachine = ShowDetailsStateMachine(
         traktRepository = traktRepository,
         trailerRepository = trailerRepository,
-        seasonsRepository = seasonsRepository,
+        seasonDetailsRepository = seasonsRepository,
         similarShowsRepository = similarShowsRepository
     )
 
