@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.trakt.api.cache
 
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
-import com.thomaskioko.tvmaniac.core.db.SelectFollowedShow
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import kotlinx.coroutines.flow.Flow
 
@@ -16,8 +15,6 @@ interface TraktFollowedCache {
     fun getUnsyncedFollowedShows(): List<Followed_shows>
 
     fun observeFollowedShows(): Flow<List<SelectFollowedShows>>
-
-    fun observeFollowedShow(traktId: Int): Flow<SelectFollowedShow?>
 
     fun updateShowSyncState(traktId: Int)
 

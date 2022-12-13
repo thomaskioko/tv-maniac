@@ -16,7 +16,9 @@ interface TraktRepository {
 
     fun observeCreateTraktList(userSlug: String): Flow<Resource<Trakt_list>>
 
-    fun observeFollowedShows(): Flow<List<SelectFollowedShows>>
+    fun observeFollowedShows(): Flow<Resource<List<SelectFollowedShows>>>
+
+    fun getFollowedShows(): List<SelectFollowedShows>
 
     fun observeUpdateFollowedShow(traktId: Int, addToWatchList: Boolean) : Flow<Resource<Unit>>
 

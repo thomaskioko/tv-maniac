@@ -21,12 +21,19 @@ class FakeTraktRepository : TraktRepository {
     private var showResult: Flow<Resource<SelectByShowId>> =
         flowOf(Resource.Success(data = null))
 
+    private var followedResult: Flow<Resource<List<SelectFollowedShows>>> =
+        flowOf(Resource.Success(data = null))
+
     suspend fun setCategoryResult(result: Resource<List<SelectShowsByCategory>>) {
         categoryResult = flow { emit(result) }
     }
 
     suspend fun setShowResult(result: Resource<SelectByShowId>) {
         showResult = flow { emit(result) }
+    }
+
+    suspend fun setFollowedResult(result: Resource<List<SelectFollowedShows>>) {
+        followedResult = flow { emit(result) }
     }
 
     override fun observeMe(slug: String): Flow<Resource<Trakt_user>> = flowOf(
@@ -66,36 +73,9 @@ class FakeTraktRepository : TraktRepository {
             )
         )
 
-    override fun observeFollowedShows(): Flow<List<SelectFollowedShows>> =
-        flowOf(
-            listOf(
-                SelectFollowedShows(
-                    trakt_id = 84958,
-                    tmdb_id = 849583,
-                    title = "Loki",
-                    overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                            "an alternate version of Loki is brought to the mysterious Time Variance " +
-                            "Authority, a bureaucratic organization that exists outside of time and " +
-                            "space and monitors the timeline. They give Loki a choice: face being " +
-                            "erased from existence due to being a “time variant”or help fix " +
-                            "the timeline and stop a greater threat.",
-                    language = "en",
-                    votes = 4958,
-                    rating = 8.1,
-                    genres = listOf("Horror", "Action"),
-                    status = "Returning Series",
-                    year = "2024",
-                    runtime = 45,
-                    poster_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                    backdrop_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                    aired_episodes = 12,
-                    id = 12,
-                    synced = true,
-                    created_at = 12345645,
-                    trakt_id_ = 1232
-                )
-            )
-        )
+    override fun observeFollowedShows(): Flow<Resource<List<SelectFollowedShows>>> = followedResult
+
+    override fun getFollowedShows(): List<SelectFollowedShows> = cachedShowResult
 
     override fun observeUpdateFollowedShow(
         traktId: Int,

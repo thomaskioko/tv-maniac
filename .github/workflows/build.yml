@@ -1,5 +1,3 @@
-name: "Android Build Check"
-
 on:
   push:
     branches:

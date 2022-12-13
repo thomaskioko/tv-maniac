@@ -4,8 +4,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
@@ -49,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.thomaskioko.tvmaniac.compose.theme.colorError
 import com.thomaskioko.tvmaniac.compose.theme.green
+import com.thomaskioko.tvmaniac.compose.theme.grey600
 import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
@@ -222,7 +226,10 @@ fun ConnectionStatus(isConnected: Boolean) {
 }
 
 @Composable
-fun ErrorUi(onRetry: () -> Unit) {
+fun ErrorUi(
+    errorMessage: String = stringResource(R.string.unexpected_error_retry),
+    onRetry: () -> Unit
+) {
     Box(Modifier.fillMaxSize()) {
 
         Column(
@@ -240,9 +247,28 @@ fun ErrorUi(onRetry: () -> Unit) {
             )
 
             Text(
+                text = errorMessage,
+                style = MaterialTheme.typography.body2,
                 textAlign = TextAlign.Center,
-                text = stringResource(R.string.unexpected_error_retry)
             )
+
+            ColumnSpacer(value = 8)
+
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                TextButton(
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = MaterialTheme.colors.onBackground,
+                        backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.08f)
+                    ),
+                    border= BorderStroke(1.dp, grey600),
+                    onClick = { onRetry() }
+                ) {
+                    Text(
+                        text = "Retry",
+                        style = MaterialTheme.typography.body2,
+                    )
+                }
+            }
         }
 
     }

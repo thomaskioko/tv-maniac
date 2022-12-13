@@ -4,6 +4,8 @@ import com.thomaskioko.tvmaniac.core.db.di.dbPlatformModule
 import com.thomaskioko.tvmaniac.core.util.di.coreUtilModule
 import com.thomaskioko.tvmaniac.details.api.ShowDetailsStateMachineWrapper
 import com.thomaskioko.tvmaniac.details.implementation.di.detailDomainModule
+import com.thomaskioko.tvmaniac.domain.following.api.FollowingStateMachineWrapper
+import com.thomaskioko.tvmaniac.domain.following.api.di.followingModule
 import com.thomaskioko.tvmaniac.episodes.implementation.di.episodeDomainModule
 import com.thomaskioko.tvmaniac.network.di.networkPlatformModule
 import com.thomaskioko.tvmaniac.seasonepisodes.implementation.seasonEpisodesDomainModule
@@ -41,6 +43,9 @@ val Koin.settingsStateMachine: SettingsStateMachineWrapper
 val Koin.trailersStateMachine: TrailersStateMachineWrapper
     get() = TrailersStateMachineWrapper(get(), get(named("main-dispatcher")))
 
+val Koin.followingStateMachineWrapper: FollowingStateMachineWrapper
+    get() = FollowingStateMachineWrapper(get(), get(named("main-dispatcher")))
+
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     appDeclaration()
     modules(
@@ -52,6 +57,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         seasonEpisodesDomainModule,
         trailersModule,
         showDomainModule,
+        followingModule,
         traktModule(),
         coreUiPlatformModule(),
         dbPlatformModule(),
