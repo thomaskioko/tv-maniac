@@ -25,7 +25,7 @@ class ShowDetailNavigationFactory @Inject constructor() : ComposeNavigationFacto
                         navController.navigate("${NavigationScreen.ShowDetailsNavScreen.route}/$showId")
                     },
                     onSeasonClicked = { showId, seasonName ->
-                        navController.navigate("${NavigationScreen.SeasonsNavScreen.route}/$showId/$seasonName")
+                        navController.navigate("${NavigationScreen.SeasonDetailsNavScreen.route}/$showId/$seasonName")
                     },
                     onWatchTrailerClicked = { showId, videoKey ->
                         navController.navigate("${NavigationScreen.VideoPlayerNavScreen.route}/$showId/$videoKey")
