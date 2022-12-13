@@ -24,13 +24,6 @@ INNER JOIN show ON show.trakt_id = followed_shows.id
 INNER JOIN show_image ON show_image.trakt_id = followed_shows.id
 ORDER BY created_at DESC;
 
-selectFollowedShow:
-SELECT *
-FROM followed_shows
-INNER JOIN show ON show.trakt_id = followed_shows.id
-INNER JOIN show_image ON show_image.trakt_id = followed_shows.id
-WHERE id = ?;
-
 removeShow:
 DELETE FROM followed_shows
 WHERE id = ?;

@@ -50,6 +50,7 @@ kotlin {
             export(project(":shared:domain:trailers:api"))
             export(project(":shared:domain:tmdb:api"))
             export(project(":shared:domain:trakt:api"))
+            export(project(":shared:domain:following:api"))
             embedBitcode(BitcodeEmbeddingMode.BITCODE)
 
             transitiveExport = true
@@ -72,6 +73,7 @@ dependencies {
     commonMainApi(project(":shared:domain:trailers:api"))
     commonMainApi(project(":shared:domain:tmdb:api"))
     commonMainApi(project(":shared:domain:trakt:api"))
+    commonMainApi(project(":shared:domain:following:api"))
 
     commonMainImplementation(project(":shared:domain:episodes:implementation"))
     commonMainImplementation(project(":shared:domain:show-details:implementation"))
