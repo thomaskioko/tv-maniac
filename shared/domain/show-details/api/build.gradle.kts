@@ -26,6 +26,7 @@ dependencies {
     commonTestImplementation(project(":shared:core:test"))
     commonTestImplementation(project(":shared:domain:trakt:testing"))
     commonTestImplementation(project(":shared:domain:similar:testing"))
+    commonTestImplementation(project(":shared:domain:season-details:testing"))
     commonTestImplementation(project(":shared:domain:trailers:testing"))
     commonTestImplementation(kotlin("test"))
 

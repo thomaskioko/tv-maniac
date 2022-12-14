@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.details.api.SeasonState.SeasonsError
 import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersError
-import com.thomaskioko.tvmaniac.details.api.fakes.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
