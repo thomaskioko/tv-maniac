@@ -8,8 +8,8 @@ import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
-import com.thomaskioko.tvmaniac.seasondetails.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonsCache
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import kotlinx.coroutines.CoroutineDispatcher

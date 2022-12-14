@@ -23,6 +23,8 @@ dependencies {
     commonTestImplementation(project(":shared:core:test"))
     commonTestImplementation(project(":shared:domain:trakt:testing"))
     commonTestImplementation(project(":shared:domain:tmdb:testing"))
+    commonTestImplementation(project(":shared:domain:episodes:testing"))
+    commonTestImplementation(project(":shared:domain:season-details:testing"))
     commonTestImplementation(kotlin("test"))
 
     commonMainImplementation(libs.kermit)

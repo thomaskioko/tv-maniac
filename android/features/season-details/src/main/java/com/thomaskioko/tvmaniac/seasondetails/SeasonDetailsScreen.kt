@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
+import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
@@ -44,8 +45,8 @@ import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.api.Loading
-import com.thomaskioko.tvmaniac.seasondetails.api.SeasonsEffect
-import com.thomaskioko.tvmaniac.seasondetails.api.SeasonsLoaded
+import com.thomaskioko.tvmaniac.seasondetails.api.LoadingError
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.seasondetails.api.model.Episode
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetails
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
@@ -59,26 +60,17 @@ fun SeasonDetailsScreen(
     onEpisodeClicked: (Int) -> Unit = {}
 ) {
 
-    val viewState by viewModel.observeState().collectAsStateWithLifecycle()
-
+    val viewState by viewModel.state.collectAsStateWithLifecycle()
 
     val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
-
-    LaunchedEffect(Unit) {
-        viewModel.observeSideEffect().collect {
-            when (it) {
-                is SeasonsEffect.Error -> scaffoldState.snackbarHostState.showSnackbar(it.errorMessage)
-            }
-        }
-    }
 
 
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
             TopBar(
-                title = (viewState as? SeasonsLoaded)?.result?.showTitle ?: "",
+                title = (viewState as? SeasonDetailsLoaded)?.showTitle ?: "",
                 navigateUp = navigateUp
             )
         },
@@ -102,9 +94,13 @@ fun SeasonDetailsScreen(
         content = { contentPadding ->
             when (viewState) {
                 Loading -> FullScreenLoading()
-                is SeasonsLoaded -> {
+                is LoadingError -> ErrorUi(
+                    errorMessage = (viewState as LoadingError).message,
+                    onRetry = {},
+                )
+                is SeasonDetailsLoaded -> {
                     SeasonsScrollingContent(
-                        seasonsEpList = (viewState as SeasonsLoaded).result.seasonsWithEpisodes,
+                        seasonsEpList = (viewState as SeasonDetailsLoaded).episodeList,
                         initialSeasonName = initialSeasonName,
                         onEpisodeClicked = onEpisodeClicked,
                         listState = listState,

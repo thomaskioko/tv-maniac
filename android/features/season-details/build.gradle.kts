@@ -9,8 +9,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":shared:core:ui"))
-    implementation(project(":shared:core:util"))
     implementation(project(":shared:domain:season-details:api"))
     implementation(project(":android:core:compose"))
 
