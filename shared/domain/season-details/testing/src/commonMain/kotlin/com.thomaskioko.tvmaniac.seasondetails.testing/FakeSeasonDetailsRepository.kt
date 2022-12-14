@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.details.api.fakes
+package com.thomaskioko.tvmaniac.seasondetails.testing
 
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonsByShowId
@@ -13,16 +13,29 @@ class FakeSeasonDetailsRepository : SeasonDetailsRepository {
     private var seasonsResult: Flow<Resource<List<SelectSeasonsByShowId>>> =
         flowOf(Resource.Success(data = null))
 
+    private var seasonEpisodesResult: Flow<Resource<List<SelectSeasonWithEpisodes>>> =
+        flowOf()
+
+
     suspend fun setSeasonsResult(result: Resource<List<SelectSeasonsByShowId>>) {
         seasonsResult = flow { emit(result) }
+    }
+
+    suspend fun setSeasonDetails(result: Resource<List<SelectSeasonWithEpisodes>>) {
+        seasonEpisodesResult = flow { emit(result) }
     }
 
     override fun observeShowSeasons(traktId: Int): Flow<Resource<List<SelectSeasonsByShowId>>> =
         seasonsResult
 
     override fun updateSeasonEpisodes(showId: Int): Flow<Resource<List<SelectSeasonWithEpisodes>>> =
-        flowOf(Resource.Success(emptyList()))
+        seasonEpisodesResult
 
     override fun observeSeasonEpisodes(showId: Int): Flow<List<SelectSeasonWithEpisodes>> =
-        flowOf(emptyList())
+        flow{
+            seasonEpisodesResult.collect {
+                emit(it.data!!)
+            }
+        }
+
 }
