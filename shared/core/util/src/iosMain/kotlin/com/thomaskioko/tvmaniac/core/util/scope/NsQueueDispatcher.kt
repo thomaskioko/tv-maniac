@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shared.core.ui
+package com.thomaskioko.tvmaniac.core.util.scope
 
 import kotlinx.coroutines.*
 import platform.darwin.*

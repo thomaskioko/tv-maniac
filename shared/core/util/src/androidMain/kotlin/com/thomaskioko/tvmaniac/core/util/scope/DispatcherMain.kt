@@ -1,8 +1,8 @@
-package com.thomaskioko.tvmaniac.shared.core.ui
+package com.thomaskioko.tvmaniac.core.util.scope
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-actual class MainDispatcher {
+actual class DispatcherMain {
     actual val main: CoroutineDispatcher = Dispatchers.Main
 }

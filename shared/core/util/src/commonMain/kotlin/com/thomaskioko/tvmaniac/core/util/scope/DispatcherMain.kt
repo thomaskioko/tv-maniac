@@ -1,7 +1,7 @@
-package com.thomaskioko.tvmaniac.shared.core.ui
+package com.thomaskioko.tvmaniac.core.util.scope
 
 import kotlinx.coroutines.CoroutineDispatcher
 
-expect class MainDispatcher {
+expect class DispatcherMain {
     val main: CoroutineDispatcher
 }
