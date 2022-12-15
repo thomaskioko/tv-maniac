@@ -49,7 +49,6 @@
 		E989E1162940E78E00C01A39 /* SettingsUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E989E1152940E78E00C01A39 /* SettingsUIView.swift */; };
 		E989E1182940EAB300C01A39 /* SettingsUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = E989E1172940EAB300C01A39 /* SettingsUtil.swift */; };
 		E989E11A2940EAFA00C01A39 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E989E1192940EAFA00C01A39 /* SettingsViewModel.swift */; };
-		E989E12829416BAD00C01A39 /* TvManiac.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E989E12729416BAD00C01A39 /* TvManiac.xcframework */; };
 		E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9AC834B26CEE00D00829A0D /* Assets.xcassets */; };
 		E9AC835126CEEA1500829A0D /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835026CEEA1500829A0D /* DiscoverView.swift */; };
 		E9AC835326CEEA9800829A0D /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835226CEEA9800829A0D /* SearchView.swift */; };
@@ -103,7 +102,6 @@
 		E989E1152940E78E00C01A39 /* SettingsUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUIView.swift; sourceTree = "<group>"; };
 		E989E1172940EAB300C01A39 /* SettingsUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUtil.swift; sourceTree = "<group>"; };
 		E989E1192940EAFA00C01A39 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
-		E989E12729416BAD00C01A39 /* TvManiac.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = TvManiac.xcframework; path = "../../tvmaniac-swift-packages/TvManiac.xcframework"; sourceTree = "<group>"; };
 		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E9AC835026CEEA1500829A0D /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
 		E9AC835226CEEA9800829A0D /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
@@ -116,7 +114,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E989E12829416BAD00C01A39 /* TvManiac.xcframework in Frameworks */,
 				E9C6114E27FF863600F8A23F /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -235,7 +232,6 @@
 		E9B6866E27871C99001698B7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E989E12729416BAD00C01A39 /* TvManiac.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

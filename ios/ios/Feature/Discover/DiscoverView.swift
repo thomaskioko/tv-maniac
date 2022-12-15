@@ -16,7 +16,7 @@ struct DiscoverView: View {
                     LoadingIndicatorView()
                 case is LoadingError:
                     let state = viewModel.showState as! LoadingError
-                    ErrorView(errorMessage: state.errorMessage ?? "Opps!! Something went wrong")
+                    ErrorView(errorMessage: state.message)
                 case is ShowsLoaded:
                     let state = viewModel.showState as! ShowsLoaded
                     BodyContentView(contentState: state)
