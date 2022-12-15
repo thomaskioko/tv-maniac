@@ -113,7 +113,10 @@ fun ShowDetailScreen(
 
             when (viewState) {
                 ShowDetailsState.Loading -> FullScreenLoading()
-                is ShowDetailsState.ShowDetailsError -> ErrorUi(onRetry = {})
+                is ShowDetailsState.ShowDetailsError -> ErrorUi(
+                    errorMessage = (viewState as ShowDetailsState.ShowDetailsError).errorMessage,
+                    onRetry = {}
+                )
                 is ShowDetailsState.ShowDetailsLoaded -> {
                     ShowDetailContent(
                         contentPadding = contentPadding,

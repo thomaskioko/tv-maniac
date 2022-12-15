@@ -151,7 +151,7 @@ private fun DiscoverShows(
                     }
                 }
             }
-            is LoadingError -> ErrorUi(onRetry = onRetry)
+            is LoadingError -> ErrorUi(errorMessage = showsState.errorMessage, onRetry = onRetry)
         }
     }
 }

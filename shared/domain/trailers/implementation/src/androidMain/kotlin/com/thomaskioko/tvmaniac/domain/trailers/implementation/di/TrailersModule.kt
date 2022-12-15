@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.domain.trailers.implementation.di
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.util.AppUtils
 import com.thomaskioko.tvmaniac.domain.trailers.api.TrailersStateMachine
-import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
+import com.thomaskioko.tvmaniac.core.util.scope.DefaultDispatcher
 import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerCache
 import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerRepository
 import com.thomaskioko.tvmaniac.domain.trailers.implementation.TrailerCacheImpl

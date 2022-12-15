@@ -50,8 +50,8 @@ var genreList = ["Drama","Action", "Sci-Fi", "Animation"]
 
 
 var seasonList = [
-	SeasonUiModel(seasonId: 123, tvShowId: 123, name: "Season 1", overview: "", seasonNumber: 1, episodeCount: 12),
-	SeasonUiModel(seasonId: 13, tvShowId: 13, name: "Season 2", overview: "", seasonNumber: 1, episodeCount: 12)
+	Season(seasonId: 123, tvShowId: 123, name: "Season 1", overview: "", seasonNumber: 1, episodeCount: 12),
+	Season(seasonId: 13, tvShowId: 13, name: "Season 2", overview: "", seasonNumber: 1, episodeCount: 12)
 ]
 
 var detailState = ShowDetailsStateShowDetailsLoaded(
@@ -68,9 +68,9 @@ class ShowDetailUiViewState {
 	var errorMessage: String?
 	var tvShow: TvShow
 	var similarShowList: [TvShow]
-	var seasonList: [SeasonUiModel]
+	var seasonList: [Season]
 	
-	init(isLoading: Bool, errorMessage: String? = nil, tvShow: TvShow, similarShowList: [TvShow], seasonList: [SeasonUiModel]) {
+	init(isLoading: Bool, errorMessage: String? = nil, tvShow: TvShow, similarShowList: [TvShow], seasonList: [Season]) {
 		self.isLoading = isLoading
 		self.errorMessage = errorMessage
 		self.tvShow = tvShow

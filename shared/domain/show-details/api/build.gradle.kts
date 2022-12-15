@@ -13,7 +13,6 @@ dependencies {
     commonMainApi(libs.flowredux)
     commonMainApi(project(":shared:core:database"))
 
-    commonMainImplementation(project(":shared:core:ui"))
     commonMainImplementation(project(":shared:core:util"))
     commonMainImplementation(project(":shared:domain:season-details:api"))
     commonMainImplementation(project(":shared:domain:similar:api"))

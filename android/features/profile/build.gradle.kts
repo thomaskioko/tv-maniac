@@ -9,13 +9,13 @@ android {
 }
 
 dependencies {
-    api(project(":shared:core:util"))
-
     implementation(project(":android:core:compose"))
     implementation(project(":android:core:trakt-auth"))
-    implementation(project(":shared:core:ui"))
+    implementation(project(":shared:core:util"))
+    implementation(project(":shared:core:database"))
     implementation(project(":shared:domain:trakt:api"))
 
+    implementation(libs.flowredux)
     implementation(libs.snapper)
     implementation(libs.accompanist.insetsui)
     implementation(libs.androidx.compose.constraintlayout)

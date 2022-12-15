@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.core.util.network.Resource
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.ANTICIPATED
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.FEATURED
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.POPULAR
@@ -150,7 +151,7 @@ class TraktRepositoryImpl constructor(
         )
 
     override fun observeCachedShows(categoryId: Int): Flow<Resource<List<SelectShowsByCategory>>> =
-        tvShowCache.observeCachedShows(categoryId)
+        tvShowCache.observeCachedShows(ShowCategory[categoryId].id)
             .map { Resource.Success(it) }
             .catch { Resource.Error<List<SelectShowsByCategory>>(it.resolveError()) }
 

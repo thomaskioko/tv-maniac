@@ -10,15 +10,14 @@ android {
 }
 
 dependencies {
-    api(project(":shared:core:ui"))
-    api(project(":shared:core:util"))
-    api(projects.shared.domain.showDetails.api)
-
+    implementation(project(":shared:core:util"))
     implementation(project(":shared:core:database"))
     implementation(project(":shared:domain:shows:api"))
     implementation(project(":shared:domain:trakt:api"))
+    implementation(project(":shared:domain:show-details:api"))
     implementation(project(":android:core:compose"))
 
-    api(libs.androidx.compose.paging)
+    implementation(libs.androidx.compose.paging)
+    implementation(libs.flowredux)
     implementation(libs.accompanist.insetsui)
 }

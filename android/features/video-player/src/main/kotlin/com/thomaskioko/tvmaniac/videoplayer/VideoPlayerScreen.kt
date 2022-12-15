@@ -72,7 +72,10 @@ fun VideoPlayerScreen(
             )
         }
 
-        is TrailerError -> ErrorUi(onRetry = { viewModel.dispatch(ReloadTrailers) })
+        is TrailerError -> ErrorUi(
+            errorMessage = (viewState as TrailerError).errorMessage,
+            onRetry = { viewModel.dispatch(ReloadTrailers) }
+        )
     }
 }
 

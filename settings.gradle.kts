@@ -29,7 +29,6 @@ include(
     ":android:features:video-player",
     ":android:features:profile",
     ":shared:shared",
-    ":shared:core:ui",
     ":shared:core:util",
     ":shared:core:test",
     ":shared:core:database",

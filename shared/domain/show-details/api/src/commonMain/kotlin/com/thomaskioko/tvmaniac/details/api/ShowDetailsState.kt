@@ -15,7 +15,7 @@ sealed interface ShowDetailsState {
         val followShowState: FollowShowsState,
     ) : ShowDetailsState
 
-    data class ShowDetailsError(val errorMessage: String?) : ShowDetailsState
+    data class ShowDetailsError(val errorMessage: String) : ShowDetailsState
 }
 
 
@@ -32,7 +32,7 @@ sealed interface SeasonState {
         }
     }
 
-    data class SeasonsError(val errorMessage: String?) : SeasonState
+    data class SeasonsError(val errorMessage: String) : SeasonState
 }
 
 sealed interface TrailersState {
@@ -59,7 +59,7 @@ sealed interface TrailersState {
 
 
 sealed interface SimilarShowsState {
-    data class SimilarShowsError(val errorMessage: String?) : SimilarShowsState
+    data class SimilarShowsError(val errorMessage: String) : SimilarShowsState
     data class SimilarShowsLoaded(
         val isLoading: Boolean,
         val similarShows: List<Show>,
@@ -76,7 +76,7 @@ sealed interface SimilarShowsState {
 
 sealed interface FollowShowsState {
     object Idle : FollowShowsState
-    data class FollowUpdateError(val errorMessage: String?) : FollowShowsState
+    data class FollowUpdateError(val errorMessage: String) : FollowShowsState
 }
 
 
