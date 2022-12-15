@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.show_grid.di
 
-import com.thomaskioko.tvmaniac.show_grid.ObservePagedShowsByCategoryInteractor
+import com.thomaskioko.tvmaniac.show_grid.GridStateMachine
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import dagger.Module
 import dagger.Provides
@@ -10,12 +10,12 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object InteractorModule {
+object GridModule {
 
     @Singleton
     @Provides
-    fun provideObservePagedShowsByCategoryInteractor(
+    fun provideGridStateMachine(
         repository: TraktRepository
-    ): ObservePagedShowsByCategoryInteractor = ObservePagedShowsByCategoryInteractor(repository)
+    ): GridStateMachine = GridStateMachine(repository)
 
 }
