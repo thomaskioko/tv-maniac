@@ -21,7 +21,6 @@ android {
 dependencies {
 
     implementation(project(":android:core:workmanager"))
-    implementation(project(":shared:core:ui"))
     implementation(project(":shared:core:util"))
     implementation(libs.inject)
     implementation(libs.appauth)

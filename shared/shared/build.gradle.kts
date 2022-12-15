@@ -36,7 +36,6 @@ kotlin {
             isStatic = false
             linkerOpts.add("-lsqlite3")
 
-            export(project(":shared:core:ui"))
             export(project(":shared:core:util"))
             export(project(":shared:core:database"))
             export(project(":shared:core:network"))
@@ -58,7 +57,6 @@ kotlin {
 }
 
 dependencies {
-    commonMainApi(project(":shared:core:ui"))
     commonMainApi(project(":shared:core:util"))
     commonMainApi(project(":shared:core:database"))
     commonMainApi(project(":shared:core:network"))

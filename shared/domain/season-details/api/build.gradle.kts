@@ -17,7 +17,7 @@ dependencies {
 
     commonMainApi(libs.flowredux)
 
-    commonMainImplementation(project(":shared:core:ui"))
+    commonMainImplementation(project(":shared:core:util"))
     commonMainImplementation(libs.coroutines.core)
 
     commonTestImplementation(project(":shared:core:test"))

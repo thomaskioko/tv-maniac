@@ -16,7 +16,6 @@ dependencies {
     commonMainImplementation(libs.ktor.serialization)
 
 
-    androidMainImplementation(project(":shared:core:ui"))
     androidMainImplementation(project(":shared:core:util"))
     androidMainImplementation(libs.inject)
     androidMainImplementation(libs.appauth)
