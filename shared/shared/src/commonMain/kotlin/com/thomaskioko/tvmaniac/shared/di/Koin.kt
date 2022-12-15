@@ -6,15 +6,14 @@ import com.thomaskioko.tvmaniac.details.api.ShowDetailsStateMachineWrapper
 import com.thomaskioko.tvmaniac.details.implementation.di.detailDomainModule
 import com.thomaskioko.tvmaniac.domain.following.api.FollowingStateMachineWrapper
 import com.thomaskioko.tvmaniac.domain.following.api.di.followingModule
+import com.thomaskioko.tvmaniac.domain.trailers.api.TrailersStateMachineWrapper
+import com.thomaskioko.tvmaniac.domain.trailers.implementation.di.trailersModule
 import com.thomaskioko.tvmaniac.episodes.implementation.di.episodeDomainModule
 import com.thomaskioko.tvmaniac.network.di.networkPlatformModule
-import com.thomaskioko.tvmaniac.seasonepisodes.implementation.seasonEpisodesDomainModule
-import com.thomaskioko.tvmaniac.seasons.implementation.di.seasonsDomainModule
+import com.thomaskioko.tvmaniac.seasondetails.implementation.di.seasonDetailsDomainModule
 import com.thomaskioko.tvmaniac.settings.api.SettingsStateMachineWrapper
 import com.thomaskioko.tvmaniac.settings.implementation.di.settingsModule
 import com.thomaskioko.tvmaniac.shared.core.ui.di.coreUiPlatformModule
-import com.thomaskioko.tvmaniac.domain.trailers.api.TrailersStateMachineWrapper
-import com.thomaskioko.tvmaniac.domain.trailers.implementation.di.trailersModule
 import com.thomaskioko.tvmaniac.shows.api.ShowsStateMachineWrapper
 import com.thomaskioko.tvmaniac.shows.implementation.di.showDomainModule
 import com.thomaskioko.tvmaniac.similar.implementation.di.similarDomainModule
@@ -51,10 +50,9 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     modules(
         dispatcherModule,
         detailDomainModule,
-        seasonsDomainModule,
+        seasonDetailsDomainModule,
         episodeDomainModule,
         similarDomainModule,
-        seasonEpisodesDomainModule,
         trailersModule,
         showDomainModule,
         followingModule,

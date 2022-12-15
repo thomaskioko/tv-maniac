@@ -7,14 +7,11 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeImageCacheImpl
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeRepositoryImpl
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodesCacheImpl
-import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
-import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 @Module
@@ -36,15 +33,11 @@ object EpisodeModule {
     @Provides
     fun provideEpisodeRepository(
         tmdbService: TmdbService,
-        traktService: TraktService,
         episodesCache: EpisodesCache,
         episodeImageCache: EpisodeImageCache,
-        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): EpisodeRepository = EpisodeRepositoryImpl(
         tmdbService,
-        traktService,
         episodesCache,
         episodeImageCache,
-        ioDispatcher
     )
 }

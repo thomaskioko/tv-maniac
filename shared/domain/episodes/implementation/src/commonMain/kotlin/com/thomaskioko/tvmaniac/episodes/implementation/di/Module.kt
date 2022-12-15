@@ -10,7 +10,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val episodeDomainModule: Module = module {
-    single<EpisodeRepository> { EpisodeRepositoryImpl(get(), get(), get(), get(), get()) }
+    single<EpisodeRepository> { EpisodeRepositoryImpl(get(), get(), get()) }
     single<EpisodesCache> { EpisodesCacheImpl(get()) }
     single<EpisodeImageCache> { EpisodeImageCacheImpl(get()) }
 }

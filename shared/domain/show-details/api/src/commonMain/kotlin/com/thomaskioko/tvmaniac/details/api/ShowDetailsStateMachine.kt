@@ -13,8 +13,8 @@ import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersError
 import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersLoaded
 import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersLoaded.Companion.EmptyTrailers
 import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersLoaded.Companion.playerErrorMessage
-import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerRepository
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 class ShowDetailsStateMachine constructor(
     private val traktRepository: TraktRepository,
     private val similarShowsRepository: SimilarShowsRepository,
-    private val seasonsRepository: SeasonsRepository,
+    private val seasonDetailsRepository: SeasonDetailsRepository,
     private val trailerRepository: TrailerRepository
 ) : FlowReduxStateMachine<ShowDetailsState, ShowDetailsAction>(
     initialState = ShowDetailsState.Loading
@@ -192,7 +192,7 @@ class ShowDetailsStateMachine constructor(
         state: State<ShowDetailsLoaded>
     ): ChangedState<ShowDetailsState> {
         var nextState: ChangedState<ShowDetailsState> = state.noChange()
-        seasonsRepository.observeShowSeasons(showId)
+        seasonDetailsRepository.observeShowSeasons(showId)
             .catch {
                 nextState = state.mutate {
                     copy(

@@ -29,7 +29,7 @@ dependencies {
     implementation(projects.android.features.showsGrid)
     implementation(projects.android.features.following)
     implementation(projects.android.features.settings)
-    implementation(projects.android.features.seasons)
+    implementation(projects.android.features.seasonDetails)
     implementation(projects.android.features.videoPlayer)
     implementation(projects.android.features.profile)
 
