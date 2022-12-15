@@ -8,7 +8,7 @@ import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsStateMachine
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonsCache
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsRepositoryImpl
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonsCacheImpl
-import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
+import com.thomaskioko.tvmaniac.core.util.scope.DefaultDispatcher
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import dagger.Module
 import dagger.Provides

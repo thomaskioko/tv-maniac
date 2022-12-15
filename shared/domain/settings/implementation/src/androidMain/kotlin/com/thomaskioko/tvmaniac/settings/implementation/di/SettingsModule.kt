@@ -8,7 +8,7 @@ import com.thomaskioko.tvmaniac.settings.api.SettingsStateMachine
 import com.thomaskioko.tvmaniac.settings.implementation.SettingsRepositoryImpl
 import com.thomaskioko.tvmaniac.settings.implementation.createDataStore
 import com.thomaskioko.tvmaniac.settings.implementation.dataStoreFileName
-import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultCoroutineScope
+import com.thomaskioko.tvmaniac.core.util.scope.DefaultCoroutineScope
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

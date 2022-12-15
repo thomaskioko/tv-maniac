@@ -2,22 +2,20 @@ package com.thomaskioko.tvmaniac.trakt.implementation.di
 
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.util.helper.DateUtilHelper
-import com.thomaskioko.tvmaniac.shared.core.ui.di.IoDispatcher
+import com.thomaskioko.tvmaniac.core.util.scope.IoDispatcher
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
-import com.thomaskioko.tvmaniac.trakt.api.ObserveStatsInteractor
-import com.thomaskioko.tvmaniac.trakt.api.ObserveTraktUserInteractor
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktStatsCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
+import com.thomaskioko.tvmaniac.trakt.implementation.TraktRepositoryImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktFollowedCacheImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktListCacheImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktStatsCacheImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktUserCacheImpl
-import com.thomaskioko.tvmaniac.trakt.implementation.TraktRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -76,15 +74,4 @@ object TraktInteractorModule {
             ioDispatcher,
         )
 
-    @Singleton
-    @Provides
-    fun provideObserveTrailerInteractor(
-        repository: TraktRepository
-    ): ObserveTraktUserInteractor = ObserveTraktUserInteractor(repository)
-
-    @Singleton
-    @Provides
-    fun provideObserveStatsInteractor(
-        repository: TraktRepository
-    ): ObserveStatsInteractor = ObserveStatsInteractor(repository)
 }

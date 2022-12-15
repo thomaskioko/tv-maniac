@@ -131,6 +131,7 @@ I wrote an article, [Going Modular — The Kotlin Multiplatform Way](https://med
 * [Mockk](https://github.com/mockk/mockk) - mocking library for Kotlin.
 * [koin](https://github.com/mockk/mockk) - Injection library.
 * [DataStore Preferences](https://android-developers.googleblog.com/2022/10/announcing-experimental-preview-of-jetpack-multiplatform-libraries.html) - Data storage
+* [Flow-Redux](https://github.com/freeletics/FlowRedux)
 
 ### iOS
 * [Kingfisher](https://github.com/onevcat/Kingfisher) - Image library.
@@ -167,7 +168,7 @@ Shared
 - [x] Refactor interactor implementation.
 - [x] Use koin for injection
 - [x] Modularize `shared` module
-- [ ] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux) 
+- [x] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux) 
 - [ ] Improve error handling, add retry.
 - [ ] Add test cases.
 - [ ] Fix paging

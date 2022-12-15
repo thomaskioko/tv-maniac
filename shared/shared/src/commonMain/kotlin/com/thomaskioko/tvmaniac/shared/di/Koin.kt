@@ -13,7 +13,6 @@ import com.thomaskioko.tvmaniac.network.di.networkPlatformModule
 import com.thomaskioko.tvmaniac.seasondetails.implementation.di.seasonDetailsDomainModule
 import com.thomaskioko.tvmaniac.settings.api.SettingsStateMachineWrapper
 import com.thomaskioko.tvmaniac.settings.implementation.di.settingsModule
-import com.thomaskioko.tvmaniac.shared.core.ui.di.coreUiPlatformModule
 import com.thomaskioko.tvmaniac.shows.api.ShowsStateMachineWrapper
 import com.thomaskioko.tvmaniac.shows.implementation.di.showDomainModule
 import com.thomaskioko.tvmaniac.similar.implementation.di.similarDomainModule
@@ -57,7 +56,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         showDomainModule,
         followingModule,
         traktModule(),
-        coreUiPlatformModule(),
         dbPlatformModule(),
         networkPlatformModule(),
         tmdbModule(),

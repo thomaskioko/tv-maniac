@@ -11,7 +11,7 @@ android {
 }
 
 dependencies {
-    androidMainImplementation(project(":shared:core:ui"))
+    androidMainImplementation(project(":shared:core:util"))
 
     androidMainImplementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

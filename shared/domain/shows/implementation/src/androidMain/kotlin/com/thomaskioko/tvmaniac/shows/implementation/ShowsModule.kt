@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.shared.core.ui.di.IoDispatcher
+import com.thomaskioko.tvmaniac.core.util.scope.IoDispatcher
 import com.thomaskioko.tvmaniac.shows.api.ShowsStateMachine
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache

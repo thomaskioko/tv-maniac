@@ -10,7 +10,6 @@ android {
 
 dependencies {
     api(project(":shared:core:util"))
-    implementation(project(":shared:core:ui"))
     implementation(project(":shared:domain:trakt:api"))
     implementation(project( ":shared:domain:settings:api"))
     implementation(project(":android:core:compose"))

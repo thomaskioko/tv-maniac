@@ -9,7 +9,7 @@ android {
 }
 
 dependencies {
-    commonMainApi(project(":shared:core:ui"))
+    commonMainApi(project(":shared:core:util"))
     commonMainApi(project(":shared:core:database"))
     commonMainApi(libs.flowredux)
 

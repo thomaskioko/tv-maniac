@@ -29,8 +29,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BackAppBar
+import com.thomaskioko.tvmaniac.compose.components.ErrorUi
+import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
+import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -42,7 +45,7 @@ fun ShowsGridScreen(
 
     val scaffoldState = rememberScaffoldState()
 
-    val gridViewState by viewModel.observeState().collectAsStateWithLifecycle()
+    val gridViewState by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -55,20 +58,32 @@ fun ShowsGridScreen(
         modifier = Modifier
             .statusBarsPadding(),
     ) { paddingValues ->
+        when (gridViewState) {
+            LoadingContent -> FullScreenLoading()
+            is LoadingContentError -> ErrorUi(
+                errorMessage = (gridViewState as LoadingContentError).errorMessage,
+                onRetry = {
+                viewModel.dispatch(
+                    ReloadShows(viewModel.showType)
+                )
+            })
 
-        ShowsGridContent(
-            viewState = gridViewState,
-            paddingValues = paddingValues,
-            onItemClicked = { openShowDetails(it) }
-        )
+            is ShowsLoaded -> ShowsGridContent(
+                paddingValues = paddingValues,
+                list = (gridViewState as ShowsLoaded).list,
+                onItemClicked = { openShowDetails(it) }
+            )
+        }
+
+
     }
 }
 
 @ExperimentalFoundationApi
 @Composable
 fun ShowsGridContent(
-    viewState: ShowsLoaded,
     paddingValues: PaddingValues,
+    list: List<TvShow>,
     onItemClicked: (Int) -> Unit,
 ) {
 
@@ -79,7 +94,7 @@ fun ShowsGridContent(
         columns = GridCells.Fixed(3),
     ) {
 
-        items(viewState.list) { show ->
+        items(list) { show ->
 
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
