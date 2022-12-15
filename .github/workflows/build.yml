@@ -1,3 +1,5 @@
+name: "Android Check:"
+
 on:
   push:
     branches:
@@ -8,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Build Project
+    name: Build
     runs-on: ubuntu-latest
     env:
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
@@ -38,7 +40,7 @@ jobs:
         run: ./gradlew assembleDebug
 
   checks:
-    name: Code quality checks
+    name: Code style
     runs-on: ubuntu-latest
     needs: build
     env:
