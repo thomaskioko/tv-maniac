@@ -56,3 +56,8 @@ INNER JOIN show_category ON show_category.trakt_id = show.trakt_id
 LEFT OUTER JOIN show_image ON show_image.trakt_id = show.trakt_id
 WHERE show_category.category_id = ?
 ORDER BY show.year DESC;
+
+selectShowImages:
+SELECT show.trakt_id, show.tmdb_id FROM show
+LEFT OUTER JOIN show_image ON show_image.trakt_id = show.trakt_id
+WHERE poster_url IS NULL AND backdrop_url IS NULL;
