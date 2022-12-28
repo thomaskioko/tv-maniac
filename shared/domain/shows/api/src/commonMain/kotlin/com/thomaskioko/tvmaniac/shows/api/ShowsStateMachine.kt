@@ -42,7 +42,6 @@ class ShowsStateMachine constructor(
                                 trendingShows = result.trendingShows,
                                 popularShows = result.popularShows,
                                 anticipatedShows = result.anticipatedShows,
-                                updateState = result.updateState
                             )
                         )
                     }
@@ -77,14 +76,11 @@ class ShowsStateMachine constructor(
             traktRepository.fetchShowsByCategoryId(FEATURED.id),
         ) { trending, popular, anticipated, featured ->
 
-            val isEmpty = trending.data.isNullOrEmpty() && popular.data.isNullOrEmpty() &&
-                    anticipated.data.isNullOrEmpty() && featured.data.isNullOrEmpty()
             ShowResult(
                 trendingShows = trending.toShowData(TRENDING),
                 popularShows = popular.toShowData(POPULAR),
                 anticipatedShows = anticipated.toShowData(ANTICIPATED),
                 featuredShows = featured.toShowData(FEATURED, 5),
-                updateState = if (isEmpty) ShowUpdateState.EMPTY else ShowUpdateState.IDLE
             )
         }
             .catch { nextState = LoadingError(it.message ?: "Something went wrong") }
@@ -103,14 +99,11 @@ class ShowsStateMachine constructor(
             traktRepository.observeCachedShows(FEATURED.id),
         ) { trending, popular, anticipated, featured ->
 
-            val isEmpty = trending.data.isNullOrEmpty() && popular.data.isNullOrEmpty() &&
-                    anticipated.data.isNullOrEmpty() && featured.data.isNullOrEmpty()
             ShowResult(
                 trendingShows = trending.toShowData(TRENDING),
                 popularShows = popular.toShowData(POPULAR),
                 anticipatedShows = anticipated.toShowData(ANTICIPATED),
                 featuredShows = featured.toShowData(FEATURED, 5),
-                updateState = if (isEmpty) ShowUpdateState.EMPTY else ShowUpdateState.IDLE
             )
         }
             .catch {

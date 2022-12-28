@@ -6,27 +6,28 @@ import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.TraktStats
 import com.thomaskioko.tvmaniac.core.db.Trakt_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
-import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.core.util.network.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface TraktRepository {
-    fun observeMe(slug: String): Flow<Resource<Trakt_user>>
+    fun observeMe(slug: String): Flow<Either<Failure, Trakt_user>>
 
-    fun observeStats(slug: String, refresh : Boolean = false): Flow<Resource<TraktStats>>
+    fun observeStats(slug: String, refresh: Boolean = false): Flow<Either<Failure, TraktStats>>
 
-    fun observeCreateTraktList(userSlug: String): Flow<Resource<Trakt_list>>
+    fun observeCreateTraktList(userSlug: String): Flow<Either<Failure, Trakt_list>>
 
-    fun observeFollowedShows(): Flow<Resource<List<SelectFollowedShows>>>
+    fun observeFollowedShows(): Flow<Either<Failure, List<SelectFollowedShows>>>
 
     fun getFollowedShows(): List<SelectFollowedShows>
 
-    fun observeUpdateFollowedShow(traktId: Int, addToWatchList: Boolean) : Flow<Resource<Unit>>
+    fun observeUpdateFollowedShow(traktId: Int, addToWatchList: Boolean): Flow<Either<Failure, Unit>>
 
-    fun observeShow(traktId: Int): Flow<Resource<SelectByShowId>>
+    fun observeShow(traktId: Int): Flow<Either<Failure, SelectByShowId>>
 
-    fun fetchShowsByCategoryId(categoryId: Int): Flow<Resource<List<SelectShowsByCategory>>>
+    fun fetchShowsByCategoryId(categoryId: Int): Flow<Either<Failure, List<SelectShowsByCategory>>>
 
-    fun observeCachedShows(categoryId: Int):  Flow<Resource<List<SelectShowsByCategory>>>
+    fun observeCachedShows(categoryId: Int): Flow<Either<Failure, List<SelectShowsByCategory>>>
 
     suspend fun updateFollowedShow(traktId: Int, addToWatchList: Boolean)
 

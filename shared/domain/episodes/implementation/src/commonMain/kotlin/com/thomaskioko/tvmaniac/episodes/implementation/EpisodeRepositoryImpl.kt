@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.core.db.EpisodeImage
 import com.thomaskioko.tvmaniac.core.db.EpisodesByShowId
+import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeImageCache
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
@@ -30,12 +32,22 @@ class EpisodeRepositoryImpl(
                             epNumber = episode.episode_number.toInt()
                         )
 
-                        episodeImageCache.insert(
-                            EpisodeImage(
-                                id = episode.id,
-                                image_url = response.still_path
-                            )
-                        )
+                        when (response) {
+                            is ApiResponse.Error -> {
+                                Logger.withTag("updateEpisodeArtWork")
+                                    .e("$response")
+                            }
+
+                            is ApiResponse.Success -> {
+                                episodeImageCache.insert(
+                                    EpisodeImage(
+                                        id = episode.id,
+                                        image_url = response.body.still_path
+                                    )
+                                )
+                            }
+                        }
+
 
                     }
                 }

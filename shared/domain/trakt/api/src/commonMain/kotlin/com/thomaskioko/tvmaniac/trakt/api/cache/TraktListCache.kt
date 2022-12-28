@@ -9,5 +9,5 @@ interface TraktListCache {
 
     fun getTraktList(): Trakt_list?
 
-    fun observeTraktList(): Flow<Trakt_list?>
+    fun observeTraktList(): Flow<Trakt_list>
 }

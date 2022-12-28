@@ -16,8 +16,4 @@ data class TvShow(
     val rating: Double = 0.0,
     val genres: List<String> = listOf(),
     val isFollowed: Boolean = false,
-) {
-    companion object {
-        val EMPTY_SHOW = TvShow()
-    }
-}
+)

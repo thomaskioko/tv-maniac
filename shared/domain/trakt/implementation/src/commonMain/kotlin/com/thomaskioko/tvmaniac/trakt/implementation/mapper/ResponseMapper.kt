@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.trakt.implementation.mapper
 
+import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.Show_category
@@ -9,6 +10,8 @@ import com.thomaskioko.tvmaniac.core.db.Trakt_user
 import com.thomaskioko.tvmaniac.core.util.DateUtil
 import com.thomaskioko.tvmaniac.core.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.util.FormatterUtil.formatDuration
+import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
@@ -17,7 +20,14 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
 import kotlin.math.roundToInt
 
-fun List<TraktShowResponse>.showResponseToCacheList() = map { it.responseToCache() }
+fun ApiResponse<List<TraktShowResponse>, ErrorResponse>.showResponseToCacheList() = when (this) {
+    is ApiResponse.Error -> {
+        Logger.withTag("showResponseToCacheList").e("$this")
+        emptyList()
+    }
+
+    is ApiResponse.Success -> body.map { it.responseToCache() }
+}
 
 fun TraktShowResponse.responseToCache() = Show(
     trakt_id = ids.trakt,
@@ -34,7 +44,15 @@ fun TraktShowResponse.responseToCache() = Show(
     status = status.replaceFirstChar { it.uppercase() },
 )
 
-fun List<TraktShowsResponse>.showsResponseToCacheList() = map { it.showResponseToCacheList() }
+fun ApiResponse<List<TraktShowsResponse>, ErrorResponse>.showsResponseToCacheList() = when (this) {
+    is ApiResponse.Error -> {
+        Logger.withTag("showsResponseToCacheList").e("$this")
+        emptyList()
+    }
+
+    is ApiResponse.Success -> body.map { it.showResponseToCacheList() }
+}
+
 
 fun TraktShowsResponse.showResponseToCacheList(): Show = Show(
     trakt_id = show.ids.trakt,

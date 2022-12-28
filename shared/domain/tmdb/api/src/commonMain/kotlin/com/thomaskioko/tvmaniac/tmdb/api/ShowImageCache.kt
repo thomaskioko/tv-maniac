@@ -8,5 +8,5 @@ interface ShowImageCache {
 
     fun insert(image: Show_image)
 
-    fun observeShowArt(traktId: Int): Flow<Show_image>
+    fun observeShowArt(): Flow<List<Show_image>>
 }

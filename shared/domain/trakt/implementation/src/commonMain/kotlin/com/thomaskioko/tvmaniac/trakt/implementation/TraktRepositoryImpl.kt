@@ -11,8 +11,11 @@ import com.thomaskioko.tvmaniac.core.db.Trakt_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.helper.DateUtilHelper
-import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
+import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
+import com.thomaskioko.tvmaniac.core.util.network.DefaultError
+import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.core.util.network.Failure
+import com.thomaskioko.tvmaniac.core.util.network.networkBoundResult
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
@@ -26,6 +29,8 @@ import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktStatsCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
+import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.implementation.mapper.responseToCache
 import com.thomaskioko.tvmaniac.trakt.implementation.mapper.showResponseToCacheList
 import com.thomaskioko.tvmaniac.trakt.implementation.mapper.showsResponseToCacheList
@@ -52,41 +57,45 @@ class TraktRepositoryImpl constructor(
     private val dispatcher: CoroutineDispatcher,
 ) : TraktRepository {
 
-    override fun observeMe(slug: String): Flow<Resource<Trakt_user>> =
-        networkBoundResource(
+    override fun observeMe(slug: String): Flow<Either<Failure, Trakt_user>> =
+        networkBoundResult(
             query = { traktUserCache.observeMe() },
             shouldFetch = { it == null },
             fetch = { traktService.getUserProfile(slug) },
-            saveFetchResult = { traktUserCache.insert(it.toCache(slug)) },
-            onFetchFailed = { Logger.withTag("observeMe").e(it.resolveError()) },
+            saveFetchResult = {
+                when (it) {
+                    is ApiResponse.Error -> Logger.withTag("observeMe").e("$it")
+                    is ApiResponse.Success -> {
+                        traktUserCache.insert(it.body.toCache(slug))
+                    }
+                }
+            },
             coroutineDispatcher = dispatcher
         )
 
-    override fun observeStats(slug: String, refresh: Boolean): Flow<Resource<TraktStats>> =
-        networkBoundResource(
+    override fun observeStats(slug: String, refresh: Boolean): Flow<Either<Failure, TraktStats>> =
+        networkBoundResult(
             query = { statsCache.observeStats() },
             shouldFetch = { it == null || refresh },
             fetch = { traktService.getUserStats(slug) },
             saveFetchResult = { statsCache.insert(it.toCache(slug)) },
-            onFetchFailed = { Logger.withTag("observeStats").e(it.resolveError()) },
             coroutineDispatcher = dispatcher
         )
 
 
-    override fun observeCreateTraktList(userSlug: String): Flow<Resource<Trakt_list>> =
-        networkBoundResource(
+    override fun observeCreateTraktList(userSlug: String): Flow<Either<Failure, Trakt_list>> =
+        networkBoundResult(
             query = { favoriteCache.observeTraktList() },
             shouldFetch = { it == null },
             fetch = { traktService.createFollowingList(userSlug) },
             saveFetchResult = { favoriteCache.insert(it.toCache()) },
-            onFetchFailed = { Logger.withTag("createTraktFavoriteList").e(it.resolveError()) },
             coroutineDispatcher = dispatcher
         )
 
     override fun observeUpdateFollowedShow(
         traktId: Int,
         addToWatchList: Boolean
-    ): Flow<Resource<Unit>> = networkBoundResource(
+    ): Flow<Either<Failure, Unit>> = networkBoundResult(
         query = { flowOf(Unit) },
         shouldFetch = { traktUserCache.getMe() != null },
         fetch = {
@@ -113,53 +122,51 @@ class TraktRepositoryImpl constructor(
                 else -> followedCache.removeShow(traktId)
             }
         },
-        onFetchFailed = {
-            //If something wrong happens on the network layer, we still want to cache it and sync later.
-            when {
-                addToWatchList -> followedCache.insert(
-                    Followed_shows(
-                        id = traktId,
-                        synced = false,
-                        created_at = dateUtilHelper.getTimestampMilliseconds()
-                    )
-                )
+        coroutineDispatcher = dispatcher
+    )
 
-                else -> followedCache.removeShow(traktId)
+    override fun observeShow(traktId: Int): Flow<Either<Failure, SelectByShowId>> =
+        networkBoundResult(
+            query = { tvShowCache.observeTvShow(traktId) },
+            shouldFetch = { it == null },
+            fetch = { traktService.getSeasonDetails(traktId) },
+            saveFetchResult = { mapAndCache(it) },
+            coroutineDispatcher = dispatcher
+        )
+
+    private fun mapAndCache(response: ApiResponse<TraktShowResponse, ErrorResponse>) {
+        when (response) {
+            is ApiResponse.Error -> {
+                Logger.withTag("mapAndCache")
+                    .e("$response")
             }
-            Logger.withTag("observeUpdateFollowedShow").e(it.resolveError())
-        },
-        coroutineDispatcher = dispatcher
-    )
 
-    override fun observeShow(traktId: Int): Flow<Resource<SelectByShowId>> = networkBoundResource(
-        query = { tvShowCache.observeTvShow(traktId) },
-        shouldFetch = { it == null },
-        fetch = { traktService.getSeasonDetails(traktId) },
-        saveFetchResult = { response -> tvShowCache.insert(response.responseToCache()) },
-        onFetchFailed = { Logger.withTag("observeShow").e { it.resolveError() } },
-        coroutineDispatcher = dispatcher
-    )
+            is ApiResponse.Success -> {
+                tvShowCache.insert(response.body.responseToCache())
+            }
+        }
 
-    override fun fetchShowsByCategoryId(categoryId: Int): Flow<Resource<List<SelectShowsByCategory>>> =
-        networkBoundResource(
+    }
+
+    override fun fetchShowsByCategoryId(categoryId: Int): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        networkBoundResult(
             query = { tvShowCache.observeCachedShows(categoryId) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = { fetchShowsAndMapResult(categoryId) },
             saveFetchResult = { cacheResult(it, categoryId) },
-            onFetchFailed = { Logger.withTag("fetchShowsByCategoryId").e(it.resolveError(), it) },
             coroutineDispatcher = dispatcher
         )
 
-    override fun observeCachedShows(categoryId: Int): Flow<Resource<List<SelectShowsByCategory>>> =
+    override fun observeCachedShows(categoryId: Int): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         tvShowCache.observeCachedShows(ShowCategory[categoryId].id)
-            .map { Resource.Success(it) }
-            .catch { Resource.Error<List<SelectShowsByCategory>>(it.resolveError()) }
+            .map { Either.Right(it) }
+            .catch { Either.Left(DefaultError(it)) }
 
     override suspend fun fetchTraktWatchlistShows() {
         traktUserCache.observeMe()
             .flowOn(dispatcher)
             .collect { user ->
-                user?.let {
+                if(user.slug.isNotBlank()){
                     followedCache.insert(traktService.getWatchList().responseToCache())
                 }
             }
@@ -182,8 +189,7 @@ class TraktRepositoryImpl constructor(
         traktUserCache.observeMe()
             .flowOn(dispatcher)
             .collect { user ->
-                user?.let {
-
+                if (user.slug.isNotBlank()) {
                     followedCache.getUnsyncedFollowedShows()
                         .map {
 
@@ -216,11 +222,11 @@ class TraktRepositoryImpl constructor(
         }
     }
 
-    override fun observeFollowedShows(): Flow<Resource<List<SelectFollowedShows>>> =
+    override fun observeFollowedShows(): Flow<Either<Failure, List<SelectFollowedShows>>> =
         followedCache.observeFollowedShows()
             .distinctUntilChanged()
-            .map { Resource.Success(it) }
-            .catch { Resource.Error<List<SelectFollowedShows>>(it.resolveError()) }
+            .map { Either.Right(it) }
+            .catch { Either.Left(DefaultError(it)) }
 
     override fun getFollowedShows(): List<SelectFollowedShows> = followedCache.getFollowedShows()
 
@@ -233,9 +239,10 @@ class TraktRepositoryImpl constructor(
                 ANTICIPATED.id -> traktService.getAnticipatedShows().showsResponseToCacheList()
                 FEATURED.id -> traktService.getRecommendedShows(period = "daily")
                     .showsResponseToCacheList()
+
                 else -> throw Throwable("Unsupported type sunny")
             }
-        } catch (exception: Throwable){
+        } catch (exception: Throwable) {
             Logger.withTag("fetchShowsAndMapResult").e(exception.resolveError(), exception)
             emptyList()
         }

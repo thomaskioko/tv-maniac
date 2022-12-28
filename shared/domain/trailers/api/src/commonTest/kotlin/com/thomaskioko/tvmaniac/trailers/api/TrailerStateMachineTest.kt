@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.trailers.api
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
-import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.domain.trailers.api.LoadTrailers
 import com.thomaskioko.tvmaniac.domain.trailers.api.LoadingTrailers
 import com.thomaskioko.tvmaniac.domain.trailers.api.TrailersLoaded
@@ -21,7 +21,7 @@ internal class TrailerStateMachineTest {
     @Test
     fun loadTrailers_state_emits_expected_result() = runBlockingTest {
         stateMachine.state.test {
-            trailerRepository.setTrailerResult(Resource.Success(trailers))
+            trailerRepository.setTrailerResult(Either.Right(trailers))
 
             stateMachine.dispatch(LoadTrailers(84958, "Fd43V"))
 

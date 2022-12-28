@@ -25,6 +25,7 @@ dependencies {
     iosMainImplementation(libs.ktor.logging)
     iosMainImplementation(libs.ktor.darwin)
 
+    commonMainImplementation(project(":shared:core:util"))
     commonMainImplementation(project(":shared:domain:tmdb:api"))
     commonMainImplementation(libs.kermit)
     commonMainImplementation(libs.koin)

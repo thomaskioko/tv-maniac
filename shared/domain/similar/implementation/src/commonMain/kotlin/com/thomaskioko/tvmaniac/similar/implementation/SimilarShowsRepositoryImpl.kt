@@ -1,10 +1,9 @@
 package com.thomaskioko.tvmaniac.similar.implementation
 
-import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
-import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
-import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
+import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.core.util.network.Failure
+import com.thomaskioko.tvmaniac.core.util.network.networkBoundResult
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
@@ -20,13 +19,12 @@ class SimilarShowsRepositoryImpl(
     private val dispatcher: CoroutineDispatcher,
 ) : SimilarShowsRepository {
 
-    override fun observeSimilarShows(traktId: Int): Flow<Resource<List<SelectSimilarShows>>> =
-        networkBoundResource(
+    override fun observeSimilarShows(traktId: Int): Flow<Either<Failure, List<SelectSimilarShows>>> =
+        networkBoundResult(
             query = { similarShowCache.observeSimilarShows(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = { traktService.getSimilarShows(traktId) },
             saveFetchResult = { response -> mapAndInsert(traktId, response) },
-            onFetchFailed = { Logger.withTag("observeSimilarShows").e { it.resolveError() } },
             coroutineDispatcher = dispatcher
         )
 

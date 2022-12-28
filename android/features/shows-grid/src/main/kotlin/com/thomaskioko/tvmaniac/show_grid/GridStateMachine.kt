@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.show_grid
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.shows.api.toTvShowList
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,8 +41,8 @@ class GridStateMachine constructor(
         repository.observeCachedShows(action.category)
             .collect { result ->
                 nextState = when (result) {
-                    is Resource.Error -> state.override { LoadingContentError(result.errorMessage) }
-                    is Resource.Success -> state.override {
+                    is Either.Left -> state.override { LoadingContentError(result.error.errorMessage) }
+                    is Either.Right -> state.override {
                         ShowsLoaded(
                             list = result.data?.toTvShowList() ?: emptyList()
                         )

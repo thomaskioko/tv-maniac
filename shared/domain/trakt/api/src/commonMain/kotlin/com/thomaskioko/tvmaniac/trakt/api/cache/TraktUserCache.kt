@@ -9,7 +9,7 @@ interface TraktUserCache {
 
     fun observeUserBySlug(slug: String) : Flow<Trakt_user?>
 
-    fun observeMe() : Flow<Trakt_user?>
+    fun observeMe(): Flow<Trakt_user>
 
     fun getMe() : Trakt_user?
 }

@@ -1,19 +1,19 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.Show_image
-import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
-import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.core.util.network.networkBoundResource
+import com.thomaskioko.tvmaniac.core.util.FormatterUtil.formatPosterPath
+import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
+import com.thomaskioko.tvmaniac.core.util.network.DefaultError
+import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.core.util.network.Failure
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
-import com.thomaskioko.tvmaniac.shows.api.toImageUrl
-import com.thomaskioko.tvmaniac.shows.implementation.mapper.toShow
 import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
@@ -25,44 +25,34 @@ class TmdbRepositoryImpl(
     private val dispatcher: CoroutineDispatcher,
 ) : TmdbRepository {
 
-    override fun observeShow(tmdbId: Int): Flow<Resource<SelectByShowId>> = networkBoundResource(
-        query = { tvShowCache.observeTvShow(tmdbId) },
-        shouldFetch = { it == null || it.backdrop_url.isNullOrBlank() },
-        fetch = { apiService.getTvShowDetails(tmdbId) },
-        saveFetchResult = { tvShowCache.insert(it.toShow(tmdbId)) },
-        onFetchFailed = { Logger.withTag("observeShow").e { it.resolveError() } },
-        coroutineDispatcher = dispatcher
-    )
-
-    override fun updateShowArtWork(): Flow<Resource<Unit>> = tvShowCache.observeTvShows()
-        .map { shows ->
-            shows.filter {
-                it.poster_url.isNullOrEmpty() || it.backdrop_url.isNullOrEmpty()
-            }
-                .forEach { show ->
+    override fun updateShowArtWork(): Flow<Either<Failure, Unit>> =
+        tvShowCache.observeShowImages()
+            .map { shows ->
+                shows.forEach { show ->
                     show.tmdb_id?.let { tmdbId ->
-                        //TODO:: Improve error handling.
-                        try {
-                            val response = apiService.getTvShowDetails(tmdbId)
 
-                            imageCache.insert(
-                                Show_image(
-                                    trakt_id = show.trakt_id,
-                                    poster_url = response.posterPath?.toImageUrl(),
-                                    backdrop_url = response.backdropPath?.toImageUrl()
+                        when (val response = apiService.getTvShowDetails(tmdbId)) {
+                            is ApiResponse.Error -> {
+                                Logger.withTag("updateShowArtWork")
+                                    .e("$response")
+                            }
+
+                            is ApiResponse.Success -> {
+                                imageCache.insert(
+                                    Show_image(
+                                        trakt_id = show.trakt_id,
+                                        tmdb_id = tmdbId,
+                                        poster_url = formatPosterPath(response.body.posterPath),
+                                        backdrop_url = formatPosterPath(response.body.backdropPath)
+                                    )
                                 )
-                            )
-
-                            Resource.Success(Unit)
-
-                        } catch (e: Throwable) {
-                            Logger.e { "${e.message}" }
-                            Resource.Error(e.resolveError())
+                            }
                         }
                     }
                 }
 
-            Resource.Success(Unit)
-        }
-        .flowOn(dispatcher)
+                Either.Right(Unit)
+            }
+            .catch { Either.Left(DefaultError(it)) }
+            .flowOn(dispatcher)
 }

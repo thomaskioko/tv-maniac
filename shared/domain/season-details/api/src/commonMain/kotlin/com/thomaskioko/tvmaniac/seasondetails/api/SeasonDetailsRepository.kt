@@ -2,16 +2,17 @@ package com.thomaskioko.tvmaniac.seasondetails.api
 
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonsByShowId
-import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.core.util.network.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface SeasonDetailsRepository {
 
-    fun observeShowSeasons(traktId: Int): Flow<Resource<List<SelectSeasonsByShowId>>>
+    fun observeShowSeasons(traktId: Int): Flow<Either<Failure, List<SelectSeasonsByShowId>>>
 
-    fun updateSeasonEpisodes(
+    fun observeSeasonEpisodes(showId: Int): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>>
+
+    fun getSeasonEpisodes(
         showId: Int,
-    ): Flow<Resource<List<SelectSeasonWithEpisodes>>>
-
-    fun observeSeasonEpisodes(showId: Int): Flow<List<SelectSeasonWithEpisodes>>
+    ): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>>
 }

@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.shows.api
 
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
-import com.thomaskioko.tvmaniac.core.util.FormatterUtil
-import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.core.util.network.Failure
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
 import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 
@@ -27,14 +27,13 @@ fun SelectShowsByCategory.toTvShow(): TvShow {
     )
 }
 
-fun String.toImageUrl() = FormatterUtil.formatPosterPath(this)
-
-fun Resource<List<SelectShowsByCategory>>.toShowData(category: ShowCategory) =
+fun Either<Failure, List<SelectShowsByCategory>>.toShowData(category: ShowCategory) =
     when (this) {
-        is Resource.Error -> ShowResult.ShowCategoryData(
-            ShowResult.CategoryError(category, errorMessage)
+        is Either.Left -> ShowResult.ShowCategoryData(
+            ShowResult.CategoryError(category, error.errorMessage)
         )
-        is Resource.Success -> ShowResult.ShowCategoryData(
+
+        is Either.Right -> ShowResult.ShowCategoryData(
             categoryState = ShowResult.CategorySuccess(
                 category = category,
                 tvShows = data?.toTvShowList() ?: emptyList()
@@ -42,14 +41,15 @@ fun Resource<List<SelectShowsByCategory>>.toShowData(category: ShowCategory) =
         )
     }
 
-fun Resource<List<SelectShowsByCategory>>.toShowData(
+fun Either<Failure, List<SelectShowsByCategory>>.toShowData(
     category: ShowCategory,
     resultLimit: Int
 ) = when (this) {
-    is Resource.Error -> ShowResult.ShowCategoryData(
-        ShowResult.CategoryError(category, errorMessage)
+    is Either.Left -> ShowResult.ShowCategoryData(
+        ShowResult.CategoryError(category, error.errorMessage)
     )
-    is Resource.Success -> ShowResult.ShowCategoryData(
+
+    is Either.Right -> ShowResult.ShowCategoryData(
         categoryState = ShowResult.CategorySuccess(
             category = category,
             tvShows = data?.toTvShowList()?.take(resultLimit) ?: emptyList()

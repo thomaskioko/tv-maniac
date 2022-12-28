@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.trakt.implementation.cache
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
+import com.squareup.sqldelight.runtime.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.db.TraktStats
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktStatsCache
@@ -22,9 +22,9 @@ class TraktStatsCacheImpl(
         )
     }
 
-    override fun observeStats(): Flow<TraktStats?> {
+    override fun observeStats(): Flow<TraktStats> {
         return database.traktStatsQueries.select()
             .asFlow()
-            .mapToOneOrNull()
+            .mapToOne()
     }
 }

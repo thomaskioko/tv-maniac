@@ -2,7 +2,8 @@ package com.thomaskioko.tvmaniac.details.api
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
-import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.core.util.network.DefaultError
+import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.details.api.SeasonState.SeasonsError
 import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersError
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
@@ -31,10 +32,10 @@ internal class ShowDetailsStateMachineTest {
     fun initial_state_emits_expected_result() = runBlockingTest {
         stateMachine.state.test {
 
-            traktRepository.setShowResult(Resource.Success(selectedShow))
-            seasonsRepository.setSeasonsResult(Resource.Success(seasons))
-            similarShowsRepository.setSimilarShowsResult(Resource.Success(similarShowResult))
-            trailerRepository.setTrailerResult(Resource.Success(trailers))
+            traktRepository.setShowResult(Either.Right(selectedShow))
+            seasonsRepository.setSeasonsResult(Either.Right(seasons))
+            similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
+            trailerRepository.setTrailerResult(Either.Right(trailers))
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
@@ -52,10 +53,10 @@ internal class ShowDetailsStateMachineTest {
         stateMachine.state.test {
 
             val errorMessage = "Oppsy. Something went wrong"
-            traktRepository.setShowResult(Resource.Success(selectedShow))
-            seasonsRepository.setSeasonsResult(Resource.Success(seasons))
-            trailerRepository.setTrailerResult(Resource.Success(trailers))
-            similarShowsRepository.setSimilarShowsResult(Resource.Error(errorMessage))
+            traktRepository.setShowResult(Either.Right(selectedShow))
+            seasonsRepository.setSeasonsResult(Either.Right(seasons))
+            trailerRepository.setTrailerResult(Either.Right(trailers))
+            similarShowsRepository.setSimilarShowsResult(Either.Left(DefaultError(Throwable(errorMessage))))
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
@@ -73,10 +74,10 @@ internal class ShowDetailsStateMachineTest {
         stateMachine.state.test {
 
             val errorMessage = "Oppsy. Something went wrong"
-            traktRepository.setShowResult(Resource.Success(selectedShow))
-            seasonsRepository.setSeasonsResult(Resource.Success(seasons))
-            similarShowsRepository.setSimilarShowsResult(Resource.Success(similarShowResult))
-            trailerRepository.setTrailerResult(Resource.Error(errorMessage))
+            traktRepository.setShowResult(Either.Right(selectedShow))
+            seasonsRepository.setSeasonsResult(Either.Right(seasons))
+            similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
+            trailerRepository.setTrailerResult(Either.Left(DefaultError(Throwable(errorMessage))))
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
@@ -96,10 +97,16 @@ internal class ShowDetailsStateMachineTest {
         stateMachine.state.test {
 
             val errorMessage = "Oppsy. Something went wrong"
-            traktRepository.setShowResult(Resource.Success(selectedShow))
-            seasonsRepository.setSeasonsResult(Resource.Error(errorMessage))
-            similarShowsRepository.setSimilarShowsResult(Resource.Success(similarShowResult))
-            trailerRepository.setTrailerResult(Resource.Success(trailers))
+            traktRepository.setShowResult(Either.Right(selectedShow))
+            seasonsRepository.setSeasonsResult(
+                Either.Left(
+                    DefaultError(
+                        Throwable(errorMessage)
+                    )
+                )
+            )
+            similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
+            trailerRepository.setTrailerResult(Either.Right(trailers))
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
@@ -129,7 +136,7 @@ internal class ShowDetailsStateMachineTest {
         stateMachine.state.test {
 
             traktRepository.setShowResult(
-                result = Resource.Error("Oppsy. Something went wrong")
+                result = Either.Left(DefaultError(Throwable("Oppsy. Something went wrong")))
             )
             stateMachine.dispatch(LoadShowDetails(84958))
 

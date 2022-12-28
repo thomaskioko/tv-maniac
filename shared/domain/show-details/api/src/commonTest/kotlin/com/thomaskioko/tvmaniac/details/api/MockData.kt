@@ -147,7 +147,8 @@ val selectedShow = SelectByShowId(
     trakt_id_ = 1234,
     id = 12345,
     created_at = null,
-    synced = false
+    synced = false,
+    tmdb_id_ = 1232
 )
 val similarShowResult = listOf(
     SelectSimilarShows(
@@ -174,6 +175,7 @@ val similarShowResult = listOf(
         synced = false,
         trakt_id_ = 184958,
         trakt_id__ = 284958,
+        tmdb_id_ = 1232
     )
 )
 

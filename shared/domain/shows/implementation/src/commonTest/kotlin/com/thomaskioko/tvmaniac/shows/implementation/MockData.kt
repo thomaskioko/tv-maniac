@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
-import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
 
@@ -49,31 +48,5 @@ object MockData {
         ),
         totalPages = 100,
         totalResults = 5
-    )
-
-    fun getShow() = SelectByShowId(
-        trakt_id = 84958,
-        title = "Loki",
-        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-            "an alternate version of Loki is brought to the mysterious Time Variance " +
-            "Authority, a bureaucratic organization that exists outside of time and " +
-            "space and monitors the timeline. They give Loki a choice: face being " +
-            "erased from existence due to being a “time variant”or help fix " +
-            "the timeline and stop a greater threat.",
-        language = "en",
-        votes = 4958,
-        rating = 8.1,
-        genres = listOf("Horror", "Action"),
-        year = "2019",
-        status = "Ended",
-        aired_episodes = 54,
-        tmdb_id = 123,
-        runtime = 0,
-        backdrop_url = null,
-        poster_url = null,
-        trakt_id_ = null,
-        id = null,
-        synced = null,
-        created_at = null
     )
 }

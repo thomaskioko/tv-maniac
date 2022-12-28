@@ -4,12 +4,12 @@ import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.details.api.model.Season
 import com.thomaskioko.tvmaniac.details.api.model.Show
 import com.thomaskioko.tvmaniac.details.api.model.Trailer
 
-fun Resource<List<SelectSimilarShows>>.toSimilarShowList(): List<Show> = data?.map {
+fun Either.Right<List<SelectSimilarShows>>.toSimilarShowList(): List<Show> = data?.map {
     Show(
         traktId = it.trakt_id_,
         tmdbId = it.tmdb_id,
@@ -27,7 +27,7 @@ fun Resource<List<SelectSimilarShows>>.toSimilarShowList(): List<Show> = data?.m
 } ?: emptyList()
 
 
-fun Resource<SelectByShowId>.toTvShow(): Show = data?.let {
+fun Either.Right<SelectByShowId>.toTvShow(): Show = data?.let {
     Show(
         traktId = it.trakt_id,
         tmdbId = it.tmdb_id,
@@ -45,7 +45,7 @@ fun Resource<SelectByShowId>.toTvShow(): Show = data?.let {
     )
 } ?: Show.EMPTY_SHOW
 
-fun Resource<List<SelectSeasonsByShowId>>.toSeasonsEntityList(): List<Season> = data?.map {
+fun Either.Right<List<SelectSeasonsByShowId>>.toSeasonsEntityList(): List<Season> = data?.map {
     Season(
         seasonId = it.id,
         tvShowId = it.show_id,
@@ -56,7 +56,7 @@ fun Resource<List<SelectSeasonsByShowId>>.toSeasonsEntityList(): List<Season> = 
     )
 } ?: emptyList()
 
-fun Resource<List<Trailers>>.toTrailerList(): List<Trailer> = data?.map {
+fun Either.Right<List<Trailers>>.toTrailerList(): List<Trailer> = data?.map {
     Trailer(
         showId = it.trakt_id,
         key = it.key,

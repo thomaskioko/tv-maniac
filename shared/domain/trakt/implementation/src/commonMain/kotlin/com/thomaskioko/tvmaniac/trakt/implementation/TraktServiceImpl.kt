@@ -1,6 +1,9 @@
 package com.thomaskioko.tvmaniac.trakt.implementation
 
+import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
+import com.thomaskioko.tvmaniac.core.util.network.safeRequest
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
+import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessRefreshTokenResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessTokenResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddRemoveShowFromListResponse
@@ -27,7 +30,9 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
+import io.ktor.http.path
 
 private const val PAGE_LIMIT_SIZE = 20
 
@@ -78,10 +83,14 @@ class TraktServiceImpl(
         }
     }
 
-    override suspend fun getUserProfile(userId: String): TraktUserResponse =
-        httpClient.get("users/$userId") {
-            parameter("extended", "full")
-        }.body()
+    override suspend fun getUserProfile(userId: String): ApiResponse<TraktUserResponse, ErrorResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("users/$userId")
+                parameter("extended", "full")
+            }
+        }
 
     override suspend fun getUserList(userId: String): List<TraktPersonalListsResponse> =
         httpClient.get("users/$userId/lists").body()
@@ -168,42 +177,59 @@ class TraktServiceImpl(
                 TraktAddShowRequest(
                     shows = listOf(
                         TraktShow(
-                            ids = TraktShowIds(
-                                traktId = traktShowId
-                            )
+                            ids = TraktShowIds(traktId = traktShowId)
                         )
                     )
                 )
             )
         }.body()
 
-    override suspend fun getTrendingShows(page: Int): List<TraktShowsResponse> =
-        httpClient.get("shows/trending") {
-            parameter("extended", "full")
-            parameter("limit", PAGE_LIMIT_SIZE)
-            parameter("page", "$page")
-        }.body()
+    override suspend fun getTrendingShows(page: Int): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("shows/trending")
+                parameter("extended", "full")
+                parameter("limit", PAGE_LIMIT_SIZE)
+                parameter("page", "$page")
+            }
+        }
 
-    override suspend fun getRecommendedShows(page: Int, period: String): List<TraktShowsResponse> =
-        httpClient.get("shows/recommended/$period") {
-            parameter("extended", "full")
-            parameter("limit", PAGE_LIMIT_SIZE)
-            parameter("page", "$page")
-        }.body()
+    override suspend fun getRecommendedShows(
+        page: Int,
+        period: String
+    ): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("shows/recommended/$period")
+                parameter("extended", "full")
+                parameter("limit", PAGE_LIMIT_SIZE)
+                parameter("page", "$page")
+            }
+        }
 
-    override suspend fun getAnticipatedShows(page: Int): List<TraktShowsResponse> =
-        httpClient.get("shows/anticipated") {
-            parameter("extended", "full")
-            parameter("limit", PAGE_LIMIT_SIZE)
-            parameter("page", "$page")
-        }.body()
+    override suspend fun getAnticipatedShows(page: Int): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("shows/anticipated")
+                parameter("extended", "full")
+                parameter("limit", PAGE_LIMIT_SIZE)
+                parameter("page", "$page")
+            }
+        }
 
-    override suspend fun getPopularShows(page: Int): List<TraktShowResponse> =
-        httpClient.get("shows/popular") {
-            parameter("extended", "full")
-            parameter("limit", PAGE_LIMIT_SIZE)
-            parameter("page", "$page")
-        }.body()
+    override suspend fun getPopularShows(page: Int): ApiResponse<List<TraktShowResponse>, ErrorResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("shows/popular")
+                parameter("extended", "full")
+                parameter("limit", PAGE_LIMIT_SIZE)
+                parameter("page", "$page")
+            }
+        }
 
     override suspend fun getSimilarShows(traktId: Int): List<TraktShowResponse> =
         httpClient.get("shows/$traktId/related") {
@@ -221,8 +247,23 @@ class TraktServiceImpl(
             parameter("extended", "full,episodes")
         }.body()
 
-    override suspend fun getSeasonDetails(traktId: Int): TraktShowResponse =
-        httpClient.get("shows/$traktId") {
-            parameter("extended", "full")
-        }.body()
+    override suspend fun getSeasonEpisodes(
+        traktId: Int
+    ): ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("shows/$traktId/seasons")
+                parameter("extended", "full,episodes")
+            }
+        }
+
+    override suspend fun getSeasonDetails(traktId: Int): ApiResponse<TraktShowResponse, ErrorResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("shows/$traktId")
+                parameter("extended", "full")
+            }
+        }
 }

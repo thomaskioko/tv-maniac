@@ -7,6 +7,6 @@ interface TraktStatsCache {
 
     fun insert(stats: TraktStats)
 
-    fun observeStats() : Flow<TraktStats?>
+    fun observeStats(): Flow<TraktStats>
 
 }

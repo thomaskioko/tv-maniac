@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.trakt.implementation.cache
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToOne
 import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
@@ -26,10 +27,10 @@ class TraktUserCacheImpl(
             .mapToOneOrNull()
     }
 
-    override fun observeMe(): Flow<Trakt_user?> {
+    override fun observeMe(): Flow<Trakt_user> {
         return database.traktUserQueries.getMe()
             .asFlow()
-            .mapToOneOrNull()
+            .mapToOne()
     }
 
     override fun getMe(): Trakt_user? = database.traktUserQueries.getMe().executeAsOneOrNull()

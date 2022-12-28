@@ -4,7 +4,7 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.domain.trailers.api.model.Trailer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainCoroutineDispatcher
@@ -57,8 +57,8 @@ class TrailersStateMachine constructor(
         trailerRepository.observeTrailersByShowId(action.showId)
             .collect { result ->
                 nextState = when (result) {
-                    is Resource.Error -> state.override { TrailerError(result.errorMessage) }
-                    is Resource.Success -> state.override {
+                    is Either.Left -> state.override { TrailerError(result.error.errorMessage) }
+                    is Either.Right -> state.override {
                         TrailersLoaded(
                             selectedVideoKey = action.trailerId,
                             trailersList = result.toTrailerList()
@@ -71,7 +71,7 @@ class TrailersStateMachine constructor(
     }
 }
 
-fun Resource<List<Trailers>>.toTrailerList(): List<Trailer> {
+fun Either.Right<List<Trailers>>.toTrailerList(): List<Trailer> {
     return data?.map {
         Trailer(
             showId = it.trakt_id,

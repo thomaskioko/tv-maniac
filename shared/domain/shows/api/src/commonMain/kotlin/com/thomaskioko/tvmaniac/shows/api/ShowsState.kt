@@ -18,7 +18,6 @@ data class ShowResult(
     val trendingShows: ShowCategoryData,
     val popularShows: ShowCategoryData,
     val anticipatedShows: ShowCategoryData,
-    val updateState: ShowUpdateState = ShowUpdateState.EMPTY
 ) {
 
     sealed interface CategoryState
@@ -37,19 +36,4 @@ data class ShowResult(
     data class ShowCategoryData(
         val categoryState: CategoryState
     )
-}
-
-
-enum class ShowUpdateState {
-    IDLE,
-
-    /**
-     *
-     */
-    EMPTY,
-
-    /**
-     * An error has occurred while updating the next state
-     */
-    ERROR,
 }

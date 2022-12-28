@@ -4,7 +4,7 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
-import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainCoroutineDispatcher
@@ -25,8 +25,8 @@ class FollowingStateMachine constructor(
             inState<FollowingContent> {
                 collectWhileInState(repository.observeFollowedShows()) { result, state ->
                     when (result) {
-                        is Resource.Success -> state.mutate { copy(list = result.toTvShowList()) }
-                        is Resource.Error -> state.override { ErrorLoadingShows(result.errorMessage) }
+                        is Either.Left -> state.override { ErrorLoadingShows(result.error.errorMessage) }
+                        is Either.Right -> state.mutate { copy(list = result.toTvShowList()) }
                     }
                 }
             }
@@ -76,12 +76,12 @@ class FollowingStateMachineWrapper(
     }
 }
 
-fun Resource<List<SelectFollowedShows>>.toTvShowList(): List<FollowedShow> {
+fun Either.Right<List<SelectFollowedShows>>.toTvShowList(): List<FollowedShow> {
     return data?.map {
         FollowedShow(
             traktId = it.id,
             tmdbId = it.tmdb_id,
-            title = it.title ?: "",
+            title = it.title,
             posterImageUrl = it.poster_url,
         )
     } ?: emptyList()
@@ -92,7 +92,7 @@ fun List<SelectFollowedShows>.toTvShowList(): List<FollowedShow> {
         FollowedShow(
             traktId = it.id,
             tmdbId = it.tmdb_id,
-            title = it.title ?: "",
+            title = it.title,
             posterImageUrl = it.poster_url,
         )
     }

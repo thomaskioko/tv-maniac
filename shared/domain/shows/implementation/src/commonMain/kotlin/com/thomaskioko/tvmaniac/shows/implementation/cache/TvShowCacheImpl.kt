@@ -2,8 +2,9 @@ package com.thomaskioko.tvmaniac.shows.implementation.cache
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
-import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
+import com.squareup.sqldelight.runtime.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
+import com.thomaskioko.tvmaniac.core.db.SelectShowImages
 import com.thomaskioko.tvmaniac.core.db.SelectShows
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
@@ -37,10 +38,10 @@ class TvShowCacheImpl(
         list.forEach { insert(it) }
     }
 
-    override fun observeTvShow(showId: Int): Flow<SelectByShowId?> {
+    override fun observeTvShow(showId: Int): Flow<SelectByShowId> {
         return database.showQueries.selectByShowId(showId)
             .asFlow()
-            .mapToOneOrNull()
+            .mapToOne()
     }
 
     override fun observeTvShows(): Flow<List<SelectShows>> {
@@ -55,15 +56,19 @@ class TvShowCacheImpl(
             .mapToList()
     }
 
-    override fun getTvShow(traktId: Int): SelectByShowId? =
+    override fun observeShowImages(): Flow<List<SelectShowImages>> {
+        return database.showQueries.selectShowImages()
+            .asFlow()
+            .mapToList()
+    }
+
+    override fun getTvShow(traktId: Int): SelectByShowId =
         database.showQueries.selectByShowId(traktId)
-            .executeAsOneOrNull()
+            .executeAsOne()
 
     override fun getTvShowByTmdbId(tmdbId: Int?): Show? =
         database.showQueries.selectShowByTmdbId(tmdbId)
             .executeAsOneOrNull()
-
-
 
     override fun deleteTvShows() {
         database.showQueries.deleteAll()

@@ -4,7 +4,7 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
-import com.thomaskioko.tvmaniac.core.util.network.Resource
+import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.details.api.SeasonState.SeasonsLoaded.Companion.EmptySeasons
 import com.thomaskioko.tvmaniac.details.api.ShowDetailsState.ShowDetailsError
 import com.thomaskioko.tvmaniac.details.api.ShowDetailsState.ShowDetailsLoaded
@@ -109,13 +109,10 @@ class ShowDetailsStateMachine constructor(
         var nextState: ShowDetailsState = ShowDetailsState.Loading
 
         traktRepository.observeShow(action.traktId)
-            .catch {
-                nextState = ShowDetailsError(it.resolveError())
-            }
             .collect {
                 nextState = when (it) {
-                    is Resource.Error -> ShowDetailsError(it.errorMessage)
-                    is Resource.Success -> ShowDetailsLoaded(
+                    is Either.Left -> ShowDetailsError(it.error.errorMessage)
+                    is Either.Right -> ShowDetailsLoaded(
                         show = it.toTvShow(),
                         similarShowsState = EmptyShows,
                         seasonState = EmptySeasons,
@@ -136,13 +133,10 @@ class ShowDetailsStateMachine constructor(
         var nextState: ShowDetailsState = ShowDetailsState.Loading
 
         traktRepository.observeShow(action.traktId)
-            .catch {
-                nextState = ShowDetailsError(it.resolveError())
-            }
             .collect {
                 nextState = when (it) {
-                    is Resource.Error -> ShowDetailsError(it.errorMessage)
-                    is Resource.Success -> ShowDetailsLoaded(
+                    is Either.Left -> ShowDetailsError(it.error.errorMessage)
+                    is Either.Right -> ShowDetailsLoaded(
                         show = it.toTvShow(),
                         similarShowsState = EmptyShows,
                         seasonState = EmptySeasons,
@@ -169,18 +163,17 @@ class ShowDetailsStateMachine constructor(
         )
 
         traktRepository.observeShow(action.traktId)
-            .catch {
-                nextState = state.mutate {
-                    copy(
-                        followShowState = FollowShowsState.FollowUpdateError(it.resolveError())
-                    )
-                }
-            }
             .collect {
-                nextState = state.mutate {
-                    copy(
-                        show = it.toTvShow()
-                    )
+                nextState = when (it) {
+                    is Either.Left -> state.mutate {
+                        copy(
+                            followShowState = FollowShowsState.FollowUpdateError(it.error.errorMessage)
+                        )
+                    }
+
+                    is Either.Right -> state.mutate {
+                        copy(show = it.toTvShow())
+                    }
                 }
             }
 
@@ -193,22 +186,13 @@ class ShowDetailsStateMachine constructor(
     ): ChangedState<ShowDetailsState> {
         var nextState: ChangedState<ShowDetailsState> = state.noChange()
         seasonDetailsRepository.observeShowSeasons(showId)
-            .catch {
-                nextState = state.mutate {
-                    copy(
-                        seasonState = SeasonState.SeasonsError(it.resolveError())
-                    )
-                }
-            }
             .collect { resource ->
                 nextState = when (resource) {
-                    is Resource.Error -> state.mutate {
-                        copy(
-                            seasonState = SeasonState.SeasonsError(resource.errorMessage)
-                        )
+                    is Either.Left -> state.mutate {
+                        copy(seasonState = SeasonState.SeasonsError(resource.error.errorMessage))
                     }
 
-                    is Resource.Success -> state.mutate {
+                    is Either.Right -> state.mutate {
                         copy(
                             seasonState = (seasonState as SeasonState.SeasonsLoaded).copy(
                                 isLoading = false,
@@ -237,13 +221,11 @@ class ShowDetailsStateMachine constructor(
             }
             .collect { resource ->
                 nextState = when (resource) {
-                    is Resource.Error -> state.mutate {
-                        copy(
-                            trailerState = TrailersError(resource.errorMessage)
-                        )
+                    is Either.Left -> state.mutate {
+                        copy(trailerState = TrailersError(resource.error.errorMessage))
                     }
 
-                    is Resource.Success -> state.mutate {
+                    is Either.Right -> state.mutate {
                         copy(
                             trailerState = (trailerState as TrailersLoaded).copy(
                                 isLoading = false,
@@ -270,19 +252,19 @@ class ShowDetailsStateMachine constructor(
                     )
                 }
             }
-            .collect { resource ->
-                nextState = when (resource) {
-                    is Resource.Error -> state.mutate {
+            .collect { result ->
+                nextState = when (result) {
+                    is Either.Left -> state.mutate {
                         copy(
-                            similarShowsState = SimilarShowsState.SimilarShowsError(resource.errorMessage)
+                            similarShowsState = SimilarShowsState.SimilarShowsError(result.error.errorMessage)
                         )
                     }
 
-                    is Resource.Success -> state.mutate {
+                    is Either.Right -> state.mutate {
                         copy(
                             similarShowsState = (similarShowsState as SimilarShowsState.SimilarShowsLoaded).copy(
                                 isLoading = false,
-                                similarShows = resource.toSimilarShowList()
+                                similarShows = result.toSimilarShowList()
                             )
                         )
                     }
