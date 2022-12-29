@@ -35,6 +35,6 @@ object AppModule {
     @Singleton
     @Named("app-build")
     @Provides
-    fun provideIsDebug(): Boolean = !BuildConfig.DEBUG
+    fun provideIsDebug(): Boolean = BuildConfig.DEBUG
 
 }

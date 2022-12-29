@@ -5,7 +5,7 @@ import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.EMPTY
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -20,7 +20,7 @@ fun traktHttpClient(
     httpClientEngine: HttpClientEngine,
 ) = HttpClient(httpClientEngine) {
     install(ContentNegotiation) {
-        json( json = json)
+        json(json = json)
     }
 
     defaultRequest {
@@ -38,7 +38,7 @@ fun traktHttpClient(
 
 
     install(Logging) {
-        level = LogLevel.ALL
+        level = LogLevel.INFO
         logger = if (isDebug) {
             object : Logger {
                 override fun log(message: String) {
@@ -47,7 +47,7 @@ fun traktHttpClient(
             }
 
         } else {
-            Logger.DEFAULT
+            Logger.EMPTY
         }
     }
 }

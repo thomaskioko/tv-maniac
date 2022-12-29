@@ -46,10 +46,12 @@ object TraktNetworkModule {
     @Provides
     @Named("trakt-http-client")
     fun provideHttpClient(
+        @Named("app-build") isDebug: Boolean,
         @Named("trakt-json") json: Json,
         @Named("trakt-http-engine") httpClientEngine: HttpClientEngine
     ): HttpClient = KtorClientFactory().httpClient(
         traktHttpClient(
+            isDebug = isDebug,
             json = json,
             httpClientEngine = httpClientEngine
         )
