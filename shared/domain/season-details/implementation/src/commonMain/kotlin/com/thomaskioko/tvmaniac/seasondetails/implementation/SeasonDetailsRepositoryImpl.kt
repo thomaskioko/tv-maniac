@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.core.db.Season_with_episodes
+import com.thomaskioko.tvmaniac.core.db.Season
+import com.thomaskioko.tvmaniac.core.db.Season_episodes
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
-import com.thomaskioko.tvmaniac.core.db.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
 import com.thomaskioko.tvmaniac.core.util.network.DefaultError
 import com.thomaskioko.tvmaniac.core.util.network.Either
@@ -27,7 +27,7 @@ class SeasonDetailsRepositoryImpl(
     private val dispatcher: CoroutineDispatcher,
 ) : SeasonDetailsRepository {
 
-    override fun observeShowSeasons(traktId: Int): Flow<Either<Failure, List<SelectSeasonsByShowId>>> =
+    override fun observeSeasons(traktId: Int): Flow<Either<Failure, List<Season>>> =
         networkBoundResult(
             query = { seasonCache.observeSeasons(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
@@ -36,7 +36,7 @@ class SeasonDetailsRepositoryImpl(
             coroutineDispatcher = dispatcher
         )
 
-    override fun getSeasonEpisodes(showId: Int): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
+    override fun observeSeasonDetails(showId: Int): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
         networkBoundResult(
             query = { seasonCache.observeShowEpisodes(showId) },
             shouldFetch = { it.isNullOrEmpty() },
@@ -45,7 +45,7 @@ class SeasonDetailsRepositoryImpl(
             coroutineDispatcher = dispatcher
         )
 
-    override fun observeSeasonEpisodes(showId: Int): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
+    override fun observeCachedSeasonDetails(showId: Int): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
         seasonCache.observeShowEpisodes(showId)
             .map { Either.Right(it) }
             .catch { Either.Left(DefaultError(it)) }
@@ -66,7 +66,7 @@ class SeasonDetailsRepositoryImpl(
                     episodesCache.insert(season.toEpisodeCacheList())
 
                     seasonCache.insert(
-                        Season_with_episodes(
+                        Season_episodes(
                             show_id = showId,
                             season_id = season.ids.trakt,
                             season_number = season.number,
@@ -74,8 +74,6 @@ class SeasonDetailsRepositoryImpl(
                     )
                 }
             }
-
-
         }
     }
 }

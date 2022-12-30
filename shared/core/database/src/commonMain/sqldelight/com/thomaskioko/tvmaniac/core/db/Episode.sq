@@ -28,23 +28,16 @@ VALUES(?,?,?,?,?,?,?,?,?);
 episodeById:
 SELECT *
 FROM episode
-LEFT OUTER JOIN episodeImage ON episodeImage.id = episode.id
+LEFT OUTER JOIN episodeImage ON episodeImage.trakt_id = episode.id
 WHERE episode.id = ?
 ORDER BY episode_number ASC ;
 
-episodesByShowId:
-SELECT *
-FROM episode
-LEFT JOIN season ON season.id = episode.season_id
-LEFT JOIN show ON show.trakt_id = season.show_id
-LEFT OUTER JOIN episodeImage ON episodeImage.id = episode.id
-WHERE season.show_id = ?;
 
 episodeArtByShowId:
-SELECT *
+SELECT show.tmdb_id, season.season_number, episode.id, episode.episode_number
 FROM episode
 LEFT JOIN season ON season.id = episode.season_id
-LEFT JOIN show ON show.trakt_id = season.show_id
-LEFT OUTER JOIN episodeImage ON episodeImage.id = episode.id
-WHERE season.show_id = ? AND episodeImage.image_url IS NULL;
+LEFT JOIN show ON show.trakt_id = season.show_trakt_id
+LEFT OUTER JOIN episodeImage ON episodeImage.trakt_id = episode.id
+WHERE season.show_trakt_id = ? AND episodeImage.image_url IS NULL;
 

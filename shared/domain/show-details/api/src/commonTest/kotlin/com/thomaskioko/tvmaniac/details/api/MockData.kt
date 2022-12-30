@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.details.api
 
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
-import com.thomaskioko.tvmaniac.core.db.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
 import com.thomaskioko.tvmaniac.details.api.model.Season
 import com.thomaskioko.tvmaniac.details.api.model.Show
@@ -76,9 +75,6 @@ val seasonsShowDetailsLoaded = initialShowDetailsLoaded.copy(
                 seasonId = 84958,
                 tvShowId = 84958,
                 name = "Season 1",
-                overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” an alternate version of Loki is brought to the mysterious Time Variance Authority, a bureaucratic organization that exists outside of time and space and monitors the timeline. They give Loki a choice: face being erased from existence due to being a “time variant”or help fix the timeline and stop a greater threat.",
-                seasonNumber = 1,
-                episodeCount = 8
             )
         )
     ),
@@ -172,7 +168,6 @@ val similarShowResult = listOf(
         backdrop_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         aired_episodes = 12,
         id = 84958,
-        synced = false,
         trakt_id_ = 184958,
         trakt_id__ = 284958,
         tmdb_id_ = 1232
@@ -180,34 +175,9 @@ val similarShowResult = listOf(
 )
 
 val seasons = listOf(
-    SelectSeasonsByShowId(
-        trakt_id = 84958,
-        tmdb_id = 849583,
-        title = "Loki",
-        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                "an alternate version of Loki is brought to the mysterious Time Variance " +
-                "Authority, a bureaucratic organization that exists outside of time and " +
-                "space and monitors the timeline. They give Loki a choice: face being " +
-                "erased from existence due to being a “time variant”or help fix " +
-                "the timeline and stop a greater threat.",
-        language = "en",
-        votes = 4958,
-        rating = 8.1,
-        genres = listOf("Horror", "Action"),
-        status = "Returning Series",
-        year = "2024",
-        runtime = 45,
-        aired_episodes = 12,
-        id = 84958,
-        show_id = 84958,
-        season_number = 1,
-        epiosode_count = 8,
+    Season(
+        seasonId = 114355,
+        tvShowId = 84958,
         name = "Season 1",
-        overview_ = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                "an alternate version of Loki is brought to the mysterious Time Variance " +
-                "Authority, a bureaucratic organization that exists outside of time and " +
-                "space and monitors the timeline. They give Loki a choice: face being " +
-                "erased from existence due to being a “time variant”or help fix " +
-                "the timeline and stop a greater threat.",
     )
 )

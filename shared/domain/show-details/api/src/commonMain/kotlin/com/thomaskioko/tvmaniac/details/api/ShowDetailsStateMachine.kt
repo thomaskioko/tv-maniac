@@ -4,7 +4,6 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
-import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.details.api.SeasonState.SeasonsLoaded.Companion.EmptySeasons
 import com.thomaskioko.tvmaniac.details.api.ShowDetailsState.ShowDetailsError
 import com.thomaskioko.tvmaniac.details.api.ShowDetailsState.ShowDetailsLoaded
@@ -109,17 +108,21 @@ class ShowDetailsStateMachine constructor(
         var nextState: ShowDetailsState = ShowDetailsState.Loading
 
         traktRepository.observeShow(action.traktId)
-            .collect {
-                nextState = when (it) {
-                    is Either.Left -> ShowDetailsError(it.error.errorMessage)
-                    is Either.Right -> ShowDetailsLoaded(
-                        show = it.toTvShow(),
-                        similarShowsState = EmptyShows,
-                        seasonState = EmptySeasons,
-                        trailerState = EmptyTrailers,
-                        followShowState = FollowShowsState.Idle
-                    )
-                }
+            .collect { result ->
+                nextState = result.fold(
+                    {
+                        ShowDetailsError(it.errorMessage)
+                    },
+                    {
+                        ShowDetailsLoaded(
+                            show = it.toTvShow(),
+                            similarShowsState = EmptyShows,
+                            seasonState = EmptySeasons,
+                            trailerState = EmptyTrailers,
+                            followShowState = FollowShowsState.Idle
+                        )
+                    }
+                )
             }
 
         return state.override { nextState }
@@ -133,17 +136,18 @@ class ShowDetailsStateMachine constructor(
         var nextState: ShowDetailsState = ShowDetailsState.Loading
 
         traktRepository.observeShow(action.traktId)
-            .collect {
-                nextState = when (it) {
-                    is Either.Left -> ShowDetailsError(it.error.errorMessage)
-                    is Either.Right -> ShowDetailsLoaded(
-                        show = it.toTvShow(),
-                        similarShowsState = EmptyShows,
-                        seasonState = EmptySeasons,
-                        trailerState = EmptyTrailers,
-                        followShowState = FollowShowsState.Idle
-                    )
-                }
+            .collect { result ->
+                nextState = result.fold(
+                    { ShowDetailsError(it.errorMessage) },
+                    {
+                        ShowDetailsLoaded(
+                            show = it.toTvShow(),
+                            similarShowsState = EmptyShows,
+                            seasonState = EmptySeasons,
+                            trailerState = EmptyTrailers,
+                            followShowState = FollowShowsState.Idle
+                        )
+                    })
             }
 
         return state.override { nextState }
@@ -164,17 +168,20 @@ class ShowDetailsStateMachine constructor(
 
         traktRepository.observeShow(action.traktId)
             .collect {
-                nextState = when (it) {
-                    is Either.Left -> state.mutate {
-                        copy(
-                            followShowState = FollowShowsState.FollowUpdateError(it.error.errorMessage)
-                        )
+                nextState = it.fold(
+                    {
+                        state.mutate {
+                            copy(
+                                followShowState = FollowShowsState.FollowUpdateError(it.errorMessage)
+                            )
+                        }
+                    },
+                    {
+                        state.mutate {
+                            copy(show = it.toTvShow())
+                        }
                     }
-
-                    is Either.Right -> state.mutate {
-                        copy(show = it.toTvShow())
-                    }
-                }
+                )
             }
 
         return nextState
@@ -185,22 +192,25 @@ class ShowDetailsStateMachine constructor(
         state: State<ShowDetailsLoaded>
     ): ChangedState<ShowDetailsState> {
         var nextState: ChangedState<ShowDetailsState> = state.noChange()
-        seasonDetailsRepository.observeShowSeasons(showId)
-            .collect { resource ->
-                nextState = when (resource) {
-                    is Either.Left -> state.mutate {
-                        copy(seasonState = SeasonState.SeasonsError(resource.error.errorMessage))
-                    }
-
-                    is Either.Right -> state.mutate {
-                        copy(
-                            seasonState = (seasonState as SeasonState.SeasonsLoaded).copy(
-                                isLoading = false,
-                                seasonsList = resource.toSeasonsEntityList()
+        seasonDetailsRepository.observeSeasons(showId)
+            .collect { result ->
+                nextState = result.fold(
+                    {
+                        state.mutate {
+                            copy(seasonState = SeasonState.SeasonsError(it.errorMessage))
+                        }
+                    },
+                    {
+                        state.mutate {
+                            copy(
+                                seasonState = (seasonState as SeasonState.SeasonsLoaded).copy(
+                                    isLoading = false,
+                                    seasonsList = it.toSeasonsList()
+                                )
                             )
-                        )
+                        }
                     }
-                }
+                )
             }
 
         return nextState
@@ -219,21 +229,24 @@ class ShowDetailsStateMachine constructor(
                     )
                 }
             }
-            .collect { resource ->
-                nextState = when (resource) {
-                    is Either.Left -> state.mutate {
-                        copy(trailerState = TrailersError(resource.error.errorMessage))
-                    }
-
-                    is Either.Right -> state.mutate {
-                        copy(
-                            trailerState = (trailerState as TrailersLoaded).copy(
-                                isLoading = false,
-                                trailersList = resource.toTrailerList()
+            .collect { result ->
+                nextState = result.fold(
+                    {
+                        state.mutate {
+                            copy(trailerState = TrailersError(it.errorMessage))
+                        }
+                    },
+                    {
+                        state.mutate {
+                            copy(
+                                trailerState = (trailerState as TrailersLoaded).copy(
+                                    isLoading = false,
+                                    trailersList = it.toTrailerList()
+                                )
                             )
-                        )
+                        }
                     }
-                }
+                )
             }
 
         return nextState
@@ -247,28 +260,29 @@ class ShowDetailsStateMachine constructor(
         similarShowsRepository.observeSimilarShows(showId)
             .catch {
                 nextState = state.mutate {
-                    copy(
-                        similarShowsState = SimilarShowsState.SimilarShowsError(it.resolveError())
-                    )
+                    copy(similarShowsState = SimilarShowsState.SimilarShowsError(it.resolveError()))
                 }
             }
             .collect { result ->
-                nextState = when (result) {
-                    is Either.Left -> state.mutate {
-                        copy(
-                            similarShowsState = SimilarShowsState.SimilarShowsError(result.error.errorMessage)
-                        )
-                    }
 
-                    is Either.Right -> state.mutate {
-                        copy(
-                            similarShowsState = (similarShowsState as SimilarShowsState.SimilarShowsLoaded).copy(
-                                isLoading = false,
-                                similarShows = result.toSimilarShowList()
+                nextState = result.fold(
+                    {
+                        state.mutate {
+                            copy(similarShowsState = SimilarShowsState.SimilarShowsError(it.errorMessage))
+                        }
+                    },
+                    {
+                        state.mutate {
+                            copy(
+                                similarShowsState = (similarShowsState as SimilarShowsState.SimilarShowsLoaded)
+                                    .copy(
+                                        isLoading = false,
+                                        similarShows = it.toSimilarShowList()
+                                    )
                             )
-                        )
+                        }
                     }
-                }
+                )
             }
 
         return nextState

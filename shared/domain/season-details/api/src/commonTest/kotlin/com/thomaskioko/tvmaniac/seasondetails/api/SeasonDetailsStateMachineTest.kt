@@ -4,7 +4,6 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
-import com.thomaskioko.tvmaniac.episodes.testing.cacheEpisodes
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.seasonDetails
 import io.kotest.matchers.shouldBe
@@ -19,7 +18,6 @@ class SeasonDetailsStateMachineTest {
     @Test
     fun initial_state_emits_expected_result() = runBlockingTest {
         seasonDetailsRepository.setSeasonDetails(Either.Right(seasonDetails))
-        episodeRepository.setEpisode(cacheEpisodes)
 
         stateMachine.state.test {
             stateMachine.dispatch(LoadSeasonDetails(1231))

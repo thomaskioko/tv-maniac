@@ -24,12 +24,12 @@ fun TraktSeasonEpisodesResponse.toEpisodeCacheList(): List<Episode> {
 fun List<TraktSeasonsResponse>.toSeasonCacheList(traktId: Int): List<Season> =
     map { seasonResponse ->
         Season(
-            show_id = traktId,
+            show_trakt_id = traktId,
             id = seasonResponse.ids.trakt,
             season_number = seasonResponse.number,
             name = seasonResponse.title,
             overview = seasonResponse.overview,
-            epiosode_count = seasonResponse.episodeCount
+            episode_count = seasonResponse.episodeCount
         )
     }
 

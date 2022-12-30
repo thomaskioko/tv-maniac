@@ -10,8 +10,6 @@ import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.MainCoroutineDispatcher
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
@@ -21,7 +19,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class ShowsStateMachine constructor(
     private val traktRepository: TraktRepository,
     private val tmdbRepository: TmdbRepository

@@ -3,9 +3,8 @@ package com.thomaskioko.tvmaniac.seasondetails.implementation
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.db.Season
-import com.thomaskioko.tvmaniac.core.db.Season_with_episodes
+import com.thomaskioko.tvmaniac.core.db.Season_episodes
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
-import com.thomaskioko.tvmaniac.core.db.SelectSeasonsByShowId
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonsCache
 import kotlinx.coroutines.flow.Flow
@@ -15,17 +14,16 @@ class SeasonsCacheImpl(
 ) : SeasonsCache {
 
     private val seasonQueries get() = database.seasonQueries
-    private val query get() = database.showWithEpisodesQueries
 
-    override fun insertSeason(tvSeason: Season) {
+    override fun insertSeason(season: Season) {
         database.transaction {
             seasonQueries.insertOrReplace(
-                id = tvSeason.id,
-                show_id = tvSeason.show_id,
-                season_number = tvSeason.season_number,
-                epiosode_count = tvSeason.epiosode_count,
-                name = tvSeason.name,
-                overview = tvSeason.overview,
+                id = season.id,
+                show_trakt_id = season.show_trakt_id,
+                season_number = season.season_number,
+                episode_count = season.episode_count,
+                name = season.name,
+                overview = season.overview,
             )
         }
     }
@@ -34,15 +32,15 @@ class SeasonsCacheImpl(
         entityList.forEach { insertSeason(it) }
     }
 
-    override fun observeSeasons(traktId: Int): Flow<List<SelectSeasonsByShowId>> {
-        return seasonQueries.selectSeasonsByShowId(traktId)
+    override fun observeSeasons(traktId: Int): Flow<List<Season>> {
+        return seasonQueries.selectBySeasonId(traktId)
             .asFlow()
             .mapToList()
     }
 
-    override fun insert(entity: Season_with_episodes) {
+    override fun insert(entity: Season_episodes) {
         database.transaction {
-            query.insertOrReplace(
+            database.seasonEpisodesQueries.insertOrReplace(
                 show_id = entity.show_id,
                 season_id = entity.season_id,
                 season_number = entity.season_number
@@ -50,12 +48,8 @@ class SeasonsCacheImpl(
         }
     }
 
-    override fun insert(list: List<Season_with_episodes>) {
-        list.map { insert(it) }
-    }
-
     override fun observeShowEpisodes(showId: Int): Flow<List<SelectSeasonWithEpisodes>> =
-        query.selectSeasonWithEpisodes(showId)
+        database.seasonEpisodesQueries.selectSeasonWithEpisodes(showId)
             .asFlow()
             .mapToList()
 }

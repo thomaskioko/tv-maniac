@@ -24,7 +24,7 @@ fun SelectSeasonWithEpisodes.toEpisode(): Episode {
         seasonId = season_id,
         episodeTitle = name,
         episodeNumberTitle = "E$episode_number • $title_",
-        overview = overview__,
+        overview = overview,
         imageUrl = image_url?.toImageUrl(),
         runtime = runtime,
         voteCount = votes,
@@ -38,6 +38,6 @@ fun SelectSeasonWithEpisodes.toEpisode(): Episode {
 }
 
 fun Either.Right<List<SelectSeasonWithEpisodes>>.getTitle(): String =
-    data?.firstOrNull()?.title_ ?: ""
+    data?.firstOrNull()?.title ?: ""
 
 fun String.toImageUrl() = FormatterUtil.formatPosterPath(this)

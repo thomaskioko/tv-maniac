@@ -18,6 +18,3 @@ VALUES(?,?,?,?);
 selectImages:
 SELECT * FROM show_image
 WHERE poster_url IS NULL;
-
-selectAll:
-SELECT * FROM show_image;

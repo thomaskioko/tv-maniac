@@ -13,7 +13,8 @@ class EpisodeImageCacheImpl(
     override fun insert(entity: EpisodeImage) {
         database.transaction {
             episodeQueries.insertOrReplace(
-                id = entity.id,
+                trakt_id = entity.trakt_id,
+                tmdb_id = entity.tmdb_id,
                 image_url = entity.image_url
             )
         }

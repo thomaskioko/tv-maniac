@@ -19,7 +19,7 @@ class SeasonDetailsStateMachine constructor(
                 on<LoadSeasonDetails> { action, state ->
                     var nextState: SeasonDetailsState = state.snapshot
 
-                    seasonDetailsRepository.getSeasonEpisodes(showId = action.showId)
+                    seasonDetailsRepository.observeSeasonDetails(showId = action.showId)
                         .collect { result ->
                             showId.value = action.showId
 
@@ -42,7 +42,7 @@ class SeasonDetailsStateMachine constructor(
 
                 collectWhileInState(showId) { id, state ->
                     var nextState: ChangedState<SeasonDetailsLoaded> = state.noChange()
-                    seasonDetailsRepository.observeSeasonEpisodes(id)
+                    seasonDetailsRepository.observeCachedSeasonDetails(id)
                         .collect {
                             when (it) {
                                 is Either.Left -> state.override { LoadingError(it.error.errorMessage) }
@@ -63,7 +63,7 @@ class SeasonDetailsStateMachine constructor(
                 on<ReloadSeasonDetails> { action, state ->
                     var nextState: SeasonDetailsState = state.snapshot
 
-                    seasonDetailsRepository.getSeasonEpisodes(showId = action.showId)
+                    seasonDetailsRepository.observeSeasonDetails(showId = action.showId)
                         .collect { result ->
                             nextState = when (result) {
                                 is Either.Left -> LoadingError(result.error.errorMessage)
