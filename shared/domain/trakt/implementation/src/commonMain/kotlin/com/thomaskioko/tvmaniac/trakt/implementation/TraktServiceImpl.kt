@@ -231,21 +231,23 @@ class TraktServiceImpl(
             }
         }
 
-    override suspend fun getSimilarShows(traktId: Int): List<TraktShowResponse> =
-        httpClient.get("shows/$traktId/related") {
-            parameter("extended", "full")
-            parameter("limit", PAGE_LIMIT_SIZE)
-        }.body()
+    override suspend fun getSimilarShows(traktId: Int): ApiResponse<List<TraktShowResponse>, ErrorResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("shows/$traktId/related")
+                parameter("extended", "full")
+            }
+        }
 
-    override suspend fun getShowSeasons(traktId: Int): List<TraktSeasonsResponse> =
-        httpClient.get("shows/$traktId/seasons") {
-            parameter("extended", "full")
-        }.body()
-
-    override suspend fun getSeasonWithEpisodes(traktId: Int): List<TraktSeasonEpisodesResponse> =
-        httpClient.get("shows/$traktId/seasons") {
-            parameter("extended", "full,episodes")
-        }.body()
+    override suspend fun getShowSeasons(traktId: Int): ApiResponse<List<TraktSeasonsResponse>, ErrorResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("shows/$traktId/seasons")
+                parameter("extended", "full")
+            }
+        }
 
     override suspend fun getSeasonEpisodes(
         traktId: Int

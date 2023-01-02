@@ -65,11 +65,9 @@ interface TraktService {
 
     suspend fun getPopularShows(page: Int = DEFAULT_API_PAGE): ApiResponse<List<TraktShowResponse>, ErrorResponse>
 
-    suspend fun getSimilarShows(traktId: Int): List<TraktShowResponse>
+    suspend fun getSimilarShows(traktId: Int): ApiResponse<List<TraktShowResponse>, ErrorResponse>
 
-    suspend fun getShowSeasons(traktId: Int): List<TraktSeasonsResponse>
-
-    suspend fun getSeasonWithEpisodes(traktId: Int): List<TraktSeasonEpisodesResponse>
+    suspend fun getShowSeasons(traktId: Int): ApiResponse<List<TraktSeasonsResponse>, ErrorResponse>
 
     suspend fun getSeasonEpisodes(traktId: Int): ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse>
 
