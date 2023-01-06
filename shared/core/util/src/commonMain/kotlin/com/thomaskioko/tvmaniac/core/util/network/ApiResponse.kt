@@ -26,6 +26,8 @@ suspend inline fun <reified T, reified E> HttpClient.safeRequest(
         ApiResponse.Error.SerializationError(e.resolveError())
     } catch (e: IOException) {
         ApiResponse.Error.NetworkError
+    } catch (e: Exception) {
+        ApiResponse.Error.GeneralError(e.resolveError())
     }
 
 suspend inline fun <reified E> ResponseException.errorBody(): E? =
@@ -53,6 +55,10 @@ sealed class ApiResponse<out T, out E> {
          */
         data class SerializationError(val errorMessage: String?) : Error<Nothing>()
 
+        /**
+         * Represent other exceptions.
+         */
+        data class GeneralError(val errorMessage: String?) : Error<Nothing>()
         /**
          * Represent IOExceptions and connectivity issues.
          */
