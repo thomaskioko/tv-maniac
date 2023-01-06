@@ -29,6 +29,6 @@ val seasonDetailsList = listOf(
 )
 
 val showDetails = SeasonDetailsLoaded(
-    showTitle = "Some title",
+    showTitle = "Loki",
     episodeList = seasonDetailsList
 )

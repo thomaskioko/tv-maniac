@@ -18,9 +18,11 @@ internal class ShowsStateMachineTest {
     @Test
     fun initial_state_emits_expected_result() = runBlockingTest {
 
-        traktRepository.setCategoryResult(
-            result = Either.Right(data = categoryResult)
-        )
+        traktRepository.setTrendingResult(Either.Right(categoryResult(1)))
+        traktRepository.setPopularResult(Either.Right(categoryResult(3)))
+        traktRepository.setAnticipatedResult(Either.Right(categoryResult(4)))
+        traktRepository.setFeaturedResult(Either.Right(categoryResult(5)))
+
         stateMachine.state.test {
             awaitItem() shouldBe Loading
             awaitItem() shouldBe ShowsLoaded(result = showResult)
@@ -31,9 +33,11 @@ internal class ShowsStateMachineTest {
     @Test
     fun on_category_error_emits_expected_result() = runBlockingTest {
 
-        traktRepository.setCategoryResult(
-            result = Either.Left(DefaultError(Throwable("Something went wrong")))
-        )
+        traktRepository.setFeaturedResult( Either.Left(DefaultError(Throwable("Something went wrong"))))
+        traktRepository.setAnticipatedResult( Either.Left(DefaultError(Throwable("Something went wrong"))))
+        traktRepository.setPopularResult( Either.Left(DefaultError(Throwable("Something went wrong"))))
+        traktRepository.setTrendingResult( Either.Left(DefaultError(Throwable("Something went wrong"))))
+
         stateMachine.state.test {
             awaitItem() shouldBe Loading
             awaitItem() shouldBe ShowsLoaded(emptyShowResult)

@@ -24,39 +24,23 @@ fun SelectShowsByCategory.toTvShow(): TvShow = TvShow(
 )
 
 
-fun Either<Failure, List<SelectShowsByCategory>>.toShowData(category: ShowCategory) =
+fun Either<Failure, List<SelectShowsByCategory>>.toShowData(resultLimit: Int? = null): ShowResult.CategoryState =
     this.fold(
         {
-            ShowResult.ShowCategoryData(
-                ShowResult.CategoryError(category, it.errorMessage)
-            )
+            ShowResult.CategoryError(it.errorMessage)
         },
-        {
-            ShowResult.ShowCategoryData(
-                categoryState = ShowResult.CategorySuccess(
-                    category = category,
-                    tvShows = it?.toTvShowList() ?: emptyList()
-                ),
-            )
+        { shows ->
+            when {
+                shows.isNullOrEmpty() -> ShowResult.EmptyCategoryData
+                else -> {
+                    ShowResult.CategorySuccess(
+                        category = ShowCategory[shows.first().category_id!!],
+                        tvShows = if (resultLimit != null) shows.toTvShowList().take(resultLimit)
+                        else shows.toTvShowList()
+
+
+                    )
+                }
+            }
         }
     )
-
-
-fun Either<Failure, List<SelectShowsByCategory>>.toShowData(
-    category: ShowCategory,
-    resultLimit: Int
-) = this.fold(
-    {
-        ShowResult.ShowCategoryData(
-            ShowResult.CategoryError(category, it.errorMessage)
-        )
-    },
-    {
-        ShowResult.ShowCategoryData(
-            categoryState = ShowResult.CategorySuccess(
-                category = category,
-                tvShows = it?.toTvShowList()?.take(resultLimit) ?: emptyList()
-            ),
-        )
-    }
-)

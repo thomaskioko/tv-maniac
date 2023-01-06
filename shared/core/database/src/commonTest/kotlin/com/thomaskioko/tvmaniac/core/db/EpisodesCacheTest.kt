@@ -25,17 +25,6 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         queryResult.votes shouldBe entity.votes
     }
 
-    @Test
-    fun insertEpisodes_andSelectEpisodesByShowId_returnsExpectedData() {
-
-        getEpisodeCacheList().insertEpisodeEntityQuery()
-
-        val queryResult = episodeQueries.episodesByShowId(2534997).executeAsList()
-
-        queryResult shouldNotBe null
-        queryResult.size shouldBe 0
-    }
-
     private fun List<Episode>.insertEpisodeEntityQuery() {
         map { it.insertEpisodeEntityQuery() }
     }

@@ -5,7 +5,7 @@ import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.EMPTY
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -16,7 +16,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 fun tmdbHttpClient(
-    isDebug: Boolean = false,
+    isDebug: Boolean,
     tmdbApiKey: String,
     json: Json,
     httpClientEngine: HttpClientEngine,
@@ -57,7 +57,7 @@ fun tmdbHttpClient(
             }
 
         } else {
-            Logger.DEFAULT
+            Logger.EMPTY
         }
     }
 }

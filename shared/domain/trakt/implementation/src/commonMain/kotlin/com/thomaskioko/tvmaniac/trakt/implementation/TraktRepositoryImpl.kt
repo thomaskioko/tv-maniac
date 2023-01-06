@@ -9,7 +9,6 @@ import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.TraktStats
 import com.thomaskioko.tvmaniac.core.db.Trakt_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
-import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
 import com.thomaskioko.tvmaniac.core.util.helper.DateUtilHelper
 import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
 import com.thomaskioko.tvmaniac.core.util.network.DefaultError
@@ -57,6 +56,8 @@ class TraktRepositoryImpl constructor(
     private val dispatcher: CoroutineDispatcher,
 ) : TraktRepository {
 
+    //TODO:: Maybe separate the repository. TraktShowsRepository, TraktProfileRepository ...
+
     override fun observeMe(slug: String): Flow<Either<Failure, Trakt_user>> =
         networkBoundResult(
             query = { traktUserCache.observeMe() },
@@ -81,7 +82,6 @@ class TraktRepositoryImpl constructor(
             saveFetchResult = { statsCache.insert(it.toCache(slug)) },
             coroutineDispatcher = dispatcher
         )
-
 
     override fun observeCreateTraktList(userSlug: String): Flow<Either<Failure, Trakt_list>> =
         networkBoundResult(
@@ -134,31 +134,65 @@ class TraktRepositoryImpl constructor(
             coroutineDispatcher = dispatcher
         )
 
-    private fun mapAndCache(response: ApiResponse<TraktShowResponse, ErrorResponse>) {
-        when (response) {
-            is ApiResponse.Error -> {
-                Logger.withTag("mapAndCache")
-                    .e("$response")
-            }
+    override fun observeCachedShows(categoryId: Int): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        tvShowCache.observeCachedShows(ShowCategory[categoryId].id)
+            .map { Either.Right(it) }
+            .catch { Either.Left(DefaultError(it)) }
 
-            is ApiResponse.Success -> {
-                tvShowCache.insert(response.body.responseToCache())
-            }
-        }
-
-    }
-
-    override fun fetchShowsByCategoryId(categoryId: Int): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+    override fun fetchTrendingShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         networkBoundResult(
-            query = { tvShowCache.observeCachedShows(categoryId) },
+            query = { tvShowCache.observeCachedShows(TRENDING.id) },
             shouldFetch = { it.isNullOrEmpty() },
-            fetch = { fetchShowsAndMapResult(categoryId) },
-            saveFetchResult = { cacheResult(it, categoryId) },
+            fetch = { traktService.getTrendingShows().showsResponseToCacheList() },
+            saveFetchResult = { cacheResult(it, TRENDING.id) },
             coroutineDispatcher = dispatcher
         )
 
-    override fun observeCachedShows(categoryId: Int): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        tvShowCache.observeCachedShows(ShowCategory[categoryId].id)
+    override fun observeTrendingCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        tvShowCache.observeCachedShows(TRENDING.id)
+            .map { Either.Right(it) }
+            .catch { Either.Left(DefaultError(it)) }
+
+    override fun fetchPopularShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        networkBoundResult(
+            query = { tvShowCache.observeCachedShows(POPULAR.id) },
+            shouldFetch = { it.isNullOrEmpty() },
+            fetch = { traktService.getPopularShows().showResponseToCacheList() },
+            saveFetchResult = { cacheResult(it, POPULAR.id) },
+            coroutineDispatcher = dispatcher
+        )
+
+    override fun observePopularCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        tvShowCache.observeCachedShows(POPULAR.id)
+            .map { Either.Right(it) }
+            .catch { Either.Left(DefaultError(it)) }
+
+    override fun fetchAnticipatedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        networkBoundResult(
+            query = { tvShowCache.observeCachedShows(ANTICIPATED.id) },
+            shouldFetch = { it.isNullOrEmpty() },
+            fetch = { traktService.getAnticipatedShows().showsResponseToCacheList() },
+            saveFetchResult = { cacheResult(it, ANTICIPATED.id) },
+            coroutineDispatcher = dispatcher
+        )
+
+    override fun observeAnticipatedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        tvShowCache.observeCachedShows(ANTICIPATED.id)
+            .map { Either.Right(it) }
+            .catch { Either.Left(DefaultError(it)) }
+
+    override fun fetchFeaturedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        networkBoundResult(
+            query = { tvShowCache.observeCachedShows(FEATURED.id) },
+            shouldFetch = { it.isNullOrEmpty() },
+            fetch = { traktService.getRecommendedShows(period = "daily")
+                .showsResponseToCacheList() },
+            saveFetchResult = { cacheResult(it, FEATURED.id) },
+            coroutineDispatcher = dispatcher
+        )
+
+    override fun observeFeaturedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        tvShowCache.observeCachedShows(FEATURED.id)
             .map { Either.Right(it) }
             .catch { Either.Left(DefaultError(it)) }
 
@@ -166,7 +200,7 @@ class TraktRepositoryImpl constructor(
         traktUserCache.observeMe()
             .flowOn(dispatcher)
             .collect { user ->
-                if(user.slug.isNotBlank()){
+                if (user.slug.isNotBlank()) {
                     followedCache.insert(traktService.getWatchList().responseToCache())
                 }
             }
@@ -231,20 +265,14 @@ class TraktRepositoryImpl constructor(
     override fun getFollowedShows(): List<SelectFollowedShows> = followedCache.getFollowedShows()
 
     private suspend fun fetchShowsAndMapResult(categoryId: Int): List<Show> =
-        //TODO:: Improve error handling
-        try {
-            when (categoryId) {
-                POPULAR.id -> traktService.getPopularShows().showResponseToCacheList()
-                TRENDING.id -> traktService.getTrendingShows().showsResponseToCacheList()
-                ANTICIPATED.id -> traktService.getAnticipatedShows().showsResponseToCacheList()
-                FEATURED.id -> traktService.getRecommendedShows(period = "daily")
-                    .showsResponseToCacheList()
+        when (categoryId) {
+            POPULAR.id -> traktService.getPopularShows().showResponseToCacheList()
+            TRENDING.id -> traktService.getTrendingShows().showsResponseToCacheList()
+            ANTICIPATED.id -> traktService.getAnticipatedShows().showsResponseToCacheList()
+            FEATURED.id -> traktService.getRecommendedShows(period = "daily")
+                .showsResponseToCacheList()
 
-                else -> throw Throwable("Unsupported type sunny")
-            }
-        } catch (exception: Throwable) {
-            Logger.withTag("fetchShowsAndMapResult").e(exception.resolveError(), exception)
-            emptyList()
+            else -> throw Throwable("Unsupported type sunny")
         }
 
 
@@ -252,5 +280,19 @@ class TraktRepositoryImpl constructor(
         tvShowCache.insert(result)
 
         showCategoryCache.insert(result.toCategoryCache(categoryId))
+    }
+
+    private fun mapAndCache(response: ApiResponse<TraktShowResponse, ErrorResponse>) {
+        when (response) {
+            is ApiResponse.Error -> {
+                Logger.withTag("mapAndCache")
+                    .e("$response")
+            }
+
+            is ApiResponse.Success -> {
+                tvShowCache.insert(response.body.responseToCache())
+            }
+        }
+
     }
 }

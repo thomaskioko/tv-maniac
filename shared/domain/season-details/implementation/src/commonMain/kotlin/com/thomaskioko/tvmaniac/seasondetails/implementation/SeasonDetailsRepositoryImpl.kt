@@ -32,7 +32,15 @@ class SeasonDetailsRepositoryImpl(
             query = { seasonCache.observeSeasons(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = { traktService.getShowSeasons(traktId) },
-            saveFetchResult = { seasonCache.insertSeasons(it.toSeasonCacheList(traktId)) },
+            saveFetchResult = {
+                when (it) {
+                    is ApiResponse.Error -> {
+                        Logger.withTag("observeSeasons")
+                            .e("$it")
+                    }
+                    is ApiResponse.Success -> seasonCache.insertSeasons(it.body.toSeasonCacheList(traktId))
+                }
+            },
             coroutineDispatcher = dispatcher
         )
 

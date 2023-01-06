@@ -4,7 +4,6 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.domain.trailers.api.model.Trailer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainCoroutineDispatcher
@@ -53,33 +52,22 @@ class TrailersStateMachine constructor(
         action: LoadTrailers,
         state: State<LoadingTrailers>
     ): ChangedState<TrailersState> {
-        var nextState: ChangedState<TrailersState> = state.noChange()
+        var nextState: TrailersState = state.snapshot
+
         trailerRepository.observeTrailersByShowId(action.showId)
             .collect { result ->
-                nextState = when (result) {
-                    is Either.Left -> state.override { TrailerError(result.error.errorMessage) }
-                    is Either.Right -> state.override {
+                nextState = result.fold(
+                    { TrailerError(it.errorMessage) },
+                    {
                         TrailersLoaded(
                             selectedVideoKey = action.trailerId,
-                            trailersList = result.toTrailerList()
+                            trailersList = it.toTrailerList()
                         )
                     }
-                }
-
+                )
             }
-        return nextState
+        return state.override { nextState }
     }
-}
-
-fun Either.Right<List<Trailers>>.toTrailerList(): List<Trailer> {
-    return data?.map {
-        Trailer(
-            showId = it.trakt_id,
-            key = it.key,
-            name = it.name,
-            youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg"
-        )
-    } ?: emptyList()
 }
 
 /**

@@ -25,60 +25,40 @@ val show = TvShow(
 )
 
 val showResult = ShowResult(
-    featuredShows = ShowResult.ShowCategoryData(
-        categoryState = ShowResult.CategorySuccess(
-            category = ShowCategory.FEATURED,
-            tvShows = listOf(show)
-        )
+    featuredCategoryState =  ShowResult.CategorySuccess(
+        category = ShowCategory.FEATURED,
+        tvShows = listOf(show)
     ),
-    trendingShows = ShowResult.ShowCategoryData(
-        categoryState = ShowResult.CategorySuccess(
-            category = ShowCategory.TRENDING,
-            tvShows = listOf(show)
-        )
+    trendingCategoryState = ShowResult.CategorySuccess(
+        category = ShowCategory.TRENDING,
+        tvShows = listOf(show)
     ),
-    popularShows = ShowResult.ShowCategoryData(
-        categoryState = ShowResult.CategorySuccess(
-            category = ShowCategory.POPULAR,
-            tvShows = listOf(show)
-        )
+    popularCategoryState = ShowResult.CategorySuccess(
+        category = ShowCategory.POPULAR,
+        tvShows = listOf(show)
     ),
-    anticipatedShows = ShowResult.ShowCategoryData(
-        categoryState = ShowResult.CategorySuccess(
-            category = ShowCategory.ANTICIPATED,
-            tvShows = listOf(show)
-        )
+    anticipatedCategoryState = ShowResult.CategorySuccess(
+        category = ShowCategory.ANTICIPATED,
+        tvShows = listOf(show)
     )
 )
 
 val emptyShowResult = ShowResult(
-    featuredShows = ShowResult.ShowCategoryData(
-        categoryState = ShowResult.CategoryError(
-            category = ShowCategory.FEATURED,
-            errorMessage = "Something went wrong"
-        )
+    featuredCategoryState = ShowResult.CategoryError(
+        errorMessage = "Something went wrong"
     ),
-    trendingShows = ShowResult.ShowCategoryData(
-        categoryState = ShowResult.CategoryError(
-            category = ShowCategory.TRENDING,
-            errorMessage = "Something went wrong"
-        )
+    trendingCategoryState = ShowResult.CategoryError(
+        errorMessage = "Something went wrong"
     ),
-    popularShows = ShowResult.ShowCategoryData(
-        categoryState = ShowResult.CategoryError(
-            category = ShowCategory.POPULAR,
-            errorMessage = "Something went wrong"
-        )
+    popularCategoryState = ShowResult.CategoryError(
+        errorMessage = "Something went wrong"
     ),
-    anticipatedShows = ShowResult.ShowCategoryData(
-        categoryState = ShowResult.CategoryError(
-            category = ShowCategory.ANTICIPATED,
-            errorMessage = "Something went wrong"
-        )
+    anticipatedCategoryState =ShowResult.CategoryError(
+        errorMessage = "Something went wrong"
     )
 )
 
-val categoryResult = listOf(
+fun categoryResult(categoryId: Int) = listOf(
     SelectShowsByCategory(
         trakt_id = 84958,
         tmdb_id = 849583,
@@ -98,10 +78,6 @@ val categoryResult = listOf(
         runtime = 45,
         poster_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdrop_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        aired_episodes = 12,
-        trakt_id_ = 1234,
-        category_id = 1,
-        trakt_id__ = 12345,
-        tmdb_id_ = 1232
+        category_id = categoryId,
     )
 )

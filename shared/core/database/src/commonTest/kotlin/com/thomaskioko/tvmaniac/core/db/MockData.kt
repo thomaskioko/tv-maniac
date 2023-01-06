@@ -32,7 +32,7 @@ object MockData {
     fun getSeasonCacheList() = listOf(
         Season(
             id = 114355,
-            show_id = 84958,
+            show_trakt_id = 84958,
             name = "Season 1",
             overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
@@ -41,26 +41,26 @@ object MockData {
                 "erased from existence due to being a “time variant”or help fix " +
                 "the timeline and stop a greater threat.",
             season_number = 1,
-            epiosode_count = 6,
+            episode_count = 6,
         ),
         Season(
             id = 77680,
-            show_id = 84958,
+            show_trakt_id = 84958,
             name = "Season 2",
             overview = "Strange things are afoot in Hawkins, Indiana, where a young boy's " +
                 "sudden disappearance unearths a young girl with otherworldly powers.",
             season_number = 1,
-            epiosode_count = 4,
+            episode_count = 4,
         ),
         Season(
             id = 4355,
-            show_id = 126280,
+            show_trakt_id = 126280,
             name = "Season 1",
             overview = "A woman's daring sexual past collides with her married-with-kids " +
                 "present when the bad-boy ex she can't stop fantasizing about crashes " +
                 "back into her life.",
             season_number = 1,
-            epiosode_count = 6,
+            episode_count = 6,
         )
     )
 

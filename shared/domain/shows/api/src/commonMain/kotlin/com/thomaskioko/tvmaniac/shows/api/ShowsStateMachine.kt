@@ -3,10 +3,6 @@ package com.thomaskioko.tvmaniac.shows.api
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.ANTICIPATED
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.FEATURED
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.POPULAR
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.TRENDING
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.CoroutineScope
@@ -35,10 +31,10 @@ class ShowsStateMachine constructor(
                     state.mutate {
                         copy(
                             result = result.copy(
-                                featuredShows = result.featuredShows,
-                                trendingShows = result.trendingShows,
-                                popularShows = result.popularShows,
-                                anticipatedShows = result.anticipatedShows,
+                                featuredCategoryState = result.featuredCategoryState,
+                                trendingCategoryState = result.trendingCategoryState,
+                                popularCategoryState = result.popularCategoryState,
+                                anticipatedCategoryState = result.anticipatedCategoryState,
                             )
                         )
                     }
@@ -67,17 +63,17 @@ class ShowsStateMachine constructor(
         var nextState: ShowsState = state.snapshot
 
         combine(
-            traktRepository.fetchShowsByCategoryId(TRENDING.id),
-            traktRepository.fetchShowsByCategoryId(POPULAR.id),
-            traktRepository.fetchShowsByCategoryId(ANTICIPATED.id),
-            traktRepository.fetchShowsByCategoryId(FEATURED.id),
+            traktRepository.fetchTrendingShows(),
+            traktRepository.fetchPopularShows(),
+            traktRepository.fetchAnticipatedShows(),
+            traktRepository.fetchFeaturedShows(),
         ) { trending, popular, anticipated, featured ->
 
             ShowResult(
-                trendingShows = trending.toShowData(TRENDING),
-                popularShows = popular.toShowData(POPULAR),
-                anticipatedShows = anticipated.toShowData(ANTICIPATED),
-                featuredShows = featured.toShowData(FEATURED, 5),
+                trendingCategoryState = trending.toShowData(),
+                popularCategoryState = popular.toShowData(),
+                anticipatedCategoryState = anticipated.toShowData(),
+                featuredCategoryState = featured.toShowData(5),
             )
         }
             .catch { nextState = LoadingError(it.message ?: "Something went wrong") }
@@ -90,17 +86,17 @@ class ShowsStateMachine constructor(
 
     private fun observeShowData(): Flow<ShowResult> =
         combine(
-            traktRepository.observeCachedShows(TRENDING.id),
-            traktRepository.observeCachedShows(POPULAR.id),
-            traktRepository.observeCachedShows(ANTICIPATED.id),
-            traktRepository.observeCachedShows(FEATURED.id),
+            traktRepository.observeTrendingCachedShows(),
+            traktRepository.observePopularCachedShows(),
+            traktRepository.observeAnticipatedCachedShows(),
+            traktRepository.observeFeaturedCachedShows(),
         ) { trending, popular, anticipated, featured ->
 
             ShowResult(
-                trendingShows = trending.toShowData(TRENDING),
-                popularShows = popular.toShowData(POPULAR),
-                anticipatedShows = anticipated.toShowData(ANTICIPATED),
-                featuredShows = featured.toShowData(FEATURED, 5),
+                trendingCategoryState = trending.toShowData(),
+                popularCategoryState = popular.toShowData(),
+                anticipatedCategoryState = anticipated.toShowData(),
+                featuredCategoryState = featured.toShowData(5),
             )
         }
             .catch {

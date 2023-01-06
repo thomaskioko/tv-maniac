@@ -14,17 +14,16 @@ data class ShowsLoaded(
 ) : ShowsState
 
 data class ShowResult(
-    val featuredShows: ShowCategoryData,
-    val trendingShows: ShowCategoryData,
-    val popularShows: ShowCategoryData,
-    val anticipatedShows: ShowCategoryData,
+    val featuredCategoryState: CategoryState,
+    val trendingCategoryState: CategoryState,
+    val popularCategoryState: CategoryState,
+    val anticipatedCategoryState: CategoryState,
 ) {
 
     sealed interface CategoryState
 
     data class CategoryError(
-        val category: ShowCategory,
-        val errorMessage: String?
+        val errorMessage: String
     ) : CategoryState
 
     data class CategorySuccess(
@@ -32,8 +31,5 @@ data class ShowResult(
         val tvShows: List<TvShow>,
     ) : CategoryState
 
-
-    data class ShowCategoryData(
-        val categoryState: CategoryState
-    )
+    object EmptyCategoryData : CategoryState
 }

@@ -20,12 +20,6 @@ class SimilarShowCacheImpl(
         }
     }
 
-    override fun updateShow(traktId: Int) {
-       database.similarShowQueries.transaction {
-           database.similarShowQueries.updateFollowedState(traktId)
-       }
-    }
-
     override fun observeSimilarShows(traktId: Int): Flow<List<SelectSimilarShows>> {
         return database.similarShowQueries.selectSimilarShows(trakt_id = traktId)
             .asFlow()

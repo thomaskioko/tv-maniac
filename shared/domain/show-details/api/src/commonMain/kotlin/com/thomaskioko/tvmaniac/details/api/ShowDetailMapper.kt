@@ -10,7 +10,7 @@ import com.thomaskioko.tvmaniac.core.db.Season as SeasonCache
 
 fun List<SelectSimilarShows>?.toSimilarShowList(): List<Show> = this?.map {
     Show(
-        traktId = it.trakt_id_,
+        traktId = it.trakt_id,
         tmdbId = it.tmdb_id,
         title = it.title,
         overview = it.overview,

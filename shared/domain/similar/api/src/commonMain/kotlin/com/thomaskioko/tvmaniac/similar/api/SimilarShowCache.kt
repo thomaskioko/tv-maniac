@@ -7,7 +7,5 @@ interface SimilarShowCache {
 
     fun insert(traktId: Int, similarShowId: Int)
 
-    fun updateShow(traktId: Int)
-
     fun observeSimilarShows(traktId: Int): Flow<List<SelectSimilarShows>>
 }

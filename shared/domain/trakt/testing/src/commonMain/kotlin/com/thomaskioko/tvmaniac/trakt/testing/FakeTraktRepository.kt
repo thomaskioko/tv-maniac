@@ -17,7 +17,16 @@ import kotlinx.coroutines.flow.flowOf
 class FakeTraktRepository : TraktRepository {
 
     //TODO:: Switch to channels
-    private var categoryResult: Flow<Either<Failure, List<SelectShowsByCategory>>> =
+    private var featuredResult: Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        flowOf(Either.Right(data = null))
+
+    private var anticipatedResult: Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        flowOf(Either.Right(data = null))
+
+    private var popularResult: Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        flowOf(Either.Right(data = null))
+
+    private var trendingResult: Flow<Either<Failure, List<SelectShowsByCategory>>> =
         flowOf(Either.Right(data = null))
 
     private var showResult: Flow<Either<Failure, SelectByShowId>> =
@@ -26,8 +35,20 @@ class FakeTraktRepository : TraktRepository {
     private var followedResult: Flow<Either<Failure, List<SelectFollowedShows>>> =
         flowOf(Either.Right(data = null))
 
-    suspend fun setCategoryResult(result: Either<Failure, List<SelectShowsByCategory>>) {
-        categoryResult = flow { emit(result) }
+    suspend fun setFeaturedResult(result: Either<Failure, List<SelectShowsByCategory>>) {
+        featuredResult = flow { emit(result) }
+    }
+
+    suspend fun setAnticipatedResult(result: Either<Failure, List<SelectShowsByCategory>>) {
+        anticipatedResult = flow { emit(result) }
+    }
+
+    suspend fun setPopularResult(result: Either<Failure, List<SelectShowsByCategory>>) {
+        popularResult = flow { emit(result) }
+    }
+
+    suspend fun setTrendingResult(result: Either<Failure, List<SelectShowsByCategory>>) {
+        trendingResult = flow { emit(result) }
     }
 
     suspend fun setShowResult(result: Either<Failure, SelectByShowId>) {
@@ -75,7 +96,8 @@ class FakeTraktRepository : TraktRepository {
             )
         )
 
-    override fun observeFollowedShows(): Flow<Either<Failure, List<SelectFollowedShows>>> = followedResult
+    override fun observeFollowedShows(): Flow<Either<Failure, List<SelectFollowedShows>>> =
+        followedResult
 
     override fun getFollowedShows(): List<SelectFollowedShows> = cachedShowResult
 
@@ -86,12 +108,49 @@ class FakeTraktRepository : TraktRepository {
 
     override fun observeShow(traktId: Int): Flow<Either<Failure, SelectByShowId>> = showResult
 
-    override fun fetchShowsByCategoryId(categoryId: Int): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        categoryResult
-
     override fun observeCachedShows(categoryId: Int): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         flow {
-            categoryResult.collect {
+            featuredResult.collect {
+                emit(it)
+            }
+        }
+
+    override fun fetchTrendingShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        trendingResult
+
+    override fun observeTrendingCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        flow {
+            trendingResult.collect {
+                emit(it)
+            }
+        }
+
+    override fun fetchPopularShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        popularResult
+
+    override fun observePopularCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        flow {
+            popularResult.collect {
+                emit(it)
+            }
+        }
+
+    override fun fetchAnticipatedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        anticipatedResult
+
+    override fun observeAnticipatedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        flow {
+            anticipatedResult.collect {
+                emit(it)
+            }
+        }
+
+    override fun fetchFeaturedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        featuredResult
+
+    override fun observeFeaturedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+        flow {
+            featuredResult.collect {
                 emit(it)
             }
         }
