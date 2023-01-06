@@ -50,12 +50,14 @@ deleteAll:
 DELETE FROM show;
 
 selectShowsByCategory:
-SELECT *
+SELECT show.trakt_id, show.tmdb_id ,show.title, show.overview, show.language, show.year, show.rating,
+show.votes, show.status, show.runtime, show.genres, show_image.poster_url, show_image.backdrop_url,
+show_category.category_id
 FROM show
 INNER JOIN show_category ON show_category.trakt_id = show.trakt_id
 LEFT OUTER JOIN show_image ON show_image.trakt_id = show.trakt_id
 WHERE show_category.category_id = ?
-ORDER BY show.year DESC;
+ORDER BY show.rating, show.year DESC;
 
 selectShowImages:
 SELECT show.trakt_id, show.tmdb_id FROM show
