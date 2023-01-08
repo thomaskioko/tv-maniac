@@ -24,22 +24,19 @@ struct BodyContentView: View {
 
                 VStack {
 
-                    switch contentState.result.featuredShows.categoryState {
+                    switch contentState.result.featuredCategoryState {
                     case is ShowResult.CategoryError:
-                        let state = contentState.result.featuredShows.categoryState as! ShowResult.CategoryError
-                        ErrorView(errorMessage: state.errorMessage ?? "Opps!! Something went wrong")
+                        let state = contentState.result.featuredCategoryState as! ShowResult.CategoryError
+                        ErrorView(errorMessage: state.errorMessage)
                     case is ShowResult.CategorySuccess:
-                        let state = contentState.result.featuredShows.categoryState as! ShowResult.CategorySuccess
+                        let state = contentState.result.featuredCategoryState as! ShowResult.CategorySuccess
                         if state.tvShows.isEmpty == false {
                             /**
 							 * This is a temporary implementation for navigation to the detail view. The problem is NavigationView
 							 * does not support MatchedGeometry effect. The other alternative would be to use an overlay
 							 * for the detailView.
 							 */
-                            NavigationLink(
-                                    destination: ShowDetailView(showId: state.tvShows[currentIndex].traktId
-                                    )
-                            ) {
+                            NavigationLink(destination: ShowDetailView(showId: state.tvShows[currentIndex].traktId)) {
                                 SnapCarousel(
                                         spacing: 10,
                                         trailingSpace: 70,
@@ -66,50 +63,50 @@ struct BodyContentView: View {
 
                         }
                     default:
-                        let _ = print("Unhandled case: \(contentState.result.featuredShows)")
+                        let _ = print("Unhandled case: \(contentState.result.featuredCategoryState)")
                     }
 
-                    switch contentState.result.trendingShows.categoryState {
+                    switch contentState.result.trendingCategoryState {
                     case is ShowResult.CategoryError:
-                        let state = contentState.result.trendingShows.categoryState as! ShowResult.CategoryError
-                        ErrorView(errorMessage: state.errorMessage ?? "Opps!! Something went wrong")
+                        let state = contentState.result.trendingCategoryState as! ShowResult.CategoryError
+                        ErrorView(errorMessage: state.errorMessage)
                     case is ShowResult.CategorySuccess:
-                        let state = contentState.result.trendingShows.categoryState as! ShowResult.CategorySuccess
+                        let state = contentState.result.trendingCategoryState as! ShowResult.CategorySuccess
                         ShowRow(
                                 categoryName: state.category.title,
                                 shows: state.tvShows
                         )
                     default:
-                        let _ = print("Unhandled case: \(contentState.result.trendingShows)")
+                        let _ = print("Unhandled case: \(contentState.result.trendingCategoryState)")
                     }
 					
-					switch contentState.result.anticipatedShows.categoryState {
+					switch contentState.result.anticipatedCategoryState {
 					case is ShowResult.CategoryError:
-						let state = contentState.result.anticipatedShows.categoryState as! ShowResult.CategoryError
-						ErrorView(errorMessage: state.errorMessage ?? "Opps!! Something went wrong")
+						let state = contentState.result.anticipatedCategoryState as! ShowResult.CategoryError
+						ErrorView(errorMessage: state.errorMessage)
 					case is ShowResult.CategorySuccess:
-						let state = contentState.result.anticipatedShows.categoryState as! ShowResult.CategorySuccess
+						let state = contentState.result.anticipatedCategoryState as! ShowResult.CategorySuccess
 						ShowRow(
 								categoryName: state.category.title,
 								shows: state.tvShows
 						)
 					default:
-						let _ = print("Unhandled case: \(contentState.result.anticipatedShows)")
+						let _ = print("Unhandled case: \(contentState.result.anticipatedCategoryState)")
 					}
 
 
-                    switch contentState.result.popularShows.categoryState {
+                    switch contentState.result.popularCategoryState {
                     case is ShowResult.CategoryError:
-                        let state = contentState.result.popularShows.categoryState as! ShowResult.CategoryError
-                        ErrorView(errorMessage: state.errorMessage ?? "Opps!! Something went wrong")
+                        let state = contentState.result.popularCategoryState as! ShowResult.CategoryError
+                        ErrorView(errorMessage: state.errorMessage)
                     case is ShowResult.CategorySuccess:
-                        let state = contentState.result.popularShows.categoryState as! ShowResult.CategorySuccess
+                        let state = contentState.result.popularCategoryState as! ShowResult.CategorySuccess
                         ShowRow(
                                 categoryName: state.category.title,
                                 shows: state.tvShows
                         )
                     default:
-                        let _ = print("Unhandled case: \(contentState.result.featuredShows)")
+                        let _ = print("Unhandled case: \(contentState.result.popularCategoryState)")
                     }
                 }
                         .padding(.bottom, 90)
@@ -123,8 +120,8 @@ struct BodyContentView: View {
             let size = proxy.size
 
             TabView(selection: $currentIndex) {
-                if contentState.result.featuredShows.categoryState is ShowResult.CategorySuccess {
-                    let state = contentState.result.featuredShows.categoryState as! ShowResult.CategorySuccess
+                if contentState.result.featuredCategoryState is ShowResult.CategorySuccess {
+                    let state = contentState.result.featuredCategoryState as! ShowResult.CategorySuccess
                     ForEach(state.tvShows.indices, id: \.self) { index in
                         ShowPosterImage(
                                 posterSize: .big,
@@ -162,8 +159,8 @@ struct BodyContentView: View {
     @ViewBuilder
     func CustomIndicator() -> some View {
         HStack(spacing: 5) {
-            if contentState.result.featuredShows.categoryState is ShowResult.CategorySuccess {
-                let state = contentState.result.featuredShows.categoryState as! ShowResult.CategorySuccess
+            if contentState.result.featuredCategoryState is ShowResult.CategorySuccess {
+                let state = contentState.result.featuredCategoryState as! ShowResult.CategorySuccess
                 ForEach(state.tvShows.indices, id: \.self) { index in
                     Circle()
                             .fill(currentIndex == index ? Color.accent_color : .gray.opacity(0.5))
