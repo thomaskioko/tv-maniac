@@ -57,7 +57,7 @@ struct BodyContentView: View {
                                 }
                             }
                                     .frame(height: 450)
-                                    .padding(.top, 120)
+                                    .padding(.top, 140)
 
                             CustomIndicator()
 

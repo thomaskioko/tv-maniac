@@ -14,6 +14,7 @@ struct DiscoverView: View {
                 switch viewModel.showState {
                 case is Loading_:
                     LoadingIndicatorView()
+						.frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
                 case is LoadingError:
                     let state = viewModel.showState as! LoadingError
                     ErrorView(errorMessage: state.message)
@@ -24,17 +25,14 @@ struct DiscoverView: View {
                     fatalError("Unhandled case: \(viewModel.showState)")
                 }
             }
-                    .ignoresSafeArea()
-                    .navigationBarHidden(true)
+			.background(Color.background)
+			.ignoresSafeArea()
+			.navigationBarHidden(true)
         }
-                .accentColor(Color.background)
+                .background(Color.background)
                 .navigationViewStyle(StackNavigationViewStyle())
-                .onAppear {
-                    viewModel.startStateMachine()
-                }
-                .onDisappear {
-                    viewModel.dismiss()
-                }
+                .onAppear { viewModel.startStateMachine() }
+                .onDisappear { viewModel.dismiss() }
     }
 
 
