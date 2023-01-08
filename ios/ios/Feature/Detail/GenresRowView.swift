@@ -21,7 +21,7 @@ struct GenresRowView: View {
 						.captionFont(size: 16)
 						.foregroundColor(Color.text_color_bg)
 						.padding(10)
-						.background(Color.accent.opacity(0.12))
+						.background(Color.accent.opacity(0.2))
 						.cornerRadius(5)
 				}
 			}

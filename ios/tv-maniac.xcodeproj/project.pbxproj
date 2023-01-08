@@ -28,7 +28,6 @@
 		E983819427936BB10039CB08 /* PosterStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983818927936BB00039CB08 /* PosterStyle.swift */; };
 		E983819527936BB10039CB08 /* ShowRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983818A27936BB00039CB08 /* ShowRow.swift */; };
 		E983819727936BB10039CB08 /* TextViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983818C27936BB10039CB08 /* TextViews.swift */; };
-		E98381A027936DC90039CB08 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983819D27936DC90039CB08 /* HeaderView.swift */; };
 		E98381A127936DC90039CB08 /* ShowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983819E27936DC90039CB08 /* ShowDetailView.swift */; };
 		E98381A227936DC90039CB08 /* GenresRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983819F27936DC90039CB08 /* GenresRowView.swift */; };
 		E98381A527936E150039CB08 /* ShowMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98381A427936E150039CB08 /* ShowMockData.swift */; };
@@ -81,7 +80,6 @@
 		E983818927936BB00039CB08 /* PosterStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PosterStyle.swift; sourceTree = "<group>"; };
 		E983818A27936BB00039CB08 /* ShowRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowRow.swift; sourceTree = "<group>"; };
 		E983818C27936BB10039CB08 /* TextViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextViews.swift; sourceTree = "<group>"; };
-		E983819D27936DC90039CB08 /* HeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		E983819E27936DC90039CB08 /* ShowDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDetailView.swift; sourceTree = "<group>"; };
 		E983819F27936DC90039CB08 /* GenresRowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenresRowView.swift; sourceTree = "<group>"; };
 		E98381A427936E150039CB08 /* ShowMockData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowMockData.swift; sourceTree = "<group>"; };
@@ -193,7 +191,6 @@
 			isa = PBXGroup;
 			children = (
 				E983819F27936DC90039CB08 /* GenresRowView.swift */,
-				E983819D27936DC90039CB08 /* HeaderView.swift */,
 				E983819E27936DC90039CB08 /* ShowDetailView.swift */,
 				E98381AA2793720C0039CB08 /* ShowInfoRow.swift */,
 				E98381D127942D720039CB08 /* ShowBodyView.swift */,
@@ -426,7 +423,6 @@
 				E9051A242916184300ADFC98 /* Koin.swift in Sources */,
 				E983819427936BB10039CB08 /* PosterStyle.swift in Sources */,
 				E983816D2793697B0039CB08 /* ColorExtension.swift in Sources */,
-				E98381A027936DC90039CB08 /* HeaderView.swift in Sources */,
 				CBDFCA9D24126097D232D988 /* BlurView.swift in Sources */,
 				CBDFC5CAEA5938940871491E /* OffsetModifier.swift in Sources */,
 				CBDFC60AF859A44365A90BA5 /* TopNavBar.swift in Sources */,

@@ -17,7 +17,6 @@ class ShowDetailsViewModel: ObservableObject {
     func startStateMachine(action: ShowDetailsAction) {
         stateMachine.start(stateChangeListener: { (state: ShowDetailsState) -> Void in
             self.detailState = state
-            let _ = print("Current State: \(state)")
         })
         stateMachine.dispatch(action: action)
     }
