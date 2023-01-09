@@ -69,25 +69,12 @@ class SettingsStateMachine constructor(
  */
 class SettingsStateMachineWrapper(
     private val stateMachine: SettingsStateMachine,
-    dispatcher: MainCoroutineDispatcher,
+    private val scope: CoroutineScope,
 ) {
-    private val job = SupervisorJob()
-    private val scope = CoroutineScope(job + dispatcher)
 
     fun dispatch(action: SettingsActions) {
         scope.launch {
             stateMachine.dispatch(action)
         }
-    }
-
-    fun start(stateChangeListener: (SettingsState) -> Unit) {
-        scope.launch {
-            stateMachine.state
-                .collect { stateChangeListener(it) }
-        }
-    }
-
-    fun cancel() {
-        job.cancelChildren()
     }
 }

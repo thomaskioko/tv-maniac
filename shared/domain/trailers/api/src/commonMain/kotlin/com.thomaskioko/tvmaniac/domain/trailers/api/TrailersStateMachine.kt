@@ -75,26 +75,11 @@ class TrailersStateMachine constructor(
  */
 class TrailersStateMachineWrapper(
     private val stateMachine: TrailersStateMachine,
-    dispatcher: MainCoroutineDispatcher,
+    private val scope: CoroutineScope,
 ) {
-    private val job = SupervisorJob()
-    private val scope = CoroutineScope(job + dispatcher)
-
     fun dispatch(action: TrailersAction) {
         scope.launch {
             stateMachine.dispatch(action)
         }
-    }
-
-    fun start(stateChangeListener: (TrailersState) -> Unit) {
-        scope.launch {
-            stateMachine.state.collect {
-                stateChangeListener(it)
-            }
-        }
-    }
-
-    fun cancel() {
-        job.cancelChildren()
     }
 }

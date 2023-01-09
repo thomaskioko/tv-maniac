@@ -5,9 +5,6 @@ import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainCoroutineDispatcher
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 
 class FollowingStateMachine constructor(
@@ -50,27 +47,12 @@ class FollowingStateMachine constructor(
  */
 class FollowingStateMachineWrapper(
     private val stateMachine: FollowingStateMachine,
-    dispatcher: MainCoroutineDispatcher,
+    private val scope: CoroutineScope,
 ) {
-    private val job = SupervisorJob()
-    private val scope = CoroutineScope(job + dispatcher)
-
     fun dispatch(action: FollowingAction) {
         scope.launch {
             stateMachine.dispatch(action)
         }
-    }
-
-    fun start(stateChangeListener: (FollowingState) -> Unit) {
-        scope.launch {
-            stateMachine.state.collect {
-                stateChangeListener(it)
-            }
-        }
-    }
-
-    fun cancel() {
-        job.cancelChildren()
     }
 }
 

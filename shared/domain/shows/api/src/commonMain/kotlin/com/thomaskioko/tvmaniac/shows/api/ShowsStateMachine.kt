@@ -110,26 +110,11 @@ class ShowsStateMachine constructor(
  */
 class ShowsStateMachineWrapper(
     private val stateMachine: ShowsStateMachine,
-    dispatcher: MainCoroutineDispatcher,
+    private val scope: CoroutineScope,
 ) {
-    private val job = SupervisorJob()
-    private val scope = CoroutineScope(job + dispatcher)
-
     fun dispatch(action: ShowsAction) {
         scope.launch {
             stateMachine.dispatch(action)
         }
-    }
-
-    fun start(stateChangeListener: (ShowsState) -> Unit) {
-        scope.launch {
-            stateMachine.state.collect {
-                stateChangeListener(it)
-            }
-        }
-    }
-
-    fun cancel() {
-        job.cancelChildren()
     }
 }

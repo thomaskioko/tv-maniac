@@ -11,5 +11,5 @@ import org.koin.dsl.module
 val trailersModule: Module = module {
     single<TrailerRepository> { TrailerRepositoryImpl(get(), get(), get(), get(), get()) }
     single<TrailerCache> { TrailerCacheImpl(get()) }
-    factory{ TrailersStateMachine(get()) }
+    single { TrailersStateMachine(get()) }
 }

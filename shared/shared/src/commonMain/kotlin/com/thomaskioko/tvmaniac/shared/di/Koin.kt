@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.thomaskioko.tvmaniac.shared.di
 
 import com.thomaskioko.tvmaniac.core.db.di.dbPlatformModule
@@ -23,26 +25,25 @@ import kotlinx.coroutines.MainScope
 import org.koin.core.Koin
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
-import org.koin.core.qualifier.named
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
 fun KoinApplication.Companion.start(): KoinApplication = initKoin {}
 
 val Koin.showStateMachine: ShowsStateMachineWrapper
-    get() = ShowsStateMachineWrapper(get(), get(named("main-dispatcher")))
+    get() = ShowsStateMachineWrapper(get(), get())
 
 val Koin.showDetailsStateMachine: ShowDetailsStateMachineWrapper
-    get() = ShowDetailsStateMachineWrapper(get(), get(named("main-dispatcher")))
+    get() = ShowDetailsStateMachineWrapper(get(), get())
 
 val Koin.settingsStateMachine: SettingsStateMachineWrapper
-    get() = SettingsStateMachineWrapper(get(), get(named("main-dispatcher")))
+    get() = SettingsStateMachineWrapper(get(), get())
 
 val Koin.trailersStateMachine: TrailersStateMachineWrapper
-    get() = TrailersStateMachineWrapper(get(), get(named("main-dispatcher")))
+    get() = TrailersStateMachineWrapper(get(), get())
 
 val Koin.followingStateMachineWrapper: FollowingStateMachineWrapper
-    get() = FollowingStateMachineWrapper(get(), get(named("main-dispatcher")))
+    get() = FollowingStateMachineWrapper(get(), get())
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     appDeclaration()
@@ -67,5 +68,5 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
 val dispatcherModule = module {
     single { MainScope() }
     single { Dispatchers.Default }
-    single(named("main-dispatcher")) { Dispatchers.Main }
+    single { Dispatchers.Main }
 }
