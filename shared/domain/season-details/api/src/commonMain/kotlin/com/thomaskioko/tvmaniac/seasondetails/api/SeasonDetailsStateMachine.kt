@@ -30,7 +30,6 @@ class SeasonDetailsStateMachine constructor(
                                         showTitle = result.getTitle(),
                                         episodeList = result.toSeasonWithEpisodes()
                                     )
-
                             }
                         }
 

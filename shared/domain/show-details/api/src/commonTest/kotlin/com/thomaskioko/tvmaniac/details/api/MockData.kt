@@ -50,7 +50,7 @@ val similarShows = listOf(
     )
 )
 
-val initialShowDetailsLoaded = ShowDetailsState.ShowDetailsLoaded(
+val showDetailsLoaded = ShowDetailsState.ShowDetailsLoaded(
     show = show,
     seasonState = SeasonState.SeasonsLoaded(
         isLoading = true,
@@ -68,7 +68,7 @@ val initialShowDetailsLoaded = ShowDetailsState.ShowDetailsLoaded(
     ),
     followShowState = FollowShowsState.Idle
 )
-val seasonsShowDetailsLoaded = initialShowDetailsLoaded.copy(
+val seasonsShowDetailsLoaded = showDetailsLoaded.copy(
     seasonState = SeasonState.SeasonsLoaded(
         isLoading = false,
         seasonsList = listOf(
@@ -82,10 +82,6 @@ val seasonsShowDetailsLoaded = initialShowDetailsLoaded.copy(
 )
 
 val trailerShowDetailsLoaded = seasonsShowDetailsLoaded.copy(
-    similarShowsState = SimilarShowsState.SimilarShowsLoaded(
-        isLoading = false,
-        similarShows = similarShows
-    ),
     trailerState = TrailersState.TrailersLoaded(
         isLoading = false,
         hasWebViewInstalled = false,
@@ -101,24 +97,11 @@ val trailerShowDetailsLoaded = seasonsShowDetailsLoaded.copy(
     )
 )
 
-val trailerErrorState = trailerShowDetailsLoaded.copy(
+val similarShowLoaded = trailerShowDetailsLoaded.copy(
     similarShowsState = SimilarShowsState.SimilarShowsLoaded(
         isLoading = false,
         similarShows = similarShows
     ),
-    trailerState = TrailersState.TrailersError("Oppsy. Something went wrong")
-)
-
-val similarShowsErrorState = trailerShowDetailsLoaded.copy(
-    similarShowsState = SimilarShowsState.SimilarShowsError("Oppsy. Something went wrong"),
-)
-
-
-val similarShowDetailsLoaded = trailerShowDetailsLoaded.copy(
-    similarShowsState = SimilarShowsState.SimilarShowsLoaded(
-        isLoading = true,
-        similarShows = emptyList()
-    )
 )
 
 val selectedShow = SelectByShowId(

@@ -10,8 +10,7 @@ import kotlinx.coroutines.flow.flowOf
 
 class FakeSimilarShowsRepository : SimilarShowsRepository {
 
-    private var similarShowsResult: Flow<Either<Failure, List<SelectSimilarShows>>> =
-        flowOf(Either.Right(data = null))
+    private var similarShowsResult: Flow<Either<Failure, List<SelectSimilarShows>>> = flowOf()
 
     suspend fun setSimilarShowsResult(result: Either<Failure, List<SelectSimilarShows>>) {
         similarShowsResult = flow { emit(result) }

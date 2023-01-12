@@ -43,7 +43,7 @@ val showResult = ShowResult(
     )
 )
 
-val emptyShowResult = ShowResult(
+val errorShowResult = ShowResult(
     featuredCategoryState = ShowResult.CategoryError(
         errorMessage = "Something went wrong"
     ),

@@ -11,12 +11,9 @@ import kotlinx.coroutines.flow.flowOf
 
 class FakeSeasonDetailsRepository : SeasonDetailsRepository {
 
-    private var seasonsResult: Flow<Either<Failure, List<Season>>> =
-        flowOf(Either.Right(data = null))
+    private var seasonsResult = flowOf<Either<Failure, List<Season>>>()
 
-    private var seasonEpisodesResult: Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
-        flowOf()
-
+    private var seasonEpisodesResult = flowOf<Either<Failure, List<SelectSeasonWithEpisodes>>>()
 
     suspend fun setSeasonsResult(result: Either<Failure, List<Season>>) {
         seasonsResult = flow { emit(result) }
@@ -29,13 +26,11 @@ class FakeSeasonDetailsRepository : SeasonDetailsRepository {
     override fun observeSeasons(traktId: Int): Flow<Either<Failure, List<Season>>> =
         seasonsResult
 
-    override fun observeCachedSeasonDetails(showId: Int): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
-        flow {
-            seasonEpisodesResult.collect {
-                emit(it)
-            }
-        }
+    override fun observeCachedSeasonDetails(
+        showId: Int
+    ): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> = seasonEpisodesResult
 
-    override fun observeSeasonDetails(showId: Int): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
-        seasonEpisodesResult
+    override fun observeSeasonDetails(
+        showId: Int
+    ): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> = seasonEpisodesResult
 }

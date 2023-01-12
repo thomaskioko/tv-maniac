@@ -16,24 +16,17 @@ import kotlinx.coroutines.flow.flowOf
 
 class FakeTraktRepository : TraktRepository {
 
-    //TODO:: Switch to channels
-    private var featuredResult: Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        flowOf(Either.Right(data = null))
+    private var featuredResult = flowOf<Either<Failure, List<SelectShowsByCategory>>>()
 
-    private var anticipatedResult: Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        flowOf(Either.Right(data = null))
+    private var anticipatedResult = flowOf<Either<Failure, List<SelectShowsByCategory>>>()
 
-    private var popularResult: Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        flowOf(Either.Right(data = null))
+    private var popularResult = flowOf<Either<Failure, List<SelectShowsByCategory>>>()
 
-    private var trendingResult: Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        flowOf(Either.Right(data = null))
+    private var trendingResult = flowOf<Either<Failure, List<SelectShowsByCategory>>>()
 
-    private var showResult: Flow<Either<Failure, SelectByShowId>> =
-        flowOf(Either.Right(data = null))
+    private var showResult = flowOf<Either<Failure, SelectByShowId>>()
 
-    private var followedResult: Flow<Either<Failure, List<SelectFollowedShows>>> =
-        flowOf(Either.Right(data = null))
+    private var followedResult = flowOf<Either<Failure, List<SelectFollowedShows>>>()
 
     suspend fun setFeaturedResult(result: Either<Failure, List<SelectShowsByCategory>>) {
         featuredResult = flow { emit(result) }
@@ -108,52 +101,33 @@ class FakeTraktRepository : TraktRepository {
 
     override fun observeShow(traktId: Int): Flow<Either<Failure, SelectByShowId>> = showResult
 
-    override fun observeCachedShows(categoryId: Int): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        flow {
-            featuredResult.collect {
-                emit(it)
-            }
-        }
+    override fun observeCachedShows(
+        categoryId: Int
+    ): Flow<Either<Failure, List<SelectShowsByCategory>>> = featuredResult
 
     override fun fetchTrendingShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         trendingResult
 
     override fun observeTrendingCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        flow {
-            trendingResult.collect {
-                emit(it)
-            }
-        }
+        trendingResult
 
     override fun fetchPopularShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         popularResult
 
     override fun observePopularCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        flow {
-            popularResult.collect {
-                emit(it)
-            }
-        }
+        popularResult
 
     override fun fetchAnticipatedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         anticipatedResult
 
     override fun observeAnticipatedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        flow {
-            anticipatedResult.collect {
-                emit(it)
-            }
-        }
+        anticipatedResult
 
     override fun fetchFeaturedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         featuredResult
 
     override fun observeFeaturedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        flow {
-            featuredResult.collect {
-                emit(it)
-            }
-        }
+        featuredResult
 
     override suspend fun updateFollowedShow(traktId: Int, addToWatchList: Boolean) {}
 

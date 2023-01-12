@@ -9,14 +9,13 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
 class FakeTrailerRepository : TrailerRepository {
-    private var trailersResult: Flow<Either<Failure, List<Trailers>>> =
-        flowOf(Either.Right(data = null))
+    private var trailersResult: Flow<Either<Failure, List<Trailers>>> = flowOf()
 
     suspend fun setTrailerResult(result: Either<Failure, List<Trailers>>) {
         trailersResult = flow { emit(result) }
     }
 
-    override fun isWebViewInstalled(): Flow<Boolean> = flowOf(false)
+    override fun isWebViewInstalled(): Flow<Boolean> = flowOf()
 
     override fun observeTrailersByShowId(traktId: Int): Flow<Either<Failure, List<Trailers>>> =
         trailersResult

@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.trailers.api
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.core.test.runBlockingTest
 import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.domain.trailers.api.LoadTrailers
 import com.thomaskioko.tvmaniac.domain.trailers.api.LoadingTrailers
@@ -11,6 +10,7 @@ import com.thomaskioko.tvmaniac.domain.trailers.api.model.Trailer
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
 internal class TrailerStateMachineTest {
@@ -19,7 +19,7 @@ internal class TrailerStateMachineTest {
     private val stateMachine = TrailersStateMachine(trailerRepository)
 
     @Test
-    fun loadTrailers_state_emits_expected_result() = runBlockingTest {
+    fun loadTrailers_state_emits_expected_result() = runTest {
         stateMachine.state.test {
             trailerRepository.setTrailerResult(Either.Right(trailers))
 
