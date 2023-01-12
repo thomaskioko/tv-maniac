@@ -30,7 +30,6 @@ include(
     ":android:features:profile",
     ":shared:shared",
     ":shared:core:util",
-    ":shared:core:test",
     ":shared:core:database",
     ":shared:core:network",
     ":shared:domain:show-details:api",

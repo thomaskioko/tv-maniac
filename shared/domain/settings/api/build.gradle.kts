@@ -17,7 +17,6 @@ dependencies {
     commonMainImplementation(libs.coroutines.core)
 
     commonTestImplementation(kotlin("test"))
-    commonTestImplementation(project(":shared:core:test"))
 
     commonTestImplementation(libs.testing.coroutines.test)
     commonTestImplementation(libs.testing.kotest.assertions)

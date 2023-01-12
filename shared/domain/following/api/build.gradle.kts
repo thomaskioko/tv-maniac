@@ -19,7 +19,6 @@ dependencies {
     commonMainImplementation(libs.koin)
 
     commonTestImplementation(kotlin("test"))
-    commonTestImplementation(project(":shared:core:test"))
     commonTestImplementation(project(":shared:domain:trakt:testing"))
 
     commonTestImplementation(libs.testing.coroutines.test)

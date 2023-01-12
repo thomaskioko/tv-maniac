@@ -26,7 +26,6 @@ dependencies {
     commonMainImplementation(libs.koin)
 
     commonTestImplementation(kotlin("test"))
-    commonTestImplementation(project(":shared:core:test"))
     commonTestImplementation(libs.testing.turbine)
     commonTestImplementation(libs.testing.mockk.common)
     commonTestImplementation(libs.testing.kotest.assertions)

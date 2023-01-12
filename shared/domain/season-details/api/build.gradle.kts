@@ -20,7 +20,6 @@ dependencies {
     commonMainImplementation(project(":shared:core:util"))
     commonMainImplementation(libs.coroutines.core)
 
-    commonTestImplementation(project(":shared:core:test"))
     commonTestImplementation(project(":shared:domain:trakt:testing"))
     commonTestImplementation(project(":shared:domain:tmdb:testing"))
     commonTestImplementation(project(":shared:domain:episodes:testing"))

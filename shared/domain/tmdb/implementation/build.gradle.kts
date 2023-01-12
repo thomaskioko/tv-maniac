@@ -35,16 +35,7 @@ dependencies {
     commonMainImplementation(libs.ktor.serialization.json)
     commonMainImplementation(libs.squareup.sqldelight.extensions)
 
-    commonTestImplementation(kotlin("test"))
-    commonTestImplementation(project(":shared:core:test"))
     commonTestImplementation(libs.ktor.serialization)
-
-    commonTestImplementation(libs.ktor.negotiation)
-    commonTestImplementation(libs.ktor.serialization.json)
-    commonTestImplementation(libs.testing.ktor.mock)
-    commonTestImplementation(libs.testing.turbine)
-    commonTestImplementation(libs.testing.kotest.assertions)
-    commonTestImplementation(libs.testing.mockk.common)
 
 }
 

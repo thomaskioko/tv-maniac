@@ -18,7 +18,6 @@ dependencies {
     commonMainImplementation(libs.coroutines.core)
     commonMainApi(libs.flowredux)
 
-    commonTestImplementation(project(":shared:core:test"))
     commonTestImplementation(project(":shared:domain:trakt:testing"))
     commonTestImplementation(project(":shared:domain:tmdb:testing"))
     commonTestImplementation(kotlin("test"))
