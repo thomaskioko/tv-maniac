@@ -37,7 +37,7 @@ jobs:
           echo -e "\TRAKT_REDIRECT_URI=$TRAKT_REDIRECT_URI" >> ./local.properties          
 
       - name: Build with gradle
-        run: ./gradlew assembleDebug
+        run: ./gradlew build
 
   checks:
     name: Code style
@@ -105,7 +105,7 @@ jobs:
           echo -e "\TRAKT_REDIRECT_URI=$TRAKT_REDIRECT_URI" >> ./local.properties
 
       - name: Build and check
-        run: ./gradlew assembleDebug
+        run: ./gradlew build
 
       - name: Create release
         uses: softprops/action-gh-release@v1
