@@ -14,7 +14,7 @@ VALUES(?,?);
 selectSimilarShows:
 SELECT show.trakt_id, show.tmdb_id ,show.title, show.overview, show.language, show.year, show.rating, show.votes, show.status,
 show.runtime, show.genres, show_image.poster_url, show_image.backdrop_url
-FROM similar_show
-INNER JOIN show ON show.trakt_id = similar_show.id
+FROM show
+JOIN similar_show ON show.trakt_id = similar_show.id
 INNER JOIN show_image ON show_image.trakt_id = similar_show.id
 WHERE similar_show.trakt_id = ?;
