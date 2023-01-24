@@ -15,20 +15,17 @@ import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersLoaded.Compani
 import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.MainCoroutineDispatcher
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class ShowDetailsStateMachine constructor(
-    private val traktRepository: TraktRepository,
+    private val traktShowRepository: TraktShowRepository,
     private val similarShowsRepository: SimilarShowsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val trailerRepository: TrailerRepository
@@ -107,7 +104,7 @@ class ShowDetailsStateMachine constructor(
         showId.value = action.traktId
         var nextState: ShowDetailsState = ShowDetailsState.Loading
 
-        traktRepository.observeShow(action.traktId)
+        traktShowRepository.observeShow(action.traktId)
             .collect { result ->
                 nextState = result.fold(
                     {
@@ -135,7 +132,7 @@ class ShowDetailsStateMachine constructor(
         showId.value = action.traktId
         var nextState: ShowDetailsState = ShowDetailsState.Loading
 
-        traktRepository.observeShow(action.traktId)
+        traktShowRepository.observeShow(action.traktId)
             .collect { result ->
                 nextState = result.fold(
                     { ShowDetailsError(it.errorMessage) },
@@ -161,12 +158,12 @@ class ShowDetailsStateMachine constructor(
 
         var nextState: ChangedState<ShowDetailsState> = state.noChange()
 
-        traktRepository.updateFollowedShow(
+        traktShowRepository.updateFollowedShow(
             traktId = action.traktId,
             addToWatchList = !action.addToWatchList
         )
 
-        traktRepository.observeShow(action.traktId)
+        traktShowRepository.observeShow(action.traktId)
             .collect {
                 nextState = it.fold(
                     {

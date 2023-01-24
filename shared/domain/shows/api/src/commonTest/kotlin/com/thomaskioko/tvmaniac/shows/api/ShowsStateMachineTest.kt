@@ -4,14 +4,14 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.util.network.DefaultError
 import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.tmdb.testing.FakeTmdbRepository
-import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktRepository
+import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktShowRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
 internal class ShowsStateMachineTest {
 
-    private val traktRepository = FakeTraktRepository()
+    private val traktRepository = FakeTraktShowRepository()
     private val tmdbRepository = FakeTmdbRepository()
     private val stateMachine = ShowsStateMachine(traktRepository, tmdbRepository)
 

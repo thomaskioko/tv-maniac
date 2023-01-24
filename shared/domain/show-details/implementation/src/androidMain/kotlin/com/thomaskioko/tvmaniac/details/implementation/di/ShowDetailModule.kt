@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.details.api.ShowDetailsStateMachine
 import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,12 +16,12 @@ object ShowDetailModule {
 
     @Provides
     fun provideShowDetailsStateMachine(
-        traktRepository: TraktRepository,
+        traktShowRepository: TraktShowRepository,
         similarShowsRepository: SimilarShowsRepository,
         seasonDetailsRepository: SeasonDetailsRepository,
         trailerRepository: TrailerRepository,
     ): ShowDetailsStateMachine = ShowDetailsStateMachine(
-        traktRepository,
+        traktShowRepository,
         similarShowsRepository,
         seasonDetailsRepository,
         trailerRepository

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.following.di
 
 import com.thomaskioko.tvmaniac.domain.following.api.FollowingStateMachine
-import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +15,7 @@ object FollowingModule {
     @Singleton
     @Provides
     fun provideFollowingStateMachine(
-        repository: TraktRepository
+        repository: TraktShowRepository
     ): FollowingStateMachine = FollowingStateMachine(repository)
 
 }

@@ -4,7 +4,8 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.util.network.Either
-import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktProfileRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.TraktManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,7 +14,7 @@ import kotlinx.coroutines.FlowPreview
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class ProfileStateMachine constructor(
     private val traktManager: TraktManager,
-    private val repository: TraktRepository
+    private val repository: TraktProfileRepository
 ) : FlowReduxStateMachine<ProfileState, ProfileActions>(initialState = ProfileContent.EMPTY) {
 
     init {

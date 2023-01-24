@@ -10,7 +10,7 @@ import com.thomaskioko.tvmaniac.shows.implementation.cache.TvShowCacheImpl
 import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
-import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,9 +38,9 @@ object ShowsModule {
     @Singleton
     @Provides
     fun provideShowsStateMachine(
-        traktRepository: TraktRepository,
+        traktShowRepository: TraktShowRepository,
         tmdbRepository: TmdbRepository,
-    ): ShowsStateMachine = ShowsStateMachine(traktRepository, tmdbRepository)
+    ): ShowsStateMachine = ShowsStateMachine(traktShowRepository, tmdbRepository)
 
     @Singleton
     @Provides

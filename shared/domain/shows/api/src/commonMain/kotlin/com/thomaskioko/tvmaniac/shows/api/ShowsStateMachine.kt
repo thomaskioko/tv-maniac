@@ -4,7 +4,7 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 
 class ShowsStateMachine constructor(
-    private val traktRepository: TraktRepository,
+    private val traktShowRepository: TraktShowRepository,
     private val tmdbRepository: TmdbRepository
 ) : FlowReduxStateMachine<ShowsState, ShowsAction>(initialState = Loading) {
 
@@ -60,10 +60,10 @@ class ShowsStateMachine constructor(
         var nextState: ShowsState = state.snapshot
 
         combine(
-            traktRepository.fetchTrendingShows(),
-            traktRepository.fetchPopularShows(),
-            traktRepository.fetchAnticipatedShows(),
-            traktRepository.fetchFeaturedShows(),
+            traktShowRepository.fetchTrendingShows(),
+            traktShowRepository.fetchPopularShows(),
+            traktShowRepository.fetchAnticipatedShows(),
+            traktShowRepository.fetchFeaturedShows(),
         ) { trending, popular, anticipated, featured ->
 
             ShowResult(
@@ -83,10 +83,10 @@ class ShowsStateMachine constructor(
 
     private fun observeShowData(): Flow<ShowResult> =
         combine(
-            traktRepository.observeTrendingCachedShows(),
-            traktRepository.observePopularCachedShows(),
-            traktRepository.observeAnticipatedCachedShows(),
-            traktRepository.observeFeaturedCachedShows(),
+            traktShowRepository.observeTrendingCachedShows(),
+            traktShowRepository.observePopularCachedShows(),
+            traktShowRepository.observeAnticipatedCachedShows(),
+            traktShowRepository.observeFeaturedCachedShows(),
         ) { trending, popular, anticipated, featured ->
 
             ShowResult(

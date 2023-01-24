@@ -11,7 +11,7 @@ import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepositor
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
-import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktRepository
+import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktShowRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -20,11 +20,11 @@ internal class ShowDetailsStateMachineTest {
 
     private val seasonsRepository = FakeSeasonDetailsRepository()
     private val trailerRepository = FakeTrailerRepository()
-    private val traktRepository = FakeTraktRepository()
+    private val traktRepository = FakeTraktShowRepository()
     private val similarShowsRepository = FakeSimilarShowsRepository()
 
     private val stateMachine = ShowDetailsStateMachine(
-        traktRepository = traktRepository,
+        traktShowRepository = traktRepository,
         trailerRepository = trailerRepository,
         seasonDetailsRepository = seasonsRepository,
         similarShowsRepository = similarShowsRepository
