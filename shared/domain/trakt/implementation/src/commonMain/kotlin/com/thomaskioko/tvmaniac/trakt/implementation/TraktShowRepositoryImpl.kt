@@ -6,9 +6,6 @@ import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
-import com.thomaskioko.tvmaniac.core.db.TraktStats
-import com.thomaskioko.tvmaniac.core.db.Trakt_list
-import com.thomaskioko.tvmaniac.core.db.Trakt_user
 import com.thomaskioko.tvmaniac.core.util.helper.DateUtilHelper
 import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
 import com.thomaskioko.tvmaniac.core.util.network.DefaultError
@@ -22,108 +19,33 @@ import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.ANTICIPATED
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.FEATURED
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.POPULAR
 import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.TRENDING
-import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
-import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
-import com.thomaskioko.tvmaniac.trakt.api.cache.TraktStatsCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.implementation.mapper.responseToCache
 import com.thomaskioko.tvmaniac.trakt.implementation.mapper.showResponseToCacheList
 import com.thomaskioko.tvmaniac.trakt.implementation.mapper.showsResponseToCacheList
-import com.thomaskioko.tvmaniac.trakt.implementation.mapper.toCache
 import com.thomaskioko.tvmaniac.trakt.implementation.mapper.toCategoryCache
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 
-class TraktRepositoryImpl constructor(
+class TraktShowRepositoryImpl constructor(
     private val tvShowCache: TvShowCache,
     private val traktUserCache: TraktUserCache,
     private val followedCache: TraktFollowedCache,
-    private val favoriteCache: TraktListCache,
     private val showCategoryCache: ShowCategoryCache,
-    private val statsCache: TraktStatsCache,
     private val traktService: TraktService,
     private val dateUtilHelper: DateUtilHelper,
     private val dispatcher: CoroutineDispatcher,
-) : TraktRepository {
-
-    //TODO:: Maybe separate the repository. TraktShowsRepository, TraktProfileRepository ...
-
-    override fun observeMe(slug: String): Flow<Either<Failure, Trakt_user>> =
-        networkBoundResult(
-            query = { traktUserCache.observeMe() },
-            shouldFetch = { it == null },
-            fetch = { traktService.getUserProfile(slug) },
-            saveFetchResult = {
-                when (it) {
-                    is ApiResponse.Error -> Logger.withTag("observeMe").e("$it")
-                    is ApiResponse.Success -> {
-                        traktUserCache.insert(it.body.toCache(slug))
-                    }
-                }
-            },
-            coroutineDispatcher = dispatcher
-        )
-
-    override fun observeStats(slug: String, refresh: Boolean): Flow<Either<Failure, TraktStats>> =
-        networkBoundResult(
-            query = { statsCache.observeStats() },
-            shouldFetch = { it == null || refresh },
-            fetch = { traktService.getUserStats(slug) },
-            saveFetchResult = { statsCache.insert(it.toCache(slug)) },
-            coroutineDispatcher = dispatcher
-        )
-
-    override fun observeCreateTraktList(userSlug: String): Flow<Either<Failure, Trakt_list>> =
-        networkBoundResult(
-            query = { favoriteCache.observeTraktList() },
-            shouldFetch = { it == null },
-            fetch = { traktService.createFollowingList(userSlug) },
-            saveFetchResult = { favoriteCache.insert(it.toCache()) },
-            coroutineDispatcher = dispatcher
-        )
-
-    override fun observeUpdateFollowedShow(
-        traktId: Int,
-        addToWatchList: Boolean
-    ): Flow<Either<Failure, Unit>> = networkBoundResult(
-        query = { flowOf(Unit) },
-        shouldFetch = { traktUserCache.getMe() != null },
-        fetch = {
-            val user = traktUserCache.getMe()
-
-            if (user != null) {
-                if (addToWatchList) {
-                    traktService.addShowToWatchList(traktId).added.shows
-                } else {
-                    traktService.removeShowFromWatchList(traktId).deleted.shows
-                }
-            }
-        },
-        saveFetchResult = {
-            when {
-                addToWatchList -> followedCache.insert(
-                    Followed_shows(
-                        id = traktId,
-                        synced = true,
-                        created_at = dateUtilHelper.getTimestampMilliseconds()
-                    )
-                )
-
-                else -> followedCache.removeShow(traktId)
-            }
-        },
-        coroutineDispatcher = dispatcher
-    )
+) : TraktShowRepository {
 
     override fun observeShow(traktId: Int): Flow<Either<Failure, SelectByShowId>> =
         networkBoundResult(

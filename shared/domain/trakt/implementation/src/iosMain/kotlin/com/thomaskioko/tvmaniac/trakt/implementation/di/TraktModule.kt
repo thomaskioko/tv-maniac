@@ -1,13 +1,15 @@
 package com.thomaskioko.tvmaniac.trakt.implementation.di
 
-import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktProfileRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktStatsCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
 import com.thomaskioko.tvmaniac.trakt.auth.implementation.BuildKonfig
-import com.thomaskioko.tvmaniac.trakt.implementation.TraktRepositoryImpl
+import com.thomaskioko.tvmaniac.trakt.implementation.TraktProfileRepositoryImpl
+import com.thomaskioko.tvmaniac.trakt.implementation.TraktShowRepositoryImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.TraktServiceImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktFollowedCacheImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktListCacheImpl
@@ -60,18 +62,12 @@ actual fun traktModule(): Module = module {
     single<TraktListCache> { TraktListCacheImpl(get()) }
     single<TraktFollowedCache> { TraktFollowedCacheImpl(get()) }
 
-    single<TraktRepository> {
-        TraktRepositoryImpl(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get()
-        )
+    single<TraktShowRepository> {
+        TraktShowRepositoryImpl(get(), get(), get(), get(), get(), get(), get())
+    }
+
+    single<TraktProfileRepository> {
+        TraktProfileRepositoryImpl(get(), get(), get(), get(), get(), get(), get())
     }
 }
 

@@ -5,13 +5,15 @@ import com.thomaskioko.tvmaniac.core.util.helper.DateUtilHelper
 import com.thomaskioko.tvmaniac.core.util.scope.IoDispatcher
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
-import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktProfileRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktStatsCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
-import com.thomaskioko.tvmaniac.trakt.implementation.TraktRepositoryImpl
+import com.thomaskioko.tvmaniac.trakt.implementation.TraktProfileRepositoryImpl
+import com.thomaskioko.tvmaniac.trakt.implementation.TraktShowRepositoryImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktFollowedCacheImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktListCacheImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktStatsCacheImpl
@@ -52,26 +54,42 @@ object TraktInteractorModule {
     @Singleton
     @Provides
     fun provideTraktRepository(
-        cache: TraktUserCache,
         tvShowCache: TvShowCache,
+        traktUserCache: TraktUserCache,
         followedCache: TraktFollowedCache,
-        favoriteCache: TraktListCache,
         showCategoryCache: ShowCategoryCache,
         dateUtilHelper: DateUtilHelper,
-        statsCache: TraktStatsCache,
         traktService: TraktService,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): TraktRepository =
-        TraktRepositoryImpl(
+    ): TraktShowRepository =
+        TraktShowRepositoryImpl(
             tvShowCache,
-            cache,
+            traktUserCache,
             followedCache,
-            favoriteCache,
             showCategoryCache,
-            statsCache,
             traktService,
             dateUtilHelper,
             ioDispatcher,
         )
 
+    @Singleton
+    @Provides
+    fun provideTraktProfileRepository(
+        traktService: TraktService,
+        listCache: TraktListCache,
+        statsCache: TraktStatsCache,
+        traktUserCache: TraktUserCache,
+        followedCache: TraktFollowedCache,
+        dateUtilHelper: DateUtilHelper,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
+    ): TraktProfileRepository =
+        TraktProfileRepositoryImpl(
+            traktService,
+            listCache,
+            statsCache,
+            traktUserCache,
+            followedCache,
+            dateUtilHelper,
+            ioDispatcher,
+        )
 }
