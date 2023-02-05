@@ -1,7 +1,5 @@
-import util.libs
-
 plugins {
-    `android-feature-plugin`
+    id("tvmaniac.android.feature")
 }
 
 android {
@@ -9,7 +7,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.android.core.compose)
     implementation(libs.accompanist.insetsui)
     implementation(libs.accompanist.navigation.material)
     implementation(libs.androidx.compose.material.icons)
