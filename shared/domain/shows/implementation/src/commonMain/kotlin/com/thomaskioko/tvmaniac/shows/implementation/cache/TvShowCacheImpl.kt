@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.shows.implementation.cache
 
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToList
-import com.squareup.sqldelight.runtime.coroutines.mapToOne
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectShowImages
 import com.thomaskioko.tvmaniac.core.db.SelectShows
@@ -11,9 +11,11 @@ import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import kotlinx.coroutines.flow.Flow
+import kotlin.coroutines.CoroutineContext
 
 class TvShowCacheImpl(
-    private val database: TvManiacDatabase
+    private val database: TvManiacDatabase,
+    private val coroutineContext: CoroutineContext
 ) : TvShowCache {
 
     override fun insert(show: Show) {
@@ -38,43 +40,39 @@ class TvShowCacheImpl(
         list.forEach { insert(it) }
     }
 
-    override fun observeTvShow(showId: Int): Flow<SelectByShowId> {
+    override fun observeTvShow(showId: Long): Flow<SelectByShowId> {
         return database.showQueries.selectByShowId(showId)
             .asFlow()
-            .mapToOne()
+            .mapToOne(coroutineContext)
     }
 
     override fun observeTvShows(): Flow<List<SelectShows>> {
         return database.showQueries.selectShows()
             .asFlow()
-            .mapToList()
+            .mapToList(coroutineContext)
     }
 
-    override fun observeCachedShows(categoryId: Int): Flow<List<SelectShowsByCategory>> {
+    override fun observeCachedShows(categoryId: Long): Flow<List<SelectShowsByCategory>> {
         return database.showQueries.selectShowsByCategory(categoryId)
             .asFlow()
-            .mapToList()
+            .mapToList(coroutineContext)
     }
 
     override fun observeShowImages(): Flow<List<SelectShowImages>> {
         return database.showQueries.selectShowImages()
             .asFlow()
-            .mapToList()
+            .mapToList(coroutineContext)
     }
 
-    override fun getTvShow(traktId: Int): SelectByShowId =
+    override fun getTvShow(traktId: Long): SelectByShowId =
         database.showQueries.selectByShowId(traktId)
             .executeAsOne()
-
-    override fun getTvShowByTmdbId(tmdbId: Int?): Show? =
-        database.showQueries.selectShowByTmdbId(tmdbId)
-            .executeAsOneOrNull()
 
     override fun deleteTvShows() {
         database.showQueries.deleteAll()
     }
 
-    override fun getShowsByCategoryID(categoryId: Int): List<SelectShowsByCategory> =
+    override fun getShowsByCategoryID(categoryId: Long): List<SelectShowsByCategory> =
         database.showQueries.selectShowsByCategory(categoryId)
             .executeAsList()
 }

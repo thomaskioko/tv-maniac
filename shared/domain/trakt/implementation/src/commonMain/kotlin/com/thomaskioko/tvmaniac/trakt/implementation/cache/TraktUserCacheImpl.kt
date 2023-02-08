@@ -1,15 +1,17 @@
 package com.thomaskioko.tvmaniac.trakt.implementation.cache
 
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToOne
-import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToOne
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
 import kotlinx.coroutines.flow.Flow
+import kotlin.coroutines.CoroutineContext
 
 class TraktUserCacheImpl(
-    private val database: TvManiacDatabase
+    private val database: TvManiacDatabase,
+    private val coroutineContext: CoroutineContext
 ) : TraktUserCache {
     override fun insert(traktUser: Trakt_user) {
         database.traktUserQueries.insertOrReplace(
@@ -24,13 +26,13 @@ class TraktUserCacheImpl(
     override fun observeUserBySlug(slug: String): Flow<Trakt_user?> {
         return database.traktUserQueries.userBySlug(slug)
             .asFlow()
-            .mapToOneOrNull()
+            .mapToOneOrNull(coroutineContext)
     }
 
     override fun observeMe(): Flow<Trakt_user> {
         return database.traktUserQueries.getMe()
             .asFlow()
-            .mapToOne()
+            .mapToOne(coroutineContext)
     }
 
     override fun getMe(): Trakt_user? = database.traktUserQueries.getMe().executeAsOneOrNull()

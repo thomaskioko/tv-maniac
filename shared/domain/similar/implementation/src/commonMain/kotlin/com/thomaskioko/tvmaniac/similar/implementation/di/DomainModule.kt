@@ -12,6 +12,6 @@ val similarDomainModule: Module = module {
         SimilarShowsRepositoryImpl(get(), get(), get(), get())
     }
 
-    single<SimilarShowCache> { SimilarShowCacheImpl(get()) }
+    single<SimilarShowCache> { SimilarShowCacheImpl(get(), get()) }
 
 }

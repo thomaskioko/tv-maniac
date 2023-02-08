@@ -12,7 +12,7 @@ import org.koin.dsl.module
 
 val showDomainModule: Module = module {
     single<TmdbRepository> { TmdbRepositoryImpl(get(), get(), get(), get()) }
-    single<TvShowCache> { TvShowCacheImpl(get()) }
+    single<TvShowCache> { TvShowCacheImpl(get(), get()) }
     single<ShowCategoryCache> { ShowCategoryCacheImpl(get()) }
     single { ShowsStateMachine(get(), get()) }
 }
