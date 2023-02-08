@@ -11,35 +11,11 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        multiDexEnabled = true
-        manifestPlaceholders["appAuthRedirectScheme"] = "empty"
-
         buildConfigField("String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TRAKT_CLIENT_ID", "") + "\"")
         buildConfigField("String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TRAKT_CLIENT_SECRET", "") + "\"")
         buildConfigField("String", "TRAKT_REDIRECT_URI", "\"" + propOrDef("TRAKT_REDIRECT_URI", "") + "\"")
         buildConfigField("String", "TMDB_API_KEY", "\"" + propOrDef("TMDB_API_KEY", "") + "\"")
     }
-
-    buildFeatures {
-        buildConfig = true
-    }
-
-    applicationVariants.all {
-        val variant = this
-        variant.outputs
-            .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
-            .forEach { output ->
-                output.outputFileName = "app-${variant.baseName}-${variant.buildType.name}-${variant.versionName}.apk"
-            }
-    }
-
-    buildTypes {
-        getByName("debug") {
-            isMinifyEnabled = false
-            multiDexEnabled = true
-        }
-    }
-
 }
 
 dependencies {
@@ -56,13 +32,13 @@ dependencies {
     implementation(projects.android.features.seasonDetails)
     implementation(projects.android.features.videoPlayer)
     implementation(projects.android.features.profile)
-    implementation(projects.shared.domain.settings.api)
+    implementation(projects.android.core.workmanager)
+    implementation(projects.shared.shared)
 
-    implementation(libs.androidx.compose.activity)
     implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.androidx.compose.activity)
+    implementation(libs.appauth)
     implementation(libs.hilt.work)
-
-    debugImplementation(libs.leakcanary)
 }
 
 fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
