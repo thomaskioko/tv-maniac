@@ -7,6 +7,10 @@ group = "com.thomaskioko.tvmaniac.plugins"
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
 }
 
 dependencies {
@@ -35,6 +39,18 @@ gradlePlugin {
         register("androidFeature") {
             id = "tvmaniac.android.feature"
             implementationClass = "FeaturePlugin"
+        }
+        register("kmmDomainApi") {
+            id = "tvmaniac.kmm.api"
+            implementationClass = "KotlinMultiplatformDomainApiPlugin"
+        }
+        register("kmmDomainImpl") {
+            id = "tvmaniac.kmm.impl"
+            implementationClass = "KotlinMultiplatformDomainImplPlugin"
+        }
+        register("kmmLibrary") {
+            id = "tvmaniac.kmm.library"
+            implementationClass = "KotlinMultiplatformLibraryPlugin"
         }
     }
 }
