@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.core.db
 
 import co.touchlab.sqliter.DatabaseConfiguration
-import com.squareup.sqldelight.db.SqlDriver
-import com.squareup.sqldelight.drivers.native.NativeSqliteDriver
-import com.squareup.sqldelight.drivers.native.wrapConnection
+import app.cash.sqldelight.driver.native.wrapConnection
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 
 actual fun inMemorySqlDriver(): SqlDriver = NativeSqliteDriver(

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.core.db
 
-import com.squareup.sqldelight.ColumnAdapter
+import app.cash.sqldelight.ColumnAdapter
 
 val stringColumnAdapter = object : ColumnAdapter<List<String>, String> {
 

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.core.db
 
-import com.squareup.sqldelight.db.SqlDriver
+import app.cash.sqldelight.db.SqlDriver
 import kotlin.test.AfterTest
 
 expect fun inMemorySqlDriver(): SqlDriver
