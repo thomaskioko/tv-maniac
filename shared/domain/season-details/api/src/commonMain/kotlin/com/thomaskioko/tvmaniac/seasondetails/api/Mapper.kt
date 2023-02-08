@@ -12,7 +12,7 @@ fun Either.Right<List<SelectSeasonWithEpisodes>>.toSeasonWithEpisodes(): List<Se
             seasonId = groupMap.value.first().season_id,
             seasonName = groupMap.key,
             episodes = groupMap.value.map { it.toEpisode() },
-            episodeCount = groupMap.value.size,
+            episodeCount = groupMap.value.size.toLong(),
             watchProgress = 0f // TODO:: Fetch watch progress
         )
     } ?: emptyList()

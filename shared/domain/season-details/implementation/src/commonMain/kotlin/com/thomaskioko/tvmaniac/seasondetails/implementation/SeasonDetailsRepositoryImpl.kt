@@ -27,7 +27,7 @@ class SeasonDetailsRepositoryImpl(
     private val dispatcher: CoroutineDispatcher,
 ) : SeasonDetailsRepository {
 
-    override fun observeSeasons(traktId: Int): Flow<Either<Failure, List<Season>>> =
+    override fun observeSeasons(traktId: Long): Flow<Either<Failure, List<Season>>> =
         networkBoundResult(
             query = { seasonCache.observeSeasons(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
@@ -44,7 +44,7 @@ class SeasonDetailsRepositoryImpl(
             coroutineDispatcher = dispatcher
         )
 
-    override fun observeSeasonDetails(showId: Int): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
+    override fun observeSeasonDetails(showId: Long): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
         networkBoundResult(
             query = { seasonCache.observeShowEpisodes(showId) },
             shouldFetch = { it.isNullOrEmpty() },
@@ -53,14 +53,14 @@ class SeasonDetailsRepositoryImpl(
             coroutineDispatcher = dispatcher
         )
 
-    override fun observeCachedSeasonDetails(showId: Int): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
+    override fun observeCachedSeasonDetails(showId: Long): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
         seasonCache.observeShowEpisodes(showId)
             .map { Either.Right(it) }
             .catch { Either.Left(DefaultError(it)) }
 
 
     private fun mapResponse(
-        showId: Int,
+        showId: Long,
         response: ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse>
     ) {
         when (response) {
@@ -76,8 +76,8 @@ class SeasonDetailsRepositoryImpl(
                     seasonCache.insert(
                         Season_episodes(
                             show_id = showId,
-                            season_id = season.ids.trakt,
-                            season_number = season.number,
+                            season_id = season.ids.trakt.toLong(),
+                            season_number = season.number.toLong(),
                         )
                     )
                 }

@@ -104,7 +104,7 @@ class TraktServiceImpl(
         }.body()
 
     override suspend fun getFollowedList(
-        listId: Int,
+        listId: Long,
         userSlug: String
     ): List<TraktFollowedShowResponse> =
         httpClient.get("users/$userSlug/lists/$listId/items/shows") {
@@ -116,14 +116,14 @@ class TraktServiceImpl(
             parameter("sort_by", "added")
         }.body()
 
-    override suspend fun addShowToWatchList(showId: Int): TraktAddShowToListResponse =
+    override suspend fun addShowToWatchList(showId: Long): TraktAddShowToListResponse =
         httpClient.post("sync/watchlist") {
             setBody(
                 TraktAddShowRequest(
                     shows = listOf(
                         TraktShow(
                             ids = TraktShowIds(
-                                traktId = showId
+                                traktId = showId.toInt()
                             )
                         )
                     )
@@ -131,7 +131,7 @@ class TraktServiceImpl(
             )
         }.body()
 
-    override suspend fun removeShowFromWatchList(showId: Int): TraktAddRemoveShowFromListResponse =
+    override suspend fun removeShowFromWatchList(showId: Long): TraktAddRemoveShowFromListResponse =
         httpClient.post("sync/watchlist/remove") {
             contentType(ContentType.Application.Json)
             setBody(
@@ -139,7 +139,7 @@ class TraktServiceImpl(
                     shows = listOf(
                         TraktShow(
                             ids = TraktShowIds(
-                                traktId = showId
+                                traktId = showId.toInt()
                             )
                         )
                     )
@@ -149,8 +149,8 @@ class TraktServiceImpl(
 
     override suspend fun addShowToList(
         userSlug: String,
-        listId: Int,
-        traktShowId: Int
+        listId: Long,
+        traktShowId: Long
     ): TraktAddShowToListResponse =
         httpClient.post("users/$userSlug/lists/$listId/items") {
             setBody(
@@ -158,7 +158,7 @@ class TraktServiceImpl(
                     shows = listOf(
                         TraktShow(
                             ids = TraktShowIds(
-                                traktId = traktShowId
+                                traktId = traktShowId.toInt()
                             )
                         )
                     )
@@ -168,8 +168,8 @@ class TraktServiceImpl(
 
     override suspend fun deleteShowFromList(
         userSlug: String,
-        listId: Int,
-        traktShowId: Int
+        listId: Long,
+        traktShowId: Long
     ): TraktAddRemoveShowFromListResponse =
         httpClient.post("users/$userSlug/lists/$listId/items/remove") {
             contentType(ContentType.Application.Json)
@@ -177,14 +177,14 @@ class TraktServiceImpl(
                 TraktAddShowRequest(
                     shows = listOf(
                         TraktShow(
-                            ids = TraktShowIds(traktId = traktShowId)
+                            ids = TraktShowIds(traktId = traktShowId.toInt())
                         )
                     )
                 )
             )
         }.body()
 
-    override suspend fun getTrendingShows(page: Int): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
+    override suspend fun getTrendingShows(page: Long): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -196,7 +196,7 @@ class TraktServiceImpl(
         }
 
     override suspend fun getRecommendedShows(
-        page: Int,
+        page: Long,
         period: String
     ): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
         httpClient.safeRequest {
@@ -209,7 +209,7 @@ class TraktServiceImpl(
             }
         }
 
-    override suspend fun getAnticipatedShows(page: Int): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
+    override suspend fun getAnticipatedShows(page: Long): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -220,7 +220,7 @@ class TraktServiceImpl(
             }
         }
 
-    override suspend fun getPopularShows(page: Int): ApiResponse<List<TraktShowResponse>, ErrorResponse> =
+    override suspend fun getPopularShows(page: Long): ApiResponse<List<TraktShowResponse>, ErrorResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -231,7 +231,7 @@ class TraktServiceImpl(
             }
         }
 
-    override suspend fun getSimilarShows(traktId: Int): ApiResponse<List<TraktShowResponse>, ErrorResponse> =
+    override suspend fun getSimilarShows(traktId: Long): ApiResponse<List<TraktShowResponse>, ErrorResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -240,7 +240,7 @@ class TraktServiceImpl(
             }
         }
 
-    override suspend fun getShowSeasons(traktId: Int): ApiResponse<List<TraktSeasonsResponse>, ErrorResponse> =
+    override suspend fun getShowSeasons(traktId: Long): ApiResponse<List<TraktSeasonsResponse>, ErrorResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -250,7 +250,7 @@ class TraktServiceImpl(
         }
 
     override suspend fun getSeasonEpisodes(
-        traktId: Int
+        traktId: Long
     ): ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse> =
         httpClient.safeRequest {
             url {
@@ -260,7 +260,7 @@ class TraktServiceImpl(
             }
         }
 
-    override suspend fun getSeasonDetails(traktId: Int): ApiResponse<TraktShowResponse, ErrorResponse> =
+    override suspend fun getSeasonDetails(traktId: Long): ApiResponse<TraktShowResponse, ErrorResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get

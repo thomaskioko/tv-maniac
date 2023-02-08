@@ -84,8 +84,8 @@ private const val MinContrastOfPrimaryVsSurface = 3f
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverViewModel,
-    openShowDetails: (showId: Int) -> Unit,
-    moreClicked: (showType: Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    moreClicked: (showType: Long) -> Unit,
 ) {
 
     val scaffoldState = rememberScaffoldState()
@@ -106,8 +106,8 @@ fun DiscoverScreen(
 private fun DiscoverShows(
     scaffoldState: ScaffoldState,
     showsState: ShowsState,
-    openShowDetails: (showId: Int) -> Unit,
-    moreClicked: (showType: Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    moreClicked: (showType: Long) -> Unit,
     reloadCategory: (ShowsAction) -> Unit,
     onRetry: () -> Unit,
 ) {
@@ -136,9 +136,9 @@ private fun DiscoverShows(
 private fun DiscoverViewScrollingContent(
     contentPadding: PaddingValues,
     state: ShowsLoaded,
-    openShowDetails: (showId: Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
     reloadCategory: (ShowsAction) -> Unit,
-    moreClicked: (showType: Int) -> Unit
+    moreClicked: (showType: Long) -> Unit
 ) {
     LazyColumn(
         contentPadding = contentPadding.copy(copyTop = false),
@@ -266,7 +266,7 @@ private fun DiscoverViewScrollingContent(
 @Composable
 fun FeaturedItems(
     showList: List<TvShow>,
-    onItemClicked: (Int) -> Unit,
+    onItemClicked: (Long) -> Unit,
 ) {
 
     val surfaceColor = grey900
@@ -318,7 +318,7 @@ fun FeaturedHorizontalPager(
     list: List<TvShow>,
     pagerState: PagerState,
     dominantColorState: DominantColorState,
-    onClick: (Int) -> Unit
+    onClick: (Long) -> Unit
 ) {
 
     val selectedImageUrl = list.getOrNull(pagerState.currentPage)
@@ -393,8 +393,8 @@ fun FeaturedHorizontalPager(
 private fun DisplayShowData(
     category: ShowCategory,
     tvShows: List<TvShow>,
-    onItemClicked: (Int) -> Unit,
-    moreClicked: (Int) -> Unit,
+    onItemClicked: (Long) -> Unit,
+    moreClicked: (Long) -> Unit,
 ) {
 
     AnimatedVisibility(visible = tvShows.isNotEmpty()) {

@@ -16,6 +16,6 @@ class FakeSimilarShowsRepository : SimilarShowsRepository {
         similarShowsResult = flow { emit(result) }
     }
 
-    override fun observeSimilarShows(traktId: Int): Flow<Either<Failure, List<SelectSimilarShows>>> =
+    override fun observeSimilarShows(traktId: Long): Flow<Either<Failure, List<SelectSimilarShows>>> =
         similarShowsResult
 }

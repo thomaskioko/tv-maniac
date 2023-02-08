@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface TrailerRepository {
     fun isWebViewInstalled(): Flow<Boolean>
-    fun observeTrailersByShowId(traktId: Int): Flow<Either<Failure, List<Trailers>>>
+    fun observeTrailersByShowId(traktId: Long): Flow<Either<Failure, List<Trailers>>>
 }

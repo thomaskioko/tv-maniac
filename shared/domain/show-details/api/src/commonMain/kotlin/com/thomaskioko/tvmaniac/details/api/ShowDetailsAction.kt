@@ -7,13 +7,13 @@ object WebViewError : ShowDetailsAction
 
 object DismissWebViewError : ShowDetailsAction
 
-data class ReloadShow(val traktId: Int) : ShowDetailsAction
+data class ReloadShow(val traktId: Long) : ShowDetailsAction
 
 data class LoadShowDetails(
-    val traktId: Int
+    val traktId: Long
 ) : ShowDetailsAction
 
 data class FollowShow(
-    val traktId: Int,
+    val traktId: Long,
     val addToWatchList: Boolean,
 ) : ShowDetailsAction

@@ -1,5 +1,7 @@
+import kotlin.Boolean;
+
 CREATE TABLE followed_shows (
-id INTEGER AS Int PRIMARY KEY,
+id INTEGER  PRIMARY KEY,
 synced INTEGER AS Boolean NOT NULL DEFAULT 0,
 created_at INTEGER NOT NULL,
 FOREIGN KEY (id) REFERENCES show(trakt_id) ON DELETE CASCADE

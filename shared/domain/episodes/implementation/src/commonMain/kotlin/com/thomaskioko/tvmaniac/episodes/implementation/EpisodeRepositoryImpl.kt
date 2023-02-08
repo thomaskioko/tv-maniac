@@ -14,7 +14,7 @@ class EpisodeRepositoryImpl(
     private val episodeImageCache: EpisodeImageCache,
 ) : EpisodeRepository {
 
-    override suspend fun updateEpisodeArtWork(showId: Int) {
+    override suspend fun updateEpisodeArtWork(showId: Long) {
         episodesCache.observeEpisodeArtByShowId(showId)
             .forEach { episode ->
 
@@ -22,7 +22,7 @@ class EpisodeRepositoryImpl(
                     val response = tmdbService.getEpisodeDetails(
                         tmdbShow = tmdbId,
                         ssnNumber = episode.season_number!!,
-                        epNumber = episode.episode_number.toInt()
+                        epNumber = episode.episode_number.toLong()
                     )
 
                     when (response) {
@@ -35,7 +35,7 @@ class EpisodeRepositoryImpl(
                             episodeImageCache.insert(
                                 EpisodeImage(
                                     trakt_id = episode.id,
-                                    tmdb_id = response.body.id,
+                                    tmdb_id = response.body.id.toLong(),
                                     image_url = response.body.still_path
                                 )
                             )

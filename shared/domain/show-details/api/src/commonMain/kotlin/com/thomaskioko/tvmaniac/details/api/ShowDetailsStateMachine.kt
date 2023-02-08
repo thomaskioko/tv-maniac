@@ -33,7 +33,7 @@ class ShowDetailsStateMachine constructor(
     initialState = ShowDetailsState.Loading
 ) {
 
-    private var showId: MutableStateFlow<Int> = MutableStateFlow(0)
+    private var showId: MutableStateFlow<Long> = MutableStateFlow(0)
 
     init {
         spec {
@@ -185,7 +185,7 @@ class ShowDetailsStateMachine constructor(
     }
 
     private suspend fun loadSeasons(
-        showId: Int,
+        showId: Long,
         state: State<ShowDetailsLoaded>
     ): ChangedState<ShowDetailsState> {
         var nextState: ChangedState<ShowDetailsState> = state.noChange()
@@ -214,7 +214,7 @@ class ShowDetailsStateMachine constructor(
     }
 
     private suspend fun loadTrailers(
-        showId: Int,
+        showId: Long,
         state: State<ShowDetailsLoaded>
     ): ChangedState<ShowDetailsState> {
         var nextState: ChangedState<ShowDetailsState> = state.noChange()
@@ -250,7 +250,7 @@ class ShowDetailsStateMachine constructor(
     }
 
     private suspend fun loadSimilarShows(
-        showId: Int,
+        showId: Long,
         state: State<ShowDetailsLoaded>
     ): ChangedState<ShowDetailsState> {
         var nextState: ChangedState<ShowDetailsState> = state.noChange()

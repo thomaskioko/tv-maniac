@@ -54,10 +54,10 @@ class FakeTraktShowRepository : TraktShowRepository {
 
     override fun getFollowedShows(): List<SelectFollowedShows> = cachedShowResult
 
-    override fun observeShow(traktId: Int): Flow<Either<Failure, SelectByShowId>> = showResult
+    override fun observeShow(traktId: Long): Flow<Either<Failure, SelectByShowId>> = showResult
 
     override fun observeCachedShows(
-        categoryId: Int
+        categoryId: Long
     ): Flow<Either<Failure, List<SelectShowsByCategory>>> = featuredResult
 
     override fun fetchTrendingShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
@@ -84,7 +84,7 @@ class FakeTraktShowRepository : TraktShowRepository {
     override fun observeFeaturedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         featuredResult
 
-    override suspend fun updateFollowedShow(traktId: Int, addToWatchList: Boolean) {}
+    override suspend fun updateFollowedShow(traktId: Long, addToWatchList: Boolean) {}
 
     override suspend fun fetchTraktWatchlistShows() {}
 

@@ -49,7 +49,7 @@ class FakeTraktProfileRepository : TraktProfileRepository {
         )
 
     override fun observeUpdateFollowedShow(
-        traktId: Int,
+        traktId: Long,
         addToWatchList: Boolean
     ): Flow<Either<Failure, Unit>> = flowOf(Either.Right(Unit))
 }

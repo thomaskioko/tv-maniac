@@ -14,7 +14,7 @@ class ShowDetailNavigationFactory @Inject constructor() : ComposeNavigationFacto
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
         builder.viewModelComposable<ShowDetailsViewModel>(
             arguments = listOf(
-                navArgument("tvShowId") { type = NavType.IntType }
+                navArgument("tvShowId") { type = NavType.LongType }
             ),
             route = "${NavigationScreen.ShowDetailsNavScreen.route}/{tvShowId}",
             content = {

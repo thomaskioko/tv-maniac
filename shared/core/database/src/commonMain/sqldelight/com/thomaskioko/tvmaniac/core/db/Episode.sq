@@ -1,12 +1,12 @@
 CREATE TABLE episode (
-id INTEGER AS Int NOT NULL PRIMARY KEY,
-season_id INTEGER AS Int NOT NULL,
-tmdb_id INTEGER AS Int,
+id INTEGER NOT NULL PRIMARY KEY,
+season_id INTEGER  NOT NULL,
+tmdb_id INTEGER,
 title TEXT NOT NULL,
 overview TEXT NOT NULL,
 ratings REAL NOT NULL,
-runtime INTEGER AS Int NOT NULL,
-votes INTEGER AS Int NOT NULL,
+runtime INTEGER NOT NULL,
+votes INTEGER NOT NULL,
 episode_number TEXT NOT NULL,
 FOREIGN KEY (season_id) REFERENCES season(id)
 );

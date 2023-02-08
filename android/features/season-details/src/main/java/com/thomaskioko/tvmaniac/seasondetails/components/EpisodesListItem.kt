@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.seasondetails
+package com.thomaskioko.tvmaniac.seasondetails.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
@@ -33,11 +33,12 @@ import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.api.model.Episode
+import com.thomaskioko.tvmaniac.seasondetails.episode
 
 @Composable
 fun EpisodeListItem(
     episode: Episode,
-    onEpisodeClicked: (Int) -> Unit = {}
+    onEpisodeClicked: (Long) -> Unit = {}
 ) {
 
     ColumnSpacer(8)

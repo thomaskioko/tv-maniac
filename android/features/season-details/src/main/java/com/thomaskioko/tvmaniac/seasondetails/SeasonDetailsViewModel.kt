@@ -19,7 +19,7 @@ class SeasonDetailsViewModel @Inject constructor(
     private val stateMachine: SeasonDetailsStateMachine
 ) : ViewModel() {
 
-    private val showId: Int = savedStateHandle["showId"]!!
+    private val showId: Long = savedStateHandle["showId"]!!
 
     val state: MutableStateFlow<SeasonDetailsState> = MutableStateFlow(Loading)
 

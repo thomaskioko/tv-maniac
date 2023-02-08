@@ -5,7 +5,7 @@ sealed interface TrailersAction
 object ReloadTrailers: TrailersAction
 
 data class LoadTrailers(
-    val showId: Int,
+    val showId: Long,
     val trailerId: String,
 ) : TrailersAction
 

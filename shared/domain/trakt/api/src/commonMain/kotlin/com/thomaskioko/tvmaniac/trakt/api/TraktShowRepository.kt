@@ -13,9 +13,9 @@ interface TraktShowRepository {
 
     fun getFollowedShows(): List<SelectFollowedShows>
 
-    fun observeShow(traktId: Int): Flow<Either<Failure, SelectByShowId>>
+    fun observeShow(traktId: Long): Flow<Either<Failure, SelectByShowId>>
 
-    fun observeCachedShows(categoryId: Int): Flow<Either<Failure, List<SelectShowsByCategory>>>
+    fun observeCachedShows(categoryId: Long): Flow<Either<Failure, List<SelectShowsByCategory>>>
 
     fun fetchTrendingShows(): Flow<Either<Failure, List<SelectShowsByCategory>>>
 
@@ -33,7 +33,7 @@ interface TraktShowRepository {
 
     fun observeFeaturedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>>
 
-    suspend fun updateFollowedShow(traktId: Int, addToWatchList: Boolean)
+    suspend fun updateFollowedShow(traktId: Long, addToWatchList: Boolean)
 
     suspend fun fetchTraktWatchlistShows()
 

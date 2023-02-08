@@ -14,7 +14,7 @@ class ShowGridViewModel @Inject constructor(
     private val stateMachine: GridStateMachine
 ) : ViewModel() {
 
-    val showType: Int = savedStateHandle["showType"]!!
+    val showType: Long = savedStateHandle["showType"]!!
 
     val state: MutableStateFlow<GridState> = MutableStateFlow(LoadingContent)
 

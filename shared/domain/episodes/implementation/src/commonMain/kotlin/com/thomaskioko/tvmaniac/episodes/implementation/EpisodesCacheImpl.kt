@@ -31,7 +31,7 @@ class EpisodesCacheImpl(
         list.map { insert(it) }
     }
 
-    override fun observeEpisodeArtByShowId(id: Int): List<EpisodeArtByShowId> =
+    override fun observeEpisodeArtByShowId(id: Long): List<EpisodeArtByShowId> =
         episodeQueries.episodeArtByShowId(id)
             .executeAsList()
 }

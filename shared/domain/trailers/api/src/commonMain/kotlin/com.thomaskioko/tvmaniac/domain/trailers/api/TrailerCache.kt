@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shared.domain.trailers.api
+package com.thomaskioko.tvmaniac.domain.trailers.api
 
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +9,6 @@ interface TrailerCache {
 
     fun insert(trailerList: List<Trailers>)
 
-    fun getTrailersByShowId(showId: Int): Flow<List<Trailers>>
+    fun getTrailersByShowId(showId: Long): Flow<List<Trailers>>
 
 }

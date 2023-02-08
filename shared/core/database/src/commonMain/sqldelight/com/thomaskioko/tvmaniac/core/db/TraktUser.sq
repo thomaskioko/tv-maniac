@@ -1,3 +1,5 @@
+import kotlin.Boolean;
+
 CREATE TABLE trakt_user (
 slug TEXT NOT NULL PRIMARY KEY,
 user_name Text NOT NULL,

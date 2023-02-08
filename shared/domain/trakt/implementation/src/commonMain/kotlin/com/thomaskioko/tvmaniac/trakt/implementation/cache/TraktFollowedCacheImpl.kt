@@ -1,16 +1,17 @@
 package com.thomaskioko.tvmaniac.trakt.implementation.cache
 
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToList
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlin.coroutines.CoroutineContext
 
 class TraktFollowedCacheImpl(
-    private val database: TvManiacDatabase
+    private val database: TvManiacDatabase,
+    private val coroutineContext: CoroutineContext
 ) : TraktFollowedCache {
 
     override fun insert(followedShow: Followed_shows) {
@@ -38,16 +39,16 @@ class TraktFollowedCacheImpl(
     override fun observeFollowedShows(): Flow<List<SelectFollowedShows>> =
         database.followedShowsQueries.selectFollowedShows()
             .asFlow()
-            .mapToList()
+            .mapToList(coroutineContext)
 
-    override fun updateShowSyncState(traktId: Int) {
+    override fun updateShowSyncState(traktId: Long) {
         database.followedShowsQueries.updateFollowedState(
             id = traktId,
             synced = true
         )
     }
 
-    override fun removeShow(traktId: Int) {
+    override fun removeShow(traktId: Long) {
         database.followedShowsQueries.removeShow(traktId)
     }
 }

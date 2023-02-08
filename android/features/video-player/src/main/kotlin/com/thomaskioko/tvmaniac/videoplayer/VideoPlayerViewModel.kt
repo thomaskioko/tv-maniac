@@ -19,7 +19,7 @@ class VideoPlayerViewModel @Inject constructor(
     private val stateMachine: TrailersStateMachine
 ) : ViewModel() {
 
-    private val showId: Int = savedStateHandle["showId"]!!
+    private val showId: Long = savedStateHandle["showId"]!!
     private val videoKey: String? = savedStateHandle["videoKey"]
 
     val state: MutableStateFlow<TrailersState> = MutableStateFlow(LoadingTrailers)

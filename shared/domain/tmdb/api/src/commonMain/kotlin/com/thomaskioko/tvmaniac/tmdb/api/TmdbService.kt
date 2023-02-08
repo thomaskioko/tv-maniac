@@ -8,13 +8,13 @@ import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
 
 interface TmdbService {
 
-    suspend fun getTvShowDetails(showId: Int): ApiResponse<ShowDetailResponse, ErrorResponse>
+    suspend fun getTvShowDetails(showId: Long): ApiResponse<ShowDetailResponse, ErrorResponse>
 
     suspend fun getEpisodeDetails(
-        tmdbShow: Int,
-        ssnNumber: Int,
-        epNumber: Int
+        tmdbShow: Long,
+        ssnNumber: Long,
+        epNumber: Long
     ): ApiResponse<EpisodesResponse, ErrorResponse>
 
-    suspend fun getTrailers(showId: Int): ApiResponse<TrailersResponse, ErrorResponse>
+    suspend fun getTrailers(showId: Long): ApiResponse<TrailersResponse, ErrorResponse>
 }

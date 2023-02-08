@@ -39,7 +39,7 @@ import com.thomaskioko.tvmaniac.shows.api.model.TvShow
 @Composable
 fun ShowsGridScreen(
     viewModel: ShowGridViewModel,
-    openShowDetails: (showId: Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
     navigateUp: () -> Unit
 ) {
 
@@ -84,7 +84,7 @@ fun ShowsGridScreen(
 fun ShowsGridContent(
     paddingValues: PaddingValues,
     list: List<TvShow>,
-    onItemClicked: (Int) -> Unit,
+    onItemClicked: (Long) -> Unit,
 ) {
 
     val listState = rememberLazyGridState()

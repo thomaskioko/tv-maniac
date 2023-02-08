@@ -58,7 +58,7 @@ val errorShowResult = ShowResult(
     )
 )
 
-fun categoryResult(categoryId: Int) = listOf(
+fun categoryResult(categoryId: Long) = listOf(
     SelectShowsByCategory(
         trakt_id = 84958,
         tmdb_id = 849583,

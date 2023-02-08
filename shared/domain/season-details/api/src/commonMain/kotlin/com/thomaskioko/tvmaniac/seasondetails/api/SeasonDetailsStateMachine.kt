@@ -11,7 +11,7 @@ class SeasonDetailsStateMachine constructor(
     private val episodeRepository: EpisodeRepository,
 ) : FlowReduxStateMachine<SeasonDetailsState, SeasonDetailsAction>(initialState = Loading) {
 
-    private var showId: MutableStateFlow<Int> = MutableStateFlow(0)
+    private var showId: MutableStateFlow<Long> = MutableStateFlow(0)
 
     init {
         spec {

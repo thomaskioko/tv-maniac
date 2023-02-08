@@ -8,7 +8,7 @@ import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.core.util.network.Failure
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResult
 import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerRepository
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerCache
+import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import com.thomaskioko.tvmaniac.tmdb.api.model.ErrorResponse
@@ -26,7 +26,7 @@ class TrailerRepositoryImpl(
 
     override fun isWebViewInstalled(): Flow<Boolean> = appUtils.isYoutubePlayerInstalled()
 
-    override fun observeTrailersByShowId(traktId: Int): Flow<Either<Failure, List<Trailers>>> =
+    override fun observeTrailersByShowId(traktId: Long): Flow<Either<Failure, List<Trailers>>> =
         networkBoundResult(
             query = { trailerCache.getTrailersByShowId(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
@@ -38,7 +38,7 @@ class TrailerRepositoryImpl(
             coroutineDispatcher = dispatcher
         )
 
-    private fun ApiResponse<TrailersResponse, ErrorResponse>.mapAndCache(showId: Int) {
+    private fun ApiResponse<TrailersResponse, ErrorResponse>.mapAndCache(showId: Long) {
         when (this) {
             is ApiResponse.Error -> {
                 Logger.withTag("mapResponse")
