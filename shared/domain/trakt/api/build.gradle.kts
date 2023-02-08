@@ -1,25 +1,27 @@
-import util.libs
-
 plugins {
-    `kmm-domain-plugin`
-    kotlin("plugin.serialization") version ("1.6.10")
+    id("tvmaniac.kmm.api")
+    alias(libs.plugins.serialization)
+}
 
+kotlin {
+    android()
+    ios()
+
+    sourceSets {
+        sourceSets["androidMain"].dependencies {
+            implementation(project(":shared:core:util"))
+            implementation(libs.inject)
+            implementation(libs.appauth)
+            implementation(libs.androidx.activity)
+            implementation(libs.androidx.core)
+        }
+
+        sourceSets["commonMain"].dependencies {
+            implementation(libs.ktor.serialization)
+        }
+    }
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.trackt.auth.api"
-}
-
-dependencies {
-    commonMainImplementation(project(":shared:core:util"))
-    commonMainImplementation(project(":shared:core:database"))
-    commonMainImplementation(libs.ktor.serialization)
-
-
-    androidMainImplementation(project(":shared:core:util"))
-    androidMainImplementation(libs.inject)
-    androidMainImplementation(libs.appauth)
-    androidMainImplementation(libs.androidx.activity)
-    androidMainImplementation(libs.androidx.core)
-
 }

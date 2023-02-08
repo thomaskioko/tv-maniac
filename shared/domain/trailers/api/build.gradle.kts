@@ -1,24 +1,29 @@
-import util.libs
+import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
 
 plugins {
-    `kmm-domain-plugin`
+    id("tvmaniac.kmm.api")
+}
+
+kotlin {
+    android()
+    ios()
+
+    sourceSets {
+        sourceSets["commonMain"].dependencies {
+            api(libs.flowredux)
+        }
+
+        sourceSets["commonTest"].dependencies {
+            implementation(kotlin("test"))
+            implementation(project(":shared:domain:trailers:testing"))
+
+            implementation(libs.testing.coroutines.test)
+            implementation(libs.testing.kotest.assertions)
+            implementation(libs.testing.turbine)
+        }
+    }
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.shared.domain.trailers.api"
-}
-
-dependencies {
-    commonMainApi(project(":shared:core:util"))
-    commonMainApi(project(":shared:core:database"))
-    commonMainApi(libs.flowredux)
-
-    commonMainImplementation(libs.coroutines.core)
-
-    commonTestImplementation(kotlin("test"))
-    commonTestImplementation(project(":shared:domain:trailers:testing"))
-
-    commonTestImplementation(libs.testing.coroutines.test)
-    commonTestImplementation(libs.testing.kotest.assertions)
-    commonTestImplementation(libs.testing.turbine)
 }

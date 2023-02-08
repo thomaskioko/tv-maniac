@@ -1,17 +1,23 @@
-import util.libs
-
 plugins {
-    `kmm-domain-plugin`
+    id("tvmaniac.kmm.library")
+}
+
+
+kotlin {
+    android()
+    ios()
+
+    sourceSets {
+        sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:core:util"))
+            implementation(project(":shared:core:database"))
+            implementation(project(":shared:domain:season-details:api"))
+
+            implementation(libs.coroutines.core)
+        }
+    }
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.episodes.testing"
-}
-
-dependencies {
-    commonMainImplementation(project(":shared:core:util"))
-    commonMainImplementation(project(":shared:core:database"))
-    commonMainImplementation(project(":shared:domain:season-details:api"))
-
-    commonMainImplementation(libs.coroutines.core)
 }

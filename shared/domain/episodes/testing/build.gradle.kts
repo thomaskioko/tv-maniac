@@ -1,17 +1,24 @@
-import util.libs
+import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
 
 plugins {
-    `kmm-domain-plugin`
+    id("tvmaniac.kmm.library")
+}
+
+kotlin {
+    android()
+    ios()
+
+    sourceSets {
+        sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:core:util"))
+            implementation(project(":shared:core:database"))
+            implementation(project(":shared:domain:episodes:api"))
+
+            implementation(libs.coroutines.core)
+        }
+    }
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.episodes.testing"
-}
-
-dependencies {
-    commonMainImplementation(project(":shared:core:util"))
-    commonMainImplementation(project(":shared:core:database"))
-    commonMainImplementation(project(":shared:domain:episodes:api"))
-
-    commonMainImplementation(libs.coroutines.core)
 }

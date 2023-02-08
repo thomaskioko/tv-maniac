@@ -1,35 +1,38 @@
-import util.libs
-
 plugins {
-    `kmm-domain-plugin`
+    id("tvmaniac.kmm.api")
+}
+
+
+
+kotlin {
+    android()
+    ios()
+
+    sourceSets {
+
+        sourceSets["commonMain"].dependencies {
+            api(libs.flowredux)
+
+            implementation(project(":shared:domain:season-details:api"))
+            implementation(project(":shared:domain:similar:api"))
+            implementation(project(":shared:domain:trailers:api"))
+            implementation(project(":shared:domain:trakt:api"))
+        }
+
+        sourceSets["commonTest"].dependencies {
+            implementation(project(":shared:domain:trakt:testing"))
+            implementation(project(":shared:domain:similar:testing"))
+            implementation(project(":shared:domain:season-details:testing"))
+            implementation(project(":shared:domain:trailers:testing"))
+            implementation(kotlin("test"))
+
+            implementation(libs.testing.turbine)
+            implementation(libs.testing.coroutines.test)
+            implementation(libs.testing.kotest.assertions)
+        }
+    }
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.shared.domain.details.api"
-}
-
-dependencies {
-
-    commonMainApi(libs.flowredux)
-    commonMainApi(project(":shared:core:database"))
-
-    commonMainImplementation(project(":shared:core:util"))
-    commonMainImplementation(project(":shared:domain:season-details:api"))
-    commonMainImplementation(project(":shared:domain:similar:api"))
-    commonMainImplementation(project(":shared:domain:trailers:api"))
-    commonMainImplementation(project(":shared:domain:trakt:api"))
-
-    commonMainImplementation(libs.coroutines.core)
-    commonMainImplementation(libs.kermit)
-
-    commonTestImplementation(project(":shared:domain:trakt:testing"))
-    commonTestImplementation(project(":shared:domain:similar:testing"))
-    commonTestImplementation(project(":shared:domain:season-details:testing"))
-    commonTestImplementation(project(":shared:domain:trailers:testing"))
-    commonTestImplementation(kotlin("test"))
-
-    commonTestImplementation(libs.testing.turbine)
-    commonTestImplementation(libs.testing.coroutines.test)
-    commonTestImplementation(libs.testing.kotest.assertions)
-
 }

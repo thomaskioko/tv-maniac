@@ -1,24 +1,30 @@
-import util.libs
-
 plugins {
-    `kmm-domain-plugin`
+    id("tvmaniac.kmm.api")
+}
+
+
+kotlin {
+    android()
+    ios()
+
+    sourceSets {
+
+        sourceSets["commonMain"].dependencies {
+            api(libs.flowredux)
+
+        }
+
+        sourceSets["commonTest"].dependencies {
+            implementation(kotlin("test"))
+
+            implementation(libs.testing.coroutines.test)
+            implementation(libs.testing.kotest.assertions)
+            implementation(libs.testing.turbine)
+        }
+
+    }
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.shared.domain.settings.api"
-}
-
-dependencies {
-    commonMainApi(project(":shared:core:util"))
-    commonMainApi(project(":shared:core:database"))
-    commonMainApi(libs.flowredux)
-
-    commonMainImplementation(project(":shared:core:util"))
-    commonMainImplementation(libs.coroutines.core)
-
-    commonTestImplementation(kotlin("test"))
-
-    commonTestImplementation(libs.testing.coroutines.test)
-    commonTestImplementation(libs.testing.kotest.assertions)
-    commonTestImplementation(libs.testing.turbine)
 }
