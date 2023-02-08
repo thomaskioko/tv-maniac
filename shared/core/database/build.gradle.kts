@@ -8,15 +8,6 @@ kotlin {
     android()
     ios()
 
-    sourceSets.all {
-        languageSettings.apply {
-            optIn("kotlin.RequiresOptIn")
-            optIn("kotlin.time.ExperimentalTime")
-            optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
-            optIn("kotlinx.coroutines.FlowPreview")
-        }
-    }
-
     sourceSets {
 
         sourceSets["commonMain"].dependencies {

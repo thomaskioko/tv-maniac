@@ -14,15 +14,6 @@ kotlin {
     android()
     ios()
 
-    sourceSets.all {
-        languageSettings.apply {
-            optIn("kotlin.RequiresOptIn")
-            optIn("kotlin.time.ExperimentalTime")
-            optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
-            optIn("kotlinx.coroutines.FlowPreview")
-        }
-    }
-
     sourceSets {
         sourceSets["androidMain"].dependencies {
             implementation(project(":shared:core:util"))
@@ -39,10 +30,6 @@ kotlin {
                     libs.versions.dagger.get().toString()
                 )
             )
-        }
-
-        sourceSets["androidTest"].dependencies {
-
         }
 
         sourceSets["commonMain"].dependencies {

@@ -11,15 +11,6 @@ kotlin {
     android()
     ios()
 
-    sourceSets.all {
-        languageSettings.apply {
-            optIn("kotlin.RequiresOptIn")
-            optIn("kotlin.time.ExperimentalTime")
-            optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
-            optIn("kotlinx.coroutines.FlowPreview")
-        }
-    }
-
     sourceSets {
         sourceSets["androidMain"].dependencies {
             implementation(libs.datetime)
@@ -50,7 +41,6 @@ kotlin {
 
         sourceSets["commonTest"].dependencies {}
 
-        sourceSets["androidTest"].dependencies {}
     }
 }
 
