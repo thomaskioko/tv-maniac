@@ -6,6 +6,7 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 
+@Suppress("UnstableApiUsage")
 class FeaturePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
@@ -15,7 +16,7 @@ class FeaturePlugin : Plugin<Project> {
             }
             extensions.configure<LibraryExtension> {
                 defaultConfig {
-
+                    manifestPlaceholders["appAuthRedirectScheme"] = "empty"
                 }
             }
 

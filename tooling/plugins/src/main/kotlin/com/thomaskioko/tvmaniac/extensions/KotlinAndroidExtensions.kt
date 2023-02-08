@@ -10,6 +10,7 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
+@Suppress("UnstableApiUsage")
 internal fun Project.configureKotlinAndroid(
     commonExtension: CommonExtension<*, *, *, *>,
 ) {
@@ -18,6 +19,7 @@ internal fun Project.configureKotlinAndroid(
 
         defaultConfig {
             minSdk = 23
+            manifestPlaceholders["appAuthRedirectScheme"] = "empty"
         }
 
         compileOptions {
@@ -35,6 +37,7 @@ internal fun Project.configureKotlinAndroid(
             freeCompilerArgs = freeCompilerArgs + listOf(
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=androidx.lifecycle.compose.ExperimentalLifecycleComposeApi",
                 "-opt-in=kotlinx.coroutines.FlowPreview",
                 "-opt-in=kotlin.Experimental",
             )
