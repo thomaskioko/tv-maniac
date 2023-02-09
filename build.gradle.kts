@@ -55,6 +55,7 @@ subprojects {
                 "-opt-in=kotlin.OptIn",
                 "-opt-in=kotlin.time.ExperimentalTime",
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=kotlinx.coroutines.FlowPreview",
                 "-opt-in=androidx.lifecycle.compose.ExperimentalLifecycleComposeApi",
                 "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
             )
