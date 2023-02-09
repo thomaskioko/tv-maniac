@@ -38,7 +38,6 @@ kotlin {
             implementation(libs.testing.turbine)
             implementation(libs.testing.kotest.assertions)
             implementation(libs.testing.coroutines.test)
-            implementation(libs.testing.mockk.common)
         }
 
     }

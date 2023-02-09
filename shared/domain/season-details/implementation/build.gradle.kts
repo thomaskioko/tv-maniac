@@ -34,7 +34,6 @@ kotlin {
         sourceSets["commonTest"].dependencies {
             implementation(kotlin("test"))
             implementation(libs.testing.turbine)
-            implementation(libs.testing.mockk.common)
             implementation(libs.testing.kotest.assertions)
         }
 

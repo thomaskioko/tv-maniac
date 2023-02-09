@@ -34,7 +34,6 @@ kotlin {
             implementation(kotlin("test"))
             implementation(libs.testing.turbine)
             implementation(libs.testing.kotest.assertions)
-            implementation(libs.testing.mockk.common)
             implementation(libs.testing.coroutines.test)
         }
     }
