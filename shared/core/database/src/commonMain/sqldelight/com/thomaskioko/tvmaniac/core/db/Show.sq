@@ -1,18 +1,18 @@
 import kotlin.collections.List;
-
+import kotlin.String;
 
 CREATE TABLE show(
-trakt_id INTEGER AS Int NOT NULL PRIMARY KEY,
-tmdb_id INTEGER AS Int,
+trakt_id INTEGER NOT NULL PRIMARY KEY,
+tmdb_id INTEGER,
 title TEXT NOT NULL,
 overview TEXT NOT NULL,
 language TEXT,
 year TEXT NOT NULL,
 rating REAL NOT NULL,
 status TEXT NOT NULL,
-runtime INTEGER AS Int NOT NULL,
-votes INTEGER  AS Int NOT NULL,
-aired_episodes INTEGER AS Int DEFAULT NULL,
+runtime INTEGER NOT NULL,
+votes INTEGER NOT NULL,
+aired_episodes INTEGER DEFAULT NULL,
 genres TEXT AS List<String> NOT NULL
 );
 

@@ -1,46 +1,58 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
-import util.libs
+import org.jetbrains.kotlin.config.AnalysisFlags.optIn
+import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
 
 plugins {
-    `kmm-domain-plugin`
-    kotlin("plugin.serialization") version ("1.6.10")
-    kotlin("kapt")
-    id("dagger.hilt.android.plugin")
+    id("tvmaniac.kmm.impl")
     id("com.codingfeline.buildkonfig")
+    alias(libs.plugins.serialization)
+}
+
+kotlin {
+    android()
+    ios()
+
+    sourceSets {
+        sourceSets["androidMain"].dependencies {
+            implementation(project(":shared:core:util"))
+            implementation(project(":shared:core:network"))
+            implementation(libs.appauth)
+            implementation(libs.ktor.okhttp)
+            implementation(libs.hilt.android)
+            configurations["kapt"].dependencies.add(
+                org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
+                    "com.google.dagger",
+                    "hilt-android-compiler",
+                    libs.versions.dagger.get().toString()
+                )
+            )
+        }
+
+
+        sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:core:network"))
+            implementation(project(":shared:domain:trakt:api"))
+            implementation(project(":shared:domain:shows:api"))
+            implementation(libs.sqldelight.extensions)
+            implementation(libs.ktor.core)
+            implementation(libs.ktor.negotiation)
+            implementation(libs.ktor.logging)
+            implementation(libs.ktor.serialization.json)
+            implementation(libs.ktor.serialization)
+        }
+
+        sourceSets["iosMain"].dependencies {
+            implementation(project(":shared:core:network"))
+            implementation(project(":shared:domain:trakt:api"))
+            implementation(libs.ktor.logging)
+            implementation(libs.ktor.darwin)
+        }
+
+    }
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.trakt.auth.implementation"
-}
-
-dependencies {
-
-    androidMainImplementation(project(":shared:core:util"))
-    androidMainImplementation(project(":shared:core:network"))
-    androidMainImplementation(libs.appauth)
-    androidMainImplementation(libs.ktor.okhttp)
-    androidMainImplementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-
-    iosMainImplementation(project(":shared:core:network"))
-    iosMainImplementation(project(":shared:domain:trakt:api"))
-    iosMainImplementation(libs.ktor.logging)
-    iosMainImplementation(libs.ktor.darwin)
-
-    commonMainImplementation(project(":shared:core:database"))
-    commonMainImplementation(project(":shared:core:util"))
-    commonMainImplementation(project(":shared:domain:trakt:api"))
-    commonMainImplementation(project(":shared:domain:shows:api"))
-    commonMainImplementation(libs.squareup.sqldelight.extensions)
-    commonMainImplementation(libs.kermit)
-    commonMainImplementation(libs.koin)
-    commonMainImplementation(libs.ktor.core)
-    commonMainImplementation(libs.ktor.negotiation)
-    commonMainImplementation(libs.ktor.logging)
-    commonMainImplementation(libs.ktor.serialization.json)
-    commonMainImplementation(libs.ktor.serialization)
-
 }
 
 buildkonfig {

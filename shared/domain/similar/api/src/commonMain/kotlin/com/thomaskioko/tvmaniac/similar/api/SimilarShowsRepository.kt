@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface SimilarShowsRepository {
 
-    fun observeSimilarShows(traktId: Int): Flow<Either<Failure, List<SelectSimilarShows>>>
+    fun observeSimilarShows(traktId: Long): Flow<Either<Failure, List<SelectSimilarShows>>>
 }

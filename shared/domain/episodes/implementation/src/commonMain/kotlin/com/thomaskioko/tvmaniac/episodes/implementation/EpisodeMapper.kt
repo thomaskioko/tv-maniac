@@ -7,13 +7,13 @@ fun List<TraktSeasonEpisodesResponse>.toEpisodeCacheList(): List<EpisodeCache> {
     return flatMap { seasonResponse ->
         seasonResponse.episodes.map { episodeResponse ->
             EpisodeCache(
-                season_id = seasonResponse.ids.trakt,
-                id = seasonResponse.ids.trakt,
-                tmdb_id = episodeResponse.ids.tmdb,
+                season_id = seasonResponse.ids.trakt.toLong(),
+                id = seasonResponse.ids.trakt.toLong(),
+                tmdb_id = episodeResponse.ids.tmdb?.toLong(),
                 title = episodeResponse.title,
                 overview = episodeResponse.overview ?: "",
-                runtime = episodeResponse.runtime,
-                votes = episodeResponse.votes,
+                runtime = episodeResponse.runtime.toLong(),
+                votes = episodeResponse.votes.toLong(),
                 ratings = episodeResponse.ratings,
                 episode_number = episodeResponse.episodeNumber.toString().padStart(2, '0')
             )

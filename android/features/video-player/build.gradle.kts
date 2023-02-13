@@ -1,7 +1,5 @@
-import util.libs
-
 plugins {
-    `android-feature-plugin`
+    id("tvmaniac.android.feature")
 }
 
 android {
@@ -10,8 +8,6 @@ android {
 
 dependencies {
     api(project(":shared:domain:trailers:api"))
-
-    implementation(projects.android.core.compose)
 
     implementation(libs.youtubePlayer)
     implementation(libs.accompanist.insetsui)

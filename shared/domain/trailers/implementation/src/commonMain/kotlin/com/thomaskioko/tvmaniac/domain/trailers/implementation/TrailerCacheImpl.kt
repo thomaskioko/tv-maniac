@@ -1,14 +1,16 @@
 package com.thomaskioko.tvmaniac.domain.trailers.implementation
 
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToList
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerCache
+import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerCache
 import kotlinx.coroutines.flow.Flow
+import kotlin.coroutines.CoroutineContext
 
 class TrailerCacheImpl(
-    private val database: TvManiacDatabase
+    private val database: TvManiacDatabase,
+    private val coroutineContext: CoroutineContext
 ): TrailerCache {
 
     override fun insert(trailer: Trailers) {
@@ -27,9 +29,9 @@ class TrailerCacheImpl(
         trailerList.forEach { insert(it) }
     }
 
-    override fun getTrailersByShowId(showId: Int): Flow<List<Trailers>> {
+    override fun getTrailersByShowId(showId: Long): Flow<List<Trailers>> {
         return database.trailersQueries.selectByShowId(showId)
             .asFlow()
-            .mapToList()
+            .mapToList(coroutineContext)
     }
 }

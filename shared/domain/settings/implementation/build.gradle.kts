@@ -1,29 +1,45 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-import util.libs
-
 plugins {
-    `kmm-domain-plugin`
-    kotlin("kapt")
-    id("dagger.hilt.android.plugin")
+    id("tvmaniac.kmm.impl")
+}
+
+
+kotlin {
+    android()
+    ios()
+
+    sourceSets {
+        sourceSets["androidMain"].dependencies {
+            implementation(libs.hilt.android)
+            configurations["kapt"].dependencies.add(
+                org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
+                    "com.google.dagger",
+                    "hilt-android-compiler",
+                    libs.versions.dagger.get().toString()
+                )
+            )
+        }
+
+        sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:domain:settings:api"))
+            implementation(libs.coroutines.core)
+            implementation(libs.androidx.datastore.preference)
+        }
+
+        sourceSets["commonTest"].dependencies {
+            implementation(kotlin("test"))
+
+            implementation(libs.testing.coroutines.test)
+            implementation(libs.testing.kotest.assertions)
+            implementation(libs.testing.turbine)
+        }
+    }
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.shared.domain.settings"
-}
-
-dependencies {
-    androidMainImplementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-
-    commonMainImplementation(project(":shared:domain:settings:api"))
-    commonMainImplementation(libs.coroutines.core)
-    commonMainImplementation(libs.androidx.datastore.preference)
-    commonMainImplementation(libs.koin)
-
-    commonTestImplementation(kotlin("test"))
-
-    commonTestImplementation(libs.testing.coroutines.test)
-    commonTestImplementation(libs.testing.kotest.assertions)
-    commonTestImplementation(libs.testing.turbine)
-
+    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
 }

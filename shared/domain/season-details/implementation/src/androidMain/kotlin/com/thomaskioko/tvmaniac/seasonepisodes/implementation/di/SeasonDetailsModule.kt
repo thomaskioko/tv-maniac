@@ -44,8 +44,9 @@ object SeasonDetailsModule {
 
     @Singleton
     @Provides
-    fun provideTvShowSeasonCache(database: TvManiacDatabase): SeasonsCache {
-        return SeasonsCacheImpl(database)
-    }
+    fun provideTvShowSeasonCache(
+        database: TvManiacDatabase,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
+    ): SeasonsCache = SeasonsCacheImpl(database, ioDispatcher)
 
 }

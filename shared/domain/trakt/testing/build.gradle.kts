@@ -1,16 +1,23 @@
-import util.libs
+import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
 
 plugins {
-    `kmm-domain-plugin`
+    id("tvmaniac.kmm.library")
+}
+
+kotlin {
+    android()
+    ios()
+
+    sourceSets {
+        sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:core:util"))
+            implementation(project(":shared:domain:trakt:api"))
+            implementation(project(":shared:core:database"))
+            implementation(libs.coroutines.core)
+        }
+    }
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.trakt.testing"
-}
-
-dependencies {
-    commonMainImplementation(project(":shared:core:util"))
-    commonMainImplementation(project(":shared:domain:trakt:api"))
-    commonMainImplementation(project(":shared:core:database"))
-    commonMainImplementation(libs.coroutines.core)
 }

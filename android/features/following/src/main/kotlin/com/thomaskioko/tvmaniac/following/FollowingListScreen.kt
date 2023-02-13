@@ -34,7 +34,7 @@ import com.thomaskioko.tvmaniac.resources.R
 @Composable
 fun FollowingScreen(
     viewModel: FollowingViewModel,
-    openShowDetails: (showId: Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
 ) {
 
     val followedState by viewModel.state.collectAsStateWithLifecycle()
@@ -77,7 +77,7 @@ fun FollowingScreen(
 private fun FollowingGridContent(
     list: List<FollowedShow>,
     paddingValues: PaddingValues,
-    onItemClicked: (Int) -> Unit,
+    onItemClicked: (Long) -> Unit,
 ) {
     val listState = rememberLazyListState()
 

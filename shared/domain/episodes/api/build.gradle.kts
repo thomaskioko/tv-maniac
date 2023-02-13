@@ -1,15 +1,14 @@
-import util.libs
+import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
 
 plugins {
-    `kmm-domain-plugin`
+    id("tvmaniac.kmm.api")
+}
+
+kotlin {
+    android()
+    ios()
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.shared.domain.episodes.api"
-}
-
-dependencies {
-    commonMainApi(project(":shared:core:util"))
-    commonMainImplementation(project(":shared:core:database"))
-    commonMainImplementation(libs.coroutines.core)
 }

@@ -1,42 +1,54 @@
 
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
-import util.libs
+import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
 
 plugins {
-    `kmm-domain-plugin`
-    kotlin("plugin.serialization") version ("1.6.10")
-    kotlin("kapt")
-    id("com.codingfeline.buildkonfig")
-    id("dagger.hilt.android.plugin")
+    id("tvmaniac.kmm.impl")
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.buildkonfig)
+}
+
+kotlin {
+    android()
+    ios()
+
+    sourceSets {
+        sourceSets["androidMain"].dependencies {
+            implementation(project(":shared:core:network"))
+            implementation(libs.hilt.android)
+            configurations["kapt"].dependencies.add(
+                org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
+                    "com.google.dagger",
+                    "hilt-android-compiler",
+                    libs.versions.dagger.get().toString()
+                )
+            )
+        }
+
+        sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:domain:tmdb:api"))
+            implementation(libs.ktor.core)
+            implementation(libs.ktor.negotiation)
+            implementation(libs.ktor.logging)
+            implementation(libs.ktor.serialization.json)
+            implementation(libs.sqldelight.extensions)
+        }
+
+        sourceSets["commonTest"].dependencies {
+            implementation(libs.ktor.serialization)
+        }
+
+        sourceSets["iosMain"].dependencies {
+            implementation(project(":shared:core:network"))
+            implementation(libs.ktor.negotiation)
+            implementation(libs.ktor.logging)
+            implementation(libs.ktor.darwin)
+        }
+    }
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.tmdb.implementation"
-}
-
-dependencies {
-
-    androidMainImplementation(project(":shared:core:network"))
-    androidMainImplementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-
-    iosMainImplementation(project(":shared:core:network"))
-    iosMainImplementation(libs.ktor.negotiation)
-    iosMainImplementation(libs.ktor.logging)
-    iosMainImplementation(libs.ktor.darwin)
-
-    commonMainImplementation(project(":shared:core:util"))
-    commonMainImplementation(project(":shared:domain:tmdb:api"))
-    commonMainImplementation(libs.kermit)
-    commonMainImplementation(libs.koin)
-    commonMainImplementation(libs.ktor.core)
-    commonMainImplementation(libs.ktor.negotiation)
-    commonMainImplementation(libs.ktor.logging)
-    commonMainImplementation(libs.ktor.serialization.json)
-    commonMainImplementation(libs.squareup.sqldelight.extensions)
-
-    commonTestImplementation(libs.ktor.serialization)
-
 }
 
 buildkonfig {

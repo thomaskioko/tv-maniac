@@ -34,11 +34,12 @@ import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.compose.theme.yellow300
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetails
+import com.thomaskioko.tvmaniac.seasondetails.components.EpisodeListItem
 
 @Composable
 fun SeasonEpisodeList(
     season: SeasonDetails,
-    onEpisodeClicked: (Int) -> Unit = {},
+    onEpisodeClicked: (Long) -> Unit = {},
     index: Int,
     collapsedState: SnapshotStateList<Boolean>
 ) {

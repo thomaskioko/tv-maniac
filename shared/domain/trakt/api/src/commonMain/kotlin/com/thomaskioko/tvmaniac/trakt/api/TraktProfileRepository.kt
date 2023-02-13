@@ -15,6 +15,6 @@ interface TraktProfileRepository {
 
     fun observeCreateTraktList(userSlug: String): Flow<Either<Failure, Trakt_list>>
 
-    fun observeUpdateFollowedShow(traktId: Int, addToWatchList: Boolean): Flow<Either<Failure, Unit>>
+    fun observeUpdateFollowedShow(traktId: Long, addToWatchList: Boolean): Flow<Either<Failure, Unit>>
 
 }

@@ -1,14 +1,16 @@
 package com.thomaskioko.tvmaniac.trakt.implementation.cache
 
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToOne
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.db.Trakt_list
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
 import kotlinx.coroutines.flow.Flow
+import kotlin.coroutines.CoroutineContext
 
 class TraktListCacheImpl(
-    private val database: TvManiacDatabase
+    private val database: TvManiacDatabase,
+    private val coroutineContext: CoroutineContext
 ) : TraktListCache {
 
     override fun insert(traktList: Trakt_list) {
@@ -25,6 +27,6 @@ class TraktListCacheImpl(
     override fun observeTraktList(): Flow<Trakt_list> {
         return database.traktListQueries.selectFavorite()
             .asFlow()
-            .mapToOne()
+            .mapToOne(coroutineContext)
     }
 }

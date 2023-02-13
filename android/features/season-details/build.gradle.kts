@@ -1,7 +1,5 @@
-import util.libs
-
 plugins {
-    `android-feature-plugin`
+    id("tvmaniac.android.feature")
 }
 
 android {
@@ -10,7 +8,6 @@ android {
 
 dependencies {
     implementation(project(":shared:domain:season-details:api"))
-    implementation(project(":android:core:compose"))
 
     implementation(libs.snapper)
     implementation(libs.androidx.compose.constraintlayout)

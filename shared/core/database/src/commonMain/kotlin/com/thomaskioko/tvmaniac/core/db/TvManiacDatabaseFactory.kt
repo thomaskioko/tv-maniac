@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.core.db
 
-import com.squareup.sqldelight.db.SqlDriver
+import app.cash.sqldelight.db.SqlDriver
+
 
 class TvManiacDatabaseFactory(
     private val driverFactory: DriverFactory

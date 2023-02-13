@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.details.api.model
 
 data class Season(
-    val seasonId: Int,
-    val tvShowId: Int,
+    val seasonId: Long,
+    val tvShowId: Long,
     val name: String,
 )

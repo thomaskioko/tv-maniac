@@ -17,6 +17,6 @@ class FakeTrailerRepository : TrailerRepository {
 
     override fun isWebViewInstalled(): Flow<Boolean> = flowOf()
 
-    override fun observeTrailersByShowId(traktId: Int): Flow<Either<Failure, List<Trailers>>> =
+    override fun observeTrailersByShowId(traktId: Long): Flow<Either<Failure, List<Trailers>>> =
         trailersResult
 }

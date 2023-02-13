@@ -1,14 +1,16 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToList
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.db.Show_image
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
 import kotlinx.coroutines.flow.Flow
+import kotlin.coroutines.CoroutineContext
 
 class ShowImageCacheImpl(
-    private val database: TvManiacDatabase
+    private val database: TvManiacDatabase,
+    private val coroutineContext: CoroutineContext
 ) : ShowImageCache {
 
     override fun insert(image: Show_image) {
@@ -25,5 +27,5 @@ class ShowImageCacheImpl(
     override fun observeShowArt(): Flow<List<Show_image>> =
         database.showImageQueries.selectImages()
             .asFlow()
-            .mapToList()
+            .mapToList(coroutineContext)
 }

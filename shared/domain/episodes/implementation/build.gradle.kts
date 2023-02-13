@@ -1,34 +1,44 @@
-import util.libs
+import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
 
 plugins {
-    `kmm-domain-plugin`
-    kotlin("kapt")
-    id("dagger.hilt.android.plugin")
+    id("tvmaniac.kmm.impl")
+}
+
+kotlin {
+    android()
+    ios()
+
+    sourceSets {
+        sourceSets["androidMain"].dependencies {
+            implementation(project(":shared:core:util"))
+            implementation(libs.hilt.android)
+
+            configurations["kapt"].dependencies.add(
+                org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
+                    "com.google.dagger",
+                    "hilt-android-compiler",
+                    libs.versions.dagger.get().toString()
+                )
+            )
+        }
+
+        sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:domain:tmdb:api"))
+            implementation(project(":shared:domain:episodes:api"))
+            implementation(project(":shared:domain:trakt:api"))
+
+            implementation(libs.sqldelight.extensions)
+        }
+
+        sourceSets["commonTest"].dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.testing.turbine)
+            implementation(libs.testing.kotest.assertions)
+        }
+
+    }
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.shared.domain.episodes.implementation"
-}
-
-dependencies {
-    androidMainImplementation(project(":shared:core:util"))
-
-    androidMainImplementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-
-    commonMainImplementation(project(":shared:core:database"))
-    commonMainImplementation(project(":shared:domain:tmdb:api"))
-    commonMainImplementation(project(":shared:domain:episodes:api"))
-    commonMainImplementation(project(":shared:domain:trakt:api"))
-
-    commonMainImplementation(libs.kermit)
-    commonMainImplementation(libs.koin)
-    commonMainImplementation(libs.squareup.sqldelight.extensions)
-
-    testImplementation(libs.testing.mockk.core)
-
-    commonTestImplementation(kotlin("test"))
-    commonTestImplementation(libs.testing.turbine)
-    commonTestImplementation(libs.testing.kotest.assertions)
-    commonTestImplementation(libs.testing.mockk.common)
 }

@@ -1,20 +1,26 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-plugins {
-    id("com.autonomousapps.dependency-analysis") version ("1.13.1")
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
 }
 
-buildscript {
-    repositories.applyDefault()
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.buildkonfig) apply false
+    alias(libs.plugins.dependency.analysis) apply false
+    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.kapt) apply false
+    alias(libs.plugins.multiplatform) apply false
+    alias(libs.plugins.serialization) apply false
+    alias(libs.plugins.sqldelight) apply false
 }
 
 allprojects {
-    repositories.applyDefault()
-
-    plugins.apply("checks.dependency-updates")
-    plugins.apply("checks.detekt")
-
-    // https://discuss.kotlinlang.org/t/disabling-androidandroidtestrelease-source-set-in-gradle-kotlin-dsl-script/21448/5
     afterEvaluate {
         // Remove log pollution until Android support in KMP improves.
         project.extensions.findByType<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension>()
@@ -42,100 +48,17 @@ tasks.withType<Test>().configureEach {
 subprojects {
     tasks.withType<KotlinCompile>().configureEach {
         with(kotlinOptions) {
+            jvmTarget = JavaVersion.VERSION_11.toString()
+
             freeCompilerArgs = freeCompilerArgs + listOf(
-                "-Xopt-in=kotlin.RequiresOptIn",
-                "-Xopt-in=kotlin.OptIn",
-                "-Xopt-in=kotlin.time.ExperimentalTime",
-                "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-Xopt-in=androidx.lifecycle.compose.ExperimentalLifecycleComposeApi",
+                "-opt-in=kotlin.RequiresOptIn",
+                "-opt-in=kotlin.OptIn",
+                "-opt-in=kotlin.time.ExperimentalTime",
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=kotlinx.coroutines.FlowPreview",
+                "-opt-in=androidx.lifecycle.compose.ExperimentalLifecycleComposeApi",
+                "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
             )
-        }
-    }
-}
-
-dependencyAnalysis {
-    issues {
-        all {
-            ignoreKtx(true)
-
-            onAny {
-                severity("fail")
-            }
-
-            onRedundantPlugins {
-                severity("fail")
-            }
-
-            onUnusedDependencies {
-                exclude(
-                    "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
-                    "androidx.core:core-ktx",
-                    "javax.inject:javax.inject",
-                    "com.google.dagger:hilt-compiler",
-                )
-            }
-
-            onUsedTransitiveDependencies {
-                exclude(
-                    // added by the parcelize plugin
-                    "org.jetbrains.kotlin:kotlin-parcelize-runtime",
-                    "androidx.compose.runtime:runtime",
-                )
-            }
-
-            onIncorrectConfiguration {
-                exclude(
-                    "javax.inject:javax.inject",
-                    "com.google.dagger:hilt-compiler",
-                    "androidx.compose.runtime:runtime",
-                )
-            }
-
-            onUnusedAnnotationProcessors {
-                exclude(
-                    "com.google.dagger:hilt-android-compiler",
-                )
-            }
-        }
-    }
-
-    dependencies {
-
-        bundle("kotlin-stdlib") {
-            include("^org.jetbrains.kotlin:kotlin-stdlib.*")
-        }
-
-        bundle("androidx-compose-runtime") {
-            includeGroup("androidx.compose.runtime")
-        }
-
-        bundle("androidx-compose-ui") {
-            includeGroup("androidx.compose.ui")
-        }
-
-        bundle("androidx-compose-foundation") {
-            includeGroup("androidx.compose.animation")
-            includeGroup("androidx.compose.foundation")
-        }
-
-        bundle("androidx-compose-material") {
-            includeGroup("androidx.compose.material")
-        }
-
-        bundle("androidx-lifecycle") {
-            include("^androidx.lifecycle:lifecycle-common.*")
-            include("^androidx.lifecycle:lifecycle-runtime.*")
-        }
-
-        bundle("coil") {
-            includeDependency("io.coil-kt:coil-compose")
-        }
-
-        bundle("dagger") {
-            includeDependency("javax.inject:javax.inject")
-            includeDependency("com.google.dagger:dagger")
-            includeDependency("com.google.dagger:hilt-android")
-            includeDependency("com.google.dagger:hilt-core")
         }
     }
 }

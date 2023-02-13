@@ -20,7 +20,7 @@ actual fun tmdbModule(): Module = module {
         )
     }
     single<TmdbService> { TmdbServiceImpl(get()) }
-    single<ShowImageCache> { ShowImageCacheImpl(get()) }
+    single<ShowImageCache> { ShowImageCacheImpl(get(), get()) }
 }
 
 

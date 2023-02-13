@@ -14,7 +14,7 @@ class SeasonDetailsNavigationFactory @Inject constructor() : ComposeNavigationFa
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
         builder.viewModelComposable<SeasonDetailsViewModel>(
             arguments = listOf(
-                navArgument("showId") { type = NavType.IntType },
+                navArgument("showId") { type = NavType.LongType },
                 navArgument("seasonName") { type = NavType.StringType }
             ),
             route = "${NavigationScreen.SeasonDetailsNavScreen.route}/{showId}/{seasonName}",

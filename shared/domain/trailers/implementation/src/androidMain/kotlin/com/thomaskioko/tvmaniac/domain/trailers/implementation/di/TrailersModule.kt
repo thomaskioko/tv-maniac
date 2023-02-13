@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.util.AppUtils
 import com.thomaskioko.tvmaniac.domain.trailers.api.TrailersStateMachine
 import com.thomaskioko.tvmaniac.core.util.scope.DefaultDispatcher
-import com.thomaskioko.tvmaniac.shared.domain.trailers.api.TrailerCache
+import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerCache
 import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerRepository
 import com.thomaskioko.tvmaniac.domain.trailers.implementation.TrailerCacheImpl
 import com.thomaskioko.tvmaniac.domain.trailers.implementation.TrailerRepositoryImpl
@@ -22,7 +22,10 @@ import javax.inject.Singleton
 object TrailersModule {
     @Singleton
     @Provides
-    fun provideTrailerCache(database: TvManiacDatabase): TrailerCache = TrailerCacheImpl(database)
+    fun provideTrailerCache(
+        database: TvManiacDatabase,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
+    ): TrailerCache = TrailerCacheImpl(database ,ioDispatcher)
 
     @Singleton
     @Provides

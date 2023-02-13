@@ -15,7 +15,7 @@ class TmdbServiceImpl(
     private val httpClient: HttpClient,
 ) : TmdbService {
 
-    override suspend fun getTvShowDetails(showId: Int): ApiResponse<ShowDetailResponse, ErrorResponse> =
+    override suspend fun getTvShowDetails(showId: Long): ApiResponse<ShowDetailResponse, ErrorResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -24,9 +24,9 @@ class TmdbServiceImpl(
         }
 
     override suspend fun getEpisodeDetails(
-        tmdbShow: Int,
-        ssnNumber: Int,
-        epNumber: Int
+        tmdbShow: Long,
+        ssnNumber: Long,
+        epNumber: Long
     ): ApiResponse<EpisodesResponse, ErrorResponse> =
         httpClient.safeRequest {
             url {
@@ -36,7 +36,7 @@ class TmdbServiceImpl(
         }
 
 
-    override suspend fun getTrailers(showId: Int): ApiResponse<TrailersResponse, ErrorResponse> =
+    override suspend fun getTrailers(showId: Long): ApiResponse<TrailersResponse, ErrorResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get

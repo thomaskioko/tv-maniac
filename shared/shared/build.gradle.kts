@@ -3,25 +3,17 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
-import util.libs
 
 plugins {
-    `kmm-domain-plugin`
-    kotlin("plugin.serialization") version ("1.6.10")
+    id("tvmaniac.kmm.library")
+    alias(libs.plugins.serialization)
     id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
 }
 
 version = libs.versions.shared.module.version.get()
 
-android {
-    namespace = "com.thomaskioko.tvmaniac.shared"
-
-    defaultConfig {
-        manifestPlaceholders["appAuthRedirectScheme"] = "empty"
-    }
-}
-
 kotlin {
+    android()
 
     val xcf = XCFramework()
     ios {
@@ -54,35 +46,42 @@ kotlin {
             transitiveExport = true
         }
     }
+
+    sourceSets {
+        sourceSets["commonMain"].dependencies {
+            api(project(":shared:core:util"))
+            api(project(":shared:core:database"))
+            api(project(":shared:core:network"))
+            api(project(":shared:domain:settings:api"))
+            api(project(":shared:domain:show-details:api"))
+            api(project(":shared:domain:episodes:api"))
+            api(project(":shared:domain:similar:api"))
+            api(project(":shared:domain:season-details:api"))
+            api(project(":shared:domain:shows:api"))
+            api(project(":shared:domain:trailers:api"))
+            api(project(":shared:domain:tmdb:api"))
+            api(project(":shared:domain:trakt:api"))
+            api(project(":shared:domain:following:api"))
+
+            implementation(project(":shared:domain:episodes:implementation"))
+            implementation(project(":shared:domain:show-details:implementation"))
+            implementation(project(":shared:domain:similar:implementation"))
+            implementation(project(":shared:domain:season-details:implementation"))
+            implementation(project(":shared:domain:trailers:implementation"))
+            implementation(project(":shared:domain:tmdb:implementation"))
+            implementation(project(":shared:domain:trakt:implementation"))
+            implementation(project(":shared:domain:shows:implementation"))
+            implementation(project(":shared:domain:settings:implementation"))
+
+            implementation(libs.koin)
+            implementation(libs.coroutines.core)
+        }
+    }
+    
 }
 
-dependencies {
-    commonMainApi(project(":shared:core:util"))
-    commonMainApi(project(":shared:core:database"))
-    commonMainApi(project(":shared:core:network"))
-    commonMainApi(project(":shared:domain:settings:api"))
-    commonMainApi(project(":shared:domain:show-details:api"))
-    commonMainApi(project(":shared:domain:episodes:api"))
-    commonMainApi(project(":shared:domain:similar:api"))
-    commonMainApi(project(":shared:domain:season-details:api"))
-    commonMainApi(project(":shared:domain:shows:api"))
-    commonMainApi(project(":shared:domain:trailers:api"))
-    commonMainApi(project(":shared:domain:tmdb:api"))
-    commonMainApi(project(":shared:domain:trakt:api"))
-    commonMainApi(project(":shared:domain:following:api"))
-
-    commonMainImplementation(project(":shared:domain:episodes:implementation"))
-    commonMainImplementation(project(":shared:domain:show-details:implementation"))
-    commonMainImplementation(project(":shared:domain:similar:implementation"))
-    commonMainImplementation(project(":shared:domain:season-details:implementation"))
-    commonMainImplementation(project(":shared:domain:trailers:implementation"))
-    commonMainImplementation(project(":shared:domain:tmdb:implementation"))
-    commonMainImplementation(project(":shared:domain:trakt:implementation"))
-    commonMainImplementation(project(":shared:domain:shows:implementation"))
-    commonMainImplementation(project(":shared:domain:settings:implementation"))
-
-    commonMainImplementation(libs.koin)
-    commonMainImplementation(libs.coroutines.core)
+android {
+    namespace = "com.thomaskioko.tvmaniac.shared"
 }
 
 multiplatformSwiftPackage {

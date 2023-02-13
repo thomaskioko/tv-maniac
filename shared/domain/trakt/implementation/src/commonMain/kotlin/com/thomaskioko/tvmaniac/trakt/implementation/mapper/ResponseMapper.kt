@@ -30,14 +30,14 @@ fun ApiResponse<List<TraktShowResponse>, ErrorResponse>.showResponseToCacheList(
 }
 
 fun TraktShowResponse.responseToCache() = Show(
-    trakt_id = ids.trakt,
-    tmdb_id = ids.tmdb,
+    trakt_id = ids.trakt.toLong(),
+    tmdb_id = ids.tmdb?.toLong(),
     title = title,
     overview = overview ?: "",
-    votes = votes,
+    votes = votes.toLong(),
     year = year ?: "--",
-    runtime = runtime,
-    aired_episodes = airedEpisodes,
+    runtime = runtime.toLong(),
+    aired_episodes = airedEpisodes.toLong(),
     language = language?.uppercase(),
     rating = rating.toTwoDecimalPoint(),
     genres = genres.map { it.replaceFirstChar { it.uppercase() } },
@@ -55,14 +55,14 @@ fun ApiResponse<List<TraktShowsResponse>, ErrorResponse>.showsResponseToCacheLis
 
 
 fun TraktShowsResponse.showResponseToCacheList(): Show = Show(
-    trakt_id = show.ids.trakt,
-    tmdb_id = show.ids.tmdb,
+    trakt_id = show.ids.trakt.toLong(),
+    tmdb_id = show.ids.tmdb?.toLong(),
     title = show.title,
     overview = show.overview ?: "",
-    votes = show.votes,
+    votes = show.votes.toLong(),
     year = show.year ?: "--",
-    runtime = show.runtime,
-    aired_episodes = show.airedEpisodes,
+    runtime = show.runtime.toLong(),
+    aired_episodes = show.airedEpisodes.toLong(),
     language = show.language?.uppercase(),
     rating = show.rating.toTwoDecimalPoint(),
     genres = show.genres.map { it.replaceFirstChar { it.uppercase() } },
@@ -80,7 +80,7 @@ fun TraktUserStatsResponse.toCache(slug: String) = TraktStats(
 )
 
 fun TraktCreateListResponse.toCache() = Trakt_list(
-    id = ids.trakt,
+    id = ids.trakt.toLong(),
     slug = ids.slug,
     description = description
 )
@@ -93,7 +93,7 @@ fun TraktUserResponse.toCache(slug: String) = Trakt_user(
     is_me = slug == "me"
 )
 
-fun List<Show>.toCategoryCache(categoryId: Int) = map {
+fun List<Show>.toCategoryCache(categoryId: Long) = map {
     Show_category(
         trakt_id = it.trakt_id,
         category_id = categoryId
@@ -102,7 +102,7 @@ fun List<Show>.toCategoryCache(categoryId: Int) = map {
 
 fun List<TraktFollowedShowResponse>.responseToCache() = map {
     Followed_shows(
-        id = it.show.ids.trakt,
+        id = it.show.ids.trakt.toLong(),
         synced = true,
         created_at = DateUtil.getTimestampMilliseconds()
     )

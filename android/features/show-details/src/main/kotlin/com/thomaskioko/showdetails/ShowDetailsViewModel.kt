@@ -18,7 +18,7 @@ class ShowDetailsViewModel @Inject constructor(
     private val stateMachine: ShowDetailsStateMachine
 ) : ViewModel() {
 
-    private val showId: Int = savedStateHandle["tvShowId"]!!
+    private val showId: Long = savedStateHandle["tvShowId"]!!
 
     val state: MutableStateFlow<ShowDetailsState> = MutableStateFlow(ShowDetailsState.Loading)
 

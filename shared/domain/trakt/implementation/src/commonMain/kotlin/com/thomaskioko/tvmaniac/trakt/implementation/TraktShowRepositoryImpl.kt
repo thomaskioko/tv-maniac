@@ -47,7 +47,7 @@ class TraktShowRepositoryImpl constructor(
     private val dispatcher: CoroutineDispatcher,
 ) : TraktShowRepository {
 
-    override fun observeShow(traktId: Int): Flow<Either<Failure, SelectByShowId>> =
+    override fun observeShow(traktId: Long): Flow<Either<Failure, SelectByShowId>> =
         networkBoundResult(
             query = { tvShowCache.observeTvShow(traktId) },
             shouldFetch = { it == null },
@@ -56,7 +56,7 @@ class TraktShowRepositoryImpl constructor(
             coroutineDispatcher = dispatcher
         )
 
-    override fun observeCachedShows(categoryId: Int): Flow<Either<Failure, List<SelectShowsByCategory>>> =
+    override fun observeCachedShows(categoryId: Long): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         tvShowCache.observeCachedShows(ShowCategory[categoryId].id)
             .map { Either.Right(it) }
             .catch { Either.Left(DefaultError(it)) }
@@ -163,7 +163,7 @@ class TraktShowRepositoryImpl constructor(
             }
     }
 
-    override suspend fun updateFollowedShow(traktId: Int, addToWatchList: Boolean) {
+    override suspend fun updateFollowedShow(traktId: Long, addToWatchList: Boolean) {
         //TODO:: Check if user is signed into trakt and sync followed shows.
         when {
             addToWatchList -> followedCache.insert(
@@ -186,7 +186,7 @@ class TraktShowRepositoryImpl constructor(
 
     override fun getFollowedShows(): List<SelectFollowedShows> = followedCache.getFollowedShows()
 
-    private suspend fun fetchShowsAndMapResult(categoryId: Int): List<Show> =
+    private suspend fun fetchShowsAndMapResult(categoryId: Long): List<Show> =
         when (categoryId) {
             POPULAR.id -> traktService.getPopularShows().showResponseToCacheList()
             TRENDING.id -> traktService.getTrendingShows().showsResponseToCacheList()
@@ -198,7 +198,7 @@ class TraktShowRepositoryImpl constructor(
         }
 
 
-    private fun cacheResult(result: List<Show>, categoryId: Int) {
+    private fun cacheResult(result: List<Show>, categoryId: Long) {
         tvShowCache.insert(result)
 
         showCategoryCache.insert(result.toCategoryCache(categoryId))
@@ -209,6 +209,7 @@ class TraktShowRepositoryImpl constructor(
             is ApiResponse.Error -> {
                 Logger.withTag("mapAndCache")
                     .e("$response")
+                throw Exception("$response")
             }
 
             is ApiResponse.Success -> {

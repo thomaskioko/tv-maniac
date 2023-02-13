@@ -10,6 +10,6 @@ import org.koin.dsl.module
 
 val seasonDetailsDomainModule: Module = module {
     single<SeasonDetailsRepository> { SeasonDetailsRepositoryImpl(get(), get(), get(), get()) }
-    single<SeasonsCache> { SeasonsCacheImpl(get()) }
+    single<SeasonsCache> { SeasonsCacheImpl(get(), get()) }
     single { SeasonDetailsStateMachine(get(), get()) }
 }

@@ -22,7 +22,7 @@ class SimilarShowsRepositoryImpl(
     private val dispatcher: CoroutineDispatcher,
 ) : SimilarShowsRepository {
 
-    override fun observeSimilarShows(traktId: Int): Flow<Either<Failure, List<SelectSimilarShows>>> =
+    override fun observeSimilarShows(traktId: Long): Flow<Either<Failure, List<SelectSimilarShows>>> =
         networkBoundResult(
             query = { similarShowCache.observeSimilarShows(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
@@ -31,7 +31,7 @@ class SimilarShowsRepositoryImpl(
             coroutineDispatcher = dispatcher
         )
 
-    private fun mapAndInsert(traktId: Int, response: ApiResponse<List<TraktShowResponse>, ErrorResponse>) {
+    private fun mapAndInsert(traktId: Long, response: ApiResponse<List<TraktShowResponse>, ErrorResponse>) {
         when (response) {
             is ApiResponse.Error -> {
                 Logger.withTag("observeSimilarShows")
@@ -44,7 +44,7 @@ class SimilarShowsRepositoryImpl(
 
                     similarShowCache.insert(
                         traktId = traktId,
-                        similarShowId = showsResponse.ids.trakt
+                        similarShowId = showsResponse.ids.trakt.toLong()
                     )
                 }
             }

@@ -4,5 +4,5 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 
 class FakeEpisodeRepository : EpisodeRepository {
 
-    override suspend fun updateEpisodeArtWork(showId: Int) {}
+    override suspend fun updateEpisodeArtWork(showId: Long) {}
 }

@@ -16,7 +16,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
 
-private const val DEFAULT_API_PAGE = 1
+private const val DEFAULT_API_PAGE: Long = 1
 
 interface TraktService {
 
@@ -34,42 +34,42 @@ interface TraktService {
 
     suspend fun createFollowingList(userSlug: String): TraktCreateListResponse
 
-    suspend fun getFollowedList(listId: Int, userSlug: String): List<TraktFollowedShowResponse>
+    suspend fun getFollowedList(listId: Long, userSlug: String): List<TraktFollowedShowResponse>
 
     suspend fun getWatchList(): List<TraktFollowedShowResponse>
 
-    suspend fun addShowToWatchList(showId: Int): TraktAddShowToListResponse
+    suspend fun addShowToWatchList(showId: Long): TraktAddShowToListResponse
 
-    suspend fun removeShowFromWatchList(showId: Int): TraktAddRemoveShowFromListResponse
+    suspend fun removeShowFromWatchList(showId: Long): TraktAddRemoveShowFromListResponse
 
     suspend fun addShowToList(
         userSlug: String,
-        listId: Int,
-        traktShowId: Int
+        listId: Long,
+        traktShowId: Long
     ): TraktAddShowToListResponse
 
     suspend fun deleteShowFromList(
         userSlug: String,
-        listId: Int,
-        traktShowId: Int
+        listId: Long,
+        traktShowId: Long
     ): TraktAddRemoveShowFromListResponse
 
-    suspend fun getTrendingShows(page: Int = DEFAULT_API_PAGE): ApiResponse<List<TraktShowsResponse>, ErrorResponse>
+    suspend fun getTrendingShows(page: Long = DEFAULT_API_PAGE): ApiResponse<List<TraktShowsResponse>, ErrorResponse>
 
     suspend fun getRecommendedShows(
-        page: Int = DEFAULT_API_PAGE,
+        page: Long = DEFAULT_API_PAGE,
         period: String
     ): ApiResponse<List<TraktShowsResponse>, ErrorResponse>
 
-    suspend fun getAnticipatedShows(page: Int = DEFAULT_API_PAGE): ApiResponse<List<TraktShowsResponse>, ErrorResponse>
+    suspend fun getAnticipatedShows(page: Long = DEFAULT_API_PAGE): ApiResponse<List<TraktShowsResponse>, ErrorResponse>
 
-    suspend fun getPopularShows(page: Int = DEFAULT_API_PAGE): ApiResponse<List<TraktShowResponse>, ErrorResponse>
+    suspend fun getPopularShows(page: Long = DEFAULT_API_PAGE): ApiResponse<List<TraktShowResponse>, ErrorResponse>
 
-    suspend fun getSimilarShows(traktId: Int): ApiResponse<List<TraktShowResponse>, ErrorResponse>
+    suspend fun getSimilarShows(traktId: Long): ApiResponse<List<TraktShowResponse>, ErrorResponse>
 
-    suspend fun getShowSeasons(traktId: Int): ApiResponse<List<TraktSeasonsResponse>, ErrorResponse>
+    suspend fun getShowSeasons(traktId: Long): ApiResponse<List<TraktSeasonsResponse>, ErrorResponse>
 
-    suspend fun getSeasonEpisodes(traktId: Int): ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse>
+    suspend fun getSeasonEpisodes(traktId: Long): ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse>
 
-    suspend fun getSeasonDetails(traktId: Int): ApiResponse<TraktShowResponse, ErrorResponse>
+    suspend fun getSeasonDetails(traktId: Long): ApiResponse<TraktShowResponse, ErrorResponse>
 }

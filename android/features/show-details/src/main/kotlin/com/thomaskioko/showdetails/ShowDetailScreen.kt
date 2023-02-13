@@ -88,9 +88,9 @@ private val HeaderHeight = 550.dp
 fun ShowDetailScreen(
     viewModel: ShowDetailsViewModel,
     navigateUp: () -> Unit,
-    onShowClicked: (Int) -> Unit,
-    onSeasonClicked: (Int, String) -> Unit,
-    onWatchTrailerClicked: (Int, String?) -> Unit = { _, _ -> }
+    onShowClicked: (Long) -> Unit,
+    onSeasonClicked: (Long, String) -> Unit,
+    onWatchTrailerClicked: (Long, String?) -> Unit = { _, _ -> }
 ) {
 
     val viewState by viewModel.state.collectAsStateWithLifecycle()
@@ -184,9 +184,9 @@ private fun ShowDetailContent(
     snackBarHostState: SnackbarHostState,
     contentPadding: PaddingValues,
     viewState: ShowDetailsState.ShowDetailsLoaded,
-    onSeasonClicked: (Int, String) -> Unit,
-    onShowClicked: (Int) -> Unit,
-    onWatchTrailerClicked: (Boolean, Int, String?) -> Unit,
+    onSeasonClicked: (Long, String) -> Unit,
+    onShowClicked: (Long) -> Unit,
+    onWatchTrailerClicked: (Boolean, Long, String?) -> Unit,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
     onDismissTrailerErrorClicked: () -> Unit,
 ) {
@@ -261,7 +261,7 @@ private fun TrailersConent(
     trailersState: TrailersState,
     snackBarHostState: SnackbarHostState,
     onDismissTrailerErrorClicked: () -> Unit,
-    onWatchTrailerClicked: (Boolean, Int, String?) -> Unit
+    onWatchTrailerClicked: (Boolean, Long, String?) -> Unit
 ) {
     when (trailersState) {
         is TrailersState.TrailersError -> {
@@ -296,7 +296,7 @@ private fun TrailersConent(
 private fun SeasonsUi(
     isLoading: Boolean,
     seasonsList: List<Season>,
-    onSeasonClicked: (Int, String) -> Unit
+    onSeasonClicked: (Long, String) -> Unit
 ) {
     LoadingRowContent(
         isLoading = isLoading,
@@ -343,7 +343,7 @@ private fun HeaderViewContent(
     trailerKey: String?,
     listState: LazyListState,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
-    onWatchTrailerClicked: (Int, String?) -> Unit,
+    onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -388,7 +388,7 @@ private fun Body(
     show: Show,
     trailerKey: String?,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
-    onWatchTrailerClicked: (Int, String?) -> Unit,
+    onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
     val surfaceGradient = backgroundGradient().reversed()
 
@@ -441,7 +441,7 @@ fun TvShowMetadata(
     show: Show,
     trailerKey: String?,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
-    onWatchTrailerClicked: (Int, String?) -> Unit,
+    onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
     val resources = LocalContext.current.resources
 
@@ -542,10 +542,10 @@ private fun GenreText(genreList: List<String>) {
 @Composable
 fun ShowDetailButtons(
     isFollowed: Boolean,
-    traktId: Int,
+    traktId: Long,
     trailerKey: String?,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
-    onWatchTrailerClicked: (Int, String?) -> Unit,
+    onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
 
     Row(

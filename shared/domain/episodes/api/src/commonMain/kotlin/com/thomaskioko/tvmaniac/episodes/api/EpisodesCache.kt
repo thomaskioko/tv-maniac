@@ -9,5 +9,5 @@ interface EpisodesCache {
 
     fun insert(list: List<EpisodeCache>)
 
-    fun observeEpisodeArtByShowId(id: Int): List<EpisodeArtByShowId>
+    fun observeEpisodeArtByShowId(id: Long): List<EpisodeArtByShowId>
 }

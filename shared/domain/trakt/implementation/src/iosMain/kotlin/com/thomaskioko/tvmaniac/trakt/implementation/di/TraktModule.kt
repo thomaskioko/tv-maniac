@@ -57,10 +57,10 @@ actual fun traktModule(): Module = module {
             get(named("traktHttpClient"))
         )
     }
-    single<TraktUserCache> { TraktUserCacheImpl(get()) }
-    single<TraktStatsCache> { TraktStatsCacheImpl(get()) }
-    single<TraktListCache> { TraktListCacheImpl(get()) }
-    single<TraktFollowedCache> { TraktFollowedCacheImpl(get()) }
+    single<TraktUserCache> { TraktUserCacheImpl(get(), get()) }
+    single<TraktStatsCache> { TraktStatsCacheImpl(get(), get()) }
+    single<TraktListCache> { TraktListCacheImpl(get(), get()) }
+    single<TraktFollowedCache> { TraktFollowedCacheImpl(get(), get()) }
 
     single<TraktShowRepository> {
         TraktShowRepositoryImpl(get(), get(), get(), get(), get(), get(), get())

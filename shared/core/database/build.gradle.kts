@@ -1,32 +1,51 @@
-import util.libs
-
 plugins {
-    `kmm-domain-plugin`
-    id("com.squareup.sqldelight")
+    id("tvmaniac.kmm.library")
+    alias(libs.plugins.sqldelight)
+}
+
+
+kotlin {
+    android()
+    ios()
+
+    sourceSets {
+
+        sourceSets["commonMain"].dependencies {
+            implementation(libs.koin)
+            implementation(libs.squareup.sqldelight.primitive.adapters)
+        }
+
+        sourceSets["androidMain"].dependencies {
+            implementation(libs.squareup.sqldelight.driver.android)
+        }
+
+        sourceSets["androidTest"].dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.squareup.sqldelight.driver.jvm)
+        }
+
+
+        sourceSets["commonTest"].dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.testing.kotest.assertions)
+        }
+
+        sourceSets["iosMain"].dependencies {
+            implementation(libs.koin)
+            implementation(libs.sqldelight.driver.native)
+        }
+    }
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.core.db"
 }
 
-dependencies {
-    commonMainImplementation(libs.koin)
-    commonMainImplementation(libs.squareup.sqldelight.runtime)
-
-    androidMainImplementation(libs.squareup.sqldelight.driver.android)
-    iosMainImplementation(libs.koin)
-    iosMainImplementation(libs.squareup.sqldelight.driver.native)
-
-    commonTestImplementation(kotlin("test"))
-    commonTestImplementation(libs.testing.kotest.assertions)
-
-    androidTestImplementation(kotlin("test"))
-    androidTestImplementation(libs.squareup.sqldelight.driver.jvm)
-}
-
 sqldelight {
-    database("TvManiacDatabase") {
-        packageName = "com.thomaskioko.tvmaniac.core.db"
-        sourceFolders = listOf("sqldelight")
+    databases {
+        create("TvManiacDatabase") {
+            packageName.set("com.thomaskioko.tvmaniac.core.db")
+        }
     }
+    linkSqlite.set(true)
 }

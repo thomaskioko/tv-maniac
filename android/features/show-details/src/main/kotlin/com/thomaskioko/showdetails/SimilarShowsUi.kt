@@ -22,7 +22,7 @@ import com.thomaskioko.tvmaniac.resources.R
 fun SimilarShowsUi(
     isLoading: Boolean,
     similarShows: List<Show>,
-    onShowClicked: (Int) -> Unit = {}
+    onShowClicked: (Long) -> Unit = {}
 ) {
     val lazyListState = rememberLazyListState()
 

@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.trakt.implementation.di
 
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.util.helper.DateUtilHelper
+import com.thomaskioko.tvmaniac.core.util.scope.DefaultDispatcher
 import com.thomaskioko.tvmaniac.core.util.scope.IoDispatcher
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
@@ -32,24 +33,32 @@ object TraktInteractorModule {
 
     @Singleton
     @Provides
-    fun provideTraktUserCache(database: TvManiacDatabase): TraktUserCache =
-        TraktUserCacheImpl(database)
+    fun provideTraktUserCache(
+        database: TvManiacDatabase,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
+    ): TraktUserCache = TraktUserCacheImpl(database, ioDispatcher)
 
 
     @Singleton
     @Provides
-    fun provideTraktFavoriteListCache(database: TvManiacDatabase): TraktListCache =
-        TraktListCacheImpl(database)
+    fun provideTraktFavoriteListCache(
+        database: TvManiacDatabase,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
+    ): TraktListCache = TraktListCacheImpl(database, ioDispatcher)
 
     @Singleton
     @Provides
-    fun provideTraktFollowedCache(database: TvManiacDatabase): TraktFollowedCache =
-        TraktFollowedCacheImpl(database)
+    fun provideTraktFollowedCache(
+        database: TvManiacDatabase,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
+    ): TraktFollowedCache = TraktFollowedCacheImpl(database, ioDispatcher)
 
     @Singleton
     @Provides
-    fun provideTraktStatsCache(database: TvManiacDatabase): TraktStatsCache =
-        TraktStatsCacheImpl(database)
+    fun provideTraktStatsCache(
+        database: TvManiacDatabase,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
+    ): TraktStatsCache = TraktStatsCacheImpl(database, ioDispatcher)
 
     @Singleton
     @Provides

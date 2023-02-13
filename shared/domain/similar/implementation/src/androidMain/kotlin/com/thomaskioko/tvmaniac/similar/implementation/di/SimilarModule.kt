@@ -21,9 +21,10 @@ object SimilarModule {
 
     @Singleton
     @Provides
-    fun provideSimilarShowCache(database: TvManiacDatabase): SimilarShowCache {
-        return SimilarShowCacheImpl(database)
-    }
+    fun provideSimilarShowCache(
+        database: TvManiacDatabase,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
+    ): SimilarShowCache = SimilarShowCacheImpl(database, ioDispatcher)
 
     @Singleton
     @Provides

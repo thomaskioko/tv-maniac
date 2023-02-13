@@ -66,7 +66,7 @@ class TraktProfileRepositoryImpl constructor(
         )
 
     override fun observeUpdateFollowedShow(
-        traktId: Int,
+        traktId: Long,
         addToWatchList: Boolean
     ): Flow<Either<Failure, Unit>> = networkBoundResult(
         query = { flowOf(Unit) },
