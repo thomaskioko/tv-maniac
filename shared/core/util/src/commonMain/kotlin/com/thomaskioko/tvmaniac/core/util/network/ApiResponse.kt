@@ -8,7 +8,6 @@ import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
-import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.SerializationException
 
 
@@ -24,10 +23,8 @@ suspend inline fun <reified T, reified E> HttpClient.safeRequest(
         ApiResponse.Error.HttpError(e.response.status.value, e.errorBody())
     } catch (e: SerializationException) {
         ApiResponse.Error.SerializationError(e.resolveError())
-    } catch (e: IOException) {
-        ApiResponse.Error.NetworkError
     } catch (e: Exception) {
-        ApiResponse.Error.GeneralError(e.resolveError())
+        ApiResponse.Error.GenericError(e.resolveError())
     }
 
 suspend inline fun <reified E> ResponseException.errorBody(): E? =
@@ -58,11 +55,7 @@ sealed class ApiResponse<out T, out E> {
         /**
          * Represent other exceptions.
          */
-        data class GeneralError(val errorMessage: String?) : Error<Nothing>()
-        /**
-         * Represent IOExceptions and connectivity issues.
-         */
-        object NetworkError : Error<Nothing>()
+        data class GenericError(val errorMessage: String?) : Error<Nothing>()
 
     }
 }
