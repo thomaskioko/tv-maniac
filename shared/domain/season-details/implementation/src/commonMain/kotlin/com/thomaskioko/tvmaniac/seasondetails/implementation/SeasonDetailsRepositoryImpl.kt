@@ -34,11 +34,19 @@ class SeasonDetailsRepositoryImpl(
             fetch = { traktService.getShowSeasons(traktId) },
             saveFetchResult = {
                 when (it) {
-                    is ApiResponse.Error -> {
-                        Logger.withTag("observeSeasons")
-                            .e("$it")
-                    }
                     is ApiResponse.Success -> seasonCache.insertSeasons(it.body.toSeasonCacheList(traktId))
+                    is ApiResponse.Error.GenericError -> {
+                        Logger.withTag("observeSeasons").e("$it")
+                        throw Throwable("${it.errorMessage}")
+                    }
+                    is ApiResponse.Error.HttpError -> {
+                        Logger.withTag("observeSeasons").e("$it")
+                        throw Throwable("${it.code} - ${it.errorBody?.message}")
+                    }
+                    is ApiResponse.Error.SerializationError -> {
+                        Logger.withTag("observeSeasons").e("$it")
+                        throw Throwable("$it")
+                    }
                 }
             },
             coroutineDispatcher = dispatcher
@@ -64,11 +72,6 @@ class SeasonDetailsRepositoryImpl(
         response: ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse>
     ) {
         when (response) {
-            is ApiResponse.Error -> {
-                Logger.withTag("mapResponse")
-                    .e("$response")
-            }
-
             is ApiResponse.Success -> {
                 response.body.forEach { season ->
                     episodesCache.insert(season.toEpisodeCacheList())
@@ -81,6 +84,18 @@ class SeasonDetailsRepositoryImpl(
                         )
                     )
                 }
+            }
+            is ApiResponse.Error.GenericError -> {
+                Logger.withTag("observeSeasonDetails").e("$response")
+                throw Throwable("${response.errorMessage}")
+            }
+            is ApiResponse.Error.HttpError -> {
+                Logger.withTag("observeSeasonDetails").e("$response")
+                throw Throwable("${response.code} - ${response.errorBody?.message}")
+            }
+            is ApiResponse.Error.SerializationError -> {
+                Logger.withTag("observeSeasonDetails").e("$response")
+                throw Throwable("$response")
             }
         }
     }

@@ -40,11 +40,6 @@ class TrailerRepositoryImpl(
 
     private fun ApiResponse<TrailersResponse, ErrorResponse>.mapAndCache(showId: Long) {
         when (this) {
-            is ApiResponse.Error -> {
-                Logger.withTag("mapResponse")
-                    .e("$this")
-            }
-
             is ApiResponse.Success -> {
                 val cacheList = body.results.map { response ->
                     Trailers(
@@ -58,6 +53,18 @@ class TrailerRepositoryImpl(
                     )
                 }
                 trailerCache.insert(cacheList)
+            }
+            is ApiResponse.Error.GenericError -> {
+                Logger.withTag("observeTrailersByShowId").e("$this")
+                throw Throwable("$errorMessage")
+            }
+            is ApiResponse.Error.HttpError -> {
+                Logger.withTag("observeTrailersByShowId").e("$this")
+                throw Throwable("$code - ${errorBody?.message}")
+            }
+            is ApiResponse.Error.SerializationError -> {
+                Logger.withTag("observeTrailersByShowId").e("$this")
+                throw Throwable("$this")
             }
         }
     }

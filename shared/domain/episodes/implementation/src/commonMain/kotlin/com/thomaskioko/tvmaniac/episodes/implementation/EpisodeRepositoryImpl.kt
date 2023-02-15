@@ -26,11 +26,6 @@ class EpisodeRepositoryImpl(
                     )
 
                     when (response) {
-                        is ApiResponse.Error -> {
-                            Logger.withTag("updateEpisodeArtWork")
-                                .e("$response")
-                        }
-
                         is ApiResponse.Success -> {
                             episodeImageCache.insert(
                                 EpisodeImage(
@@ -39,6 +34,18 @@ class EpisodeRepositoryImpl(
                                     image_url = response.body.still_path
                                 )
                             )
+                        }
+                        is ApiResponse.Error.GenericError -> {
+                            Logger.withTag("updateEpisodeArtWork").e("$response")
+                            throw Throwable("${response.errorMessage}")
+                        }
+                        is ApiResponse.Error.HttpError -> {
+                            Logger.withTag("updateEpisodeArtWork").e("$response")
+                            throw Throwable("${response.code} - ${response.errorBody?.message}")
+                        }
+                        is ApiResponse.Error.SerializationError -> {
+                            Logger.withTag("updateEpisodeArtWork").e("$response")
+                            throw Throwable("$response")
                         }
                     }
                 }

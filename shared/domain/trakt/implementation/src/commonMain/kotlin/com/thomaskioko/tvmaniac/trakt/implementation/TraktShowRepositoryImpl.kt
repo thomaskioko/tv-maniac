@@ -206,14 +206,20 @@ class TraktShowRepositoryImpl constructor(
 
     private fun mapAndCache(response: ApiResponse<TraktShowResponse, ErrorResponse>) {
         when (response) {
-            is ApiResponse.Error -> {
-                Logger.withTag("mapAndCache")
-                    .e("$response")
-                throw Exception("$response")
-            }
-
             is ApiResponse.Success -> {
                 tvShowCache.insert(response.body.responseToCache())
+            }
+            is ApiResponse.Error.GenericError -> {
+                Logger.withTag("observeShow").e("$this")
+                throw Throwable("${response.errorMessage}")
+            }
+            is ApiResponse.Error.HttpError -> {
+                Logger.withTag("observeShow").e("$this")
+                throw Throwable("${response.code} - ${response.errorBody?.message}")
+            }
+            is ApiResponse.Error.SerializationError -> {
+                Logger.withTag("observeShow").e("$this")
+                throw Throwable("$response")
             }
         }
 

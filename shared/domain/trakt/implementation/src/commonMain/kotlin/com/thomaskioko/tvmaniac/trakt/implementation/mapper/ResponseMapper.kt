@@ -21,12 +21,19 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
 import kotlin.math.roundToInt
 
 fun ApiResponse<List<TraktShowResponse>, ErrorResponse>.showResponseToCacheList() = when (this) {
-    is ApiResponse.Error -> {
-        Logger.withTag("showResponseToCacheList").e("$this")
-        emptyList()
-    }
-
     is ApiResponse.Success -> body.map { it.responseToCache() }
+    is ApiResponse.Error.GenericError -> {
+        Logger.withTag("showResponseToCacheList").e("$this")
+        throw Throwable("$errorMessage")
+    }
+    is ApiResponse.Error.HttpError -> {
+        Logger.withTag("showResponseToCacheList").e("$this")
+        throw Throwable("$code - ${errorBody?.message}")
+    }
+    is ApiResponse.Error.SerializationError -> {
+        Logger.withTag("showResponseToCacheList").e("$this")
+        throw Throwable("$this")
+    }
 }
 
 fun TraktShowResponse.responseToCache() = Show(
@@ -45,12 +52,19 @@ fun TraktShowResponse.responseToCache() = Show(
 )
 
 fun ApiResponse<List<TraktShowsResponse>, ErrorResponse>.showsResponseToCacheList() = when (this) {
-    is ApiResponse.Error -> {
-        Logger.withTag("showsResponseToCacheList").e("$this")
-        emptyList()
-    }
-
     is ApiResponse.Success -> body.map { it.showResponseToCacheList() }
+    is ApiResponse.Error.GenericError -> {
+        Logger.withTag("showsResponseToCacheList").e("$this")
+        throw Throwable("$errorMessage")
+    }
+    is ApiResponse.Error.HttpError -> {
+        Logger.withTag("showsResponseToCacheList").e("$this")
+        throw Throwable("$code - ${errorBody?.message}")
+    }
+    is ApiResponse.Error.SerializationError -> {
+        Logger.withTag("showsResponseToCacheList").e("$this")
+        throw Throwable("$this")
+    }
 }
 
 

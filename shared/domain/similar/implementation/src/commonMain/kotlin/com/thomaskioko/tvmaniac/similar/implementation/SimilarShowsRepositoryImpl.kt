@@ -33,11 +33,6 @@ class SimilarShowsRepositoryImpl(
 
     private fun mapAndInsert(traktId: Long, response: ApiResponse<List<TraktShowResponse>, ErrorResponse>) {
         when (response) {
-            is ApiResponse.Error -> {
-                Logger.withTag("observeSimilarShows")
-                    .e("$response")
-            }
-
             is ApiResponse.Success -> {
                 response.body.forEach { showsResponse ->
                     tvShowCache.insert(showsResponse.toShow())
@@ -47,6 +42,18 @@ class SimilarShowsRepositoryImpl(
                         similarShowId = showsResponse.ids.trakt.toLong()
                     )
                 }
+            }
+            is ApiResponse.Error.GenericError -> {
+                Logger.withTag("observeSimilarShows").e("$response")
+                throw Throwable("${response.errorMessage}")
+            }
+            is ApiResponse.Error.HttpError -> {
+                Logger.withTag("observeSimilarShows").e("$response")
+                throw Throwable("${response.code} - ${response.errorBody?.message}")
+            }
+            is ApiResponse.Error.SerializationError -> {
+                Logger.withTag("observeSimilarShows").e("$response")
+                throw Throwable("$response")
             }
         }
     }

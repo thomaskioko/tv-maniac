@@ -38,9 +38,20 @@ class TraktProfileRepositoryImpl constructor(
             fetch = { traktService.getUserProfile(slug) },
             saveFetchResult = {
                 when (it) {
-                    is ApiResponse.Error -> Logger.withTag("observeMe").e("$it")
                     is ApiResponse.Success -> {
                         traktUserCache.insert(it.body.toCache(slug))
+                    }
+                    is ApiResponse.Error.GenericError -> {
+                        Logger.withTag("observeMe").e("$it")
+                        throw Throwable("${it.errorMessage}")
+                    }
+                    is ApiResponse.Error.HttpError -> {
+                        Logger.withTag("observeMe").e("$it")
+                        throw Throwable("${it.code} - ${it.errorBody?.message}")
+                    }
+                    is ApiResponse.Error.SerializationError -> {
+                        Logger.withTag("observeMe").e("$it")
+                        throw Throwable("$it")
                     }
                 }
             },
