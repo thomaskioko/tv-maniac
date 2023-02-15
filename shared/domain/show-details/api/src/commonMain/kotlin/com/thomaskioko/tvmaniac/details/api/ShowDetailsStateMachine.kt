@@ -293,6 +293,14 @@ class ShowDetailsStateMachineWrapper(
     private val stateMachine: ShowDetailsStateMachine,
     private val scope: CoroutineScope,
 ) {
+    fun start(stateChangeListener: (ShowDetailsState) -> Unit) {
+        scope.launch {
+            stateMachine.state.collect {
+                stateChangeListener(it)
+            }
+        }
+    }
+
     fun dispatch(action: ShowDetailsAction) {
         scope.launch {
             stateMachine.dispatch(action)

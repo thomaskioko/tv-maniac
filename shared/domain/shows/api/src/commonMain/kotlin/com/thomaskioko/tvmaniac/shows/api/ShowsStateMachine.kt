@@ -6,12 +6,14 @@ import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
-
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class ShowsStateMachine constructor(
     private val traktShowRepository: TraktShowRepository,
     private val tmdbRepository: TmdbRepository
@@ -109,6 +111,15 @@ class ShowsStateMachineWrapper(
     private val stateMachine: ShowsStateMachine,
     private val scope: CoroutineScope,
 ) {
+
+    fun start(stateChangeListener: (ShowsState) -> Unit) {
+        scope.launch {
+            stateMachine.state.collect {
+                stateChangeListener(it)
+            }
+        }
+    }
+
     fun dispatch(action: ShowsAction) {
         scope.launch {
             stateMachine.dispatch(action)

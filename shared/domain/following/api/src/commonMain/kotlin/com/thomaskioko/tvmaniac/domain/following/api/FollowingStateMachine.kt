@@ -5,8 +5,11 @@ import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class FollowingStateMachine constructor(
     private val repository: TraktShowRepository,
 ) : FlowReduxStateMachine<FollowingState, FollowingAction>(initialState = LoadingShows) {
@@ -49,6 +52,14 @@ class FollowingStateMachineWrapper(
     private val stateMachine: FollowingStateMachine,
     private val scope: CoroutineScope,
 ) {
+    fun start(stateChangeListener: (FollowingState) -> Unit) {
+        scope.launch {
+            stateMachine.state.collect {
+                stateChangeListener(it)
+            }
+        }
+    }
+
     fun dispatch(action: FollowingAction) {
         scope.launch {
             stateMachine.dispatch(action)

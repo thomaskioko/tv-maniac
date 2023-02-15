@@ -3,15 +3,13 @@ package com.thomaskioko.tvmaniac.domain.trailers.api
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.domain.trailers.api.model.Trailer
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainCoroutineDispatcher
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class TrailersStateMachine constructor(
     private val trailerRepository: TrailerRepository
 ) : FlowReduxStateMachine<TrailersState, TrailersAction>(
@@ -77,6 +75,14 @@ class TrailersStateMachineWrapper(
     private val stateMachine: TrailersStateMachine,
     private val scope: CoroutineScope,
 ) {
+    fun start(stateChangeListener: (TrailersState) -> Unit) {
+        scope.launch {
+            stateMachine.state.collect {
+                stateChangeListener(it)
+            }
+        }
+    }
+
     fun dispatch(action: TrailersAction) {
         scope.launch {
             stateMachine.dispatch(action)

@@ -4,9 +4,6 @@ import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.MainCoroutineDispatcher
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -71,6 +68,14 @@ class SettingsStateMachineWrapper(
     private val stateMachine: SettingsStateMachine,
     private val scope: CoroutineScope,
 ) {
+
+    fun start(stateChangeListener: (SettingsState) -> Unit) {
+        scope.launch {
+            stateMachine.state.collect {
+                stateChangeListener(it)
+            }
+        }
+    }
 
     fun dispatch(action: SettingsActions) {
         scope.launch {
