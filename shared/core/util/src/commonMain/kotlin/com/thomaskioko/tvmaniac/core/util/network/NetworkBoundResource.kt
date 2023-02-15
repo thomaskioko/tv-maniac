@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.core.util.network
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -26,4 +27,6 @@ inline fun <ResultType, RequestType> networkBoundResult(
     } else {
         emit(Either.Right(query().first()))
     }
+}.catch {
+    emit(Either.Left(DefaultError(it)))
 }.flowOn(coroutineDispatcher)
