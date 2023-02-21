@@ -20,10 +20,10 @@ struct ShowDetailView: View {
 	@SwiftUI.State var size: CGSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
 
 	
-	var showId: Int32
+	var showId: Int64
 	let maxHeight = CGFloat(520)
 	
-	init(showId: Int32) {
+	init(showId: Int64) {
 		self.showId = showId
 	}
 	
@@ -65,7 +65,6 @@ struct ShowDetailView: View {
 		.navigationBarHidden(true)
 		.ignoresSafeArea()
 		.onAppear { viewModel.startStateMachine(action: LoadShowDetails(traktId: showId)) }
-		.onDisappear { viewModel.dismiss() }
 	}
 	
 	@ViewBuilder
