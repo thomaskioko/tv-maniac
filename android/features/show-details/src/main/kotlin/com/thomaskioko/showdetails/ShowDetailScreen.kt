@@ -74,12 +74,12 @@ import com.thomaskioko.tvmaniac.details.api.FollowShow
 import com.thomaskioko.tvmaniac.details.api.SeasonState
 import com.thomaskioko.tvmaniac.details.api.ShowDetailsAction
 import com.thomaskioko.tvmaniac.details.api.ShowDetailsState
+import com.thomaskioko.tvmaniac.details.api.ShowState
 import com.thomaskioko.tvmaniac.details.api.SimilarShowsState
 import com.thomaskioko.tvmaniac.details.api.TrailersState
 import com.thomaskioko.tvmaniac.details.api.WebViewError
 import com.thomaskioko.tvmaniac.details.api.model.Season
 import com.thomaskioko.tvmaniac.details.api.model.Show
-import com.thomaskioko.tvmaniac.details.api.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
 
 private val HeaderHeight = 550.dp
@@ -98,7 +98,7 @@ fun ShowDetailScreen(
     val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
 
-    val title = (viewState as? ShowDetailsState.ShowDetailsLoaded)?.show?.title ?: ""
+    val title = (viewState as? ShowState.ShowLoaded)?.show?.title ?: ""
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -196,18 +196,17 @@ private fun ShowDetailContent(
     ) {
 
         item {
-            val trailerState = (detailUiState.trailerState as? TrailersState.TrailersLoaded)
+            val trailerState = (viewState.trailerState as? TrailersState.TrailersLoaded)
 
             HeaderViewContent(
                 listState = listState,
-                show = viewState.show,
+                showState = viewState.showState,
                 trailerKey = trailerState?.trailersList?.firstOrNull()?.key,
-                onUpdateFavoriteClicked = onUpdateFavoriteClicked,
-                onWatchTrailerClicked = { showId, key ->
-                    val hasWebView = trailerState?.hasWebViewInstalled ?: false
-                    onWatchTrailerClicked(hasWebView, showId, key)
-                }
-            )
+                onUpdateFavoriteClicked = onUpdateFavoriteClicked
+            ) { showId, key ->
+                val hasWebView = trailerState?.hasWebViewInstalled ?: false
+                onWatchTrailerClicked(hasWebView, showId, key)
+            }
         }
 
         item {
@@ -229,7 +228,7 @@ private fun ShowDetailContent(
 
         //Trailers
         item {
-            TrailersConent(
+            TrailersContent(
                 trailersState = viewState.trailerState,
                 snackBarHostState = snackBarHostState,
                 onDismissTrailerErrorClicked = onDismissTrailerErrorClicked,
@@ -257,7 +256,7 @@ private fun ShowDetailContent(
     }
 }
 @Composable
-private fun TrailersConent(
+private fun TrailersContent(
     trailersState: TrailersState,
     snackBarHostState: SnackbarHostState,
     onDismissTrailerErrorClicked: () -> Unit,
@@ -280,10 +279,10 @@ private fun TrailersConent(
             TrailersRowContent(
                 isLoading = trailersState.isLoading,
                 trailersList = trailersState.trailersList,
-                onTrailerClicked = { videoKey ->
+                onTrailerClicked = { showId, videoKey ->
                     onWatchTrailerClicked(
                         trailersState.hasWebViewInstalled,
-                        detailUiState.show.traktId,
+                        showId,
                         videoKey
                     )
                 }
@@ -339,37 +338,48 @@ private fun SeasonsUi(
 
 @Composable
 private fun HeaderViewContent(
-    show: Show,
+    showState: ShowState,
     trailerKey: String?,
     listState: LazyListState,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
     onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(HeaderHeight)
-            .clipToBounds()
-            .offset {
-                IntOffset(
-                    x = 0,
-                    y = if (listState.firstVisibleItemIndex == 0) {
-                        listState.firstVisibleItemScrollOffset / 2
-                    } else 0
+    when(showState){
+        is ShowState.ShowError -> {
+            ErrorUi(
+                errorMessage = showState.errorMessage,
+                onRetry = {}
+            )
+        }
+        is ShowState.ShowLoaded -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(HeaderHeight)
+                    .clipToBounds()
+                    .offset {
+                        IntOffset(
+                            x = 0,
+                            y = if (listState.firstVisibleItemIndex == 0) {
+                                listState.firstVisibleItemScrollOffset / 2
+                            } else 0
+                        )
+                    }
+            ) {
+                HeaderImage(
+                    backdropImageUrl = showState.show.backdropImageUrl
+                )
+
+                Body(
+                    show = showState.show,
+                    trailerKey = trailerKey,
+                    onUpdateFavoriteClicked = onUpdateFavoriteClicked,
+                    onWatchTrailerClicked = onWatchTrailerClicked
                 )
             }
-    ) {
-        HeaderImage(
-            backdropImageUrl = show.backdropImageUrl
-        )
-
-        Body(
-            show = show,
-            trailerKey = trailerKey,
-            onUpdateFavoriteClicked = onUpdateFavoriteClicked,
-            onWatchTrailerClicked = onWatchTrailerClicked
-        )
+        }
     }
+
 }
 
 @Composable

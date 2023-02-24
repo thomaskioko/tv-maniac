@@ -8,7 +8,7 @@ import com.thomaskioko.tvmaniac.details.api.model.Trailer
 sealed interface ShowDetailsState {
     object Loading : ShowDetailsState
     data class ShowDetailsLoaded(
-        val show: Show,
+        val showState: ShowState,
         val similarShowsState: SimilarShowsState,
         val seasonState: SeasonState,
         val trailerState: TrailersState,
@@ -18,19 +18,19 @@ sealed interface ShowDetailsState {
     data class ShowDetailsError(val errorMessage: String) : ShowDetailsState
 }
 
+sealed interface ShowState {
+    data class ShowLoaded(
+        val show: Show,
+    ) : ShowState
+
+    data class ShowError(val errorMessage: String) : ShowState
+}
 
 sealed interface SeasonState {
     data class SeasonsLoaded(
         val isLoading: Boolean,
         val seasonsList: List<Season>,
-    ) : SeasonState {
-        companion object {
-            val EmptySeasons = SeasonsLoaded(
-                isLoading = true,
-                seasonsList = emptyList()
-            )
-        }
-    }
+    ) : SeasonState
 
     data class SeasonsError(val errorMessage: String) : SeasonState
 }
@@ -40,17 +40,10 @@ sealed interface TrailersState {
     data class TrailersLoaded(
         val isLoading: Boolean,
         val hasWebViewInstalled: Boolean,
-        val playerErrorMessage: String?,
+        val playerErrorMessage: String? = null,
         val trailersList: List<Trailer>,
     ) : TrailersState {
         companion object {
-            val EmptyTrailers = TrailersLoaded(
-                isLoading = true,
-                hasWebViewInstalled = false,
-                playerErrorMessage = null,
-                trailersList = emptyList()
-            )
-
             const val playerErrorMessage: String =
                 "Please make sure you have Android WebView installed or enabled."
         }
@@ -63,14 +56,7 @@ sealed interface SimilarShowsState {
     data class SimilarShowsLoaded(
         val isLoading: Boolean,
         val similarShows: List<Show>,
-    ) : SimilarShowsState {
-        companion object {
-            val EmptyShows = SimilarShowsLoaded(
-                isLoading = true,
-                similarShows = emptyList()
-            )
-        }
-    }
+    ) : SimilarShowsState
 }
 
 
