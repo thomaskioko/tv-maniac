@@ -4,7 +4,6 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.util.network.DefaultError
 import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.details.api.SeasonState.SeasonsError
-import com.thomaskioko.tvmaniac.details.api.ShowDetailsState.ShowDetailsError
 import com.thomaskioko.tvmaniac.details.api.SimilarShowsState.SimilarShowsError
 import com.thomaskioko.tvmaniac.details.api.TrailersState.TrailersError
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
@@ -13,9 +12,11 @@ import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktShowRepository
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class ShowDetailsStateMachineTest {
 
     private val seasonsRepository = FakeSeasonDetailsRepository()
@@ -52,10 +53,11 @@ internal class ShowDetailsStateMachineTest {
             stateMachine.dispatch(LoadShowDetails(84958))
 
             awaitItem() shouldBe ShowDetailsState.Loading
-            awaitItem() shouldBe showDetailsLoaded
-            awaitItem() shouldBe seasonsShowDetailsLoaded
-            awaitItem() shouldBe trailerShowDetailsLoaded
-            awaitItem() shouldBe similarShowLoaded
+            awaitItem() shouldBe showDetailsLoaded.copy(
+                seasonState = seasonsShowDetailsLoaded,
+                trailerState = trailerShowDetailsLoaded,
+                similarShowsState = similarShowLoaded,
+            )
         }
     }
 
@@ -65,14 +67,25 @@ internal class ShowDetailsStateMachineTest {
 
             val errorMessage = "Oppsy. Something went wrong"
             traktRepository.setShowResult(Either.Right(selectedShow))
-            similarShowsRepository.setSimilarShowsResult(Either.Left(DefaultError(Throwable(errorMessage))))
+            seasonsRepository.setSeasonsResult(Either.Right(seasons))
+            trailerRepository.setTrailerResult(Either.Right(trailers))
+            similarShowsRepository.setSimilarShowsResult(
+                Either.Left(
+                    DefaultError(
+                        Throwable(
+                            errorMessage
+                        )
+                    )
+                )
+            )
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
             awaitItem() shouldBe ShowDetailsState.Loading
-            awaitItem() shouldBe showDetailsLoaded // Show data loaded
             awaitItem() shouldBe showDetailsLoaded.copy(
-                similarShowsState = SimilarShowsError("Oppsy. Something went wrong"),
+                seasonState = seasonsShowDetailsLoaded,
+                trailerState = trailerShowDetailsLoaded,
+                similarShowsState = SimilarShowsError(errorMessage),
             )
         }
     }
@@ -83,14 +96,17 @@ internal class ShowDetailsStateMachineTest {
 
             val errorMessage = "Oppsy. Something went wrong"
             traktRepository.setShowResult(Either.Right(selectedShow))
+            seasonsRepository.setSeasonsResult(Either.Right(seasons))
+            similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
             trailerRepository.setTrailerResult(Either.Left(DefaultError(Throwable(errorMessage))))
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
             awaitItem() shouldBe ShowDetailsState.Loading
-            awaitItem() shouldBe showDetailsLoaded // Show data loaded
             awaitItem() shouldBe showDetailsLoaded.copy(
-                trailerState = TrailersError("Oppsy. Something went wrong")
+                seasonState = seasonsShowDetailsLoaded,
+                similarShowsState = similarShowLoaded,
+                trailerState = TrailersError(errorMessage),
             )
         }
     }
@@ -101,14 +117,17 @@ internal class ShowDetailsStateMachineTest {
 
             val errorMessage = "Oppsy. Something went wrong"
             traktRepository.setShowResult(Either.Right(selectedShow))
+            trailerRepository.setTrailerResult(Either.Right(trailers))
+            similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
             seasonsRepository.setSeasonsResult(Either.Left(DefaultError(Throwable(errorMessage))))
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
             awaitItem() shouldBe ShowDetailsState.Loading
-            awaitItem() shouldBe showDetailsLoaded // Show data loaded
             awaitItem() shouldBe showDetailsLoaded.copy(
-                seasonState = SeasonsError(errorMessage)
+                similarShowsState = similarShowLoaded,
+                trailerState = trailerShowDetailsLoaded,
+                seasonState = SeasonsError(errorMessage),
             )
         }
     }
@@ -117,12 +136,22 @@ internal class ShowDetailsStateMachineTest {
     fun error_state_emits_expected_result() = runTest {
         stateMachine.state.test {
 
-            traktRepository.setShowResult(Either.Left(DefaultError(Throwable("Oppsy. Something went wrong"))))
+            val errorMessage = "Oppsy. Something went wrong"
+            traktRepository.setShowResult(Either.Left(DefaultError(Throwable(errorMessage))))
+            seasonsRepository.setSeasonsResult(Either.Right(seasons))
+            similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
+            trailerRepository.setTrailerResult(Either.Right(trailers))
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
             awaitItem() shouldBe ShowDetailsState.Loading
-            awaitItem() shouldBe ShowDetailsError("Oppsy. Something went wrong")
+            awaitItem() shouldBe ShowDetailsState.ShowDetailsLoaded(
+                showState = ShowState.ShowError(errorMessage),
+                seasonState = seasonsShowDetailsLoaded,
+                trailerState = trailerShowDetailsLoaded,
+                similarShowsState = similarShowLoaded,
+                followShowState = FollowShowsState.Idle
+            )
         }
     }
 }

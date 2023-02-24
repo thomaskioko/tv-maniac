@@ -51,7 +51,9 @@ val similarShows = listOf(
 )
 
 val showDetailsLoaded = ShowDetailsState.ShowDetailsLoaded(
-    show = show,
+    showState = ShowState.ShowLoaded(
+        show = show
+    ),
     seasonState = SeasonState.SeasonsLoaded(
         isLoading = true,
         seasonsList = emptyList()
@@ -68,40 +70,34 @@ val showDetailsLoaded = ShowDetailsState.ShowDetailsLoaded(
     ),
     followShowState = FollowShowsState.Idle
 )
-val seasonsShowDetailsLoaded = showDetailsLoaded.copy(
-    seasonState = SeasonState.SeasonsLoaded(
-        isLoading = false,
-        seasonsList = listOf(
-            Season(
-                seasonId = 84958,
-                tvShowId = 114355,
-                name = "Season 1",
-            )
-        )
-    ),
-)
-
-val trailerShowDetailsLoaded = seasonsShowDetailsLoaded.copy(
-    trailerState = TrailersState.TrailersLoaded(
-        isLoading = false,
-        hasWebViewInstalled = false,
-        playerErrorMessage = null,
-        trailersList = listOf(
-            Trailer(
-                showId = 84958,
-                key = "Fd43V",
-                name = "Some title",
-                youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg"
-            )
+val seasonsShowDetailsLoaded = SeasonState.SeasonsLoaded(
+    isLoading = false,
+    seasonsList = listOf(
+        Season(
+            seasonId = 84958,
+            tvShowId = 114355,
+            name = "Season 1",
         )
     )
 )
 
-val similarShowLoaded = trailerShowDetailsLoaded.copy(
-    similarShowsState = SimilarShowsState.SimilarShowsLoaded(
-        isLoading = false,
-        similarShows = similarShows
-    ),
+val trailerShowDetailsLoaded = TrailersState.TrailersLoaded(
+    isLoading = false,
+    hasWebViewInstalled = false,
+    playerErrorMessage = null,
+    trailersList = listOf(
+        Trailer(
+            showId = 84958,
+            key = "Fd43V",
+            name = "Some title",
+            youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg"
+        )
+    )
+)
+
+val similarShowLoaded = SimilarShowsState.SimilarShowsLoaded(
+    isLoading = false,
+    similarShows = similarShows
 )
 
 val selectedShow = SelectByShowId(
