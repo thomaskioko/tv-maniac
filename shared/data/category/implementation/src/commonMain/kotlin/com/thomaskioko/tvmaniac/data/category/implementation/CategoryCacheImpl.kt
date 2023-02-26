@@ -1,12 +1,12 @@
-package com.thomaskioko.tvmaniac.shows.implementation.cache
+package com.thomaskioko.tvmaniac.data.category.implementation
 
+import com.thomaskioko.tvmaniac.category.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.core.db.Show_category
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
 
-class ShowCategoryCacheImpl(
+class CategoryCacheImpl(
     private val database: TvManiacDatabase
-) : ShowCategoryCache {
+) : CategoryCache {
 
     private val showCategoryQuery get() = database.showCategoryQueries
 
