@@ -32,7 +32,7 @@ kotlin {
         sourceSets["commonMain"].dependencies {
             implementation(project(":shared:data:network"))
             implementation(project(":shared:data:trakt:api"))
-            implementation(project(":shared:data:shows:api"))
+            implementation(project(":shared:data:category:api"))
             implementation(libs.sqldelight.extensions)
             implementation(libs.ktor.core)
             implementation(libs.ktor.negotiation)

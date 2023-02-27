@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
-
 plugins {
     id("tvmaniac.kmm.impl")
 }
@@ -25,6 +23,7 @@ kotlin {
         sourceSets["commonMain"].dependencies {
             implementation(project(":shared:data:tmdb:api"))
             implementation(project(":shared:data:trakt:api"))
+            implementation(project(":shared:data:episodes:api"))
             implementation(project(":shared:data:season-details:api"))
 
             implementation(libs.sqldelight.extensions)
@@ -41,5 +40,5 @@ kotlin {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.shared.data.seasonepisodes.implementation"
+    namespace = "com.thomaskioko.tvmaniac.seasondetails.implementation"
 }

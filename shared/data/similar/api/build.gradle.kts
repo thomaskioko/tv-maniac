@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
-
 plugins {
     id("tvmaniac.kmm.api")
 }
@@ -12,12 +10,12 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:data:shows:api"))
+            implementation(project(":shared:data:trakt:api"))
         }
 
     }
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.shared.domain.similar.api"
+    namespace = "com.thomaskioko.tvmaniac.similar.api"
 }

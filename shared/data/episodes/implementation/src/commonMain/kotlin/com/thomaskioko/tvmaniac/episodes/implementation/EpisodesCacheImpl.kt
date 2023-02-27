@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import com.thomaskioko.tvmaniac.core.db.Episode as EpisodeCache
 import com.thomaskioko.tvmaniac.core.db.EpisodeArtByShowId
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
-import com.thomaskioko.tvmaniac.core.db.Episode as EpisodeCache
 
 class EpisodesCacheImpl(
     private val database: TvManiacDatabase
@@ -32,6 +32,6 @@ class EpisodesCacheImpl(
     }
 
     override fun observeEpisodeArtByShowId(id: Long): List<EpisodeArtByShowId> =
-        episodeQueries.episodeArtByShowId(id)
+        episodeQueries.episodeArtByShowId()
             .executeAsList()
 }

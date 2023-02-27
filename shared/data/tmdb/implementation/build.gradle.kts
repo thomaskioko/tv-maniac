@@ -27,6 +27,7 @@ kotlin {
 
         sourceSets["commonMain"].dependencies {
             implementation(project(":shared:data:tmdb:api"))
+            implementation(project(":shared:data:trakt:api"))
             implementation(libs.ktor.core)
             implementation(libs.ktor.negotiation)
             implementation(libs.ktor.logging)

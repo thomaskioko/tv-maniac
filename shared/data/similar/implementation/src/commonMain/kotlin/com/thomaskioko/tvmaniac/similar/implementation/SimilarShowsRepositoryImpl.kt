@@ -6,10 +6,10 @@ import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
 import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.core.util.network.Failure
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResult
-import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
+import com.thomaskioko.tvmaniac.trakt.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import kotlinx.coroutines.CoroutineDispatcher

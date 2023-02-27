@@ -12,17 +12,17 @@ import com.thomaskioko.tvmaniac.core.util.network.DefaultError
 import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.core.util.network.Failure
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResult
-import com.thomaskioko.tvmaniac.shows.api.cache.ShowCategoryCache
-import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.ANTICIPATED
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.FEATURED
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.POPULAR
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory.TRENDING
-import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
+import com.thomaskioko.tvmaniac.category.api.cache.CategoryCache
+import com.thomaskioko.tvmaniac.category.api.model.Category
+import com.thomaskioko.tvmaniac.category.api.model.Category.ANTICIPATED
+import com.thomaskioko.tvmaniac.category.api.model.Category.FEATURED
+import com.thomaskioko.tvmaniac.category.api.model.Category.POPULAR
+import com.thomaskioko.tvmaniac.category.api.model.Category.TRENDING
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
+import com.thomaskioko.tvmaniac.trakt.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.implementation.mapper.responseToCache
@@ -41,7 +41,7 @@ class TraktShowRepositoryImpl constructor(
     private val tvShowCache: TvShowCache,
     private val traktUserCache: TraktUserCache,
     private val followedCache: TraktFollowedCache,
-    private val showCategoryCache: ShowCategoryCache,
+    private val categoryCache: CategoryCache,
     private val traktService: TraktService,
     private val dateUtilHelper: DateUtilHelper,
     private val dispatcher: CoroutineDispatcher,
@@ -57,7 +57,7 @@ class TraktShowRepositoryImpl constructor(
         )
 
     override fun observeCachedShows(categoryId: Long): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        tvShowCache.observeCachedShows(ShowCategory[categoryId].id)
+        tvShowCache.observeCachedShows(Category[categoryId].id)
             .map { Either.Right(it) }
             .catch { Either.Left(DefaultError(it)) }
 
@@ -136,7 +136,7 @@ class TraktShowRepositoryImpl constructor(
             val mappedResult = fetchShowsAndMapResult(it.id)
 
             tvShowCache.insert(mappedResult)
-            showCategoryCache.insert(mappedResult.toCategoryCache(it.id))
+            categoryCache.insert(mappedResult.toCategoryCache(it.id))
         }
 
     }
@@ -201,7 +201,7 @@ class TraktShowRepositoryImpl constructor(
     private fun cacheResult(result: List<Show>, categoryId: Long) {
         tvShowCache.insert(result)
 
-        showCategoryCache.insert(result.toCategoryCache(categoryId))
+        categoryCache.insert(result.toCategoryCache(categoryId))
     }
 
     private fun mapAndCache(response: ApiResponse<TraktShowResponse, ErrorResponse>) {

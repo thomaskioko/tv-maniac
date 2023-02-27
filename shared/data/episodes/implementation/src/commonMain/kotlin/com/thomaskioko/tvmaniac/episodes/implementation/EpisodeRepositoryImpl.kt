@@ -16,7 +16,7 @@ class EpisodeRepositoryImpl(
 
     override suspend fun updateEpisodeArtWork(showId: Long) {
         episodesCache.observeEpisodeArtByShowId(showId)
-            .forEach { episode ->
+            .map { episode ->
 
                 episode.tmdb_id?.let { tmdbId ->
                     val response = tmdbService.getEpisodeDetails(
@@ -35,21 +35,12 @@ class EpisodeRepositoryImpl(
                                 )
                             )
                         }
-                        is ApiResponse.Error.GenericError -> {
+
+                        is ApiResponse.Error -> {
                             Logger.withTag("updateEpisodeArtWork").e("$response")
-                            throw Throwable("${response.errorMessage}")
-                        }
-                        is ApiResponse.Error.HttpError -> {
-                            Logger.withTag("updateEpisodeArtWork").e("$response")
-                            throw Throwable("${response.code} - ${response.errorBody?.message}")
-                        }
-                        is ApiResponse.Error.SerializationError -> {
-                            Logger.withTag("updateEpisodeArtWork").e("$response")
-                            throw Throwable("$response")
                         }
                     }
                 }
-
             }
     }
 }

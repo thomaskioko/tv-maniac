@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
-
 plugins {
     id("tvmaniac.kmm.api")
 }
@@ -10,5 +8,5 @@ kotlin {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.shared.domain.episodes.api"
+    namespace = "com.thomaskioko.tvmaniac.episodes.api"
 }
