@@ -4,7 +4,7 @@ import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 
-class KotlinMultiplatformDomainImplPlugin : Plugin<Project> {
+class KotlinMultiplatformDataImplPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
@@ -19,7 +19,7 @@ class KotlinMultiplatformDomainImplPlugin : Plugin<Project> {
             dependencies {
 
                 add("commonMainImplementation", (project(":shared:core:util")))
-                add("commonMainImplementation", (project(":shared:core:database")))
+                add("commonMainImplementation", (project(":shared:data:database")))
                 add("commonMainImplementation", libs.findLibrary("kermit").get())
                 add("commonMainImplementation", libs.findLibrary("koin").get())
 

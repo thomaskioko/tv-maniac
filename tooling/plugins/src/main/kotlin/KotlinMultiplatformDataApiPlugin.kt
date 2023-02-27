@@ -4,7 +4,7 @@ import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 
-class KotlinMultiplatformDomainApiPlugin : Plugin<Project> {
+class KotlinMultiplatformDataApiPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
@@ -15,7 +15,7 @@ class KotlinMultiplatformDomainApiPlugin : Plugin<Project> {
 
             dependencies {
                 add("commonMainApi",(project(":shared:core:util")))
-                add("commonMainApi",(project(":shared:core:database")))
+                add("commonMainApi",(project(":shared:data:database")))
                 add("commonMainImplementation", libs.findLibrary("coroutines.core").get())
             }
         }
