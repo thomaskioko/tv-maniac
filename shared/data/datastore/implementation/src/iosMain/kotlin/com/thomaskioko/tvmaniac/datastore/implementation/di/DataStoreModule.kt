@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.datastore.implementation.di
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.datastore.api.SettingsStateMachine
 import com.thomaskioko.tvmaniac.datastore.implementation.DatastoreRepositoryImpl
 import com.thomaskioko.tvmaniac.datastore.implementation.createDataStore
 import com.thomaskioko.tvmaniac.datastore.implementation.dataStoreFileName
@@ -18,7 +17,6 @@ import platform.Foundation.NSUserDomainMask
 actual fun datastoreModule(): Module = module {
     single { dataStore(get()) }
     single<DatastoreRepository> { DatastoreRepositoryImpl(get(), get()) }
-    single { SettingsStateMachine(get()) }
 }
 
 fun dataStore(scope: CoroutineScope): DataStore<Preferences> = createDataStore(
