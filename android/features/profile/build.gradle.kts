@@ -8,7 +8,7 @@ android {
 
 dependencies {
     implementation(project(":android:core:trakt-auth"))
-    implementation(project(":shared:domain:trakt:api"))
+    implementation(project(":shared:data:trakt:api"))
 
     implementation(libs.flowredux)
     implementation(libs.snapper)

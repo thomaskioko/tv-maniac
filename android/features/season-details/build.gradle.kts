@@ -7,9 +7,10 @@ android {
 }
 
 dependencies {
-    implementation(project(":shared:domain:season-details:api"))
+    implementation(project(":shared:domain:seasondetails"))
 
-    implementation(libs.snapper)
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.compose.material.icons)
+    implementation(libs.flowredux)
+    implementation(libs.snapper)
 }

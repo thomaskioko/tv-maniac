@@ -10,8 +10,7 @@ android {
 dependencies {
 
     implementation(project(":shared:core:util"))
-    implementation(project(":shared:domain:trakt:api"))
-    implementation(project(":shared:domain:shows:api"))
+    implementation(project(":shared:data:trakt:api"))
 
     implementation(libs.androidx.work.runtime)
 

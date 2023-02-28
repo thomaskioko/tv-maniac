@@ -7,8 +7,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":shared:domain:following:api"))
-    implementation(project(":shared:domain:trakt:api"))
+    implementation(project(":shared:data:trakt:api"))
+    implementation(project(":shared:domain:following"))
 
     implementation(libs.accompanist.insetsui)
+    implementation(libs.flowredux)
 }

@@ -7,13 +7,14 @@ android {
 }
 
 dependencies {
-    api(project(":shared:domain:shows:api"))
+    api(project(":shared:domain:discover"))
+    implementation(project(":shared:data:category:api"))
 
-    api(libs.androidx.compose.material)
-    api(libs.accompanist.pager.core)
-
-    implementation(libs.snapper)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.accompanist.pager.core)
 
     implementation(libs.accompanist.pager.indicator)
     implementation(libs.androidx.compose.ui.util)
+    implementation(libs.flowredux)
+    implementation(libs.snapper)
 }
