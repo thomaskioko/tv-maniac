@@ -3,11 +3,11 @@ package com.thomaskioko.tvmaniac.videoplayer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.domain.trailers.api.LoadTrailers
-import com.thomaskioko.tvmaniac.domain.trailers.api.LoadingTrailers
-import com.thomaskioko.tvmaniac.domain.trailers.api.TrailersAction
-import com.thomaskioko.tvmaniac.domain.trailers.api.TrailersState
-import com.thomaskioko.tvmaniac.domain.trailers.api.TrailersStateMachine
+import com.thomaskioko.tvmaniac.data.trailers.LoadTrailers
+import com.thomaskioko.tvmaniac.data.trailers.LoadingTrailers
+import com.thomaskioko.tvmaniac.data.trailers.TrailersAction
+import com.thomaskioko.tvmaniac.data.trailers.TrailersState
+import com.thomaskioko.tvmaniac.data.trailers.TrailersStateMachine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

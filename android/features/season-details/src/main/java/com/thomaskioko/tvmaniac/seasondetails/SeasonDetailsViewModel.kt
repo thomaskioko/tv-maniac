@@ -3,11 +3,11 @@ package com.thomaskioko.tvmaniac.seasondetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.seasondetails.api.LoadSeasonDetails
-import com.thomaskioko.tvmaniac.seasondetails.api.Loading
-import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsAction
-import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsState
-import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsStateMachine
+import com.thomaskioko.tvmaniac.data.seasondetails.LoadSeasonDetails
+import com.thomaskioko.tvmaniac.data.seasondetails.Loading
+import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsAction
+import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsState
+import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsStateMachine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

@@ -31,8 +31,8 @@ import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.LoadingRowContent
 import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.details.api.TrailersState
-import com.thomaskioko.tvmaniac.details.api.model.Trailer
+import com.thomaskioko.tvmaniac.data.showdetails.TrailersState
+import com.thomaskioko.tvmaniac.data.showdetails.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior

@@ -1,14 +1,14 @@
 package com.thomaskioko.showdetails
 
-import com.thomaskioko.tvmaniac.details.api.FollowShowsState
-import com.thomaskioko.tvmaniac.details.api.SeasonState
-import com.thomaskioko.tvmaniac.details.api.ShowDetailsState
-import com.thomaskioko.tvmaniac.details.api.ShowState
-import com.thomaskioko.tvmaniac.details.api.SimilarShowsState
-import com.thomaskioko.tvmaniac.details.api.TrailersState
-import com.thomaskioko.tvmaniac.details.api.model.Season
-import com.thomaskioko.tvmaniac.details.api.model.Show
-import com.thomaskioko.tvmaniac.details.api.model.Trailer
+import com.thomaskioko.tvmaniac.data.showdetails.FollowShowsState
+import com.thomaskioko.tvmaniac.data.showdetails.SeasonState
+import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.data.showdetails.ShowState
+import com.thomaskioko.tvmaniac.data.showdetails.SimilarShowsState
+import com.thomaskioko.tvmaniac.data.showdetails.TrailersState
+import com.thomaskioko.tvmaniac.data.showdetails.model.Season
+import com.thomaskioko.tvmaniac.data.showdetails.model.Show
+import com.thomaskioko.tvmaniac.data.showdetails.model.Trailer
 
 val detailUiState = ShowDetailsState.ShowDetailsLoaded(
     showState = ShowState.ShowLoaded(

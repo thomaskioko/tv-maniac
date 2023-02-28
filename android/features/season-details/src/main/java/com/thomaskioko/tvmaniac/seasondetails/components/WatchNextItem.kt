@@ -29,8 +29,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.data.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.seasondetails.api.model.Episode
 import com.thomaskioko.tvmaniac.seasondetails.episode
 
 @Composable

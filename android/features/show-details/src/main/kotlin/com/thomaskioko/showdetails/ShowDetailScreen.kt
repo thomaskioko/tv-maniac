@@ -69,17 +69,17 @@ import com.thomaskioko.tvmaniac.compose.components.SnackBarErrorRetry
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
-import com.thomaskioko.tvmaniac.details.api.DismissWebViewError
-import com.thomaskioko.tvmaniac.details.api.FollowShow
-import com.thomaskioko.tvmaniac.details.api.SeasonState
-import com.thomaskioko.tvmaniac.details.api.ShowDetailsAction
-import com.thomaskioko.tvmaniac.details.api.ShowDetailsState
-import com.thomaskioko.tvmaniac.details.api.ShowState
-import com.thomaskioko.tvmaniac.details.api.SimilarShowsState
-import com.thomaskioko.tvmaniac.details.api.TrailersState
-import com.thomaskioko.tvmaniac.details.api.WebViewError
-import com.thomaskioko.tvmaniac.details.api.model.Season
-import com.thomaskioko.tvmaniac.details.api.model.Show
+import com.thomaskioko.tvmaniac.data.showdetails.DismissWebViewError
+import com.thomaskioko.tvmaniac.data.showdetails.FollowShow
+import com.thomaskioko.tvmaniac.data.showdetails.SeasonState
+import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsAction
+import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.data.showdetails.ShowState
+import com.thomaskioko.tvmaniac.data.showdetails.SimilarShowsState
+import com.thomaskioko.tvmaniac.data.showdetails.TrailersState
+import com.thomaskioko.tvmaniac.data.showdetails.WebViewError
+import com.thomaskioko.tvmaniac.data.showdetails.model.Season
+import com.thomaskioko.tvmaniac.data.showdetails.model.Show
 import com.thomaskioko.tvmaniac.resources.R
 
 private val HeaderHeight = 550.dp

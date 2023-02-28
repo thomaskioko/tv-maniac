@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.settings
+package com.thomaskioko.tvmaniac.datastore
 
 import android.content.res.Configuration
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -52,15 +52,15 @@ import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
+import com.thomaskioko.tvmaniac.datastore.api.Theme
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.settings.api.ChangeThemeClicked
-import com.thomaskioko.tvmaniac.settings.api.DimissThemeClicked
-import com.thomaskioko.tvmaniac.settings.api.DismissTraktDialog
-import com.thomaskioko.tvmaniac.settings.api.SettingsContent
-import com.thomaskioko.tvmaniac.settings.api.ShowTraktDialog
-import com.thomaskioko.tvmaniac.settings.api.Theme
-import com.thomaskioko.tvmaniac.settings.api.ThemeSelected
-import com.thomaskioko.tvmaniac.settings.api.TraktLogout
+import com.thomaskioko.tvmaniac.settings.ChangeThemeClicked
+import com.thomaskioko.tvmaniac.settings.DimissThemeClicked
+import com.thomaskioko.tvmaniac.settings.DismissTraktDialog
+import com.thomaskioko.tvmaniac.settings.SettingsContent
+import com.thomaskioko.tvmaniac.settings.ShowTraktDialog
+import com.thomaskioko.tvmaniac.settings.ThemeSelected
+import com.thomaskioko.tvmaniac.settings.TraktLogout
 
 @Composable
 fun SettingsScreen(

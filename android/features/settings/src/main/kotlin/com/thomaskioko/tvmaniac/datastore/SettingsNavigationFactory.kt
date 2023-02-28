@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.settings
+package com.thomaskioko.tvmaniac.datastore
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController

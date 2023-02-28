@@ -32,8 +32,8 @@ import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.compose.theme.yellow300
+import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetails
 import com.thomaskioko.tvmaniac.seasondetails.components.EpisodeListItem
 
 @Composable

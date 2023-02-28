@@ -1,11 +1,11 @@
-package com.thomaskioko.tvmaniac.settings
+package com.thomaskioko.tvmaniac.datastore
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.settings.api.SettingsActions
-import com.thomaskioko.tvmaniac.settings.api.SettingsContent
-import com.thomaskioko.tvmaniac.settings.api.SettingsState
-import com.thomaskioko.tvmaniac.settings.api.SettingsStateMachine
+import com.thomaskioko.tvmaniac.settings.SettingsActions
+import com.thomaskioko.tvmaniac.settings.SettingsContent
+import com.thomaskioko.tvmaniac.settings.SettingsState
+import com.thomaskioko.tvmaniac.settings.SettingsStateMachine
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

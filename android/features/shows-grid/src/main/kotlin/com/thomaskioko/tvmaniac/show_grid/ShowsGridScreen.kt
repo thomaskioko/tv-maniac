@@ -27,13 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BackAppBar
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.shows.api.model.TvShow
+import com.thomaskioko.tvmaniac.show_grid.model.TvShow
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -51,7 +51,7 @@ fun ShowsGridScreen(
         scaffoldState = scaffoldState,
         topBar = {
             BackAppBar(
-                title = ShowCategory[viewModel.showType].title,
+                title = Category[viewModel.showType].title, //TODO:: Remove this and do the mapping from the state machine
                 onBackClick = navigateUp
             )
         },

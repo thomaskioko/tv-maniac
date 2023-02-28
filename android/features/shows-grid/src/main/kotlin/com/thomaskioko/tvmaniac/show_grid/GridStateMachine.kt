@@ -4,7 +4,6 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.util.network.Either
-import com.thomaskioko.tvmaniac.shows.api.toTvShowList
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

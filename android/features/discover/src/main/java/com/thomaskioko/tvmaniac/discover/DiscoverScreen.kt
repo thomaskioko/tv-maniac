@@ -43,6 +43,7 @@ import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
+import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
@@ -59,17 +60,16 @@ import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.shows.api.Loading
-import com.thomaskioko.tvmaniac.shows.api.LoadingError
-import com.thomaskioko.tvmaniac.shows.api.ReloadFeatured
-import com.thomaskioko.tvmaniac.shows.api.RetryLoading
-import com.thomaskioko.tvmaniac.shows.api.ShowResult
-import com.thomaskioko.tvmaniac.shows.api.ShowResult.CategorySuccess
-import com.thomaskioko.tvmaniac.shows.api.ShowsAction
-import com.thomaskioko.tvmaniac.shows.api.ShowsLoaded
-import com.thomaskioko.tvmaniac.shows.api.ShowsState
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.shows.api.model.TvShow
+import com.thomaskioko.tvmaniac.shared.domain.discover.Loading
+import com.thomaskioko.tvmaniac.shared.domain.discover.LoadingError
+import com.thomaskioko.tvmaniac.shared.domain.discover.ReloadFeatured
+import com.thomaskioko.tvmaniac.shared.domain.discover.RetryLoading
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowResult
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowResult.CategorySuccess
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsAction
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsLoaded
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsState
+import com.thomaskioko.tvmaniac.shared.domain.discover.model.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlin.math.absoluteValue
@@ -152,7 +152,7 @@ private fun DiscoverViewScrollingContent(
             when (state.result.featuredCategoryState) {
                 is ShowResult.CategoryError -> {
                     CategoryError(
-                        categoryTitle = ShowCategory.FEATURED.title,
+                        categoryTitle = Category.FEATURED.title,
                         onRetry = { reloadCategory(ReloadFeatured) }
                     )
                 }
@@ -179,7 +179,7 @@ private fun DiscoverViewScrollingContent(
             when (state.result.trendingCategoryState) {
                 is ShowResult.CategoryError -> {
                     CategoryError(
-                        categoryTitle = ShowCategory.TRENDING.title,
+                        categoryTitle = Category.TRENDING.title,
                         onRetry = { reloadCategory(ReloadFeatured) }
                     )
                 }
@@ -208,7 +208,7 @@ private fun DiscoverViewScrollingContent(
             when (state.result.anticipatedCategoryState) {
                 is ShowResult.CategoryError -> {
                     CategoryError(
-                        categoryTitle = ShowCategory.ANTICIPATED.title,
+                        categoryTitle = Category.ANTICIPATED.title,
                         onRetry = { reloadCategory(ReloadFeatured) }
                     )
                 }
@@ -236,7 +236,7 @@ private fun DiscoverViewScrollingContent(
             when (state.result.popularCategoryState) {
                 is ShowResult.CategoryError -> {
                     CategoryError(
-                        categoryTitle = ShowCategory.POPULAR.title,
+                        categoryTitle = Category.POPULAR.title,
                         onRetry = { reloadCategory(ReloadFeatured) }
                     )
                 }
@@ -391,7 +391,7 @@ fun FeaturedHorizontalPager(
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
 private fun DisplayShowData(
-    category: ShowCategory,
+    category: Category,
     tvShows: List<TvShow>,
     onItemClicked: (Long) -> Unit,
     moreClicked: (Long) -> Unit,
