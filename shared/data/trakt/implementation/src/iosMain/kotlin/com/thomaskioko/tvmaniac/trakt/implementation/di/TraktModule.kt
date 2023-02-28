@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktStatsCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
+import com.thomaskioko.tvmaniac.trakt.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.trakt.auth.implementation.BuildKonfig
 import com.thomaskioko.tvmaniac.trakt.implementation.TraktProfileRepositoryImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.TraktShowRepositoryImpl
@@ -15,6 +16,7 @@ import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktFollowedCacheImp
 import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktListCacheImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktStatsCacheImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktUserCacheImpl
+import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktShowCacheImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.traktHttpClient
 import io.ktor.client.engine.darwin.Darwin
 import io.ktor.http.HttpHeaders
@@ -69,6 +71,8 @@ actual fun traktModule(): Module = module {
     single<TraktProfileRepository> {
         TraktProfileRepositoryImpl(get(), get(), get(), get(), get(), get(), get())
     }
+
+    single<TvShowCache> { TraktShowCacheImpl(get(), get()) }
 }
 
 fun createJson() = Json {

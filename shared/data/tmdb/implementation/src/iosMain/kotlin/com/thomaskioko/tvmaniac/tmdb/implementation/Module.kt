@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
 import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
+import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbRepositoryImpl
 import io.ktor.client.engine.darwin.Darwin
 import kotlinx.serialization.json.Json
 import org.koin.core.module.Module
@@ -21,6 +23,7 @@ actual fun tmdbModule(): Module = module {
     }
     single<TmdbService> { TmdbServiceImpl(get()) }
     single<ShowImageCache> { ShowImageCacheImpl(get(), get()) }
+    single<TmdbRepository> { TmdbRepositoryImpl(get(), get(), get(), get()) }
 }
 
 
