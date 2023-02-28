@@ -94,7 +94,7 @@ You need to add API keys from [Trakt.tv](https://trakt.docs.apiary.io) & [TMDb](
 
 
 ### Android
-- Java 11
+- [Zulu Java 17](https://www.azul.com/downloads-new/?package=jdk#zulu)
 - You require the latest [Android Studio Dolphin](https://developer.android.com/studio/preview) release to be able to build the app.
 - Install Kmm Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/kmm-setup.html).
 
