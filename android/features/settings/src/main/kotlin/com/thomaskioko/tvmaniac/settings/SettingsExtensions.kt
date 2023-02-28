@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.datastore
+package com.thomaskioko.tvmaniac.settings
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
