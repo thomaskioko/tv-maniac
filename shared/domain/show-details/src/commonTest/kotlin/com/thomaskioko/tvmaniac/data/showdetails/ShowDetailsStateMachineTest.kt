@@ -50,10 +50,18 @@ internal class ShowDetailsStateMachineTest {
             stateMachine.dispatch(LoadShowDetails(84958))
 
             awaitItem() shouldBe ShowDetailsState.Loading
+            awaitItem() shouldBe showDetailsLoaded
+            awaitItem() shouldBe showDetailsLoaded.copy(
+                seasonState = seasonsShowDetailsLoaded,
+            )
+            awaitItem() shouldBe showDetailsLoaded.copy(
+                seasonState = seasonsShowDetailsLoaded,
+                trailerState = trailerShowDetailsLoaded
+            )
             awaitItem() shouldBe showDetailsLoaded.copy(
                 seasonState = seasonsShowDetailsLoaded,
                 trailerState = trailerShowDetailsLoaded,
-                similarShowsState = similarShowLoaded,
+                similarShowsState = similarShowLoaded
             )
         }
     }
@@ -66,23 +74,23 @@ internal class ShowDetailsStateMachineTest {
             traktRepository.setShowResult(Either.Right(selectedShow))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))
             trailerRepository.setTrailerResult(Either.Right(trailers))
-            similarShowsRepository.setSimilarShowsResult(
-                Either.Left(
-                    DefaultError(
-                        Throwable(
-                            errorMessage
-                        )
-                    )
-                )
-            )
+            similarShowsRepository.setSimilarShowsResult(Either.Left(DefaultError(Throwable(errorMessage))))
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
             awaitItem() shouldBe ShowDetailsState.Loading
+            awaitItem() shouldBe showDetailsLoaded
+            awaitItem() shouldBe showDetailsLoaded.copy(
+                seasonState = seasonsShowDetailsLoaded,
+            )
+            awaitItem() shouldBe showDetailsLoaded.copy(
+                seasonState = seasonsShowDetailsLoaded,
+                trailerState = trailerShowDetailsLoaded
+            )
             awaitItem() shouldBe showDetailsLoaded.copy(
                 seasonState = seasonsShowDetailsLoaded,
                 trailerState = trailerShowDetailsLoaded,
-                similarShowsState = SimilarShowsState.SimilarShowsError(errorMessage),
+                similarShowsState = SimilarShowsState.SimilarShowsError(errorMessage)
             )
         }
     }
@@ -100,6 +108,14 @@ internal class ShowDetailsStateMachineTest {
             stateMachine.dispatch(LoadShowDetails(84958))
 
             awaitItem() shouldBe ShowDetailsState.Loading
+            awaitItem() shouldBe showDetailsLoaded
+            awaitItem() shouldBe showDetailsLoaded.copy(
+                seasonState = seasonsShowDetailsLoaded,
+            )
+            awaitItem() shouldBe showDetailsLoaded.copy(
+                seasonState = seasonsShowDetailsLoaded,
+                trailerState = TrailersState.TrailersError(errorMessage),
+            )
             awaitItem() shouldBe showDetailsLoaded.copy(
                 seasonState = seasonsShowDetailsLoaded,
                 similarShowsState = similarShowLoaded,
@@ -121,10 +137,18 @@ internal class ShowDetailsStateMachineTest {
             stateMachine.dispatch(LoadShowDetails(84958))
 
             awaitItem() shouldBe ShowDetailsState.Loading
+            awaitItem() shouldBe showDetailsLoaded
             awaitItem() shouldBe showDetailsLoaded.copy(
-                similarShowsState = similarShowLoaded,
-                trailerState = trailerShowDetailsLoaded,
                 seasonState = SeasonState.SeasonsError(errorMessage),
+            )
+            awaitItem() shouldBe showDetailsLoaded.copy(
+                seasonState = SeasonState.SeasonsError(errorMessage),
+                trailerState = trailerShowDetailsLoaded
+            )
+            awaitItem() shouldBe showDetailsLoaded.copy(
+                seasonState = SeasonState.SeasonsError(errorMessage),
+                trailerState = trailerShowDetailsLoaded,
+                similarShowsState = similarShowLoaded
             )
         }
     }
@@ -142,13 +166,7 @@ internal class ShowDetailsStateMachineTest {
             stateMachine.dispatch(LoadShowDetails(84958))
 
             awaitItem() shouldBe ShowDetailsState.Loading
-            awaitItem() shouldBe ShowDetailsState.ShowDetailsLoaded(
-                showState = ShowState.ShowError(errorMessage),
-                seasonState = seasonsShowDetailsLoaded,
-                trailerState = trailerShowDetailsLoaded,
-                similarShowsState = similarShowLoaded,
-                followShowState = FollowShowsState.Idle
-            )
+            awaitItem() shouldBe ShowDetailsState.ShowDetailsError(errorMessage)
         }
     }
 }

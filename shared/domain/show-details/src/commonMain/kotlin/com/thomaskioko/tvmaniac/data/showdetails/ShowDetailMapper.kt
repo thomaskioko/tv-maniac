@@ -4,6 +4,8 @@ import com.thomaskioko.tvmaniac.core.db.Season as SeasonCache
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
+import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.core.util.network.Failure
 import com.thomaskioko.tvmaniac.data.showdetails.model.Season
 import com.thomaskioko.tvmaniac.data.showdetails.model.Show
 import com.thomaskioko.tvmaniac.data.showdetails.model.Trailer
@@ -60,3 +62,27 @@ fun List<Trailers>?.toTrailerList(): List<Trailer> = this?.map {
         youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg"
     )
 } ?: emptyList()
+
+fun Either<Failure, SelectByShowId?>.toShowState(): ShowState = fold(
+    {
+        ShowState.ShowError(it.errorMessage)
+    },
+    {
+        ShowState.ShowLoaded(
+            show = it.toTvShow(),
+        )
+    }
+)
+
+fun Either<Failure, List<com.thomaskioko.tvmaniac.core.db.Season>>.toSeasonState() = fold(
+    {
+        SeasonState.SeasonsError(it.errorMessage)
+    },
+    {
+        SeasonState.SeasonsLoaded(
+            isLoading = false,
+            seasonsList = it.toSeasonsList()
+        )
+
+    }
+)

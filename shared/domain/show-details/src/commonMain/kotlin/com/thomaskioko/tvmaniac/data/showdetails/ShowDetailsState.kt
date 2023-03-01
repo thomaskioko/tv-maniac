@@ -30,7 +30,14 @@ sealed interface SeasonState {
     data class SeasonsLoaded(
         val isLoading: Boolean,
         val seasonsList: List<Season>,
-    ) : SeasonState
+    ) : SeasonState {
+        companion object {
+            val EmptySeasons = SeasonsLoaded(
+                isLoading = true,
+                seasonsList = emptyList()
+            )
+        }
+    }
 
     data class SeasonsError(val errorMessage: String) : SeasonState
 }
@@ -46,6 +53,13 @@ sealed interface TrailersState {
         companion object {
             const val playerErrorMessage: String =
                 "Please make sure you have Android WebView installed or enabled."
+
+            val EmptyTrailers = TrailersLoaded(
+                isLoading = true,
+                hasWebViewInstalled = false,
+                playerErrorMessage = null,
+                trailersList = emptyList()
+            )
         }
     }
 }
@@ -56,7 +70,14 @@ sealed interface SimilarShowsState {
     data class SimilarShowsLoaded(
         val isLoading: Boolean,
         val similarShows: List<Show>,
-    ) : SimilarShowsState
+    ) : SimilarShowsState {
+        companion object {
+            val EmptyShows = SimilarShowsLoaded(
+                isLoading = true,
+                similarShows = emptyList()
+            )
+        }
+    }
 }
 
 
