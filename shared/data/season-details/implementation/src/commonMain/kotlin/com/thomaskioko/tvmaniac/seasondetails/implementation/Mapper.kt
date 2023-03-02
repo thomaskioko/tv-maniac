@@ -9,7 +9,7 @@ fun TraktSeasonEpisodesResponse.toEpisodeCacheList(): List<Episode> {
     return episodes.map { episodeResponse ->
         Episode(
             season_id = ids.trakt.toLong(),
-            id = episodeResponse.ids.trakt.toLong(),
+            trakt_id = episodeResponse.ids.trakt.toLong(),
             tmdb_id = episodeResponse.ids.tmdb?.toLong(),
             title = episodeResponse.title,
             overview = episodeResponse.overview ?: "TBA",

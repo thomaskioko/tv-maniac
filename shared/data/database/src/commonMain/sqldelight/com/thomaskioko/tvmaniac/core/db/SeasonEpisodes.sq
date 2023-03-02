@@ -15,10 +15,10 @@ season_number
 
 selectSeasonWithEpisodes:
 SELECT show.trakt_id, show.tmdb_id ,show.title, season.id , season.name, season.season_number, season.episode_count,
-episode.id, episode.season_id, episode.title , episode.episode_number, episode.overview, episode.runtime,
-episode.ratings, episode.votes, episodeImage.image_url
+episode.trakt_id, episode.season_id, episode.title , episode.episode_number, episode.overview, episode.runtime,
+episode.ratings, episode.votes, episode_image.image_url
 FROM show
 INNER JOIN season ON season.show_trakt_id = show.trakt_id
 INNER JOIN episode ON episode.season_id = season.id
-LEFT OUTER JOIN episodeImage ON episodeImage.trakt_id = episode.id
+LEFT OUTER JOIN episode_image ON episode_image.trakt_id = episode.trakt_id
 WHERE show.trakt_id = ? AND season_number != 0 ORDER BY season.season_number, episode_number ASC;

@@ -1,5 +1,5 @@
 CREATE TABLE episode (
-id INTEGER NOT NULL PRIMARY KEY,
+trakt_id INTEGER NOT NULL PRIMARY KEY,
 season_id INTEGER  NOT NULL,
 tmdb_id INTEGER,
 title TEXT NOT NULL,
@@ -13,7 +13,7 @@ FOREIGN KEY (season_id) REFERENCES season(id)
 
 insertOrReplace:
 INSERT OR REPLACE INTO episode(
-id,
+trakt_id,
 season_id,
 tmdb_id,
 title,
@@ -28,16 +28,16 @@ VALUES(?,?,?,?,?,?,?,?,?);
 episodeById:
 SELECT *
 FROM episode
-LEFT OUTER JOIN episodeImage ON episodeImage.trakt_id = episode.id
-WHERE episode.id = ?
+LEFT OUTER JOIN episode_image ON episode_image.trakt_id = episode.trakt_id
+WHERE episode.trakt_id = ?
 ORDER BY episode_number ASC ;
 
 
-episodeArtByShowId:
-SELECT show.tmdb_id, season.season_number, episode.id, episode.episode_number
+episodeArt:
+SELECT show.tmdb_id, season.season_number, episode.trakt_id, episode.episode_number
 FROM episode
 LEFT JOIN season ON season.id = episode.season_id
 LEFT JOIN show ON show.trakt_id = season.show_trakt_id
-LEFT OUTER JOIN episodeImage ON episodeImage.trakt_id = episode.id
-WHERE season.show_trakt_id = ? AND episodeImage.image_url IS NULL;
+LEFT OUTER JOIN episode_image ON episode_image.trakt_id = episode.trakt_id
+WHERE episode_image.image_url IS NULL;
 

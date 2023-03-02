@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
-import com.thomaskioko.tvmaniac.core.db.EpisodeImage
+import com.thomaskioko.tvmaniac.core.db.Episode_image
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeImageCache
 
@@ -10,7 +10,7 @@ class EpisodeImageCacheImpl(
 
     private val episodeQueries get() = database.episodeImageQueries
 
-    override fun insert(entity: EpisodeImage) {
+    override fun insert(entity: Episode_image) {
         database.transaction {
             episodeQueries.insertOrReplace(
                 trakt_id = entity.trakt_id,
@@ -20,7 +20,7 @@ class EpisodeImageCacheImpl(
         }
     }
 
-    override fun insert(list: List<EpisodeImage>) {
+    override fun insert(list: List<Episode_image>) {
         list.map { insert(it) }
     }
 
