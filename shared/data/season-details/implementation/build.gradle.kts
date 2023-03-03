@@ -21,9 +21,10 @@ kotlin {
 
 
         sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:data:datastore:api"))
+            implementation(project(":shared:data:episodes:api"))
             implementation(project(":shared:data:tmdb:api"))
             implementation(project(":shared:data:trakt:api"))
-            implementation(project(":shared:data:episodes:api"))
             implementation(project(":shared:data:season-details:api"))
 
             implementation(libs.sqldelight.extensions)
