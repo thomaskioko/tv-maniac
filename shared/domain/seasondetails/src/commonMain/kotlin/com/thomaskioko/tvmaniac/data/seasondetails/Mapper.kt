@@ -1,13 +1,24 @@
 package com.thomaskioko.tvmaniac.data.seasondetails
 
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
-import com.thomaskioko.tvmaniac.core.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.data.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
 
 fun Either.Right<List<SelectSeasonWithEpisodes>>.toSeasonWithEpisodes(): List<SeasonDetails> {
     return data?.groupBy { it.name }?.map { groupMap ->
+        SeasonDetails(
+            seasonId = groupMap.value.first().season_id,
+            seasonName = groupMap.key,
+            episodes = groupMap.value.map { it.toEpisode() },
+            episodeCount = groupMap.value.size.toLong(),
+            watchProgress = 0f // TODO:: Fetch watch progress
+        )
+    } ?: emptyList()
+}
+
+fun List<SelectSeasonWithEpisodes>?.toSeasonWithEpisodes(): List<SeasonDetails> {
+    return this?.groupBy { it.name }?.map { groupMap ->
         SeasonDetails(
             seasonId = groupMap.value.first().season_id,
             seasonName = groupMap.key,
@@ -25,7 +36,7 @@ fun SelectSeasonWithEpisodes.toEpisode(): Episode {
         episodeTitle = name,
         episodeNumberTitle = "E$episode_number • $title_",
         overview = overview,
-        imageUrl = image_url?.toImageUrl(),
+        imageUrl = image_url,
         runtime = runtime,
         voteCount = votes,
         episodeNumber = episode_number,
@@ -40,4 +51,7 @@ fun SelectSeasonWithEpisodes.toEpisode(): Episode {
 fun Either.Right<List<SelectSeasonWithEpisodes>>.getTitle(): String =
     data?.firstOrNull()?.title ?: ""
 
-fun String.toImageUrl() = FormatterUtil.formatPosterPath(this)
+fun List<SelectSeasonWithEpisodes>?.getTitle(): String =
+    this?.firstOrNull()?.title ?: ""
+
+

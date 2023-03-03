@@ -2,12 +2,12 @@ package com.thomaskioko.tvmaniac.data.seasondetails
 
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
+import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class SeasonDetailsStateMachine constructor(
@@ -15,50 +15,31 @@ class SeasonDetailsStateMachine constructor(
     private val episodeRepository: EpisodeRepository,
 ) : FlowReduxStateMachine<SeasonDetailsState, SeasonDetailsAction>(initialState = Loading) {
 
-    private var showId: MutableStateFlow<Long> = MutableStateFlow(0)
 
     init {
         spec {
             inState<Loading> {
                 on<LoadSeasonDetails> { action, state ->
-                    var nextState: SeasonDetailsState = state.snapshot
-
-                    seasonDetailsRepository.observeSeasonDetails(showId = action.showId)
-                        .collect { result ->
-                            showId.value = action.showId
-
-                            nextState = when (result) {
-                                is Either.Left -> LoadingError(result.error.errorMessage)
-                                is Either.Right ->
-                                    SeasonDetailsLoaded(
-                                        showTitle = result.getTitle(),
-                                        episodeList = result.toSeasonWithEpisodes()
-                                    )
-                            }
-                        }
-
-                    state.override { nextState }
+                    fetchSeasonDetails(state, action)
                 }
             }
 
             inState<SeasonDetailsLoaded> {
-
-                collectWhileInState(showId) { id, state ->
-                    var nextState: ChangedState<SeasonDetailsLoaded> = state.noChange()
-                    seasonDetailsRepository.observeCachedSeasonDetails(id)
-                        .collect {
-                            when (it) {
-                                is Either.Left -> state.override { LoadingError(it.error.errorMessage) }
-                                is Either.Right -> nextState = state.mutate {
-                                    copy(episodeList = it.toSeasonWithEpisodes())
-                                }
+                collectWhileInState(seasonDetailsRepository.observeSeasonDetails()) { result, state ->
+                    result.fold(
+                        {
+                            state.override { LoadingError(it.errorMessage) }
+                        },
+                        {
+                            state.mutate {
+                                copy(episodeList = it.toSeasonWithEpisodes())
                             }
                         }
-                    nextState
+                    )
                 }
 
-                collectWhileInStateEffect(showId) { id, _ ->
-                    episodeRepository.updateEpisodeArtWork(id)
+                collectWhileInStateEffect(episodeRepository.updateEpisodeArtWork()) { _, _ ->
+                    /** No need to do anything. Just trigger artwork download. **/
                 }
             }
 
@@ -66,7 +47,7 @@ class SeasonDetailsStateMachine constructor(
                 on<ReloadSeasonDetails> { action, state ->
                     var nextState: SeasonDetailsState = state.snapshot
 
-                    seasonDetailsRepository.observeSeasonDetails(showId = action.showId)
+                    seasonDetailsRepository.observeSeasonDetailsStream(traktId = action.showId)
                         .collect { result ->
                             nextState = when (result) {
                                 is Either.Left -> LoadingError(result.error.errorMessage)
@@ -81,6 +62,29 @@ class SeasonDetailsStateMachine constructor(
                 }
             }
         }
+    }
+
+    private suspend fun fetchSeasonDetails(
+        state: State<Loading>,
+        action: LoadSeasonDetails
+    ): ChangedState<SeasonDetailsState> {
+        lateinit var nextState: SeasonDetailsState
+
+        seasonDetailsRepository.observeSeasonDetailsStream(traktId = action.showId)
+            .collect { result ->
+
+                nextState = result.fold(
+                    { LoadingError(it.errorMessage) },
+                    {
+                        SeasonDetailsLoaded(
+                            showTitle = it.getTitle(),
+                            episodeList = it.toSeasonWithEpisodes()
+                        )
+                    }
+                )
+            }
+
+        return state.override { nextState }
     }
 }
 
