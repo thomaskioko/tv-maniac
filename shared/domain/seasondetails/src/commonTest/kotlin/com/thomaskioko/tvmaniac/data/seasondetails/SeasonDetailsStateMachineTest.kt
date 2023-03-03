@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.data.seasondetails
 
 import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.core.util.network.DefaultError
 import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
@@ -18,16 +19,6 @@ class SeasonDetailsStateMachineTest {
     private val stateMachine = SeasonDetailsStateMachine(seasonDetailsRepository, episodeRepository)
 
     @Test
-    fun initial_state_emits_expected_result() = runTest {
-        stateMachine.state.test {
-
-            stateMachine.dispatch(LoadSeasonDetails(1231))
-
-            awaitItem() shouldBe Loading
-        }
-    }
-
-    @Test
     fun onLoadSeasonDetails_correct_state_is_emitted() = runTest {
         stateMachine.state.test {
             seasonDetailsRepository.setSeasonDetails(Either.Right(seasonDetails))
@@ -35,8 +26,20 @@ class SeasonDetailsStateMachineTest {
             stateMachine.dispatch(LoadSeasonDetails(1231))
 
             awaitItem() shouldBe Loading
-            awaitItem() shouldBe seasonDetailsLoaded //Loading State
-            awaitItem() shouldBe seasonDetailsLoaded // SeasonDetails State
+            awaitItem() shouldBe seasonDetailsLoaded
+        }
+    }
+
+    @Test
+    fun onLoadSeasonDetails_andErrorOccurs_correctStateIsEmitted() = runTest {
+        stateMachine.state.test {
+            val errorMessage = "Oppsy. Something went wrong"
+            seasonDetailsRepository.setSeasonDetails(Either.Left(DefaultError(Throwable(errorMessage))))
+
+            stateMachine.dispatch(LoadSeasonDetails(1231))
+
+            awaitItem() shouldBe Loading
+            awaitItem() shouldBe LoadingError(errorMessage)
         }
     }
 
