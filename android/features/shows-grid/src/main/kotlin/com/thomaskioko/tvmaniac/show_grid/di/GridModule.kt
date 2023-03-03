@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.show_grid.di
 
 import com.thomaskioko.tvmaniac.show_grid.GridStateMachine
-import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +15,7 @@ object GridModule {
     @Singleton
     @Provides
     fun provideGridStateMachine(
-        repository: TraktRepository
+        repository: TraktShowRepository
     ): GridStateMachine = GridStateMachine(repository)
 
 }

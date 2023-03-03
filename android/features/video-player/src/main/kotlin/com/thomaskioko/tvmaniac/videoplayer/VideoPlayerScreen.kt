@@ -42,14 +42,14 @@ import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.data.trailers.LoadingTrailers
+import com.thomaskioko.tvmaniac.data.trailers.ReloadTrailers
+import com.thomaskioko.tvmaniac.data.trailers.TrailerError
+import com.thomaskioko.tvmaniac.data.trailers.TrailerSelected
+import com.thomaskioko.tvmaniac.data.trailers.TrailersLoaded
+import com.thomaskioko.tvmaniac.data.trailers.VideoPlayerError
+import com.thomaskioko.tvmaniac.data.trailers.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.domain.trailers.api.LoadingTrailers
-import com.thomaskioko.tvmaniac.domain.trailers.api.ReloadTrailers
-import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerError
-import com.thomaskioko.tvmaniac.domain.trailers.api.TrailerSelected
-import com.thomaskioko.tvmaniac.domain.trailers.api.TrailersLoaded
-import com.thomaskioko.tvmaniac.domain.trailers.api.VideoPlayerError
-import com.thomaskioko.tvmaniac.domain.trailers.api.model.Trailer
 
 @Composable
 fun VideoPlayerScreen(

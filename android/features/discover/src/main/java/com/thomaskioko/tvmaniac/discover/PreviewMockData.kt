@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.discover
 
-import com.thomaskioko.tvmaniac.shows.api.ShowResult
-import com.thomaskioko.tvmaniac.shows.api.ShowsLoaded
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.shows.api.model.TvShow
+import com.thomaskioko.tvmaniac.category.api.model.Category
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowResult
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsLoaded
+import com.thomaskioko.tvmaniac.shared.domain.discover.model.TvShow
 
 val shows = TvShow(
     traktId = 84958,
@@ -27,29 +27,21 @@ val shows = TvShow(
 
 val showsLoaded = ShowsLoaded(
     result = ShowResult(
-        featuredShows = ShowResult.ShowCategoryData(
-            categoryState = ShowResult.CategorySuccess(
-                category = ShowCategory.FEATURED,
-                tvShows = List(5) { shows }
-            )
+        featuredCategoryState = ShowResult.CategorySuccess(
+            category = Category.FEATURED,
+            tvShows = List(5) { shows }
         ),
-        trendingShows = ShowResult.ShowCategoryData(
-            categoryState = ShowResult.CategorySuccess(
-                category = ShowCategory.TRENDING,
-                tvShows = List(10) { shows }
-            )
+        trendingCategoryState = ShowResult.CategorySuccess(
+            category = Category.TRENDING,
+            tvShows = List(10) { shows }
         ),
-        popularShows = ShowResult.ShowCategoryData(
-            categoryState = ShowResult.CategorySuccess(
-                category = ShowCategory.POPULAR,
-                tvShows = List(10) { shows }
-            )
+        popularCategoryState = ShowResult.CategorySuccess(
+            category = Category.POPULAR,
+            tvShows = List(10) { shows }
         ),
-        anticipatedShows = ShowResult.ShowCategoryData(
-            categoryState = ShowResult.CategorySuccess(
-                category = ShowCategory.ANTICIPATED,
-                tvShows = List(10) { shows }
-            )
+        anticipatedCategoryState = ShowResult.CategorySuccess(
+            category = Category.ANTICIPATED,
+            tvShows = List(10) { shows }
         ),
     )
 )

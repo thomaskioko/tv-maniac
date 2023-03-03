@@ -3,7 +3,7 @@ TvManiac
 ![Check](https://github.com/c0de-wizard/tv-maniac/actions/workflows/build.yml/badge.svg)  ![android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat) ![ios](http://img.shields.io/badge/platform-ios-CDCDCD.svg?style=flat)
 
 **TvManiac** is a Multiplatform app (Android & iOS) for viewing TV Shows information from
-[TMDB](https://www.themoviedb.org/). The aim of this project is do demonstrate KMM development capabilities.
+[Trakt](https://trakt.tv/). The aim of this project is do demonstrate KMM development capabilities.
 
 You can Install and test latest android app from below 👇
 
@@ -28,15 +28,25 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
   </td>
     <td>
     <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AnroidHomeDark.png?raw=true" alt="Home Screen Dark" width="500"/>
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/EpisodeListLight.png?raw=true" alt="Episodes List Light" width="500"/>
     </p>
   </td>
   <td>
     <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AnroidDetailDark.png?raw=true" alt="Show Details Dark" width="500"/>
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AnroidHomeDark.png?raw=true" alt="Show Details Dark" width="500"/>
     </p>
   </td>
 </tr>
+    <td>
+    <p align="center">
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AnroidDetailDark.png?raw=true" alt="Show Details Dark" width="500"/>
+    </p>
+  </td>
+  <td>
+    <p align="center">
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/EpisodeListDark.png?raw=true" alt="Episodes List Dark" width="500"/>
+    </p>
+  </td>
 </table>
 
 ### 🔆 iOS Screenshots
@@ -84,7 +94,7 @@ You need to add API keys from [Trakt.tv](https://trakt.docs.apiary.io) & [TMDb](
 
 
 ### Android
-- Java 11
+- [Zulu Java 17](https://www.azul.com/downloads-new/?package=jdk#zulu)
 - You require the latest [Android Studio Dolphin](https://developer.android.com/studio/preview) release to be able to build the app.
 - Install Kmm Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/kmm-setup.html).
 

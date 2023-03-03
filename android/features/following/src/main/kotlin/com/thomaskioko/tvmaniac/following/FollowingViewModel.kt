@@ -2,10 +2,10 @@ package com.thomaskioko.tvmaniac.following
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.domain.following.api.FollowingAction
-import com.thomaskioko.tvmaniac.domain.following.api.FollowingState
-import com.thomaskioko.tvmaniac.domain.following.api.FollowingStateMachine
-import com.thomaskioko.tvmaniac.domain.following.api.LoadingShows
+import com.thomaskioko.tvmaniac.domain.following.FollowingAction
+import com.thomaskioko.tvmaniac.domain.following.FollowingState
+import com.thomaskioko.tvmaniac.domain.following.FollowingStateMachine
+import com.thomaskioko.tvmaniac.domain.following.LoadingShows
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

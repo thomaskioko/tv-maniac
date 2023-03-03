@@ -1,9 +1,5 @@
-@file:Suppress("UnstableApiUsage")
-
-import util.libs
-
 plugins {
-    `android-feature-plugin`
+    id("tvmaniac.android.feature")
 }
 
 android {
@@ -11,12 +7,12 @@ android {
 }
 
 dependencies {
-    api(project(":shared:domain:show-details:api"))
-    implementation(project(":android:core:compose"))
+    api(project(":shared:domain:show-details"))
 
-    implementation(libs.snapper)
     implementation(libs.accompanist.insetsui)
     implementation(libs.accompanist.navigation.material)
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.compose.material.icons)
+    implementation(libs.flowredux)
+    implementation(libs.snapper)
 }

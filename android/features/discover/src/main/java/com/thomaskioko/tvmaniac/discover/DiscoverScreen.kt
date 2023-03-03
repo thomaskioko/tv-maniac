@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.Surface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -44,6 +43,7 @@ import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
+import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
@@ -60,20 +60,18 @@ import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.compose.util.verticalGradientScrim
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.shows.api.Loading
-import com.thomaskioko.tvmaniac.shows.api.LoadingError
-import com.thomaskioko.tvmaniac.shows.api.ReloadCategory
-import com.thomaskioko.tvmaniac.shows.api.RetryLoading
-import com.thomaskioko.tvmaniac.shows.api.ShowResult
-import com.thomaskioko.tvmaniac.shows.api.ShowResult.CategorySuccess
-import com.thomaskioko.tvmaniac.shows.api.ShowUpdateState
-import com.thomaskioko.tvmaniac.shows.api.ShowsLoaded
-import com.thomaskioko.tvmaniac.shows.api.ShowsState
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.shows.api.model.TvShow
+import com.thomaskioko.tvmaniac.shared.domain.discover.Loading
+import com.thomaskioko.tvmaniac.shared.domain.discover.LoadingError
+import com.thomaskioko.tvmaniac.shared.domain.discover.ReloadFeatured
+import com.thomaskioko.tvmaniac.shared.domain.discover.RetryLoading
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowResult
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowResult.CategorySuccess
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsAction
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsLoaded
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsState
+import com.thomaskioko.tvmaniac.shared.domain.discover.model.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 /**
@@ -86,8 +84,8 @@ private const val MinContrastOfPrimaryVsSurface = 3f
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverViewModel,
-    openShowDetails: (showId: Int) -> Unit,
-    moreClicked: (showType: Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    moreClicked: (showType: Long) -> Unit,
 ) {
 
     val scaffoldState = rememberScaffoldState()
@@ -100,7 +98,7 @@ fun DiscoverScreen(
         openShowDetails = openShowDetails,
         moreClicked = moreClicked,
         onRetry = { viewModel.dispatch(RetryLoading) },
-        reloadCategory = { viewModel.dispatch(ReloadCategory(it)) }
+        reloadCategory = { viewModel.dispatch(it) }
     )
 }
 
@@ -108,9 +106,9 @@ fun DiscoverScreen(
 private fun DiscoverShows(
     scaffoldState: ScaffoldState,
     showsState: ShowsState,
-    openShowDetails: (showId: Int) -> Unit,
-    moreClicked: (showType: Int) -> Unit,
-    reloadCategory: (Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+    moreClicked: (showType: Long) -> Unit,
+    reloadCategory: (ShowsAction) -> Unit,
     onRetry: () -> Unit,
 ) {
     Scaffold(
@@ -121,36 +119,14 @@ private fun DiscoverShows(
             Loading -> FullScreenLoading()
             is ShowsLoaded -> {
                 DiscoverViewScrollingContent(
-                    contentPadding,
-                    showsState,
-                    openShowDetails,
-                    moreClicked,
-                    reloadCategory,
+                    contentPadding = contentPadding,
+                    state = showsState,
+                    openShowDetails = openShowDetails,
+                    reloadCategory = reloadCategory,
+                    moreClicked = moreClicked,
                 )
-
-                when (showsState.result.updateState) {
-                    ShowUpdateState.EMPTY -> {
-                        EmptyContentView(
-                            painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                            message = stringResource(id = R.string.generic_empty_content)
-                        )
-                    }
-                    ShowUpdateState.IDLE -> {
-                        //Do nothing
-                    }
-                    ShowUpdateState.ERROR -> {
-                        val errorMessage = stringResource(R.string.generic_error_message)
-                        LaunchedEffect(scaffoldState.snackbarHostState) {
-                            launch {
-                                scaffoldState.snackbarHostState.showSnackbar(
-                                    errorMessage,
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
-                    }
-                }
             }
+
             is LoadingError -> ErrorUi(errorMessage = showsState.errorMessage, onRetry = onRetry)
         }
     }
@@ -160,9 +136,9 @@ private fun DiscoverShows(
 private fun DiscoverViewScrollingContent(
     contentPadding: PaddingValues,
     state: ShowsLoaded,
-    openShowDetails: (showId: Int) -> Unit,
-    reloadCategory: (Int) -> Unit,
-    moreClicked: (showType: Int) -> Unit
+    openShowDetails: (showId: Long) -> Unit,
+    reloadCategory: (ShowsAction) -> Unit,
+    moreClicked: (showType: Long) -> Unit
 ) {
     LazyColumn(
         contentPadding = contentPadding.copy(copyTop = false),
@@ -173,40 +149,44 @@ private fun DiscoverViewScrollingContent(
     ) {
 
         item {
-            when (state.result.featuredShows.categoryState) {
+            when (state.result.featuredCategoryState) {
                 is ShowResult.CategoryError -> {
-                    val resultState =
-                        (state.result.featuredShows.categoryState as ShowResult.CategoryError)
                     CategoryError(
-                        category = resultState.category,
-                        onRetry = reloadCategory
+                        categoryTitle = Category.FEATURED.title,
+                        onRetry = { reloadCategory(ReloadFeatured) }
                     )
                 }
+
                 is CategorySuccess -> {
                     val resultState =
-                        (state.result.featuredShows.categoryState as CategorySuccess)
+                        (state.result.featuredCategoryState as CategorySuccess)
                     FeaturedItems(
                         showList = resultState.tvShows,
                         onItemClicked = openShowDetails
                     )
                 }
+
+                ShowResult.EmptyCategoryData ->
+                    EmptyContentView(
+                        painter = painterResource(id = R.drawable.ic_watchlist_empty),
+                        message = stringResource(id = R.string.generic_empty_content)
+                    )
             }
 
         }
 
         item {
-            when (state.result.trendingShows.categoryState) {
+            when (state.result.trendingCategoryState) {
                 is ShowResult.CategoryError -> {
-                    val resultState =
-                        (state.result.trendingShows.categoryState as ShowResult.CategoryError)
                     CategoryError(
-                        category = resultState.category,
-                        onRetry = reloadCategory
+                        categoryTitle = Category.TRENDING.title,
+                        onRetry = { reloadCategory(ReloadFeatured) }
                     )
                 }
+
                 is CategorySuccess -> {
                     val resultState =
-                        (state.result.trendingShows.categoryState as CategorySuccess)
+                        (state.result.trendingCategoryState as CategorySuccess)
                     DisplayShowData(
                         category = resultState.category,
                         tvShows = resultState.tvShows,
@@ -214,23 +194,28 @@ private fun DiscoverViewScrollingContent(
                         moreClicked = moreClicked
                     )
                 }
+
+                ShowResult.EmptyCategoryData ->
+                    EmptyContentView(
+                        painter = painterResource(id = R.drawable.ic_watchlist_empty),
+                        message = stringResource(id = R.string.generic_empty_content)
+                    )
             }
 
         }
 
         item {
-            when (state.result.anticipatedShows.categoryState) {
+            when (state.result.anticipatedCategoryState) {
                 is ShowResult.CategoryError -> {
-                    val resultState =
-                        (state.result.anticipatedShows.categoryState as ShowResult.CategoryError)
                     CategoryError(
-                        category = resultState.category,
-                        onRetry = reloadCategory
+                        categoryTitle = Category.ANTICIPATED.title,
+                        onRetry = { reloadCategory(ReloadFeatured) }
                     )
                 }
+
                 is CategorySuccess -> {
                     val resultState =
-                        (state.result.anticipatedShows.categoryState as CategorySuccess)
+                        (state.result.anticipatedCategoryState as CategorySuccess)
                     DisplayShowData(
                         category = resultState.category,
                         tvShows = resultState.tvShows,
@@ -238,22 +223,27 @@ private fun DiscoverViewScrollingContent(
                         moreClicked = moreClicked
                     )
                 }
+
+                ShowResult.EmptyCategoryData ->
+                    EmptyContentView(
+                        painter = painterResource(id = R.drawable.ic_watchlist_empty),
+                        message = stringResource(id = R.string.generic_empty_content)
+                    )
             }
         }
 
         item {
-            when (state.result.popularShows.categoryState) {
+            when (state.result.popularCategoryState) {
                 is ShowResult.CategoryError -> {
-                    val resultState =
-                        (state.result.popularShows.categoryState as ShowResult.CategoryError)
                     CategoryError(
-                        category = resultState.category,
-                        onRetry = reloadCategory
+                        categoryTitle = Category.POPULAR.title,
+                        onRetry = { reloadCategory(ReloadFeatured) }
                     )
                 }
+
                 is CategorySuccess -> {
                     val resultState =
-                        (state.result.popularShows.categoryState as CategorySuccess)
+                        (state.result.popularCategoryState as CategorySuccess)
                     DisplayShowData(
                         category = resultState.category,
                         tvShows = resultState.tvShows,
@@ -261,6 +251,12 @@ private fun DiscoverViewScrollingContent(
                         moreClicked = moreClicked
                     )
                 }
+
+                ShowResult.EmptyCategoryData ->
+                    EmptyContentView(
+                        painter = painterResource(id = R.drawable.ic_watchlist_empty),
+                        message = stringResource(id = R.string.generic_empty_content)
+                    )
             }
         }
     }
@@ -270,7 +266,7 @@ private fun DiscoverViewScrollingContent(
 @Composable
 fun FeaturedItems(
     showList: List<TvShow>,
-    onItemClicked: (Int) -> Unit,
+    onItemClicked: (Long) -> Unit,
 ) {
 
     val surfaceColor = grey900
@@ -322,7 +318,7 @@ fun FeaturedHorizontalPager(
     list: List<TvShow>,
     pagerState: PagerState,
     dominantColorState: DominantColorState,
-    onClick: (Int) -> Unit
+    onClick: (Long) -> Unit
 ) {
 
     val selectedImageUrl = list.getOrNull(pagerState.currentPage)
@@ -395,10 +391,10 @@ fun FeaturedHorizontalPager(
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
 private fun DisplayShowData(
-    category: ShowCategory,
+    category: Category,
     tvShows: List<TvShow>,
-    onItemClicked: (Int) -> Unit,
-    moreClicked: (Int) -> Unit,
+    onItemClicked: (Long) -> Unit,
+    moreClicked: (Long) -> Unit,
 ) {
 
     AnimatedVisibility(visible = tvShows.isNotEmpty()) {
@@ -430,16 +426,16 @@ private fun DisplayShowData(
 
 @Composable
 private fun CategoryError(
-    category: ShowCategory,
-    onRetry: (Int) -> Unit,
+    categoryTitle: String,
+    onRetry: () -> Unit,
 ) {
 
     Column {
         BoxTextItems(
-            title = category.title
+            title = categoryTitle
         )
 
-        RowError(onRetry = { onRetry(category.id) })
+        RowError(onRetry = { onRetry() })
     }
 }
 

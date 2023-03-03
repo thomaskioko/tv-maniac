@@ -1,7 +1,8 @@
 package com.thomaskioko.tvmaniac.seasondetails
 
-import com.thomaskioko.tvmaniac.seasondetails.api.model.Episode
-import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetails
+import com.thomaskioko.tvmaniac.data.seasondetails.model.Episode
+import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
+
 
 val episode = Episode(
     id = 2534997,

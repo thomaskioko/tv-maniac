@@ -43,12 +43,13 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.copy
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
+import com.thomaskioko.tvmaniac.data.seasondetails.Loading
+import com.thomaskioko.tvmaniac.data.seasondetails.LoadingError
+import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsLoaded
+import com.thomaskioko.tvmaniac.data.seasondetails.model.Episode
+import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.seasondetails.api.Loading
-import com.thomaskioko.tvmaniac.seasondetails.api.LoadingError
-import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsLoaded
-import com.thomaskioko.tvmaniac.seasondetails.api.model.Episode
-import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetails
+import com.thomaskioko.tvmaniac.seasondetails.components.WatchlistRowItem
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
@@ -57,7 +58,7 @@ fun SeasonDetailsScreen(
     viewModel: SeasonDetailsViewModel,
     navigateUp: () -> Unit,
     initialSeasonName: String? = null,
-    onEpisodeClicked: (Int) -> Unit = {}
+    onEpisodeClicked: (Long) -> Unit = {}
 ) {
 
     val viewState by viewModel.state.collectAsStateWithLifecycle()
@@ -147,7 +148,7 @@ private fun SeasonsScrollingContent(
     initialSeasonName: String?,
     listState: LazyListState,
     contentPadding: PaddingValues,
-    onEpisodeClicked: (Int) -> Unit = {}
+    onEpisodeClicked: (Long) -> Unit = {}
 ) {
     seasonsEpList?.let {
         val initialIndex = seasonsEpList

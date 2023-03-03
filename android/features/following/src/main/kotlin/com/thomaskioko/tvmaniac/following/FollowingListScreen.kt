@@ -24,17 +24,17 @@ import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
-import com.thomaskioko.tvmaniac.domain.following.api.ErrorLoadingShows
-import com.thomaskioko.tvmaniac.domain.following.api.FollowedShow
-import com.thomaskioko.tvmaniac.domain.following.api.ReloadFollowedShows
-import com.thomaskioko.tvmaniac.domain.following.api.FollowingContent
-import com.thomaskioko.tvmaniac.domain.following.api.LoadingShows
+import com.thomaskioko.tvmaniac.domain.following.ErrorLoadingShows
+import com.thomaskioko.tvmaniac.domain.following.FollowedShow
+import com.thomaskioko.tvmaniac.domain.following.FollowingContent
+import com.thomaskioko.tvmaniac.domain.following.LoadingShows
+import com.thomaskioko.tvmaniac.domain.following.ReloadFollowedShows
 import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun FollowingScreen(
     viewModel: FollowingViewModel,
-    openShowDetails: (showId: Int) -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
 ) {
 
     val followedState by viewModel.state.collectAsStateWithLifecycle()
@@ -77,7 +77,7 @@ fun FollowingScreen(
 private fun FollowingGridContent(
     list: List<FollowedShow>,
     paddingValues: PaddingValues,
-    onItemClicked: (Int) -> Unit,
+    onItemClicked: (Long) -> Unit,
 ) {
     val listState = rememberLazyListState()
 

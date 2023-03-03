@@ -50,8 +50,8 @@ var genreList = ["Drama","Action", "Sci-Fi", "Animation"]
 
 
 var seasonList = [
-	Season(seasonId: 123, tvShowId: 123, name: "Season 1", overview: "", seasonNumber: 1, episodeCount: 12),
-	Season(seasonId: 13, tvShowId: 13, name: "Season 2", overview: "", seasonNumber: 1, episodeCount: 12)
+	Season(seasonId: 123, tvShowId: 123, name: "Season 1"),
+	Season(seasonId: 13, tvShowId: 13, name: "Season 2")
 ]
 
 var detailState = ShowDetailsStateShowDetailsLoaded(

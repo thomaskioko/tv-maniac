@@ -1,0 +1,20 @@
+CREATE TABLE show_image (
+trakt_id INTEGER NOT NULL PRIMARY KEY,
+tmdb_id INTEGER DEFAULT NULL,
+poster_url TEXT DEFAULT NULL,
+backdrop_url TEXT DEFAULT NULL,
+FOREIGN KEY (trakt_id) REFERENCES show(trakt_id) ON DELETE CASCADE
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO show_image(
+trakt_id,
+tmdb_id,
+poster_url,
+backdrop_url
+)
+VALUES(?,?,?,?);
+
+selectImages:
+SELECT * FROM show_image
+WHERE poster_url IS NULL;

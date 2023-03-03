@@ -7,8 +7,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
@@ -30,12 +27,14 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SnackbarResult
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.SignalWifi4Bar
 import androidx.compose.material.icons.outlined.SignalWifiOff
+import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -45,9 +44,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.thomaskioko.tvmaniac.compose.theme.colorError
@@ -227,6 +226,7 @@ fun ConnectionStatus(isConnected: Boolean) {
 
 @Composable
 fun ErrorUi(
+    modifier: Modifier = Modifier.size(120.dp),
     errorMessage: String = stringResource(R.string.unexpected_error_retry),
     onRetry: () -> Unit
 ) {
@@ -235,14 +235,13 @@ fun ErrorUi(
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
-                .wrapContentSize()
-                .clickable { onRetry() },
+                .wrapContentSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_watchlist_empty),
+                imageVector = Icons.Outlined.WarningAmber,
                 colorFilter = ColorFilter.tint(MaterialTheme.colors.onSurface.copy(alpha = 0.8F)),
-                modifier = Modifier.size(96.dp),
+                modifier = modifier,
                 contentDescription = null
             )
 
@@ -275,7 +274,9 @@ fun ErrorUi(
 }
 
 @Composable
-fun RowError(onRetry: () -> Unit) {
+fun RowError(
+    onRetry: () -> Unit,
+) {
     Box(Modifier.fillMaxSize()) {
 
         Column(
@@ -285,7 +286,7 @@ fun RowError(onRetry: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_watchlist_empty),
+                imageVector = Icons.Outlined.WarningAmber,
                 colorFilter = ColorFilter.tint(MaterialTheme.colors.onSurface.copy(alpha = 0.8F)),
                 modifier = Modifier.size(24.dp),
                 contentDescription = null
@@ -297,10 +298,11 @@ fun RowError(onRetry: () -> Unit) {
                         contentColor = MaterialTheme.colors.onBackground,
                         backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.08f)
                     ),
+                    border = BorderStroke(1.dp, grey600),
                     onClick = { onRetry() }
                 ) {
                     Text(
-                        text = stringResource(R.string.unexpected_error_retry),
+                        text = "Retry",
                         style = MaterialTheme.typography.body2,
                     )
                 }
@@ -350,4 +352,25 @@ fun LoadingRowContent(
 
     content()
 
+}
+
+@Preview
+@Composable
+fun ErrorUiPreview() {
+    Surface(Modifier.fillMaxWidth()) {
+        ErrorUi(
+            errorMessage = "Opps",
+            onRetry = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun RowErrorPreview() {
+    Surface(Modifier.fillMaxWidth()) {
+        RowError(
+            onRetry = {}
+        )
+    }
 }

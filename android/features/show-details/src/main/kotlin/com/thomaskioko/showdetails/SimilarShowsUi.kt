@@ -12,17 +12,17 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.LoadingRowContent
 import com.thomaskioko.tvmaniac.compose.components.TvShowCard
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.details.api.model.Show
+import com.thomaskioko.tvmaniac.data.showdetails.model.Show
+import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import com.thomaskioko.tvmaniac.resources.R
 
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
 fun SimilarShowsUi(
     isLoading: Boolean,
     similarShows: List<Show>,
-    onShowClicked: (Int) -> Unit = {}
+    onShowClicked: (Long) -> Unit = {}
 ) {
     val lazyListState = rememberLazyListState()
 
