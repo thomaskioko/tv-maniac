@@ -6,6 +6,6 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 actual fun seasonDetailsDataModule(): Module = module {
-    single<SeasonDetailsRepository> { SeasonDetailsRepositoryImpl(get(), get(), get(), get()) }
+    single<SeasonDetailsRepository> { SeasonDetailsRepositoryImpl(get(), get(), get(), get(), get()) }
     single<SeasonsCache> { SeasonsCacheImpl(get(), get()) }
 }
