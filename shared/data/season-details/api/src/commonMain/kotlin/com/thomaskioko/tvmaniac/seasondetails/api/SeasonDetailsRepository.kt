@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface SeasonDetailsRepository {
 
-    fun observeSeasons(traktId: Long): Flow<Either<Failure, List<Season>>>
+    fun observeSeasonsStream(traktId: Long): Flow<Either<Failure, List<Season>>>
 
-    fun observeSeasonDetails(showId: Long): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>>
+    fun observeSeasonDetailsStream(traktId: Long): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>>
 
-    fun observeCachedSeasonDetails(showId: Long): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>>
+    fun observeSeasonDetails(): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>>
 
 }

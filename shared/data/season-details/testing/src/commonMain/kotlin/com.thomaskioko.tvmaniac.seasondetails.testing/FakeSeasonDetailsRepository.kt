@@ -23,14 +23,12 @@ class FakeSeasonDetailsRepository : SeasonDetailsRepository {
         seasonEpisodesResult = flow { emit(result) }
     }
 
-    override fun observeSeasons(traktId: Long): Flow<Either<Failure, List<Season>>> =
-        seasonsResult
+    override fun observeSeasonsStream(traktId: Long): Flow<Either<Failure, List<Season>>> = seasonsResult
 
-    override fun observeCachedSeasonDetails(
-        showId: Long
-    ): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> = seasonEpisodesResult
+    override fun observeSeasonDetails(): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
+        seasonEpisodesResult
 
-    override fun observeSeasonDetails(
-        showId: Long
+    override fun observeSeasonDetailsStream(
+        traktId: Long
     ): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> = seasonEpisodesResult
 }
