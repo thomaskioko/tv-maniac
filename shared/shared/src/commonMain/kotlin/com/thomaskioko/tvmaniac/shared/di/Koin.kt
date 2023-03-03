@@ -1,21 +1,27 @@
+@file:Suppress("unused")
+
 package com.thomaskioko.tvmaniac.shared.di
 
 import com.thomaskioko.tvmaniac.core.db.di.dbPlatformModule
 import com.thomaskioko.tvmaniac.core.util.di.coreUtilModule
-import com.thomaskioko.tvmaniac.details.api.ShowDetailsStateMachineWrapper
-import com.thomaskioko.tvmaniac.details.implementation.di.detailDomainModule
-import com.thomaskioko.tvmaniac.domain.following.api.FollowingStateMachineWrapper
-import com.thomaskioko.tvmaniac.domain.following.api.di.followingModule
-import com.thomaskioko.tvmaniac.domain.trailers.api.TrailersStateMachineWrapper
-import com.thomaskioko.tvmaniac.domain.trailers.implementation.di.trailersModule
-import com.thomaskioko.tvmaniac.episodes.implementation.di.episodeDomainModule
-import com.thomaskioko.tvmaniac.network.di.networkPlatformModule
-import com.thomaskioko.tvmaniac.seasondetails.implementation.di.seasonDetailsDomainModule
-import com.thomaskioko.tvmaniac.settings.api.SettingsStateMachineWrapper
-import com.thomaskioko.tvmaniac.settings.implementation.di.settingsModule
-import com.thomaskioko.tvmaniac.shows.api.ShowsStateMachineWrapper
-import com.thomaskioko.tvmaniac.shows.implementation.di.showDomainModule
-import com.thomaskioko.tvmaniac.similar.implementation.di.similarDomainModule
+import com.thomaskioko.tvmaniac.data.category.implementation.categoryDataModule
+import com.thomaskioko.tvmaniac.data.seasondetails.seasonDetailsDomainModule
+import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsStateMachineWrapper
+import com.thomaskioko.tvmaniac.data.showdetails.showDetailsDomainModule
+import com.thomaskioko.tvmaniac.data.trailers.TrailersStateMachineWrapper
+import com.thomaskioko.tvmaniac.data.trailers.implementation.trailersModule
+import com.thomaskioko.tvmaniac.data.trailers.trailerDomainModule
+import com.thomaskioko.tvmaniac.datastore.implementation.di.datastoreModule
+import com.thomaskioko.tvmaniac.domain.following.FollowingStateMachineWrapper
+import com.thomaskioko.tvmaniac.domain.following.followingDomainModule
+import com.thomaskioko.tvmaniac.episodes.implementation.di.episodeDataModule
+import com.thomaskioko.tvmaniac.network.di.networkModule
+import com.thomaskioko.tvmaniac.seasondetails.implementation.seasonDetailsDataModule
+import com.thomaskioko.tvmaniac.settings.SettingsStateMachineWrapper
+import com.thomaskioko.tvmaniac.settings.settingsDomainModule
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsStateMachineWrapper
+import com.thomaskioko.tvmaniac.shared.domain.discover.discoverDomainModule
+import com.thomaskioko.tvmaniac.similar.implementation.similarDataModule
 import com.thomaskioko.tvmaniac.tmdb.implementation.tmdbModule
 import com.thomaskioko.tvmaniac.trakt.implementation.di.traktModule
 import kotlinx.coroutines.Dispatchers
@@ -23,49 +29,52 @@ import kotlinx.coroutines.MainScope
 import org.koin.core.Koin
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
-import org.koin.core.qualifier.named
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
 fun KoinApplication.Companion.start(): KoinApplication = initKoin {}
 
 val Koin.showStateMachine: ShowsStateMachineWrapper
-    get() = ShowsStateMachineWrapper(get(), get(named("main-dispatcher")))
+    get() = ShowsStateMachineWrapper(get(), get())
 
 val Koin.showDetailsStateMachine: ShowDetailsStateMachineWrapper
-    get() = ShowDetailsStateMachineWrapper(get(), get(named("main-dispatcher")))
+    get() = ShowDetailsStateMachineWrapper(get(), get())
 
 val Koin.settingsStateMachine: SettingsStateMachineWrapper
-    get() = SettingsStateMachineWrapper(get(), get(named("main-dispatcher")))
+    get() = SettingsStateMachineWrapper(get(), get())
 
 val Koin.trailersStateMachine: TrailersStateMachineWrapper
-    get() = TrailersStateMachineWrapper(get(), get(named("main-dispatcher")))
+    get() = TrailersStateMachineWrapper(get(), get())
 
 val Koin.followingStateMachineWrapper: FollowingStateMachineWrapper
-    get() = FollowingStateMachineWrapper(get(), get(named("main-dispatcher")))
+    get() = FollowingStateMachineWrapper(get(), get())
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     appDeclaration()
     modules(
-        dispatcherModule,
-        detailDomainModule,
-        seasonDetailsDomainModule,
-        episodeDomainModule,
-        similarDomainModule,
-        trailersModule,
-        showDomainModule,
-        followingModule,
-        traktModule(),
-        dbPlatformModule(),
-        networkPlatformModule(),
-        tmdbModule(),
+        categoryDataModule(),
         coreUtilModule(),
-        settingsModule()
+        datastoreModule(),
+        dbPlatformModule(),
+        discoverDomainModule(),
+        dispatcherModule(),
+        episodeDataModule(),
+        followingDomainModule(),
+        seasonDetailsDataModule(),
+        networkModule(),
+        seasonDetailsDomainModule(),
+        settingsDomainModule(),
+        showDetailsDomainModule(),
+        similarDataModule(),
+        tmdbModule(),
+        trailerDomainModule(),
+        trailersModule(),
+        traktModule()
     )
 }
 
-val dispatcherModule = module {
+fun dispatcherModule() = module {
     single { MainScope() }
     single { Dispatchers.Default }
-    single(named("main-dispatcher")) { Dispatchers.Main }
+    single { Dispatchers.Main }
 }

@@ -11,10 +11,9 @@ struct iOSApp: App {
 	var body: some Scene {
 		WindowGroup {
 			HomeUIView()
-					.preferredColorScheme(colorScheme)
-					.onAppear {
-						viewModel.startStateMachine()
-					}.environmentObject(viewModel)
+				.preferredColorScheme(colorScheme)
+				.onAppear { viewModel.startStateMachine() }
+				.environmentObject(viewModel)
 		}
 	}
 

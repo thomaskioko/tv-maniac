@@ -1,7 +1,8 @@
-package com.thomaskioko.tvmaniac.seasondetails
+package com.thomaskioko.tvmaniac.seasondetails.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,13 +32,14 @@ import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.data.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.seasondetails.api.model.Episode
+import com.thomaskioko.tvmaniac.seasondetails.episode
 
 @Composable
 fun EpisodeListItem(
     episode: Episode,
-    onEpisodeClicked: (Int) -> Unit = {}
+    onEpisodeClicked: (Long) -> Unit = {}
 ) {
 
     ColumnSpacer(8)
@@ -46,6 +48,7 @@ fun EpisodeListItem(
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
             .fillMaxWidth()
+            .defaultMinSize(minHeight = 84.dp)
             .padding(horizontal = 16.dp)
             .clickable { onEpisodeClicked(episode.id) },
     ) {

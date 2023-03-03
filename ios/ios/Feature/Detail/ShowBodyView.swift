@@ -23,7 +23,7 @@ struct ShowBodyView: View {
                         .foregroundColor(Color.text_color_bg)
                         .padding(.trailing, 16)
                         .padding(.leading, 16)
-                        .padding(.top, 16)
+                        .padding(.top, 5)
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center) {

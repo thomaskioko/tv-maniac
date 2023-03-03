@@ -3,25 +3,17 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
-import util.libs
 
 plugins {
-    `kmm-domain-plugin`
-    kotlin("plugin.serialization") version ("1.6.10")
+    id("tvmaniac.kmm.library")
+    alias(libs.plugins.serialization)
     id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
 }
 
 version = libs.versions.shared.module.version.get()
 
-android {
-    namespace = "com.thomaskioko.tvmaniac.shared"
-
-    defaultConfig {
-        manifestPlaceholders["appAuthRedirectScheme"] = "empty"
-    }
-}
-
 kotlin {
+    android()
 
     val xcf = XCFramework()
     ios {
@@ -37,52 +29,70 @@ kotlin {
             linkerOpts.add("-lsqlite3")
 
             export(project(":shared:core:util"))
-            export(project(":shared:core:database"))
-            export(project(":shared:core:network"))
-            export(project(":shared:domain:show-details:api"))
-            export(project(":shared:domain:episodes:api"))
-            export(project(":shared:domain:settings:api"))
-            export(project(":shared:domain:similar:api"))
-            export(project(":shared:domain:season-details:api"))
-            export(project(":shared:domain:shows:api"))
-            export(project(":shared:domain:trailers:api"))
-            export(project(":shared:domain:tmdb:api"))
-            export(project(":shared:domain:trakt:api"))
-            export(project(":shared:domain:following:api"))
+            export(project(":shared:data:database"))
+
+            //TODO:: Do we need to export api and implementation or is domain
+            // good enough?
+            export(project(":shared:data:datastore:api"))
+            export(project(":shared:data:network"))
+            export(project(":shared:data:episodes:api"))
+            export(project(":shared:data:similar:api"))
+            export(project(":shared:data:season-details:api"))
+            export(project(":shared:data:category:api"))
+            export(project(":shared:data:trailers:api"))
+            export(project(":shared:data:tmdb:api"))
+            export(project(":shared:data:trakt:api"))
+            export(project(":shared:domain:following"))
+            export(project(":shared:domain:discover"))
+            export(project(":shared:domain:seasondetails"))
+            export(project(":shared:domain:settings"))
+            export(project(":shared:domain:show-details"))
+            export(project(":shared:domain:trailers"))
+
             embedBitcode(BitcodeEmbeddingMode.BITCODE)
 
             transitiveExport = true
         }
     }
+
+    sourceSets {
+        sourceSets["commonMain"].dependencies {
+            api(project(":shared:core:util"))
+            api(project(":shared:data:database"))
+            api(project(":shared:data:datastore:api"))
+            api(project(":shared:data:network"))
+            api(project(":shared:data:episodes:api"))
+            api(project(":shared:data:similar:api"))
+            api(project(":shared:data:season-details:api"))
+            api(project(":shared:data:category:api"))
+            api(project(":shared:data:trailers:api"))
+            api(project(":shared:data:tmdb:api"))
+            api(project(":shared:data:trakt:api"))
+            api(project(":shared:domain:discover"))
+            api(project(":shared:domain:following"))
+            api(project(":shared:domain:seasondetails"))
+            api(project(":shared:domain:settings"))
+            api(project(":shared:domain:show-details"))
+            api(project(":shared:domain:trailers"))
+
+            implementation(project(":shared:data:datastore:implementation"))
+            implementation(project(":shared:data:episodes:implementation"))
+            implementation(project(":shared:data:similar:implementation"))
+            implementation(project(":shared:data:season-details:implementation"))
+            implementation(project(":shared:data:trailers:implementation"))
+            implementation(project(":shared:data:tmdb:implementation"))
+            implementation(project(":shared:data:trakt:implementation"))
+            implementation(project(":shared:data:category:implementation"))
+
+            implementation(libs.koin)
+            implementation(libs.coroutines.core)
+        }
+    }
+    
 }
 
-dependencies {
-    commonMainApi(project(":shared:core:util"))
-    commonMainApi(project(":shared:core:database"))
-    commonMainApi(project(":shared:core:network"))
-    commonMainApi(project(":shared:domain:settings:api"))
-    commonMainApi(project(":shared:domain:show-details:api"))
-    commonMainApi(project(":shared:domain:episodes:api"))
-    commonMainApi(project(":shared:domain:similar:api"))
-    commonMainApi(project(":shared:domain:season-details:api"))
-    commonMainApi(project(":shared:domain:shows:api"))
-    commonMainApi(project(":shared:domain:trailers:api"))
-    commonMainApi(project(":shared:domain:tmdb:api"))
-    commonMainApi(project(":shared:domain:trakt:api"))
-    commonMainApi(project(":shared:domain:following:api"))
-
-    commonMainImplementation(project(":shared:domain:episodes:implementation"))
-    commonMainImplementation(project(":shared:domain:show-details:implementation"))
-    commonMainImplementation(project(":shared:domain:similar:implementation"))
-    commonMainImplementation(project(":shared:domain:season-details:implementation"))
-    commonMainImplementation(project(":shared:domain:trailers:implementation"))
-    commonMainImplementation(project(":shared:domain:tmdb:implementation"))
-    commonMainImplementation(project(":shared:domain:trakt:implementation"))
-    commonMainImplementation(project(":shared:domain:shows:implementation"))
-    commonMainImplementation(project(":shared:domain:settings:implementation"))
-
-    commonMainImplementation(libs.koin)
-    commonMainImplementation(libs.coroutines.core)
+android {
+    namespace = "com.thomaskioko.tvmaniac.shared"
 }
 
 multiplatformSwiftPackage {

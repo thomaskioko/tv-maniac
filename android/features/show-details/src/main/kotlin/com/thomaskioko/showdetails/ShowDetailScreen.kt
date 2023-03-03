@@ -69,17 +69,17 @@ import com.thomaskioko.tvmaniac.compose.components.SnackBarErrorRetry
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.util.copy
-import com.thomaskioko.tvmaniac.details.api.DismissWebViewError
-import com.thomaskioko.tvmaniac.details.api.FollowShow
-import com.thomaskioko.tvmaniac.details.api.SeasonState
-import com.thomaskioko.tvmaniac.details.api.ShowDetailsAction
-import com.thomaskioko.tvmaniac.details.api.ShowDetailsState
-import com.thomaskioko.tvmaniac.details.api.SimilarShowsState
-import com.thomaskioko.tvmaniac.details.api.TrailersState
-import com.thomaskioko.tvmaniac.details.api.WebViewError
-import com.thomaskioko.tvmaniac.details.api.model.Season
-import com.thomaskioko.tvmaniac.details.api.model.Show
-import com.thomaskioko.tvmaniac.details.api.model.Trailer
+import com.thomaskioko.tvmaniac.data.showdetails.DismissWebViewError
+import com.thomaskioko.tvmaniac.data.showdetails.FollowShow
+import com.thomaskioko.tvmaniac.data.showdetails.SeasonState
+import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsAction
+import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.data.showdetails.ShowState
+import com.thomaskioko.tvmaniac.data.showdetails.SimilarShowsState
+import com.thomaskioko.tvmaniac.data.showdetails.TrailersState
+import com.thomaskioko.tvmaniac.data.showdetails.WebViewError
+import com.thomaskioko.tvmaniac.data.showdetails.model.Season
+import com.thomaskioko.tvmaniac.data.showdetails.model.Show
 import com.thomaskioko.tvmaniac.resources.R
 
 private val HeaderHeight = 550.dp
@@ -88,9 +88,9 @@ private val HeaderHeight = 550.dp
 fun ShowDetailScreen(
     viewModel: ShowDetailsViewModel,
     navigateUp: () -> Unit,
-    onShowClicked: (Int) -> Unit,
-    onSeasonClicked: (Int, String) -> Unit,
-    onWatchTrailerClicked: (Int, String?) -> Unit = { _, _ -> }
+    onShowClicked: (Long) -> Unit,
+    onSeasonClicked: (Long, String) -> Unit,
+    onWatchTrailerClicked: (Long, String?) -> Unit = { _, _ -> }
 ) {
 
     val viewState by viewModel.state.collectAsStateWithLifecycle()
@@ -98,7 +98,7 @@ fun ShowDetailScreen(
     val scaffoldState = rememberScaffoldState()
     val listState = rememberLazyListState()
 
-    val title = (viewState as? ShowDetailsState.ShowDetailsLoaded)?.show?.title ?: ""
+    val title = (viewState as? ShowState.ShowLoaded)?.show?.title ?: ""
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -184,9 +184,9 @@ private fun ShowDetailContent(
     snackBarHostState: SnackbarHostState,
     contentPadding: PaddingValues,
     viewState: ShowDetailsState.ShowDetailsLoaded,
-    onSeasonClicked: (Int, String) -> Unit,
-    onShowClicked: (Int) -> Unit,
-    onWatchTrailerClicked: (Boolean, Int, String?) -> Unit,
+    onSeasonClicked: (Long, String) -> Unit,
+    onShowClicked: (Long) -> Unit,
+    onWatchTrailerClicked: (Boolean, Long, String?) -> Unit,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
     onDismissTrailerErrorClicked: () -> Unit,
 ) {
@@ -196,18 +196,17 @@ private fun ShowDetailContent(
     ) {
 
         item {
-            val trailerState = (detailUiState.trailerState as? TrailersState.TrailersLoaded)
+            val trailerState = (viewState.trailerState as? TrailersState.TrailersLoaded)
 
             HeaderViewContent(
                 listState = listState,
-                show = viewState.show,
+                showState = viewState.showState,
                 trailerKey = trailerState?.trailersList?.firstOrNull()?.key,
-                onUpdateFavoriteClicked = onUpdateFavoriteClicked,
-                onWatchTrailerClicked = { showId, key ->
-                    val hasWebView = trailerState?.hasWebViewInstalled ?: false
-                    onWatchTrailerClicked(hasWebView, showId, key)
-                }
-            )
+                onUpdateFavoriteClicked = onUpdateFavoriteClicked
+            ) { showId, key ->
+                val hasWebView = trailerState?.hasWebViewInstalled ?: false
+                onWatchTrailerClicked(hasWebView, showId, key)
+            }
         }
 
         item {
@@ -229,7 +228,7 @@ private fun ShowDetailContent(
 
         //Trailers
         item {
-            TrailersConent(
+            TrailersContent(
                 trailersState = viewState.trailerState,
                 snackBarHostState = snackBarHostState,
                 onDismissTrailerErrorClicked = onDismissTrailerErrorClicked,
@@ -257,11 +256,11 @@ private fun ShowDetailContent(
     }
 }
 @Composable
-private fun TrailersConent(
+private fun TrailersContent(
     trailersState: TrailersState,
     snackBarHostState: SnackbarHostState,
     onDismissTrailerErrorClicked: () -> Unit,
-    onWatchTrailerClicked: (Boolean, Int, String?) -> Unit
+    onWatchTrailerClicked: (Boolean, Long, String?) -> Unit
 ) {
     when (trailersState) {
         is TrailersState.TrailersError -> {
@@ -280,10 +279,10 @@ private fun TrailersConent(
             TrailersRowContent(
                 isLoading = trailersState.isLoading,
                 trailersList = trailersState.trailersList,
-                onTrailerClicked = { videoKey ->
+                onTrailerClicked = { showId, videoKey ->
                     onWatchTrailerClicked(
                         trailersState.hasWebViewInstalled,
-                        detailUiState.show.traktId,
+                        showId,
                         videoKey
                     )
                 }
@@ -296,7 +295,7 @@ private fun TrailersConent(
 private fun SeasonsUi(
     isLoading: Boolean,
     seasonsList: List<Season>,
-    onSeasonClicked: (Int, String) -> Unit
+    onSeasonClicked: (Long, String) -> Unit
 ) {
     LoadingRowContent(
         isLoading = isLoading,
@@ -339,37 +338,48 @@ private fun SeasonsUi(
 
 @Composable
 private fun HeaderViewContent(
-    show: Show,
+    showState: ShowState,
     trailerKey: String?,
     listState: LazyListState,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
-    onWatchTrailerClicked: (Int, String?) -> Unit,
+    onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(HeaderHeight)
-            .clipToBounds()
-            .offset {
-                IntOffset(
-                    x = 0,
-                    y = if (listState.firstVisibleItemIndex == 0) {
-                        listState.firstVisibleItemScrollOffset / 2
-                    } else 0
+    when(showState){
+        is ShowState.ShowError -> {
+            ErrorUi(
+                errorMessage = showState.errorMessage,
+                onRetry = {}
+            )
+        }
+        is ShowState.ShowLoaded -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(HeaderHeight)
+                    .clipToBounds()
+                    .offset {
+                        IntOffset(
+                            x = 0,
+                            y = if (listState.firstVisibleItemIndex == 0) {
+                                listState.firstVisibleItemScrollOffset / 2
+                            } else 0
+                        )
+                    }
+            ) {
+                HeaderImage(
+                    backdropImageUrl = showState.show.backdropImageUrl
+                )
+
+                Body(
+                    show = showState.show,
+                    trailerKey = trailerKey,
+                    onUpdateFavoriteClicked = onUpdateFavoriteClicked,
+                    onWatchTrailerClicked = onWatchTrailerClicked
                 )
             }
-    ) {
-        HeaderImage(
-            backdropImageUrl = show.backdropImageUrl
-        )
-
-        Body(
-            show = show,
-            trailerKey = trailerKey,
-            onUpdateFavoriteClicked = onUpdateFavoriteClicked,
-            onWatchTrailerClicked = onWatchTrailerClicked
-        )
+        }
     }
+
 }
 
 @Composable
@@ -388,7 +398,7 @@ private fun Body(
     show: Show,
     trailerKey: String?,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
-    onWatchTrailerClicked: (Int, String?) -> Unit,
+    onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
     val surfaceGradient = backgroundGradient().reversed()
 
@@ -441,7 +451,7 @@ fun TvShowMetadata(
     show: Show,
     trailerKey: String?,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
-    onWatchTrailerClicked: (Int, String?) -> Unit,
+    onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
     val resources = LocalContext.current.resources
 
@@ -542,10 +552,10 @@ private fun GenreText(genreList: List<String>) {
 @Composable
 fun ShowDetailButtons(
     isFollowed: Boolean,
-    traktId: Int,
+    traktId: Long,
     trailerKey: String?,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
-    onWatchTrailerClicked: (Int, String?) -> Unit,
+    onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
 
     Row(

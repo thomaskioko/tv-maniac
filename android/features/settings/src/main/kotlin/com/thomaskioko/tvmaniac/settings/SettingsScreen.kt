@@ -52,15 +52,8 @@ import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
+import com.thomaskioko.tvmaniac.datastore.api.Theme
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.settings.api.ChangeThemeClicked
-import com.thomaskioko.tvmaniac.settings.api.DimissThemeClicked
-import com.thomaskioko.tvmaniac.settings.api.DismissTraktDialog
-import com.thomaskioko.tvmaniac.settings.api.SettingsContent
-import com.thomaskioko.tvmaniac.settings.api.ShowTraktDialog
-import com.thomaskioko.tvmaniac.settings.api.Theme
-import com.thomaskioko.tvmaniac.settings.api.ThemeSelected
-import com.thomaskioko.tvmaniac.settings.api.TraktLogout
 
 @Composable
 fun SettingsScreen(

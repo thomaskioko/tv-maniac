@@ -3,8 +3,9 @@ package com.thomaskioko.tvmaniac.profile
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.core.util.network.Resource
-import com.thomaskioko.tvmaniac.trakt.api.TraktRepository
+import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.trakt.api.TraktProfileRepository
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.TraktManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,7 +14,7 @@ import kotlinx.coroutines.FlowPreview
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class ProfileStateMachine constructor(
     private val traktManager: TraktManager,
-    private val repository: TraktRepository
+    private val repository: TraktProfileRepository
 ) : FlowReduxStateMachine<ProfileState, ProfileActions>(initialState = ProfileContent.EMPTY) {
 
     init {
@@ -73,8 +74,8 @@ class ProfileStateMachine constructor(
         repository.observeStats("me")
             .collect { result ->
                 nextState = when (result) {
-                    is Resource.Error -> state.override { ProfileStatsError(result.errorMessage) }
-                    is Resource.Success -> state.mutate {
+                    is Either.Left -> state.override { ProfileStatsError(result.error.errorMessage) }
+                    is Either.Right -> state.mutate {
                         copy(
                             profileStats = result.data?.let {
                                 ProfileStats(
@@ -99,8 +100,8 @@ class ProfileStateMachine constructor(
         repository.observeMe("me")
             .collect { result ->
                 nextState = when (result) {
-                    is Resource.Error -> state.override { ProfileError(result.errorMessage) }
-                    is Resource.Success -> {
+                    is Either.Left -> state.override { ProfileError(result.error.errorMessage) }
+                    is Either.Right -> {
                         dispatch(FetchUserStatsProfile)
                         state.mutate {
                             copy(

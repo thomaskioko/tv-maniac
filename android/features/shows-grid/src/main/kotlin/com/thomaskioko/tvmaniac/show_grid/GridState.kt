@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.show_grid
 
-import com.thomaskioko.tvmaniac.shows.api.model.TvShow
+import com.thomaskioko.tvmaniac.show_grid.model.TvShow
+
 
 sealed interface GridState
 

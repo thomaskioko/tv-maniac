@@ -39,7 +39,7 @@ struct HomeUIView: View {
 		.onAppear {
 			UITabBar.appearance().barTintColor = UIColor(Color("TabBackgroundColor"))
 		}
-		.accentColor(Color("AccentColor"))
+		.accentColor(Color.accent)
 	}
 }
 
