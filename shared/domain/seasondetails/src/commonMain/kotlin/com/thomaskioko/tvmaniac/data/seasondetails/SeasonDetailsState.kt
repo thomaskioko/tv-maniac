@@ -3,13 +3,13 @@ package com.thomaskioko.tvmaniac.data.seasondetails
 import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
 
 
-sealed class SeasonDetailsState
+sealed interface SeasonDetailsState
 
-object Loading : SeasonDetailsState()
+object Loading : SeasonDetailsState
 
 data class SeasonDetailsLoaded(
     val showTitle: String = "",
     val episodeList: List<SeasonDetails> = emptyList(),
-) : SeasonDetailsState()
+) : SeasonDetailsState
 
-data class LoadingError(val message: String) : SeasonDetailsState()
+data class LoadingError(val message: String) : SeasonDetailsState
