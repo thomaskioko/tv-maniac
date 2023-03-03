@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.Theme
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeDatastoreRepository : DatastoreRepository {
@@ -17,4 +18,8 @@ class FakeDatastoreRepository : DatastoreRepository {
     override fun saveTheme(theme: Theme) { }
 
     override fun observeTheme(): Flow<Theme> = themeFlow.receiveAsFlow()
+
+    override fun saveSeasonId(id: Long) { }
+
+    override fun getSeasonId(): Flow<Long> = flowOf(0)
 }
