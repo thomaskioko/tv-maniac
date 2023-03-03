@@ -192,7 +192,7 @@ class ShowDetailsStateMachine constructor(
         state: State<ShowDetailsLoaded>
     ): ChangedState<ShowDetailsState> {
         var nextState: ChangedState<ShowDetailsState> = state.noChange()
-        seasonDetailsRepository.observeSeasons(showId)
+        seasonDetailsRepository.observeSeasonsStream(showId)
             .collect { result ->
                 nextState = result.fold(
                     {
