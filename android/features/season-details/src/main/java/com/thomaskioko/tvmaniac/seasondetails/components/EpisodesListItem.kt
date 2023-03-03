@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.seasondetails.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -47,6 +48,7 @@ fun EpisodeListItem(
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
             .fillMaxWidth()
+            .defaultMinSize(minHeight = 84.dp)
             .padding(horizontal = 16.dp)
             .clickable { onEpisodeClicked(episode.id) },
     ) {
