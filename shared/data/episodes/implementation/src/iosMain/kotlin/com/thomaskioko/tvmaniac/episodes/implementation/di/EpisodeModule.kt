@@ -11,6 +11,6 @@ import org.koin.dsl.module
 
 actual fun episodeDataModule(): Module = module {
     single<EpisodeRepository> { EpisodeRepositoryImpl(get(), get(), get()) }
-    single<EpisodesCache> { EpisodesCacheImpl(get()) }
+    single<EpisodesCache> { EpisodesCacheImpl(get(), get()) }
     single<EpisodeImageCache> { EpisodeImageCacheImpl(get()) }
 }

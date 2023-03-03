@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.implementation.di
 
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.util.scope.DefaultDispatcher
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeImageCache
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
@@ -12,10 +13,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.dsl.module
 import javax.inject.Singleton
 
-actual fun episodeDataModule() : org.koin.core.module.Module = module {  }
+actual fun episodeDataModule(): org.koin.core.module.Module = module { }
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -23,9 +25,11 @@ object EpisodeModule {
 
     @Singleton
     @Provides
-    fun provideEpisodesCache(database: TvManiacDatabase): EpisodesCache {
-        return EpisodesCacheImpl(database)
-    }
+    fun provideEpisodesCache(
+        database: TvManiacDatabase,
+        @DefaultDispatcher ioDispatcher: CoroutineDispatcher
+    ): EpisodesCache = EpisodesCacheImpl(database, ioDispatcher)
+
 
     @Singleton
     @Provides
