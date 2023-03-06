@@ -34,6 +34,7 @@ dependencies {
     implementation(projects.android.features.profile)
     implementation(projects.android.core.workmanager)
     implementation(projects.shared.shared)
+    implementation(projects.shared.data.database)
 
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.compose.activity)
