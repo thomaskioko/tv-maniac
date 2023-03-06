@@ -20,6 +20,8 @@ import com.thomaskioko.tvmaniac.trakt.implementation.cache.TraktShowCacheImpl
 import com.thomaskioko.tvmaniac.trakt.implementation.traktHttpClient
 import io.ktor.client.engine.darwin.Darwin
 import io.ktor.http.HttpHeaders
+import kotlinx.coroutines.Dispatchers
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
@@ -59,22 +61,62 @@ actual fun traktModule(): Module = module {
             get(named("traktHttpClient"))
         )
     }
-    single<TraktUserCache> { TraktUserCacheImpl(get(), get()) }
-    single<TraktStatsCache> { TraktStatsCacheImpl(get(), get()) }
-    single<TraktListCache> { TraktListCacheImpl(get(), get()) }
-    single<TraktFollowedCache> { TraktFollowedCacheImpl(get(), get()) }
+    single<TraktUserCache> {
+        TraktUserCacheImpl(
+            database = get(),
+            coroutineContext = Dispatchers.Default
+        )
+    }
+    single<TraktStatsCache> {
+        TraktStatsCacheImpl(
+            database = get(),
+            coroutineContext = Dispatchers.Default
+        )
+    }
+    single<TraktListCache> {
+        TraktListCacheImpl(
+            database = get(),
+            coroutineContext = Dispatchers.Default
+        )
+    }
+    single<TraktFollowedCache> {
+        TraktFollowedCacheImpl(
+            database = get(),
+            coroutineContext = Dispatchers.Default
+        )
+    }
 
     single<TraktShowRepository> {
-        TraktShowRepositoryImpl(get(), get(), get(), get(), get(), get(), get())
+        TraktShowRepositoryImpl(
+            tvShowCache = get(),
+            traktUserCache = get(),
+            followedCache = get(),
+            categoryCache = get(),
+            traktService = get(),
+            dateUtilHelper = get(),
+            dispatcher = Dispatchers.Default
+        )
     }
 
     single<TraktProfileRepository> {
-        TraktProfileRepositoryImpl(get(), get(), get(), get(), get(), get(), get())
+        TraktProfileRepositoryImpl(
+            traktService = get(),
+            traktListCache = get(),
+            statsCache = get(),
+            traktUserCache = get(),
+            followedCache = get(),
+            dateUtilHelper = get(),
+            dispatcher = Dispatchers.Default
+        )
     }
 
-    single<TvShowCache> { TraktShowCacheImpl(get(), get()) }
+    single<TvShowCache> { TraktShowCacheImpl(
+        database = get(),
+        coroutineContext = Dispatchers.Default
+    ) }
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 fun createJson() = Json {
     isLenient = true
     ignoreUnknownKeys = true
