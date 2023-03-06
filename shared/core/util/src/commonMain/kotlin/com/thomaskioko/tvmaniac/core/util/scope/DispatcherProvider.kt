@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.core.util.scope
 
 import kotlinx.coroutines.CoroutineDispatcher
 
-expect class DispatcherMain {
+expect class DispatcherProvider {
+    val default: CoroutineDispatcher
     val main: CoroutineDispatcher
 }
