@@ -5,6 +5,9 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.MainCoroutineDispatcher
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -67,8 +70,10 @@ class SettingsStateMachine constructor(
  */
 class SettingsStateMachineWrapper(
     private val stateMachine: SettingsStateMachine,
-    private val scope: CoroutineScope,
+    dispatcher: MainCoroutineDispatcher,
 ) {
+    private val job = SupervisorJob()
+    private val scope = CoroutineScope(job + dispatcher)
 
     fun start(stateChangeListener: (SettingsState) -> Unit) {
         scope.launch {
@@ -82,5 +87,9 @@ class SettingsStateMachineWrapper(
         scope.launch {
             stateMachine.dispatch(action)
         }
+    }
+
+    fun cancel() {
+        job.cancelChildren()
     }
 }

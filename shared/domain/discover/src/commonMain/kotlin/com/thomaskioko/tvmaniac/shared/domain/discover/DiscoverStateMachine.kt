@@ -8,6 +8,9 @@ import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.MainCoroutineDispatcher
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -43,7 +46,7 @@ class DiscoverStateMachine constructor(
                     /** No need to do anything. Just trigger artwork download. **/
                 }
 
-                on<ReloadCategory> { action, state ->
+                on<ReloadCategory> { _, state ->
                     // TODO:: Implement reloading category data
                     state.noChange()
                 }
@@ -107,10 +110,14 @@ class DiscoverStateMachine constructor(
 /**
  * A wrapper class around [DiscoverStateMachine] handling `Flow` and suspend functions on iOS.
  */
-class ShowsStateMachineWrapper(
+class DiscoverStateMachineWrapper(
+    dispatcher: MainCoroutineDispatcher,
     private val stateMachine: DiscoverStateMachine,
-    private val scope: CoroutineScope,
 ) {
+
+    private val job = SupervisorJob()
+    private val scope = CoroutineScope(job + dispatcher)
+
 
     fun start(stateChangeListener: (ShowsState) -> Unit) {
         scope.launch {
@@ -125,4 +132,9 @@ class ShowsStateMachineWrapper(
             stateMachine.dispatch(action)
         }
     }
+
+    fun cancel() {
+        job.cancelChildren()
+    }
+
 }
