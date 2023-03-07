@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 buildscript {
     repositories {
         gradlePluginPortal()
@@ -46,7 +45,7 @@ tasks.withType<Test>().configureEach {
 }
 
 subprojects {
-    tasks.withType<KotlinCompile>().configureEach {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         with(kotlinOptions) {
             jvmTarget = JavaVersion.VERSION_11.toString()
 
