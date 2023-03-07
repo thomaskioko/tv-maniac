@@ -55,7 +55,7 @@ var seasonList = [
 ]
 
 var detailState = ShowDetailsStateShowDetailsLoaded(
-		show: mockShow,
+		showState: ShowStateShowLoaded(show: mockShow),
 		similarShowsState: SimilarShowsStateSimilarShowsError(errorMessage: ""),
 		seasonState: SeasonStateSeasonsError(errorMessage: ""),
 		trailerState: TrailersStateTrailersError(errorMessage: ""),

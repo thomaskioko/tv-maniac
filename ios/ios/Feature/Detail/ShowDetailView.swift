@@ -39,8 +39,10 @@ struct ShowDetailView: View {
 				
 				ScrollView(.vertical, showsIndicators: false) {
 					VStack {
-						ArtWork(state: state)
-						
+                        if let showState = state.showState as? ShowStateShowLoaded {
+                            ArtWork(state: showState)
+                        }
+                        
 						ShowBodyView(detailLoadedState: state)
 					}
 				}
@@ -56,7 +58,13 @@ struct ShowDetailView: View {
 		}
 		.overlay(alignment: .top){
 			if let state = viewModel.detailState as? ShowDetailsStateShowDetailsLoaded {
-				TopNavBarView(showTitle: state.show.title)
+                
+                if let showState = state.showState as? ShowStateShowLoaded {
+                    TopNavBarView(showTitle: showState.show.title)
+                } else {
+                    TopNavBarView(showTitle: "")
+                }
+                
 			} else {
 				TopNavBarView(showTitle: "")
 			}
@@ -65,10 +73,11 @@ struct ShowDetailView: View {
 		.navigationBarHidden(true)
 		.ignoresSafeArea()
 		.onAppear { viewModel.startStateMachine(action: LoadShowDetails(traktId: showId)) }
+        .onDisappear { viewModel.cancel() }
 	}
 	
 	@ViewBuilder
-	func ArtWork(state: ShowDetailsStateShowDetailsLoaded) -> some View {
+	func ArtWork(state: ShowStateShowLoaded) -> some View {
 		let height = size.height * 0.45
 		
 		GeometryReader { proxy in
