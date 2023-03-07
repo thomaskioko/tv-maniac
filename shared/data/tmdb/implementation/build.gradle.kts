@@ -1,6 +1,5 @@
 
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
-import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
 
 plugins {
     id("tvmaniac.kmm.impl")
@@ -20,7 +19,7 @@ kotlin {
                 org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
                     "com.google.dagger",
                     "hilt-android-compiler",
-                    libs.versions.dagger.get().toString()
+                    libs.versions.dagger.get()
                 )
             )
         }
