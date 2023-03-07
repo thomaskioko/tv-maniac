@@ -11,7 +11,7 @@ import TvManiac
 
 
 class DiscoverShowsViewModel: ObservableObject {
-    @LazyKoin private var stateMachine: ShowsStateMachineWrapper
+    @LazyKoin private var stateMachine: DiscoverStateMachineWrapper
     @Published private(set) var showState: ShowsState
 
     init(showState: ShowsState) {
@@ -22,5 +22,9 @@ class DiscoverShowsViewModel: ObservableObject {
         stateMachine.start(stateChangeListener: { (state: ShowsState) -> Void in
             self.showState = state
         })
+    }
+    
+    func cancel() {
+        stateMachine.cancel()
     }
 }
