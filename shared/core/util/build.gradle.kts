@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.config.AnalysisFlags.optIn
-import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
-
 plugins {
     id("tvmaniac.kmm.library")
     alias(libs.plugins.serialization)
@@ -19,7 +16,7 @@ kotlin {
                 org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
                     "com.google.dagger",
                     "hilt-android-compiler",
-                    libs.versions.dagger.get().toString()
+                    libs.versions.dagger.get()
                 )
             )
         }

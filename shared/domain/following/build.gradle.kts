@@ -16,7 +16,7 @@ kotlin {
                 org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
                     "com.google.dagger",
                     "hilt-android-compiler",
-                    libs.versions.dagger.get().toString()
+                    libs.versions.dagger.get()
                 )
             )
         }
