@@ -7,6 +7,9 @@ import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.MainCoroutineDispatcher
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 
 
@@ -73,9 +76,13 @@ class TrailersStateMachine constructor(
  * A wrapper class around [TrailersStateMachine] handling `Flow` and suspend functions on iOS.
  */
 class TrailersStateMachineWrapper(
+    dispatcher: MainCoroutineDispatcher,
     private val stateMachine: TrailersStateMachine,
-    private val scope: CoroutineScope,
 ) {
+
+    private val job = SupervisorJob()
+    private val scope = CoroutineScope(job + dispatcher)
+
     fun start(stateChangeListener: (TrailersState) -> Unit) {
         scope.launch {
             stateMachine.state.collect {
@@ -88,5 +95,9 @@ class TrailersStateMachineWrapper(
         scope.launch {
             stateMachine.dispatch(action)
         }
+    }
+
+    fun cancel() {
+        job.cancelChildren()
     }
 }

@@ -7,6 +7,9 @@ import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.MainCoroutineDispatcher
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -49,9 +52,13 @@ class FollowingStateMachine constructor(
  * A wrapper class around [FollowingStateMachine] handling `Flow` and suspend functions on iOS.
  */
 class FollowingStateMachineWrapper(
+    dispatcher: MainCoroutineDispatcher,
     private val stateMachine: FollowingStateMachine,
-    private val scope: CoroutineScope,
 ) {
+    private val job = SupervisorJob()
+    private val scope = CoroutineScope(job + dispatcher)
+
+
     fun start(stateChangeListener: (FollowingState) -> Unit) {
         scope.launch {
             stateMachine.state.collect {
@@ -64,6 +71,10 @@ class FollowingStateMachineWrapper(
         scope.launch {
             stateMachine.dispatch(action)
         }
+    }
+
+    fun cancel() {
+        job.cancelChildren()
     }
 }
 
