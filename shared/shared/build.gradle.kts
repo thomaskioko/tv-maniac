@@ -85,6 +85,8 @@ kotlin {
             implementation(libs.koin)
             implementation(libs.coroutines.core)
         }
+
+        sourceSets["commonTest"].dependencies {}
     }
     
 }
