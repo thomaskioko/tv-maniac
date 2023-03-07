@@ -21,9 +21,11 @@ extension KoinApplication {
 
 extension KoinApplication {
     private static let keyPaths: [PartialKeyPath<Koin>] = [
-        \.showStateMachine,
-        \.showDetailsStateMachine,
-        \.settingsStateMachine
+         \.discoverStateMachine,
+          \.followingStateMachineWrapper,
+          \.settingsStateMachine,
+          \.showDetailsStateMachine,
+          \.trailersStateMachine
     ]
 
     static func inject<T>() -> T {
