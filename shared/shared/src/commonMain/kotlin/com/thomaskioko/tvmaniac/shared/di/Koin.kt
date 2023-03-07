@@ -19,35 +19,48 @@ import com.thomaskioko.tvmaniac.network.di.networkModule
 import com.thomaskioko.tvmaniac.seasondetails.implementation.seasonDetailsDataModule
 import com.thomaskioko.tvmaniac.settings.SettingsStateMachineWrapper
 import com.thomaskioko.tvmaniac.settings.settingsDomainModule
-import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsStateMachineWrapper
+import com.thomaskioko.tvmaniac.shared.domain.discover.DiscoverStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.domain.discover.discoverDomainModule
 import com.thomaskioko.tvmaniac.similar.implementation.similarDataModule
 import com.thomaskioko.tvmaniac.tmdb.implementation.tmdbModule
 import com.thomaskioko.tvmaniac.trakt.implementation.di.traktModule
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import org.koin.core.Koin
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
-import org.koin.dsl.module
 
 fun KoinApplication.Companion.start(): KoinApplication = initKoin {}
 
-val Koin.showStateMachine: ShowsStateMachineWrapper
-    get() = ShowsStateMachineWrapper(get(), get())
-
-val Koin.showDetailsStateMachine: ShowDetailsStateMachineWrapper
-    get() = ShowDetailsStateMachineWrapper(get(), get())
-
-val Koin.settingsStateMachine: SettingsStateMachineWrapper
-    get() = SettingsStateMachineWrapper(get(), get())
-
-val Koin.trailersStateMachine: TrailersStateMachineWrapper
-    get() = TrailersStateMachineWrapper(get(), get())
+val Koin.discoverStateMachine: DiscoverStateMachineWrapper
+    get() = DiscoverStateMachineWrapper(
+        dispatcher = Dispatchers.Main,
+        stateMachine = get()
+    )
 
 val Koin.followingStateMachineWrapper: FollowingStateMachineWrapper
-    get() = FollowingStateMachineWrapper(get(), get())
+    get() = FollowingStateMachineWrapper(
+        dispatcher = Dispatchers.Main,
+        stateMachine = get()
+    )
+
+val Koin.showDetailsStateMachine: ShowDetailsStateMachineWrapper
+    get() = ShowDetailsStateMachineWrapper(
+        dispatcher = Dispatchers.Main,
+        stateMachine = get()
+    )
+
+val Koin.settingsStateMachine: SettingsStateMachineWrapper
+    get() = SettingsStateMachineWrapper(
+        dispatcher = Dispatchers.Main,
+        stateMachine = get()
+    )
+
+val Koin.trailersStateMachine: TrailersStateMachineWrapper
+    get() = TrailersStateMachineWrapper(
+        dispatcher = Dispatchers.Main,
+        stateMachine = get()
+    )
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
     appDeclaration()
@@ -57,7 +70,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         datastoreModule(),
         dbPlatformModule(),
         discoverDomainModule(),
-        dispatcherModule(),
         episodeDataModule(),
         followingDomainModule(),
         seasonDetailsDataModule(),
@@ -71,10 +83,4 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         trailersModule(),
         traktModule()
     )
-}
-
-fun dispatcherModule() = module {
-    single { MainScope() }
-    single { Dispatchers.Default }
-    single { Dispatchers.Main }
 }
