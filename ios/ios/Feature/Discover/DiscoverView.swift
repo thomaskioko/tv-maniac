@@ -32,6 +32,7 @@ struct DiscoverView: View {
                 .background(Color.background)
                 .navigationViewStyle(StackNavigationViewStyle())
                 .onAppear { viewModel.startStateMachine() }
+                .onDisappear { viewModel.cancel() }
     }
 
 

@@ -32,4 +32,8 @@ class SettingsViewModel: ObservableObject {
 	func dispatchAction(action: SettingsActions){
 		stateMachine.dispatch(action: action)
 	}
+    
+    func cancel() {
+        stateMachine.cancel()
+    }
 }

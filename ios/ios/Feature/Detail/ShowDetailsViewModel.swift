@@ -24,5 +24,9 @@ class ShowDetailsViewModel: ObservableObject {
     func dispatchAction(action: ShowDetailsAction){
         stateMachine.dispatch(action: action)
     }
+    
+    func cancel() {
+        stateMachine.cancel()
+    }
 
 }
