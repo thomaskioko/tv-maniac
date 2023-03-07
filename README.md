@@ -109,8 +109,8 @@ In case you make changes to the `shared` module and want to test out the changes
 2. Add the generated package in XCode.
 
 
-## Project Structure & Architecture
-I wrote an article, [Going Modular — The Kotlin Multiplatform Way](https://medium.com/better-programming/going-modular-the-kotlin-multiplatform-way-132c3dee6c95) detailing the modularization process and thinking behind the structure of the shared module.
+### Android Demo
+https://user-images.githubusercontent.com/841885/223576880-c7391d14-63b8-47cd-a7f9-97aee5e47892.mp4
 
 
 ## Libraries Used
