@@ -22,6 +22,7 @@ val colorError = Color(0xFFED2224)
 
 val grey = Color(0xFF1f2123)
 val grey500: Color = Color(0xFFA1A5AB)
+val grey600 = Color(0xFF414141)
 val grey900 = Color(0xFF2c2c30)
 
 val green = Color(0xFF00b300)

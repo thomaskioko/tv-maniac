@@ -1,10 +1,19 @@
-enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    includeBuild("tooling")
+
     repositories {
-        google()
         gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
         mavenCentral()
     }
 }
@@ -25,34 +34,40 @@ include(
     ":android:features:following",
     ":android:features:shows-grid",
     ":android:features:settings",
-    ":android:features:seasons",
+    ":android:features:season-details",
     ":android:features:video-player",
     ":android:features:profile",
     ":shared:shared",
-    ":shared:core:ui",
     ":shared:core:util",
-    ":shared:core:test",
-    ":shared:core:persistence",
-    ":shared:core:database",
-    ":shared:core:network",
-    ":shared:domain:show-details:api",
-    ":shared:domain:show-details:implementation",
-    ":shared:domain:seasons:api",
-    ":shared:domain:seasons:implementation",
-    ":shared:domain:episodes:api",
-    ":shared:domain:episodes:implementation",
-    ":shared:domain:last-air-episodes:api",
-    ":shared:domain:last-air-episodes:implementation",
-    ":shared:domain:similar:api",
-    ":shared:domain:similar:implementation",
-    ":shared:domain:season-episodes:api",
-    ":shared:domain:season-episodes:implementation",
-    ":shared:domain:shows:api",
-    ":shared:domain:shows:implementation",
-    ":shared:domain:trailers:api",
-    ":shared:domain:trailers:implementation",
-    ":shared:domain:tmdb:api",
-    ":shared:domain:tmdb:implementation",
-    ":shared:domain:trakt:api",
-    ":shared:domain:trakt:implementation",
+    ":shared:data:database",
+    ":shared:data:network",
+    ":shared:data:datastore:api",
+    ":shared:data:datastore:implementation",
+    ":shared:data:datastore:testing",
+    ":shared:data:season-details:testing",
+    ":shared:data:episodes:api",
+    ":shared:data:episodes:implementation",
+    ":shared:data:episodes:testing",
+    ":shared:data:similar:api",
+    ":shared:data:similar:implementation",
+    ":shared:data:similar:testing",
+    ":shared:data:season-details:api",
+    ":shared:data:season-details:implementation",
+    ":shared:data:category:api",
+    ":shared:data:category:implementation",
+    ":shared:data:trailers:api",
+    ":shared:data:trailers:implementation",
+    ":shared:data:trailers:testing",
+    ":shared:data:tmdb:api",
+    ":shared:data:tmdb:implementation",
+    ":shared:data:tmdb:testing",
+    ":shared:data:trakt:api",
+    ":shared:data:trakt:implementation",
+    ":shared:data:trakt:testing",
+    ":shared:domain:discover",
+    ":shared:domain:following",
+    ":shared:domain:seasondetails",
+    ":shared:domain:settings",
+    ":shared:domain:show-details",
+    ":shared:domain:trailers",
 )

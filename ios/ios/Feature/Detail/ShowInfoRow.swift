@@ -11,7 +11,7 @@ import TvManiac
 
 struct ShowInfoRow: View {
 	
-	var show: TvShow
+	var show: Show
 	
 	var body: some View {
 		ScrollView(.horizontal, showsIndicators: false) {
@@ -51,8 +51,8 @@ struct ShowInfoRow: View {
 						.bodyFont(size: 16)
 						.foregroundColor(.accent)
 
-				if let averageVotes = show.averageVotes {
-					Text(String(format: "%.1f", averageVotes))
+				if let rating = show.rating {
+					Text(String(format: "%.1f", rating))
 							.captionFont(size: 16)
 							.foregroundColor(Color.text_color_bg)
 				}

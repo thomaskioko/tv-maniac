@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.traktauth
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.thomaskioko.tvmaniac.shared.core.ui.di.DefaultDispatcher
+import com.thomaskioko.tvmaniac.core.util.scope.DefaultDispatcher
 import com.thomaskioko.tvmaniac.workmanager.ShowTasks
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.DelicateCoroutinesApi

@@ -1,7 +1,5 @@
-import util.libs
-
 plugins {
-    `android-feature-plugin`
+    id("tvmaniac.android.feature")
 }
 
 android {
@@ -9,13 +7,9 @@ android {
 }
 
 dependencies {
-    api(project(":shared:core:ui"))
-    api(project(":shared:core:util"))
-    api(project(":shared:domain:show-details:api"))
-    api(project(":shared:domain:shows:api"))
-
-    implementation(project(":shared:core:database"))
-    implementation(projects.android.core.compose)
+    implementation(project(":shared:data:trakt:api"))
+    implementation(project(":shared:domain:following"))
 
     implementation(libs.accompanist.insetsui)
+    implementation(libs.flowredux)
 }

@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.discover
 
-import com.thomaskioko.tvmaniac.shows.api.DiscoverShowResult
-import com.thomaskioko.tvmaniac.shows.api.DiscoverShowState
-import com.thomaskioko.tvmaniac.shows.api.model.ShowCategory
-import com.thomaskioko.tvmaniac.shows.api.model.TvShow
+import com.thomaskioko.tvmaniac.category.api.model.Category
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowResult
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsLoaded
+import com.thomaskioko.tvmaniac.shared.domain.discover.model.TvShow
 
 val shows = TvShow(
     traktId = 84958,
@@ -25,22 +25,24 @@ val shows = TvShow(
 )
 
 
-val discoverStatePreview = DiscoverShowState(
-    featuredShows = DiscoverShowResult.DiscoverShowsData(
-        category = ShowCategory.FEATURED,
-        tvShows = List(5) { shows }
-    ),
-    trendingShows = DiscoverShowResult.DiscoverShowsData(
-        category = ShowCategory.TRENDING,
-        tvShows = List(10) { shows }
-    ),
-    recommendedShows = DiscoverShowResult.DiscoverShowsData(
-        category = ShowCategory.RECOMMENDED,
-        tvShows = List(10) { shows }
-    ),
-    popularShows = DiscoverShowResult.DiscoverShowsData(
-        category = ShowCategory.POPULAR,
-        tvShows = List(10) { shows }
-    ),
+val showsLoaded = ShowsLoaded(
+    result = ShowResult(
+        featuredCategoryState = ShowResult.CategorySuccess(
+            category = Category.FEATURED,
+            tvShows = List(5) { shows }
+        ),
+        trendingCategoryState = ShowResult.CategorySuccess(
+            category = Category.TRENDING,
+            tvShows = List(10) { shows }
+        ),
+        popularCategoryState = ShowResult.CategorySuccess(
+            category = Category.POPULAR,
+            tvShows = List(10) { shows }
+        ),
+        anticipatedCategoryState = ShowResult.CategorySuccess(
+            category = Category.ANTICIPATED,
+            tvShows = List(10) { shows }
+        ),
+    )
 )
 
