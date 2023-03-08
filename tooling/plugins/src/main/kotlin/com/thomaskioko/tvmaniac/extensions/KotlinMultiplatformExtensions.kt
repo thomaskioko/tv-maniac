@@ -6,7 +6,7 @@ import org.gradle.api.Project
 
 @Suppress("UnstableApiUsage")
 internal fun Project.configureKotlinMultiplatform(
-    commonExtension: CommonExtension<*, *, *, *>,
+    commonExtension: CommonExtension<*, *, *, *, *>,
 ) {
     commonExtension.apply {
         compileSdk = 33
