@@ -1,7 +1,8 @@
 package com.thomaskioko.tvmaniac.injection
 
-import com.thomaskioko.tvmaniac.shared.core.ui.di.IoCoroutineScope
-import com.thomaskioko.tvmaniac.shared.core.ui.di.MainCoroutineScope
+import com.thomaskioko.tvmaniac.core.util.scope.DefaultCoroutineScope
+import com.thomaskioko.tvmaniac.core.util.scope.IoCoroutineScope
+import com.thomaskioko.tvmaniac.core.util.scope.MainCoroutineScope
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,4 +22,9 @@ object CoroutineScopeModule {
     @Provides
     @IoCoroutineScope
     fun provideIOCoroutineScope(): CoroutineScope = CoroutineScope(Job() + Dispatchers.IO)
+
+    @Provides
+    @DefaultCoroutineScope
+    fun provideDefaultCoroutineScope(): CoroutineScope = CoroutineScope(Job() + Dispatchers.Default)
+
 }

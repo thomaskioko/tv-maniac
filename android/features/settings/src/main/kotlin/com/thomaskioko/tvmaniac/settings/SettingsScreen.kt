@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
@@ -37,21 +39,21 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
+import com.thomaskioko.tvmaniac.datastore.api.Theme
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsActions
-import com.thomaskioko.tvmaniac.shared.persistance.SettingsContent
-import com.thomaskioko.tvmaniac.shared.persistance.Theme
 
 @Composable
 fun SettingsScreen(
@@ -59,7 +61,7 @@ fun SettingsScreen(
     navigateUp: () -> Unit
 ) {
 
-    val settingsState by viewModel.observeState().collectAsStateWithLifecycle()
+    val settingsState by viewModel.state.collectAsStateWithLifecycle()
 
     val loginLauncher = rememberLauncherForActivityResult(
         viewModel.buildLoginActivityResult()
@@ -97,38 +99,45 @@ fun SettingsScreen(
         modifier = Modifier
             .statusBarsPadding(),
         content = { innerPadding ->
-            SettingsList(
-                settingsState = settingsState,
-                onThemeChanged = { viewModel.dispatch(SettingsActions.ThemeSelected(it)) },
-                onThemeClicked = { viewModel.dispatch(SettingsActions.ThemeClicked) },
-                onDismissTheme = { viewModel.dispatch(SettingsActions.ThemeClicked) },
-                onLogoutClicked = { viewModel.dispatch(SettingsActions.TraktLogout) },
-                onLoginClicked = {
-                    loginLauncher.launch(Unit)
-                    viewModel.dispatch(SettingsActions.DismissTraktDialog)
-                },
-                onConnectClicked = { viewModel.dispatch(SettingsActions.ShowTraktDialog) },
-                onDismissDialogClicked = { viewModel.dispatch(SettingsActions.DismissTraktDialog) },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            )
+
+            when (settingsState) {
+                is SettingsContent -> {
+                    SettingsList(
+                        settingsContent = settingsState as SettingsContent,
+                        onThemeChanged = { viewModel.dispatch(ThemeSelected(it)) },
+                        onThemeClicked = { viewModel.dispatch(ChangeThemeClicked) },
+                        onDismissTheme = { viewModel.dispatch(DimissThemeClicked) },
+                        onLogoutClicked = { viewModel.dispatch(TraktLogout) },
+                        onLoginClicked = {
+                            loginLauncher.launch(Unit)
+                            viewModel.dispatch(DismissTraktDialog)
+                        },
+                        onConnectClicked = { viewModel.dispatch(ShowTraktDialog) },
+                        onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                    )
+                }
+            }
+
         }
     )
 }
 
 @Composable
 fun SettingsList(
-    settingsState: SettingsContent,
-    onThemeChanged: (String) -> Unit,
+    settingsContent: SettingsContent,
+    onThemeChanged: (Theme) -> Unit,
     onThemeClicked: () -> Unit,
     onDismissTheme: () -> Unit,
     onConnectClicked: () -> Unit,
     onLoginClicked: () -> Unit,
     onLogoutClicked: () -> Unit,
     onDismissDialogClicked: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+    modifier: Modifier = Modifier,
+
+    ) {
     LazyColumn(
         modifier = modifier,
     ) {
@@ -137,7 +146,7 @@ fun SettingsList(
 
         item {
             ThemeSettingsItem(
-                settingsState = settingsState,
+                settingsContent = settingsContent,
                 onThemeSelected = onThemeChanged,
                 onThemeClicked = onThemeClicked,
                 onDismissTheme = onDismissTheme
@@ -146,7 +155,11 @@ fun SettingsList(
 
         item {
             TraktProfileSettingsItem(
-                settingsState = settingsState,
+                showTraktDialog = settingsContent.showTraktDialog,
+                loggedIn = settingsContent.loggedIn,
+                traktUserName = settingsContent.traktUserName,
+                traktFullName = settingsContent.traktFullName,
+                traktUserPicUrl = settingsContent.traktUserPicUrl,
                 onLoginClicked = onLoginClicked,
                 onLogoutClicked = onLogoutClicked,
                 onDismissDialogClicked = onDismissDialogClicked,
@@ -162,14 +175,21 @@ fun SettingsList(
 
 @Composable
 private fun TraktProfileSettingsItem(
-    settingsState: SettingsContent,
+    showTraktDialog: Boolean,
+    loggedIn: Boolean,
+    traktUserName: String?,
+    traktFullName: String?,
+    traktUserPicUrl: String?,
     onConnectClicked: () -> Unit,
     onLoginClicked: () -> Unit,
     onLogoutClicked: () -> Unit,
-    onDismissDialogClicked: () -> Unit
+    onDismissDialogClicked: () -> Unit,
 ) {
-    val titleId = if (settingsState.loggedIn) {
-        stringResource(R.string.settings_title_disconnect_trakt, settingsState.traktUserName)
+    val titleId = if (loggedIn) {
+        stringResource(
+            R.string.settings_title_disconnect_trakt,
+            traktUserName ?: traktFullName ?: ""
+        )
     } else {
         stringResource(R.string.settings_title_connect_trakt)
     }
@@ -190,25 +210,42 @@ private fun TraktProfileSettingsItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Icon(
-                imageVector = Icons.Filled.Person,
-                tint = MaterialTheme.colors.secondary,
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .size(28.dp)
-            )
+            if (!traktUserPicUrl.isNullOrBlank()) {
+                AsyncImageComposable(
+                    model = traktUserPicUrl,
+                    contentDescription = stringResource(
+                        R.string.cd_profile_pic,
+                        traktUserName ?: traktFullName ?: ""
+                    ),
+                    modifier = Modifier
+                        .padding(top = 64.dp)
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .border(2.dp, MaterialTheme.colors.secondary, CircleShape)
+
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Filled.Person,
+                    tint = MaterialTheme.colors.secondary,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .size(28.dp)
+                )
+            }
+
 
             Column(
                 modifier = Modifier
                     .weight(1f),
             ) {
                 SettingTitle(titleId)
-                SettingDescription(stringResource(R.string.settings_trakt_description))
+                SettingDescription(stringResource(R.string.trakt_description))
             }
 
             TrackDialog(
-                isVisible = settingsState.showTraktDialog,
+                isVisible = showTraktDialog,
                 onLoginClicked = onLoginClicked,
                 onLogoutClicked = onLogoutClicked,
                 onDismissDialog = onDismissDialogClicked
@@ -241,7 +278,7 @@ fun TrackDialog(
 
         BasicDialog(
             dialogTitle = stringResource(id = R.string.settings_title_trakt_app),
-            dialogMessage = stringResource(id = R.string.settings_trakt_description),
+            dialogMessage = stringResource(id = R.string.trakt_description),
             confirmButtonText = stringResource(id = R.string.login),
             dismissButtonText = stringResource(id = R.string.logout),
             onDismissDialog = onDismissDialog,
@@ -253,13 +290,13 @@ fun TrackDialog(
 
 @Composable
 private fun ThemeSettingsItem(
-    settingsState: SettingsContent,
-    onThemeSelected: (String) -> Unit,
+    settingsContent: SettingsContent,
+    onThemeSelected: (Theme) -> Unit,
     onThemeClicked: () -> Unit,
     onDismissTheme: () -> Unit
 ) {
 
-    val themeTitle = when (settingsState.theme) {
+    val themeTitle = when (settingsContent.theme) {
         Theme.LIGHT -> stringResource(R.string.settings_title_theme_dark)
         Theme.DARK -> stringResource(R.string.settings_title_theme_light)
         Theme.SYSTEM -> stringResource(R.string.settings_title_theme_system)
@@ -304,8 +341,8 @@ private fun ThemeSettingsItem(
             }
 
             ThemeMenu(
-                isVisible = settingsState.showPopup,
-                theme = settingsState.theme,
+                isVisible = settingsContent.showPopup,
+                selectedTheme = settingsContent.theme,
                 onDismissTheme = onDismissTheme,
                 onThemeSelected = onThemeSelected
             )
@@ -320,9 +357,9 @@ private fun ThemeSettingsItem(
 @Composable
 private fun ThemeMenu(
     isVisible: Boolean,
+    selectedTheme: Theme,
     onDismissTheme: () -> Unit,
-    onThemeSelected: (String) -> Unit,
-    theme: Theme,
+    onThemeSelected: (Theme) -> Unit,
 ) {
 
     AnimatedVisibility(
@@ -346,27 +383,24 @@ private fun ThemeMenu(
 
         ) {
             ThemeMenuItem(
-                themeTitle = "Light",
-                themeName = Theme.LIGHT.name,
-                theme,
-                onThemeSelected,
-                onDismissTheme
+                theme = Theme.LIGHT,
+                selectedTheme = selectedTheme,
+                onThemeSelected = onThemeSelected,
+                onDismissTheme = onDismissTheme
             )
 
             ThemeMenuItem(
-                themeTitle = "Dark",
-                themeName = Theme.DARK.name,
-                theme,
-                onThemeSelected,
-                onDismissTheme
+                theme =  Theme.DARK,
+                selectedTheme = selectedTheme,
+                onThemeSelected = onThemeSelected,
+                onDismissTheme = onDismissTheme
             )
 
             ThemeMenuItem(
-                themeTitle = "Use system default",
-                themeName = Theme.SYSTEM.name,
-                theme,
-                onThemeSelected,
-                onDismissTheme
+                theme = Theme.SYSTEM,
+                selectedTheme = selectedTheme,
+                onThemeSelected = onThemeSelected,
+                onDismissTheme = onDismissTheme
             )
         }
     }
@@ -374,15 +408,20 @@ private fun ThemeMenu(
 
 @Composable
 private fun ThemeMenuItem(
-    themeTitle: String,
-    themeName: String,
     theme: Theme,
-    onThemeSelected: (String) -> Unit,
+    selectedTheme: Theme,
+    onThemeSelected: (Theme) -> Unit,
     onDismissTheme: () -> Unit
 ) {
+
+    val themeTitle = when(theme){
+        Theme.LIGHT -> "Light Theme"
+        Theme.DARK -> "Dark Theme"
+        Theme.SYSTEM -> "System Theme"
+    }
     DropdownMenuItem(
         onClick = {
-            onThemeSelected(themeName.lowercase())
+            onThemeSelected(theme)
             onDismissTheme()
         }
     ) {
@@ -400,9 +439,9 @@ private fun ThemeMenuItem(
             )
 
             RadioButton(
-                selected = theme.name == themeName,
+                selected = selectedTheme == theme,
                 onClick = {
-                    onThemeSelected(themeName.lowercase())
+                    onThemeSelected(theme)
                     onDismissTheme()
                 }
             )
@@ -481,7 +520,7 @@ fun SettingsPropertyPreview() {
     TvManiacTheme {
         Surface {
             SettingsList(
-                settingsState = SettingsContent.DEFAULT,
+                settingsContent = SettingsContent.EMPTY,
                 onThemeChanged = {},
                 onThemeClicked = {},
                 onDismissTheme = {},

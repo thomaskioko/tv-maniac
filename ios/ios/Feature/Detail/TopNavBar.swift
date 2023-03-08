@@ -8,10 +8,8 @@ import TvManiac
 
 struct TopNavBar: View {
 
-    @Binding var offset: CGFloat
-    var viewState: ShowDetailUiViewState
-    var maxHeight: CGFloat
-    var topEdge: CGFloat
+    var titleProgress: CGFloat
+    var title: String
 
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
@@ -22,33 +20,25 @@ struct TopNavBar: View {
             Button {
                 presentationMode.wrappedValue.dismiss()
             } label: {
-                Image(systemName: "arrow.left")
+                Image(systemName: "chevron.left")
                         .font(.body.bold())
-                        .padding(.top)
-                        .padding(.bottom)
-                        .padding(.trailing)
+						.foregroundColor(.white)
+						.padding([.top, .bottom,.trailing])
             }
-
-            Spacer()
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text(viewState.tvShow.title)
-                        .titleFont(size: 24)
-                        .foregroundColor(Color.text_color_bg)
-                        .lineLimit(1)
-                        .opacity(topBarTitleOpacity())
-            }
-
-            Spacer()
-
+			
+			Spacer(minLength: 0)
+			
         }
-                .navigationBarBackButtonHidden(true)
+		.overlay(content: {
+			Text(title)
+				.titleFont(size: 24)
+				.foregroundColor(Color.text_color_bg)
+				.lineLimit(1)
+				.offset(y: -titleProgress > 0.75 ? 0 : 45)
+				.clipped()
+				.animation(.easeInOut(duration: 0.25), value: -titleProgress > 0.75)
+		})
+		.padding(.top, 10)
 
-    }
-
-    func topBarTitleOpacity() -> CGFloat {
-        let progress = -(offset + 380) / (maxHeight - (80 + topEdge))
-
-        return progress
     }
 }
