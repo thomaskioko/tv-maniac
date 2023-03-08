@@ -2,6 +2,7 @@
 
 package com.thomaskioko.tvmaniac.shared.di
 
+import com.thomaskioko.trakt.service.implementation.traktServiceModule
 import com.thomaskioko.tvmaniac.core.db.di.dbPlatformModule
 import com.thomaskioko.tvmaniac.core.util.di.coreUtilModule
 import com.thomaskioko.tvmaniac.data.category.implementation.categoryDataModule
@@ -81,6 +82,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         tmdbModule(),
         trailerDomainModule(),
         trailersModule(),
-        traktModule()
+        traktModule(),
+        traktServiceModule()
     )
 }
