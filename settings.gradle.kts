@@ -64,6 +64,8 @@ include(
     ":shared:data:trakt:api",
     ":shared:data:trakt:implementation",
     ":shared:data:trakt:testing",
+    ":shared:data:trakt-service:api",
+    ":shared:data:trakt-service:implementation",
     ":shared:domain:discover",
     ":shared:domain:following",
     ":shared:domain:seasondetails",

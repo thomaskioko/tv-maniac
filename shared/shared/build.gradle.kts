@@ -66,6 +66,7 @@ kotlin {
             api(project(":shared:data:trailers:api"))
             api(project(":shared:data:tmdb:api"))
             api(project(":shared:data:trakt:api"))
+            api(project( ":shared:data:trakt-service:api"))
             api(project(":shared:domain:discover"))
             api(project(":shared:domain:following"))
             api(project(":shared:domain:seasondetails"))
@@ -80,6 +81,7 @@ kotlin {
             implementation(project(":shared:data:trailers:implementation"))
             implementation(project(":shared:data:tmdb:implementation"))
             implementation(project(":shared:data:trakt:implementation"))
+            implementation(project(":shared:data:trakt-service:implementation"))
             implementation(project(":shared:data:category:implementation"))
 
             implementation(libs.koin)
