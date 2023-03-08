@@ -11,13 +11,13 @@ import com.thomaskioko.tvmaniac.core.util.DateUtil
 import com.thomaskioko.tvmaniac.core.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.util.FormatterUtil.formatDuration
 import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
+import com.thomaskioko.tvmaniac.trakt.service.api.model.ErrorResponse
+import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktCreateListResponse
+import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktFollowedShowResponse
+import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktShowResponse
+import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktShowsResponse
+import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktUserResponse
+import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktUserStatsResponse
 import kotlin.math.roundToInt
 
 fun ApiResponse<List<TraktShowResponse>, ErrorResponse>.showResponseToCacheList() = when (this) {
