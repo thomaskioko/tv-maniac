@@ -68,7 +68,8 @@ fun <T : Any> LazyPagedGridItems(
                         SnackBarErrorRetry(
                             snackBarHostState = hostState,
                             errorMessage = exception.error.localizedMessage!!,
-                            onErrorAction = { retry() }
+                            onErrorAction = { retry() },
+                            actionLabel = "Retry"
                         )
                     }
                 }
@@ -78,7 +79,8 @@ fun <T : Any> LazyPagedGridItems(
                         SnackBarErrorRetry(
                             snackBarHostState = hostState,
                             errorMessage = exception.error.localizedMessage!!,
-                            onErrorAction = { retry() }
+                            onErrorAction = { retry() },
+                            actionLabel = "Retry"
                         )
                     }
                 }

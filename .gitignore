@@ -56,7 +56,8 @@ captures/
 timeline.xctimeline
 playground.xcworkspace
 
-shared/secrets.properties
+## Shared
+/shared/domain/settings/implementation/*.preferences_pb
 
 *.xcworkspacedata
 *.xcuserstate

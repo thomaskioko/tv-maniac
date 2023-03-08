@@ -1,47 +1,43 @@
 import SwiftUI
 import TvManiac
+import os.log
 
 struct DiscoverView: View {
 
-    @ObservedObject var observable = ObservableViewModel<DiscoverShowsViewModel, DiscoverShowsState>(
-            viewModel: DiscoverShowsViewModel()
-    )
-
+    @ObservedObject var viewModel: DiscoverShowsViewModel = DiscoverShowsViewModel(showState: Loading_())
 
     var body: some View {
         NavigationView {
 
             VStack {
-                if observable.state is DiscoverShowsState.InProgress {
+
+                switch viewModel.showState {
+                case is Loading_:
                     LoadingIndicatorView()
-                } else if observable.state is DiscoverShowsState.Error {
-                    //TODO:: Show Error
-                    EmptyView()
-                } else if observable.state is DiscoverShowsState.Success {
-
-                    let result = observable.state as? DiscoverShowsState.Success
-
-                    BodyContentView(showResult: result!.data)
-
+						.frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
+                case is LoadingError:
+                    let state = viewModel.showState as! LoadingError
+                    ErrorView(errorMessage: state.message)
+                case is ShowsLoaded:
+                    let state = viewModel.showState as! ShowsLoaded
+                    BodyContentView(contentState: state)
+                default:
+                    fatalError("Unhandled case: \(viewModel.showState)")
                 }
             }
-                    .ignoresSafeArea()
-                    .navigationBarHidden(true)
+			.background(Color.background)
+			.ignoresSafeArea()
+			.navigationBarHidden(true)
         }
-                .onAppear {
-                    observable.viewModel.attach()
-                }
-                .onDisappear {
-                    observable.viewModel.detach()
-                }
-                .accentColor(Color.background)
+                .background(Color.background)
                 .navigationViewStyle(StackNavigationViewStyle())
+                .onAppear { viewModel.startStateMachine() }
+                .onDisappear { viewModel.cancel() }
     }
+
 
 }
 
-
-// Screen Bounds...
 extension View {
     func getRect() -> CGRect {
         UIScreen.main.bounds
@@ -50,7 +46,6 @@ extension View {
 
 
 struct DiscoverView_Previews: PreviewProvider {
-
     static var previews: some View {
         DiscoverView()
 
