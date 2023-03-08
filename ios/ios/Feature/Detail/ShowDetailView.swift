@@ -10,191 +10,120 @@ import SwiftUI
 import TvManiac
 
 struct ShowDetailView: View {
-	
-	@ObservedObject var viewModel: ShowDetailsViewModel = ShowDetailsViewModel(
-		detailState: ShowDetailsStateLoading()
-	)
-	
-	@SwiftUI.State var offset: CGFloat = 0
-	@SwiftUI.State var titleOffset: CGFloat = 0
-	@SwiftUI.State var size: CGSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
 
-	
-	var showId: Int64
-	let maxHeight = CGFloat(520)
-	
-	init(showId: Int64) {
-		self.showId = showId
-	}
-	
-	var body: some View {
-		
-		VStack {
-			switch viewModel.detailState {
-			case is ShowDetailsStateLoading:
-				LoadingIndicatorView()
-					.frame(maxWidth: size.width, maxHeight: size.height,  alignment: .center)
-			case is ShowDetailsStateShowDetailsLoaded:
-				let state = viewModel.detailState as! ShowDetailsStateShowDetailsLoaded
-				
-				ScrollView(.vertical, showsIndicators: false) {
-					VStack {
-                        if let showState = state.showState as? ShowStateShowLoaded {
-                            ArtWork(state: showState)
-                        }
-                        
-						ShowBodyView(detailLoadedState: state)
-					}
-				}
-				.coordinateSpace(name: "SCROLL")
-				
-			case is ShowDetailsStateShowDetailsError:
-				let state = viewModel.detailState as! ShowDetailsStateShowDetailsError
-				
-				ErrorView(errorMessage: state.errorMessage)
-			default:
-				let _ = print("Unhandled case: \(viewModel.detailState)")
-			}
-		}
-		.overlay(alignment: .top){
-			if let state = viewModel.detailState as? ShowDetailsStateShowDetailsLoaded {
-                
-                if let showState = state.showState as? ShowStateShowLoaded {
-                    TopNavBarView(showTitle: showState.show.title)
-                } else {
-                    TopNavBarView(showTitle: "")
+    @ObservedObject var observable = ObservableViewModel<ShowDetailsViewModel, ShowDetailUiViewState>(
+            viewModel: ShowDetailsViewModel()
+    )
+
+    @SwiftUI.State var topEdge: CGFloat = 0
+    @SwiftUI.State var offset: CGFloat = 0
+    @SwiftUI.State var titleOffset: CGFloat = 0
+
+    @Environment(\.colorScheme) var scheme
+    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
+    @GestureState private var dragOffset = CGSize.zero
+
+    var showId: Int64
+    let maxHeight = CGFloat(520)
+
+    init(showId: Int64) {
+        self.showId = showId
+    }
+
+    var body: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+
+            VStack {
+                GeometryReader { proxy in
+                    HeaderView(
+                            viewState: observable.state,
+                            topEdge: topEdge,
+                            maxHeight: maxHeight,
+                            offset: $offset,
+                            onFollowShowClicked: { id in
+                                print(id)
+                            }
+                    )
+                            .frame(maxWidth: .infinity)
+                            .frame(height: getHeaderHeight(), alignment: .bottom)
+                            .background(BackgroundView())
+                            .overlay(
+                                    TopNavBar(
+                                            offset: $offset,
+                                            viewState: observable.state,
+                                            maxHeight: maxHeight,
+                                            topEdge: topEdge
+                                    )
+                                            .padding(.horizontal)
+                                            .frame(height: 160)
+                                            .foregroundColor(.white)
+                                            .padding(.top, topEdge)
+                                    , alignment: .top
+                            )
                 }
-                
-			} else {
-				TopNavBarView(showTitle: "")
-			}
-		}
-		.background(Color.background)
-		.navigationBarHidden(true)
-		.ignoresSafeArea()
-		.onAppear { viewModel.startStateMachine(action: LoadShowDetails(traktId: showId)) }
-        .onDisappear { viewModel.cancel() }
-	}
-	
-	@ViewBuilder
-	func ArtWork(state: ShowStateShowLoaded) -> some View {
-		let height = size.height * 0.45
-		
-		GeometryReader { proxy in
-			let size = proxy.size
-			let minY = proxy.frame(in: .named("SCROLL")).minY
-			let progress = minY / (height * (minY > 0 ? 0.5 : 0.8))
-			
-			ShowPosterImage(
-				posterSize: .max,
-				imageUrl: state.show.backdropImageUrl
-			)
-			.aspectRatio(contentMode: .fill)
-			.frame(width: size.width, height: size.height + (minY > 0 ? minY : 0))
-			.clipped()
-			.overlay( content : {
-				ZStack(alignment: .bottom) {
-					
-					Rectangle()
-						.fill(
-							.linearGradient(colors: [
-								Color.background,
-								.clear,
-								Color.background.opacity(0 - progress),
-								Color.background.opacity(0.1 - progress),
-								Color.background.opacity(0.3 - progress),
-								Color.background.opacity(0.5 - progress),
-								Color.background.opacity(0.8 - progress),
-								Color.background.opacity(1),
-							], startPoint: .top, endPoint: .bottom)
-						)
-					
-					//Header Content
-					HeaderContentView(show: state.show)
-						.opacity(1 + (progress > 0 ? -progress : progress))
-						.padding(.horizontal,16)
-					// Moving With ScrollView
-						.offset(y: minY < 0 ? minY : 0)
-				}
-			})
-			.offset(y: -minY)
-		}
-		.frame(height: maxHeight)
-	}
-	
-	
-	@ViewBuilder
-	func TopNavBarView(showTitle: String)->some View{
-		GeometryReader{proxy in
-			let minY = proxy.frame(in: .named("SCROLL")).minY
-			let height = maxHeight * 0.45
-			let progress = minY / (height * (minY > 0 ? 0.5 : 0.8))
-			let titleProgress = minY / height
-			
-			TopNavBar(
-				titleProgress: titleProgress,
-				title: showTitle
-			)
-			.padding(.top, 45)
-			.padding([.horizontal,],15)
-			.background(content: {
-				Color.background
-					.opacity(-progress > 1 ? 1 : 0)
-			})
-			.offset(y: -minY)
-		}
-	}
-	
-	@ViewBuilder
-	func HeaderContentView(show: Show) -> some View {
-		
-		VStack(spacing: 0){
-			Text(show.title)
-				.titleFont(size: 30)
-				.foregroundColor(Color.text_color_bg)
-				.lineLimit(1)
-				.padding(.top, 8)
-			
-			Text(show.overview)
-				.bodyFont(size: 18)
-				.foregroundColor(Color.text_color_bg)
-				.lineLimit(3)
-				.padding(.top, 1)
-			
-			ShowInfoRow(show: show)
-				.padding(.top, 5)
-			
-			GenresRowView(genres: show.genres)
-				.padding(.top, 5)
-			
-			HStack(alignment: .center, spacing: 8) {
-				
-				BorderedButton(
-					text: "Watch Trailer",
-					systemImageName: "film.fill",
-					color: .accent,
-					borderColor: .grey_200,
-					isOn: false,
-					action: {
-						//TODO:: Navigate to trailer view
-					})
-				
-				BorderedButton(
-					text: "Follow Show",
-					systemImageName: "plus.app.fill",
-					color: .accent,
-					borderColor: .grey_200,
-					isOn: false,
-					action: {
-						viewModel.dispatchAction(action: FollowShow(traktId: show.traktId, addToWatchList: show.isFollowed))
-					}
-				)
-			}
-			.padding(.bottom, 16)
-			.padding(.top, 10)
-		}
-		
-	}
+                        .frame(height: maxHeight)
+                        .offset(y: -offset)
+                        .zIndex(1)
+
+
+                ShowBodyView(viewState: observable.state)
+                        .offset(y: 100)
+                        .zIndex(0)
+            }
+                    .modifier(OffsetModifier(offset: $offset))
+                    .onAppear {
+                        observable.viewModel.attach()
+                        observable.viewModel.dispatch(action: ShowDetailAction.LoadShowDetails(showId: showId))
+                    }
+                    .onDisappear {
+                        observable.viewModel.detach()
+                    }
+        }
+                .background(Color.background)
+                .coordinateSpace(name: "SCROLL")
+                .navigationBarHidden(true)
+                .edgesIgnoringSafeArea(.all)
+                .gesture(DragGesture().updating($dragOffset, body: { (value, state, transaction) in
+                    if (value.startLocation.x < 20 && value.translation.width > 100) {
+                        mode.wrappedValue.dismiss()
+                    }
+                }))
+    }
+
+    @ViewBuilder
+    func BackgroundView() -> some View {
+
+        let color: Color = (scheme == .dark ? .black : .white)
+        // Custom Gradient
+        LinearGradient(colors: [
+            .black,
+            .clear,
+            color.opacity(0.15),
+            color.opacity(0.5),
+            color.opacity(0.8),
+            color,
+            color
+        ], startPoint: .top, endPoint: .bottom)
+
+        // Blurred Overlay
+        Rectangle()
+                .fill(.ultraThinMaterial)
+    }
+
+    func getHeaderHeight() -> CGFloat {
+        let topHeight = maxHeight + offset
+
+        return topHeight > (120 + topEdge) ? topHeight : (120 + topEdge)
+    }
+
+    func getCornerRadius() -> CGFloat {
+
+        let progress = -offset / (maxHeight - (80 + topEdge))
+
+        let radius = (1 - progress) * 50
+
+        return offset < 0 ? radius : 50
+    }
 }
 
 

@@ -11,17 +11,17 @@ import TvManiac
 
 struct GenresRowView: View {
 	
-	let genres: [String]
+	let genres: [GenreUIModel]
 	var body: some View {
 		
 		ScrollView(.horizontal, showsIndicators: false) {
 			HStack(alignment: .center, spacing: 4) {
 				ForEach(genres, id: \.self) { genre in
-					Text(genre)
+					Text(genre.name)
 						.captionFont(size: 16)
 						.foregroundColor(Color.text_color_bg)
 						.padding(10)
-						.background(Color.accent.opacity(0.2))
+						.background(Color.accent.opacity(0.12))
 						.cornerRadius(5)
 				}
 			}

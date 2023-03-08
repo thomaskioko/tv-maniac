@@ -3,8 +3,4 @@
     package="com.thomaskioko.tvmaniac.core.util">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <queries>
-        <package android:name="com.google.android.webview" />
-    </queries>
 </manifest>

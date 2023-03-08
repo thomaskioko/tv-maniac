@@ -59,7 +59,7 @@ fun HomeScreen(
             val currentSelectedItem by navController.currentScreenAsState()
             val showBottomBar = route in listOf(
                 NavigationScreen.DiscoverNavScreen.route,
-                NavigationScreen.SearchNavScreen.route,
+                NavigationScreen.SettingsScreen.route,
                 NavigationScreen.WatchlistNavScreen.route,
                 NavigationScreen.ProfileNavScreen.route,
             )

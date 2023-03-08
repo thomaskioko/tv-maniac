@@ -1,0 +1,27 @@
+CREATE TABLE trailers (
+id TEXT NOT NULL PRIMARY KEY,
+trakt_id INTEGER AS Int NOT NULL,
+key TEXT NOT NULL,
+name TEXT NOT NULL,
+site TEXT NOT NULL,
+size INTEGER NOT NULL,
+type TEXT NOT NULL,
+FOREIGN KEY (trakt_id) REFERENCES show(trakt_id)
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO trailers(
+id,
+trakt_id,
+key,
+name,
+site,
+size,
+type
+)
+VALUES(?,?,?,?,?,?,?);
+
+selectByShowId:
+SELECT *
+FROM trailers
+WHERE trakt_id = ?;

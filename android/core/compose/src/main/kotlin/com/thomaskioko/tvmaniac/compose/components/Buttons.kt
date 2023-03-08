@@ -26,7 +26,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.compose.theme.grey600
 import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
@@ -57,13 +56,13 @@ fun ExtendedFab(
         onClick = { onClick() },
         modifier = Modifier
             .padding(2.dp)
-            .border(1.dp, grey600, RoundedCornerShape(8.dp))
+            .border(1.dp, Color(0xFF414141), RoundedCornerShape(8.dp))
     )
 }
 
 @Composable
 fun ExtendedLoadingFab(
-    isLoading: Boolean = false,
+    isLoading: Boolean,
     painter: Painter,
     text: String,
     onClick: () -> Unit = {}
@@ -98,7 +97,7 @@ fun ExtendedLoadingFab(
         onClick = { onClick() },
         modifier = Modifier
             .padding(2.dp)
-            .border(1.dp, grey600, RoundedCornerShape(8.dp))
+            .border(1.dp, Color(0xFF414141), RoundedCornerShape(8.dp))
             .clickable(
                 enabled = isLoading,
                 onClick = {}

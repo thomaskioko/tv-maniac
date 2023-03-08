@@ -32,9 +32,5 @@ object AppModule {
     @Provides
     fun provideTmdbApiKey(): String = BuildConfig.TMDB_API_KEY
 
-    @Singleton
-    @Named("app-build")
-    @Provides
-    fun provideIsDebug(): Boolean = BuildConfig.DEBUG
 
 }

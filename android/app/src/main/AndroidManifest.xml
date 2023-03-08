@@ -6,13 +6,12 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-            android:name=".TvManicApplication"
-            android:allowBackup="true"
-            android:hardwareAccelerated="true"
-            android:icon="@drawable/ic_app_launcher"
-            android:label="Tv Maniac"
-            android:supportsRtl="true"
-            android:theme="@style/Theme.TvManiac">
+        android:name=".TvManicApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_app_launcher"
+        android:label="Tv Maniac"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.TvManiac">
 
         <profileable
             android:shell="true"

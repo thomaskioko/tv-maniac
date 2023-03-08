@@ -1,5 +1,7 @@
+import util.libs
+
 plugins {
-    id("tvmaniac.android.feature")
+    `android-feature-plugin`
 }
 
 android {
@@ -7,14 +9,20 @@ android {
 }
 
 dependencies {
-    api(project(":shared:domain:discover"))
-    implementation(project(":shared:data:category:api"))
+    api(project(":shared:core:ui"))
+    api(project(":shared:core:util"))
+    api(projects.android.core.compose)
 
-    implementation(libs.androidx.compose.material)
-    implementation(libs.accompanist.pager.core)
+    api(libs.inject)
+    api(libs.androidx.compose.material)
+    api(libs.androidx.navigation.common)
+    api(libs.androidx.navigation.runtime)
+    api(libs.accompanist.pager.core)
+
+    api(project(":shared:domain:shows:api"))
+
+    implementation(libs.snapper)
 
     implementation(libs.accompanist.pager.indicator)
     implementation(libs.androidx.compose.ui.util)
-    implementation(libs.flowredux)
-    implementation(libs.snapper)
 }

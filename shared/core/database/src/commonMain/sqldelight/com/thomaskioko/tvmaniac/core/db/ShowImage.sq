@@ -1,0 +1,21 @@
+CREATE TABLE show_image (
+trakt_id INTEGER AS Int NOT NULL PRIMARY KEY,
+poster_url TEXT DEFAULT NULL,
+backdrop_url TEXT DEFAULT NULL,
+FOREIGN KEY (trakt_id) REFERENCES show(trakt_id) ON DELETE CASCADE
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO show_image(
+trakt_id,
+poster_url,
+backdrop_url
+)
+VALUES(?,?,?);
+
+selectById:
+SELECT * FROM show_image
+WHERE trakt_id = ?;
+
+selectAll:
+SELECT * FROM show_image;

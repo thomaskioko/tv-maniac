@@ -3,7 +3,7 @@ TvManiac
 ![Check](https://github.com/c0de-wizard/tv-maniac/actions/workflows/build.yml/badge.svg)  ![android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat) ![ios](http://img.shields.io/badge/platform-ios-CDCDCD.svg?style=flat)
 
 **TvManiac** is a Multiplatform app (Android & iOS) for viewing TV Shows information from
-[Trakt](https://trakt.tv/). The aim of this project is do demonstrate KMM development capabilities.
+[TMDB](https://www.themoviedb.org/). The aim of this project is do demonstrate KMM development capabilities.
 
 You can Install and test latest android app from below 👇
 
@@ -28,25 +28,15 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
   </td>
     <td>
     <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/EpisodeListLight.png?raw=true" alt="Episodes List Light" width="500"/>
+      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AnroidHomeDark.png?raw=true" alt="Home Screen Dark" width="500"/>
     </p>
   </td>
   <td>
-    <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AnroidHomeDark.png?raw=true" alt="Show Details Dark" width="500"/>
-    </p>
-  </td>
-</tr>
-    <td>
     <p align="center">
       <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AnroidDetailDark.png?raw=true" alt="Show Details Dark" width="500"/>
     </p>
   </td>
-  <td>
-    <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/EpisodeListDark.png?raw=true" alt="Episodes List Dark" width="500"/>
-    </p>
-  </td>
+</tr>
 </table>
 
 ### 🔆 iOS Screenshots
@@ -82,7 +72,8 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 
 You need to add API keys from [Trakt.tv](https://trakt.docs.apiary.io) & [TMDb](https://developers.themoviedb.org). To do so:
 
-- Add the following keys to `~/.gradle/gradle.properties`
+- Create `local.properties` in `root` dir
+- Add the following
     ```
     TMDB_API_URL=https://api.themoviedb.org/3/
     TMDB_API_KEY=ENTER_URI
@@ -94,7 +85,7 @@ You need to add API keys from [Trakt.tv](https://trakt.docs.apiary.io) & [TMDb](
 
 
 ### Android
-- [Zulu Java 17](https://www.azul.com/downloads-new/?package=jdk#zulu)
+- Java 11
 - You require the latest [Android Studio Dolphin](https://developer.android.com/studio/preview) release to be able to build the app.
 - Install Kmm Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/kmm-setup.html).
 
@@ -109,8 +100,8 @@ In case you make changes to the `shared` module and want to test out the changes
 2. Add the generated package in XCode.
 
 
-### Android Demo
-https://user-images.githubusercontent.com/841885/223576880-c7391d14-63b8-47cd-a7f9-97aee5e47892.mp4
+## Project Structure & Architecture
+I wrote an article, [Going Modular — The Kotlin Multiplatform Way](https://medium.com/better-programming/going-modular-the-kotlin-multiplatform-way-132c3dee6c95) detailing the modularization process and thinking behind the structure of the shared module.
 
 
 ## Libraries Used
@@ -140,8 +131,6 @@ https://user-images.githubusercontent.com/841885/223576880-c7391d14-63b8-47cd-a7
 * [Napier](https://github.com/AAkira/Napier) - Logging
 * [Mockk](https://github.com/mockk/mockk) - mocking library for Kotlin.
 * [koin](https://github.com/mockk/mockk) - Injection library.
-* [DataStore Preferences](https://android-developers.googleblog.com/2022/10/announcing-experimental-preview-of-jetpack-multiplatform-libraries.html) - Data storage
-* [Flow-Redux](https://github.com/freeletics/FlowRedux)
 
 ### iOS
 * [Kingfisher](https://github.com/onevcat/Kingfisher) - Image library.
@@ -166,7 +155,6 @@ iOS
 - [x] Add HomeScreen: Tabs & Empty UI
 - [x] Implement Discover UI
 - [x] Show Detail Screen
-- [x] Add Settings panel.
 - [ ] Implement trakt auth & sign in
 - [ ] Add Seasons UI
 - [ ] Implement Search UI
@@ -178,10 +166,11 @@ Shared
 - [x] Refactor interactor implementation.
 - [x] Use koin for injection
 - [x] Modularize `shared` module
-- [x] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux) 
+- [ ] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux) 
 - [ ] Improve error handling, add retry.
 - [ ] Add test cases.
 - [ ] Fix paging
+- [ ] Better MVI implementation
 - [ ] Observe Internet connection
     - [x] Android
     - [ ] iOS

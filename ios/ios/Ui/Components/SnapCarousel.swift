@@ -134,7 +134,7 @@ struct SnapCarousel<Content: View, T: TvShow>: View {
     // Fetching Index...
     func getIndex(item: T) -> Int {
         let index = list.firstIndex { currentItem in
-            return currentItem.traktId == item.traktId
+            return currentItem.id == item.id
         } ?? 0
 
         return index

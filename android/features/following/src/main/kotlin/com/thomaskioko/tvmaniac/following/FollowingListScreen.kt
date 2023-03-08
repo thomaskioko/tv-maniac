@@ -7,13 +7,16 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -22,91 +25,96 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
-import com.thomaskioko.tvmaniac.compose.components.ErrorUi
-import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
-import com.thomaskioko.tvmaniac.domain.following.ErrorLoadingShows
-import com.thomaskioko.tvmaniac.domain.following.FollowedShow
-import com.thomaskioko.tvmaniac.domain.following.FollowingContent
-import com.thomaskioko.tvmaniac.domain.following.LoadingShows
-import com.thomaskioko.tvmaniac.domain.following.ReloadFollowedShows
+import com.thomaskioko.tvmaniac.compose.components.SwipeDismissSnackbar
 import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
-fun FollowingScreen(
+fun FollowingContent(
     viewModel: FollowingViewModel,
-    openShowDetails: (showId: Long) -> Unit,
+    openShowDetails: (showId: Int) -> Unit,
 ) {
 
-    val followedState by viewModel.state.collectAsStateWithLifecycle()
+    val followedViewState by viewModel.observeState().collectAsStateWithLifecycle()
+
     val scaffoldState = rememberScaffoldState()
+
+    LaunchedEffect(Unit) {
+        viewModel.observeSideEffect().collect {
+            when (it) {
+                is FollowingEffect.Error -> scaffoldState.snackbarHostState.showSnackbar(it.message)
+            }
+        }
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = Modifier
             .statusBarsPadding()
             .navigationBarsPadding(),
+        snackbarHost = { snackBarHostState ->
+            SnackbarHost(
+                hostState = snackBarHostState,
+                snackbar = { snackBarData ->
+                    SwipeDismissSnackbar(
+                        data = snackBarData,
+                        onDismiss = { }
+                    )
+                },
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+            )
+        },
         content = { contentPadding ->
-
-            when (followedState) {
-                is LoadingShows -> FullScreenLoading()
-                is ErrorLoadingShows -> ErrorUi(
-                    errorMessage = (followedState as ErrorLoadingShows).message,
-                    onRetry = { viewModel.dispatch(ReloadFollowedShows) })
-
-                is FollowingContent -> {
-                    val state = (followedState as FollowingContent)
-                    when {
-                        state.list.isEmpty() -> EmptyContentView(
-                            painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                            message = stringResource(id = R.string.msg_empty_favorites)
-                        )
-
-                        else -> FollowingGridContent(
-                            list = state.list,
-                            paddingValues = contentPadding,
-                            onItemClicked = openShowDetails
-                        )
-                    }
-                }
-            }
+            FollowingGridContent(
+                viewState = followedViewState,
+                paddingValues = contentPadding,
+                onItemClicked = openShowDetails
+            )
         }
     )
 }
 
 @Composable
 private fun FollowingGridContent(
-    list: List<FollowedShow>,
+    viewState: FollowingState,
     paddingValues: PaddingValues,
-    onItemClicked: (Long) -> Unit,
+    onItemClicked: (Int) -> Unit,
 ) {
     val listState = rememberLazyListState()
 
-    LazyGridItems(
-        listState = listState,
-        items = list,
-        paddingValues = paddingValues,
-    ) { show ->
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .animateContentSize()
-        ) {
-            Card(
-                elevation = 4.dp,
-                modifier = Modifier.clickable { onItemClicked(show.traktId) },
-                shape = MaterialTheme.shapes.medium
+    if (viewState.list.isEmpty())
+        EmptyContentView(
+            painter = painterResource(id = R.drawable.ic_watchlist_empty),
+            message = stringResource(id = R.string.msg_empty_favorites)
+        )
+    else
+        LazyGridItems(
+            listState = listState,
+            items = viewState.list,
+            paddingValues = paddingValues,
+        ) { show ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize()
             ) {
-                AsyncImageComposable(
-                    model = show.posterImageUrl,
-                    contentDescription = stringResource(
-                        R.string.cd_show_poster,
-                        show.title
-                    ),
-                    modifier = Modifier
-                        .weight(1f)
-                        .aspectRatio(2 / 3f)
-                )
+                Card(
+                    elevation = 4.dp,
+                    modifier = Modifier.clickable { onItemClicked(show.traktId) },
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    AsyncImageComposable(
+                        model = show.posterImageUrl,
+                        contentDescription = stringResource(
+                            R.string.cd_show_poster,
+                            show.title
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(2 / 3f)
+                    )
+                }
             }
         }
-    }
 }

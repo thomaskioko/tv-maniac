@@ -11,26 +11,26 @@ import TvManiac
 
 struct HeaderView: View {
 
-    var show: Show
+    var viewState: ShowDetailUiViewState
     var topEdge: CGFloat
     var maxHeight: CGFloat
 
     @Binding var offset: CGFloat
-    let onFollowShowClicked: (Int32) -> Void
+    let onFollowShowClicked: (Int64) -> Void
 
     var body: some View {
 
         ZStack(alignment: .bottom) {
             ShowPosterImage(
                     posterSize: .max,
-                    imageUrl: show.backdropImageUrl
+                    imageUrl: viewState.tvShow.backdropImageUrl
             )
                     .aspectRatio(contentMode: .fill)
                     .overlay(
                             ZStack(alignment: .bottom) {
                                 ShowPosterImage(
                                         posterSize: .max,
-                                        imageUrl: show.backdropImageUrl
+                                        imageUrl: viewState.tvShow.backdropImageUrl
                                 )
                                         .blur(radius: 50) /// blur the image
                                         .clipped() /// prevent blur overflow
@@ -41,22 +41,22 @@ struct HeaderView: View {
 
             VStack {
 
-                Text(show.title)
+                Text(viewState.tvShow.title)
                         .titleFont(size: 30)
                         .foregroundColor(Color.text_color_bg)
                         .lineLimit(1)
                         .padding(.top, 8)
 
-                Text(show.overview)
+                Text(viewState.tvShow.overview)
                         .bodyFont(size: 18)
                         .foregroundColor(Color.text_color_bg)
                         .lineLimit(3)
                         .padding(.top, 1)
 
-                ShowInfoRow(show: show)
+                ShowInfoRow(show: viewState.tvShow)
                         .padding(.top, 1)
 
-                GenresRowView(genres: show.genres)
+                GenresRowView(genres: viewState.genreList)
 
                 HStack(alignment: .center, spacing: 8) {
 
@@ -77,7 +77,7 @@ struct HeaderView: View {
                             borderColor: .grey_200,
                             isOn: false,
                             action: {
-                                onFollowShowClicked(show.traktId)
+                                onFollowShowClicked(viewState.tvShow.id)
                             }
                     )
                 }
@@ -93,7 +93,6 @@ struct HeaderView: View {
     }
 
     // Calculation Opacity...
-
     func getOpacity() -> CGFloat {
 
         let progress = -(offset + 80) / (maxHeight - (120 + topEdge))
@@ -112,11 +111,11 @@ struct HeaderView_Previews: PreviewProvider {
     static private var offset = Binding.constant(CGFloat(0))
     static var previews: some View {
         HeaderView(
-                show: mockShow,
+                viewState: viewState,
                 topEdge: 10,
                 maxHeight: 720,
                 offset: offset
-        ) { (int64: Int32) -> () in
+        ) { (int64: Int64) -> () in
         }
     }
 }

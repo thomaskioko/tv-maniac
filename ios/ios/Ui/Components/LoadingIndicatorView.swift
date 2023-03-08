@@ -12,6 +12,7 @@ struct LoadingIndicatorView: View {
 	
 	let style = StrokeStyle(lineWidth: 3, lineCap: .round)
 	@State var animate = false
+	let color = Color("AccentColor")
 	
     var body: some View {
 		ZStack {
@@ -19,7 +20,7 @@ struct LoadingIndicatorView: View {
 				.trim(from: 0, to: 0.2)
 				.stroke(
 					AngularGradient(
-						gradient: .init(colors: [Color.accent]),
+						gradient: .init(colors: [color]),
 						center: .center
 					),
 					style: style
@@ -32,7 +33,7 @@ struct LoadingIndicatorView: View {
 				.trim(from: 0.5, to: 0.7)
 				.stroke(
 					AngularGradient(
-						gradient: .init(colors: [Color.accent]),
+						gradient: .init(colors: [color]),
 						center: .center
 					),
 					style: style
@@ -43,6 +44,7 @@ struct LoadingIndicatorView: View {
 	
 		}
 		.padding(16)
+		.background(Color("Background"))
 		.edgesIgnoringSafeArea(.all)
 		.onAppear(){
 			self.animate.toggle()

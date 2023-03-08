@@ -58,7 +58,6 @@ import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.Layout
-import com.thomaskioko.tvmaniac.compose.components.SnackBarErrorRetry
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
@@ -74,7 +73,7 @@ fun ProfileScreen(
 ) {
 
     val scaffoldState = rememberScaffoldState()
-    val profileState by viewModel.state.collectAsStateWithLifecycle()
+    val profileState by viewModel.observeState().collectAsStateWithLifecycle()
 
     val loginLauncher = rememberLauncherForActivityResult(
         viewModel.buildLoginActivityResult()
@@ -113,36 +112,16 @@ fun ProfileScreen(
             .background(color = MaterialTheme.colors.background)
             .statusBarsPadding(),
         content = { contentPadding ->
-
-            when(profileState){
-                is ProfileError -> {
-                    SnackBarErrorRetry(
-                        snackBarHostState = scaffoldState.snackbarHostState,
-                        errorMessage = (profileState as ProfileError).error,
-                        actionLabel = "Retry"
-                    )
-                }
-                is ProfileStatsError -> {
-                    SnackBarErrorRetry(
-                        snackBarHostState = scaffoldState.snackbarHostState,
-                        errorMessage = (profileState as ProfileStatsError).error,
-                        actionLabel = "Retry"
-                    )
-                }
-                is ProfileContent -> {
-                    ProfileScreenContent(
-                        contentPadding = contentPadding,
-                        profileState = profileState as ProfileContent,
-                        onLoginClicked = {
-                            loginLauncher.launch(Unit)
-                            viewModel.dispatch(DismissTraktDialog)
-                        },
-                        onConnectClicked = { loginLauncher.launch(Unit) },
-                        onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
-                    )
-                }
-
-            }
+            ProfileScreenContent(
+                contentPadding = contentPadding,
+                profileState = profileState,
+                onLoginClicked = {
+                    loginLauncher.launch(Unit)
+                    viewModel.dispatch(ProfileActions.DismissTraktDialog)
+                },
+                onConnectClicked = { viewModel.dispatch(ProfileActions.ShowTraktDialog) },
+                onDismissDialogClicked = { viewModel.dispatch(ProfileActions.DismissTraktDialog) },
+            )
         }
     )
 }
@@ -150,7 +129,7 @@ fun ProfileScreen(
 @Composable
 fun ProfileScreenContent(
     contentPadding: PaddingValues,
-    profileState: ProfileContent,
+    profileState: ProfileStateContent,
     onLoginClicked: () -> Unit,
     onConnectClicked: () -> Unit,
     onDismissDialogClicked: () -> Unit,
@@ -172,7 +151,7 @@ fun ProfileScreenContent(
 
 @Composable
 fun TraktInfoContent(
-    state: ProfileContent,
+    state: ProfileStateContent,
     onConnectClicked: () -> Unit,
     onLoginClicked: () -> Unit,
     onDismissDialogClicked: () -> Unit,
@@ -297,7 +276,7 @@ fun TextListItem(text: String) {
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
 fun UserProfile(
-    state: ProfileContent,
+    state: ProfileStateContent,
 ) {
 
     Column(
@@ -317,7 +296,7 @@ fun UserProfile(
                         model = state.traktUser.userPicUrl,
                         contentDescription = stringResource(
                             R.string.cd_profile_pic,
-                            state.traktUser.fullName ?: state.traktUser.userName ?: ""
+                            state.traktUser.fullName ?: state.traktUser.userName
                         ),
                         modifier = Modifier
                             .padding(top = 64.dp)
@@ -385,7 +364,7 @@ fun UserProfile(
 
 @Composable
 fun ShowTimeStats(
-    profileStats: ProfileStats
+    profileStats: ProfileStateContent.ProfileStats
 ) {
 
     Card(
@@ -428,7 +407,7 @@ fun ShowTimeStats(
 
 @Composable
 fun EpisodesStats(
-    profileStats: ProfileStats
+    profileStats: ProfileStateContent.ProfileStats
 ) {
     Card(
         shape = MaterialTheme.shapes.medium,
@@ -528,16 +507,15 @@ fun LoggedInProfileScreenPreview() {
     TvManiacTheme {
         ProfileScreenContent(
             contentPadding = PaddingValues(0.dp),
-            profileState = ProfileContent(
+            profileState = ProfileStateContent(
                 loggedIn = true,
                 showTraktDialog = false,
-                traktUser = TraktUser(
+                traktUser = ProfileStateContent.TraktUser(
                     fullName = "Code Wizard",
                     userName = "@code_wizard",
                     userPicUrl = "",
-                    slug = "me"
                 ),
-                profileStats = ProfileStats(
+                profileStats = ProfileStateContent.ProfileStats(
                     collectedShows = "2000",
                     showMonths = "08",
                     showDays = "120",
@@ -559,7 +537,7 @@ fun LoggedOutProfileScreenPreview() {
     TvManiacTheme {
         ProfileScreenContent(
             contentPadding = PaddingValues(0.dp),
-            profileState = ProfileContent(
+            profileState = ProfileStateContent(
                 loggedIn = false,
                 showTraktDialog = false,
                 traktUser = null,

@@ -1,5 +1,8 @@
+@file:Suppress("UnstableApiUsage")
+import util.libs
+
 plugins {
-    id("tvmaniac.android.feature")
+    `android-feature-plugin`
 }
 
 android {
@@ -7,10 +10,15 @@ android {
 }
 
 dependencies {
-    implementation(project(":shared:data:trakt:api"))
-    implementation(project(":shared:data:category:api"))
+    api(project(":shared:core:ui"))
+    api(project(":shared:core:util"))
+    api(projects.shared.domain.showDetails.api)
 
-    implementation(libs.androidx.compose.paging)
-    implementation(libs.flowredux)
+    implementation(project(":shared:core:database"))
+    implementation(project(":shared:domain:shows:api"))
+    implementation(project(":android:core:compose"))
+
+    api(libs.androidx.compose.paging)
+    api(libs.multiplatform.paging.core)
     implementation(libs.accompanist.insetsui)
 }
