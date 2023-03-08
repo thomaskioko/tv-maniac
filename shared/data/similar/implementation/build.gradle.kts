@@ -25,6 +25,7 @@ kotlin {
             implementation(project(":shared:data:tmdb:api"))
             implementation(project(":shared:data:similar:api"))
             implementation(project(":shared:data:trakt:api"))
+            implementation(project(":shared:data:trakt-service:api"))
 
             implementation(libs.sqldelight.extensions)
         }

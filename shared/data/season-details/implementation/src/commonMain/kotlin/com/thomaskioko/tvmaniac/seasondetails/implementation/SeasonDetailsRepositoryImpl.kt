@@ -13,9 +13,9 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonsCache
-import com.thomaskioko.tvmaniac.trakt.api.TraktService
-import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
+import com.thomaskioko.tvmaniac.trakt.service.api.TraktService
+import com.thomaskioko.tvmaniac.trakt.service.api.model.ErrorResponse
+import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktSeasonEpisodesResponse
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

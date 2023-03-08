@@ -4,8 +4,8 @@ import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.util.scope.DefaultDispatcher
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.trakt.service.api.TraktService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
