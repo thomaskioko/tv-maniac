@@ -12,7 +12,7 @@ kotlin {
             implementation(project(":shared:core:util"))
             implementation(libs.inject)
             implementation(libs.appauth)
-            implementation(libs.androidx.activity)
+            implementation(libs.androidx.compose.activity)
             implementation(libs.androidx.core)
         }
 
