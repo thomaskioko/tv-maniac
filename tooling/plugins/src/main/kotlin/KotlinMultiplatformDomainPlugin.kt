@@ -37,9 +37,9 @@ class KotlinMultiplatformDomainPlugin : Plugin<Project> {
                 add("commonMainImplementation", libs.findLibrary("koin").get())
 
                 add("commonTestImplementation", (kotlin("test")))
-                add("commonTestImplementation", libs.findLibrary("testing-coroutines-test").get())
-                add("commonTestImplementation", libs.findLibrary("testing-kotest-assertions").get())
-                add("commonTestImplementation", libs.findLibrary("testing-turbine").get())
+                add("commonTestImplementation", libs.findLibrary("coroutines-test").get())
+                add("commonTestImplementation", libs.findLibrary("kotest-assertions").get())
+                add("commonTestImplementation", libs.findLibrary("turbine").get())
 
             }
         }

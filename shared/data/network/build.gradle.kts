@@ -17,7 +17,7 @@ kotlin {
             api(libs.ktor.negotiation)
             api(libs.ktor.logging)
             implementation(libs.ktor.okhttp)
-            implementation(libs.squareup.sqldelight.driver.android)
+            implementation(libs.sqldelight.driver.android)
             implementation(libs.hilt.android)
             configurations["kapt"].dependencies.add(
                 org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
