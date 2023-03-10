@@ -23,7 +23,7 @@ class FeaturePlugin : Plugin<Project> {
 
             dependencies {
                 add("api", project(":shared:core:util"))
-                add("api", project(":android:core:compose"))
+                add("api", project(":android:core:designsystem"))
                 add("api", project(":android:core:navigation"))
                 add("implementation", project(":android:core:resources"))
 
