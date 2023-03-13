@@ -3,8 +3,6 @@ package com.thomaskioko.tvmaniac.compose.theme
 import androidx.compose.material.Colors
 import androidx.compose.material.LocalElevationOverlay
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
@@ -13,61 +11,29 @@ import androidx.compose.ui.unit.Dp
 import kotlin.math.max
 import kotlin.math.min
 
-val yellow300 = Color(0xFFFEC804)
-val yellow500 = Color(0xFFFFBe0A)
-
-val blue500 = Color(0xFF1473FB)
-val blue700 = Color(0xFF0049c7)
-val colorError = Color(0xFFED2224)
-
-val grey = Color(0xFF1f2123)
-val grey500: Color = Color(0xFFA1A5AB)
-val grey600 = Color(0xFF414141)
-val grey900 = Color(0xFF2c2c30)
-
 val green = Color(0xFF00b300)
 
-val LightColors = lightColors(
-    primary = yellow300,
-    primaryVariant = yellow500,
-    secondary = blue500,
-    secondaryVariant = blue700,
-    surface = Color.White,
-    onPrimary = Color.White,
-    background = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    error = colorError
-)
+val md_theme_light_primary = Color(0xFF1646F7)
+val md_theme_light_onPrimary = Color(0xFFFFFFFF)
+val md_theme_light_secondary = Color(0xFF3947EA)
+val md_theme_light_onSecondary = Color(0xFFFFFFFF)
+val md_theme_light_error = Color(0xFFBA1A1A)
+val md_theme_light_background = Color(0xFFF8FDFF)
+val md_theme_light_onBackground = Color(0xFF001F25)
+val md_theme_light_surface = Color(0xFFF8FDFF)
+val md_theme_light_onSurface = Color(0xFF001F25)
 
-val DarkColors = darkColors(
-    primary = grey,
-    primaryVariant = grey900,
-    secondary = yellow300,
-    secondaryVariant = yellow500,
-    background = grey900,
-    surface = grey900,
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onBackground = Color.White,
-    onSurface = Color.White,
-    error = colorError
-).withBrandedSurface()
 
-fun Colors.withBrandedSurface() = copy(
-    surface = primary.copy(alpha = 0.08f)
-        .compositeOver(this.surface),
-)
+val md_theme_dark_primary = Color(0xFF1F2123)
+val md_theme_dark_onPrimary = Color(0xFFE0E0FF)
+val md_theme_dark_secondary = Color(0xFFFCBC04)
+val md_theme_dark_onSecondary = Color(0xFFE0E0FF)
+val md_theme_dark_error = Color(0xFFBA1A1A)
+val md_theme_dark_background = Color(0xFF2c2c30)
+val md_theme_dark_onBackground = Color(0xFFE0E0FF)
+val md_theme_dark_surface = Color(0xFF1F2123)
+val md_theme_dark_onSurface = Color(0xFFE0E0FF)
 
-/**
- * Return the fully opaque color that results from compositing [onSurface] atop [surface] with the
- * given [alpha]. Useful for situations where semi-transparent colors are undesirable.
- */
-@Composable
-fun Colors.compositedOnSurface(alpha: Float): Color {
-    return onSurface.copy(alpha = alpha).compositeOver(surface)
-}
 
 /**
  * Calculates the color of an elevated `surface` in dark mode. Returns `surface` in light mode.
