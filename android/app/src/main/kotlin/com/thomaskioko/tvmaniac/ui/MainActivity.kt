@@ -7,7 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -22,14 +22,12 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.thomaskioko.tvmaniac.compose.components.ConnectionStatus
-import com.thomaskioko.tvmaniac.compose.theme.DarkColors
-import com.thomaskioko.tvmaniac.compose.theme.LightColors
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.util.network.ConnectionState
 import com.thomaskioko.tvmaniac.core.util.network.ObserveConnectionState
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.home.HomeScreen
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
-import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.settings.shouldUseDarkColors
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,6 +35,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
+@OptIn(ExperimentalAnimationApi::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
@@ -48,7 +47,6 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var observeNetwork: ObserveConnectionState
 
-    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -68,10 +66,11 @@ class MainActivity : ComponentActivity() {
         val systemUiController = rememberSystemUiController()
         val isLightTheme = !datastoreRepository.shouldUseDarkColors()
 
-        val systemBarColor = MaterialTheme.colors.surface.copy(alpha = 0.0f)
+        val systemBarColor = MaterialTheme.colorScheme.background
         val transparentColor: (Color) -> Color = { original ->
             systemBarColor.compositeOver(original)
         }
+        val navBarColor = MaterialTheme.colorScheme.surface
         SideEffect {
             systemUiController.setSystemBarsColor(
                 color = Color.Transparent,
@@ -85,7 +84,7 @@ class MainActivity : ComponentActivity() {
             )
 
             systemUiController.setNavigationBarColor(
-                color = if (isLightTheme) LightColors.surface else DarkColors.primary,
+                color = navBarColor,
                 darkIcons = isLightTheme,
                 navigationBarContrastEnforced = false,
                 transformColorForLightContent = transparentColor
