@@ -1,13 +1,10 @@
 package com.thomaskioko.tvmaniac.compose.theme
 
-import androidx.compose.material.Colors
-import androidx.compose.material.LocalElevationOverlay
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.unit.Dp
 import kotlin.math.max
 import kotlin.math.min
 
@@ -21,7 +18,7 @@ val md_theme_light_error = Color(0xFFBA1A1A)
 val md_theme_light_background = Color(0xFFF8FDFF)
 val md_theme_light_onBackground = Color(0xFF001F25)
 val md_theme_light_surface = Color(0xFFF8FDFF)
-val md_theme_light_onSurface = Color(0xFF001F25)
+val md_theme_light_onSurface = Color(0xFF1F2123)
 
 
 val md_theme_dark_primary = Color(0xFF1F2123)
@@ -32,27 +29,15 @@ val md_theme_dark_error = Color(0xFFBA1A1A)
 val md_theme_dark_background = Color(0xFF2c2c30)
 val md_theme_dark_onBackground = Color(0xFFE0E0FF)
 val md_theme_dark_surface = Color(0xFF1F2123)
-val md_theme_dark_onSurface = Color(0xFFE0E0FF)
-
-
-/**
- * Calculates the color of an elevated `surface` in dark mode. Returns `surface` in light mode.
- */
-@Composable
-fun Colors.elevatedSurface(elevation: Dp): Color {
-    return LocalElevationOverlay.current?.apply(
-        color = this.surface,
-        elevation = elevation
-    ) ?: this.surface
-}
+val md_theme_dark_onSurface = Color(0xFFF8FDFF)
 
 @Composable
 fun backgroundGradient(): List<Color> {
     return listOf(
-        MaterialTheme.colors.surface,
-        MaterialTheme.colors.surface.copy(alpha = 0.9F),
-        MaterialTheme.colors.surface.copy(alpha = 0.8F),
-        MaterialTheme.colors.surface.copy(alpha = 0.7F),
+        MaterialTheme.colorScheme.surface,
+        MaterialTheme.colorScheme.surface.copy(alpha = 0.9F),
+        MaterialTheme.colorScheme.surface.copy(alpha = 0.8F),
+        MaterialTheme.colorScheme.surface.copy(alpha = 0.7F),
         Color.Transparent
     )
 }
