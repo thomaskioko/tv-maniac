@@ -1,5 +1,15 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.TvManiac" parent="android:Theme.Material.NoActionBar" />
+    <style name="NightAdjusted.Theme.Nia" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowLightStatusBar" >true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+    </style>
+
+    <style name="PlatformAdjusted.Theme.TvManiac" parent="NightAdjusted.Theme.TvManiac">
+        <item name="android:statusBarColor">@color/black</item>
+    </style>
+
+    <style name="Theme.TvManiac" parent="PlatformAdjusted.Theme.TvManiac" />
+
 
 </resources>
