@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.28.0"
-agp = "8.1.0-alpha08"
+agp = "8.1.0-alpha09"
 appauth = "0.8.1"
 
 androidx-activity = "1.6.1"
@@ -8,6 +8,7 @@ androidx-appCompat = "1.5.1"
 androidx-core = "1.9.0"
 androidx-datastore = "1.1.0-dev01"
 androidx-lifecycle = "2.6.0-alpha05"
+androidx-material3 = "1.1.0-alpha06"
 androidx-navigation = "2.5.3"
 navigation-compose = "1.0.0"
 androidx-palette = "1.0.0"
@@ -42,7 +43,6 @@ accompanist-navigation-material = { module = "com.google.accompanist:accompanist
 
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation" }
-androidx-compose-material = { module = "androidx.compose.material:material" }
 androidx-compose-material-icons = { module = "androidx.compose.material:material-icons-extended" }
 androidx-compose-ui-runtime = { module = "androidx.compose.ui:ui" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling"}
@@ -52,6 +52,8 @@ androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "
 
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version = "1.0.1" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidx-material3" }
+androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "androidx-material3" }
 androidx-compose-paging = { module = "androidx.paging:paging-compose", version = "1.0.0-alpha17" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-datastore-preference = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
@@ -102,8 +104,6 @@ ktor-serialization = { module = "io.ktor:ktor-client-serialization", version.ref
 ktor-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
-
-material = { module = "com.google.android.material:material", version = "1.9.0-alpha01" }
 
 snapper = { module = "dev.chrisbanes.snapper:snapper", version = "0.3.0" }
 
