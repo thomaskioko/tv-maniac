@@ -14,7 +14,7 @@ dependencies {
     api(libs.coil.compose)
     api(libs.androidx.compose.ui.tooling)
     api(libs.androidx.palette)
-    api(libs.androidx.compose.material)
+    api(libs.androidx.compose.material3)
     api(libs.androidx.compose.ui.runtime)
     implementation(libs.kenburns)
     implementation(libs.accompanist.insetsui)
