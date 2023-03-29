@@ -42,7 +42,8 @@ fun SelectByShowId?.toTvShow(): Show = this?.let {
         genres = it.genres,
         year = it.year,
         status = it.status,
-        isFollowed = it.id != null && it.id == it.trakt_id
+        isFollowed = it.id != null && it.id == it.trakt_id,
+        //TODO:: Get season count
     )
 } ?: Show.EMPTY_SHOW
 

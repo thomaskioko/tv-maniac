@@ -33,7 +33,7 @@ class SeasonDetailsStateMachineTest {
     @Test
     fun onLoadSeasonDetails_andErrorOccurs_correctStateIsEmitted() = runTest {
         stateMachine.state.test {
-            val errorMessage = "Oppsy. Something went wrong"
+            val errorMessage = "Something went wrong"
             seasonDetailsRepository.setSeasonDetails(Either.Left(DefaultError(Throwable(errorMessage))))
 
             stateMachine.dispatch(LoadSeasonDetails(1231))
