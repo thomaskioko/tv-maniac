@@ -30,10 +30,11 @@ class FeaturePlugin : Plugin<Project> {
                 add("api", libs.findLibrary("androidx.navigation.common").get())
                 add("api", libs.findLibrary("androidx.navigation.runtime").get())
 
+                add("implementation", libs.findLibrary("androidx.compose.foundation").get())
+                add("implementation", libs.findLibrary("androidx.hilt.navigationcompose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.viewmodel.compose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.runtime.compose").get())
                 add("implementation", libs.findLibrary("androidx.navigation.compose").get())
-                add("implementation", libs.findLibrary("androidx.compose.foundation").get())
                 add("implementation", libs.findLibrary("coroutines.core").get())
 
                 add("runtimeOnly", libs.findLibrary("coroutines.android").get())
