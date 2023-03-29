@@ -48,7 +48,6 @@ import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
-import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.Theme
 import com.thomaskioko.tvmaniac.resources.R
@@ -76,10 +75,11 @@ fun SettingsScreen(
                 title = stringResource(R.string.title_settings),
                 showNavigationIcon = true,
                 onBackClick = navigateUp,
-                modifier = Modifier.iconButtonBackgroundScrim()
+                modifier = Modifier
             )
         },
         modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background)
             .statusBarsPadding(),
         content = { innerPadding ->
 
