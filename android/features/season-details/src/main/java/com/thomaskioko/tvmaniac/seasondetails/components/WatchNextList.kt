@@ -1,48 +1,96 @@
 package com.thomaskioko.tvmaniac.seasondetails.components
 
-import android.content.res.Configuration
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Card
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color.Companion.LightGray
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
+import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
+import com.thomaskioko.tvmaniac.compose.components.RowSpacer
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.data.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.episode
+import dev.chrisbanes.snapper.ExperimentalSnapperApi
+import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+
+
+@OptIn(ExperimentalSnapperApi::class)
+@Composable
+fun WatchNextContent(
+    episodeList: List<Episode>?
+) {
+    episodeList?.let {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            ColumnSpacer(8)
+
+            Text(
+                text = stringResource(id = R.string.title_watch_next),
+                style = MaterialTheme.typography.labelMedium.copy(MaterialTheme.colorScheme.secondary),
+            )
+        }
+
+        ColumnSpacer(8)
+
+        val lazyListState = rememberLazyListState()
+
+        LazyRow(
+            state = lazyListState,
+            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+        ) {
+
+            itemsIndexed(episodeList) { index, episode ->
+                RowSpacer(if (index == 0) 32 else 8)
+
+                WatchNextItem(
+                    episode = episode,
+                    onEpisodeClicked = {},
+                )
+            }
+
+            item { RowSpacer(16) }
+        }
+    }
+}
 
 @Composable
-fun WatchlistRowItem(
+fun WatchNextItem(
     episode: Episode,
     onEpisodeClicked: (Long) -> Unit = {}
 ) {
 
     Card(
-        shape = MaterialTheme.shapes.medium,
+        shape = RectangleShape,
         modifier = Modifier
-            .size(width = 260.dp, height = 84.dp)
+            .size(width = 260.dp, height = 90.dp)
             .clickable { onEpisodeClicked(episode.id) },
     ) {
         ConstraintLayout(
@@ -60,7 +108,6 @@ fun WatchlistRowItem(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .width(84.dp)
-                    .clip(MaterialTheme.shapes.medium)
                     .constrainAs(image) {
                         start.linkTo(parent.start)
                         bottom.linkTo(parent.bottom)
@@ -74,7 +121,7 @@ fun WatchlistRowItem(
                 text = episode.seasonEpisodeNumber,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier
                     .constrainAs(episodeTitle) {
                         linkTo(
@@ -89,22 +136,22 @@ fun WatchlistRowItem(
                     }
             )
 
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                Text(
-                    text = episode.episodeTitle,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.overline,
-                    modifier = Modifier
-                        .constrainAs(overview) {
-                            start.linkTo(image.end, 8.dp)
-                            top.linkTo(episodeTitle.bottom, 5.dp)
-                            end.linkTo(watchedStatusIcon.start, 8.dp)
+            Text(
+                text = episode.episodeTitle,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .constrainAs(overview) {
+                        start.linkTo(image.end, 8.dp)
+                        top.linkTo(episodeTitle.bottom, 5.dp)
+                        end.linkTo(watchedStatusIcon.start, 8.dp)
+                        bottom.linkTo(parent.bottom)
 
-                            width = Dimension.fillToConstraints
-                        }
-                )
-            }
+                        width = Dimension.fillToConstraints
+                    }
+            )
 
             IconButton(
                 onClick = {},
@@ -116,8 +163,8 @@ fun WatchlistRowItem(
             ) {
                 Icon(
                     imageVector = Icons.Filled.CheckCircle,
-                    contentDescription = stringResource(R.string.cd_navigate_back),
-                    tint = LightGray,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .size(32.dp)
                 )
@@ -126,13 +173,12 @@ fun WatchlistRowItem(
     }
 }
 
-@Preview("default")
-@Preview("dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ThemePreviews
 @Composable
 fun WatchlistRowItemPreview() {
     TvManiacTheme {
         Surface {
-            WatchlistRowItem(
+            WatchNextItem(
                 episode = episode
             )
         }

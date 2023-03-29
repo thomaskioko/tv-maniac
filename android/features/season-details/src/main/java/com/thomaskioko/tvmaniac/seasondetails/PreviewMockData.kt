@@ -17,16 +17,17 @@ val episode = Episode(
     seasonEpisodeNumber = "S01 | E01"
 )
 
-val seasonsEpList: List<SeasonDetails> = listOf(
-    SeasonDetails(
-        seasonId = 1,
-        seasonName = "Specials",
-        episodeCount = 8,
-        watchProgress = 0.4f,
-        episodes = listOf(
-            episode,
-            episode,
-            episode
-        )
+val seasonDetails =  SeasonDetails(
+    seasonId = 1,
+    seasonName = "Specials",
+    episodeCount = 8,
+    watchProgress = 0.4f,
+    episodes = listOf(
+        episode,
+        episode,
+        episode,
+        episode,
     )
 )
+
+val seasonsEpList: List<SeasonDetails> = listOf(seasonDetails)

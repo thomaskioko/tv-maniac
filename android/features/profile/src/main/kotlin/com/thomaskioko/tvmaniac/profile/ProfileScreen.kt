@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.profile
 
-import android.content.res.Configuration
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -22,26 +21,27 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
 import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,29 +51,30 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
-import com.thomaskioko.tvmaniac.compose.components.Layout
 import com.thomaskioko.tvmaniac.compose.components.SnackBarErrorRetry
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacTextButton
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
+import com.thomaskioko.tvmaniac.compose.extensions.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel,
     settingsClicked: () -> Unit
 ) {
 
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val profileState by viewModel.state.collectAsStateWithLifecycle()
 
     val loginLauncher = rememberLauncherForActivityResult(
@@ -85,50 +86,35 @@ fun ProfileScreen(
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
         topBar = {
             TvManiacTopBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.menu_item_profile),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                },
-                actions = {
-                    IconButton(
-                        onClick = settingsClicked,
-                        modifier = Modifier.iconButtonBackgroundScrim()
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = null,
-                        )
-                    }
-                },
-                backgroundColor = MaterialTheme.colors.background
+                title = stringResource(id = R.string.menu_item_profile),
+                onActionClicked = settingsClicked,
+                actionImageVector = Icons.Filled.Settings,
             )
         },
         modifier = Modifier
-            .background(color = MaterialTheme.colors.background)
+            .background(color = MaterialTheme.colorScheme.background)
             .statusBarsPadding(),
         content = { contentPadding ->
 
-            when(profileState){
+            when (profileState) {
                 is ProfileError -> {
                     SnackBarErrorRetry(
-                        snackBarHostState = scaffoldState.snackbarHostState,
+                        snackBarHostState = snackbarHostState,
                         errorMessage = (profileState as ProfileError).error,
                         actionLabel = "Retry"
                     )
                 }
+
                 is ProfileStatsError -> {
                     SnackBarErrorRetry(
-                        snackBarHostState = scaffoldState.snackbarHostState,
+                        snackBarHostState = snackbarHostState,
                         errorMessage = (profileState as ProfileStatsError).error,
                         actionLabel = "Retry"
                     )
                 }
+
                 is ProfileContent -> {
                     ProfileScreenContent(
                         contentPadding = contentPadding,
@@ -192,7 +178,7 @@ fun TraktInfoContent(
 
         Icon(
             painter = painterResource(id = R.drawable.trakt_icon_red),
-            tint = MaterialTheme.colors.error,
+            tint = MaterialTheme.colorScheme.error,
             contentDescription = null,
             modifier = Modifier
                 .padding(top = 64.dp)
@@ -203,7 +189,7 @@ fun TraktInfoContent(
         ColumnSpacer(value = 16)
 
         Divider(
-            color = MaterialTheme.colors.secondary.copy(alpha = 0.8f)
+            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f)
         )
 
         ColumnSpacer(value = 16)
@@ -211,8 +197,8 @@ fun TraktInfoContent(
         Text(
             text = stringResource(id = R.string.trakt_description),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.body2,
-            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -235,25 +221,24 @@ fun TraktInfoContent(
 
         ColumnSpacer(value = 16)
 
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            TextButton(
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = MaterialTheme.colors.onBackground,
-                    backgroundColor = MaterialTheme.colors.secondary
-                ),
-                onClick = onConnectClicked,
-                shape = RoundedCornerShape(30.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(2.dp)
-                    .align(Alignment.CenterHorizontally)
-            ) {
+        TvManiacTextButton(
+            onClick = onConnectClicked,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(2.dp)
+                .align(Alignment.CenterHorizontally),
+            buttonColors = ButtonDefaults.buttonColors(
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+                containerColor = MaterialTheme.colorScheme.secondary
+            ),
+            content = {
                 Text(
                     text = stringResource(R.string.settings_title_connect_trakt),
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSecondary
                 )
             }
-        }
+        )
     }
 }
 
@@ -261,8 +246,8 @@ fun TraktInfoContent(
 fun TextListItem(text: String) {
 
     val divider = buildAnnotatedString {
-        val tagStyle = MaterialTheme.typography.overline.toSpanStyle().copy(
-            color = MaterialTheme.colors.secondary
+        val tagStyle = MaterialTheme.typography.labelMedium.toSpanStyle().copy(
+            color = MaterialTheme.colorScheme.secondary
         )
         withStyle(tagStyle) {
             append("  •  ")
@@ -279,15 +264,15 @@ fun TextListItem(text: String) {
         Text(
             text = divider,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.h2,
-            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Text(
             text = text,
             textAlign = TextAlign.Start,
-            style = MaterialTheme.typography.caption,
-            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -323,7 +308,7 @@ fun UserProfile(
                             .padding(top = 64.dp)
                             .size(120.dp)
                             .clip(CircleShape)
-                            .border(2.dp, MaterialTheme.colors.secondary, CircleShape)
+                            .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
                             .align(Alignment.CenterHorizontally)
 
                     )
@@ -349,8 +334,8 @@ fun UserProfile(
                     R.string.trakt_user_name,
                     state.traktUser?.fullName ?: state.traktUser?.userName ?: "Stranger"
                 ),
-                style = MaterialTheme.typography.h6,
-                color = MaterialTheme.colors.onBackground,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
             )
@@ -398,8 +383,8 @@ fun ShowTimeStats(
         ) {
             Text(
                 text = "Show Time",
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onBackground,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
             )
@@ -440,8 +425,8 @@ fun EpisodesStats(
         ) {
             Text(
                 text = "Episodes Watched",
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onBackground,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .padding(start = 16.dp, end = 8.dp)
                     .align(Alignment.CenterHorizontally)
@@ -472,8 +457,8 @@ fun DurationInfo(
 
         Text(
             text = value,
-            color = MaterialTheme.colors.secondary,
-            style = MaterialTheme.typography.h5,
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -484,8 +469,8 @@ fun DurationInfo(
         valueTitle?.let {
             Text(
                 text = valueTitle,
-                color = MaterialTheme.colors.onBackground,
-                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
             )
@@ -521,54 +506,56 @@ fun TrackDialog(
     }
 }
 
-@Preview("Profile")
-@Preview("Profile dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ThemePreviews
 @Composable
-fun LoggedInProfileScreenPreview() {
+fun LoggedInContentPreview() {
     TvManiacTheme {
-        ProfileScreenContent(
-            contentPadding = PaddingValues(0.dp),
-            profileState = ProfileContent(
-                loggedIn = true,
-                showTraktDialog = false,
-                traktUser = TraktUser(
-                    fullName = "Code Wizard",
-                    userName = "@code_wizard",
-                    userPicUrl = "",
-                    slug = "me"
+        Surface {
+            ProfileScreenContent(
+                contentPadding = PaddingValues(0.dp),
+                profileState = ProfileContent(
+                    loggedIn = true,
+                    showTraktDialog = false,
+                    traktUser = TraktUser(
+                        fullName = "Code Wizard",
+                        userName = "@code_wizard",
+                        userPicUrl = "",
+                        slug = "me"
+                    ),
+                    profileStats = ProfileStats(
+                        collectedShows = "2000",
+                        showMonths = "08",
+                        showDays = "120",
+                        showHours = "120",
+                        episodesWatched = "8.1k"
+                    )
                 ),
-                profileStats = ProfileStats(
-                    collectedShows = "2000",
-                    showMonths = "08",
-                    showDays = "120",
-                    showHours = "120",
-                    episodesWatched = "8.1k"
-                )
-            ),
-            onLoginClicked = {},
-            onDismissDialogClicked = {},
-            onConnectClicked = {},
-        )
+                onLoginClicked = {},
+                onDismissDialogClicked = {},
+                onConnectClicked = {},
+            )
+        }
     }
 }
 
-@Preview("default")
-@Preview("dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ThemePreviews
 @Composable
-fun LoggedOutProfileScreenPreview() {
+fun LoggedOutContentPreview() {
     TvManiacTheme {
-        ProfileScreenContent(
-            contentPadding = PaddingValues(0.dp),
-            profileState = ProfileContent(
-                loggedIn = false,
-                showTraktDialog = false,
-                traktUser = null,
-                profileStats = null
-            ),
-            onLoginClicked = {},
-            onDismissDialogClicked = {},
-            onConnectClicked = {},
-        )
+        Surface {
+            ProfileScreenContent(
+                contentPadding = PaddingValues(0.dp),
+                profileState = ProfileContent(
+                    loggedIn = false,
+                    showTraktDialog = false,
+                    traktUser = null,
+                    profileStats = null
+                ),
+                onLoginClicked = {},
+                onDismissDialogClicked = {},
+                onConnectClicked = {},
+            )
+        }
     }
 }
 
