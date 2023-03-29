@@ -36,9 +36,13 @@ internal fun Project.configureAndroidCompose(
             freeCompilerArgs = freeCompilerArgs
         }
 
+        val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
+
         dependencies {
             val bom = libs.findLibrary("androidx-compose-bom").get()
+
             add("implementation", platform(bom))
+            add("lintChecks", libs.findLibrary("lint-compose").get())
         }
     }
 }

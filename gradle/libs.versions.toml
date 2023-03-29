@@ -105,6 +105,8 @@ ktor-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
+lint-compose = { module = "com.slack.lint.compose:compose-lint-checks", version = "1.1.1" }
+
 snapper = { module = "dev.chrisbanes.snapper:snapper", version = "0.3.0" }
 
 sqldelight-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
