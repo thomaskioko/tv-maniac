@@ -36,7 +36,7 @@ import com.thomaskioko.tvmaniac.data.seasondetails.LoadingError
 import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.seasondetails.components.CollapsableSeasonContent
+import com.thomaskioko.tvmaniac.seasondetails.components.CollapsableContent
 import com.thomaskioko.tvmaniac.seasondetails.components.WatchNextContent
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -134,12 +134,12 @@ private fun SeasonContent(
             item { AllSeasonsTitle() }
 
             itemsIndexed(seasonsEpList) { index, season ->
-                CollapsableSeasonContent(
+                CollapsableContent(
                     episodesCount = season.episodeCount,
-                    title = season.seasonName,
+                    headerTitle = season.seasonName,
                     watchProgress = season.watchProgress,
                     episodeList = season.episodes,
-                    expanded = collapsedState[index],
+                    collapsed = collapsedState[index],
                     onEpisodeClicked = { onEpisodeClicked(it) },
                     onSeasonHeaderClicked = { collapsedState[index] = !collapsedState[index] }
                 )
