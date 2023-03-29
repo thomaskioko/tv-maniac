@@ -38,9 +38,9 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
+import com.thomaskioko.tvmaniac.compose.components.CircularLoadingView
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
-import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.data.trailers.LoadingTrailers
 import com.thomaskioko.tvmaniac.data.trailers.ReloadTrailers
@@ -60,7 +60,7 @@ fun VideoPlayerScreen(
     val viewState by viewModel.state.collectAsStateWithLifecycle()
 
     when (viewState) {
-        is LoadingTrailers -> FullScreenLoading()
+        is LoadingTrailers -> CircularLoadingView()
         is TrailersLoaded -> {
             val state = (viewState as TrailersLoaded)
             Content(

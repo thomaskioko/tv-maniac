@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -44,14 +45,14 @@ import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
+import com.thomaskioko.tvmaniac.compose.components.CircularLoadingView
 import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
-import com.thomaskioko.tvmaniac.compose.components.EmptyContentView
+import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
-import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
 import com.thomaskioko.tvmaniac.compose.components.RowError
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
-import com.thomaskioko.tvmaniac.compose.components.TvShowCard
+import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.verticalGradientScrim
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
@@ -82,7 +83,7 @@ fun DiscoverScreen(
     val discoverViewState by viewModel.state.collectAsStateWithLifecycle()
 
     when (discoverViewState) {
-        Loading -> FullScreenLoading()
+        Loading -> CircularLoadingView()
         is ShowsLoaded -> {
             DiscoverContent(
                 state = discoverViewState as ShowsLoaded,
@@ -119,7 +120,10 @@ private fun DiscoverContent(
                 is ShowResult.CategoryError -> {
                     CategoryError(
                         categoryTitle = Category.FEATURED.title,
-                        onRetry = { reloadCategory(ReloadFeatured) }
+                        onRetry = { reloadCategory(ReloadFeatured) },
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .aspectRatio(0.7f)
                     )
                 }
 
@@ -134,7 +138,7 @@ private fun DiscoverContent(
                 }
 
                 ShowResult.EmptyCategoryData ->
-                    EmptyContentView(
+                    EmptyContent(
                         painter = painterResource(id = R.drawable.ic_watchlist_empty),
                         message = stringResource(id = R.string.generic_empty_content)
                     )
@@ -163,7 +167,7 @@ private fun DiscoverContent(
                 }
 
                 ShowResult.EmptyCategoryData ->
-                    EmptyContentView(
+                    EmptyContent(
                         painter = painterResource(id = R.drawable.ic_watchlist_empty),
                         message = stringResource(id = R.string.generic_empty_content)
                     )
@@ -192,7 +196,7 @@ private fun DiscoverContent(
                 }
 
                 ShowResult.EmptyCategoryData ->
-                    EmptyContentView(
+                    EmptyContent(
                         painter = painterResource(id = R.drawable.ic_watchlist_empty),
                         message = stringResource(id = R.string.generic_empty_content)
                     )
@@ -220,7 +224,7 @@ private fun DiscoverContent(
                 }
 
                 ShowResult.EmptyCategoryData ->
-                    EmptyContentView(
+                    EmptyContent(
                         painter = painterResource(id = R.drawable.ic_watchlist_empty),
                         message = stringResource(id = R.string.generic_empty_content)
                     )
@@ -322,7 +326,7 @@ fun HorizontalPagerItem(
             .fillMaxSize()
     ) { pageNumber ->
 
-        TvShowCard(
+        TvPosterCard(
             title = list[pageNumber].title,
             posterImageUrl = list[pageNumber].posterImageUrl,
             onClick = { onClick(list[pageNumber].traktId) },
@@ -386,7 +390,7 @@ private fun DiscoverContent(
                 flingBehavior = rememberSnapperFlingBehavior(lazyListState),
             ) {
                 itemsIndexed(tvShows) { index, tvShow ->
-                    TvShowCard(
+                    TvPosterCard(
                         posterImageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,
                         isFirstCard = index == 0,
@@ -402,6 +406,10 @@ private fun DiscoverContent(
 private fun CategoryError(
     categoryTitle: String,
     onRetry: () -> Unit,
+    modifier: Modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentSize()
+        .padding(vertical = 16.dp),
 ) {
 
     Column {
@@ -409,7 +417,10 @@ private fun CategoryError(
             title = categoryTitle
         )
 
-        RowError(onRetry = { onRetry() })
+        RowError(
+            modifier = modifier,
+            onRetry = { onRetry() }
+        )
     }
 }
 

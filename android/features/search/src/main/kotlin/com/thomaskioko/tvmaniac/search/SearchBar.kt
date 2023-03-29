@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.compose.components
+package com.thomaskioko.tvmaniac.search
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -23,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
@@ -31,9 +35,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
 fun SearchBar(
+    modifier: Modifier = Modifier,
     hint: String,
     textState: MutableState<TextFieldValue>,
     onValueChange: (String) -> Unit
@@ -41,6 +48,7 @@ fun SearchBar(
     var textFieldFocusState by remember { mutableStateOf(false) }
 
     SearchInputText(
+        modifier = modifier,
         textFieldValue = textState.value,
         onTextChanged = {
             textState.value = it
@@ -61,6 +69,7 @@ var SemanticsPropertyReceiver.keyboardShownProperty by KeyboardShownKey
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SearchInputText(
+    modifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Text,
     onTextChanged: (TextFieldValue) -> Unit,
     textFieldValue: TextFieldValue,
@@ -77,52 +86,76 @@ private fun SearchInputText(
         }
     }
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .semantics { keyboardShownProperty = keyboardShown },
-        horizontalArrangement = Arrangement.End
+    Card(
+        shape = RectangleShape,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp
+        ),
     ) {
-        Box(
-            modifier = Modifier
-                .height(45.dp)
-                .weight(1f)
-                .align(Alignment.Bottom)
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .semantics { keyboardShownProperty = keyboardShown },
+            horizontalArrangement = Arrangement.End
         ) {
-            var lastFocusState by remember { mutableStateOf(Recomposer.State.Inactive) }
-
-            BasicTextField(
-                value = textFieldValue,
-                onValueChange = { onTextChanged(it) },
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp)
-                    .align(Alignment.CenterStart)
-                    .onFocusEvent { state ->
-                        // TODO:: Handle focus state
-                    },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Search,
-                    keyboardType = keyboardType
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        // TODO:: Invoke Search Action
-                    }
-                ),
-                textStyle = MaterialTheme.typography.body2,
-            )
+                    .height(45.dp)
+                    .weight(1f)
+                    .align(Alignment.Bottom)
+            ) {
+                var lastFocusState by remember { mutableStateOf(Recomposer.State.Inactive) }
 
-            if (textFieldValue.text.isEmpty() && !focusState) {
-                Text(
+                BasicTextField(
+                    value = textFieldValue,
+                    onValueChange = { onTextChanged(it) },
                     modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp)
                         .align(Alignment.CenterStart)
-                        .padding(start = 16.dp),
-                    text = hint,
-                    style = MaterialTheme.typography.body2.copy(MaterialTheme.colors.onSurface)
+                        .onFocusEvent { state ->
+                            // TODO:: Handle focus state
+                        },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Search,
+                        keyboardType = keyboardType
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            // TODO:: Invoke Search Action
+                        }
+                    ),
+                    textStyle = MaterialTheme.typography.bodyMedium,
                 )
+
+                if (textFieldValue.text.isEmpty() && !focusState) {
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .padding(start = 16.dp),
+                        text = hint,
+                        style = MaterialTheme.typography.bodyMedium.copy(MaterialTheme.colorScheme.onSurface)
+                    )
+                }
             }
+        }
+    }
+
+
+}
+
+@ThemePreviews
+@Composable
+fun SearchBarPreview() {
+    val textState = remember { mutableStateOf(TextFieldValue()) }
+    TvManiacTheme {
+        Surface {
+            SearchBar(
+                hint = "Enter Show Title",
+                textState = textState,
+                onValueChange = {}
+            )
         }
     }
 }

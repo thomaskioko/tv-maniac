@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.LoadingRowContent
-import com.thomaskioko.tvmaniac.compose.components.TvShowCard
+import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
+import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.data.showdetails.model.Show
 import com.thomaskioko.tvmaniac.resources.R
@@ -19,35 +19,33 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
-fun SimilarShowsUi(
+fun SimilarShowsContent(
     isLoading: Boolean,
     similarShows: List<Show>,
     onShowClicked: (Long) -> Unit = {}
 ) {
     val lazyListState = rememberLazyListState()
 
-    LoadingRowContent(
+    TextLoadingItem(
         isLoading = isLoading,
         text = stringResource(id = R.string.title_similar),
-        content = {
-
-            LazyRow(
-                state = lazyListState,
-                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-            ) {
-                itemsIndexed(similarShows) { index, tvShow ->
-                    TvShowCard(
-                        posterImageUrl = tvShow.posterImageUrl,
-                        title = tvShow.title,
-                        isFirstCard = index == 0,
-                        onClick = { onShowClicked(tvShow.traktId) },
-                        imageWidth = 84.dp,
-                        rowSpacer = 0
-                    )
-                }
-            }
-        }
     )
+
+    LazyRow(
+        state = lazyListState,
+        flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+    ) {
+        itemsIndexed(similarShows) { index, tvShow ->
+            TvPosterCard(
+                posterImageUrl = tvShow.posterImageUrl,
+                title = tvShow.title,
+                isFirstCard = index == 0,
+                onClick = { onShowClicked(tvShow.traktId) },
+                imageWidth = 84.dp,
+                rowSpacer = 0
+            )
+        }
+    }
 
 }
 
@@ -57,7 +55,7 @@ fun SimilarShowsUi(
 fun SimilarShowsShowsContentPreview() {
     TvManiacTheme {
         Surface {
-            SimilarShowsUi(
+            SimilarShowsContent(
                 isLoading = false,
                 similarShows = showList,
             )
