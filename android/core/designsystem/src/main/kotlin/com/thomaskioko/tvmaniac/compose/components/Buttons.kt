@@ -1,123 +1,221 @@
 package com.thomaskioko.tvmaniac.compose.components
 
-import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.FloatingActionButtonDefaults
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.compose.theme.grey600
 import com.thomaskioko.tvmaniac.resources.R
 
+
 @Composable
-fun ExtendedFab(
-    painter: Painter,
-    text: String,
-    onClick: () -> Unit = {}
+fun TvManiacTextButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    shape: Shape = RectangleShape,
+    buttonColors: ButtonColors = ButtonDefaults.textButtonColors(),
+    content: @Composable RowScope.() -> Unit,
 ) {
-    ExtendedFloatingActionButton(
-        icon = {
-            Image(
-                painter = painter,
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(MaterialTheme.colors.secondary.copy(alpha = 0.8F)),
-            )
-        },
-        text = {
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.body2,
-                )
-            }
-        },
-        shape = RectangleShape,
-        backgroundColor = Color.Transparent,
-        elevation = FloatingActionButtonDefaults.elevation(0.dp),
-        onClick = { onClick() },
-        modifier = Modifier
-            .padding(2.dp)
-            .border(1.dp, grey600, RoundedCornerShape(8.dp))
+
+    TextButton(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        colors = buttonColors,
+        content = content,
+        shape = shape
     )
 }
 
 @Composable
-fun ExtendedLoadingFab(
-    isLoading: Boolean = false,
-    painter: Painter,
+fun TvManiacOutlinedButton(
     text: String,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    textPadding: Dp = 4.dp,
+    borderColor: Color = MaterialTheme.colorScheme.secondary,
+    leadingIcon: @Composable (() -> Unit)? = null,
 ) {
-    ExtendedFloatingActionButton(
-        icon = {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colors.secondary,
-                    modifier = Modifier.size(16.dp)
-                )
-            } else {
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colors.secondary.copy(alpha = 0.8F)),
-                )
-            }
+    TvManiacOutlinedButton(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        borderColor = borderColor,
+        contentPadding = if (leadingIcon != null) {
+            ButtonDefaults.ButtonWithIconContentPadding
+        } else {
+            ButtonDefaults.ContentPadding
         },
-        text = {
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+    ) {
+        TvManiacButtonContent(
+            text = {
                 Text(
                     text = text,
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier
+                        .padding(textPadding)
                 )
-            }
-        },
-        shape = RectangleShape,
-        backgroundColor = Color.Transparent,
-        elevation = FloatingActionButtonDefaults.elevation(0.dp),
-        onClick = { onClick() },
-        modifier = Modifier
-            .padding(2.dp)
-            .border(1.dp, grey600, RoundedCornerShape(8.dp))
-            .clickable(
-                enabled = isLoading,
-                onClick = {}
-            )
-    )
+            },
+            leadingIcon = leadingIcon,
+        )
+    }
 }
 
-@Preview("default")
-@Preview("dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun ExtendedLoadingFabPreview() {
+fun TvManiacOutlinedButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    shape: Shape = RoundedCornerShape(4.dp),
+    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
+    borderColor: Color,
+    content: @Composable RowScope.() -> Unit,
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier
+            .padding(2.dp),
+        enabled = enabled,
+        shape = shape,
+        contentPadding = contentPadding,
+        content = content,
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = MaterialTheme.colorScheme.onSecondary,
+        ),
+        border = BorderStroke(
+            width = 1.dp,
+            color = when {
+                enabled -> borderColor
+                else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+            },
+        ),
+
+        )
+}
+
+@Composable
+private fun TvManiacButtonContent(
+    text: @Composable () -> Unit,
+    leadingIcon: @Composable (() -> Unit)? = null,
+) {
+    if (leadingIcon != null) {
+        Box(Modifier.sizeIn(maxHeight = ButtonDefaults.IconSize)) {
+            leadingIcon()
+        }
+    }
+    Box(
+        Modifier
+            .padding(
+                start = when {
+                    leadingIcon != null -> ButtonDefaults.IconSpacing
+                    else -> 0.dp
+                },
+            ),
+    ) {
+        text()
+    }
+}
+
+@ThemePreviews
+@Composable
+fun TvManiacTextButtonPreview() {
     TvManiacTheme {
         Surface {
-            ExtendedLoadingFab(
-                isLoading = true,
-                painter = painterResource(id = R.drawable.ic_baseline_check_box_24),
+            TvManiacTextButton(
+                onClick = {},
+                enabled = false,
+                buttonColors = ButtonDefaults.buttonColors(
+                    contentColor = MaterialTheme.colorScheme.onBackground,
+                    containerColor = MaterialTheme.colorScheme.secondary
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(2.dp)
+                    .background(color = MaterialTheme.colorScheme.secondary)
+            ) {
+                Text(
+                    text = "Horror",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
+            }
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+fun TvManiacAlphaTextButtonPreview() {
+    TvManiacTheme {
+        Surface {
+            TvManiacTextButton(
+                onClick = {},
+                enabled = false,
+                buttonColors = ButtonDefaults.buttonColors(
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                    containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
+                ),
+                modifier = Modifier
+                    .background(color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f))
+            ) {
+                Text(
+                    text = "Horror",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+fun TvManiacOutlinedButtonPreview() {
+    TvManiacTheme {
+        Surface {
+            TvManiacOutlinedButton(
+                onClick = {},
+                enabled = true,
+                leadingIcon = {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_baseline_check_box_24),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(
+                            MaterialTheme.colorScheme.secondary.copy(
+                                alpha = 0.8F
+                            )
+                        ),
+                    )
+                },
                 text = "Following",
             )
         }
     }
 }
+
 

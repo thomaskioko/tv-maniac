@@ -1,6 +1,10 @@
-package com.thomaskioko.tvmaniac.compose.util
+package com.thomaskioko.tvmaniac.compose.extensions
 
 import androidx.annotation.FloatRange
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -10,6 +14,8 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.dp
 import kotlin.math.pow
 
 /**
@@ -60,3 +66,19 @@ fun Modifier.verticalGradientScrim(
         drawRect(brush = brush)
     }
 }
+
+fun Modifier.iconButtonBackgroundScrim(
+    enabled: Boolean = true,
+    shape: Shape = CircleShape,
+    @FloatRange(from = 0.0, to = 1.0) alpha: Float = 0.4f,
+): Modifier = composed {
+    if (enabled) {
+        Modifier
+            .padding(start = 8.dp, end = 16.dp)
+            .background(
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
+                shape = shape,
+            )
+    } else this
+}
+
