@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.compose.components
+package com.thomaskioko.tvmaniac.compose.extensions
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides

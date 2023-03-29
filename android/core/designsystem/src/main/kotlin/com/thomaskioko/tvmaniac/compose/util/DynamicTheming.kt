@@ -5,7 +5,7 @@ import androidx.collection.LruCache
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
@@ -30,8 +30,8 @@ private const val MAC_COLOR_COUNT = 8
 @Composable
 fun rememberDominantColorState(
     context: Context = LocalContext.current,
-    defaultColor: Color = MaterialTheme.colors.primary,
-    defaultOnColor: Color = MaterialTheme.colors.onPrimary,
+    defaultColor: Color = MaterialTheme.colorScheme.secondary,
+    defaultOnColor: Color = MaterialTheme.colorScheme.onSecondary,
     cacheSize: Int = 12,
     isColorValid: (Color) -> Boolean = { true }
 ): DominantColorState = remember {
@@ -39,7 +39,7 @@ fun rememberDominantColorState(
 }
 
 /**
- * A composable which allows dynamic theming of the [androidx.compose.material.Colors.primary]
+ * A composable which allows dynamic theming of the [MaterialTheme.colorScheme]
  * color from an image.
  */
 @Composable
@@ -47,17 +47,19 @@ fun DynamicThemePrimaryColorsFromImage(
     dominantColorState: DominantColorState = rememberDominantColorState(),
     content: @Composable () -> Unit
 ) {
-    val colors = MaterialTheme.colors.copy(
-        primary = animateColorAsState(
+    val colorScheme = MaterialTheme.colorScheme.copy(
+        secondary = animateColorAsState(
             dominantColorState.color,
-            spring(stiffness = Spring.StiffnessLow)
+            spring(stiffness = Spring.StiffnessLow),
+            label = "secondaryColorAnimation"
         ).value,
-        onPrimary = animateColorAsState(
+        onSecondary = animateColorAsState(
             dominantColorState.onColor,
-            spring(stiffness = Spring.StiffnessLow)
+            spring(stiffness = Spring.StiffnessLow),
+            label = "onSecondaryColorAnimation"
         ).value
     )
-    MaterialTheme(colors = colors, content = content)
+    MaterialTheme(colorScheme = colorScheme, content = content)
 }
 
 /**
