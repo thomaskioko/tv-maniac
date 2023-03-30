@@ -3,8 +3,10 @@ package com.thomaskioko.tvmaniac.compose.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -26,9 +28,10 @@ import com.thomaskioko.tvmaniac.resources.R
 fun EmptyContent(
     painter: Painter,
     message: String,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -39,7 +42,7 @@ fun EmptyContent(
             contentDescription = null
         )
 
-        ColumnSpacer(value = 12)
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = message,
@@ -54,7 +57,7 @@ fun EmptyContent(
 
 @ThemePreviews
 @Composable
-fun EmptyContentViewPreview(){
+fun EmptyContentViewPreview() {
     TvManiacTheme {
         Surface {
             EmptyContent(

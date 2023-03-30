@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -37,7 +38,10 @@ import com.thomaskioko.tvmaniac.resources.R
 
 
 @Composable
-fun ConnectionStatus(isConnected: Boolean) {
+fun ConnectionStatus(
+    isConnected: Boolean,
+    modifier: Modifier = Modifier
+) {
     val backgroundColor by animateColorAsState(
         if (isConnected) green else MaterialTheme.colorScheme.error, label = ""
     )
@@ -46,7 +50,7 @@ fun ConnectionStatus(isConnected: Boolean) {
     val icon = if (isConnected) Icons.Outlined.SignalWifi4Bar else Icons.Outlined.SignalWifiOff
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .background(backgroundColor)
             .statusBarsPadding()
             .fillMaxWidth()
@@ -73,9 +77,11 @@ fun ConnectionStatus(isConnected: Boolean) {
 
 @Composable
 fun ErrorUi(
-    errorMessage: String = stringResource(R.string.unexpected_error_retry), onRetry: () -> Unit = {}
+    modifier: Modifier = Modifier,
+    errorMessage: String = stringResource(R.string.unexpected_error_retry),
+    onRetry: () -> Unit = {}
 ) {
-    Box(Modifier.fillMaxSize()) {
+    Box(modifier = modifier) {
 
         Column(
             modifier = Modifier
@@ -96,7 +102,7 @@ fun ErrorUi(
                 textAlign = TextAlign.Center,
             )
 
-            ColumnSpacer(value = 8)
+            Spacer(modifier = Modifier.height(8.dp))
 
             TvManiacOutlinedButton(
                 text = "Retry", onClick = onRetry
@@ -108,8 +114,8 @@ fun ErrorUi(
 
 @Composable
 fun RowError(
-    modifier: Modifier = Modifier,
     onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
     errorMessage: String = stringResource(id = R.string.unexpected_error_retry),
 ) {
 
@@ -123,7 +129,7 @@ fun RowError(
             textAlign = TextAlign.Center,
         )
 
-        ColumnSpacer(value = 8)
+        Spacer(modifier = Modifier.height(8.dp))
 
         TvManiacOutlinedButton(
             text = "Retry", onClick = onRetry
@@ -137,7 +143,11 @@ fun RowError(
 fun ErrorUiPreview() {
     TvManiacTheme {
         Surface {
-            ErrorUi(errorMessage = "Opps! Something went wrong", onRetry = {})
+            ErrorUi(
+                errorMessage = "Opps! Something went wrong",
+                onRetry = {},
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 

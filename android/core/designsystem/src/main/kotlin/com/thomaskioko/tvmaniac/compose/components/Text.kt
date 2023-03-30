@@ -26,11 +26,12 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 @Composable
 fun BoxTextItems(
     title: String,
+    modifier: Modifier = Modifier,
     label: String? = null,
     onMoreClicked: () -> Unit = { }
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(start = 16.dp)
     ) {
@@ -63,10 +64,11 @@ fun BoxTextItems(
 fun TextLoadingItem(
     isLoading: Boolean,
     text: String,
+    modifier: Modifier = Modifier,
 ) {
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp),
     ) {

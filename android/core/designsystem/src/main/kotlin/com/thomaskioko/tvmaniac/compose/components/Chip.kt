@@ -15,13 +15,12 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 
-
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun TvManiacChip(
-    modifier: Modifier = Modifier,
     text: String,
-    onClick : () -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     selected: Boolean = true,
     enabled: Boolean = true
 ) {
