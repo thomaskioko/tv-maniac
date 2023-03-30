@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,9 +34,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -45,10 +48,9 @@ import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
-import com.thomaskioko.tvmaniac.compose.components.CircularLoadingView
-import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.RowError
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
@@ -68,71 +70,101 @@ import com.thomaskioko.tvmaniac.shared.domain.discover.ShowResult
 import com.thomaskioko.tvmaniac.shared.domain.discover.ShowResult.CategorySuccess
 import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsAction
 import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsLoaded
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsState
 import com.thomaskioko.tvmaniac.shared.domain.discover.model.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlin.math.absoluteValue
 
 @Composable
-fun DiscoverScreen(
-    viewModel: DiscoverViewModel,
-    openShowDetails: (showId: Long) -> Unit,
-    moreClicked: (showType: Long) -> Unit,
+fun DiscoverRoute(
+    onShowClicked: (showId: Long) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: DiscoverViewModel = hiltViewModel(),
+    onMoreClicked: (showType: Long) -> Unit,
 ) {
 
     val discoverViewState by viewModel.state.collectAsStateWithLifecycle()
 
-    when (discoverViewState) {
-        Loading -> CircularLoadingView()
-        is ShowsLoaded -> {
-            DiscoverContent(
-                state = discoverViewState as ShowsLoaded,
-                openShowDetails = openShowDetails,
-                reloadCategory = { viewModel.dispatch(it) },
-                moreClicked = moreClicked,
+    DiscoverScreen(
+        state = discoverViewState,
+        onShowClicked = onShowClicked,
+        onReloadClicked = { viewModel.dispatch(it) },
+        onRetry = { viewModel.dispatch(RetryLoading) },
+        onMoreClicked = onMoreClicked,
+        modifier = modifier
+            .fillMaxSize()
+            .imePadding()
+            .navigationBarsPadding()
+            .animateContentSize()
+    )
+}
+
+@Composable
+private fun DiscoverScreen(
+    state: ShowsState,
+    onShowClicked: (showId: Long) -> Unit,
+    onReloadClicked: (ShowsAction) -> Unit,
+    modifier: Modifier = Modifier,
+    onRetry: () -> Unit = {},
+    onMoreClicked: (showType: Long) -> Unit
+) {
+
+    when (state) {
+        Loading ->
+            LoadingIndicator(
                 modifier = Modifier
                     .fillMaxSize()
-                    .imePadding()
-                    .navigationBarsPadding()
-                    .animateContentSize()
+                    .wrapContentSize(Alignment.Center)
             )
-        }
 
-        is LoadingError -> ErrorUi(
-            errorMessage = (discoverViewState as LoadingError).errorMessage,
-            onRetry = { viewModel.dispatch(RetryLoading) }
-        )
+        is ShowsLoaded ->
+            CategoryContent(
+                state = state,
+                onReloadClicked = onReloadClicked,
+                modifier = modifier,
+                onShowClicked = onShowClicked,
+                onMoreClicked = onMoreClicked
+            )
+
+        is LoadingError ->
+            ErrorUi(
+                errorMessage = state.errorMessage,
+                onRetry = onRetry,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center)
+            )
     }
 }
 
 @Composable
-private fun DiscoverContent(
-    modifier: Modifier = Modifier,
+private fun CategoryContent(
     state: ShowsLoaded,
-    openShowDetails: (showId: Long) -> Unit,
-    reloadCategory: (ShowsAction) -> Unit,
-    moreClicked: (showType: Long) -> Unit
+    onReloadClicked: (ShowsAction) -> Unit,
+    onShowClicked: (showId: Long) -> Unit,
+    modifier: Modifier = Modifier,
+    onMoreClicked: (showType: Long) -> Unit
 ) {
     LazyColumn {
 
         item {
             when (state.result.featuredCategoryState) {
-                is ShowResult.CategoryError -> {
+                is ShowResult.CategoryError ->
                     CategoryError(
                         categoryTitle = Category.FEATURED.title,
-                        onRetry = { reloadCategory(ReloadFeatured) },
+                        onRetry = { onReloadClicked(ReloadFeatured) },
                         modifier = modifier
                             .fillMaxWidth()
                             .aspectRatio(0.7f)
                     )
-                }
 
                 is CategorySuccess -> {
                     val resultState = (state.result.featuredCategoryState as CategorySuccess)
 
                     FeaturedContent(
                         showList = resultState.tvShows,
-                        onItemClicked = openShowDetails,
+                        onShowClicked = onShowClicked,
                         modifier = modifier
                     )
                 }
@@ -148,21 +180,23 @@ private fun DiscoverContent(
 
         item {
             when (state.result.trendingCategoryState) {
-                is ShowResult.CategoryError -> {
+                is ShowResult.CategoryError ->
                     CategoryError(
                         categoryTitle = Category.TRENDING.title,
-                        onRetry = { reloadCategory(ReloadFeatured) }
+                        onRetry = { onReloadClicked(ReloadFeatured) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentSize()
+                            .padding(vertical = 16.dp),
                     )
-                }
 
                 is CategorySuccess -> {
-                    val resultState =
-                        (state.result.trendingCategoryState as CategorySuccess)
-                    DiscoverContent(
+                    val resultState = (state.result.trendingCategoryState as CategorySuccess)
+                    RowContent(
                         category = resultState.category,
                         tvShows = resultState.tvShows,
-                        onItemClicked = openShowDetails,
-                        onLabelClicked = moreClicked
+                        onItemClicked = onShowClicked,
+                        onLabelClicked = onMoreClicked
                     )
                 }
 
@@ -177,21 +211,24 @@ private fun DiscoverContent(
 
         item {
             when (state.result.anticipatedCategoryState) {
-                is ShowResult.CategoryError -> {
+                is ShowResult.CategoryError ->
                     CategoryError(
                         categoryTitle = Category.ANTICIPATED.title,
-                        onRetry = { reloadCategory(ReloadFeatured) }
+                        onRetry = { onReloadClicked(ReloadFeatured) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentSize()
+                            .padding(vertical = 16.dp),
                     )
-                }
+
 
                 is CategorySuccess -> {
-                    val resultState =
-                        (state.result.anticipatedCategoryState as CategorySuccess)
-                    DiscoverContent(
+                    val resultState = (state.result.anticipatedCategoryState as CategorySuccess)
+                    RowContent(
                         category = resultState.category,
                         tvShows = resultState.tvShows,
-                        onItemClicked = openShowDetails,
-                        onLabelClicked = moreClicked
+                        onItemClicked = onShowClicked,
+                        onLabelClicked = onMoreClicked
                     )
                 }
 
@@ -205,21 +242,23 @@ private fun DiscoverContent(
 
         item {
             when (state.result.popularCategoryState) {
-                is ShowResult.CategoryError -> {
+                is ShowResult.CategoryError ->
                     CategoryError(
                         categoryTitle = Category.POPULAR.title,
-                        onRetry = { reloadCategory(ReloadFeatured) }
+                        onRetry = { onReloadClicked(ReloadFeatured) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentSize()
+                            .padding(vertical = 16.dp),
                     )
-                }
 
                 is CategorySuccess -> {
-                    val resultState =
-                        (state.result.popularCategoryState as CategorySuccess)
-                    DiscoverContent(
+                    val resultState = (state.result.popularCategoryState as CategorySuccess)
+                    RowContent(
                         category = resultState.category,
                         tvShows = resultState.tvShows,
-                        onItemClicked = openShowDetails,
-                        onLabelClicked = moreClicked
+                        onItemClicked = onShowClicked,
+                        onLabelClicked = onMoreClicked
                     )
                 }
 
@@ -236,9 +275,9 @@ private fun DiscoverContent(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun FeaturedContent(
-    modifier: Modifier = Modifier,
     showList: List<TvShow>,
-    onItemClicked: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+    onShowClicked: (Long) -> Unit,
 ) {
 
     Column(
@@ -273,7 +312,7 @@ fun FeaturedContent(
                     list = showList,
                     pagerState = pagerState,
                     dominantColorState = dominantColorState,
-                    onClick = onItemClicked
+                    onClick = onShowClicked
                 )
             }
         }
@@ -288,7 +327,7 @@ fun FeaturedContent(
                     .padding(top = 16.dp),
             )
 
-        ColumnSpacer(value = 16)
+        Spacer(modifier = Modifier.height(16.dp))
     }
 
 }
@@ -299,6 +338,7 @@ fun HorizontalPagerItem(
     list: List<TvShow>,
     pagerState: PagerState,
     dominantColorState: DominantColorState,
+    modifier: Modifier = Modifier,
     onClick: (Long) -> Unit
 ) {
 
@@ -322,7 +362,7 @@ fun HorizontalPagerItem(
         count = list.size,
         state = pagerState,
         contentPadding = PaddingValues(horizontal = 45.dp),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
     ) { pageNumber ->
 
@@ -368,7 +408,7 @@ fun HorizontalPagerItem(
 
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
-private fun DiscoverContent(
+private fun RowContent(
     category: Category,
     tvShows: List<TvShow>,
     onItemClicked: (Long) -> Unit,
@@ -390,10 +430,14 @@ private fun DiscoverContent(
                 flingBehavior = rememberSnapperFlingBehavior(lazyListState),
             ) {
                 itemsIndexed(tvShows) { index, tvShow ->
+
+                    val value = if (index == 0) 16 else 4
+
+                    Spacer(modifier = Modifier.width(value.dp))
+
                     TvPosterCard(
                         posterImageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,
-                        isFirstCard = index == 0,
                         onClick = { onItemClicked(tvShow.traktId) }
                     )
                 }
@@ -406,10 +450,7 @@ private fun DiscoverContent(
 private fun CategoryError(
     categoryTitle: String,
     onRetry: () -> Unit,
-    modifier: Modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentSize()
-        .padding(vertical = 16.dp),
+    modifier: Modifier = Modifier,
 ) {
 
     Column {
@@ -426,15 +467,18 @@ private fun CategoryError(
 
 @ThemePreviews
 @Composable
-fun DiscoverScreenPreview() {
+private fun DiscoverScreenPreview(
+    @PreviewParameter(DiscoverPreviewParameterProvider::class)
+    state: ShowsState
+) {
     TvManiacTheme {
         TvManiacBackground {
             Surface(Modifier.fillMaxWidth()) {
-                DiscoverContent(
-                    state = showsLoaded,
-                    openShowDetails = {},
-                    moreClicked = {},
-                    reloadCategory = {}
+                DiscoverScreen(
+                    state = state,
+                    onShowClicked = {},
+                    onMoreClicked = {},
+                    onReloadClicked = {}
                 )
             }
         }

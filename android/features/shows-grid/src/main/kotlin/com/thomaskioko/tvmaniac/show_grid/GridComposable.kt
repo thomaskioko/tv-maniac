@@ -4,8 +4,10 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
@@ -19,8 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import com.thomaskioko.tvmaniac.compose.components.CircularLoadingView
-import com.thomaskioko.tvmaniac.compose.components.CircularProgressIndicator
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.SnackBarErrorRetry
 
 @ExperimentalFoundationApi
@@ -29,11 +30,13 @@ fun <T : Any> LazyPagedGridItems(
     listState: LazyGridState,
     lazyPagingItems: LazyPagingItems<T>,
     snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
     rows: Int = 3,
     hPadding: Int = 2,
     itemContent: @Composable LazyGridItemScope.(value: T?) -> Unit
 ) {
     LazyVerticalGrid(
+        modifier = modifier,
         state = listState,
         columns = GridCells.Fixed(rows),
     ) {
@@ -59,12 +62,18 @@ fun <T : Any> LazyPagedGridItems(
         lazyPagingItems.apply {
             when {
                 loadState.refresh is LoadState.Loading -> {
-                    item { CircularLoadingView() }
+                    item {
+                        LoadingIndicator(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .wrapContentSize(Alignment.Center)
+                        )
+                    }
                 }
 
                 loadState.append is LoadState.Loading -> {
                     item {
-                        CircularProgressIndicator(
+                        LoadingIndicator(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp)

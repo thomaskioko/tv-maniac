@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -28,12 +29,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
-import com.thomaskioko.tvmaniac.compose.components.CircularLoadingView
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
@@ -42,42 +45,70 @@ import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.show_grid.model.TvShow
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ShowsGridScreen(
-    viewModel: ShowGridViewModel,
+fun ShowsGridRoute(
     openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit
+    onBackClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: ShowGridViewModel = hiltViewModel(),
 ) {
 
     val gridViewState by viewModel.state.collectAsStateWithLifecycle()
 
+    GridScreen(
+        onBackClicked = onBackClicked,
+        state = gridViewState,
+        modifier = modifier,
+        title = Category[viewModel.showType].title, //TODO:: Remove this and do the mapping from the state machine
+        onRetry = { viewModel.dispatch(ReloadShows(viewModel.showType)) },
+        onShowClicked = { openShowDetails(it) }
+    )
+
+}
+
+@Composable
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+private fun GridScreen(
+    onBackClicked: () -> Unit,
+    state: GridState,
+    title: String,
+    onShowClicked: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+    onRetry: () -> Unit = {},
+) {
     Scaffold(
         topBar = {
             TvManiacTopBar(
-                title = Category[viewModel.showType].title, //TODO:: Remove this and do the mapping from the state machine
-                onBackClick = navigateUp
+                title = title,
+                onBackClick = onBackClicked
             )
         },
         modifier = Modifier
             .statusBarsPadding(),
     ) { contentPadding ->
-        when (gridViewState) {
-            LoadingContent -> CircularLoadingView()
+        when (state) {
+            LoadingContent -> LoadingIndicator(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center)
+            )
+
             is LoadingContentError -> ErrorUi(
-                errorMessage = (gridViewState as LoadingContentError).errorMessage,
-                onRetry = { viewModel.dispatch(ReloadShows(viewModel.showType)) })
+                errorMessage = state.errorMessage,
+                onRetry = onRetry,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center)
+            )
 
             is ShowsLoaded -> GridContent(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxSize(),
                 contentPadding = contentPadding,
-                list = (gridViewState as ShowsLoaded).list,
-                onItemClicked = { openShowDetails(it) }
+                list = state.list,
+                onItemClicked = onShowClicked
             )
         }
-
-
     }
 }
 
@@ -144,16 +175,20 @@ fun GridContent(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @ThemePreviews
 @Composable
-fun ShowsGridContentPreview() {
+private fun ShowsGridContentPreview(
+    @PreviewParameter(GridPreviewParameterProvider::class)
+    state: GridState
+) {
     TvManiacTheme {
         Surface {
-            GridContent(
-                list = showList,
-                contentPadding = PaddingValues(),
-                onItemClicked = {}
+            GridScreen(
+                state = state,
+                title = "Anticipated",
+                onShowClicked = {},
+                onBackClicked = {},
+                onRetry = {}
             )
         }
     }

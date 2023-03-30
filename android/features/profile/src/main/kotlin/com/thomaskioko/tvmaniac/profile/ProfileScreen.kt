@@ -5,43 +5,41 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,12 +49,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
-import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
-import com.thomaskioko.tvmaniac.compose.components.SnackBarErrorRetry
+import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTextButton
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
@@ -67,14 +66,13 @@ import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(
-    viewModel: ProfileViewModel,
+fun ProfileRoute(
+    modifier: Modifier = Modifier,
+    viewModel: ProfileViewModel = hiltViewModel(),
     settingsClicked: () -> Unit
 ) {
 
-    val snackbarHostState = remember { SnackbarHostState() }
     val profileState by viewModel.state.collectAsStateWithLifecycle()
 
     val loginLauncher = rememberLauncherForActivityResult(
@@ -85,46 +83,67 @@ fun ProfileScreen(
         }
     }
 
+    ProfileScreen(
+        onSettingsClicked = settingsClicked,
+        modifier = modifier,
+        state = profileState,
+        onLoginClicked = {
+            loginLauncher.launch(Unit)
+            viewModel.dispatch(DismissTraktDialog)
+        },
+        onConnectClicked = { loginLauncher.launch(Unit) },
+        onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun ProfileScreen(
+    onSettingsClicked: () -> Unit,
+    state: ProfileState,
+    onLoginClicked: () -> Unit,
+    onConnectClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    onDismissDialogClicked: () -> Unit,
+) {
+
     Scaffold(
         topBar = {
             TvManiacTopBar(
                 title = stringResource(id = R.string.menu_item_profile),
-                onActionClicked = settingsClicked,
+                onActionClicked = onSettingsClicked,
                 actionImageVector = Icons.Filled.Settings,
             )
         },
-        modifier = Modifier
+        modifier = modifier
             .background(color = MaterialTheme.colorScheme.background)
             .statusBarsPadding(),
         content = { contentPadding ->
 
-            when (profileState) {
+            when (state) {
                 is ProfileError -> {
-                    SnackBarErrorRetry(
-                        snackBarHostState = snackbarHostState,
-                        errorMessage = (profileState as ProfileError).error,
-                        actionLabel = "Retry"
+                    ErrorUi(
+                        errorMessage = state.error,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center)
                     )
                 }
 
                 is ProfileStatsError -> {
-                    SnackBarErrorRetry(
-                        snackBarHostState = snackbarHostState,
-                        errorMessage = (profileState as ProfileStatsError).error,
-                        actionLabel = "Retry"
+                    ErrorUi(
+                        errorMessage = state.error,
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
 
                 is ProfileContent -> {
                     ProfileScreenContent(
                         contentPadding = contentPadding,
-                        profileState = profileState as ProfileContent,
-                        onLoginClicked = {
-                            loginLauncher.launch(Unit)
-                            viewModel.dispatch(DismissTraktDialog)
-                        },
-                        onConnectClicked = { loginLauncher.launch(Unit) },
-                        onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
+                        profileState = state,
+                        onLoginClicked = onLoginClicked,
+                        onConnectClicked = onConnectClicked,
+                        onDismissDialogClicked = onDismissDialogClicked,
                     )
                 }
 
@@ -142,9 +161,10 @@ fun ProfileScreenContent(
     onDismissDialogClicked: () -> Unit,
 ) {
     when {
-        profileState.loggedIn -> UserProfile(
-            state = profileState,
-        )
+        profileState.loggedIn ->
+            UserProfile(
+                state = profileState,
+            )
 
         else ->
             TraktInfoContent(
@@ -161,11 +181,12 @@ fun TraktInfoContent(
     state: ProfileContent,
     onConnectClicked: () -> Unit,
     onLoginClicked: () -> Unit,
+    modifier: Modifier = Modifier,
     onDismissDialogClicked: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp),
     ) {
@@ -186,13 +207,13 @@ fun TraktInfoContent(
                 .align(Alignment.CenterHorizontally)
         )
 
-        ColumnSpacer(value = 16)
+        Spacer(modifier = Modifier.height(16.dp))
 
         Divider(
             color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f)
         )
 
-        ColumnSpacer(value = 16)
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = stringResource(id = R.string.trakt_description),
@@ -202,7 +223,7 @@ fun TraktInfoContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        ColumnSpacer(value = 8)
+        Spacer(modifier = Modifier.height(8.dp))
 
         val supportItems = listOf(
             stringResource(id = R.string.trakt_sync),
@@ -219,7 +240,7 @@ fun TraktInfoContent(
             }
         }
 
-        ColumnSpacer(value = 16)
+        Spacer(modifier = Modifier.height(16.dp))
 
         TvManiacTextButton(
             onClick = onConnectClicked,
@@ -243,7 +264,10 @@ fun TraktInfoContent(
 }
 
 @Composable
-fun TextListItem(text: String) {
+fun TextListItem(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
 
     val divider = buildAnnotatedString {
         val tagStyle = MaterialTheme.typography.labelMedium.toSpanStyle().copy(
@@ -257,7 +281,7 @@ fun TextListItem(text: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
     ) {
 
@@ -283,21 +307,35 @@ fun TextListItem(text: String) {
 @Composable
 fun UserProfile(
     state: ProfileContent,
+    modifier: Modifier = Modifier,
 ) {
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp),
+            .padding(start = 16.dp, end = 16.dp, top = 64.dp),
+        verticalArrangement = Arrangement.Center,
     ) {
 
-        IconButton(
-            onClick = {},
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-        ) {
-            when {
-                state.loggedIn && state.traktUser?.userPicUrl != null -> {
+        when {
+            state.loggedIn && state.traktUser?.userPicUrl != null -> {
+
+                Card(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .size(120.dp)
+                        .align(Alignment.CenterHorizontally),
+                    shape = CircleShape,
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 4.dp
+                    ),
+                    border = BorderStroke(
+                        width = 2.dp,
+                        color = MaterialTheme.colorScheme.secondary,
+                    ),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                ) {
+
                     AsyncImageComposable(
                         model = state.traktUser.userPicUrl,
                         contentDescription = stringResource(
@@ -305,41 +343,37 @@ fun UserProfile(
                             state.traktUser.fullName ?: state.traktUser.userName ?: ""
                         ),
                         modifier = Modifier
-                            .padding(top = 64.dp)
                             .size(120.dp)
                             .clip(CircleShape)
-                            .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
                             .align(Alignment.CenterHorizontally)
 
                     )
                 }
+            }
 
-                else -> {
-                    Icon(
-                        imageVector = when {
-                            state.loggedIn -> Icons.Default.Person
-                            else -> Icons.Outlined.Person
-                        },
-                        contentDescription = stringResource(R.string.cd_user_profile)
-                    )
-                }
+            else -> {
+                Icon(
+                    imageVector = when {
+                        state.loggedIn -> Icons.Default.Person
+                        else -> Icons.Outlined.Person
+                    },
+                    contentDescription = stringResource(R.string.cd_user_profile)
+                )
             }
         }
 
-        ColumnSpacer(value = 16)
+        Spacer(modifier = Modifier.height(16.dp))
 
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            Text(
-                text = stringResource(
-                    R.string.trakt_user_name,
-                    state.traktUser?.fullName ?: state.traktUser?.userName ?: "Stranger"
-                ),
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-            )
-        }
+        Text(
+            text = stringResource(
+                R.string.trakt_user_name,
+                state.traktUser?.fullName ?: state.traktUser?.userName ?: "Stranger"
+            ),
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+        )
 
         Spacer(modifier = Modifier.size(24.dp))
 
@@ -370,10 +404,12 @@ fun UserProfile(
 
 @Composable
 fun ShowTimeStats(
-    profileStats: ProfileStats
+    profileStats: ProfileStats,
+    modifier: Modifier = Modifier,
 ) {
 
     Card(
+        modifier = modifier,
         shape = MaterialTheme.shapes.medium,
     ) {
 
@@ -413,9 +449,11 @@ fun ShowTimeStats(
 
 @Composable
 fun EpisodesStats(
-    profileStats: ProfileStats
+    profileStats: ProfileStats,
+    modifier: Modifier = Modifier,
 ) {
     Card(
+        modifier = modifier,
         shape = MaterialTheme.shapes.medium,
     ) {
 
@@ -445,9 +483,9 @@ fun EpisodesStats(
 
 @Composable
 fun DurationInfo(
+    value: String,
     modifier: Modifier = Modifier,
-    valueTitle: String? = null,
-    value: String
+    valueTitle: String? = null
 ) {
     Column(
         modifier = modifier
@@ -508,54 +546,19 @@ fun TrackDialog(
 
 @ThemePreviews
 @Composable
-fun LoggedInContentPreview() {
+private fun ProfileScreenPreview(
+    @PreviewParameter(PreviewParameterProvider::class)
+    state: ProfileState
+) {
     TvManiacTheme {
         Surface {
-            ProfileScreenContent(
-                contentPadding = PaddingValues(0.dp),
-                profileState = ProfileContent(
-                    loggedIn = true,
-                    showTraktDialog = false,
-                    traktUser = TraktUser(
-                        fullName = "Code Wizard",
-                        userName = "@code_wizard",
-                        userPicUrl = "",
-                        slug = "me"
-                    ),
-                    profileStats = ProfileStats(
-                        collectedShows = "2000",
-                        showMonths = "08",
-                        showDays = "120",
-                        showHours = "120",
-                        episodesWatched = "8.1k"
-                    )
-                ),
+            ProfileScreen(
+                state = state,
                 onLoginClicked = {},
-                onDismissDialogClicked = {},
                 onConnectClicked = {},
+                onDismissDialogClicked = {},
+                onSettingsClicked = {}
             )
         }
     }
 }
-
-@ThemePreviews
-@Composable
-fun LoggedOutContentPreview() {
-    TvManiacTheme {
-        Surface {
-            ProfileScreenContent(
-                contentPadding = PaddingValues(0.dp),
-                profileState = ProfileContent(
-                    loggedIn = false,
-                    showTraktDialog = false,
-                    traktUser = null,
-                    profileStats = null
-                ),
-                onLoginClicked = {},
-                onDismissDialogClicked = {},
-                onConnectClicked = {},
-            )
-        }
-    }
-}
-

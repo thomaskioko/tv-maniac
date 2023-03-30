@@ -1,8 +1,11 @@
 package com.thomaskioko.tvmaniac.discover
 
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.category.api.model.Category
+import com.thomaskioko.tvmaniac.shared.domain.discover.LoadingError
 import com.thomaskioko.tvmaniac.shared.domain.discover.ShowResult
 import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsLoaded
+import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsState
 import com.thomaskioko.tvmaniac.shared.domain.discover.model.TvShow
 
 val shows = TvShow(
@@ -24,25 +27,32 @@ val shows = TvShow(
     year = "2024"
 )
 
-
-val showsLoaded = ShowsLoaded(
-    result = ShowResult(
-        featuredCategoryState = ShowResult.CategorySuccess(
-            category = Category.FEATURED,
-            tvShows = List(5) { shows }
-        ),
-        trendingCategoryState = ShowResult.CategorySuccess(
-            category = Category.TRENDING,
-            tvShows = List(10) { shows }
-        ),
-        popularCategoryState = ShowResult.CategorySuccess(
-            category = Category.POPULAR,
-            tvShows = List(10) { shows }
-        ),
-        anticipatedCategoryState = ShowResult.CategorySuccess(
-            category = Category.ANTICIPATED,
-            tvShows = List(10) { shows }
-        ),
-    )
+val showResultSuccess = ShowResult(
+    featuredCategoryState = ShowResult.CategorySuccess(
+        category = Category.FEATURED,
+        tvShows = List(5) { shows }
+    ),
+    trendingCategoryState = ShowResult.CategorySuccess(
+        category = Category.TRENDING,
+        tvShows = List(10) { shows }
+    ),
+    popularCategoryState = ShowResult.CategorySuccess(
+        category = Category.POPULAR,
+        tvShows = List(10) { shows }
+    ),
+    anticipatedCategoryState = ShowResult.CategorySuccess(
+        category = Category.ANTICIPATED,
+        tvShows = List(10) { shows }
+    ),
 )
 
+
+class DiscoverPreviewParameterProvider : PreviewParameterProvider<ShowsState> {
+    override val values: Sequence<ShowsState>
+        get() {
+            return sequenceOf(
+                ShowsLoaded(result = showResultSuccess),
+                LoadingError(errorMessage = "Opps! Something went wrong")
+            )
+        }
+}

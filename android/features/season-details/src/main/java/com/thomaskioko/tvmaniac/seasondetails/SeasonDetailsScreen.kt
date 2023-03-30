@@ -2,9 +2,13 @@ package com.thomaskioko.tvmaniac.seasondetails
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -22,11 +26,12 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.thomaskioko.tvmaniac.compose.components.CircularLoadingView
-import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
@@ -34,45 +39,73 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.data.seasondetails.Loading
 import com.thomaskioko.tvmaniac.data.seasondetails.LoadingError
 import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsLoaded
+import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.components.CollapsableContent
 import com.thomaskioko.tvmaniac.seasondetails.components.WatchNextContent
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SeasonDetailsScreen(
-    viewModel: SeasonDetailsViewModel,
-    navigateUp: () -> Unit,
+fun SeasonDetailsRoute(
+    onBackClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: SeasonDetailsViewModel = hiltViewModel(),
     initialSeasonName: String? = null,
     onEpisodeClicked: (Long) -> Unit = {},
 ) {
 
     val viewState by viewModel.state.collectAsStateWithLifecycle()
-    val listState = rememberLazyListState()
 
+    SeasonDetailScreen(
+        state = viewState,
+        onBackClicked = onBackClicked,
+        modifier = modifier,
+        seasonName = initialSeasonName,
+        onEpisodeClicked = onEpisodeClicked,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SeasonDetailScreen(
+    state: SeasonDetailsState,
+    onBackClicked: () -> Unit,
+    seasonName: String?,
+    modifier: Modifier = Modifier,
+    onEpisodeClicked: (Long) -> Unit,
+) {
+    val listState = rememberLazyListState()
 
     Scaffold(
         topBar = {
             TopBar(
-                title = (viewState as? SeasonDetailsLoaded)?.showTitle ?: "",
-                navigateUp = navigateUp
+                title = (state as? SeasonDetailsLoaded)?.showTitle ?: "",
+                navigateUp = onBackClicked
             )
         },
-        modifier = Modifier
+        modifier = modifier
             .statusBarsPadding(),
         content = { contentPadding ->
-            when (viewState) {
-                Loading -> CircularLoadingView()
-                is LoadingError -> ErrorUi(
-                    errorMessage = (viewState as LoadingError).message,
-                    onRetry = {},
+            when (state) {
+                Loading -> LoadingIndicator(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.Center)
                 )
+
+                is LoadingError ->
+                    ErrorUi(
+                        errorMessage = state.message,
+                        onRetry = {},
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center)
+                    )
 
                 is SeasonDetailsLoaded -> {
                     SeasonContent(
-                        seasonsEpList = (viewState as SeasonDetailsLoaded).episodeList,
-                        initialSeasonName = initialSeasonName,
+                        seasonsEpList = state.seasonDetailsList,
+                        initialSeasonName = seasonName,
                         onEpisodeClicked = onEpisodeClicked,
                         listState = listState,
                         contentPadding = contentPadding,
@@ -125,11 +158,11 @@ private fun SeasonContent(
             contentPadding = contentPadding.copy(copyTop = false),
         ) {
 
-            item { ColumnSpacer(64) }
+            item { Spacer(modifier = Modifier.height(64.dp)) }
 
             item { WatchNextContent(seasonsEpList.firstOrNull()?.episodes) }
 
-            item { ColumnSpacer(16) }
+            item { Spacer(modifier = Modifier.height(16.dp)) }
 
             item { AllSeasonsTitle() }
 
@@ -150,37 +183,43 @@ private fun SeasonContent(
 
 
 @Composable
-private fun AllSeasonsTitle() {
+private fun AllSeasonsTitle(
+    modifier: Modifier = Modifier,
+) {
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(2.dp),
         contentAlignment = Alignment.Center
     ) {
-        ColumnSpacer(8)
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = stringResource(id = R.string.title_all_seasons),
             style = MaterialTheme.typography.labelMedium.copy(MaterialTheme.colorScheme.secondary),
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
     }
 
-    ColumnSpacer(8)
 }
 
 
 @ThemePreviews
 @Composable
-fun SeasonsContentPreview() {
+private fun SeasonDetailScreenPreview(
+    @PreviewParameter(SeasonPreviewParameterProvider::class)
+    state: SeasonDetailsState
+) {
     TvManiacTheme {
         Surface {
-            SeasonContent(
-                seasonsEpList = seasonsEpList,
-                initialSeasonName = "Specials",
+            SeasonDetailScreen(
+                state = state,
+                seasonName = "Loki",
+                onBackClicked = {},
                 onEpisodeClicked = {},
-                contentPadding = PaddingValues(),
-                listState = LazyListState(),
             )
         }
     }

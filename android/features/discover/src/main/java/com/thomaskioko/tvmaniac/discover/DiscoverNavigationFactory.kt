@@ -13,12 +13,16 @@ class DiscoverNavigationFactory @Inject constructor() : ComposeNavigationFactory
         builder.viewModelComposable<DiscoverViewModel>(
             route = NavigationScreen.DiscoverNavScreen.route,
             content = {
-                DiscoverScreen(
-                    openShowDetails = { tvShowId ->
-                        navController.navigate("${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId")
+                DiscoverRoute(
+                    onShowClicked = { tvShowId ->
+                        navController.navigate(
+                            "${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId"
+                        )
                     },
-                    moreClicked = { showType ->
-                        navController.navigate("${NavigationScreen.ShowGridNavScreen.route}/$showType")
+                    onMoreClicked = { showType ->
+                        navController.navigate(
+                            "${NavigationScreen.ShowGridNavScreen.route}/$showType"
+                        )
                     },
                     viewModel = this,
                 )

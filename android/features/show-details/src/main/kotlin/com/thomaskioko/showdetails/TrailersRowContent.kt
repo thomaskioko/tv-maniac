@@ -2,9 +2,11 @@ package com.thomaskioko.showdetails
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -27,12 +29,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
-import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
-import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.data.showdetails.TrailersState
 import com.thomaskioko.tvmaniac.data.showdetails.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
@@ -43,9 +42,10 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 fun TrailersRowContent(
     isLoading: Boolean,
     trailersList: List<Trailer>,
-    onTrailerClicked: (Long, String,) -> Unit
+    modifier: Modifier = Modifier,
+    onTrailerClicked: (Long, String) -> Unit
 ) {
-    if (trailersList.isNotEmpty()){
+    if (trailersList.isNotEmpty()) {
         TextLoadingItem(
             isLoading = isLoading,
             text = stringResource(id = R.string.title_trailer)
@@ -54,16 +54,18 @@ fun TrailersRowContent(
         val lazyListState = rememberLazyListState()
 
         LazyRow(
+            modifier = modifier,
             state = lazyListState,
             flingBehavior = rememberSnapperFlingBehavior(lazyListState),
         ) {
             itemsIndexed(trailersList) { index, trailer ->
 
-                RowSpacer(value = if (index == 0) 16 else 8)
+                val value = if (index == 0) 16 else 8
+                Spacer(modifier = Modifier.width(value.dp))
 
                 Card(
                     modifier = Modifier
-                        .clickable { onTrailerClicked( trailer.showId, trailer.key) },
+                        .clickable { onTrailerClicked(trailer.showId, trailer.key) },
                     shape = RoundedCornerShape(4.dp),
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 4.dp
@@ -106,7 +108,7 @@ fun TrailersRowContent(
 
         }
 
-        ColumnSpacer(8)
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -117,7 +119,7 @@ fun TrailersContentPreview() {
         Surface {
             TrailersRowContent(
                 isLoading = false,
-                trailersList = (detailUiState.trailerState as TrailersState.TrailersLoaded).trailersList,
+                trailersList = trailerLoaded.trailersList,
                 onTrailerClicked = { _, _ -> }
             )
         }
