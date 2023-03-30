@@ -53,7 +53,7 @@ fun AsyncImageComposable(
 @Composable
 fun KenBurnsViewImage(
     imageUrl: String?,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val kenBuns = remember { KenBurnsView(context) }

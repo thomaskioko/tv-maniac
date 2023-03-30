@@ -14,33 +14,24 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 
 @Composable
-fun CircularLoadingView() {
+fun LoadingIndicator(
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.secondary
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .wrapContentSize(Alignment.Center)
     ) {
         CircularProgressIndicator(
-            color = MaterialTheme.colorScheme.secondary
+            color = color
         )
     }
 }
 
-
-@Composable
-fun CircularProgressIndicator(
-    modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.secondary
-) {
-    CircularProgressIndicator(
-        modifier = modifier,
-        color = color
-    )
-}
-
 @ThemePreviews
 @Composable
-fun CircularProgressIndicator() {
+fun CircularProgressIndicatorPreview() {
     TvManiacTheme {
         Surface {
             CircularProgressIndicator()

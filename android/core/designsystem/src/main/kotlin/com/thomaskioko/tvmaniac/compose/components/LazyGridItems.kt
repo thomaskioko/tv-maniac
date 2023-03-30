@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.following
+package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,20 +13,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.extensions.copy
 
 @Composable
 fun <T> LazyGridItems(
+    listState: LazyListState,
+    paddingValues: PaddingValues,
+    modifier: Modifier = Modifier,
     items: List<T> = listOf(),
     rows: Int = 3,
     hPadding: Int = 8,
-    listState: LazyListState,
-    paddingValues: PaddingValues,
     itemContent: @Composable() (LazyItemScope.(T) -> Unit)
 ) {
     val chunkedList = items.chunked(rows)
     LazyColumn(
         state = listState,
-        modifier = Modifier
+        contentPadding = paddingValues.copy(copyTop = false),
+        modifier = modifier
             .padding(horizontal = hPadding.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {

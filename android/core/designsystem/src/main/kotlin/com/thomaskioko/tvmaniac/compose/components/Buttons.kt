@@ -89,11 +89,11 @@ fun TvManiacOutlinedButton(
 @Composable
 fun TvManiacOutlinedButton(
     onClick: () -> Unit,
+    borderColor: Color,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     shape: Shape = RoundedCornerShape(4.dp),
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
-    borderColor: Color,
     content: @Composable RowScope.() -> Unit,
 ) {
     OutlinedButton(
