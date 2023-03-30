@@ -200,8 +200,6 @@ private fun AllSeasonsTitle(
             text = stringResource(id = R.string.title_all_seasons),
             style = MaterialTheme.typography.labelMedium.copy(MaterialTheme.colorScheme.secondary),
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
     }
 
 }
@@ -217,7 +215,7 @@ private fun SeasonDetailScreenPreview(
         Surface {
             SeasonDetailScreen(
                 state = state,
-                seasonName = "Loki",
+                seasonName = "Specials",
                 onBackClicked = {},
                 onEpisodeClicked = {},
             )

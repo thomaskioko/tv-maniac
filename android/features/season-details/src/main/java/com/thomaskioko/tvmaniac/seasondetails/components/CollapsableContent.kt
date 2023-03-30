@@ -65,6 +65,8 @@ fun CollapsableContent(
         modifier = modifier
     ) {
 
+        Spacer(modifier = Modifier.height(8.dp))
+
         SeasonTitleHeader(
             title = headerTitle,
             episodesCount = episodesCount,

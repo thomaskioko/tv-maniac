@@ -70,7 +70,7 @@ fun WatchNextContent(
 
             itemsIndexed(episodeList) { index, episode ->
                 val value = if (index == 0) 32 else 8
-                Spacer(modifier = Modifier.height(value.dp))
+                Spacer(modifier = Modifier.width(value.dp))
 
                 WatchNextItem(
                     episode = episode,
