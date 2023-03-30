@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
-import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.green
@@ -56,11 +56,14 @@ fun CollapsableContent(
     watchProgress: Float,
     episodeList: List<Episode>,
     collapsed: Boolean,
+    modifier: Modifier = Modifier,
     onEpisodeClicked: (Long) -> Unit = {},
     onSeasonHeaderClicked: () -> Unit = {},
 ) {
 
-    Column {
+    Column(
+        modifier = modifier
+    ) {
 
         SeasonTitleHeader(
             title = headerTitle,
@@ -70,14 +73,18 @@ fun CollapsableContent(
             onSeasonHeaderClicked = onSeasonHeaderClicked
         )
 
-        ColumnSpacer(value = 8)
+        Spacer(modifier = Modifier.height(8.dp))
 
         if (!collapsed) {
             episodeList.forEach { episode ->
+                Spacer(modifier = Modifier.height(8.dp))
+
                 EpisodeItem(
-                    episode = episode ,
+                    episode = episode,
                     onEpisodeClicked = onEpisodeClicked
                 )
+
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
 
@@ -213,14 +220,13 @@ private fun SeasonTitleHeader(
 @Composable
 fun EpisodeItem(
     episode: Episode,
+    modifier: Modifier = Modifier,
     onEpisodeClicked: (Long) -> Unit = {}
 ) {
 
-    ColumnSpacer(8)
-
     Card(
         shape = RectangleShape,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 84.dp)
             .padding(horizontal = 16.dp)
@@ -302,7 +308,7 @@ fun EpisodeItem(
         }
     }
 
-    ColumnSpacer(8)
+
 }
 
 @ThemePreviews

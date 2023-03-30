@@ -13,9 +13,9 @@ class SettingsNavigationFactory @Inject constructor() : ComposeNavigationFactory
         builder.viewModelComposable<SettingsViewModel>(
             route = NavigationScreen.SettingsScreen.route,
             content = {
-                SettingsScreen(
+                SettingsRoute(
                     viewModel = this,
-                    navigateUp = { navController.popBackStack() },
+                    onBackClicked = { navController.popBackStack() },
                 )
             }
         )

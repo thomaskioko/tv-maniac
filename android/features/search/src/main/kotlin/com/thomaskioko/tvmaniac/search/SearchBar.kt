@@ -16,7 +16,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,11 +39,11 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
 fun SearchBar(
-    modifier: Modifier = Modifier,
     hint: String,
-    textState: MutableState<TextFieldValue>,
+    modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit
 ) {
+    val textState = remember { mutableStateOf(TextFieldValue()) }
     var textFieldFocusState by remember { mutableStateOf(false) }
 
     SearchInputText(
@@ -69,14 +68,14 @@ var SemanticsPropertyReceiver.keyboardShownProperty by KeyboardShownKey
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SearchInputText(
-    modifier: Modifier = Modifier,
-    keyboardType: KeyboardType = KeyboardType.Text,
     onTextChanged: (TextFieldValue) -> Unit,
     textFieldValue: TextFieldValue,
     keyboardShown: Boolean,
-    hint: String = "",
     onTextFieldFocused: (Boolean) -> Unit,
-    focusState: Boolean
+    focusState: Boolean,
+    modifier: Modifier = Modifier,
+    hint: String = "",
+    keyboardType: KeyboardType = KeyboardType.Text
 ) {
     var keyboardController by remember { mutableStateOf<SoftwareKeyboardController?>(null) }
 
@@ -148,12 +147,10 @@ private fun SearchInputText(
 @ThemePreviews
 @Composable
 fun SearchBarPreview() {
-    val textState = remember { mutableStateOf(TextFieldValue()) }
     TvManiacTheme {
         Surface {
             SearchBar(
                 hint = "Enter Show Title",
-                textState = textState,
                 onValueChange = {}
             )
         }

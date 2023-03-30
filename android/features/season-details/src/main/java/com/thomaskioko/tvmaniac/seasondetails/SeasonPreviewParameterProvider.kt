@@ -1,5 +1,9 @@
 package com.thomaskioko.tvmaniac.seasondetails
 
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.thomaskioko.tvmaniac.data.seasondetails.LoadingError
+import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsLoaded
+import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.data.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
 
@@ -17,7 +21,7 @@ val episode = Episode(
     seasonEpisodeNumber = "S01 | E01"
 )
 
-val seasonDetails =  SeasonDetails(
+val seasonDetails = SeasonDetails(
     seasonId = 1,
     seasonName = "Specials",
     episodeCount = 8,
@@ -30,4 +34,16 @@ val seasonDetails =  SeasonDetails(
     )
 )
 
-val seasonsEpList: List<SeasonDetails> = listOf(seasonDetails)
+class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsState> {
+    override val values: Sequence<SeasonDetailsState>
+        get() {
+            return sequenceOf(
+                SeasonDetailsLoaded(
+                    showTitle = "Loki",
+                    seasonDetailsList = listOf(seasonDetails)
+                ),
+                LoadingError(message = "Something went Wrong ")
+            )
+        }
+
+}

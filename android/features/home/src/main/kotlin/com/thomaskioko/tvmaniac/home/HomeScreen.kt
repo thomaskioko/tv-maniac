@@ -47,7 +47,8 @@ import com.thomaskioko.tvmaniac.resources.R
 @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    composeNavigationFactories: Set<ComposeNavigationFactory>
+    composeNavigationFactories: Set<ComposeNavigationFactory>,
+    modifier: Modifier = Modifier
 ) {
 
     val navController = rememberNavController()
@@ -56,7 +57,7 @@ fun HomeScreen(
     navController.navigatorProvider += bottomSheetNavigator
 
     Scaffold(
-        modifier = Modifier
+        modifier = modifier
             .navigationBarsPadding(),
         containerColor = Color.Transparent,
         contentColor = MaterialTheme.colorScheme.onBackground,
@@ -149,6 +150,7 @@ fun RowScope.TvManiacBottomNavigationItem(
     imageVector: ImageVector,
     title: String,
     selected: Boolean,
+    modifier: Modifier = Modifier,
     onNavigationSelected: (NavigationScreen) -> Unit
 ) {
     BottomNavigationItem(

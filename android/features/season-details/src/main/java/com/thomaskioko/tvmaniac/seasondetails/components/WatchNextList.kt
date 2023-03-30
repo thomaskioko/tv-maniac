@@ -2,7 +2,9 @@ package com.thomaskioko.tvmaniac.seasondetails.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,8 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
-import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
-import com.thomaskioko.tvmaniac.compose.components.RowSpacer
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.data.seasondetails.model.Episode
@@ -42,15 +42,16 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
 fun WatchNextContent(
-    episodeList: List<Episode>?
+    episodeList: List<Episode>?,
+    modifier: Modifier = Modifier
 ) {
     episodeList?.let {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            ColumnSpacer(8)
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = stringResource(id = R.string.title_watch_next),
@@ -58,7 +59,7 @@ fun WatchNextContent(
             )
         }
 
-        ColumnSpacer(8)
+        Spacer(modifier = Modifier.height(8.dp))
 
         val lazyListState = rememberLazyListState()
 
@@ -68,7 +69,8 @@ fun WatchNextContent(
         ) {
 
             itemsIndexed(episodeList) { index, episode ->
-                RowSpacer(if (index == 0) 32 else 8)
+                val value = if (index == 0) 32 else 8
+                Spacer(modifier = Modifier.height(value.dp))
 
                 WatchNextItem(
                     episode = episode,
@@ -76,7 +78,7 @@ fun WatchNextContent(
                 )
             }
 
-            item { RowSpacer(16) }
+            item { Spacer(modifier = Modifier.height(16.dp)) }
         }
     }
 }
@@ -84,12 +86,13 @@ fun WatchNextContent(
 @Composable
 fun WatchNextItem(
     episode: Episode,
-    onEpisodeClicked: (Long) -> Unit = {}
+    modifier: Modifier = Modifier,
+    onEpisodeClicked: (Long) -> Unit = {},
 ) {
 
     Card(
         shape = RectangleShape,
-        modifier = Modifier
+        modifier = modifier
             .size(width = 260.dp, height = 90.dp)
             .clickable { onEpisodeClicked(episode.id) },
     ) {

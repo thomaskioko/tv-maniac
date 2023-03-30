@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -52,17 +54,17 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.showdetails.DetailConstants.HEADER_HEIGHT
-import com.thomaskioko.tvmaniac.compose.components.CircularLoadingView
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
-import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
-import com.thomaskioko.tvmaniac.compose.components.RowSpacer
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.SnackBarErrorRetry
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -86,56 +88,90 @@ import com.thomaskioko.tvmaniac.data.showdetails.model.Show
 import com.thomaskioko.tvmaniac.resources.R
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowDetailScreen(
-    viewModel: ShowDetailsViewModel,
-    navigateUp: () -> Unit,
+fun ShowDetailRoute(
+    onBackClicked: () -> Unit,
     onShowClicked: (Long) -> Unit,
     onSeasonClicked: (Long, String) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: ShowDetailsViewModel = hiltViewModel(),
     onWatchTrailerClicked: (Long, String?) -> Unit = { _, _ -> }
 ) {
 
     val viewState by viewModel.state.collectAsStateWithLifecycle()
 
+    ShowDetailScreen(
+        state = viewState,
+        modifier = modifier,
+        onBackClicked = onBackClicked,
+        onSeasonClicked = onSeasonClicked,
+        onShowClicked = onShowClicked,
+        onWatchTrailerClicked = { canPlay, traktId, trailerKey ->
+            if (canPlay)
+                onWatchTrailerClicked(traktId, trailerKey)
+            else
+                viewModel.dispatch(WebViewError)
+        },
+        onUpdateFavoriteClicked = { viewModel.dispatch(it) },
+        onDismissTrailerErrorClicked = { viewModel.dispatch(DismissWebViewError) }
+    )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ShowDetailScreen(
+    state: ShowDetailsState,
+    onBackClicked: () -> Unit,
+    onSeasonClicked: (Long, String) -> Unit,
+    onShowClicked: (Long) -> Unit,
+    onWatchTrailerClicked: (Boolean, Long, String?) -> Unit,
+    onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
+    modifier: Modifier = Modifier,
+    onDismissTrailerErrorClicked: () -> Unit,
+) {
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
 
-    val title = (viewState as? ShowState.ShowLoaded)?.show?.title ?: ""
+    val title = (state as? ShowState.ShowLoaded)?.show?.title ?: ""
 
     Scaffold(
         topBar = {
             ShowTopBar(
                 listState = listState,
                 title = title,
-                onNavUpClick = navigateUp
+                onNavUpClick = onBackClicked
             )
         },
         content = { contentPadding ->
 
-            when (viewState) {
-                ShowDetailsState.Loading -> CircularLoadingView()
+            when (state) {
+                ShowDetailsState.Loading -> LoadingIndicator(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.Center)
+                )
+
                 is ShowDetailsState.ShowDetailsError -> ErrorUi(
-                    errorMessage = (viewState as ShowDetailsState.ShowDetailsError).errorMessage,
-                    onRetry = {}
+                    errorMessage = state.errorMessage,
+                    onRetry = {},
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.Center)
                 )
 
                 is ShowDetailsState.ShowDetailsLoaded -> {
                     ShowDetailContent(
                         contentPadding = contentPadding,
                         snackBarHostState = snackbarHostState,
-                        viewState = viewState as ShowDetailsState.ShowDetailsLoaded,
+                        viewState = state,
                         listState = listState,
+                        modifier = modifier,
                         onSeasonClicked = onSeasonClicked,
                         onShowClicked = onShowClicked,
-                        onWatchTrailerClicked = { canPlay, traktId, trailerKey ->
-                            if (canPlay)
-                                onWatchTrailerClicked(traktId, trailerKey)
-                            else
-                                viewModel.dispatch(WebViewError)
-                        },
-                        onUpdateFavoriteClicked = { viewModel.dispatch(it) },
-                        onDismissTrailerErrorClicked = { viewModel.dispatch(DismissWebViewError) }
+                        onWatchTrailerClicked = onWatchTrailerClicked,
+                        onUpdateFavoriteClicked = onUpdateFavoriteClicked,
+                        onDismissTrailerErrorClicked = onDismissTrailerErrorClicked
                     )
                 }
             }
@@ -143,6 +179,7 @@ fun ShowDetailScreen(
         }
     )
 }
+
 
 @Composable
 private fun ShowTopBar(
@@ -191,9 +228,11 @@ private fun ShowDetailContent(
     onShowClicked: (Long) -> Unit,
     onWatchTrailerClicked: (Boolean, Long, String?) -> Unit,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
+    modifier: Modifier = Modifier,
     onDismissTrailerErrorClicked: () -> Unit,
 ) {
     LazyColumn(
+        modifier = modifier,
         state = listState,
         contentPadding = contentPadding.copy(copyTop = false),
     ) {
@@ -201,7 +240,7 @@ private fun ShowDetailContent(
         item {
             val trailerState = (viewState.trailerState as? TrailersState.TrailersLoaded)
 
-            ShowHeaderContent(
+            HeaderContent(
                 listState = listState,
                 showState = viewState.showState,
                 trailerKey = trailerState?.trailersList?.firstOrNull()?.key,
@@ -259,7 +298,7 @@ private fun ShowDetailContent(
 }
 
 @Composable
-private fun ShowHeaderContent(
+private fun HeaderContent(
     showState: ShowState,
     trailerKey: String?,
     listState: LazyListState,
@@ -327,7 +366,8 @@ private fun Body(
             .background(Brush.verticalGradient(surfaceGradient))
             .padding(horizontal = 16.dp)
     ) {
-        ColumnSpacer(16)
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Column(
             modifier = Modifier
@@ -345,7 +385,7 @@ private fun Body(
                 maxLines = 1
             )
 
-            ColumnSpacer(8)
+            Spacer(modifier = Modifier.height(8.dp))
 
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 ExpandingText(
@@ -354,9 +394,9 @@ private fun Body(
                 )
             }
 
-            ColumnSpacer(8)
+            Spacer(modifier = Modifier.height(8.dp))
 
-            TvShowMetadata(
+            ShowMetadata(
                 releaseYear = show.year,
                 status = show.status,
                 seasonNumber = show.numberOfSeasons,
@@ -366,7 +406,7 @@ private fun Body(
 
             GenreText(show.genres)
 
-            ColumnSpacer(8)
+            Spacer(modifier = Modifier.height(8.dp))
 
             ShowDetailButtons(
                 traktId = show.traktId,
@@ -376,7 +416,7 @@ private fun Body(
                 onWatchTrailerClicked = onWatchTrailerClicked
             )
 
-            ColumnSpacer(8)
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
         Spacer(Modifier.height(16.dp))
@@ -384,92 +424,100 @@ private fun Body(
 }
 
 @Composable
-fun TvShowMetadata(
+fun ShowMetadata(
     releaseYear: String,
     status: String?,
     seasonNumber: Int?,
     language: String?,
-    rating: Double
+    rating: Double,
+    modifier: Modifier = Modifier
 ) {
-    val resources = LocalContext.current.resources
+    Column(
+        modifier = modifier
+    ) {
+        val resources = LocalContext.current.resources
 
-    val divider = buildAnnotatedString {
-        val tagStyle = MaterialTheme.typography.labelMedium.toSpanStyle().copy(
-            color = MaterialTheme.colorScheme.secondary
-        )
-        withStyle(tagStyle) {
-            append("  •  ")
-        }
-    }
-    val text = buildAnnotatedString {
-        val statusStyle = MaterialTheme.typography.labelMedium.toSpanStyle().copy(
-            color = MaterialTheme.colorScheme.secondary,
-            background = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f)
-        )
-
-        val tagStyle = MaterialTheme.typography.labelMedium.toSpanStyle().copy(
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-
-        AnimatedVisibility(visible = !status.isNullOrBlank()) {
-            status?.let {
-                withStyle(statusStyle) {
-                    append(" ")
-                    append(it)
-                    append(" ")
-                }
-                append(divider)
-            }
-        }
-
-        withStyle(tagStyle) {
-            append(releaseYear)
-        }
-
-        AnimatedVisibility(visible = seasonNumber != null) {
-            seasonNumber?.let {
-                append(divider)
-                withStyle(tagStyle) {
-                    append(resources.getQuantityString(R.plurals.season_count, it, it))
-                }
-            }
-        }
-
-        append(divider)
-        language?.let { language ->
+        val divider = buildAnnotatedString {
+            val tagStyle = MaterialTheme.typography.labelMedium.toSpanStyle().copy(
+                color = MaterialTheme.colorScheme.secondary
+            )
             withStyle(tagStyle) {
-                append(language)
+                append("  •  ")
+            }
+        }
+        val text = buildAnnotatedString {
+            val statusStyle = MaterialTheme.typography.labelMedium.toSpanStyle().copy(
+                color = MaterialTheme.colorScheme.secondary,
+                background = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f)
+            )
+
+            val tagStyle = MaterialTheme.typography.labelMedium.toSpanStyle().copy(
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            AnimatedVisibility(visible = !status.isNullOrBlank()) {
+                status?.let {
+                    withStyle(statusStyle) {
+                        append(" ")
+                        append(it)
+                        append(" ")
+                    }
+                    append(divider)
+                }
+            }
+
+            withStyle(tagStyle) {
+                append(releaseYear)
+            }
+
+            AnimatedVisibility(visible = seasonNumber != null) {
+                seasonNumber?.let {
+                    append(divider)
+                    withStyle(tagStyle) {
+                        append(resources.getQuantityString(R.plurals.season_count, it, it))
+                    }
+                }
+            }
+
+            append(divider)
+            language?.let { language ->
+                withStyle(tagStyle) {
+                    append(language)
+                }
+                append(divider)
+            }
+            withStyle(tagStyle) {
+                append("$rating")
             }
             append(divider)
         }
-        withStyle(tagStyle) {
-            append("$rating")
+
+        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.fillMaxWidth(),
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
         }
-        append(divider)
-    }
 
-    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.fillMaxWidth(),
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1
-        )
+        Spacer(modifier = Modifier.height(8.dp))
     }
-
-    ColumnSpacer(8)
 
 }
 
 @Composable
-private fun GenreText(genreList: List<String>) {
+private fun GenreText(
+    genreList: List<String>
+) {
 
     LazyRow(
         modifier = Modifier.fillMaxWidth()
     ) {
         items(genreList) { genre ->
-            RowSpacer(4)
+
+            Spacer(modifier = Modifier.width(4.dp))
 
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 TvManiacTextButton(
@@ -499,9 +547,11 @@ fun ShowDetailButtons(
     trailerKey: String?,
     onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
     onWatchTrailerClicked: (Long, String?) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
 
     Row(
+        modifier = modifier,
         horizontalArrangement = Arrangement.Center,
     ) {
 
@@ -523,7 +573,7 @@ fun ShowDetailButtons(
             onClick = { onWatchTrailerClicked(traktId, trailerKey) },
         )
 
-        RowSpacer(value = 8)
+        Spacer(modifier = Modifier.width(8.dp))
 
 
         TvManiacOutlinedButton(
@@ -617,7 +667,12 @@ private fun TrailersContent(
 ) {
     when (trailersState) {
         is TrailersState.TrailersError -> {
-            //TODO:: Show Error view with retry
+            SnackBarErrorRetry(
+                snackBarHostState = snackBarHostState,
+                errorMessage = trailersState.errorMessage,
+                onErrorAction = onDismissTrailerErrorClicked,
+                actionLabel = "Dismiss"
+            )
         }
 
         is TrailersState.TrailersLoaded -> {
@@ -645,26 +700,26 @@ private fun TrailersContent(
 }
 
 private object DetailConstants {
-     val HEADER_HEIGHT = 550.dp
+    val HEADER_HEIGHT = 550.dp
 }
 
 
 @ThemePreviews
 @Composable
-fun ShowDetailContentPreview() {
+private fun ShowDetailScreenPreview(
+    @PreviewParameter(DetailPreviewParameterProvider::class)
+    state: ShowDetailsState
+) {
     TvManiacTheme {
         Surface {
-            val snackbarHostState = remember { SnackbarHostState() }
-            ShowDetailContent(
-                snackBarHostState = snackbarHostState,
-                viewState = detailUiState,
-                listState = LazyListState(),
-                contentPadding = PaddingValues(),
+            ShowDetailScreen(
+                state = state,
                 onSeasonClicked = { _, _ -> },
                 onShowClicked = {},
                 onWatchTrailerClicked = { _, _, _ -> },
                 onUpdateFavoriteClicked = {},
-                onDismissTrailerErrorClicked = {}
+                onDismissTrailerErrorClicked = {},
+                onBackClicked = {}
             )
         }
     }
