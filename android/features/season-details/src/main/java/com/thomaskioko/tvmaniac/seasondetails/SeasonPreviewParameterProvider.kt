@@ -26,12 +26,9 @@ val seasonDetails = SeasonDetails(
     seasonName = "Specials",
     episodeCount = 8,
     watchProgress = 0.4f,
-    episodes = listOf(
-        episode,
-        episode,
-        episode,
-        episode,
-    )
+    episodes = List(8) {
+        episode
+    }
 )
 
 class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsState> {
@@ -45,5 +42,4 @@ class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsSta
                 LoadingError(message = "Something went Wrong ")
             )
         }
-
 }
