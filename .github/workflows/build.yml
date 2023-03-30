@@ -47,7 +47,7 @@ jobs:
           echo -e "\TRAKT_REDIRECT_URI=$TRAKT_REDIRECT_URI" >> ./local.properties          
 
       - name: Check lint
-        run: ./gradlew lintDemoDebug
+        run: ./gradlew lint
 
       - name: Build with gradle
         run: ./gradlew assemble
