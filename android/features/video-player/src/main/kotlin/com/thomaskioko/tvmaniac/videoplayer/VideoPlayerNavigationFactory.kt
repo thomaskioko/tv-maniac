@@ -19,7 +19,7 @@ class VideoPlayerNavigationFactory @Inject constructor() : ComposeNavigationFact
             ),
             route = "${NavigationScreen.VideoPlayerNavScreen.route}/{showId}/{videoKey}",
             content = {
-                VideoPlayerScreen(
+                VideoPlayerRoute(
                     viewModel = this,
                 )
             }

@@ -13,11 +13,11 @@ kotlin {
 
         sourceSets["commonMain"].dependencies {
             implementation(libs.koin)
-            implementation(libs.squareup.sqldelight.primitive.adapters)
+            implementation(libs.sqldelight.primitive.adapters)
         }
 
         sourceSets["androidMain"].dependencies {
-            implementation(libs.squareup.sqldelight.driver.android)
+            implementation(libs.sqldelight.driver.android)
             implementation(libs.hilt.android)
             configurations["kapt"].dependencies.add(
                 org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
@@ -31,13 +31,13 @@ kotlin {
 
         sourceSets["androidTest"].dependencies {
             implementation(kotlin("test"))
-            implementation(libs.squareup.sqldelight.driver.jvm)
+            implementation(libs.sqldelight.driver.jvm)
         }
 
 
         sourceSets["commonTest"].dependencies {
             implementation(kotlin("test"))
-            implementation(libs.testing.kotest.assertions)
+            implementation(libs.kotest.assertions)
         }
 
         sourceSets["iosMain"].dependencies {

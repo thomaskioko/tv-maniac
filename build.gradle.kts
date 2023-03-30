@@ -40,10 +40,6 @@ tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }
 
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
-}
-
 subprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         with(kotlinOptions) {
@@ -51,25 +47,10 @@ subprojects {
 
             freeCompilerArgs = freeCompilerArgs + listOf(
                 "-opt-in=kotlin.RequiresOptIn",
-                "-opt-in=kotlin.OptIn",
                 "-opt-in=kotlin.time.ExperimentalTime",
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=kotlinx.coroutines.FlowPreview",
-                "-opt-in=androidx.lifecycle.compose.ExperimentalLifecycleComposeApi",
-                "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
             )
         }
     }
 }
-
-/**
- * Disable iosTest Task for now. Using mockk causes the build to fail. Revisit later.
- * Action:
- * - Resolve issue or replace dependency
- */
-project.gradle.startParameter.excludedTaskNames.addAll(
-    listOf(
-        "compileTestKotlinIosArm64",
-        "compileTestKotlinIosX64"
-    )
-)

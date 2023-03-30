@@ -13,7 +13,7 @@ class SearchNavigationFactory @Inject constructor() : ComposeNavigationFactory {
         builder.viewModelComposable<SearchViewModel>(
             route = NavigationScreen.SearchNavScreen.route,
             content = {
-                SearchScreen(
+                SearchRoute(
                     viewModel = this,
                     navController = navController
                 )

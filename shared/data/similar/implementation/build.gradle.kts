@@ -31,9 +31,9 @@ kotlin {
 
         sourceSets["commonTest"].dependencies {
             implementation(kotlin("test"))
-            implementation(libs.testing.turbine)
-            implementation(libs.testing.kotest.assertions)
-            implementation(libs.testing.coroutines.test)
+            implementation(libs.turbine)
+            implementation(libs.kotest.assertions)
+            implementation(libs.coroutines.test)
         }
     }
 }

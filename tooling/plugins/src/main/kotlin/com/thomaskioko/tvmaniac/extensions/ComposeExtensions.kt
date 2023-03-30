@@ -8,7 +8,6 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 
 
-@Suppress("UnstableApiUsage")
 internal fun Project.configureAndroidCompose(
     commonExtension: CommonExtension<*, *, *, *>,
 ) {
@@ -37,9 +36,13 @@ internal fun Project.configureAndroidCompose(
             freeCompilerArgs = freeCompilerArgs
         }
 
+        val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
+
         dependencies {
             val bom = libs.findLibrary("androidx-compose-bom").get()
+
             add("implementation", platform(bom))
+            add("lintChecks", libs.findLibrary("lint-compose").get())
         }
     }
 }

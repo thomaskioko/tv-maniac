@@ -70,7 +70,7 @@ internal class ShowDetailsStateMachineTest {
     fun error_loading_similarShows_emits_expected_result() = runTest {
         stateMachine.state.test {
 
-            val errorMessage = "Oppsy. Something went wrong"
+            val errorMessage = "Something went wrong"
             traktRepository.setShowResult(Either.Right(selectedShow))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))
             trailerRepository.setTrailerResult(Either.Right(trailers))
@@ -99,7 +99,7 @@ internal class ShowDetailsStateMachineTest {
     fun error_loading_trailers_emits_expected_result() = runTest {
         stateMachine.state.test {
 
-            val errorMessage = "Oppsy. Something went wrong"
+            val errorMessage = "Something went wrong"
             traktRepository.setShowResult(Either.Right(selectedShow))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))
             similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
@@ -128,7 +128,7 @@ internal class ShowDetailsStateMachineTest {
     fun error_loading_seasons_emits_expected_result() = runTest {
         stateMachine.state.test {
 
-            val errorMessage = "Oppsy. Something went wrong"
+            val errorMessage = "Something went wrong"
             traktRepository.setShowResult(Either.Right(selectedShow))
             trailerRepository.setTrailerResult(Either.Right(trailers))
             similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
@@ -157,7 +157,7 @@ internal class ShowDetailsStateMachineTest {
     fun error_state_emits_expected_result() = runTest {
         stateMachine.state.test {
 
-            val errorMessage = "Oppsy. Something went wrong"
+            val errorMessage = "Something went wrong"
             traktRepository.setShowResult(Either.Left(DefaultError(Throwable(errorMessage))))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))
             similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))

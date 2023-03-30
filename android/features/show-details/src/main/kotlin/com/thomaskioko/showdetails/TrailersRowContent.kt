@@ -1,20 +1,23 @@
 package com.thomaskioko.showdetails
 
-import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Card
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,14 +27,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
-import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
-import com.thomaskioko.tvmaniac.compose.components.LoadingRowContent
-import com.thomaskioko.tvmaniac.compose.components.RowSpacer
+import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.data.showdetails.TrailersState
 import com.thomaskioko.tvmaniac.data.showdetails.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
@@ -42,80 +42,84 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 fun TrailersRowContent(
     isLoading: Boolean,
     trailersList: List<Trailer>,
-    onTrailerClicked: (Long, String,) -> Unit
+    modifier: Modifier = Modifier,
+    onTrailerClicked: (Long, String) -> Unit
 ) {
-    if (trailersList.isNotEmpty()){
-        LoadingRowContent(
+    if (trailersList.isNotEmpty()) {
+        TextLoadingItem(
             isLoading = isLoading,
             text = stringResource(id = R.string.title_trailer)
+        )
+
+        val lazyListState = rememberLazyListState()
+
+        LazyRow(
+            modifier = modifier,
+            state = lazyListState,
+            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
         ) {
-            val lazyListState = rememberLazyListState()
+            itemsIndexed(trailersList) { index, trailer ->
 
-            LazyRow(
-                state = lazyListState,
-                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-            ) {
-                itemsIndexed(trailersList) { index, trailer ->
+                val value = if (index == 0) 16 else 8
+                Spacer(modifier = Modifier.width(value.dp))
 
-                    RowSpacer(value = if (index == 0) 16 else 8)
+                Card(
+                    modifier = Modifier
+                        .clickable { onTrailerClicked(trailer.showId, trailer.key) },
+                    shape = RoundedCornerShape(4.dp),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 4.dp
+                    ),
+                ) {
 
-                    Card(
-                        elevation = 4.dp,
-                        modifier = Modifier
-                            .clickable { onTrailerClicked( trailer.showId, trailer.key) },
-                        shape = MaterialTheme.shapes.medium
-                    ) {
+                    Box {
+                        AsyncImageComposable(
+                            model = trailer.youtubeThumbnailUrl,
+                            contentDescription = trailer.name,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .height(140.dp)
+                                .aspectRatio(3 / 1.5f)
+                                .drawWithCache {
+                                    val gradient = Brush.verticalGradient(
+                                        colors = listOf(Color.Transparent, Color.Black),
+                                        startY = size.height / 3,
+                                        endY = size.height
+                                    )
+                                    onDrawWithContent {
+                                        drawContent()
+                                        drawRect(gradient, blendMode = BlendMode.Multiply)
+                                    }
+                                },
+                        )
 
-                        Box {
-                            AsyncImageComposable(
-                                model = trailer.youtubeThumbnailUrl,
-                                contentDescription = trailer.name,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .height(140.dp)
-                                    .aspectRatio(3 / 1.5f)
-                                    .drawWithCache {
-                                        val gradient = Brush.verticalGradient(
-                                            colors = listOf(Color.Transparent, Color.Black),
-                                            startY = size.height / 3,
-                                            endY = size.height
-                                        )
-                                        onDrawWithContent {
-                                            drawContent()
-                                            drawRect(gradient, blendMode = BlendMode.Multiply)
-                                        }
-                                    },
-                            )
-
-                            Icon(
-                                imageVector = Icons.Filled.PlayCircle,
-                                contentDescription = trailer.name,
-                                tint = MaterialTheme.colors.secondary,
-                                modifier = Modifier
-                                    .align(Alignment.Center)
-                                    .size(48.dp)
-                            )
-                        }
-
+                        Icon(
+                            imageVector = Icons.Filled.PlayCircle,
+                            contentDescription = trailer.name,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .size(48.dp)
+                        )
                     }
-                }
 
+                }
             }
 
-            ColumnSpacer(8)
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
-@Preview("default")
-@Preview("dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ThemePreviews
 @Composable
 fun TrailersContentPreview() {
     TvManiacTheme {
         Surface {
             TrailersRowContent(
                 isLoading = false,
-                trailersList = (detailUiState.trailerState as TrailersState.TrailersLoaded).trailersList,
+                trailersList = trailerLoaded.trailersList,
                 onTrailerClicked = { _, _ -> }
             )
         }

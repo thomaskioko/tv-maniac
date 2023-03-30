@@ -63,12 +63,12 @@ class SeasonDetailsRepositoryImpl(
 
     override fun observeSeasonDetailsStream(traktId: Long): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
         networkBoundResult(
-            query = { seasonCache.observeShowEpisodes(traktId) },
-            shouldFetch = { it.isNullOrEmpty() },
-            fetch = {
+            query = {
                 datastore.saveSeasonId(traktId)
-                traktService.getSeasonEpisodes(traktId)
+                seasonCache.observeShowEpisodes(traktId)
             },
+            shouldFetch = { it.isNullOrEmpty() },
+            fetch = { traktService.getSeasonEpisodes(traktId) },
             saveFetchResult = { mapResponse(traktId, it) },
             coroutineDispatcher = dispatcher
         )

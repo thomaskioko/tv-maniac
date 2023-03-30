@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.settings
 
-import android.content.res.Configuration
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -12,28 +11,29 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -42,23 +42,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
-import com.thomaskioko.tvmaniac.compose.components.ColumnSpacer
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.compose.util.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.datastore.api.Theme
 import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
-fun SettingsScreen(
-    viewModel: SettingsViewModel,
-    navigateUp: () -> Unit
+fun SettingsRoute(
+    modifier: Modifier = Modifier,
+    viewModel: SettingsViewModel = hiltViewModel(),
+    onBackClicked: () -> Unit
 ) {
 
     val settingsState by viewModel.state.collectAsStateWithLifecycle()
@@ -71,49 +72,62 @@ fun SettingsScreen(
         }
     }
 
+    SettingsScreen(
+        state = settingsState,
+        modifier = modifier,
+        onBackClicked = onBackClicked,
+        onThemeChanged = { viewModel.dispatch(ThemeSelected(it)) },
+        onThemeClicked = { viewModel.dispatch(ChangeThemeClicked) },
+        onDismissTheme = { viewModel.dispatch(DimissThemeClicked) },
+        onLogoutClicked = { viewModel.dispatch(TraktLogout) },
+        onLoginClicked = {
+            loginLauncher.launch(Unit)
+            viewModel.dispatch(DismissTraktDialog)
+        },
+        onConnectClicked = { viewModel.dispatch(ShowTraktDialog) },
+        onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun SettingsScreen(
+    onBackClicked: () -> Unit,
+    state: SettingsState,
+    onThemeChanged: (Theme) -> Unit,
+    onThemeClicked: () -> Unit,
+    onDismissTheme: () -> Unit,
+    onConnectClicked: () -> Unit,
+    onLoginClicked: () -> Unit,
+    onLogoutClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    onDismissDialogClicked: () -> Unit,
+) {
     Scaffold(
         topBar = {
             TvManiacTopBar(
-                title = {
-                    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                        Text(
-                            text = stringResource(R.string.title_settings),
-                            color = MaterialTheme.colors.onSurface
-                        )
-                    }
-                },
-                backgroundColor = MaterialTheme.colors.background,
-                navigationIcon = {
-                    IconButton(
-                        onClick = navigateUp,
-                        modifier = Modifier.iconButtonBackgroundScrim()
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = null,
-                        )
-                    }
-                },
+                title = stringResource(R.string.title_settings),
+                showNavigationIcon = true,
+                onBackClick = onBackClicked,
+                modifier = Modifier
             )
         },
-        modifier = Modifier
+        modifier = modifier
+            .background(color = MaterialTheme.colorScheme.background)
             .statusBarsPadding(),
         content = { innerPadding ->
 
-            when (settingsState) {
+            when (state) {
                 is SettingsContent -> {
                     SettingsList(
-                        settingsContent = settingsState as SettingsContent,
-                        onThemeChanged = { viewModel.dispatch(ThemeSelected(it)) },
-                        onThemeClicked = { viewModel.dispatch(ChangeThemeClicked) },
-                        onDismissTheme = { viewModel.dispatch(DimissThemeClicked) },
-                        onLogoutClicked = { viewModel.dispatch(TraktLogout) },
-                        onLoginClicked = {
-                            loginLauncher.launch(Unit)
-                            viewModel.dispatch(DismissTraktDialog)
-                        },
-                        onConnectClicked = { viewModel.dispatch(ShowTraktDialog) },
-                        onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
+                        settingsContent = state,
+                        onThemeChanged = onThemeChanged,
+                        onThemeClicked = onThemeClicked,
+                        onDismissTheme = onDismissTheme,
+                        onLogoutClicked = onLogoutClicked,
+                        onLoginClicked = onLoginClicked,
+                        onConnectClicked = onConnectClicked,
+                        onDismissDialogClicked = onDismissDialogClicked,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding),
@@ -142,7 +156,7 @@ fun SettingsList(
         modifier = modifier,
     ) {
 
-        item { ColumnSpacer(value = 16) }
+        item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
             ThemeSettingsItem(
@@ -167,7 +181,7 @@ fun SettingsList(
             )
         }
 
-        item { ColumnSpacer(value = 16) }
+        item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item { AboutSettingsItem() }
     }
@@ -200,11 +214,11 @@ private fun TraktProfileSettingsItem(
             .clickable { onConnectClicked() }
             .padding(start = 16.dp, end = 16.dp),
     ) {
-        ColumnSpacer(value = 8)
+        Spacer(modifier = Modifier.height(8.dp))
 
         SettingHeaderTitle(title = stringResource(R.string.settings_title_trakt))
 
-        ColumnSpacer(value = 8)
+        Spacer(modifier = Modifier.height(8.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -218,20 +232,20 @@ private fun TraktProfileSettingsItem(
                         traktUserName ?: traktFullName ?: ""
                     ),
                     modifier = Modifier
-                        .padding(top = 64.dp)
+                        .padding(end = 16.dp)
                         .size(48.dp)
                         .clip(CircleShape)
-                        .border(2.dp, MaterialTheme.colors.secondary, CircleShape)
+                        .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
 
                 )
             } else {
                 Icon(
                     imageVector = Icons.Filled.Person,
-                    tint = MaterialTheme.colors.secondary,
+                    tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = null,
                     modifier = Modifier
                         .padding(end = 16.dp)
-                        .size(28.dp)
+                        .size(48.dp)
                 )
             }
 
@@ -240,7 +254,7 @@ private fun TraktProfileSettingsItem(
                 modifier = Modifier
                     .weight(1f),
             ) {
-                SettingTitle(titleId)
+                TitleItem(titleId)
                 SettingDescription(stringResource(R.string.trakt_description))
             }
 
@@ -252,9 +266,9 @@ private fun TraktProfileSettingsItem(
             )
         }
 
-        ColumnSpacer(value = 8)
+        Spacer(modifier = Modifier.height(8.dp))
 
-        SettingListDivider()
+        ListDivider()
     }
 }
 
@@ -309,14 +323,14 @@ private fun ThemeSettingsItem(
             .padding(start = 16.dp, end = 16.dp)
     ) {
 
-        ColumnSpacer(value = 8)
+        Spacer(modifier = Modifier.height(8.dp))
 
         SettingHeaderTitle(
             title = stringResource(R.string.settings_title_ui),
             modifier = Modifier
         )
 
-        ColumnSpacer(value = 8)
+        Spacer(modifier = Modifier.height(8.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -324,11 +338,11 @@ private fun ThemeSettingsItem(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_palette_24),
-                tint = MaterialTheme.colors.secondary,
+                tint = MaterialTheme.colorScheme.secondary,
                 contentDescription = null,
                 modifier = Modifier
                     .padding(end = 16.dp)
-                    .size(28.dp)
+                    .size(48.dp)
             )
 
             Column(
@@ -336,7 +350,7 @@ private fun ThemeSettingsItem(
                     .padding(end = 8.dp, bottom = 8.dp)
                     .weight(1f),
             ) {
-                SettingTitle(themeTitle)
+                TitleItem(themeTitle)
                 SettingDescription(stringResource(R.string.settings_theme_description))
             }
 
@@ -348,9 +362,9 @@ private fun ThemeSettingsItem(
             )
         }
 
-        ColumnSpacer(value = 8)
+        Spacer(modifier = Modifier.height(8.dp))
 
-        SettingListDivider()
+        ListDivider()
     }
 }
 
@@ -379,7 +393,7 @@ private fun ThemeMenu(
             onDismissRequest = { onDismissTheme() },
             offset = DpOffset(16.dp, 32.dp),
             modifier = Modifier
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
 
         ) {
             ThemeMenuItem(
@@ -390,7 +404,7 @@ private fun ThemeMenu(
             )
 
             ThemeMenuItem(
-                theme =  Theme.DARK,
+                theme = Theme.DARK,
                 selectedTheme = selectedTheme,
                 onThemeSelected = onThemeSelected,
                 onDismissTheme = onDismissTheme
@@ -414,7 +428,7 @@ private fun ThemeMenuItem(
     onDismissTheme: () -> Unit
 ) {
 
-    val themeTitle = when(theme){
+    val themeTitle = when (theme) {
         Theme.LIGHT -> "Light Theme"
         Theme.DARK -> "Dark Theme"
         Theme.SYSTEM -> "System Theme"
@@ -460,20 +474,20 @@ private fun AboutSettingsItem() {
     ) {
         SettingHeaderTitle(title = stringResource(R.string.settings_title_info))
 
-        ColumnSpacer(value = 8)
+        Spacer(modifier = Modifier.height(8.dp))
 
-        SettingTitle(title = stringResource(R.string.settings_title_about))
+        TitleItem(title = stringResource(R.string.settings_title_about))
 
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             Text(
                 text = stringResource(R.string.settings_about_description),
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
 
-        ColumnSpacer(value = 8)
+        Spacer(modifier = Modifier.height(8.dp))
 
-        SettingListDivider()
+        ListDivider()
     }
 }
 
@@ -481,8 +495,8 @@ private fun AboutSettingsItem() {
 fun SettingHeaderTitle(title: String, modifier: Modifier = Modifier) {
     Text(
         text = title,
-        style = MaterialTheme.typography.body2.copy(
-            color = MaterialTheme.colors.secondary
+        style = MaterialTheme.typography.bodyMedium.copy(
+            color = MaterialTheme.colorScheme.secondary
         ),
         modifier = modifier
             .fillMaxWidth(),
@@ -490,14 +504,28 @@ fun SettingHeaderTitle(title: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SettingTitle(title: String) {
-    Text(title, style = MaterialTheme.typography.subtitle1)
+fun TitleItem(
+    title: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
+        modifier = modifier
+    )
 }
 
 @Composable
-fun SettingDescription(description: String) {
+fun SettingDescription(
+    description: String,
+    modifier: Modifier = Modifier,
+) {
     CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-        Text(description, style = MaterialTheme.typography.body2)
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = modifier
+        )
     }
 }
 
@@ -505,29 +533,28 @@ fun SettingDescription(description: String) {
  * Full-width divider with padding for settings items
  */
 @Composable
-private fun SettingListDivider() {
-    Divider(
-        color = MaterialTheme.colors.onSurface.copy(alpha = 0.08f)
-    )
+private fun ListDivider() {
+    Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
 }
 
-@Preview(
-    name = "Settings List",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-)
+@ThemePreviews
 @Composable
-fun SettingsPropertyPreview() {
+private fun SettingsScreenPreview(
+    @PreviewParameter(SettingsPreviewParameterProvider::class)
+    state: SettingsState
+) {
     TvManiacTheme {
         Surface {
-            SettingsList(
-                settingsContent = SettingsContent.EMPTY,
+            SettingsScreen(
+                state = state,
                 onThemeChanged = {},
                 onThemeClicked = {},
                 onDismissTheme = {},
                 onLogoutClicked = {},
                 onLoginClicked = {},
                 onDismissDialogClicked = {},
-                onConnectClicked = {}
+                onConnectClicked = {},
+                onBackClicked = {}
             )
         }
     }

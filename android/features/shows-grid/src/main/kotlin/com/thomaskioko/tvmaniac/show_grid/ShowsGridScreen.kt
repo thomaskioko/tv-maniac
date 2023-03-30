@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.show_grid
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -9,89 +10,124 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
-import com.thomaskioko.tvmaniac.compose.components.BackAppBar
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
-import com.thomaskioko.tvmaniac.compose.components.FullScreenLoading
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
+import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.show_grid.model.TvShow
 
-@OptIn(ExperimentalFoundationApi::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ShowsGridScreen(
-    viewModel: ShowGridViewModel,
+fun ShowsGridRoute(
     openShowDetails: (showId: Long) -> Unit,
-    navigateUp: () -> Unit
+    onBackClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: ShowGridViewModel = hiltViewModel(),
 ) {
-
-    val scaffoldState = rememberScaffoldState()
 
     val gridViewState by viewModel.state.collectAsStateWithLifecycle()
 
+    GridScreen(
+        onBackClicked = onBackClicked,
+        state = gridViewState,
+        modifier = modifier,
+        title = Category[viewModel.showType].title, //TODO:: Remove this and do the mapping from the state machine
+        onRetry = { viewModel.dispatch(ReloadShows(viewModel.showType)) },
+        onShowClicked = { openShowDetails(it) }
+    )
+
+}
+
+@Composable
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+private fun GridScreen(
+    onBackClicked: () -> Unit,
+    state: GridState,
+    title: String,
+    onShowClicked: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+    onRetry: () -> Unit = {},
+) {
     Scaffold(
-        scaffoldState = scaffoldState,
         topBar = {
-            BackAppBar(
-                title = Category[viewModel.showType].title, //TODO:: Remove this and do the mapping from the state machine
-                onBackClick = navigateUp
+            TvManiacTopBar(
+                title = title,
+                onBackClick = onBackClicked
             )
         },
         modifier = Modifier
             .statusBarsPadding(),
-    ) { paddingValues ->
-        when (gridViewState) {
-            LoadingContent -> FullScreenLoading()
-            is LoadingContentError -> ErrorUi(
-                errorMessage = (gridViewState as LoadingContentError).errorMessage,
-                onRetry = {
-                viewModel.dispatch(
-                    ReloadShows(viewModel.showType)
-                )
-            })
+    ) { contentPadding ->
+        when (state) {
+            LoadingContent -> LoadingIndicator(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center)
+            )
 
-            is ShowsLoaded -> ShowsGridContent(
-                paddingValues = paddingValues,
-                list = (gridViewState as ShowsLoaded).list,
-                onItemClicked = { openShowDetails(it) }
+            is LoadingContentError -> ErrorUi(
+                errorMessage = state.errorMessage,
+                onRetry = onRetry,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center)
+            )
+
+            is ShowsLoaded -> GridContent(
+                modifier = modifier
+                    .fillMaxSize(),
+                contentPadding = contentPadding,
+                list = state.list,
+                onItemClicked = onShowClicked
             )
         }
-
-
     }
 }
 
 @ExperimentalFoundationApi
 @Composable
-fun ShowsGridContent(
-    paddingValues: PaddingValues,
+fun GridContent(
     list: List<TvShow>,
+    contentPadding: PaddingValues,
     onItemClicked: (Long) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     val listState = rememberLazyGridState()
 
     LazyVerticalGrid(
+        modifier = modifier,
         state = listState,
         columns = GridCells.Fixed(3),
+        contentPadding = contentPadding.copy(copyTop = false),
     ) {
 
         items(list) { show ->
@@ -115,9 +151,10 @@ fun ShowsGridContent(
                             .animateContentSize()
                     ) {
                         Card(
-                            elevation = 4.dp,
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 4.dp
+                            ),
                             modifier = Modifier.clickable { onItemClicked(show.traktId) },
-                            shape = MaterialTheme.shapes.medium
                         ) {
                             AsyncImageComposable(
                                 model = show.posterImageUrl,
@@ -134,6 +171,25 @@ fun ShowsGridContent(
                     }
                 }
             }
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ShowsGridContentPreview(
+    @PreviewParameter(GridPreviewParameterProvider::class)
+    state: GridState
+) {
+    TvManiacTheme {
+        Surface {
+            GridScreen(
+                state = state,
+                title = "Anticipated",
+                onShowClicked = {},
+                onBackClicked = {},
+                onRetry = {}
+            )
         }
     }
 }

@@ -18,9 +18,9 @@ class ShowDetailNavigationFactory @Inject constructor() : ComposeNavigationFacto
             ),
             route = "${NavigationScreen.ShowDetailsNavScreen.route}/{tvShowId}",
             content = {
-                ShowDetailScreen(
+                ShowDetailRoute(
                     viewModel = this,
-                    navigateUp = { navController.popBackStack() },
+                    onBackClicked = { navController.popBackStack() },
                     onShowClicked = { showId ->
                         navController.navigate("${NavigationScreen.ShowDetailsNavScreen.route}/$showId")
                     },

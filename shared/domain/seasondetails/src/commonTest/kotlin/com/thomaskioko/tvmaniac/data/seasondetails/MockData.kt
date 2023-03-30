@@ -7,7 +7,7 @@ val episodes = listOf(
     Episode(
         id = 12345,
         seasonId = 12343,
-        episodeTitle = "Season 01",
+        episodeTitle = "Some title",
         episodeNumberTitle = "E01 • Some title",
         overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
         imageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -30,5 +30,5 @@ val seasonDetailsList = listOf(
 
 val seasonDetailsLoaded = SeasonDetailsLoaded(
     showTitle = "Loki",
-    episodeList = seasonDetailsList
+    seasonDetailsList = seasonDetailsList
 )
