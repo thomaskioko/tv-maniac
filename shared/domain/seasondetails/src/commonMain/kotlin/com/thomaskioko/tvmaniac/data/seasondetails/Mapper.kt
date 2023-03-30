@@ -33,8 +33,8 @@ fun SelectSeasonWithEpisodes.toEpisode(): Episode {
     return Episode(
         id = id,
         seasonId = season_id,
-        episodeTitle = name,
-        episodeNumberTitle = "E$episode_number • $title_",
+        episodeTitle = title_,
+        episodeNumberTitle = "E${episode_number} • $title_",
         overview = overview,
         imageUrl = image_url,
         runtime = runtime,

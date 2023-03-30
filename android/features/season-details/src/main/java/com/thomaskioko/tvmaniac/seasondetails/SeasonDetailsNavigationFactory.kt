@@ -19,9 +19,9 @@ class SeasonDetailsNavigationFactory @Inject constructor() : ComposeNavigationFa
             ),
             route = "${NavigationScreen.SeasonDetailsNavScreen.route}/{showId}/{seasonName}",
             content = {
-                SeasonDetailsScreen(
+                SeasonDetailsRoute(
                     viewModel = this,
-                    navigateUp = { navController.popBackStack() },
+                    onBackClicked = { navController.popBackStack() },
                     initialSeasonName = navController.currentBackStackEntry?.arguments?.getString("seasonName"),
                     onEpisodeClicked = {
                         // TODO:: Navigate to Episode detail module

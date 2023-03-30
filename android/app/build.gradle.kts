@@ -20,7 +20,7 @@ android {
 
 dependencies {
 
-    implementation(projects.android.core.compose)
+    implementation(projects.android.core.designsystem)
     implementation(projects.android.core.navigation)
     implementation(projects.android.features.discover)
     implementation(projects.android.features.home)

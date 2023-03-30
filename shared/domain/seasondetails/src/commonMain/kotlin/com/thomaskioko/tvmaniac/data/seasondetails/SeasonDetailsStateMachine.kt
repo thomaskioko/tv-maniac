@@ -32,7 +32,7 @@ class SeasonDetailsStateMachine constructor(
                         },
                         {
                             state.mutate {
-                                copy(episodeList = it.toSeasonWithEpisodes())
+                                copy(seasonDetailsList = it.toSeasonWithEpisodes())
                             }
                         }
                     )
@@ -53,7 +53,7 @@ class SeasonDetailsStateMachine constructor(
                                 is Either.Left -> LoadingError(result.error.errorMessage)
                                 is Either.Right -> SeasonDetailsLoaded(
                                     showTitle = result.getTitle(),
-                                    episodeList = result.toSeasonWithEpisodes()
+                                    seasonDetailsList = result.toSeasonWithEpisodes()
                                 )
                             }
                         }
@@ -78,7 +78,7 @@ class SeasonDetailsStateMachine constructor(
                     {
                         SeasonDetailsLoaded(
                             showTitle = it.getTitle(),
-                            episodeList = it.toSeasonWithEpisodes()
+                            seasonDetailsList = it.toSeasonWithEpisodes()
                         )
                     }
                 )

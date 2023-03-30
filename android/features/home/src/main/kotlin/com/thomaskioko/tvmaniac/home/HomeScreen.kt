@@ -2,19 +2,21 @@ package com.thomaskioko.tvmaniac.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
@@ -23,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
@@ -41,10 +44,11 @@ import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import com.thomaskioko.tvmaniac.navigation.addNavigation
 import com.thomaskioko.tvmaniac.resources.R
 
-@OptIn(ExperimentalMaterialNavigationApi::class)
+@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    composeNavigationFactories: Set<ComposeNavigationFactory>
+    composeNavigationFactories: Set<ComposeNavigationFactory>,
+    modifier: Modifier = Modifier
 ) {
 
     val navController = rememberNavController()
@@ -53,8 +57,11 @@ fun HomeScreen(
     navController.navigatorProvider += bottomSheetNavigator
 
     Scaffold(
-        modifier = Modifier
+        modifier = modifier
             .navigationBarsPadding(),
+        containerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onBackground,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             val currentSelectedItem by navController.currentScreenAsState()
             val showBottomBar = route in listOf(
@@ -95,10 +102,12 @@ fun HomeScreen(
 @Composable
 private fun TvManiacBottomNavigation(
     currentSelectedItem: NavigationScreen,
-    onNavigationSelected: (NavigationScreen) -> Unit
+    onNavigationSelected: (NavigationScreen) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     BottomNavigation(
-        backgroundColor = MaterialTheme.colors.primary
+        modifier = modifier,
+        backgroundColor = MaterialTheme.colorScheme.surface
     ) {
 
         TvManiacBottomNavigationItem(
@@ -141,6 +150,7 @@ fun RowScope.TvManiacBottomNavigationItem(
     imageVector: ImageVector,
     title: String,
     selected: Boolean,
+    modifier: Modifier = Modifier,
     onNavigationSelected: (NavigationScreen) -> Unit
 ) {
     BottomNavigationItem(
@@ -153,8 +163,8 @@ fun RowScope.TvManiacBottomNavigationItem(
         label = { Text(title) },
         selected = selected,
         alwaysShowLabel = true,
-        selectedContentColor = MaterialTheme.colors.secondary,
-        unselectedContentColor = MaterialTheme.colors.onSurface,
+        selectedContentColor = MaterialTheme.colorScheme.secondary,
+        unselectedContentColor = MaterialTheme.colorScheme.onSurface,
         onClick = { onNavigationSelected(screen) }
     )
 }
@@ -181,12 +191,15 @@ private fun NavController.currentScreenAsState(): State<NavigationScreen> {
                 destination.hierarchy.any { it.route == NavigationScreen.DiscoverNavScreen.route } -> {
                     selectedItem.value = NavigationScreen.DiscoverNavScreen
                 }
+
                 destination.hierarchy.any { it.route == NavigationScreen.SearchNavScreen.route } -> {
                     selectedItem.value = NavigationScreen.SearchNavScreen
                 }
+
                 destination.hierarchy.any { it.route == NavigationScreen.WatchlistNavScreen.route } -> {
                     selectedItem.value = NavigationScreen.WatchlistNavScreen
                 }
+
                 destination.hierarchy.any { it.route == NavigationScreen.ProfileNavScreen.route } -> {
                     selectedItem.value = NavigationScreen.ProfileNavScreen
                 }

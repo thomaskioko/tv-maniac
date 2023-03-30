@@ -10,7 +10,6 @@ dependencies {
     api(project(":shared:domain:discover"))
     implementation(project(":shared:data:category:api"))
 
-    implementation(libs.androidx.compose.material)
     implementation(libs.accompanist.pager.core)
 
     implementation(libs.accompanist.pager.indicator)

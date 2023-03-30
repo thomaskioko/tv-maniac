@@ -18,9 +18,9 @@ class ShowsGridNavigationFactory @Inject constructor() : ComposeNavigationFactor
             ),
             route = "${NavigationScreen.ShowGridNavScreen.route}/{showType}",
             content = {
-                ShowsGridScreen(
+                ShowsGridRoute(
                     viewModel = this,
-                    navigateUp = { navController.popBackStack() },
+                    onBackClicked = { navController.popBackStack() },
                     openShowDetails = { tvShowId ->
                         navController.navigate("${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId")
                     },

@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimaryVariant">#FFBE0B</color>
-    <color name="system_ui_scrim_light">#FFFFFF</color>
-    <color name="system_ui_scrim_dark">#FF131313</color>
+    <color name="black">#FF131313</color>
 </resources>
