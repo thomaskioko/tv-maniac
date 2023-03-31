@@ -5,7 +5,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
+import com.thomaskioko.tvmaniac.trakt.profile.api.TraktProfileRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -13,15 +13,16 @@ import dagger.assisted.AssistedInject
 class SyncFollowedShows @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val traktShowRepository: TraktShowRepository
+    private val profileRepository: TraktProfileRepository
 ) : CoroutineWorker(context, params) {
+
     companion object {
         const val TAG = "sync-followed-shows"
     }
 
     override suspend fun doWork(): Result {
         Logger.d("$tags worker running")
-        traktShowRepository.fetchTraktWatchlistShows()
+        profileRepository.fetchTraktWatchlistShows()
 
         return Result.success()
     }

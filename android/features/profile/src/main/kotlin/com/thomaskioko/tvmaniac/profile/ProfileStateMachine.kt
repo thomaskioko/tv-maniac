@@ -4,8 +4,7 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.util.network.Either
-import com.thomaskioko.tvmaniac.trakt.api.TraktProfileRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
+import com.thomaskioko.tvmaniac.trakt.profile.api.TraktProfileRepository
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.TraktManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi

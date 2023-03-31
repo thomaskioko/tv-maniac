@@ -11,6 +11,7 @@ dependencies {
 
     implementation(project(":shared:core:util"))
     implementation(project(":shared:data:trakt:api"))
+    implementation(project(":shared:data:trakt-profile:api"))
 
     implementation(libs.androidx.work.runtime)
 
