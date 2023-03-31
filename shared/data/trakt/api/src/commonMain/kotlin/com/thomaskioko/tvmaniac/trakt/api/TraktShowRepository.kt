@@ -35,10 +35,6 @@ interface TraktShowRepository {
 
     suspend fun updateFollowedShow(traktId: Long, addToWatchList: Boolean)
 
-    suspend fun fetchTraktWatchlistShows()
-
     suspend fun fetchShows()
-
-    suspend fun syncFollowedShows()
 
 }
