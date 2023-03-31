@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.trakt.api
+package com.thomaskioko.tvmaniac.trakt.profile.api
 
 import com.thomaskioko.tvmaniac.core.db.TraktStats
 import com.thomaskioko.tvmaniac.core.db.Trakt_list
@@ -17,4 +17,7 @@ interface TraktProfileRepository {
 
     fun observeUpdateFollowedShow(traktId: Long, addToWatchList: Boolean): Flow<Either<Failure, Unit>>
 
+    suspend fun syncFollowedShows()
+
+    suspend fun fetchTraktWatchlistShows()
 }
