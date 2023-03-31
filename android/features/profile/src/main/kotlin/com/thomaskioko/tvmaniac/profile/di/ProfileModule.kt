@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.profile.di
 
 import com.thomaskioko.tvmaniac.profile.ProfileStateMachine
-import com.thomaskioko.tvmaniac.trakt.api.TraktProfileRepository
+import com.thomaskioko.tvmaniac.trakt.profile.api.TraktProfileRepository
 import com.thomaskioko.tvmaniac.traktauth.TraktManager
 import dagger.Module
 import dagger.Provides
