@@ -1,11 +1,11 @@
-package com.thomaskioko.tvmaniac.trakt.testing
+package com.thomaskioko.tvmaniac.trakt.profile.testing
 
 import com.thomaskioko.tvmaniac.core.db.TraktStats
 import com.thomaskioko.tvmaniac.core.db.Trakt_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
 import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.core.util.network.Failure
-import com.thomaskioko.tvmaniac.trakt.api.TraktProfileRepository
+import com.thomaskioko.tvmaniac.trakt.profile.api.TraktProfileRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -52,4 +52,8 @@ class FakeTraktProfileRepository : TraktProfileRepository {
         traktId: Long,
         addToWatchList: Boolean
     ): Flow<Either<Failure, Unit>> = flowOf(Either.Right(Unit))
+
+    override suspend fun fetchTraktWatchlistShows() {}
+
+    override suspend fun syncFollowedShows() {}
 }

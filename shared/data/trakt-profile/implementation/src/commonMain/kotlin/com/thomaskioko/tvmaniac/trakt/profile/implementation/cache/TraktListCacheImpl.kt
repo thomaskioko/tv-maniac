@@ -1,10 +1,10 @@
-package com.thomaskioko.tvmaniac.trakt.implementation.cache
+package com.thomaskioko.tvmaniac.trakt.profile.implementation.cache
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.db.Trakt_list
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
+import com.thomaskioko.tvmaniac.trakt.profile.api.cache.TraktListCache
 import kotlinx.coroutines.flow.Flow
 import kotlin.coroutines.CoroutineContext
 

@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.trakt.implementation
+package com.thomaskioko.tvmaniac.trakt.profile.implementation
 
 import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
@@ -10,16 +10,16 @@ import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
 import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.core.util.network.Failure
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResult
-import com.thomaskioko.tvmaniac.trakt.api.TraktProfileRepository
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
-import com.thomaskioko.tvmaniac.trakt.api.cache.TraktListCache
-import com.thomaskioko.tvmaniac.trakt.api.cache.TraktStatsCache
-import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
-import com.thomaskioko.tvmaniac.trakt.implementation.mapper.toCache
+import com.thomaskioko.tvmaniac.trakt.profile.api.TraktProfileRepository
+import com.thomaskioko.tvmaniac.trakt.profile.api.cache.TraktListCache
+import com.thomaskioko.tvmaniac.trakt.profile.api.cache.TraktStatsCache
+import com.thomaskioko.tvmaniac.trakt.profile.api.cache.TraktUserCache
 import com.thomaskioko.tvmaniac.trakt.service.api.TraktService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 
 class TraktProfileRepositoryImpl constructor(
     private val traktService: TraktService,
@@ -108,4 +108,36 @@ class TraktProfileRepositoryImpl constructor(
         },
         coroutineDispatcher = dispatcher
     )
+
+    override suspend fun fetchTraktWatchlistShows() {
+        traktUserCache.observeMe()
+            .flowOn(dispatcher)
+            .collect { user ->
+                if (user.slug.isNotBlank()) {
+                    followedCache.insert(traktService.getWatchList().responseToCache())
+                }
+            }
+    }
+
+    override suspend fun syncFollowedShows() {
+        traktUserCache.observeMe()
+            .flowOn(dispatcher)
+            .collect { user ->
+                if (user.slug.isNotBlank()) {
+                    followedCache.getUnsyncedFollowedShows()
+                        .map {
+
+                            traktService.addShowToWatchList(it.id)
+
+                            followedCache.insert(
+                                Followed_shows(
+                                    id = it.id,
+                                    synced = true,
+                                    created_at = dateUtilHelper.getTimestampMilliseconds()
+                                )
+                            )
+                        }
+                }
+            }
+    }
 }
