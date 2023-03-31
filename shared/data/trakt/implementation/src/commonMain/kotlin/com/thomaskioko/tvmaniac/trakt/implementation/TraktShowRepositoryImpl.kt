@@ -1,6 +1,12 @@
 package com.thomaskioko.tvmaniac.trakt.implementation
 
 import co.touchlab.kermit.Logger
+import com.thomaskioko.tvmaniac.category.api.cache.CategoryCache
+import com.thomaskioko.tvmaniac.category.api.model.Category
+import com.thomaskioko.tvmaniac.category.api.model.Category.ANTICIPATED
+import com.thomaskioko.tvmaniac.category.api.model.Category.FEATURED
+import com.thomaskioko.tvmaniac.category.api.model.Category.POPULAR
+import com.thomaskioko.tvmaniac.category.api.model.Category.TRENDING
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
@@ -12,15 +18,8 @@ import com.thomaskioko.tvmaniac.core.util.network.DefaultError
 import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.core.util.network.Failure
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResult
-import com.thomaskioko.tvmaniac.category.api.cache.CategoryCache
-import com.thomaskioko.tvmaniac.category.api.model.Category
-import com.thomaskioko.tvmaniac.category.api.model.Category.ANTICIPATED
-import com.thomaskioko.tvmaniac.category.api.model.Category.FEATURED
-import com.thomaskioko.tvmaniac.category.api.model.Category.POPULAR
-import com.thomaskioko.tvmaniac.category.api.model.Category.TRENDING
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
 import com.thomaskioko.tvmaniac.trakt.api.cache.TraktFollowedCache
-import com.thomaskioko.tvmaniac.trakt.api.cache.TraktUserCache
 import com.thomaskioko.tvmaniac.trakt.api.cache.TvShowCache
 import com.thomaskioko.tvmaniac.trakt.implementation.mapper.responseToCache
 import com.thomaskioko.tvmaniac.trakt.implementation.mapper.showResponseToCacheList
@@ -33,13 +32,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 
 class TraktShowRepositoryImpl constructor(
     private val tvShowCache: TvShowCache,
-    private val traktUserCache: TraktUserCache,
     private val followedCache: TraktFollowedCache,
     private val categoryCache: CategoryCache,
     private val traktService: TraktService,
@@ -118,16 +115,6 @@ class TraktShowRepositoryImpl constructor(
             .map { Either.Right(it) }
             .catch { Either.Left(DefaultError(it)) }
 
-    override suspend fun fetchTraktWatchlistShows() {
-        traktUserCache.observeMe()
-            .flowOn(dispatcher)
-            .collect { user ->
-                if (user.slug.isNotBlank()) {
-                    followedCache.insert(traktService.getWatchList().responseToCache())
-                }
-            }
-    }
-
     override suspend fun fetchShows() {
 
         val categories = listOf(TRENDING, POPULAR, ANTICIPATED, FEATURED)
@@ -139,28 +126,6 @@ class TraktShowRepositoryImpl constructor(
             categoryCache.insert(mappedResult.toCategoryCache(it.id))
         }
 
-    }
-
-    override suspend fun syncFollowedShows() {
-        traktUserCache.observeMe()
-            .flowOn(dispatcher)
-            .collect { user ->
-                if (user.slug.isNotBlank()) {
-                    followedCache.getUnsyncedFollowedShows()
-                        .map {
-
-                            traktService.addShowToWatchList(it.id)
-
-                            followedCache.insert(
-                                Followed_shows(
-                                    id = it.id,
-                                    synced = true,
-                                    created_at = dateUtilHelper.getTimestampMilliseconds()
-                                )
-                            )
-                        }
-                }
-            }
     }
 
     override suspend fun updateFollowedShow(traktId: Long, addToWatchList: Boolean) {
