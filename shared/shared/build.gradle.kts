@@ -39,6 +39,7 @@ kotlin {
             export(project(":shared:data:trailers:api"))
             export(project(":shared:data:tmdb:api"))
             export(project(":shared:data:trakt:api"))
+            export(project(":shared:data:trakt-profile:api"))
             export(project(":shared:domain:following"))
             export(project(":shared:domain:discover"))
             export(project(":shared:domain:seasondetails"))
@@ -66,6 +67,7 @@ kotlin {
             api(project(":shared:data:trailers:api"))
             api(project(":shared:data:tmdb:api"))
             api(project(":shared:data:trakt:api"))
+            api(project( ":shared:data:trakt-profile:api"))
             api(project( ":shared:data:trakt-service:api"))
             api(project(":shared:domain:discover"))
             api(project(":shared:domain:following"))
@@ -81,6 +83,7 @@ kotlin {
             implementation(project(":shared:data:trailers:implementation"))
             implementation(project(":shared:data:tmdb:implementation"))
             implementation(project(":shared:data:trakt:implementation"))
+            implementation(project(":shared:data:trakt-profile:implementation"))
             implementation(project(":shared:data:trakt-service:implementation"))
             implementation(project(":shared:data:category:implementation"))
 
