@@ -25,6 +25,7 @@ import com.thomaskioko.tvmaniac.shared.domain.discover.discoverDomainModule
 import com.thomaskioko.tvmaniac.similar.implementation.similarDataModule
 import com.thomaskioko.tvmaniac.tmdb.implementation.tmdbModule
 import com.thomaskioko.tvmaniac.trakt.implementation.di.traktModule
+import com.thomaskioko.tvmaniac.trakt.profile.implementation.di.traktProfileModule
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.Koin
 import org.koin.core.KoinApplication
@@ -83,6 +84,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         trailerDomainModule(),
         trailersModule(),
         traktModule(),
-        traktServiceModule()
+        traktServiceModule(),
+        traktProfileModule()
     )
 }
