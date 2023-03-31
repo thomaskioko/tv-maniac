@@ -86,10 +86,6 @@ class FakeTraktShowRepository : TraktShowRepository {
 
     override suspend fun updateFollowedShow(traktId: Long, addToWatchList: Boolean) {}
 
-    override suspend fun fetchTraktWatchlistShows() {}
-
     override suspend fun fetchShows() {}
-
-    override suspend fun syncFollowedShows() {}
 
 }
