@@ -5,7 +5,7 @@ import org.koin.core.module.Module as KoinModule
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
+import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -20,12 +20,12 @@ object ShowDetailsModule {
 
     @Provides
     fun provideShowDetailsStateMachine(
-        traktShowRepository: TraktShowRepository,
+        showsRepository: ShowsRepository,
         similarShowsRepository: SimilarShowsRepository,
         seasonDetailsRepository: SeasonDetailsRepository,
         trailerRepository: TrailerRepository
     ): ShowDetailsStateMachine = ShowDetailsStateMachine(
-        traktShowRepository = traktShowRepository,
+        showsRepository = showsRepository,
         similarShowsRepository = similarShowsRepository,
         seasonDetailsRepository = seasonDetailsRepository,
         trailerRepository = trailerRepository

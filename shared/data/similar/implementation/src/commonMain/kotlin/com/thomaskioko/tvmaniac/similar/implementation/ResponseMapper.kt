@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.similar.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Show
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
+import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktShowResponse
 
 fun TraktShowResponse.toShow(): Show {
     return Show(

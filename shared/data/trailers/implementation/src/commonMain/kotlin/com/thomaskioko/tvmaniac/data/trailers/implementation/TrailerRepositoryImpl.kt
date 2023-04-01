@@ -10,14 +10,14 @@ import com.thomaskioko.tvmaniac.core.util.network.networkBoundResult
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import com.thomaskioko.tvmaniac.tmdb.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
-import com.thomaskioko.tvmaniac.trakt.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
 class TrailerRepositoryImpl(
     private val apiService: TmdbService,
     private val trailerCache: TrailerCache,
-    private val tvShowCache: TvShowCache,
+    private val showsCache: ShowsCache,
     private val appUtils: AppUtils,
     private val dispatcher: CoroutineDispatcher,
 ) : TrailerRepository {
@@ -29,7 +29,7 @@ class TrailerRepositoryImpl(
             query = { trailerCache.getTrailersByShowId(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = {
-                val show = tvShowCache.getTvShow(traktId)
+                val show = showsCache.getTvShow(traktId)
                 apiService.getTrailers(show.tmdb_id!!)
             },
             saveFetchResult = { it.mapAndCache(traktId) },

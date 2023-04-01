@@ -7,8 +7,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":shared:data:trakt:api"))
     implementation(project(":shared:data:category:api"))
+    implementation(project(":shared:data:shows:api"))
 
     implementation(libs.androidx.compose.paging)
     implementation(libs.flowredux)

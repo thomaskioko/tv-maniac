@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.28.0"
-agp = "8.1.0-alpha09"
+agp = "8.0.0-rc01"
 appauth = "0.8.1"
 
 androidx-activity = "1.6.1"

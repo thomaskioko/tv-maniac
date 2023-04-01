@@ -10,7 +10,7 @@ import com.thomaskioko.tvmaniac.core.util.network.Failure
 import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
-import com.thomaskioko.tvmaniac.trakt.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -20,13 +20,13 @@ import kotlinx.coroutines.flow.map
 
 class TmdbRepositoryImpl(
     private val apiService: TmdbService,
-    private val tvShowCache: TvShowCache,
+    private val showsCache: ShowsCache,
     private val imageCache: ShowImageCache,
     private val dispatcher: CoroutineDispatcher,
 ) : TmdbRepository {
 
     override fun updateShowArtWork(): Flow<Either<Failure, Unit>> =
-        tvShowCache.observeShowImages()
+        showsCache.observeShowImages()
             .map { shows ->
                 shows.forEach { show ->
                     show.tmdb_id?.let { tmdbId ->
