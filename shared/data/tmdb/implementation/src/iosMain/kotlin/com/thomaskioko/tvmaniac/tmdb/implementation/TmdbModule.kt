@@ -31,7 +31,7 @@ actual fun tmdbModule(): Module = module {
     single<TmdbRepository> {
         TmdbRepositoryImpl(
             apiService = get(),
-            tvShowCache = get(),
+            showsCache = get(),
             imageCache =  get(),
             dispatcher = Dispatchers.Default
         )

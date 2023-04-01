@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.domain.following
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
+import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class FollowingStateMachine constructor(
-    private val repository: TraktShowRepository,
+    private val repository: ShowsRepository,
 ) : FlowReduxStateMachine<FollowingState, FollowingAction>(initialState = LoadingShows) {
 
     init {

@@ -22,10 +22,10 @@ import com.thomaskioko.tvmaniac.settings.SettingsStateMachineWrapper
 import com.thomaskioko.tvmaniac.settings.settingsDomainModule
 import com.thomaskioko.tvmaniac.shared.domain.discover.DiscoverStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.domain.discover.discoverDomainModule
+import com.thomaskioko.tvmaniac.shows.implementation.di.showsModule
 import com.thomaskioko.tvmaniac.similar.implementation.similarDataModule
 import com.thomaskioko.tvmaniac.tmdb.implementation.tmdbModule
-import com.thomaskioko.tvmaniac.trakt.implementation.di.traktModule
-import com.thomaskioko.tvmaniac.trakt.profile.implementation.di.traktProfileModule
+import com.thomaskioko.tvmaniac.trakt.profile.implementation.di.profileModule
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.Koin
 import org.koin.core.KoinApplication
@@ -74,17 +74,17 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
         discoverDomainModule(),
         episodeDataModule(),
         followingDomainModule(),
+        profileModule(),
         seasonDetailsDataModule(),
-        networkModule(),
         seasonDetailsDomainModule(),
         settingsDomainModule(),
         showDetailsDomainModule(),
+        showsModule(),
         similarDataModule(),
         tmdbModule(),
         trailerDomainModule(),
         trailersModule(),
-        traktModule(),
         traktServiceModule(),
-        traktProfileModule()
+        networkModule()
     )
 }

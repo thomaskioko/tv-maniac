@@ -9,14 +9,14 @@ import com.thomaskioko.tvmaniac.core.db.SelectShows
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
 import kotlinx.coroutines.flow.Flow
 import kotlin.coroutines.CoroutineContext
 
-class TraktShowCacheImpl(
+class ShowCacheImpl(
     private val database: TvManiacDatabase,
     private val coroutineContext: CoroutineContext
-) : TvShowCache {
+) : ShowsCache {
 
     override fun insert(show: Show) {
         database.showQueries.transaction {

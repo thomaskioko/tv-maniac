@@ -5,14 +5,14 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.shows.api.cache.TraktFollowedCache
+import com.thomaskioko.tvmaniac.shows.api.cache.FollowedCache
 import kotlinx.coroutines.flow.Flow
 import kotlin.coroutines.CoroutineContext
 
-class TraktFollowedCacheImpl(
+class FollowedCacheImpl(
     private val database: TvManiacDatabase,
     private val coroutineContext: CoroutineContext
-) : TraktFollowedCache {
+) : FollowedCache {
 
     override fun insert(followedShow: Followed_shows) {
         database.transaction {

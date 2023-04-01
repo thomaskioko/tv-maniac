@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import kotlinx.coroutines.flow.Flow
 
-interface TraktFollowedCache {
+interface FollowedCache {
 
     fun insert(followedShow: Followed_shows)
 

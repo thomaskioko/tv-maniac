@@ -5,13 +5,13 @@ import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.util.helper.DateUtilHelper
 import com.thomaskioko.tvmaniac.core.util.scope.DefaultDispatcher
 import com.thomaskioko.tvmaniac.core.util.scope.IoDispatcher
-import com.thomaskioko.tvmaniac.shows.api.cache.TraktFollowedCache
-import com.thomaskioko.tvmaniac.trakt.profile.api.cache.TraktListCache
+import com.thomaskioko.tvmaniac.shows.api.cache.FollowedCache
 import com.thomaskioko.tvmaniac.trakt.profile.api.ProfileRepository
+import com.thomaskioko.tvmaniac.trakt.profile.api.cache.TraktListCache
 import com.thomaskioko.tvmaniac.trakt.profile.api.cache.TraktStatsCache
 import com.thomaskioko.tvmaniac.trakt.profile.api.cache.TraktUserCache
-import com.thomaskioko.tvmaniac.trakt.profile.implementation.cache.TraktListCacheImpl
 import com.thomaskioko.tvmaniac.trakt.profile.implementation.ProfileRepositoryImpl
+import com.thomaskioko.tvmaniac.trakt.profile.implementation.cache.TraktListCacheImpl
 import com.thomaskioko.tvmaniac.trakt.profile.implementation.cache.TraktStatsCacheImpl
 import com.thomaskioko.tvmaniac.trakt.profile.implementation.cache.TraktUserCacheImpl
 import com.thomaskioko.tvmaniac.trakt.service.api.TraktService
@@ -54,12 +54,12 @@ object TraktModule {
 
     @Singleton
     @Provides
-    fun provideTraktProfileRepository(
+    fun provideProfileRepository(
         traktService: TraktService,
         listCache: TraktListCache,
         statsCache: TraktStatsCache,
         traktUserCache: TraktUserCache,
-        followedCache: TraktFollowedCache,
+        followedCache: FollowedCache,
         dateUtilHelper: DateUtilHelper,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): ProfileRepository = ProfileRepositoryImpl(

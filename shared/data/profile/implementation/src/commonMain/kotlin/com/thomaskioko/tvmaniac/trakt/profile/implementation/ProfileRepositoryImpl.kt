@@ -10,7 +10,7 @@ import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
 import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.core.util.network.Failure
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResult
-import com.thomaskioko.tvmaniac.shows.api.cache.TraktFollowedCache
+import com.thomaskioko.tvmaniac.shows.api.cache.FollowedCache
 import com.thomaskioko.tvmaniac.trakt.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.trakt.profile.api.cache.TraktListCache
 import com.thomaskioko.tvmaniac.trakt.profile.api.cache.TraktStatsCache
@@ -26,7 +26,7 @@ class ProfileRepositoryImpl constructor(
     private val traktListCache: TraktListCache,
     private val statsCache: TraktStatsCache,
     private val traktUserCache: TraktUserCache,
-    private val followedCache: TraktFollowedCache,
+    private val followedCache: FollowedCache,
     private val dateUtilHelper: DateUtilHelper,
     private val dispatcher: CoroutineDispatcher,
 ) : ProfileRepository {

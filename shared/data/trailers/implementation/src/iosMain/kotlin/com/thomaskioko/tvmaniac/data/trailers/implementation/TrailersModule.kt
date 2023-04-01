@@ -9,7 +9,7 @@ actual fun trailersModule(): Module = module {
         TrailerRepositoryImpl(
             apiService = get(),
             trailerCache = get(),
-            tvShowCache = get(),
+            showsCache = get(),
             appUtils = get(),
             dispatcher = Dispatchers.Default
         )
