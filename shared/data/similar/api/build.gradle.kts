@@ -10,7 +10,7 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:data:trakt:api"))
+            implementation(project(":shared:data:shows:api"))
         }
 
     }
