@@ -22,11 +22,11 @@ kotlin {
         }
 
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:data:trakt:api"))
+            implementation(project(":shared:data:shows:api"))
         }
 
         sourceSets["commonTest"].dependencies {
-            implementation(project(":shared:data:trakt:testing"))
+            implementation(project(":shared:data:shows:testing"))
         }
 
     }

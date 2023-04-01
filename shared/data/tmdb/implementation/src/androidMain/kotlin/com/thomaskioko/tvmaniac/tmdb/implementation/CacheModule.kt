@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.core.util.scope.IoDispatcher
 import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
-import com.thomaskioko.tvmaniac.trakt.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,12 +29,12 @@ object CacheModule {
     @Provides
     fun provideTmdbRepository(
         tmdbService: TmdbService,
-        tvShowCache: TvShowCache,
+        showsCache: ShowsCache,
         imageCache: ShowImageCache,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): TmdbRepository = TmdbRepositoryImpl(
             apiService = tmdbService,
-            tvShowCache = tvShowCache,
+            showsCache = showsCache,
             imageCache = imageCache,
             dispatcher = ioDispatcher
         )
