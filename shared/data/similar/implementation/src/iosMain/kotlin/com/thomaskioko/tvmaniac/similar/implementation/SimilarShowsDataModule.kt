@@ -11,7 +11,7 @@ actual fun similarDataModule(): Module = module {
         SimilarShowsRepositoryImpl(
             traktService = get(),
             similarShowCache = get(),
-            tvShowCache = get(),
+            showsCache = get(),
             dispatcher = Dispatchers.Default
         )
     }

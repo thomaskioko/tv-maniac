@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.shared.domain.discover
 
 import org.koin.core.module.Module as KoinModule
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
+import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -18,9 +18,9 @@ object DiscoverModule {
     @Singleton
     @Provides
     fun provideDiscoverStateMachine(
-        traktShowRepository: TraktShowRepository,
+        showsRepository: ShowsRepository,
         tmdbRepository: TmdbRepository,
-    ): DiscoverStateMachine = DiscoverStateMachine(traktShowRepository, tmdbRepository)
+    ): DiscoverStateMachine = DiscoverStateMachine(showsRepository, tmdbRepository)
 
 }
 

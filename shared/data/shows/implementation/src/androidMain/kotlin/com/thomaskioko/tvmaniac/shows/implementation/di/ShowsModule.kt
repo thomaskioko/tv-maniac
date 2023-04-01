@@ -7,11 +7,11 @@ import com.thomaskioko.tvmaniac.core.util.helper.DateUtilHelper
 import com.thomaskioko.tvmaniac.core.util.scope.DefaultDispatcher
 import com.thomaskioko.tvmaniac.core.util.scope.IoDispatcher
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
-import com.thomaskioko.tvmaniac.shows.api.cache.TraktFollowedCache
-import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.shows.api.cache.FollowedCache
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
 import com.thomaskioko.tvmaniac.shows.implementation.ShowsRepositoryImpl
-import com.thomaskioko.tvmaniac.shows.implementation.cache.TraktFollowedCacheImpl
-import com.thomaskioko.tvmaniac.shows.implementation.cache.TraktShowCacheImpl
+import com.thomaskioko.tvmaniac.shows.implementation.cache.FollowedCacheImpl
+import com.thomaskioko.tvmaniac.shows.implementation.cache.ShowCacheImpl
 import com.thomaskioko.tvmaniac.trakt.service.api.TraktService
 import dagger.Module
 import dagger.Provides
@@ -21,7 +21,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.dsl.module
 import javax.inject.Singleton
 
-actual fun traktModule(): KoinModule = module {}
+actual fun showsModule(): KoinModule = module {}
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -29,30 +29,30 @@ object TraktModule {
 
     @Singleton
     @Provides
-    fun provideTraktFollowedCache(
+    fun provideFollowedCache(
         database: TvManiacDatabase,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
-    ): TraktFollowedCache = TraktFollowedCacheImpl(database, ioDispatcher)
+    ): FollowedCache = FollowedCacheImpl(database, ioDispatcher)
 
 
     @Singleton
     @Provides
-    fun provideTvShowCache(
+    fun provideShowsCache(
         database: TvManiacDatabase,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
-    ): TvShowCache = TraktShowCacheImpl(database, ioDispatcher)
+    ): ShowsCache = ShowCacheImpl(database, ioDispatcher)
 
     @Singleton
     @Provides
-    fun provideTraktRepository(
-        tvShowCache: TvShowCache,
-        followedCache: TraktFollowedCache,
+    fun provideShowsRepository(
+        showsCache: ShowsCache,
+        followedCache: FollowedCache,
         categoryCache: CategoryCache,
         dateUtilHelper: DateUtilHelper,
         traktService: TraktService,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): ShowsRepository = ShowsRepositoryImpl(
-        tvShowCache,
+        showsCache,
         followedCache,
         categoryCache,
         traktService,

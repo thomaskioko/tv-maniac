@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.util.AppUtils
 import com.thomaskioko.tvmaniac.core.util.scope.DefaultDispatcher
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
-import com.thomaskioko.tvmaniac.trakt.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,13 +31,13 @@ object TrailersModule {
     fun provideTrailerRepository(
         tmdbService: TmdbService,
         cache: TrailerCache,
-        tvShowCache: TvShowCache,
+        showsCache: ShowsCache,
         appUtils: AppUtils,
         @DefaultDispatcher ioDispatcher: CoroutineDispatcher
     ): TrailerRepository = TrailerRepositoryImpl(
         tmdbService,
         cache,
-        tvShowCache,
+        showsCache,
         appUtils,
         ioDispatcher
     )

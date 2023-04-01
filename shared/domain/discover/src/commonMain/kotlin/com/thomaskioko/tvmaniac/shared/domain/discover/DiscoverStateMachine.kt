@@ -4,7 +4,7 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktShowRepository
+import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class DiscoverStateMachine constructor(
-    private val traktShowRepository: TraktShowRepository,
+    private val showsRepository: ShowsRepository,
     private val tmdbRepository: TmdbRepository
 ) : FlowReduxStateMachine<ShowsState, ShowsAction>(initialState = Loading) {
 
@@ -65,10 +65,10 @@ class DiscoverStateMachine constructor(
         var nextState: ShowsState = state.snapshot
 
         combine(
-            traktShowRepository.fetchTrendingShows(),
-            traktShowRepository.fetchPopularShows(),
-            traktShowRepository.fetchAnticipatedShows(),
-            traktShowRepository.fetchFeaturedShows(),
+            showsRepository.fetchTrendingShows(),
+            showsRepository.fetchPopularShows(),
+            showsRepository.fetchAnticipatedShows(),
+            showsRepository.fetchFeaturedShows(),
         ) { trending, popular, anticipated, featured ->
 
             ShowResult(
@@ -88,10 +88,10 @@ class DiscoverStateMachine constructor(
 
     private fun observeShowData(): Flow<ShowResult> =
         combine(
-            traktShowRepository.observeTrendingCachedShows(),
-            traktShowRepository.observePopularCachedShows(),
-            traktShowRepository.observeAnticipatedCachedShows(),
-            traktShowRepository.observeFeaturedCachedShows(),
+            showsRepository.observeTrendingCachedShows(),
+            showsRepository.observePopularCachedShows(),
+            showsRepository.observeAnticipatedCachedShows(),
+            showsRepository.observeFeaturedCachedShows(),
         ) { trending, popular, anticipated, featured ->
 
             ShowResult(

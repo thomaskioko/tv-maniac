@@ -19,8 +19,8 @@ import com.thomaskioko.tvmaniac.core.util.network.Either
 import com.thomaskioko.tvmaniac.core.util.network.Failure
 import com.thomaskioko.tvmaniac.core.util.network.networkBoundResult
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
-import com.thomaskioko.tvmaniac.shows.api.cache.TraktFollowedCache
-import com.thomaskioko.tvmaniac.shows.api.cache.TvShowCache
+import com.thomaskioko.tvmaniac.shows.api.cache.FollowedCache
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
 import com.thomaskioko.tvmaniac.shows.implementation.mapper.responseToCache
 import com.thomaskioko.tvmaniac.shows.implementation.mapper.showResponseToCacheList
 import com.thomaskioko.tvmaniac.shows.implementation.mapper.showsResponseToCacheList
@@ -36,8 +36,8 @@ import kotlinx.coroutines.flow.map
 
 
 class ShowsRepositoryImpl constructor(
-    private val tvShowCache: TvShowCache,
-    private val followedCache: TraktFollowedCache,
+    private val showsCache: ShowsCache,
+    private val followedCache: FollowedCache,
     private val categoryCache: CategoryCache,
     private val traktService: TraktService,
     private val dateUtilHelper: DateUtilHelper,
@@ -46,7 +46,7 @@ class ShowsRepositoryImpl constructor(
 
     override fun observeShow(traktId: Long): Flow<Either<Failure, SelectByShowId>> =
         networkBoundResult(
-            query = { tvShowCache.observeTvShow(traktId) },
+            query = { showsCache.observeTvShow(traktId) },
             shouldFetch = { it == null },
             fetch = { traktService.getSeasonDetails(traktId) },
             saveFetchResult = { mapAndCache(it) },
@@ -54,13 +54,13 @@ class ShowsRepositoryImpl constructor(
         )
 
     override fun observeCachedShows(categoryId: Long): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        tvShowCache.observeCachedShows(Category[categoryId].id)
+        showsCache.observeCachedShows(Category[categoryId].id)
             .map { Either.Right(it) }
             .catch { Either.Left(DefaultError(it)) }
 
     override fun fetchTrendingShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         networkBoundResult(
-            query = { tvShowCache.observeCachedShows(TRENDING.id) },
+            query = { showsCache.observeCachedShows(TRENDING.id) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = { traktService.getTrendingShows().showsResponseToCacheList() },
             saveFetchResult = { cacheResult(it, TRENDING.id) },
@@ -68,13 +68,13 @@ class ShowsRepositoryImpl constructor(
         )
 
     override fun observeTrendingCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        tvShowCache.observeCachedShows(TRENDING.id)
+        showsCache.observeCachedShows(TRENDING.id)
             .map { Either.Right(it) }
             .catch { Either.Left(DefaultError(it)) }
 
     override fun fetchPopularShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         networkBoundResult(
-            query = { tvShowCache.observeCachedShows(POPULAR.id) },
+            query = { showsCache.observeCachedShows(POPULAR.id) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = { traktService.getPopularShows().showResponseToCacheList() },
             saveFetchResult = { cacheResult(it, POPULAR.id) },
@@ -82,13 +82,13 @@ class ShowsRepositoryImpl constructor(
         )
 
     override fun observePopularCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        tvShowCache.observeCachedShows(POPULAR.id)
+        showsCache.observeCachedShows(POPULAR.id)
             .map { Either.Right(it) }
             .catch { Either.Left(DefaultError(it)) }
 
     override fun fetchAnticipatedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         networkBoundResult(
-            query = { tvShowCache.observeCachedShows(ANTICIPATED.id) },
+            query = { showsCache.observeCachedShows(ANTICIPATED.id) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = { traktService.getAnticipatedShows().showsResponseToCacheList() },
             saveFetchResult = { cacheResult(it, ANTICIPATED.id) },
@@ -96,13 +96,13 @@ class ShowsRepositoryImpl constructor(
         )
 
     override fun observeAnticipatedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        tvShowCache.observeCachedShows(ANTICIPATED.id)
+        showsCache.observeCachedShows(ANTICIPATED.id)
             .map { Either.Right(it) }
             .catch { Either.Left(DefaultError(it)) }
 
     override fun fetchFeaturedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         networkBoundResult(
-            query = { tvShowCache.observeCachedShows(FEATURED.id) },
+            query = { showsCache.observeCachedShows(FEATURED.id) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = { traktService.getRecommendedShows(period = "daily")
                 .showsResponseToCacheList() },
@@ -111,7 +111,7 @@ class ShowsRepositoryImpl constructor(
         )
 
     override fun observeFeaturedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        tvShowCache.observeCachedShows(FEATURED.id)
+        showsCache.observeCachedShows(FEATURED.id)
             .map { Either.Right(it) }
             .catch { Either.Left(DefaultError(it)) }
 
@@ -122,7 +122,7 @@ class ShowsRepositoryImpl constructor(
         categories.forEach {
             val mappedResult = fetchShowsAndMapResult(it.id)
 
-            tvShowCache.insert(mappedResult)
+            showsCache.insert(mappedResult)
             categoryCache.insert(mappedResult.toCategoryCache(it.id))
         }
 
@@ -164,7 +164,7 @@ class ShowsRepositoryImpl constructor(
 
 
     private fun cacheResult(result: List<Show>, categoryId: Long) {
-        tvShowCache.insert(result)
+        showsCache.insert(result)
 
         categoryCache.insert(result.toCategoryCache(categoryId))
     }
@@ -172,7 +172,7 @@ class ShowsRepositoryImpl constructor(
     private fun mapAndCache(response: ApiResponse<TraktShowResponse, ErrorResponse>) {
         when (response) {
             is ApiResponse.Success -> {
-                tvShowCache.insert(response.body.responseToCache())
+                showsCache.insert(response.body.responseToCache())
             }
             is ApiResponse.Error.GenericError -> {
                 Logger.withTag("observeShow").e("$this")

@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
 import kotlinx.coroutines.flow.Flow
 
-interface TvShowCache {
+interface ShowsCache {
 
     fun insert(show: Show)
 
