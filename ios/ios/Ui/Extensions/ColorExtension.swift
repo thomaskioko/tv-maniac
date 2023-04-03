@@ -23,7 +23,7 @@ extension Color {
 	)
 	
 	public static var accent_color: Color {
-		Color("AccentColor", bundle: nil)
+		Color("accent", bundle: nil)
 	}
 	
 	
