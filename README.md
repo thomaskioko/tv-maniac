@@ -2,8 +2,8 @@ TvManiac
 -------------------------
 ![Check](https://github.com/c0de-wizard/tv-maniac/actions/workflows/build.yml/badge.svg)  ![android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat) ![ios](http://img.shields.io/badge/platform-ios-CDCDCD.svg?style=flat)
 
-**TvManiac** is a Multiplatform app (Android & iOS) for viewing TV Shows information from
-[Trakt](https://trakt.tv/). The aim of this project is do demonstrate KMM development capabilities.
+**TvManiac** is a personalized entertainment tracking and recommendation Multiplatform app (Android & iOS). By utilizing
+[Trakt](https://trakt.tv/), we are able to view shows, create a watchlist get statistics and much more. The aim of this project is do demonstrate KMM development capabilities.
 
 You can Install and test latest android app from below 👇
 
@@ -78,11 +78,14 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 
 ## 🖥 Project Setup & Environment
 
-### Api Keys
+### API Keys
+To use the Trakt API, you'll need to [create a new API app](https://trakt.tv/oauth/applications/new). & for [TMDb](https://www.themoviedb.org/settings/api) create an account and generate an API key if you don't have one.
 
-You need to add API keys from [Trakt.tv](https://trakt.docs.apiary.io) & [TMDb](https://developers.themoviedb.org). To do so:
+#### Shared/Android Api Keys
+You need to add API keys from [Trakt.tv](https://trakt.tv/oauth/applications) & [TMDb](https://www.themoviedb.org/settings/api). To do so:
 
-- Add the following keys to `~/.gradle/gradle.properties`
+- Add the following keys to `~/.gradle/gradle.properties`:
+
     ```
     TMDB_API_URL=https://api.themoviedb.org/3/
     TMDB_API_KEY=ENTER_URI
@@ -93,7 +96,16 @@ You need to add API keys from [Trakt.tv](https://trakt.docs.apiary.io) & [TMDb](
 - Run `./gradlew generateBuildKonfig`
 
 
-### Android
+#### iOS Trakt Config Keys
+Open `config.json` in the iOS project root directory and enter the correct values that your generated for your [Trakt Applicaton.](https://trakt.tv/oauth/applications):
+
+- `callbackURL`
+- `clientId`
+- `clientSecret`
+
+## ▶️ Building/Opening The Project
+
+#### Android Requirements
 - [Zulu Java 17](https://www.azul.com/downloads-new/?package=jdk#zulu)
 - You require the latest [Android Studio](https://developer.android.com/studio/preview) release to be able to build the app.
 - Install Kmm Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/kmm-setup.html).
@@ -146,7 +158,10 @@ https://user-images.githubusercontent.com/841885/223576880-c7391d14-63b8-47cd-a7
 
 ### iOS
 * [Kingfisher](https://github.com/onevcat/Kingfisher) - Image library.
+* [OAuthSwift](https://github.com/OAuthSwift/OAuthSwift) Swift based OAuth library for iOS and macOS.
 * [TvManiac](https://github.com/c0de-wizard/tvmaniac-swift-packages) - TvManiac SwiftPackage.
+
+
 
 ## Roadmap
 Android
@@ -158,7 +173,7 @@ Android
     - Dynamic theme change.
 - [x] Add Seasons UI
 - [x] Implement trakt auth & sign in
-- [ ] UI State improvement.
+- [ ] Migrate to Material3
 - [ ] Add Episode detail screen
 - [ ] Add Watchlist
 - [ ] Implement Search
