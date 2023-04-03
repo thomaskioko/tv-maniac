@@ -29,7 +29,7 @@ struct LabelText : View {
 			.kerning(1.5)
 			.font(.caption)
 			.bold()
-			.foregroundColor(Color("AccentColor"))
+            .foregroundColor(Color.accent)
 			.padding(10)
 	}
 }
