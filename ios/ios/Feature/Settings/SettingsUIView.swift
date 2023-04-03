@@ -12,6 +12,7 @@ import TvManiac
 struct SettingsUIView: View {
     
     @ObservedObject var viewModel: SettingsViewModel = SettingsViewModel(settingsState: SettingsContent.companion.EMPTY)
+    @ObservedObject private var model = TraktAuthViewModel()
     
     @Environment(\.openURL) var openURL
     @Environment(\.presentationMode) var presentationMode
@@ -71,8 +72,8 @@ struct SettingsUIView: View {
                     Alert(
                         title: Text("Trakt Coming Soon"),
                         message: Text("Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch."),
-                        primaryButton: .default(Text("Cancel")),
-                        secondaryButton: .default(Text("Login"))
+                        primaryButton: .default(Text("Login")) { model.initiateAuthorization() },
+                        secondaryButton: .destructive(Text("Cancel"))
                     )
                 }
             }
