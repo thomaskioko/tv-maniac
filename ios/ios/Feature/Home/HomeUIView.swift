@@ -29,11 +29,11 @@ struct HomeUIView: View {
 					   Text("Watchlist")
 				   }
 			
-			SettingsUIView()
+            ProfileView()
 				.font(.system(size: 30, weight: .bold, design: .rounded))
 				.tabItem {
-					Image(systemName: "gearshape.fill")
-					Text("Settings")
+					Image(systemName: "person.circle")
+					Text("Profile")
 				}
 		}
 		.onAppear {
