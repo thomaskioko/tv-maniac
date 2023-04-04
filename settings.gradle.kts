@@ -38,6 +38,7 @@ include(
     ":android:features:video-player",
     ":android:features:profile",
     ":shared:shared",
+    ":shared:core:networkutil",
     ":shared:core:util",
     ":shared:data:category:api",
     ":shared:data:category:implementation",
