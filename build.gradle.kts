@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.kapt) apply false
+    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.multiplatform) apply false
     alias(libs.plugins.serialization) apply false
     alias(libs.plugins.sqldelight) apply false
