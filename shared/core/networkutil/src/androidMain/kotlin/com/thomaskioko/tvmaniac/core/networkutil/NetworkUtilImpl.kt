@@ -1,18 +1,22 @@
-package com.thomaskioko.tvmaniac.core.util.network
+package com.thomaskioko.tvmaniac.core.networkutil
 
+import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import com.thomaskioko.tvmaniac.core.util.AppContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import me.tatarka.inject.annotations.Inject
 
-actual class ObserveConnectionState actual constructor(private val context: AppContext) {
+@Inject
+class NetworkUtilImpl(
+    private val context: Application
+) : NetworkUtil {
 
-    actual fun observeConnectivityAsFlow(): Flow<ConnectionState> = callbackFlow {
+    override fun observeConnectionState(): Flow<ConnectionState> = callbackFlow {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -38,7 +42,7 @@ actual class ObserveConnectionState actual constructor(private val context: AppC
     /**
      * Network utility to get current state of internet connection
      */
-    val currentConnectivityState: ConnectionState
+    override val connectivityState: ConnectionState
         get() {
             val connectivityManager =
                 context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
