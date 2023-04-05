@@ -9,17 +9,17 @@ import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import com.thomaskioko.tvmaniac.navigation.viewModelBottomSheetComposable
 import javax.inject.Inject
 
-class VideoPlayerNavigationFactory @Inject constructor() : ComposeNavigationFactory {
+class TrailerNavigationFactory @Inject constructor() : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
-        builder.viewModelBottomSheetComposable<VideoPlayerViewModel>(
+        builder.viewModelBottomSheetComposable<TrailersViewModel>(
             arguments = listOf(
                 navArgument("showId") { type = NavType.LongType },
                 navArgument("videoKey") { type = NavType.StringType },
             ),
-            route = "${NavigationScreen.VideoPlayerNavScreen.route}/{showId}/{videoKey}",
+            route = "${NavigationScreen.TrailersNavScreen.route}/{showId}/{videoKey}",
             content = {
-                VideoPlayerRoute(
+                TrailersRoute(
                     viewModel = this,
                 )
             }

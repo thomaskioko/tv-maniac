@@ -61,9 +61,9 @@ import com.thomaskioko.tvmaniac.data.trailers.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
-fun VideoPlayerRoute(
+fun TrailersRoute(
     modifier: Modifier = Modifier,
-    viewModel: VideoPlayerViewModel = hiltViewModel(),
+    viewModel: TrailersViewModel = hiltViewModel(),
 ) {
 
     val viewState by viewModel.state.collectAsStateWithLifecycle()
