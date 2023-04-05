@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class VideoPlayerViewModel @Inject constructor(
+class TrailersViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val stateMachine: TrailersStateMachine
 ) : ViewModel() {
