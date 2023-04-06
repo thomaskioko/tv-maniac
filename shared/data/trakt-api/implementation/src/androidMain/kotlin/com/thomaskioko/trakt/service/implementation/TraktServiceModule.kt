@@ -1,33 +1,28 @@
 package com.thomaskioko.trakt.service.implementation
 
 import org.koin.core.module.Module as KoinModule
+import com.thomaskioko.tvmaniac.core.util.model.AppConfig
+import com.thomaskioko.tvmaniac.core.util.model.TraktOAuthInfo
+import com.thomaskioko.tvmaniac.core.util.scope.Singleton
 import com.thomaskioko.tvmaniac.network.KtorClientFactory
 import com.thomaskioko.tvmaniac.trakt.service.api.TraktService
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import me.tatarka.inject.annotations.Provides
 import org.koin.dsl.module
-import javax.inject.Named
-import javax.inject.Singleton
 
 
-actual fun traktServiceModule() : KoinModule = module {  }
+actual fun traktServiceModule(): KoinModule = module { }
 
-@Module
-@InstallIn(SingletonComponent::class)
 object TraktServiceModule {
 
 
     @OptIn(ExperimentalSerializationApi::class)
     @Singleton
     @Provides
-    @Named("trakt-json")
     fun provideJson(): Json = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
@@ -37,7 +32,6 @@ object TraktServiceModule {
 
     @Singleton
     @Provides
-    @Named("trakt-http-engine")
     fun provideHttpClientEngine(
         interceptor: TraktAuthInterceptor
     ): HttpClientEngine = OkHttp.create {
@@ -46,14 +40,13 @@ object TraktServiceModule {
 
     @Singleton
     @Provides
-    @Named("trakt-http-client")
     fun provideHttpClient(
-        @Named("app-build") isDebug: Boolean,
-        @Named("trakt-json") json: Json,
-        @Named("trakt-http-engine") httpClientEngine: HttpClientEngine
+        appConfig: AppConfig,
+        json: Json,
+        httpClientEngine: HttpClientEngine
     ): HttpClient = KtorClientFactory().httpClient(
         traktHttpClient(
-            isDebug = isDebug,
+            isDebug = appConfig.isDebug,
             json = json,
             httpClientEngine = httpClientEngine
         )
@@ -62,10 +55,13 @@ object TraktServiceModule {
     @Singleton
     @Provides
     fun provideTvShowService(
-        @Named("trakt-client-id") clientId: String,
-        @Named("trakt-client-secret") clientSecret: String,
-        @Named("trakt-auth-redirect-uri") redirectUri: String,
-        @Named("trakt-http-client") httpClient: HttpClient
-    ): TraktService = TraktServiceImpl(clientId, clientSecret, redirectUri, httpClient)
+        traktOAuthInfo: TraktOAuthInfo,
+        httpClient: HttpClient
+    ): TraktService = TraktServiceImpl(
+        clientId = traktOAuthInfo.clientId,
+        clientSecret = traktOAuthInfo.clientSecret,
+        redirectUri = traktOAuthInfo.redirectUri,
+        httpClient
+    )
 
 }

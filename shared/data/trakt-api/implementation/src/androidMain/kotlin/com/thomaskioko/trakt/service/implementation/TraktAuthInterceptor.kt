@@ -1,16 +1,17 @@
 package com.thomaskioko.trakt.service.implementation
 
 import android.content.SharedPreferences
+import com.thomaskioko.tvmaniac.core.util.model.TraktOAuthInfo
 import io.ktor.http.HttpHeaders
+import me.tatarka.inject.annotations.Inject
 import net.openid.appauth.AuthState
 import okhttp3.Interceptor
 import okhttp3.Response
-import javax.inject.Inject
-import javax.inject.Named
 
-class TraktAuthInterceptor @Inject constructor(
-    @Named("trakt-client-id") private val clientId: String,
-    @Named("auth") private val authPrefs: SharedPreferences,
+@Inject
+class TraktAuthInterceptor(
+    private val traktOAuthInfo: TraktOAuthInfo,
+    private val authPrefs: SharedPreferences,
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -22,7 +23,7 @@ class TraktAuthInterceptor @Inject constructor(
             .addHeader(HttpHeaders.ContentType, "application/json")
             .addHeader(HttpHeaders.Authorization,  "Bearer ${authState?.accessToken}")
             .addHeader("trakt-api-version", "2")
-            .addHeader("trakt-api-key", clientId)
+            .addHeader("trakt-api-key", traktOAuthInfo.clientId)
             .build()
         return chain.proceed(request)
     }

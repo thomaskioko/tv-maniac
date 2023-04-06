@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.trakt.service.api
 
-import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.service.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktAccessRefreshTokenResponse
 import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktAccessTokenResponse
