@@ -1,20 +1,20 @@
-package com.thomaskioko.tvmaniac.trakt.service.api
+package com.thomaskioko.tvmaniac.trakt.api
 
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.ErrorResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktAccessRefreshTokenResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktAccessTokenResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktAddRemoveShowFromListResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktAddShowToListResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktCreateListResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktFollowedShowResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktPersonalListsResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktSeasonEpisodesResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktSeasonsResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktShowResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktShowsResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktUserResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktUserStatsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessRefreshTokenResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessTokenResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddRemoveShowFromListResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowToListResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
 
 
 private const val DEFAULT_API_PAGE: Long = 1

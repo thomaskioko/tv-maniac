@@ -1,10 +1,10 @@
-package com.thomaskioko.tvmaniac.trakt.service.api.model
+package com.thomaskioko.tvmaniac.trakt.api.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TraktAccessTokenResponse(
+data class TraktAccessRefreshTokenResponse(
     @SerialName("scope") val scope: String?,
     @SerialName("access_token") val accessToken: String?,
     @SerialName("created_at") val createdAt: Long?,

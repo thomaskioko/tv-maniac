@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.trakt.service.api.model
+package com.thomaskioko.tvmaniac.trakt.api.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
