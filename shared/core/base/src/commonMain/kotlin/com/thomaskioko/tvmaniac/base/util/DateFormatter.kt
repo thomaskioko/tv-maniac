@@ -1,8 +1,14 @@
-package com.thomaskioko.tvmaniac.core.util
+package com.thomaskioko.tvmaniac.base.util
 
 const val DATE_PATTERN = "EEE, MMM d, yyyy"
 
-expect object DateUtil {
+interface DateFormatter {
+    /**
+     * Returns the current time in milliseconds
+     *
+     * @return timestamp
+     */
+    fun getTimestampMilliseconds(): Long
 
     /**
      *  Formats date to provided pattern
@@ -15,10 +21,5 @@ expect object DateUtil {
         dateString: String?
     ): String
 
-    /**
-     * Returns the current time in milliseconds
-     *
-     * @return timestamp
-     */
-    fun getTimestampMilliseconds(): Long
 }
+
