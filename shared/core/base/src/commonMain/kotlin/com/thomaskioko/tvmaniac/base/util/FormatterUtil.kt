@@ -1,10 +1,10 @@
-package com.thomaskioko.tvmaniac.core.util
+package com.thomaskioko.tvmaniac.base.util
 
-expect object FormatterUtil {
+interface FormatterUtil {
     /**
      * Formats TMDB image url. If the url is null, we return a default imageUrl
      */
-    fun formatPosterPath(imageUrl: String?): String
+    fun formatTmdbPosterPath(imageUrl: String?): String
 
     /**
      * Rounds of a double number to the set decimal point.

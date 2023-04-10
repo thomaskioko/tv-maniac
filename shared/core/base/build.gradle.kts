@@ -1,7 +1,7 @@
 plugins {
     id("tvmaniac.kmm.library")
     alias(libs.plugins.serialization)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -11,34 +11,28 @@ kotlin {
     sourceSets {
         sourceSets["androidMain"].dependencies {
             implementation(libs.datetime)
-            implementation(libs.hilt.android)
-            configurations["kapt"].dependencies.add(
-                org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
-                    "com.google.dagger",
-                    "hilt-android-compiler",
-                    libs.versions.dagger.get()
-                )
-            )
         }
 
         sourceSets["commonMain"].dependencies {
             api(libs.ktor.serialization)
-            implementation(libs.koin)
-            implementation(libs.kermit)
-            implementation(libs.ktor.core)
             implementation(libs.datetime)
+            implementation(libs.kermit)
+            implementation(libs.kotlinInject.runtime)
+            implementation(libs.ktor.core)
             implementation(libs.coroutines.core)
         }
 
 
         sourceSets["iosMain"].dependencies {
-            implementation(libs.koin)
             implementation(libs.datetime)
         }
 
-        sourceSets["commonTest"].dependencies {}
-
     }
+}
+
+dependencies {
+    add("kspIosX64", libs.kotlinInject.compiler)
+    add("kspIosArm64", libs.kotlinInject.compiler)
 }
 
 android {
