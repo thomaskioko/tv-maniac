@@ -1,17 +1,22 @@
 package com.thomaskioko.tvmaniac.data.showdetails
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.core.util.network.DefaultError
-import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
+import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.shows.testing.FakeShowsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
-import com.thomaskioko.tvmaniac.shows.testing.FakeShowsRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
+
+class FakeExceptionHandler : ExceptionHandler {
+    override fun resolveError(throwable: Throwable): String = "Something went wrong"
+}
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class ShowDetailsStateMachineTest {
@@ -25,7 +30,8 @@ internal class ShowDetailsStateMachineTest {
         showsRepository = traktRepository,
         trailerRepository = trailerRepository,
         seasonDetailsRepository = seasonsRepository,
-        similarShowsRepository = similarShowsRepository
+        similarShowsRepository = similarShowsRepository,
+        exceptionHandler = FakeExceptionHandler()
     )
 
     @Test
@@ -74,7 +80,7 @@ internal class ShowDetailsStateMachineTest {
             traktRepository.setShowResult(Either.Right(selectedShow))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))
             trailerRepository.setTrailerResult(Either.Right(trailers))
-            similarShowsRepository.setSimilarShowsResult(Either.Left(DefaultError(Throwable(errorMessage))))
+            similarShowsRepository.setSimilarShowsResult(Either.Left(DefaultError(errorMessage)))
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
@@ -103,7 +109,7 @@ internal class ShowDetailsStateMachineTest {
             traktRepository.setShowResult(Either.Right(selectedShow))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))
             similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
-            trailerRepository.setTrailerResult(Either.Left(DefaultError(Throwable(errorMessage))))
+            trailerRepository.setTrailerResult(Either.Left(DefaultError(errorMessage)))
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
@@ -132,7 +138,7 @@ internal class ShowDetailsStateMachineTest {
             traktRepository.setShowResult(Either.Right(selectedShow))
             trailerRepository.setTrailerResult(Either.Right(trailers))
             similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
-            seasonsRepository.setSeasonsResult(Either.Left(DefaultError(Throwable(errorMessage))))
+            seasonsRepository.setSeasonsResult(Either.Left(DefaultError(errorMessage)))
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
@@ -158,7 +164,7 @@ internal class ShowDetailsStateMachineTest {
         stateMachine.state.test {
 
             val errorMessage = "Something went wrong"
-            traktRepository.setShowResult(Either.Left(DefaultError(Throwable(errorMessage))))
+            traktRepository.setShowResult(Either.Left(DefaultError(errorMessage)))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))
             similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
             trailerRepository.setTrailerResult(Either.Right(trailers))
