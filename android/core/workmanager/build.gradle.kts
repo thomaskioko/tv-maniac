@@ -1,6 +1,6 @@
 plugins {
     id("tvmaniac.android.library")
-    id("tvmaniac.hilt")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -9,12 +9,14 @@ android {
 
 dependencies {
 
-    implementation(project(":shared:core:util"))
+    implementation(project(":shared:core:base"))
     implementation(project(":shared:data:profile:api"))
     implementation(project(":shared:data:shows:api"))
 
     implementation(libs.androidx.work.runtime)
 
-    implementation(libs.hilt.work)
     implementation(libs.kermit)
+
+    implementation(libs.kotlinInject.runtime)
+    ksp(libs.kotlinInject.compiler)
 }

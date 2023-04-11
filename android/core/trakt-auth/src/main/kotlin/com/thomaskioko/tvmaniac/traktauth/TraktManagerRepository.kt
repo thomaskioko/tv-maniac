@@ -2,9 +2,8 @@ package com.thomaskioko.tvmaniac.traktauth
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.thomaskioko.tvmaniac.core.util.scope.DefaultDispatcher
+import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.workmanager.ShowTasks
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,18 +11,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 import net.openid.appauth.AuthState
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
 
 @OptIn(DelicateCoroutinesApi::class)
-@Singleton
-class TraktManager @Inject constructor(
+@Inject
+class TraktManagerRepository(
     private val showTasks: ShowTasks,
-    @DefaultDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @DefaultDispatcher private val mainDispatcher: CoroutineDispatcher,
-    @Named("auth") private val authPrefs: SharedPreferences,
+    private val dispatchers: AppCoroutineDispatchers,
+    private val authPrefs: SharedPreferences,
 ) {
     private val authState = MutableStateFlow(EmptyAuthState)
 
@@ -32,14 +28,14 @@ class TraktManager @Inject constructor(
         get() = _state.asStateFlow()
 
     init {
-        GlobalScope.launch(ioDispatcher) {
+        GlobalScope.launch(dispatchers.io) {
             authState.collect { authState ->
                 updateAuthState(authState)
             }
         }
 
-        GlobalScope.launch(mainDispatcher) {
-            val state = withContext(ioDispatcher) { readAuthState() }
+        GlobalScope.launch(dispatchers.main) {
+            val state = withContext(dispatchers.io) { readAuthState() }
             authState.value = state
         }
     }
@@ -58,10 +54,10 @@ class TraktManager @Inject constructor(
     }
 
     fun onNewAuthState(newState: AuthState) {
-        GlobalScope.launch(mainDispatcher) {
+        GlobalScope.launch(dispatchers.main) {
             authState.value = newState
         }
-        GlobalScope.launch(ioDispatcher) {
+        GlobalScope.launch(dispatchers.io) {
             persistAuthState(newState)
         }
 
