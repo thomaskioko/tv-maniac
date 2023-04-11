@@ -1,7 +1,7 @@
 package com.thomaskioko.trakt.service.implementation
 
 import android.content.SharedPreferences
-import com.thomaskioko.tvmaniac.core.util.model.TraktOAuthInfo
+import com.thomaskioko.tvmaniac.base.model.TraktOAuthInfo
 import io.ktor.http.HttpHeaders
 import me.tatarka.inject.annotations.Inject
 import net.openid.appauth.AuthState
