@@ -1,28 +1,25 @@
 package com.thomaskioko.tvmaniac
 
 import android.app.Application
-import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.thomaskioko.tvmaniac.initializers.AppInitializers
-import com.thomaskioko.tvmaniac.workmanager.ShowTasks
-import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
+import androidx.work.WorkerFactory
+import com.thomaskioko.tvmaniac.base.extensions.unsafeLazy
+import com.thomaskioko.tvmaniac.inject.ApplicationComponent
+import com.thomaskioko.tvmaniac.inject.create
 
-@HiltAndroidApp
 class TvManicApplication : Application(), Configuration.Provider {
 
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
+    val component: ApplicationComponent by unsafeLazy { ApplicationComponent::class.create(this) }
 
-    @Inject lateinit var initializers: AppInitializers
-
-    @Inject lateinit var showTasks: ShowTasks
+    private lateinit var workerFactory: WorkerFactory
 
     override fun onCreate() {
         super.onCreate()
-        initializers.init()
 
-        showTasks.syncTraktFollowedShowsWhenIdle()
+        workerFactory = component.workerFactory
+
+        component.initializers.init()
+
     }
 
     override fun getWorkManagerConfiguration(): Configuration {
