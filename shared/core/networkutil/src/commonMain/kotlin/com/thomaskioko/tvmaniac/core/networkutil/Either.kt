@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.util.network
+package com.thomaskioko.tvmaniac.core.networkutil
 
 sealed class Either<out L, out R> {
 

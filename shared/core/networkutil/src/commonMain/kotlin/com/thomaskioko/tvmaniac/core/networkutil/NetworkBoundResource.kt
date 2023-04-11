@@ -1,5 +1,6 @@
-package com.thomaskioko.tvmaniac.core.util.network
+package com.thomaskioko.tvmaniac.core.networkutil
 
+import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -12,6 +13,7 @@ inline fun <ResultType, RequestType> networkBoundResult(
     crossinline fetch: suspend () -> RequestType,
     crossinline saveFetchResult: suspend (RequestType) -> Unit,
     crossinline shouldFetch: (ResultType?) -> Boolean = { true },
+    exceptionHandler: ExceptionHandler,
     coroutineDispatcher: CoroutineDispatcher
 ) = flow<Either<Failure, ResultType>> {
 
@@ -22,11 +24,11 @@ inline fun <ResultType, RequestType> networkBoundResult(
             saveFetchResult(fetch())
             emit(Either.Right(query().first()))
         } catch (e: Exception) {
-            emit(Either.Left(DefaultError(e)))
+            emit(Either.Left(DefaultError(exceptionHandler.resolveError(e))))
         }
     } else {
         emit(Either.Right(query().first()))
     }
 }.catch {
-    emit(Either.Left(DefaultError(it)))
+    emit(Either.Left(DefaultError(exceptionHandler.resolveError(it))))
 }.flowOn(coroutineDispatcher)

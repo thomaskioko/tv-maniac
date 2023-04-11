@@ -1,6 +1,6 @@
-package com.thomaskioko.tvmaniac.core.util.network
+package com.thomaskioko.tvmaniac.core.networkutil
 
-import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
+import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
@@ -12,6 +12,7 @@ import kotlinx.serialization.SerializationException
 
 
 suspend inline fun <reified T, reified E> HttpClient.safeRequest(
+    exceptionHandler: ExceptionHandler,
     block: HttpRequestBuilder.() -> Unit,
 ): ApiResponse<T, E> =
     try {
@@ -22,9 +23,9 @@ suspend inline fun <reified T, reified E> HttpClient.safeRequest(
     } catch (e: ServerResponseException) {
         ApiResponse.Error.HttpError(e.response.status.value, e.errorBody())
     } catch (e: SerializationException) {
-        ApiResponse.Error.SerializationError(e.resolveError())
+        ApiResponse.Error.SerializationError(exceptionHandler.resolveError(e))
     } catch (e: Exception) {
-        ApiResponse.Error.GenericError(e.resolveError())
+        ApiResponse.Error.GenericError(exceptionHandler.resolveError(e))
     }
 
 suspend inline fun <reified E> ResponseException.errorBody(): E? =
