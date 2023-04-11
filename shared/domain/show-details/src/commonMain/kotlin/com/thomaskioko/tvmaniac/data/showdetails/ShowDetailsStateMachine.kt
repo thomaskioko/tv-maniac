@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.data.showdetails
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.data.showdetails.SeasonState.SeasonsLoaded.Companion.EmptySeasons
 import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState.ShowDetailsLoaded
@@ -20,10 +19,8 @@ import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -292,33 +289,5 @@ class ShowDetailsStateMachine constructor(
             }
 
         return nextState
-    }
-}
-
-/**
- * A wrapper class around [ShowDetailsStateMachineWrapper] handling `Flow` and suspend functions on iOS.
- */
-@Inject
-class ShowDetailsStateMachineWrapper(
-    private val scope: AppCoroutineScope,
-    private val stateMachine: ShowDetailsStateMachine,
-) {
-
-    fun start(stateChangeListener: (ShowDetailsState) -> Unit) {
-        scope.main.launch {
-            stateMachine.state.collect {
-                stateChangeListener(it)
-            }
-        }
-    }
-
-    fun dispatch(action: ShowDetailsAction) {
-        scope.main.launch {
-            stateMachine.dispatch(action)
-        }
-    }
-
-    fun cancel() {
-        scope.main.cancel()
     }
 }
