@@ -3,13 +3,15 @@ package com.thomaskioko.tvmaniac.show_grid
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import me.tatarka.inject.annotations.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-class GridStateMachine constructor(
+@Inject
+class GridStateMachine(
     private val repository: ShowsRepository,
 ) : FlowReduxStateMachine<GridState, GridActions>(initialState = LoadingContent) {
 

@@ -3,13 +3,12 @@ package com.thomaskioko.tvmaniac.show_grid
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
-class ShowGridViewModel @Inject constructor(
+@Inject
+class ShowGridViewModel(
     savedStateHandle: SavedStateHandle,
     private val stateMachine: GridStateMachine
 ) : ViewModel() {

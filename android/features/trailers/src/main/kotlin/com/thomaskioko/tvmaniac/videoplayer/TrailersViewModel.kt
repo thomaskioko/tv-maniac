@@ -8,13 +8,12 @@ import com.thomaskioko.tvmaniac.data.trailers.LoadingTrailers
 import com.thomaskioko.tvmaniac.data.trailers.TrailersAction
 import com.thomaskioko.tvmaniac.data.trailers.TrailersState
 import com.thomaskioko.tvmaniac.data.trailers.TrailersStateMachine
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
-class TrailersViewModel @Inject constructor(
+@Inject
+class TrailersViewModel(
     savedStateHandle: SavedStateHandle,
     private val stateMachine: TrailersStateMachine
 ) : ViewModel() {
