@@ -3,16 +3,13 @@ package com.thomaskioko.tvmaniac.shared.domain.discover
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -104,34 +101,4 @@ class DiscoverStateMachine(
             .catch {
                 LoadingError(it.message ?: "Something went wrong")
             }
-}
-
-
-/**
- * A wrapper class around [DiscoverStateMachine] handling `Flow` and suspend functions on iOS.
- */
-@Inject
-class DiscoverStateMachineWrapper(
-    private val scope: AppCoroutineScope,
-    private val stateMachine: DiscoverStateMachine,
-) {
-
-    fun start(stateChangeListener: (ShowsState) -> Unit) {
-        scope.main.launch {
-            stateMachine.state.collect {
-                stateChangeListener(it)
-            }
-        }
-    }
-
-    fun dispatch(action: ShowsAction) {
-        scope.main.launch {
-            stateMachine.dispatch(action)
-        }
-    }
-
-    fun cancel() {
-        scope.main.cancel()
-    }
-
 }
