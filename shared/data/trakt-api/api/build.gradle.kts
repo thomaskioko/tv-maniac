@@ -16,5 +16,5 @@ kotlin {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.trakt.service.api"
+    namespace = "com.thomaskioko.tvmaniac.trakt.api.api"
 }
