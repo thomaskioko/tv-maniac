@@ -1,5 +1,6 @@
 package com.thomaskioko.trakt.service.implementation
 
+import co.touchlab.kermit.Logger as KLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
@@ -42,7 +43,7 @@ fun traktHttpClient(
         logger = if (isDebug) {
             object : Logger {
                 override fun log(message: String) {
-                    co.touchlab.kermit.Logger.d { message }
+                    KLogger.d { message }
                 }
             }
 

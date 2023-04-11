@@ -1,61 +1,71 @@
 package com.thomaskioko.tvmaniac.trakt.profile.implementation
 
 import co.touchlab.kermit.Logger
+import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.base.util.DateFormatter
+import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.base.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.TraktStats
 import com.thomaskioko.tvmaniac.core.db.Trakt_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
-import com.thomaskioko.tvmaniac.core.util.helper.DateUtilHelper
-import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
-import com.thomaskioko.tvmaniac.core.util.network.Either
-import com.thomaskioko.tvmaniac.core.util.network.Failure
-import com.thomaskioko.tvmaniac.core.util.network.networkBoundResult
+import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
 import com.thomaskioko.tvmaniac.shows.api.cache.FollowedCache
+import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.profile.api.ProfileRepository
-import com.thomaskioko.tvmaniac.trakt.profile.api.cache.TraktListCache
-import com.thomaskioko.tvmaniac.trakt.profile.api.cache.TraktStatsCache
-import com.thomaskioko.tvmaniac.trakt.profile.api.cache.TraktUserCache
-import com.thomaskioko.tvmaniac.trakt.service.api.TraktService
-import kotlinx.coroutines.CoroutineDispatcher
+import com.thomaskioko.tvmaniac.trakt.profile.api.cache.FavoriteListCache
+import com.thomaskioko.tvmaniac.trakt.profile.api.cache.StatsCache
+import com.thomaskioko.tvmaniac.trakt.profile.api.cache.UserCache
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class ProfileRepositoryImpl constructor(
     private val traktService: TraktService,
-    private val traktListCache: TraktListCache,
-    private val statsCache: TraktStatsCache,
-    private val traktUserCache: TraktUserCache,
+    private val favoriteListCache: FavoriteListCache,
+    private val statsCache: StatsCache,
+    private val userCache: UserCache,
     private val followedCache: FollowedCache,
-    private val dateUtilHelper: DateUtilHelper,
-    private val dispatcher: CoroutineDispatcher,
+    private val dateFormatter: DateFormatter,
+    private val formatterUtil: FormatterUtil,
+    private val exceptionHandler: ExceptionHandler,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : ProfileRepository {
 
     override fun observeMe(slug: String): Flow<Either<Failure, Trakt_user>> =
         networkBoundResult(
-            query = { traktUserCache.observeMe() },
+            query = { userCache.observeMe() },
             shouldFetch = { it == null },
             fetch = { traktService.getUserProfile(slug) },
             saveFetchResult = {
                 when (it) {
                     is ApiResponse.Success -> {
-                        traktUserCache.insert(it.body.toCache(slug))
+                        userCache.insert(it.body.toCache(slug))
                     }
+
                     is ApiResponse.Error.GenericError -> {
                         Logger.withTag("observeMe").e("$it")
                         throw Throwable("${it.errorMessage}")
                     }
+
                     is ApiResponse.Error.HttpError -> {
                         Logger.withTag("observeMe").e("$it")
                         throw Throwable("${it.code} - ${it.errorBody?.message}")
                     }
+
                     is ApiResponse.Error.SerializationError -> {
                         Logger.withTag("observeMe").e("$it")
                         throw Throwable("$it")
                     }
                 }
             },
-            coroutineDispatcher = dispatcher
+            exceptionHandler = exceptionHandler,
+            coroutineDispatcher = dispatchers.io
         )
 
     override fun observeStats(slug: String, refresh: Boolean): Flow<Either<Failure, TraktStats>> =
@@ -63,17 +73,19 @@ class ProfileRepositoryImpl constructor(
             query = { statsCache.observeStats() },
             shouldFetch = { it == null || refresh },
             fetch = { traktService.getUserStats(slug) },
-            saveFetchResult = { statsCache.insert(it.toCache(slug)) },
-            coroutineDispatcher = dispatcher
+            saveFetchResult = { statsCache.insert(it.toCache(slug, formatterUtil)) },
+            exceptionHandler = exceptionHandler,
+            coroutineDispatcher = dispatchers.io
         )
 
     override fun observeCreateTraktList(userSlug: String): Flow<Either<Failure, Trakt_list>> =
         networkBoundResult(
-            query = { traktListCache.observeTraktList() },
+            query = { favoriteListCache.observeTraktList() },
             shouldFetch = { it == null },
             fetch = { traktService.createFollowingList(userSlug) },
-            saveFetchResult = { traktListCache.insert(it.toCache()) },
-            coroutineDispatcher = dispatcher
+            saveFetchResult = { favoriteListCache.insert(it.toCache()) },
+            exceptionHandler = exceptionHandler,
+            coroutineDispatcher = dispatchers.io
         )
 
     override fun observeUpdateFollowedShow(
@@ -81,9 +93,9 @@ class ProfileRepositoryImpl constructor(
         addToWatchList: Boolean
     ): Flow<Either<Failure, Unit>> = networkBoundResult(
         query = { flowOf(Unit) },
-        shouldFetch = { traktUserCache.getMe() != null },
+        shouldFetch = { userCache.getMe() != null },
         fetch = {
-            val user = traktUserCache.getMe()
+            val user = userCache.getMe()
 
             if (user != null) {
                 if (addToWatchList) {
@@ -99,29 +111,30 @@ class ProfileRepositoryImpl constructor(
                     Followed_shows(
                         id = traktId,
                         synced = true,
-                        created_at = dateUtilHelper.getTimestampMilliseconds()
+                        created_at = dateFormatter.getTimestampMilliseconds()
                     )
                 )
 
                 else -> followedCache.removeShow(traktId)
             }
         },
-        coroutineDispatcher = dispatcher
+        exceptionHandler = exceptionHandler,
+        coroutineDispatcher = dispatchers.io
     )
 
     override suspend fun fetchTraktWatchlistShows() {
-        traktUserCache.observeMe()
-            .flowOn(dispatcher)
+        userCache.observeMe()
+            .flowOn(dispatchers.io)
             .collect { user ->
                 if (user.slug.isNotBlank()) {
-                    followedCache.insert(traktService.getWatchList().responseToCache())
+                    followedCache.insert(traktService.getWatchList().responseToCache(dateFormatter))
                 }
             }
     }
 
     override suspend fun syncFollowedShows() {
-        traktUserCache.observeMe()
-            .flowOn(dispatcher)
+        userCache.observeMe()
+            .flowOn(dispatchers.io)
             .collect { user ->
                 if (user.slug.isNotBlank()) {
                     followedCache.getUnsyncedFollowedShows()
@@ -133,7 +146,7 @@ class ProfileRepositoryImpl constructor(
                                 Followed_shows(
                                     id = it.id,
                                     synced = true,
-                                    created_at = dateUtilHelper.getTimestampMilliseconds()
+                                    created_at = dateFormatter.getTimestampMilliseconds()
                                 )
                             )
                         }

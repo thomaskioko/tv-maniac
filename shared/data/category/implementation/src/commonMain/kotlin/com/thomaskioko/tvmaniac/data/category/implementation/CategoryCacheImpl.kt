@@ -3,7 +3,9 @@ package com.thomaskioko.tvmaniac.data.category.implementation
 import com.thomaskioko.tvmaniac.category.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.core.db.Show_category
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class CategoryCacheImpl(
     private val database: TvManiacDatabase
 ) : CategoryCache {

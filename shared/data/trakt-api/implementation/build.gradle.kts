@@ -1,5 +1,3 @@
-import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
-
 plugins {
     id("tvmaniac.kmm.library")
     alias(libs.plugins.serialization)
@@ -12,29 +10,29 @@ kotlin {
 
     sourceSets {
         sourceSets["androidMain"].dependencies {
-            implementation(project(":shared:core:util"))
-            implementation(project(":shared:data:network"))
+            implementation(project(":shared:core:base"))
+
             implementation(libs.appauth)
             implementation(libs.ktor.okhttp)
         }
 
 
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:data:network"))
             implementation(project(":shared:data:trakt-api:api"))
+
             implementation(libs.sqldelight.extensions)
-            implementation(libs.koin)
+            implementation(libs.kermit)
             implementation(libs.ktor.core)
-            implementation(libs.ktor.negotiation)
             implementation(libs.ktor.logging)
+            implementation(libs.ktor.negotiation)
             implementation(libs.ktor.serialization.json)
             implementation(libs.ktor.serialization)
             implementation(libs.kotlinInject.runtime)
         }
 
         sourceSets["iosMain"].dependencies {
-            implementation(project(":shared:data:network"))
             implementation(project(":shared:data:trakt-api:api"))
+
             implementation(libs.ktor.logging)
             implementation(libs.ktor.darwin)
         }
@@ -48,5 +46,5 @@ dependencies {
 }
 
 android {
-    namespace = "com.thomaskioko.trakt.service.implementation"
+    namespace = "com.thomaskioko.trakt.api.implementation"
 }

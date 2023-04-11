@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.trakt.profile.api.cache
 import com.thomaskioko.tvmaniac.core.db.Trakt_list
 import kotlinx.coroutines.flow.Flow
 
-interface TraktListCache {
+interface FavoriteListCache {
 
     fun insert(traktList: Trakt_list)
 

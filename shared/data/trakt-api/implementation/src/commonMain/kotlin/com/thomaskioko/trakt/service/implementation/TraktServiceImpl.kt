@@ -1,28 +1,30 @@
 package com.thomaskioko.trakt.service.implementation
 
+import com.thomaskioko.tvmaniac.base.model.TraktOAuthInfo
+import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.safeRequest
-import com.thomaskioko.tvmaniac.trakt.service.api.TraktService
-import com.thomaskioko.tvmaniac.trakt.service.api.model.AccessTokenBody
-import com.thomaskioko.tvmaniac.trakt.service.api.model.ErrorResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.RefreshAccessTokenBody
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktAccessRefreshTokenResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktAccessTokenResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktAddRemoveShowFromListResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktAddShowRequest
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktAddShowToListResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktCreateListRequest
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktCreateListResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktFollowedShowResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktPersonalListsResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktSeasonEpisodesResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktSeasonsResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktShow
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktShowIds
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktShowResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktShowsResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktUserResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktUserStatsResponse
+import com.thomaskioko.tvmaniac.trakt.api.TraktService
+import com.thomaskioko.tvmaniac.trakt.api.model.AccessTokenBody
+import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.RefreshAccessTokenBody
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessRefreshTokenResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessTokenResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddRemoveShowFromListResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowRequest
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowToListResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListRequest
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShow
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -33,14 +35,15 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.http.path
+import me.tatarka.inject.annotations.Inject
 
 private const val PAGE_LIMIT_SIZE = 20
 
+@Inject
 class TraktServiceImpl(
-    private val clientId: String,
-    private val clientSecret: String,
-    private val redirectUri: String,
-    private val httpClient: HttpClient
+    private val traktOAuthInfo: TraktOAuthInfo,
+    private val httpClient: HttpClient,
+    private val exceptionHandler: ExceptionHandler
 ) : TraktService {
 
     override suspend fun getAccessToken(
@@ -49,9 +52,9 @@ class TraktServiceImpl(
         setBody(
             AccessTokenBody(
                 code = authCode,
-                clientId = clientId,
-                clientSecret = clientSecret,
-                redirectUri = redirectUri,
+                clientId = traktOAuthInfo.clientId,
+                clientSecret = traktOAuthInfo.clientSecret,
+                redirectUri = traktOAuthInfo.redirectUri,
                 grantType = "authorization_code",
             )
         )
@@ -75,16 +78,16 @@ class TraktServiceImpl(
             setBody(
                 AccessTokenBody(
                     code = authCode,
-                    clientId = clientId,
-                    clientSecret = clientSecret,
-                    redirectUri = redirectUri,
+                    clientId = traktOAuthInfo.clientId,
+                    clientSecret = traktOAuthInfo.clientSecret,
+                    redirectUri = traktOAuthInfo.redirectUri,
                 )
             )
         }
     }
 
     override suspend fun getUserProfile(userId: String): ApiResponse<TraktUserResponse, ErrorResponse> =
-        httpClient.safeRequest {
+        httpClient.safeRequest(exceptionHandler) {
             url {
                 method = HttpMethod.Get
                 path("users/$userId")
@@ -185,7 +188,7 @@ class TraktServiceImpl(
         }.body()
 
     override suspend fun getTrendingShows(page: Long): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
-        httpClient.safeRequest {
+        httpClient.safeRequest(exceptionHandler) {
             url {
                 method = HttpMethod.Get
                 path("shows/trending")
@@ -199,7 +202,7 @@ class TraktServiceImpl(
         page: Long,
         period: String
     ): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
-        httpClient.safeRequest {
+        httpClient.safeRequest(exceptionHandler) {
             url {
                 method = HttpMethod.Get
                 path("shows/recommended/$period")
@@ -210,7 +213,7 @@ class TraktServiceImpl(
         }
 
     override suspend fun getAnticipatedShows(page: Long): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
-        httpClient.safeRequest {
+        httpClient.safeRequest(exceptionHandler) {
             url {
                 method = HttpMethod.Get
                 path("shows/anticipated")
@@ -221,7 +224,7 @@ class TraktServiceImpl(
         }
 
     override suspend fun getPopularShows(page: Long): ApiResponse<List<TraktShowResponse>, ErrorResponse> =
-        httpClient.safeRequest {
+        httpClient.safeRequest(exceptionHandler) {
             url {
                 method = HttpMethod.Get
                 path("shows/popular")
@@ -232,7 +235,7 @@ class TraktServiceImpl(
         }
 
     override suspend fun getSimilarShows(traktId: Long): ApiResponse<List<TraktShowResponse>, ErrorResponse> =
-        httpClient.safeRequest {
+        httpClient.safeRequest(exceptionHandler) {
             url {
                 method = HttpMethod.Get
                 path("shows/$traktId/related")
@@ -241,7 +244,7 @@ class TraktServiceImpl(
         }
 
     override suspend fun getShowSeasons(traktId: Long): ApiResponse<List<TraktSeasonsResponse>, ErrorResponse> =
-        httpClient.safeRequest {
+        httpClient.safeRequest(exceptionHandler) {
             url {
                 method = HttpMethod.Get
                 path("shows/$traktId/seasons")
@@ -252,7 +255,7 @@ class TraktServiceImpl(
     override suspend fun getSeasonEpisodes(
         traktId: Long
     ): ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse> =
-        httpClient.safeRequest {
+        httpClient.safeRequest(exceptionHandler) {
             url {
                 method = HttpMethod.Get
                 path("shows/$traktId/seasons")
@@ -261,7 +264,7 @@ class TraktServiceImpl(
         }
 
     override suspend fun getSeasonDetails(traktId: Long): ApiResponse<TraktShowResponse, ErrorResponse> =
-        httpClient.safeRequest {
+        httpClient.safeRequest(exceptionHandler) {
             url {
                 method = HttpMethod.Get
                 path("shows/$traktId")
