@@ -1,5 +1,5 @@
 plugins {
-    id("tvmaniac.kmm.api")
+    id("tvmaniac.kmm.data")
 }
 
 
