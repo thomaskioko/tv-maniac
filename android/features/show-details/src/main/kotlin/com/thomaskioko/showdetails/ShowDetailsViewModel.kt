@@ -7,13 +7,13 @@ import com.thomaskioko.tvmaniac.data.showdetails.LoadShowDetails
 import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState
 import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsStateMachine
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
-class ShowDetailsViewModel @Inject constructor(
+
+@Inject
+class ShowDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val stateMachine: ShowDetailsStateMachine
 ) : ViewModel() {

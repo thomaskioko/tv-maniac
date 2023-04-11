@@ -3,13 +3,12 @@ package com.thomaskioko.tvmaniac.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
-class SettingsViewModel @Inject constructor(
+@Inject
+class SettingsViewModel(
     private val stateMachine: SettingsStateMachine,
     private val traktAuthManager: TraktAuthManager,
 ) : ViewModel(), TraktAuthManager by traktAuthManager {
