@@ -12,9 +12,9 @@ import kotlinx.coroutines.flow.callbackFlow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class NetworkUtilImpl(
+class NetworkRepositoryImpl(
     private val context: Application
-) : NetworkUtil {
+) : NetworkRepository {
 
     override fun observeConnectionState(): Flow<ConnectionState> = callbackFlow {
         val connectivityManager =
