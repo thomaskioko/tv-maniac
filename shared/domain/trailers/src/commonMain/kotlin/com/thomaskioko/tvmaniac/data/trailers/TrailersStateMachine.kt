@@ -3,22 +3,20 @@ package com.thomaskioko.tvmaniac.data.trailers
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
+import com.thomaskioko.tvmaniac.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.MainCoroutineDispatcher
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-class TrailersStateMachine constructor(
+@Inject
+class TrailersStateMachine(
     private val trailerRepository: TrailerRepository
-) : FlowReduxStateMachine<TrailersState, TrailersAction>(
-    initialState = LoadingTrailers
-) {
+) : FlowReduxStateMachine<TrailersState, TrailersAction>(initialState = LoadingTrailers) {
 
     init {
         spec {
@@ -75,16 +73,14 @@ class TrailersStateMachine constructor(
 /**
  * A wrapper class around [TrailersStateMachine] handling `Flow` and suspend functions on iOS.
  */
+@Inject
 class TrailersStateMachineWrapper(
-    dispatcher: MainCoroutineDispatcher,
+    private val scope: AppCoroutineScope,
     private val stateMachine: TrailersStateMachine,
 ) {
 
-    private val job = SupervisorJob()
-    private val scope = CoroutineScope(job + dispatcher)
-
     fun start(stateChangeListener: (TrailersState) -> Unit) {
-        scope.launch {
+        scope.main.launch {
             stateMachine.state.collect {
                 stateChangeListener(it)
             }
@@ -92,12 +88,12 @@ class TrailersStateMachineWrapper(
     }
 
     fun dispatch(action: TrailersAction) {
-        scope.launch {
+        scope.main.launch {
             stateMachine.dispatch(action)
         }
     }
 
     fun cancel() {
-        job.cancelChildren()
+        scope.main.cancel()
     }
 }

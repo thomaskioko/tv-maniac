@@ -3,7 +3,9 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import com.thomaskioko.tvmaniac.core.db.Episode_image
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeImageCache
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class EpisodeImageCacheImpl(
     private val database: TvManiacDatabase
 ) : EpisodeImageCache {

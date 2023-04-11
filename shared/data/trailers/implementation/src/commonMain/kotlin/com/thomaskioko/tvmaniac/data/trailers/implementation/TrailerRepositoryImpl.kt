@@ -1,28 +1,32 @@
 package com.thomaskioko.tvmaniac.data.trailers.implementation
 
 import co.touchlab.kermit.Logger
+import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.base.util.AppUtils
+import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.core.util.AppUtils
-import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
-import com.thomaskioko.tvmaniac.core.util.network.Either
-import com.thomaskioko.tvmaniac.core.util.network.Failure
-import com.thomaskioko.tvmaniac.core.util.network.networkBoundResult
+import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import com.thomaskioko.tvmaniac.tmdb.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
-import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class TrailerRepositoryImpl(
     private val apiService: TmdbService,
     private val trailerCache: TrailerCache,
     private val showsCache: ShowsCache,
     private val appUtils: AppUtils,
-    private val dispatcher: CoroutineDispatcher,
+    private val exceptionHandler: ExceptionHandler,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : TrailerRepository {
 
-    override fun isWebViewInstalled(): Flow<Boolean> = appUtils.isYoutubePlayerInstalled()
+    override fun isYoutubePlayerInstalled(): Flow<Boolean> = appUtils.isYoutubePlayerInstalled()
 
     override fun observeTrailersByShowId(traktId: Long): Flow<Either<Failure, List<Trailers>>> =
         networkBoundResult(
@@ -33,7 +37,8 @@ class TrailerRepositoryImpl(
                 apiService.getTrailers(show.tmdb_id!!)
             },
             saveFetchResult = { it.mapAndCache(traktId) },
-            coroutineDispatcher = dispatcher
+            exceptionHandler = exceptionHandler,
+            coroutineDispatcher = dispatchers.io
         )
 
     private fun ApiResponse<TrailersResponse, ErrorResponse>.mapAndCache(showId: Long) {
@@ -52,14 +57,17 @@ class TrailerRepositoryImpl(
                 }
                 trailerCache.insert(cacheList)
             }
+
             is ApiResponse.Error.GenericError -> {
                 Logger.withTag("observeTrailersByShowId").e("$this")
                 throw Throwable("$errorMessage")
             }
+
             is ApiResponse.Error.HttpError -> {
                 Logger.withTag("observeTrailersByShowId").e("$this")
                 throw Throwable("$code - ${errorBody?.message}")
             }
+
             is ApiResponse.Error.SerializationError -> {
                 Logger.withTag("observeTrailersByShowId").e("$this")
                 throw Throwable("$this")

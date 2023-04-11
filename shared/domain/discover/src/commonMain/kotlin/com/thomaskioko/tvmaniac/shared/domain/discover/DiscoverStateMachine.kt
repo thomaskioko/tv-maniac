@@ -3,21 +3,21 @@ package com.thomaskioko.tvmaniac.shared.domain.discover
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
+import com.thomaskioko.tvmaniac.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
-import kotlinx.coroutines.CoroutineScope
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.MainCoroutineDispatcher
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-class DiscoverStateMachine constructor(
+@Inject
+class DiscoverStateMachine(
     private val showsRepository: ShowsRepository,
     private val tmdbRepository: TmdbRepository
 ) : FlowReduxStateMachine<ShowsState, ShowsAction>(initialState = Loading) {
@@ -110,17 +110,14 @@ class DiscoverStateMachine constructor(
 /**
  * A wrapper class around [DiscoverStateMachine] handling `Flow` and suspend functions on iOS.
  */
+@Inject
 class DiscoverStateMachineWrapper(
-    dispatcher: MainCoroutineDispatcher,
+    private val scope: AppCoroutineScope,
     private val stateMachine: DiscoverStateMachine,
 ) {
 
-    private val job = SupervisorJob()
-    private val scope = CoroutineScope(job + dispatcher)
-
-
     fun start(stateChangeListener: (ShowsState) -> Unit) {
-        scope.launch {
+        scope.main.launch {
             stateMachine.state.collect {
                 stateChangeListener(it)
             }
@@ -128,13 +125,13 @@ class DiscoverStateMachineWrapper(
     }
 
     fun dispatch(action: ShowsAction) {
-        scope.launch {
+        scope.main.launch {
             stateMachine.dispatch(action)
         }
     }
 
     fun cancel() {
-        job.cancelChildren()
+        scope.main.cancel()
     }
 
 }

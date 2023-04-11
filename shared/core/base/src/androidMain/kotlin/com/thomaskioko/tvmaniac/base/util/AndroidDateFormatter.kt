@@ -1,16 +1,17 @@
-package com.thomaskioko.tvmaniac.core.util
+package com.thomaskioko.tvmaniac.base.util
 
 import co.touchlab.kermit.Logger
 import kotlinx.datetime.Clock
+import me.tatarka.inject.annotations.Inject
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-actual object DateUtil {
+@Inject
+class AndroidDateFormatter : DateFormatter {
 
-    actual fun formatDateString(
-        datePattern: String,
-        dateString: String?
-    ): String {
+    override fun getTimestampMilliseconds(): Long = Clock.System.now().toEpochMilliseconds()
+
+    override fun formatDateString(datePattern: String, dateString: String?): String {
         var result = "TBA"
         try {
             dateString?.let {
@@ -24,6 +25,4 @@ actual object DateUtil {
         }
         return result
     }
-
-    actual fun getTimestampMilliseconds(): Long = Clock.System.now().toEpochMilliseconds()
 }

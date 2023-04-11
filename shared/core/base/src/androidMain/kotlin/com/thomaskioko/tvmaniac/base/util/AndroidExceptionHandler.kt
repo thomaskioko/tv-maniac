@@ -1,24 +1,26 @@
-package com.thomaskioko.tvmaniac.core.util
+package com.thomaskioko.tvmaniac.base.util
 
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.serialization.JsonConvertException
+import me.tatarka.inject.annotations.Inject
 import java.net.UnknownHostException
 
-actual object ExceptionHandler : Exception() {
+@Inject
+class AndroidExceptionHandler : ExceptionHandler, Exception() {
 
     override val message: String
         get() = cause?.message ?: "Something went wrong"
 
-    actual fun Throwable.resolveError() = when (this) {
+    override fun resolveError(throwable: Throwable) = when (throwable) {
         is ClientRequestException ->
-            when (response.status.value) {
+            when (throwable.response.status.value) {
                 401 -> "Unauthorized request"
                 403 -> "Invalid API key"
                 404 -> "Invalid Request"
                 420 -> "Account limit exceeded"
                 426 -> "Upgrade to VIP"
-                in 500..522 -> "${response.status.value} Server Error"
+                in 500..522 -> "${throwable.response.status.value} Server Error"
                 else -> "Network error!"
             }
 
