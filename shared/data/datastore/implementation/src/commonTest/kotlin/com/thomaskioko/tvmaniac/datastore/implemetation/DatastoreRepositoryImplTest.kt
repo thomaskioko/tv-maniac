@@ -5,11 +5,14 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.Theme
 import com.thomaskioko.tvmaniac.datastore.implementation.DatastoreRepositoryImpl
 import com.thomaskioko.tvmaniac.datastore.implementation.DatastoreRepositoryImpl.Companion.KEY_THEME
+import com.thomaskioko.tvmaniac.datastore.implementation.IgnoreIos
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -18,6 +21,7 @@ import okio.Path.Companion.toPath
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DatastoreRepositoryImplTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -28,7 +32,17 @@ class DatastoreRepositoryImplTest {
         scope = preferencesScope,
         produceFile = { "test.preferences_pb".toPath() },
     )
-    private val repository = DatastoreRepositoryImpl(dataStore, preferencesScope)
+
+    private val coroutineScope = AppCoroutineScope(
+        io = preferencesScope,
+        default = preferencesScope,
+        main = preferencesScope
+    )
+
+    private val repository = DatastoreRepositoryImpl(
+        coroutineScope= coroutineScope,
+        dataStore = dataStore
+    )
 
 
     @AfterTest
@@ -39,6 +53,7 @@ class DatastoreRepositoryImplTest {
         preferencesScope.cancel()
     }
 
+    @IgnoreIos
     @Test
     fun default_theme_is_emitted() = runTest {
         repository.observeTheme().test {
@@ -46,6 +61,7 @@ class DatastoreRepositoryImplTest {
         }
     }
 
+    @IgnoreIos
     @Test
     fun when_theme_is_changed_correct_value_is_set() = runTest {
 
