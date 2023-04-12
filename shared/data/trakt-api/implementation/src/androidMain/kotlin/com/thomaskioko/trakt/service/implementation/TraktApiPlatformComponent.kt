@@ -3,8 +3,6 @@ package com.thomaskioko.trakt.service.implementation
 import com.thomaskioko.tvmaniac.base.model.AppConfig
 import com.thomaskioko.tvmaniac.base.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -16,7 +14,7 @@ interface TraktApiPlatformComponent {
     @OptIn(ExperimentalSerializationApi::class)
     @ApplicationScope
     @Provides
-    fun provideJson(): Json = Json {
+    fun provideJson(): TraktJson = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
         isLenient = true
@@ -25,9 +23,9 @@ interface TraktApiPlatformComponent {
 
     @ApplicationScope
     @Provides
-    fun provideHttpClientEngine(
+    fun provideTraktHttpClientEngine(
         interceptor: TraktAuthInterceptor
-    ): HttpClientEngine = OkHttp.create {
+    ): TraktHttpClientEngine = OkHttp.create {
         addInterceptor(interceptor)
     }
 
@@ -35,9 +33,9 @@ interface TraktApiPlatformComponent {
     @Provides
     fun provideHttpClient(
         appConfig: AppConfig,
-        json: Json,
-        httpClientEngine: HttpClientEngine
-    ): HttpClient = traktHttpClient(
+        json: TraktJson,
+        httpClientEngine: TraktHttpClientEngine
+    ): TraktHttpClient = traktHttpClient(
         isDebug = appConfig.isDebug,
         json = json,
         httpClientEngine = httpClientEngine

@@ -14,11 +14,14 @@ import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+typealias TraktHttpClient = HttpClient
+typealias TraktHttpClientEngine = HttpClientEngine
+typealias TraktJson = Json
 
 fun traktHttpClient(
     isDebug: Boolean = false,
-    json: Json,
-    httpClientEngine: HttpClientEngine,
+    json: TraktJson,
+    httpClientEngine: TraktHttpClientEngine,
 ) = HttpClient(httpClientEngine) {
     install(ContentNegotiation) {
         json(json = json)
