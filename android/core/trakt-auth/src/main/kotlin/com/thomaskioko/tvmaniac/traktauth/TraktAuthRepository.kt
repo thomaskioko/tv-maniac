@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.traktauth
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.traktauth.model.TraktAuthState
 import com.thomaskioko.tvmaniac.workmanager.ShowTasks
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -16,7 +17,7 @@ import net.openid.appauth.AuthState
 
 @OptIn(DelicateCoroutinesApi::class)
 @Inject
-class TraktManagerRepository(
+class TraktAuthRepository(
     private val showTasks: ShowTasks,
     private val dispatchers: AppCoroutineDispatchers,
     private val authPrefs: SharedPreferences,

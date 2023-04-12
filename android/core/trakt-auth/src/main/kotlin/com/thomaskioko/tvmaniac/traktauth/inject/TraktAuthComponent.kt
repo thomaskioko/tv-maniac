@@ -8,14 +8,15 @@ import androidx.core.net.toUri
 import com.thomaskioko.tvmaniac.base.model.TraktOAuthInfo
 import com.thomaskioko.tvmaniac.base.scope.ActivityScope
 import com.thomaskioko.tvmaniac.base.scope.ApplicationScope
-import com.thomaskioko.tvmaniac.traktauth.ActivityTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.TraktAuthState
-import com.thomaskioko.tvmaniac.traktauth.TraktManagerRepository
+import com.thomaskioko.tvmaniac.traktauth.TraktAuthManagerImpl
+import com.thomaskioko.tvmaniac.traktauth.TraktAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.model.TraktAuthState
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import me.tatarka.inject.annotations.Provides
 import net.openid.appauth.AuthorizationRequest
+import net.openid.appauth.AuthorizationService
 import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientSecretBasic
@@ -25,9 +26,9 @@ interface TraktAuthComponent {
 
     @ApplicationScope
     @Provides
-    fun provideAuthState(traktManagerRepository: TraktManagerRepository): TraktAuthState =
+    fun provideTraktAuthState(traktAuthRepository: TraktAuthRepository): TraktAuthState =
         runBlocking {
-            traktManagerRepository.state.first()
+            traktAuthRepository.state.first()
         }
 
     @ApplicationScope
@@ -65,15 +66,19 @@ interface TraktAuthComponent {
     @Provides
     fun provideAuthSharedPrefs(
         context: Application
-    ): SharedPreferences {
-        return context.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
-    }
+    ): SharedPreferences = context.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
+
+    @ApplicationScope
+    @Provides
+    fun provideAuthorizationService(
+        application: Application
+    ): AuthorizationService = AuthorizationService(application)
 }
 
 interface TraktAuthManagerComponent {
 
     @ActivityScope
     @Provides
-    fun provideTraktAuthManager(bind: ActivityTraktAuthManager): TraktAuthManager = bind
-
+    fun provideLoginToTraktInteractor(bind: TraktAuthManagerImpl): TraktAuthManager =
+        bind
 }
