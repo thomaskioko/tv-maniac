@@ -4,7 +4,6 @@ import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.base.util.DateFormatter
 import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
-import com.thomaskioko.tvmaniac.base.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.TraktStats
 import com.thomaskioko.tvmaniac.core.db.Trakt_list
@@ -32,7 +31,7 @@ class ProfileRepositoryImpl constructor(
     private val userCache: UserCache,
     private val followedCache: FollowedCache,
     private val dateFormatter: DateFormatter,
-    private val formatterUtil: FormatterUtil,
+    private val mapper: ProfileResponseMapper,
     private val exceptionHandler: ExceptionHandler,
     private val dispatchers: AppCoroutineDispatchers,
 ) : ProfileRepository {
@@ -45,7 +44,7 @@ class ProfileRepositoryImpl constructor(
             saveFetchResult = {
                 when (it) {
                     is ApiResponse.Success -> {
-                        userCache.insert(it.body.toCache(slug))
+                        userCache.insert(mapper.toTraktList(slug, it.body))
                     }
 
                     is ApiResponse.Error.GenericError -> {
@@ -73,7 +72,7 @@ class ProfileRepositoryImpl constructor(
             query = { statsCache.observeStats() },
             shouldFetch = { it == null || refresh },
             fetch = { traktService.getUserStats(slug) },
-            saveFetchResult = { statsCache.insert(it.toCache(slug, formatterUtil)) },
+            saveFetchResult = { statsCache.insert(mapper.toTraktStats(slug, it)) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io
         )
@@ -83,7 +82,7 @@ class ProfileRepositoryImpl constructor(
             query = { favoriteListCache.observeTraktList() },
             shouldFetch = { it == null },
             fetch = { traktService.createFollowingList(userSlug) },
-            saveFetchResult = { favoriteListCache.insert(it.toCache()) },
+            saveFetchResult = { favoriteListCache.insert(mapper.toTraktList(it)) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io
         )
@@ -127,7 +126,7 @@ class ProfileRepositoryImpl constructor(
             .flowOn(dispatchers.io)
             .collect { user ->
                 if (user.slug.isNotBlank()) {
-                    followedCache.insert(traktService.getWatchList().responseToCache(dateFormatter))
+                    followedCache.insert(mapper.responseToCache(traktService.getWatchList()))
                 }
             }
     }
