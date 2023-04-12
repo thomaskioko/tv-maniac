@@ -8,14 +8,14 @@ import com.thomaskioko.tvmaniac.tmdb.api.model.EpisodesResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
-import io.ktor.client.HttpClient
+import com.thomaskioko.tvmaniac.tmdb.implementation.inject.TmdbHttpClient
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TmdbServiceImpl(
-    private val httpClient: HttpClient,
+    private val httpClient: TmdbHttpClient,
     private val exceptionHandler: ExceptionHandler,
 ) : TmdbService {
 

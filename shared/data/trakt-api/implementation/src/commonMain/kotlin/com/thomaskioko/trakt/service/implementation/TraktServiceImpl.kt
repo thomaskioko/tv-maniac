@@ -25,7 +25,6 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
-import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -42,7 +41,7 @@ private const val PAGE_LIMIT_SIZE = 20
 @Inject
 class TraktServiceImpl(
     private val traktOAuthInfo: TraktOAuthInfo,
-    private val httpClient: HttpClient,
+    private val httpClient: TraktHttpClient,
     private val exceptionHandler: ExceptionHandler
 ) : TraktService {
 
