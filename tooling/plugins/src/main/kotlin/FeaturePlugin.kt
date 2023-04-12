@@ -11,7 +11,7 @@ class FeaturePlugin : Plugin<Project> {
         with(target) {
             pluginManager.apply {
                 apply("tvmaniac.compose.library")
-                apply("tvmaniac.hilt")
+                apply("com.google.devtools.ksp")
             }
             extensions.configure<LibraryExtension> {
                 defaultConfig {
@@ -22,7 +22,7 @@ class FeaturePlugin : Plugin<Project> {
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
             dependencies {
-                add("api", project(":shared:core:util"))
+                add("api", project(":shared:core:base"))
                 add("api", project(":android:core:designsystem"))
                 add("api", project(":android:core:navigation"))
                 add("implementation", project(":android:core:resources"))
@@ -31,12 +31,13 @@ class FeaturePlugin : Plugin<Project> {
                 add("api", libs.findLibrary("androidx.navigation.runtime").get())
 
                 add("implementation", libs.findLibrary("androidx.compose.foundation").get())
-                add("implementation", libs.findLibrary("androidx.hilt.navigationcompose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.viewmodel.compose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.runtime.compose").get())
                 add("implementation", libs.findLibrary("androidx.navigation.compose").get())
                 add("implementation", libs.findLibrary("coroutines.core").get())
+                add("implementation", libs.findLibrary("kotlinInject.runtime").get())
 
+                add("ksp", libs.findLibrary("kotlinInject.compiler").get())
                 add("runtimeOnly", libs.findLibrary("coroutines.android").get())
             }
         }

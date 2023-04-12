@@ -28,10 +28,6 @@ gradlePlugin {
             id = "tvmaniac.android.library"
             implementationClass = "AndroidLibraryPlugin"
         }
-        register("androidHilt") {
-            id = "tvmaniac.hilt"
-            implementationClass = "HiltPlugin"
-        }
         register("androidComposeLibrary") {
             id = "tvmaniac.compose.library"
             implementationClass = "ComposeLibraryPlugin"
@@ -40,13 +36,9 @@ gradlePlugin {
             id = "tvmaniac.android.feature"
             implementationClass = "FeaturePlugin"
         }
-        register("kmmDataApi") {
-            id = "tvmaniac.kmm.api"
-            implementationClass = "KotlinMultiplatformDataApiPlugin"
-        }
-        register("kmmDataImpl") {
-            id = "tvmaniac.kmm.impl"
-            implementationClass = "KotlinMultiplatformDataImplPlugin"
+        register("kmmData") {
+            id = "tvmaniac.kmm.data"
+            implementationClass = "KotlinMultiplatformDataPlugin"
         }
         register("kmmDomain") {
             id = "tvmaniac.kmm.domain"
