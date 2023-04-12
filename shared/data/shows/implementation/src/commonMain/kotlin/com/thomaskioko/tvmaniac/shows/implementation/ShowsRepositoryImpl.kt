@@ -4,7 +4,6 @@ import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.base.util.DateFormatter
 import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
-import com.thomaskioko.tvmaniac.base.util.FormatterUtil
 import com.thomaskioko.tvmaniac.category.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.category.api.model.Category.ANTICIPATED
@@ -24,10 +23,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.cache.FollowedCache
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
-import com.thomaskioko.tvmaniac.shows.implementation.mapper.responseToCache
-import com.thomaskioko.tvmaniac.shows.implementation.mapper.showResponseToCacheList
-import com.thomaskioko.tvmaniac.shows.implementation.mapper.showsResponseToCacheList
-import com.thomaskioko.tvmaniac.shows.implementation.mapper.toCategoryCache
+import com.thomaskioko.tvmaniac.shows.implementation.mapper.ShowsResponseMapper
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
@@ -44,7 +40,7 @@ class ShowsRepositoryImpl constructor(
     private val categoryCache: CategoryCache,
     private val traktService: TraktService,
     private val dateFormatter: DateFormatter,
-    private val formatterUtil: FormatterUtil,
+    private val mapper: ShowsResponseMapper,
     private val exceptionHandler: ExceptionHandler,
     private val dispatchers: AppCoroutineDispatchers,
 ) : ShowsRepository {
@@ -68,7 +64,7 @@ class ShowsRepositoryImpl constructor(
         networkBoundResult(
             query = { showsCache.observeCachedShows(TRENDING.id) },
             shouldFetch = { it.isNullOrEmpty() },
-            fetch = { traktService.getTrendingShows().showsResponseToCacheList(formatterUtil) },
+            fetch = { mapper.showsResponseToCacheList(traktService.getTrendingShows()) },
             saveFetchResult = { cacheResult(it, TRENDING.id) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io
@@ -83,7 +79,7 @@ class ShowsRepositoryImpl constructor(
         networkBoundResult(
             query = { showsCache.observeCachedShows(POPULAR.id) },
             shouldFetch = { it.isNullOrEmpty() },
-            fetch = { traktService.getPopularShows().showResponseToCacheList(formatterUtil) },
+            fetch = { mapper.showResponseToCacheList(traktService.getPopularShows()) },
             saveFetchResult = { cacheResult(it, POPULAR.id) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io
@@ -98,7 +94,7 @@ class ShowsRepositoryImpl constructor(
         networkBoundResult(
             query = { showsCache.observeCachedShows(ANTICIPATED.id) },
             shouldFetch = { it.isNullOrEmpty() },
-            fetch = { traktService.getAnticipatedShows().showsResponseToCacheList(formatterUtil) },
+            fetch = { mapper.showsResponseToCacheList(traktService.getAnticipatedShows()) },
             saveFetchResult = { cacheResult(it, ANTICIPATED.id) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io
@@ -113,10 +109,7 @@ class ShowsRepositoryImpl constructor(
         networkBoundResult(
             query = { showsCache.observeCachedShows(FEATURED.id) },
             shouldFetch = { it.isNullOrEmpty() },
-            fetch = {
-                traktService.getRecommendedShows(period = "daily")
-                    .showsResponseToCacheList(formatterUtil)
-            },
+            fetch = { mapper.showsResponseToCacheList(traktService.getRecommendedShows(period = "daily")) },
             saveFetchResult = { cacheResult(it, FEATURED.id) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io
@@ -135,7 +128,7 @@ class ShowsRepositoryImpl constructor(
             val mappedResult = fetchShowsAndMapResult(it.id)
 
             showsCache.insert(mappedResult)
-            categoryCache.insert(mappedResult.toCategoryCache(it.id))
+            categoryCache.insert(mapper.toCategoryCache(mappedResult, it.id))
         }
 
     }
@@ -165,13 +158,10 @@ class ShowsRepositoryImpl constructor(
 
     private suspend fun fetchShowsAndMapResult(categoryId: Long): List<Show> =
         when (categoryId) {
-            POPULAR.id -> traktService.getPopularShows().showResponseToCacheList(formatterUtil)
-            TRENDING.id -> traktService.getTrendingShows().showsResponseToCacheList(formatterUtil)
-            ANTICIPATED.id -> traktService.getAnticipatedShows()
-                .showsResponseToCacheList(formatterUtil)
-
-            FEATURED.id -> traktService.getRecommendedShows(period = "daily")
-                .showsResponseToCacheList(formatterUtil)
+            POPULAR.id -> mapper.showResponseToCacheList(traktService.getPopularShows())
+            TRENDING.id -> mapper.showsResponseToCacheList(traktService.getTrendingShows())
+            ANTICIPATED.id -> mapper.showsResponseToCacheList(traktService.getAnticipatedShows())
+            FEATURED.id -> mapper.showsResponseToCacheList(traktService.getRecommendedShows(period = "daily"))
 
             else -> throw Throwable("Unsupported type sunny")
         }
@@ -180,13 +170,13 @@ class ShowsRepositoryImpl constructor(
     private fun cacheResult(result: List<Show>, categoryId: Long) {
         showsCache.insert(result)
 
-        categoryCache.insert(result.toCategoryCache(categoryId))
+        categoryCache.insert(mapper.toCategoryCache(result, categoryId))
     }
 
     private fun mapAndCache(response: ApiResponse<TraktShowResponse, ErrorResponse>) {
         when (response) {
             is ApiResponse.Success -> {
-                showsCache.insert(response.body.responseToCache(formatterUtil))
+                showsCache.insert(mapper.responseToCache(response.body))
             }
 
             is ApiResponse.Error.GenericError -> {
