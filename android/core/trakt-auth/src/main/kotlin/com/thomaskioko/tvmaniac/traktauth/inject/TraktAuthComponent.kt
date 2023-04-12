@@ -79,6 +79,5 @@ interface TraktAuthManagerComponent {
 
     @ActivityScope
     @Provides
-    fun provideLoginToTraktInteractor(bind: TraktAuthManagerImpl): TraktAuthManager =
-        bind
+    fun provideTraktAuthManager(bind: TraktAuthManagerImpl): TraktAuthManager = bind
 }
