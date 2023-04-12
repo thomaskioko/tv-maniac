@@ -1,9 +1,11 @@
 package com.thomaskioko.tvmaniac.base
 
 import com.thomaskioko.tvmaniac.base.scope.ApplicationScope
+import com.thomaskioko.tvmaniac.base.util.AndroidAppUtils
 import com.thomaskioko.tvmaniac.base.util.AndroidDateFormatter
 import com.thomaskioko.tvmaniac.base.util.AndroidExceptionHandler
 import com.thomaskioko.tvmaniac.base.util.AndroidFormatterUtil
+import com.thomaskioko.tvmaniac.base.util.AppUtils
 import com.thomaskioko.tvmaniac.base.util.DateFormatter
 import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.base.util.FormatterUtil
@@ -22,4 +24,8 @@ interface BasePlatformComponent {
     @ApplicationScope
     @Provides
     fun provideAndroidExceptionHandler(bind: AndroidExceptionHandler): ExceptionHandler = bind
+
+    @ApplicationScope
+    @Provides
+    fun provideAppUtils(bind: AndroidAppUtils): AppUtils = bind
 }
