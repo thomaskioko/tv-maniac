@@ -20,7 +20,7 @@ class TraktAuthManagerImpl(
 
     private lateinit var launcher: ActivityResultLauncher<Unit>
 
-    override fun register() {
+    override fun registerResult() {
         require(activity is ComponentActivity)
 
         launcher = activity.registerForActivityResult(traktActivityResultContract) { result ->
@@ -30,7 +30,7 @@ class TraktAuthManagerImpl(
         }
     }
 
-    override fun launch() = launcher.launch(Unit)
+    override fun launchWebView() = launcher.launch(Unit)
 
     private fun onLoginResult(result: TraktActivityResultContract.Result) {
         val (response, error) = result

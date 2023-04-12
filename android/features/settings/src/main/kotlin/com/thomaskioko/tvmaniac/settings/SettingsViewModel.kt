@@ -11,7 +11,7 @@ import me.tatarka.inject.annotations.Inject
 class SettingsViewModel(
     private val stateMachine: SettingsStateMachine,
     private val traktAuthManager: TraktAuthManager,
-) : ViewModel(), TraktAuthManager by traktAuthManager {
+) : ViewModel() {
 
     val state: MutableStateFlow<SettingsState> = MutableStateFlow(SettingsContent.EMPTY)
 
@@ -27,6 +27,13 @@ class SettingsViewModel(
     fun dispatch(action: SettingsActions) {
         viewModelScope.launch {
             stateMachine.dispatch(action)
+        }
+    }
+
+
+    fun login() {
+        viewModelScope.launch {
+            traktAuthManager.launchWebView()
         }
     }
 
