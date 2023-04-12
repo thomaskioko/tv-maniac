@@ -14,8 +14,7 @@ class KotlinMultiplatformDomainPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("tvmaniac.kmm.library")
-                apply("dagger.hilt.android.plugin")
-                apply("org.jetbrains.kotlin.kapt")
+                apply("com.google.devtools.ksp")
             }
 
             extensions.configure<LibraryExtension> {
@@ -34,7 +33,7 @@ class KotlinMultiplatformDomainPlugin : Plugin<Project> {
 
                 add("commonMainApi", libs.findLibrary("flowredux").get())
                 add("commonMainImplementation", libs.findLibrary("coroutines-core").get())
-                add("commonMainImplementation", libs.findLibrary("koin").get())
+                add("commonMainImplementation", libs.findLibrary("kotlinInject.runtime").get())
 
                 add("commonTestImplementation", (kotlin("test")))
                 add("commonTestImplementation", libs.findLibrary("coroutines-test").get())
