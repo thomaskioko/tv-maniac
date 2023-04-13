@@ -9,11 +9,11 @@ android {
 
 dependencies {
 
-    implementation(project(":shared:core:base"))
-    implementation(project(":shared:data:profile:api"))
-    implementation(project(":shared:data:shows:api"))
+    implementation(projects.shared.core.base)
+    implementation(projects.shared.data.profile.api)
+    implementation(projects.shared.data.shows.api)
 
-    implementation(libs.androidx.work.runtime)
+    api(libs.androidx.work.runtime)
 
     implementation(libs.kermit)
 
