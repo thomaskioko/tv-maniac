@@ -2,7 +2,6 @@ package com.thomaskioko.trakt.service.implementation
 
 import co.touchlab.kermit.Logger as KLogger
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -12,11 +11,6 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.json.Json
-
-typealias TraktHttpClient = HttpClient
-typealias TraktHttpClientEngine = HttpClientEngine
-typealias TraktJson = Json
 
 fun traktHttpClient(
     isDebug: Boolean = false,

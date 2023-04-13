@@ -18,7 +18,7 @@ interface DateFormatter {
      */
     fun formatDateString(
         datePattern: String = DATE_PATTERN,
-        dateString: String?
+        dateString: String
     ): String
 
 }

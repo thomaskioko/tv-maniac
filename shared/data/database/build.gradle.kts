@@ -45,7 +45,7 @@ dependencies {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.core.db"
+    namespace = "com.thomaskioko.tvmaniac.db"
 }
 
 sqldelight {
