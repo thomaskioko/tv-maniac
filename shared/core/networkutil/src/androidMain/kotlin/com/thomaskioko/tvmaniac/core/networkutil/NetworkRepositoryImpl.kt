@@ -38,16 +38,6 @@ class NetworkRepositoryImpl(
             connectivityManager.unregisterNetworkCallback(callback)
         }
     }
-
-    /**
-     * Network utility to get current state of internet connection
-     */
-    override val connectivityState: ConnectionState
-        get() {
-            val connectivityManager =
-                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            return connectivityManager.getCurrentConnectivityState()
-        }
 }
 
 @Suppress("FunctionName")
