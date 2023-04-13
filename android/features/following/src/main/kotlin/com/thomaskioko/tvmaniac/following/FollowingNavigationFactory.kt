@@ -4,17 +4,19 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.navigation.NavigationScreen
-import com.thomaskioko.tvmaniac.navigation.viewModelComposable
-import javax.inject.Inject
+import com.thomaskioko.tvmaniac.navigation.extensions.screenComposable
+import me.tatarka.inject.annotations.Inject
 
-class FollowingNavigationFactory @Inject constructor() : ComposeNavigationFactory {
+@Inject
+class FollowingNavigationFactory(
+    private val following: Following
+) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
-        builder.viewModelComposable<FollowingViewModel>(
+        builder.screenComposable(
             route = NavigationScreen.WatchlistNavScreen.route,
             content = {
-                FollowingRoute(
-                    viewModel = this,
+                following(
                     onShowClicked = { tvShowId ->
                         navController.navigate(
                             "${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId"

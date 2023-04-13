@@ -10,23 +10,37 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.resources.R
+import me.tatarka.inject.annotations.Inject
 
+
+typealias Search = @Composable () -> Unit
+
+@Inject
 @Composable
-fun SearchRoute(
-    navController: NavHostController,
-    modifier: Modifier = Modifier,
-    viewModel: SearchViewModel = hiltViewModel(),
+fun Search(
+    viewModelFactory: () -> SearchViewModel,
 ) {
-    SearchScreen()
+    SearchScreen(
+        viewModel = viewModel(factory = viewModelFactory),
+    )
 }
 
 @Composable
-private fun SearchScreen(
+internal fun SearchScreen(
+    viewModel: SearchViewModel,
+    modifier: Modifier = Modifier,
+) {
+    SearchScreen(
+        modifier = modifier
+    )
+}
+
+@Composable
+internal fun SearchScreen(
     modifier: Modifier = Modifier,
 ) {
 

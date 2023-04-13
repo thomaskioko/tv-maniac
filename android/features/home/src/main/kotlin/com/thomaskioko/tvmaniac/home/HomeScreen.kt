@@ -47,7 +47,7 @@ import com.thomaskioko.tvmaniac.resources.R
 @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    composeNavigationFactories: Set<ComposeNavigationFactory>,
+    factorySet: Set<ComposeNavigationFactory>,
     modifier: Modifier = Modifier
 ) {
 
@@ -93,7 +93,7 @@ fun HomeScreen(
                 startDestination = NavigationScreen.DiscoverNavScreen.route,
                 modifier = Modifier.padding(contentPadding)
             ) {
-                composeNavigationFactories.addNavigation(this, navController)
+                factorySet.addNavigation(this, navController)
             }
         }
     }
@@ -154,6 +154,7 @@ fun RowScope.TvManiacBottomNavigationItem(
     onNavigationSelected: (NavigationScreen) -> Unit
 ) {
     BottomNavigationItem(
+        modifier = modifier,
         icon = {
             Icon(
                 imageVector = imageVector,

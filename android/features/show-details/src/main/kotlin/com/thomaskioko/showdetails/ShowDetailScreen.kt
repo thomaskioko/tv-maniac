@@ -57,7 +57,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.showdetails.DetailConstants.HEADER_HEIGHT
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
@@ -85,19 +85,47 @@ import com.thomaskioko.tvmaniac.data.showdetails.TrailersState
 import com.thomaskioko.tvmaniac.data.showdetails.WebViewError
 import com.thomaskioko.tvmaniac.data.showdetails.model.Season
 import com.thomaskioko.tvmaniac.data.showdetails.model.Show
+import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.resources.R
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
 
-@Composable
-fun ShowDetailRoute(
+typealias ShowDetail = @Composable (
     onBackClicked: () -> Unit,
     onShowClicked: (Long) -> Unit,
     onSeasonClicked: (Long, String) -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: ShowDetailsViewModel = hiltViewModel(),
-    onWatchTrailerClicked: (Long, String?) -> Unit = { _, _ -> }
+    onWatchTrailerClicked: (Long, String?) -> Unit
+) -> Unit
+
+@Inject
+@Composable
+fun ShowDetail(
+    viewModelFactory: (SavedStateHandle) -> ShowDetailsViewModel,
+    @Assisted onBackClicked: () -> Unit,
+    @Assisted onShowClicked: (Long) -> Unit,
+    @Assisted onSeasonClicked: (Long, String) -> Unit,
+    @Assisted onWatchTrailerClicked: (Long, String?) -> Unit = { _, _ -> },
 ) {
 
+    ShowDetailScreen(
+        viewModel = viewModel(factory = viewModelFactory),
+        onBackClicked = onBackClicked,
+        onSeasonClicked = onSeasonClicked,
+        onShowClicked = onShowClicked,
+        onWatchTrailerClicked = onWatchTrailerClicked,
+    )
+}
+
+@Composable
+internal fun ShowDetailScreen(
+    viewModel: ShowDetailsViewModel,
+    onBackClicked: () -> Unit,
+    onSeasonClicked: (Long, String) -> Unit,
+    onShowClicked: (Long) -> Unit,
+    onWatchTrailerClicked: (Long, String?) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()
 
     ShowDetailScreen(
@@ -120,7 +148,7 @@ fun ShowDetailRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ShowDetailScreen(
+internal fun ShowDetailScreen(
     state: ShowDetailsState,
     onBackClicked: () -> Unit,
     onSeasonClicked: (Long, String) -> Unit,

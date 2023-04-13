@@ -6,20 +6,22 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.navigation.NavigationScreen
-import com.thomaskioko.tvmaniac.navigation.viewModelComposable
-import javax.inject.Inject
+import com.thomaskioko.tvmaniac.navigation.extensions.screenComposable
+import me.tatarka.inject.annotations.Inject
 
-class ShowDetailNavigationFactory @Inject constructor() : ComposeNavigationFactory {
+@Inject
+class ShowDetailNavigationFactory(
+    private val showDetail: ShowDetail
+) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
-        builder.viewModelComposable<ShowDetailsViewModel>(
+        builder.screenComposable(
             arguments = listOf(
                 navArgument("tvShowId") { type = NavType.LongType }
             ),
             route = "${NavigationScreen.ShowDetailsNavScreen.route}/{tvShowId}",
             content = {
-                ShowDetailRoute(
-                    viewModel = this,
+                showDetail(
                     onBackClicked = { navController.popBackStack() },
                     onShowClicked = { showId ->
                         navController.navigate("${NavigationScreen.ShowDetailsNavScreen.route}/$showId")
@@ -28,7 +30,7 @@ class ShowDetailNavigationFactory @Inject constructor() : ComposeNavigationFacto
                         navController.navigate("${NavigationScreen.SeasonDetailsNavScreen.route}/$showId/$seasonName")
                     },
                     onWatchTrailerClicked = { showId, videoKey ->
-                        navController.navigate("${NavigationScreen.VideoPlayerNavScreen.route}/$showId/$videoKey")
+                        navController.navigate("${NavigationScreen.TrailersNavScreen.route}/$showId/$videoKey")
                     }
                 )
             }

@@ -10,11 +10,12 @@ import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsStateMachine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SeasonDetailsViewModel(
-    savedStateHandle: SavedStateHandle,
+    @Assisted savedStateHandle: SavedStateHandle,
     private val stateMachine: SeasonDetailsStateMachine
 ) : ViewModel() {
 

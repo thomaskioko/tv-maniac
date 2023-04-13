@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
@@ -31,15 +30,34 @@ import com.thomaskioko.tvmaniac.domain.following.FollowingContent
 import com.thomaskioko.tvmaniac.domain.following.FollowingState
 import com.thomaskioko.tvmaniac.domain.following.LoadingShows
 import com.thomaskioko.tvmaniac.domain.following.ReloadFollowedShows
+import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.resources.R
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-@Composable
-fun FollowingRoute(
-    modifier: Modifier = Modifier,
-    viewModel: FollowingViewModel = hiltViewModel(),
+typealias Following = @Composable (
     onShowClicked: (showId: Long) -> Unit,
+) -> Unit
+
+@Inject
+@Composable
+fun Following(
+    viewModelFactory: () -> FollowingViewModel,
+    @Assisted onShowClicked: (showId: Long) -> Unit,
 ) {
 
+    FollowingScreen(
+        viewModel = viewModel(factory = viewModelFactory),
+        onShowClicked = onShowClicked,
+    )
+}
+
+@Composable
+internal fun FollowingScreen(
+    viewModel: FollowingViewModel,
+    onShowClicked: (showId: Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val followedState by viewModel.state.collectAsStateWithLifecycle()
 
     FollowingScreen(
