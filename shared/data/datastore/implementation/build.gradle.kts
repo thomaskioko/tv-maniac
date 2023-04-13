@@ -13,7 +13,8 @@ kotlin {
             implementation(project(":shared:core:base"))
             implementation(project(":shared:data:datastore:api"))
 
-            implementation(libs.androidx.datastore.preference)
+            api(libs.androidx.datastore.preference)
+
             implementation(libs.coroutines.core)
             implementation(libs.kotlinInject.runtime)
         }
