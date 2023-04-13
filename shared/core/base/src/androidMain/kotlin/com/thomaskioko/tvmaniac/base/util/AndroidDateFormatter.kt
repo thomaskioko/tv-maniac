@@ -11,7 +11,7 @@ class AndroidDateFormatter : DateFormatter {
 
     override fun getTimestampMilliseconds(): Long = Clock.System.now().toEpochMilliseconds()
 
-    override fun formatDateString(datePattern: String, dateString: String?): String {
+    override fun formatDateString(datePattern: String, dateString: String): String {
         var result = "TBA"
         try {
             dateString?.let {

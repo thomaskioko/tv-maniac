@@ -8,7 +8,7 @@ import com.thomaskioko.tvmaniac.base.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import me.tatarka.inject.annotations.Provides
 
-interface DataStorePlatformComponent {
+actual interface DataStorePlatformComponent {
 
     @ApplicationScope
     @Provides
