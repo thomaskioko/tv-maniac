@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
@@ -58,17 +58,32 @@ import com.thomaskioko.tvmaniac.data.trailers.TrailersLoaded
 import com.thomaskioko.tvmaniac.data.trailers.TrailersState
 import com.thomaskioko.tvmaniac.data.trailers.VideoPlayerError
 import com.thomaskioko.tvmaniac.data.trailers.model.Trailer
+import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.resources.R
+import me.tatarka.inject.annotations.Inject
 
+
+typealias Trailers = @Composable () -> Unit
+
+@Inject
 @Composable
-fun TrailersRoute(
-    modifier: Modifier = Modifier,
-    viewModel: TrailersViewModel = hiltViewModel(),
+fun Trailers(
+    viewModelFactory: (SavedStateHandle) -> TrailersViewModel,
 ) {
 
+    TrailersScreen(
+        viewModel = viewModel(factory = viewModelFactory),
+    )
+}
+
+@Composable
+internal fun TrailersScreen(
+    viewModel: TrailersViewModel,
+    modifier: Modifier = Modifier,
+) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()
 
-    VideoPlayerScreen(
+    TrailersScreen(
         modifier = modifier,
         state = viewState,
         onRetryClicked = { viewModel.dispatch(ReloadTrailers) },
@@ -79,7 +94,7 @@ fun TrailersRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun VideoPlayerScreen(
+private fun TrailersScreen(
     state: TrailersState,
     onRetryClicked: () -> Unit,
     onYoutubeError: (String) -> Unit,
@@ -275,7 +290,7 @@ private fun TrailerListContentPreview(
 ) {
     TvManiacTheme {
         Surface {
-            VideoPlayerScreen(
+            TrailersScreen(
                 state = state,
                 onRetryClicked = {},
                 onTrailerClicked = {},

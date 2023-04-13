@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.inject
 import android.app.Activity
 import com.thomaskioko.tvmaniac.MainActivityViewModel
 import com.thomaskioko.tvmaniac.base.scope.ActivityScope
+import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.inject.TraktAuthManagerComponent
 import me.tatarka.inject.annotations.Component
@@ -16,4 +17,5 @@ abstract class MainActivityComponent(
 ) : TraktAuthManagerComponent {
     abstract val traktAuthManager: TraktAuthManager
     abstract val viewModel: () -> MainActivityViewModel
+    abstract val navFactorySet: Set<ComposeNavigationFactory>
 }

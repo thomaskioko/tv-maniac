@@ -38,7 +38,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -61,6 +60,7 @@ import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
 import com.thomaskioko.tvmaniac.compose.util.DominantColorState
 import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
+import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.shared.domain.discover.Loading
 import com.thomaskioko.tvmaniac.shared.domain.discover.LoadingError
@@ -74,14 +74,36 @@ import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsState
 import com.thomaskioko.tvmaniac.shared.domain.discover.model.TvShow
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 import kotlin.math.absoluteValue
 
+typealias Discover = @Composable (
+    onShowClicked: (showId: Long) -> Unit,
+    onMoreClicked: (showType: Long) -> Unit,
+) -> Unit
+
+@Inject
 @Composable
-fun DiscoverRoute(
+fun Discover(
+    viewModelFactory: () -> DiscoverViewModel,
+    @Assisted onShowClicked: (showId: Long) -> Unit,
+    @Assisted onMoreClicked: (showType: Long) -> Unit,
+) {
+
+    DiscoverScreen(
+        viewModel = viewModel(factory = viewModelFactory),
+        onShowClicked = onShowClicked,
+        onMoreClicked = onMoreClicked,
+    )
+}
+
+@Composable
+internal fun DiscoverScreen(
+    viewModel: DiscoverViewModel,
     onShowClicked: (showId: Long) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: DiscoverViewModel = hiltViewModel(),
-    onMoreClicked: (showType: Long) -> Unit,
+    onMoreClicked: (showType: Long) -> Unit
 ) {
 
     val discoverViewState by viewModel.state.collectAsStateWithLifecycle()

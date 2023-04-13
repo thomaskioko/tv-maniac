@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.show_grid
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -31,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
@@ -41,16 +40,41 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.show_grid.model.TvShow
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+
+typealias ShowsGrid = @Composable (
+    onBackClicked: () -> Unit,
+    openShowDetails: (showId: Long) -> Unit,
+) -> Unit
+
+
+@Inject
 @Composable
-fun ShowsGridRoute(
+fun ShowsGrid(
+    viewModelFactory: (SavedStateHandle) -> ShowGridViewModel,
+    @Assisted onBackClicked: () -> Unit,
+    @Assisted openShowDetails: (showId: Long) -> Unit
+) {
+
+    GridScreen(
+        viewModel = viewModel(factory = viewModelFactory),
+        openShowDetails = openShowDetails,
+        onBackClicked = onBackClicked
+    )
+
+}
+
+@Composable
+internal fun GridScreen(
     openShowDetails: (showId: Long) -> Unit,
     onBackClicked: () -> Unit,
+    viewModel: ShowGridViewModel,
     modifier: Modifier = Modifier,
-    viewModel: ShowGridViewModel = hiltViewModel(),
 ) {
 
     val gridViewState by viewModel.state.collectAsStateWithLifecycle()
@@ -63,7 +87,6 @@ fun ShowsGridRoute(
         onRetry = { viewModel.dispatch(ReloadShows(viewModel.showType)) },
         onShowClicked = { openShowDetails(it) }
     )
-
 }
 
 @Composable
