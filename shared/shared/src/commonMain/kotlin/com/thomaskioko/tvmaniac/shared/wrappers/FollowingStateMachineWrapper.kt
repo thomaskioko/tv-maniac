@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shared
+package com.thomaskioko.tvmaniac.shared.wrappers
 
 import com.thomaskioko.tvmaniac.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.domain.following.FollowingAction
