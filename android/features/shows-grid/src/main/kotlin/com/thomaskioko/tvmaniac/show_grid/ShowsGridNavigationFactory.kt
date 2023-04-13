@@ -6,20 +6,22 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.navigation.NavigationScreen
-import com.thomaskioko.tvmaniac.navigation.viewModelComposable
-import javax.inject.Inject
+import com.thomaskioko.tvmaniac.navigation.extensions.screenComposable
+import me.tatarka.inject.annotations.Inject
 
-class ShowsGridNavigationFactory @Inject constructor() : ComposeNavigationFactory {
+@Inject
+class ShowsGridNavigationFactory(
+    private val showsGrid: ShowsGrid
+) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
-        builder.viewModelComposable<ShowGridViewModel>(
+        builder.screenComposable(
             arguments = listOf(
                 navArgument("showType") { type = NavType.LongType },
             ),
             route = "${NavigationScreen.ShowGridNavScreen.route}/{showType}",
             content = {
-                ShowsGridRoute(
-                    viewModel = this,
+                showsGrid(
                     onBackClicked = { navController.popBackStack() },
                     openShowDetails = { tvShowId ->
                         navController.navigate("${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId")

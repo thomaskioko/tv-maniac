@@ -34,6 +34,7 @@ abstract class ApplicationComponent(
     DatabaseComponent,
     DataStorePlatformComponent,
     EpisodeComponent,
+    NavigationComponent,
     NetworkUtilComponent,
     ProfileComponent,
     SeasonDetailsComponent,

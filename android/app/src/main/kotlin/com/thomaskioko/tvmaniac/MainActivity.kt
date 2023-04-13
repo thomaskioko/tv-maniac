@@ -20,11 +20,14 @@ import androidx.compose.runtime.setValue
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.thomaskioko.tvmaniac.base.extensions.unsafeLazy
 import com.thomaskioko.tvmaniac.compose.components.ConnectionStatus
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.networkutil.ConnectionState
+import com.thomaskioko.tvmaniac.home.HomeScreen
 import com.thomaskioko.tvmaniac.inject.MainActivityComponent
 import com.thomaskioko.tvmaniac.inject.create
+import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.settings.shouldUseDarkColors
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -32,6 +35,8 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalAnimationApi::class)
 class MainActivity : ComponentActivity() {
     private lateinit var component: MainActivityComponent
+
+    private val navFactorySet: Set<ComposeNavigationFactory> by unsafeLazy { component.navFactorySet }
 
     private val viewModel: MainActivityViewModel by viewModels {
         viewModelFactory {
@@ -60,6 +65,7 @@ class MainActivity : ComponentActivity() {
 
             TvManiacTheme(darkTheme = darkTheme) {
                 Surface {
+                    HomeScreen(navFactorySet)
                 }
             }
 
