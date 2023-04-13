@@ -11,7 +11,6 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.buildkonfig) apply false
     alias(libs.plugins.dependency.analysis) apply false
-    alias(libs.plugins.hilt) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.ksp) apply false
