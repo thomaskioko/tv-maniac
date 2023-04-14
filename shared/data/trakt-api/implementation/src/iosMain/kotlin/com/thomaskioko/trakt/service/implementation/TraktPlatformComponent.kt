@@ -1,6 +1,8 @@
 package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.tvmaniac.base.model.AppConfig
+import com.thomaskioko.tvmaniac.base.model.Configs
+import com.thomaskioko.tvmaniac.base.model.TraktOAuthInfo
 import io.ktor.client.engine.darwin.Darwin
 import com.thomaskioko.tvmaniac.base.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
@@ -23,6 +25,17 @@ actual interface TraktPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideTraktHttpClientEngine(): TraktHttpClientEngine = Darwin.create()
+
+    @ApplicationScope
+    @Provides
+    fun provideTraktOAuthInfo(
+        configs: Configs,
+    ): TraktOAuthInfo = TraktOAuthInfo(
+        clientId = configs.traktClientId,
+        clientSecret = configs.traktClientSecret,
+        redirectUri = configs.traktRedirectUri,
+    )
+
 
     @ApplicationScope
     @Provides

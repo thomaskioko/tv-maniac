@@ -1,13 +1,10 @@
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
-import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     id("tvmaniac.kmm.library")
-    id("com.codingfeline.buildkonfig")
     id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
+    id("com.google.devtools.ksp")
 }
 
 version = libs.versions.shared.module.version.get()
@@ -15,18 +12,17 @@ version = libs.versions.shared.module.version.get()
 kotlin {
     android()
 
-    val xcf = XCFramework()
-    ios {
-        binaries.framework {
+    listOf(
+        iosX64(),
+        iosArm64(),
+    ).forEach {
+        it.binaries.framework {
             baseName = "TvManiac"
-            xcf.add(this)
-        }
-    }
-
-    targets.withType<KotlinNativeTarget> {
-        binaries.withType<Framework> {
             isStatic = false
+            transitiveExport = true
             linkerOpts.add("-lsqlite3")
+
+            embedBitcode(BitcodeEmbeddingMode.BITCODE)
 
             export(project(":shared:core:base"))
             export(project(":shared:core:networkutil"))
@@ -46,89 +42,75 @@ kotlin {
             export(project(":shared:domain:settings"))
             export(project(":shared:domain:show-details"))
             export(project(":shared:domain:trailers"))
-
-            embedBitcode(BitcodeEmbeddingMode.BITCODE)
-
-            transitiveExport = true
         }
     }
+
 
     sourceSets {
-        sourceSets["commonMain"].dependencies {
+        val commonMain by getting {
+            dependencies {
+                api(project(":shared:core:base"))
+                api(project(":shared:core:networkutil"))
+                api(project(":shared:data:category:api"))
+                api(project(":shared:data:database"))
+                api(project(":shared:data:datastore:api"))
+                api(project(":shared:data:episodes:api"))
+                api(project(":shared:data:similar:api"))
+                api(project(":shared:data:season-details:api"))
+                api(project(":shared:data:shows:api"))
+                api(project(":shared:data:trailers:api"))
+                api(project(":shared:data:tmdb:api"))
+                api(project(":shared:data:profile:api"))
+                api(project(":shared:data:trakt-api:api"))
+                api(project(":shared:domain:discover"))
+                api(project(":shared:domain:following"))
+                api(project(":shared:domain:seasondetails"))
+                api(project(":shared:domain:settings"))
+                api(project(":shared:domain:show-details"))
+                api(project(":shared:domain:trailers"))
 
-            api(project(":shared:core:base"))
-            api(project(":shared:core:networkutil"))
-            api(project(":shared:data:category:api"))
-            api(project(":shared:data:database"))
-            api(project(":shared:data:datastore:api"))
-            api(project(":shared:data:episodes:api"))
-            api(project(":shared:data:similar:api"))
-            api(project(":shared:data:season-details:api"))
-            api(project(":shared:data:shows:api"))
-            api(project(":shared:data:trailers:api"))
-            api(project(":shared:data:tmdb:api"))
-            api(project(":shared:data:profile:api"))
-            api(project(":shared:data:trakt-api:api"))
-            api(project(":shared:domain:discover"))
-            api(project(":shared:domain:following"))
-            api(project(":shared:domain:seasondetails"))
-            api(project(":shared:domain:settings"))
-            api(project(":shared:domain:show-details"))
-            api(project(":shared:domain:trailers"))
+                implementation(project(":shared:data:category:implementation"))
+                implementation(project(":shared:data:datastore:implementation"))
+                implementation(project(":shared:data:episodes:implementation"))
+                implementation(project(":shared:data:profile:implementation"))
+                implementation(project(":shared:data:similar:implementation"))
+                implementation(project(":shared:data:season-details:implementation"))
+                implementation(project(":shared:data:shows:implementation"))
+                implementation(project(":shared:data:tmdb:implementation"))
+                implementation(project(":shared:data:trailers:implementation"))
+                implementation(project(":shared:data:trakt-api:implementation"))
 
-            implementation(project(":shared:data:category:implementation"))
-            implementation(project(":shared:data:datastore:implementation"))
-            implementation(project(":shared:data:episodes:implementation"))
-            implementation(project(":shared:data:profile:implementation"))
-            implementation(project(":shared:data:similar:implementation"))
-            implementation(project(":shared:data:season-details:implementation"))
-            implementation(project(":shared:data:shows:implementation"))
-            implementation(project(":shared:data:tmdb:implementation"))
-            implementation(project(":shared:data:trailers:implementation"))
-            implementation(project(":shared:data:trakt-api:implementation"))
-
-            implementation(libs.androidx.datastore.preference)
-            implementation(libs.coroutines.core)
-            implementation(libs.kotlinInject.runtime)
+                implementation(libs.coroutines.core)
+                implementation(libs.kotlinInject.runtime)
+            }
         }
-
-        sourceSets["iosMain"].dependencies {
-            implementation(libs.ktor.darwin)
-            implementation(libs.sqldelight.driver.native)
+        val commonTest by getting
+        val androidMain by getting
+        val androidTest by getting
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosMain by creating {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+        }
+        val iosX64Test by getting
+        val iosArm64Test by getting
+        val iosTest by creating {
+            dependsOn(commonTest)
+            iosX64Test.dependsOn(this)
+            iosArm64Test.dependsOn(this)
         }
     }
+}
 
+dependencies {
+    add("kspIosX64", libs.kotlinInject.compiler)
+    add("kspIosArm64", libs.kotlinInject.compiler)
 }
 
 android {
     namespace = "com.thomaskioko.tvmaniac.shared"
-}
-
-buildkonfig {
-    packageName = "com.thomaskioko.tvmaniac.shared"
-
-    defaultConfigs {
-        buildConfigField(
-            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "TMDB_API_KEY",
-            "\"" + propOrDef("TMDB_API_KEY", "") + "\""
-        )
-        buildConfigField(
-            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "TRAKT_CLIENT_ID",
-            "\"" + propOrDef("TRAKT_CLIENT_ID", "") + "\""
-        )
-        buildConfigField(
-            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "TRAKT_CLIENT_SECRET",
-            "\"" + propOrDef("TRAKT_CLIENT_SECRET", "") + "\""
-        )
-        buildConfigField(
-            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "TRAKT_REDIRECT_URI",
-            "\"" + propOrDef("TRAKT_REDIRECT_URI", "") + "\""
-        )
-    }
 }
 
 multiplatformSwiftPackage {
@@ -141,10 +123,3 @@ multiplatformSwiftPackage {
     distributionMode { local() }
     outputDirectory(File("$projectDir/../../../", "tvmaniac-swift-packages"))
 }
-
-fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
-    @Suppress("UNCHECKED_CAST")
-    val propertyValue = project.properties[propertyName] as T?
-    return propertyValue ?: defaultValue
-}
-

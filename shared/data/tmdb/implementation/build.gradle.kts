@@ -42,3 +42,8 @@ kotlin {
 android {
     namespace = "com.thomaskioko.tvmaniac.tmdb.implementation"
 }
+
+dependencies {
+    add("kspIosX64", libs.kotlinInject.compiler)
+    add("kspIosArm64", libs.kotlinInject.compiler)
+}
