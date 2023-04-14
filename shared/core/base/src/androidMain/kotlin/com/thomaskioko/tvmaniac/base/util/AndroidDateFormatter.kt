@@ -12,17 +12,13 @@ class AndroidDateFormatter : DateFormatter {
     override fun getTimestampMilliseconds(): Long = Clock.System.now().toEpochMilliseconds()
 
     override fun formatDateString(datePattern: String, dateString: String): String {
-        var result = "TBA"
-        try {
-            dateString?.let {
-                val date = SimpleDateFormat("yyyy-mm-dd", Locale.getDefault())
-                    .parse(dateString)
-                result = SimpleDateFormat(datePattern, Locale.getDefault())
-                    .format(date!!)
-            }
+        return try {
+            val date = SimpleDateFormat("yyyy-mm-dd", Locale.getDefault())
+                .parse(dateString)
+            SimpleDateFormat(datePattern, Locale.getDefault()).format(date!!)
         } catch (exception: Exception) {
             Logger.e("formatDate::  $dateString ${exception.message}", exception)
+            "TBA"
         }
-        return result
     }
 }
