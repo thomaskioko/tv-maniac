@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.core.db
 
 import app.cash.sqldelight.db.SqlDriver
+import com.thomaskioko.tvmaniac.db.stringColumnAdapter
 import kotlin.test.AfterTest
 
 expect fun inMemorySqlDriver(): SqlDriver
