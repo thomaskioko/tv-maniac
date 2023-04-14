@@ -1,0 +1,4 @@
+tmdbApiKey: "PUT_KEY_HERE"
+traktClientId: "PUT_KEY_HERE"
+traktClientSecret: "PUT_KEY_HERE"
+traktRedirectUri: "PUT_KEY_HERE"

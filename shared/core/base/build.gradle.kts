@@ -20,6 +20,7 @@ kotlin {
             implementation(libs.kotlinInject.runtime)
             implementation(libs.ktor.core)
             implementation(libs.coroutines.core)
+            implementation(libs.yamlkt)
         }
 
 
