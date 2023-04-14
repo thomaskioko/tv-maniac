@@ -22,6 +22,7 @@ kotlin {
 }
 
 dependencies {
+    add("kspAndroid", libs.kotlinInject.compiler)
     add("kspIosX64", libs.kotlinInject.compiler)
     add("kspIosArm64", libs.kotlinInject.compiler)
 }

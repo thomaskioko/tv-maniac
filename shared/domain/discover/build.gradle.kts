@@ -21,6 +21,11 @@ kotlin {
     }
 }
 
+dependencies {
+    add("kspIosX64", libs.kotlinInject.compiler)
+    add("kspIosArm64", libs.kotlinInject.compiler)
+}
+
 android {
     namespace = "com.thomaskioko.tvmaniac.discover"
 }
