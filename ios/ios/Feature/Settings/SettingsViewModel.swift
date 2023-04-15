@@ -11,13 +11,9 @@ import TvManiac
 
 class SettingsViewModel: ObservableObject {
 
-	@LazyKoin private var stateMachine: SettingsStateMachineWrapper
-	@Published private (set) var settingsState: SettingsState
+    private var stateMachine: SettingsStateMachineWrapper = ApplicationComponentKt.settingsStateMachine()
+	@Published private (set) var settingsState: SettingsState = SettingsContent.companion.EMPTY
 	@Published var appTheme: AppTheme = AppTheme.System
-
-	init(settingsState: SettingsState){
-		self.settingsState = settingsState
-	}
 
 	func startStateMachine() {
 		stateMachine.start(stateChangeListener: { (state: SettingsState) -> Void in

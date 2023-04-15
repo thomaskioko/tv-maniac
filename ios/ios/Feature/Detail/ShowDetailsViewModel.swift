@@ -7,12 +7,8 @@ import Foundation
 import TvManiac
 
 class ShowDetailsViewModel: ObservableObject {
-    @LazyKoin private var stateMachine: ShowDetailsStateMachineWrapper
-    @Published private(set) var detailState: ShowDetailsState
-
-    init(detailState: ShowDetailsState) {
-        self.detailState = detailState
-    }
+    private let stateMachine: ShowDetailsStateMachineWrapper = ApplicationComponentKt.showDetailsStateMachine()
+    @Published private(set) var detailState: ShowDetailsState = ShowDetailsStateLoading()
 
     func startStateMachine(action: ShowDetailsAction) {
         stateMachine.start(stateChangeListener: { (state: ShowDetailsState) -> Void in
@@ -23,10 +19,6 @@ class ShowDetailsViewModel: ObservableObject {
 
     func dispatchAction(action: ShowDetailsAction){
         stateMachine.dispatch(action: action)
-    }
-    
-    func cancel() {
-        stateMachine.cancel()
     }
 
 }
