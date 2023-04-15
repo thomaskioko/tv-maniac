@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.CoroutineScope
 import okio.Path.Companion.toPath
 
-
 fun createDataStore(
     coroutineScope: CoroutineScope,
     producePath: () -> String
@@ -17,4 +16,4 @@ fun createDataStore(
     produceFile = { producePath().toPath() },
 )
 
-internal const val dataStoreFileName = "tvmainac.preferences_pb"
+const val dataStoreFileName = "tvmainac.preferences_pb"

@@ -5,20 +5,22 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.thomaskioko.tvmaniac.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.Theme
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class DatastoreRepositoryImpl(
-    private val dataStore: DataStore<Preferences>,
-    private val coroutineScope: CoroutineScope
+    private val coroutineScope: AppCoroutineScope,
+    private val dataStore: DataStore<Preferences>
 ) : DatastoreRepository {
 
     override fun saveTheme(theme: Theme) {
-        coroutineScope.launch {
+        coroutineScope.io.launch {
             dataStore.edit { preferences ->
                 preferences[KEY_THEME] = theme.name
             }
@@ -34,7 +36,7 @@ class DatastoreRepositoryImpl(
     }
 
     override fun saveSeasonId(id: Long) {
-        coroutineScope.launch {
+        coroutineScope.io.launch {
             dataStore.edit { preferences ->
                 preferences[SEASON_ID] = id
             }

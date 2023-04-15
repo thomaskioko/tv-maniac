@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Episode
 import com.thomaskioko.tvmaniac.core.db.Season
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktSeasonEpisodesResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktSeasonsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
 
 fun TraktSeasonEpisodesResponse.toEpisodeCacheList(): List<Episode> {
     return episodes.map { episodeResponse ->

@@ -8,14 +8,14 @@ import com.thomaskioko.tvmaniac.data.seasondetails.Loading
 import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsStateMachine
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
-class SeasonDetailsViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@Inject
+class SeasonDetailsViewModel(
+    @Assisted savedStateHandle: SavedStateHandle,
     private val stateMachine: SeasonDetailsStateMachine
 ) : ViewModel() {
 

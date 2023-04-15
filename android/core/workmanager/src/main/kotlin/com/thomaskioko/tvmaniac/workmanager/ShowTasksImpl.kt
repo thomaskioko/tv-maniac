@@ -6,10 +6,11 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import me.tatarka.inject.annotations.Inject
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-class ShowTasksImpl @Inject constructor(
+@Inject
+class ShowTasksImpl(
     private val workManager: WorkManager
 ) : ShowTasks {
 

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.following.api
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.domain.following.FollowingContent
 import com.thomaskioko.tvmaniac.domain.following.FollowingStateMachine
 import com.thomaskioko.tvmaniac.domain.following.LoadingShows

@@ -6,13 +6,12 @@ import com.thomaskioko.tvmaniac.shared.domain.discover.DiscoverStateMachine
 import com.thomaskioko.tvmaniac.shared.domain.discover.Loading
 import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsAction
 import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsState
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
-class DiscoverViewModel @Inject constructor(
+@Inject
+class DiscoverViewModel(
     private val stateMachine: DiscoverStateMachine
 ) : ViewModel() {
 
@@ -26,7 +25,7 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    fun dispatch(action : ShowsAction) {
+    fun dispatch(action: ShowsAction) {
         viewModelScope.launch {
             stateMachine.dispatch(action)
         }

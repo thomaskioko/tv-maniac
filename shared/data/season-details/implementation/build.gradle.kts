@@ -1,5 +1,6 @@
 plugins {
-    id("tvmaniac.kmm.impl")
+    id("tvmaniac.kmm.data")
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -7,26 +8,17 @@ kotlin {
     ios()
 
     sourceSets {
-        sourceSets["androidMain"].dependencies {
-            implementation(project(":shared:core:util"))
-            implementation(libs.hilt.android)
-            configurations["kapt"].dependencies.add(
-                org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
-                    "com.google.dagger",
-                    "hilt-android-compiler",
-                    libs.versions.dagger.get()
-                )
-            )
-        }
-
-
         sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:core:base"))
+            implementation(project(":shared:data:database"))
             implementation(project(":shared:data:datastore:api"))
             implementation(project(":shared:data:episodes:api"))
             implementation(project(":shared:data:season-details:api"))
             implementation(project(":shared:data:tmdb:api"))
-            implementation(project(":shared:data:trakt-service:api"))
+            implementation(project(":shared:data:trakt-api:api"))
 
+            implementation(libs.kermit)
+            implementation(libs.kotlinInject.runtime)
             implementation(libs.sqldelight.extensions)
 
         }
@@ -38,6 +30,12 @@ kotlin {
         }
 
     }
+}
+
+dependencies {
+    add("kspAndroid", libs.kotlinInject.compiler)
+    add("kspIosX64", libs.kotlinInject.compiler)
+    add("kspIosArm64", libs.kotlinInject.compiler)
 }
 
 android {

@@ -4,8 +4,7 @@ import TvManiac
 @main
 struct iOSApp: App {
 
-	@UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-	@ObservedObject var viewModel: SettingsViewModel = SettingsViewModel(settingsState: SettingsContent.companion.EMPTY)
+	@ObservedObject var viewModel: SettingsViewModel = SettingsViewModel()
 	@Environment(\.colorScheme) var systemColorScheme: ColorScheme
 
 	var body: some Scene {
@@ -28,12 +27,5 @@ struct iOSApp: App {
 				return .light
 			}
 		}
-	}
-}
-
-class AppDelegate : NSObject, UIApplicationDelegate {
-	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-		KoinApplication.start()
-		return true
 	}
 }

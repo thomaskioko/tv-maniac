@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.settings
 
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -45,7 +44,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
@@ -53,24 +51,37 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.Theme
+import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.resources.R
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
+
+
+typealias Settings = @Composable (
+    onBackClicked: () -> Unit,
+) -> Unit
+
+@Inject
+@Composable
+fun Settings(
+    viewModelFactory: () -> SettingsViewModel,
+    @Assisted onBackClicked: () -> Unit
+) {
+
+    SettingsScreen(
+        viewModel = viewModel(factory = viewModelFactory),
+        onBackClicked = onBackClicked,
+    )
+}
 
 @Composable
-fun SettingsRoute(
+internal fun SettingsScreen(
+    onBackClicked: () -> Unit,
+    viewModel: SettingsViewModel,
     modifier: Modifier = Modifier,
-    viewModel: SettingsViewModel = hiltViewModel(),
-    onBackClicked: () -> Unit
 ) {
 
     val settingsState by viewModel.state.collectAsStateWithLifecycle()
-
-    val loginLauncher = rememberLauncherForActivityResult(
-        viewModel.buildLoginActivityResult()
-    ) { result ->
-        if (result != null) {
-            viewModel.onLoginResult(result)
-        }
-    }
 
     SettingsScreen(
         state = settingsState,
@@ -81,17 +92,18 @@ fun SettingsRoute(
         onDismissTheme = { viewModel.dispatch(DimissThemeClicked) },
         onLogoutClicked = { viewModel.dispatch(TraktLogout) },
         onLoginClicked = {
-            loginLauncher.launch(Unit)
+            viewModel.login()
             viewModel.dispatch(DismissTraktDialog)
         },
         onConnectClicked = { viewModel.dispatch(ShowTraktDialog) },
         onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
     )
+
 }
 
-@Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun SettingsScreen(
+@Composable
+internal fun SettingsScreen(
     onBackClicked: () -> Unit,
     state: SettingsState,
     onThemeChanged: (Theme) -> Unit,

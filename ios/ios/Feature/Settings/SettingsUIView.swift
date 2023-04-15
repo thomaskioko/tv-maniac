@@ -11,7 +11,7 @@ import TvManiac
 
 struct SettingsUIView: View {
     
-    @ObservedObject var viewModel: SettingsViewModel = SettingsViewModel(settingsState: SettingsContent.companion.EMPTY)
+    @ObservedObject var viewModel: SettingsViewModel = SettingsViewModel()
     @ObservedObject private var model = TraktAuthViewModel()
     
     @Environment(\.openURL) var openURL

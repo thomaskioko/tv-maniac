@@ -28,7 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -41,17 +41,44 @@ import com.thomaskioko.tvmaniac.data.seasondetails.LoadingError
 import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
+import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.components.CollapsableContent
 import com.thomaskioko.tvmaniac.seasondetails.components.WatchNextContent
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
+
+
+typealias SeasonDetails = @Composable (
+    onBackClicked: () -> Unit,
+    onEpisodeClicked: (Long) -> Unit,
+    initialSeasonName: String?
+) -> Unit
+
+@Inject
+@Composable
+fun SeasonDetails(
+    viewModelFactory: (SavedStateHandle) -> SeasonDetailsViewModel,
+    @Assisted onBackClicked: () -> Unit,
+    @Assisted onEpisodeClicked: (Long) -> Unit,
+    @Assisted initialSeasonName: String? = null,
+) {
+
+    SeasonDetailScreen(
+        viewModel = viewModel(factory = viewModelFactory),
+        onBackClicked = onBackClicked,
+        seasonName = initialSeasonName,
+        onEpisodeClicked = onEpisodeClicked,
+    )
+}
 
 @Composable
-fun SeasonDetailsRoute(
+internal fun SeasonDetailScreen(
+    viewModel: SeasonDetailsViewModel,
     onBackClicked: () -> Unit,
+    seasonName: String?,
     modifier: Modifier = Modifier,
-    viewModel: SeasonDetailsViewModel = hiltViewModel(),
-    initialSeasonName: String? = null,
-    onEpisodeClicked: (Long) -> Unit = {},
+    onEpisodeClicked: (Long) -> Unit,
 ) {
 
     val viewState by viewModel.state.collectAsStateWithLifecycle()
@@ -60,14 +87,15 @@ fun SeasonDetailsRoute(
         state = viewState,
         onBackClicked = onBackClicked,
         modifier = modifier,
-        seasonName = initialSeasonName,
+        seasonName = seasonName,
         onEpisodeClicked = onEpisodeClicked,
     )
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SeasonDetailScreen(
+internal fun SeasonDetailScreen(
     state: SeasonDetailsState,
     onBackClicked: () -> Unit,
     seasonName: String?,

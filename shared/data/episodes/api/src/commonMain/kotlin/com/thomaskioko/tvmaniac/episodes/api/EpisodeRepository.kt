@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
-import com.thomaskioko.tvmaniac.core.util.network.Either
-import com.thomaskioko.tvmaniac.core.util.network.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import kotlinx.coroutines.flow.Flow
 
 

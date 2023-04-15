@@ -1,6 +1,6 @@
 plugins {
     id("tvmaniac.application")
-    id("tvmaniac.hilt")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -22,6 +22,8 @@ dependencies {
 
     implementation(projects.android.core.designsystem)
     implementation(projects.android.core.navigation)
+    implementation(projects.android.core.traktAuth)
+    implementation(projects.android.core.workmanager)
     implementation(projects.android.features.discover)
     implementation(projects.android.features.home)
     implementation(projects.android.features.search)
@@ -30,15 +32,31 @@ dependencies {
     implementation(projects.android.features.following)
     implementation(projects.android.features.settings)
     implementation(projects.android.features.seasonDetails)
-    implementation(projects.android.features.videoPlayer)
+    implementation(projects.android.features.trailers)
     implementation(projects.android.features.profile)
-    implementation(projects.android.core.workmanager)
+
     implementation(projects.shared.shared)
+    implementation(projects.shared.core.base)
+    implementation(projects.shared.data.category.implementation)
+    implementation(projects.shared.data.datastore.implementation)
+    implementation(projects.shared.data.episodes.implementation)
+    implementation(projects.shared.data.profile.implementation)
+    implementation(projects.shared.data.seasonDetails.implementation)
+    implementation(projects.shared.data.similar.implementation)
+    implementation(projects.shared.data.shows.implementation)
+    implementation(projects.shared.data.tmdb.implementation)
+    implementation(projects.shared.data.trailers.implementation)
+    implementation(projects.shared.data.traktApi.implementation)
+    implementation(projects.shared.domain.seasondetails)
+    implementation(projects.shared.domain.settings)
+    implementation(projects.shared.domain.showDetails)
 
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.compose.activity)
     implementation(libs.appauth)
-    implementation(libs.hilt.work)
+
+    implementation(libs.kotlinInject.runtime)
+    ksp(libs.kotlinInject.compiler)
 }
 
 fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {

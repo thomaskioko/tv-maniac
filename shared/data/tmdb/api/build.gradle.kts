@@ -1,7 +1,5 @@
-import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
-
 plugins {
-    id("tvmaniac.kmm.api")
+    id("tvmaniac.kmm.data")
     alias(libs.plugins.serialization)
 }
 
@@ -11,6 +9,7 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
+            api(project(":shared:core:networkutil"))
             implementation(libs.ktor.serialization)
         }
 

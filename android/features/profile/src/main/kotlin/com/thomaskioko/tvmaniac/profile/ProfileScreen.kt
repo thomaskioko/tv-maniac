@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.profile
 
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -51,7 +50,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
@@ -61,43 +59,55 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTextButton
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-@Composable
-fun ProfileRoute(
-    modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel = hiltViewModel(),
+
+typealias Profile = @Composable (
     settingsClicked: () -> Unit
+) -> Unit
+
+@Inject
+@Composable
+fun Profile(
+    viewModelFactory: () -> ProfileViewModel,
+    @Assisted settingsClicked: () -> Unit
 ) {
 
-    val profileState by viewModel.state.collectAsStateWithLifecycle()
-
-    val loginLauncher = rememberLauncherForActivityResult(
-        viewModel.buildLoginActivityResult()
-    ) { result ->
-        if (result != null) {
-            viewModel.onLoginResult(result)
-        }
-    }
-
     ProfileScreen(
+        viewModel = viewModel(factory = viewModelFactory),
         onSettingsClicked = settingsClicked,
-        modifier = modifier,
-        state = profileState,
-        onLoginClicked = {
-            loginLauncher.launch(Unit)
-            viewModel.dispatch(DismissTraktDialog)
-        },
-        onConnectClicked = { loginLauncher.launch(Unit) },
-        onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
     )
 }
 
 @Composable
+internal fun ProfileScreen(
+    viewModel: ProfileViewModel,
+    modifier: Modifier = Modifier,
+    onSettingsClicked: () -> Unit
+) {
+    val profileState by viewModel.state.collectAsStateWithLifecycle()
+
+    ProfileScreen(
+        onSettingsClicked = onSettingsClicked,
+        modifier = modifier,
+        state = profileState,
+        onLoginClicked = {
+            viewModel.login()
+            viewModel.dispatch(DismissTraktDialog)
+        },
+        onConnectClicked = { viewModel.login() },
+        onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
+@Composable
 private fun ProfileScreen(
     onSettingsClicked: () -> Unit,
     state: ProfileState,

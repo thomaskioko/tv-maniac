@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.similar.testing
 
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
-import com.thomaskioko.tvmaniac.core.util.network.Either
-import com.thomaskioko.tvmaniac.core.util.network.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

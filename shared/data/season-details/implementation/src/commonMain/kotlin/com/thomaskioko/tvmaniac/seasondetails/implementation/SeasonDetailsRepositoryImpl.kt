@@ -1,32 +1,36 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import co.touchlab.kermit.Logger
+import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.core.db.Season_episodes
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
-import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
-import com.thomaskioko.tvmaniac.core.util.network.DefaultError
-import com.thomaskioko.tvmaniac.core.util.network.Either
-import com.thomaskioko.tvmaniac.core.util.network.Failure
-import com.thomaskioko.tvmaniac.core.util.network.networkBoundResult
+import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonsCache
-import com.thomaskioko.tvmaniac.trakt.service.api.TraktService
-import com.thomaskioko.tvmaniac.trakt.service.api.model.ErrorResponse
-import com.thomaskioko.tvmaniac.trakt.service.api.model.TraktSeasonEpisodesResponse
-import kotlinx.coroutines.CoroutineDispatcher
+import com.thomaskioko.tvmaniac.trakt.api.TraktService
+import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class SeasonDetailsRepositoryImpl(
     private val traktService: TraktService,
     private val seasonCache: SeasonsCache,
     private val episodesCache: EpisodesCache,
     private val datastore: DatastoreRepository,
-    private val dispatcher: CoroutineDispatcher,
+    private val exceptionHandler: ExceptionHandler,
+    private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonDetailsRepository {
 
     override fun observeSeasonsStream(traktId: Long): Flow<Either<Failure, List<Season>>> =
@@ -58,7 +62,8 @@ class SeasonDetailsRepositoryImpl(
                     }
                 }
             },
-            coroutineDispatcher = dispatcher
+            exceptionHandler = exceptionHandler,
+            coroutineDispatcher = dispatcher.io
         )
 
     override fun observeSeasonDetailsStream(traktId: Long): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
@@ -70,7 +75,8 @@ class SeasonDetailsRepositoryImpl(
             shouldFetch = { it.isNullOrEmpty() },
             fetch = { traktService.getSeasonEpisodes(traktId) },
             saveFetchResult = { mapResponse(traktId, it) },
-            coroutineDispatcher = dispatcher
+            exceptionHandler = exceptionHandler,
+            coroutineDispatcher = dispatcher.io
         )
 
     override fun observeSeasonDetails(): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
@@ -79,7 +85,7 @@ class SeasonDetailsRepositoryImpl(
             datastore.getSeasonId()
                 .collect {
                     seasonCache.observeShowEpisodes(it)
-                        .catch { emit(Either.Left(DefaultError(it))) }
+                        .catch { emit(Either.Left(DefaultError(exceptionHandler.resolveError(it)))) }
                         .collect { emit(Either.Right(it)) }
                 }
         }

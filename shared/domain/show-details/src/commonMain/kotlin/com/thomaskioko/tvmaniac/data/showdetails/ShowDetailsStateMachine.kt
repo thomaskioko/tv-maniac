@@ -3,9 +3,11 @@ package com.thomaskioko.tvmaniac.data.showdetails
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.core.util.ExceptionHandler.resolveError
+import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.data.showdetails.SeasonState.SeasonsLoaded.Companion.EmptySeasons
 import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState.ShowDetailsLoaded
+import com.thomaskioko.tvmaniac.data.showdetails.SimilarShowsState.SimilarShowsError
+import com.thomaskioko.tvmaniac.data.showdetails.SimilarShowsState.SimilarShowsLoaded
 import com.thomaskioko.tvmaniac.data.showdetails.SimilarShowsState.SimilarShowsLoaded.Companion.EmptyShows
 import com.thomaskioko.tvmaniac.data.showdetails.TrailersState.TrailersError
 import com.thomaskioko.tvmaniac.data.showdetails.TrailersState.TrailersLoaded
@@ -13,24 +15,22 @@ import com.thomaskioko.tvmaniac.data.showdetails.TrailersState.TrailersLoaded.Co
 import com.thomaskioko.tvmaniac.data.showdetails.TrailersState.TrailersLoaded.Companion.playerErrorMessage
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
-import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
-import kotlinx.coroutines.CoroutineScope
+import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.MainCoroutineDispatcher
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@Inject
 class ShowDetailsStateMachine constructor(
     private val showsRepository: ShowsRepository,
     private val similarShowsRepository: SimilarShowsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
-    private val trailerRepository: TrailerRepository
+    private val trailerRepository: TrailerRepository,
+    private val exceptionHandler: ExceptionHandler
 ) : FlowReduxStateMachine<ShowDetailsState, ShowDetailsAction>(
     initialState = ShowDetailsState.Loading
 ) {
@@ -59,7 +59,7 @@ class ShowDetailsStateMachine constructor(
                     loadSimilarShows(id, state)
                 }
 
-                collectWhileInState(trailerRepository.isWebViewInstalled()) { result, state ->
+                collectWhileInState(trailerRepository.isYoutubePlayerInstalled()) { result, state ->
                     state.mutate {
                         copy(
                             trailerState = (trailerState as? TrailersLoaded)
@@ -228,7 +228,7 @@ class ShowDetailsStateMachine constructor(
             .catch {
                 nextState = state.mutate {
                     copy(
-                        trailerState = TrailersError(it.resolveError())
+                        trailerState = TrailersError(exceptionHandler.resolveError(it))
                     )
                 }
             }
@@ -263,7 +263,7 @@ class ShowDetailsStateMachine constructor(
         similarShowsRepository.observeSimilarShows(showId)
             .catch {
                 nextState = state.mutate {
-                    copy(similarShowsState = SimilarShowsState.SimilarShowsError(it.resolveError()))
+                    copy(similarShowsState = SimilarShowsError(exceptionHandler.resolveError(it)))
                 }
             }
             .collect { result ->
@@ -271,13 +271,13 @@ class ShowDetailsStateMachine constructor(
                 nextState = result.fold(
                     {
                         state.mutate {
-                            copy(similarShowsState = SimilarShowsState.SimilarShowsError(it.errorMessage))
+                            copy(similarShowsState = SimilarShowsError(it.errorMessage))
                         }
                     },
                     {
                         state.mutate {
                             copy(
-                                similarShowsState = (similarShowsState as SimilarShowsState.SimilarShowsLoaded)
+                                similarShowsState = (similarShowsState as SimilarShowsLoaded)
                                     .copy(
                                         isLoading = false,
                                         similarShows = it.toSimilarShowList()
@@ -289,35 +289,5 @@ class ShowDetailsStateMachine constructor(
             }
 
         return nextState
-    }
-}
-
-/**
- * A wrapper class around [ShowDetailsStateMachineWrapper] handling `Flow` and suspend functions on iOS.
- */
-class ShowDetailsStateMachineWrapper(
-    dispatcher: MainCoroutineDispatcher,
-    private val stateMachine: ShowDetailsStateMachine,
-    ) {
-
-    private val job = SupervisorJob()
-    private val scope = CoroutineScope(job + dispatcher)
-
-    fun start(stateChangeListener: (ShowDetailsState) -> Unit) {
-        scope.launch {
-            stateMachine.state.collect {
-                stateChangeListener(it)
-            }
-        }
-    }
-
-    fun dispatch(action: ShowDetailsAction) {
-        scope.launch {
-            stateMachine.dispatch(action)
-        }
-    }
-
-    fun cancel() {
-        job.cancelChildren()
     }
 }

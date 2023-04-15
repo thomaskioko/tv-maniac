@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.tmdb.api
 
-import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.EpisodesResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse

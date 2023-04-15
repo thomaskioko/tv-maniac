@@ -3,16 +3,15 @@ package com.thomaskioko.tvmaniac.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
-class ProfileViewModel @Inject constructor(
+@Inject
+class ProfileViewModel(
     private val stateMachine: ProfileStateMachine,
     private val traktAuthManager: TraktAuthManager,
-) : ViewModel(), TraktAuthManager by traktAuthManager {
+) : ViewModel() {
 
     val state: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileContent.EMPTY)
 
@@ -27,6 +26,12 @@ class ProfileViewModel @Inject constructor(
     fun dispatch(action : ProfileActions) {
         viewModelScope.launch {
             stateMachine.dispatch(action)
+        }
+    }
+
+    fun login() {
+        viewModelScope.launch {
+            traktAuthManager.launchWebView()
         }
     }
 
