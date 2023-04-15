@@ -4,7 +4,7 @@ import TvManiac
 @main
 struct iOSApp: App {
 
-	@ObservedObject var viewModel: SettingsViewModel = SettingsViewModel(settingsState: SettingsContent.companion.EMPTY)
+	@ObservedObject var viewModel: SettingsViewModel = SettingsViewModel()
 	@Environment(\.colorScheme) var systemColorScheme: ColorScheme
 
 	var body: some Scene {

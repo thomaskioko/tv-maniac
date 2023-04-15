@@ -11,9 +11,7 @@ import TvManiac
 
 struct ShowDetailView: View {
 	
-	@ObservedObject var viewModel: ShowDetailsViewModel = ShowDetailsViewModel(
-		detailState: ShowDetailsStateLoading()
-	)
+	@ObservedObject var viewModel: ShowDetailsViewModel = ShowDetailsViewModel()
 	
 	@SwiftUI.State var offset: CGFloat = 0
 	@SwiftUI.State var titleOffset: CGFloat = 0
@@ -73,7 +71,6 @@ struct ShowDetailView: View {
 		.navigationBarHidden(true)
 		.ignoresSafeArea()
 		.onAppear { viewModel.startStateMachine(action: LoadShowDetails(traktId: showId)) }
-        .onDisappear { viewModel.cancel() }
 	}
 	
 	@ViewBuilder
