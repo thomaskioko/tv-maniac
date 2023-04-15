@@ -4,8 +4,8 @@ import com.thomaskioko.tvmaniac.core.db.Season as SeasonCache
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.core.util.network.Either
-import com.thomaskioko.tvmaniac.core.util.network.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.data.showdetails.model.Season
 import com.thomaskioko.tvmaniac.data.showdetails.model.Show
 import com.thomaskioko.tvmaniac.data.showdetails.model.Trailer

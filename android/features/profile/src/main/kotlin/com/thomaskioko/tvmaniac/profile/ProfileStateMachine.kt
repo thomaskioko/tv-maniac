@@ -3,16 +3,18 @@ package com.thomaskioko.tvmaniac.profile
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.trakt.profile.api.ProfileRepository
-import com.thomaskioko.tvmaniac.traktauth.TraktAuthState
-import com.thomaskioko.tvmaniac.traktauth.TraktManager
+import com.thomaskioko.tvmaniac.traktauth.model.TraktAuthState
+import com.thomaskioko.tvmaniac.traktauth.TraktAuthRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import me.tatarka.inject.annotations.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-class ProfileStateMachine constructor(
-    private val traktManager: TraktManager,
+@Inject
+class ProfileStateMachine(
+    private val traktAuthRepository: TraktAuthRepository,
     private val repository: ProfileRepository
 ) : FlowReduxStateMachine<ProfileState, ProfileActions>(initialState = ProfileContent.EMPTY) {
 
@@ -20,7 +22,7 @@ class ProfileStateMachine constructor(
         spec {
             inState<ProfileContent> {
 
-                collectWhileInStateEffect(traktManager.state) { result, _ ->
+                collectWhileInStateEffect(traktAuthRepository.state) { result, _ ->
                     when (result) {
                         TraktAuthState.LOGGED_IN -> dispatch(FetchTraktUserProfile)
                         TraktAuthState.LOGGED_OUT -> {}
@@ -48,7 +50,7 @@ class ProfileStateMachine constructor(
                 }
 
                 on<TraktLogout> { _, state ->
-                    traktManager.clearAuth()
+                    traktAuthRepository.clearAuth()
                     state.mutate {
                         copy(showTraktDialog = false)
                     }

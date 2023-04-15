@@ -1,17 +1,16 @@
 package com.thomaskioko.tvmaniac.workmanager
 
 import android.content.Context
-import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
 
-@HiltWorker
-class SyncDiscoverShowsWorker @AssistedInject constructor(
+@Inject
+class SyncDiscoverShowsWorker(
     @Assisted context: Context,
     @Assisted workerParameters: WorkerParameters,
     private val showsRepository: ShowsRepository,

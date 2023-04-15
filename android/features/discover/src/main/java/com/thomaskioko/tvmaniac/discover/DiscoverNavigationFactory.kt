@@ -4,16 +4,19 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.navigation.NavigationScreen
-import com.thomaskioko.tvmaniac.navigation.viewModelComposable
-import javax.inject.Inject
+import com.thomaskioko.tvmaniac.navigation.extensions.screenComposable
+import me.tatarka.inject.annotations.Inject
 
-class DiscoverNavigationFactory @Inject constructor() : ComposeNavigationFactory {
+@Inject
+class DiscoverNavigationFactory(
+    private val discover: Discover,
+) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
-        builder.viewModelComposable<DiscoverViewModel>(
+        builder.screenComposable(
             route = NavigationScreen.DiscoverNavScreen.route,
             content = {
-                DiscoverRoute(
+                discover(
                     onShowClicked = { tvShowId ->
                         navController.navigate(
                             "${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId"
@@ -24,7 +27,6 @@ class DiscoverNavigationFactory @Inject constructor() : ComposeNavigationFactory
                             "${NavigationScreen.ShowGridNavScreen.route}/$showType"
                         )
                     },
-                    viewModel = this,
                 )
             }
         )

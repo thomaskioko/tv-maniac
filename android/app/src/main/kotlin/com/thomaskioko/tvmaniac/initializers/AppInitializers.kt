@@ -1,14 +1,15 @@
 package com.thomaskioko.tvmaniac.initializers
 
 import com.thomaskioko.tvmaniac.workmanager.AppInitializer
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class AppInitializers @Inject constructor(
-    private val initializers: Set<@JvmSuppressWildcards AppInitializer>
+@Inject
+class AppInitializers(
+    private val initializers: Set<AppInitializer>
 ) {
     fun init() {
-        initializers.forEach {
-            it.init()
+        for (initializer in initializers) {
+            initializer.init()
         }
     }
 }

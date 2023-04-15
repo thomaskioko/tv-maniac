@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.shared.domain.discover
 
-import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
-import com.thomaskioko.tvmaniac.core.util.network.Either
-import com.thomaskioko.tvmaniac.core.util.network.Failure
-import com.thomaskioko.tvmaniac.shared.domain.discover.model.TvShow
 import com.thomaskioko.tvmaniac.category.api.model.Category
+import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
+import com.thomaskioko.tvmaniac.shared.domain.discover.model.TvShow
 
 
 fun List<SelectShowsByCategory>.toTvShowList(): List<TvShow> = map { it.toTvShow() }

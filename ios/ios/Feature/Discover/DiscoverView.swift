@@ -4,7 +4,7 @@ import os.log
 
 struct DiscoverView: View {
 
-    @ObservedObject var viewModel: DiscoverShowsViewModel = DiscoverShowsViewModel(showState: Loading_())
+    @ObservedObject var viewModel: DiscoverShowsViewModel = DiscoverShowsViewModel()
 
     var body: some View {
         NavigationView {
@@ -12,12 +12,12 @@ struct DiscoverView: View {
             VStack {
 
                 switch viewModel.showState {
-                case is Loading_:
+                case is Loading:
                     LoadingIndicatorView()
 						.frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
                 case is LoadingError:
                     let state = viewModel.showState as! LoadingError
-                    ErrorView(errorMessage: state.message)
+                    ErrorView(errorMessage: state.errorMessage)
                 case is ShowsLoaded:
                     let state = viewModel.showState as! ShowsLoaded
                     BodyContentView(contentState: state)
@@ -31,9 +31,7 @@ struct DiscoverView: View {
         }
                 .background(Color.background)
                 .navigationViewStyle(StackNavigationViewStyle())
-                .onAppear { viewModel.startStateMachine() }
-                .onDisappear { viewModel.cancel() }
-    }
+                .onAppear { viewModel.startStateMachine() } }
 
 
 }

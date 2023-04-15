@@ -3,13 +3,15 @@ package com.thomaskioko.tvmaniac.data.seasondetails
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import me.tatarka.inject.annotations.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@Inject
 class SeasonDetailsStateMachine constructor(
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val episodeRepository: EpisodeRepository,
@@ -87,5 +89,4 @@ class SeasonDetailsStateMachine constructor(
         return state.override { nextState }
     }
 }
-
 

@@ -1,28 +1,32 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
 import co.touchlab.kermit.Logger
+import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.base.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.db.Show_image
-import com.thomaskioko.tvmaniac.core.util.FormatterUtil.formatPosterPath
-import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
-import com.thomaskioko.tvmaniac.core.util.network.DefaultError
-import com.thomaskioko.tvmaniac.core.util.network.Either
-import com.thomaskioko.tvmaniac.core.util.network.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
 import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
-import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import me.tatarka.inject.annotations.Inject
 
-
+@Inject
 class TmdbRepositoryImpl(
     private val apiService: TmdbService,
     private val showsCache: ShowsCache,
     private val imageCache: ShowImageCache,
-    private val dispatcher: CoroutineDispatcher,
+    private val formatterUtil: FormatterUtil,
+    private val exceptionHandler: ExceptionHandler,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : TmdbRepository {
 
     override fun updateShowArtWork(): Flow<Either<Failure, Unit>> =
@@ -42,8 +46,8 @@ class TmdbRepositoryImpl(
                                     Show_image(
                                         trakt_id = show.trakt_id,
                                         tmdb_id = tmdbId,
-                                        poster_url = formatPosterPath(response.body.posterPath),
-                                        backdrop_url = formatPosterPath(response.body.backdropPath)
+                                        poster_url = formatterUtil.formatTmdbPosterPath(response.body.posterPath),
+                                        backdrop_url = formatterUtil.formatTmdbPosterPath(response.body.backdropPath)
                                     )
                                 )
                             }
@@ -53,6 +57,6 @@ class TmdbRepositoryImpl(
 
                 Either.Right(Unit)
             }
-            .catch { Either.Left(DefaultError(it)) }
-            .flowOn(dispatcher)
+            .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
+            .flowOn(dispatchers.io)
 }

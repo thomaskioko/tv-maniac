@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.shows.api
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
-import com.thomaskioko.tvmaniac.core.util.network.Either
-import com.thomaskioko.tvmaniac.core.util.network.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface ShowsRepository {

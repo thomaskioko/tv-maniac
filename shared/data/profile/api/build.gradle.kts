@@ -1,5 +1,5 @@
 plugins {
-    id("tvmaniac.kmm.api")
+    id("tvmaniac.kmm.data")
 }
 
 kotlin {
@@ -7,7 +7,10 @@ kotlin {
     ios()
 
     sourceSets {
-        sourceSets["commonMain"].dependencies { }
+        sourceSets["commonMain"].dependencies {
+            api(project(":shared:core:base"))
+            api(project(":shared:core:networkutil"))
+        }
     }
 }
 

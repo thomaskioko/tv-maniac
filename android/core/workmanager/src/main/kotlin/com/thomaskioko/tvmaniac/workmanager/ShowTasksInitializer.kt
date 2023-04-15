@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.workmanager
 
-import dagger.Lazy
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class ShowTasksInitializer @Inject constructor(
+@Inject
+class ShowTasksInitializer(
     private val showTasks: Lazy<ShowTasks>
 ) : AppInitializer {
     override fun init() {
-        showTasks.get().setupDiscoverDailySyncs()
+        showTasks.value.setupDiscoverDailySyncs()
     }
 }

@@ -1,7 +1,7 @@
 plugins {
     id("tvmaniac.kmm.library")
-    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.ksp)
 }
 
 
@@ -11,23 +11,16 @@ kotlin {
 
     sourceSets {
 
-        sourceSets["commonMain"].dependencies {
-            implementation(libs.koin)
-            implementation(libs.sqldelight.primitive.adapters)
-        }
-
         sourceSets["androidMain"].dependencies {
             implementation(libs.sqldelight.driver.android)
-            implementation(libs.hilt.android)
-            configurations["kapt"].dependencies.add(
-                org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
-                    "com.google.dagger",
-                    "hilt-android-compiler",
-                    libs.versions.dagger.get()
-                )
-            )
-
         }
+
+        sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:core:base"))
+            implementation(libs.sqldelight.primitive.adapters)
+            implementation(libs.kotlinInject.runtime)
+        }
+
 
         sourceSets["androidTest"].dependencies {
             implementation(kotlin("test"))
@@ -41,14 +34,18 @@ kotlin {
         }
 
         sourceSets["iosMain"].dependencies {
-            implementation(libs.koin)
             implementation(libs.sqldelight.driver.native)
         }
     }
 }
 
+dependencies {
+    add("kspIosX64", libs.kotlinInject.compiler)
+    add("kspIosArm64", libs.kotlinInject.compiler)
+}
+
 android {
-    namespace = "com.thomaskioko.tvmaniac.core.db"
+    namespace = "com.thomaskioko.tvmaniac.db"
 }
 
 sqldelight {

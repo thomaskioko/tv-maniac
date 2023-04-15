@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.data.seasondetails
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.core.util.network.DefaultError
-import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
+import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.seasonDetails
@@ -34,7 +34,7 @@ class SeasonDetailsStateMachineTest {
     fun onLoadSeasonDetails_andErrorOccurs_correctStateIsEmitted() = runTest {
         stateMachine.state.test {
             val errorMessage = "Something went wrong"
-            seasonDetailsRepository.setSeasonDetails(Either.Left(DefaultError(Throwable(errorMessage))))
+            seasonDetailsRepository.setSeasonDetails(Either.Left(DefaultError(errorMessage)))
 
             stateMachine.dispatch(LoadSeasonDetails(1231))
 

@@ -1,12 +1,13 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
 import co.touchlab.kermit.Logger
+import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.base.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.db.Episode_image
-import com.thomaskioko.tvmaniac.core.util.FormatterUtil
-import com.thomaskioko.tvmaniac.core.util.network.ApiResponse
-import com.thomaskioko.tvmaniac.core.util.network.DefaultError
-import com.thomaskioko.tvmaniac.core.util.network.Either
-import com.thomaskioko.tvmaniac.core.util.network.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeImageCache
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
@@ -14,11 +15,15 @@ import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class EpisodeRepositoryImpl(
     private val tmdbService: TmdbService,
     private val episodesCache: EpisodesCache,
     private val episodeImageCache: EpisodeImageCache,
+    private val formatterUtil: FormatterUtil,
+    private val exceptionHandler: ExceptionHandler
 ) : EpisodeRepository {
 
     override fun updateEpisodeArtWork(): Flow<Either<Failure, Unit>> =
@@ -38,7 +43,7 @@ class EpisodeRepositoryImpl(
                                     Episode_image(
                                         trakt_id = episodeArt.trakt_id,
                                         tmdb_id = response.body.id.toLong(),
-                                        image_url = response.body.imageUrl.toImageUrl()
+                                        image_url = formatterUtil.formatTmdbPosterPath(response.body.imageUrl)
                                     )
                                 )
                             }
@@ -52,8 +57,7 @@ class EpisodeRepositoryImpl(
 
                 Either.Right(Unit)
             }
-            .catch { Either.Left(DefaultError(it)) }
+            .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
 
 }
 
-fun String?.toImageUrl() = FormatterUtil.formatPosterPath(this)

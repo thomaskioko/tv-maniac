@@ -4,20 +4,18 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.navigation.NavigationScreen
-import com.thomaskioko.tvmaniac.navigation.viewModelComposable
-import javax.inject.Inject
+import com.thomaskioko.tvmaniac.navigation.extensions.screenComposable
+import me.tatarka.inject.annotations.Inject
 
-class SearchNavigationFactory @Inject constructor() : ComposeNavigationFactory {
+@Inject
+class SearchNavigationFactory(
+    private val search: Search
+) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
-        builder.viewModelComposable<SearchViewModel>(
+        builder.screenComposable(
             route = NavigationScreen.SearchNavScreen.route,
-            content = {
-                SearchRoute(
-                    viewModel = this,
-                    navController = navController
-                )
-            }
+            content = { search() }
         )
     }
 }

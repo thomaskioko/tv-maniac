@@ -3,15 +3,17 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import com.thomaskioko.tvmaniac.core.db.Episode as EpisodeCache
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.EpisodeArt
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import kotlinx.coroutines.flow.Flow
-import kotlin.coroutines.CoroutineContext
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class EpisodesCacheImpl(
     private val database: TvManiacDatabase,
-    private val coroutineContext: CoroutineContext
+    private val dispatchers: AppCoroutineDispatchers,
 ) : EpisodesCache {
 
     private val episodeQueries get() = database.episodeQueries
@@ -39,5 +41,5 @@ class EpisodesCacheImpl(
     override fun observeEpisodeArtByShowId(): Flow<List<EpisodeArt>> =
         episodeQueries.episodeArt()
             .asFlow()
-            .mapToList(coroutineContext)
+            .mapToList(dispatchers.io)
 }

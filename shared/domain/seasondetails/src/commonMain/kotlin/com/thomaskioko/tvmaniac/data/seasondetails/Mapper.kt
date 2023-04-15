@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.seasondetails
 
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
-import com.thomaskioko.tvmaniac.core.util.network.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.data.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
 

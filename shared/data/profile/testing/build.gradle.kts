@@ -8,7 +8,6 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:core:util"))
             implementation(project(":shared:data:database"))
             implementation(project(":shared:data:profile:api"))
             implementation(libs.coroutines.core)

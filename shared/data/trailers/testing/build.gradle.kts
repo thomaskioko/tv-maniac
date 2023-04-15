@@ -12,7 +12,7 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:core:util"))
+            implementation(project(":shared:core:base"))
             implementation(project(":shared:data:database"))
             implementation(project(":shared:data:trailers:api"))
 

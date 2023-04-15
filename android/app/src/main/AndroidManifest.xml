@@ -19,7 +19,7 @@
             tools:targetApi="29" />
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode"
             android:exported="true"
             android:launchMode="singleTask"
