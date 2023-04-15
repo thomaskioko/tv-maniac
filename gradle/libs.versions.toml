@@ -17,17 +17,16 @@ androidx-work = "2.7.1"
 coil = "2.2.2"
 compileSdk = "33"
 compose-bom = "2023.01.00"
-composecompiler = "1.4.2"
+composecompiler = "1.4.5"
 coroutines = "1.6.4"
-dagger = "2.44.2"
 desugar = "2.0.2"
 junit = "4.13.2"
 kotest = "5.5.4"
-kotlin = "1.8.0"
+kotlin = "1.8.20"
 kotlininject = "0.6.1"
 ktor = "2.1.2"
-ksp = "1.8.10-1.0.9"
-shared-module-version = "0.6.0"
+ksp = "1.8.20-1.0.10"
+shared-module-version = "0.7.0"
 sqldelight = "2.0.0-alpha05"
 turbine = "0.12.1"
 
@@ -78,7 +77,6 @@ coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", ve
 coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.4.0" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.0.2" }
 
