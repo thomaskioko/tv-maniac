@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.shows.implementation.mapper
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.base.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.Show_category
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse

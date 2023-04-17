@@ -1,7 +1,5 @@
 package com.thomaskioko.trakt.service.implementation
 
-import com.thomaskioko.tvmaniac.base.model.TraktOAuthInfo
-import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.safeRequest
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
@@ -25,6 +23,8 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.model.Configs
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -40,7 +40,7 @@ private const val PAGE_LIMIT_SIZE = 20
 
 @Inject
 class TraktServiceImpl(
-    private val traktOAuthInfo: TraktOAuthInfo,
+    private val configs: Configs,
     private val httpClient: TraktHttpClient,
     private val exceptionHandler: ExceptionHandler
 ) : TraktService {
@@ -51,9 +51,9 @@ class TraktServiceImpl(
         setBody(
             AccessTokenBody(
                 code = authCode,
-                clientId = traktOAuthInfo.clientId,
-                clientSecret = traktOAuthInfo.clientSecret,
-                redirectUri = traktOAuthInfo.redirectUri,
+                clientId = configs.traktClientId,
+                clientSecret = configs.traktClientSecret,
+                redirectUri = configs.traktRedirectUri,
                 grantType = "authorization_code",
             )
         )
@@ -77,9 +77,9 @@ class TraktServiceImpl(
             setBody(
                 AccessTokenBody(
                     code = authCode,
-                    clientId = traktOAuthInfo.clientId,
-                    clientSecret = traktOAuthInfo.clientSecret,
-                    redirectUri = traktOAuthInfo.redirectUri,
+                    clientId = configs.traktClientId,
+                    clientSecret = configs.traktClientSecret,
+                    redirectUri = configs.traktRedirectUri,
                 )
             )
         }

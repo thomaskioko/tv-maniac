@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.trakt.profile.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.base.util.DateFormatter
-import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.DateFormatter
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.TraktStats
 import com.thomaskioko.tvmaniac.core.db.Trakt_list

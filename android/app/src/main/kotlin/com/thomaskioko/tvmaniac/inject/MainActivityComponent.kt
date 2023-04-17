@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.inject
 
 import android.app.Activity
 import com.thomaskioko.tvmaniac.MainActivityViewModel
-import com.thomaskioko.tvmaniac.base.scope.ActivityScope
+import com.thomaskioko.tvmaniac.util.scope.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.inject.TraktAuthManagerComponent

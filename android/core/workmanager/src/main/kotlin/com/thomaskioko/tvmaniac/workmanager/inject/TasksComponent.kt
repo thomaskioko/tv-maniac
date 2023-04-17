@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.workmanager.inject
 
 import android.app.Application
 import androidx.work.WorkManager
-import com.thomaskioko.tvmaniac.base.scope.ApplicationScope
+import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.workmanager.AppInitializer
 import com.thomaskioko.tvmaniac.workmanager.ShowTasks
 import com.thomaskioko.tvmaniac.workmanager.ShowTasksImpl

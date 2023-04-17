@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.shared
 
 import com.thomaskioko.trakt.service.implementation.TraktPlatformComponent
-import com.thomaskioko.tvmaniac.base.BasePlatformComponent
-import com.thomaskioko.tvmaniac.base.scope.ApplicationScope
+import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
+import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.core.networkutil.NetworkUtilComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
@@ -25,7 +25,7 @@ import me.tatarka.inject.annotations.Component
 @ApplicationScope
 @Component
 abstract class ApplicationComponent :
-    BasePlatformComponent,
+    UtilPlatformComponent,
     CategoryComponent,
     DatabaseComponent,
     DataStorePlatformComponent,

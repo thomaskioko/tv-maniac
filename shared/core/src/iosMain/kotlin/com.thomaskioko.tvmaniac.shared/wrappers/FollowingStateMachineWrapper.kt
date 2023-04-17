@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.shared.wrappers
 
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineScope
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.domain.following.FollowingAction
 import com.thomaskioko.tvmaniac.domain.following.FollowingState
 import com.thomaskioko.tvmaniac.domain.following.FollowingStateMachine

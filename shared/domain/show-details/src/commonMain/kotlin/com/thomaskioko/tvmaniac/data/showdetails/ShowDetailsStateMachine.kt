@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.data.showdetails
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.data.showdetails.SeasonState.SeasonsLoaded.Companion.EmptySeasons
 import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState.ShowDetailsLoaded
 import com.thomaskioko.tvmaniac.data.showdetails.SimilarShowsState.SimilarShowsError

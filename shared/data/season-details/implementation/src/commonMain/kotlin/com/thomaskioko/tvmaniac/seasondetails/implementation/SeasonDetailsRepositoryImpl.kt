@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.core.db.Season_episodes
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes

@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.base.util.DateFormatter
-import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.DateFormatter
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.category.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.category.api.model.Category.ANTICIPATED
