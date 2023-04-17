@@ -1,5 +1,5 @@
 plugins {
-    id("tvmaniac.kmm.data")
+    id("tvmaniac.kmm.library")
     alias(libs.plugins.serialization)
 }
 
@@ -9,7 +9,7 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
-            api(project(":shared:core:networkutil"))
+            api(project(":shared:networkutil"))
             implementation(libs.ktor.serialization)
         }
     }

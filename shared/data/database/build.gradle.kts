@@ -16,7 +16,7 @@ kotlin {
         }
 
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:core:base"))
+            implementation(project(":shared:util"))
             implementation(libs.sqldelight.primitive.adapters)
             implementation(libs.kotlinInject.runtime)
         }

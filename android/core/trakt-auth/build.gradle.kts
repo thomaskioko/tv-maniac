@@ -10,7 +10,7 @@ android {
 dependencies {
 
     implementation(projects.android.core.workmanager)
-    implementation(projects.shared.core.base)
+    implementation(projects.shared.util)
 
     implementation(libs.appauth)
     implementation(libs.androidx.activity)

@@ -10,7 +10,7 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:core:base"))
+            implementation(project(":shared:util"))
             implementation(project(":shared:data:tmdb:api"))
             implementation(project(":shared:data:database"))
             implementation(libs.coroutines.core)

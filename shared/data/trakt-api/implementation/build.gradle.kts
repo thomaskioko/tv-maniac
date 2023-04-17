@@ -10,14 +10,13 @@ kotlin {
 
     sourceSets {
         sourceSets["androidMain"].dependencies {
-            implementation(project(":shared:core:base"))
-
             implementation(libs.appauth)
             implementation(libs.ktor.okhttp)
         }
 
 
         sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:util"))
             implementation(project(":shared:data:trakt-api:api"))
 
             implementation(libs.sqldelight.extensions)

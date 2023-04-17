@@ -1,5 +1,5 @@
 plugins {
-    id("tvmaniac.kmm.data")
+    id("tvmaniac.kmm.library")
 }
 
 
@@ -10,9 +10,12 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
-            api(project(":shared:core:networkutil"))
+            api(project(":shared:networkutil"))
+            api(project(":shared:data:database"))
             implementation(project(":shared:data:shows:api"))
             implementation(project(":shared:data:tmdb:api"))
+
+            api(libs.coroutines.core)
 
         }
     }
