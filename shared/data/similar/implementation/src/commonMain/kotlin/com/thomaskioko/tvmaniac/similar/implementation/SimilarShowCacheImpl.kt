@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.similar.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache

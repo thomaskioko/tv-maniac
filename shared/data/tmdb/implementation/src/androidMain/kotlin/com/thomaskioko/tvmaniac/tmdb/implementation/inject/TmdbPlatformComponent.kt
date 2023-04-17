@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation.inject
 
-import com.thomaskioko.tvmaniac.base.model.AppConfig
-import com.thomaskioko.tvmaniac.base.scope.ApplicationScope
+import com.thomaskioko.tvmaniac.util.model.Configs
+import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
@@ -34,12 +34,12 @@ actual interface TmdbPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideTmdbHttpClient(
-        appConfig: AppConfig,
+        configs: Configs,
         json: TmdbJson,
         httpClientEngine: TmdbHttpClientEngine
     ): TmdbHttpClient = tmdbHttpClient(
-        isDebug = appConfig.isDebug,
-        tmdbApiKey = appConfig.tmdbApiKey,
+        isDebug = configs.isDebug,
+        tmdbApiKey = configs.tmdbApiKey,
         json = json,
         httpClientEngine = httpClientEngine
     )

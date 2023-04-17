@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.showdetails
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository

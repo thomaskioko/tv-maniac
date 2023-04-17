@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.data.trailers.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import kotlinx.coroutines.flow.Flow

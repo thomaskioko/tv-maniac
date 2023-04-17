@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
-import com.thomaskioko.tvmaniac.base.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.db.Show_image
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError

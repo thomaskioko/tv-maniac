@@ -2,12 +2,9 @@ package com.thomaskioko.tvmaniac.datastore.implementation
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineScope
-import com.thomaskioko.tvmaniac.base.scope.ApplicationScope
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
+import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.datastore.implementation.DatastoreRepositoryImpl
-import com.thomaskioko.tvmaniac.datastore.implementation.createDataStore
-import com.thomaskioko.tvmaniac.datastore.implementation.dataStoreFileName
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager

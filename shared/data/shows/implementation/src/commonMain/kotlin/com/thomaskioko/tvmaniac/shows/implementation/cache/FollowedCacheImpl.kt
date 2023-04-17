@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.shows.implementation.cache
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase

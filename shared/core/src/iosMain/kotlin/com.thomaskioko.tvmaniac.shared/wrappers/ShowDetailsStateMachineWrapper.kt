@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.shared.wrappers
 
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineScope
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState
 import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsStateMachine

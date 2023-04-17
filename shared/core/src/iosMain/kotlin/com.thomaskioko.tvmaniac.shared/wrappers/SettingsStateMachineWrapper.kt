@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.shared.wrappers
 
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineScope
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.settings.SettingsActions
 import com.thomaskioko.tvmaniac.settings.SettingsState
 import com.thomaskioko.tvmaniac.settings.SettingsStateMachine

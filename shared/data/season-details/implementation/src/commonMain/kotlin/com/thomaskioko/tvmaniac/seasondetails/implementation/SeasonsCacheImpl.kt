@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.core.db.Season_episodes
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes

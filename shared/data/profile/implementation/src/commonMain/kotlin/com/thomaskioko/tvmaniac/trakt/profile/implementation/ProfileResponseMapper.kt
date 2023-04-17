@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.trakt.profile.implementation
 
-import com.thomaskioko.tvmaniac.base.util.DateFormatter
-import com.thomaskioko.tvmaniac.base.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.DateFormatter
+import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.TraktStats
 import com.thomaskioko.tvmaniac.core.db.Trakt_list

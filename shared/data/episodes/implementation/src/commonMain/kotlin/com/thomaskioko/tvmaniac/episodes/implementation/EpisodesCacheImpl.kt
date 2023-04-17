@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import com.thomaskioko.tvmaniac.core.db.Episode as EpisodeCache
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.EpisodeArt
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache

@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
-import com.thomaskioko.tvmaniac.base.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.db.Episode_image
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError

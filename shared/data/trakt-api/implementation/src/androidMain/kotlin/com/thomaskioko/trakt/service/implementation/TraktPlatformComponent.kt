@@ -1,8 +1,8 @@
 package com.thomaskioko.trakt.service.implementation
 
-import com.thomaskioko.tvmaniac.base.model.AppConfig
-import com.thomaskioko.tvmaniac.base.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
+import com.thomaskioko.tvmaniac.util.model.Configs
+import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import io.ktor.client.engine.okhttp.OkHttp
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -32,11 +32,11 @@ actual interface TraktPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideHttpClient(
-        appConfig: AppConfig,
+        configs: Configs,
         json: TraktJson,
         httpClientEngine: TraktHttpClientEngine
     ): TraktHttpClient = traktHttpClient(
-        isDebug = appConfig.isDebug,
+        isDebug = configs.isDebug,
         json = json,
         httpClientEngine = httpClientEngine
     )

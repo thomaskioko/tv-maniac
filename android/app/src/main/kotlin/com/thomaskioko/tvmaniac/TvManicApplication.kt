@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac
 import android.app.Application
 import androidx.work.Configuration
 import androidx.work.WorkerFactory
-import com.thomaskioko.tvmaniac.base.extensions.unsafeLazy
+import com.thomaskioko.tvmaniac.util.extensions.unsafeLazy
 import com.thomaskioko.tvmaniac.inject.ApplicationComponent
 import com.thomaskioko.tvmaniac.inject.create
 
