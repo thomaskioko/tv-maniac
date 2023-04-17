@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shared.wrappers
+package com.thomaskioko.tvmaniac.shared.base.wrappers
 
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.data.trailers.TrailersAction

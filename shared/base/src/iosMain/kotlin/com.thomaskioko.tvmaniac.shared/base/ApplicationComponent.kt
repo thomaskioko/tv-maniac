@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shared
+package com.thomaskioko.tvmaniac.shared.base
 
 import com.thomaskioko.trakt.service.implementation.TraktPlatformComponent
 import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
@@ -10,12 +10,12 @@ import com.thomaskioko.tvmaniac.datastore.implementation.DataStorePlatformCompon
 import com.thomaskioko.tvmaniac.db.DatabaseComponent
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeComponent
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsComponent
-import com.thomaskioko.tvmaniac.shared.wrappers.DiscoverStateMachineWrapper
-import com.thomaskioko.tvmaniac.shared.wrappers.FollowingStateMachineWrapper
-import com.thomaskioko.tvmaniac.shared.wrappers.SeasonDetailsStateMachineWrapper
-import com.thomaskioko.tvmaniac.shared.wrappers.SettingsStateMachineWrapper
-import com.thomaskioko.tvmaniac.shared.wrappers.ShowDetailsStateMachineWrapper
-import com.thomaskioko.tvmaniac.shared.wrappers.TrailersStateMachineWrapper
+import com.thomaskioko.tvmaniac.shared.base.wrappers.DiscoverStateMachineWrapper
+import com.thomaskioko.tvmaniac.shared.base.wrappers.FollowingStateMachineWrapper
+import com.thomaskioko.tvmaniac.shared.base.wrappers.SeasonDetailsStateMachineWrapper
+import com.thomaskioko.tvmaniac.shared.base.wrappers.SettingsStateMachineWrapper
+import com.thomaskioko.tvmaniac.shared.base.wrappers.ShowDetailsStateMachineWrapper
+import com.thomaskioko.tvmaniac.shared.base.wrappers.TrailersStateMachineWrapper
 import com.thomaskioko.tvmaniac.shows.implementation.ShowsComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.inject.TmdbPlatformComponent
