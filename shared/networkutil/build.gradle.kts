@@ -10,7 +10,7 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:core:base"))
+            implementation(project(":shared:util"))
 
             implementation(libs.coroutines.core)
             implementation(libs.kotlinInject.runtime)

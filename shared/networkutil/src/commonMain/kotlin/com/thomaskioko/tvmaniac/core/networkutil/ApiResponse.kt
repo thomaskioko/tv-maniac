@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.core.networkutil
 
-import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
