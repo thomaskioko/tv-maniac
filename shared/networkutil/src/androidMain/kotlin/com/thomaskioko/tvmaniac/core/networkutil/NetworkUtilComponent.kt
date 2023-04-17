@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.core.networkutil
 
-import com.thomaskioko.tvmaniac.base.scope.ApplicationScope
+import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 actual interface NetworkUtilComponent {
