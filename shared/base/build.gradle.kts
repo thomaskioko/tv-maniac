@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 plugins {
     id("tvmaniac.kmm.library")
     id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.ksp)
 }
 
 version = libs.versions.shared.module.version.get()
@@ -24,8 +24,6 @@ kotlin {
 
             embedBitcode(BitcodeEmbeddingMode.BITCODE)
 
-            export(project(":shared:core:base"))
-            export(project(":shared:core:networkutil"))
             export(project(":shared:data:database"))
             export(project(":shared:data:datastore:api"))
             export(project(":shared:data:episodes:api"))
@@ -49,8 +47,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(project(":shared:core:base"))
-                api(project(":shared:core:networkutil"))
+                api(project(":shared:util"))
+                api(project(":shared:networkutil"))
                 api(project(":shared:data:category:api"))
                 api(project(":shared:data:database"))
                 api(project(":shared:data:datastore:api"))
@@ -84,6 +82,7 @@ kotlin {
                 implementation(libs.kotlinInject.runtime)
             }
         }
+
         val commonTest by getting
         val androidMain by getting
         val androidTest by getting
@@ -110,7 +109,7 @@ dependencies {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.shared"
+    namespace = "com.thomaskioko.tvmaniac.shared.base"
 }
 
 multiplatformSwiftPackage {
