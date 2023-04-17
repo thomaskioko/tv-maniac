@@ -1,5 +1,5 @@
 plugins {
-    id("tvmaniac.kmm.data")
+    id("tvmaniac.kmm.library")
     alias(libs.plugins.ksp)
 }
 
@@ -10,12 +10,11 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:core:base"))
+            implementation(project(":shared:util"))
             implementation(project(":shared:data:datastore:api"))
 
             api(libs.androidx.datastore.preference)
 
-            implementation(libs.coroutines.core)
             implementation(libs.kotlinInject.runtime)
         }
 

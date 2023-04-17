@@ -9,6 +9,7 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:util"))
             implementation(project(":shared:data:season-details:api"))
             implementation(project(":shared:data:similar:api"))
             implementation(project(":shared:data:trailers:api"))

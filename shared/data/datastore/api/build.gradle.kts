@@ -1,5 +1,5 @@
 plugins {
-    id("tvmaniac.kmm.data")
+    id("tvmaniac.kmm.library")
 }
 
 
@@ -8,6 +8,11 @@ kotlin {
     ios()
 
     sourceSets {
+
+        sourceSets["commonMain"].dependencies {
+            api(libs.coroutines.core)
+        }
+
         sourceSets["commonTest"].dependencies {
             implementation(kotlin("test"))
 

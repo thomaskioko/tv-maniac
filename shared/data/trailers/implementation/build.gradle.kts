@@ -1,5 +1,5 @@
 plugins {
-    id("tvmaniac.kmm.data")
+    id("tvmaniac.kmm.library")
     alias(libs.plugins.ksp)
 }
 
@@ -10,6 +10,7 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
+            implementation(project(":shared:util"))
             implementation(project(":shared:data:shows:api"))
             implementation(project(":shared:data:tmdb:api"))
             implementation(project(":shared:data:trailers:api"))
