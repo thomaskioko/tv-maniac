@@ -10,10 +10,10 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
-            api(project(":shared:networkutil"))
-            api(project(":shared:data:database"))
-            implementation(project(":shared:data:shows:api"))
-            implementation(project(":shared:data:tmdb:api"))
+            api(projects.shared.core.database)
+            api(projects.shared.core.networkutil)
+            implementation(projects.shared.core.tmdbApi.api)
+            implementation(projects.shared.data.shows.api)
 
             api(libs.coroutines.core)
 

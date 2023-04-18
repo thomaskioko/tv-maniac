@@ -9,13 +9,13 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:data:episodes:api"))
-            implementation(project(":shared:data:season-details:api"))
+            implementation(projects.shared.data.episodes.api)
+            implementation(projects.shared.data.seasonDetails.api)
         }
 
         sourceSets["commonTest"].dependencies {
-            implementation(project(":shared:data:episodes:testing"))
-            implementation(project(":shared:data:season-details:testing"))
+            implementation(projects.shared.data.episodes.testing)
+            implementation(projects.shared.data.seasonDetails.testing)
         }
     }
 }
@@ -26,5 +26,5 @@ dependencies {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.data.seasondetails"
+    namespace = "com.thomaskioko.tvmaniac.domain.seasondetails"
 }

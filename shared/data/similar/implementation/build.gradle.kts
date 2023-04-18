@@ -11,11 +11,11 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:util"))
-            implementation(project(":shared:data:tmdb:api"))
-            implementation(project(":shared:data:similar:api"))
-            implementation(project(":shared:data:shows:api"))
-            implementation(project(":shared:data:trakt-api:api"))
+            implementation(projects.shared.core.tmdbApi.api)
+            implementation(projects.shared.core.traktApi.api)
+            implementation(projects.shared.core.util)
+            implementation(projects.shared.data.similar.api)
+            implementation(projects.shared.data.shows.api)
 
             implementation(libs.kermit)
             implementation(libs.kotlinInject.runtime)
