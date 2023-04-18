@@ -34,11 +34,9 @@ kotlin {
 android {
     namespace = "com.thomaskioko.tvmaniac.util"
 
-    sourceSets["main"].resources.setSrcDirs(
-        listOf(
-            "src/commonMain/resources" // <-- add the commonMain Resources
-        )
-    )
+    sourceSets["main"].apply {
+        resources.srcDirs("src/commonMain/resources") // <-- add the commonMain Resources
+    }
 }
 
 

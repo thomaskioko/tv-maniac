@@ -1,3 +1,5 @@
+import com.thomaskioko.tvmaniac.extensions.TvManiacBuildType
+
 plugins {
     id("tvmaniac.application")
     alias(libs.plugins.ksp)
@@ -10,11 +12,18 @@ android {
         applicationId = "com.thomaskioko.tvmaniac"
         versionCode = 1
         versionName = "1.0"
+    }
 
-        buildConfigField("String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TRAKT_CLIENT_ID", "") + "\"")
-        buildConfigField("String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TRAKT_CLIENT_SECRET", "") + "\"")
-        buildConfigField("String", "TRAKT_REDIRECT_URI", "\"" + propOrDef("TRAKT_REDIRECT_URI", "") + "\"")
-        buildConfigField("String", "TMDB_API_KEY", "\"" + propOrDef("TMDB_API_KEY", "") + "\"")
+    buildTypes {
+        debug {
+            applicationIdSuffix = TvManiacBuildType.DEBUG.applicationIdSuffix
+        }
+    }
+
+    packaging {
+        resources {
+            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+        }
     }
 }
 
@@ -35,21 +44,35 @@ dependencies {
     implementation(projects.android.features.trailers)
     implementation(projects.android.features.profile)
 
-    implementation(projects.shared.shared)
-    implementation(projects.shared.core.base)
-    implementation(projects.shared.data.category.implementation)
-    implementation(projects.shared.data.datastore.implementation)
-    implementation(projects.shared.data.episodes.implementation)
-    implementation(projects.shared.data.profile.implementation)
-    implementation(projects.shared.data.seasonDetails.implementation)
-    implementation(projects.shared.data.similar.implementation)
-    implementation(projects.shared.data.shows.implementation)
-    implementation(projects.shared.data.tmdb.implementation)
-    implementation(projects.shared.data.trailers.implementation)
-    implementation(projects.shared.data.traktApi.implementation)
-    implementation(projects.shared.domain.seasondetails)
-    implementation(projects.shared.domain.settings)
-    implementation(projects.shared.domain.showDetails)
+    implementation(project(":shared:util"))
+    implementation(project(":shared:networkutil"))
+    implementation(project(":shared:data:category:api"))
+    implementation(project(":shared:data:category:implementation"))
+    implementation(project(":shared:data:database"))
+    implementation(project(":shared:data:datastore:api"))
+    implementation(project(":shared:data:datastore:implementation"))
+    implementation(project(":shared:data:episodes:api"))
+    implementation(project(":shared:data:episodes:implementation"))
+    implementation(project(":shared:data:profile:api"))
+    implementation(project(":shared:data:profile:implementation"))
+    implementation(project(":shared:data:similar:api"))
+    implementation(project(":shared:data:similar:implementation"))
+    implementation(project(":shared:data:season-details:api"))
+    implementation(project(":shared:data:season-details:implementation"))
+    implementation(project(":shared:data:shows:api"))
+    implementation(project(":shared:data:shows:implementation"))
+    implementation(project(":shared:data:trailers:api"))
+    implementation(project(":shared:data:trailers:implementation"))
+    implementation(project(":shared:data:tmdb:api"))
+    implementation(project(":shared:data:tmdb:implementation"))
+    implementation(project(":shared:data:trakt-api:api"))
+    implementation(project(":shared:data:trakt-api:implementation"))
+    implementation(project(":shared:domain:discover"))
+    implementation(project(":shared:domain:following"))
+    implementation(project(":shared:domain:seasondetails"))
+    implementation(project(":shared:domain:settings"))
+    implementation(project(":shared:domain:show-details"))
+    implementation(project(":shared:domain:trailers"))
 
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.compose.activity)
@@ -57,10 +80,4 @@ dependencies {
 
     implementation(libs.kotlinInject.runtime)
     ksp(libs.kotlinInject.compiler)
-}
-
-fun <T : Any> propOrDef(propertyName: String, defaultValue: T): T {
-    @Suppress("UNCHECKED_CAST")
-    val propertyValue = project.properties[propertyName] as T?
-    return propertyValue ?: defaultValue
 }
