@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.core.db
 
-import com.thomaskioko.tvmaniac.core.db.Episode as EpisodeCache
+import com.thomaskioko.tvmaniac.core.db.Episodes as EpisodeCache
 
 object MockData {
 

@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.data.showdetails
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.domain.showdetails.LoadShowDetails
 import com.thomaskioko.tvmaniac.domain.showdetails.SeasonState
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsStateMachine
@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.shows.testing.FakeShowsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
