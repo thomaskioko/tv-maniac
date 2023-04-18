@@ -23,9 +23,10 @@ class FeaturePlugin : Plugin<Project> {
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
             dependencies {
-                add("api", project(":shared:util"))
                 add("api", project(":android:core:designsystem"))
                 add("api", project(":android:core:navigation"))
+                add("api", project(":shared:core:util"))
+
                 add("implementation", project(":android:core:resources"))
 
                 add("api", libs.findLibrary("androidx.navigation.common").get())
