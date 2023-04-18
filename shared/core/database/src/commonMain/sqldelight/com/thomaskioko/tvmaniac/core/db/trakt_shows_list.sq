@@ -1,17 +1,17 @@
-CREATE TABLE trakt_list (
+CREATE TABLE trakt_shows_list (
 id INTEGER NOT NULL PRIMARY KEY,
 slug TEXT NOT NULL,
 description TEXT NOT NULL
 );
 
 insertOrReplace:
-INSERT OR REPLACE INTO trakt_list(
+INSERT OR REPLACE INTO trakt_shows_list(
 id,
 slug,
 description
 )
 VALUES(?,?,?);
 
-selectFavorite:
+selectShowsList:
 SELECT *
-FROM trakt_list;
+FROM trakt_shows_list;

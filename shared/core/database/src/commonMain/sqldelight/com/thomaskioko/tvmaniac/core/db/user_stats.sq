@@ -1,4 +1,4 @@
-CREATE TABLE traktStats(
+CREATE TABLE user_stats(
 user_slug TEXT NOT NULL PRIMARY KEY,
 months Text NOT NULL,
 days Text NOT NULL,
@@ -8,7 +8,7 @@ episodes_watched Text NOT NULL
 );
 
 insertOrReplace:
-INSERT OR REPLACE INTO traktStats(
+INSERT OR REPLACE INTO user_stats(
 user_slug,
 months,
 days,
@@ -20,7 +20,7 @@ VALUES(?,?,?,?,?,?);
 
 select:
 SELECT *
-FROM traktStats;
+FROM user_stats;
 
 delete:
-DELETE FROM traktStats;
+DELETE FROM user_stats;
