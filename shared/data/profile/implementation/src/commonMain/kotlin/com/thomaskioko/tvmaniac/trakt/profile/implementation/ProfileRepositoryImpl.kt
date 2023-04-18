@@ -1,13 +1,10 @@
 package com.thomaskioko.tvmaniac.trakt.profile.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.util.DateFormatter
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
-import com.thomaskioko.tvmaniac.core.db.TraktStats
-import com.thomaskioko.tvmaniac.core.db.Trakt_list
+import com.thomaskioko.tvmaniac.core.db.Trakt_shows_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
+import com.thomaskioko.tvmaniac.core.db.User_stats
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
@@ -18,6 +15,9 @@ import com.thomaskioko.tvmaniac.trakt.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.trakt.profile.api.cache.FavoriteListCache
 import com.thomaskioko.tvmaniac.trakt.profile.api.cache.StatsCache
 import com.thomaskioko.tvmaniac.trakt.profile.api.cache.UserCache
+import com.thomaskioko.tvmaniac.util.DateFormatter
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -67,7 +67,7 @@ class ProfileRepositoryImpl constructor(
             coroutineDispatcher = dispatchers.io
         )
 
-    override fun observeStats(slug: String, refresh: Boolean): Flow<Either<Failure, TraktStats>> =
+    override fun observeStats(slug: String, refresh: Boolean): Flow<Either<Failure, User_stats>> =
         networkBoundResult(
             query = { statsCache.observeStats() },
             shouldFetch = { it == null || refresh },
@@ -77,7 +77,7 @@ class ProfileRepositoryImpl constructor(
             coroutineDispatcher = dispatchers.io
         )
 
-    override fun observeCreateTraktList(userSlug: String): Flow<Either<Failure, Trakt_list>> =
+    override fun observeCreateTraktList(userSlug: String): Flow<Either<Failure, Trakt_shows_list>> =
         networkBoundResult(
             query = { favoriteListCache.observeTraktList() },
             shouldFetch = { it == null },

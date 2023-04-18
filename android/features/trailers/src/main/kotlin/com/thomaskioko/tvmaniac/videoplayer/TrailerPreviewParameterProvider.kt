@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.videoplayer
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.data.trailers.TrailerError
-import com.thomaskioko.tvmaniac.data.trailers.TrailersLoaded
-import com.thomaskioko.tvmaniac.data.trailers.TrailersState
-import com.thomaskioko.tvmaniac.data.trailers.model.Trailer
+import com.thomaskioko.tvmaniac.domain.trailers.TrailerError
+import com.thomaskioko.tvmaniac.domain.trailers.TrailersLoaded
+import com.thomaskioko.tvmaniac.domain.trailers.TrailersState
+import com.thomaskioko.tvmaniac.domain.trailers.model.Trailer
 
 
 private val trailersList = List(4) {

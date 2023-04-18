@@ -1,11 +1,17 @@
 package com.thomaskioko.tvmaniac.data.showdetails
 
-import com.thomaskioko.tvmaniac.core.db.Season as SeasonCache
+import com.thomaskioko.tvmaniac.core.db.Seasons as SeasonCache
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
-import com.thomaskioko.tvmaniac.data.showdetails.model.Season
-import com.thomaskioko.tvmaniac.data.showdetails.model.Show
-import com.thomaskioko.tvmaniac.data.showdetails.model.Trailer
+import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowsState
+import com.thomaskioko.tvmaniac.domain.showdetails.SeasonState
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowState
+import com.thomaskioko.tvmaniac.domain.showdetails.SimilarShowsState
+import com.thomaskioko.tvmaniac.domain.showdetails.TrailersState
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Season
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Show
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Trailer
 
 
 val show = Show(

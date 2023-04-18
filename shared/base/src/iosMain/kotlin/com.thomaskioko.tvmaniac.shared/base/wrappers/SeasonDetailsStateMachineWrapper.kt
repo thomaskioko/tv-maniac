@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.shared.base.wrappers
 
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
-import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsAction
-import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsState
-import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsStateMachine
+import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsAction
+import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsState
+import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsStateMachine
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject

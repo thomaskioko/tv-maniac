@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Episode as EpisodeCache
+import com.thomaskioko.tvmaniac.core.db.Episodes as EpisodeCache
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
@@ -16,7 +16,7 @@ class EpisodesCacheImpl(
     private val dispatchers: AppCoroutineDispatchers,
 ) : EpisodesCache {
 
-    private val episodeQueries get() = database.episodeQueries
+    private val episodeQueries get() = database.episodesQueries
 
     override fun insert(entity: EpisodeCache) {
         database.transaction {

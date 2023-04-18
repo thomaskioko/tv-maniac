@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.data.seasondetails.model
+package com.thomaskioko.tvmaniac.domain.seasondetails.model
 
 
 data class SeasonDetails(

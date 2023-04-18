@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.seasondetails
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.data.seasondetails.LoadingError
-import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsLoaded
-import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsState
-import com.thomaskioko.tvmaniac.data.seasondetails.model.Episode
-import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
+import com.thomaskioko.tvmaniac.domain.seasondetails.LoadingError
+import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsLoaded
+import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsState
+import com.thomaskioko.tvmaniac.domain.seasondetails.model.Episode
+import com.thomaskioko.tvmaniac.domain.seasondetails.model.SeasonDetails
 
 
 val episode = Episode(

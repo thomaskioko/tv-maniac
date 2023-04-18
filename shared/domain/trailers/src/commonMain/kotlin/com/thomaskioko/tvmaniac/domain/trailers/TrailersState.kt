@@ -1,6 +1,6 @@
-package com.thomaskioko.tvmaniac.data.trailers
+package com.thomaskioko.tvmaniac.domain.trailers
 
-import com.thomaskioko.tvmaniac.data.trailers.model.Trailer
+import com.thomaskioko.tvmaniac.domain.trailers.model.Trailer
 
 interface TrailersState
 

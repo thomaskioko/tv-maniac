@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.data.seasondetails
+package com.thomaskioko.tvmaniac.domain.seasondetails
 
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine

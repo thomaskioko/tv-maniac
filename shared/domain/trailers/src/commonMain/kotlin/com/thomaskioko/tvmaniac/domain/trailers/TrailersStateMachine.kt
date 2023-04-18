@@ -1,8 +1,11 @@
-package com.thomaskioko.tvmaniac.data.trailers
+package com.thomaskioko.tvmaniac.domain.trailers
 
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
+import com.thomaskioko.tvmaniac.domain.trailers.LoadingTrailers
+import com.thomaskioko.tvmaniac.domain.trailers.TrailersAction
+import com.thomaskioko.tvmaniac.domain.trailers.TrailersState
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

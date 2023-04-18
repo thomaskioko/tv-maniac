@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.seasondetails.testing
 
-import com.thomaskioko.tvmaniac.core.db.Season
+import com.thomaskioko.tvmaniac.core.db.Seasons
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.flowOf
 
 class FakeSeasonDetailsRepository : SeasonDetailsRepository {
 
-    private var seasonsResult = flowOf<Either<Failure, List<Season>>>()
+    private var seasonsResult = flowOf<Either<Failure, List<Seasons>>>()
 
     private var seasonEpisodesResult = flowOf<Either<Failure, List<SelectSeasonWithEpisodes>>>()
 
-    suspend fun setSeasonsResult(result: Either<Failure, List<Season>>) {
+    suspend fun setSeasonsResult(result: Either<Failure, List<Seasons>>) {
         seasonsResult = flow { emit(result) }
     }
 
@@ -23,7 +23,7 @@ class FakeSeasonDetailsRepository : SeasonDetailsRepository {
         seasonEpisodesResult = flow { emit(result) }
     }
 
-    override fun observeSeasonsStream(traktId: Long): Flow<Either<Failure, List<Season>>> = seasonsResult
+    override fun observeSeasonsStream(traktId: Long): Flow<Either<Failure, List<Seasons>>> = seasonsResult
 
     override fun observeSeasonDetails(): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
         seasonEpisodesResult

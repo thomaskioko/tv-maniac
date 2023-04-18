@@ -2,10 +2,10 @@ package com.thomaskioko.tvmaniac.trakt.profile.implementation.cache
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOne
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.db.TraktStats
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.db.User_stats
 import com.thomaskioko.tvmaniac.trakt.profile.api.cache.StatsCache
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
@@ -15,8 +15,8 @@ class StatsCacheImpl(
     private val dispatchers: AppCoroutineDispatchers,
 ) : StatsCache {
 
-    override fun insert(stats: TraktStats) {
-        database.traktStatsQueries.insertOrReplace(
+    override fun insert(stats: User_stats) {
+        database.user_statsQueries.insertOrReplace(
             user_slug = stats.user_slug,
             months = stats.months,
             days = stats.days,
@@ -26,8 +26,8 @@ class StatsCacheImpl(
         )
     }
 
-    override fun observeStats(): Flow<TraktStats> {
-        return database.traktStatsQueries.select()
+    override fun observeStats(): Flow<User_stats> {
+        return database.user_statsQueries.select()
             .asFlow()
             .mapToOne(dispatchers.io)
     }
