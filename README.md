@@ -13,6 +13,38 @@ You can Install and test latest android app from below 👇
 ## 🚧 Under Heavy Development 🚧
 This is my playground for learning Kotlin Multiplatform. With that said, I'm sure it's filled bugs are crawling everywhere, and I'm probably doing a couple of things wrong. So a lot is changing, but that shouldn't stop you from checking it out.
 
+### Android Demo
+https://user-images.githubusercontent.com/841885/223576880-c7391d14-63b8-47cd-a7f9-97aee5e47892.mp4
+
+## 🖥 Project Setup & Environment
+
+#### Requirements
+- [Zulu Java 17](https://www.azul.com/downloads-new/?package=jdk#zulu)
+- You require the latest [Android Studio](https://developer.android.com/studio/preview) release to be able to build the app.
+- Install Kmm Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/kmm-setup.html).
+
+### API Keys
+To use the Trakt API, you'll need to [create a new API app](https://trakt.tv/oauth/applications/new). & for [TMDb](https://www.themoviedb.org/settings/api) create an account and generate an API key if you don't have one.
+Once you have your keys, add them to `config.yaml`. If the file is not available, navigate to the root dir and create a symlink
+
+`ln -s shared/core/util/src/commonMain/resources/config.yaml config.yaml`
+
+```
+tmdbApiKey: "PUT_API_KEY_HERE"
+traktClientId: "PUT_CLIENT_ID_HERE"
+traktClientSecret: "PUT_CLIENT_SECRET_HERE"
+traktRedirectUri: "PUT_CALLBACK_URI_HERE"
+```
+
+### Opening iOS Project
+- Navigate to ios directory & open `.xcworkspace` & not `.xcodeproj` 
+
+### Genereating Swift Package Locally
+In case you make changes to the `shared` module and want to test out the changes, you can generate the swift package locally by:
+
+1. Execute `./gradle createSwiftPackage`. This will generate a swift package outside the root directory.
+2. Add the generated package in XCode.
+
 ### Android Screenshots
 
 <table>
@@ -76,54 +108,6 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 </table>
 
 
-## 🖥 Project Setup & Environment
-
-### API Keys
-To use the Trakt API, you'll need to [create a new API app](https://trakt.tv/oauth/applications/new). & for [TMDb](https://www.themoviedb.org/settings/api) create an account and generate an API key if you don't have one.
-
-#### Shared/Android Api Keys
-You need to add API keys from [Trakt.tv](https://trakt.tv/oauth/applications) & [TMDb](https://www.themoviedb.org/settings/api). To do so:
-
-- Add the following keys to `~/.gradle/gradle.properties`:
-
-    ```
-    TMDB_API_URL=https://api.themoviedb.org/3/
-    TMDB_API_KEY=ENTER_URI
-    TRAKT_CLIENT_ID=ENTER_KEY
-    TRAKT_CLIENT_SECRET=ENTER_KEY
-    TRAKT_REDIRECT_URI=ENTER_KEY
-    ```
-- Run `./gradlew generateBuildKonfig`
-
-
-#### iOS Trakt Config Keys
-Open `config.json` in the iOS project root directory and enter the correct values that your generated for your [Trakt Applicaton.](https://trakt.tv/oauth/applications):
-
-- `callbackURL`
-- `clientId`
-- `clientSecret`
-
-## ▶️ Building/Opening The Project
-
-#### Android Requirements
-- [Zulu Java 17](https://www.azul.com/downloads-new/?package=jdk#zulu)
-- You require the latest [Android Studio](https://developer.android.com/studio/preview) release to be able to build the app.
-- Install Kmm Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/kmm-setup.html).
-
-
-### Opening iOS Project
-- Navigate to ios directory & open `.xcworkspace` & not `.xcodeproj` 
-
-### Genereating Swift Package Locally
-In case you make changes to the `shared` module and want to test out the changes, you can generate the swift package locally by:
-
-1. Execute `./gradle createSwiftPackage`. This will generate a swift package outside the root directory.
-2. Add the generated package in XCode.
-
-
-### Android Demo
-https://user-images.githubusercontent.com/841885/223576880-c7391d14-63b8-47cd-a7f9-97aee5e47892.mp4
-
 
 ## Libraries Used
 ### Android
@@ -133,7 +117,6 @@ https://user-images.githubusercontent.com/841885/223576880-c7391d14-63b8-47cd-a7
 * [Android-youtube-player](https://github.com/PierfrancescoSoffritti/android-youtube-player) - Youtube Player
 * [AppAuth](https://openid.github.io/AppAuth-Android/) - AppAuth for Android is a client SDK for communicating with OAuth 2.0 and OpenID Connect providers.
 * [Compose Lints](https://slackhq.github.io/compose-lints/) - Custom lint checks for Jetpack Compose.
-* [Dagger Hilt](https://dagger.dev/hilt) - dependency injection.
 * [Jetpack Compose](https://developer.android.com/jetpack/compose)
     * [Coil](https://coil-kt.github.io/coil/compose/) - Image loading
     * [Navigation](https://developer.android.com/jetpack/compose/navigation) - Navigation
@@ -150,7 +133,7 @@ https://user-images.githubusercontent.com/841885/223576880-c7391d14-63b8-47cd-a7
 * [DateTime](https://github.com/Kotlin/kotlinx-datetime) - Date & Time
 * [Flow-Redux](https://github.com/freeletics/FlowRedux)
 * [Kermit](https://kermit.touchlab.co/) - Logging
-* [koin](https://github.com/mockk/mockk) - Injection library.
+* [kotlin-inject](https://github.com/evant/kotlin-inject) - Injection library.
 * [Ktor](https://ktor.io/) - Networking
 * [Kotest Assertions](https://kotest.io/docs/assertions/assertions.html) - Testing
 * [SQLDelight](https://github.com/cashapp/sqldelight/) - Local storage
