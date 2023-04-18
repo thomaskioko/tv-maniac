@@ -1,3 +1,4 @@
+
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -22,7 +23,7 @@ class FeaturePlugin : Plugin<Project> {
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
             dependencies {
-                add("api", project(":shared:core:base"))
+                add("api", project(":shared:util"))
                 add("api", project(":android:core:designsystem"))
                 add("api", project(":android:core:navigation"))
                 add("implementation", project(":android:core:resources"))
