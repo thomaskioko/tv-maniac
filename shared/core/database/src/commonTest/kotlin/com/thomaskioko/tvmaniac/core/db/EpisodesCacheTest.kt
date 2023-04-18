@@ -6,7 +6,7 @@ import kotlin.test.Test
 
 internal class EpisodesCacheTest : BaseDatabaseTest() {
 
-    private val episodeQueries get() = database.episodeQueries
+    private val episodeQueries get() = database.episodesQueries
 
     @Test
     fun insertEpisodes_andEpisodeByEpisodeId_returnsExpectedData() {
@@ -24,11 +24,11 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         queryResult.votes shouldBe entity.votes
     }
 
-    private fun List<Episode>.insertEpisodeEntityQuery() {
+    private fun List<Episodes>.insertEpisodeEntityQuery() {
         map { it.insertEpisodeEntityQuery() }
     }
 
-    private fun Episode.insertEpisodeEntityQuery() {
+    private fun Episodes.insertEpisodeEntityQuery() {
         episodeQueries.insertOrReplace(
             trakt_id = trakt_id,
             season_id = season_id,
