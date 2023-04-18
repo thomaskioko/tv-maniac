@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":shared:domain:seasondetails"))
+    implementation(projects.shared.domain.seasondetails)
 
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.compose.material.icons)

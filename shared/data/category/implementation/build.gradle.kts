@@ -9,8 +9,8 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:util"))
-            implementation(project(":shared:data:category:api"))
+            implementation(projects.shared.core.util)
+            implementation(projects.shared.data.category.api)
 
             implementation(libs.kotlinInject.runtime)
             implementation(libs.sqldelight.extensions)

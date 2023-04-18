@@ -10,11 +10,11 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:util"))
-            implementation(project(":shared:data:database"))
-            implementation(project(":shared:data:category:api"))
-            implementation(project(":shared:data:shows:api"))
-            implementation(project(":shared:data:trakt-api:api"))
+            implementation(projects.shared.core.database)
+            implementation(projects.shared.core.traktApi.api)
+            implementation(projects.shared.core.util)
+            implementation(projects.shared.data.category.api)
+            implementation(projects.shared.data.shows.api)
 
             api(libs.coroutines.core)
 

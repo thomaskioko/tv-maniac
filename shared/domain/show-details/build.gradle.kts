@@ -9,19 +9,19 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:util"))
-            implementation(project(":shared:data:season-details:api"))
-            implementation(project(":shared:data:similar:api"))
-            implementation(project(":shared:data:trailers:api"))
-            implementation(project(":shared:data:shows:api"))
+            implementation(projects.shared.core.util)
+            implementation(projects.shared.data.seasonDetails.api)
+            implementation(projects.shared.data.similar.api)
+            implementation(projects.shared.data.trailers.api)
+            implementation(projects.shared.data.shows.api)
 
         }
 
         sourceSets["commonTest"].dependencies {
-            implementation(project(":shared:data:shows:testing"))
-            implementation(project(":shared:data:season-details:testing"))
-            implementation(project(":shared:data:similar:testing"))
-            implementation(project(":shared:data:trailers:testing"))
+            implementation(projects.shared.data.shows.testing)
+            implementation(projects.shared.data.seasonDetails.testing)
+            implementation(projects.shared.data.similar.testing)
+            implementation(projects.shared.data.trailers.testing)
         }
     }
 }
@@ -32,5 +32,5 @@ dependencies {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.data.showdetails"
+    namespace = "com.thomaskioko.tvmaniac.domain.showdetails"
 }

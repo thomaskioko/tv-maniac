@@ -10,9 +10,9 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
-            api(project(":shared:networkutil"))
-            api(project(":shared:data:database"))
-            implementation(project(":shared:data:shows:api"))
+            api(projects.shared.core.networkutil)
+            api(projects.shared.core.database)
+            implementation(projects.shared.data.shows.api)
 
             api(libs.coroutines.core)
         }

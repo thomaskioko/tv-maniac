@@ -9,9 +9,9 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:data:profile:api"))
-            implementation(project(":shared:data:shows:api"))
-            implementation(project(":shared:data:trakt-api:api"))
+            implementation(projects.shared.data.profile.api)
+            implementation(projects.shared.data.shows.api)
+            implementation(projects.shared.core.traktApi.api)
 
             implementation(libs.kermit)
             implementation(libs.kotlinInject.runtime)
