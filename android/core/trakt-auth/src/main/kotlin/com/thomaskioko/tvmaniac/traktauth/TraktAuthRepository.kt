@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.traktauth
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.traktauth.model.TraktAuthState
 import com.thomaskioko.tvmaniac.workmanager.ShowTasks
 import kotlinx.coroutines.DelicateCoroutinesApi

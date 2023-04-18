@@ -5,11 +5,15 @@ import com.thomaskioko.tvmaniac.util.AndroidDateUtil
 import com.thomaskioko.tvmaniac.util.AndroidExceptionHandlerUtil
 import com.thomaskioko.tvmaniac.util.AndroidFormatterUtil
 import com.thomaskioko.tvmaniac.util.AppUtils
+import com.thomaskioko.tvmaniac.util.ClasspathResourceReader
 import com.thomaskioko.tvmaniac.util.DateFormatter
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.ResourceReader
+import com.thomaskioko.tvmaniac.util.YamlResourceReader
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
+import com.thomaskioko.tvmaniac.util.model.Configs
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,5 +55,15 @@ actual interface UtilPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideAppUtils(bind: AndroidAppUtils): AppUtils = bind
+
+    @ApplicationScope
+    @Provides
+    fun provideConfigs(
+        resourceReader: YamlResourceReader
+    ): Configs = resourceReader.readAndDecodeResource("config.yaml", Configs.serializer())
+
+    @ApplicationScope
+    @Provides
+    fun provideResourceReader(bind: ClasspathResourceReader): ResourceReader = bind
 
 }
