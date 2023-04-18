@@ -36,11 +36,11 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.data.seasondetails.Loading
-import com.thomaskioko.tvmaniac.data.seasondetails.LoadingError
-import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsLoaded
-import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsState
-import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
+import com.thomaskioko.tvmaniac.domain.seasondetails.Loading
+import com.thomaskioko.tvmaniac.domain.seasondetails.LoadingError
+import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsLoaded
+import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsState
+import com.thomaskioko.tvmaniac.domain.seasondetails.model.SeasonDetails
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.components.CollapsableContent

@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.data.trailers
+package com.thomaskioko.tvmaniac.domain.trailers
 
 sealed interface TrailersAction
 

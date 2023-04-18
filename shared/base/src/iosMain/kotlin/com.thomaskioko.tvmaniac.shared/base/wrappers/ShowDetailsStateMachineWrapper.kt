@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.shared.base.wrappers
 
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsAction
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsStateMachine
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsAction
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsStateMachine
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject

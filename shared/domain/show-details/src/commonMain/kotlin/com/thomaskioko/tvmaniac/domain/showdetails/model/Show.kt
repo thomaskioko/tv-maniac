@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.data.showdetails.model
+package com.thomaskioko.tvmaniac.domain.showdetails.model
 
 data class Show(
     val traktId: Long = 0,

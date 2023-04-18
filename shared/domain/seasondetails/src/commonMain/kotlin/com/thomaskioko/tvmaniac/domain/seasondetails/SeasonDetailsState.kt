@@ -1,6 +1,6 @@
-package com.thomaskioko.tvmaniac.data.seasondetails
+package com.thomaskioko.tvmaniac.domain.seasondetails
 
-import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
+import com.thomaskioko.tvmaniac.domain.seasondetails.model.SeasonDetails
 
 
 sealed interface SeasonDetailsState

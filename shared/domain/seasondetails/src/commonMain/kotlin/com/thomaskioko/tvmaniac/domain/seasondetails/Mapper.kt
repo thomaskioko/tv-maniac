@@ -1,9 +1,9 @@
-package com.thomaskioko.tvmaniac.data.seasondetails
+package com.thomaskioko.tvmaniac.domain.seasondetails
 
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
 import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.data.seasondetails.model.Episode
-import com.thomaskioko.tvmaniac.data.seasondetails.model.SeasonDetails
+import com.thomaskioko.tvmaniac.domain.seasondetails.model.Episode
+import com.thomaskioko.tvmaniac.domain.seasondetails.model.SeasonDetails
 
 fun Either.Right<List<SelectSeasonWithEpisodes>>.toSeasonWithEpisodes(): List<SeasonDetails> {
     return data?.groupBy { it.name }?.map { groupMap ->

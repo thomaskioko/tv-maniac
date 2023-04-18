@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.data.showdetails
+package com.thomaskioko.tvmaniac.domain.showdetails
 
 
 sealed interface ShowDetailsAction

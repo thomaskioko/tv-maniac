@@ -3,10 +3,10 @@ package com.thomaskioko.showdetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.data.showdetails.LoadShowDetails
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsAction
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsStateMachine
+import com.thomaskioko.tvmaniac.domain.showdetails.LoadShowDetails
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsAction
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsStateMachine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted

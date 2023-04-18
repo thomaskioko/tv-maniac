@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.data.seasondetails
+package com.thomaskioko.tvmaniac.domain.seasondetails
 
 sealed interface SeasonDetailsAction
 

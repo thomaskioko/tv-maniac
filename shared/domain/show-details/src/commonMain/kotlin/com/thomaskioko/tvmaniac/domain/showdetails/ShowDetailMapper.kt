@@ -1,14 +1,14 @@
-package com.thomaskioko.tvmaniac.data.showdetails
+package com.thomaskioko.tvmaniac.domain.showdetails
 
-import com.thomaskioko.tvmaniac.core.db.Season as SeasonCache
+import com.thomaskioko.tvmaniac.core.db.Seasons as SeasonCache
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
-import com.thomaskioko.tvmaniac.data.showdetails.model.Season
-import com.thomaskioko.tvmaniac.data.showdetails.model.Show
-import com.thomaskioko.tvmaniac.data.showdetails.model.Trailer
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Season
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Show
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Trailer
 
 fun List<SelectSimilarShows>?.toSimilarShowList(): List<Show> = this?.map {
     Show(
@@ -75,7 +75,7 @@ fun Either<Failure, SelectByShowId?>.toShowState(): ShowState = fold(
     }
 )
 
-fun Either<Failure, List<com.thomaskioko.tvmaniac.core.db.Season>>.toSeasonState() = fold(
+fun Either<Failure, List<com.thomaskioko.tvmaniac.core.db.Seasons>>.toSeasonState() = fold(
     {
         SeasonState.SeasonsError(it.errorMessage)
     },

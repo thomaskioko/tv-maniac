@@ -3,11 +3,11 @@ package com.thomaskioko.tvmaniac.seasondetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.data.seasondetails.LoadSeasonDetails
-import com.thomaskioko.tvmaniac.data.seasondetails.Loading
-import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsAction
-import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsState
-import com.thomaskioko.tvmaniac.data.seasondetails.SeasonDetailsStateMachine
+import com.thomaskioko.tvmaniac.domain.seasondetails.LoadSeasonDetails
+import com.thomaskioko.tvmaniac.domain.seasondetails.Loading
+import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsAction
+import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsState
+import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsStateMachine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted

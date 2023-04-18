@@ -1,7 +1,7 @@
-package com.thomaskioko.tvmaniac.data.trailers
+package com.thomaskioko.tvmaniac.domain.trailers
 
 import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.data.trailers.model.Trailer
+import com.thomaskioko.tvmaniac.domain.trailers.model.Trailer
 
 internal fun List<Trailers>?.toTrailerList(): List<Trailer> {
     return this?.map {

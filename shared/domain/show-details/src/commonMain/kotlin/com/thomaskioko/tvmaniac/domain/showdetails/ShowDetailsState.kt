@@ -1,8 +1,8 @@
-package com.thomaskioko.tvmaniac.data.showdetails
+package com.thomaskioko.tvmaniac.domain.showdetails
 
-import com.thomaskioko.tvmaniac.data.showdetails.model.Season
-import com.thomaskioko.tvmaniac.data.showdetails.model.Show
-import com.thomaskioko.tvmaniac.data.showdetails.model.Trailer
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Season
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Show
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Trailer
 
 
 sealed interface ShowDetailsState {

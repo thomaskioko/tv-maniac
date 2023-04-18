@@ -4,6 +4,11 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.domain.showdetails.SeasonState
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsStateMachine
+import com.thomaskioko.tvmaniac.domain.showdetails.SimilarShowsState
+import com.thomaskioko.tvmaniac.domain.showdetails.TrailersState
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.shows.testing.FakeShowsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository

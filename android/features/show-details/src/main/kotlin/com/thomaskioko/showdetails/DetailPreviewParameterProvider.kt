@@ -1,17 +1,17 @@
 package com.thomaskioko.showdetails
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.data.showdetails.FollowShowsState
-import com.thomaskioko.tvmaniac.data.showdetails.SeasonState
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState.ShowDetailsError
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState.ShowDetailsLoaded
-import com.thomaskioko.tvmaniac.data.showdetails.ShowState
-import com.thomaskioko.tvmaniac.data.showdetails.SimilarShowsState
-import com.thomaskioko.tvmaniac.data.showdetails.TrailersState
-import com.thomaskioko.tvmaniac.data.showdetails.model.Season
-import com.thomaskioko.tvmaniac.data.showdetails.model.Show
-import com.thomaskioko.tvmaniac.data.showdetails.model.Trailer
+import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowsState
+import com.thomaskioko.tvmaniac.domain.showdetails.SeasonState
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState.ShowDetailsError
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState.ShowDetailsLoaded
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowState
+import com.thomaskioko.tvmaniac.domain.showdetails.SimilarShowsState
+import com.thomaskioko.tvmaniac.domain.showdetails.TrailersState
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Season
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Show
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Trailer
 
 val trailerLoaded = TrailersState.TrailersLoaded(
     isLoading = true,

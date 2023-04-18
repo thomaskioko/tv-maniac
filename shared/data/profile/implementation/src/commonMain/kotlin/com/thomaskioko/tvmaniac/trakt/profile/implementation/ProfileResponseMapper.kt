@@ -1,15 +1,15 @@
 package com.thomaskioko.tvmaniac.trakt.profile.implementation
 
-import com.thomaskioko.tvmaniac.util.DateFormatter
-import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
-import com.thomaskioko.tvmaniac.core.db.TraktStats
-import com.thomaskioko.tvmaniac.core.db.Trakt_list
+import com.thomaskioko.tvmaniac.core.db.Trakt_shows_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
+import com.thomaskioko.tvmaniac.core.db.User_stats
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
+import com.thomaskioko.tvmaniac.util.DateFormatter
+import com.thomaskioko.tvmaniac.util.FormatterUtil
 import me.tatarka.inject.annotations.Inject
 import kotlin.math.roundToInt
 
@@ -22,7 +22,7 @@ class ProfileResponseMapper(
     fun toTraktStats(
         slug: String,
         response: TraktUserStatsResponse,
-    ) = TraktStats(
+    ) = User_stats(
         user_slug = slug,
         collected_shows = response.shows.collected.toString(),
         months = (response.episodes.minutes / 43800).toDouble().roundToInt().toString(),
@@ -31,7 +31,7 @@ class ProfileResponseMapper(
         episodes_watched = formatterUtil.formatDuration(response.episodes.watched)
     )
 
-    fun toTraktList(response: TraktCreateListResponse) = Trakt_list(
+    fun toTraktList(response: TraktCreateListResponse) = Trakt_shows_list(
         id = response.ids.trakt.toLong(),
         slug = response.ids.slug,
         description = response.description

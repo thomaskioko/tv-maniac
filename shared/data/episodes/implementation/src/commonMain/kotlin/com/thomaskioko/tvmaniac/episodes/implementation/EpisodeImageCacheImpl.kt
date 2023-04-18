@@ -10,7 +10,7 @@ class EpisodeImageCacheImpl(
     private val database: TvManiacDatabase
 ) : EpisodeImageCache {
 
-    private val episodeQueries get() = database.episodeImageQueries
+    private val episodeQueries get() = database.episode_imageQueries
 
     override fun insert(entity: Episode_image) {
         database.transaction {

@@ -2,10 +2,10 @@ package com.thomaskioko.tvmaniac.similar.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
@@ -16,8 +16,8 @@ class SimilarShowCacheImpl(
 ) : SimilarShowCache {
 
     override fun insert(traktId: Long, similarShowId: Long) {
-        database.similarShowQueries.transaction {
-            database.similarShowQueries.insertOrReplace(
+        database.similar_showsQueries.transaction {
+            database.similar_showsQueries.insertOrReplace(
                 id = similarShowId,
                 trakt_id = traktId
             )
@@ -25,7 +25,7 @@ class SimilarShowCacheImpl(
     }
 
     override fun observeSimilarShows(traktId: Long): Flow<List<SelectSimilarShows>> {
-        return database.similarShowQueries.selectSimilarShows(trakt_id = traktId)
+        return database.similar_showsQueries.selectSimilarShows(trakt_id = traktId)
             .asFlow()
             .mapToList(dispatchers.io)
     }

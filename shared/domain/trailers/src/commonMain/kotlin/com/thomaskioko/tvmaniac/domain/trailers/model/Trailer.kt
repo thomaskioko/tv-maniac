@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.data.trailers.model
+package com.thomaskioko.tvmaniac.domain.trailers.model
 
 data class Trailer(
     val showId : Long,

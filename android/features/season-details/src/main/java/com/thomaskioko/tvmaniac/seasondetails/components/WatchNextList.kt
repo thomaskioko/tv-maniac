@@ -32,7 +32,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.data.seasondetails.model.Episode
+import com.thomaskioko.tvmaniac.domain.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.episode
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
