@@ -20,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.thomaskioko.tvmaniac.util.extensions.unsafeLazy
 import com.thomaskioko.tvmaniac.compose.components.ConnectionStatus
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.networkutil.ConnectionState
@@ -29,6 +28,7 @@ import com.thomaskioko.tvmaniac.inject.MainActivityComponent
 import com.thomaskioko.tvmaniac.inject.create
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.settings.shouldUseDarkColors
+import com.thomaskioko.tvmaniac.util.extensions.unsafeLazy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 
@@ -73,7 +73,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
     @ExperimentalAnimationApi
     @ExperimentalCoroutinesApi
     @Composable
@@ -94,7 +93,7 @@ class MainActivity : ComponentActivity() {
         AnimatedVisibility(
             visible = visibility,
             enter = expandVertically(),
-            exit = shrinkVertically()
+            exit = shrinkVertically(),
         ) {
             ConnectionStatus(isConnected = isConnected)
         }

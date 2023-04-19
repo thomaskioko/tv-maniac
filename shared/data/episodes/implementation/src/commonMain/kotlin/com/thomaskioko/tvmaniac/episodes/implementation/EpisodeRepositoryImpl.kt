@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
-import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.db.Episode_image
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
@@ -12,6 +10,8 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeImageCache
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.FormatterUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -23,7 +23,7 @@ class EpisodeRepositoryImpl(
     private val episodesCache: EpisodesCache,
     private val episodeImageCache: EpisodeImageCache,
     private val formatterUtil: FormatterUtil,
-    private val exceptionHandler: ExceptionHandler
+    private val exceptionHandler: ExceptionHandler,
 ) : EpisodeRepository {
 
     override fun updateEpisodeArtWork(): Flow<Either<Failure, Unit>> =
@@ -34,7 +34,7 @@ class EpisodeRepositoryImpl(
                         val response = tmdbService.getEpisodeDetails(
                             tmdbShow = tmdbId,
                             ssnNumber = episodeArt.season_number!!,
-                            epNumber = episodeArt.episode_number.toLong()
+                            epNumber = episodeArt.episode_number.toLong(),
                         )
 
                         when (response) {
@@ -43,8 +43,8 @@ class EpisodeRepositoryImpl(
                                     Episode_image(
                                         trakt_id = episodeArt.trakt_id,
                                         tmdb_id = response.body.id.toLong(),
-                                        image_url = formatterUtil.formatTmdbPosterPath(response.body.imageUrl)
-                                    )
+                                        image_url = formatterUtil.formatTmdbPosterPath(response.body.imageUrl),
+                                    ),
                                 )
                             }
 
@@ -58,6 +58,4 @@ class EpisodeRepositoryImpl(
                 Either.Right(Unit)
             }
             .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
-
 }
-

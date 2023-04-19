@@ -13,7 +13,7 @@ interface TmdbService {
     suspend fun getEpisodeDetails(
         tmdbShow: Long,
         ssnNumber: Long,
-        epNumber: Long
+        epNumber: Long,
     ): ApiResponse<EpisodesResponse, ErrorResponse>
 
     suspend fun getTrailers(showId: Long): ApiResponse<TrailersResponse, ErrorResponse>

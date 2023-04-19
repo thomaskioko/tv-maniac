@@ -10,5 +10,5 @@ data class TraktAccessRefreshTokenResponse(
     @SerialName("created_at") val createdAt: Long?,
     @SerialName("expires_in") val expiresIn: Long?,
     @SerialName("refresh_token") val refreshToken: String?,
-    @SerialName("token_type") val tokenType: String?
+    @SerialName("token_type") val tokenType: String?,
 )

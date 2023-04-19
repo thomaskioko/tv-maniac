@@ -36,17 +36,20 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.resources.R
 
-
 @Composable
 fun ConnectionStatus(
     isConnected: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val backgroundColor by animateColorAsState(
-        if (isConnected) green else MaterialTheme.colorScheme.error, label = ""
+        if (isConnected) green else MaterialTheme.colorScheme.error,
+        label = "",
     )
-    val message = if (isConnected) stringResource(id = R.string.status_connected)
-    else stringResource(id = R.string.status_no_connection)
+    val message = if (isConnected) {
+        stringResource(id = R.string.status_connected)
+    } else {
+        stringResource(id = R.string.status_no_connection)
+    }
     val icon = if (isConnected) Icons.Outlined.SignalWifi4Bar else Icons.Outlined.SignalWifiOff
 
     Box(
@@ -54,14 +57,17 @@ fun ConnectionStatus(
             .background(backgroundColor)
             .statusBarsPadding()
             .fillMaxWidth()
-            .padding(8.dp), contentAlignment = Alignment.TopCenter
+            .padding(8.dp),
+        contentAlignment = Alignment.TopCenter,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
         ) {
             Icon(
-                imageVector = icon, contentDescription = "Connectivity Icon", tint = Color.White
+                imageVector = icon,
+                contentDescription = "Connectivity Icon",
+                tint = Color.White,
             )
 
             Spacer(modifier = Modifier.size(8.dp))
@@ -79,10 +85,9 @@ fun ConnectionStatus(
 fun ErrorUi(
     modifier: Modifier = Modifier,
     errorMessage: String = stringResource(R.string.unexpected_error_retry),
-    onRetry: () -> Unit = {}
+    onRetry: () -> Unit = {},
 ) {
     Box(modifier = modifier) {
-
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -93,7 +98,7 @@ fun ErrorUi(
                 modifier = Modifier.size(120.dp),
                 imageVector = Icons.Outlined.WarningAmber,
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
-                contentDescription = null
+                contentDescription = null,
             )
 
             Text(
@@ -105,10 +110,10 @@ fun ErrorUi(
             Spacer(modifier = Modifier.height(8.dp))
 
             TvManiacOutlinedButton(
-                text = "Retry", onClick = onRetry
+                text = "Retry",
+                onClick = onRetry,
             )
         }
-
     }
 }
 
@@ -118,7 +123,6 @@ fun RowError(
     modifier: Modifier = Modifier,
     errorMessage: String = stringResource(id = R.string.unexpected_error_retry),
 ) {
-
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -132,11 +136,11 @@ fun RowError(
         Spacer(modifier = Modifier.height(8.dp))
 
         TvManiacOutlinedButton(
-            text = "Retry", onClick = onRetry
+            text = "Retry",
+            onClick = onRetry,
         )
     }
 }
-
 
 @ThemePreviews
 @Composable
@@ -146,11 +150,10 @@ fun ErrorUiPreview() {
             ErrorUi(
                 errorMessage = "Opps! Something went wrong",
                 onRetry = {},
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             )
         }
     }
-
 }
 
 @ThemePreviews
@@ -162,9 +165,8 @@ fun RowErrorPreview() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),
-                onRetry = {}
+                onRetry = {},
             )
         }
     }
-
 }

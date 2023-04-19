@@ -25,7 +25,7 @@ fun SimilarShowsContent(
     isLoading: Boolean,
     similarShows: List<Show>,
     modifier: Modifier = Modifier,
-    onShowClicked: (Long) -> Unit = {}
+    onShowClicked: (Long) -> Unit = {},
 ) {
     val lazyListState = rememberLazyListState()
 

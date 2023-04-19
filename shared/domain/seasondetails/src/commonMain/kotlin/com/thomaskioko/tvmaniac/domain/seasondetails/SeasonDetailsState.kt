@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.domain.seasondetails
 
 import com.thomaskioko.tvmaniac.domain.seasondetails.model.SeasonDetails
 
-
 sealed interface SeasonDetailsState
 
 object Loading : SeasonDetailsState

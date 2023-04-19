@@ -29,6 +29,6 @@ class FakeSeasonDetailsRepository : SeasonDetailsRepository {
         seasonEpisodesResult
 
     override fun observeSeasonDetailsStream(
-        traktId: Long
+        traktId: Long,
     ): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> = seasonEpisodesResult
 }

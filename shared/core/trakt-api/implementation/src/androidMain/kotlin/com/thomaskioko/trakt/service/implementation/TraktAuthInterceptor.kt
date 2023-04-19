@@ -21,7 +21,7 @@ class TraktAuthInterceptor(
 
         request = request.newBuilder()
             .addHeader(HttpHeaders.ContentType, "application/json")
-            .addHeader(HttpHeaders.Authorization,  "Bearer ${authState?.accessToken}")
+            .addHeader(HttpHeaders.Authorization, "Bearer ${authState?.accessToken}")
             .addHeader("trakt-api-version", "2")
             .addHeader("trakt-api-key", configs.traktClientId)
             .build()

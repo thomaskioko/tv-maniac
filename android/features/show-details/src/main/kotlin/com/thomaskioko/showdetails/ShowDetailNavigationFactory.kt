@@ -11,13 +11,13 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ShowDetailNavigationFactory(
-    private val showDetail: ShowDetail
+    private val showDetail: ShowDetail,
 ) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
         builder.screenComposable(
             arguments = listOf(
-                navArgument("tvShowId") { type = NavType.LongType }
+                navArgument("tvShowId") { type = NavType.LongType },
             ),
             route = "${NavigationScreen.ShowDetailsNavScreen.route}/{tvShowId}",
             content = {
@@ -31,9 +31,9 @@ class ShowDetailNavigationFactory(
                     },
                     onWatchTrailerClicked = { showId, videoKey ->
                         navController.navigate("${NavigationScreen.TrailersNavScreen.route}/$showId/$videoKey")
-                    }
+                    },
                 )
-            }
+            },
         )
     }
 }

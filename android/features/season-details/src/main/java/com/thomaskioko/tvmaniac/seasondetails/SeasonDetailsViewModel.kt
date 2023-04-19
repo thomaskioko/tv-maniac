@@ -16,7 +16,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class SeasonDetailsViewModel(
     @Assisted savedStateHandle: SavedStateHandle,
-    private val stateMachine: SeasonDetailsStateMachine
+    private val stateMachine: SeasonDetailsStateMachine,
 ) : ViewModel() {
 
     private val showId: Long = savedStateHandle["showId"]!!
@@ -37,10 +37,9 @@ class SeasonDetailsViewModel(
         }
     }
 
-    fun dispatch(action : SeasonDetailsAction) {
+    fun dispatch(action: SeasonDetailsAction) {
         viewModelScope.launch {
             stateMachine.dispatch(action)
         }
     }
-
 }

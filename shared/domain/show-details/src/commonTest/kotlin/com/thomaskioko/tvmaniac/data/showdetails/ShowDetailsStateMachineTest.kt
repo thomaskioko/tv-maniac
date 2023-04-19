@@ -37,13 +37,12 @@ internal class ShowDetailsStateMachineTest {
         trailerRepository = trailerRepository,
         seasonDetailsRepository = seasonsRepository,
         similarShowsRepository = similarShowsRepository,
-        exceptionHandler = FakeExceptionHandler()
+        exceptionHandler = FakeExceptionHandler(),
     )
 
     @Test
     fun initial_state_emits_expected_result() = runTest {
         stateMachine.state.test {
-
             stateMachine.dispatch(LoadShowDetails(84958))
 
             awaitItem() shouldBe ShowDetailsState.Loading
@@ -53,7 +52,6 @@ internal class ShowDetailsStateMachineTest {
     @Test
     fun loadingData_state_emits_expected_result() = runTest {
         stateMachine.state.test {
-
             traktRepository.setShowResult(Either.Right(selectedShow))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))
             similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
@@ -68,12 +66,12 @@ internal class ShowDetailsStateMachineTest {
             )
             awaitItem() shouldBe showDetailsLoaded.copy(
                 seasonState = seasonsShowDetailsLoaded,
-                trailerState = trailerShowDetailsLoaded
+                trailerState = trailerShowDetailsLoaded,
             )
             awaitItem() shouldBe showDetailsLoaded.copy(
                 seasonState = seasonsShowDetailsLoaded,
                 trailerState = trailerShowDetailsLoaded,
-                similarShowsState = similarShowLoaded
+                similarShowsState = similarShowLoaded,
             )
         }
     }
@@ -81,7 +79,6 @@ internal class ShowDetailsStateMachineTest {
     @Test
     fun error_loading_similarShows_emits_expected_result() = runTest {
         stateMachine.state.test {
-
             val errorMessage = "Something went wrong"
             traktRepository.setShowResult(Either.Right(selectedShow))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))
@@ -97,12 +94,12 @@ internal class ShowDetailsStateMachineTest {
             )
             awaitItem() shouldBe showDetailsLoaded.copy(
                 seasonState = seasonsShowDetailsLoaded,
-                trailerState = trailerShowDetailsLoaded
+                trailerState = trailerShowDetailsLoaded,
             )
             awaitItem() shouldBe showDetailsLoaded.copy(
                 seasonState = seasonsShowDetailsLoaded,
                 trailerState = trailerShowDetailsLoaded,
-                similarShowsState = SimilarShowsState.SimilarShowsError(errorMessage)
+                similarShowsState = SimilarShowsState.SimilarShowsError(errorMessage),
             )
         }
     }
@@ -110,7 +107,6 @@ internal class ShowDetailsStateMachineTest {
     @Test
     fun error_loading_trailers_emits_expected_result() = runTest {
         stateMachine.state.test {
-
             val errorMessage = "Something went wrong"
             traktRepository.setShowResult(Either.Right(selectedShow))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))
@@ -139,7 +135,6 @@ internal class ShowDetailsStateMachineTest {
     @Test
     fun error_loading_seasons_emits_expected_result() = runTest {
         stateMachine.state.test {
-
             val errorMessage = "Something went wrong"
             traktRepository.setShowResult(Either.Right(selectedShow))
             trailerRepository.setTrailerResult(Either.Right(trailers))
@@ -155,12 +150,12 @@ internal class ShowDetailsStateMachineTest {
             )
             awaitItem() shouldBe showDetailsLoaded.copy(
                 seasonState = SeasonState.SeasonsError(errorMessage),
-                trailerState = trailerShowDetailsLoaded
+                trailerState = trailerShowDetailsLoaded,
             )
             awaitItem() shouldBe showDetailsLoaded.copy(
                 seasonState = SeasonState.SeasonsError(errorMessage),
                 trailerState = trailerShowDetailsLoaded,
-                similarShowsState = similarShowLoaded
+                similarShowsState = similarShowLoaded,
             )
         }
     }
@@ -168,7 +163,6 @@ internal class ShowDetailsStateMachineTest {
     @Test
     fun error_state_emits_expected_result() = runTest {
         stateMachine.state.test {
-
             val errorMessage = "Something went wrong"
             traktRepository.setShowResult(Either.Left(DefaultError(errorMessage)))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))

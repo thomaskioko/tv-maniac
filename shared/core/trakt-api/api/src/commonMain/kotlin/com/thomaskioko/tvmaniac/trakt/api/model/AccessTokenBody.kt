@@ -9,5 +9,5 @@ data class AccessTokenBody(
     @SerialName("client_id") val clientId: String,
     @SerialName("client_secret") val clientSecret: String,
     @SerialName("redirect_uri") val redirectUri: String,
-    @SerialName("grant_type") val grantType: String? = null
+    @SerialName("grant_type") val grantType: String? = null,
 )

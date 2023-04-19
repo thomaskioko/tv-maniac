@@ -19,7 +19,7 @@ class FavoriteListCacheImpl(
         database.trakt_shows_listQueries.insertOrReplace(
             id = traktList.id,
             slug = traktList.slug,
-            description = traktList.description
+            description = traktList.description,
         )
     }
 

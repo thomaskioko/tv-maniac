@@ -26,7 +26,6 @@ fun tmdbHttpClient(
     }
 
     defaultRequest {
-
         url {
             protocol = URLProtocol.HTTPS
             host = "api.themoviedb.org"
@@ -46,7 +45,6 @@ fun tmdbHttpClient(
         socketTimeoutMillis = 60000
     }
 
-
     install(Logging) {
         level = LogLevel.INFO
         logger = if (isDebug) {
@@ -55,7 +53,6 @@ fun tmdbHttpClient(
                     co.touchlab.kermit.Logger.d { message }
                 }
             }
-
         } else {
             Logger.EMPTY
         }

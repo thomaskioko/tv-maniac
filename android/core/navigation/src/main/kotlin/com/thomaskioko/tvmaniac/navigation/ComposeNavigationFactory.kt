@@ -9,7 +9,7 @@ interface ComposeNavigationFactory {
 
 fun Iterable<ComposeNavigationFactory>.addNavigation(
     builder: NavGraphBuilder,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     forEach { factory ->
         factory.create(builder, navController)

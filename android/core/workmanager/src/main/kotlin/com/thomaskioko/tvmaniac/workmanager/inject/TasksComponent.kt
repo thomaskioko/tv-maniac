@@ -15,7 +15,7 @@ interface TasksComponent {
     @ApplicationScope
     @Provides
     fun provideWorkManager(
-        application: Application
+        application: Application,
     ): WorkManager = WorkManager.getInstance(application)
 
     @ApplicationScope

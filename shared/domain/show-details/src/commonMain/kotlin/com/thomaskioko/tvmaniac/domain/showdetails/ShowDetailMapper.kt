@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.domain.showdetails
 
-import com.thomaskioko.tvmaniac.core.db.Seasons as SeasonCache
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
@@ -9,6 +8,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Season
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Show
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Trailer
+import com.thomaskioko.tvmaniac.core.db.Seasons as SeasonCache
 
 fun List<SelectSimilarShows>?.toSimilarShowList(): List<Show> = this?.map {
     Show(
@@ -27,7 +27,6 @@ fun List<SelectSimilarShows>?.toSimilarShowList(): List<Show> = this?.map {
     )
 } ?: emptyList()
 
-
 fun SelectByShowId?.toTvShow(): Show = this?.let {
     Show(
         traktId = it.trakt_id,
@@ -43,7 +42,7 @@ fun SelectByShowId?.toTvShow(): Show = this?.let {
         year = it.year,
         status = it.status,
         isFollowed = it.id != null && it.id == it.trakt_id,
-        //TODO:: Get season count
+        // TODO:: Get season count
     )
 } ?: Show.EMPTY_SHOW
 
@@ -60,7 +59,7 @@ fun List<Trailers>?.toTrailerList(): List<Trailer> = this?.map {
         showId = it.trakt_id,
         key = it.key,
         name = it.name,
-        youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg"
+        youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg",
     )
 } ?: emptyList()
 
@@ -72,7 +71,7 @@ fun Either<Failure, SelectByShowId?>.toShowState(): ShowState = fold(
         ShowState.ShowLoaded(
             show = it.toTvShow(),
         )
-    }
+    },
 )
 
 fun Either<Failure, List<com.thomaskioko.tvmaniac.core.db.Seasons>>.toSeasonState() = fold(
@@ -82,8 +81,7 @@ fun Either<Failure, List<com.thomaskioko.tvmaniac.core.db.Seasons>>.toSeasonStat
     {
         SeasonState.SeasonsLoaded(
             isLoading = false,
-            seasonsList = it.toSeasonsList()
+            seasonsList = it.toSeasonsList(),
         )
-
-    }
+    },
 )

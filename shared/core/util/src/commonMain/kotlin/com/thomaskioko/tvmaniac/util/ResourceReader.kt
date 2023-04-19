@@ -10,7 +10,7 @@ interface ResourceReader {
 
 @Inject
 class YamlResourceReader(
-    private val resourceReader: ResourceReader
+    private val resourceReader: ResourceReader,
 ) {
     internal fun <T> readAndDecodeResource(name: String, strategy: DeserializationStrategy<T>): T {
         val text = resourceReader.readResource(name)

@@ -22,7 +22,7 @@ class StatsCacheImpl(
             days = stats.days,
             hours = stats.hours,
             collected_shows = stats.collected_shows,
-            episodes_watched = stats.episodes_watched
+            episodes_watched = stats.episodes_watched,
         )
     }
 

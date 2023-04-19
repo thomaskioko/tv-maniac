@@ -6,5 +6,4 @@ interface ShowTasks {
     fun syncTraktFollowedShows()
 
     fun syncTraktFollowedShowsWhenIdle()
-
 }

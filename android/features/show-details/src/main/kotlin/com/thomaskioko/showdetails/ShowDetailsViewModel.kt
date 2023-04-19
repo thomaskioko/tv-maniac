@@ -12,11 +12,10 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-
 @Inject
 class ShowDetailsViewModel(
     @Assisted savedStateHandle: SavedStateHandle,
-    private val stateMachine: ShowDetailsStateMachine
+    private val stateMachine: ShowDetailsStateMachine,
 ) : ViewModel() {
 
     private val showId: Long = savedStateHandle["tvShowId"]!!
@@ -35,11 +34,9 @@ class ShowDetailsViewModel(
         viewModelScope.launch {
             stateMachine.dispatch(LoadShowDetails(showId))
         }
-
-
     }
 
-    fun dispatch(action : ShowDetailsAction) {
+    fun dispatch(action: ShowDetailsAction) {
         viewModelScope.launch {
             stateMachine.dispatch(action)
         }

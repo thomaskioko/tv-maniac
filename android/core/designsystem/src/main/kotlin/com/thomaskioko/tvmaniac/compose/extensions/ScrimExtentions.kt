@@ -34,7 +34,7 @@ fun Modifier.verticalGradientScrim(
     @FloatRange(from = 0.0, to = 1.0) startYPercentage: Float = 0f,
     @FloatRange(from = 0.0, to = 1.0) endYPercentage: Float = 1f,
     decay: Float = 1.0f,
-    numStops: Int = 16
+    numStops: Int = 16,
 ): Modifier = composed {
     val colors = remember(color, numStops) {
         if (decay != 1f) {
@@ -57,7 +57,7 @@ fun Modifier.verticalGradientScrim(
         Brush.verticalGradient(
             colors = colors,
             startY = height * startYPercentage,
-            endY = height * endYPercentage
+            endY = height * endYPercentage,
         )
     }
 
@@ -79,6 +79,7 @@ fun Modifier.iconButtonBackgroundScrim(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
                 shape = shape,
             )
-    } else this
+    } else {
+        this
+    }
 }
-

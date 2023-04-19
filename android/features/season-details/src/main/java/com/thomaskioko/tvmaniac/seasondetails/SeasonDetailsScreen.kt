@@ -48,11 +48,10 @@ import com.thomaskioko.tvmaniac.seasondetails.components.WatchNextContent
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-
 typealias SeasonDetails = @Composable (
     onBackClicked: () -> Unit,
     onEpisodeClicked: (Long) -> Unit,
-    initialSeasonName: String?
+    initialSeasonName: String?,
 ) -> Unit
 
 @Inject
@@ -63,7 +62,6 @@ fun SeasonDetails(
     @Assisted onEpisodeClicked: (Long) -> Unit,
     @Assisted initialSeasonName: String? = null,
 ) {
-
     SeasonDetailScreen(
         viewModel = viewModel(factory = viewModelFactory),
         onBackClicked = onBackClicked,
@@ -80,7 +78,6 @@ internal fun SeasonDetailScreen(
     modifier: Modifier = Modifier,
     onEpisodeClicked: (Long) -> Unit,
 ) {
-
     val viewState by viewModel.state.collectAsStateWithLifecycle()
 
     SeasonDetailScreen(
@@ -90,7 +87,6 @@ internal fun SeasonDetailScreen(
         seasonName = seasonName,
         onEpisodeClicked = onEpisodeClicked,
     )
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,7 +104,7 @@ internal fun SeasonDetailScreen(
         topBar = {
             TopBar(
                 title = (state as? SeasonDetailsLoaded)?.showTitle ?: "",
-                navigateUp = onBackClicked
+                navigateUp = onBackClicked,
             )
         },
         modifier = modifier
@@ -118,7 +114,7 @@ internal fun SeasonDetailScreen(
                 Loading -> LoadingIndicator(
                     modifier = Modifier
                         .fillMaxSize()
-                        .wrapContentSize(Alignment.Center)
+                        .wrapContentSize(Alignment.Center),
                 )
 
                 is LoadingError ->
@@ -127,7 +123,7 @@ internal fun SeasonDetailScreen(
                         onRetry = {},
                         modifier = Modifier
                             .fillMaxSize()
-                            .wrapContentSize(Alignment.Center)
+                            .wrapContentSize(Alignment.Center),
                     )
 
                 is SeasonDetailsLoaded -> {
@@ -140,15 +136,14 @@ internal fun SeasonDetailScreen(
                     )
                 }
             }
-        }
+        },
     )
 }
-
 
 @Composable
 private fun TopBar(
     title: String,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
 ) {
     TvManiacTopBar(
         title = title,
@@ -166,7 +161,6 @@ private fun SeasonContent(
     onEpisodeClicked: (Long) -> Unit = {},
 ) {
     seasonsEpList?.let {
-
         LaunchedEffect(initialSeasonName) {
             val initialIndex = seasonsEpList.indexOfFirst { it.seasonName == initialSeasonName }
 
@@ -185,7 +179,6 @@ private fun SeasonContent(
             state = listState,
             contentPadding = contentPadding.copy(copyTop = false),
         ) {
-
             item { Spacer(modifier = Modifier.height(64.dp)) }
 
             item { WatchNextContent(seasonsEpList.firstOrNull()?.episodes) }
@@ -202,26 +195,23 @@ private fun SeasonContent(
                     episodeList = season.episodes,
                     collapsed = collapsedState[index],
                     onEpisodeClicked = { onEpisodeClicked(it) },
-                    onSeasonHeaderClicked = { collapsedState[index] = !collapsedState[index] }
+                    onSeasonHeaderClicked = { collapsedState[index] = !collapsedState[index] },
                 )
             }
         }
     }
 }
 
-
 @Composable
 private fun AllSeasonsTitle(
     modifier: Modifier = Modifier,
 ) {
-
     Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(2.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
-
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
@@ -229,15 +219,13 @@ private fun AllSeasonsTitle(
             style = MaterialTheme.typography.labelMedium.copy(MaterialTheme.colorScheme.secondary),
         )
     }
-
 }
-
 
 @ThemePreviews
 @Composable
 private fun SeasonDetailScreenPreview(
     @PreviewParameter(SeasonPreviewParameterProvider::class)
-    state: SeasonDetailsState
+    state: SeasonDetailsState,
 ) {
     TvManiacTheme {
         Surface {

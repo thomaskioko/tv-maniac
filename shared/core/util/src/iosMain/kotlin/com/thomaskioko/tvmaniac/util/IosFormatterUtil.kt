@@ -21,7 +21,7 @@ class IosFormatterUtil : FormatterUtil {
         val formatter = NSNumberFormatter()
         formatter.minimumFractionDigits = 0u
         formatter.maximumFractionDigits = 1u
-        formatter.numberStyle = 1u //Decimal
+        formatter.numberStyle = 1u // Decimal
         return when {
             number != null -> formatter.stringFromNumber(NSNumber(number))?.toDouble() ?: 0.0
             else -> 0.0
@@ -32,12 +32,14 @@ class IosFormatterUtil : FormatterUtil {
         val formatter = NSNumberFormatter()
         formatter.minimumFractionDigits = 0u
         formatter.maximumFractionDigits = 1u
-        formatter.numberStyle = 1u //Decimal
+        formatter.numberStyle = 1u // Decimal
 
         val num = NSNumber((abs(number) / 1000))
 
-        return if (abs(number) > 999) "${(sign(number.toDouble()) * num.doubleValue) / 10.0} k"
-        else (sign(number.toDouble()) * abs(number)).toString()
+        return if (abs(number) > 999) {
+            "${(sign(number.toDouble()) * num.doubleValue) / 10.0} k"
+        } else {
+            (sign(number.toDouble()) * abs(number)).toString()
+        }
     }
-
 }

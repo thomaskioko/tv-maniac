@@ -29,7 +29,6 @@ fun List<TraktSeasonsResponse>.toSeasonCacheList(traktId: Long): List<Seasons> =
             season_number = seasonResponse.number.toLong(),
             name = seasonResponse.title,
             overview = seasonResponse.overview,
-            episode_count = seasonResponse.episodeCount.toLong()
+            episode_count = seasonResponse.episodeCount.toLong(),
         )
     }
-

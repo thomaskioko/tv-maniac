@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.show_grid
+package com.thomaskioko.tvmaniac.showsgrid
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -11,7 +11,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class ShowGridViewModel(
     @Assisted savedStateHandle: SavedStateHandle,
-    private val stateMachine: GridStateMachine
+    private val stateMachine: GridStateMachine,
 ) : ViewModel() {
 
     val showType: Long = savedStateHandle["showType"]!!
@@ -28,7 +28,6 @@ class ShowGridViewModel(
         viewModelScope.launch {
             stateMachine.dispatch(LoadShows(showType))
         }
-
     }
 
     fun dispatch(action: GridActions) {

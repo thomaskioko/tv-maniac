@@ -1,6 +1,5 @@
 package com.thomaskioko.trakt.service.implementation
 
-import co.touchlab.kermit.Logger as KLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -11,6 +10,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
+import co.touchlab.kermit.Logger as KLogger
 
 fun traktHttpClient(
     isDebug: Boolean = false,
@@ -34,7 +34,6 @@ fun traktHttpClient(
         socketTimeoutMillis = 60000
     }
 
-
     install(Logging) {
         level = LogLevel.INFO
         logger = if (isDebug) {
@@ -43,7 +42,6 @@ fun traktHttpClient(
                     KLogger.d { message }
                 }
             }
-
         } else {
             Logger.EMPTY
         }

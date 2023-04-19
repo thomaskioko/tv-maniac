@@ -18,18 +18,18 @@ fun Modifier.matchParent() = this
     .fillMaxWidth()
 
 fun Modifier.verticalGradientBackground(
-    colors: List<Color>
+    colors: List<Color>,
 ) = gradientBackground(colors) { gradientColors, size ->
     Brush.verticalGradient(
         colors = gradientColors,
         startY = 0f,
-        endY = size.width
+        endY = size.width,
     )
 }
 
 fun Modifier.gradientBackground(
     colors: List<Color>,
-    brushProvider: (List<Color>, Size) -> Brush
+    brushProvider: (List<Color>, Size) -> Brush,
 ): Modifier = composed {
     var size by remember { mutableStateOf(Size.Zero) }
     val gradient = remember(colors, size) { brushProvider(colors, size) }

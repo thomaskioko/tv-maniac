@@ -1,10 +1,9 @@
 package com.thomaskioko.tvmaniac.core.db
 
-import co.touchlab.sqliter.DatabaseConfiguration
-import app.cash.sqldelight.driver.native.wrapConnection
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
-import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import app.cash.sqldelight.driver.native.wrapConnection
+import co.touchlab.sqliter.DatabaseConfiguration
 
 actual fun inMemorySqlDriver(): SqlDriver = NativeSqliteDriver(
     DatabaseConfiguration(
@@ -16,6 +15,6 @@ actual fun inMemorySqlDriver(): SqlDriver = NativeSqliteDriver(
         },
         upgrade = { connection, oldVersion, newVersion ->
             wrapConnection(connection) { TvManiacDatabase.Schema.migrate(it, oldVersion, newVersion) }
-        }
-    )
+        },
+    ),
 )

@@ -46,9 +46,4 @@ class SeasonDetailsStateMachineTest {
             awaitItem() shouldBe LoadingError(errorMessage)
         }
     }
-
 }
-
-
-
-

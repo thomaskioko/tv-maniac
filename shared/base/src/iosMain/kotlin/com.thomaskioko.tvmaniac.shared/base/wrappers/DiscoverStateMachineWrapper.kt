@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.shared.base.wrappers
 
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.shared.domain.discover.DiscoverStateMachine
 import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsAction
 import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsState
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
@@ -34,5 +34,4 @@ class DiscoverStateMachineWrapper(
     fun cancel() {
         scope.main.cancel()
     }
-
 }

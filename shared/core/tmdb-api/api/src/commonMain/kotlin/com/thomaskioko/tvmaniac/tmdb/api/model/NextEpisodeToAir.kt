@@ -14,5 +14,5 @@ data class NextEpisodeToAir(
     @SerialName("still_path") val stillPath: String?,
     @SerialName("vote_average") val voteAverage: Double?,
     @SerialName("vote_count") val voteCount: Int?,
-    @SerialName("production_code") val productionCode: String?
+    @SerialName("production_code") val productionCode: String?,
 )

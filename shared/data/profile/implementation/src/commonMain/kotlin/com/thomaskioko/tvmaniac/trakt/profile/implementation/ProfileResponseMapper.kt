@@ -28,34 +28,34 @@ class ProfileResponseMapper(
         months = (response.episodes.minutes / 43800).toDouble().roundToInt().toString(),
         days = (response.episodes.minutes / 1440).toDouble().roundToInt().toString(),
         hours = formatterUtil.formatDuration(response.episodes.minutes / 60),
-        episodes_watched = formatterUtil.formatDuration(response.episodes.watched)
+        episodes_watched = formatterUtil.formatDuration(response.episodes.watched),
     )
 
     fun toTraktList(response: TraktCreateListResponse) = Trakt_shows_list(
         id = response.ids.trakt.toLong(),
         slug = response.ids.slug,
-        description = response.description
+        description = response.description,
     )
 
     fun toTraktList(
         slug: String,
-        response: TraktUserResponse
+        response: TraktUserResponse,
     ) = Trakt_user(
         slug = response.ids.slug,
         full_name = response.name,
         user_name = response.userName,
         profile_picture = response.images.avatar.full,
-        is_me = slug == "me"
+        is_me = slug == "me",
     )
 
     fun responseToCache(
 
-        response: List<TraktFollowedShowResponse>
+        response: List<TraktFollowedShowResponse>,
     ) = response.map {
         Followed_shows(
             id = it.show.ids.trakt.toLong(),
             synced = true,
-            created_at = dateFormatter.getTimestampMilliseconds()
+            created_at = dateFormatter.getTimestampMilliseconds(),
         )
     }
 }

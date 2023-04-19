@@ -12,7 +12,7 @@ fun Either.Right<List<SelectSeasonWithEpisodes>>.toSeasonWithEpisodes(): List<Se
             seasonName = groupMap.key,
             episodes = groupMap.value.map { it.toEpisode() },
             episodeCount = groupMap.value.size.toLong(),
-            watchProgress = 0f // TODO:: Fetch watch progress
+            watchProgress = 0f, // TODO:: Fetch watch progress
         )
     } ?: emptyList()
 }
@@ -24,7 +24,7 @@ fun List<SelectSeasonWithEpisodes>?.toSeasonWithEpisodes(): List<SeasonDetails> 
             seasonName = groupMap.key,
             episodes = groupMap.value.map { it.toEpisode() },
             episodeCount = groupMap.value.size.toLong(),
-            watchProgress = 0f // TODO:: Fetch watch progress
+            watchProgress = 0f, // TODO:: Fetch watch progress
         )
     } ?: emptyList()
 }
@@ -34,7 +34,7 @@ fun SelectSeasonWithEpisodes.toEpisode(): Episode {
         id = id,
         seasonId = season_id,
         episodeTitle = title_,
-        episodeNumberTitle = "E${episode_number} • $title_",
+        episodeNumberTitle = "E$episode_number • $title_",
         overview = overview,
         imageUrl = image_url,
         runtime = runtime,
@@ -44,7 +44,7 @@ fun SelectSeasonWithEpisodes.toEpisode(): Episode {
             season_number
                 .toString()
                 .padStart(2, '0')
-        } | E$episode_number"
+        } | E$episode_number",
     )
 }
 
@@ -53,5 +53,3 @@ fun Either.Right<List<SelectSeasonWithEpisodes>>.getTitle(): String =
 
 fun List<SelectSeasonWithEpisodes>?.getTitle(): String =
     this?.firstOrNull()?.title ?: ""
-
-

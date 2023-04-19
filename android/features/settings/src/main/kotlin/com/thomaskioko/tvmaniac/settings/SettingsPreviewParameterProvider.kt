@@ -14,7 +14,7 @@ class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState>
                     showTraktDialog = false,
                     traktUserName = "@j_Doe",
                     traktFullName = "J Doe",
-                    traktUserPicUrl = "image.png"
+                    traktUserPicUrl = "image.png",
                 ),
                 SettingsContent(
                     theme = Theme.DARK,
@@ -23,8 +23,8 @@ class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState>
                     showTraktDialog = false,
                     traktUserName = "@j_Doe",
                     traktFullName = "J Doe",
-                    traktUserPicUrl = "image.png"
-                )
+                    traktUserPicUrl = "image.png",
+                ),
             )
         }
 }

@@ -42,11 +42,11 @@ private const val PAGE_LIMIT_SIZE = 20
 class TraktServiceImpl(
     private val configs: Configs,
     private val httpClient: TraktHttpClient,
-    private val exceptionHandler: ExceptionHandler
+    private val exceptionHandler: ExceptionHandler,
 ) : TraktService {
 
     override suspend fun getAccessToken(
-        authCode: String
+        authCode: String,
     ): TraktAccessTokenResponse = httpClient.post("oauth/token") {
         setBody(
             AccessTokenBody(
@@ -55,23 +55,22 @@ class TraktServiceImpl(
                 clientSecret = configs.traktClientSecret,
                 redirectUri = configs.traktRedirectUri,
                 grantType = "authorization_code",
-            )
+            ),
         )
     }.body()
 
-
     override suspend fun getAccessRefreshToken(
-        refreshToken: String
+        refreshToken: String,
     ): TraktAccessRefreshTokenResponse = httpClient.post("oauth/token") {
         setBody(
             RefreshAccessTokenBody(
-                refreshToken = refreshToken
-            )
+                refreshToken = refreshToken,
+            ),
         )
     }.body()
 
     override suspend fun revokeAccessToken(
-        authCode: String
+        authCode: String,
     ) {
         httpClient.post("oauth/revoke") {
             setBody(
@@ -80,7 +79,7 @@ class TraktServiceImpl(
                     clientId = configs.traktClientId,
                     clientSecret = configs.traktClientSecret,
                     redirectUri = configs.traktRedirectUri,
-                )
+                ),
             )
         }
     }
@@ -107,7 +106,7 @@ class TraktServiceImpl(
 
     override suspend fun getFollowedList(
         listId: Long,
-        userSlug: String
+        userSlug: String,
     ): List<TraktFollowedShowResponse> =
         httpClient.get("users/$userSlug/lists/$listId/items/shows") {
             parameter("sort_by", "added")
@@ -125,11 +124,11 @@ class TraktServiceImpl(
                     shows = listOf(
                         TraktShow(
                             ids = TraktShowIds(
-                                traktId = showId.toInt()
-                            )
-                        )
-                    )
-                )
+                                traktId = showId.toInt(),
+                            ),
+                        ),
+                    ),
+                ),
             )
         }.body()
 
@@ -141,18 +140,18 @@ class TraktServiceImpl(
                     shows = listOf(
                         TraktShow(
                             ids = TraktShowIds(
-                                traktId = showId.toInt()
-                            )
-                        )
-                    )
-                )
+                                traktId = showId.toInt(),
+                            ),
+                        ),
+                    ),
+                ),
             )
         }.body()
 
     override suspend fun addShowToList(
         userSlug: String,
         listId: Long,
-        traktShowId: Long
+        traktShowId: Long,
     ): TraktAddShowToListResponse =
         httpClient.post("users/$userSlug/lists/$listId/items") {
             setBody(
@@ -160,18 +159,18 @@ class TraktServiceImpl(
                     shows = listOf(
                         TraktShow(
                             ids = TraktShowIds(
-                                traktId = traktShowId.toInt()
-                            )
-                        )
-                    )
-                )
+                                traktId = traktShowId.toInt(),
+                            ),
+                        ),
+                    ),
+                ),
             )
         }.body()
 
     override suspend fun deleteShowFromList(
         userSlug: String,
         listId: Long,
-        traktShowId: Long
+        traktShowId: Long,
     ): TraktAddRemoveShowFromListResponse =
         httpClient.post("users/$userSlug/lists/$listId/items/remove") {
             contentType(ContentType.Application.Json)
@@ -179,10 +178,10 @@ class TraktServiceImpl(
                 TraktAddShowRequest(
                     shows = listOf(
                         TraktShow(
-                            ids = TraktShowIds(traktId = traktShowId.toInt())
-                        )
-                    )
-                )
+                            ids = TraktShowIds(traktId = traktShowId.toInt()),
+                        ),
+                    ),
+                ),
             )
         }.body()
 
@@ -199,7 +198,7 @@ class TraktServiceImpl(
 
     override suspend fun getRecommendedShows(
         page: Long,
-        period: String
+        period: String,
     ): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
         httpClient.safeRequest(exceptionHandler) {
             url {
@@ -252,7 +251,7 @@ class TraktServiceImpl(
         }
 
     override suspend fun getSeasonEpisodes(
-        traktId: Long
+        traktId: Long,
     ): ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse> =
         httpClient.safeRequest(exceptionHandler) {
             url {

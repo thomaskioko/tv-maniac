@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TrailersResponse(
     @SerialName("id") val id: Int,
-    @SerialName("results") val results: List<TrailerResponse>
+    @SerialName("results") val results: List<TrailerResponse>,
 )

@@ -31,5 +31,4 @@ class AndroidExceptionHandlerUtil : ExceptionHandler, Exception() {
     }
 
     private fun Throwable.getErrorMessage(): String = message ?: "Something went wrong"
-
 }

@@ -90,7 +90,6 @@ fun Discover(
     @Assisted onShowClicked: (showId: Long) -> Unit,
     @Assisted onMoreClicked: (showType: Long) -> Unit,
 ) {
-
     DiscoverScreen(
         viewModel = viewModel(factory = viewModelFactory),
         onShowClicked = onShowClicked,
@@ -103,9 +102,8 @@ internal fun DiscoverScreen(
     viewModel: DiscoverViewModel,
     onShowClicked: (showId: Long) -> Unit,
     modifier: Modifier = Modifier,
-    onMoreClicked: (showType: Long) -> Unit
+    onMoreClicked: (showType: Long) -> Unit,
 ) {
-
     val discoverViewState by viewModel.state.collectAsStateWithLifecycle()
 
     DiscoverScreen(
@@ -118,7 +116,7 @@ internal fun DiscoverScreen(
             .fillMaxSize()
             .imePadding()
             .navigationBarsPadding()
-            .animateContentSize()
+            .animateContentSize(),
     )
 }
 
@@ -129,15 +127,14 @@ private fun DiscoverScreen(
     onReloadClicked: (ShowsAction) -> Unit,
     modifier: Modifier = Modifier,
     onRetry: () -> Unit = {},
-    onMoreClicked: (showType: Long) -> Unit
+    onMoreClicked: (showType: Long) -> Unit,
 ) {
-
     when (state) {
         Loading ->
             LoadingIndicator(
                 modifier = Modifier
                     .fillMaxSize()
-                    .wrapContentSize(Alignment.Center)
+                    .wrapContentSize(Alignment.Center),
             )
 
         is ShowsLoaded ->
@@ -146,7 +143,7 @@ private fun DiscoverScreen(
                 onReloadClicked = onReloadClicked,
                 modifier = modifier,
                 onShowClicked = onShowClicked,
-                onMoreClicked = onMoreClicked
+                onMoreClicked = onMoreClicked,
             )
 
         is LoadingError ->
@@ -155,7 +152,7 @@ private fun DiscoverScreen(
                 onRetry = onRetry,
                 modifier = Modifier
                     .fillMaxSize()
-                    .wrapContentSize(Alignment.Center)
+                    .wrapContentSize(Alignment.Center),
             )
     }
 }
@@ -166,10 +163,9 @@ private fun CategoryContent(
     onReloadClicked: (ShowsAction) -> Unit,
     onShowClicked: (showId: Long) -> Unit,
     modifier: Modifier = Modifier,
-    onMoreClicked: (showType: Long) -> Unit
+    onMoreClicked: (showType: Long) -> Unit,
 ) {
     LazyColumn {
-
         item {
             when (state.result.featuredCategoryState) {
                 is ShowResult.CategoryError ->
@@ -178,7 +174,7 @@ private fun CategoryContent(
                         onRetry = { onReloadClicked(ReloadFeatured) },
                         modifier = modifier
                             .fillMaxWidth()
-                            .aspectRatio(0.7f)
+                            .aspectRatio(0.7f),
                     )
 
                 is CategorySuccess -> {
@@ -187,17 +183,16 @@ private fun CategoryContent(
                     FeaturedContent(
                         showList = resultState.tvShows,
                         onShowClicked = onShowClicked,
-                        modifier = modifier
+                        modifier = modifier,
                     )
                 }
 
                 ShowResult.EmptyCategoryData ->
                     EmptyContent(
                         painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                        message = stringResource(id = R.string.generic_empty_content)
+                        message = stringResource(id = R.string.generic_empty_content),
                     )
             }
-
         }
 
         item {
@@ -218,17 +213,16 @@ private fun CategoryContent(
                         category = resultState.category,
                         tvShows = resultState.tvShows,
                         onItemClicked = onShowClicked,
-                        onLabelClicked = onMoreClicked
+                        onLabelClicked = onMoreClicked,
                     )
                 }
 
                 ShowResult.EmptyCategoryData ->
                     EmptyContent(
                         painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                        message = stringResource(id = R.string.generic_empty_content)
+                        message = stringResource(id = R.string.generic_empty_content),
                     )
             }
-
         }
 
         item {
@@ -243,21 +237,20 @@ private fun CategoryContent(
                             .padding(vertical = 16.dp),
                     )
 
-
                 is CategorySuccess -> {
                     val resultState = (state.result.anticipatedCategoryState as CategorySuccess)
                     RowContent(
                         category = resultState.category,
                         tvShows = resultState.tvShows,
                         onItemClicked = onShowClicked,
-                        onLabelClicked = onMoreClicked
+                        onLabelClicked = onMoreClicked,
                     )
                 }
 
                 ShowResult.EmptyCategoryData ->
                     EmptyContent(
                         painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                        message = stringResource(id = R.string.generic_empty_content)
+                        message = stringResource(id = R.string.generic_empty_content),
                     )
             }
         }
@@ -280,14 +273,14 @@ private fun CategoryContent(
                         category = resultState.category,
                         tvShows = resultState.tvShows,
                         onItemClicked = onShowClicked,
-                        onLabelClicked = onMoreClicked
+                        onLabelClicked = onMoreClicked,
                     )
                 }
 
                 ShowResult.EmptyCategoryData ->
                     EmptyContent(
                         painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                        message = stringResource(id = R.string.generic_empty_content)
+                        message = stringResource(id = R.string.generic_empty_content),
                     )
             }
         }
@@ -301,14 +294,12 @@ fun FeaturedContent(
     modifier: Modifier = Modifier,
     onShowClicked: (Long) -> Unit,
 ) {
-
     Column(
         modifier = modifier
             .windowInsetsPadding(
-                WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)
-            )
+                WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
+            ),
     ) {
-
         val surfaceColor = MaterialTheme.colorScheme.secondary
         val dominantColorState = rememberDominantColorState { color ->
             // We want a color which has sufficient contrast against the surface color
@@ -317,29 +308,27 @@ fun FeaturedContent(
         val pagerState = rememberPagerState()
 
         DynamicThemePrimaryColorsFromImage(dominantColorState) {
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalGradientScrim(
                         color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.38f),
                         startYPercentage = 1f,
-                        endYPercentage = 0f
-                    )
+                        endYPercentage = 0f,
+                    ),
             ) {
-
                 Spacer(modifier = Modifier.height(90.dp))
 
                 HorizontalPagerItem(
                     list = showList,
                     pagerState = pagerState,
                     dominantColorState = dominantColorState,
-                    onClick = onShowClicked
+                    onClick = onShowClicked,
                 )
             }
         }
 
-        if (showList.isNotEmpty())
+        if (showList.isNotEmpty()) {
             HorizontalPagerIndicator(
                 pagerState = pagerState,
                 activeColor = MaterialTheme.colorScheme.secondary,
@@ -348,10 +337,10 @@ fun FeaturedContent(
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 16.dp),
             )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
     }
-
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -361,9 +350,8 @@ fun HorizontalPagerItem(
     pagerState: PagerState,
     dominantColorState: DominantColorState,
     modifier: Modifier = Modifier,
-    onClick: (Long) -> Unit
+    onClick: (Long) -> Unit,
 ) {
-
     val selectedImageUrl = list.getOrNull(pagerState.currentPage)?.posterImageUrl
 
     LaunchedEffect(selectedImageUrl) {
@@ -385,7 +373,7 @@ fun HorizontalPagerItem(
         state = pagerState,
         contentPadding = PaddingValues(horizontal = 45.dp),
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxSize(),
     ) { pageNumber ->
 
         TvPosterCard(
@@ -401,7 +389,7 @@ fun HorizontalPagerItem(
                     lerp(
                         start = 0.85f,
                         stop = 1f,
-                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        fraction = 1f - pageOffset.coerceIn(0f, 1f),
                     ).also { scale ->
                         scaleX = scale
                         scaleY = scale
@@ -411,7 +399,7 @@ fun HorizontalPagerItem(
                     alpha = lerp(
                         start = 0.5f,
                         stop = 1f,
-                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        fraction = 1f - pageOffset.coerceIn(0f, 1f),
                     )
                 }
                 .offset {
@@ -419,7 +407,7 @@ fun HorizontalPagerItem(
                     // Then use it as a multiplier to apply an offset
                     IntOffset(
                         x = (37.dp * pageOffset).roundToPx(),
-                        y = 0
+                        y = 0,
                     )
                 }
                 .fillMaxWidth()
@@ -436,13 +424,12 @@ private fun RowContent(
     onItemClicked: (Long) -> Unit,
     onLabelClicked: (Long) -> Unit,
 ) {
-
     AnimatedVisibility(visible = tvShows.isNotEmpty()) {
         Column {
             BoxTextItems(
                 title = category.title,
                 label = stringResource(id = R.string.str_more),
-                onMoreClicked = { onLabelClicked(category.id) }
+                onMoreClicked = { onLabelClicked(category.id) },
             )
 
             val lazyListState = rememberLazyListState()
@@ -460,7 +447,7 @@ private fun RowContent(
                     TvPosterCard(
                         posterImageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,
-                        onClick = { onItemClicked(tvShow.traktId) }
+                        onClick = { onItemClicked(tvShow.traktId) },
                     )
                 }
             }
@@ -474,15 +461,14 @@ private fun CategoryError(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     Column {
         BoxTextItems(
-            title = categoryTitle
+            title = categoryTitle,
         )
 
         RowError(
             modifier = modifier,
-            onRetry = { onRetry() }
+            onRetry = { onRetry() },
         )
     }
 }
@@ -491,7 +477,7 @@ private fun CategoryError(
 @Composable
 private fun DiscoverScreenPreview(
     @PreviewParameter(DiscoverPreviewParameterProvider::class)
-    state: ShowsState
+    state: ShowsState,
 ) {
     TvManiacTheme {
         TvManiacBackground {
@@ -500,7 +486,7 @@ private fun DiscoverScreenPreview(
                     state = state,
                     onShowClicked = {},
                     onMoreClicked = {},
-                    onReloadClicked = {}
+                    onReloadClicked = {},
                 )
             }
         }

@@ -17,10 +17,8 @@ internal class ShowsStateMachineTest {
     private val tmdbRepository = FakeTmdbRepository()
     private val stateMachine = DiscoverStateMachine(traktRepository, tmdbRepository)
 
-
     @Test
     fun initial_state_emits_expected_result() = runTest {
-
         traktRepository.setTrendingResult(Either.Right(categoryResult(1)))
         traktRepository.setPopularResult(Either.Right(categoryResult(3)))
         traktRepository.setAnticipatedResult(Either.Right(categoryResult(4)))
@@ -34,7 +32,6 @@ internal class ShowsStateMachineTest {
 
     @Test
     fun on_category_error_emits_expected_result() = runTest {
-
         traktRepository.setFeaturedResult(Either.Left(DefaultError("Something went wrong")))
         traktRepository.setAnticipatedResult(Either.Left(DefaultError("Something went wrong")))
         traktRepository.setPopularResult(Either.Left(DefaultError("Something went wrong")))

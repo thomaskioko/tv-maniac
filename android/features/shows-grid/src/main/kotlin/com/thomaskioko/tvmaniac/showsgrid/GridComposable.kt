@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.show_grid
+package com.thomaskioko.tvmaniac.showsgrid
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -33,26 +33,25 @@ fun <T : Any> LazyPagedGridItems(
     modifier: Modifier = Modifier,
     rows: Int = 3,
     hPadding: Int = 2,
-    itemContent: @Composable LazyGridItemScope.(value: T?) -> Unit
+    itemContent: @Composable LazyGridItemScope.(value: T?) -> Unit,
 ) {
     LazyVerticalGrid(
         modifier = modifier,
         state = listState,
         columns = GridCells.Fixed(rows),
     ) {
-
         items(lazyPagingItems.itemCount) { index ->
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier
-                    .padding(horizontal = hPadding.dp)
+                    .padding(horizontal = hPadding.dp),
             ) {
                 Box(
                     modifier = Modifier
                         .weight(1F)
                         .align(Alignment.Top)
                         .padding(2.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     itemContent(lazyPagingItems[index])
                 }
@@ -66,7 +65,7 @@ fun <T : Any> LazyPagedGridItems(
                         LoadingIndicator(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .wrapContentSize(Alignment.Center)
+                                .wrapContentSize(Alignment.Center),
                         )
                     }
                 }
@@ -77,7 +76,7 @@ fun <T : Any> LazyPagedGridItems(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp)
-                                .wrapContentWidth(Alignment.CenterHorizontally)
+                                .wrapContentWidth(Alignment.CenterHorizontally),
                         )
                     }
                 }
@@ -89,7 +88,7 @@ fun <T : Any> LazyPagedGridItems(
                             snackBarHostState = snackbarHostState,
                             errorMessage = exception.error.localizedMessage!!,
                             onErrorAction = { retry() },
-                            actionLabel = "Retry"
+                            actionLabel = "Retry",
                         )
                     }
                 }
@@ -101,7 +100,7 @@ fun <T : Any> LazyPagedGridItems(
                             snackBarHostState = snackbarHostState,
                             errorMessage = exception.error.localizedMessage!!,
                             onErrorAction = { retry() },
-                            actionLabel = "Retry"
+                            actionLabel = "Retry",
                         )
                     }
                 }
@@ -113,7 +112,7 @@ fun <T : Any> LazyPagedGridItems(
 @ExperimentalFoundationApi
 fun <T : Any> LazyGridScope.items(
     lazyPagingItems: LazyPagingItems<T>,
-    itemContent: @Composable LazyGridItemScope.(value: T?) -> Unit
+    itemContent: @Composable LazyGridItemScope.(value: T?) -> Unit,
 ) {
     items(lazyPagingItems.itemCount) { index ->
         itemContent(lazyPagingItems[index])

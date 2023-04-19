@@ -9,7 +9,7 @@ internal fun List<Trailers>?.toTrailerList(): List<Trailer> {
             showId = it.trakt_id,
             key = it.key,
             name = it.name,
-            youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg"
+            youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg",
         )
     } ?: emptyList()
 }

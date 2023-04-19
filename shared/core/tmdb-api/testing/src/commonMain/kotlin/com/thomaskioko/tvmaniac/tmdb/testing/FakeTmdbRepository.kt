@@ -6,9 +6,7 @@ import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-
 class FakeTmdbRepository : TmdbRepository {
 
     override fun updateShowArtWork(): Flow<Either<Failure, Unit>> = flowOf(Either.Right(Unit))
-
 }

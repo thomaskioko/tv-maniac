@@ -7,5 +7,4 @@ interface EpisodeImageCache {
     fun insert(entity: Episode_image)
 
     fun insert(list: List<Episode_image>)
-
 }

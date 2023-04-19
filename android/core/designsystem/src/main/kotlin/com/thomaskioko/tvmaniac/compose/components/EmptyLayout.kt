@@ -33,13 +33,13 @@ fun EmptyContent(
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
             painter = painter,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
             modifier = Modifier.size(120.dp),
-            contentDescription = null
+            contentDescription = null,
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -62,9 +62,8 @@ fun EmptyContentViewPreview() {
         Surface {
             EmptyContent(
                 painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                message = stringResource(id = R.string.generic_empty_content)
+                message = stringResource(id = R.string.generic_empty_content),
             )
         }
     }
 }
-

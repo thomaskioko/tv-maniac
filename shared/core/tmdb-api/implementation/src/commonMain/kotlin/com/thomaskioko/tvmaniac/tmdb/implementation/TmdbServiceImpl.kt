@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.safeRequest
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
@@ -9,6 +8,7 @@ import com.thomaskioko.tvmaniac.tmdb.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
 import com.thomaskioko.tvmaniac.tmdb.implementation.inject.TmdbHttpClient
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
 import me.tatarka.inject.annotations.Inject
@@ -30,7 +30,7 @@ class TmdbServiceImpl(
     override suspend fun getEpisodeDetails(
         tmdbShow: Long,
         ssnNumber: Long,
-        epNumber: Long
+        epNumber: Long,
     ): ApiResponse<EpisodesResponse, ErrorResponse> =
         httpClient.safeRequest(exceptionHandler) {
             url {
@@ -38,7 +38,6 @@ class TmdbServiceImpl(
                 path("3/tv/$tmdbShow/season/$ssnNumber/episode/$epNumber")
             }
         }
-
 
     override suspend fun getTrailers(showId: Long): ApiResponse<TrailersResponse, ErrorResponse> =
         httpClient.safeRequest(exceptionHandler) {

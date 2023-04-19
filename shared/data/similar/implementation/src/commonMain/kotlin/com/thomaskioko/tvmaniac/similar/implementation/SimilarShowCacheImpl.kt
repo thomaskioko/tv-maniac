@@ -19,7 +19,7 @@ class SimilarShowCacheImpl(
         database.similar_showsQueries.transaction {
             database.similar_showsQueries.insertOrReplace(
                 id = similarShowId,
-                trakt_id = traktId
+                trakt_id = traktId,
             )
         }
     }

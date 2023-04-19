@@ -18,9 +18,9 @@ class FakeProfileRepository : ProfileRepository {
                 user_name = "silly_eyes",
                 full_name = "Stranger Danger",
                 profile_picture = "",
-                is_me = true
-            )
-        )
+                is_me = true,
+            ),
+        ),
     )
 
     override fun observeStats(slug: String, refresh: Boolean): Flow<Either<Failure, User_stats>> =
@@ -32,9 +32,9 @@ class FakeProfileRepository : ProfileRepository {
                     days = "54",
                     hours = "142",
                     collected_shows = "1200",
-                    episodes_watched = "8200"
-                )
-            )
+                    episodes_watched = "8200",
+                ),
+            ),
         )
 
     override fun observeCreateTraktList(userSlug: String): Flow<Either<Failure, Trakt_shows_list>> =
@@ -43,14 +43,14 @@ class FakeProfileRepository : ProfileRepository {
                 Trakt_shows_list(
                     id = 45,
                     slug = "favorites",
-                    description = "Favorite Shows"
-                )
-            )
+                    description = "Favorite Shows",
+                ),
+            ),
         )
 
     override fun observeUpdateFollowedShow(
         traktId: Long,
-        addToWatchList: Boolean
+        addToWatchList: Boolean,
     ): Flow<Either<Failure, Unit>> = flowOf(Either.Right(Unit))
 
     override suspend fun fetchTraktWatchlistShows() {}

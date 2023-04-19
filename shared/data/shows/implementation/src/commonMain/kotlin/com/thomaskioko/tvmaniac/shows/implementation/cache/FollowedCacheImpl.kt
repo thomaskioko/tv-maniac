@@ -21,7 +21,7 @@ class FollowedCacheImpl(
             database.followed_showsQueries.insertOrReplace(
                 id = followedShow.id,
                 synced = followedShow.synced,
-                created_at = followedShow.created_at
+                created_at = followedShow.created_at,
             )
         }
     }
@@ -46,7 +46,7 @@ class FollowedCacheImpl(
     override fun updateShowSyncState(traktId: Long) {
         database.followed_showsQueries.updateFollowedState(
             id = traktId,
-            synced = true
+            synced = true,
         )
     }
 

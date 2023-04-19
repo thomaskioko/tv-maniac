@@ -27,9 +27,8 @@ data class Shows(
 
 @Serializable
 data class Seasons(
-    @SerialName("ratings") val ratings: Int
+    @SerialName("ratings") val ratings: Int,
 )
-
 
 @Serializable
 data class Episodes(
