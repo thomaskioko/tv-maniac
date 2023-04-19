@@ -8,11 +8,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Runnable
 import platform.darwin.DISPATCH_TIME_NOW
+import platform.darwin.dispatch_after
 import platform.darwin.dispatch_async
+import platform.darwin.dispatch_get_main_queue
 import platform.darwin.dispatch_queue_t
 import platform.darwin.dispatch_time
-import platform.darwin.dispatch_get_main_queue
-import platform.darwin.dispatch_after
 import kotlin.coroutines.CoroutineContext
 
 @OptIn(InternalCoroutinesApi::class)
