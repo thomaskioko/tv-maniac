@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.similar.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.Either
@@ -14,6 +12,8 @@ import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
@@ -33,7 +33,7 @@ class SimilarShowsRepositoryImpl(
             fetch = { traktService.getSimilarShows(traktId) },
             saveFetchResult = { response -> mapAndInsert(traktId, response) },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatchers.io
+            coroutineDispatcher = dispatchers.io,
         )
 
     private fun mapAndInsert(traktId: Long, response: ApiResponse<List<TraktShowResponse>, ErrorResponse>) {
@@ -44,7 +44,7 @@ class SimilarShowsRepositoryImpl(
 
                     similarShowCache.insert(
                         traktId = traktId,
-                        similarShowId = showsResponse.ids.trakt.toLong()
+                        similarShowId = showsResponse.ids.trakt.toLong(),
                     )
                 }
             }

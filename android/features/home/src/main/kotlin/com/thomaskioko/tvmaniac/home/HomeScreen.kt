@@ -48,9 +48,8 @@ import com.thomaskioko.tvmaniac.resources.R
 @Composable
 fun HomeScreen(
     factorySet: Set<ComposeNavigationFactory>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-
     val navController = rememberNavController()
     val route = currentRoute(navController)
     val bottomSheetNavigator = rememberBottomSheetNavigator()
@@ -82,16 +81,16 @@ fun HomeScreen(
                             }
                         }
                     },
-                    currentSelectedItem = currentSelectedItem
+                    currentSelectedItem = currentSelectedItem,
                 )
             }
-        }
+        },
     ) { contentPadding ->
         ModalBottomSheetLayout(bottomSheetNavigator) {
             NavHost(
                 navController = navController,
                 startDestination = NavigationScreen.DiscoverNavScreen.route,
-                modifier = Modifier.padding(contentPadding)
+                modifier = Modifier.padding(contentPadding),
             ) {
                 factorySet.addNavigation(this, navController)
             }
@@ -107,15 +106,14 @@ private fun TvManiacBottomNavigation(
 ) {
     BottomNavigation(
         modifier = modifier,
-        backgroundColor = MaterialTheme.colorScheme.surface
+        backgroundColor = MaterialTheme.colorScheme.surface,
     ) {
-
         TvManiacBottomNavigationItem(
             screen = NavigationScreen.DiscoverNavScreen,
             imageVector = Icons.Outlined.Movie,
             title = stringResource(id = R.string.menu_item_discover),
             selected = currentSelectedItem == NavigationScreen.DiscoverNavScreen,
-            onNavigationSelected = onNavigationSelected
+            onNavigationSelected = onNavigationSelected,
         )
 
         TvManiacBottomNavigationItem(
@@ -123,7 +121,7 @@ private fun TvManiacBottomNavigation(
             imageVector = Icons.Outlined.Search,
             title = stringResource(id = R.string.menu_item_search),
             selected = currentSelectedItem == NavigationScreen.SearchNavScreen,
-            onNavigationSelected = onNavigationSelected
+            onNavigationSelected = onNavigationSelected,
         )
 
         TvManiacBottomNavigationItem(
@@ -131,7 +129,7 @@ private fun TvManiacBottomNavigation(
             imageVector = Icons.Outlined.Star,
             title = stringResource(id = R.string.menu_item_follow),
             selected = currentSelectedItem == NavigationScreen.WatchlistNavScreen,
-            onNavigationSelected = onNavigationSelected
+            onNavigationSelected = onNavigationSelected,
         )
 
         TvManiacBottomNavigationItem(
@@ -139,7 +137,7 @@ private fun TvManiacBottomNavigation(
             imageVector = Icons.Filled.AccountCircle,
             title = stringResource(id = R.string.menu_item_profile),
             selected = currentSelectedItem == NavigationScreen.ProfileNavScreen,
-            onNavigationSelected = onNavigationSelected
+            onNavigationSelected = onNavigationSelected,
         )
     }
 }
@@ -151,14 +149,14 @@ fun RowScope.TvManiacBottomNavigationItem(
     title: String,
     selected: Boolean,
     modifier: Modifier = Modifier,
-    onNavigationSelected: (NavigationScreen) -> Unit
+    onNavigationSelected: (NavigationScreen) -> Unit,
 ) {
     BottomNavigationItem(
         modifier = modifier,
         icon = {
             Icon(
                 imageVector = imageVector,
-                contentDescription = title
+                contentDescription = title,
             )
         },
         label = { Text(title) },
@@ -166,7 +164,7 @@ fun RowScope.TvManiacBottomNavigationItem(
         alwaysShowLabel = true,
         selectedContentColor = MaterialTheme.colorScheme.secondary,
         unselectedContentColor = MaterialTheme.colorScheme.onSurface,
-        onClick = { onNavigationSelected(screen) }
+        onClick = { onNavigationSelected(screen) },
     )
 }
 

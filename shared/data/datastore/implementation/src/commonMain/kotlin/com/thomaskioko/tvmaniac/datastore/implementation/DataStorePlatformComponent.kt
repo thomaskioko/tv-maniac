@@ -1,3 +1,0 @@
-package com.thomaskioko.tvmaniac.datastore.implementation
-
-expect interface DataStorePlatformComponent

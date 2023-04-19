@@ -9,11 +9,11 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:data:shows:api"))
+            implementation(projects.shared.data.shows.api)
         }
 
         sourceSets["commonTest"].dependencies {
-            implementation(project(":shared:data:shows:testing"))
+            implementation(projects.shared.data.shows.testing)
         }
 
     }

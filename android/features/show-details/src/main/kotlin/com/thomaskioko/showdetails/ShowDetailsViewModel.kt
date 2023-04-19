@@ -3,20 +3,19 @@ package com.thomaskioko.showdetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.data.showdetails.LoadShowDetails
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsAction
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsStateMachine
+import com.thomaskioko.tvmaniac.domain.showdetails.LoadShowDetails
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsAction
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsStateMachine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-
 @Inject
 class ShowDetailsViewModel(
     @Assisted savedStateHandle: SavedStateHandle,
-    private val stateMachine: ShowDetailsStateMachine
+    private val stateMachine: ShowDetailsStateMachine,
 ) : ViewModel() {
 
     private val showId: Long = savedStateHandle["tvShowId"]!!
@@ -35,11 +34,9 @@ class ShowDetailsViewModel(
         viewModelScope.launch {
             stateMachine.dispatch(LoadShowDetails(showId))
         }
-
-
     }
 
-    fun dispatch(action : ShowDetailsAction) {
+    fun dispatch(action: ShowDetailsAction) {
         viewModelScope.launch {
             stateMachine.dispatch(action)
         }

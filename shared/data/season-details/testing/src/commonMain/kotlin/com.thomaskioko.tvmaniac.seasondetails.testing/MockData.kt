@@ -19,6 +19,6 @@ val seasonDetails = listOf(
         ratings = 4.5,
         episode_number = "01",
         votes = 4958,
-        image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg"
-    )
+        image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+    ),
 )

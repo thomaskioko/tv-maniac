@@ -30,11 +30,9 @@ class SettingsViewModel(
         }
     }
 
-
     fun login() {
         viewModelScope.launch {
             traktAuthManager.launchWebView()
         }
     }
-
 }

@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Inject
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Inject
 class SettingsStateMachine(
-    private val datastoreRepository: DatastoreRepository
+    private val datastoreRepository: DatastoreRepository,
 ) : FlowReduxStateMachine<SettingsState, SettingsActions>(initialState = SettingsContent.EMPTY) {
 
     init {

@@ -1,13 +1,13 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Episode
-import com.thomaskioko.tvmaniac.core.db.Season
+import com.thomaskioko.tvmaniac.core.db.Episodes
+import com.thomaskioko.tvmaniac.core.db.Seasons
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
 
-fun TraktSeasonEpisodesResponse.toEpisodeCacheList(): List<Episode> {
+fun TraktSeasonEpisodesResponse.toEpisodeCacheList(): List<Episodes> {
     return episodes.map { episodeResponse ->
-        Episode(
+        Episodes(
             season_id = ids.trakt.toLong(),
             trakt_id = episodeResponse.ids.trakt.toLong(),
             tmdb_id = episodeResponse.ids.tmdb?.toLong(),
@@ -21,15 +21,14 @@ fun TraktSeasonEpisodesResponse.toEpisodeCacheList(): List<Episode> {
     }
 }
 
-fun List<TraktSeasonsResponse>.toSeasonCacheList(traktId: Long): List<Season> =
+fun List<TraktSeasonsResponse>.toSeasonCacheList(traktId: Long): List<Seasons> =
     map { seasonResponse ->
-        Season(
+        Seasons(
             show_trakt_id = traktId,
             id = seasonResponse.ids.trakt.toLong(),
             season_number = seasonResponse.number.toLong(),
             name = seasonResponse.title,
             overview = seasonResponse.overview,
-            episode_count = seasonResponse.episodeCount.toLong()
+            episode_count = seasonResponse.episodeCount.toLong(),
         )
     }
-

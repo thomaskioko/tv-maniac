@@ -49,6 +49,9 @@ jobs:
       - name: Check lint
         run: ./gradlew lint
 
+      - name: Check spotless
+        run: ./gradlew spotlessCheck --init-script tooling/checks/spotless.gradle.kts --no-configuration-cache
+
       - name: Build with gradle
         run: ./gradlew assemble
 

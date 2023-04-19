@@ -15,27 +15,26 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class MainActivityViewModel(
     datastoreRepository: DatastoreRepository,
-    observeNetwork: NetworkRepository
+    observeNetwork: NetworkRepository,
 ) : ViewModel() {
 
     val state: StateFlow<MainState> = combine(
         observeNetwork.observeConnectionState(),
-        datastoreRepository.observeTheme()
+        datastoreRepository.observeTheme(),
     ) { connectionState, theme ->
 
         MainState(
             theme = theme,
-            connectionState = connectionState
+            connectionState = connectionState,
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = MainState(),
     )
-
 }
 
 data class MainState(
     val theme: Theme = Theme.SYSTEM,
-    val connectionState: ConnectionState = ConnectionState.ConnectionAvailable
+    val connectionState: ConnectionState = ConnectionState.ConnectionAvailable,
 )

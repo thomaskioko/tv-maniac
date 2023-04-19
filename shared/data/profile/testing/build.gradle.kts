@@ -8,8 +8,8 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:data:database"))
-            implementation(project(":shared:data:profile:api"))
+            api(projects.shared.core.database)
+            implementation(projects.shared.data.profile.api)
             implementation(libs.coroutines.core)
         }
     }

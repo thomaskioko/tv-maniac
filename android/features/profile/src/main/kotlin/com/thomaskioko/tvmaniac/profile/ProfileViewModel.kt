@@ -23,7 +23,7 @@ class ProfileViewModel(
         }
     }
 
-    fun dispatch(action : ProfileActions) {
+    fun dispatch(action: ProfileActions) {
         viewModelScope.launch {
             stateMachine.dispatch(action)
         }
@@ -34,6 +34,4 @@ class ProfileViewModel(
             traktAuthManager.launchWebView()
         }
     }
-
 }
-

@@ -24,7 +24,7 @@ class FollowingStateMachine(
                 collectWhileInState(repository.observeFollowedShows()) { result, state ->
                     result.fold(
                         { state.override { ErrorLoadingShows(it.errorMessage) } },
-                        { state.mutate { copy(list = it.followedShowList()) } }
+                        { state.mutate { copy(list = it.followedShowList()) } },
                     )
                 }
             }
@@ -38,10 +38,8 @@ class FollowingStateMachine(
     }
 
     private fun loadFollowedShows(state: State<LoadingShows>): ChangedState<FollowingState> {
-
         val result = repository.getFollowedShows()
 
         return state.override { FollowingContent(result.followedShowList()) }
     }
 }
-

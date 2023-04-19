@@ -16,7 +16,6 @@ import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.resources.R
 import me.tatarka.inject.annotations.Inject
 
-
 typealias Search = @Composable () -> Unit
 
 @Inject
@@ -35,7 +34,7 @@ internal fun SearchScreen(
     modifier: Modifier = Modifier,
 ) {
     SearchScreen(
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -43,18 +42,17 @@ internal fun SearchScreen(
 internal fun SearchScreen(
     modifier: Modifier = Modifier,
 ) {
-
     Column(
         modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .padding(16.dp)
+            .padding(16.dp),
     ) {
         SearchBar(
             hint = stringResource(id = R.string.msg_search_show_hint),
             modifier = Modifier
                 .fillMaxWidth(),
-            onValueChange = {}
+            onValueChange = {},
         )
     }
 }

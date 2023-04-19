@@ -9,13 +9,13 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SearchNavigationFactory(
-    private val search: Search
+    private val search: Search,
 ) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
         builder.screenComposable(
             route = NavigationScreen.SearchNavScreen.route,
-            content = { search() }
+            content = { search() },
         )
     }
 }

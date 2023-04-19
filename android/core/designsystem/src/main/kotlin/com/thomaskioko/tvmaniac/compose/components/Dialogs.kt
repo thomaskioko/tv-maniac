@@ -25,9 +25,8 @@ fun BasicDialog(
     shape: Shape = RectangleShape,
     onDismissDialog: () -> Unit = {},
     confirmButtonClicked: () -> Unit = {},
-    dismissButtonClicked: () -> Unit = {}
+    dismissButtonClicked: () -> Unit = {},
 ) {
-
     val configuration = LocalConfiguration.current
 
     AlertDialog(
@@ -47,23 +46,23 @@ fun BasicDialog(
             Text(
                 text = dialogMessage,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 16.dp),
             )
         },
         confirmButton = {
             TvManiacOutlinedButton(
                 text = confirmButtonText,
-                onClick = confirmButtonClicked
+                onClick = confirmButtonClicked,
             )
         },
         dismissButton = {
             dismissButtonText?.let {
                 TvManiacOutlinedButton(
                     text = dismissButtonText,
-                    onClick = dismissButtonClicked
+                    onClick = dismissButtonClicked,
                 )
             }
-        }
+        },
     )
 }
 
@@ -75,9 +74,9 @@ fun BasicDialogPreview() {
             BasicDialog(
                 dialogTitle = "Dialog Title",
                 dialogMessage = "Trakt is a platform that does many things, but primarily keeps " +
-                        "track of TV shows and movies you watch.",
+                    "track of TV shows and movies you watch.",
                 confirmButtonText = "Confirm",
-                dismissButtonText = "Cancel"
+                dismissButtonText = "Cancel",
             )
         }
     }

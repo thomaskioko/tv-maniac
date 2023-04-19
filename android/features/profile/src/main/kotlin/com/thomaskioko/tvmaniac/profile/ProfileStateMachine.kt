@@ -5,8 +5,8 @@ import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.trakt.profile.api.ProfileRepository
-import com.thomaskioko.tvmaniac.traktauth.model.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.model.TraktAuthState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Inject
@@ -15,7 +15,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class ProfileStateMachine(
     private val traktAuthRepository: TraktAuthRepository,
-    private val repository: ProfileRepository
+    private val repository: ProfileRepository,
 ) : FlowReduxStateMachine<ProfileState, ProfileActions>(initialState = ProfileContent.EMPTY) {
 
     init {
@@ -84,9 +84,9 @@ class ProfileStateMachine(
                                     showDays = it.days,
                                     showHours = it.hours,
                                     collectedShows = it.collected_shows,
-                                    episodesWatched = it.episodes_watched
+                                    episodesWatched = it.episodes_watched,
                                 )
-                            }
+                            },
                         )
                     }
                 }
@@ -113,10 +113,9 @@ class ProfileStateMachine(
                                         fullName = it.full_name,
                                         userPicUrl = it.profile_picture,
                                     )
-                                }
+                                },
                             )
                         }
-
                     }
                 }
             }

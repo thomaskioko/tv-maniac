@@ -36,5 +36,4 @@ interface ShowsRepository {
     suspend fun updateFollowedShow(traktId: Long, addToWatchList: Boolean)
 
     suspend fun fetchShows()
-
 }

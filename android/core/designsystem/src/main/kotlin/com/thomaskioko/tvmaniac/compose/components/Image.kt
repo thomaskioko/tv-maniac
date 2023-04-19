@@ -29,7 +29,7 @@ fun AsyncImageComposable(
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
-    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality
+    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
 ) {
     AsyncImage(
         model = requestBuilder?.let { builder ->
@@ -53,7 +53,7 @@ fun AsyncImageComposable(
 @Composable
 fun KenBurnsViewImage(
     imageUrl: String?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val kenBuns = remember { KenBurnsView(context) }

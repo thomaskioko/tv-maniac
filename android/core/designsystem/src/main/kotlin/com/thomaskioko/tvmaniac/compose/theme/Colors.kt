@@ -21,7 +21,6 @@ val md_theme_light_surface = Color(0xFFF8FDFF)
 val md_theme_light_onSurface = Color(0xFF1F2123)
 val md_theme_light_outline = Color(0xFF1646F7)
 
-
 val md_theme_dark_primary = Color(0xFF1F2123)
 val md_theme_dark_onPrimary = Color(0xFFE0E0FF)
 val md_theme_dark_secondary = Color(0xFFFEC804)
@@ -40,7 +39,7 @@ fun backgroundGradient(): List<Color> {
         MaterialTheme.colorScheme.background.copy(alpha = 0.9F),
         MaterialTheme.colorScheme.background.copy(alpha = 0.8F),
         MaterialTheme.colorScheme.background.copy(alpha = 0.7F),
-        Color.Transparent
+        Color.Transparent,
     )
 }
 

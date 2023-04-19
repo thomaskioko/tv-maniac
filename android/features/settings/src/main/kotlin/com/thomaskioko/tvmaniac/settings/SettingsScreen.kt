@@ -56,7 +56,6 @@ import com.thomaskioko.tvmaniac.resources.R
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-
 typealias Settings = @Composable (
     onBackClicked: () -> Unit,
 ) -> Unit
@@ -65,9 +64,8 @@ typealias Settings = @Composable (
 @Composable
 fun Settings(
     viewModelFactory: () -> SettingsViewModel,
-    @Assisted onBackClicked: () -> Unit
+    @Assisted onBackClicked: () -> Unit,
 ) {
-
     SettingsScreen(
         viewModel = viewModel(factory = viewModelFactory),
         onBackClicked = onBackClicked,
@@ -80,7 +78,6 @@ internal fun SettingsScreen(
     viewModel: SettingsViewModel,
     modifier: Modifier = Modifier,
 ) {
-
     val settingsState by viewModel.state.collectAsStateWithLifecycle()
 
     SettingsScreen(
@@ -98,7 +95,6 @@ internal fun SettingsScreen(
         onConnectClicked = { viewModel.dispatch(ShowTraktDialog) },
         onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
     )
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -121,7 +117,7 @@ internal fun SettingsScreen(
                 title = stringResource(R.string.title_settings),
                 showNavigationIcon = true,
                 onBackClick = onBackClicked,
-                modifier = Modifier
+                modifier = Modifier,
             )
         },
         modifier = modifier
@@ -146,8 +142,7 @@ internal fun SettingsScreen(
                     )
                 }
             }
-
-        }
+        },
     )
 }
 
@@ -163,11 +158,10 @@ fun SettingsList(
     onDismissDialogClicked: () -> Unit,
     modifier: Modifier = Modifier,
 
-    ) {
+) {
     LazyColumn(
         modifier = modifier,
     ) {
-
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
@@ -175,7 +169,7 @@ fun SettingsList(
                 settingsContent = settingsContent,
                 onThemeSelected = onThemeChanged,
                 onThemeClicked = onThemeClicked,
-                onDismissTheme = onDismissTheme
+                onDismissTheme = onDismissTheme,
             )
         }
 
@@ -189,7 +183,7 @@ fun SettingsList(
                 onLoginClicked = onLoginClicked,
                 onLogoutClicked = onLogoutClicked,
                 onDismissDialogClicked = onDismissDialogClicked,
-                onConnectClicked = onConnectClicked
+                onConnectClicked = onConnectClicked,
             )
         }
 
@@ -214,7 +208,7 @@ private fun TraktProfileSettingsItem(
     val titleId = if (loggedIn) {
         stringResource(
             R.string.settings_title_disconnect_trakt,
-            traktUserName ?: traktFullName ?: ""
+            traktUserName ?: traktFullName ?: "",
         )
     } else {
         stringResource(R.string.settings_title_connect_trakt)
@@ -241,13 +235,13 @@ private fun TraktProfileSettingsItem(
                     model = traktUserPicUrl,
                     contentDescription = stringResource(
                         R.string.cd_profile_pic,
-                        traktUserName ?: traktFullName ?: ""
+                        traktUserName ?: traktFullName ?: "",
                     ),
                     modifier = Modifier
                         .padding(end = 16.dp)
                         .size(48.dp)
                         .clip(CircleShape)
-                        .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+                        .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape),
 
                 )
             } else {
@@ -257,10 +251,9 @@ private fun TraktProfileSettingsItem(
                     contentDescription = null,
                     modifier = Modifier
                         .padding(end = 16.dp)
-                        .size(48.dp)
+                        .size(48.dp),
                 )
             }
-
 
             Column(
                 modifier = Modifier
@@ -274,7 +267,7 @@ private fun TraktProfileSettingsItem(
                 isVisible = showTraktDialog,
                 onLoginClicked = onLoginClicked,
                 onLogoutClicked = onLogoutClicked,
-                onDismissDialog = onDismissDialogClicked
+                onDismissDialog = onDismissDialogClicked,
             )
         }
 
@@ -294,14 +287,13 @@ fun TrackDialog(
     AnimatedVisibility(
         visible = isVisible,
         enter = fadeIn(
-            initialAlpha = 0.4f
+            initialAlpha = 0.4f,
         ),
         exit = fadeOut(
             // Overwrites the default animation with tween
-            animationSpec = tween(durationMillis = 250)
-        )
+            animationSpec = tween(durationMillis = 250),
+        ),
     ) {
-
         BasicDialog(
             dialogTitle = stringResource(id = R.string.settings_title_trakt_app),
             dialogMessage = stringResource(id = R.string.trakt_description),
@@ -309,7 +301,7 @@ fun TrackDialog(
             dismissButtonText = stringResource(id = R.string.logout),
             onDismissDialog = onDismissDialog,
             confirmButtonClicked = onLoginClicked,
-            dismissButtonClicked = onLogoutClicked
+            dismissButtonClicked = onLogoutClicked,
         )
     }
 }
@@ -319,9 +311,8 @@ private fun ThemeSettingsItem(
     settingsContent: SettingsContent,
     onThemeSelected: (Theme) -> Unit,
     onThemeClicked: () -> Unit,
-    onDismissTheme: () -> Unit
+    onDismissTheme: () -> Unit,
 ) {
-
     val themeTitle = when (settingsContent.theme) {
         Theme.LIGHT -> stringResource(R.string.settings_title_theme_dark)
         Theme.DARK -> stringResource(R.string.settings_title_theme_light)
@@ -332,14 +323,13 @@ private fun ThemeSettingsItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onThemeClicked() }
-            .padding(start = 16.dp, end = 16.dp)
+            .padding(start = 16.dp, end = 16.dp),
     ) {
-
         Spacer(modifier = Modifier.height(8.dp))
 
         SettingHeaderTitle(
             title = stringResource(R.string.settings_title_ui),
-            modifier = Modifier
+            modifier = Modifier,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -354,7 +344,7 @@ private fun ThemeSettingsItem(
                 contentDescription = null,
                 modifier = Modifier
                     .padding(end = 16.dp)
-                    .size(48.dp)
+                    .size(48.dp),
             )
 
             Column(
@@ -370,7 +360,7 @@ private fun ThemeSettingsItem(
                 isVisible = settingsContent.showPopup,
                 selectedTheme = settingsContent.theme,
                 onDismissTheme = onDismissTheme,
-                onThemeSelected = onThemeSelected
+                onThemeSelected = onThemeSelected,
             )
         }
 
@@ -387,46 +377,44 @@ private fun ThemeMenu(
     onDismissTheme: () -> Unit,
     onThemeSelected: (Theme) -> Unit,
 ) {
-
     AnimatedVisibility(
         visible = isVisible,
         enter = fadeIn(
             // Overwrites the initial value of alpha to 0.4f for fade in, 0 by default
-            initialAlpha = 0.4f
+            initialAlpha = 0.4f,
         ),
         exit = fadeOut(
             // Overwrites the default animation with tween
-            animationSpec = tween(durationMillis = 250)
-        )
+            animationSpec = tween(durationMillis = 250),
+        ),
     ) {
-
         DropdownMenu(
             expanded = isVisible,
             onDismissRequest = { onDismissTheme() },
             offset = DpOffset(16.dp, 32.dp),
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.surface),
 
         ) {
             ThemeMenuItem(
                 theme = Theme.LIGHT,
                 selectedTheme = selectedTheme,
                 onThemeSelected = onThemeSelected,
-                onDismissTheme = onDismissTheme
+                onDismissTheme = onDismissTheme,
             )
 
             ThemeMenuItem(
                 theme = Theme.DARK,
                 selectedTheme = selectedTheme,
                 onThemeSelected = onThemeSelected,
-                onDismissTheme = onDismissTheme
+                onDismissTheme = onDismissTheme,
             )
 
             ThemeMenuItem(
                 theme = Theme.SYSTEM,
                 selectedTheme = selectedTheme,
                 onThemeSelected = onThemeSelected,
-                onDismissTheme = onDismissTheme
+                onDismissTheme = onDismissTheme,
             )
         }
     }
@@ -437,9 +425,8 @@ private fun ThemeMenuItem(
     theme: Theme,
     selectedTheme: Theme,
     onThemeSelected: (Theme) -> Unit,
-    onDismissTheme: () -> Unit
+    onDismissTheme: () -> Unit,
 ) {
-
     val themeTitle = when (theme) {
         Theme.LIGHT -> "Light Theme"
         Theme.DARK -> "Dark Theme"
@@ -449,19 +436,19 @@ private fun ThemeMenuItem(
         onClick = {
             onThemeSelected(theme)
             onDismissTheme()
-        }
+        },
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 text = themeTitle,
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1f),
             )
 
             RadioButton(
@@ -469,7 +456,7 @@ private fun ThemeMenuItem(
                 onClick = {
                     onThemeSelected(theme)
                     onDismissTheme()
-                }
+                },
             )
         }
     }
@@ -477,12 +464,11 @@ private fun ThemeMenuItem(
 
 @Composable
 private fun AboutSettingsItem() {
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .clickable { }
-            .padding(start = 16.dp, end = 16.dp)
+            .padding(start = 16.dp, end = 16.dp),
     ) {
         SettingHeaderTitle(title = stringResource(R.string.settings_title_info))
 
@@ -508,7 +494,7 @@ fun SettingHeaderTitle(title: String, modifier: Modifier = Modifier) {
     Text(
         text = title,
         style = MaterialTheme.typography.bodyMedium.copy(
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.secondary,
         ),
         modifier = modifier
             .fillMaxWidth(),
@@ -523,7 +509,7 @@ fun TitleItem(
     Text(
         text = title,
         style = MaterialTheme.typography.titleMedium,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -536,7 +522,7 @@ fun SettingDescription(
         Text(
             text = description,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }
@@ -553,7 +539,7 @@ private fun ListDivider() {
 @Composable
 private fun SettingsScreenPreview(
     @PreviewParameter(SettingsPreviewParameterProvider::class)
-    state: SettingsState
+    state: SettingsState,
 ) {
     TvManiacTheme {
         Surface {
@@ -566,7 +552,7 @@ private fun SettingsScreenPreview(
                 onLoginClicked = {},
                 onDismissDialogClicked = {},
                 onConnectClicked = {},
-                onBackClicked = {}
+                onBackClicked = {},
             )
         }
     }

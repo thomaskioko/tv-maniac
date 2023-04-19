@@ -8,7 +8,7 @@ import com.thomaskioko.tvmaniac.profile.ProfileNavigationFactory
 import com.thomaskioko.tvmaniac.search.SearchNavigationFactory
 import com.thomaskioko.tvmaniac.seasondetails.SeasonDetailsNavigationFactory
 import com.thomaskioko.tvmaniac.settings.SettingsNavigationFactory
-import com.thomaskioko.tvmaniac.show_grid.ShowsGridNavigationFactory
+import com.thomaskioko.tvmaniac.showsgrid.ShowsGridNavigationFactory
 import com.thomaskioko.tvmaniac.videoplayer.TrailerNavigationFactory
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
@@ -18,66 +18,66 @@ interface NavigationComponent {
     @Provides
     @IntoSet
     fun provideSettingsNavigationFactory(
-        bind: SettingsNavigationFactory
+        bind: SettingsNavigationFactory,
     ): ComposeNavigationFactory = bind
 
     @Provides
     @IntoSet
     fun provideShowDetailNavigationFactory(
-        bind: ShowDetailNavigationFactory
+        bind: ShowDetailNavigationFactory,
     ): ComposeNavigationFactory = bind
 
     @Provides
     @IntoSet
     fun bindDiscoverNavigation(
-        factory: DiscoverNavigationFactory
+        factory: DiscoverNavigationFactory,
     ): ComposeNavigationFactory = factory
 
     @Provides
     @IntoSet
     fun bindSearchNavigation(
-        factory: SearchNavigationFactory
+        factory: SearchNavigationFactory,
     ): ComposeNavigationFactory = factory
 
     @Provides
     @IntoSet
     fun bindWatchlistNavigation(
-        factory: FollowingNavigationFactory
+        factory: FollowingNavigationFactory,
     ): ComposeNavigationFactory = factory
 
     @Provides
     @IntoSet
     fun bindShowDetailNavigationFactory(
-        factory: ShowDetailNavigationFactory
+        factory: ShowDetailNavigationFactory,
     ): ComposeNavigationFactory = factory
 
     @Provides
     @IntoSet
     fun bindShowsGridNavigationFactory(
-        factory: ShowsGridNavigationFactory
+        factory: ShowsGridNavigationFactory,
     ): ComposeNavigationFactory = factory
 
     @Provides
     @IntoSet
     fun bindSettingsNavigationFactory(
-        factory: SettingsNavigationFactory
+        factory: SettingsNavigationFactory,
     ): ComposeNavigationFactory = factory
 
     @Provides
     @IntoSet
     fun bindSeasonsNavigationFactory(
-        factory: SeasonDetailsNavigationFactory
+        factory: SeasonDetailsNavigationFactory,
     ): ComposeNavigationFactory = factory
 
     @Provides
     @IntoSet
     fun bindProfileNavigationFactory(
-        factory: ProfileNavigationFactory
+        factory: ProfileNavigationFactory,
     ): ComposeNavigationFactory = factory
 
     @Provides
     @IntoSet
     fun bindTrailerNavigationFactory(
-        factory: TrailerNavigationFactory
+        factory: TrailerNavigationFactory,
     ): ComposeNavigationFactory = factory
 }

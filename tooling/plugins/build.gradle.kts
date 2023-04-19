@@ -36,10 +36,6 @@ gradlePlugin {
             id = "tvmaniac.android.feature"
             implementationClass = "FeaturePlugin"
         }
-        register("kmmData") {
-            id = "tvmaniac.kmm.data"
-            implementationClass = "KotlinMultiplatformDataPlugin"
-        }
         register("kmmDomain") {
             id = "tvmaniac.kmm.domain"
             implementationClass = "KotlinMultiplatformDomainPlugin"

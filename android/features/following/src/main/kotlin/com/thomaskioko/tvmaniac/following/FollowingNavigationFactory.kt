@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class FollowingNavigationFactory(
-    private val following: Following
+    private val following: Following,
 ) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
@@ -19,11 +19,11 @@ class FollowingNavigationFactory(
                 following(
                     onShowClicked = { tvShowId ->
                         navController.navigate(
-                            "${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId"
+                            "${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId",
                         )
-                    }
+                    },
                 )
-            }
+            },
         )
     }
 }

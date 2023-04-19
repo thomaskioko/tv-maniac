@@ -4,8 +4,6 @@ import android.app.Application
 import android.content.Context
 import com.thomaskioko.trakt.service.implementation.TraktPlatformComponent
 import com.thomaskioko.tvmaniac.TvManicApplication
-import com.thomaskioko.tvmaniac.base.BasePlatformComponent
-import com.thomaskioko.tvmaniac.base.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.core.networkutil.NetworkUtilComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
@@ -19,6 +17,8 @@ import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.inject.TmdbPlatformComponent
 import com.thomaskioko.tvmaniac.trakt.profile.implementation.ProfileComponent
 import com.thomaskioko.tvmaniac.traktauth.inject.TraktAuthComponent
+import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
+import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.workmanager.factory.DiscoverWorkerFactory
 import com.thomaskioko.tvmaniac.workmanager.inject.TasksComponent
 import me.tatarka.inject.annotations.Component
@@ -28,8 +28,7 @@ import me.tatarka.inject.annotations.Provides
 @ApplicationScope
 abstract class ApplicationComponent(
     @get:Provides val application: Application,
-) : AppComponent,
-    BasePlatformComponent,
+) : UtilPlatformComponent,
     CategoryComponent,
     DatabaseComponent,
     DataStorePlatformComponent,
@@ -49,11 +48,9 @@ abstract class ApplicationComponent(
     abstract val initializers: AppInitializers
     abstract val workerFactory: DiscoverWorkerFactory
 
-
     companion object {
         fun from(context: Context): ApplicationComponent {
             return (context.applicationContext as TvManicApplication).component
         }
     }
 }
-

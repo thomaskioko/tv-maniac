@@ -33,7 +33,7 @@ fun rememberDominantColorState(
     defaultColor: Color = MaterialTheme.colorScheme.secondary,
     defaultOnColor: Color = MaterialTheme.colorScheme.onSecondary,
     cacheSize: Int = 12,
-    isColorValid: (Color) -> Boolean = { true }
+    isColorValid: (Color) -> Boolean = { true },
 ): DominantColorState = remember {
     DominantColorState(context, defaultColor, defaultOnColor, cacheSize, isColorValid)
 }
@@ -45,19 +45,19 @@ fun rememberDominantColorState(
 @Composable
 fun DynamicThemePrimaryColorsFromImage(
     dominantColorState: DominantColorState = rememberDominantColorState(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = MaterialTheme.colorScheme.copy(
         secondary = animateColorAsState(
             dominantColorState.color,
             spring(stiffness = Spring.StiffnessLow),
-            label = "secondaryColorAnimation"
+            label = "secondaryColorAnimation",
         ).value,
         onSecondary = animateColorAsState(
             dominantColorState.onColor,
             spring(stiffness = Spring.StiffnessLow),
-            label = "onSecondaryColorAnimation"
-        ).value
+            label = "onSecondaryColorAnimation",
+        ).value,
     )
     MaterialTheme(colorScheme = colorScheme, content = content)
 }
@@ -80,7 +80,7 @@ class DominantColorState(
     private val defaultColor: Color,
     private val defaultOnColor: Color,
     cacheSize: Int = 12,
-    private val isColorValid: (Color) -> Boolean = { true }
+    private val isColorValid: (Color) -> Boolean = { true },
 ) {
     var color by mutableStateOf(defaultColor)
         private set
@@ -115,7 +115,7 @@ class DominantColorState(
             ?.let { swatch ->
                 DominantColors(
                     color = Color(swatch.rgb),
-                    onColor = Color(swatch.bodyTextColor).copy(alpha = 1f)
+                    onColor = Color(swatch.bodyTextColor).copy(alpha = 1f),
                 )
             }
             // Cache the resulting [DominantColors]
@@ -139,7 +139,7 @@ private data class DominantColors(val color: Color, val onColor: Color)
  */
 private suspend fun calculateSwatchesInImage(
     context: Context,
-    imageUrl: String
+    imageUrl: String,
 ): List<Palette.Swatch> {
     val request = ImageRequest.Builder(context)
         .data(imageUrl)

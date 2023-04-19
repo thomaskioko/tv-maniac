@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.profile
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 
-class PreviewParameterProvider : PreviewParameterProvider<ProfileState> {
+class ProfilePreviewParameterProvider : PreviewParameterProvider<ProfileState> {
     override val values: Sequence<ProfileState>
         get() {
             return sequenceOf(
@@ -10,7 +10,7 @@ class PreviewParameterProvider : PreviewParameterProvider<ProfileState> {
                     showTraktDialog = false,
                     loggedIn = false,
                     traktUser = null,
-                    profileStats = null
+                    profileStats = null,
                 ),
                 ProfileContent(
                     showTraktDialog = false,
@@ -19,19 +19,18 @@ class PreviewParameterProvider : PreviewParameterProvider<ProfileState> {
                         slug = "me",
                         userName = "@j_Doe",
                         fullName = "J Doe",
-                        userPicUrl = "image.png"
+                        userPicUrl = "image.png",
                     ),
                     profileStats = ProfileStats(
                         collectedShows = "2000",
                         showMonths = "08",
                         showDays = "120",
                         showHours = "120",
-                        episodesWatched = "8.1k"
-                    )
+                        episodesWatched = "8.1k",
+                    ),
                 ),
                 ProfileError(error = "Something went Wrong "),
                 ProfileStatsError(error = "Something went Wrong "),
             )
         }
-
 }
