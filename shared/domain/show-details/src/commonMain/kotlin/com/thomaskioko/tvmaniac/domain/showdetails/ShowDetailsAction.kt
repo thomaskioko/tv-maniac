@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.domain.showdetails
 
-
 sealed interface ShowDetailsAction
 
 object WebViewError : ShowDetailsAction
@@ -10,7 +9,7 @@ object DismissWebViewError : ShowDetailsAction
 data class ReloadShow(val traktId: Long) : ShowDetailsAction
 
 data class LoadShowDetails(
-    val traktId: Long
+    val traktId: Long,
 ) : ShowDetailsAction
 
 data class FollowShow(

@@ -12,7 +12,6 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
     @Test
     fun insertTvShow() {
-
         makeShowList().insertTvShowsEntityList()
 
         val entities = tvShowQueries.selectShows().executeAsList()
@@ -22,7 +21,6 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
     @Test
     fun verify_selectByShowId_returnTvShowEntity_afterInsertHasBeenDone() {
-
         getShow().insertTvShowQuery()
 
         val entity = tvShowQueries.selectByShowId(getShow().trakt_id)
@@ -36,10 +34,8 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         entity.genres shouldBe getShow().genres
     }
 
-
     @Test
     fun verifyDelete_clearsTable() {
-
         getShow().insertTvShowQuery()
 
         tvShowQueries.deleteAll()
@@ -66,7 +62,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             year = year,
             status = status,
             tmdb_id = tmdb_id,
-            rating = rating
+            rating = rating,
         )
     }
 }

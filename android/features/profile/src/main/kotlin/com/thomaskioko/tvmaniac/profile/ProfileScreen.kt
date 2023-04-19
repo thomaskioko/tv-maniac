@@ -67,18 +67,16 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-
 typealias Profile = @Composable (
-    settingsClicked: () -> Unit
+    settingsClicked: () -> Unit,
 ) -> Unit
 
 @Inject
 @Composable
 fun Profile(
     viewModelFactory: () -> ProfileViewModel,
-    @Assisted settingsClicked: () -> Unit
+    @Assisted settingsClicked: () -> Unit,
 ) {
-
     ProfileScreen(
         viewModel = viewModel(factory = viewModelFactory),
         onSettingsClicked = settingsClicked,
@@ -89,7 +87,7 @@ fun Profile(
 internal fun ProfileScreen(
     viewModel: ProfileViewModel,
     modifier: Modifier = Modifier,
-    onSettingsClicked: () -> Unit
+    onSettingsClicked: () -> Unit,
 ) {
     val profileState by viewModel.state.collectAsStateWithLifecycle()
 
@@ -116,7 +114,6 @@ private fun ProfileScreen(
     modifier: Modifier = Modifier,
     onDismissDialogClicked: () -> Unit,
 ) {
-
     Scaffold(
         topBar = {
             TvManiacTopBar(
@@ -136,14 +133,14 @@ private fun ProfileScreen(
                         errorMessage = state.error,
                         modifier = Modifier
                             .fillMaxSize()
-                            .wrapContentSize(Alignment.Center)
+                            .wrapContentSize(Alignment.Center),
                     )
                 }
 
                 is ProfileStatsError -> {
                     ErrorUi(
                         errorMessage = state.error,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     )
                 }
 
@@ -156,9 +153,8 @@ private fun ProfileScreen(
                         onDismissDialogClicked = onDismissDialogClicked,
                     )
                 }
-
             }
-        }
+        },
     )
 }
 
@@ -200,11 +196,10 @@ fun TraktInfoContent(
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp),
     ) {
-
         TrackDialog(
             isVisible = state.showTraktDialog,
             onLoginClicked = onLoginClicked,
-            onDismissDialog = onDismissDialogClicked
+            onDismissDialog = onDismissDialogClicked,
         )
 
         Icon(
@@ -214,13 +209,13 @@ fun TraktInfoContent(
             modifier = Modifier
                 .padding(top = 64.dp)
                 .size(120.dp)
-                .align(Alignment.CenterHorizontally)
+                .align(Alignment.CenterHorizontally),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Divider(
-            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f)
+            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -230,7 +225,7 @@ fun TraktInfoContent(
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -243,7 +238,7 @@ fun TraktInfoContent(
         )
 
         LazyColumn(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             items(supportItems) { text ->
                 TextListItem(text = text)
@@ -260,15 +255,15 @@ fun TraktInfoContent(
                 .align(Alignment.CenterHorizontally),
             buttonColors = ButtonDefaults.buttonColors(
                 contentColor = MaterialTheme.colorScheme.onSecondary,
-                containerColor = MaterialTheme.colorScheme.secondary
+                containerColor = MaterialTheme.colorScheme.secondary,
             ),
             content = {
                 Text(
                     text = stringResource(R.string.settings_title_connect_trakt),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSecondary
+                    color = MaterialTheme.colorScheme.onSecondary,
                 )
-            }
+            },
         )
     }
 }
@@ -278,10 +273,9 @@ fun TextListItem(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-
     val divider = buildAnnotatedString {
         val tagStyle = MaterialTheme.typography.labelMedium.toSpanStyle().copy(
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.secondary,
         )
         withStyle(tagStyle) {
             append("  •  ")
@@ -292,9 +286,8 @@ fun TextListItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxWidth(),
     ) {
-
         Text(
             text = divider,
             textAlign = TextAlign.Center,
@@ -309,7 +302,6 @@ fun TextListItem(
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.fillMaxWidth(),
         )
-
     }
 }
 
@@ -319,17 +311,14 @@ fun UserProfile(
     state: ProfileContent,
     modifier: Modifier = Modifier,
 ) {
-
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, top = 64.dp),
         verticalArrangement = Arrangement.Center,
     ) {
-
         when {
             state.loggedIn && state.traktUser?.userPicUrl != null -> {
-
                 Card(
                     modifier = Modifier
                         .padding(top = 16.dp)
@@ -337,7 +326,7 @@ fun UserProfile(
                         .align(Alignment.CenterHorizontally),
                     shape = CircleShape,
                     elevation = CardDefaults.cardElevation(
-                        defaultElevation = 4.dp
+                        defaultElevation = 4.dp,
                     ),
                     border = BorderStroke(
                         width = 2.dp,
@@ -345,17 +334,16 @@ fun UserProfile(
                     ),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 ) {
-
                     AsyncImageComposable(
                         model = state.traktUser.userPicUrl,
                         contentDescription = stringResource(
                             R.string.cd_profile_pic,
-                            state.traktUser.fullName ?: state.traktUser.userName ?: ""
+                            state.traktUser.fullName ?: state.traktUser.userName ?: "",
                         ),
                         modifier = Modifier
                             .size(120.dp)
                             .clip(CircleShape)
-                            .align(Alignment.CenterHorizontally)
+                            .align(Alignment.CenterHorizontally),
 
                     )
                 }
@@ -367,7 +355,7 @@ fun UserProfile(
                         state.loggedIn -> Icons.Default.Person
                         else -> Icons.Outlined.Person
                     },
-                    contentDescription = stringResource(R.string.cd_user_profile)
+                    contentDescription = stringResource(R.string.cd_user_profile),
                 )
             }
         }
@@ -377,18 +365,18 @@ fun UserProfile(
         Text(
             text = stringResource(
                 R.string.trakt_user_name,
-                state.traktUser?.fullName ?: state.traktUser?.userName ?: "Stranger"
+                state.traktUser?.fullName ?: state.traktUser?.userName ?: "Stranger",
             ),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
+                .align(Alignment.CenterHorizontally),
         )
 
         Spacer(modifier = Modifier.size(24.dp))
 
         state.profileStats?.let {
-            //Stats Row
+            // Stats Row
             val lazyListState = rememberLazyListState()
             val contentPadding =
                 PaddingValues(horizontal = Layout.bodyMargin, vertical = Layout.gutter)
@@ -398,10 +386,10 @@ fun UserProfile(
                 modifier = Modifier.fillMaxWidth(),
                 flingBehavior = rememberSnapperFlingBehavior(
                     lazyListState = lazyListState,
-                    snapOffsetForItem = SnapOffsets.Start
+                    snapOffsetForItem = SnapOffsets.Start,
                 ),
                 contentPadding = contentPadding,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 item { ShowTimeStats(profileStats = state.profileStats) }
 
@@ -409,7 +397,6 @@ fun UserProfile(
             }
         }
     }
-
 }
 
 @Composable
@@ -417,41 +404,37 @@ fun ShowTimeStats(
     profileStats: ProfileStats,
     modifier: Modifier = Modifier,
 ) {
-
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
     ) {
-
         Column(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(8.dp),
         ) {
             Text(
                 text = "Show Time",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .align(Alignment.CenterHorizontally),
             )
 
             Row {
-
                 DurationInfo(
                     value = profileStats.showMonths,
-                    valueTitle = "Months"
+                    valueTitle = "Months",
                 )
 
                 DurationInfo(
                     value = profileStats.showDays,
-                    valueTitle = "Days"
+                    valueTitle = "Days",
                 )
 
                 DurationInfo(
                     value = profileStats.showHours,
-                    valueTitle = "Hours"
+                    valueTitle = "Hours",
                 )
-
             }
         }
     }
@@ -466,10 +449,9 @@ fun EpisodesStats(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
     ) {
-
         Column(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(8.dp),
         ) {
             Text(
                 text = "Episodes Watched",
@@ -477,16 +459,15 @@ fun EpisodesStats(
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .padding(start = 16.dp, end = 8.dp)
-                    .align(Alignment.CenterHorizontally)
+                    .align(Alignment.CenterHorizontally),
             )
 
             DurationInfo(
                 value = profileStats.episodesWatched,
                 valueTitle = "",
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .align(Alignment.CenterHorizontally),
             )
-
         }
     }
 }
@@ -495,21 +476,20 @@ fun EpisodesStats(
 fun DurationInfo(
     value: String,
     modifier: Modifier = Modifier,
-    valueTitle: String? = null
+    valueTitle: String? = null,
 ) {
     Column(
         modifier = modifier
             .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
         Text(
             text = value,
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
+                .align(Alignment.CenterHorizontally),
         )
 
         Spacer(modifier = Modifier.size(4.dp))
@@ -520,12 +500,11 @@ fun DurationInfo(
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .align(Alignment.CenterHorizontally),
             )
         }
     }
 }
-
 
 @Composable
 fun TrackDialog(
@@ -536,14 +515,13 @@ fun TrackDialog(
     AnimatedVisibility(
         visible = isVisible,
         enter = fadeIn(
-            initialAlpha = 0.4f
+            initialAlpha = 0.4f,
         ),
         exit = fadeOut(
             // Overwrites the default animation with tween
-            animationSpec = tween(durationMillis = 250)
-        )
+            animationSpec = tween(durationMillis = 250),
+        ),
     ) {
-
         BasicDialog(
             dialogTitle = stringResource(id = R.string.settings_title_trakt_app),
             dialogMessage = stringResource(id = R.string.trakt_description),
@@ -557,8 +535,8 @@ fun TrackDialog(
 @ThemePreviews
 @Composable
 private fun ProfileScreenPreview(
-    @PreviewParameter(PreviewParameterProvider::class)
-    state: ProfileState
+    @PreviewParameter(ProfilePreviewParameterProvider::class)
+    state: ProfileState,
 ) {
     TvManiacTheme {
         Surface {
@@ -567,7 +545,7 @@ private fun ProfileScreenPreview(
                 onLoginClicked = {},
                 onConnectClicked = {},
                 onDismissDialogClicked = {},
-                onSettingsClicked = {}
+                onSettingsClicked = {},
             )
         }
     }

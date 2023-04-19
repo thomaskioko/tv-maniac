@@ -16,7 +16,7 @@ import platform.darwin.NSObjectMeta
 
 @Inject
 class BundleResourceReader(
-    private val bundle: NSBundle = NSBundle.bundleForClass(BundleMarker)
+    private val bundle: NSBundle = NSBundle.bundleForClass(BundleMarker),
 ) : ResourceReader {
 
     override fun readResource(name: String): String {

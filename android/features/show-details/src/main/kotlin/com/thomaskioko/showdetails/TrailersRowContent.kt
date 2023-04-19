@@ -43,12 +43,12 @@ fun TrailersRowContent(
     isLoading: Boolean,
     trailersList: List<Trailer>,
     modifier: Modifier = Modifier,
-    onTrailerClicked: (Long, String) -> Unit
+    onTrailerClicked: (Long, String) -> Unit,
 ) {
     if (trailersList.isNotEmpty()) {
         TextLoadingItem(
             isLoading = isLoading,
-            text = stringResource(id = R.string.title_trailer)
+            text = stringResource(id = R.string.title_trailer),
         )
 
         val lazyListState = rememberLazyListState()
@@ -68,10 +68,9 @@ fun TrailersRowContent(
                         .clickable { onTrailerClicked(trailer.showId, trailer.key) },
                     shape = RoundedCornerShape(4.dp),
                     elevation = CardDefaults.cardElevation(
-                        defaultElevation = 4.dp
+                        defaultElevation = 4.dp,
                     ),
                 ) {
-
                     Box {
                         AsyncImageComposable(
                             model = trailer.youtubeThumbnailUrl,
@@ -84,7 +83,7 @@ fun TrailersRowContent(
                                     val gradient = Brush.verticalGradient(
                                         colors = listOf(Color.Transparent, Color.Black),
                                         startY = size.height / 3,
-                                        endY = size.height
+                                        endY = size.height,
                                     )
                                     onDrawWithContent {
                                         drawContent()
@@ -99,13 +98,11 @@ fun TrailersRowContent(
                             tint = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier
                                 .align(Alignment.Center)
-                                .size(48.dp)
+                                .size(48.dp),
                         )
                     }
-
                 }
             }
-
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -120,7 +117,7 @@ fun TrailersContentPreview() {
             TrailersRowContent(
                 isLoading = false,
                 trailersList = trailerLoaded.trailersList,
-                onTrailerClicked = { _, _ -> }
+                onTrailerClicked = { _, _ -> },
             )
         }
     }

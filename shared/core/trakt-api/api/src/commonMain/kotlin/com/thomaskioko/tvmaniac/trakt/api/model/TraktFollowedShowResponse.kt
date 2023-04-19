@@ -10,9 +10,8 @@ data class TraktFollowedShowResponse(
     @SerialName("listed_at") var listedAt: String,
     @SerialName("notes") var notes: String?,
     @SerialName("type") var type: String,
-    @SerialName("show") var show: ShowResponse
+    @SerialName("show") var show: ShowResponse,
 )
-
 
 @Serializable
 data class ShowResponse(

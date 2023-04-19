@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.show_grid
+package com.thomaskioko.tvmaniac.showsgrid
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -11,7 +11,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ShowsGridNavigationFactory(
-    private val showsGrid: ShowsGrid
+    private val showsGrid: ShowsGrid,
 ) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
@@ -27,7 +27,7 @@ class ShowsGridNavigationFactory(
                         navController.navigate("${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId")
                     },
                 )
-            }
+            },
         )
     }
 }

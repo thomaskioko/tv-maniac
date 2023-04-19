@@ -33,7 +33,7 @@ actual interface UtilPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideCoroutineScope(
-        dispatchers: AppCoroutineDispatchers
+        dispatchers: AppCoroutineDispatchers,
     ): AppCoroutineScope = AppCoroutineScope(
         default = CoroutineScope(Job() + dispatchers.computation),
         io = CoroutineScope(Job() + dispatchers.io),
@@ -59,11 +59,10 @@ actual interface UtilPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideConfigs(
-        resourceReader: YamlResourceReader
+        resourceReader: YamlResourceReader,
     ): Configs = resourceReader.readAndDecodeResource("config.yaml", Configs.serializer())
 
     @ApplicationScope
     @Provides
     fun provideResourceReader(bind: ClasspathResourceReader): ResourceReader = bind
-
 }

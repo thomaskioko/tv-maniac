@@ -1,7 +1,7 @@
-package com.thomaskioko.tvmaniac.show_grid
+package com.thomaskioko.tvmaniac.showsgrid
 
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
-import com.thomaskioko.tvmaniac.show_grid.model.TvShow
+import com.thomaskioko.tvmaniac.showsgrid.model.TvShow
 
 fun List<SelectShowsByCategory>.toTvShowList(): List<TvShow> = map { it.toTvShow() }
 

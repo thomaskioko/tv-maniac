@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.domain.showdetails.model.Season
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Show
 import com.thomaskioko.tvmaniac.domain.showdetails.model.Trailer
 
-
 sealed interface ShowDetailsState {
     object Loading : ShowDetailsState
     data class ShowDetailsLoaded(
@@ -34,7 +33,7 @@ sealed interface SeasonState {
         companion object {
             val EmptySeasons = SeasonsLoaded(
                 isLoading = true,
-                seasonsList = emptyList()
+                seasonsList = emptyList(),
             )
         }
     }
@@ -58,12 +57,11 @@ sealed interface TrailersState {
                 isLoading = true,
                 hasWebViewInstalled = false,
                 playerErrorMessage = null,
-                trailersList = emptyList()
+                trailersList = emptyList(),
             )
         }
     }
 }
-
 
 sealed interface SimilarShowsState {
     data class SimilarShowsError(val errorMessage: String) : SimilarShowsState
@@ -74,16 +72,13 @@ sealed interface SimilarShowsState {
         companion object {
             val EmptyShows = SimilarShowsLoaded(
                 isLoading = true,
-                similarShows = emptyList()
+                similarShows = emptyList(),
             )
         }
     }
 }
 
-
 sealed interface FollowShowsState {
     object Idle : FollowShowsState
     data class FollowUpdateError(val errorMessage: String) : FollowShowsState
 }
-
-

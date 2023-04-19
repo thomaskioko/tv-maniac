@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
-
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun TvManiacChip(
@@ -22,7 +21,7 @@ fun TvManiacChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     selected: Boolean = true,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     FilterChip(
         modifier = modifier,
@@ -35,7 +34,7 @@ fun TvManiacChip(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = 8.dp),
                 )
             }
         },
@@ -62,7 +61,7 @@ fun ChipItemSelectedPreview() {
             TvManiacChip(
                 selected = true,
                 text = "Season 1",
-                onClick = {}
+                onClick = {},
             )
         }
     }

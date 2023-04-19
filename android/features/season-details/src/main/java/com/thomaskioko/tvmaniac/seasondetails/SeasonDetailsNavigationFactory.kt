@@ -11,14 +11,14 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SeasonDetailsNavigationFactory(
-    private val seasonDetails: SeasonDetails
+    private val seasonDetails: SeasonDetails,
 ) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
         builder.screenComposable(
             arguments = listOf(
                 navArgument("showId") { type = NavType.LongType },
-                navArgument("seasonName") { type = NavType.StringType }
+                navArgument("seasonName") { type = NavType.StringType },
             ),
             route = "${NavigationScreen.SeasonDetailsNavScreen.route}/{showId}/{seasonName}",
             content = {
@@ -27,9 +27,9 @@ class SeasonDetailsNavigationFactory(
                     onBackClicked = { navController.popBackStack() },
                     onEpisodeClicked = {
                         // TODO:: Navigate to Episode detail module
-                    }
+                    },
                 )
-            }
+            },
         )
     }
 }

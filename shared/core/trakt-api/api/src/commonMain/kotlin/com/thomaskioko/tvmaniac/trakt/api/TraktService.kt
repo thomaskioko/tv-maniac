@@ -16,7 +16,6 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
 
-
 private const val DEFAULT_API_PAGE: Long = 1
 
 interface TraktService {
@@ -46,20 +45,20 @@ interface TraktService {
     suspend fun addShowToList(
         userSlug: String,
         listId: Long,
-        traktShowId: Long
+        traktShowId: Long,
     ): TraktAddShowToListResponse
 
     suspend fun deleteShowFromList(
         userSlug: String,
         listId: Long,
-        traktShowId: Long
+        traktShowId: Long,
     ): TraktAddRemoveShowFromListResponse
 
     suspend fun getTrendingShows(page: Long = DEFAULT_API_PAGE): ApiResponse<List<TraktShowsResponse>, ErrorResponse>
 
     suspend fun getRecommendedShows(
         page: Long = DEFAULT_API_PAGE,
-        period: String
+        period: String,
     ): ApiResponse<List<TraktShowsResponse>, ErrorResponse>
 
     suspend fun getAnticipatedShows(page: Long = DEFAULT_API_PAGE): ApiResponse<List<TraktShowsResponse>, ErrorResponse>

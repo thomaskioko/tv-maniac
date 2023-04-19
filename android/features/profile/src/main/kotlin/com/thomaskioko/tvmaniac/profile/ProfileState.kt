@@ -6,14 +6,14 @@ data class ProfileContent(
     val showTraktDialog: Boolean,
     val loggedIn: Boolean,
     val traktUser: TraktUser?,
-    val profileStats: ProfileStats?
+    val profileStats: ProfileStats?,
 ) : ProfileState {
     companion object {
         val EMPTY = ProfileContent(
             showTraktDialog = false,
             loggedIn = false,
             traktUser = null,
-            profileStats = null
+            profileStats = null,
         )
     }
 }
@@ -33,5 +33,5 @@ data class ProfileStats(
     val showDays: String,
     val showHours: String,
     val collectedShows: String,
-    val episodesWatched: String
+    val episodesWatched: String,
 )

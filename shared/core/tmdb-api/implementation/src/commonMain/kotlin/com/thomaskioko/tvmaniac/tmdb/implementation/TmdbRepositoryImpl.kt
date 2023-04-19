@@ -47,8 +47,8 @@ class TmdbRepositoryImpl(
                                         trakt_id = show.trakt_id,
                                         tmdb_id = tmdbId,
                                         poster_url = formatterUtil.formatTmdbPosterPath(response.body.posterPath),
-                                        backdrop_url = formatterUtil.formatTmdbPosterPath(response.body.backdropPath)
-                                    )
+                                        backdrop_url = formatterUtil.formatTmdbPosterPath(response.body.backdropPath),
+                                    ),
                                 )
                             }
                         }

@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.util
 
-
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.util.DateFormatter
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
-import platform.Foundation.*
+import platform.Foundation.NSDate
+import platform.Foundation.NSDateFormatter
+import platform.Foundation.NSISO8601DateFormatter
 
 @Inject
 class IosDateFormatter : DateFormatter {
@@ -18,8 +18,6 @@ class IosDateFormatter : DateFormatter {
             val date = getDateFromIso8601Timestamp(dateString) ?: return ""
 
             val dateFormatter = NSDateFormatter()
-            dateFormatter.timeZone = NSTimeZone.localTimeZone
-            dateFormatter.locale = NSLocale.autoupdatingCurrentLocale
             dateFormatter.dateFormat = "yyyy-MM-dd"
 
             result = dateFormatter.stringFromDate(date)

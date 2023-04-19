@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
-
 class FakeShowsRepository : ShowsRepository {
 
     private var featuredResult = flowOf<Either<Failure, List<SelectShowsByCategory>>>()
@@ -57,7 +56,7 @@ class FakeShowsRepository : ShowsRepository {
     override fun observeShow(traktId: Long): Flow<Either<Failure, SelectByShowId>> = showResult
 
     override fun observeCachedShows(
-        categoryId: Long
+        categoryId: Long,
     ): Flow<Either<Failure, List<SelectShowsByCategory>>> = featuredResult
 
     override fun fetchTrendingShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
@@ -87,5 +86,4 @@ class FakeShowsRepository : ShowsRepository {
     override suspend fun updateFollowedShow(traktId: Long, addToWatchList: Boolean) {}
 
     override suspend fun fetchShows() {}
-
 }

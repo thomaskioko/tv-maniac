@@ -8,7 +8,7 @@ import okio.Path.Companion.toPath
 
 fun createDataStore(
     coroutineScope: CoroutineScope,
-    producePath: () -> String
+    producePath: () -> String,
 ): DataStore<Preferences> = PreferenceDataStoreFactory.createWithPath(
     corruptionHandler = null,
     migrations = emptyList(),

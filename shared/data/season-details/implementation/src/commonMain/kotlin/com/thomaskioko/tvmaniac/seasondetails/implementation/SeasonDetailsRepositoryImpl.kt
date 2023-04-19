@@ -42,8 +42,8 @@ class SeasonDetailsRepositoryImpl(
                 when (it) {
                     is ApiResponse.Success -> seasonCache.insertSeasons(
                         it.body.toSeasonCacheList(
-                            traktId
-                        )
+                            traktId,
+                        ),
                     )
 
                     is ApiResponse.Error.GenericError -> {
@@ -63,7 +63,7 @@ class SeasonDetailsRepositoryImpl(
                 }
             },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatcher.io
+            coroutineDispatcher = dispatcher.io,
         )
 
     override fun observeSeasonDetailsStream(traktId: Long): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
@@ -76,12 +76,11 @@ class SeasonDetailsRepositoryImpl(
             fetch = { traktService.getSeasonEpisodes(traktId) },
             saveFetchResult = { mapResponse(traktId, it) },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatcher.io
+            coroutineDispatcher = dispatcher.io,
         )
 
     override fun observeSeasonDetails(): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
         flow {
-
             datastore.getSeasonId()
                 .collect {
                     seasonCache.observeShowEpisodes(it)
@@ -90,10 +89,9 @@ class SeasonDetailsRepositoryImpl(
                 }
         }
 
-
     private fun mapResponse(
         showId: Long,
-        response: ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse>
+        response: ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse>,
     ) {
         when (response) {
             is ApiResponse.Success -> {
@@ -105,7 +103,7 @@ class SeasonDetailsRepositoryImpl(
                             show_id = showId,
                             season_id = season.ids.trakt.toLong(),
                             season_number = season.number.toLong(),
-                        )
+                        ),
                     )
                 }
             }

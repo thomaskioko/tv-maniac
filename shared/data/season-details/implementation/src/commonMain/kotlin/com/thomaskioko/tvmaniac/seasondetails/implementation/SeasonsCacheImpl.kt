@@ -14,7 +14,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class SeasonsCacheImpl(
     private val database: TvManiacDatabase,
-    private val dispatcher: AppCoroutineDispatchers
+    private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonsCache {
 
     private val seasonQueries get() = database.seasonQueries
@@ -47,7 +47,7 @@ class SeasonsCacheImpl(
             database.seasonEpisodesQueries.insertOrReplace(
                 show_id = entity.show_id,
                 season_id = entity.season_id,
-                season_number = entity.season_number
+                season_number = entity.season_number,
             )
         }
     }

@@ -15,8 +15,8 @@ val episodes = listOf(
         runtime = 45,
         voteCount = 4958,
         episodeNumber = "01",
-        seasonEpisodeNumber = "S00 | E01"
-    )
+        seasonEpisodeNumber = "S00 | E01",
+    ),
 )
 
 val seasonDetailsList = listOf(
@@ -25,11 +25,11 @@ val seasonDetailsList = listOf(
         seasonName = "Season 01",
         episodeCount = 1,
         watchProgress = 0.0f,
-        episodes = episodes
-    )
+        episodes = episodes,
+    ),
 )
 
 val seasonDetailsLoaded = SeasonDetailsLoaded(
     showTitle = "Loki",
-    seasonDetailsList = seasonDetailsList
+    seasonDetailsList = seasonDetailsList,
 )

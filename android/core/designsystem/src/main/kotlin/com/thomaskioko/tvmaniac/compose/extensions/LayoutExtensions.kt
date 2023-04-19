@@ -65,6 +65,6 @@ fun Modifier.bodyWidth() = fillMaxWidth()
         padding(
             WindowInsets.systemBars
                 .only(WindowInsetsSides.Horizontal)
-                .asPaddingValues()
+                .asPaddingValues(),
         )
     }

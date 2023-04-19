@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.domain.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.domain.seasondetails.model.SeasonDetails
 
-
 val episode = Episode(
     id = 2534997,
     episodeNumberTitle = "E01 • Glorious Purpose",
@@ -18,7 +17,7 @@ val episode = Episode(
     imageUrl = "",
     episodeNumber = "01",
     episodeTitle = "Glorious Purpose",
-    seasonEpisodeNumber = "S01 | E01"
+    seasonEpisodeNumber = "S01 | E01",
 )
 
 val seasonDetails = SeasonDetails(
@@ -28,7 +27,7 @@ val seasonDetails = SeasonDetails(
     watchProgress = 0.4f,
     episodes = List(8) {
         episode
-    }
+    },
 )
 
 class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsState> {
@@ -37,9 +36,9 @@ class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsSta
             return sequenceOf(
                 SeasonDetailsLoaded(
                     showTitle = "Loki",
-                    seasonDetailsList = listOf(seasonDetails)
+                    seasonDetailsList = listOf(seasonDetails),
                 ),
-                LoadingError(message = "Something went Wrong ")
+                LoadingError(message = "Something went Wrong "),
             )
         }
 }

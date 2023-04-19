@@ -13,7 +13,7 @@ inline fun NavGraphBuilder.screenComposable(
     route: String,
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
-    crossinline content: @Composable (NavBackStackEntry) -> Unit
+    crossinline content: @Composable (NavBackStackEntry) -> Unit,
 ) {
     composable(route, arguments, deepLinks) { navBackStackEntry ->
         content(navBackStackEntry)
@@ -25,10 +25,9 @@ inline fun NavGraphBuilder.bottomSheetComposable(
     route: String,
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
-    crossinline content: @Composable (NavBackStackEntry) -> Unit
+    crossinline content: @Composable (NavBackStackEntry) -> Unit,
 ) {
     bottomSheet(route, arguments, deepLinks) { navBackStackEntry ->
         content(navBackStackEntry)
     }
 }
-

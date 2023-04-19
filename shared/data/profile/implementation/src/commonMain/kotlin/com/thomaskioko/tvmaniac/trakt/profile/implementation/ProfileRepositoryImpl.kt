@@ -64,7 +64,7 @@ class ProfileRepositoryImpl constructor(
                 }
             },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatchers.io
+            coroutineDispatcher = dispatchers.io,
         )
 
     override fun observeStats(slug: String, refresh: Boolean): Flow<Either<Failure, User_stats>> =
@@ -74,7 +74,7 @@ class ProfileRepositoryImpl constructor(
             fetch = { traktService.getUserStats(slug) },
             saveFetchResult = { statsCache.insert(mapper.toTraktStats(slug, it)) },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatchers.io
+            coroutineDispatcher = dispatchers.io,
         )
 
     override fun observeCreateTraktList(userSlug: String): Flow<Either<Failure, Trakt_shows_list>> =
@@ -84,12 +84,12 @@ class ProfileRepositoryImpl constructor(
             fetch = { traktService.createFollowingList(userSlug) },
             saveFetchResult = { favoriteListCache.insert(mapper.toTraktList(it)) },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatchers.io
+            coroutineDispatcher = dispatchers.io,
         )
 
     override fun observeUpdateFollowedShow(
         traktId: Long,
-        addToWatchList: Boolean
+        addToWatchList: Boolean,
     ): Flow<Either<Failure, Unit>> = networkBoundResult(
         query = { flowOf(Unit) },
         shouldFetch = { userCache.getMe() != null },
@@ -110,15 +110,15 @@ class ProfileRepositoryImpl constructor(
                     Followed_shows(
                         id = traktId,
                         synced = true,
-                        created_at = dateFormatter.getTimestampMilliseconds()
-                    )
+                        created_at = dateFormatter.getTimestampMilliseconds(),
+                    ),
                 )
 
                 else -> followedCache.removeShow(traktId)
             }
         },
         exceptionHandler = exceptionHandler,
-        coroutineDispatcher = dispatchers.io
+        coroutineDispatcher = dispatchers.io,
     )
 
     override suspend fun fetchTraktWatchlistShows() {
@@ -138,15 +138,14 @@ class ProfileRepositoryImpl constructor(
                 if (user.slug.isNotBlank()) {
                     followedCache.getUnsyncedFollowedShows()
                         .map {
-
                             traktService.addShowToWatchList(it.id)
 
                             followedCache.insert(
                                 Followed_shows(
                                     id = it.id,
                                     synced = true,
-                                    created_at = dateFormatter.getTimestampMilliseconds()
-                                )
+                                    created_at = dateFormatter.getTimestampMilliseconds(),
+                                ),
                             )
                         }
                 }

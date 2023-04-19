@@ -12,5 +12,5 @@ data class TrailerResponse(
     @SerialName("name") val name: String,
     @SerialName("site") val site: String,
     @SerialName("size") val size: Int,
-    @SerialName("type") val type: String
+    @SerialName("type") val type: String,
 )

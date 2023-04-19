@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.show_grid
+package com.thomaskioko.tvmaniac.showsgrid
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.thomaskioko.tvmaniac.category.api.model.Category
+import com.thomaskioko.tvmaniac.category.api.model.getCategory
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -42,31 +42,27 @@ import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.show_grid.model.TvShow
+import com.thomaskioko.tvmaniac.showsgrid.model.TvShow
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-
 
 typealias ShowsGrid = @Composable (
     onBackClicked: () -> Unit,
     openShowDetails: (showId: Long) -> Unit,
 ) -> Unit
 
-
 @Inject
 @Composable
 fun ShowsGrid(
     viewModelFactory: (SavedStateHandle) -> ShowGridViewModel,
     @Assisted onBackClicked: () -> Unit,
-    @Assisted openShowDetails: (showId: Long) -> Unit
+    @Assisted openShowDetails: (showId: Long) -> Unit,
 ) {
-
     GridScreen(
         viewModel = viewModel(factory = viewModelFactory),
         openShowDetails = openShowDetails,
-        onBackClicked = onBackClicked
+        onBackClicked = onBackClicked,
     )
-
 }
 
 @Composable
@@ -76,16 +72,15 @@ internal fun GridScreen(
     viewModel: ShowGridViewModel,
     modifier: Modifier = Modifier,
 ) {
-
     val gridViewState by viewModel.state.collectAsStateWithLifecycle()
 
     GridScreen(
         onBackClicked = onBackClicked,
         state = gridViewState,
         modifier = modifier,
-        title = Category[viewModel.showType].title, //TODO:: Remove this and do the mapping from the state machine
+        title = viewModel.showType.getCategory().title, // TODO:: Remove this and do the mapping from the state machine
         onRetry = { viewModel.dispatch(ReloadShows(viewModel.showType)) },
-        onShowClicked = { openShowDetails(it) }
+        onShowClicked = { openShowDetails(it) },
     )
 }
 
@@ -103,7 +98,7 @@ private fun GridScreen(
         topBar = {
             TvManiacTopBar(
                 title = title,
-                onBackClick = onBackClicked
+                onBackClick = onBackClicked,
             )
         },
         modifier = Modifier
@@ -113,7 +108,7 @@ private fun GridScreen(
             LoadingContent -> LoadingIndicator(
                 modifier = Modifier
                     .fillMaxSize()
-                    .wrapContentSize(Alignment.Center)
+                    .wrapContentSize(Alignment.Center),
             )
 
             is LoadingContentError -> ErrorUi(
@@ -121,7 +116,7 @@ private fun GridScreen(
                 onRetry = onRetry,
                 modifier = Modifier
                     .fillMaxSize()
-                    .wrapContentSize(Alignment.Center)
+                    .wrapContentSize(Alignment.Center),
             )
 
             is ShowsLoaded -> GridContent(
@@ -129,7 +124,7 @@ private fun GridScreen(
                     .fillMaxSize(),
                 contentPadding = contentPadding,
                 list = state.list,
-                onItemClicked = onShowClicked
+                onItemClicked = onShowClicked,
             )
         }
     }
@@ -141,9 +136,8 @@ fun GridContent(
     list: List<TvShow>,
     contentPadding: PaddingValues,
     onItemClicked: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-
     val listState = rememberLazyGridState()
 
     LazyVerticalGrid(
@@ -152,30 +146,28 @@ fun GridContent(
         columns = GridCells.Fixed(3),
         contentPadding = contentPadding.copy(copyTop = false),
     ) {
-
         items(list) { show ->
 
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier
-                    .padding(horizontal = 2.dp)
+                    .padding(horizontal = 2.dp),
             ) {
                 Box(
                     modifier = Modifier
                         .weight(1F)
                         .align(Alignment.Top)
                         .padding(2.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
-
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .animateContentSize()
+                            .animateContentSize(),
                     ) {
                         Card(
                             elevation = CardDefaults.cardElevation(
-                                defaultElevation = 4.dp
+                                defaultElevation = 4.dp,
                             ),
                             modifier = Modifier.clickable { onItemClicked(show.traktId) },
                         ) {
@@ -183,14 +175,13 @@ fun GridContent(
                                 model = show.posterImageUrl,
                                 contentDescription = stringResource(
                                     R.string.cd_show_poster,
-                                    show.title
+                                    show.title,
                                 ),
                                 modifier = Modifier
                                     .weight(1F)
                                     .aspectRatio(2 / 3f),
                             )
                         }
-
                     }
                 }
             }
@@ -202,7 +193,7 @@ fun GridContent(
 @Composable
 private fun ShowsGridContentPreview(
     @PreviewParameter(GridPreviewParameterProvider::class)
-    state: GridState
+    state: GridState,
 ) {
     TvManiacTheme {
         Surface {
@@ -211,7 +202,7 @@ private fun ShowsGridContentPreview(
                 title = "Anticipated",
                 onShowClicked = {},
                 onBackClicked = {},
-                onRetry = {}
+                onRetry = {},
             )
         }
     }

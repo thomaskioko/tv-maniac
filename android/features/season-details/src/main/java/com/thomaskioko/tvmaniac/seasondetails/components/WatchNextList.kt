@@ -38,18 +38,17 @@ import com.thomaskioko.tvmaniac.seasondetails.episode
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
-
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
 fun WatchNextContent(
     episodeList: List<Episode>?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     episodeList?.let {
         Box(
             modifier = modifier
                 .fillMaxWidth(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -67,7 +66,6 @@ fun WatchNextContent(
             state = lazyListState,
             flingBehavior = rememberSnapperFlingBehavior(lazyListState),
         ) {
-
             itemsIndexed(episodeList) { index, episode ->
                 val value = if (index == 0) 32 else 8
                 Spacer(modifier = Modifier.width(value.dp))
@@ -89,7 +87,6 @@ fun WatchNextItem(
     modifier: Modifier = Modifier,
     onEpisodeClicked: (Long) -> Unit = {},
 ) {
-
     Card(
         shape = RectangleShape,
         modifier = modifier
@@ -97,16 +94,15 @@ fun WatchNextItem(
             .clickable { onEpisodeClicked(episode.id) },
     ) {
         ConstraintLayout(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
-
             val (episodeTitle, image, overview, watchedStatusIcon) = createRefs()
 
             AsyncImageComposable(
                 model = episode.imageUrl,
                 contentDescription = stringResource(
                     R.string.cd_show_poster,
-                    episode.episodeNumberTitle
+                    episode.episodeNumberTitle,
                 ),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -131,12 +127,12 @@ fun WatchNextItem(
                             start = image.end,
                             end = watchedStatusIcon.start,
                             startMargin = 8.dp,
-                            bias = 0f
+                            bias = 0f,
                         )
                         top.linkTo(parent.top, 16.dp)
 
                         width = Dimension.preferredWrapContent
-                    }
+                    },
             )
 
             Text(
@@ -153,7 +149,7 @@ fun WatchNextItem(
                         bottom.linkTo(parent.bottom)
 
                         width = Dimension.fillToConstraints
-                    }
+                    },
             )
 
             IconButton(
@@ -162,14 +158,14 @@ fun WatchNextItem(
                     .constrainAs(watchedStatusIcon) {
                         centerVerticallyTo(parent)
                         end.linkTo(parent.end, 8.dp)
-                    }
+                    },
             ) {
                 Icon(
                     imageVector = Icons.Filled.CheckCircle,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(32.dp),
                 )
             }
         }
@@ -182,7 +178,7 @@ fun WatchlistRowItemPreview() {
     TvManiacTheme {
         Surface {
             WatchNextItem(
-                episode = episode
+                episode = episode,
             )
         }
     }

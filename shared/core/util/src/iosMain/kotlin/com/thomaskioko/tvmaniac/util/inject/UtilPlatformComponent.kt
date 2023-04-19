@@ -1,10 +1,5 @@
 package com.thomaskioko.tvmaniac.util.inject
 
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
-import com.thomaskioko.tvmaniac.util.model.Configs
-import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
-import com.thomaskioko.tvmaniac.util.scope.NsQueueCoroutineScope
 import com.thomaskioko.tvmaniac.util.AppUtils
 import com.thomaskioko.tvmaniac.util.BundleProvider
 import com.thomaskioko.tvmaniac.util.BundleResourceReader
@@ -17,6 +12,11 @@ import com.thomaskioko.tvmaniac.util.IosExceptionHandler
 import com.thomaskioko.tvmaniac.util.IosFormatterUtil
 import com.thomaskioko.tvmaniac.util.ResourceReader
 import com.thomaskioko.tvmaniac.util.YamlResourceReader
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
+import com.thomaskioko.tvmaniac.util.model.Configs
+import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
+import com.thomaskioko.tvmaniac.util.scope.NsQueueCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -52,7 +52,7 @@ actual interface UtilPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideAppCoroutineScope(
-        dispatchers: AppCoroutineDispatchers
+        dispatchers: AppCoroutineDispatchers,
     ): AppCoroutineScope = AppCoroutineScope(
         default = CoroutineScope(Job() + dispatchers.computation),
         io = CoroutineScope(Job() + dispatchers.io),
@@ -66,9 +66,8 @@ actual interface UtilPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideConfigs(
-        resourceReader: YamlResourceReader
+        resourceReader: YamlResourceReader,
     ): Configs = resourceReader.readAndDecodeResource("config.yaml", Configs.serializer())
-
 
     @ApplicationScope
     @Provides

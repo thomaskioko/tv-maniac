@@ -10,7 +10,6 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
 
     @Test
     fun insertEpisodes_andEpisodeByEpisodeId_returnsExpectedData() {
-
         getEpisodeCacheList().insertEpisodeEntityQuery()
         val entity = getEpisodeCacheList().first()
 
@@ -38,7 +37,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             episode_number = episode_number,
             tmdb_id = tmdb_id,
             ratings = ratings,
-            runtime = runtime
+            runtime = runtime,
         )
     }
 }

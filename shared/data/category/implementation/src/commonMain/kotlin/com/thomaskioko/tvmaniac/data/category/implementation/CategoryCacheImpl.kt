@@ -7,7 +7,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class CategoryCacheImpl(
-    private val database: TvManiacDatabase
+    private val database: TvManiacDatabase,
 ) : CategoryCache {
 
     private val showCategoryQuery get() = database.show_categoryQueries
@@ -16,7 +16,7 @@ class CategoryCacheImpl(
         database.transaction {
             showCategoryQuery.insertOrReplace(
                 trakt_id = category.trakt_id,
-                category_id = category.category_id
+                category_id = category.category_id,
             )
         }
     }

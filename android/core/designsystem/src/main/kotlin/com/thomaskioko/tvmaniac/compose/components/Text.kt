@@ -28,20 +28,19 @@ fun BoxTextItems(
     title: String,
     modifier: Modifier = Modifier,
     label: String? = null,
-    onMoreClicked: () -> Unit = { }
+    onMoreClicked: () -> Unit = { },
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 16.dp)
+            .padding(start = 16.dp),
     ) {
-
         Text(
             text = title,
             modifier = Modifier.align(Alignment.CenterStart),
             style = MaterialTheme.typography.titleMedium.copy(
                 color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = Bold
+                fontWeight = Bold,
             ),
         )
 
@@ -53,8 +52,8 @@ fun BoxTextItems(
                     .clickable { onMoreClicked() }
                     .padding(16.dp),
                 style = MaterialTheme.typography.labelMedium.copy(
-                    color = MaterialTheme.colorScheme.secondary
-                )
+                    color = MaterialTheme.colorScheme.secondary,
+                ),
             )
         }
     }
@@ -66,36 +65,33 @@ fun TextLoadingItem(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-
     Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(16.dp),
     ) {
-
         Text(
             text = text,
             modifier = Modifier
                 .align(Alignment.CenterStart),
             style = MaterialTheme.typography.titleMedium.copy(
                 color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = Bold
+                fontWeight = Bold,
             ),
         )
 
         AnimatedVisibility(
             visible = isLoading,
             modifier = Modifier
-                .align(Alignment.CenterEnd)
+                .align(Alignment.CenterEnd),
         ) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .size(32.dp),
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.secondary,
             )
         }
     }
-
 }
 
 @Composable
@@ -119,16 +115,15 @@ fun ExpandingText(
         modifier = modifier
             .clickable(
                 enabled = expandable && canTextExpand,
-                onClick = { expanded = !expanded }
+                onClick = { expanded = !expanded },
             ),
         onTextLayout = {
             if (!expanded) {
                 canTextExpand = it.hasVisualOverflow
             }
-        }
+        },
     )
 }
-
 
 @ThemePreviews
 @Composable
@@ -137,16 +132,15 @@ fun ExpandingTextPreview() {
         Surface {
             ExpandingText(
                 text = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                        "an alternate version of Loki is brought to the mysterious Time Variance " +
-                        "Authority, a bureaucratic organization that exists outside of time and " +
-                        "space and monitors the timeline. They give Loki a choice: face being " +
-                        "erased from existence due to being a “time variant”or help fix " +
-                        "the timeline and stop a greater threat."
+                    "an alternate version of Loki is brought to the mysterious Time Variance " +
+                    "Authority, a bureaucratic organization that exists outside of time and " +
+                    "space and monitors the timeline. They give Loki a choice: face being " +
+                    "erased from existence due to being a “time variant”or help fix " +
+                    "the timeline and stop a greater threat.",
             )
         }
     }
 }
-
 
 @ThemePreviews
 @Composable
@@ -155,7 +149,7 @@ fun BoxTextItemsPreview() {
         Surface {
             BoxTextItems(
                 title = "Being Watched",
-                label = "More"
+                label = "More",
             )
         }
     }
@@ -168,7 +162,7 @@ fun TextLoadingItemPreview() {
         Surface {
             TextLoadingItem(
                 text = "Seasons",
-                isLoading = true
+                isLoading = true,
             )
         }
     }

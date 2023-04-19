@@ -25,7 +25,7 @@ fun TvPosterCard(
     title: String,
     modifier: Modifier = Modifier,
     imageWidth: Dp = 120.dp,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     Card(
         modifier = modifier
@@ -33,19 +33,18 @@ fun TvPosterCard(
             .clickable { onClick() },
         shape = RectangleShape,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
+            defaultElevation = 4.dp,
         ),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
         Box {
-
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .padding(4.dp)
-                    .align(Alignment.Center)
+                    .align(Alignment.Center),
             )
 
             AsyncImageComposable(

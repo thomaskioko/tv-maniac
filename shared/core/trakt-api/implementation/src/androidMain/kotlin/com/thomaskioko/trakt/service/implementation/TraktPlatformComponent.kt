@@ -10,7 +10,6 @@ import me.tatarka.inject.annotations.Provides
 
 actual interface TraktPlatformComponent {
 
-
     @OptIn(ExperimentalSerializationApi::class)
     @ApplicationScope
     @Provides
@@ -24,7 +23,7 @@ actual interface TraktPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideTraktHttpClientEngine(
-        interceptor: TraktAuthInterceptor
+        interceptor: TraktAuthInterceptor,
     ): TraktHttpClientEngine = OkHttp.create {
         addInterceptor(interceptor)
     }
@@ -34,15 +33,14 @@ actual interface TraktPlatformComponent {
     fun provideHttpClient(
         configs: Configs,
         json: TraktJson,
-        httpClientEngine: TraktHttpClientEngine
+        httpClientEngine: TraktHttpClientEngine,
     ): TraktHttpClient = traktHttpClient(
         isDebug = configs.isDebug,
         json = json,
-        httpClientEngine = httpClientEngine
+        httpClientEngine = httpClientEngine,
     )
 
     @ApplicationScope
     @Provides
     fun provideTraktService(bind: TraktServiceImpl): TraktService = bind
-
 }

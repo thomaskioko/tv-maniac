@@ -5,11 +5,11 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.Theme
 import com.thomaskioko.tvmaniac.datastore.implementation.DatastoreRepositoryImpl
 import com.thomaskioko.tvmaniac.datastore.implementation.DatastoreRepositoryImpl.Companion.KEY_THEME
 import com.thomaskioko.tvmaniac.datastore.implementation.IgnoreIos
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,14 +36,13 @@ class DatastoreRepositoryImplTest {
     private val coroutineScope = AppCoroutineScope(
         io = preferencesScope,
         default = preferencesScope,
-        main = preferencesScope
+        main = preferencesScope,
     )
 
     private val repository = DatastoreRepositoryImpl(
-        coroutineScope= coroutineScope,
-        dataStore = dataStore
+        coroutineScope = coroutineScope,
+        dataStore = dataStore,
     )
-
 
     @AfterTest
     fun clearDataStore() = runTest {
@@ -64,11 +63,9 @@ class DatastoreRepositoryImplTest {
     @IgnoreIos
     @Test
     fun when_theme_is_changed_correct_value_is_set() = runTest {
-
         repository.observeTheme().test {
-
             repository.saveTheme(Theme.DARK)
-            awaitItem() shouldBe Theme.SYSTEM //Default theme
+            awaitItem() shouldBe Theme.SYSTEM // Default theme
             awaitItem() shouldBe Theme.DARK
         }
     }

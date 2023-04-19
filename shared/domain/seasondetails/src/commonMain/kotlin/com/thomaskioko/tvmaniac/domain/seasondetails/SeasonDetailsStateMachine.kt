@@ -17,7 +17,6 @@ class SeasonDetailsStateMachine constructor(
     private val episodeRepository: EpisodeRepository,
 ) : FlowReduxStateMachine<SeasonDetailsState, SeasonDetailsAction>(initialState = Loading) {
 
-
     init {
         spec {
             inState<Loading> {
@@ -36,7 +35,7 @@ class SeasonDetailsStateMachine constructor(
                             state.mutate {
                                 copy(seasonDetailsList = it.toSeasonWithEpisodes())
                             }
-                        }
+                        },
                     )
                 }
 
@@ -55,7 +54,7 @@ class SeasonDetailsStateMachine constructor(
                                 is Either.Left -> LoadingError(result.error.errorMessage)
                                 is Either.Right -> SeasonDetailsLoaded(
                                     showTitle = result.getTitle(),
-                                    seasonDetailsList = result.toSeasonWithEpisodes()
+                                    seasonDetailsList = result.toSeasonWithEpisodes(),
                                 )
                             }
                         }
@@ -68,7 +67,7 @@ class SeasonDetailsStateMachine constructor(
 
     private suspend fun fetchSeasonDetails(
         state: State<Loading>,
-        action: LoadSeasonDetails
+        action: LoadSeasonDetails,
     ): ChangedState<SeasonDetailsState> {
         lateinit var nextState: SeasonDetailsState
 
@@ -80,13 +79,12 @@ class SeasonDetailsStateMachine constructor(
                     {
                         SeasonDetailsLoaded(
                             showTitle = it.getTitle(),
-                            seasonDetailsList = it.toSeasonWithEpisodes()
+                            seasonDetailsList = it.toSeasonWithEpisodes(),
                         )
-                    }
+                    },
                 )
             }
 
         return state.override { nextState }
     }
 }
-

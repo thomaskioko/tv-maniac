@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.show_grid
+package com.thomaskioko.tvmaniac.showsgrid
 
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
@@ -36,7 +36,7 @@ class GridStateMachine(
 
     private suspend fun loadShowData(
         state: State<LoadingContent>,
-        action: LoadShows
+        action: LoadShows,
     ): ChangedState<GridState> {
         var nextState: ChangedState<GridState> = state.noChange()
         repository.observeCachedShows(action.category)
@@ -45,7 +45,7 @@ class GridStateMachine(
                     is Either.Left -> state.override { LoadingContentError(result.error.errorMessage) }
                     is Either.Right -> state.override {
                         ShowsLoaded(
-                            list = result.data?.toTvShowList() ?: emptyList()
+                            list = result.data?.toTvShowList() ?: emptyList(),
                         )
                     }
                 }

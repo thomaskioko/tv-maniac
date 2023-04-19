@@ -13,15 +13,15 @@ data class TraktUserResponse(
 
 @Serializable
 data class Ids(
-    @SerialName("slug") val slug: String
+    @SerialName("slug") val slug: String,
 )
 
 @Serializable
 data class ProfileImages(
-    @SerialName("avatar") val avatar: Avatar
+    @SerialName("avatar") val avatar: Avatar,
 ) {
     @Serializable
     data class Avatar(
-        @SerialName("full") val full: String
+        @SerialName("full") val full: String,
     )
 }

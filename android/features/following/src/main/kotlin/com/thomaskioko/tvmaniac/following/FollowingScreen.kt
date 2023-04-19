@@ -45,7 +45,6 @@ fun Following(
     viewModelFactory: () -> FollowingViewModel,
     @Assisted onShowClicked: (showId: Long) -> Unit,
 ) {
-
     FollowingScreen(
         viewModel = viewModel(factory = viewModelFactory),
         onShowClicked = onShowClicked,
@@ -74,7 +73,7 @@ private fun FollowingScreen(
     state: FollowingState,
     onShowClicked: (showId: Long) -> Unit,
     modifier: Modifier = Modifier,
-    onRetry: () -> Unit = {}
+    onRetry: () -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier
@@ -87,7 +86,7 @@ private fun FollowingScreen(
                     LoadingIndicator(
                         modifier = Modifier
                             .fillMaxSize()
-                            .wrapContentSize(Alignment.Center)
+                            .wrapContentSize(Alignment.Center),
                     )
 
                 is ErrorLoadingShows ->
@@ -96,25 +95,25 @@ private fun FollowingScreen(
                         errorMessage = state.message,
                         modifier = Modifier
                             .fillMaxSize()
-                            .wrapContentSize(Alignment.Center)
+                            .wrapContentSize(Alignment.Center),
                     )
 
                 is FollowingContent -> {
                     when {
                         state.list.isEmpty() -> EmptyContent(
                             painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                            message = stringResource(id = R.string.msg_empty_favorites)
+                            message = stringResource(id = R.string.msg_empty_favorites),
                         )
 
                         else -> FollowingGridContent(
                             list = state.list,
                             paddingValues = contentPadding,
-                            onItemClicked = onShowClicked
+                            onItemClicked = onShowClicked,
                         )
                     }
                 }
             }
-        }
+        },
     )
 }
 
@@ -144,13 +143,13 @@ private fun FollowingGridContent(
 @Composable
 private fun FollowingScreenPreview(
     @PreviewParameter(FollowingPreviewParameterProvider::class)
-    state: FollowingState
+    state: FollowingState,
 ) {
     TvManiacTheme {
         Surface {
             FollowingScreen(
                 state = state,
-                onShowClicked = {}
+                onShowClicked = {},
             )
         }
     }

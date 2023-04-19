@@ -11,5 +11,5 @@ data class TraktCreateListRequest(
     @SerialName("sort_how") val sortHow: String = "asc",
     @SerialName("description") val description: String = "Your list of followed shows on TvManiac.",
     @SerialName("display_numbers") val displayNumbers: Boolean = false,
-    @SerialName("allow_comments") val allowComments: Boolean = false
+    @SerialName("allow_comments") val allowComments: Boolean = false,
 )

@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.resources.R
 
-
 @Composable
 fun TvManiacTextButton(
     onClick: () -> Unit,
@@ -39,14 +38,13 @@ fun TvManiacTextButton(
     buttonColors: ButtonColors = ButtonDefaults.textButtonColors(),
     content: @Composable RowScope.() -> Unit,
 ) {
-
     TextButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
         colors = buttonColors,
         content = content,
-        shape = shape
+        shape = shape,
     )
 }
 
@@ -78,7 +76,7 @@ fun TvManiacOutlinedButton(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier
-                        .padding(textPadding)
+                        .padding(textPadding),
                 )
             },
             leadingIcon = leadingIcon,
@@ -115,7 +113,7 @@ fun TvManiacOutlinedButton(
             },
         ),
 
-        )
+    )
 }
 
 @Composable
@@ -151,17 +149,17 @@ fun TvManiacTextButtonPreview() {
                 enabled = false,
                 buttonColors = ButtonDefaults.buttonColors(
                     contentColor = MaterialTheme.colorScheme.onBackground,
-                    containerColor = MaterialTheme.colorScheme.secondary
+                    containerColor = MaterialTheme.colorScheme.secondary,
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(2.dp)
-                    .background(color = MaterialTheme.colorScheme.secondary)
+                    .background(color = MaterialTheme.colorScheme.secondary),
             ) {
                 Text(
                     text = "Horror",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSecondary
+                    color = MaterialTheme.colorScheme.onSecondary,
                 )
             }
         }
@@ -181,12 +179,12 @@ fun TvManiacAlphaTextButtonPreview() {
                     containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
                 ),
                 modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f))
+                    .background(color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f)),
             ) {
                 Text(
                     text = "Horror",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
                 )
             }
         }
@@ -207,8 +205,8 @@ fun TvManiacOutlinedButtonPreview() {
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(
                             MaterialTheme.colorScheme.secondary.copy(
-                                alpha = 0.8F
-                            )
+                                alpha = 0.8F,
+                            ),
                         ),
                     )
                 },
@@ -217,5 +215,3 @@ fun TvManiacOutlinedButtonPreview() {
         }
     }
 }
-
-

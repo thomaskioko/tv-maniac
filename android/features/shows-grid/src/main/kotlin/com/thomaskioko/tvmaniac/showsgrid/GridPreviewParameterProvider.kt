@@ -1,8 +1,7 @@
-package com.thomaskioko.tvmaniac.show_grid
+package com.thomaskioko.tvmaniac.showsgrid
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.show_grid.model.TvShow
-
+import com.thomaskioko.tvmaniac.showsgrid.model.TvShow
 
 private val showList = List(6) {
     TvShow(
@@ -18,7 +17,7 @@ class GridPreviewParameterProvider : PreviewParameterProvider<GridState> {
         get() {
             return sequenceOf(
                 ShowsLoaded(list = showList),
-                LoadingContentError(errorMessage = "Opps! Something went wrong")
+                LoadingContentError(errorMessage = "Opps! Something went wrong"),
             )
         }
 }

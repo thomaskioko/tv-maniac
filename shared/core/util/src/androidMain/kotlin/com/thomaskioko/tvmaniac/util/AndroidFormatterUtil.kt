@@ -15,8 +15,11 @@ const val DEFAULT_IMAGE_URL =
 class AndroidFormatterUtil : FormatterUtil {
 
     override fun formatTmdbPosterPath(imageUrl: String?): String {
-        return if (imageUrl.isNullOrBlank()) DEFAULT_IMAGE_URL
-        else String.format(POSTER_PATH, imageUrl)
+        return if (imageUrl.isNullOrBlank()) {
+            DEFAULT_IMAGE_URL
+        } else {
+            String.format(POSTER_PATH, imageUrl)
+        }
     }
 
     override fun formatDouble(number: Double?, scale: Int): Double {

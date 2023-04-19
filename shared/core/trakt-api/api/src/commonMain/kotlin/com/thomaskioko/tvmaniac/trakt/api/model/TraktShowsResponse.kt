@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TraktShowsResponse(
     @SerialName("watchers") val watchers: Int? = null,
-    @SerialName("show") val show: TraktShowResponse
+    @SerialName("show") val show: TraktShowResponse,
 )
 
 @Serializable

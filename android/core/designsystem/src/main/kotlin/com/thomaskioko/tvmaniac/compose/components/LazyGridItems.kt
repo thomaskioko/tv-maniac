@@ -23,7 +23,7 @@ fun <T> LazyGridItems(
     items: List<T> = listOf(),
     rows: Int = 3,
     hPadding: Int = 8,
-    itemContent: @Composable() (LazyItemScope.(T) -> Unit)
+    itemContent: @Composable (LazyItemScope.(T) -> Unit),
 ) {
     val chunkedList = items.chunked(rows)
     LazyColumn(
@@ -33,7 +33,6 @@ fun <T> LazyGridItems(
             .padding(horizontal = hPadding.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-
         itemsIndexed(chunkedList) { _, item ->
             Row(modifier = Modifier) {
                 item.forEachIndexed { _, item ->
@@ -42,7 +41,7 @@ fun <T> LazyGridItems(
                             .weight(1F)
                             .align(Alignment.Top)
                             .padding(2.dp),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         itemContent(item)
                     }
@@ -51,7 +50,7 @@ fun <T> LazyGridItems(
                     Box(
                         modifier = Modifier
                             .weight(1F)
-                            .padding(8.dp)
+                            .padding(8.dp),
                     )
                 }
             }

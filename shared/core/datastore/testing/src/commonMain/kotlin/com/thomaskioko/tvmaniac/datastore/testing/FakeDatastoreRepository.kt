@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeDatastoreRepository : DatastoreRepository {
 
-    private val themeFlow : Channel<Theme> = Channel(Channel.UNLIMITED)
+    private val themeFlow: Channel<Theme> = Channel(Channel.UNLIMITED)
 
     suspend fun setTheme(theme: Theme) {
         themeFlow.send(theme)

@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.trakt.api.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class TraktPersonalListsResponse(
     @SerialName("allow_comments") val allowComments: Boolean,
@@ -18,6 +17,5 @@ data class TraktPersonalListsResponse(
     @SerialName("privacy") val privacy: String,
     @SerialName("sort_by") val sort_by: String,
     @SerialName("sort_how") val sort_how: String,
-    @SerialName("updated_at") val updated_at: String
+    @SerialName("updated_at") val updated_at: String,
 )
-

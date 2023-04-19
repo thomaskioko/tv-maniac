@@ -20,7 +20,6 @@ class FollowingStateMachineTest {
 
     @Test
     fun initial_state_emits_expected_result() = runTest {
-
         traktRepository.setFollowedResult(Either.Right(data = cachedShowResult))
 
         stateMachine.state.test {
@@ -28,5 +27,4 @@ class FollowingStateMachineTest {
             awaitItem() shouldBe FollowingContent(list = followedShows)
         }
     }
-
 }

@@ -1,14 +1,14 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Episodes as EpisodeCache
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.EpisodeArt
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
+import com.thomaskioko.tvmaniac.core.db.Episodes as EpisodeCache
 
 @Inject
 class EpisodesCacheImpl(
@@ -29,7 +29,7 @@ class EpisodesCacheImpl(
                 ratings = entity.ratings,
                 runtime = entity.runtime,
                 votes = entity.votes,
-                episode_number = entity.episode_number
+                episode_number = entity.episode_number,
             )
         }
     }

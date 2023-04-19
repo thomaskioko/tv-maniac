@@ -5,8 +5,8 @@ import com.thomaskioko.tvmaniac.datastore.api.Theme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlin.test.Test
 import kotlinx.coroutines.test.runTest
+import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsStateMachineTest {
@@ -24,12 +24,11 @@ class SettingsStateMachineTest {
     @Test
     fun when_theme_is_updated_expected_result_is_emitted() = runTest {
         stateMachine.state.test {
-
             awaitItem() shouldBe SettingsContent.EMPTY // Initial State
 
             stateMachine.dispatch(ChangeThemeClicked)
             awaitItem() shouldBe SettingsContent.EMPTY.copy( //  Popup is shown
-                showPopup = true
+                showPopup = true,
             )
 
             settingsRepository.setTheme(Theme.DARK)
@@ -37,11 +36,11 @@ class SettingsStateMachineTest {
 
             awaitItem() shouldBe SettingsContent.EMPTY.copy( // Theme is updated
                 showPopup = true,
-                theme = Theme.DARK
+                theme = Theme.DARK,
             )
             awaitItem() shouldBe SettingsContent.EMPTY.copy( // Popup is dismissed.
                 showPopup = false,
-                theme = Theme.DARK
+                theme = Theme.DARK,
             )
         }
     }
@@ -49,7 +48,6 @@ class SettingsStateMachineTest {
     @Test
     fun when_dialog_is_dismissed_expected_result_is_emitted() = runTest {
         stateMachine.state.test {
-
             awaitItem() shouldBe SettingsContent.EMPTY // Initial State
 
             stateMachine.dispatch(ChangeThemeClicked)

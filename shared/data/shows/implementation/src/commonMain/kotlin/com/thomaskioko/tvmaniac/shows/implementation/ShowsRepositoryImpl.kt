@@ -1,15 +1,12 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.util.DateFormatter
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.category.api.cache.CategoryCache
-import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.category.api.model.Category.ANTICIPATED
 import com.thomaskioko.tvmaniac.category.api.model.Category.FEATURED
 import com.thomaskioko.tvmaniac.category.api.model.Category.POPULAR
 import com.thomaskioko.tvmaniac.category.api.model.Category.TRENDING
+import com.thomaskioko.tvmaniac.category.api.model.getCategory
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
@@ -27,6 +24,9 @@ import com.thomaskioko.tvmaniac.shows.implementation.mapper.ShowsResponseMapper
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
+import com.thomaskioko.tvmaniac.util.DateFormatter
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -52,11 +52,11 @@ class ShowsRepositoryImpl constructor(
             fetch = { traktService.getSeasonDetails(traktId) },
             saveFetchResult = { mapAndCache(it) },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatchers.io
+            coroutineDispatcher = dispatchers.io,
         )
 
     override fun observeCachedShows(categoryId: Long): Flow<Either<Failure, List<SelectShowsByCategory>>> =
-        showsCache.observeCachedShows(Category[categoryId].id)
+        showsCache.observeCachedShows(categoryId.getCategory().id)
             .map { Either.Right(it) }
             .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
 
@@ -67,7 +67,7 @@ class ShowsRepositoryImpl constructor(
             fetch = { mapper.showsResponseToCacheList(traktService.getTrendingShows()) },
             saveFetchResult = { cacheResult(it, TRENDING.id) },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatchers.io
+            coroutineDispatcher = dispatchers.io,
         )
 
     override fun observeTrendingCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
@@ -82,7 +82,7 @@ class ShowsRepositoryImpl constructor(
             fetch = { mapper.showResponseToCacheList(traktService.getPopularShows()) },
             saveFetchResult = { cacheResult(it, POPULAR.id) },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatchers.io
+            coroutineDispatcher = dispatchers.io,
         )
 
     override fun observePopularCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
@@ -97,7 +97,7 @@ class ShowsRepositoryImpl constructor(
             fetch = { mapper.showsResponseToCacheList(traktService.getAnticipatedShows()) },
             saveFetchResult = { cacheResult(it, ANTICIPATED.id) },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatchers.io
+            coroutineDispatcher = dispatchers.io,
         )
 
     override fun observeAnticipatedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
@@ -112,7 +112,7 @@ class ShowsRepositoryImpl constructor(
             fetch = { mapper.showsResponseToCacheList(traktService.getRecommendedShows(period = "daily")) },
             saveFetchResult = { cacheResult(it, FEATURED.id) },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatchers.io
+            coroutineDispatcher = dispatchers.io,
         )
 
     override fun observeFeaturedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
@@ -121,7 +121,6 @@ class ShowsRepositoryImpl constructor(
             .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
 
     override suspend fun fetchShows() {
-
         val categories = listOf(TRENDING, POPULAR, ANTICIPATED, FEATURED)
 
         categories.forEach {
@@ -130,18 +129,17 @@ class ShowsRepositoryImpl constructor(
             showsCache.insert(mappedResult)
             categoryCache.insert(mapper.toCategoryCache(mappedResult, it.id))
         }
-
     }
 
     override suspend fun updateFollowedShow(traktId: Long, addToWatchList: Boolean) {
-        //TODO:: Check if user is signed into trakt and sync followed shows.
+        // TODO:: Check if user is signed into trakt and sync followed shows.
         when {
             addToWatchList -> followedCache.insert(
                 Followed_shows(
                     id = traktId,
                     synced = false,
-                    created_at = dateFormatter.getTimestampMilliseconds()
-                )
+                    created_at = dateFormatter.getTimestampMilliseconds(),
+                ),
             )
 
             else -> followedCache.removeShow(traktId)
@@ -165,7 +163,6 @@ class ShowsRepositoryImpl constructor(
 
             else -> throw Throwable("Unsupported type sunny")
         }
-
 
     private fun cacheResult(result: List<Show>, categoryId: Long) {
         showsCache.insert(result)
@@ -194,6 +191,5 @@ class ShowsRepositoryImpl constructor(
                 throw Throwable("$response")
             }
         }
-
     }
 }

@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.shared.base
 
 import com.thomaskioko.trakt.service.implementation.TraktPlatformComponent
-import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
-import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.core.networkutil.NetworkUtilComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
@@ -20,6 +18,8 @@ import com.thomaskioko.tvmaniac.shows.implementation.ShowsComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.inject.TmdbPlatformComponent
 import com.thomaskioko.tvmaniac.trakt.profile.implementation.ProfileComponent
+import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
+import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import me.tatarka.inject.annotations.Component
 
 @ApplicationScope

@@ -21,7 +21,7 @@ class ShowImageCacheImpl(
                 trakt_id = image.trakt_id,
                 tmdb_id = image.tmdb_id,
                 poster_url = image.poster_url,
-                backdrop_url = image.backdrop_url
+                backdrop_url = image.backdrop_url,
             )
         }
     }

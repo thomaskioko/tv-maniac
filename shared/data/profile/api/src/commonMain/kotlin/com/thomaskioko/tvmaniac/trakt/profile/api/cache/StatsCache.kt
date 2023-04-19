@@ -8,5 +8,4 @@ interface StatsCache {
     fun insert(stats: User_stats)
 
     fun observeStats(): Flow<User_stats>
-
 }

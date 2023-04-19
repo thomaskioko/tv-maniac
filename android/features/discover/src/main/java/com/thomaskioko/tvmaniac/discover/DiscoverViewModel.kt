@@ -12,7 +12,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DiscoverViewModel(
-    private val stateMachine: DiscoverStateMachine
+    private val stateMachine: DiscoverStateMachine,
 ) : ViewModel() {
 
     val state: MutableStateFlow<ShowsState> = MutableStateFlow(Loading)

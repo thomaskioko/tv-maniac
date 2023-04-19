@@ -10,7 +10,6 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import kotlinx.serialization.SerializationException
 
-
 suspend inline fun <reified T, reified E> HttpClient.safeRequest(
     exceptionHandler: ExceptionHandler,
     block: HttpRequestBuilder.() -> Unit,
@@ -35,7 +34,6 @@ suspend inline fun <reified E> ResponseException.errorBody(): E? =
         null
     }
 
-
 sealed class ApiResponse<out T, out E> {
     /**
      * Represents successful network responses (2xx).
@@ -57,6 +55,5 @@ sealed class ApiResponse<out T, out E> {
          * Represent other exceptions.
          */
         data class GenericError(val errorMessage: String?) : Error<Nothing>()
-
     }
 }

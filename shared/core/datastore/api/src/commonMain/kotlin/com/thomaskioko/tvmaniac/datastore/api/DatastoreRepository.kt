@@ -12,5 +12,5 @@ interface DatastoreRepository {
 enum class Theme {
     LIGHT,
     DARK,
-    SYSTEM
+    SYSTEM,
 }

@@ -18,7 +18,7 @@ private val LightColorScheme = lightColorScheme(
     onBackground = md_theme_light_onBackground,
     surface = md_theme_light_surface,
     onSurface = md_theme_light_onSurface,
-    outline = md_theme_light_outline
+    outline = md_theme_light_outline,
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -31,15 +31,14 @@ private val DarkColorScheme = darkColorScheme(
     onBackground = md_theme_dark_onBackground,
     surface = md_theme_dark_surface,
     onSurface = md_theme_dark_onSurface,
-    outline = md_theme_dark_outline
+    outline = md_theme_dark_outline,
 )
 
 @Composable
 fun TvManiacTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
-
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val backgroundTheme = BackgroundTheme(
         color = colorScheme.surface,
@@ -53,7 +52,7 @@ fun TvManiacTheme(
         MaterialTheme(
             colorScheme = colorScheme,
             content = content,
-            //TODO:: Add Typography
+            // TODO:: Add Typography
         )
     }
 }

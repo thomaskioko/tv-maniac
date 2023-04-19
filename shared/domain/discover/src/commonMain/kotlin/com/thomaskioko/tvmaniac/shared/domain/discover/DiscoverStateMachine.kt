@@ -16,7 +16,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class DiscoverStateMachine(
     private val showsRepository: ShowsRepository,
-    private val tmdbRepository: TmdbRepository
+    private val tmdbRepository: TmdbRepository,
 ) : FlowReduxStateMachine<ShowsState, ShowsAction>(initialState = Loading) {
 
     init {
@@ -34,7 +34,7 @@ class DiscoverStateMachine(
                                 trendingCategoryState = result.trendingCategoryState,
                                 popularCategoryState = result.popularCategoryState,
                                 anticipatedCategoryState = result.anticipatedCategoryState,
-                            )
+                            ),
                         )
                     }
                 }
@@ -47,7 +47,6 @@ class DiscoverStateMachine(
                     // TODO:: Implement reloading category data
                     state.noChange()
                 }
-
             }
 
             inState<LoadingError> {

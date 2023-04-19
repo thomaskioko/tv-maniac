@@ -3,19 +3,15 @@ package com.thomaskioko.tvmaniac.domain.trailers
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.domain.trailers.LoadingTrailers
-import com.thomaskioko.tvmaniac.domain.trailers.TrailersAction
-import com.thomaskioko.tvmaniac.domain.trailers.TrailersState
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Inject
 
-
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Inject
 class TrailersStateMachine(
-    private val trailerRepository: TrailerRepository
+    private val trailerRepository: TrailerRepository,
 ) : FlowReduxStateMachine<TrailersState, TrailersAction>(initialState = LoadingTrailers) {
 
     init {
@@ -28,7 +24,6 @@ class TrailersStateMachine(
                 on<VideoPlayerError> { action, state ->
                     state.override { TrailerError(action.errorMessage) }
                 }
-
             }
 
             inState<TrailersLoaded> {
@@ -37,7 +32,6 @@ class TrailersStateMachine(
                         copy(selectedVideoKey = action.trailerKey)
                     }
                 }
-
             }
 
             inState<TrailerError> {
@@ -50,7 +44,7 @@ class TrailersStateMachine(
 
     private suspend fun loadTrailers(
         action: LoadTrailers,
-        state: State<LoadingTrailers>
+        state: State<LoadingTrailers>,
     ): ChangedState<TrailersState> {
         var nextState: TrailersState = state.snapshot
 
@@ -61,9 +55,9 @@ class TrailersStateMachine(
                     {
                         TrailersLoaded(
                             selectedVideoKey = action.trailerId,
-                            trailersList = it.toTrailerList()
+                            trailersList = it.toTrailerList(),
                         )
-                    }
+                    },
                 )
             }
         return state.override { nextState }

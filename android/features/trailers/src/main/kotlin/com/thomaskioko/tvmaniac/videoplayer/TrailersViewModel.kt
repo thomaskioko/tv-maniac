@@ -16,7 +16,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TrailersViewModel(
     @Assisted savedStateHandle: SavedStateHandle,
-    private val stateMachine: TrailersStateMachine
+    private val stateMachine: TrailersStateMachine,
 ) : ViewModel() {
 
     private val showId: Long = savedStateHandle["showId"]!!
@@ -35,7 +35,6 @@ class TrailersViewModel(
         viewModelScope.launch {
             stateMachine.dispatch(LoadTrailers(showId, videoKey!!))
         }
-
     }
 
     fun dispatch(action: TrailersAction) {

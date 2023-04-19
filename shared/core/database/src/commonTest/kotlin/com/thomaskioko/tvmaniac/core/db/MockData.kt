@@ -14,7 +14,7 @@ object MockData {
             ratings = 6.429,
             runtime = 45,
             episode_number = "01",
-            tmdb_id = 1
+            tmdb_id = 1,
         ),
         EpisodeCache(
             trakt_id = 2927202,
@@ -25,8 +25,8 @@ object MockData {
             ratings = 7.6,
             runtime = 45,
             episode_number = "02",
-            tmdb_id = 1
-        )
+            tmdb_id = 1,
+        ),
     )
 
     fun getShow() = Show(
@@ -46,7 +46,7 @@ object MockData {
         status = "Ended",
         tmdb_id = 126280,
         runtime = 0,
-        aired_episodes = 12
+        aired_episodes = 12,
     )
 
     fun makeShowList() = listOf(
@@ -67,7 +67,7 @@ object MockData {
             status = "Ended",
             tmdb_id = 126280,
             runtime = 0,
-            aired_episodes = 12
+            aired_episodes = 12,
         ),
         Show(
             trakt_id = 126280,
@@ -83,7 +83,7 @@ object MockData {
             status = "Ended",
             tmdb_id = 126280,
             runtime = 0,
-            aired_episodes = 12
+            aired_episodes = 12,
         ),
     )
 }

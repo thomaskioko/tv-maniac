@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SettingsNavigationFactory(
-    private val settings: Settings
+    private val settings: Settings,
 ) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
@@ -19,7 +19,7 @@ class SettingsNavigationFactory(
                 settings(
                     onBackClicked = { navController.popBackStack() },
                 )
-            }
+            },
         )
     }
 }

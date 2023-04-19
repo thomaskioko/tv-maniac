@@ -48,7 +48,6 @@ import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.episode
 import com.thomaskioko.tvmaniac.seasondetails.seasonDetails
 
-
 @Composable
 fun CollapsableContent(
     headerTitle: String,
@@ -60,11 +59,9 @@ fun CollapsableContent(
     onEpisodeClicked: (Long) -> Unit = {},
     onSeasonHeaderClicked: () -> Unit = {},
 ) {
-
     Column(
-        modifier = modifier
+        modifier = modifier,
     ) {
-
         Spacer(modifier = Modifier.height(8.dp))
 
         SeasonTitleHeader(
@@ -72,7 +69,7 @@ fun CollapsableContent(
             episodesCount = episodesCount,
             watchProgress = watchProgress,
             expanded = !collapsed,
-            onSeasonHeaderClicked = onSeasonHeaderClicked
+            onSeasonHeaderClicked = onSeasonHeaderClicked,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -83,13 +80,12 @@ fun CollapsableContent(
 
                 EpisodeItem(
                     episode = episode,
-                    onEpisodeClicked = onEpisodeClicked
+                    onEpisodeClicked = onEpisodeClicked,
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
-
     }
 }
 
@@ -102,7 +98,6 @@ private fun SeasonTitleHeader(
     expanded: Boolean,
     onSeasonHeaderClicked: () -> Unit = {},
 ) {
-
     val transitionState = remember {
         MutableTransitionState(expanded).apply {
             targetState = !expanded
@@ -113,9 +108,8 @@ private fun SeasonTitleHeader(
     val arrowRotationDegree by transition.animateFloat(
         label = "rotationDegreeTransition",
         transitionSpec = { tween(durationMillis = EXPANSION_TRANSITION_DURATION) },
-        targetValueByState = { if (expanded) 0f else 180f }
+        targetValueByState = { if (expanded) 0f else 180f },
     )
-
 
     Card(
         shape = RectangleShape,
@@ -125,12 +119,10 @@ private fun SeasonTitleHeader(
             .padding(horizontal = 16.dp)
             .clickable { onSeasonHeaderClicked() },
     ) {
-
         ConstraintLayout(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
-
             val (episodeTitle, image, count, watchedStatusIcon, watchlistProgress) = createRefs()
 
             Icon(
@@ -145,7 +137,6 @@ private fun SeasonTitleHeader(
                         bottom.linkTo(parent.bottom)
 
                         height = Dimension.fillToConstraints
-
                     },
             )
 
@@ -164,8 +155,7 @@ private fun SeasonTitleHeader(
                         bottom.linkTo(image.bottom)
 
                         width = Dimension.fillToConstraints
-
-                    }
+                    },
             )
 
             Text(
@@ -180,7 +170,7 @@ private fun SeasonTitleHeader(
                         bottom.linkTo(watchedStatusIcon.bottom)
 
                         width = Dimension.preferredWrapContent
-                    }
+                    },
             )
 
             IconButton(
@@ -189,14 +179,14 @@ private fun SeasonTitleHeader(
                     .constrainAs(watchedStatusIcon) {
                         centerVerticallyTo(parent)
                         end.linkTo(parent.end, 8.dp)
-                    }
+                    },
             ) {
                 Icon(
                     imageVector = Icons.Filled.CheckCircle,
                     contentDescription = null,
                     tint = if (watchProgress == 1f) green else MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
-                        .size(28.dp)
+                        .size(28.dp),
                 )
             }
 
@@ -213,7 +203,7 @@ private fun SeasonTitleHeader(
                         bottom.linkTo(parent.bottom, 12.dp)
 
                         width = Dimension.fillToConstraints
-                    }
+                    },
             )
         }
     }
@@ -223,9 +213,8 @@ private fun SeasonTitleHeader(
 fun EpisodeItem(
     episode: Episode,
     modifier: Modifier = Modifier,
-    onEpisodeClicked: (Long) -> Unit = {}
+    onEpisodeClicked: (Long) -> Unit = {},
 ) {
-
     Card(
         shape = RectangleShape,
         modifier = modifier
@@ -235,16 +224,15 @@ fun EpisodeItem(
             .clickable { onEpisodeClicked(episode.id) },
     ) {
         ConstraintLayout(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
-
             val (episodeTitle, image, overview, watchedStatusIcon) = createRefs()
 
             AsyncImageComposable(
                 model = episode.imageUrl,
                 contentDescription = stringResource(
                     R.string.cd_show_poster,
-                    episode.episodeNumberTitle
+                    episode.episodeNumberTitle,
                 ),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -272,7 +260,7 @@ fun EpisodeItem(
                         top.linkTo(parent.top, 8.dp)
 
                         width = Dimension.fillToConstraints
-                    }
+                    },
             )
 
             Text(
@@ -288,7 +276,7 @@ fun EpisodeItem(
                         bottom.linkTo(parent.bottom, 8.dp)
 
                         width = Dimension.fillToConstraints
-                    }
+                    },
             )
 
             IconButton(
@@ -297,20 +285,18 @@ fun EpisodeItem(
                     .constrainAs(watchedStatusIcon) {
                         centerVerticallyTo(parent)
                         end.linkTo(parent.end, 8.dp)
-                    }
+                    },
             ) {
                 Icon(
                     imageVector = Icons.Filled.CheckCircle,
                     contentDescription = stringResource(R.string.cd_navigate_back),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(32.dp),
                 )
             }
         }
     }
-
-
 }
 
 @ThemePreviews
@@ -319,7 +305,7 @@ fun EpisodeItemPreview() {
     TvManiacTheme {
         Surface {
             EpisodeItem(
-                episode = episode
+                episode = episode,
             )
         }
     }
@@ -334,17 +320,15 @@ fun SeasonTitleHeaderPreview() {
                 title = "Specials",
                 episodesCount = 8,
                 watchProgress = 0.5f,
-                expanded = true
+                expanded = true,
             )
         }
     }
 }
 
-
 @ThemePreviews
 @Composable
 fun CollapsableContentPreview() {
-
     TvManiacTheme {
         Surface {
             CollapsableContent(

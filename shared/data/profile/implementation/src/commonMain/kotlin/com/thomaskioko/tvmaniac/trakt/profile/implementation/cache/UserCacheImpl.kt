@@ -22,7 +22,7 @@ class UserCacheImpl(
             full_name = traktUser.full_name,
             profile_picture = traktUser.profile_picture,
             user_name = traktUser.user_name,
-            is_me = traktUser.is_me
+            is_me = traktUser.is_me,
         )
     }
 

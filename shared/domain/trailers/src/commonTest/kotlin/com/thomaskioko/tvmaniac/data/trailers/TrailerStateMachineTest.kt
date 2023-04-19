@@ -29,15 +29,15 @@ internal class TrailerStateMachineTest {
 
             awaitItem() shouldBe LoadingTrailers
             awaitItem() shouldBe TrailersLoaded(
-                selectedVideoKey= "Fd43V",
+                selectedVideoKey = "Fd43V",
                 trailersList = listOf(
                     Trailer(
-                        showId=84958,
-                        key="Fd43V",
-                        name="Some title",
-                        youtubeThumbnailUrl="https://i.ytimg.com/vi/Fd43V/hqdefault.jpg"
-                    )
-                )
+                        showId = 84958,
+                        key = "Fd43V",
+                        name = "Some title",
+                        youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
+                    ),
+                ),
             )
         }
     }

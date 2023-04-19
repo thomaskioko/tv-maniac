@@ -29,11 +29,11 @@ actual interface TraktPlatformComponent {
     fun provideHttpClient(
         configs: Configs,
         json: TraktJson,
-        httpClientEngine: TraktHttpClientEngine
+        httpClientEngine: TraktHttpClientEngine,
     ): TraktHttpClient = traktHttpClient(
         isDebug = configs.isDebug,
         json = json,
-        httpClientEngine = httpClientEngine
+        httpClientEngine = httpClientEngine,
     )
 
     @ApplicationScope

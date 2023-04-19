@@ -25,7 +25,7 @@ class FollowingViewModel(
         }
     }
 
-    fun dispatch(action : FollowingAction) {
+    fun dispatch(action: FollowingAction) {
         viewModelScope.launch {
             stateMachine.dispatch(action)
         }
