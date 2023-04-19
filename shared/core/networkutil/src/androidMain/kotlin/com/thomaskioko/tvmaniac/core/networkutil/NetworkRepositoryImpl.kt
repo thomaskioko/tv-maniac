@@ -13,7 +13,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class NetworkRepositoryImpl(
-    private val context: Application
+    private val context: Application,
 ) : NetworkRepository {
 
     override fun observeConnectionState(): Flow<ConnectionState> = callbackFlow {

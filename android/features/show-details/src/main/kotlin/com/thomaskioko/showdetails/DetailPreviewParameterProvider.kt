@@ -1,17 +1,17 @@
 package com.thomaskioko.showdetails
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.data.showdetails.FollowShowsState
-import com.thomaskioko.tvmaniac.data.showdetails.SeasonState
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState.ShowDetailsError
-import com.thomaskioko.tvmaniac.data.showdetails.ShowDetailsState.ShowDetailsLoaded
-import com.thomaskioko.tvmaniac.data.showdetails.ShowState
-import com.thomaskioko.tvmaniac.data.showdetails.SimilarShowsState
-import com.thomaskioko.tvmaniac.data.showdetails.TrailersState
-import com.thomaskioko.tvmaniac.data.showdetails.model.Season
-import com.thomaskioko.tvmaniac.data.showdetails.model.Show
-import com.thomaskioko.tvmaniac.data.showdetails.model.Trailer
+import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowsState
+import com.thomaskioko.tvmaniac.domain.showdetails.SeasonState
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState.ShowDetailsError
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState.ShowDetailsLoaded
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowState
+import com.thomaskioko.tvmaniac.domain.showdetails.SimilarShowsState
+import com.thomaskioko.tvmaniac.domain.showdetails.TrailersState
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Season
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Show
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Trailer
 
 val trailerLoaded = TrailersState.TrailersLoaded(
     isLoading = true,
@@ -22,15 +22,15 @@ val trailerLoaded = TrailersState.TrailersLoaded(
             showId = 1232,
             key = "",
             name = "",
-            youtubeThumbnailUrl = ""
+            youtubeThumbnailUrl = "",
         ),
         Trailer(
             showId = 1232,
             key = "",
             name = "",
-            youtubeThumbnailUrl = ""
+            youtubeThumbnailUrl = "",
         ),
-    )
+    ),
 )
 
 private val showDetailsLoaded = ShowDetailsLoaded(
@@ -39,11 +39,11 @@ private val showDetailsLoaded = ShowDetailsLoaded(
             traktId = 84958,
             title = "Loki",
             overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                    "an alternate version of Loki is brought to the mysterious Time Variance " +
-                    "Authority, a bureaucratic organization that exists outside of time and " +
-                    "space and monitors the timeline. They give Loki a choice: face being " +
-                    "erased from existence due to being a “time variant”or help fix " +
-                    "the timeline and stop a greater threat.",
+                "an alternate version of Loki is brought to the mysterious Time Variance " +
+                "Authority, a bureaucratic organization that exists outside of time and " +
+                "space and monitors the timeline. They give Loki a choice: face being " +
+                "erased from existence due to being a “time variant”or help fix " +
+                "the timeline and stop a greater threat.",
             posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             language = "en",
@@ -51,8 +51,8 @@ private val showDetailsLoaded = ShowDetailsLoaded(
             rating = 8.1,
             genres = listOf("Horror", "Action"),
             status = "Returning Series",
-            year = "2024"
-        )
+            year = "2024",
+        ),
     ),
     seasonState = SeasonState.SeasonsLoaded(
         isLoading = false,
@@ -61,15 +61,15 @@ private val showDetailsLoaded = ShowDetailsLoaded(
                 seasonId = 114355,
                 tvShowId = 84958,
                 name = "Season 1",
-            )
+            ),
         ),
     ),
     trailerState = trailerLoaded,
     similarShowsState = SimilarShowsState.SimilarShowsLoaded(
         isLoading = false,
-        similarShows = emptyList()
+        similarShows = emptyList(),
     ),
-    followShowState = FollowShowsState.Idle
+    followShowState = FollowShowsState.Idle,
 )
 
 val showList = List(4) {
@@ -77,11 +77,11 @@ val showList = List(4) {
         traktId = 84958,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                "an alternate version of Loki is brought to the mysterious Time Variance " +
-                "Authority, a bureaucratic organization that exists outside of time and " +
-                "space and monitors the timeline. They give Loki a choice: face being " +
-                "erased from existence due to being a “time variant”or help fix " +
-                "the timeline and stop a greater threat.",
+            "an alternate version of Loki is brought to the mysterious Time Variance " +
+            "Authority, a bureaucratic organization that exists outside of time and " +
+            "space and monitors the timeline. They give Loki a choice: face being " +
+            "erased from existence due to being a “time variant”or help fix " +
+            "the timeline and stop a greater threat.",
         posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         language = "en",
@@ -89,17 +89,16 @@ val showList = List(4) {
         rating = 8.1,
         genres = listOf("Horror", "Action"),
         status = "Returning Series",
-        year = "2024"
+        year = "2024",
     )
 }
-
 
 class DetailPreviewParameterProvider : PreviewParameterProvider<ShowDetailsState> {
     override val values: Sequence<ShowDetailsState>
         get() {
             return sequenceOf(
                 showDetailsLoaded,
-                ShowDetailsError(errorMessage = "Opps! Something went wrong")
+                ShowDetailsError(errorMessage = "Opps! Something went wrong"),
             )
         }
 }

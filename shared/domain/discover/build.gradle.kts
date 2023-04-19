@@ -8,15 +8,15 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:data:category:api"))
-            implementation(project(":shared:data:shows:api"))
-            implementation(project(":shared:data:tmdb:api"))
+            implementation(projects.shared.core.tmdbApi.api)
+            implementation(projects.shared.data.category.api)
+            implementation(projects.shared.data.shows.api)
         }
 
         sourceSets["commonTest"].dependencies {
 
-            implementation(project(":shared:data:shows:testing"))
-            implementation(project(":shared:data:tmdb:testing"))
+            implementation(projects.shared.core.tmdbApi.testing)
+            implementation(projects.shared.data.shows.testing)
         }
     }
 }
@@ -27,5 +27,5 @@ dependencies {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.discover"
+    namespace = "com.thomaskioko.tvmaniac.domain.discover"
 }

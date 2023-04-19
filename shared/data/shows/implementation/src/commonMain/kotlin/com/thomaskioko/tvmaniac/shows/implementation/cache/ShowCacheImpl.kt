@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.shows.implementation.cache
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectShowImages
 import com.thomaskioko.tvmaniac.core.db.SelectShows
@@ -11,6 +10,7 @@ import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
@@ -33,7 +33,7 @@ class ShowCacheImpl constructor(
                 status = show.status,
                 runtime = show.runtime,
                 rating = show.rating,
-                genres = show.genres
+                genres = show.genres,
             )
         }
     }

@@ -12,7 +12,7 @@ import me.tatarka.inject.annotations.Inject
 class SyncFollowedShows(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
 ) : CoroutineWorker(context, params) {
 
     companion object {

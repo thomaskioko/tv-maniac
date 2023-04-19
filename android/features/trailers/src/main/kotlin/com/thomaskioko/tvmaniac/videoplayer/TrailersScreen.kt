@@ -50,18 +50,17 @@ import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.data.trailers.LoadingTrailers
-import com.thomaskioko.tvmaniac.data.trailers.ReloadTrailers
-import com.thomaskioko.tvmaniac.data.trailers.TrailerError
-import com.thomaskioko.tvmaniac.data.trailers.TrailerSelected
-import com.thomaskioko.tvmaniac.data.trailers.TrailersLoaded
-import com.thomaskioko.tvmaniac.data.trailers.TrailersState
-import com.thomaskioko.tvmaniac.data.trailers.VideoPlayerError
-import com.thomaskioko.tvmaniac.data.trailers.model.Trailer
+import com.thomaskioko.tvmaniac.domain.trailers.LoadingTrailers
+import com.thomaskioko.tvmaniac.domain.trailers.ReloadTrailers
+import com.thomaskioko.tvmaniac.domain.trailers.TrailerError
+import com.thomaskioko.tvmaniac.domain.trailers.TrailerSelected
+import com.thomaskioko.tvmaniac.domain.trailers.TrailersLoaded
+import com.thomaskioko.tvmaniac.domain.trailers.TrailersState
+import com.thomaskioko.tvmaniac.domain.trailers.VideoPlayerError
+import com.thomaskioko.tvmaniac.domain.trailers.model.Trailer
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.resources.R
 import me.tatarka.inject.annotations.Inject
-
 
 typealias Trailers = @Composable () -> Unit
 
@@ -70,7 +69,6 @@ typealias Trailers = @Composable () -> Unit
 fun Trailers(
     viewModelFactory: (SavedStateHandle) -> TrailersViewModel,
 ) {
-
     TrailersScreen(
         viewModel = viewModel(factory = viewModelFactory),
     )
@@ -88,7 +86,7 @@ internal fun TrailersScreen(
         state = viewState,
         onRetryClicked = { viewModel.dispatch(ReloadTrailers) },
         onYoutubeError = { viewModel.dispatch(VideoPlayerError(it)) },
-        onTrailerClicked = { viewModel.dispatch(TrailerSelected(it)) }
+        onTrailerClicked = { viewModel.dispatch(TrailerSelected(it)) },
     )
 }
 
@@ -113,7 +111,7 @@ private fun TrailersScreen(
                 is LoadingTrailers -> LoadingIndicator(
                     modifier = Modifier
                         .fillMaxSize()
-                        .wrapContentSize(Alignment.Center)
+                        .wrapContentSize(Alignment.Center),
                 )
 
                 is TrailersLoaded -> {
@@ -132,10 +130,10 @@ private fun TrailersScreen(
                     onRetry = onRetryClicked,
                     modifier = Modifier
                         .fillMaxSize()
-                        .wrapContentSize(Alignment.Center)
+                        .wrapContentSize(Alignment.Center),
                 )
             }
-        }
+        },
     )
 }
 
@@ -147,16 +145,14 @@ private fun VideoPlayerContent(
     onYoutubeError: (String) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
-    onTrailerClicked: (String) -> Unit
+    onTrailerClicked: (String) -> Unit,
 ) {
-
     Column(
         modifier = modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start,
     ) {
-
         AndroidView(
             modifier = Modifier.fillMaxWidth(),
             factory = { context ->
@@ -165,13 +161,13 @@ private fun VideoPlayerContent(
                         override fun onReady(youTubePlayer: YouTubePlayer) {
                             youTubePlayer.loadVideo(
                                 videoId = videoKey,
-                                startSeconds = 0f
+                                startSeconds = 0f,
                             )
                         }
 
                         override fun onError(
                             youTubePlayer: YouTubePlayer,
-                            error: PlayerConstants.PlayerError
+                            error: PlayerConstants.PlayerError,
                         ) {
                             super.onError(youTubePlayer, error)
                             onYoutubeError(error.name)
@@ -186,7 +182,7 @@ private fun VideoPlayerContent(
         Text(
             text = stringResource(id = R.string.str_more_trailers),
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp),
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -195,11 +191,10 @@ private fun VideoPlayerContent(
             listState = listState,
             trailerList = trailersList,
             onTrailerClicked = onTrailerClicked,
-            contentPadding = contentPadding
+            contentPadding = contentPadding,
         )
     }
 }
-
 
 @Composable
 private fun TrailerList(
@@ -207,13 +202,12 @@ private fun TrailerList(
     trailerList: List<Trailer>,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
-    onTrailerClicked: (String) -> Unit = {}
+    onTrailerClicked: (String) -> Unit = {},
 ) {
-
     LazyColumn(
         state = listState,
         contentPadding = contentPadding.copy(copyTop = false),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
         item { Spacer(modifier = Modifier.height(8.dp)) }
 
@@ -224,7 +218,7 @@ private fun TrailerList(
                     .fillMaxWidth()
                     .height(80.dp)
                     .clickable { onTrailerClicked(trailer.key) }
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 8.dp),
             ) {
                 val (episodeTitle, image) = createRefs()
 
@@ -242,8 +236,8 @@ private fun TrailerList(
                                     brush = Brush.verticalGradient(
                                         colors = listOf(Color.Transparent, Color.Black),
                                         startY = size.height / 3,
-                                        endY = size.height
-                                    )
+                                        endY = size.height,
+                                    ),
                                 )
                             }
                         }
@@ -272,13 +266,12 @@ private fun TrailerList(
                             top.linkTo(parent.top)
 
                             width = Dimension.preferredWrapContent
-                        }
+                        },
                 )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
         }
-
     }
 }
 
@@ -286,7 +279,7 @@ private fun TrailerList(
 @Composable
 private fun TrailerListContentPreview(
     @PreviewParameter(TrailerPreviewParameterProvider::class)
-    state: TrailersState
+    state: TrailersState,
 ) {
     TvManiacTheme {
         Surface {
@@ -294,10 +287,8 @@ private fun TrailerListContentPreview(
                 state = state,
                 onRetryClicked = {},
                 onTrailerClicked = {},
-                onYoutubeError = {}
+                onYoutubeError = {},
             )
         }
     }
 }
-
-

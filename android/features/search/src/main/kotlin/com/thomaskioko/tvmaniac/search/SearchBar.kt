@@ -41,7 +41,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 fun SearchBar(
     hint: String,
     modifier: Modifier = Modifier,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
 ) {
     val textState = remember { mutableStateOf(TextFieldValue()) }
     var textFieldFocusState by remember { mutableStateOf(false) }
@@ -58,7 +58,7 @@ fun SearchBar(
             textFieldFocusState = focused
         },
         hint = hint,
-        focusState = textFieldFocusState
+        focusState = textFieldFocusState,
     )
 }
 
@@ -75,7 +75,7 @@ private fun SearchInputText(
     focusState: Boolean,
     modifier: Modifier = Modifier,
     hint: String = "",
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
 ) {
     var keyboardController by remember { mutableStateOf<SoftwareKeyboardController?>(null) }
 
@@ -88,7 +88,7 @@ private fun SearchInputText(
     Card(
         shape = RectangleShape,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
+            defaultElevation = 8.dp,
         ),
     ) {
         Row(
@@ -96,13 +96,13 @@ private fun SearchInputText(
                 .fillMaxWidth()
                 .height(48.dp)
                 .semantics { keyboardShownProperty = keyboardShown },
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
         ) {
             Box(
                 modifier = Modifier
                     .height(45.dp)
                     .weight(1f)
-                    .align(Alignment.Bottom)
+                    .align(Alignment.Bottom),
             ) {
                 var lastFocusState by remember { mutableStateOf(Recomposer.State.Inactive) }
 
@@ -118,12 +118,12 @@ private fun SearchInputText(
                         },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Search,
-                        keyboardType = keyboardType
+                        keyboardType = keyboardType,
                     ),
                     keyboardActions = KeyboardActions(
                         onDone = {
                             // TODO:: Invoke Search Action
-                        }
+                        },
                     ),
                     textStyle = MaterialTheme.typography.bodyMedium,
                 )
@@ -134,14 +134,12 @@ private fun SearchInputText(
                             .align(Alignment.CenterStart)
                             .padding(start = 16.dp),
                         text = hint,
-                        style = MaterialTheme.typography.bodyMedium.copy(MaterialTheme.colorScheme.onSurface)
+                        style = MaterialTheme.typography.bodyMedium.copy(MaterialTheme.colorScheme.onSurface),
                     )
                 }
             }
         }
     }
-
-
 }
 
 @ThemePreviews
@@ -151,7 +149,7 @@ fun SearchBarPreview() {
         Surface {
             SearchBar(
                 hint = "Enter Show Title",
-                onValueChange = {}
+                onValueChange = {},
             )
         }
     }

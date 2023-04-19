@@ -23,7 +23,7 @@ data class ShowResult(
     sealed interface CategoryState
 
     data class CategoryError(
-        val errorMessage: String
+        val errorMessage: String,
     ) : CategoryState
 
     data class CategorySuccess(

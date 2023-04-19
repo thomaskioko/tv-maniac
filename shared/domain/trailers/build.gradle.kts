@@ -10,11 +10,11 @@ kotlin {
     sourceSets {
 
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:data:trailers:api"))
+            implementation(projects.shared.data.trailers.api)
         }
 
         sourceSets["commonTest"].dependencies {
-            implementation(project(":shared:data:trailers:testing"))
+            implementation(projects.shared.data.trailers.testing)
         }
 
     }
@@ -26,5 +26,5 @@ dependencies {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.data.trailers"
+    namespace = "com.thomaskioko.tvmaniac.domain.trailers"
 }

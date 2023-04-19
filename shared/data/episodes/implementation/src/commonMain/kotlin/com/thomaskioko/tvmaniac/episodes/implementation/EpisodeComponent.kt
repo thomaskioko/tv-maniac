@@ -15,5 +15,4 @@ interface EpisodeComponent {
 
     @Provides
     fun provideEpisodeRepository(bind: EpisodeRepositoryImpl): EpisodeRepository = bind
-
 }

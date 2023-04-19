@@ -8,11 +8,11 @@ val cachedShowResult = listOf(
         tmdb_id = 849583,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                "an alternate version of Loki is brought to the mysterious Time Variance " +
-                "Authority, a bureaucratic organization that exists outside of time and " +
-                "space and monitors the timeline. They give Loki a choice: face being " +
-                "erased from existence due to being a “time variant”or help fix " +
-                "the timeline and stop a greater threat.",
+            "an alternate version of Loki is brought to the mysterious Time Variance " +
+            "Authority, a bureaucratic organization that exists outside of time and " +
+            "space and monitors the timeline. They give Loki a choice: face being " +
+            "erased from existence due to being a “time variant”or help fix " +
+            "the timeline and stop a greater threat.",
         language = "en",
         votes = 4958,
         rating = 8.1,
@@ -27,6 +27,6 @@ val cachedShowResult = listOf(
         synced = true,
         created_at = 12345645,
         trakt_id_ = 1232,
-        tmdb_id_ = 849583
-    )
+        tmdb_id_ = 849583,
+    ),
 )

@@ -42,46 +42,48 @@ fun TvManiacTopBar(
     showNavigationIcon: Boolean = false,
     actionImageVector: ImageVector? = null,
     onActionClicked: () -> Unit = {},
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
 ) {
     TopAppBar(
         title = {
-            if (title != null)
+            if (title != null) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.headlineSmall.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
+            }
         },
         navigationIcon = {
-            if (showNavigationIcon)
+            if (showNavigationIcon) {
                 Image(
                     painter = painterResource(R.drawable.ic_baseline_arrow_back_24),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
                     modifier = modifier
                         .clickable(onClick = onBackClick)
-                        .padding(16.dp)
+                        .padding(16.dp),
                 )
+            }
         },
         backgroundColor = MaterialTheme.colorScheme.background,
         actions = {
-            if (actionImageVector != null)
+            if (actionImageVector != null) {
                 IconButton(
                     onClick = onActionClicked,
                 ) {
                     Icon(
                         imageVector = actionImageVector,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface
+                        tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }
-        }
+            }
+        },
     )
 }
-
 
 @Composable
 fun CollapsableAppBar(
@@ -90,7 +92,6 @@ fun CollapsableAppBar(
     onNavIconPressed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     val backgroundColor by animateColorAsState(
         targetValue = when {
             showAppBarBackground -> MaterialTheme.colorScheme.surface
@@ -113,15 +114,16 @@ fun CollapsableAppBar(
         title = {
             Crossfade(
                 showAppBarBackground && title != null,
-                label = "titleAnimation"
+                label = "titleAnimation",
             ) { show ->
-                if (show)
+                if (show) {
                     Text(
                         text = title!!,
                         style = MaterialTheme.typography.headlineSmall.copy(
                             color = MaterialTheme.colorScheme.onSurface,
                         ),
                     )
+                }
             }
         },
         contentPadding = WindowInsets.systemBars
@@ -140,10 +142,9 @@ fun CollapsableAppBar(
         },
         elevation = elevation,
         backgroundColor = backgroundColor,
-        modifier = modifier
+        modifier = modifier,
     )
 }
-
 
 @ThemePreviews
 @Composable
@@ -163,7 +164,7 @@ private fun TopBarActionPreview() {
         TvManiacTopBar(
             title = "Tv Maniac",
             showNavigationIcon = true,
-            actionImageVector = Icons.Filled.Settings
+            actionImageVector = Icons.Filled.Settings,
         )
     }
 }
@@ -176,11 +177,10 @@ private fun TopBarScrimPreview() {
             title = "Tv Maniac",
             showNavigationIcon = true,
             modifier = Modifier
-                .iconButtonBackgroundScrim()
+                .iconButtonBackgroundScrim(),
         )
     }
 }
-
 
 @ThemePreviews
 @Composable
@@ -189,8 +189,7 @@ private fun CollapsableAppBarPreview() {
         CollapsableAppBar(
             title = "Star Wars",
             showAppBarBackground = true,
-            onNavIconPressed = { }
+            onNavIconPressed = { },
         )
     }
 }
-

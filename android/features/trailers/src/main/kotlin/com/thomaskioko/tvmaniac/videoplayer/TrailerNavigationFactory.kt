@@ -11,7 +11,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TrailerNavigationFactory(
-    private val trailers: Trailers
+    private val trailers: Trailers,
 ) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
@@ -21,7 +21,7 @@ class TrailerNavigationFactory(
                 navArgument("videoKey") { type = NavType.StringType },
             ),
             route = "${NavigationScreen.TrailersNavScreen.route}/{showId}/{videoKey}",
-            content = { trailers() }
+            content = { trailers() },
         )
     }
 }

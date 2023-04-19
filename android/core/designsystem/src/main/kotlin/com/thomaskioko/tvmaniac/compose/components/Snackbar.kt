@@ -16,7 +16,6 @@ fun SnackBarErrorRetry(
     showError: Boolean = !errorMessage.isNullOrBlank(),
     onErrorAction: () -> Unit = { },
 ) {
-
     AnimatedVisibility(
         visible = showError,
         enter = slideInVertically(initialOffsetY = { it }),
@@ -26,7 +25,7 @@ fun SnackBarErrorRetry(
             LaunchedEffect(errorMessage) {
                 val actionResult = snackBarHostState.showSnackbar(
                     message = errorMessage,
-                    actionLabel = actionLabel
+                    actionLabel = actionLabel,
                 )
 
                 when (actionResult) {

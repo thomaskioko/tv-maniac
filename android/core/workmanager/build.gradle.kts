@@ -9,7 +9,7 @@ android {
 
 dependencies {
 
-    implementation(projects.shared.core.base)
+    implementation(projects.shared.core.util)
     implementation(projects.shared.data.profile.api)
     implementation(projects.shared.data.shows.api)
 

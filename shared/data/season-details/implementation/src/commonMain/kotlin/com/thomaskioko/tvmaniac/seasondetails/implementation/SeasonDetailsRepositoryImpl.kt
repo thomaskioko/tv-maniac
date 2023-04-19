@@ -1,10 +1,8 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
-import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.core.db.Season_episodes
+import com.thomaskioko.tvmaniac.core.db.Seasons
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
@@ -18,6 +16,8 @@ import com.thomaskioko.tvmaniac.seasondetails.api.SeasonsCache
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -33,7 +33,7 @@ class SeasonDetailsRepositoryImpl(
     private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonDetailsRepository {
 
-    override fun observeSeasonsStream(traktId: Long): Flow<Either<Failure, List<Season>>> =
+    override fun observeSeasonsStream(traktId: Long): Flow<Either<Failure, List<Seasons>>> =
         networkBoundResult(
             query = { seasonCache.observeSeasons(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
@@ -42,8 +42,8 @@ class SeasonDetailsRepositoryImpl(
                 when (it) {
                     is ApiResponse.Success -> seasonCache.insertSeasons(
                         it.body.toSeasonCacheList(
-                            traktId
-                        )
+                            traktId,
+                        ),
                     )
 
                     is ApiResponse.Error.GenericError -> {
@@ -63,7 +63,7 @@ class SeasonDetailsRepositoryImpl(
                 }
             },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatcher.io
+            coroutineDispatcher = dispatcher.io,
         )
 
     override fun observeSeasonDetailsStream(traktId: Long): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
@@ -76,12 +76,11 @@ class SeasonDetailsRepositoryImpl(
             fetch = { traktService.getSeasonEpisodes(traktId) },
             saveFetchResult = { mapResponse(traktId, it) },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatcher.io
+            coroutineDispatcher = dispatcher.io,
         )
 
     override fun observeSeasonDetails(): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
         flow {
-
             datastore.getSeasonId()
                 .collect {
                     seasonCache.observeShowEpisodes(it)
@@ -90,10 +89,9 @@ class SeasonDetailsRepositoryImpl(
                 }
         }
 
-
     private fun mapResponse(
         showId: Long,
-        response: ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse>
+        response: ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse>,
     ) {
         when (response) {
             is ApiResponse.Success -> {
@@ -105,7 +103,7 @@ class SeasonDetailsRepositoryImpl(
                             show_id = showId,
                             season_id = season.ids.trakt.toLong(),
                             season_number = season.number.toLong(),
-                        )
+                        ),
                     )
                 }
             }

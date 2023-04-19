@@ -1,0 +1,24 @@
+CREATE TABLE season_episodes (
+show_id INTEGER DEFAULT NULL PRIMARY KEY,
+season_id INTEGER DEFAULT NULL,
+season_number INTEGER DEFAULT NULL,
+FOREIGN KEY (season_id) REFERENCES seasons(id),
+FOREIGN KEY (show_id) REFERENCES show(trakt_id)
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO season_episodes(
+show_id,
+season_id,
+season_number
+)VALUES(?,?,?);
+
+selectSeasonWithEpisodes:
+SELECT show.trakt_id, show.tmdb_id ,show.title, seasons.id , seasons.name, seasons.season_number, seasons.episode_count,
+episodes.trakt_id, episodes.season_id, episodes.title , episodes.episode_number, episodes.overview, episodes.runtime,
+episodes.ratings, episodes.votes, episode_image.image_url
+FROM show
+INNER JOIN seasons ON seasons.show_trakt_id = show.trakt_id
+INNER JOIN episodes ON episodes.season_id = seasons.id
+LEFT OUTER JOIN episode_image ON episode_image.trakt_id = episodes.trakt_id
+WHERE show.trakt_id = ? AND season_number != 0 ORDER BY seasons.season_number, episode_number ASC;

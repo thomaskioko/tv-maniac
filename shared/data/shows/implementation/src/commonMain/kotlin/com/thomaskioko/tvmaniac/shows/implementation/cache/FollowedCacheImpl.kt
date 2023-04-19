@@ -2,11 +2,11 @@ package com.thomaskioko.tvmaniac.shows.implementation.cache
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.shows.api.cache.FollowedCache
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
@@ -18,10 +18,10 @@ class FollowedCacheImpl(
 
     override fun insert(followedShow: Followed_shows) {
         database.transaction {
-            database.followedShowsQueries.insertOrReplace(
+            database.followed_showsQueries.insertOrReplace(
                 id = followedShow.id,
                 synced = followedShow.synced,
-                created_at = followedShow.created_at
+                created_at = followedShow.created_at,
             )
         }
     }
@@ -31,26 +31,26 @@ class FollowedCacheImpl(
     }
 
     override fun getFollowedShows(): List<SelectFollowedShows> =
-        database.followedShowsQueries.selectFollowedShows()
+        database.followed_showsQueries.selectFollowedShows()
             .executeAsList()
 
     override fun getUnsyncedFollowedShows(): List<Followed_shows> =
-        database.followedShowsQueries.selectUnsyncedShows()
+        database.followed_showsQueries.selectUnsyncedShows()
             .executeAsList()
 
     override fun observeFollowedShows(): Flow<List<SelectFollowedShows>> =
-        database.followedShowsQueries.selectFollowedShows()
+        database.followed_showsQueries.selectFollowedShows()
             .asFlow()
             .mapToList(dispatchers.io)
 
     override fun updateShowSyncState(traktId: Long) {
-        database.followedShowsQueries.updateFollowedState(
+        database.followed_showsQueries.updateFollowedState(
             id = traktId,
-            synced = true
+            synced = true,
         )
     }
 
     override fun removeShow(traktId: Long) {
-        database.followedShowsQueries.removeShow(traktId)
+        database.followed_showsQueries.removeShow(traktId)
     }
 }

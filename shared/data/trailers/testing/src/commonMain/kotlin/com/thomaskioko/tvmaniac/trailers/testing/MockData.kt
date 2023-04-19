@@ -10,6 +10,6 @@ val trailers = listOf(
         name = "Some title",
         site = "Youtube",
         size = 1231,
-        type = "type"
-    )
+        type = "type",
+    ),
 )

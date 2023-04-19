@@ -1,9 +1,6 @@
 package com.thomaskioko.tvmaniac.data.trailers.implementation
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.base.util.AppUtils
-import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.Either
@@ -13,6 +10,9 @@ import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import com.thomaskioko.tvmaniac.tmdb.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
+import com.thomaskioko.tvmaniac.util.AppUtils
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
@@ -38,7 +38,7 @@ class TrailerRepositoryImpl(
             },
             saveFetchResult = { it.mapAndCache(traktId) },
             exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatchers.io
+            coroutineDispatcher = dispatchers.io,
         )
 
     private fun ApiResponse<TrailersResponse, ErrorResponse>.mapAndCache(showId: Long) {
@@ -52,7 +52,7 @@ class TrailerRepositoryImpl(
                         name = response.name,
                         site = response.site,
                         size = response.size.toLong(),
-                        type = response.type
+                        type = response.type,
                     )
                 }
                 trailerCache.insert(cacheList)

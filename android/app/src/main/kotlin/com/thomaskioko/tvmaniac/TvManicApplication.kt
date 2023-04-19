@@ -3,9 +3,9 @@ package com.thomaskioko.tvmaniac
 import android.app.Application
 import androidx.work.Configuration
 import androidx.work.WorkerFactory
-import com.thomaskioko.tvmaniac.base.extensions.unsafeLazy
 import com.thomaskioko.tvmaniac.inject.ApplicationComponent
 import com.thomaskioko.tvmaniac.inject.create
+import com.thomaskioko.tvmaniac.util.extensions.unsafeLazy
 
 class TvManicApplication : Application(), Configuration.Provider {
 
@@ -19,7 +19,6 @@ class TvManicApplication : Application(), Configuration.Provider {
         workerFactory = component.workerFactory
 
         component.initializers.init()
-
     }
 
     override fun getWorkManagerConfiguration(): Configuration {
@@ -28,5 +27,4 @@ class TvManicApplication : Application(), Configuration.Provider {
             .setMinimumLoggingLevel(android.util.Log.INFO)
             .build()
     }
-
 }

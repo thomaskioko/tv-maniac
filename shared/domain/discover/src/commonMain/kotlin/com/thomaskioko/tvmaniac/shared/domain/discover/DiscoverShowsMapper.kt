@@ -1,11 +1,10 @@
 package com.thomaskioko.tvmaniac.shared.domain.discover
 
-import com.thomaskioko.tvmaniac.category.api.model.Category
+import com.thomaskioko.tvmaniac.category.api.model.getCategory
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.shared.domain.discover.model.TvShow
-
 
 fun List<SelectShowsByCategory>.toTvShowList(): List<TvShow> = map { it.toTvShow() }
 
@@ -24,7 +23,6 @@ fun SelectShowsByCategory.toTvShow(): TvShow = TvShow(
     status = status,
 )
 
-
 fun Either<Failure, List<SelectShowsByCategory>>.toShowData(resultLimit: Int? = null): ShowResult.CategoryState =
     this.fold(
         {
@@ -35,11 +33,14 @@ fun Either<Failure, List<SelectShowsByCategory>>.toShowData(resultLimit: Int? = 
                 shows.isNullOrEmpty() -> ShowResult.EmptyCategoryData
                 else -> {
                     ShowResult.CategorySuccess(
-                        category = Category[shows.first().category_id!!],
-                        tvShows = if (resultLimit != null) shows.toTvShowList().take(resultLimit)
-                        else shows.toTvShowList()
+                        category = shows.first().category_id!!.getCategory(),
+                        tvShows = if (resultLimit != null) {
+                            shows.toTvShowList().take(resultLimit)
+                        } else {
+                            shows.toTvShowList()
+                        },
                     )
                 }
             }
-        }
+        },
     )

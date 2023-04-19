@@ -15,13 +15,12 @@ val list = List(6) {
     )
 }
 
-
 class FollowingPreviewParameterProvider : PreviewParameterProvider<FollowingState> {
     override val values: Sequence<FollowingState>
         get() {
             return sequenceOf(
                 FollowingContent(list = list),
-                ErrorLoadingShows(message = "Something went Wrong")
+                ErrorLoadingShows(message = "Something went Wrong"),
             )
         }
 }

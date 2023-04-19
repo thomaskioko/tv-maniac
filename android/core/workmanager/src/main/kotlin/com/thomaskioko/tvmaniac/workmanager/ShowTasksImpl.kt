@@ -11,23 +11,23 @@ import java.util.concurrent.TimeUnit
 
 @Inject
 class ShowTasksImpl(
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
 ) : ShowTasks {
 
     override fun setupDiscoverDailySyncs() {
         val request = PeriodicWorkRequestBuilder<SyncDiscoverShowsWorker>(
             repeatInterval = 24,
-            repeatIntervalTimeUnit = TimeUnit.HOURS
+            repeatIntervalTimeUnit = TimeUnit.HOURS,
         ).setConstraints(
             Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.UNMETERED)
-                .build()
+                .build(),
         ).build()
 
         workManager.enqueueUniquePeriodicWork(
             SyncDiscoverShowsWorker.DAILY_SYNC_TAG,
             ExistingPeriodicWorkPolicy.KEEP,
-            request
+            request,
         )
     }
 
@@ -44,7 +44,7 @@ class ShowTasksImpl(
             .setConstraints(
                 Constraints.Builder()
                     .setRequiresDeviceIdle(true)
-                    .build()
+                    .build(),
             )
             .build()
         workManager.enqueue(request)

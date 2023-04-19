@@ -8,7 +8,6 @@ import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-
 @Inject
 class SyncDiscoverShowsWorker(
     @Assisted context: Context,

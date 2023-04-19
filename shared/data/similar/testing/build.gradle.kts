@@ -10,9 +10,9 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
-            implementation(project(":shared:core:base"))
-            implementation(project(":shared:data:database"))
-            implementation(project(":shared:data:similar:api"))
+            implementation(projects.shared.core.database)
+            implementation(projects.shared.core.util)
+            implementation(projects.shared.data.similar.api)
             implementation(libs.coroutines.core)
         }
 

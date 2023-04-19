@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ProfileNavigationFactory(
-    private val profile: Profile
+    private val profile: Profile,
 ) : ComposeNavigationFactory {
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
         builder.screenComposable(
@@ -18,9 +18,9 @@ class ProfileNavigationFactory(
                 profile(
                     settingsClicked = {
                         navController.navigate(NavigationScreen.SettingsScreen.route)
-                    }
+                    },
                 )
-            }
+            },
         )
     }
 }

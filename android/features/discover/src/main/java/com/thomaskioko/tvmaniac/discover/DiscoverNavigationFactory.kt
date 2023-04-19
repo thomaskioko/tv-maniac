@@ -19,16 +19,16 @@ class DiscoverNavigationFactory(
                 discover(
                     onShowClicked = { tvShowId ->
                         navController.navigate(
-                            "${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId"
+                            "${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId",
                         )
                     },
                     onMoreClicked = { showType ->
                         navController.navigate(
-                            "${NavigationScreen.ShowGridNavScreen.route}/$showType"
+                            "${NavigationScreen.ShowGridNavScreen.route}/$showType",
                         )
                     },
                 )
-            }
+            },
         )
     }
 }

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.core.networkutil
 
-import com.thomaskioko.tvmaniac.base.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
@@ -9,7 +9,6 @@ import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import kotlinx.serialization.SerializationException
-
 
 suspend inline fun <reified T, reified E> HttpClient.safeRequest(
     exceptionHandler: ExceptionHandler,
@@ -35,7 +34,6 @@ suspend inline fun <reified E> ResponseException.errorBody(): E? =
         null
     }
 
-
 sealed class ApiResponse<out T, out E> {
     /**
      * Represents successful network responses (2xx).
@@ -57,6 +55,5 @@ sealed class ApiResponse<out T, out E> {
          * Represent other exceptions.
          */
         data class GenericError(val errorMessage: String?) : Error<Nothing>()
-
     }
 }

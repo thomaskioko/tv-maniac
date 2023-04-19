@@ -7,8 +7,8 @@ android {
 }
 
 dependencies {
-    api(project(":shared:domain:discover"))
-    implementation(project(":shared:data:category:api"))
+    api(projects.shared.domain.discover)
+    implementation(projects.shared.data.category.api)
 
     implementation(libs.accompanist.pager.core)
 

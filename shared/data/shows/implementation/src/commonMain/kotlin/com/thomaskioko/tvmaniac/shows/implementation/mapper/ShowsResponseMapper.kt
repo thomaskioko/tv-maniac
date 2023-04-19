@@ -1,18 +1,18 @@
 package com.thomaskioko.tvmaniac.shows.implementation.mapper
 
 import co.touchlab.kermit.Logger
-import com.thomaskioko.tvmaniac.base.util.FormatterUtil
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.Show_category
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
+import com.thomaskioko.tvmaniac.util.FormatterUtil
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ShowsResponseMapper(
-    private val formatterUtil: FormatterUtil
+    private val formatterUtil: FormatterUtil,
 ) {
 
     fun showResponseToCacheList(result: ApiResponse<List<TraktShowResponse>, ErrorResponse>) =
@@ -68,7 +68,6 @@ class ShowsResponseMapper(
             }
         }
 
-
     private fun showResponseToCacheList(response: TraktShowsResponse): Show = Show(
         trakt_id = response.show.ids.trakt.toLong(),
         tmdb_id = response.show.ids.tmdb?.toLong(),
@@ -84,12 +83,10 @@ class ShowsResponseMapper(
         status = response.show.status.replaceFirstChar { it.uppercase() },
     )
 
-
     fun toCategoryCache(shows: List<Show>, categoryId: Long) = shows.map {
         Show_category(
             trakt_id = it.trakt_id,
-            category_id = categoryId
+            category_id = categoryId,
         )
     }
 }
-
