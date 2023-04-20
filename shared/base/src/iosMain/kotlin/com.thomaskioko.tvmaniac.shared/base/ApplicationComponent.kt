@@ -25,7 +25,6 @@ import me.tatarka.inject.annotations.Component
 @ApplicationScope
 @Component
 abstract class ApplicationComponent :
-    UtilPlatformComponent,
     CategoryComponent,
     DatabaseComponent,
     DataStorePlatformComponent,
@@ -37,7 +36,8 @@ abstract class ApplicationComponent :
     SimilarShowsComponent,
     TmdbPlatformComponent,
     TraktPlatformComponent,
-    TrailerComponent {
+    TrailerComponent,
+    UtilPlatformComponent {
 
     abstract val discoverStateMachine: DiscoverStateMachineWrapper
     abstract val followingStateMachineWrapper: FollowingStateMachineWrapper
