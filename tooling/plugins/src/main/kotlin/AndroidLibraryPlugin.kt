@@ -1,4 +1,5 @@
 import com.android.build.gradle.LibraryExtension
+import com.thomaskioko.tvmaniac.extensions.configureFlavors
 import com.thomaskioko.tvmaniac.extensions.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -15,6 +16,7 @@ class AndroidLibraryPlugin : Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
+                configureFlavors(this)
                 defaultConfig.targetSdk = 33
             }
 

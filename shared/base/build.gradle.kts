@@ -1,9 +1,7 @@
-
-import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
-
 plugins {
     id("tvmaniac.kmm.library")
-    id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
+    id("maven-publish")
+    alias(libs.plugins.kmmbridge)
     alias(libs.plugins.ksp)
 }
 
@@ -18,28 +16,8 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "TvManiac"
-            isStatic = false
-            transitiveExport = true
+            isStatic = true
             linkerOpts.add("-lsqlite3")
-
-            embedBitcode(BitcodeEmbeddingMode.BITCODE)
-
-            export(projects.shared.core.database)
-            export(projects.shared.core.datastore.api)
-            export(projects.shared.core.tmdbApi.api)
-            export(projects.shared.data.episodes.api)
-            export(projects.shared.data.similar.api)
-            export(projects.shared.data.seasonDetails.api)
-            export(projects.shared.data.category.api)
-            export(projects.shared.data.trailers.api)
-            export(projects.shared.data.shows.api)
-            export(projects.shared.data.profile.api)
-            export(projects.shared.domain.discover)
-            export(projects.shared.domain.following)
-            export(projects.shared.domain.seasondetails)
-            export(projects.shared.domain.settings)
-            export(projects.shared.domain.showDetails)
-            export(projects.shared.domain.trailers)
         }
     }
 
@@ -47,30 +25,23 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(projects.shared.core.database)
-                api(projects.shared.core.datastore.api)
-                api(projects.shared.core.networkutil)
-                api(projects.shared.core.tmdbApi.api)
-                api(projects.shared.core.traktApi.api)
-                api(projects.shared.core.util)
-                api(projects.shared.data.category.api)
-                api(projects.shared.data.episodes.api)
-                api(projects.shared.data.similar.api)
-                api(projects.shared.data.seasonDetails.api)
-                api(projects.shared.data.shows.api)
-                api(projects.shared.data.trailers.api)
-                api(projects.shared.data.profile.api)
-                api(projects.shared.domain.discover)
-                api(projects.shared.domain.following)
-                api(projects.shared.domain.seasondetails)
-                api(projects.shared.domain.settings)
-                api(projects.shared.domain.seasondetails)
-                api(projects.shared.domain.showDetails)
-                api(projects.shared.domain.trailers)
-
+                implementation(projects.shared.core.database)
                 implementation(projects.shared.core.datastore.implementation)
-                implementation(projects.shared.core.tmdbApi.implementation)
+                implementation(projects.shared.core.networkutil)
+                implementation(projects.shared.core.traktApi.api)
                 implementation(projects.shared.core.traktApi.implementation)
+                implementation(projects.shared.core.tmdbApi.api)
+                implementation(projects.shared.core.tmdbApi.implementation)
+                implementation(projects.shared.core.util)
+
+                implementation(projects.shared.domain.discover)
+                implementation(projects.shared.domain.following)
+                implementation(projects.shared.domain.seasondetails)
+                implementation(projects.shared.domain.settings)
+                implementation(projects.shared.domain.seasondetails)
+                implementation(projects.shared.domain.showDetails)
+                implementation(projects.shared.domain.trailers)
+
                 implementation(projects.shared.data.category.implementation)
                 implementation(projects.shared.data.episodes.implementation)
                 implementation(projects.shared.data.profile.implementation)
@@ -79,7 +50,6 @@ kotlin {
                 implementation(projects.shared.data.shows.implementation)
                 implementation(projects.shared.data.trailers.implementation)
 
-                implementation(libs.coroutines.core)
                 implementation(libs.kotlinInject.runtime)
             }
         }
@@ -94,13 +64,6 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
         }
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-        }
     }
 }
 
@@ -113,13 +76,11 @@ android {
     namespace = "com.thomaskioko.tvmaniac.shared.base"
 }
 
-multiplatformSwiftPackage {
-    packageName("TvManiac")
-    swiftToolsVersion("5.3")
-    targetPlatforms {
-        iOS { v("13") }
-    }
+addGithubPackagesRepository()
 
-    distributionMode { local() }
-    outputDirectory(File("$projectDir/../../../", "tvmaniac-swift-packages"))
+kmmbridge {
+    frameworkName.set("TvManiac")
+    githubReleaseVersions()
+    spm()
+    versionPrefix.set("0.1")
 }

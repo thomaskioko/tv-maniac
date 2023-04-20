@@ -21,6 +21,7 @@ composecompiler = "1.4.5"
 coroutines = "1.6.4"
 desugar = "2.0.2"
 junit = "4.13.2"
+kmmbridge = "0.3.7"
 kotest = "5.5.4"
 kotlin = "1.8.20"
 kotlininject = "0.6.1"
@@ -119,6 +120,7 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 dependency-check = { id = "com.github.ben-manes.versions", version = "0.44.0" }
 dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version = "1.13.1" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.22.0" }
+kmmbridge = { id = "co.touchlab.faktory.kmmbridge", version.ref = "kmmbridge" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
