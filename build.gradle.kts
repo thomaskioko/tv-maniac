@@ -42,6 +42,12 @@ tasks.register("clean", Delete::class) {
 }
 
 subprojects {
+    val GROUP: String by project
+    val LIBRARY_VERSION: String by project
+
+    group = GROUP
+    version = LIBRARY_VERSION
+
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         with(kotlinOptions) {
             jvmTarget = JavaVersion.VERSION_11.toString()
