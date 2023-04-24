@@ -4,10 +4,13 @@ agp = "8.0.0"
 appauth = "0.8.1"
 
 androidx-activity = "1.7.1"
+androidx-annotation = "1.6.0"
 androidx-appCompat = "1.5.1"
+androidx-collection = "1.2.0"
 androidx-core = "1.10.0"
 androidx-datastore = "1.1.0-dev01"
 androidx-lifecycle = "2.6.1"
+androidx-material = "1.4.2"
 androidx-material3 = "1.1.0-rc01"
 androidx-navigation = "2.5.3"
 navigation-compose = "1.0.0"
@@ -44,26 +47,33 @@ accompanist-navigation-material = { module = "com.google.accompanist:accompanist
 
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation" }
+androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout" }
 androidx-compose-material-icons = { module = "androidx.compose.material:material-icons-extended" }
-androidx-compose-ui-runtime = { module = "androidx.compose.ui:ui" }
+androidx-compose-ui-ui = { module = "androidx.compose.ui:ui" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling"}
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview"}
 androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util"}
 
 androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activity" }
+androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
 
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version = "1.0.1" }
+androidx-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "androidx-material" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidx-material3" }
 androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "androidx-material3" }
 androidx-compose-paging = { module = "androidx.paging:paging-compose", version = "1.0.0-alpha18" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-collection = { module = "androidx.collection:collection", version.ref = "androidx-collection" }
 androidx-datastore-preference = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewmodel-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "androidx-lifecycle" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 androidx-navigation-common = { module = "androidx.navigation:navigation-common", version.ref = "androidx-navigation" }
 androidx-navigation-runtime = { module = "androidx.navigation:navigation-runtime", version.ref = "androidx-navigation" }
+androidx-paging-common = { module = "androidx.paging:paging-common", version = "3.1.1" }
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version = "3.1.1" }
 androidx-palette = { module = "androidx.palette:palette-ktx", version.ref = "androidx-palette" }
 androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
@@ -109,6 +119,7 @@ sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", ver
 sqldelight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
+sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
 
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 yamlkt = { module = "net.mamoe.yamlkt:yamlkt", version = "0.12.0" }
@@ -118,7 +129,7 @@ youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 dependency-check = { id = "com.github.ben-manes.versions", version = "0.44.0" }
-dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version = "1.13.1" }
+dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version = "1.20.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.22.0" }
 kmmbridge = { id = "co.touchlab.faktory.kmmbridge", version.ref = "kmmbridge" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
