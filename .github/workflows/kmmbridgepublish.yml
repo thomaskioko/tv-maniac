@@ -3,14 +3,6 @@ on: workflow_dispatch
 
 jobs:
   call-kmmbridge-publish:
-    name: Run workflow
-    steps:
-      - name: Install JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: 17
-      - name: KmmBridgeWorkflow
-        uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@v0.8
-        with:
-          jvmVersion: 17
+    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@v0.8
+    with:
+      jvmVersion: 17
