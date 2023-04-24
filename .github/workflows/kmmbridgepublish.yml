@@ -2,6 +2,7 @@ name: KMMBridge Publish Release
 on: workflow_dispatch
 
 jobs:
-  uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuild.yml@b795422fddc0bbedd1239857aa46c0d9520889c2
-  with:
-    jvmVersion: '17'
+  call-kmmbridge-publish:
+    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuild.yml@b795422fddc0bbedd1239857aa46c0d9520889c2
+    with:
+      jvmVersion: '17'
