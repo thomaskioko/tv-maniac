@@ -7,11 +7,20 @@ android {
 }
 
 dependencies {
-    api(project(":shared:domain:trailers"))
+    api(projects.shared.domain.trailers)
 
-    implementation(libs.accompanist.insetsui)
+    api(libs.androidx.compose.ui.tooling.preview)
+    api(libs.androidx.compose.ui.ui)
+    api(libs.androidx.navigation.common)
+    api(libs.androidx.navigation.runtime)
+    api(libs.coroutines.core)
+
+    implementation(projects.android.core.resources)
+
     implementation(libs.accompanist.navigation.material)
     implementation(libs.androidx.compose.constraintlayout)
-    implementation(libs.flowredux)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui.ui)
     implementation(libs.youtubePlayer)
+
 }

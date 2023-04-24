@@ -9,15 +9,17 @@ android {
 
 dependencies {
 
-    implementation(projects.android.core.workmanager)
-    implementation(projects.shared.core.util)
+    api(projects.android.core.workmanager)
+    api(projects.shared.core.util)
 
-    implementation(libs.appauth)
+    api(libs.appauth)
+    api(libs.coroutines.core)
+
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.core)
     implementation(libs.androidx.work.runtime)
     implementation(libs.kermit)
 
     implementation(libs.kotlinInject.runtime)
     ksp(libs.kotlinInject.compiler)
+
 }

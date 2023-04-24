@@ -23,7 +23,6 @@ kotlin {
 
 
         sourceSets["androidTest"].dependencies {
-            implementation(kotlin("test"))
             implementation(libs.sqldelight.driver.jvm)
         }
 
