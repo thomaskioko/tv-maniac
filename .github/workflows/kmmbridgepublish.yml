@@ -3,6 +3,7 @@ on: workflow_dispatch
 
 jobs:
   call-kmmbridge-publish:
+    name: Run workflow
     steps:
       - name: Install JDK
         uses: actions/setup-java@v3
