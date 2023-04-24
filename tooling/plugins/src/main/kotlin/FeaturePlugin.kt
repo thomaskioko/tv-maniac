@@ -25,18 +25,10 @@ class FeaturePlugin : Plugin<Project> {
             dependencies {
                 add("api", project(":android:core:designsystem"))
                 add("api", project(":android:core:navigation"))
-                add("api", project(":shared:core:util"))
-
-                add("implementation", project(":android:core:resources"))
-
-                add("api", libs.findLibrary("androidx.navigation.common").get())
-                add("api", libs.findLibrary("androidx.navigation.runtime").get())
 
                 add("implementation", libs.findLibrary("androidx.compose.foundation").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.viewmodel.compose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.runtime.compose").get())
-                add("implementation", libs.findLibrary("androidx.navigation.compose").get())
-                add("implementation", libs.findLibrary("coroutines.core").get())
                 add("implementation", libs.findLibrary("kotlinInject.runtime").get())
 
                 add("ksp", libs.findLibrary("kotlinInject.compiler").get())

@@ -80,6 +80,18 @@ dependencies {
     implementation(libs.androidx.compose.activity)
     implementation(libs.appauth)
 
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui.ui)
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.datastore.preference )
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.sqldelight.runtime)
+    implementation(libs.ktor.core)
+    implementation(libs.coroutines.core)
+
     implementation(libs.kotlinInject.runtime)
     ksp(libs.kotlinInject.compiler)
 }

@@ -7,12 +7,19 @@ android {
 }
 
 dependencies {
-    api(project(":shared:domain:show-details"))
+    api(projects.shared.domain.showDetails)
 
-    implementation(libs.accompanist.insetsui)
-    implementation(libs.accompanist.navigation.material)
-    implementation(libs.androidx.compose.constraintlayout)
+    api(libs.androidx.compose.material3)
+    api(libs.androidx.compose.ui.tooling.preview)
+    api(libs.androidx.compose.ui.ui)
+    api(libs.androidx.navigation.common)
+    api(libs.androidx.navigation.runtime)
+    api(libs.coroutines.core)
+
+    implementation(projects.android.core.resources)
+
     implementation(libs.androidx.compose.material.icons)
-    implementation(libs.flowredux)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.snapper)
 }

@@ -8,13 +8,12 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
-            implementation(projects.shared.core.tmdbApi.api)
-            implementation(projects.shared.data.category.api)
+            api(projects.shared.data.category.api)
             implementation(projects.shared.data.shows.api)
+            implementation(projects.shared.core.tmdbApi.api)
         }
 
         sourceSets["commonTest"].dependencies {
-
             implementation(projects.shared.core.tmdbApi.testing)
             implementation(projects.shared.data.shows.testing)
         }

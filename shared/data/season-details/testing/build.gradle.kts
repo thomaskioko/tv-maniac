@@ -19,5 +19,5 @@ kotlin {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.episodes.testing"
+    namespace = "com.thomaskioko.tvmaniac.seasondetails.testing"
 }
