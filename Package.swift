@@ -1,8 +1,7 @@
+// swift-tools-version:5.3
 import PackageDescription
 
-let remoteKotlinUrl = "https://maven.pkg.github.com/touchlab/KMMBridgeKickStart/co/touchlab/kmmbridgekickstart/allshared-kmmbridge/0.13.0/allshared-kmmbridge-0.13.0.zip"
-let remoteKotlinChecksum = "fe57822fa8ae5806e791558b1a632c3cd3af6f185d8e866ff4e132f40f68a6d4"
-let packageName = "Tvmaniac"
+let packageName = "TvManiac"
 
 let package = Package(
     name: packageName,
@@ -18,8 +17,7 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: packageName,
-            url: remoteKotlinUrl,
-            checksum: remoteKotlinChecksum
+            path: "./shared/base/build/XCFrameworks/debug/\(packageName).xcframework"
         )
         ,
     ]
