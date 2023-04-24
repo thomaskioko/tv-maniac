@@ -1,6 +1,7 @@
 // swift-tools-version:5.3
 import PackageDescription
 
+let remoteKotlinUrl = "https://github.com/c0de-wizard/tv-maniac/packages/1845300" //TODO Remove hardcoded url
 let packageName = "TvManiac"
 
 let package = Package(
@@ -17,7 +18,7 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: packageName,
-            path: "./shared/base/build/XCFrameworks/debug/\(packageName).xcframework"
+            url: remoteKotlinUrl,
         )
         ,
     ]
