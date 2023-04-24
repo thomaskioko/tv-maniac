@@ -5,5 +5,4 @@ jobs:
   call-kmmbridge-publish:
     uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@v0.8
     with:
-      distribution: 'zulu'
-      java-version: 17
+      jvmVersion: 17
