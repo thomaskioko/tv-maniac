@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.traktauth
 import android.app.Activity
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
-import co.touchlab.kermit.Logger
+import com.thomaskioko.tvmaniac.util.KermitLogger
 import me.tatarka.inject.annotations.Inject
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationService
@@ -16,6 +16,7 @@ class TraktAuthManagerImpl(
     private val traktAuthRepository: TraktAuthRepository,
     private val clientAuth: Lazy<ClientAuthentication>,
     private val authService: Lazy<AuthorizationService>,
+    private val logger: KermitLogger,
 ) : TraktAuthManager {
 
     private lateinit var launcher: ActivityResultLauncher<Unit>
@@ -47,7 +48,7 @@ class TraktAuthManagerImpl(
                 }
             }
 
-            error != null -> Logger.e("AuthException", error)
+            error != null -> logger.error("AuthException", error)
         }
     }
 }

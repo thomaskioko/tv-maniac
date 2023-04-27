@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.android.core.resources)
+    implementation(projects.androidCore.resources)
 
     api(libs.coroutines.jvm)
     api(libs.coil.coil)

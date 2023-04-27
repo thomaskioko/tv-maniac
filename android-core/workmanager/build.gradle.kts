@@ -15,8 +15,6 @@ dependencies {
 
     api(libs.androidx.work.runtime)
 
-    implementation(libs.kermit)
-
     implementation(libs.kotlinInject.runtime)
     ksp(libs.kotlinInject.compiler)
 }
