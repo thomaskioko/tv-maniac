@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.workmanager
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.trakt.profile.api.ProfileRepository
+import com.thomaskioko.tvmaniac.util.KermitLogger
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -12,6 +12,7 @@ import me.tatarka.inject.annotations.Inject
 class SyncFollowedShows(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
+    private val logger: KermitLogger,
     private val profileRepository: ProfileRepository,
 ) : CoroutineWorker(context, params) {
 
@@ -20,7 +21,7 @@ class SyncFollowedShows(
     }
 
     override suspend fun doWork(): Result {
-        Logger.d("$tags worker running")
+        logger.debug("$tags worker running")
         profileRepository.fetchTraktWatchlistShows()
 
         return Result.success()
