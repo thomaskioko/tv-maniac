@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.android.core.traktAuth)
+    implementation(projects.androidCore.traktAuth)
     implementation(projects.shared.core.datastore.api)
     implementation(projects.shared.data.shows.api)
     implementation(projects.shared.domain.settings)
