@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
-import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.core.db.Season_episodes
 import com.thomaskioko.tvmaniac.core.db.Seasons
 import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
@@ -17,6 +16,7 @@ import com.thomaskioko.tvmaniac.trakt.api.TraktService
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -31,6 +31,7 @@ class SeasonDetailsRepositoryImpl(
     private val datastore: DatastoreRepository,
     private val exceptionHandler: ExceptionHandler,
     private val dispatcher: AppCoroutineDispatchers,
+    private val logger: KermitLogger,
 ) : SeasonDetailsRepository {
 
     override fun observeSeasonsStream(traktId: Long): Flow<Either<Failure, List<Seasons>>> =
@@ -47,17 +48,17 @@ class SeasonDetailsRepositoryImpl(
                     )
 
                     is ApiResponse.Error.GenericError -> {
-                        Logger.withTag("observeSeasons").e("$it")
+                        logger.error("observeSeasons", "$it")
                         throw Throwable("${it.errorMessage}")
                     }
 
                     is ApiResponse.Error.HttpError -> {
-                        Logger.withTag("observeSeasons").e("$it")
+                        logger.error("observeSeasons", "$it")
                         throw Throwable("${it.code} - ${it.errorBody?.message}")
                     }
 
                     is ApiResponse.Error.SerializationError -> {
-                        Logger.withTag("observeSeasons").e("$it")
+                        logger.error("observeSeasons", "$it")
                         throw Throwable("$it")
                     }
                 }
@@ -109,17 +110,17 @@ class SeasonDetailsRepositoryImpl(
             }
 
             is ApiResponse.Error.GenericError -> {
-                Logger.withTag("observeSeasonDetails").e("$response")
+                logger.error("observeSeasonDetails", "$response")
                 throw Throwable("${response.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
-                Logger.withTag("observeSeasonDetails").e("$response")
+                logger.error("observeSeasonDetails", "$response")
                 throw Throwable("${response.code} - ${response.errorBody?.message}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                Logger.withTag("observeSeasonDetails").e("$response")
+                logger.error("observeSeasonDetails", "$response")
                 throw Throwable("$response")
             }
         }

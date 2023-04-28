@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.trakt.profile.implementation
 
-import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.Trakt_shows_list
 import com.thomaskioko.tvmaniac.core.db.Trakt_user
@@ -17,6 +16,7 @@ import com.thomaskioko.tvmaniac.trakt.profile.api.cache.StatsCache
 import com.thomaskioko.tvmaniac.trakt.profile.api.cache.UserCache
 import com.thomaskioko.tvmaniac.util.DateFormatter
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -33,6 +33,7 @@ class ProfileRepositoryImpl constructor(
     private val dateFormatter: DateFormatter,
     private val mapper: ProfileResponseMapper,
     private val exceptionHandler: ExceptionHandler,
+    private val logger: KermitLogger,
     private val dispatchers: AppCoroutineDispatchers,
 ) : ProfileRepository {
 
@@ -48,17 +49,17 @@ class ProfileRepositoryImpl constructor(
                     }
 
                     is ApiResponse.Error.GenericError -> {
-                        Logger.withTag("observeMe").e("$it")
+                        logger.error("observeMe", "$it")
                         throw Throwable("${it.errorMessage}")
                     }
 
                     is ApiResponse.Error.HttpError -> {
-                        Logger.withTag("observeMe").e("$it")
+                        logger.error("observeMe", "$it")
                         throw Throwable("${it.code} - ${it.errorBody?.message}")
                     }
 
                     is ApiResponse.Error.SerializationError -> {
-                        Logger.withTag("observeMe").e("$it")
+                        logger.error("observeMe", "$it")
                         throw Throwable("$it")
                     }
                 }
