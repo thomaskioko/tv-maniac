@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.shows.implementation.mapper
 
-import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.Show_category
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
@@ -8,28 +7,30 @@ import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.KermitLogger
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ShowsResponseMapper(
     private val formatterUtil: FormatterUtil,
+    private val logger: KermitLogger,
 ) {
 
     fun showResponseToCacheList(result: ApiResponse<List<TraktShowResponse>, ErrorResponse>) =
         when (result) {
             is ApiResponse.Success -> result.body.map { responseToCache(it) }
             is ApiResponse.Error.GenericError -> {
-                Logger.withTag("showResponseToCacheList").e("$this")
+                logger.error("showResponseToCacheList", "$this")
                 throw Throwable("${result.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
-                Logger.withTag("showResponseToCacheList").e("$this")
+                logger.error("showResponseToCacheList", "$this")
                 throw Throwable("${result.code} - ${result.errorBody?.message}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                Logger.withTag("showResponseToCacheList").e("$this")
+                logger.error("showResponseToCacheList", "$this")
                 throw Throwable("$this")
             }
         }
@@ -53,17 +54,17 @@ class ShowsResponseMapper(
         when (result) {
             is ApiResponse.Success -> result.body.map { showResponseToCacheList(it) }
             is ApiResponse.Error.GenericError -> {
-                Logger.withTag("showsResponseToCacheList").e("$this")
+                logger.error("showsResponseToCacheList", "$this")
                 throw Throwable("${result.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
-                Logger.withTag("showsResponseToCacheList").e("$this")
+                logger.error("showsResponseToCacheList", "$this")
                 throw Throwable("${result.code} - ${result.errorBody?.message}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                Logger.withTag("showsResponseToCacheList").e("$this")
+                logger.error("showsResponseToCacheList", "$this")
                 throw Throwable("$this")
             }
         }

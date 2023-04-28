@@ -13,7 +13,6 @@ kotlin {
             implementation(projects.shared.data.shows.api)
             implementation(projects.shared.core.traktApi.api)
 
-            implementation(libs.kermit)
             implementation(libs.kotlinInject.runtime)
             implementation(libs.sqldelight.extensions)
         }
