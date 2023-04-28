@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
-import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.core.db.Show_image
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
@@ -12,6 +11,7 @@ import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -27,6 +27,7 @@ class TmdbRepositoryImpl(
     private val formatterUtil: FormatterUtil,
     private val exceptionHandler: ExceptionHandler,
     private val dispatchers: AppCoroutineDispatchers,
+    private val logger: KermitLogger,
 ) : TmdbRepository {
 
     override fun updateShowArtWork(): Flow<Either<Failure, Unit>> =
@@ -37,8 +38,7 @@ class TmdbRepositoryImpl(
 
                         when (val response = apiService.getTvShowDetails(tmdbId)) {
                             is ApiResponse.Error -> {
-                                Logger.withTag("updateShowArtWork")
-                                    .e("$response")
+                                logger.error("updateShowArtWork", "$response")
                             }
 
                             is ApiResponse.Success -> {
