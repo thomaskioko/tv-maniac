@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
-import co.touchlab.kermit.Logger
 import com.thomaskioko.tvmaniac.category.api.cache.CategoryCache
 import com.thomaskioko.tvmaniac.category.api.model.Category.ANTICIPATED
 import com.thomaskioko.tvmaniac.category.api.model.Category.FEATURED
@@ -26,6 +25,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.util.DateFormatter
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -43,6 +43,7 @@ class ShowsRepositoryImpl constructor(
     private val mapper: ShowsResponseMapper,
     private val exceptionHandler: ExceptionHandler,
     private val dispatchers: AppCoroutineDispatchers,
+    private val logger: KermitLogger,
 ) : ShowsRepository {
 
     override fun observeShow(traktId: Long): Flow<Either<Failure, SelectByShowId>> =
@@ -177,17 +178,17 @@ class ShowsRepositoryImpl constructor(
             }
 
             is ApiResponse.Error.GenericError -> {
-                Logger.withTag("observeShow").e("$this")
+                logger.error("observeShow", "$this")
                 throw Throwable("${response.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
-                Logger.withTag("observeShow").e("$this")
+                logger.error("observeShow", "$this")
                 throw Throwable("${response.code} - ${response.errorBody?.message}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                Logger.withTag("observeShow").e("$this")
+                logger.error("observeShow", "$this")
                 throw Throwable("$response")
             }
         }

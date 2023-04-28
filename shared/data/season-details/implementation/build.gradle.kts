@@ -17,7 +17,6 @@ kotlin {
             implementation(projects.shared.data.episodes.api)
             implementation(projects.shared.data.seasonDetails.api)
 
-            implementation(libs.kermit)
             implementation(libs.kotlinInject.runtime)
             implementation(libs.sqldelight.extensions)
 

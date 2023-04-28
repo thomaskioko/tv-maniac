@@ -19,14 +19,13 @@ kotlin {
             implementation(projects.shared.core.util)
             implementation(projects.shared.core.traktApi.api)
 
-            implementation(libs.sqldelight.extensions)
-            implementation(libs.kermit)
             implementation(libs.ktor.core)
             implementation(libs.ktor.logging)
             implementation(libs.ktor.negotiation)
             implementation(libs.ktor.serialization.json)
             implementation(libs.ktor.serialization)
             implementation(libs.kotlinInject.runtime)
+            implementation(libs.sqldelight.extensions)
         }
 
         sourceSets["iosMain"].dependencies {

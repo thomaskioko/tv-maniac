@@ -5,9 +5,7 @@ import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.EMPTY
 import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.headers
 import io.ktor.http.HttpHeaders
@@ -47,14 +45,5 @@ fun tmdbHttpClient(
 
     install(Logging) {
         level = LogLevel.INFO
-        logger = if (isDebug) {
-            object : Logger {
-                override fun log(message: String) {
-                    co.touchlab.kermit.Logger.d { message }
-                }
-            }
-        } else {
-            Logger.EMPTY
-        }
     }
 }

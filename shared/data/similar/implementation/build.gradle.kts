@@ -17,7 +17,6 @@ kotlin {
             implementation(projects.shared.data.similar.api)
             implementation(projects.shared.data.shows.api)
 
-            implementation(libs.kermit)
             implementation(libs.kotlinInject.runtime)
             implementation(libs.sqldelight.extensions)
         }
