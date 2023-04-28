@@ -19,7 +19,6 @@ kotlin {
             implementation(projects.shared.core.tmdbApi.api)
             implementation(projects.shared.data.shows.api)
 
-            implementation(libs.kermit)
             implementation(libs.kotlinInject.runtime)
             implementation(libs.ktor.core)
             implementation(libs.ktor.logging)
