@@ -24,7 +24,7 @@ class SimilarShowsRepositoryImpl(
     private val showsCache: ShowsCache,
     private val exceptionHandler: ExceptionHandler,
     private val dispatchers: AppCoroutineDispatchers,
-    private val logger: KermitLogger
+    private val logger: KermitLogger,
 ) : SimilarShowsRepository {
 
     override fun observeSimilarShows(traktId: Long): Flow<Either<Failure, List<SelectSimilarShows>>> =
@@ -39,7 +39,7 @@ class SimilarShowsRepositoryImpl(
 
     private fun mapAndInsert(
         traktId: Long,
-        response: ApiResponse<List<TraktShowResponse>, ErrorResponse>
+        response: ApiResponse<List<TraktShowResponse>, ErrorResponse>,
     ) {
         when (response) {
             is ApiResponse.Success -> {
