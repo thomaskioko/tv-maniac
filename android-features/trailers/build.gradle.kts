@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    api(project(":shared:domain:trailers"))
+    api(projects.domain.trailers)
 
     implementation(libs.accompanist.insetsui)
     implementation(libs.accompanist.navigation.material)
