@@ -8,9 +8,9 @@ android {
 
 dependencies {
     implementation(projects.androidCore.traktAuth)
-    implementation(projects.shared.core.datastore.api)
-    implementation(projects.shared.data.shows.api)
-    implementation(projects.shared.domain.settings)
+    implementation(projects.core.datastore.api)
+    implementation(projects.data.shows.api)
+    implementation(projects.domain.settings)
 
     implementation(libs.accompanist.insetsui)
     implementation(libs.flowredux)
