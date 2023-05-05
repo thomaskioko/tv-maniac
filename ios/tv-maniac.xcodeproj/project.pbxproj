@@ -13,7 +13,6 @@
 		CBDFC60AF859A44365A90BA5 /* TopNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC4463ABF8E9F9AEB156C /* TopNavBar.swift */; };
 		CBDFCA9D24126097D232D988 /* BlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC78A5C2441FF7F2BB401 /* BlurView.swift */; };
 		CBDFCFDED77DDE3DC67E3C28 /* ShowDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFCB6603736674C1A12CEE /* ShowDetailsViewModel.swift */; };
-		D626573829EE3DEC008782BB /* config.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D626573729EE3DEC008782BB /* config.yaml */; };
 		D63B9C2629EA341B00A02A43 /* TvManiac in Frameworks */ = {isa = PBXBuildFile; productRef = D63B9C2529EA341B00A02A43 /* TvManiac */; };
 		D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D653924729D8B6A6000EE673 /* OAuthSwift */; };
 		D653924D29D8B70E000EE673 /* TraktManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653924C29D8B70E000EE673 /* TraktManagerError.swift */; };
@@ -26,6 +25,7 @@
 		D653926029DAC949000EE673 /* AuthenticatedProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925F29DAC949000EE673 /* AuthenticatedProfileView.swift */; };
 		D653926329DACC39000EE673 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653926229DACC39000EE673 /* ProfileViewModel.swift */; };
 		D653926B29DAD8FA000EE673 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = D653926A29DAD8FA000EE673 /* config.json */; };
+		D65BFED82A05470E00F8899A /* config.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D65BFED72A05470E00F8899A /* config.yaml */; };
 		E90392B02918616400B9CAF0 /* DiscoverShowsViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90392AF2918616400B9CAF0 /* DiscoverShowsViewmodel.swift */; };
 		E90392C129197BDF00B9CAF0 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90392C029197BDF00B9CAF0 /* ErrorView.swift */; };
 		E924E11D272F2BA000C4435F /* HomeUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E924E11C272F2BA000C4435F /* HomeUIView.swift */; };
@@ -77,7 +77,6 @@
 		CBDFC78A5C2441FF7F2BB401 /* BlurView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlurView.swift; sourceTree = "<group>"; };
 		CBDFC8F86D71D33205E42D7F /* OffsetModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OffsetModifier.swift; sourceTree = "<group>"; };
 		CBDFCB6603736674C1A12CEE /* ShowDetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDetailsViewModel.swift; sourceTree = "<group>"; };
-		D626573729EE3DEC008782BB /* config.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; name = config.yaml; path = ../../../shared/core/util/src/commonMain/resources/config.yaml; sourceTree = "<group>"; };
 		D653924C29D8B70E000EE673 /* TraktManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktManagerError.swift; sourceTree = "<group>"; };
 		D653924E29D8BC7E000EE673 /* TraktAuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktAuthViewModel.swift; sourceTree = "<group>"; };
 		D653925229DABCEA000EE673 /* ConfigLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigLoader.swift; sourceTree = "<group>"; };
@@ -88,6 +87,7 @@
 		D653925F29DAC949000EE673 /* AuthenticatedProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatedProfileView.swift; sourceTree = "<group>"; };
 		D653926229DACC39000EE673 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		D653926A29DAD8FA000EE673 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
+		D65BFED72A05470E00F8899A /* config.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; name = config.yaml; path = ../../../core/util/src/commonMain/resources/config.yaml; sourceTree = "<group>"; };
 		E90392AF2918616400B9CAF0 /* DiscoverShowsViewmodel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverShowsViewmodel.swift; sourceTree = "<group>"; };
 		E90392C029197BDF00B9CAF0 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		E924E11C272F2BA000C4435F /* HomeUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeUIView.swift; sourceTree = "<group>"; };
@@ -178,7 +178,7 @@
 		D63B9C2129EA012A00A02A43 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D626573729EE3DEC008782BB /* config.yaml */,
+				D65BFED72A05470E00F8899A /* config.yaml */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -454,7 +454,7 @@
 				E98381AD27937ABF0039CB08 /* FjallaOne-Regular.ttf in Resources */,
 				E98381CC2793A0A50039CB08 /* WorkSans-ExtraBold.ttf in Resources */,
 				E98381CF2793A0A50039CB08 /* WorkSans-SemiBold.ttf in Resources */,
-				D626573829EE3DEC008782BB /* config.yaml in Resources */,
+				D65BFED82A05470E00F8899A /* config.yaml in Resources */,
 				E98381CE2793A0A50039CB08 /* WorkSans-Thin.ttf in Resources */,
 				E98381D02793A0A50039CB08 /* WorkSans-Medium.ttf in Resources */,
 				D653926B29DAD8FA000EE673 /* config.json in Resources */,
