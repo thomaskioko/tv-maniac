@@ -37,7 +37,7 @@ include(
     ":android-features:season-details",
     ":android-features:trailers",
     ":android-features:profile",
-    ":shared:base",
+    ":shared",
     ":core:util",
     ":core:networkutil",
     ":core:database",
