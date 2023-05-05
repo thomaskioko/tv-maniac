@@ -9,9 +9,9 @@ android {
 
 dependencies {
 
-    implementation(projects.shared.core.util)
-    implementation(projects.shared.data.profile.api)
-    implementation(projects.shared.data.shows.api)
+    implementation(projects.core.util)
+    implementation(projects.data.profile.api)
+    implementation(projects.data.shows.api)
 
     api(libs.androidx.work.runtime)
 

@@ -27,7 +27,7 @@ https://user-images.githubusercontent.com/841885/223576880-c7391d14-63b8-47cd-a7
 To use the Trakt API, you'll need to [create a new API app](https://trakt.tv/oauth/applications/new). & for [TMDb](https://www.themoviedb.org/settings/api) create an account and generate an API key if you don't have one.
 Once you have your keys, add them to `config.yaml`. If the file is not available, navigate to the root dir and create a symlink
 
-`ln -s shared/core/util/src/commonMain/resources/config.yaml config.yaml`
+`ln -s core/util/src/commonMain/resources/config.yaml config.yaml`
 
 ```
 tmdbApiKey: "PUT_API_KEY_HERE"
