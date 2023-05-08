@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.shared.base.wrappers
 
-import com.thomaskioko.tvmaniac.domain.following.FollowingAction
-import com.thomaskioko.tvmaniac.domain.following.FollowingState
-import com.thomaskioko.tvmaniac.domain.following.FollowingStateMachine
+import com.thomaskioko.tvmaniac.presentation.following.FollowingAction
+import com.thomaskioko.tvmaniac.presentation.following.FollowingState
+import com.thomaskioko.tvmaniac.presentation.following.FollowingStateMachine
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
