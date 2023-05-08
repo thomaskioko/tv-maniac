@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.domain.following.api
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.domain.following.FollowingContent
-import com.thomaskioko.tvmaniac.domain.following.FollowingStateMachine
-import com.thomaskioko.tvmaniac.domain.following.LoadingShows
+import com.thomaskioko.tvmaniac.presentation.following.FollowingContent
+import com.thomaskioko.tvmaniac.presentation.following.FollowingStateMachine
+import com.thomaskioko.tvmaniac.presentation.following.LoadingShows
 import com.thomaskioko.tvmaniac.shows.testing.FakeShowsRepository
 import com.thomaskioko.tvmaniac.shows.testing.cachedShowResult
 import io.kotest.matchers.shouldBe
