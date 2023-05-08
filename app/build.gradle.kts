@@ -69,12 +69,12 @@ dependencies {
     implementation(projects.data.trailers.api)
     implementation(projects.data.trailers.implementation)
 
-    implementation(projects.domain.discover)
-    implementation(projects.domain.following)
-    implementation(projects.domain.seasondetails)
-    implementation(projects.domain.settings)
-    implementation(projects.domain.showDetails)
-    implementation(projects.domain.trailers)
+    implementation(projects.presentation.discover)
+    implementation(projects.presentation.following)
+    implementation(projects.presentation.seasondetails)
+    implementation(projects.presentation.settings)
+    implementation(projects.presentation.showDetails)
+    implementation(projects.presentation.trailers)
 
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.compose.activity)
