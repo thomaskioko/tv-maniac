@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    api(projects.domain.discover)
+    api(projects.presentation.discover)
     implementation(projects.data.category.api)
 
     implementation(libs.accompanist.pager.core)

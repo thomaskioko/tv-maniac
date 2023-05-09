@@ -10,7 +10,7 @@ dependencies {
     implementation(projects.androidCore.traktAuth)
     implementation(projects.core.datastore.api)
     implementation(projects.data.shows.api)
-    implementation(projects.domain.settings)
+    implementation(projects.presentation.settings)
 
     implementation(libs.accompanist.insetsui)
     implementation(libs.flowredux)
