@@ -50,15 +50,15 @@ import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.domain.trailers.LoadingTrailers
-import com.thomaskioko.tvmaniac.domain.trailers.ReloadTrailers
-import com.thomaskioko.tvmaniac.domain.trailers.TrailerError
-import com.thomaskioko.tvmaniac.domain.trailers.TrailerSelected
-import com.thomaskioko.tvmaniac.domain.trailers.TrailersLoaded
-import com.thomaskioko.tvmaniac.domain.trailers.TrailersState
-import com.thomaskioko.tvmaniac.domain.trailers.VideoPlayerError
-import com.thomaskioko.tvmaniac.domain.trailers.model.Trailer
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
+import com.thomaskioko.tvmaniac.presentation.trailers.LoadingTrailers
+import com.thomaskioko.tvmaniac.presentation.trailers.ReloadTrailers
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailerError
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailerSelected
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailersLoaded
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailersState
+import com.thomaskioko.tvmaniac.presentation.trailers.VideoPlayerError
+import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
 import me.tatarka.inject.annotations.Inject
 

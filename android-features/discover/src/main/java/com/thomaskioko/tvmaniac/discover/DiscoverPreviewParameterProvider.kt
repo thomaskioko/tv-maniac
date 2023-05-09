@@ -2,11 +2,11 @@ package com.thomaskioko.tvmaniac.discover
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.category.api.model.Category
-import com.thomaskioko.tvmaniac.shared.domain.discover.LoadingError
-import com.thomaskioko.tvmaniac.shared.domain.discover.ShowResult
-import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsLoaded
-import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsState
-import com.thomaskioko.tvmaniac.shared.domain.discover.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.discover.LoadingError
+import com.thomaskioko.tvmaniac.presentation.discover.ShowResult
+import com.thomaskioko.tvmaniac.presentation.discover.ShowsLoaded
+import com.thomaskioko.tvmaniac.presentation.discover.ShowsState
+import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 
 val shows = TvShow(
     traktId = 84958,
