@@ -8,7 +8,7 @@ android {
 
 dependencies {
     implementation(projects.data.shows.api)
-    implementation(projects.domain.following)
+    implementation(projects.presentation.following)
 
     implementation(libs.accompanist.insetsui)
     implementation(libs.flowredux)
