@@ -24,13 +24,13 @@ import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.domain.following.ErrorLoadingShows
-import com.thomaskioko.tvmaniac.domain.following.FollowedShow
-import com.thomaskioko.tvmaniac.domain.following.FollowingContent
-import com.thomaskioko.tvmaniac.domain.following.FollowingState
-import com.thomaskioko.tvmaniac.domain.following.LoadingShows
-import com.thomaskioko.tvmaniac.domain.following.ReloadFollowedShows
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
+import com.thomaskioko.tvmaniac.presentation.following.ErrorLoadingShows
+import com.thomaskioko.tvmaniac.presentation.following.FollowingContent
+import com.thomaskioko.tvmaniac.presentation.following.FollowingShow
+import com.thomaskioko.tvmaniac.presentation.following.FollowingState
+import com.thomaskioko.tvmaniac.presentation.following.LoadingShows
+import com.thomaskioko.tvmaniac.presentation.following.ReloadFollowedShows
 import com.thomaskioko.tvmaniac.resources.R
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -119,7 +119,7 @@ private fun FollowingScreen(
 
 @Composable
 private fun FollowingGridContent(
-    list: List<FollowedShow>,
+    list: List<FollowingShow>,
     paddingValues: PaddingValues,
     onItemClicked: (Long) -> Unit,
 ) {

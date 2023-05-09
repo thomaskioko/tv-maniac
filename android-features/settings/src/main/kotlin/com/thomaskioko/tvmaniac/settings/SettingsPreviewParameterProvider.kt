@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.settings
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.datastore.api.Theme
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsContent
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsState
 
 class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState> {
     override val values: Sequence<SettingsState>

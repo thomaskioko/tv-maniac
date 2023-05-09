@@ -1,13 +1,13 @@
 package com.thomaskioko.tvmaniac.following
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.domain.following.ErrorLoadingShows
-import com.thomaskioko.tvmaniac.domain.following.FollowedShow
-import com.thomaskioko.tvmaniac.domain.following.FollowingContent
-import com.thomaskioko.tvmaniac.domain.following.FollowingState
+import com.thomaskioko.tvmaniac.presentation.following.ErrorLoadingShows
+import com.thomaskioko.tvmaniac.presentation.following.FollowingContent
+import com.thomaskioko.tvmaniac.presentation.following.FollowingShow
+import com.thomaskioko.tvmaniac.presentation.following.FollowingState
 
 val list = List(6) {
-    FollowedShow(
+    FollowingShow(
         traktId = 84958,
         tmdbId = 84958,
         title = "Loki",
