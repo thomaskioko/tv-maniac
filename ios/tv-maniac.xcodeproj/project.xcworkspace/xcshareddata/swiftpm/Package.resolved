@@ -62,6 +62,15 @@
         "revision" : "9483a5d459b45c3ffd059f7b55f9638e268632fd",
         "version" : "1.5.0"
       }
+    },
+    {
+      "identity" : "tvmaniac-swift-packages",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/c0de-wizard/tvmaniac-swift-packages.git",
+      "state" : {
+        "revision" : "c03d1d51578b5f17f8148939fa3be30e79e84f15",
+        "version" : "0.7.0"
+      }
     }
   ],
   "version" : 2
