@@ -30,11 +30,9 @@ struct ShowInfoRow: View {
 							.foregroundColor(.accent)
 				}
 
-				if let year = show.year {
-					Text(year)
-							.captionFont(size: 16)
-							.foregroundColor(Color.text_color_bg)
-				}
+                Text(show.year)
+                        .captionFont(size: 16)
+                        .foregroundColor(Color.text_color_bg)
 
 				Text("•")
 						.bodyFont(size: 16)
@@ -51,11 +49,9 @@ struct ShowInfoRow: View {
 						.bodyFont(size: 16)
 						.foregroundColor(.accent)
 
-				if let rating = show.rating {
-					Text(String(format: "%.1f", rating))
-							.captionFont(size: 16)
-							.foregroundColor(Color.text_color_bg)
-				}
+                Text(String(format: "%.1f", show.rating))
+                        .captionFont(size: 16)
+                        .foregroundColor(Color.text_color_bg)
 
 				Text("•")
 						.bodyFont(size: 16)

@@ -37,13 +37,7 @@ traktRedirectUri: "PUT_CALLBACK_URI_HERE"
 ```
 
 ### Opening iOS Project
-- Navigate to ios directory & open `.xcworkspace` & not `.xcodeproj` 
-
-### Genereating Swift Package Locally
-In case you make changes to the `shared` module and want to test out the changes, you can generate the swift package locally by:
-
-1. Execute `./gradle createSwiftPackage`. This will generate a swift package outside the root directory.
-2. Add the generated package in XCode.
+- Navigate to ios directory & open `.xcodeproj`
 
 ### Android Screenshots
 
