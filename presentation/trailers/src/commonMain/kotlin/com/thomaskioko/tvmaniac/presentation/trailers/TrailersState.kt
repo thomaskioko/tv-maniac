@@ -7,7 +7,7 @@ interface TrailersState
 object LoadingTrailers : TrailersState
 
 data class TrailersLoaded(
-    val selectedVideoKey: String = "",
+    val selectedVideoKey: String? = null,
     val trailersList: List<Trailer> = emptyList(),
 ) : TrailersState
 
