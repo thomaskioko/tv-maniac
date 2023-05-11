@@ -30,7 +30,7 @@ class TrailerCacheImpl(
         trailerList.forEach { insert(it) }
     }
 
-    override fun getTrailersByShowId(showId: Long): Flow<List<Trailers>> {
+    override fun observeTrailersById(showId: Long): Flow<List<Trailers>> {
         return database.trailersQueries.selectByShowId(showId)
             .asFlow()
             .mapToList(dispatchers.io)
