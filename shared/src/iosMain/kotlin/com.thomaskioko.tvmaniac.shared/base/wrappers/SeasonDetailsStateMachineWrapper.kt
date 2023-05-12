@@ -14,7 +14,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class SeasonDetailsStateMachineWrapper(
     private val scope: AppCoroutineScope,
-    private val stateMachine:(Long) ->  SeasonDetailsStateMachine,
+    private val stateMachine: (Long) -> SeasonDetailsStateMachine,
 ) {
 
     fun start(showId: Long, stateChangeListener: (SeasonDetailsState) -> Unit) {
