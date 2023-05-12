@@ -6,13 +6,13 @@ object WebViewError : ShowDetailsAction
 
 object DismissWebViewError : ShowDetailsAction
 
-data class ReloadShow(val traktId: Long) : ShowDetailsAction
+data class ReloadShowDetails(val traktId: Long) : ShowDetailsAction
 
 data class LoadShowDetails(
     val traktId: Long,
 ) : ShowDetailsAction
 
-data class FollowShow(
+data class FollowShowClicked(
     val traktId: Long,
-    val addToWatchList: Boolean,
+    val addToFollowed: Boolean,
 ) : ShowDetailsAction

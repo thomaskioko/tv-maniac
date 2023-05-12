@@ -3,6 +3,11 @@ package com.thomaskioko.tvmaniac.presentation.showdetails
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
+import com.thomaskioko.tvmaniac.core.db.Seasons
+import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
+import com.thomaskioko.tvmaniac.core.db.Trailers
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonState.SeasonsLoaded.Companion.EmptySeasons
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.ShowDetailsLoaded
@@ -16,47 +21,43 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersL
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.catch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Inject
 class ShowDetailsStateMachine constructor(
+    @Assisted private val traktShowId: Long,
     private val showsRepository: ShowsRepository,
     private val similarShowsRepository: SimilarShowsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val trailerRepository: TrailerRepository,
-    private val exceptionHandler: ExceptionHandler,
 ) : FlowReduxStateMachine<ShowDetailsState, ShowDetailsAction>(
     initialState = ShowDetailsState.Loading,
 ) {
 
-    private var showId: MutableStateFlow<Long> = MutableStateFlow(0)
-
     init {
         spec {
             inState<ShowDetailsState.Loading> {
-                on<LoadShowDetails> { action, state ->
-                    fetchShowData(action, state)
+                onEnter { state ->
+                    fetchShowDetails(state)
                 }
             }
 
             inState<ShowDetailsLoaded> {
 
-                collectWhileInState(showId) { id, state ->
-                    loadSeasons(id, state)
+                collectWhileInState(seasonDetailsRepository.observeSeasonsStream(traktShowId)) { result, state ->
+                    updateShowDetailsState(result, state)
                 }
 
-                collectWhileInState(showId) { id, state ->
-                    loadTrailers(id, state)
+                collectWhileInState(trailerRepository.observeTrailersByShowId(traktShowId)) { result, state ->
+                    updateTrailerState(result, state)
                 }
 
-                collectWhileInState(showId) { id, state ->
-                    loadSimilarShows(id, state)
+                collectWhileInState(similarShowsRepository.observeSimilarShows(traktShowId)) { result, state ->
+                    updateSimilarShowsState(result, state)
                 }
 
                 collectWhileInState(trailerRepository.isYoutubePlayerInstalled()) { result, state ->
@@ -70,15 +71,19 @@ class ShowDetailsStateMachine constructor(
                     }
                 }
 
-                on<FollowShow> { action, state ->
-                    updateFollowState(action, state)
+                onActionEffect<FollowShowClicked> { action, _ ->
+                    showsRepository.updateFollowedShow(
+                        traktId = action.traktId,
+                        addToWatchList = !action.addToFollowed,
+                    )
                 }
 
                 on<WebViewError> { _, state ->
                     state.mutate {
                         copy(
-                            trailerState = (trailerState as TrailersLoaded)
-                                .copy(playerErrorMessage = playerErrorMessage),
+                            trailerState = (trailerState as? TrailersLoaded)?.copy(
+                                playerErrorMessage = playerErrorMessage,
+                            ) ?: TrailersError(playerErrorMessage),
                         )
                     }
                 }
@@ -94,23 +99,83 @@ class ShowDetailsStateMachine constructor(
             }
 
             inState<ShowDetailsState.ShowDetailsError> {
-                on<ReloadShow> { action, state ->
+                on<ReloadShowDetails> { action, state ->
                     reloadShowData(action, state)
                 }
             }
         }
     }
 
-    private suspend fun fetchShowData(
-        action: LoadShowDetails,
-        state: State<ShowDetailsState.Loading>,
-    ): ChangedState<ShowDetailsState> {
-        showId.value = action.traktId
-        var nextState: ShowDetailsState = ShowDetailsState.Loading
+    private fun updateSimilarShowsState(
+        result: Either<Failure, List<SelectSimilarShows>>,
+        state: State<ShowDetailsLoaded>,
+    ) = result.fold(
+        {
+            state.mutate {
+                copy(similarShowsState = SimilarShowsError(it.errorMessage))
+            }
+        },
+        {
+            state.mutate {
+                copy(
+                    similarShowsState = (similarShowsState as SimilarShowsLoaded)
+                        .copy(
+                            isLoading = false,
+                            similarShows = it.toSimilarShowList(),
+                        ),
+                )
+            }
+        },
+    )
 
-        showsRepository.observeShow(action.traktId)
+    private fun updateTrailerState(
+        result: Either<Failure, List<Trailers>>,
+        state: State<ShowDetailsLoaded>,
+    ) = result.fold(
+        {
+            state.mutate {
+                copy(trailerState = TrailersError(it.errorMessage))
+            }
+        },
+        {
+            state.mutate {
+                copy(
+                    trailerState = (trailerState as TrailersLoaded).copy(
+                        isLoading = false,
+                        trailersList = it.toTrailerList(),
+                    ),
+                )
+            }
+        },
+    )
+
+    private fun updateShowDetailsState(
+        result: Either<Failure, List<Seasons>>,
+        state: State<ShowDetailsLoaded>,
+    ) = result.fold(
+        {
+            state.mutate {
+                copy(seasonState = SeasonState.SeasonsError(it.errorMessage))
+            }
+        },
+        {
+            state.mutate {
+                copy(
+                    seasonState = (seasonState as SeasonState.SeasonsLoaded).copy(
+                        isLoading = false,
+                        seasonsList = it.toSeasonsList(),
+                    ),
+                )
+            }
+        },
+    )
+
+    private suspend fun fetchShowDetails(state: State<ShowDetailsState.Loading>): ChangedState<ShowDetailsState> {
+        var detailState: ShowDetailsState = ShowDetailsState.Loading
+
+        showsRepository.observeShow(traktShowId)
             .collect { result ->
-                nextState = result.fold(
+                detailState = result.fold(
                     {
                         ShowDetailsState.ShowDetailsError(it.errorMessage)
                     },
@@ -126,19 +191,18 @@ class ShowDetailsStateMachine constructor(
                 )
             }
 
-        return state.override { nextState }
+        return state.override { detailState }
     }
 
     private suspend fun reloadShowData(
-        action: ReloadShow,
+        action: ReloadShowDetails,
         state: State<ShowDetailsState.ShowDetailsError>,
     ): ChangedState<ShowDetailsState> {
-        showId.value = action.traktId
-        var nextState: ShowDetailsState = ShowDetailsState.Loading
+        var detailState: ShowDetailsState = ShowDetailsState.Loading
 
         showsRepository.observeShow(action.traktId)
             .collect { result ->
-                nextState = result.fold(
+                detailState = result.fold(
                     { ShowDetailsState.ShowDetailsError(it.errorMessage) },
                     {
                         ShowDetailsLoaded(
@@ -152,146 +216,6 @@ class ShowDetailsStateMachine constructor(
                 )
             }
 
-        return state.override { nextState }
-    }
-
-    private suspend fun updateFollowState(
-        action: FollowShow,
-        state: State<ShowDetailsLoaded>,
-    ): ChangedState<ShowDetailsState> {
-        var nextState: ChangedState<ShowDetailsState> = state.noChange()
-
-        showsRepository.updateFollowedShow(
-            traktId = action.traktId,
-            addToWatchList = !action.addToWatchList,
-        )
-
-        showsRepository.observeShow(action.traktId)
-            .collect {
-                nextState = it.fold(
-                    {
-                        state.mutate {
-                            copy(
-                                followShowState = FollowShowsState.FollowUpdateError(it.errorMessage),
-                            )
-                        }
-                    },
-                    {
-                        state.mutate {
-                            copy(
-                                showState = (showState as ShowState.ShowLoaded)
-                                    .copy(show = it.toTvShow()),
-                            )
-                        }
-                    },
-                )
-            }
-
-        return nextState
-    }
-
-    private suspend fun loadSeasons(
-        showId: Long,
-        state: State<ShowDetailsLoaded>,
-    ): ChangedState<ShowDetailsState> {
-        var nextState: ChangedState<ShowDetailsState> = state.noChange()
-        seasonDetailsRepository.observeSeasonsStream(showId)
-            .collect { result ->
-                nextState = result.fold(
-                    {
-                        state.mutate {
-                            copy(seasonState = SeasonState.SeasonsError(it.errorMessage))
-                        }
-                    },
-                    {
-                        state.mutate {
-                            copy(
-                                seasonState = (seasonState as SeasonState.SeasonsLoaded).copy(
-                                    isLoading = false,
-                                    seasonsList = it.toSeasonsList(),
-                                ),
-                            )
-                        }
-                    },
-                )
-            }
-
-        return nextState
-    }
-
-    private suspend fun loadTrailers(
-        showId: Long,
-        state: State<ShowDetailsLoaded>,
-    ): ChangedState<ShowDetailsState> {
-        var nextState: ChangedState<ShowDetailsState> = state.noChange()
-        trailerRepository.observeTrailersByShowId(showId)
-            .catch {
-                nextState = state.mutate {
-                    copy(
-                        trailerState = TrailersError(exceptionHandler.resolveError(it)),
-                    )
-                }
-            }
-            .collect { result ->
-                nextState = result.fold(
-                    {
-                        state.mutate {
-                            copy(trailerState = TrailersError(it.errorMessage))
-                        }
-                    },
-                    {
-                        state.mutate {
-                            copy(
-                                trailerState = (trailerState as TrailersLoaded).copy(
-                                    isLoading = false,
-                                    trailersList = it.toTrailerList(),
-                                ),
-                            )
-                        }
-                    },
-                )
-            }
-
-        return nextState
-    }
-
-    private suspend fun loadSimilarShows(
-        showId: Long,
-        state: State<ShowDetailsLoaded>,
-    ): ChangedState<ShowDetailsState> {
-        var nextState: ChangedState<ShowDetailsState> = state.noChange()
-        similarShowsRepository.observeSimilarShows(showId)
-            .catch {
-                nextState = state.mutate {
-                    copy(
-                        similarShowsState = SimilarShowsError(
-                            exceptionHandler.resolveError(it),
-                        ),
-                    )
-                }
-            }
-            .collect { result ->
-
-                nextState = result.fold(
-                    {
-                        state.mutate {
-                            copy(similarShowsState = SimilarShowsError(it.errorMessage))
-                        }
-                    },
-                    {
-                        state.mutate {
-                            copy(
-                                similarShowsState = (similarShowsState as SimilarShowsLoaded)
-                                    .copy(
-                                        isLoading = false,
-                                        similarShows = it.toSimilarShowList(),
-                                    ),
-                            )
-                        }
-                    },
-                )
-            }
-
-        return nextState
+        return state.override { detailState }
     }
 }

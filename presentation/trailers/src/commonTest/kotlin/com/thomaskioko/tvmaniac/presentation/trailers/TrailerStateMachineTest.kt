@@ -13,18 +13,21 @@ import kotlin.test.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class TrailerStateMachineTest {
 
-    private val trailerRepository = FakeTrailerRepository()
-    private val stateMachine = TrailersStateMachine(trailerRepository)
+    private val repository = FakeTrailerRepository()
+    private val stateMachine = TrailersStateMachine(
+        traktShowId = 84958,
+        repository = repository,
+    )
 
     @Test
-    fun loadTrailers_state_emits_expected_result() = runTest {
+    fun reloadTrailers_emits_expected_result() = runTest {
         stateMachine.state.test {
-            trailerRepository.setTrailerResult(Either.Right(trailers))
+            repository.setTrailerResult(Either.Right(trailers))
 
-            stateMachine.dispatch(LoadTrailers(84958, "Fd43V"))
+            stateMachine.dispatch(ReloadTrailers)
 
             awaitItem() shouldBe LoadingTrailers
-            awaitItem() shouldBe TrailersLoaded(
+            awaitItem() shouldBe TrailersContent(
                 selectedVideoKey = "Fd43V",
                 trailersList = listOf(
                     Trailer(

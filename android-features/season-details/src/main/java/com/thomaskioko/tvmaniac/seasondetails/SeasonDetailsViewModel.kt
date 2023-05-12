@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.seasondetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.presentation.seasondetails.LoadSeasonDetails
 import com.thomaskioko.tvmaniac.presentation.seasondetails.Loading
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsState
@@ -16,7 +15,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class SeasonDetailsViewModel(
     @Assisted savedStateHandle: SavedStateHandle,
-    private val stateMachine: SeasonDetailsStateMachine,
+    private val stateMachine: (Long) -> SeasonDetailsStateMachine,
 ) : ViewModel() {
 
     private val showId: Long = savedStateHandle["showId"]!!
@@ -26,20 +25,16 @@ class SeasonDetailsViewModel(
     init {
 
         viewModelScope.launch {
-            stateMachine.state
+            stateMachine(showId).state
                 .collect {
                     state.value = it
                 }
-        }
-
-        viewModelScope.launch {
-            stateMachine.dispatch(LoadSeasonDetails(showId))
         }
     }
 
     fun dispatch(action: SeasonDetailsAction) {
         viewModelScope.launch {
-            stateMachine.dispatch(action)
+            stateMachine(showId).dispatch(action)
         }
     }
 }
