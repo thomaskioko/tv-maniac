@@ -166,7 +166,7 @@ fun SettingsList(
     onDismissDialogClicked: () -> Unit,
     modifier: Modifier = Modifier,
 
-    ) {
+) {
     LazyColumn(
         modifier = modifier,
     ) {

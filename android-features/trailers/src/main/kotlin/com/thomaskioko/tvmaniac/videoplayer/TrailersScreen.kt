@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.videoplayer
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -55,7 +56,7 @@ import com.thomaskioko.tvmaniac.presentation.trailers.LoadingTrailers
 import com.thomaskioko.tvmaniac.presentation.trailers.ReloadTrailers
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailerError
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailerSelected
-import com.thomaskioko.tvmaniac.presentation.trailers.TrailersLoaded
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailersContent
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersState
 import com.thomaskioko.tvmaniac.presentation.trailers.VideoPlayerError
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
@@ -114,7 +115,7 @@ private fun TrailersScreen(
                         .wrapContentSize(Alignment.Center),
                 )
 
-                is TrailersLoaded -> {
+                is TrailersContent -> {
                     VideoPlayerContent(
                         listState = listState,
                         trailersList = state.trailersList,
@@ -141,7 +142,7 @@ private fun TrailersScreen(
 private fun VideoPlayerContent(
     listState: LazyListState,
     trailersList: List<Trailer>,
-    videoKey: String,
+    videoKey: String?,
     onYoutubeError: (String) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
@@ -153,31 +154,32 @@ private fun VideoPlayerContent(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start,
     ) {
-        AndroidView(
-            modifier = Modifier.fillMaxWidth(),
-            factory = { context ->
-                YouTubePlayerView(context).apply {
-                    addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-                        override fun onReady(youTubePlayer: YouTubePlayer) {
-                            youTubePlayer.loadVideo(
-                                videoId = videoKey,
-                                startSeconds = 0f,
-                            )
-                        }
+        AnimatedVisibility(visible = videoKey != null) {
+            AndroidView(
+                modifier = Modifier.fillMaxWidth(),
+                factory = { context ->
+                    YouTubePlayerView(context).apply {
+                        addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+                            override fun onReady(youTubePlayer: YouTubePlayer) {
+                                youTubePlayer.loadVideo(
+                                    videoId = videoKey!!,
+                                    startSeconds = 0f,
+                                )
+                            }
 
-                        override fun onError(
-                            youTubePlayer: YouTubePlayer,
-                            error: PlayerConstants.PlayerError,
-                        ) {
-                            super.onError(youTubePlayer, error)
-                            onYoutubeError(error.name)
-                        }
-                    })
-                }
-            },
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
+                            override fun onError(
+                                youTubePlayer: YouTubePlayer,
+                                error: PlayerConstants.PlayerError,
+                            ) {
+                                super.onError(youTubePlayer, error)
+                                onYoutubeError(error.name)
+                            }
+                        })
+                    }
+                },
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
         Text(
             text = stringResource(id = R.string.str_more_trailers),
