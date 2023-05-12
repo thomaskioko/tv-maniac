@@ -6,11 +6,14 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.headers
+import io.ktor.http.HttpHeaders
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 
 fun traktHttpClient(
     isDebug: Boolean = false,
+    traktClientId: String,
     json: TraktJson,
     httpClientEngine: TraktHttpClientEngine,
 ) = HttpClient(httpClientEngine) {
@@ -22,6 +25,12 @@ fun traktHttpClient(
         url {
             protocol = URLProtocol.HTTPS
             host = "api.trakt.tv"
+        }
+
+        headers {
+            append(HttpHeaders.ContentType, "application/json")
+            append("trakt-api-version", "2")
+            append("trakt-api-key", traktClientId)
         }
     }
 
