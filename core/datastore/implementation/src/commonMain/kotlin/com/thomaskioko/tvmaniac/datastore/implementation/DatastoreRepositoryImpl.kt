@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.datastore.implementation
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.Theme
@@ -35,20 +34,7 @@ class DatastoreRepositoryImpl(
         }
     }
 
-    override fun saveSeasonId(id: Long) {
-        coroutineScope.io.launch {
-            dataStore.edit { preferences ->
-                preferences[SEASON_ID] = id
-            }
-        }
-    }
-
-    override fun getSeasonId(): Flow<Long> = dataStore.data.map { preferences ->
-        preferences[SEASON_ID] ?: -1
-    }
-
     companion object {
         val KEY_THEME = stringPreferencesKey("app_theme")
-        val SEASON_ID = longPreferencesKey("season_id")
     }
 }
