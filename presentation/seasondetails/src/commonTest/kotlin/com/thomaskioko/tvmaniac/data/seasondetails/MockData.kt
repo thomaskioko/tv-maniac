@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.data.seasondetails
 
-import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsLoaded
-import com.thomaskioko.tvmaniac.domain.seasondetails.model.Episode
-import com.thomaskioko.tvmaniac.domain.seasondetails.model.SeasonDetails
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
+import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
+import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetails
 
 val episodes = listOf(
     Episode(

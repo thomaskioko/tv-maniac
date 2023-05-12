@@ -25,7 +25,7 @@ class FakeSeasonDetailsRepository : SeasonDetailsRepository {
 
     override fun observeSeasonsStream(traktId: Long): Flow<Either<Failure, List<Seasons>>> = seasonsResult
 
-    override fun observeSeasonDetails(): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
+    override fun observeSeasonDetails(traktId: Long): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
         seasonEpisodesResult
 
     override fun observeSeasonDetailsStream(

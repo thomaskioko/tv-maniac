@@ -8,11 +8,13 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Inject
 class SeasonDetailsStateMachine constructor(
+    @Assisted private val traktId: Long,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val episodeRepository: EpisodeRepository,
 ) : FlowReduxStateMachine<SeasonDetailsState, SeasonDetailsAction>(initialState = Loading) {
@@ -20,13 +22,13 @@ class SeasonDetailsStateMachine constructor(
     init {
         spec {
             inState<Loading> {
-                on<LoadSeasonDetails> { action, state ->
-                    fetchSeasonDetails(state, action)
+                onEnter { state ->
+                    fetchSeasonDetails(state)
                 }
             }
 
             inState<SeasonDetailsLoaded> {
-                collectWhileInState(seasonDetailsRepository.observeSeasonDetails()) { result, state ->
+                collectWhileInState(seasonDetailsRepository.observeSeasonDetails(traktId)) { result, state ->
                     result.fold(
                         {
                             state.override { LoadingError(it.errorMessage) }
@@ -65,13 +67,10 @@ class SeasonDetailsStateMachine constructor(
         }
     }
 
-    private suspend fun fetchSeasonDetails(
-        state: State<Loading>,
-        action: LoadSeasonDetails,
-    ): ChangedState<SeasonDetailsState> {
-        lateinit var nextState: SeasonDetailsState
+    private suspend fun fetchSeasonDetails(state: State<Loading>): ChangedState<SeasonDetailsState> {
+        var nextState: SeasonDetailsState = Loading
 
-        seasonDetailsRepository.observeSeasonDetailsStream(traktId = action.showId)
+        seasonDetailsRepository.observeSeasonDetailsStream(traktId)
             .collect { result ->
 
                 nextState = result.fold(
