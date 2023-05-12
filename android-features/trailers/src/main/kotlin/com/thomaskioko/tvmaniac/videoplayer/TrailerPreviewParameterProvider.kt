@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.videoplayer
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailerError
-import com.thomaskioko.tvmaniac.presentation.trailers.TrailersLoaded
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailersContent
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersState
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
 
@@ -19,7 +19,7 @@ class TrailerPreviewParameterProvider : PreviewParameterProvider<TrailersState> 
     override val values: Sequence<TrailersState>
         get() {
             return sequenceOf(
-                TrailersLoaded(trailersList = trailersList),
+                TrailersContent(trailersList = trailersList),
                 TrailerError(errorMessage = "Opps! Something went wrong"),
             )
         }
