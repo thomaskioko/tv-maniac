@@ -8,7 +8,6 @@ import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
-import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonsCache
@@ -20,7 +19,7 @@ import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -28,7 +27,6 @@ class SeasonDetailsRepositoryImpl(
     private val traktService: TraktService,
     private val seasonCache: SeasonsCache,
     private val episodesCache: EpisodesCache,
-    private val datastore: DatastoreRepository,
     private val exceptionHandler: ExceptionHandler,
     private val dispatcher: AppCoroutineDispatchers,
     private val logger: KermitLogger,
@@ -69,10 +67,7 @@ class SeasonDetailsRepositoryImpl(
 
     override fun observeSeasonDetailsStream(traktId: Long): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
         networkBoundResult(
-            query = {
-                datastore.saveSeasonId(traktId)
-                seasonCache.observeShowEpisodes(traktId)
-            },
+            query = { seasonCache.observeShowEpisodes(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = { traktService.getSeasonEpisodes(traktId) },
             saveFetchResult = { mapResponse(traktId, it) },
@@ -80,15 +75,10 @@ class SeasonDetailsRepositoryImpl(
             coroutineDispatcher = dispatcher.io,
         )
 
-    override fun observeSeasonDetails(): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
-        flow {
-            datastore.getSeasonId()
-                .collect {
-                    seasonCache.observeShowEpisodes(it)
-                        .catch { emit(Either.Left(DefaultError(exceptionHandler.resolveError(it)))) }
-                        .collect { emit(Either.Right(it)) }
-                }
-        }
+    override fun observeSeasonDetails(traktId: Long): Flow<Either<Failure, List<SelectSeasonWithEpisodes>>> =
+        seasonCache.observeShowEpisodes(traktId)
+            .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
+            .map { Either.Right(it) }
 
     private fun mapResponse(
         showId: Long,

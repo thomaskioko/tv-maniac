@@ -36,6 +36,7 @@ actual interface TraktPlatformComponent {
         httpClientEngine: TraktHttpClientEngine,
     ): TraktHttpClient = traktHttpClient(
         isDebug = configs.isDebug,
+        traktClientId = configs.traktClientId,
         json = json,
         httpClientEngine = httpClientEngine,
     )

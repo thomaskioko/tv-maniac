@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.shared.base.wrappers
 
-import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsAction
-import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState
-import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsStateMachine
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsAction
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsStateMachine
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -14,20 +14,20 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class ShowDetailsStateMachineWrapper(
     private val scope: AppCoroutineScope,
-    private val stateMachine: ShowDetailsStateMachine,
+    private val stateMachine: (Long) -> ShowDetailsStateMachine,
 ) {
 
-    fun start(stateChangeListener: (ShowDetailsState) -> Unit) {
+    fun start(showId: Long, stateChangeListener: (ShowDetailsState) -> Unit) {
         scope.main.launch {
-            stateMachine.state.collect {
+            stateMachine(showId).state.collect {
                 stateChangeListener(it)
             }
         }
     }
 
-    fun dispatch(action: ShowDetailsAction) {
+    fun dispatch(showId: Long, action: ShowDetailsAction) {
         scope.main.launch {
-            stateMachine.dispatch(action)
+            stateMachine(showId).dispatch(action)
         }
     }
 

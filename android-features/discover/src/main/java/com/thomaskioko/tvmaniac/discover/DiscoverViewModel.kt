@@ -2,10 +2,10 @@ package com.thomaskioko.tvmaniac.discover
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thomaskioko.tvmaniac.shared.domain.discover.DiscoverStateMachine
-import com.thomaskioko.tvmaniac.shared.domain.discover.Loading
-import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsAction
-import com.thomaskioko.tvmaniac.shared.domain.discover.ShowsState
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverStateMachine
+import com.thomaskioko.tvmaniac.presentation.discover.Loading
+import com.thomaskioko.tvmaniac.presentation.discover.ShowsAction
+import com.thomaskioko.tvmaniac.presentation.discover.ShowsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
