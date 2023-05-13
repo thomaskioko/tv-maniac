@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.shared.base.wrappers
 
-import com.thomaskioko.tvmaniac.settings.SettingsActions
-import com.thomaskioko.tvmaniac.settings.SettingsState
-import com.thomaskioko.tvmaniac.settings.SettingsStateMachine
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsActions
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsState
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsStateMachine
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch

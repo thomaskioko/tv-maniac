@@ -74,18 +74,18 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTextButton
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
-import com.thomaskioko.tvmaniac.domain.showdetails.DismissWebViewError
-import com.thomaskioko.tvmaniac.domain.showdetails.FollowShow
-import com.thomaskioko.tvmaniac.domain.showdetails.SeasonState
-import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsAction
-import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsState
-import com.thomaskioko.tvmaniac.domain.showdetails.ShowState
-import com.thomaskioko.tvmaniac.domain.showdetails.SimilarShowsState
-import com.thomaskioko.tvmaniac.domain.showdetails.TrailersState
-import com.thomaskioko.tvmaniac.domain.showdetails.WebViewError
-import com.thomaskioko.tvmaniac.domain.showdetails.model.Season
-import com.thomaskioko.tvmaniac.domain.showdetails.model.Show
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
+import com.thomaskioko.tvmaniac.presentation.showdetails.DismissWebViewError
+import com.thomaskioko.tvmaniac.presentation.showdetails.FollowShowClicked
+import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonState
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsAction
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowState
+import com.thomaskioko.tvmaniac.presentation.showdetails.SimilarShowsState
+import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState
+import com.thomaskioko.tvmaniac.presentation.showdetails.WebViewError
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.resources.R
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -616,9 +616,9 @@ fun ShowDetailButtons(
             textPadding = 8.dp,
             onClick = {
                 onUpdateFavoriteClicked(
-                    FollowShow(
+                    FollowShowClicked(
                         traktId = traktId,
-                        addToWatchList = isFollowed,
+                        addToFollowed = isFollowed,
                     ),
                 )
             },

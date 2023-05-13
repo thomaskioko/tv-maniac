@@ -52,6 +52,14 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.Theme
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
+import com.thomaskioko.tvmaniac.presentation.settings.ChangeThemeClicked
+import com.thomaskioko.tvmaniac.presentation.settings.DimissThemeClicked
+import com.thomaskioko.tvmaniac.presentation.settings.DismissTraktDialog
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsContent
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsState
+import com.thomaskioko.tvmaniac.presentation.settings.ShowTraktDialog
+import com.thomaskioko.tvmaniac.presentation.settings.ThemeSelected
+import com.thomaskioko.tvmaniac.presentation.settings.TraktLogout
 import com.thomaskioko.tvmaniac.resources.R
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject

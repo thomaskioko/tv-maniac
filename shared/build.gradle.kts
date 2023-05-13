@@ -3,6 +3,7 @@ plugins {
     id("maven-publish")
     alias(libs.plugins.kmmbridge)
     alias(libs.plugins.ksp)
+    id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
 }
 
 version = libs.versions.shared.module.version.get()
@@ -16,8 +17,17 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "TvManiac"
-            isStatic = true
+            isStatic = false
             linkerOpts.add("-lsqlite3")
+
+            export(projects.core.datastore.api)
+            export(projects.core.util)
+            export(projects.presentation.discover)
+            export(projects.presentation.following)
+            export(projects.presentation.seasondetails)
+            export(projects.presentation.settings)
+            export(projects.presentation.showDetails)
+            export(projects.presentation.trailers)
         }
     }
 
@@ -25,6 +35,18 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+
+                api(projects.core.datastore.api)
+                api(projects.core.util)
+
+                api(projects.presentation.discover)
+                api(projects.presentation.following)
+                api(projects.presentation.seasondetails)
+                api(projects.presentation.settings)
+                api(projects.presentation.seasondetails)
+                api(projects.presentation.showDetails)
+                api(projects.presentation.trailers)
+
                 implementation(projects.core.database)
                 implementation(projects.core.datastore.implementation)
                 implementation(projects.core.networkutil)
@@ -32,15 +54,7 @@ kotlin {
                 implementation(projects.core.traktApi.implementation)
                 implementation(projects.core.tmdbApi.api)
                 implementation(projects.core.tmdbApi.implementation)
-                implementation(projects.core.util)
 
-                implementation(projects.domain.discover)
-                implementation(projects.domain.following)
-                implementation(projects.domain.seasondetails)
-                implementation(projects.domain.settings)
-                implementation(projects.domain.seasondetails)
-                implementation(projects.domain.showDetails)
-                implementation(projects.domain.trailers)
 
                 implementation(projects.data.category.implementation)
                 implementation(projects.data.episodes.implementation)
@@ -84,4 +98,16 @@ kmmbridge {
     githubReleaseVersions()
     spm()
     versionPrefix.set("0.2.5")
+}
+
+//TODO:: Get rid of this once we fully migrate to kmmbridge
+multiplatformSwiftPackage {
+    packageName("TvManiac")
+    swiftToolsVersion("5.3")
+    targetPlatforms {
+        iOS { v("13") }
+    }
+
+    distributionMode { local() }
+    outputDirectory(File("$projectDir/../../", "tvmaniac-swift-packages"))
 }

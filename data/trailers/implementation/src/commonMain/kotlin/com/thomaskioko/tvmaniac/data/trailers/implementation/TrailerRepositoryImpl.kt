@@ -30,7 +30,7 @@ class TrailerRepositoryImpl(
 
     override fun observeTrailersByShowId(traktId: Long): Flow<Either<Failure, List<Trailers>>> =
         networkBoundResult(
-            query = { trailerCache.getTrailersByShowId(traktId) },
+            query = { trailerCache.observeTrailersById(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = {
                 val show = showsCache.getTvShow(traktId)
