@@ -9,16 +9,16 @@ import com.thomaskioko.tvmaniac.core.db.SelectShows
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowsDao
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ShowCacheImpl constructor(
+class ShowDaoImpl constructor(
     private val database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
-) : ShowsCache {
+) : ShowsDao {
 
     override fun insert(show: Show) {
         database.showQueries.transaction {

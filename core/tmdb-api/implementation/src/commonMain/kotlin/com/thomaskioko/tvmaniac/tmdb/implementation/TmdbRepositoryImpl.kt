@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
-import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.ShowImageCache
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
@@ -22,7 +22,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TmdbRepositoryImpl(
     private val apiService: TmdbService,
-    private val showsCache: ShowsCache,
+    private val showsDao: ShowsDao,
     private val imageCache: ShowImageCache,
     private val formatterUtil: FormatterUtil,
     private val exceptionHandler: ExceptionHandler,
@@ -31,7 +31,7 @@ class TmdbRepositoryImpl(
 ) : TmdbRepository {
 
     override fun updateShowArtWork(): Flow<Either<Failure, Unit>> =
-        showsCache.observeShowImages()
+        showsDao.observeShowImages()
             .map { shows ->
                 shows.forEach { show ->
                     show.tmdb_id?.let { tmdbId ->

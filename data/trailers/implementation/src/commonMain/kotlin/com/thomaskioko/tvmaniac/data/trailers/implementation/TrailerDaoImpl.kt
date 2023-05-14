@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TrailerCacheImpl(
+class TrailerDaoImpl(
     private val database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
-) : TrailerCache {
+) : TrailerDao {
 
     override fun insert(trailer: Trailers) {
         database.trailersQueries.insertOrReplace(
