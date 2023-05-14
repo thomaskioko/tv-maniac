@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.data.trailers.implementation
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import kotlinx.coroutines.flow.Flow
 
-interface TrailerCache {
+interface TrailerDao {
 
     fun insert(trailer: Trailers)
 

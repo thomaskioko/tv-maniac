@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
-import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import com.thomaskioko.tvmaniac.tmdb.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
@@ -19,8 +19,8 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TrailerRepositoryImpl(
     private val apiService: TmdbService,
-    private val trailerCache: TrailerCache,
-    private val showsCache: ShowsCache,
+    private val trailerDao: TrailerDao,
+    private val showsDao: ShowsDao,
     private val appUtils: AppUtils,
     private val exceptionHandler: ExceptionHandler,
     private val dispatchers: AppCoroutineDispatchers,
@@ -30,10 +30,10 @@ class TrailerRepositoryImpl(
 
     override fun observeTrailersByShowId(traktId: Long): Flow<Either<Failure, List<Trailers>>> =
         networkBoundResult(
-            query = { trailerCache.observeTrailersById(traktId) },
+            query = { trailerDao.observeTrailersById(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = {
-                val show = showsCache.getTvShow(traktId)
+                val show = showsDao.getTvShow(traktId)
                 apiService.getTrailers(show.tmdb_id!!)
             },
             saveFetchResult = { it.mapAndCache(traktId) },
@@ -55,7 +55,7 @@ class TrailerRepositoryImpl(
                         type = response.type,
                     )
                 }
-                trailerCache.insert(cacheList)
+                trailerDao.insert(cacheList)
             }
 
             is ApiResponse.Error.GenericError -> {

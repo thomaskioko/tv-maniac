@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
-import com.thomaskioko.tvmaniac.shows.api.cache.ShowsCache
+import com.thomaskioko.tvmaniac.shows.api.cache.ShowsDao
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowCache
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktService
@@ -21,7 +21,7 @@ import me.tatarka.inject.annotations.Inject
 class SimilarShowsRepositoryImpl(
     private val traktService: TraktService,
     private val similarShowCache: SimilarShowCache,
-    private val showsCache: ShowsCache,
+    private val showsDao: ShowsDao,
     private val exceptionHandler: ExceptionHandler,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: KermitLogger,
@@ -44,7 +44,7 @@ class SimilarShowsRepositoryImpl(
         when (response) {
             is ApiResponse.Success -> {
                 response.body.forEach { showsResponse ->
-                    showsCache.insert(showsResponse.toShow())
+                    showsDao.insert(showsResponse.toShow())
 
                     similarShowCache.insert(
                         traktId = traktId,
