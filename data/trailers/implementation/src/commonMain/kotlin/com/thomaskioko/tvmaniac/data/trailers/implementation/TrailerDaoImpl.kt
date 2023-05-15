@@ -35,4 +35,16 @@ class TrailerDaoImpl(
             .asFlow()
             .mapToList(dispatchers.io)
     }
+
+    override fun delete(id: Long) {
+        database.transaction {
+            database.trailersQueries.delete(id)
+        }
+    }
+
+    override fun deleteAll() {
+        database.transaction {
+            database.trailersQueries.deleteAll()
+        }
+    }
 }

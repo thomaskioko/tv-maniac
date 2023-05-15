@@ -10,4 +10,8 @@ interface TrailerDao {
     fun insert(trailerList: List<Trailers>)
 
     fun observeTrailersById(showId: Long): Flow<List<Trailers>>
+
+    fun delete(id: Long)
+
+    fun deleteAll()
 }
