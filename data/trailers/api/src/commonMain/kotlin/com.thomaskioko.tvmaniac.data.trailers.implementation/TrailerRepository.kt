@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.data.trailers.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import kotlinx.coroutines.flow.Flow
+import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 interface TrailerRepository {
     fun isYoutubePlayerInstalled(): Flow<Boolean>
-    fun observeTrailersByShowId(traktId: Long): Flow<Either<Failure, List<Trailers>>>
+    fun observeTrailersStoreResponse(traktId: Long): Flow<StoreReadResponse<List<Trailers>>>
+    suspend fun fetchTrailersByShowId(traktId: Long): List<Trailers>
 }
