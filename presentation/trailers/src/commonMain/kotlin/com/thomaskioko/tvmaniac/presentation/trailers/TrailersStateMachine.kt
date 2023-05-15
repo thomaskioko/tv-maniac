@@ -8,6 +8,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
+import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Inject
@@ -19,28 +20,19 @@ class TrailersStateMachine(
     init {
         spec {
             inState<LoadingTrailers> {
-                onEnter { state -> loadTrailers(state) }
+                onEnter { state ->
+                    val result = repository.fetchTrailersByShowId(traktShowId)
+
+                    state.override {
+                        TrailersContent(
+                            selectedVideoKey = result.toTrailerList().firstOrNull()?.key,
+                            trailersList = result.toTrailerList(),
+                        )
+                    }
+                }
 
                 on<VideoPlayerError> { action, state ->
                     state.override { TrailerError(action.errorMessage) }
-                }
-
-                on<ReloadTrailers> { _, state ->
-                    var nextState: TrailersState = state.snapshot
-
-                    repository.observeTrailersByShowId(traktShowId)
-                        .collect { result ->
-                            nextState = result.fold(
-                                { TrailerError(it.errorMessage) },
-                                {
-                                    TrailersContent(
-                                        selectedVideoKey = it.toTrailerList().firstOrNull()?.key,
-                                        trailersList = it.toTrailerList(),
-                                    )
-                                },
-                            )
-                        }
-                    state.override { nextState }
                 }
             }
 
@@ -51,12 +43,32 @@ class TrailersStateMachine(
                     }
                 }
 
-                collectWhileInState(repository.observeTrailersByShowId(traktShowId)) { result, state ->
-                    result.fold(
-                        { state.override { TrailerError(it.errorMessage) } },
-                        { state.mutate { copy(trailersList = it.toTrailerList()) } },
-                    )
+                collectWhileInState(repository.observeTrailersStoreResponse(traktShowId)) { response, state ->
+                    when (response) {
+                        is StoreReadResponse.Loading -> state.override { LoadingTrailers }
+                        is StoreReadResponse.NoNewData -> state.noChange()
+                        is StoreReadResponse.Data -> {
+                            state.mutate {
+                                copy(
+                                    selectedVideoKey = response.requireData().toTrailerList()
+                                        .firstOrNull()?.key,
+                                    trailersList = response.requireData().toTrailerList(),
+                                )
+                            }
+                        }
+
+                        is StoreReadResponse.Error.Exception -> {
+                            state.override { TrailerError("") }
+                        }
+
+                        is StoreReadResponse.Error.Message -> {
+                            state.override { TrailerError(response.message) }
+                        }
+                    }
                 }
+            }
+
+            inState<TrailerError> {
 
                 on<ReloadTrailers> { _, state ->
                     reloadTrailers(state)
@@ -65,42 +77,32 @@ class TrailersStateMachine(
         }
     }
 
-    private suspend fun loadTrailers(state: State<LoadingTrailers>): ChangedState<TrailersState> {
-        var trailerState: TrailersState = LoadingTrailers
-        repository.observeTrailersByShowId(traktShowId)
-            .collect { result ->
-                trailerState = result.fold(
-                    {
-                        TrailerError(it.errorMessage)
-                    },
-                    {
-                        TrailersContent(
-                            trailersList = it.toTrailerList(),
-                            selectedVideoKey = it.toTrailerList().firstOrNull()?.key,
-                        )
-                    },
-                )
-            }
-        return state.override { trailerState }
-    }
+    private suspend fun reloadTrailers(state: State<TrailerError>): ChangedState<TrailersState> {
+        var trailerState: ChangedState<TrailersState> = state.override { LoadingTrailers }
+        repository.observeTrailersStoreResponse(traktShowId)
+            .collect { response ->
+                trailerState = when (response) {
+                    is StoreReadResponse.Loading -> state.override { LoadingTrailers }
+                    is StoreReadResponse.NoNewData -> state.noChange()
+                    is StoreReadResponse.Data -> {
+                        state.override {
+                            TrailersContent(
+                                selectedVideoKey = response.requireData().toTrailerList()
+                                    .firstOrNull()?.key,
+                                trailersList = response.requireData().toTrailerList(),
+                            )
+                        }
+                    }
 
-    private suspend fun reloadTrailers(
-        state: State<TrailersContent>,
-    ): ChangedState<TrailersState> {
-        var nextState: TrailersState = state.snapshot
+                    is StoreReadResponse.Error.Exception -> {
+                        state.override { TrailerError("") }
+                    }
 
-        repository.observeTrailersByShowId(traktShowId)
-            .collect { result ->
-                nextState = result.fold(
-                    { TrailerError(it.errorMessage) },
-                    {
-                        TrailersContent(
-                            selectedVideoKey = it.toTrailerList().firstOrNull()?.key,
-                            trailersList = it.toTrailerList(),
-                        )
-                    },
-                )
+                    is StoreReadResponse.Error.Message -> {
+                        state.override { TrailerError(response.message) }
+                    }
+                }
             }
-        return state.override { nextState }
+        return trailerState
     }
 }

@@ -5,7 +5,7 @@ import me.tatarka.inject.annotations.Provides
 interface TrailerComponent {
 
     @Provides
-    fun provideTrailerCache(bind: TrailerDaoImpl): TrailerDao = bind
+    fun provideTrailerDao(bind: TrailerDaoImpl): TrailerDao = bind
 
     @Provides
     fun provideTrailerRepository(bind: TrailerRepositoryImpl): TrailerRepository = bind

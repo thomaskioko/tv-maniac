@@ -25,6 +25,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
+import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Inject
@@ -52,8 +53,8 @@ class ShowDetailsStateMachine constructor(
                     updateShowDetailsState(result, state)
                 }
 
-                collectWhileInState(trailerRepository.observeTrailersByShowId(traktShowId)) { result, state ->
-                    updateTrailerState(result, state)
+                collectWhileInState(trailerRepository.observeTrailersStoreResponse(traktShowId)) { response, state ->
+                    updateTrailerState(response, state)
                 }
 
                 collectWhileInState(similarShowsRepository.observeSimilarShows(traktShowId)) { result, state ->
@@ -129,25 +130,40 @@ class ShowDetailsStateMachine constructor(
     )
 
     private fun updateTrailerState(
-        result: Either<Failure, List<Trailers>>,
+        response: StoreReadResponse<List<Trailers>>,
         state: State<ShowDetailsLoaded>,
-    ) = result.fold(
-        {
-            state.mutate {
-                copy(trailerState = TrailersError(it.errorMessage))
-            }
-        },
-        {
+    ) = when (response) {
+        is StoreReadResponse.NoNewData -> state.noChange()
+        is StoreReadResponse.Loading -> state.mutate {
+            copy(
+                trailerState = (trailerState as TrailersLoaded).copy(
+                    isLoading = true,
+                ),
+            )
+        }
+        is StoreReadResponse.Data -> {
             state.mutate {
                 copy(
                     trailerState = (trailerState as TrailersLoaded).copy(
                         isLoading = false,
-                        trailersList = it.toTrailerList(),
+                        trailersList = response.requireData().toTrailerList(),
                     ),
                 )
             }
-        },
-    )
+        }
+
+        is StoreReadResponse.Error.Exception -> {
+            state.mutate {
+                copy(trailerState = TrailersError(response.error.message))
+            }
+        }
+
+        is StoreReadResponse.Error.Message -> {
+            state.mutate {
+                copy(trailerState = TrailersError(response.message))
+            }
+        }
+    }
 
     private fun updateShowDetailsState(
         result: Either<Failure, List<Seasons>>,
