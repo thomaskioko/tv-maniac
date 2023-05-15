@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.shared.base
 
+import com.thomaskioko.trakt.service.implementation.TraktComponent
 import com.thomaskioko.trakt.service.implementation.TraktPlatformComponent
 import com.thomaskioko.tvmaniac.core.networkutil.NetworkUtilComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
@@ -35,6 +36,7 @@ abstract class ApplicationComponent :
     ShowsComponent,
     SimilarShowsComponent,
     TmdbPlatformComponent,
+    TraktComponent,
     TraktPlatformComponent,
     TrailerComponent,
     UtilPlatformComponent {
