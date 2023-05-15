@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.inject
 
 import android.app.Application
 import android.content.Context
+import com.thomaskioko.trakt.service.implementation.TraktComponent
 import com.thomaskioko.trakt.service.implementation.TraktPlatformComponent
 import com.thomaskioko.tvmaniac.TvManicApplication
 import com.thomaskioko.tvmaniac.core.networkutil.NetworkUtilComponent
@@ -41,6 +42,7 @@ abstract class ApplicationComponent(
     SimilarShowsComponent,
     TasksComponent,
     TmdbPlatformComponent,
+    TraktComponent,
     TraktPlatformComponent,
     TrailerComponent,
     TraktAuthComponent {
