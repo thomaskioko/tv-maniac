@@ -2,9 +2,7 @@ package com.thomaskioko.tvmaniac.seasons.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.thomaskioko.tvmaniac.core.db.Season_episodes
 import com.thomaskioko.tvmaniac.core.db.Seasons
-import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
@@ -37,23 +35,18 @@ class SeasonsDaoImpl(
     }
 
     override fun observeSeasons(traktId: Long): Flow<List<Seasons>> {
-        return seasonQueries.selectBySeasonId(traktId)
+        return seasonQueries.seasonById(traktId)
             .asFlow()
             .mapToList(dispatcher.io)
     }
 
-    override fun insert(entity: Season_episodes) {
+    override fun delete(id: Long) {
+        seasonQueries.delete(id)
+    }
+
+    override fun deleteAll() {
         database.transaction {
-            database.seasonEpisodesQueries.insertOrReplace(
-                show_id = entity.show_id,
-                season_id = entity.season_id,
-                season_number = entity.season_number,
-            )
+            seasonQueries.deleteAll()
         }
     }
-
-    override fun observeShowEpisodes(showId: Long): Flow<List<SelectSeasonWithEpisodes>> =
-        database.seasonEpisodesQueries.selectSeasonWithEpisodes(showId)
-            .asFlow()
-            .mapToList(dispatcher.io)
 }
