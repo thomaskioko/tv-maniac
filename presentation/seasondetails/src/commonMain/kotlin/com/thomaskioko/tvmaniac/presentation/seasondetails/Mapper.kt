@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.presentation.seasondetails
 
-import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
+import com.thomaskioko.tvmaniac.core.db.SeasonWithEpisodes
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetails
 
-fun Either.Right<List<SelectSeasonWithEpisodes>>.toSeasonWithEpisodes(): List<SeasonDetails> {
+fun Either.Right<List<SeasonWithEpisodes>>.toSeasonWithEpisodes(): List<SeasonDetails> {
     return data?.groupBy { it.name }?.map { groupMap ->
         SeasonDetails(
             seasonId = groupMap.value.first().season_id,
@@ -17,7 +17,7 @@ fun Either.Right<List<SelectSeasonWithEpisodes>>.toSeasonWithEpisodes(): List<Se
     } ?: emptyList()
 }
 
-fun List<SelectSeasonWithEpisodes>?.toSeasonWithEpisodes(): List<SeasonDetails> {
+fun List<SeasonWithEpisodes>?.toSeasonWithEpisodes(): List<SeasonDetails> {
     return this?.groupBy { it.name }?.map { groupMap ->
         SeasonDetails(
             seasonId = groupMap.value.first().season_id,
@@ -29,7 +29,7 @@ fun List<SelectSeasonWithEpisodes>?.toSeasonWithEpisodes(): List<SeasonDetails> 
     } ?: emptyList()
 }
 
-fun SelectSeasonWithEpisodes.toEpisode(): Episode {
+fun SeasonWithEpisodes.toEpisode(): Episode {
     return Episode(
         id = id,
         seasonId = season_id,
@@ -48,8 +48,8 @@ fun SelectSeasonWithEpisodes.toEpisode(): Episode {
     )
 }
 
-fun Either.Right<List<SelectSeasonWithEpisodes>>.getTitle(): String =
+fun Either.Right<List<SeasonWithEpisodes>>.getTitle(): String =
     data?.firstOrNull()?.title ?: ""
 
-fun List<SelectSeasonWithEpisodes>?.getTitle(): String =
+fun List<SeasonWithEpisodes>?.getTitle(): String =
     this?.firstOrNull()?.title ?: ""

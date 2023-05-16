@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.seasondetails.testing
 
-import com.thomaskioko.tvmaniac.core.db.SelectSeasonWithEpisodes
+import com.thomaskioko.tvmaniac.core.db.SeasonWithEpisodes
 
 val seasonDetails = listOf(
-    SelectSeasonWithEpisodes(
+    SeasonWithEpisodes(
         trakt_id = 84958,
         tmdb_id = 849583,
         title = "Loki",

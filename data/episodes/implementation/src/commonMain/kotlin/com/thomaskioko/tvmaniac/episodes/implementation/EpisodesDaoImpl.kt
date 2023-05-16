@@ -4,17 +4,17 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.db.EpisodeArt
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
+import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 import com.thomaskioko.tvmaniac.core.db.Episodes as EpisodeCache
 
 @Inject
-class EpisodesCacheImpl(
+class EpisodesDaoImpl(
     private val database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
-) : EpisodesCache {
+) : EpisodesDao {
 
     private val episodeQueries get() = database.episodesQueries
 
@@ -42,4 +42,14 @@ class EpisodesCacheImpl(
         episodeQueries.episodeArt()
             .asFlow()
             .mapToList(dispatchers.io)
+
+    override fun delete(id: Long) {
+        episodeQueries.delete(id)
+    }
+
+    override fun deleteAll() {
+        database.transaction {
+            episodeQueries.deleteAll()
+        }
+    }
 }
