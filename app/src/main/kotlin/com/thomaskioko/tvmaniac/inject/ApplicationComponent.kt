@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.datastore.implementation.DataStorePlatformCompon
 import com.thomaskioko.tvmaniac.db.DatabaseComponent
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeComponent
 import com.thomaskioko.tvmaniac.initializers.AppInitializers
-import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsComponent
+import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsComponent
 import com.thomaskioko.tvmaniac.shows.implementation.ShowsComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.inject.TmdbPlatformComponent
@@ -37,7 +37,7 @@ abstract class ApplicationComponent(
     NavigationComponent,
     NetworkUtilComponent,
     ProfileComponent,
-    SeasonDetailsComponent,
+    SeasonsComponent,
     ShowsComponent,
     SimilarShowsComponent,
     TasksComponent,

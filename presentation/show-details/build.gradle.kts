@@ -10,7 +10,7 @@ kotlin {
 
         sourceSets["commonMain"].dependencies {
             implementation(projects.core.util)
-            implementation(projects.data.seasonDetails.api)
+            implementation(projects.data.seasons.api)
             implementation(projects.data.similar.api)
             implementation(projects.data.trailers.api)
             implementation(projects.data.shows.api)
@@ -19,7 +19,7 @@ kotlin {
 
         sourceSets["commonTest"].dependencies {
             implementation(projects.data.shows.testing)
-            implementation(projects.data.seasonDetails.testing)
+            implementation(projects.data.seasons.testing)
             implementation(projects.data.similar.testing)
             implementation(projects.data.trailers.testing)
         }
