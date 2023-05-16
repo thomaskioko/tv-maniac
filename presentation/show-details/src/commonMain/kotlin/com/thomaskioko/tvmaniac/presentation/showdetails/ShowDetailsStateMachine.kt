@@ -6,9 +6,8 @@ import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.db.Seasons
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
+import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonState.SeasonsError
 import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonState.SeasonsLoaded.Companion.EmptySeasons
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.ShowDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.showdetails.SimilarShowsState.SimilarShowsError
@@ -34,7 +33,7 @@ class ShowDetailsStateMachine constructor(
     @Assisted private val traktShowId: Long,
     private val showsRepository: ShowsRepository,
     private val similarShowsRepository: SimilarShowsRepository,
-    private val seasonDetailsRepository: SeasonsRepository,
+    private val seasonsRepository: SeasonsRepository,
     private val trailerRepository: TrailerRepository,
     private val exceptionHandler: ExceptionHandler,
 ) : FlowReduxStateMachine<ShowDetailsState, ShowDetailsAction>(
@@ -51,7 +50,7 @@ class ShowDetailsStateMachine constructor(
 
             inState<ShowDetailsLoaded> {
 
-                collectWhileInState(seasonDetailsRepository.observeSeasonsStream(traktShowId)) { result, state ->
+                collectWhileInState(seasonsRepository.observeSeasonsStoreResponse(traktShowId)) { result, state ->
                     updateShowDetailsState(result, state)
                 }
 
@@ -197,25 +196,41 @@ class ShowDetailsStateMachine constructor(
     }
 
     private fun updateShowDetailsState(
-        result: Either<Failure, List<Seasons>>,
+        response: StoreReadResponse<List<Seasons>>,
         state: State<ShowDetailsLoaded>,
-    ) = result.fold(
-        {
+    ) = when (response) {
+        is StoreReadResponse.NoNewData -> state.noChange()
+        is StoreReadResponse.Loading -> {
             state.mutate {
-                copy(seasonState = SeasonState.SeasonsError(it.errorMessage))
+                copy(
+                    seasonState = (seasonState as SeasonState.SeasonsLoaded).copy(
+                        isLoading = true,
+                    ),
+                )
             }
-        },
-        {
+        }
+        is StoreReadResponse.Data -> {
             state.mutate {
                 copy(
                     seasonState = (seasonState as SeasonState.SeasonsLoaded).copy(
                         isLoading = false,
-                        seasonsList = it.toSeasonsList(),
+                        seasonsList = response.requireData().toSeasonsList(),
                     ),
                 )
             }
-        },
-    )
+        }
+        is StoreReadResponse.Error.Exception -> {
+            state.mutate {
+                copy(seasonState = SeasonsError(exceptionHandler.resolveError(response.error)))
+            }
+        }
+
+        is StoreReadResponse.Error.Message -> {
+            state.mutate {
+                copy(seasonState = SeasonsError(response.message))
+            }
+        }
+    }
 
     private suspend fun fetchShowDetails(state: State<ShowDetailsState.Loading>): ChangedState<ShowDetailsState> {
         var detailState: ShowDetailsState = ShowDetailsState.Loading
