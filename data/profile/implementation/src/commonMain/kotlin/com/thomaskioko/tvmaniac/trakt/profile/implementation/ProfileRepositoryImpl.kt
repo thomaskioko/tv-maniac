@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
 import com.thomaskioko.tvmaniac.shows.api.cache.FollowedCache
-import com.thomaskioko.tvmaniac.trakt.api.TraktService
+import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.trakt.profile.api.cache.FavoriteListCache
 import com.thomaskioko.tvmaniac.trakt.profile.api.cache.StatsCache
@@ -25,7 +25,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ProfileRepositoryImpl constructor(
-    private val traktService: TraktService,
+    private val traktRemoteDataSource: TraktRemoteDataSource,
     private val favoriteListCache: FavoriteListCache,
     private val statsCache: StatsCache,
     private val userCache: UserCache,
@@ -41,7 +41,7 @@ class ProfileRepositoryImpl constructor(
         networkBoundResult(
             query = { userCache.observeMe() },
             shouldFetch = { it == null },
-            fetch = { traktService.getUserProfile(slug) },
+            fetch = { traktRemoteDataSource.getUserProfile(slug) },
             saveFetchResult = {
                 when (it) {
                     is ApiResponse.Success -> {
@@ -72,7 +72,7 @@ class ProfileRepositoryImpl constructor(
         networkBoundResult(
             query = { statsCache.observeStats() },
             shouldFetch = { it == null || refresh },
-            fetch = { traktService.getUserStats(slug) },
+            fetch = { traktRemoteDataSource.getUserStats(slug) },
             saveFetchResult = { statsCache.insert(mapper.toTraktStats(slug, it)) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io,
@@ -82,7 +82,7 @@ class ProfileRepositoryImpl constructor(
         networkBoundResult(
             query = { favoriteListCache.observeTraktList() },
             shouldFetch = { it == null },
-            fetch = { traktService.createFollowingList(userSlug) },
+            fetch = { traktRemoteDataSource.createFollowingList(userSlug) },
             saveFetchResult = { favoriteListCache.insert(mapper.toTraktList(it)) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io,
@@ -99,9 +99,9 @@ class ProfileRepositoryImpl constructor(
 
             if (user != null) {
                 if (addToWatchList) {
-                    traktService.addShowToWatchList(traktId).added.shows
+                    traktRemoteDataSource.addShowToWatchList(traktId).added.shows
                 } else {
-                    traktService.removeShowFromWatchList(traktId).deleted.shows
+                    traktRemoteDataSource.removeShowFromWatchList(traktId).deleted.shows
                 }
             }
         },
@@ -127,7 +127,7 @@ class ProfileRepositoryImpl constructor(
             .flowOn(dispatchers.io)
             .collect { user ->
                 if (user.slug.isNotBlank()) {
-                    followedCache.insert(mapper.responseToCache(traktService.getWatchList()))
+                    followedCache.insert(mapper.responseToCache(traktRemoteDataSource.getWatchList()))
                 }
             }
     }
@@ -139,7 +139,7 @@ class ProfileRepositoryImpl constructor(
                 if (user.slug.isNotBlank()) {
                     followedCache.getUnsyncedFollowedShows()
                         .map {
-                            traktService.addShowToWatchList(it.id)
+                            traktRemoteDataSource.addShowToWatchList(it.id)
 
                             followedCache.insert(
                                 Followed_shows(

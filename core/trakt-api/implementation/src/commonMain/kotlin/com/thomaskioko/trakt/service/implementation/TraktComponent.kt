@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation
 
-import com.thomaskioko.tvmaniac.trakt.api.TraktService
+import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.Configs
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
@@ -41,5 +41,5 @@ interface TraktComponent {
 
     @ApplicationScope
     @Provides
-    fun provideTraktService(bind: TraktServiceImpl): TraktService = bind
+    fun provideTraktRemoteDataSource(bind: TraktRemoteDataSourceImpl): TraktRemoteDataSource = bind
 }

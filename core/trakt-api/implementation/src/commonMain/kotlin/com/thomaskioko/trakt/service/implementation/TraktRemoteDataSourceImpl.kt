@@ -2,7 +2,7 @@ package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.safeRequest
-import com.thomaskioko.tvmaniac.trakt.api.TraktService
+import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.AccessTokenBody
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.RefreshAccessTokenBody
@@ -39,11 +39,11 @@ import me.tatarka.inject.annotations.Inject
 private const val PAGE_LIMIT_SIZE = 20
 
 @Inject
-class TraktServiceImpl(
+class TraktRemoteDataSourceImpl(
     private val configs: Configs,
     private val httpClient: TraktHttpClient,
     private val exceptionHandler: ExceptionHandler,
-) : TraktService {
+) : TraktRemoteDataSource {
 
     override suspend fun getAccessToken(
         authCode: String,

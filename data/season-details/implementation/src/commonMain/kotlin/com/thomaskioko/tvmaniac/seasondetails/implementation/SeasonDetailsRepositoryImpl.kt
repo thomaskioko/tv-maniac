@@ -11,7 +11,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonsCache
-import com.thomaskioko.tvmaniac.trakt.api.TraktService
+import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
@@ -24,7 +24,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SeasonDetailsRepositoryImpl(
-    private val traktService: TraktService,
+    private val traktRemoteDataSource: TraktRemoteDataSource,
     private val seasonCache: SeasonsCache,
     private val episodesCache: EpisodesCache,
     private val exceptionHandler: ExceptionHandler,
@@ -36,7 +36,7 @@ class SeasonDetailsRepositoryImpl(
         networkBoundResult(
             query = { seasonCache.observeSeasons(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
-            fetch = { traktService.getShowSeasons(traktId) },
+            fetch = { traktRemoteDataSource.getShowSeasons(traktId) },
             saveFetchResult = {
                 when (it) {
                     is ApiResponse.Success -> seasonCache.insertSeasons(
@@ -69,7 +69,7 @@ class SeasonDetailsRepositoryImpl(
         networkBoundResult(
             query = { seasonCache.observeShowEpisodes(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
-            fetch = { traktService.getSeasonEpisodes(traktId) },
+            fetch = { traktRemoteDataSource.getSeasonEpisodes(traktId) },
             saveFetchResult = { mapResponse(traktId, it) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatcher.io,
