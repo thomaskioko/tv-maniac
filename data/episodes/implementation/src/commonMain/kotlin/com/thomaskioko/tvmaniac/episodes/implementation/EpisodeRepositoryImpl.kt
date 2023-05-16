@@ -5,9 +5,9 @@ import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeImageCache
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeImageDao
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
-import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
+import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.util.FormatterUtil
@@ -20,15 +20,15 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class EpisodeRepositoryImpl(
     private val tmdbService: TmdbService,
-    private val episodesCache: EpisodesCache,
-    private val episodeImageCache: EpisodeImageCache,
+    private val episodesDao: EpisodesDao,
+    private val episodeImageDao: EpisodeImageDao,
     private val formatterUtil: FormatterUtil,
     private val logger: KermitLogger,
     private val exceptionHandler: ExceptionHandler,
 ) : EpisodeRepository {
 
     override fun updateEpisodeArtWork(): Flow<Either<Failure, Unit>> =
-        episodesCache.observeEpisodeArtByShowId()
+        episodesDao.observeEpisodeArtByShowId()
             .map { episode ->
                 episode.forEach { episodeArt ->
                     episodeArt.tmdb_id?.let { tmdbId ->
@@ -40,7 +40,7 @@ class EpisodeRepositoryImpl(
 
                         when (response) {
                             is ApiResponse.Success -> {
-                                episodeImageCache.insert(
+                                episodeImageDao.insert(
                                     Episode_image(
                                         trakt_id = episodeArt.trakt_id,
                                         tmdb_id = response.body.id.toLong(),

@@ -2,13 +2,13 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Episode_image
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeImageCache
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeImageDao
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class EpisodeImageCacheImpl(
+class EpisodeImageDaoImpl(
     private val database: TvManiacDatabase,
-) : EpisodeImageCache {
+) : EpisodeImageDao {
 
     private val episodeQueries get() = database.episode_imageQueries
 
