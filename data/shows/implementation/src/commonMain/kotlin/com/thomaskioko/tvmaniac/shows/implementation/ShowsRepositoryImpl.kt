@@ -20,7 +20,7 @@ import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.cache.FollowedCache
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowsDao
 import com.thomaskioko.tvmaniac.shows.implementation.mapper.ShowsResponseMapper
-import com.thomaskioko.tvmaniac.trakt.api.TraktService
+import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.util.DateFormatter
@@ -38,7 +38,7 @@ class ShowsRepositoryImpl constructor(
     private val showsDao: ShowsDao,
     private val followedCache: FollowedCache,
     private val categoryCache: CategoryCache,
-    private val traktService: TraktService,
+    private val traktRemoteDataSource: TraktRemoteDataSource,
     private val dateFormatter: DateFormatter,
     private val mapper: ShowsResponseMapper,
     private val exceptionHandler: ExceptionHandler,
@@ -50,7 +50,7 @@ class ShowsRepositoryImpl constructor(
         networkBoundResult(
             query = { showsDao.observeTvShow(traktId) },
             shouldFetch = { it == null },
-            fetch = { traktService.getSeasonDetails(traktId) },
+            fetch = { traktRemoteDataSource.getSeasonDetails(traktId) },
             saveFetchResult = { mapAndCache(it) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io,
@@ -65,7 +65,7 @@ class ShowsRepositoryImpl constructor(
         networkBoundResult(
             query = { showsDao.observeCachedShows(TRENDING.id) },
             shouldFetch = { it.isNullOrEmpty() },
-            fetch = { mapper.showsResponseToCacheList(traktService.getTrendingShows()) },
+            fetch = { mapper.showsResponseToCacheList(traktRemoteDataSource.getTrendingShows()) },
             saveFetchResult = { cacheResult(it, TRENDING.id) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io,
@@ -80,7 +80,7 @@ class ShowsRepositoryImpl constructor(
         networkBoundResult(
             query = { showsDao.observeCachedShows(POPULAR.id) },
             shouldFetch = { it.isNullOrEmpty() },
-            fetch = { mapper.showResponseToCacheList(traktService.getPopularShows()) },
+            fetch = { mapper.showResponseToCacheList(traktRemoteDataSource.getPopularShows()) },
             saveFetchResult = { cacheResult(it, POPULAR.id) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io,
@@ -95,7 +95,7 @@ class ShowsRepositoryImpl constructor(
         networkBoundResult(
             query = { showsDao.observeCachedShows(ANTICIPATED.id) },
             shouldFetch = { it.isNullOrEmpty() },
-            fetch = { mapper.showsResponseToCacheList(traktService.getAnticipatedShows()) },
+            fetch = { mapper.showsResponseToCacheList(traktRemoteDataSource.getAnticipatedShows()) },
             saveFetchResult = { cacheResult(it, ANTICIPATED.id) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io,
@@ -110,7 +110,7 @@ class ShowsRepositoryImpl constructor(
         networkBoundResult(
             query = { showsDao.observeCachedShows(FEATURED.id) },
             shouldFetch = { it.isNullOrEmpty() },
-            fetch = { mapper.showsResponseToCacheList(traktService.getRecommendedShows(period = "daily")) },
+            fetch = { mapper.showsResponseToCacheList(traktRemoteDataSource.getRecommendedShows(period = "daily")) },
             saveFetchResult = { cacheResult(it, FEATURED.id) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io,
@@ -157,10 +157,10 @@ class ShowsRepositoryImpl constructor(
 
     private suspend fun fetchShowsAndMapResult(categoryId: Long): List<Show> =
         when (categoryId) {
-            POPULAR.id -> mapper.showResponseToCacheList(traktService.getPopularShows())
-            TRENDING.id -> mapper.showsResponseToCacheList(traktService.getTrendingShows())
-            ANTICIPATED.id -> mapper.showsResponseToCacheList(traktService.getAnticipatedShows())
-            FEATURED.id -> mapper.showsResponseToCacheList(traktService.getRecommendedShows(period = "daily"))
+            POPULAR.id -> mapper.showResponseToCacheList(traktRemoteDataSource.getPopularShows())
+            TRENDING.id -> mapper.showsResponseToCacheList(traktRemoteDataSource.getTrendingShows())
+            ANTICIPATED.id -> mapper.showsResponseToCacheList(traktRemoteDataSource.getAnticipatedShows())
+            FEATURED.id -> mapper.showsResponseToCacheList(traktRemoteDataSource.getRecommendedShows(period = "daily"))
 
             else -> throw Throwable("Unsupported type sunny")
         }

@@ -18,7 +18,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
 
 private const val DEFAULT_API_PAGE: Long = 1
 
-interface TraktService {
+interface TraktRemoteDataSource {
 
     suspend fun getAccessToken(authCode: String): TraktAccessTokenResponse
 
