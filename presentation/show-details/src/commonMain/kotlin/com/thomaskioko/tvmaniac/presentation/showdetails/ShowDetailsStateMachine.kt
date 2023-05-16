@@ -18,7 +18,7 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersE
 import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersLoaded
 import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersLoaded.Companion.EmptyTrailers
 import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersLoaded.Companion.playerErrorMessage
-import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
+import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
@@ -34,7 +34,7 @@ class ShowDetailsStateMachine constructor(
     @Assisted private val traktShowId: Long,
     private val showsRepository: ShowsRepository,
     private val similarShowsRepository: SimilarShowsRepository,
-    private val seasonDetailsRepository: SeasonDetailsRepository,
+    private val seasonDetailsRepository: SeasonsRepository,
     private val trailerRepository: TrailerRepository,
     private val exceptionHandler: ExceptionHandler,
 ) : FlowReduxStateMachine<ShowDetailsState, ShowDetailsAction>(

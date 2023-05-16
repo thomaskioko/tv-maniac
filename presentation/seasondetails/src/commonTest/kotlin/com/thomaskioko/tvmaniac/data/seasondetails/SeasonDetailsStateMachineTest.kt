@@ -7,19 +7,18 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.presentation.seasondetails.Loading
 import com.thomaskioko.tvmaniac.presentation.seasondetails.LoadingError
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsStateMachine
-import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
-import com.thomaskioko.tvmaniac.seasondetails.testing.seasonDetails
+import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
+import com.thomaskioko.tvmaniac.seasons.testing.seasonDetails
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @Ignore // TODO:: Fix test
 class SeasonDetailsStateMachineTest {
 
-    private val seasonDetailsRepository = FakeSeasonDetailsRepository()
+    private val seasonDetailsRepository = FakeSeasonsRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val stateMachine = SeasonDetailsStateMachine(
         traktId = 1231,
