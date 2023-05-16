@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.datastore.implementation.DataStorePlatformCompon
 import com.thomaskioko.tvmaniac.db.DatabaseComponent
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeComponent
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsComponent
+import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsComponent
 import com.thomaskioko.tvmaniac.shared.base.wrappers.DiscoverStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.base.wrappers.FollowingStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.base.wrappers.SeasonDetailsStateMachineWrapper
@@ -32,6 +33,7 @@ abstract class ApplicationComponent :
     EpisodeComponent,
     NetworkUtilComponent,
     ProfileComponent,
+    SeasonsComponent,
     SeasonDetailsComponent,
     ShowsComponent,
     SimilarShowsComponent,

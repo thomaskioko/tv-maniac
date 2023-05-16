@@ -64,6 +64,8 @@ dependencies {
     implementation(projects.data.similar.implementation)
     implementation(projects.data.seasons.api)
     implementation(projects.data.seasons.implementation)
+    implementation(projects.data.seasondetails.api)
+    implementation(projects.data.seasondetails.implementation)
     implementation(projects.data.shows.api)
     implementation(projects.data.shows.implementation)
     implementation(projects.data.trailers.api)
