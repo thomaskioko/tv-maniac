@@ -4,7 +4,7 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.db.Seasons
-import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
+import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
@@ -21,6 +21,7 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersL
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Assisted
@@ -35,6 +36,7 @@ class ShowDetailsStateMachine constructor(
     private val similarShowsRepository: SimilarShowsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val trailerRepository: TrailerRepository,
+    private val exceptionHandler: ExceptionHandler,
 ) : FlowReduxStateMachine<ShowDetailsState, ShowDetailsAction>(
     initialState = ShowDetailsState.Loading,
 ) {
@@ -108,26 +110,50 @@ class ShowDetailsStateMachine constructor(
     }
 
     private fun updateSimilarShowsState(
-        result: Either<Failure, List<SelectSimilarShows>>,
+        response: StoreReadResponse<List<SimilarShows>>,
         state: State<ShowDetailsLoaded>,
-    ) = result.fold(
-        {
-            state.mutate {
-                copy(similarShowsState = SimilarShowsError(it.errorMessage))
-            }
-        },
-        {
+    ) = when (response) {
+        is StoreReadResponse.NoNewData -> state.noChange()
+        is StoreReadResponse.Loading -> {
             state.mutate {
                 copy(
                     similarShowsState = (similarShowsState as SimilarShowsLoaded)
-                        .copy(
-                            isLoading = false,
-                            similarShows = it.toSimilarShowList(),
-                        ),
+                        .copy(isLoading = true),
                 )
             }
-        },
-    )
+        }
+
+        is StoreReadResponse.Data -> {
+            state.mutate {
+                copy(
+                    similarShowsState = (similarShowsState as? SimilarShowsLoaded)
+                        ?.copy(
+                            isLoading = false,
+                            similarShows = response.requireData().toSimilarShowList(),
+                        ) ?: SimilarShowsLoaded(
+                        isLoading = false,
+                        similarShows = response.requireData().toSimilarShowList(),
+                    ),
+                )
+            }
+        }
+
+        is StoreReadResponse.Error.Exception -> {
+            state.mutate {
+                copy(
+                    similarShowsState = SimilarShowsError(
+                        exceptionHandler.resolveError(response.error),
+                    ),
+                )
+            }
+        }
+
+        is StoreReadResponse.Error.Message -> {
+            state.mutate {
+                copy(similarShowsState = SimilarShowsError(response.message))
+            }
+        }
+    }
 
     private fun updateTrailerState(
         response: StoreReadResponse<List<Trailers>>,
@@ -141,6 +167,7 @@ class ShowDetailsStateMachine constructor(
                 ),
             )
         }
+
         is StoreReadResponse.Data -> {
             state.mutate {
                 copy(
@@ -154,7 +181,11 @@ class ShowDetailsStateMachine constructor(
 
         is StoreReadResponse.Error.Exception -> {
             state.mutate {
-                copy(trailerState = TrailersError(response.error.message))
+                copy(
+                    trailerState = TrailersError(
+                        exceptionHandler.resolveError(response.error),
+                    ),
+                )
             }
         }
 
