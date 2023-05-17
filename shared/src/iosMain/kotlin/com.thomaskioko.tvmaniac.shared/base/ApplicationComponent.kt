@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
 import com.thomaskioko.tvmaniac.datastore.implementation.DataStorePlatformComponent
 import com.thomaskioko.tvmaniac.db.DatabaseComponent
+import com.thomaskioko.tvmaniac.episodeimages.implementation.EpisodeImageComponent
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeComponent
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsComponent
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsComponent
@@ -16,9 +17,10 @@ import com.thomaskioko.tvmaniac.shared.base.wrappers.SeasonDetailsStateMachineWr
 import com.thomaskioko.tvmaniac.shared.base.wrappers.SettingsStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.base.wrappers.ShowDetailsStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.base.wrappers.TrailersStateMachineWrapper
+import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
 import com.thomaskioko.tvmaniac.shows.implementation.ShowsComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
-import com.thomaskioko.tvmaniac.tmdb.implementation.inject.TmdbPlatformComponent
+import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbPlatformComponent
 import com.thomaskioko.tvmaniac.trakt.profile.implementation.ProfileComponent
 import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
@@ -31,11 +33,13 @@ abstract class ApplicationComponent :
     DatabaseComponent,
     DataStorePlatformComponent,
     EpisodeComponent,
+    EpisodeImageComponent,
     NetworkUtilComponent,
     ProfileComponent,
     SeasonsComponent,
     SeasonDetailsComponent,
     ShowsComponent,
+    ShowImagesComponent,
     SimilarShowsComponent,
     TmdbPlatformComponent,
     TraktComponent,
