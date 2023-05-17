@@ -4,7 +4,6 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
-import com.thomaskioko.tvmaniac.core.db.SelectShowImages
 import com.thomaskioko.tvmaniac.core.db.SelectShows
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
@@ -56,12 +55,6 @@ class ShowDaoImpl constructor(
 
     override fun observeCachedShows(categoryId: Long): Flow<List<SelectShowsByCategory>> {
         return database.showQueries.selectShowsByCategory(categoryId)
-            .asFlow()
-            .mapToList(dispatchers.io)
-    }
-
-    override fun observeShowImages(): Flow<List<SelectShowImages>> {
-        return database.showQueries.selectShowImages()
             .asFlow()
             .mapToList(dispatchers.io)
     }

@@ -17,7 +17,6 @@ kotlin {
         sourceSets["commonMain"].dependencies {
             implementation(projects.core.util)
             implementation(projects.core.tmdbApi.api)
-            implementation(projects.data.shows.api)
 
             implementation(libs.kotlinInject.runtime)
             implementation(libs.ktor.core)
