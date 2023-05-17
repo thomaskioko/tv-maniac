@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.following
+package com.thomaskioko.tvmaniac.watchlist
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -8,15 +8,15 @@ import com.thomaskioko.tvmaniac.navigation.extensions.screenComposable
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class FollowingNavigationFactory(
-    private val following: Following,
+class WatchlistNavigationFactory(
+    private val watchlist: Watchlist,
 ) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
         builder.screenComposable(
             route = NavigationScreen.WatchlistNavScreen.route,
             content = {
-                following(
+                watchlist(
                     onShowClicked = { tvShowId ->
                         navController.navigate(
                             "${NavigationScreen.ShowDetailsNavScreen.route}/$tvShowId",

@@ -38,11 +38,11 @@ dependencies {
     implementation(projects.androidFeatures.search)
     implementation(projects.androidFeatures.showDetails)
     implementation(projects.androidFeatures.showsGrid)
-    implementation(projects.androidFeatures.following)
     implementation(projects.androidFeatures.settings)
     implementation(projects.androidFeatures.seasonDetails)
     implementation(projects.androidFeatures.trailers)
     implementation(projects.androidFeatures.profile)
+    implementation(projects.androidFeatures.watchlist)
 
     implementation(projects.core.database)
     implementation(projects.core.networkutil)

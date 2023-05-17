@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.following
+package com.thomaskioko.tvmaniac.watchlist
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,24 +25,24 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
-import com.thomaskioko.tvmaniac.presentation.following.ErrorLoadingShows
-import com.thomaskioko.tvmaniac.presentation.following.FollowingContent
-import com.thomaskioko.tvmaniac.presentation.following.FollowingShow
-import com.thomaskioko.tvmaniac.presentation.following.FollowingState
-import com.thomaskioko.tvmaniac.presentation.following.LoadingShows
-import com.thomaskioko.tvmaniac.presentation.following.ReloadFollowedShows
+import com.thomaskioko.tvmaniac.presentation.watchlist.ErrorLoadingShows
+import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
+import com.thomaskioko.tvmaniac.presentation.watchlist.ReloadWatchlist
+import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistContent
+import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistItem
+import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistState
 import com.thomaskioko.tvmaniac.resources.R
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias Following = @Composable (
+typealias Watchlist = @Composable (
     onShowClicked: (showId: Long) -> Unit,
 ) -> Unit
 
 @Inject
 @Composable
 fun Following(
-    viewModelFactory: () -> FollowingViewModel,
+    viewModelFactory: () -> WatchlistViewModel,
     @Assisted onShowClicked: (showId: Long) -> Unit,
 ) {
     FollowingScreen(
@@ -53,7 +53,7 @@ fun Following(
 
 @Composable
 internal fun FollowingScreen(
-    viewModel: FollowingViewModel,
+    viewModel: WatchlistViewModel,
     onShowClicked: (showId: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -63,14 +63,14 @@ internal fun FollowingScreen(
         modifier = modifier,
         state = followedState,
         onShowClicked = onShowClicked,
-        onRetry = { viewModel.dispatch(ReloadFollowedShows) },
+        onRetry = { viewModel.dispatch(ReloadWatchlist) },
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FollowingScreen(
-    state: FollowingState,
+    state: WatchlistState,
     onShowClicked: (showId: Long) -> Unit,
     modifier: Modifier = Modifier,
     onRetry: () -> Unit = {},
@@ -98,7 +98,7 @@ private fun FollowingScreen(
                             .wrapContentSize(Alignment.Center),
                     )
 
-                is FollowingContent -> {
+                is WatchlistContent -> {
                     when {
                         state.list.isEmpty() -> EmptyContent(
                             painter = painterResource(id = R.drawable.ic_watchlist_empty),
@@ -119,7 +119,7 @@ private fun FollowingScreen(
 
 @Composable
 private fun FollowingGridContent(
-    list: List<FollowingShow>,
+    list: List<WatchlistItem>,
     paddingValues: PaddingValues,
     onItemClicked: (Long) -> Unit,
 ) {
@@ -143,7 +143,7 @@ private fun FollowingGridContent(
 @Composable
 private fun FollowingScreenPreview(
     @PreviewParameter(FollowingPreviewParameterProvider::class)
-    state: FollowingState,
+    state: WatchlistState,
 ) {
     TvManiacTheme {
         Surface {
