@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shows.implementation.mapper
+package com.thomaskioko.tvmaniac.shows.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.Show_category
