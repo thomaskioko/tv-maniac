@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.profile
 sealed interface ProfileState
 
 data class ProfileContent(
+    val isLoading: Boolean,
     val showTraktDialog: Boolean,
     val loggedIn: Boolean,
     val traktUser: TraktUser?,
@@ -10,6 +11,7 @@ data class ProfileContent(
 ) : ProfileState {
     companion object {
         val EMPTY = ProfileContent(
+            isLoading = false,
             showTraktDialog = false,
             loggedIn = false,
             traktUser = null,
