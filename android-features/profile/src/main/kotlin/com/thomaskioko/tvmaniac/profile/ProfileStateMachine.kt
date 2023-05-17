@@ -4,18 +4,23 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.trakt.profile.api.ProfileRepository
+import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
+import com.thomaskioko.tvmaniac.profile.api.stats.StatsRepository
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.model.TraktAuthState
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Inject
+import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Inject
 class ProfileStateMachine(
     private val traktAuthRepository: TraktAuthRepository,
+    private val statsRepository: StatsRepository,
     private val repository: ProfileRepository,
+    private val exceptionHandler: ExceptionHandler,
 ) : FlowReduxStateMachine<ProfileState, ProfileActions>(initialState = ProfileContent.EMPTY) {
 
     init {
@@ -29,13 +34,29 @@ class ProfileStateMachine(
                     }
                 }
 
+                collectWhileInState(statsRepository.observeStats("me")) { result, state ->
+                    when (result) {
+                        is Either.Left -> state.override { ProfileStatsError(result.error.errorMessage) }
+                        is Either.Right -> state.mutate {
+                            copy(
+                                profileStats = result.data?.let {
+                                    ProfileStats(
+                                        showMonths = it.months,
+                                        showDays = it.days,
+                                        showHours = it.hours,
+                                        collectedShows = it.collected_shows,
+                                        episodesWatched = it.episodes_watched,
+                                    )
+                                },
+                            )
+                        }
+                    }
+                }
+
                 on<FetchTraktUserProfile> { _, state ->
                     fetchUserProfile(state)
                 }
 
-                on<FetchUserStatsProfile> { _, state ->
-                    fetchTraktStats(state)
-                }
 
                 on<ShowTraktDialog> { _, state ->
                     state.mutate {
@@ -70,53 +91,37 @@ class ProfileStateMachine(
         }
     }
 
-    private suspend fun fetchTraktStats(state: State<ProfileContent>): ChangedState<ProfileState> {
-        var nextState: ChangedState<ProfileState> = state.noChange()
-        repository.observeStats("me")
-            .collect { result ->
-                nextState = when (result) {
-                    is Either.Left -> state.override { ProfileStatsError(result.error.errorMessage) }
-                    is Either.Right -> state.mutate {
-                        copy(
-                            profileStats = result.data?.let {
-                                ProfileStats(
-                                    showMonths = it.months,
-                                    showDays = it.days,
-                                    showHours = it.hours,
-                                    collectedShows = it.collected_shows,
-                                    episodesWatched = it.episodes_watched,
-                                )
-                            },
-                        )
-                    }
-                }
-            }
-
-        return nextState
-    }
-
     private suspend fun fetchUserProfile(state: State<ProfileContent>): ChangedState<ProfileState> {
         var nextState: ChangedState<ProfileState> = state.noChange()
 
-        repository.observeMe("me")
+        repository.observeProfile("me")
             .collect { result ->
                 nextState = when (result) {
-                    is Either.Left -> state.override { ProfileError(result.error.errorMessage) }
-                    is Either.Right -> {
-                        dispatch(FetchUserStatsProfile)
-                        state.mutate {
-                            copy(
-                                traktUser = result.data?.let {
-                                    TraktUser(
-                                        slug = it.slug,
-                                        userName = it.user_name,
-                                        fullName = it.full_name,
-                                        userPicUrl = it.profile_picture,
-                                    )
-                                },
-                            )
-                        }
+                    is StoreReadResponse.NoNewData -> state.noChange()
+                    is StoreReadResponse.Loading -> state.mutate {
+                        copy(isLoading = true)
                     }
+
+                    is StoreReadResponse.Data -> state.mutate {
+                        copy(
+                            isLoading = true,
+                            traktUser = TraktUser(
+                                slug = result.requireData().slug,
+                                userName = result.requireData().user_name,
+                                fullName = result.requireData().full_name,
+                                userPicUrl = result.requireData().profile_picture,
+                            ),
+                        )
+                    }
+
+                    is StoreReadResponse.Error.Exception -> state.override {
+                        ProfileStatsError(exceptionHandler.resolveError(result.error))
+                    }
+
+                    is StoreReadResponse.Error.Message -> state.override {
+                        ProfileStatsError(result.message)
+                    }
+
                 }
             }
 
