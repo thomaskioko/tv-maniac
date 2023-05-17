@@ -49,20 +49,25 @@ kotlin {
 
                 implementation(projects.core.database)
                 implementation(projects.core.datastore.implementation)
+                implementation(projects.data.episodeimages.api)
                 implementation(projects.core.networkutil)
+                implementation(projects.data.showimages.api)
                 implementation(projects.core.traktApi.api)
                 implementation(projects.core.traktApi.implementation)
                 implementation(projects.core.tmdbApi.api)
                 implementation(projects.core.tmdbApi.implementation)
 
 
+
                 implementation(projects.data.category.implementation)
                 implementation(projects.data.episodes.implementation)
+                implementation(projects.data.episodeimages.implementation)
                 implementation(projects.data.profile.implementation)
                 implementation(projects.data.similar.implementation)
                 implementation(projects.data.seasons.implementation)
                 implementation(projects.data.seasondetails.implementation)
                 implementation(projects.data.shows.implementation)
+                implementation(projects.data.showimages.implementation)
                 implementation(projects.data.trailers.implementation)
 
                 implementation(libs.kotlinInject.runtime)

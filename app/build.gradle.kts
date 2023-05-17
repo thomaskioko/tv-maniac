@@ -58,6 +58,8 @@ dependencies {
     implementation(projects.data.category.implementation)
     implementation(projects.data.episodes.api)
     implementation(projects.data.episodes.implementation)
+    implementation(projects.data.episodeimages.api)
+    implementation(projects.data.episodeimages.implementation)
     implementation(projects.data.profile.api)
     implementation(projects.data.profile.implementation)
     implementation(projects.data.similar.api)
@@ -68,6 +70,8 @@ dependencies {
     implementation(projects.data.seasondetails.implementation)
     implementation(projects.data.shows.api)
     implementation(projects.data.shows.implementation)
+    implementation(projects.data.showimages.api)
+    implementation(projects.data.showimages.implementation)
     implementation(projects.data.trailers.api)
     implementation(projects.data.trailers.implementation)
 
