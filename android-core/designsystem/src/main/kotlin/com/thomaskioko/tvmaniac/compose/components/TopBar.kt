@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.ui.TopAppBar
 import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
@@ -52,6 +53,8 @@ fun TvManiacTopBar(
                     style = MaterialTheme.typography.headlineSmall.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                     ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
