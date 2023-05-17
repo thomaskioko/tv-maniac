@@ -19,7 +19,7 @@ import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
 import com.thomaskioko.tvmaniac.shows.implementation.ShowsComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbPlatformComponent
-import com.thomaskioko.tvmaniac.trakt.profile.implementation.ProfileComponent
+import com.thomaskioko.tvmaniac.profile.implementation.ProfileComponent
 import com.thomaskioko.tvmaniac.traktauth.inject.TraktAuthComponent
 import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
