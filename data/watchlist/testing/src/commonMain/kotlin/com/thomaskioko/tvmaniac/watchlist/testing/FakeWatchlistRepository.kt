@@ -21,7 +21,8 @@ class FakeWatchlistRepository : WatchlistRepository {
 
     override fun getWatchlist(): List<SelectWatchlist> = com.thomaskioko.tvmaniac.watchlist.testing.watchlistResult
 
-    override suspend fun updateFollowedShow(traktId: Long, addToWatchList: Boolean) {}
+    override suspend fun updateWatchlist(traktId: Long, addToWatchList: Boolean) {
+    }
 
     override suspend fun syncWatchlist() {}
 }
