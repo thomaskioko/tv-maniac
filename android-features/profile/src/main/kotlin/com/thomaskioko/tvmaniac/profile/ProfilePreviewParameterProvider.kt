@@ -7,12 +7,14 @@ class ProfilePreviewParameterProvider : PreviewParameterProvider<ProfileState> {
         get() {
             return sequenceOf(
                 ProfileContent(
+                    isLoading = true,
                     showTraktDialog = false,
                     loggedIn = false,
                     traktUser = null,
                     profileStats = null,
                 ),
                 ProfileContent(
+                    isLoading = false,
                     showTraktDialog = false,
                     loggedIn = true,
                     traktUser = TraktUser(
