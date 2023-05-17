@@ -1,6 +1,6 @@
 import kotlin.Boolean;
 
-CREATE TABLE trakt_user (
+CREATE TABLE user (
 slug TEXT NOT NULL PRIMARY KEY,
 user_name Text NOT NULL,
 full_name TEXT,
@@ -9,7 +9,7 @@ is_me INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
 insertOrReplace:
-INSERT OR REPLACE INTO trakt_user(
+INSERT OR REPLACE INTO user(
 slug,
 user_name,
 full_name,
@@ -20,10 +20,16 @@ VALUES(?,?,?,?,? );
 
 userBySlug:
 SELECT *
-FROM trakt_user
+FROM user
 WHERE slug = ?;
 
-getMe:
+getCurrentUser:
 SELECT *
-FROM trakt_user
+FROM user
 WHERE is_me != 0;
+
+delete:
+DELETE FROM user WHERE slug = ?;
+
+deleteAll:
+DELETE FROM user;
