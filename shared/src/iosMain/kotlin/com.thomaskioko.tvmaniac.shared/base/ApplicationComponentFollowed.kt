@@ -13,11 +13,11 @@ import com.thomaskioko.tvmaniac.profile.implementation.ProfileComponent
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsComponent
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsComponent
 import com.thomaskioko.tvmaniac.shared.base.wrappers.DiscoverStateMachineWrapper
-import com.thomaskioko.tvmaniac.shared.base.wrappers.WatchlistStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.base.wrappers.SeasonDetailsStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.base.wrappers.SettingsStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.base.wrappers.ShowDetailsStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.base.wrappers.TrailersStateMachineWrapper
+import com.thomaskioko.tvmaniac.shared.base.wrappers.WatchlistStateMachineWrapper
 import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
 import com.thomaskioko.tvmaniac.shows.implementation.ShowsComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent

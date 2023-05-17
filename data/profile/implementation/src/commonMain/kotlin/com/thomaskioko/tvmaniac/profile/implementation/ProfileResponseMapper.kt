@@ -1,14 +1,9 @@
 package com.thomaskioko.tvmaniac.profile.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Followed_shows
-import com.thomaskioko.tvmaniac.core.db.Trakt_shows_list
 import com.thomaskioko.tvmaniac.core.db.User
 import com.thomaskioko.tvmaniac.core.db.User_stats
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
-import com.thomaskioko.tvmaniac.util.DateFormatter
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import me.tatarka.inject.annotations.Inject
 import kotlin.math.roundToInt
@@ -16,7 +11,6 @@ import kotlin.math.roundToInt
 @Inject
 class ProfileResponseMapper(
     private val formatterUtil: FormatterUtil,
-    private val dateFormatter: DateFormatter,
 ) {
 
     fun toTraktStats(
@@ -30,39 +24,10 @@ class ProfileResponseMapper(
         hours = formatterUtil.formatDuration(response.episodes.minutes / 60),
         episodes_watched = formatterUtil.formatDuration(response.episodes.watched),
     )
-
-    fun toTraktList(response: TraktCreateListResponse) = Trakt_shows_list(
-        id = response.ids.trakt.toLong(),
-        slug = response.ids.slug,
-        description = response.description,
-    )
-
-    fun toTraktList(
-        slug: String,
-        response: TraktUserResponse,
-    ) = User(
-        slug = response.ids.slug,
-        full_name = response.name,
-        user_name = response.userName,
-        profile_picture = response.images.avatar.full,
-        is_me = slug == "me",
-    )
-
-    fun responseToCache(
-
-        response: List<TraktFollowedShowResponse>,
-    ) = response.map {
-        Followed_shows(
-            id = it.show.ids.trakt.toLong(),
-            synced = true,
-            created_at = dateFormatter.getTimestampMilliseconds(),
-        )
-    }
-
 }
 
 fun TraktUserResponse.toUser(
-    slug: String
+    slug: String,
 ) = User(
     slug = ids.slug,
     full_name = name,

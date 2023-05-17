@@ -12,10 +12,10 @@ import org.mobilenativefoundation.store.store5.StoreReadResponse
 @Inject
 class ProfileRepositoryImpl constructor(
     private val store: ProfileStore,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
 ) : ProfileRepository {
 
     override fun observeProfile(slug: String): Flow<StoreReadResponse<User>> =
-       store.stream(StoreReadRequest.cached(key = slug, refresh = true))
-           .flowOn(dispatchers.io)
+        store.stream(StoreReadRequest.cached(key = slug, refresh = true))
+            .flowOn(dispatchers.io)
 }

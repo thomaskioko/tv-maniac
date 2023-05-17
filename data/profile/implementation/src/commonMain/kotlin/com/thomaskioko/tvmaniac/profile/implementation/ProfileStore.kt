@@ -21,7 +21,7 @@ class ProfileStore(
 ) : Store<String, User> by StoreBuilder.from<String, User, User, User>(
     fetcher = Fetcher.of { slug ->
 
-        when (val apiResult = traktRemoteDataSource.getUser(slug)){
+        when (val apiResult = traktRemoteDataSource.getUser(slug)) {
             is ApiResponse.Success -> apiResult.body.toUser(slug)
 
             is ApiResponse.Error.GenericError -> {
@@ -44,7 +44,7 @@ class ProfileStore(
         reader = { slug -> profileDao.observeUserBySlug(slug) },
         writer = { _, user -> profileDao.insert(user) },
         delete = profileDao::delete,
-        deleteAll = profileDao::deleteAll
+        deleteAll = profileDao::deleteAll,
     ),
 )
     .scope(scope.io)
