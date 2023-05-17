@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.shows.api.cache
 
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
-import com.thomaskioko.tvmaniac.core.db.SelectShowImages
 import com.thomaskioko.tvmaniac.core.db.SelectShows
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
@@ -18,8 +17,6 @@ interface ShowsDao {
     fun observeTvShows(): Flow<List<SelectShows>>
 
     fun observeCachedShows(categoryId: Long): Flow<List<SelectShowsByCategory>>
-
-    fun observeShowImages(): Flow<List<SelectShowImages>>
 
     fun getTvShow(traktId: Long): SelectByShowId
 
