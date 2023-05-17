@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.core.db.Episodes
 import com.thomaskioko.tvmaniac.core.db.SeasonWithEpisodes
 import com.thomaskioko.tvmaniac.core.db.Season_episodes
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
-import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
+import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
@@ -20,7 +20,7 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 class SeasonDetailsStore(
     private val traktRemoteDataSource: TraktRemoteDataSource,
     private val seasonDetailsDao: SeasonDetailsDao,
-    private val episodesCache: EpisodesCache,
+    private val episodesDao: EpisodesDao,
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
 ) : Store<Long, List<SeasonWithEpisodes>> by StoreBuilder
@@ -48,7 +48,7 @@ class SeasonDetailsStore(
             reader = seasonDetailsDao::observeShowEpisodes,
             writer = { id, list ->
                 list.forEach { season ->
-                    episodesCache.insert(
+                    episodesDao.insert(
                         Episodes(
                             trakt_id = season.trakt_id,
                             season_id = season.season_id,

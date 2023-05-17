@@ -9,12 +9,13 @@ kotlin {
 
     sourceSets {
         sourceSets["commonMain"].dependencies {
+            implementation(projects.data.episodeimages.api)
             implementation(projects.data.episodes.api)
             implementation(projects.data.seasondetails.api)
         }
 
         sourceSets["commonTest"].dependencies {
-            implementation(projects.data.episodes.testing)
+            implementation(projects.data.episodeimages.testing)
             implementation(projects.data.seasondetails.testing)
         }
     }
