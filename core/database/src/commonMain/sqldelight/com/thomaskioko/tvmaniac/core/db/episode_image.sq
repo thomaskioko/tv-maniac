@@ -12,3 +12,17 @@ tmdb_id,
 image_url
 )
 VALUES(?,?,?);
+
+episodeImage:
+SELECT show.tmdb_id, seasons.season_number, episodes.trakt_id, episodes.episode_number
+FROM episodes
+LEFT JOIN seasons ON seasons.id = episodes.season_id
+LEFT JOIN show ON show.trakt_id = seasons.show_trakt_id
+LEFT OUTER JOIN episode_image ON episode_image.trakt_id = episodes.trakt_id
+WHERE episode_image.image_url IS NULL;
+
+delete:
+DELETE FROM episode_image WHERE trakt_id = ?;
+
+deleteAll:
+DELETE FROM episode_image;
