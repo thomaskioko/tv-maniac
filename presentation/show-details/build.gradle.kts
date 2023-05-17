@@ -14,6 +14,7 @@ kotlin {
             implementation(projects.data.similar.api)
             implementation(projects.data.trailers.api)
             implementation(projects.data.shows.api)
+            implementation(projects.data.watchlist.api)
 
         }
 
@@ -22,6 +23,7 @@ kotlin {
             implementation(projects.data.seasons.testing)
             implementation(projects.data.similar.testing)
             implementation(projects.data.trailers.testing)
+            implementation(projects.data.watchlist.testing)
         }
     }
 }

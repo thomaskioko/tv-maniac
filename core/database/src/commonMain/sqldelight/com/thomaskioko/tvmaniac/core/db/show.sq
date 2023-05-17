@@ -35,7 +35,7 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?);
 selectByShowId:
 SELECT * FROM show
 LEFT OUTER JOIN show_image ON show_image.trakt_id = show.trakt_id
-LEFT OUTER JOIN followed_shows ON show.trakt_id = followed_shows.id
+LEFT OUTER JOIN watchlist ON show.trakt_id = watchlist.id
 WHERE show.trakt_id = ?;
 
 selectShowByTmdbId:
