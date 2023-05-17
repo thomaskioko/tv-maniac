@@ -31,5 +31,4 @@ class StatsRepositoryImpl(
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatchers.io,
         )
-
 }

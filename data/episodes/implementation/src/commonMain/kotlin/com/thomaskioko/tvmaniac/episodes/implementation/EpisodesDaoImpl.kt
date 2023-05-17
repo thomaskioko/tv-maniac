@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Episodes as EpisodeCache
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import me.tatarka.inject.annotations.Inject
+import com.thomaskioko.tvmaniac.core.db.Episodes as EpisodeCache
 
 @Inject
 class EpisodesDaoImpl(

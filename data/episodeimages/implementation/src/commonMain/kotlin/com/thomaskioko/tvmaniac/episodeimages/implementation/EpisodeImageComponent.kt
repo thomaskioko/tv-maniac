@@ -11,6 +11,6 @@ interface EpisodeImageComponent {
 
     @Provides
     fun provideEpisodeImageRepository(
-        bind: EpisodeImageRepositoryImpl
+        bind: EpisodeImageRepositoryImpl,
     ): EpisodeImageRepository = bind
 }

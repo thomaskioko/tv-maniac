@@ -57,7 +57,6 @@ class ProfileStateMachine(
                     fetchUserProfile(state)
                 }
 
-
                 on<ShowTraktDialog> { _, state ->
                     state.mutate {
                         copy(showTraktDialog = true)
@@ -121,7 +120,6 @@ class ProfileStateMachine(
                     is StoreReadResponse.Error.Message -> state.override {
                         ProfileStatsError(result.message)
                     }
-
                 }
             }
 
