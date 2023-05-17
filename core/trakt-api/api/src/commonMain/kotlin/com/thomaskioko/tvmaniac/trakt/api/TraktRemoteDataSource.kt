@@ -26,7 +26,7 @@ interface TraktRemoteDataSource {
 
     suspend fun revokeAccessToken(authCode: String)
 
-    suspend fun getUserProfile(userId: String): ApiResponse<TraktUserResponse, ErrorResponse>
+    suspend fun getUser(userId: String): ApiResponse<TraktUserResponse, ErrorResponse>
 
     suspend fun getUserList(userId: String): List<TraktPersonalListsResponse>
 

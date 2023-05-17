@@ -84,7 +84,7 @@ class TraktRemoteDataSourceImpl(
         }
     }
 
-    override suspend fun getUserProfile(userId: String): ApiResponse<TraktUserResponse, ErrorResponse> =
+    override suspend fun getUser(userId: String): ApiResponse<TraktUserResponse, ErrorResponse> =
         httpClient.safeRequest(exceptionHandler) {
             url {
                 method = HttpMethod.Get
