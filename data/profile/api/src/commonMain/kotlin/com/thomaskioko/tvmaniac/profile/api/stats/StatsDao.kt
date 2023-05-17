@@ -1,9 +1,9 @@
-package com.thomaskioko.tvmaniac.trakt.profile.api.cache
+package com.thomaskioko.tvmaniac.profile.api.stats
 
 import com.thomaskioko.tvmaniac.core.db.User_stats
 import kotlinx.coroutines.flow.Flow
 
-interface StatsCache {
+interface StatsDao {
 
     fun insert(stats: User_stats)
 

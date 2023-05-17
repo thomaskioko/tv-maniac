@@ -1,19 +1,19 @@
-package com.thomaskioko.tvmaniac.trakt.profile.implementation.cache
+package com.thomaskioko.tvmaniac.profile.implementation.stats
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.db.User_stats
-import com.thomaskioko.tvmaniac.trakt.profile.api.cache.StatsCache
+import com.thomaskioko.tvmaniac.profile.api.stats.StatsDao
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class StatsCacheImpl(
+class StatsDaoImpl(
     private val database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
-) : StatsCache {
+) : StatsDao {
 
     override fun insert(stats: User_stats) {
         database.user_statsQueries.insertOrReplace(

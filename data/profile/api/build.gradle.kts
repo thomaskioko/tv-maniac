@@ -13,10 +13,12 @@ kotlin {
             api(projects.core.util)
 
             api(libs.coroutines.core)
+            api(libs.kotlinx.atomicfu)
+            api(libs.store5)
         }
     }
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.trakt.profile.api"
+    namespace = "com.thomaskioko.tvmaniac.profile.api"
 }

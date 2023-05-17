@@ -1,9 +1,9 @@
-package com.thomaskioko.tvmaniac.trakt.profile.api.cache
+package com.thomaskioko.tvmaniac.profile.api.favorite
 
 import com.thomaskioko.tvmaniac.core.db.Trakt_shows_list
 import kotlinx.coroutines.flow.Flow
 
-interface FavoriteListCache {
+interface FavoriteListDao {
 
     fun insert(traktList: Trakt_shows_list)
 

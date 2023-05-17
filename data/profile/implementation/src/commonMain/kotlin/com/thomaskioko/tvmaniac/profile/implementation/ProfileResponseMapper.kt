@@ -1,8 +1,8 @@
-package com.thomaskioko.tvmaniac.trakt.profile.implementation
+package com.thomaskioko.tvmaniac.profile.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.Trakt_shows_list
-import com.thomaskioko.tvmaniac.core.db.Trakt_user
+import com.thomaskioko.tvmaniac.core.db.User
 import com.thomaskioko.tvmaniac.core.db.User_stats
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
@@ -40,7 +40,7 @@ class ProfileResponseMapper(
     fun toTraktList(
         slug: String,
         response: TraktUserResponse,
-    ) = Trakt_user(
+    ) = User(
         slug = response.ids.slug,
         full_name = response.name,
         user_name = response.userName,
@@ -58,4 +58,15 @@ class ProfileResponseMapper(
             created_at = dateFormatter.getTimestampMilliseconds(),
         )
     }
+
 }
+
+fun TraktUserResponse.toUser(
+    slug: String
+) = User(
+    slug = ids.slug,
+    full_name = name,
+    user_name = userName,
+    profile_picture = images.avatar.full,
+    is_me = slug == "me",
+)
