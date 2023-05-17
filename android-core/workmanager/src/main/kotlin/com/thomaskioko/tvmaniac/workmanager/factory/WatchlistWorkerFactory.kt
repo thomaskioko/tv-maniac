@@ -4,19 +4,19 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
-import com.thomaskioko.tvmaniac.workmanager.SyncFollowedShows
+import com.thomaskioko.tvmaniac.workmanager.SyncWatchlist
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class FollowedShowsWorkerFactory(
-    private val syncFollowedShowsShows: (Context, WorkerParameters) -> SyncFollowedShows,
+class WatchlistWorkerFactory(
+    private val syncWatchlist: (Context, WorkerParameters) -> SyncWatchlist,
 ) : WorkerFactory() {
     override fun createWorker(
         appContext: Context,
         workerClassName: String,
         workerParameters: WorkerParameters,
     ): ListenableWorker? = when (workerClassName) {
-        name<SyncFollowedShows>() -> syncFollowedShowsShows(appContext, workerParameters)
+        name<SyncWatchlist>() -> syncWatchlist(appContext, workerParameters)
         else -> null
     }
 
