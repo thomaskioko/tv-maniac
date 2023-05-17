@@ -74,9 +74,11 @@ dependencies {
     implementation(projects.data.showimages.implementation)
     implementation(projects.data.trailers.api)
     implementation(projects.data.trailers.implementation)
+    implementation(projects.data.watchlist.api)
+    implementation(projects.data.watchlist.implementation)
 
     implementation(projects.presentation.discover)
-    implementation(projects.presentation.following)
+    implementation(projects.presentation.watchlist)
     implementation(projects.presentation.seasondetails)
     implementation(projects.presentation.settings)
     implementation(projects.presentation.showDetails)

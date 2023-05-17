@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersL
 import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersLoaded.Companion.playerErrorMessage
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
+import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,6 +36,7 @@ class ShowDetailsStateMachine constructor(
     private val similarShowsRepository: SimilarShowsRepository,
     private val seasonsRepository: SeasonsRepository,
     private val trailerRepository: TrailerRepository,
+    private val watchlistRepository: WatchlistRepository,
     private val exceptionHandler: ExceptionHandler,
 ) : FlowReduxStateMachine<ShowDetailsState, ShowDetailsAction>(
     initialState = ShowDetailsState.Loading,
@@ -74,7 +76,7 @@ class ShowDetailsStateMachine constructor(
                 }
 
                 onActionEffect<FollowShowClicked> { action, _ ->
-                    showsRepository.updateFollowedShow(
+                    watchlistRepository.updateWatchlist(
                         traktId = action.traktId,
                         addToWatchList = !action.addToFollowed,
                     )
