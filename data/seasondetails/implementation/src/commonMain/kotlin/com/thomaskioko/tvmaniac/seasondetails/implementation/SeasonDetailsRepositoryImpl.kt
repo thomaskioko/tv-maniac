@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
-import com.thomaskioko.tvmaniac.episodes.api.EpisodesCache
+import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
@@ -25,7 +25,7 @@ import me.tatarka.inject.annotations.Inject
 class SeasonDetailsRepositoryImpl(
     private val traktRemoteDataSource: TraktRemoteDataSource,
     private val seasonCache: SeasonDetailsDao,
-    private val episodesCache: EpisodesCache,
+    private val episodesDao: EpisodesDao,
     private val exceptionHandler: ExceptionHandler,
     private val dispatcher: AppCoroutineDispatchers,
     private val logger: KermitLogger,
@@ -53,7 +53,7 @@ class SeasonDetailsRepositoryImpl(
         when (response) {
             is ApiResponse.Success -> {
                 response.body.forEach { season ->
-                    episodesCache.insert(season.toEpisodeCacheList())
+                    episodesDao.insert(season.toEpisodeCacheList())
 
                     seasonCache.insert(
                         Season_episodes(

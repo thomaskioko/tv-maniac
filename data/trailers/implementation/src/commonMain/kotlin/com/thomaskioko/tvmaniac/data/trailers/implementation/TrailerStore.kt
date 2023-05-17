@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.data.trailers.implementation
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.shows.api.cache.ShowsDao
-import com.thomaskioko.tvmaniac.tmdb.api.TmdbService
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbNetworkDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
@@ -14,7 +14,7 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 
 @Inject
 class TrailerStore(
-    private val apiService: TmdbService,
+    private val apiService: TmdbNetworkDataSource,
     private val trailerDao: TrailerDao,
     private val showsDao: ShowsDao,
     private val logger: KermitLogger,

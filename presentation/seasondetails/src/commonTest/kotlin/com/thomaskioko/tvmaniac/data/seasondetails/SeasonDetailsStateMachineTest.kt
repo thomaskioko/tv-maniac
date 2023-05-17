@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.data.seasondetails
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeImageRepository
 import com.thomaskioko.tvmaniac.presentation.seasondetails.Loading
 import com.thomaskioko.tvmaniac.presentation.seasondetails.LoadingError
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsStateMachine
@@ -18,10 +18,10 @@ import kotlin.test.Test
 class SeasonDetailsStateMachineTest {
 
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
-    private val episodeRepository = FakeEpisodeRepository()
+    private val episodeImageRepository = FakeEpisodeImageRepository()
     private val stateMachine = SeasonDetailsStateMachine(
         traktId = 1231,
-        episodeRepository = episodeRepository,
+        episodeImageRepository = episodeImageRepository,
         seasonDetailsRepository = seasonDetailsRepository,
     )
 

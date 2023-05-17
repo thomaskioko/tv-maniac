@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.presentation.discover
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
+import com.thomaskioko.tvmaniac.showimages.api.ShowImagesRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
-import com.thomaskioko.tvmaniac.tmdb.api.TmdbRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +16,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class DiscoverStateMachine(
     private val showsRepository: ShowsRepository,
-    private val tmdbRepository: TmdbRepository,
+    private val showImagesRepository: ShowImagesRepository,
 ) : FlowReduxStateMachine<ShowsState, ShowsAction>(initialState = Loading) {
 
     init {
@@ -39,7 +39,7 @@ class DiscoverStateMachine(
                     }
                 }
 
-                collectWhileInStateEffect(tmdbRepository.updateShowArtWork()) { _, _ ->
+                collectWhileInStateEffect(showImagesRepository.updateShowArtWork()) { _, _ ->
                     /** No need to do anything. Just trigger artwork download. **/
                 }
 

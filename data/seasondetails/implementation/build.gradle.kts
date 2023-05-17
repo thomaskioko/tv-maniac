@@ -39,5 +39,5 @@ dependencies {
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.seasons.implementation"
+    namespace = "com.thomaskioko.tvmaniac.seasonsdetail.implementation"
 }
