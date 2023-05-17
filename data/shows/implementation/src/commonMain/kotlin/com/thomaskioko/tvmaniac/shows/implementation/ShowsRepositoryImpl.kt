@@ -6,9 +6,7 @@ import com.thomaskioko.tvmaniac.category.api.model.Category.FEATURED
 import com.thomaskioko.tvmaniac.category.api.model.Category.POPULAR
 import com.thomaskioko.tvmaniac.category.api.model.Category.TRENDING
 import com.thomaskioko.tvmaniac.category.api.model.getCategory
-import com.thomaskioko.tvmaniac.core.db.Followed_shows
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
-import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
@@ -16,30 +14,24 @@ import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
+import com.thomaskioko.tvmaniac.shows.api.ShowsDao
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
-import com.thomaskioko.tvmaniac.shows.api.cache.FollowedCache
-import com.thomaskioko.tvmaniac.shows.api.cache.ShowsDao
-import com.thomaskioko.tvmaniac.shows.implementation.mapper.ShowsResponseMapper
 import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
-import com.thomaskioko.tvmaniac.util.DateFormatter
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ShowsRepositoryImpl constructor(
     private val showsDao: ShowsDao,
-    private val followedCache: FollowedCache,
     private val categoryCache: CategoryCache,
     private val traktRemoteDataSource: TraktRemoteDataSource,
-    private val dateFormatter: DateFormatter,
     private val mapper: ShowsResponseMapper,
     private val exceptionHandler: ExceptionHandler,
     private val dispatchers: AppCoroutineDispatchers,
@@ -131,29 +123,6 @@ class ShowsRepositoryImpl constructor(
             categoryCache.insert(mapper.toCategoryCache(mappedResult, it.id))
         }
     }
-
-    override suspend fun updateFollowedShow(traktId: Long, addToWatchList: Boolean) {
-        // TODO:: Check if user is signed into trakt and sync followed shows.
-        when {
-            addToWatchList -> followedCache.insert(
-                Followed_shows(
-                    id = traktId,
-                    synced = false,
-                    created_at = dateFormatter.getTimestampMilliseconds(),
-                ),
-            )
-
-            else -> followedCache.removeShow(traktId)
-        }
-    }
-
-    override fun observeFollowedShows(): Flow<Either<Failure, List<SelectFollowedShows>>> =
-        followedCache.observeFollowedShows()
-            .distinctUntilChanged()
-            .map { Either.Right(it) }
-            .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
-
-    override fun getFollowedShows(): List<SelectFollowedShows> = followedCache.getFollowedShows()
 
     private suspend fun fetchShowsAndMapResult(categoryId: Long): List<Show> =
         when (categoryId) {

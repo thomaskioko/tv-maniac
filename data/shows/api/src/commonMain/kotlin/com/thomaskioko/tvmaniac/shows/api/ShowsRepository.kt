@@ -1,17 +1,12 @@
 package com.thomaskioko.tvmaniac.shows.api
 
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
-import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface ShowsRepository {
-
-    fun observeFollowedShows(): Flow<Either<Failure, List<SelectFollowedShows>>>
-
-    fun getFollowedShows(): List<SelectFollowedShows>
 
     fun observeShow(traktId: Long): Flow<Either<Failure, SelectByShowId>>
 
@@ -32,8 +27,6 @@ interface ShowsRepository {
     fun fetchFeaturedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>>
 
     fun observeFeaturedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>>
-
-    suspend fun updateFollowedShow(traktId: Long, addToWatchList: Boolean)
 
     suspend fun fetchShows()
 }

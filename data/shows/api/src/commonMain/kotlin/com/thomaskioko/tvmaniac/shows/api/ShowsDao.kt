@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shows.api.cache
+package com.thomaskioko.tvmaniac.shows.api
 
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
 import com.thomaskioko.tvmaniac.core.db.SelectShows
