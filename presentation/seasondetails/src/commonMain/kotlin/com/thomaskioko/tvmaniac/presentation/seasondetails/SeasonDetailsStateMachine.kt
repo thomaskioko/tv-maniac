@@ -4,7 +4,7 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import com.thomaskioko.tvmaniac.episodeimages.api.EpisodeImageRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -16,7 +16,7 @@ import me.tatarka.inject.annotations.Inject
 class SeasonDetailsStateMachine constructor(
     @Assisted private val traktId: Long,
     private val seasonDetailsRepository: SeasonDetailsRepository,
-    private val episodeRepository: EpisodeRepository,
+    private val episodeImageRepository: EpisodeImageRepository,
 ) : FlowReduxStateMachine<SeasonDetailsState, SeasonDetailsAction>(initialState = Loading) {
 
     init {
@@ -41,7 +41,7 @@ class SeasonDetailsStateMachine constructor(
                     )
                 }
 
-                collectWhileInStateEffect(episodeRepository.updateEpisodeArtWork()) { _, _ ->
+                collectWhileInStateEffect(episodeImageRepository.updateEpisodeImage()) { _, _ ->
                     /** No need to do anything. Just trigger artwork download. **/
                 }
             }

@@ -7,8 +7,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.androidCore.resources)
-
     api(libs.coroutines.jvm)
     api(libs.coil.coil)
     api(libs.coil.compose)
@@ -16,6 +14,9 @@ dependencies {
     api(libs.androidx.palette)
     api(libs.androidx.compose.material3)
     api(libs.androidx.compose.ui.runtime)
+
+    implementation(projects.androidCore.resources)
+
     implementation(libs.kenburns)
     implementation(libs.accompanist.insetsui)
     implementation(libs.androidx.core)

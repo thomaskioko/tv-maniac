@@ -18,3 +18,14 @@ VALUES(?,?,?,?);
 selectImages:
 SELECT * FROM show_image
 WHERE poster_url IS NULL;
+
+selectShowImages:
+SELECT show.trakt_id, show.tmdb_id FROM show
+LEFT OUTER JOIN show_image ON show_image.trakt_id = show.trakt_id
+WHERE poster_url IS NULL AND backdrop_url IS NULL;
+
+delete:
+DELETE FROM show_image WHERE trakt_id = ?;
+
+deleteAll:
+DELETE FROM show_image;

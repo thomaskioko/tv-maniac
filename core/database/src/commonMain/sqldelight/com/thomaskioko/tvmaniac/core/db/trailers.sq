@@ -25,3 +25,9 @@ selectByShowId:
 SELECT *
 FROM trailers
 WHERE trakt_id = ?;
+
+delete:
+DELETE FROM trailers WHERE trakt_id = ?;
+
+deleteAll:
+DELETE FROM trailers;

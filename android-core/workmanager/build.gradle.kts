@@ -9,11 +9,12 @@ android {
 
 dependencies {
 
+    api(libs.androidx.work.runtime)
+
     implementation(projects.core.util)
     implementation(projects.data.profile.api)
     implementation(projects.data.shows.api)
-
-    api(libs.androidx.work.runtime)
+    implementation(projects.data.watchlist.api)
 
     implementation(libs.kotlinInject.runtime)
     ksp(libs.kotlinInject.compiler)

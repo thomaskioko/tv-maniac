@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.inject
 
 import com.thomaskioko.showdetails.ShowDetailNavigationFactory
 import com.thomaskioko.tvmaniac.discover.DiscoverNavigationFactory
-import com.thomaskioko.tvmaniac.following.FollowingNavigationFactory
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.profile.ProfileNavigationFactory
 import com.thomaskioko.tvmaniac.search.SearchNavigationFactory
@@ -10,6 +9,7 @@ import com.thomaskioko.tvmaniac.seasondetails.SeasonDetailsNavigationFactory
 import com.thomaskioko.tvmaniac.settings.SettingsNavigationFactory
 import com.thomaskioko.tvmaniac.showsgrid.ShowsGridNavigationFactory
 import com.thomaskioko.tvmaniac.videoplayer.TrailerNavigationFactory
+import com.thomaskioko.tvmaniac.watchlist.WatchlistNavigationFactory
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
@@ -42,7 +42,7 @@ interface NavigationComponent {
     @Provides
     @IntoSet
     fun bindWatchlistNavigation(
-        factory: FollowingNavigationFactory,
+        factory: WatchlistNavigationFactory,
     ): ComposeNavigationFactory = factory
 
     @Provides

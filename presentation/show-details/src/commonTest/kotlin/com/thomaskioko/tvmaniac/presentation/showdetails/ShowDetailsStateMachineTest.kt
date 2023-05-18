@@ -3,32 +3,41 @@ package com.thomaskioko.tvmaniac.presentation.showdetails
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.shows.testing.FakeShowsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.mobilenativefoundation.store.store5.StoreReadResponse
+import org.mobilenativefoundation.store.store5.StoreReadResponseOrigin
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @Ignore // TODO:: Fix test
 internal class ShowDetailsStateMachineTest {
 
-    private val seasonsRepository = FakeSeasonDetailsRepository()
+    private val exceptionHandler = object : ExceptionHandler {
+        override fun resolveError(throwable: Throwable): String = "Something went wrong"
+    }
+
+    private val seasonsRepository = FakeSeasonsRepository()
     private val trailerRepository = FakeTrailerRepository()
     private val traktRepository = FakeShowsRepository()
     private val similarShowsRepository = FakeSimilarShowsRepository()
+    private val watchlistRepository = FakeWatchlistRepository()
 
     private val stateMachine = ShowDetailsStateMachine(
         traktShowId = 84958,
         showsRepository = traktRepository,
         trailerRepository = trailerRepository,
-        seasonDetailsRepository = seasonsRepository,
+        seasonsRepository = seasonsRepository,
         similarShowsRepository = similarShowsRepository,
+        watchlistRepository = watchlistRepository,
+        exceptionHandler = exceptionHandler,
     )
 
     @Test
@@ -44,9 +53,24 @@ internal class ShowDetailsStateMachineTest {
     fun loadingData_state_emits_expected_result() = runTest {
         stateMachine.state.test {
             traktRepository.setShowResult(Either.Right(selectedShow))
-            seasonsRepository.setSeasonsResult(Either.Right(seasons))
-            similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
-            trailerRepository.setTrailerResult(Either.Right(trailers))
+            seasonsRepository.setSeasonsResult(
+                StoreReadResponse.Data(
+                    value = seasons,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
+            similarShowsRepository.setSimilarShowsResult(
+                StoreReadResponse.Data(
+                    value = similarShowResult,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
+            trailerRepository.setTrailerResult(
+                StoreReadResponse.Data(
+                    value = trailers,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
@@ -72,9 +96,24 @@ internal class ShowDetailsStateMachineTest {
         stateMachine.state.test {
             val errorMessage = "Something went wrong"
             traktRepository.setShowResult(Either.Right(selectedShow))
-            seasonsRepository.setSeasonsResult(Either.Right(seasons))
-            trailerRepository.setTrailerResult(Either.Right(trailers))
-            similarShowsRepository.setSimilarShowsResult(Either.Left(DefaultError(errorMessage)))
+            seasonsRepository.setSeasonsResult(
+                StoreReadResponse.Data(
+                    value = seasons,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
+            trailerRepository.setTrailerResult(
+                StoreReadResponse.Data(
+                    value = trailers,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
+            similarShowsRepository.setSimilarShowsResult(
+                StoreReadResponse.Error.Message(
+                    message = errorMessage,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
@@ -100,9 +139,24 @@ internal class ShowDetailsStateMachineTest {
         stateMachine.state.test {
             val errorMessage = "Something went wrong"
             traktRepository.setShowResult(Either.Right(selectedShow))
-            seasonsRepository.setSeasonsResult(Either.Right(seasons))
-            similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
-            trailerRepository.setTrailerResult(Either.Left(DefaultError(errorMessage)))
+            seasonsRepository.setSeasonsResult(
+                StoreReadResponse.Data(
+                    value = seasons,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
+            similarShowsRepository.setSimilarShowsResult(
+                StoreReadResponse.Data(
+                    value = similarShowResult,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
+            trailerRepository.setTrailerResult(
+                StoreReadResponse.Error.Message(
+                    message = errorMessage,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
@@ -128,9 +182,24 @@ internal class ShowDetailsStateMachineTest {
         stateMachine.state.test {
             val errorMessage = "Something went wrong"
             traktRepository.setShowResult(Either.Right(selectedShow))
-            trailerRepository.setTrailerResult(Either.Right(trailers))
-            similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
-            seasonsRepository.setSeasonsResult(Either.Left(DefaultError(errorMessage)))
+            trailerRepository.setTrailerResult(
+                StoreReadResponse.Data(
+                    value = trailers,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
+            similarShowsRepository.setSimilarShowsResult(
+                StoreReadResponse.Data(
+                    value = similarShowResult,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
+            seasonsRepository.setSeasonsResult(
+                StoreReadResponse.Error.Message(
+                    message = errorMessage,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
 
             awaitItem() shouldBe ShowDetailsState.Loading
             awaitItem() shouldBe showDetailsLoaded
@@ -154,9 +223,24 @@ internal class ShowDetailsStateMachineTest {
         stateMachine.state.test {
             val errorMessage = "Something went wrong"
             traktRepository.setShowResult(Either.Left(DefaultError(errorMessage)))
-            seasonsRepository.setSeasonsResult(Either.Right(seasons))
-            similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
-            trailerRepository.setTrailerResult(Either.Right(trailers))
+            seasonsRepository.setSeasonsResult(
+                StoreReadResponse.Error.Message(
+                    message = errorMessage,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
+            similarShowsRepository.setSimilarShowsResult(
+                StoreReadResponse.Data(
+                    value = similarShowResult,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
+            trailerRepository.setTrailerResult(
+                StoreReadResponse.Data(
+                    value = trailers,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
 
             stateMachine.dispatch(LoadShowDetails(84958))
 
