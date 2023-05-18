@@ -6,32 +6,42 @@ atomicfu = "0.18.5"
 
 androidx-activity = "1.7.1"
 androidx-appCompat = "1.5.1"
-androidx-core = "1.10.0"
+androidx-core = "1.10.1"
 androidx-datastore = "1.1.0-alpha04"
 androidx-lifecycle = "2.6.1"
 androidx-material3 = "1.1.0-rc01"
 androidx-navigation = "2.5.3"
 navigation-compose = "1.0.0"
 androidx-palette = "1.0.0"
+androidx-paging = "3.1.1"
 androidx-work = "2.8.1"
 
 coil = "2.3.0"
 compileSdk = "33"
 compose-bom = "2023.05.00"
+compose-constraintlayout= "1.0.1"
+compose-paging = "1.0.0-alpha19"
 composecompiler = "1.4.5"
 coroutines = "1.6.4"
+datetime = "0.4.0"
 desugar = "2.0.3"
+flowredux = "1.1.0"
 junit = "4.13.2"
+kenburns = "1.0.7"
+kermit = "1.2.2"
 kmmbridge = "0.3.7"
 kotest = "5.5.4"
 kotlin = "1.8.20"
 kotlininject = "0.6.1"
 ktor = "2.3.0"
 ksp = "1.8.20-1.0.10"
-shared-module-version = "0.7.0"
+lint = "1.2.0"
+shared-module-version = "0.7.1"
+snapper = "0.3.0"
 sqldelight = "2.0.0-alpha05"
-store = "5.0.0-alpha06"
+store5 = "5.0.0-alpha05"
 turbine = "0.12.3"
+youtubePlayer = "11.0.1"
 
 [libraries]
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar" }
@@ -54,10 +64,10 @@ androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util"}
 androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activity" }
 
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
-androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version = "1.0.1" }
+androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version = "compose-constraintlayout" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidx-material3" }
 androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "androidx-material3" }
-androidx-compose-paging = { module = "androidx.paging:paging-compose", version = "1.0.0-alpha19" }
+androidx-compose-paging = { module = "androidx.paging:paging-compose", version = "compose-paging" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-datastore-preference = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
@@ -66,7 +76,7 @@ androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-view
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 androidx-navigation-common = { module = "androidx.navigation:navigation-common", version.ref = "androidx-navigation" }
 androidx-navigation-runtime = { module = "androidx.navigation:navigation-runtime", version.ref = "androidx-navigation" }
-androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version = "3.1.1" }
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version = "androidx-paging" }
 androidx-palette = { module = "androidx.palette:palette-ktx", version.ref = "androidx-palette" }
 androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
 
@@ -80,20 +90,20 @@ coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", ve
 coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.4.0" }
-desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.0.3" }
+desugar = { module = "com.android.tools:desugar_jdk_libs", version = "desugar" }
 
-flowredux = { module = "com.freeletics.flowredux:flowredux", version = "1.0.2" }
+flowredux = { module = "com.freeletics.flowredux:flowredux", version = "flowredux" }
 
 junit = { module = "junit:junit", version.ref = "junit" }
 
-kenburns = { module = "com.flaviofaria:kenburnsview", version = "1.0.7" }
-kermit = { module = "co.touchlab:kermit", version = "1.2.2" }
+kenburns = { module = "com.flaviofaria:kenburnsview", version = "kenburns" }
+kermit = { module = "co.touchlab:kermit", version = "kermit" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 
 kotlinInject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlininject" }
 kotlinInject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlininject" }
 kotlinx-atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "datetime" }
 
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
@@ -103,20 +113,20 @@ ktor-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktor" }
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
-lint-compose = { module = "com.slack.lint.compose:compose-lint-checks", version = "1.2.0" }
+lint-compose = { module = "com.slack.lint.compose:compose-lint-checks", version = "lint" }
 
-snapper = { module = "dev.chrisbanes.snapper:snapper", version = "0.3.0" }
+snapper = { module = "dev.chrisbanes.snapper:snapper", version = "snapper" }
 
 sqldelight-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
-store5 = { module = "org.mobilenativefoundation.store:store5", version = "5.0.0-alpha05" }
+store5 = { module = "org.mobilenativefoundation.store:store5", version = "store5" }
 
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 yamlkt = { module = "net.mamoe.yamlkt:yamlkt", version = "0.12.0" }
-youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version = "11.0.1" }
+youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version = "youtubePlayer" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
