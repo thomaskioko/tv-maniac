@@ -1,6 +1,12 @@
 package com.thomaskioko.tvmaniac.profile
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.thomaskioko.tvmaniac.presentation.profile.ProfileContent
+import com.thomaskioko.tvmaniac.presentation.profile.ProfileError
+import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
+import com.thomaskioko.tvmaniac.presentation.profile.ProfileStats
+import com.thomaskioko.tvmaniac.presentation.profile.ProfileStatsError
+import com.thomaskioko.tvmaniac.presentation.profile.TraktUser
 
 class ProfilePreviewParameterProvider : PreviewParameterProvider<ProfileState> {
     override val values: Sequence<ProfileState>

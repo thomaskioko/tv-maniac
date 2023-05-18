@@ -60,6 +60,12 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
+import com.thomaskioko.tvmaniac.presentation.profile.DismissTraktDialog
+import com.thomaskioko.tvmaniac.presentation.profile.ProfileContent
+import com.thomaskioko.tvmaniac.presentation.profile.ProfileError
+import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
+import com.thomaskioko.tvmaniac.presentation.profile.ProfileStats
+import com.thomaskioko.tvmaniac.presentation.profile.ProfileStatsError
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
@@ -335,10 +341,10 @@ fun UserProfile(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 ) {
                     AsyncImageComposable(
-                        model = state.traktUser.userPicUrl,
+                        model = state.traktUser!!.userPicUrl,
                         contentDescription = stringResource(
                             R.string.cd_profile_pic,
-                            state.traktUser.fullName ?: state.traktUser.userName ?: "",
+                            state.traktUser!!.fullName ?: state.traktUser!!.userName ?: "",
                         ),
                         modifier = Modifier
                             .size(120.dp)
@@ -391,9 +397,9 @@ fun UserProfile(
                 contentPadding = contentPadding,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                item { ShowTimeStats(profileStats = state.profileStats) }
+                item { ShowTimeStats(profileStats = state.profileStats!!) }
 
-                item { EpisodesStats(profileStats = state.profileStats) }
+                item { EpisodesStats(profileStats = state.profileStats!!) }
             }
         }
     }
