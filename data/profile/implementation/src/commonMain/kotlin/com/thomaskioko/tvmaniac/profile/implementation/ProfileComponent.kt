@@ -16,5 +16,4 @@ interface ProfileComponent {
 
     @Provides
     fun provideProfileRepository(bind: ProfileRepositoryImpl): ProfileRepository = bind
-
 }

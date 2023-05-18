@@ -9,7 +9,6 @@ interface StatsComponent {
     @Provides
     fun provideStatsDao(bind: StatsDaoImpl): StatsDao = bind
 
-
     @Provides
     fun provideStatsRepository(bind: StatsRepositoryImpl): StatsRepository = bind
 }

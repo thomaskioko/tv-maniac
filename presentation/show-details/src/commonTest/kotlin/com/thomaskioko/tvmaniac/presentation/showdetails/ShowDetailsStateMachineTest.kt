@@ -36,7 +36,7 @@ internal class ShowDetailsStateMachineTest {
         trailerRepository = trailerRepository,
         seasonsRepository = seasonsRepository,
         similarShowsRepository = similarShowsRepository,
-        watchlistRepository= watchlistRepository,
+        watchlistRepository = watchlistRepository,
         exceptionHandler = exceptionHandler,
     )
 

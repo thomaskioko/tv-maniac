@@ -12,16 +12,14 @@ class FakeProfileRepository : ProfileRepository {
     override fun observeProfile(slug: String): Flow<StoreReadResponse<User>> =
         flowOf(
             StoreReadResponse.Data(
-                value =      User(
+                value = User(
                     slug = "me",
                     user_name = "silly_eyes",
                     full_name = "Stranger Danger",
                     profile_picture = "",
                     is_me = true,
                 ),
-                origin = StoreReadResponseOrigin.Cache
-            )
+                origin = StoreReadResponseOrigin.Cache,
+            ),
         )
-
-
 }
