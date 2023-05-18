@@ -96,8 +96,13 @@ class TraktRemoteDataSourceImpl(
     override suspend fun getUserList(userId: String): List<TraktPersonalListsResponse> =
         httpClient.get("users/$userId/lists").body()
 
-    override suspend fun getUserStats(userId: String): TraktUserStatsResponse =
-        httpClient.get("users/$userId/stats").body()
+    override suspend fun getStats(userId: String): ApiResponse<TraktUserStatsResponse, ErrorResponse> =
+        httpClient.safeRequest(exceptionHandler) {
+            url {
+                method = HttpMethod.Get
+                path("users/$userId/stats")
+            }
+        }
 
     override suspend fun createFollowingList(userSlug: String): TraktCreateListResponse =
         httpClient.post("users/$userSlug/lists") {
