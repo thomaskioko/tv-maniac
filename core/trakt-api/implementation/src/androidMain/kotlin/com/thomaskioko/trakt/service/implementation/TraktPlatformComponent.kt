@@ -1,24 +1,10 @@
 package com.thomaskioko.trakt.service.implementation
 
-import com.thomaskioko.tvmaniac.trakt.api.TraktService
-import com.thomaskioko.tvmaniac.util.model.Configs
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import io.ktor.client.engine.okhttp.OkHttp
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Provides
 
 actual interface TraktPlatformComponent {
-
-    @OptIn(ExperimentalSerializationApi::class)
-    @ApplicationScope
-    @Provides
-    fun provideJson(): TraktJson = Json {
-        ignoreUnknownKeys = true
-        prettyPrint = true
-        isLenient = true
-        explicitNulls = false
-    }
 
     @ApplicationScope
     @Provides
@@ -27,21 +13,4 @@ actual interface TraktPlatformComponent {
     ): TraktHttpClientEngine = OkHttp.create {
         addInterceptor(interceptor)
     }
-
-    @ApplicationScope
-    @Provides
-    fun provideHttpClient(
-        configs: Configs,
-        json: TraktJson,
-        httpClientEngine: TraktHttpClientEngine,
-    ): TraktHttpClient = traktHttpClient(
-        isDebug = configs.isDebug,
-        traktClientId = configs.traktClientId,
-        json = json,
-        httpClientEngine = httpClientEngine,
-    )
-
-    @ApplicationScope
-    @Provides
-    fun provideTraktService(bind: TraktServiceImpl): TraktService = bind
 }

@@ -35,7 +35,7 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?);
 selectByShowId:
 SELECT * FROM show
 LEFT OUTER JOIN show_image ON show_image.trakt_id = show.trakt_id
-LEFT OUTER JOIN followed_shows ON show.trakt_id = followed_shows.id
+LEFT OUTER JOIN watchlist ON show.trakt_id = watchlist.id
 WHERE show.trakt_id = ?;
 
 selectShowByTmdbId:
@@ -59,7 +59,5 @@ LEFT OUTER JOIN show_image ON show_image.trakt_id = show.trakt_id
 WHERE show_category.category_id = ?
 ORDER BY show.rating, show.year DESC;
 
-selectShowImages:
-SELECT show.trakt_id, show.tmdb_id FROM show
-LEFT OUTER JOIN show_image ON show_image.trakt_id = show.trakt_id
-WHERE poster_url IS NULL AND backdrop_url IS NULL;
+delete:
+DELETE FROM show WHERE trakt_id = ?;

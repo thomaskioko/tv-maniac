@@ -1,10 +1,13 @@
 package com.thomaskioko.trakt.service.implementation
 
+import com.thomaskioko.tvmaniac.util.KermitLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.EMPTY
 import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.headers
 import io.ktor.http.HttpHeaders
@@ -16,6 +19,7 @@ fun traktHttpClient(
     traktClientId: String,
     json: TraktJson,
     httpClientEngine: TraktHttpClientEngine,
+    kermitLogger: KermitLogger,
 ) = HttpClient(httpClientEngine) {
     install(ContentNegotiation) {
         json(json = json)
@@ -27,6 +31,7 @@ fun traktHttpClient(
             host = "api.trakt.tv"
         }
 
+        // TODO:: Move this to Auth interceptor
         headers {
             append(HttpHeaders.ContentType, "application/json")
             append("trakt-api-version", "2")
@@ -42,5 +47,14 @@ fun traktHttpClient(
 
     install(Logging) {
         level = LogLevel.INFO
+        logger = if (isDebug) {
+            object : Logger {
+                override fun log(message: String) {
+                    kermitLogger.debug(message)
+                }
+            }
+        } else {
+            Logger.EMPTY
+        }
     }
 }

@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.shows.testing
 
-import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
+import com.thomaskioko.tvmaniac.core.db.SelectWatchlist
 
-val cachedShowResult = listOf(
-    SelectFollowedShows(
+val selectWatchList = listOf(
+    SelectWatchlist(
         trakt_id = 84958,
         tmdb_id = 849583,
         title = "Loki",

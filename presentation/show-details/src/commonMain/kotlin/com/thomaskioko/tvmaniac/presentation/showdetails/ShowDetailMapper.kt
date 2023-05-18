@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
-import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
+import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
@@ -10,7 +10,7 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import com.thomaskioko.tvmaniac.core.db.Seasons as SeasonCache
 
-fun List<SelectSimilarShows>?.toSimilarShowList(): List<Show> = this?.map {
+fun List<SimilarShows>?.toSimilarShowList(): List<Show> = this?.map {
     Show(
         traktId = it.trakt_id,
         tmdbId = it.tmdb_id,

@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.shows.testing
 
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
-import com.thomaskioko.tvmaniac.core.db.SelectFollowedShows
 import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
@@ -22,8 +21,6 @@ class FakeShowsRepository : ShowsRepository {
 
     private var showResult = flowOf<Either<Failure, SelectByShowId>>()
 
-    private var followedResult = flowOf<Either<Failure, List<SelectFollowedShows>>>()
-
     suspend fun setFeaturedResult(result: Either<Failure, List<SelectShowsByCategory>>) {
         featuredResult = flow { emit(result) }
     }
@@ -43,15 +40,6 @@ class FakeShowsRepository : ShowsRepository {
     suspend fun setShowResult(result: Either<Failure, SelectByShowId>) {
         showResult = flow { emit(result) }
     }
-
-    suspend fun setFollowedResult(result: Either<Failure, List<SelectFollowedShows>>) {
-        followedResult = flow { emit(result) }
-    }
-
-    override fun observeFollowedShows(): Flow<Either<Failure, List<SelectFollowedShows>>> =
-        followedResult
-
-    override fun getFollowedShows(): List<SelectFollowedShows> = cachedShowResult
 
     override fun observeShow(traktId: Long): Flow<Either<Failure, SelectByShowId>> = showResult
 
@@ -82,8 +70,6 @@ class FakeShowsRepository : ShowsRepository {
 
     override fun observeFeaturedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>> =
         featuredResult
-
-    override suspend fun updateFollowedShow(traktId: Long, addToWatchList: Boolean) {}
 
     override suspend fun fetchShows() {}
 }
