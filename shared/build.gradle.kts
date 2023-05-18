@@ -64,6 +64,7 @@ kotlin {
                 implementation(projects.data.episodeimages.implementation)
                 implementation(projects.data.watchlist.implementation)
                 implementation(projects.data.profile.implementation)
+                implementation(projects.data.profilestats.implementation)
                 implementation(projects.data.similar.implementation)
                 implementation(projects.data.seasons.implementation)
                 implementation(projects.data.seasondetails.implementation)

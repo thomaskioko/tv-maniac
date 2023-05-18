@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.episodeimages.implementation.EpisodeImageCompone
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeComponent
 import com.thomaskioko.tvmaniac.initializers.AppInitializers
 import com.thomaskioko.tvmaniac.profile.implementation.ProfileComponent
+import com.thomaskioko.tvmaniac.profilestats.implementation.StatsComponent
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsComponent
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsComponent
 import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
@@ -48,6 +49,7 @@ abstract class ApplicationComponent(
     ShowsComponent,
     ShowImagesComponent,
     SimilarShowsComponent,
+    StatsComponent,
     TasksComponent,
     TmdbPlatformComponent,
     TraktComponent,
