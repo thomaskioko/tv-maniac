@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.profile
+package com.thomaskioko.tvmaniac.presentation.profile
 
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
@@ -6,15 +6,14 @@ import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.profilestats.api.StatsRepository
-import com.thomaskioko.tvmaniac.traktauth.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.model.TraktAuthState
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadResponse
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class ProfileStateMachine(
     private val traktAuthRepository: TraktAuthRepository,

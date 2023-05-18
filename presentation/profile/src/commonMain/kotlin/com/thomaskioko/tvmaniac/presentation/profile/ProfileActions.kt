@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.profile
+package com.thomaskioko.tvmaniac.presentation.profile
 
 sealed interface ProfileActions
 
