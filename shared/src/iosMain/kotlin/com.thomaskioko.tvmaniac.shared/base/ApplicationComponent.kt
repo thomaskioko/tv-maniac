@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.db.DatabaseComponent
 import com.thomaskioko.tvmaniac.episodeimages.implementation.EpisodeImageComponent
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeComponent
 import com.thomaskioko.tvmaniac.profile.implementation.ProfileComponent
+import com.thomaskioko.tvmaniac.profilestats.implementation.StatsComponent
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsComponent
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsComponent
 import com.thomaskioko.tvmaniac.shared.base.wrappers.DiscoverStateMachineWrapper
@@ -29,7 +30,7 @@ import me.tatarka.inject.annotations.Component
 
 @ApplicationScope
 @Component
-abstract class ApplicationComponentFollowed :
+abstract class ApplicationComponent :
     CategoryComponent,
     DatabaseComponent,
     DataStorePlatformComponent,
@@ -42,6 +43,7 @@ abstract class ApplicationComponentFollowed :
     ShowsComponent,
     ShowImagesComponent,
     SimilarShowsComponent,
+    StatsComponent,
     TmdbPlatformComponent,
     TraktComponent,
     TraktPlatformComponent,
@@ -58,19 +60,19 @@ abstract class ApplicationComponentFollowed :
 }
 
 fun discoverStateMachine(): DiscoverStateMachineWrapper =
-    ApplicationComponentFollowed::class.create().discoverStateMachine
+    ApplicationComponent::class.create().discoverStateMachine
 
-fun followingStateMachine(): WatchlistStateMachineWrapper =
-    ApplicationComponentFollowed::class.create().followingStateMachineWrapper
+fun watchlistStateMachineWrapper(): WatchlistStateMachineWrapper =
+    ApplicationComponent::class.create().watchlistStateMachineWrapper
 
 fun seasonDetailsStateMachine(): SeasonDetailsStateMachineWrapper =
-    ApplicationComponentFollowed::class.create().seasonDetailsStateMachineWrapper
+    ApplicationComponent::class.create().seasonDetailsStateMachineWrapper
 
 fun settingsStateMachine(): SettingsStateMachineWrapper =
-    ApplicationComponentFollowed::class.create().settingsStateMachineWrapper
+    ApplicationComponent::class.create().settingsStateMachineWrapper
 
 fun showDetailsStateMachine(): ShowDetailsStateMachineWrapper =
-    ApplicationComponentFollowed::class.create().showDetailsStateMachineWrapper
+    ApplicationComponent::class.create().showDetailsStateMachineWrapper
 
 fun trailerStateMachine(): TrailersStateMachineWrapper =
-    ApplicationComponentFollowed::class.create().trailerStateMachineWrapper
+    ApplicationComponent::class.create().trailerStateMachineWrapper

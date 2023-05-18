@@ -62,6 +62,8 @@ dependencies {
     implementation(projects.data.episodeimages.implementation)
     implementation(projects.data.profile.api)
     implementation(projects.data.profile.implementation)
+    implementation(projects.data.profilestats.api)
+    implementation(projects.data.profilestats.implementation)
     implementation(projects.data.similar.api)
     implementation(projects.data.similar.implementation)
     implementation(projects.data.seasons.api)
