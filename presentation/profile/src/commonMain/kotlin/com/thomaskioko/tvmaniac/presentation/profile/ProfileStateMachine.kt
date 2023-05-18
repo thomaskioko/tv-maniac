@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.presentation.profile
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.profilestats.api.StatsRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -33,21 +32,31 @@ class ProfileStateMachine(
                     }
                 }
 
-                collectWhileInState(statsRepository.observeStats("me")) { result, state ->
-                    when (result) {
-                        is Either.Left -> state.override { ProfileStatsError(result.error.errorMessage) }
-                        is Either.Right -> state.mutate {
+                collectWhileInState(statsRepository.observeStats("me")) { storeReadResponse, state ->
+                    when (storeReadResponse) {
+                        is StoreReadResponse.NoNewData -> state.noChange()
+                        is StoreReadResponse.Loading -> state.mutate {
+                            copy(isLoading = true)
+                        }
+
+                        is StoreReadResponse.Data -> state.mutate {
                             copy(
-                                profileStats = result.data?.let {
-                                    ProfileStats(
-                                        showMonths = it.months,
-                                        showDays = it.days,
-                                        showHours = it.hours,
-                                        collectedShows = it.collected_shows,
-                                        episodesWatched = it.episodes_watched,
-                                    )
-                                },
+                                profileStats = ProfileStats(
+                                    showMonths = storeReadResponse.requireData().months,
+                                    showDays = storeReadResponse.requireData().days,
+                                    showHours = storeReadResponse.requireData().hours,
+                                    collectedShows = storeReadResponse.requireData().collected_shows,
+                                    episodesWatched = storeReadResponse.requireData().episodes_watched,
+                                ),
                             )
+                        }
+
+                        is StoreReadResponse.Error.Exception -> state.override {
+                            ProfileStatsError(exceptionHandler.resolveError(storeReadResponse.error))
+                        }
+
+                        is StoreReadResponse.Error.Message -> state.override {
+                            ProfileStatsError(storeReadResponse.message)
                         }
                     }
                 }
