@@ -30,7 +30,7 @@ interface TraktRemoteDataSource {
 
     suspend fun getUserList(userId: String): List<TraktPersonalListsResponse>
 
-    suspend fun getUserStats(userId: String): TraktUserStatsResponse
+    suspend fun getStats(userId: String): ApiResponse<TraktUserStatsResponse, ErrorResponse>
 
     suspend fun createFollowingList(userSlug: String): TraktCreateListResponse
 
