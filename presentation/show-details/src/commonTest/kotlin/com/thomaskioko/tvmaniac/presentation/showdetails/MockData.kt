@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
+import com.thomaskioko.tvmaniac.core.db.Seasons as SeasonCache
 import com.thomaskioko.tvmaniac.core.db.SelectByShowId
-import com.thomaskioko.tvmaniac.core.db.SelectSimilarShows
+import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
-import com.thomaskioko.tvmaniac.core.db.Seasons as SeasonCache
 
 val show = Show(
     traktId = 84958,
@@ -126,7 +126,7 @@ val selectedShow = SelectByShowId(
     tmdb_id_ = 1232,
 )
 val similarShowResult = listOf(
-    SelectSimilarShows(
+    SimilarShows(
         trakt_id = 184958,
         tmdb_id = 284958,
         title = "Loki",

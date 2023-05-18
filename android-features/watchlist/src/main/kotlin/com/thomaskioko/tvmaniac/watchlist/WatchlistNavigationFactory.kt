@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class WatchlistNavigationFactory(
-    private val watchlist: Watchlist,
+    private val watchlist: WatchList,
 ) : ComposeNavigationFactory {
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {

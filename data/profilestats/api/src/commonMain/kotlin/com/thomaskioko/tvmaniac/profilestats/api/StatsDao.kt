@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.profile.api.stats
+package com.thomaskioko.tvmaniac.profilestats.api
 
 import com.thomaskioko.tvmaniac.core.db.User_stats
 import kotlinx.coroutines.flow.Flow

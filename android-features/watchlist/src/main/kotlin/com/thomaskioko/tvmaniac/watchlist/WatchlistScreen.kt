@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -35,31 +34,31 @@ import com.thomaskioko.tvmaniac.resources.R
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias Watchlist = @Composable (
+typealias WatchList = @Composable (
     onShowClicked: (showId: Long) -> Unit,
 ) -> Unit
 
 @Inject
 @Composable
-fun Following(
+fun WatchList(
     viewModelFactory: () -> WatchlistViewModel,
     @Assisted onShowClicked: (showId: Long) -> Unit,
 ) {
-    FollowingScreen(
+    WatchlistScreen(
         viewModel = viewModel(factory = viewModelFactory),
         onShowClicked = onShowClicked,
     )
 }
 
 @Composable
-internal fun FollowingScreen(
+internal fun WatchlistScreen(
     viewModel: WatchlistViewModel,
     onShowClicked: (showId: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val followedState by viewModel.state.collectAsStateWithLifecycle()
 
-    FollowingScreen(
+    WatchlistScreen(
         modifier = modifier,
         state = followedState,
         onShowClicked = onShowClicked,
@@ -67,9 +66,8 @@ internal fun FollowingScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun FollowingScreen(
+private fun WatchlistScreen(
     state: WatchlistState,
     onShowClicked: (showId: Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -147,7 +145,7 @@ private fun FollowingScreenPreview(
 ) {
     TvManiacTheme {
         Surface {
-            FollowingScreen(
+            WatchlistScreen(
                 state = state,
                 onShowClicked = {},
             )

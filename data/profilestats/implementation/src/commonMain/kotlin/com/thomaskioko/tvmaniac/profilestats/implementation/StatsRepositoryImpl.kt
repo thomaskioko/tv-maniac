@@ -1,12 +1,11 @@
-package com.thomaskioko.tvmaniac.profile.implementation.stats
+package com.thomaskioko.tvmaniac.profilestats.implementation
 
 import com.thomaskioko.tvmaniac.core.db.User_stats
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
-import com.thomaskioko.tvmaniac.profile.api.stats.StatsDao
-import com.thomaskioko.tvmaniac.profile.api.stats.StatsRepository
-import com.thomaskioko.tvmaniac.profile.implementation.ProfileResponseMapper
+import com.thomaskioko.tvmaniac.profilestats.api.StatsDao
+import com.thomaskioko.tvmaniac.profilestats.api.StatsRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
@@ -17,7 +16,7 @@ import me.tatarka.inject.annotations.Inject
 class StatsRepositoryImpl(
     private val traktRemoteDataSource: TraktRemoteDataSource,
     private val statsDao: StatsDao,
-    private val mapper: ProfileResponseMapper,
+    private val mapper: StatsMapper,
     private val exceptionHandler: ExceptionHandler,
     private val dispatchers: AppCoroutineDispatchers,
 ) : StatsRepository {

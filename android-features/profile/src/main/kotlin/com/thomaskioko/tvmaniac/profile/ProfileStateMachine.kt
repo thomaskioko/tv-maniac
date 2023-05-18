@@ -5,7 +5,7 @@ import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
-import com.thomaskioko.tvmaniac.profile.api.stats.StatsRepository
+import com.thomaskioko.tvmaniac.profilestats.api.StatsRepository
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.model.TraktAuthState
 import com.thomaskioko.tvmaniac.util.ExceptionHandler

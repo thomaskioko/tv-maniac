@@ -1,10 +1,10 @@
-package com.thomaskioko.tvmaniac.profile.implementation.stats
+package com.thomaskioko.tvmaniac.profilestats.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.db.User_stats
-import com.thomaskioko.tvmaniac.profile.api.stats.StatsDao
+import com.thomaskioko.tvmaniac.profilestats.api.StatsDao
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
