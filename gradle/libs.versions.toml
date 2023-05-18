@@ -24,6 +24,9 @@ compose-paging = "1.0.0-alpha19"
 composecompiler = "1.4.5"
 coroutines = "1.6.4"
 datetime = "0.4.0"
+detekt = "1.22.0"
+dependency-analysis = "1.13.1"
+dependency-check = "0.44.0"
 desugar = "2.0.3"
 flowredux = "1.1.0"
 junit = "4.13.2"
@@ -41,6 +44,7 @@ snapper = "0.3.0"
 sqldelight = "2.0.0-alpha05"
 store5 = "5.0.0-alpha05"
 turbine = "0.12.3"
+yamlkt = "0.12.0"
 youtubePlayer = "11.0.1"
 
 [libraries]
@@ -64,10 +68,10 @@ androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util"}
 androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activity" }
 
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
-androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version = "compose-constraintlayout" }
+androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "compose-constraintlayout" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidx-material3" }
 androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "androidx-material3" }
-androidx-compose-paging = { module = "androidx.paging:paging-compose", version = "compose-paging" }
+androidx-compose-paging = { module = "androidx.paging:paging-compose", version.ref = "compose-paging" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-datastore-preference = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
@@ -76,7 +80,7 @@ androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-view
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 androidx-navigation-common = { module = "androidx.navigation:navigation-common", version.ref = "androidx-navigation" }
 androidx-navigation-runtime = { module = "androidx.navigation:navigation-runtime", version.ref = "androidx-navigation" }
-androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version = "androidx-paging" }
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidx-paging" }
 androidx-palette = { module = "androidx.palette:palette-ktx", version.ref = "androidx-palette" }
 androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
 
@@ -90,20 +94,20 @@ coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", ve
 coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
-desugar = { module = "com.android.tools:desugar_jdk_libs", version = "desugar" }
+desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 
-flowredux = { module = "com.freeletics.flowredux:flowredux", version = "flowredux" }
+flowredux = { module = "com.freeletics.flowredux:flowredux", version.ref = "flowredux" }
 
 junit = { module = "junit:junit", version.ref = "junit" }
 
-kenburns = { module = "com.flaviofaria:kenburnsview", version = "kenburns" }
-kermit = { module = "co.touchlab:kermit", version = "kermit" }
+kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 
 kotlinInject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlininject" }
 kotlinInject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlininject" }
 kotlinx-atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu" }
-kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "datetime" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
 
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
@@ -113,27 +117,27 @@ ktor-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktor" }
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
-lint-compose = { module = "com.slack.lint.compose:compose-lint-checks", version = "lint" }
+lint-compose = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "lint" }
 
-snapper = { module = "dev.chrisbanes.snapper:snapper", version = "snapper" }
+snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 
 sqldelight-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
-store5 = { module = "org.mobilenativefoundation.store:store5", version = "store5" }
+store5 = { module = "org.mobilenativefoundation.store:store5", version.ref = "store5" }
 
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
-yamlkt = { module = "net.mamoe.yamlkt:yamlkt", version = "0.12.0" }
-youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version = "youtubePlayer" }
+yamlkt = { module = "net.mamoe.yamlkt:yamlkt", version.ref = "yamlkt" }
+youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "youtubePlayer" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-dependency-check = { id = "com.github.ben-manes.versions", version = "0.44.0" }
-dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version = "1.13.1" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.22.0" }
+dependency-check = { id = "com.github.ben-manes.versions", version.ref = "dependency-check" }
+dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependency-analysis" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kmmbridge = { id = "co.touchlab.faktory.kmmbridge", version.ref = "kmmbridge" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
