@@ -1,5 +1,5 @@
-CREATE TABLE user_stats(
-user_slug TEXT NOT NULL PRIMARY KEY,
+CREATE TABLE stats(
+slug TEXT NOT NULL PRIMARY KEY,
 months Text NOT NULL,
 days Text NOT NULL,
 hours Text NOT NULL,
@@ -8,8 +8,8 @@ episodes_watched Text NOT NULL
 );
 
 insertOrReplace:
-INSERT OR REPLACE INTO user_stats(
-user_slug,
+INSERT OR REPLACE INTO stats(
+slug,
 months,
 days,
 hours,
@@ -20,7 +20,10 @@ VALUES(?,?,?,?,?,?);
 
 select:
 SELECT *
-FROM user_stats;
+FROM stats WHERE slug = ?;
 
 delete:
-DELETE FROM user_stats;
+DELETE FROM stats WHERE slug = ?;
+
+deleteAll:
+DELETE FROM stats;
