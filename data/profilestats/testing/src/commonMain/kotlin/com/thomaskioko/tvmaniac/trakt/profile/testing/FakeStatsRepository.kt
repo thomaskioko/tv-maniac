@@ -10,5 +10,4 @@ import kotlinx.coroutines.flow.flowOf
 class FakeStatsRepository : StatsRepository {
     override fun observeStats(slug: String, refresh: Boolean): Flow<Either<Failure, User_stats>> =
         flowOf()
-
 }

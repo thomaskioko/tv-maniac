@@ -23,4 +23,3 @@ class StatsMapper(
         episodes_watched = formatterUtil.formatDuration(response.episodes.watched),
     )
 }
-
