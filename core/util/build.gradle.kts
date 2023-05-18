@@ -11,11 +11,12 @@ kotlin {
 
     sourceSets {
         sourceSets["androidMain"].dependencies {
-            implementation(libs.datetime)
+            implementation(libs.kotlinx.datetime)
         }
 
         sourceSets["commonMain"].dependencies {
             api(libs.ktor.serialization)
+
             implementation(libs.coroutines.core)
             implementation(libs.kermit)
             implementation(libs.kotlinInject.runtime)
@@ -25,7 +26,7 @@ kotlin {
 
 
         sourceSets["iosMain"].dependencies {
-            implementation(libs.datetime)
+            implementation(libs.kotlinx.datetime)
         }
 
     }
