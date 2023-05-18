@@ -21,8 +21,10 @@ kotlin {
             linkerOpts.add("-lsqlite3")
 
             export(projects.core.datastore.api)
+            export(projects.core.traktAuth.api)
             export(projects.core.util)
             export(projects.presentation.discover)
+            export(projects.presentation.profile)
             export(projects.presentation.seasondetails)
             export(projects.presentation.settings)
             export(projects.presentation.showDetails)
@@ -37,9 +39,11 @@ kotlin {
             dependencies {
 
                 api(projects.core.datastore.api)
+                api(projects.core.traktAuth.api)
                 api(projects.core.util)
 
                 api(projects.presentation.discover)
+                api(projects.presentation.profile)
                 api(projects.presentation.seasondetails)
                 api(projects.presentation.settings)
                 api(projects.presentation.seasondetails)
@@ -55,6 +59,7 @@ kotlin {
                 implementation(projects.data.showimages.api)
                 implementation(projects.core.traktApi.api)
                 implementation(projects.core.traktApi.implementation)
+                implementation(projects.core.traktAuth.implementation)
                 implementation(projects.core.tmdbApi.api)
                 implementation(projects.core.tmdbApi.implementation)
 

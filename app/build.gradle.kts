@@ -53,6 +53,8 @@ dependencies {
     implementation(projects.core.tmdbApi.implementation)
     implementation(projects.core.traktApi.api)
     implementation(projects.core.traktApi.implementation)
+    implementation(projects.core.traktAuth.api)
+    implementation(projects.core.traktAuth.implementation)
 
     implementation(projects.data.category.api)
     implementation(projects.data.category.implementation)
@@ -80,6 +82,7 @@ dependencies {
     implementation(projects.data.watchlist.implementation)
 
     implementation(projects.presentation.discover)
+    implementation(projects.presentation.profile)
     implementation(projects.presentation.watchlist)
     implementation(projects.presentation.seasondetails)
     implementation(projects.presentation.settings)
