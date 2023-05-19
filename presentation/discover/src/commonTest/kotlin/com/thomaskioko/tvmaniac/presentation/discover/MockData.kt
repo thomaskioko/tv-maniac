@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.thomaskioko.tvmaniac.category.api.model.Category
-import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
+import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 
 val show = TvShow(
@@ -59,7 +59,7 @@ val errorShowResult = ShowResult(
 )
 
 fun categoryResult(categoryId: Long) = listOf(
-    SelectShowsByCategory(
+    ShowsByCategory(
         trakt_id = 84958,
         tmdb_id = 849583,
         title = "Loki",
