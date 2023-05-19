@@ -14,7 +14,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     fun insertTvShow() {
         makeShowList().insertTvShowsEntityList()
 
-        val entities = tvShowQueries.selectShows().executeAsList()
+        val entities = tvShowQueries.shows().executeAsList()
 
         entities.size shouldBe 2
     }
@@ -23,7 +23,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     fun verify_selectByShowId_returnTvShowEntity_afterInsertHasBeenDone() {
         getShow().insertTvShowQuery()
 
-        val entity = tvShowQueries.selectByShowId(getShow().trakt_id)
+        val entity = tvShowQueries.showById(getShow().trakt_id)
             .executeAsOne()
 
         entity shouldNotBe null
@@ -40,7 +40,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         tvShowQueries.deleteAll()
 
-        val entity = tvShowQueries.selectByShowId(getShow().trakt_id)
+        val entity = tvShowQueries.showById(getShow().trakt_id)
             .executeAsOneOrNull()
 
         entity shouldBe null
