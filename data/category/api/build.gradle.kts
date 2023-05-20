@@ -13,7 +13,6 @@ kotlin {
             api(projects.core.database)
             api(projects.core.networkutil)
             implementation(projects.core.tmdbApi.api)
-            implementation(projects.data.shows.api)
 
             api(libs.coroutines.core)
 
