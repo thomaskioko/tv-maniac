@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.profile
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -31,7 +32,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -60,12 +60,12 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
-import com.thomaskioko.tvmaniac.presentation.profile.DismissTraktDialog
-import com.thomaskioko.tvmaniac.presentation.profile.ProfileContent
+import com.thomaskioko.tvmaniac.presentation.profile.LoggedOutUser
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileError
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStats
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStatsError
+import com.thomaskioko.tvmaniac.presentation.profile.SignedInProfileContent
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
@@ -101,24 +101,17 @@ internal fun ProfileScreen(
         onSettingsClicked = onSettingsClicked,
         modifier = modifier,
         state = profileState,
-        onLoginClicked = {
-            viewModel.login()
-            viewModel.dispatch(DismissTraktDialog)
-        },
         onConnectClicked = { viewModel.login() },
-        onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 private fun ProfileScreen(
     onSettingsClicked: () -> Unit,
     state: ProfileState,
-    onLoginClicked: () -> Unit,
     onConnectClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    onDismissDialogClicked: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -131,9 +124,21 @@ private fun ProfileScreen(
         modifier = modifier
             .background(color = MaterialTheme.colorScheme.background)
             .statusBarsPadding(),
-        content = { contentPadding ->
-
+        content = {
             when (state) {
+                is LoggedOutUser -> {
+                    LoggedOutContent(
+                        onConnectClicked = onConnectClicked,
+                    )
+                }
+                is SignedInProfileContent -> {
+                    UserProfile(
+                        state = state,
+                        loggedIn = state.loggedIn,
+                        picUrl = state.traktUser?.userPicUrl,
+                    )
+                }
+
                 is ProfileError -> {
                     ErrorUi(
                         errorMessage = state.error,
@@ -149,52 +154,15 @@ private fun ProfileScreen(
                         modifier = Modifier.fillMaxSize(),
                     )
                 }
-
-                is ProfileContent -> {
-                    ProfileScreenContent(
-                        contentPadding = contentPadding,
-                        profileState = state,
-                        onLoginClicked = onLoginClicked,
-                        onConnectClicked = onConnectClicked,
-                        onDismissDialogClicked = onDismissDialogClicked,
-                    )
-                }
             }
         },
     )
 }
 
 @Composable
-fun ProfileScreenContent(
-    contentPadding: PaddingValues,
-    profileState: ProfileContent,
-    onLoginClicked: () -> Unit,
+fun LoggedOutContent(
     onConnectClicked: () -> Unit,
-    onDismissDialogClicked: () -> Unit,
-) {
-    when {
-        profileState.loggedIn ->
-            UserProfile(
-                state = profileState,
-            )
-
-        else ->
-            TraktInfoContent(
-                state = profileState,
-                onLoginClicked = onLoginClicked,
-                onConnectClicked = onConnectClicked,
-                onDismissDialogClicked = onDismissDialogClicked,
-            )
-    }
-}
-
-@Composable
-fun TraktInfoContent(
-    state: ProfileContent,
-    onConnectClicked: () -> Unit,
-    onLoginClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    onDismissDialogClicked: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -202,12 +170,6 @@ fun TraktInfoContent(
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp),
     ) {
-        TrackDialog(
-            isVisible = state.showTraktDialog,
-            onLoginClicked = onLoginClicked,
-            onDismissDialog = onDismissDialogClicked,
-        )
-
         Icon(
             painter = painterResource(id = R.drawable.trakt_icon_red),
             tint = MaterialTheme.colorScheme.error,
@@ -314,7 +276,9 @@ fun TextListItem(
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
 fun UserProfile(
-    state: ProfileContent,
+    state: SignedInProfileContent,
+    loggedIn: Boolean,
+    picUrl: String?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -324,7 +288,7 @@ fun UserProfile(
         verticalArrangement = Arrangement.Center,
     ) {
         when {
-            state.loggedIn && state.traktUser?.userPicUrl != null -> {
+            loggedIn && picUrl != null -> {
                 Card(
                     modifier = Modifier
                         .padding(top = 16.dp)
@@ -341,10 +305,10 @@ fun UserProfile(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 ) {
                     AsyncImageComposable(
-                        model = state.traktUser!!.userPicUrl,
+                        model = picUrl,
                         contentDescription = stringResource(
                             R.string.cd_profile_pic,
-                            state.traktUser!!.fullName ?: state.traktUser!!.userName ?: "",
+                            state.traktUser?.fullName ?: state.traktUser?.userName ?: "",
                         ),
                         modifier = Modifier
                             .size(120.dp)
@@ -548,9 +512,7 @@ private fun ProfileScreenPreview(
         Surface {
             ProfileScreen(
                 state = state,
-                onLoginClicked = {},
                 onConnectClicked = {},
-                onDismissDialogClicked = {},
                 onSettingsClicked = {},
             )
         }

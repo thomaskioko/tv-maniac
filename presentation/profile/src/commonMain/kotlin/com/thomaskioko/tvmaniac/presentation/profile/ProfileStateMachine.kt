@@ -17,18 +17,35 @@ import org.mobilenativefoundation.store.store5.StoreReadResponse
 class ProfileStateMachine(
     private val traktAuthRepository: TraktAuthRepository,
     private val statsRepository: StatsRepository,
-    private val repository: ProfileRepository,
+    private val profileRepository: ProfileRepository,
     private val exceptionHandler: ExceptionHandler,
-) : FlowReduxStateMachine<ProfileState, ProfileActions>(initialState = ProfileContent.EMPTY) {
+) : FlowReduxStateMachine<ProfileState, ProfileActions>(initialState = LoggedOutUser()) {
 
     init {
         spec {
-            inState<ProfileContent> {
 
-                collectWhileInStateEffect(traktAuthRepository.state) { result, _ ->
+            inState<LoggedOutUser> {
+
+                collectWhileInStateEffect(traktAuthRepository.state) { result, state ->
                     when (result) {
                         TraktAuthState.LOGGED_IN -> dispatch(FetchTraktUserProfile)
                         TraktAuthState.LOGGED_OUT -> {}
+                    }
+                }
+
+                on<FetchTraktUserProfile> { _, state ->
+                    fetchUserProfile(state)
+                }
+            }
+
+            inState<SignedInProfileContent> {
+
+                collectWhileInStateEffect(traktAuthRepository.state) { result, _ ->
+                    when (result) {
+                        TraktAuthState.LOGGED_IN -> {}
+                        TraktAuthState.LOGGED_OUT -> {
+                            // Clear data and reset state
+                        }
                     }
                 }
 
@@ -61,32 +78,16 @@ class ProfileStateMachine(
                     }
                 }
 
-                on<FetchTraktUserProfile> { _, state ->
-                    fetchUserProfile(state)
-                }
-
-                on<ShowTraktDialog> { _, state ->
-                    state.mutate {
-                        copy(showTraktDialog = true)
-                    }
-                }
-
-                on<DismissTraktDialog> { _, state ->
-                    state.mutate {
-                        copy(showTraktDialog = false)
-                    }
-                }
-
                 on<TraktLogout> { _, state ->
                     traktAuthRepository.clearAuth()
                     state.mutate {
-                        copy(showTraktDialog = false)
+                        copy(showLogoutDialog = false)
                     }
                 }
 
                 on<TraktLogin> { _, state ->
                     state.mutate {
-                        copy(showTraktDialog = false)
+                        copy(showLogoutDialog = false)
                     }
                 }
 
@@ -98,20 +99,22 @@ class ProfileStateMachine(
         }
     }
 
-    private suspend fun fetchUserProfile(state: State<ProfileContent>): ChangedState<ProfileState> {
+    private suspend fun fetchUserProfile(state: State<LoggedOutUser>): ChangedState<ProfileState> {
         var nextState: ChangedState<ProfileState> = state.noChange()
 
-        repository.observeProfile("me")
+        profileRepository.observeProfile("me")
             .collect { result ->
                 nextState = when (result) {
                     is StoreReadResponse.NoNewData -> state.noChange()
-                    is StoreReadResponse.Loading -> state.mutate {
-                        copy(isLoading = true)
+                    is StoreReadResponse.Loading -> state.override {
+                        SignedInProfileContent(
+                            isLoading = true,
+                        )
                     }
 
-                    is StoreReadResponse.Data -> state.mutate {
-                        copy(
-                            isLoading = true,
+                    is StoreReadResponse.Data -> state.override {
+                        SignedInProfileContent(
+                            isLoading = false,
                             traktUser = TraktUser(
                                 slug = result.requireData().slug,
                                 userName = result.requireData().user_name,

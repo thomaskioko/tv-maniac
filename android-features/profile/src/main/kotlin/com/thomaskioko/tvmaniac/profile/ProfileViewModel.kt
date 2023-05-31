@@ -3,9 +3,9 @@ package com.thomaskioko.tvmaniac.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileActions
-import com.thomaskioko.tvmaniac.presentation.profile.ProfileContent
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStateMachine
+import com.thomaskioko.tvmaniac.presentation.profile.SignedInProfileContent
 import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -17,7 +17,7 @@ class ProfileViewModel(
     private val traktAuthManager: TraktAuthManager,
 ) : ViewModel() {
 
-    val state: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileContent.EMPTY)
+    val state: MutableStateFlow<ProfileState> = MutableStateFlow(SignedInProfileContent())
 
     init {
         viewModelScope.launch {
