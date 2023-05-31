@@ -1,11 +1,9 @@
 package com.thomaskioko.tvmaniac.discover
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.category.api.model.Category
-import com.thomaskioko.tvmaniac.presentation.discover.LoadingError
-import com.thomaskioko.tvmaniac.presentation.discover.ShowResult
-import com.thomaskioko.tvmaniac.presentation.discover.ShowsLoaded
-import com.thomaskioko.tvmaniac.presentation.discover.ShowsState
+import com.thomaskioko.tvmaniac.presentation.discover.ContentError
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverContent
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 
 val shows = TvShow(
@@ -27,31 +25,22 @@ val shows = TvShow(
     year = "2024",
 )
 
-val showResultSuccess = ShowResult(
-    featuredCategoryState = ShowResult.CategorySuccess(
-        category = Category.FEATURED,
-        tvShows = List(5) { shows },
-    ),
-    trendingCategoryState = ShowResult.CategorySuccess(
-        category = Category.TRENDING,
-        tvShows = List(10) { shows },
-    ),
-    popularCategoryState = ShowResult.CategorySuccess(
-        category = Category.POPULAR,
-        tvShows = List(10) { shows },
-    ),
-    anticipatedCategoryState = ShowResult.CategorySuccess(
-        category = Category.ANTICIPATED,
-        tvShows = List(10) { shows },
+val discoverContentSuccess = DiscoverContent(
+
+    contentState = DiscoverContent.DataLoaded(
+        recommendedShows = List(5) { shows },
+        trendingShows = List(20) { shows },
+        popularShows = List(20) { shows },
+        anticipatedShows = List(20) { shows },
     ),
 )
 
-class DiscoverPreviewParameterProvider : PreviewParameterProvider<ShowsState> {
-    override val values: Sequence<ShowsState>
+class DiscoverPreviewParameterProvider : PreviewParameterProvider<DiscoverState> {
+    override val values: Sequence<DiscoverState>
         get() {
             return sequenceOf(
-                ShowsLoaded(result = showResultSuccess),
-                LoadingError(errorMessage = "Opps! Something went wrong"),
+                discoverContentSuccess,
+                ContentError(errorMessage = "Opps! Something went wrong"),
             )
         }
 }

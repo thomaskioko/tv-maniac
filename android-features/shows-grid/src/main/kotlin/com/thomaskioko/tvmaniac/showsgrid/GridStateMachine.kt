@@ -3,16 +3,18 @@ package com.thomaskioko.tvmaniac.showsgrid
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Inject
+import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Inject
 class GridStateMachine(
     private val repository: ShowsRepository,
+    private val exceptionHandler: ExceptionHandler,
 ) : FlowReduxStateMachine<GridState, GridActions>(initialState = LoadingContent) {
 
     init {
@@ -39,14 +41,21 @@ class GridStateMachine(
         action: LoadShows,
     ): ChangedState<GridState> {
         var nextState: ChangedState<GridState> = state.noChange()
-        repository.observeCachedShows(action.category)
+        repository.observeRecommendedShows(action.category)
             .collect { result ->
                 nextState = when (result) {
-                    is Either.Left -> state.override { LoadingContentError(result.error.errorMessage) }
-                    is Either.Right -> state.override {
+                    is StoreReadResponse.NoNewData -> state.noChange()
+                    is StoreReadResponse.Loading -> state.override { LoadingContent }
+                    is StoreReadResponse.Data -> state.override {
                         ShowsLoaded(
-                            list = result.data?.toTvShowList() ?: emptyList(),
+                            list = result.requireData().toTvShowList(),
                         )
+                    }
+                    is StoreReadResponse.Error.Exception -> state.override {
+                        LoadingContentError(exceptionHandler.resolveError(result.error))
+                    }
+                    is StoreReadResponse.Error.Message -> state.override {
+                        LoadingContentError(result.message)
                     }
                 }
             }
