@@ -6,5 +6,7 @@ import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 interface SimilarShowsRepository {
 
+    suspend fun fetchSimilarShows(traktId: Long): List<SimilarShows>
+
     fun observeSimilarShows(traktId: Long): Flow<StoreReadResponse<List<SimilarShows>>>
 }

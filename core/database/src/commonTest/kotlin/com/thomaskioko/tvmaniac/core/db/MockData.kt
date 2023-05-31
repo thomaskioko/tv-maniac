@@ -49,7 +49,7 @@ object MockData {
         aired_episodes = 12,
     )
 
-    fun makeShowList() = listOf(
+    fun showList() = listOf(
         Show(
             trakt_id = 84958,
             title = "Loki",
@@ -85,5 +85,10 @@ object MockData {
             runtime = 0,
             aired_episodes = 12,
         ),
+    )
+
+    fun showCategory(traktId: Long, categoryId: Long) = Show_category(
+        trakt_id = traktId,
+        category_id = categoryId,
     )
 }

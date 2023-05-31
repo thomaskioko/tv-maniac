@@ -1,5 +1,6 @@
 package com.thomaskioko.showdetails
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -29,10 +30,12 @@ fun SimilarShowsContent(
 ) {
     val lazyListState = rememberLazyListState()
 
-    TextLoadingItem(
-        isLoading = isLoading,
-        text = stringResource(id = R.string.title_similar),
-    )
+    AnimatedVisibility(visible = similarShows.isNotEmpty()) {
+        TextLoadingItem(
+            isLoading = isLoading,
+            text = stringResource(id = R.string.title_similar),
+        )
+    }
 
     LazyRow(
         modifier = modifier,

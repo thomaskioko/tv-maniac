@@ -1,5 +1,6 @@
 package com.thomaskioko.showdetails
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -45,67 +46,65 @@ fun TrailersRowContent(
     modifier: Modifier = Modifier,
     onTrailerClicked: (Long, String) -> Unit,
 ) {
-    if (trailersList.isNotEmpty()) {
+    AnimatedVisibility(visible = trailersList.isNotEmpty()) {
         TextLoadingItem(
             isLoading = isLoading,
             text = stringResource(id = R.string.title_trailer),
         )
+    }
 
-        val lazyListState = rememberLazyListState()
+    val lazyListState = rememberLazyListState()
 
-        LazyRow(
-            modifier = modifier,
-            state = lazyListState,
-            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-        ) {
-            itemsIndexed(trailersList) { index, trailer ->
+    LazyRow(
+        modifier = modifier,
+        state = lazyListState,
+        flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+    ) {
+        itemsIndexed(trailersList) { index, trailer ->
 
-                val value = if (index == 0) 16 else 8
-                Spacer(modifier = Modifier.width(value.dp))
+            val value = if (index == 0) 16 else 8
+            Spacer(modifier = Modifier.width(value.dp))
 
-                Card(
-                    modifier = Modifier
-                        .clickable { onTrailerClicked(trailer.showId, trailer.key) },
-                    shape = RoundedCornerShape(4.dp),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 4.dp,
-                    ),
-                ) {
-                    Box {
-                        AsyncImageComposable(
-                            model = trailer.youtubeThumbnailUrl,
-                            contentDescription = trailer.name,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .height(140.dp)
-                                .aspectRatio(3 / 1.5f)
-                                .drawWithCache {
-                                    val gradient = Brush.verticalGradient(
-                                        colors = listOf(Color.Transparent, Color.Black),
-                                        startY = size.height / 3,
-                                        endY = size.height,
-                                    )
-                                    onDrawWithContent {
-                                        drawContent()
-                                        drawRect(gradient, blendMode = BlendMode.Multiply)
-                                    }
-                                },
-                        )
+            Card(
+                modifier = Modifier
+                    .clickable { onTrailerClicked(trailer.showId, trailer.key) },
+                shape = RoundedCornerShape(4.dp),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 4.dp,
+                ),
+            ) {
+                Box {
+                    AsyncImageComposable(
+                        model = trailer.youtubeThumbnailUrl,
+                        contentDescription = trailer.name,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .height(140.dp)
+                            .aspectRatio(3 / 1.5f)
+                            .drawWithCache {
+                                val gradient = Brush.verticalGradient(
+                                    colors = listOf(Color.Transparent, Color.Black),
+                                    startY = size.height / 3,
+                                    endY = size.height,
+                                )
+                                onDrawWithContent {
+                                    drawContent()
+                                    drawRect(gradient, blendMode = BlendMode.Multiply)
+                                }
+                            },
+                    )
 
-                        Icon(
-                            imageVector = Icons.Filled.PlayCircle,
-                            contentDescription = trailer.name,
-                            tint = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .size(48.dp),
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Filled.PlayCircle,
+                        contentDescription = trailer.name,
+                        tint = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(48.dp),
+                    )
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 

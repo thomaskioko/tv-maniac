@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
-import com.thomaskioko.tvmaniac.core.db.SelectByShowId
+import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.networkutil.Either
@@ -27,7 +27,7 @@ fun List<SimilarShows>?.toSimilarShowList(): List<Show> = this?.map {
     )
 } ?: emptyList()
 
-fun SelectByShowId?.toTvShow(): Show = this?.let {
+fun ShowById?.toTvShow(): Show = this?.let {
     Show(
         traktId = it.trakt_id,
         tmdbId = it.tmdb_id,
@@ -63,7 +63,7 @@ fun List<Trailers>?.toTrailerList(): List<Trailer> = this?.map {
     )
 } ?: emptyList()
 
-fun Either<Failure, SelectByShowId?>.toShowState(): ShowState = fold(
+fun Either<Failure, ShowById?>.toShowState(): ShowState = fold(
     {
         ShowState.ShowError(it.errorMessage)
     },

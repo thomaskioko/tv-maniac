@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
 
 private const val DEFAULT_API_PAGE: Long = 1
+private const val FETCH_PERIOD: String = "daily"
 
 interface TraktRemoteDataSource {
 
@@ -30,7 +31,7 @@ interface TraktRemoteDataSource {
 
     suspend fun getUserList(userId: String): List<TraktPersonalListsResponse>
 
-    suspend fun getUserStats(userId: String): TraktUserStatsResponse
+    suspend fun getStats(userId: String): ApiResponse<TraktUserStatsResponse, ErrorResponse>
 
     suspend fun createFollowingList(userSlug: String): TraktCreateListResponse
 
@@ -58,7 +59,7 @@ interface TraktRemoteDataSource {
 
     suspend fun getRecommendedShows(
         page: Long = DEFAULT_API_PAGE,
-        period: String,
+        period: String = FETCH_PERIOD,
     ): ApiResponse<List<TraktShowsResponse>, ErrorResponse>
 
     suspend fun getAnticipatedShows(page: Long = DEFAULT_API_PAGE): ApiResponse<List<TraktShowsResponse>, ErrorResponse>

@@ -27,7 +27,6 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
@@ -78,7 +77,6 @@ import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.presentation.showdetails.DismissWebViewError
 import com.thomaskioko.tvmaniac.presentation.showdetails.FollowShowClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonState
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowState
 import com.thomaskioko.tvmaniac.presentation.showdetails.SimilarShowsState
@@ -139,12 +137,11 @@ internal fun ShowDetailScreen(
                 viewModel.dispatch(WebViewError)
             }
         },
-        onUpdateFavoriteClicked = { viewModel.dispatch(it) },
+        onUpdateFavoriteClicked = { viewModel.dispatch(FollowShowClicked(it)) },
         onDismissTrailerErrorClicked = { viewModel.dispatch(DismissWebViewError) },
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ShowDetailScreen(
     state: ShowDetailsState,
@@ -152,7 +149,7 @@ internal fun ShowDetailScreen(
     onSeasonClicked: (Long, String) -> Unit,
     onShowClicked: (Long) -> Unit,
     onWatchTrailerClicked: (Boolean, Long, String?) -> Unit,
-    onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
+    onUpdateFavoriteClicked: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     onDismissTrailerErrorClicked: () -> Unit,
 ) {
@@ -251,7 +248,7 @@ private fun ShowDetailContent(
     onSeasonClicked: (Long, String) -> Unit,
     onShowClicked: (Long) -> Unit,
     onWatchTrailerClicked: (Boolean, Long, String?) -> Unit,
-    onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
+    onUpdateFavoriteClicked: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     onDismissTrailerErrorClicked: () -> Unit,
 ) {
@@ -325,7 +322,7 @@ private fun HeaderContent(
     showState: ShowState,
     trailerKey: String?,
     listState: LazyListState,
-    onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
+    onUpdateFavoriteClicked: (Boolean) -> Unit,
     onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
     when (showState) {
@@ -376,7 +373,7 @@ private fun HeaderContent(
 private fun Body(
     show: Show,
     trailerKey: String?,
-    onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
+    onUpdateFavoriteClicked: (Boolean) -> Unit,
     onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
     val surfaceGradient = backgroundGradient().reversed()
@@ -564,7 +561,7 @@ fun ShowDetailButtons(
     isFollowed: Boolean,
     traktId: Long,
     trailerKey: String?,
-    onUpdateFavoriteClicked: (ShowDetailsAction) -> Unit,
+    onUpdateFavoriteClicked: (Boolean) -> Unit,
     onWatchTrailerClicked: (Long, String?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -614,14 +611,7 @@ fun ShowDetailButtons(
                 stringResource(id = R.string.following)
             },
             textPadding = 8.dp,
-            onClick = {
-                onUpdateFavoriteClicked(
-                    FollowShowClicked(
-                        traktId = traktId,
-                        addToFollowed = isFollowed,
-                    ),
-                )
-            },
+            onClick = { onUpdateFavoriteClicked(isFollowed) },
             borderColor = MaterialTheme.colorScheme.secondary,
         )
     }
@@ -633,10 +623,12 @@ private fun SeasonsContent(
     seasonsList: List<Season>,
     onSeasonClicked: (Long, String) -> Unit,
 ) {
-    TextLoadingItem(
-        isLoading = isLoading,
-        text = stringResource(id = R.string.title_seasons),
-    )
+    AnimatedVisibility(visible = seasonsList.isNotEmpty()) {
+        TextLoadingItem(
+            isLoading = isLoading,
+            text = stringResource(id = R.string.title_seasons),
+        )
+    }
 
     val selectedIndex by remember { mutableStateOf(0) }
 

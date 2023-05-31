@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.presentation.profile
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.profilestats.api.StatsRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -18,66 +17,77 @@ import org.mobilenativefoundation.store.store5.StoreReadResponse
 class ProfileStateMachine(
     private val traktAuthRepository: TraktAuthRepository,
     private val statsRepository: StatsRepository,
-    private val repository: ProfileRepository,
+    private val profileRepository: ProfileRepository,
     private val exceptionHandler: ExceptionHandler,
-) : FlowReduxStateMachine<ProfileState, ProfileActions>(initialState = ProfileContent.EMPTY) {
+) : FlowReduxStateMachine<ProfileState, ProfileActions>(initialState = LoggedOutUser()) {
 
     init {
         spec {
-            inState<ProfileContent> {
 
-                collectWhileInStateEffect(traktAuthRepository.state) { result, _ ->
+            inState<LoggedOutUser> {
+
+                collectWhileInStateEffect(traktAuthRepository.state) { result, state ->
                     when (result) {
                         TraktAuthState.LOGGED_IN -> dispatch(FetchTraktUserProfile)
                         TraktAuthState.LOGGED_OUT -> {}
                     }
                 }
 
-                collectWhileInState(statsRepository.observeStats("me")) { result, state ->
+                on<FetchTraktUserProfile> { _, state ->
+                    fetchUserProfile(state)
+                }
+            }
+
+            inState<SignedInProfileContent> {
+
+                collectWhileInStateEffect(traktAuthRepository.state) { result, _ ->
                     when (result) {
-                        is Either.Left -> state.override { ProfileStatsError(result.error.errorMessage) }
-                        is Either.Right -> state.mutate {
-                            copy(
-                                profileStats = result.data?.let {
-                                    ProfileStats(
-                                        showMonths = it.months,
-                                        showDays = it.days,
-                                        showHours = it.hours,
-                                        collectedShows = it.collected_shows,
-                                        episodesWatched = it.episodes_watched,
-                                    )
-                                },
-                            )
+                        TraktAuthState.LOGGED_IN -> {}
+                        TraktAuthState.LOGGED_OUT -> {
+                            // Clear data and reset state
                         }
                     }
                 }
 
-                on<FetchTraktUserProfile> { _, state ->
-                    fetchUserProfile(state)
-                }
+                collectWhileInState(statsRepository.observeStats("me")) { storeReadResponse, state ->
+                    when (storeReadResponse) {
+                        is StoreReadResponse.NoNewData -> state.noChange()
+                        is StoreReadResponse.Loading -> state.mutate {
+                            copy(isLoading = true)
+                        }
 
-                on<ShowTraktDialog> { _, state ->
-                    state.mutate {
-                        copy(showTraktDialog = true)
-                    }
-                }
+                        is StoreReadResponse.Data -> state.mutate {
+                            copy(
+                                profileStats = ProfileStats(
+                                    showMonths = storeReadResponse.requireData().months,
+                                    showDays = storeReadResponse.requireData().days,
+                                    showHours = storeReadResponse.requireData().hours,
+                                    collectedShows = storeReadResponse.requireData().collected_shows,
+                                    episodesWatched = storeReadResponse.requireData().episodes_watched,
+                                ),
+                            )
+                        }
 
-                on<DismissTraktDialog> { _, state ->
-                    state.mutate {
-                        copy(showTraktDialog = false)
+                        is StoreReadResponse.Error.Exception -> state.override {
+                            ProfileStatsError(exceptionHandler.resolveError(storeReadResponse.error))
+                        }
+
+                        is StoreReadResponse.Error.Message -> state.override {
+                            ProfileStatsError(storeReadResponse.message)
+                        }
                     }
                 }
 
                 on<TraktLogout> { _, state ->
                     traktAuthRepository.clearAuth()
                     state.mutate {
-                        copy(showTraktDialog = false)
+                        copy(showLogoutDialog = false)
                     }
                 }
 
                 on<TraktLogin> { _, state ->
                     state.mutate {
-                        copy(showTraktDialog = false)
+                        copy(showLogoutDialog = false)
                     }
                 }
 
@@ -89,20 +99,22 @@ class ProfileStateMachine(
         }
     }
 
-    private suspend fun fetchUserProfile(state: State<ProfileContent>): ChangedState<ProfileState> {
+    private suspend fun fetchUserProfile(state: State<LoggedOutUser>): ChangedState<ProfileState> {
         var nextState: ChangedState<ProfileState> = state.noChange()
 
-        repository.observeProfile("me")
+        profileRepository.observeProfile("me")
             .collect { result ->
                 nextState = when (result) {
                     is StoreReadResponse.NoNewData -> state.noChange()
-                    is StoreReadResponse.Loading -> state.mutate {
-                        copy(isLoading = true)
+                    is StoreReadResponse.Loading -> state.override {
+                        SignedInProfileContent(
+                            isLoading = true,
+                        )
                     }
 
-                    is StoreReadResponse.Data -> state.mutate {
-                        copy(
-                            isLoading = true,
+                    is StoreReadResponse.Data -> state.override {
+                        SignedInProfileContent(
+                            isLoading = false,
                             traktUser = TraktUser(
                                 slug = result.requireData().slug,
                                 userName = result.requireData().user_name,
