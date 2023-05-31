@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.compose.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,9 +18,10 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Collections
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.SignalWifi4Bar
 import androidx.compose.material.icons.outlined.SignalWifiOff
-import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -83,9 +85,10 @@ fun ConnectionStatus(
 
 @Composable
 fun ErrorUi(
+    errorMessage: String,
     modifier: Modifier = Modifier,
-    errorMessage: String = stringResource(R.string.unexpected_error_retry),
     onRetry: () -> Unit = {},
+    showRetryButton: Boolean = true,
 ) {
     Box(modifier = modifier) {
         Column(
@@ -96,10 +99,12 @@ fun ErrorUi(
         ) {
             Image(
                 modifier = Modifier.size(120.dp),
-                imageVector = Icons.Outlined.WarningAmber,
+                imageVector = Icons.Outlined.ErrorOutline,
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
                 contentDescription = null,
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = errorMessage,
@@ -109,10 +114,12 @@ fun ErrorUi(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            TvManiacOutlinedButton(
-                text = "Retry",
-                onClick = onRetry,
-            )
+            AnimatedVisibility(visible = showRetryButton) {
+                TvManiacOutlinedButton(
+                    text = "Retry",
+                    onClick = onRetry,
+                )
+            }
         }
     }
 }
@@ -126,6 +133,7 @@ fun RowError(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = errorMessage,
@@ -139,6 +147,38 @@ fun RowError(
             text = "Retry",
             onClick = onRetry,
         )
+    }
+}
+
+@Composable
+fun EmptyUi(
+    modifier: Modifier = Modifier,
+    message: String = stringResource(R.string.generic_empty_content),
+) {
+    Box(modifier = modifier) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .wrapContentSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                modifier = Modifier.size(120.dp),
+                imageVector = Icons.Outlined.Collections,
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+                contentDescription = null,
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+        }
     }
 }
 
