@@ -89,6 +89,6 @@ object MockData {
 
     fun showCategory(traktId: Long, categoryId: Long) = Show_category(
         trakt_id = traktId,
-        category_id = categoryId
+        category_id = categoryId,
     )
 }

@@ -22,7 +22,7 @@ class SyncDiscoverShowsWorker(
 
     override suspend fun doWork(): Result {
         logger.debug("$tags worker running")
-        showsRepository.fetchShows()
+        showsRepository.fetchDiscoverShows()
         return Result.success()
     }
 }
