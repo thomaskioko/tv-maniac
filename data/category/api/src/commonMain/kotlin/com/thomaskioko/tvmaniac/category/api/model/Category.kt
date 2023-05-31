@@ -5,15 +5,15 @@ enum class Category(
     val title: String,
 ) {
     TRENDING(1, "Being Watched"),
-    POPULAR(3, "Popular"),
-    ANTICIPATED(4, "Anticipated"),
-    FEATURED(5, "Featured"),
+    POPULAR(2, "Popular"),
+    ANTICIPATED(3, "Anticipated"),
+    RECOMMENDED(4, "Recommended"),
 }
 
 fun Long.getCategory(): Category = when (this) {
     Category.POPULAR.id -> Category.POPULAR
     Category.TRENDING.id -> Category.TRENDING
     Category.ANTICIPATED.id -> Category.ANTICIPATED
-    Category.FEATURED.id -> Category.FEATURED
+    Category.RECOMMENDED.id -> Category.RECOMMENDED
     else -> Category.TRENDING
 }

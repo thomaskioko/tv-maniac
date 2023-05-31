@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.core.networkutil
 import kotlinx.coroutines.flow.Flow
 
 interface NetworkRepository {
+    fun isConnected(): Boolean
     fun observeConnectionState(): Flow<ConnectionState>
 }
 

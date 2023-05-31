@@ -24,5 +24,7 @@ class FakeSeasonsRepository : SeasonsRepository {
         seasonEpisodesResult = flow { emit(result) }
     }
 
+    override suspend fun getSeasons(traktId: Long): List<Seasons> = emptyList()
+
     override fun observeSeasonsStoreResponse(traktId: Long): Flow<StoreReadResponse<List<Seasons>>> = seasonsResult
 }

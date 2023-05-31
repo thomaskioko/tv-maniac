@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.data.trailers.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Trailers
+import com.thomaskioko.tvmaniac.core.networkutil.NetworkRepository
 import com.thomaskioko.tvmaniac.util.AppUtils
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +15,7 @@ import org.mobilenativefoundation.store.store5.impl.extensions.get
 class TrailerRepositoryImpl(
     private val store: TrailerStore,
     private val appUtils: AppUtils,
+    private val networkRepository: NetworkRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : TrailerRepository {
 
@@ -23,6 +25,6 @@ class TrailerRepositoryImpl(
         store.get(traktId)
 
     override fun observeTrailersStoreResponse(traktId: Long): Flow<StoreReadResponse<List<Trailers>>> =
-        store.stream(StoreReadRequest.cached(key = traktId, refresh = true))
+        store.stream(StoreReadRequest.cached(key = traktId, refresh = networkRepository.isConnected()))
             .flowOn(dispatchers.io)
 }
