@@ -1,7 +1,8 @@
 package com.thomaskioko.tvmaniac.core.db
 
 import com.thomaskioko.tvmaniac.core.db.MockData.getShow
-import com.thomaskioko.tvmaniac.core.db.MockData.makeShowList
+import com.thomaskioko.tvmaniac.core.db.MockData.showCategory
+import com.thomaskioko.tvmaniac.core.db.MockData.showList
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.test.Test
@@ -9,10 +10,17 @@ import kotlin.test.Test
 internal class TvShowCacheTest : BaseDatabaseTest() {
 
     private val tvShowQueries get() = database.showQueries
+    private val showCategoryQueries get() = database.show_categoryQueries
 
     @Test
     fun insertTvShow() {
-        makeShowList().insertTvShowsEntityList()
+        val shows = showList()
+
+        shows.insertTvShowsEntityList()
+
+        for(show in shows){
+            showCategory(show.trakt_id, 1).insertCategory()
+        }
 
         val entities = tvShowQueries.shows().executeAsList()
 
@@ -63,6 +71,13 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             status = status,
             tmdb_id = tmdb_id,
             rating = rating,
+        )
+    }
+
+    private fun Show_category.insertCategory() {
+        showCategoryQueries.insertOrReplace(
+            trakt_id = trakt_id,
+            category_id = category_id
         )
     }
 }
