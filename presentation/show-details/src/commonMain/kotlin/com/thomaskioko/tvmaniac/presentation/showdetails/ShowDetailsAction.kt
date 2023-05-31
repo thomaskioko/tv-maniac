@@ -13,6 +13,5 @@ data class LoadShowDetails(
 ) : ShowDetailsAction
 
 data class FollowShowClicked(
-    val traktId: Long,
     val addToFollowed: Boolean,
 ) : ShowDetailsAction

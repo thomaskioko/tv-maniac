@@ -13,7 +13,6 @@ kotlin {
             implementation(projects.core.database)
             implementation(projects.core.traktApi.api)
             implementation(projects.core.util)
-            implementation(projects.data.category.api)
             implementation(projects.data.shows.api)
 
             api(libs.coroutines.core)

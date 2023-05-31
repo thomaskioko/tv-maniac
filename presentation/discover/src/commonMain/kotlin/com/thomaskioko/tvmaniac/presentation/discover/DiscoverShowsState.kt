@@ -1,35 +1,25 @@
 package com.thomaskioko.tvmaniac.presentation.discover
 
-import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 
-sealed interface ShowsState
+sealed interface DiscoverState
 
-object Loading : ShowsState
+object Loading : DiscoverState
 
-data class LoadingError(val errorMessage: String) : ShowsState
+data class ContentError(val errorMessage: String) : DiscoverState
 
-data class ShowsLoaded(
-    val result: ShowResult,
-) : ShowsState
+data class DiscoverContent(
+    val contentState: DiscoverContentState,
+) : DiscoverState {
 
-data class ShowResult(
-    val featuredCategoryState: CategoryState,
-    val trendingCategoryState: CategoryState,
-    val popularCategoryState: CategoryState,
-    val anticipatedCategoryState: CategoryState,
-) {
+    sealed interface DiscoverContentState
 
-    sealed interface CategoryState
+    data class DataLoaded(
+        val recommendedShows: List<TvShow> = emptyList(),
+        val trendingShows: List<TvShow> = emptyList(),
+        val popularShows: List<TvShow> = emptyList(),
+        val anticipatedShows: List<TvShow> = emptyList(),
+    ) : DiscoverContentState
 
-    data class CategoryError(
-        val errorMessage: String,
-    ) : CategoryState
-
-    data class CategorySuccess(
-        val category: Category,
-        val tvShows: List<TvShow>,
-    ) : CategoryState
-
-    object EmptyCategoryData : CategoryState
+    object EmptyResult : DiscoverContentState
 }

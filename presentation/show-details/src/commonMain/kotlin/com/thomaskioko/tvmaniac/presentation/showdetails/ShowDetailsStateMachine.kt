@@ -8,14 +8,11 @@ import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonState.SeasonsError
-import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonState.SeasonsLoaded.Companion.EmptySeasons
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.ShowDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.showdetails.SimilarShowsState.SimilarShowsError
 import com.thomaskioko.tvmaniac.presentation.showdetails.SimilarShowsState.SimilarShowsLoaded
-import com.thomaskioko.tvmaniac.presentation.showdetails.SimilarShowsState.SimilarShowsLoaded.Companion.EmptyShows
 import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersError
 import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersLoaded
-import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersLoaded.Companion.EmptyTrailers
 import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersLoaded.Companion.playerErrorMessage
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
@@ -23,12 +20,11 @@ import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadResponse
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class ShowDetailsStateMachine constructor(
     @Assisted private val traktShowId: Long,
@@ -53,7 +49,7 @@ class ShowDetailsStateMachine constructor(
             inState<ShowDetailsLoaded> {
 
                 collectWhileInState(seasonsRepository.observeSeasonsStoreResponse(traktShowId)) { result, state ->
-                    updateShowDetailsState(result, state)
+                    updateSeasonDetailsState(result, state)
                 }
 
                 collectWhileInState(trailerRepository.observeTrailersStoreResponse(traktShowId)) { response, state ->
@@ -77,7 +73,7 @@ class ShowDetailsStateMachine constructor(
 
                 onActionEffect<FollowShowClicked> { action, _ ->
                     watchlistRepository.updateWatchlist(
-                        traktId = action.traktId,
+                        traktId = traktShowId,
                         addToWatchList = !action.addToFollowed,
                     )
                 }
@@ -103,8 +99,8 @@ class ShowDetailsStateMachine constructor(
             }
 
             inState<ShowDetailsState.ShowDetailsError> {
-                on<ReloadShowDetails> { action, state ->
-                    reloadShowData(action, state)
+                on<ReloadShowDetails> { _, state ->
+                    state.override { ShowDetailsState.Loading }
                 }
             }
         }
@@ -197,7 +193,7 @@ class ShowDetailsStateMachine constructor(
         }
     }
 
-    private fun updateShowDetailsState(
+    private fun updateSeasonDetailsState(
         response: StoreReadResponse<List<Seasons>>,
         state: State<ShowDetailsLoaded>,
     ) = when (response) {
@@ -211,6 +207,7 @@ class ShowDetailsStateMachine constructor(
                 )
             }
         }
+
         is StoreReadResponse.Data -> {
             state.mutate {
                 copy(
@@ -221,6 +218,7 @@ class ShowDetailsStateMachine constructor(
                 )
             }
         }
+
         is StoreReadResponse.Error.Exception -> {
             state.mutate {
                 copy(seasonState = SeasonsError(exceptionHandler.resolveError(response.error)))
@@ -235,51 +233,31 @@ class ShowDetailsStateMachine constructor(
     }
 
     private suspend fun fetchShowDetails(state: State<ShowDetailsState.Loading>): ChangedState<ShowDetailsState> {
-        var detailState: ShowDetailsState = ShowDetailsState.Loading
+        val show = showsRepository.fetchShow(traktShowId)
+        val similar = similarShowsRepository.fetchSimilarShows(traktShowId)
+        val season = seasonsRepository.getSeasons(traktShowId)
+        val trailers = trailerRepository.fetchTrailersByShowId(traktShowId)
 
-        showsRepository.observeShow(traktShowId)
-            .collect { result ->
-                detailState = result.fold(
-                    {
-                        ShowDetailsState.ShowDetailsError(it.errorMessage)
-                    },
-                    {
-                        ShowDetailsLoaded(
-                            showState = result.toShowState(),
-                            similarShowsState = EmptyShows,
-                            seasonState = EmptySeasons,
-                            trailerState = EmptyTrailers,
-                            followShowState = FollowShowsState.Idle,
-                        )
-                    },
-                )
-            }
-
-        return state.override { detailState }
-    }
-
-    private suspend fun reloadShowData(
-        action: ReloadShowDetails,
-        state: State<ShowDetailsState.ShowDetailsError>,
-    ): ChangedState<ShowDetailsState> {
-        var detailState: ShowDetailsState = ShowDetailsState.Loading
-
-        showsRepository.observeShow(action.traktId)
-            .collect { result ->
-                detailState = result.fold(
-                    { ShowDetailsState.ShowDetailsError(it.errorMessage) },
-                    {
-                        ShowDetailsLoaded(
-                            showState = result.toShowState(),
-                            similarShowsState = EmptyShows,
-                            seasonState = EmptySeasons,
-                            trailerState = EmptyTrailers,
-                            followShowState = FollowShowsState.Idle,
-                        )
-                    },
-                )
-            }
-
-        return state.override { detailState }
+        return state.override {
+            ShowDetailsLoaded(
+                showState = ShowState.ShowLoaded(
+                    show = show.toTvShow(),
+                ),
+                similarShowsState = SimilarShowsLoaded(
+                    isLoading = false,
+                    similarShows = similar.toSimilarShowList(),
+                ),
+                seasonState = SeasonState.SeasonsLoaded(
+                    isLoading = false,
+                    seasonsList = season.toSeasonsList(),
+                ),
+                trailerState = TrailersLoaded(
+                    isLoading = false,
+                    hasWebViewInstalled = false,
+                    trailersList = trailers.toTrailerList(),
+                ),
+                followShowState = FollowShowsState.Idle,
+            )
+        }
     }
 }
