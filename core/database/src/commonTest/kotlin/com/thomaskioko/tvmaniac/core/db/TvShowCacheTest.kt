@@ -18,7 +18,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         shows.insertTvShowsEntityList()
 
-        for(show in shows){
+        for (show in shows) {
             showCategory(show.trakt_id, 1).insertCategory()
         }
 
@@ -77,7 +77,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     private fun Show_category.insertCategory() {
         showCategoryQueries.insertOrReplace(
             trakt_id = trakt_id,
-            category_id = category_id
+            category_id = category_id,
         )
     }
 }

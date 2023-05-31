@@ -15,6 +15,8 @@ class FakeSimilarShowsRepository : SimilarShowsRepository {
         similarShowsResult = flow { emit(result) }
     }
 
+    override suspend fun fetchSimilarShows(traktId: Long): List<SimilarShows> = emptyList()
+
     override fun observeSimilarShows(traktId: Long): Flow<StoreReadResponse<List<SimilarShows>>> =
         similarShowsResult
 }

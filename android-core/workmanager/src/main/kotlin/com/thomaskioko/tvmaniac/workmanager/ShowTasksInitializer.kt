@@ -8,5 +8,7 @@ class ShowTasksInitializer(
 ) : AppInitializer {
     override fun init() {
         showTasks.value.setupDiscoverDailySyncs()
+        showTasks.value.syncTraktFollowedShows()
+        showTasks.value.syncTraktFollowedShowsWhenIdle()
     }
 }

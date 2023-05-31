@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
-import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.shows.testing.FakeShowsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
@@ -52,7 +50,12 @@ internal class ShowDetailsStateMachineTest {
     @Test
     fun loadingData_state_emits_expected_result() = runTest {
         stateMachine.state.test {
-            traktRepository.setShowResult(Either.Right(selectedShow))
+            traktRepository.setShowResult(
+                StoreReadResponse.Data(
+                    value = selectedShow,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
             seasonsRepository.setSeasonsResult(
                 StoreReadResponse.Data(
                     value = seasons,
@@ -95,7 +98,12 @@ internal class ShowDetailsStateMachineTest {
     fun error_loading_similarShows_emits_expected_result() = runTest {
         stateMachine.state.test {
             val errorMessage = "Something went wrong"
-            traktRepository.setShowResult(Either.Right(selectedShow))
+            traktRepository.setShowResult(
+                StoreReadResponse.Data(
+                    value = selectedShow,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
             seasonsRepository.setSeasonsResult(
                 StoreReadResponse.Data(
                     value = seasons,
@@ -138,7 +146,12 @@ internal class ShowDetailsStateMachineTest {
     fun error_loading_trailers_emits_expected_result() = runTest {
         stateMachine.state.test {
             val errorMessage = "Something went wrong"
-            traktRepository.setShowResult(Either.Right(selectedShow))
+            traktRepository.setShowResult(
+                StoreReadResponse.Data(
+                    value = selectedShow,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
             seasonsRepository.setSeasonsResult(
                 StoreReadResponse.Data(
                     value = seasons,
@@ -181,7 +194,12 @@ internal class ShowDetailsStateMachineTest {
     fun error_loading_seasons_emits_expected_result() = runTest {
         stateMachine.state.test {
             val errorMessage = "Something went wrong"
-            traktRepository.setShowResult(Either.Right(selectedShow))
+            traktRepository.setShowResult(
+                StoreReadResponse.Data(
+                    value = selectedShow,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
             trailerRepository.setTrailerResult(
                 StoreReadResponse.Data(
                     value = trailers,
@@ -222,7 +240,12 @@ internal class ShowDetailsStateMachineTest {
     fun error_state_emits_expected_result() = runTest {
         stateMachine.state.test {
             val errorMessage = "Something went wrong"
-            traktRepository.setShowResult(Either.Left(DefaultError(errorMessage)))
+            traktRepository.setShowResult(
+                StoreReadResponse.Error.Message(
+                    message = errorMessage,
+                    origin = StoreReadResponseOrigin.Cache,
+                ),
+            )
             seasonsRepository.setSeasonsResult(
                 StoreReadResponse.Error.Message(
                     message = errorMessage,
