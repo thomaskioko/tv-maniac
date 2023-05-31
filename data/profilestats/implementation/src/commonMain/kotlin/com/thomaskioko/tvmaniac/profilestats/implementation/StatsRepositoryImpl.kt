@@ -1,33 +1,23 @@
 package com.thomaskioko.tvmaniac.profilestats.implementation
 
-import com.thomaskioko.tvmaniac.core.db.User_stats
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.Failure
-import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
-import com.thomaskioko.tvmaniac.profilestats.api.StatsDao
+import com.thomaskioko.tvmaniac.core.db.Stats
+import com.thomaskioko.tvmaniac.core.networkutil.NetworkRepository
 import com.thomaskioko.tvmaniac.profilestats.api.StatsRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
+import org.mobilenativefoundation.store.store5.StoreReadRequest
+import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 @Inject
 class StatsRepositoryImpl(
-    private val traktRemoteDataSource: TraktRemoteDataSource,
-    private val statsDao: StatsDao,
-    private val mapper: StatsMapper,
-    private val exceptionHandler: ExceptionHandler,
+    private val store: StatsStore,
+    private val networkRepository: NetworkRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : StatsRepository {
 
-    override fun observeStats(slug: String, refresh: Boolean): Flow<Either<Failure, User_stats>> =
-        networkBoundResult(
-            query = { statsDao.observeStats() },
-            shouldFetch = { it == null || refresh },
-            fetch = { traktRemoteDataSource.getUserStats(slug) },
-            saveFetchResult = { statsDao.insert(mapper.toTraktStats(slug, it)) },
-            exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatchers.io,
-        )
+    override fun observeStats(slug: String): Flow<StoreReadResponse<Stats>> =
+        store.stream(StoreReadRequest.cached(key = slug, refresh = networkRepository.isConnected()))
+            .flowOn(dispatchers.io)
 }

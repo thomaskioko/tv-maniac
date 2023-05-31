@@ -2,23 +2,17 @@ package com.thomaskioko.tvmaniac.presentation.profile
 
 sealed interface ProfileState
 
-data class ProfileContent(
-    val isLoading: Boolean,
-    val showTraktDialog: Boolean,
-    val loggedIn: Boolean,
-    val traktUser: TraktUser?,
-    val profileStats: ProfileStats?,
-) : ProfileState {
-    companion object {
-        val EMPTY = ProfileContent(
-            isLoading = false,
-            showTraktDialog = false,
-            loggedIn = false,
-            traktUser = null,
-            profileStats = null,
-        )
-    }
-}
+data class LoggedOutUser(
+    val showTraktDialog: Boolean = false,
+) : ProfileState
+
+data class SignedInProfileContent(
+    val isLoading: Boolean = false,
+    val showLogoutDialog: Boolean = false,
+    val loggedIn: Boolean = false,
+    val traktUser: TraktUser? = null,
+    val profileStats: ProfileStats? = null,
+) : ProfileState
 
 data class ProfileError(val error: String) : ProfileState
 data class ProfileStatsError(val error: String) : ProfileState

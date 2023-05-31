@@ -1,10 +1,9 @@
 package com.thomaskioko.tvmaniac.profilestats.api
 
-import com.thomaskioko.tvmaniac.core.db.User_stats
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.Failure
+import com.thomaskioko.tvmaniac.core.db.Stats
 import kotlinx.coroutines.flow.Flow
+import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 interface StatsRepository {
-    fun observeStats(slug: String, refresh: Boolean = false): Flow<Either<Failure, User_stats>>
+    fun observeStats(slug: String): Flow<StoreReadResponse<Stats>>
 }

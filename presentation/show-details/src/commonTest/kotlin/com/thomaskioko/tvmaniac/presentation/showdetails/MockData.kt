@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
-import com.thomaskioko.tvmaniac.core.db.SelectByShowId
+import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
@@ -99,7 +99,7 @@ val similarShowLoaded = SimilarShowsState.SimilarShowsLoaded(
     similarShows = similarShows,
 )
 
-val selectedShow = SelectByShowId(
+val selectedShow = ShowById(
     trakt_id = 84958,
     tmdb_id = 849583,
     title = "Loki",

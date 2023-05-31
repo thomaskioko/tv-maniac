@@ -1,11 +1,15 @@
 package com.thomaskioko.tvmaniac.profilestats.api
 
-import com.thomaskioko.tvmaniac.core.db.User_stats
+import com.thomaskioko.tvmaniac.core.db.Stats
 import kotlinx.coroutines.flow.Flow
 
 interface StatsDao {
 
-    fun insert(stats: User_stats)
+    fun insert(stats: Stats)
 
-    fun observeStats(): Flow<User_stats>
+    fun observeStats(slug: String): Flow<Stats>
+
+    fun delete(slug: String)
+
+    fun deleteAll()
 }

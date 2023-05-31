@@ -1,32 +1,28 @@
 package com.thomaskioko.tvmaniac.shows.api
 
-import com.thomaskioko.tvmaniac.core.db.SelectByShowId
-import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.Failure
+import com.thomaskioko.tvmaniac.category.api.model.Category
+import com.thomaskioko.tvmaniac.core.db.ShowById
+import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import kotlinx.coroutines.flow.Flow
+import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 interface ShowsRepository {
 
-    fun observeShow(traktId: Long): Flow<Either<Failure, SelectByShowId>>
+    fun observeShow(traktId: Long): Flow<StoreReadResponse<ShowById>>
 
-    fun observeCachedShows(categoryId: Long): Flow<Either<Failure, List<SelectShowsByCategory>>>
+    fun observeRecommendedShows(categoryId: Long): Flow<StoreReadResponse<List<ShowsByCategory>>>
 
-    fun fetchTrendingShows(): Flow<Either<Failure, List<SelectShowsByCategory>>>
+    fun observeTrendingShows(): Flow<StoreReadResponse<List<ShowsByCategory>>>
 
-    fun observeTrendingCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>>
+    fun observePopularShows(): Flow<StoreReadResponse<List<ShowsByCategory>>>
 
-    fun fetchPopularShows(): Flow<Either<Failure, List<SelectShowsByCategory>>>
+    fun observeAnticipatedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>>
 
-    fun observePopularCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>>
+    fun observeFeaturedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>>
 
-    fun fetchAnticipatedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>>
+    suspend fun fetchDiscoverShows()
 
-    fun observeAnticipatedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>>
+    suspend fun fetchShow(traktId: Long): ShowById
 
-    fun fetchFeaturedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>>
-
-    fun observeFeaturedCachedShows(): Flow<Either<Failure, List<SelectShowsByCategory>>>
-
-    suspend fun fetchShows()
+    suspend fun fetchShows(category: Category): List<ShowsByCategory>
 }

@@ -7,11 +7,10 @@ import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.episodeimages.api.EpisodeImageRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class SeasonDetailsStateMachine constructor(
     @Assisted private val traktId: Long,
@@ -61,7 +60,7 @@ class SeasonDetailsStateMachine constructor(
                             }
                         }
 
-                    state.override { nextState }
+                    state.override { Loading }
                 }
             }
         }

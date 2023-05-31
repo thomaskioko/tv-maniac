@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.shared.base.wrappers
 
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverStateMachine
 import com.thomaskioko.tvmaniac.presentation.discover.ShowsAction
-import com.thomaskioko.tvmaniac.presentation.discover.ShowsState
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -17,7 +17,7 @@ class DiscoverStateMachineWrapper(
     private val stateMachine: DiscoverStateMachine,
 ) {
 
-    fun start(stateChangeListener: (ShowsState) -> Unit) {
+    fun start(stateChangeListener: (DiscoverState) -> Unit) {
         scope.main.launch {
             stateMachine.state.collect {
                 stateChangeListener(it)

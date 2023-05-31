@@ -3,38 +3,37 @@ package com.thomaskioko.tvmaniac.presentation.discover
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
+import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.showimages.api.ShowImagesRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
+import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import me.tatarka.inject.annotations.Inject
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class DiscoverStateMachine(
+    private val exceptionHandler: ExceptionHandler,
     private val showsRepository: ShowsRepository,
     private val showImagesRepository: ShowImagesRepository,
-) : FlowReduxStateMachine<ShowsState, ShowsAction>(initialState = Loading) {
+) : FlowReduxStateMachine<DiscoverState, ShowsAction>(initialState = Loading) {
 
     init {
         spec {
             inState<Loading> {
-                onEnter { fetchShowData(it) }
+                onEnter { state ->
+                    fetchShowData(state)
+                }
             }
 
-            inState<ShowsLoaded> {
+            inState<DiscoverContent> {
                 collectWhileInState(observeShowData()) { result, state ->
                     state.mutate {
                         copy(
-                            result = result.copy(
-                                featuredCategoryState = result.featuredCategoryState,
-                                trendingCategoryState = result.trendingCategoryState,
-                                popularCategoryState = result.popularCategoryState,
-                                anticipatedCategoryState = result.anticipatedCategoryState,
-                            ),
+                            contentState = result,
                         )
                     }
                 }
@@ -49,7 +48,7 @@ class DiscoverStateMachine(
                 }
             }
 
-            inState<LoadingError> {
+            inState<ContentError> {
                 on<RetryLoading> { _, state ->
                     state.override { Loading }
                 }
@@ -57,47 +56,34 @@ class DiscoverStateMachine(
         }
     }
 
-    private suspend fun fetchShowData(state: State<Loading>): ChangedState<ShowsState> {
-        var nextState: ShowsState = state.snapshot
+    private suspend fun fetchShowData(state: State<Loading>): ChangedState<DiscoverContent> {
+        val trendingResponse = showsRepository.fetchShows(Category.TRENDING)
+        val recommendedResponse = showsRepository.fetchShows(Category.RECOMMENDED)
+        val popularResponse = showsRepository.fetchShows(Category.POPULAR)
+        val anticipatedResponse = showsRepository.fetchShows(Category.ANTICIPATED)
 
-        combine(
-            showsRepository.fetchTrendingShows(),
-            showsRepository.fetchPopularShows(),
-            showsRepository.fetchAnticipatedShows(),
-            showsRepository.fetchFeaturedShows(),
-        ) { trending, popular, anticipated, featured ->
-
-            ShowResult(
-                trendingCategoryState = trending.toShowData(),
-                popularCategoryState = popular.toShowData(),
-                anticipatedCategoryState = anticipated.toShowData(),
-                featuredCategoryState = featured.toShowData(5),
+        return state.override {
+            DiscoverContent(
+                contentState = DiscoverContent.DataLoaded(
+                    trendingShows = trendingResponse.toTvShowList(),
+                    popularShows = popularResponse.toTvShowList(),
+                    anticipatedShows = anticipatedResponse.toTvShowList(),
+                    recommendedShows = recommendedResponse.toTvShowList().take(5),
+                ),
             )
         }
-            .catch { nextState = LoadingError(it.message ?: "Something went wrong") }
-            .collect {
-                nextState = ShowsLoaded(result = it)
-            }
-
-        return state.override { nextState }
     }
 
-    private fun observeShowData(): Flow<ShowResult> =
+    private fun observeShowData(): Flow<DiscoverContent.DiscoverContentState> =
         combine(
-            showsRepository.observeTrendingCachedShows(),
-            showsRepository.observePopularCachedShows(),
-            showsRepository.observeAnticipatedCachedShows(),
-            showsRepository.observeFeaturedCachedShows(),
+            showsRepository.observeTrendingShows(),
+            showsRepository.observePopularShows(),
+            showsRepository.observeAnticipatedShows(),
+            showsRepository.observeFeaturedShows(),
         ) { trending, popular, anticipated, featured ->
-
-            ShowResult(
-                trendingCategoryState = trending.toShowData(),
-                popularCategoryState = popular.toShowData(),
-                anticipatedCategoryState = anticipated.toShowData(),
-                featuredCategoryState = featured.toShowData(5),
-            )
+            toShowResultState(trending, popular, anticipated, featured)
         }
             .catch {
-                LoadingError(it.message ?: "Something went wrong")
+                ContentError(exceptionHandler.resolveError(it))
             }
 }
