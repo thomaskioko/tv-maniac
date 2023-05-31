@@ -16,6 +16,15 @@ class NetworkRepositoryImpl(
     private val context: Application,
 ) : NetworkRepository {
 
+    override fun isConnected(): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return when (connectivityManager.getCurrentConnectivityState()) {
+            is ConnectionState.ConnectionAvailable -> true
+            is ConnectionState.NoConnection -> false
+        }
+    }
+
     override fun observeConnectionState(): Flow<ConnectionState> = callbackFlow {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

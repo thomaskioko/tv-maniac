@@ -6,5 +6,6 @@ import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 interface SeasonsRepository {
 
+    suspend fun getSeasons(traktId: Long): List<Seasons>
     fun observeSeasonsStoreResponse(traktId: Long): Flow<StoreReadResponse<List<Seasons>>>
 }
