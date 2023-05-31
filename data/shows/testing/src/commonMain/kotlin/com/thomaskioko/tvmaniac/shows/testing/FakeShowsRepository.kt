@@ -43,23 +43,27 @@ class FakeShowsRepository : ShowsRepository {
 
     override fun observeShow(traktId: Long): Flow<StoreReadResponse<ShowById>> = showResult
 
-    override fun observeShows(categoryId: Long): Flow<StoreReadResponse<List<ShowsByCategory>>> {
-        TODO("Not yet implemented")
+    override fun observeRecommendedShows(
+        categoryId: Long,
+    ): Flow<StoreReadResponse<List<ShowsByCategory>>> = featuredResult
+
+    override fun observeTrendingShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> {
+        return trendingResult
     }
 
-    override fun fetchTrendingShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> =
-        trendingResult
+    override fun observePopularShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> {
+        return popularResult
+    }
 
-    override fun fetchPopularShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> =
-        popularResult
+    override fun observeAnticipatedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> {
+        return anticipatedResult
+    }
 
-    override fun fetchAnticipatedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> =
-        anticipatedResult
+    override fun observeFeaturedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> {
+        return featuredResult
+    }
 
-    override fun fetchFeaturedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> =
-        featuredResult
-
-    override suspend fun fetchShows() {}
+    override suspend fun fetchDiscoverShows() {}
 
     override suspend fun fetchShows(category: Category): List<ShowsByCategory> = emptyList()
 
