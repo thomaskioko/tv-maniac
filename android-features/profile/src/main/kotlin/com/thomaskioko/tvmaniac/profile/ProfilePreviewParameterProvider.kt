@@ -1,27 +1,29 @@
 package com.thomaskioko.tvmaniac.profile
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.presentation.profile.ProfileContent
+import com.thomaskioko.tvmaniac.presentation.profile.LoggedOutUser
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileError
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStats
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStatsError
+import com.thomaskioko.tvmaniac.presentation.profile.SignedInProfileContent
 import com.thomaskioko.tvmaniac.presentation.profile.TraktUser
 
 class ProfilePreviewParameterProvider : PreviewParameterProvider<ProfileState> {
     override val values: Sequence<ProfileState>
         get() {
             return sequenceOf(
-                ProfileContent(
+                LoggedOutUser(),
+                SignedInProfileContent(
                     isLoading = true,
-                    showTraktDialog = false,
+                    showLogoutDialog = false,
                     loggedIn = false,
                     traktUser = null,
                     profileStats = null,
                 ),
-                ProfileContent(
+                SignedInProfileContent(
                     isLoading = false,
-                    showTraktDialog = false,
+                    showLogoutDialog = false,
                     loggedIn = true,
                     traktUser = TraktUser(
                         slug = "me",
