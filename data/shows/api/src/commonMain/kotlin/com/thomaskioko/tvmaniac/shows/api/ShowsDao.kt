@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.shows.api
 
-import com.thomaskioko.tvmaniac.core.db.SelectByShowId
-import com.thomaskioko.tvmaniac.core.db.SelectShows
-import com.thomaskioko.tvmaniac.core.db.SelectShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.Show
+import com.thomaskioko.tvmaniac.core.db.ShowById
+import com.thomaskioko.tvmaniac.core.db.Shows
+import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import kotlinx.coroutines.flow.Flow
 
 interface ShowsDao {
@@ -12,15 +12,15 @@ interface ShowsDao {
 
     fun insert(list: List<Show>)
 
-    fun observeTvShow(showId: Long): Flow<SelectByShowId>
+    fun observeTvShow(showId: Long): Flow<ShowById>
 
-    fun observeTvShows(): Flow<List<SelectShows>>
+    fun observeCachedShows(categoryId: Long): Flow<List<ShowsByCategory>>
 
-    fun observeCachedShows(categoryId: Long): Flow<List<SelectShowsByCategory>>
+    fun observeShows(): Flow<List<Shows>>
 
-    fun getTvShow(traktId: Long): SelectByShowId
+    fun getTvShow(traktId: Long): ShowById
 
     fun deleteTvShows()
 
-    fun getShowsByCategoryID(categoryId: Long): List<SelectShowsByCategory>
+    fun getShowsByCategoryID(categoryId: Long): List<ShowsByCategory>
 }

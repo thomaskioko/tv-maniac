@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.presentation.discover
 
-import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 
@@ -24,38 +23,17 @@ val show = TvShow(
     backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
 )
 
-val showResult = ShowResult(
-    featuredCategoryState = ShowResult.CategorySuccess(
-        category = Category.FEATURED,
-        tvShows = listOf(show),
-    ),
-    trendingCategoryState = ShowResult.CategorySuccess(
-        category = Category.TRENDING,
-        tvShows = listOf(show),
-    ),
-    popularCategoryState = ShowResult.CategorySuccess(
-        category = Category.POPULAR,
-        tvShows = listOf(show),
-    ),
-    anticipatedCategoryState = ShowResult.CategorySuccess(
-        category = Category.ANTICIPATED,
-        tvShows = listOf(show),
+val discoverContent = DiscoverContent(
+    contentState = DiscoverContent.DataLoaded(
+        recommendedShows = listOf(show),
+        trendingShows = listOf(show),
+        popularShows = listOf(show),
+        anticipatedShows = listOf(show),
     ),
 )
 
-val errorShowResult = ShowResult(
-    featuredCategoryState = ShowResult.CategoryError(
-        errorMessage = "Something went wrong",
-    ),
-    trendingCategoryState = ShowResult.CategoryError(
-        errorMessage = "Something went wrong",
-    ),
-    popularCategoryState = ShowResult.CategoryError(
-        errorMessage = "Something went wrong",
-    ),
-    anticipatedCategoryState = ShowResult.CategoryError(
-        errorMessage = "Something went wrong",
-    ),
+val errorDiscoverContent = DiscoverContent(
+    contentState = DiscoverContent.EmptyResult,
 )
 
 fun categoryResult(categoryId: Long) = listOf(
@@ -79,5 +57,6 @@ fun categoryResult(categoryId: Long) = listOf(
         poster_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdrop_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         category_id = categoryId,
+        aired_episodes = null,
     ),
 )
