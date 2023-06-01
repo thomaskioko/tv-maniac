@@ -26,7 +26,6 @@ include(
     ":android-core:navigation",
     ":android-core:resources",
     ":android-core:workmanager",
-    ":android-core:trakt-auth",
     ":android-features:discover",
     ":android-features:home",
     ":android-features:search",
