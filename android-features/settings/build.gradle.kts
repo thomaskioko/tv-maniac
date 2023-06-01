@@ -7,8 +7,8 @@ android {
 }
 
 dependencies {
-    implementation(projects.androidCore.traktAuth)
     implementation(projects.core.datastore.api)
+    implementation(projects.core.traktAuth.api)
     implementation(projects.data.shows.api)
     implementation(projects.presentation.settings)
 
