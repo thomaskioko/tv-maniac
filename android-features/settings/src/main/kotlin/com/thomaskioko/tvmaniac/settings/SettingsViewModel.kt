@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.presentation.settings.SettingsActions
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsContent
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsState
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsStateMachine
-import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
