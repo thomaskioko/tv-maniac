@@ -31,7 +31,6 @@ dependencies {
 
     implementation(projects.androidCore.designsystem)
     implementation(projects.androidCore.navigation)
-    implementation(projects.androidCore.traktAuth)
     implementation(projects.androidCore.workmanager)
     implementation(projects.androidFeatures.discover)
     implementation(projects.androidFeatures.home)
