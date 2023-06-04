@@ -26,7 +26,6 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -105,7 +104,6 @@ internal fun SettingsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SettingsScreen(
     onBackClicked: () -> Unit,
@@ -123,7 +121,7 @@ internal fun SettingsScreen(
         topBar = {
             TvManiacTopBar(
                 title = stringResource(R.string.title_settings),
-                showNavigationIcon = true,
+                showNavigationIcon = false,
                 onBackClick = onBackClicked,
                 modifier = Modifier,
             )
@@ -272,6 +270,7 @@ private fun TraktProfileSettingsItem(
             }
 
             TrackDialog(
+                loggedIn = loggedIn,
                 isVisible = showTraktDialog,
                 onLoginClicked = onLoginClicked,
                 onLogoutClicked = onLogoutClicked,
@@ -288,6 +287,7 @@ private fun TraktProfileSettingsItem(
 @Composable
 fun TrackDialog(
     isVisible: Boolean,
+    loggedIn: Boolean,
     onLoginClicked: () -> Unit,
     onLogoutClicked: () -> Unit,
     onDismissDialog: () -> Unit,
@@ -310,6 +310,8 @@ fun TrackDialog(
             onDismissDialog = onDismissDialog,
             confirmButtonClicked = onLoginClicked,
             dismissButtonClicked = onLogoutClicked,
+            enableConfirmButton = !loggedIn,
+            enableDismissButton = loggedIn,
         )
     }
 }
