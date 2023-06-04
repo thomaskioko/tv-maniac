@@ -18,7 +18,7 @@ class ProfileStore(
     private val profileDao: ProfileDao,
     private val logger: KermitLogger,
     private val scope: AppCoroutineScope,
-) : Store<String, User> by StoreBuilder.from<String, User, User, User>(
+) : Store<String, User> by StoreBuilder.from<String, User, User>(
     fetcher = Fetcher.of { slug ->
 
         when (val apiResult = traktRemoteDataSource.getUser(slug)) {
@@ -41,7 +41,7 @@ class ProfileStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of(
-        reader = { slug -> profileDao.observeUserBySlug(slug) },
+        reader = { _ -> profileDao.observeUser() },
         writer = { _, user -> profileDao.insert(user) },
         delete = profileDao::delete,
         deleteAll = profileDao::deleteAll,

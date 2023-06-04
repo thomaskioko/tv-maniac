@@ -4,7 +4,6 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
-import com.thomaskioko.tvmaniac.profilestats.api.StatsRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.ExceptionHandler
@@ -16,20 +15,22 @@ import org.mobilenativefoundation.store.store5.StoreReadResponse
 @Inject
 class ProfileStateMachine(
     private val traktAuthRepository: TraktAuthRepository,
-    private val statsRepository: StatsRepository,
     private val profileRepository: ProfileRepository,
     private val exceptionHandler: ExceptionHandler,
-) : FlowReduxStateMachine<ProfileState, ProfileActions>(initialState = LoggedOutUser()) {
+) : FlowReduxStateMachine<ProfileState, ProfileActions>(initialState = LoggedOutContent()) {
 
     init {
         spec {
 
-            inState<LoggedOutUser> {
+            inState<LoggedOutContent> {
 
-                collectWhileInStateEffect(traktAuthRepository.state) { result, state ->
+                collectWhileInState(traktAuthRepository.state) { result, state ->
                     when (result) {
-                        TraktAuthState.LOGGED_IN -> dispatch(FetchTraktUserProfile)
-                        TraktAuthState.LOGGED_OUT -> {}
+                        TraktAuthState.LOGGED_IN -> fetchUserProfile(state)
+                        TraktAuthState.LOGGED_OUT -> {
+                            traktAuthRepository.clearAuth()
+                            state.override { LoggedOutContent() }
+                        }
                     }
                 }
 
@@ -38,42 +39,14 @@ class ProfileStateMachine(
                 }
             }
 
-            inState<SignedInProfileContent> {
+            inState<SignedInContent> {
 
-                collectWhileInStateEffect(traktAuthRepository.state) { result, _ ->
+                collectWhileInState(traktAuthRepository.state) { result, state ->
                     when (result) {
-                        TraktAuthState.LOGGED_IN -> {}
+                        TraktAuthState.LOGGED_IN -> state.noChange()
                         TraktAuthState.LOGGED_OUT -> {
-                            // Clear data and reset state
-                        }
-                    }
-                }
-
-                collectWhileInState(statsRepository.observeStats("me")) { storeReadResponse, state ->
-                    when (storeReadResponse) {
-                        is StoreReadResponse.NoNewData -> state.noChange()
-                        is StoreReadResponse.Loading -> state.mutate {
-                            copy(isLoading = true)
-                        }
-
-                        is StoreReadResponse.Data -> state.mutate {
-                            copy(
-                                profileStats = ProfileStats(
-                                    showMonths = storeReadResponse.requireData().months,
-                                    showDays = storeReadResponse.requireData().days,
-                                    showHours = storeReadResponse.requireData().hours,
-                                    collectedShows = storeReadResponse.requireData().collected_shows,
-                                    episodesWatched = storeReadResponse.requireData().episodes_watched,
-                                ),
-                            )
-                        }
-
-                        is StoreReadResponse.Error.Exception -> state.override {
-                            ProfileStatsError(exceptionHandler.resolveError(storeReadResponse.error))
-                        }
-
-                        is StoreReadResponse.Error.Message -> state.override {
-                            ProfileStatsError(storeReadResponse.message)
+                            traktAuthRepository.clearAuth()
+                            state.override { LoggedOutContent() }
                         }
                     }
                 }
@@ -90,16 +63,11 @@ class ProfileStateMachine(
                         copy(showLogoutDialog = false)
                     }
                 }
-
-                on<RefreshTraktAuthToken> { _, state ->
-                    /** Implement token refresh **/
-                    state.noChange()
-                }
             }
         }
     }
 
-    private suspend fun fetchUserProfile(state: State<LoggedOutUser>): ChangedState<ProfileState> {
+    private suspend fun fetchUserProfile(state: State<LoggedOutContent>): ChangedState<ProfileState> {
         var nextState: ChangedState<ProfileState> = state.noChange()
 
         profileRepository.observeProfile("me")
@@ -107,13 +75,13 @@ class ProfileStateMachine(
                 nextState = when (result) {
                     is StoreReadResponse.NoNewData -> state.noChange()
                     is StoreReadResponse.Loading -> state.override {
-                        SignedInProfileContent(
+                        SignedInContent(
                             isLoading = true,
                         )
                     }
 
                     is StoreReadResponse.Data -> state.override {
-                        SignedInProfileContent(
+                        SignedInContent(
                             isLoading = false,
                             traktUser = TraktUser(
                                 slug = result.requireData().slug,
@@ -133,7 +101,6 @@ class ProfileStateMachine(
                     }
                 }
             }
-
         return nextState
     }
 }

@@ -9,17 +9,23 @@ import org.mobilenativefoundation.store.store5.StoreReadResponseOrigin
 
 class FakeProfileRepository : ProfileRepository {
 
+    private val user = User(
+        slug = "me",
+        user_name = "silly_eyes",
+        full_name = "Stranger Danger",
+        profile_picture = "",
+        is_me = true,
+    )
+
     override fun observeProfile(slug: String): Flow<StoreReadResponse<User>> =
         flowOf(
             StoreReadResponse.Data(
-                value = User(
-                    slug = "me",
-                    user_name = "silly_eyes",
-                    full_name = "Stranger Danger",
-                    profile_picture = "",
-                    is_me = true,
-                ),
+                value = user,
                 origin = StoreReadResponseOrigin.Cache,
             ),
         )
+
+    override suspend fun clearProfile() {
+        // no-op
+    }
 }

@@ -17,7 +17,7 @@ class ProfileNavigationFactory(
             content = {
                 profile(
                     settingsClicked = {
-                        navController.navigate(NavigationScreen.SettingsScreen.route)
+                        navController.navigate(NavigationScreen.SettingsNavScreen.route)
                     },
                 )
             },
