@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.androidCore.traktAuth)
+    implementation(projects.core.traktAuth.api)
     implementation(projects.presentation.profile)
 
     implementation(libs.flowredux)
