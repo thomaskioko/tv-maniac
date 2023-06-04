@@ -45,6 +45,7 @@ include(
     ":core:datastore:testing",
     ":core:trakt-auth:api",
     ":core:trakt-auth:implementation",
+    ":core:trakt-auth:testing",
     ":data:watchlist:api",
     ":data:watchlist:implementation",
     ":data:watchlist:testing",
