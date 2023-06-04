@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ButtonDefaults
@@ -60,12 +59,12 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
-import com.thomaskioko.tvmaniac.presentation.profile.LoggedOutUser
+import com.thomaskioko.tvmaniac.presentation.profile.LoggedOutContent
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileError
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStats
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStatsError
-import com.thomaskioko.tvmaniac.presentation.profile.SignedInProfileContent
+import com.thomaskioko.tvmaniac.presentation.profile.SignedInContent
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
@@ -124,17 +123,17 @@ private fun ProfileScreen(
         modifier = modifier
             .background(color = MaterialTheme.colorScheme.background)
             .statusBarsPadding(),
-        content = {
+        content = { contentPadding ->
+
             when (state) {
-                is LoggedOutUser -> {
+                is LoggedOutContent -> {
                     LoggedOutContent(
                         onConnectClicked = onConnectClicked,
                     )
                 }
-                is SignedInProfileContent -> {
+                is SignedInContent -> {
                     UserProfile(
                         state = state,
-                        loggedIn = state.loggedIn,
                         picUrl = state.traktUser?.userPicUrl,
                     )
                 }
@@ -276,8 +275,7 @@ fun TextListItem(
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
 fun UserProfile(
-    state: SignedInProfileContent,
-    loggedIn: Boolean,
+    state: SignedInContent,
     picUrl: String?,
     modifier: Modifier = Modifier,
 ) {
@@ -288,7 +286,7 @@ fun UserProfile(
         verticalArrangement = Arrangement.Center,
     ) {
         when {
-            loggedIn && picUrl != null -> {
+            picUrl != null -> {
                 Card(
                     modifier = Modifier
                         .padding(top = 16.dp)
@@ -321,10 +319,7 @@ fun UserProfile(
 
             else -> {
                 Icon(
-                    imageVector = when {
-                        state.loggedIn -> Icons.Default.Person
-                        else -> Icons.Outlined.Person
-                    },
+                    imageVector = Icons.Outlined.Person,
                     contentDescription = stringResource(R.string.cd_user_profile),
                 )
             }
