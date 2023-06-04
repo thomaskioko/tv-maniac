@@ -20,8 +20,7 @@ class DiscoverShowsStore(
     private val traktRemoteDataSource: TraktRemoteDataSource,
     private val mapper: ShowsResponseMapper,
     private val scope: AppCoroutineScope,
-) : Store<Category, List<ShowsByCategory>> by StoreBuilder.from<Category, List<ShowsByCategory>,
-    List<ShowsByCategory>, List<ShowsByCategory>,>(
+) : Store<Category, List<ShowsByCategory>> by StoreBuilder.from<Category, List<ShowsByCategory>, List<ShowsByCategory>>(
     fetcher = Fetcher.of { category ->
         when (category) {
             Category.POPULAR -> mapper.showResponseToCacheList(traktRemoteDataSource.getPopularShows())
