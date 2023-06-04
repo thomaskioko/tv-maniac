@@ -14,6 +14,7 @@ kotlin {
         }
 
         sourceSets["commonMain"].dependencies {
+            api(projects.core.datastore.api)
             api(libs.coroutines.core)
         }
     }

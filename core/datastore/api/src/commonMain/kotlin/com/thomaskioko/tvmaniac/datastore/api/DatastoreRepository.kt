@@ -6,10 +6,10 @@ interface DatastoreRepository {
     fun saveTheme(theme: Theme)
     fun observeTheme(): Flow<Theme>
 
-    fun saveAuthState(authState: AuthState)
     fun clearAuthState()
     fun observeAuthState(): Flow<AuthState>
-    suspend fun getAuthState() : AuthState
+    suspend fun saveAuthState(authState: AuthState)
+    suspend fun getAuthState(): AuthState
 }
 
 enum class Theme {

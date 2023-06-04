@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
-import com.thomaskioko.tvmaniac.traktauth.api.AuthState
+import com.thomaskioko.tvmaniac.datastore.api.AuthState
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
@@ -16,9 +17,10 @@ import me.tatarka.inject.annotations.Inject
 @OptIn(DelicateCoroutinesApi::class)
 @Inject
 class TraktAuthRepositoryImpl(
+    private val datastoreRepository: DatastoreRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : TraktAuthRepository {
-    private val authState = MutableStateFlow(EmptyAuthState)
+    private val authState = MutableStateFlow(AuthState())
 
     private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
     override val state: StateFlow<TraktAuthState>
@@ -32,55 +34,30 @@ class TraktAuthRepositoryImpl(
         }
 
         GlobalScope.launch(dispatchers.main) {
-            val state = withContext(dispatchers.io) { readAuthState() }
+            val state = withContext(dispatchers.io) {
+                datastoreRepository.getAuthState()
+            }
             authState.value = state
         }
     }
 
-    override fun updateAuthState(authState: AuthState) {
-        if (authState.isAuthorized) {
-            _state.value = TraktAuthState.LOGGED_IN
-        } else {
-            _state.value = TraktAuthState.LOGGED_OUT
-        }
-    }
-
     override fun clearAuth() {
-        authState.value = EmptyAuthState
-        clearPersistedAuthState()
+        updateAuthState(AuthState())
+        GlobalScope.launch(dispatchers.io) { datastoreRepository.clearAuthState() }
     }
 
     override fun onNewAuthState(newState: AuthState) {
-        GlobalScope.launch(dispatchers.main) {
-            authState.value = newState
-        }
         GlobalScope.launch(dispatchers.io) {
-            persistAuthState(newState)
+            datastoreRepository.saveAuthState(newState)
+            authState.value = newState
+            updateAuthState(newState)
         }
     }
 
-    private fun readAuthState(): AuthState {
-        // TODO:: Add implementation. #61
-        return AuthState(
-            accessToken = "",
-            refreshToken = "",
-            isAuthorized = false,
-        )
-    }
-
-    private fun persistAuthState(state: AuthState) {
-        // TODO:: Add implementation. #61
-    }
-
-    private fun clearPersistedAuthState() {
-        // TODO:: Add implementation. #61
-    }
-
-    companion object {
-        private val EmptyAuthState = AuthState(
-            accessToken = "",
-            refreshToken = "",
-            isAuthorized = false,
-        )
+    override fun updateAuthState(authState: AuthState) {
+        _state.value = when {
+            authState.isAuthorized -> TraktAuthState.LOGGED_IN
+            else -> TraktAuthState.LOGGED_OUT
+        }
     }
 }

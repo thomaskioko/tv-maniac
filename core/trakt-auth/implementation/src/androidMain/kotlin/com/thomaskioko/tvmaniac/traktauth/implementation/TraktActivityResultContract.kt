@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.traktauth
+package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import android.content.Context
 import android.content.Intent
