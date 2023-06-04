@@ -19,7 +19,7 @@ class ShowStore(
     private val mapper: ShowsResponseMapper,
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
-) : Store<Long, ShowById> by StoreBuilder.from<Long, ShowById, ShowById, ShowById>(
+) : Store<Long, ShowById> by StoreBuilder.from<Long, ShowById, ShowById>(
     fetcher = Fetcher.of { traktId ->
         when (val apiResult = traktRemoteDataSource.getSeasonDetails(traktId)) {
             is ApiResponse.Success -> {

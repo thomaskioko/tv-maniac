@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
@@ -24,10 +23,10 @@ class SeasonDetailsStore(
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
 ) : Store<Long, List<SeasonWithEpisodes>> by StoreBuilder
-    .from<Long, List<TraktSeasonEpisodesResponse>, List<SeasonWithEpisodes>, List<SeasonWithEpisodes>>(
-        fetcher = Fetcher.of { id ->
+    .from<Long, List<SeasonWithEpisodes>, List<SeasonWithEpisodes>>(
+        fetcher = Fetcher.of { id: Long ->
             when (val response = traktRemoteDataSource.getSeasonEpisodes(id)) {
-                is ApiResponse.Success -> response.body
+                is ApiResponse.Success -> response.body.toSeasonWithEpisodes()
                 is ApiResponse.Error.GenericError -> {
                     logger.error("GenericError", "$response")
                     throw Throwable("${response.errorMessage}")

@@ -10,11 +10,10 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -44,7 +43,7 @@ import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import com.thomaskioko.tvmaniac.navigation.addNavigation
 import com.thomaskioko.tvmaniac.resources.R
 
-@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun HomeScreen(
     factorySet: Set<ComposeNavigationFactory>,
@@ -68,6 +67,7 @@ fun HomeScreen(
                 NavigationScreen.SearchNavScreen.route,
                 NavigationScreen.WatchlistNavScreen.route,
                 NavigationScreen.ProfileNavScreen.route,
+                NavigationScreen.SettingsNavScreen.route,
             )
             AnimatedVisibility(visible = showBottomBar) {
                 TvManiacBottomNavigation(
@@ -133,10 +133,10 @@ private fun TvManiacBottomNavigation(
         )
 
         TvManiacBottomNavigationItem(
-            screen = NavigationScreen.ProfileNavScreen,
-            imageVector = Icons.Filled.AccountCircle,
-            title = stringResource(id = R.string.menu_item_profile),
-            selected = currentSelectedItem == NavigationScreen.ProfileNavScreen,
+            screen = NavigationScreen.SettingsNavScreen,
+            imageVector = Icons.Filled.Settings,
+            title = stringResource(id = R.string.menu_item_settings),
+            selected = currentSelectedItem == NavigationScreen.SettingsNavScreen,
             onNavigationSelected = onNavigationSelected,
         )
     }

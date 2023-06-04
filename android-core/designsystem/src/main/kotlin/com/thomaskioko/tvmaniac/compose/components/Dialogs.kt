@@ -21,6 +21,8 @@ fun BasicDialog(
     dialogTitle: String,
     dialogMessage: String,
     confirmButtonText: String,
+    enableConfirmButton: Boolean = true,
+    enableDismissButton: Boolean = true,
     dismissButtonText: String? = null,
     shape: Shape = RectangleShape,
     onDismissDialog: () -> Unit = {},
@@ -51,6 +53,7 @@ fun BasicDialog(
         },
         confirmButton = {
             TvManiacOutlinedButton(
+                enabled = enableConfirmButton,
                 text = confirmButtonText,
                 onClick = confirmButtonClicked,
             )
@@ -58,6 +61,7 @@ fun BasicDialog(
         dismissButton = {
             dismissButtonText?.let {
                 TvManiacOutlinedButton(
+                    enabled = enableDismissButton,
                     text = dismissButtonText,
                     onClick = dismissButtonClicked,
                 )

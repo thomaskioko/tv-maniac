@@ -2,11 +2,11 @@ package com.thomaskioko.tvmaniac.presentation.profile
 
 sealed interface ProfileState
 
-data class LoggedOutUser(
+data class LoggedOutContent(
     val showTraktDialog: Boolean = false,
 ) : ProfileState
 
-data class SignedInProfileContent(
+data class SignedInContent(
     val isLoading: Boolean = false,
     val showLogoutDialog: Boolean = false,
     val loggedIn: Boolean = false,
