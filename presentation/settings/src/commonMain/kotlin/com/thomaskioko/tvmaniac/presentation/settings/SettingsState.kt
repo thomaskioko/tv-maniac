@@ -12,6 +12,7 @@ data class SettingsContent(
     val traktUserName: String?,
     val traktFullName: String?,
     val traktUserPicUrl: String?,
+    val errorMessage: String?,
 ) : SettingsState {
     companion object {
         val EMPTY = SettingsContent(
@@ -22,6 +23,7 @@ data class SettingsContent(
             traktUserName = null,
             traktFullName = null,
             traktUserPicUrl = null,
+            errorMessage = null,
         )
     }
 }
