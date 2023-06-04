@@ -18,6 +18,7 @@ kotlin {
         sourceSets["commonMain"].dependencies {
             implementation(projects.core.util)
             implementation(projects.core.traktApi.api)
+            implementation(projects.core.datastore.api)
 
             implementation(libs.ktor.core)
             implementation(libs.ktor.logging)

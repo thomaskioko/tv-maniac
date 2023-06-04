@@ -14,7 +14,7 @@ class SettingsNavigationFactory(
 
     override fun create(builder: NavGraphBuilder, navController: NavHostController) {
         builder.screenComposable(
-            route = NavigationScreen.SettingsScreen.route,
+            route = NavigationScreen.SettingsNavScreen.route,
             content = {
                 settings(
                     onBackClicked = { navController.popBackStack() },

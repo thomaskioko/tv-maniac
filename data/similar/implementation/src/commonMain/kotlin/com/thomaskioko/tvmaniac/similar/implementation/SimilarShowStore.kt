@@ -20,8 +20,7 @@ class SimilarShowStore(
     private val showsDao: ShowsDao,
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
-) : Store<Long, List<SimilarShows>> by StoreBuilder.from<
-    Long, List<SimilarShows>, List<SimilarShows>, List<SimilarShows>,>(
+) : Store<Long, List<SimilarShows>> by StoreBuilder.from<Long, List<SimilarShows>, List<SimilarShows>>(
     fetcher = Fetcher.of { id ->
 
         when (val apiResult = traktRemoteDataSource.getSimilarShows(id)) {

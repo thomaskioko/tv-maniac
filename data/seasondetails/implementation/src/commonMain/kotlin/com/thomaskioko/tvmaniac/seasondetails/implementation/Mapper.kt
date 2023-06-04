@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Episodes
+import com.thomaskioko.tvmaniac.core.db.SeasonWithEpisodes
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 
@@ -34,4 +35,9 @@ fun List<TraktEpisodesResponse>.toEpisodeCache(seasonId: Long): List<Episodes> {
             episode_number = episodeResponse.episodeNumber.toString().padStart(2, '0'),
         )
     }
+}
+
+fun List<TraktSeasonEpisodesResponse>.toSeasonWithEpisodes(): List<SeasonWithEpisodes> {
+    // TODO:: Add mapping #59
+    return emptyList()
 }

@@ -3,30 +3,39 @@ package com.thomaskioko.showdetails
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.Tab
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
@@ -42,9 +51,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -59,6 +71,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.showdetails.DetailConstants.HEADER_HEIGHT
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -70,6 +83,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacChip
 import com.thomaskioko.tvmaniac.compose.components.TvManiacOutlinedButton
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTextButton
+import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
@@ -84,7 +98,10 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState
 import com.thomaskioko.tvmaniac.presentation.showdetails.WebViewError
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
+import dev.chrisbanes.snapper.ExperimentalSnapperApi
+import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -704,6 +721,109 @@ private fun TrailersContent(
                     )
                 },
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalSnapperApi::class)
+@Composable
+fun SimilarShowsContent(
+    isLoading: Boolean,
+    similarShows: List<Show>,
+    modifier: Modifier = Modifier,
+    onShowClicked: (Long) -> Unit = {},
+) {
+    val lazyListState = rememberLazyListState()
+
+    TextLoadingItem(
+        isLoading = isLoading,
+        text = stringResource(id = R.string.title_similar),
+    )
+
+    LazyRow(
+        modifier = modifier,
+        state = lazyListState,
+        flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+    ) {
+        itemsIndexed(similarShows) { index, tvShow ->
+            val value = if (index == 0) 16 else 4
+
+            Spacer(modifier = Modifier.width(value.dp))
+
+            TvPosterCard(
+                posterImageUrl = tvShow.posterImageUrl,
+                title = tvShow.title,
+                onClick = { onShowClicked(tvShow.traktId) },
+                imageWidth = 84.dp,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalSnapperApi::class)
+@Composable
+fun TrailersRowContent(
+    isLoading: Boolean,
+    trailersList: List<Trailer>,
+    modifier: Modifier = Modifier,
+    onTrailerClicked: (Long, String) -> Unit,
+) {
+    TextLoadingItem(
+        isLoading = isLoading,
+        text = stringResource(id = R.string.title_trailer),
+    )
+
+    val lazyListState = rememberLazyListState()
+
+    LazyRow(
+        modifier = modifier,
+        state = lazyListState,
+        flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+    ) {
+        itemsIndexed(trailersList) { index, trailer ->
+
+            val value = if (index == 0) 16 else 8
+            Spacer(modifier = Modifier.width(value.dp))
+
+            Card(
+                modifier = Modifier
+                    .clickable { onTrailerClicked(trailer.showId, trailer.key) },
+                shape = RoundedCornerShape(4.dp),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 4.dp,
+                ),
+            ) {
+                Box {
+                    AsyncImageComposable(
+                        model = trailer.youtubeThumbnailUrl,
+                        contentDescription = trailer.name,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .height(140.dp)
+                            .aspectRatio(3 / 1.5f)
+                            .drawWithCache {
+                                val gradient = Brush.verticalGradient(
+                                    colors = listOf(Color.Transparent, Color.Black),
+                                    startY = size.height / 3,
+                                    endY = size.height,
+                                )
+                                onDrawWithContent {
+                                    drawContent()
+                                    drawRect(gradient, blendMode = BlendMode.Multiply)
+                                }
+                            },
+                    )
+
+                    Icon(
+                        imageVector = Icons.Filled.PlayCircle,
+                        contentDescription = trailer.name,
+                        tint = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(48.dp),
+                    )
+                }
+            }
         }
     }
 }

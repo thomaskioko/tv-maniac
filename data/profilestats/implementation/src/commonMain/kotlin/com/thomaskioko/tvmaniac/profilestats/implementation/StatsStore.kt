@@ -10,7 +10,7 @@ import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.StoreBuilder
+import org.mobilenativefoundation.store.store5.impl.storeBuilderFromFetcherAndSourceOfTruth
 
 @Inject
 class StatsStore(
@@ -19,7 +19,7 @@ class StatsStore(
     private val mapper: StatsMapper,
     private val logger: KermitLogger,
     private val scope: AppCoroutineScope,
-) : Store<String, Stats> by StoreBuilder.from<String, Stats, Stats, Stats>(
+) : Store<String, Stats> by storeBuilderFromFetcherAndSourceOfTruth<String, Stats, Stats>(
     fetcher = Fetcher.of { slug ->
 
         when (val response = traktRemoteDataSource.getStats(slug)) {

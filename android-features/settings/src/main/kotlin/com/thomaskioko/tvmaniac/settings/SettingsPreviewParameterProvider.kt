@@ -17,6 +17,7 @@ class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState>
                     traktUserName = "@j_Doe",
                     traktFullName = "J Doe",
                     traktUserPicUrl = "image.png",
+                    errorMessage = null,
                 ),
                 SettingsContent(
                     theme = Theme.DARK,
@@ -26,6 +27,7 @@ class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState>
                     traktUserName = "@j_Doe",
                     traktFullName = "J Doe",
                     traktUserPicUrl = "image.png",
+                    errorMessage = null,
                 ),
             )
         }

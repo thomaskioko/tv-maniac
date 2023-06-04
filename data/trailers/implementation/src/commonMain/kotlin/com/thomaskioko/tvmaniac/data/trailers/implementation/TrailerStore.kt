@@ -19,7 +19,7 @@ class TrailerStore(
     private val showsDao: ShowsDao,
     private val logger: KermitLogger,
     private val scope: AppCoroutineScope,
-) : Store<Long, List<Trailers>> by StoreBuilder.from<Long, List<Trailers>, List<Trailers>, List<Trailers>>(
+) : Store<Long, List<Trailers>> by StoreBuilder.from<Long, List<Trailers>, List<Trailers>>(
     fetcher = Fetcher.of { id ->
 
         val show = showsDao.getTvShow(id)
