@@ -74,7 +74,10 @@ fun TvManiacOutlinedButton(
                 Text(
                     text = text,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = when {
+                        enabled -> MaterialTheme.colorScheme.secondary
+                        else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                    },
                     modifier = Modifier
                         .padding(textPadding),
                 )
