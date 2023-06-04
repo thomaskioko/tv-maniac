@@ -18,7 +18,7 @@ class SeasonsStore(
     private val seasonsDao: SeasonsDao,
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
-) : Store<Long, List<Seasons>> by StoreBuilder.from<Long, List<Seasons>, List<Seasons>, List<Seasons>>(
+) : Store<Long, List<Seasons>> by StoreBuilder.from<Long, List<Seasons>, List<Seasons>>(
     fetcher = Fetcher.of { id ->
         when (val response = traktRemoteDataSource.getShowSeasons(id)) {
             is ApiResponse.Success -> response.body.toSeasonCacheList(id)
@@ -38,7 +38,7 @@ class SeasonsStore(
             }
         }
     },
-    sourceOfTruth = SourceOfTruth.Companion.of(
+    sourceOfTruth = SourceOfTruth.of(
         reader = seasonsDao::observeSeasons,
         writer = { _, list -> seasonsDao.insertSeasons(list) },
         delete = seasonsDao::delete,
