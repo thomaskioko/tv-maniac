@@ -1,8 +1,10 @@
-package com.thomaskioko.tvmaniac.traktauth
+package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import android.app.Activity
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import me.tatarka.inject.annotations.Inject
 import net.openid.appauth.AuthState
@@ -44,7 +46,13 @@ class TraktAuthManagerImpl(
                     val state = AuthState().apply {
                         update(tokenResponse, ex)
                     }
-                    traktAuthRepository.onNewAuthState(state)
+                    traktAuthRepository.onNewAuthState(
+                        com.thomaskioko.tvmaniac.datastore.api.AuthState(
+                            accessToken = state.accessToken,
+                            refreshToken = state.refreshToken,
+                            isAuthorized = state.isAuthorized,
+                        ),
+                    )
                 }
             }
 

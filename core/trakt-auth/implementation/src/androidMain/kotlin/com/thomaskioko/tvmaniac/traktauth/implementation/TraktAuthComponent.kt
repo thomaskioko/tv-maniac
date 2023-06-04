@@ -1,19 +1,12 @@
-package com.thomaskioko.tvmaniac.traktauth.inject
+package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
 import android.net.Uri
 import androidx.core.net.toUri
-import com.thomaskioko.tvmaniac.traktauth.TraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.TraktAuthManagerImpl
-import com.thomaskioko.tvmaniac.traktauth.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.model.TraktAuthState
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.util.model.Configs
 import com.thomaskioko.tvmaniac.util.scope.ActivityScope
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import me.tatarka.inject.annotations.Provides
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService
@@ -26,13 +19,6 @@ interface TraktAuthComponent {
 
     @ApplicationScope
     @Provides
-    fun provideTraktAuthState(traktAuthRepository: TraktAuthRepository): TraktAuthState =
-        runBlocking {
-            traktAuthRepository.state.first()
-        }
-
-    @ApplicationScope
-    @Provides
     fun provideAuthConfig(): AuthorizationServiceConfiguration {
         return AuthorizationServiceConfiguration(
             Uri.parse("https://trakt.tv/oauth/authorize"),
@@ -42,10 +28,10 @@ interface TraktAuthComponent {
 
     @Provides
     fun provideAuthRequest(
-        serviceConfig: AuthorizationServiceConfiguration,
+        configuration: AuthorizationServiceConfiguration,
         configs: Configs,
     ): AuthorizationRequest = AuthorizationRequest.Builder(
-        serviceConfig,
+        configuration,
         configs.traktClientId,
         ResponseTypeValues.CODE,
         configs.traktRedirectUri.toUri(),
@@ -58,12 +44,6 @@ interface TraktAuthComponent {
     fun provideClientAuth(
         configs: Configs,
     ): ClientAuthentication = ClientSecretBasic(configs.traktClientSecret)
-
-    @ApplicationScope
-    @Provides
-    fun provideAuthSharedPrefs(
-        context: Application,
-    ): SharedPreferences = context.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
 
     @ApplicationScope
     @Provides

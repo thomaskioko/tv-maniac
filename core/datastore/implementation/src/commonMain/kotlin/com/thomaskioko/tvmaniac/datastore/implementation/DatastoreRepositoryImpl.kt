@@ -37,7 +37,7 @@ class DatastoreRepositoryImpl(
         }
     }
 
-    override fun saveAuthState(authState: AuthState) {
+    override suspend fun saveAuthState(authState: AuthState) {
         coroutineScope.io.launch {
             dataStore.edit { preferences ->
                 preferences[KEY_ACCESS_TOKEN] = authState.accessToken!!
@@ -51,7 +51,7 @@ class DatastoreRepositoryImpl(
         return AuthState(
             accessToken = dataStore.data.first()[KEY_ACCESS_TOKEN],
             refreshToken = dataStore.data.first()[KEY_REFRESH_TOKEN],
-            isAuthorized = dataStore.data.first()[KEY_IS_AUTHORIZED] ?: false
+            isAuthorized = dataStore.data.first()[KEY_IS_AUTHORIZED] ?: false,
         )
     }
 
@@ -69,7 +69,7 @@ class DatastoreRepositoryImpl(
         AuthState(
             accessToken = preferences[KEY_ACCESS_TOKEN],
             refreshToken = preferences[KEY_REFRESH_TOKEN],
-            isAuthorized = preferences[KEY_IS_AUTHORIZED] ?: false
+            isAuthorized = preferences[KEY_IS_AUTHORIZED] ?: false,
         )
     }
 
