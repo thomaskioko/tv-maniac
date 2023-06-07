@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 class FakeTraktAuthRepository : TraktAuthRepository {
 
-    override val state: StateFlow<TraktAuthState>
-        get() = MutableStateFlow(TraktAuthState.LOGGED_OUT)
+    override fun observeState(): StateFlow<TraktAuthState> =
+        MutableStateFlow(TraktAuthState.LOGGED_OUT)
 
     override fun updateAuthState(authState: AuthState) {
         // no-op

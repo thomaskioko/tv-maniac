@@ -47,12 +47,16 @@ class DatastoreRepositoryImpl(
         }
     }
 
-    override suspend fun getAuthState(): AuthState {
-        return AuthState(
-            accessToken = dataStore.data.first()[KEY_ACCESS_TOKEN],
-            refreshToken = dataStore.data.first()[KEY_REFRESH_TOKEN],
-            isAuthorized = dataStore.data.first()[KEY_IS_AUTHORIZED] ?: false,
-        )
+    override suspend fun getAuthState(): AuthState? {
+        return if (dataStore.data.first()[KEY_ACCESS_TOKEN] == null) {
+            null
+        } else {
+            AuthState(
+                accessToken = dataStore.data.first()[KEY_ACCESS_TOKEN],
+                refreshToken = dataStore.data.first()[KEY_REFRESH_TOKEN],
+                isAuthorized = dataStore.data.first()[KEY_IS_AUTHORIZED] ?: false,
+            )
+        }
     }
 
     override fun clearAuthState() {
