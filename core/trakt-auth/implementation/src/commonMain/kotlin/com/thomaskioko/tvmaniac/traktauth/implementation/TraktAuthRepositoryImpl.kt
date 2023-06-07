@@ -23,8 +23,7 @@ class TraktAuthRepositoryImpl(
     private val authState = MutableStateFlow(AuthState())
 
     private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
-    override val state: StateFlow<TraktAuthState>
-        get() = _state.asStateFlow()
+    override fun observeState(): StateFlow<TraktAuthState> = _state.asStateFlow()
 
     init {
         GlobalScope.launch(dispatchers.io) {
@@ -37,7 +36,7 @@ class TraktAuthRepositoryImpl(
             val state = withContext(dispatchers.io) {
                 datastoreRepository.getAuthState()
             }
-            authState.value = state
+            authState.value = state ?: AuthState()
         }
     }
 

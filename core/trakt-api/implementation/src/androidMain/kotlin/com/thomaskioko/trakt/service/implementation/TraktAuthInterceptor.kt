@@ -22,7 +22,7 @@ class TraktAuthInterceptor(
 
         request = request.newBuilder()
             .addHeader(HttpHeaders.ContentType, "application/json")
-            .addHeader(HttpHeaders.Authorization, "Bearer ${authState.accessToken}")
+            .addHeader(HttpHeaders.Authorization, "Bearer ${authState?.accessToken}")
             .build()
         return chain.proceed(request)
     }
