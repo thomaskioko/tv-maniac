@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thomaskioko.tvmaniac.presentation.settings.Default
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsActions
-import com.thomaskioko.tvmaniac.presentation.settings.SettingsContent
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsState
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsStateMachine
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
@@ -17,7 +17,7 @@ class SettingsViewModel(
     private val traktAuthManager: TraktAuthManager,
 ) : ViewModel() {
 
-    val state: MutableStateFlow<SettingsState> = MutableStateFlow(SettingsContent.EMPTY)
+    val state: MutableStateFlow<SettingsState> = MutableStateFlow(Default.EMPTY)
 
     init {
         viewModelScope.launch {
