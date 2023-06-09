@@ -18,8 +18,9 @@ kotlin {
         }
 
         sourceSets["commonTest"].dependencies {
-            implementation(projects.data.episodeimages.testing)
-            implementation(projects.data.seasondetails.testing)
+            implementation(projects.core.datastore.testing)
+            implementation(projects.data.profile.testing)
+            implementation(projects.core.traktAuth.testing)
         }
     }
 }

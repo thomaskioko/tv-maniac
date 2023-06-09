@@ -1,7 +1,6 @@
-package com.thomaskioko.tvmaniac.presentation.settings
+package com.thomaskioko.tvmaniac.presentation.profile
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.datastore.api.Theme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.testing.authenticatedAuthState
 import com.thomaskioko.tvmaniac.trakt.profile.testing.FakeProfileRepository
@@ -14,12 +13,13 @@ import org.mobilenativefoundation.store.store5.StoreReadResponse
 import org.mobilenativefoundation.store.store5.StoreReadResponseOrigin
 import kotlin.test.Test
 
-class SettingsStateMachineTest {
+class ProfileStateMachineTest {
 
     private val datastoreRepository = FakeDatastoreRepository()
     private val profileRepository = FakeProfileRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
-    private val stateMachine = SettingsStateMachine(
+
+    private val stateMachine = ProfileStateMachine(
         datastoreRepository = datastoreRepository,
         profileRepository = profileRepository,
         traktAuthRepository = traktAuthRepository,
@@ -28,87 +28,25 @@ class SettingsStateMachineTest {
     @Test
     fun initial_state_emits_expected_result() = runTest {
         stateMachine.state.test {
-            awaitItem() shouldBe Default.EMPTY
+            awaitItem() shouldBe LoggedOutContent()
         }
     }
 
     @Test
-    fun when_theme_is_updated_expected_result_is_emitted() = runTest {
+    fun given_ShowTraktDialog_andUserIsAuthenticated_expectedResultIsEmitted() = runTest {
         stateMachine.state.test {
-            awaitItem() shouldBe Default.EMPTY // Initial State
-
-            stateMachine.dispatch(ChangeThemeClicked)
-            awaitItem() shouldBe Default.EMPTY.copy(
-                showPopup = true,
-            )
-
-            datastoreRepository.setTheme(Theme.DARK)
-            stateMachine.dispatch(ThemeSelected(Theme.DARK))
-
-            awaitItem() shouldBe Default.EMPTY.copy(
-                showPopup = true,
-                theme = Theme.DARK,
-            )
-            awaitItem() shouldBe Default.EMPTY.copy(
-                showPopup = false,
-                theme = Theme.DARK,
-            )
-        }
-    }
-
-    @Test
-    fun when_dialog_is_dismissed_expected_result_is_emitted() = runTest {
-        stateMachine.state.test {
-            awaitItem() shouldBe Default.EMPTY // Initial State
-
-            stateMachine.dispatch(ChangeThemeClicked)
-
-            awaitItem() shouldBe Default.EMPTY.copy(
-                showPopup = true,
-            )
-
-            stateMachine.dispatch(DimissThemeClicked)
-
-            awaitItem() shouldBe Default.EMPTY.copy(
-                showPopup = false,
-            )
-        }
-    }
-
-    @Test
-    fun when_ShowTraktDialog_is_clicked_expected_result_is_emitted() = runTest {
-        stateMachine.state.test {
-            awaitItem() shouldBe Default.EMPTY // Initial State
+            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE // Initial State
 
             stateMachine.dispatch(ShowTraktDialog)
 
-            awaitItem() shouldBe Default.EMPTY.copy(
-                showTraktDialog = true,
-            )
-
-            stateMachine.dispatch(DismissTraktDialog)
-
-            awaitItem() shouldBe Default.EMPTY.copy(
-                showTraktDialog = false,
-            )
-        }
-    }
-
-    @Test
-    fun given_TraktLoginClicked_andUserIsAuthenticated_expectedResultIsEmitted() = runTest {
-        stateMachine.state.test {
-            awaitItem() shouldBe Default.EMPTY // Initial State
-
-            stateMachine.dispatch(ShowTraktDialog)
-
-            awaitItem() shouldBe Default.EMPTY
+            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE
                 .copy(
                     showTraktDialog = true,
                 )
 
             stateMachine.dispatch(TraktLoginClicked)
 
-            awaitItem() shouldBe Default.EMPTY
+            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE
                 .copy(
                     showTraktDialog = false,
                 )
@@ -122,8 +60,8 @@ class SettingsStateMachineTest {
                 ),
             )
 
-            awaitItem() shouldBe LoggedInContent.DEFAULT_STATE
-            awaitItem() shouldBe LoggedInContent.DEFAULT_STATE
+            awaitItem() shouldBe LoggedInContent()
+            awaitItem() shouldBe LoggedInContent()
                 .copy(
                     errorMessage = null,
                     userInfo = UserInfo(
@@ -141,17 +79,17 @@ class SettingsStateMachineTest {
         stateMachine.state.test {
             val errorMessage = "Something happened"
 
-            awaitItem() shouldBe Default.EMPTY // Initial State
+            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE
 
             stateMachine.dispatch(ShowTraktDialog)
 
-            awaitItem() shouldBe Default.EMPTY.copy(
+            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE.copy(
                 showTraktDialog = true,
             )
 
             stateMachine.dispatch(TraktLoginClicked)
 
-            awaitItem() shouldBe Default.EMPTY.copy(
+            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE.copy(
                 showTraktDialog = false,
             )
 
@@ -164,8 +102,8 @@ class SettingsStateMachineTest {
                 ),
             )
 
-            awaitItem() shouldBe LoggedInContent.DEFAULT_STATE
-            awaitItem() shouldBe LoggedInContent.DEFAULT_STATE
+            awaitItem() shouldBe LoggedInContent()
+            awaitItem() shouldBe LoggedInContent()
                 .copy(
                     errorMessage = errorMessage,
                 )
@@ -175,7 +113,7 @@ class SettingsStateMachineTest {
     @Test
     fun given_TraktLogoutClicked_expectedResultIsEmitted() = runTest {
         stateMachine.state.test {
-            awaitItem() shouldBe Default.EMPTY // Initial State
+            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE
 
             traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
             datastoreRepository.setAuthState(authenticatedAuthState)
@@ -186,8 +124,8 @@ class SettingsStateMachineTest {
                 ),
             )
 
-            awaitItem() shouldBe LoggedInContent.DEFAULT_STATE
-            awaitItem() shouldBe LoggedInContent.DEFAULT_STATE
+            awaitItem() shouldBe LoggedInContent()
+            awaitItem() shouldBe LoggedInContent()
                 .copy(
                     errorMessage = null,
                     userInfo = UserInfo(
@@ -200,7 +138,7 @@ class SettingsStateMachineTest {
 
             stateMachine.dispatch(TraktLogoutClicked)
 
-            awaitItem() shouldBe Default.EMPTY
+            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE
         }
     }
 }

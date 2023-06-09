@@ -34,19 +34,12 @@ class ShowTasksImpl(
     override fun syncTraktFollowedShows() {
         val request = OneTimeWorkRequestBuilder<SyncWatchlist>()
             .addTag(SyncWatchlist.TAG)
-            .build()
-        workManager.enqueue(request)
-    }
-
-    override fun syncTraktFollowedShowsWhenIdle() {
-        val request = OneTimeWorkRequestBuilder<SyncWatchlist>()
-            .addTag(SyncWatchlist.TAG)
             .setConstraints(
                 Constraints.Builder()
-                    .setRequiresDeviceIdle(true)
+                    .setRequiredNetworkType(NetworkType.UNMETERED)
                     .build(),
-            )
-            .build()
+            ).build()
+
         workManager.enqueue(request)
     }
 }

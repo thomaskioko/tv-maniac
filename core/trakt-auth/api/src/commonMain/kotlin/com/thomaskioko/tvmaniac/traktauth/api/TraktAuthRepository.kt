@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface TraktAuthRepository {
 
-    val state: StateFlow<TraktAuthState>
+    fun observeState(): StateFlow<TraktAuthState>
 
     fun updateAuthState(authState: AuthState)
 

@@ -1,31 +1,29 @@
 package com.thomaskioko.tvmaniac.profile
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.thomaskioko.tvmaniac.presentation.profile.LoggedInContent
 import com.thomaskioko.tvmaniac.presentation.profile.LoggedOutContent
-import com.thomaskioko.tvmaniac.presentation.profile.ProfileError
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStats
-import com.thomaskioko.tvmaniac.presentation.profile.ProfileStatsError
-import com.thomaskioko.tvmaniac.presentation.profile.SignedInContent
-import com.thomaskioko.tvmaniac.presentation.profile.TraktUser
+import com.thomaskioko.tvmaniac.presentation.profile.UserInfo
 
 class ProfilePreviewParameterProvider : PreviewParameterProvider<ProfileState> {
     override val values: Sequence<ProfileState>
         get() {
             return sequenceOf(
                 LoggedOutContent(),
-                SignedInContent(
+                LoggedInContent(
                     isLoading = true,
                     showLogoutDialog = false,
                     loggedIn = false,
-                    traktUser = null,
+                    userInfo = null,
                     profileStats = null,
                 ),
-                SignedInContent(
+                LoggedInContent(
                     isLoading = false,
                     showLogoutDialog = false,
                     loggedIn = true,
-                    traktUser = TraktUser(
+                    userInfo = UserInfo(
                         slug = "me",
                         userName = "@j_Doe",
                         fullName = "J Doe",
@@ -39,8 +37,6 @@ class ProfilePreviewParameterProvider : PreviewParameterProvider<ProfileState> {
                         episodesWatched = "8.1k",
                     ),
                 ),
-                ProfileError(error = "Something went Wrong "),
-                ProfileStatsError(error = "Something went Wrong "),
             )
         }
 }
