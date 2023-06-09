@@ -5,11 +5,17 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class FakeTraktAuthRepository : TraktAuthRepository {
 
-    override fun observeState(): StateFlow<TraktAuthState> =
-        MutableStateFlow(TraktAuthState.LOGGED_OUT)
+    private val state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
+
+    suspend fun setAuthState(authState: TraktAuthState) {
+        state.emit(authState)
+    }
+
+    override fun observeState(): StateFlow<TraktAuthState> = state.asStateFlow()
 
     override fun updateAuthState(authState: AuthState) {
         // no-op
