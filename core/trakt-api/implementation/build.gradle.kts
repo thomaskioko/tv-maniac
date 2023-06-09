@@ -24,7 +24,6 @@ kotlin {
             implementation(libs.ktor.logging)
             implementation(libs.ktor.negotiation)
             implementation(libs.ktor.serialization.json)
-            implementation(libs.ktor.serialization)
             implementation(libs.kotlinInject.runtime)
             implementation(libs.sqldelight.extensions)
         }

@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collect
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadResponse
 
@@ -17,98 +16,142 @@ class SettingsStateMachine(
     private val datastoreRepository: DatastoreRepository,
     private val profileRepository: ProfileRepository,
     private val traktAuthRepository: TraktAuthRepository,
-) : FlowReduxStateMachine<SettingsState, SettingsActions>(initialState = SettingsContent.EMPTY) {
+) : FlowReduxStateMachine<SettingsState, SettingsActions>(initialState = Default.EMPTY) {
 
     init {
         spec {
 
-            inState<SettingsContent> {
+            inState<SettingsState> {
 
                 collectWhileInState(datastoreRepository.observeTheme()) { theme, state ->
                     state.mutate {
-                        copy(theme = theme)
+                        when (this) {
+                            is Default -> copy(theme = theme)
+                            is LoggedInContent -> copy(theme = theme)
+                        }
                     }
                 }
 
-                collectWhileInState(traktAuthRepository.state) { result, state ->
-                    when (result) {
-                        TraktAuthState.LOGGED_IN -> {
-                            profileRepository.observeProfile("me").collect()
-                            state.noChange()
+                on<DimissThemeClicked> { _, state ->
+                    state.mutate {
+                        when (this) {
+                            is Default -> copy(showPopup = false)
+                            is LoggedInContent -> copy(showPopup = false)
                         }
-
-                        TraktAuthState.LOGGED_OUT -> state.override { SettingsContent.EMPTY }
-                    }
-                }
-
-                collectWhileInState(profileRepository.observeProfile("me")) { response, state ->
-                    when (response) {
-                        is StoreReadResponse.Data -> state.mutate {
-                            copy(
-                                loggedIn = true,
-                                traktFullName = response.requireData().full_name,
-                                traktUserName = response.requireData().user_name,
-                                traktUserPicUrl = response.requireData().profile_picture,
-                            )
-                        }
-
-                        is StoreReadResponse.Error.Exception -> state.mutate {
-                            copy(
-                                errorMessage = response.errorMessageOrNull()
-                                    ?: "Something went wrong",
-                            )
-                        }
-
-                        is StoreReadResponse.Error.Message -> state.mutate {
-                            copy(
-                                errorMessage = response.message,
-                            )
-                        }
-
-                        is StoreReadResponse.Loading -> state.noChange()
-                        is StoreReadResponse.NoNewData -> state.noChange()
                     }
                 }
 
                 on<ChangeThemeClicked> { _, state ->
                     state.mutate {
-                        copy(showPopup = true)
+                        when (this) {
+                            is Default -> copy(showPopup = true)
+                            is LoggedInContent -> copy(showPopup = true)
+                        }
                     }
                 }
 
                 on<ThemeSelected> { action, state ->
                     datastoreRepository.saveTheme(action.theme)
-                    state.mutate { copy(showPopup = false) }
-                }
-
-                on<DimissThemeClicked> { _, state ->
                     state.mutate {
-                        copy(showPopup = false)
+                        when (this) {
+                            is Default -> copy(showPopup = false)
+                            is LoggedInContent -> copy(showPopup = false)
+                        }
                     }
                 }
 
                 on<ShowTraktDialog> { _, state ->
                     state.mutate {
-                        copy(showTraktDialog = true)
+                        when (this) {
+                            is Default -> copy(showTraktDialog = true)
+                            is LoggedInContent -> copy(showTraktDialog = true)
+                        }
                     }
                 }
 
                 on<DismissTraktDialog> { _, state ->
                     state.mutate {
-                        copy(showTraktDialog = false)
+                        when (this) {
+                            is Default -> copy(showTraktDialog = false)
+                            is LoggedInContent -> copy(showTraktDialog = false)
+                        }
+                    }
+                }
+            }
+
+            inState<Default> {
+
+                collectWhileInState(datastoreRepository.observeAuthState()) { result, state ->
+                    if (result.isAuthorized) {
+                        state.override { LoggedInContent.DEFAULT_STATE }
+                    } else {
+                        state.noChange()
                     }
                 }
 
-                on<TraktLogin> { _, state ->
+                on<TraktLoginClicked> { _, state ->
                     state.mutate {
                         copy(showTraktDialog = !showTraktDialog)
                     }
                 }
+            }
 
-                on<TraktLogout> { _, state ->
+            inState<LoggedInContent> {
+                collectWhileInState(traktAuthRepository.observeState()) { result, state ->
+                    when (result) {
+                        TraktAuthState.LOGGED_IN -> state.noChange()
+                        TraktAuthState.LOGGED_OUT -> {
+                            datastoreRepository.clearAuthState()
+                            traktAuthRepository.clearAuth()
+                            state.override { Default.EMPTY }
+                        }
+                    }
+                }
+
+                collectWhileInState(profileRepository.observeProfile("me")) { response, state ->
+
+                    when (response) {
+                        is StoreReadResponse.NoNewData -> state.noChange()
+                        is StoreReadResponse.Loading -> state.mutate {
+                            copy(
+                                isLoading = true,
+                            )
+                        }
+                        is StoreReadResponse.Data -> state.mutate {
+                            copy(
+                                isLoading = false,
+                                userInfo = UserInfo(
+                                    slug = response.requireData().slug,
+                                    userName = response.requireData().user_name,
+                                    fullName = response.requireData().full_name,
+                                    userPicUrl = response.requireData().profile_picture,
+                                ),
+                            )
+                        }
+
+                        is StoreReadResponse.Error.Exception -> state.mutate {
+                            copy(
+                                isLoading = false,
+                                errorMessage = response.error.message,
+                            )
+                        }
+
+                        is StoreReadResponse.Error.Message -> state.mutate {
+                            copy(
+                                isLoading = false,
+                                errorMessage = response.message,
+                            )
+                        }
+                    }
+                }
+
+                on<TraktLogoutClicked> { _, state ->
                     traktAuthRepository.clearAuth()
                     profileRepository.clearProfile()
-                    state.override { SettingsContent.EMPTY }
+
+                    state.override {
+                        Default.EMPTY
+                    }
                 }
             }
         }

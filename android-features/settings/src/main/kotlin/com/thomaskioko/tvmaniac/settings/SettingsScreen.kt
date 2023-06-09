@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -30,11 +31,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,13 +58,15 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.Theme
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.presentation.settings.ChangeThemeClicked
+import com.thomaskioko.tvmaniac.presentation.settings.Default
 import com.thomaskioko.tvmaniac.presentation.settings.DimissThemeClicked
 import com.thomaskioko.tvmaniac.presentation.settings.DismissTraktDialog
-import com.thomaskioko.tvmaniac.presentation.settings.SettingsContent
+import com.thomaskioko.tvmaniac.presentation.settings.LoggedInContent
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsState
 import com.thomaskioko.tvmaniac.presentation.settings.ShowTraktDialog
 import com.thomaskioko.tvmaniac.presentation.settings.ThemeSelected
-import com.thomaskioko.tvmaniac.presentation.settings.TraktLogout
+import com.thomaskioko.tvmaniac.presentation.settings.TraktLogoutClicked
+import com.thomaskioko.tvmaniac.presentation.settings.UserInfo
 import com.thomaskioko.tvmaniac.resources.R
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -86,15 +94,17 @@ internal fun SettingsScreen(
     modifier: Modifier = Modifier,
 ) {
     val settingsState by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     SettingsScreen(
         state = settingsState,
+        snackbarHostState = snackbarHostState,
         modifier = modifier,
         onBackClicked = onBackClicked,
         onThemeChanged = { viewModel.dispatch(ThemeSelected(it)) },
         onThemeClicked = { viewModel.dispatch(ChangeThemeClicked) },
         onDismissTheme = { viewModel.dispatch(DimissThemeClicked) },
-        onLogoutClicked = { viewModel.dispatch(TraktLogout) },
+        onLogoutClicked = { viewModel.dispatch(TraktLogoutClicked) },
         onLoginClicked = {
             viewModel.login()
             viewModel.dispatch(DismissTraktDialog)
@@ -114,6 +124,7 @@ internal fun SettingsScreen(
     onConnectClicked: () -> Unit,
     onLoginClicked: () -> Unit,
     onLogoutClicked: () -> Unit,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     onDismissDialogClicked: () -> Unit,
 ) {
@@ -126,35 +137,71 @@ internal fun SettingsScreen(
                 modifier = Modifier,
             )
         },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         modifier = modifier
             .background(color = MaterialTheme.colorScheme.background)
             .statusBarsPadding(),
         content = { innerPadding ->
 
-            when (state) {
-                is SettingsContent -> {
-                    SettingsList(
-                        settingsContent = state,
-                        onThemeChanged = onThemeChanged,
-                        onThemeClicked = onThemeClicked,
-                        onDismissTheme = onDismissTheme,
-                        onLogoutClicked = onLogoutClicked,
-                        onLoginClicked = onLoginClicked,
-                        onConnectClicked = onConnectClicked,
-                        onDismissDialogClicked = onDismissDialogClicked,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
+            LaunchedEffect(key1 = state.errorMessage) {
+                if (state.errorMessage != null) {
+                    snackbarHostState.showSnackbar(
+                        message = state.errorMessage!!,
+                        duration = SnackbarDuration.Short,
                     )
                 }
+            }
+
+            when (state) {
+                is Default -> SettingsContent(
+                    userInfo = state.userInfo,
+                    theme = state.theme,
+                    showPopup = state.showPopup,
+                    showTraktDialog = state.showTraktDialog,
+                    isLoading = false,
+                    onThemeChanged = onThemeChanged,
+                    onThemeClicked = onThemeClicked,
+                    onDismissTheme = onDismissTheme,
+                    onLogoutClicked = onLogoutClicked,
+                    onLoginClicked = onLoginClicked,
+                    onConnectClicked = onConnectClicked,
+                    onDismissDialogClicked = onDismissDialogClicked,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                )
+
+                is LoggedInContent -> SettingsContent(
+                    userInfo = state.userInfo,
+                    theme = state.theme,
+                    showPopup = state.showPopup,
+                    showTraktDialog = state.showTraktDialog,
+                    isLoading = state.isLoading,
+                    onThemeChanged = onThemeChanged,
+                    onThemeClicked = onThemeClicked,
+                    onDismissTheme = onDismissTheme,
+                    onLogoutClicked = onLogoutClicked,
+                    onLoginClicked = onLoginClicked,
+                    onConnectClicked = onConnectClicked,
+                    onDismissDialogClicked = onDismissDialogClicked,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                )
             }
         },
     )
 }
 
 @Composable
-fun SettingsList(
-    settingsContent: SettingsContent,
+fun SettingsContent(
+    userInfo: UserInfo?,
+    theme: Theme,
+    showPopup: Boolean,
+    showTraktDialog: Boolean,
+    isLoading: Boolean,
     onThemeChanged: (Theme) -> Unit,
     onThemeClicked: () -> Unit,
     onDismissTheme: () -> Unit,
@@ -171,25 +218,27 @@ fun SettingsList(
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
-            ThemeSettingsItem(
-                settingsContent = settingsContent,
-                onThemeSelected = onThemeChanged,
-                onThemeClicked = onThemeClicked,
-                onDismissTheme = onDismissTheme,
-            )
-        }
-
-        item {
             TraktProfileSettingsItem(
-                showTraktDialog = settingsContent.showTraktDialog,
-                loggedIn = settingsContent.loggedIn,
-                traktUserName = settingsContent.traktUserName,
-                traktFullName = settingsContent.traktFullName,
-                traktUserPicUrl = settingsContent.traktUserPicUrl,
+                showTraktDialog = showTraktDialog,
+                isLoading = isLoading,
+                loggedIn = userInfo != null,
+                traktUserName = userInfo?.userName,
+                traktFullName = userInfo?.fullName,
+                traktUserPicUrl = userInfo?.userPicUrl,
                 onLoginClicked = onLoginClicked,
                 onLogoutClicked = onLogoutClicked,
                 onDismissDialogClicked = onDismissDialogClicked,
                 onConnectClicked = onConnectClicked,
+            )
+        }
+
+        item {
+            SettingsThemeItem(
+                showPopup = showPopup,
+                theme = theme,
+                onThemeSelected = onThemeChanged,
+                onThemeClicked = onThemeClicked,
+                onDismissTheme = onDismissTheme,
             )
         }
 
@@ -201,6 +250,7 @@ fun SettingsList(
 
 @Composable
 private fun TraktProfileSettingsItem(
+    isLoading: Boolean,
     showTraktDialog: Boolean,
     loggedIn: Boolean,
     traktUserName: String?,
@@ -237,19 +287,27 @@ private fun TraktProfileSettingsItem(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             if (!traktUserPicUrl.isNullOrBlank()) {
-                AsyncImageComposable(
-                    model = traktUserPicUrl,
-                    contentDescription = stringResource(
-                        R.string.cd_profile_pic,
-                        traktUserName ?: traktFullName ?: "",
-                    ),
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape),
-
-                )
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .size(48.dp),
+                        color = MaterialTheme.colorScheme.secondary,
+                    )
+                } else {
+                    AsyncImageComposable(
+                        model = traktUserPicUrl,
+                        contentDescription = stringResource(
+                            R.string.cd_profile_pic,
+                            traktUserName ?: traktFullName ?: "",
+                        ),
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape),
+                    )
+                }
             } else {
                 Icon(
                     imageVector = Icons.Filled.Person,
@@ -292,6 +350,17 @@ fun TrackDialog(
     onLogoutClicked: () -> Unit,
     onDismissDialog: () -> Unit,
 ) {
+    val title = if (loggedIn) {
+        stringResource(id = R.string.trakt_dialog_logout_title)
+    } else {
+        stringResource(id = R.string.trakt_dialog_login_title)
+    }
+
+    val message = if (loggedIn) {
+        stringResource(id = R.string.trakt_dialog_logout_message)
+    } else {
+        stringResource(id = R.string.trakt_dialog_login_message)
+    }
     AnimatedVisibility(
         visible = isVisible,
         enter = fadeIn(
@@ -303,8 +372,8 @@ fun TrackDialog(
         ),
     ) {
         BasicDialog(
-            dialogTitle = stringResource(id = R.string.settings_title_trakt_app),
-            dialogMessage = stringResource(id = R.string.trakt_description),
+            dialogTitle = title,
+            dialogMessage = message,
             confirmButtonText = stringResource(id = R.string.login),
             dismissButtonText = stringResource(id = R.string.logout),
             onDismissDialog = onDismissDialog,
@@ -317,13 +386,14 @@ fun TrackDialog(
 }
 
 @Composable
-private fun ThemeSettingsItem(
-    settingsContent: SettingsContent,
+private fun SettingsThemeItem(
+    theme: Theme,
+    showPopup: Boolean,
     onThemeSelected: (Theme) -> Unit,
     onThemeClicked: () -> Unit,
     onDismissTheme: () -> Unit,
 ) {
-    val themeTitle = when (settingsContent.theme) {
+    val themeTitle = when (theme) {
         Theme.LIGHT -> stringResource(R.string.settings_title_theme_dark)
         Theme.DARK -> stringResource(R.string.settings_title_theme_light)
         Theme.SYSTEM -> stringResource(R.string.settings_title_theme_system)
@@ -367,8 +437,8 @@ private fun ThemeSettingsItem(
             }
 
             ThemeMenu(
-                isVisible = settingsContent.showPopup,
-                selectedTheme = settingsContent.theme,
+                isVisible = showPopup,
+                selectedTheme = theme,
                 onDismissTheme = onDismissTheme,
                 onThemeSelected = onThemeSelected,
             )
@@ -555,6 +625,7 @@ private fun SettingsScreenPreview(
         Surface {
             SettingsScreen(
                 state = state,
+                snackbarHostState = SnackbarHostState(),
                 onThemeChanged = {},
                 onThemeClicked = {},
                 onDismissTheme = {},

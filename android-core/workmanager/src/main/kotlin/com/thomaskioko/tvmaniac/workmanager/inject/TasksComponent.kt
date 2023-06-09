@@ -4,9 +4,9 @@ import android.app.Application
 import androidx.work.WorkManager
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.workmanager.AppInitializer
+import com.thomaskioko.tvmaniac.workmanager.DiscoverTasksInitializer
 import com.thomaskioko.tvmaniac.workmanager.ShowTasks
 import com.thomaskioko.tvmaniac.workmanager.ShowTasksImpl
-import com.thomaskioko.tvmaniac.workmanager.ShowTasksInitializer
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
@@ -21,7 +21,7 @@ interface TasksComponent {
     @ApplicationScope
     @Provides
     @IntoSet
-    fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer = bind
+    fun provideShowTasksInitializer(bind: DiscoverTasksInitializer): AppInitializer = bind
 
     @ApplicationScope
     @Provides

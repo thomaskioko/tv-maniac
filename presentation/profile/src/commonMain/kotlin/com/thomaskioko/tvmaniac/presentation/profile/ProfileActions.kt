@@ -4,7 +4,5 @@ sealed interface ProfileActions
 
 object ShowTraktDialog : ProfileActions
 object DismissTraktDialog : ProfileActions
-object TraktLogout : ProfileActions
-object TraktLogin : ProfileActions
-object FetchTraktUserProfile : ProfileActions
-object FetchUserStatsProfile : ProfileActions
+object TraktLogoutClicked : ProfileActions
+object TraktLoginClicked : ProfileActions

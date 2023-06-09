@@ -199,8 +199,8 @@ private fun NavController.currentScreenAsState(): State<NavigationScreen> {
                     selectedItem.value = NavigationScreen.WatchlistNavScreen
                 }
 
-                destination.hierarchy.any { it.route == NavigationScreen.ProfileNavScreen.route } -> {
-                    selectedItem.value = NavigationScreen.ProfileNavScreen
+                destination.hierarchy.any { it.route == NavigationScreen.SettingsNavScreen.route } -> {
+                    selectedItem.value = NavigationScreen.SettingsNavScreen
                 }
             }
         }
