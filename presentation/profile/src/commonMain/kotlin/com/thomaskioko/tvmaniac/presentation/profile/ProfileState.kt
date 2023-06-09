@@ -1,23 +1,36 @@
 package com.thomaskioko.tvmaniac.presentation.profile
 
-sealed interface ProfileState
+sealed interface ProfileState {
+    val userInfo: UserInfo?
+    val errorMessage: String?
+    val showTraktDialog: Boolean
+}
 
 data class LoggedOutContent(
-    val showTraktDialog: Boolean = false,
-) : ProfileState
+    override val userInfo: UserInfo? = null,
+    override val errorMessage: String? = null,
+    override val showTraktDialog: Boolean = false,
+) : ProfileState {
+    companion object {
+        val DEFAULT_STATE = LoggedOutContent(
+            userInfo = null,
+            errorMessage = null,
+            showTraktDialog = false,
+        )
+    }
+}
 
-data class SignedInContent(
+data class LoggedInContent(
+    override val userInfo: UserInfo? = null,
+    override val errorMessage: String? = null,
+    override val showTraktDialog: Boolean = false,
     val isLoading: Boolean = false,
     val showLogoutDialog: Boolean = false,
     val loggedIn: Boolean = false,
-    val traktUser: TraktUser? = null,
     val profileStats: ProfileStats? = null,
 ) : ProfileState
 
-data class ProfileError(val error: String) : ProfileState
-data class ProfileStatsError(val error: String) : ProfileState
-
-data class TraktUser(
+data class UserInfo(
     val slug: String,
     val userName: String?,
     val fullName: String?,

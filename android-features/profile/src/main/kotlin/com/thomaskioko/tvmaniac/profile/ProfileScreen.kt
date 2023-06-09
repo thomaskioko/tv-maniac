@@ -12,13 +12,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -52,19 +50,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
-import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTextButton
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
+import com.thomaskioko.tvmaniac.presentation.profile.DismissTraktDialog
+import com.thomaskioko.tvmaniac.presentation.profile.LoggedInContent
 import com.thomaskioko.tvmaniac.presentation.profile.LoggedOutContent
-import com.thomaskioko.tvmaniac.presentation.profile.ProfileError
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStats
-import com.thomaskioko.tvmaniac.presentation.profile.ProfileStatsError
-import com.thomaskioko.tvmaniac.presentation.profile.SignedInContent
+import com.thomaskioko.tvmaniac.presentation.profile.ShowTraktDialog
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
@@ -100,7 +97,12 @@ internal fun ProfileScreen(
         onSettingsClicked = onSettingsClicked,
         modifier = modifier,
         state = profileState,
-        onConnectClicked = { viewModel.login() },
+        onLoginClicked = {
+            viewModel.login()
+            viewModel.dispatch(DismissTraktDialog)
+        },
+        onConnectClicked = { viewModel.dispatch(ShowTraktDialog) },
+        onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
     )
 }
 
@@ -110,6 +112,8 @@ private fun ProfileScreen(
     onSettingsClicked: () -> Unit,
     state: ProfileState,
     onConnectClicked: () -> Unit,
+    onLoginClicked: () -> Unit,
+    onDismissDialogClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -127,30 +131,20 @@ private fun ProfileScreen(
 
             when (state) {
                 is LoggedOutContent -> {
-                    LoggedOutContent(
+                    LoggedOutUi(
+                        showTraktDialog = state.showTraktDialog,
                         onConnectClicked = onConnectClicked,
+                        onLoginClicked = onLoginClicked,
+                        onDismissDialogClicked = onDismissDialogClicked,
                     )
                 }
-                is SignedInContent -> {
+
+                is LoggedInContent -> {
                     UserProfile(
-                        state = state,
-                        picUrl = state.traktUser?.userPicUrl,
-                    )
-                }
-
-                is ProfileError -> {
-                    ErrorUi(
-                        errorMessage = state.error,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .wrapContentSize(Alignment.Center),
-                    )
-                }
-
-                is ProfileStatsError -> {
-                    ErrorUi(
-                        errorMessage = state.error,
-                        modifier = Modifier.fillMaxSize(),
+                        picUrl = state.userInfo?.userPicUrl,
+                        userName = state.userInfo?.userName,
+                        fullName = state.userInfo?.fullName,
+                        profileStats = state.profileStats,
                     )
                 }
             }
@@ -159,7 +153,10 @@ private fun ProfileScreen(
 }
 
 @Composable
-fun LoggedOutContent(
+fun LoggedOutUi(
+    showTraktDialog: Boolean,
+    onLoginClicked: () -> Unit,
+    onDismissDialogClicked: () -> Unit,
     onConnectClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -232,6 +229,12 @@ fun LoggedOutContent(
                 )
             },
         )
+
+        TrackDialog(
+            isVisible = showTraktDialog,
+            onLoginClicked = onLoginClicked,
+            onDismissDialog = onDismissDialogClicked,
+        )
     }
 }
 
@@ -275,8 +278,10 @@ fun TextListItem(
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
 fun UserProfile(
-    state: SignedInContent,
+    userName: String?,
+    fullName: String?,
     picUrl: String?,
+    profileStats: ProfileStats?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -306,7 +311,7 @@ fun UserProfile(
                         model = picUrl,
                         contentDescription = stringResource(
                             R.string.cd_profile_pic,
-                            state.traktUser?.fullName ?: state.traktUser?.userName ?: "",
+                            fullName ?: userName ?: "",
                         ),
                         modifier = Modifier
                             .size(120.dp)
@@ -328,10 +333,7 @@ fun UserProfile(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = stringResource(
-                R.string.trakt_user_name,
-                state.traktUser?.fullName ?: state.traktUser?.userName ?: "Stranger",
-            ),
+            text = stringResource(R.string.trakt_user_name, fullName ?: userName ?: "Stranger"),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
@@ -340,7 +342,7 @@ fun UserProfile(
 
         Spacer(modifier = Modifier.size(24.dp))
 
-        state.profileStats?.let {
+        profileStats?.let {
             // Stats Row
             val lazyListState = rememberLazyListState()
             val contentPadding =
@@ -356,9 +358,9 @@ fun UserProfile(
                 contentPadding = contentPadding,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                item { ShowTimeStats(profileStats = state.profileStats!!) }
+                item { ShowTimeStats(profileStats = profileStats) }
 
-                item { EpisodesStats(profileStats = state.profileStats!!) }
+                item { EpisodesStats(profileStats = profileStats) }
             }
         }
     }
@@ -488,8 +490,8 @@ fun TrackDialog(
         ),
     ) {
         BasicDialog(
-            dialogTitle = stringResource(id = R.string.settings_title_trakt_app),
-            dialogMessage = stringResource(id = R.string.trakt_description),
+            dialogTitle = stringResource(id = R.string.trakt_dialog_login_title),
+            dialogMessage = stringResource(id = R.string.trakt_dialog_login_message),
             confirmButtonText = stringResource(id = R.string.login),
             onDismissDialog = onDismissDialog,
             confirmButtonClicked = onLoginClicked,
@@ -509,6 +511,8 @@ private fun ProfileScreenPreview(
                 state = state,
                 onConnectClicked = {},
                 onSettingsClicked = {},
+                onLoginClicked = {},
+                onDismissDialogClicked = {},
             )
         }
     }
