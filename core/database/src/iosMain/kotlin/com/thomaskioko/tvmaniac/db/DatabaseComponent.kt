@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.db
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
+import com.thomaskioko.tvmaniac.core.db.Last_requests
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
@@ -22,5 +23,8 @@ actual interface DatabaseComponent {
         showAdapter = Show.Adapter(
             genresAdapter = stringColumnAdapter,
         ),
+        last_requestsAdapter = Last_requests.Adapter(
+            timestampAdapter = InstantColumnAdapter
+        )
     )
 }
