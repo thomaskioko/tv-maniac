@@ -8,7 +8,7 @@ data class TraktFollowedShowResponse(
     @SerialName("rank") var rank: Int,
     @SerialName("id") var id: Int,
     @SerialName("listed_at") var listedAt: String,
-    @SerialName("notes") var notes: String?,
+    @SerialName("notes") var notes: String? = null,
     @SerialName("type") var type: String,
     @SerialName("show") var show: ShowResponse,
 )
@@ -16,7 +16,7 @@ data class TraktFollowedShowResponse(
 @Serializable
 data class ShowResponse(
     @SerialName("title") var title: String,
-    @SerialName("year") var year: Int,
+    @SerialName("year") var year: Int? = null,
     @SerialName("ids") var ids: IdsResponse,
 )
 
