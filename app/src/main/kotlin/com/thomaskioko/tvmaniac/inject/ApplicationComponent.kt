@@ -5,7 +5,6 @@ import android.content.Context
 import com.thomaskioko.trakt.service.implementation.TraktComponent
 import com.thomaskioko.trakt.service.implementation.TraktPlatformComponent
 import com.thomaskioko.tvmaniac.TvManicApplication
-import com.thomaskioko.tvmaniac.core.networkutil.NetworkUtilComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
 import com.thomaskioko.tvmaniac.datastore.implementation.DataStorePlatformComponent
@@ -15,6 +14,7 @@ import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeComponent
 import com.thomaskioko.tvmaniac.initializers.AppInitializers
 import com.thomaskioko.tvmaniac.profile.implementation.ProfileComponent
 import com.thomaskioko.tvmaniac.profilestats.implementation.StatsComponent
+import com.thomaskioko.tvmaniac.resourcemanager.implementation.RequestManagerComponent
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsComponent
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsComponent
 import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
@@ -43,8 +43,8 @@ abstract class ApplicationComponent(
     EpisodeImageComponent,
     WatchlistComponent,
     NavigationComponent,
-    NetworkUtilComponent,
     ProfileComponent,
+    RequestManagerComponent,
     SeasonsComponent,
     SeasonDetailsComponent,
     ShowsComponent,
