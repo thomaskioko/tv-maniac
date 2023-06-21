@@ -24,7 +24,7 @@ actual interface DatabaseComponent {
             genresAdapter = stringColumnAdapter,
         ),
         last_requestsAdapter = Last_requests.Adapter(
-            timestampAdapter = InstantColumnAdapter
-        )
+            timestampAdapter = InstantColumnAdapter,
+        ),
     )
 }
