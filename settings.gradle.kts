@@ -61,6 +61,8 @@ include(
     ":data:episodes:api",
     ":data:episodes:implementation",
     ":data:episodes:testing",
+    ":data:request-manager:api",
+    ":data:request-manager:implementation",
     ":data:seasons:api",
     ":data:seasons:implementation",
     ":data:seasons:testing",
