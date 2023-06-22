@@ -12,6 +12,7 @@ kotlin {
         sourceSets["commonMain"].dependencies {
             implementation(projects.core.tmdbApi.api)
             implementation(projects.core.util)
+            implementation(projects.data.requestManager.api)
             implementation(projects.data.shows.api)
             implementation(projects.data.trailers.api)
 

@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.similar.implementation
 
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
+import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsDao
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
@@ -18,6 +20,7 @@ class SimilarShowStore(
     private val traktRemoteDataSource: TraktRemoteDataSource,
     private val similarShowsDao: SimilarShowsDao,
     private val showsDao: ShowsDao,
+    private val requestManagerRepository: RequestManagerRepository,
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
 ) : Store<Long, List<SimilarShows>> by StoreBuilder.from<Long, List<SimilarShows>, List<SimilarShows>>(
@@ -27,17 +30,21 @@ class SimilarShowStore(
             is ApiResponse.Success -> apiResult.body.responseToShow()
 
             is ApiResponse.Error.GenericError -> {
-                logger.error("GenericError", "${apiResult.errorMessage}")
+                logger.error("SimilarShowStore GenericError", "${apiResult.errorMessage}")
                 throw Throwable("${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
-                logger.error("HttpError", "${apiResult.code} - ${apiResult.errorBody?.message}")
+                logger.error("SimilarShowStore HttpError", "${apiResult.code} - ${apiResult.errorBody?.message}")
                 throw Throwable("${apiResult.code} - ${apiResult.errorBody?.message}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("SerializationError", "$apiResult")
+                logger.error("SimilarShowStore SerializationError", "$apiResult")
+                throw Throwable("$apiResult")
+            }
+            is ApiResponse.Error.JsonConvertException -> {
+                logger.error("SimilarShowStore JsonConvertException", "$apiResult")
                 throw Throwable("$apiResult")
             }
         }
@@ -54,6 +61,14 @@ class SimilarShowStore(
                     similarShowId = it.trakt_id,
                 )
             }
+
+            requestManagerRepository.insert(
+                LastRequest(
+                    id = id + list.size,
+                    entityId = id,
+                    requestType = "SIMILAR_SHOWS",
+                ),
+            )
         },
         delete = similarShowsDao::delete,
         deleteAll = similarShowsDao::deleteAll,

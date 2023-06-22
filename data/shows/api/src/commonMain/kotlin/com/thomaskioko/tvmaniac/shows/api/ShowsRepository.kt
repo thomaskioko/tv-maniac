@@ -10,7 +10,7 @@ interface ShowsRepository {
 
     fun observeShow(traktId: Long): Flow<StoreReadResponse<ShowById>>
 
-    fun observeRecommendedShows(categoryId: Long): Flow<StoreReadResponse<List<ShowsByCategory>>>
+    fun observeShowsByCategory(categoryId: Long): Flow<StoreReadResponse<List<ShowsByCategory>>>
 
     fun observeTrendingShows(): Flow<StoreReadResponse<List<ShowsByCategory>>>
 
@@ -22,7 +22,7 @@ interface ShowsRepository {
 
     suspend fun fetchDiscoverShows()
 
-    suspend fun fetchShow(traktId: Long): ShowById
+    suspend fun getShowById(traktId: Long): ShowById
 
     suspend fun fetchShows(category: Category): List<ShowsByCategory>
 }
