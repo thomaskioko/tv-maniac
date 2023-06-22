@@ -28,17 +28,21 @@ class SeasonDetailsStore(
             when (val response = traktRemoteDataSource.getSeasonEpisodes(id)) {
                 is ApiResponse.Success -> response.body.toSeasonWithEpisodes()
                 is ApiResponse.Error.GenericError -> {
-                    logger.error("GenericError", "$response")
+                    logger.error("SeasonDetailsStore GenericError", "$response")
                     throw Throwable("${response.errorMessage}")
                 }
 
                 is ApiResponse.Error.HttpError -> {
-                    logger.error("HttpError", "$response")
+                    logger.error("SeasonDetailsStore HttpError", "$response")
                     throw Throwable("${response.code} - ${response.errorBody?.message}")
                 }
 
                 is ApiResponse.Error.SerializationError -> {
-                    logger.error("SerializationError", "$response")
+                    logger.error("SeasonDetailsStore SerializationError", "$response")
+                    throw Throwable("$response")
+                }
+                is ApiResponse.Error.JsonConvertException -> {
+                    logger.error("SeasonDetailsStore JsonConvertException", "$response")
                     throw Throwable("$response")
                 }
             }

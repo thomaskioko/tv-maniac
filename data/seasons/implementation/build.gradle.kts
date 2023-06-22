@@ -15,6 +15,7 @@ kotlin {
             implementation(projects.core.traktApi.api)
             implementation(projects.core.util)
             implementation(projects.data.episodes.api)
+            implementation(projects.data.requestManager.api)
             implementation(projects.data.seasons.api)
 
             implementation(libs.kotlinInject.runtime)

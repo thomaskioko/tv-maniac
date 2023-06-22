@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.shows.implementation
 
 import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
+import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
@@ -16,6 +18,7 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 class ShowStore(
     private val showsDao: ShowsDao,
     private val traktRemoteDataSource: TraktRemoteDataSource,
+    private val requestManagerRepository: RequestManagerRepository,
     private val mapper: ShowsResponseMapper,
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
@@ -27,26 +30,38 @@ class ShowStore(
             }
 
             is ApiResponse.Error.GenericError -> {
-                logger.error("GenericError", "${apiResult.errorMessage}")
+                logger.error("ShowStore GenericError", "${apiResult.errorMessage}")
                 throw Throwable("${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
-                logger.error("HttpError", "${apiResult.code} - ${apiResult.errorBody?.message}")
+                logger.error("ShowStore HttpError", "${apiResult.code} - ${apiResult.errorBody?.message}")
                 throw Throwable("${apiResult.code} - ${apiResult.errorBody?.message}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("SerializationError", "$apiResult")
+                logger.error("ShowStore SerializationError", "$apiResult")
+                throw Throwable("$apiResult")
+            }
+            is ApiResponse.Error.JsonConvertException -> {
+                logger.error("ShowStore JsonConvertException", "$apiResult")
                 throw Throwable("$apiResult")
             }
         }
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { traktId -> showsDao.observeTvShow(traktId) },
-        writer = { _, show ->
+        writer = { id, show ->
 
             showsDao.insert(mapper.toShow(show))
+
+            requestManagerRepository.insert(
+                LastRequest(
+                    id = id + show.trakt_id,
+                    entityId = id,
+                    requestType = "SHOW_DETAILS",
+                ),
+            )
         },
     ),
 )
