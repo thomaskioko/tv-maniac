@@ -7,13 +7,7 @@ import com.thomaskioko.tvmaniac.core.db.Seasons
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
-import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonState.SeasonsError
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.ShowDetailsLoaded
-import com.thomaskioko.tvmaniac.presentation.showdetails.SimilarShowsState.SimilarShowsError
-import com.thomaskioko.tvmaniac.presentation.showdetails.SimilarShowsState.SimilarShowsLoaded
-import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersError
-import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersLoaded
-import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState.TrailersLoaded.Companion.playerErrorMessage
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.TrailersContent.Companion.playerErrorMessage
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
@@ -35,18 +29,48 @@ class ShowDetailsStateMachine constructor(
     private val watchlistRepository: WatchlistRepository,
     private val exceptionHandler: ExceptionHandler,
 ) : FlowReduxStateMachine<ShowDetailsState, ShowDetailsAction>(
-    initialState = ShowDetailsState.Loading,
+    initialState = ShowDetailsLoaded.EMPTY_DETAIL_STATE,
 ) {
 
     init {
         spec {
-            inState<ShowDetailsState.Loading> {
+
+            inState<ShowDetailsLoaded> {
+
                 onEnter { state ->
                     fetchShowDetails(state)
                 }
-            }
 
-            inState<ShowDetailsLoaded> {
+                collectWhileInState(showsRepository.observeShow(traktShowId)) { response, state ->
+                    when (response) {
+                        is StoreReadResponse.NoNewData -> state.noChange()
+                        is StoreReadResponse.Loading -> state.mutate {
+                            copy(isLoading = true)
+                        }
+
+                        is StoreReadResponse.Data -> state.mutate {
+                            copy(
+                                isLoading = false,
+                                show = response.requireData().toTvShow(),
+                            )
+                        }
+
+                        is StoreReadResponse.Error.Exception ->
+                            state.mutate {
+                                copy(
+                                    isLoading = false,
+                                    errorMessage = response.errorMessageOrNull(),
+                                )
+                            }
+
+                        is StoreReadResponse.Error.Message -> state.mutate {
+                            copy(
+                                isLoading = false,
+                                errorMessage = response.message,
+                            )
+                        }
+                    }
+                }
 
                 collectWhileInState(seasonsRepository.observeSeasonsStoreResponse(traktShowId)) { result, state ->
                     updateSeasonDetailsState(result, state)
@@ -63,10 +87,7 @@ class ShowDetailsStateMachine constructor(
                 collectWhileInState(trailerRepository.isYoutubePlayerInstalled()) { result, state ->
                     state.mutate {
                         copy(
-                            trailerState = (trailerState as? TrailersLoaded)
-                                ?.copy(hasWebViewInstalled = result) ?: TrailersError(
-                                null,
-                            ),
+                            trailersContent = trailersContent.copy(hasWebViewInstalled = result),
                         )
                     }
                 }
@@ -81,9 +102,9 @@ class ShowDetailsStateMachine constructor(
                 on<WebViewError> { _, state ->
                     state.mutate {
                         copy(
-                            trailerState = (trailerState as? TrailersLoaded)?.copy(
+                            trailersContent = trailersContent.copy(
                                 playerErrorMessage = playerErrorMessage,
-                            ) ?: TrailersError(playerErrorMessage),
+                            ),
                         )
                     }
                 }
@@ -91,16 +112,10 @@ class ShowDetailsStateMachine constructor(
                 on<DismissWebViewError> { _, state ->
                     state.mutate {
                         copy(
-                            trailerState = (trailerState as TrailersLoaded)
+                            trailersContent = trailersContent
                                 .copy(playerErrorMessage = null),
                         )
                     }
-                }
-            }
-
-            inState<ShowDetailsState.ShowDetailsError> {
-                on<ReloadShowDetails> { _, state ->
-                    state.override { ShowDetailsState.Loading }
                 }
             }
         }
@@ -114,7 +129,7 @@ class ShowDetailsStateMachine constructor(
         is StoreReadResponse.Loading -> {
             state.mutate {
                 copy(
-                    similarShowsState = (similarShowsState as SimilarShowsLoaded)
+                    similarShowsContent = similarShowsContent
                         .copy(isLoading = true),
                 )
             }
@@ -123,11 +138,7 @@ class ShowDetailsStateMachine constructor(
         is StoreReadResponse.Data -> {
             state.mutate {
                 copy(
-                    similarShowsState = (similarShowsState as? SimilarShowsLoaded)
-                        ?.copy(
-                            isLoading = false,
-                            similarShows = response.requireData().toSimilarShowList(),
-                        ) ?: SimilarShowsLoaded(
+                    similarShowsContent = similarShowsContent.copy(
                         isLoading = false,
                         similarShows = response.requireData().toSimilarShowList(),
                     ),
@@ -138,8 +149,8 @@ class ShowDetailsStateMachine constructor(
         is StoreReadResponse.Error.Exception -> {
             state.mutate {
                 copy(
-                    similarShowsState = SimilarShowsError(
-                        exceptionHandler.resolveError(response.error),
+                    similarShowsContent = similarShowsContent.copy(
+                        errorMessage = exceptionHandler.resolveError(response.error),
                     ),
                 )
             }
@@ -147,7 +158,11 @@ class ShowDetailsStateMachine constructor(
 
         is StoreReadResponse.Error.Message -> {
             state.mutate {
-                copy(similarShowsState = SimilarShowsError(response.message))
+                copy(
+                    similarShowsContent = similarShowsContent.copy(
+                        errorMessage = response.message,
+                    ),
+                )
             }
         }
     }
@@ -159,7 +174,7 @@ class ShowDetailsStateMachine constructor(
         is StoreReadResponse.NoNewData -> state.noChange()
         is StoreReadResponse.Loading -> state.mutate {
             copy(
-                trailerState = (trailerState as TrailersLoaded).copy(
+                trailersContent = trailersContent.copy(
                     isLoading = true,
                 ),
             )
@@ -168,7 +183,7 @@ class ShowDetailsStateMachine constructor(
         is StoreReadResponse.Data -> {
             state.mutate {
                 copy(
-                    trailerState = (trailerState as TrailersLoaded).copy(
+                    trailersContent = trailersContent.copy(
                         isLoading = false,
                         trailersList = response.requireData().toTrailerList(),
                     ),
@@ -179,8 +194,8 @@ class ShowDetailsStateMachine constructor(
         is StoreReadResponse.Error.Exception -> {
             state.mutate {
                 copy(
-                    trailerState = TrailersError(
-                        exceptionHandler.resolveError(response.error),
+                    trailersContent = trailersContent.copy(
+                        errorMessage = exceptionHandler.resolveError(response.error),
                     ),
                 )
             }
@@ -188,7 +203,7 @@ class ShowDetailsStateMachine constructor(
 
         is StoreReadResponse.Error.Message -> {
             state.mutate {
-                copy(trailerState = TrailersError(response.message))
+                copy(trailersContent = trailersContent.copy(errorMessage = response.message))
             }
         }
     }
@@ -201,7 +216,7 @@ class ShowDetailsStateMachine constructor(
         is StoreReadResponse.Loading -> {
             state.mutate {
                 copy(
-                    seasonState = (seasonState as SeasonState.SeasonsLoaded).copy(
+                    seasonsContent = seasonsContent.copy(
                         isLoading = true,
                     ),
                 )
@@ -211,7 +226,7 @@ class ShowDetailsStateMachine constructor(
         is StoreReadResponse.Data -> {
             state.mutate {
                 copy(
-                    seasonState = (seasonState as SeasonState.SeasonsLoaded).copy(
+                    seasonsContent = seasonsContent.copy(
                         isLoading = false,
                         seasonsList = response.requireData().toSeasonsList(),
                     ),
@@ -221,42 +236,53 @@ class ShowDetailsStateMachine constructor(
 
         is StoreReadResponse.Error.Exception -> {
             state.mutate {
-                copy(seasonState = SeasonsError(exceptionHandler.resolveError(response.error)))
+                copy(
+                    seasonsContent = seasonsContent.copy(
+                        isLoading = true,
+                        errorMessage = response.error.message,
+                    ),
+                )
             }
         }
 
         is StoreReadResponse.Error.Message -> {
             state.mutate {
-                copy(seasonState = SeasonsError(response.message))
+                copy(
+                    seasonsContent = seasonsContent.copy(
+                        isLoading = true,
+                        errorMessage = response.message,
+                    ),
+                )
             }
         }
     }
 
-    private suspend fun fetchShowDetails(state: State<ShowDetailsState.Loading>): ChangedState<ShowDetailsState> {
-        val show = showsRepository.fetchShow(traktShowId)
+    private suspend fun fetchShowDetails(state: State<ShowDetailsLoaded>): ChangedState<ShowDetailsState> {
+        val show = showsRepository.getShowById(traktShowId)
         val similar = similarShowsRepository.fetchSimilarShows(traktShowId)
         val season = seasonsRepository.getSeasons(traktShowId)
         val trailers = trailerRepository.fetchTrailersByShowId(traktShowId)
 
-        return state.override {
-            ShowDetailsLoaded(
-                showState = ShowState.ShowLoaded(
-                    show = show.toTvShow(),
-                ),
-                similarShowsState = SimilarShowsLoaded(
+        return state.mutate {
+            copy(
+                show = show.toTvShow(),
+                similarShowsContent = ShowDetailsLoaded.SimilarShowsContent(
                     isLoading = false,
                     similarShows = similar.toSimilarShowList(),
+                    errorMessage = null,
                 ),
-                seasonState = SeasonState.SeasonsLoaded(
+                seasonsContent = ShowDetailsLoaded.SeasonsContent(
                     isLoading = false,
                     seasonsList = season.toSeasonsList(),
+                    errorMessage = null,
                 ),
-                trailerState = TrailersLoaded(
+                trailersContent = ShowDetailsLoaded.TrailersContent(
                     isLoading = false,
                     hasWebViewInstalled = false,
                     trailersList = trailers.toTrailerList(),
+                    errorMessage = null,
                 ),
-                followShowState = FollowShowsState.Idle,
+                errorMessage = null,
             )
         }
     }
