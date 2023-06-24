@@ -49,27 +49,25 @@ val similarShows = listOf(
     ),
 )
 
-val showDetailsLoaded = ShowDetailsState.ShowDetailsLoaded(
-    showState = ShowState.ShowLoaded(
-        show = show,
-    ),
-    seasonState = SeasonState.SeasonsLoaded(
+val showDetailsLoaded = ShowDetailsLoaded(
+    show = show,
+    seasonsContent = ShowDetailsLoaded.SeasonsContent(
         isLoading = true,
         seasonsList = emptyList(),
     ),
-    similarShowsState = SimilarShowsState.SimilarShowsLoaded(
+    similarShowsContent = ShowDetailsLoaded.SimilarShowsContent(
         isLoading = true,
         similarShows = emptyList(),
     ),
-    trailerState = TrailersState.TrailersLoaded(
+    trailersContent = ShowDetailsLoaded.TrailersContent(
         isLoading = true,
         hasWebViewInstalled = false,
         playerErrorMessage = null,
         trailersList = emptyList(),
     ),
-    followShowState = FollowShowsState.Idle,
+    errorMessage = null,
 )
-val seasonsShowDetailsLoaded = SeasonState.SeasonsLoaded(
+val seasonsShowDetailsLoaded = ShowDetailsLoaded.SeasonsContent(
     isLoading = false,
     seasonsList = listOf(
         Season(
@@ -80,7 +78,7 @@ val seasonsShowDetailsLoaded = SeasonState.SeasonsLoaded(
     ),
 )
 
-val trailerShowDetailsLoaded = TrailersState.TrailersLoaded(
+val trailerShowDetailsLoaded = ShowDetailsLoaded.TrailersContent(
     isLoading = false,
     hasWebViewInstalled = false,
     playerErrorMessage = null,
@@ -94,7 +92,7 @@ val trailerShowDetailsLoaded = TrailersState.TrailersLoaded(
     ),
 )
 
-val similarShowLoaded = SimilarShowsState.SimilarShowsLoaded(
+val similarShowLoaded = ShowDetailsLoaded.SimilarShowsContent(
     isLoading = false,
     similarShows = similarShows,
 )

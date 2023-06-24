@@ -4,21 +4,17 @@ import com.thomaskioko.tvmaniac.tmdb.api.TmdbNetworkDataSource
 import com.thomaskioko.tvmaniac.util.model.Configs
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import io.ktor.client.engine.okhttp.OkHttp
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Provides
 
-@OptIn(ExperimentalSerializationApi::class)
 actual interface TmdbPlatformComponent {
 
-    @OptIn(ExperimentalSerializationApi::class)
     @ApplicationScope
     @Provides
     fun provideTmdbJson(): TmdbJson = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
-        isLenient = true
-        explicitNulls = false
+        encodeDefaults = true
     }
 
     @ApplicationScope

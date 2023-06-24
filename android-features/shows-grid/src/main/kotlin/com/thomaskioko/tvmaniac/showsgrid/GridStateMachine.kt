@@ -41,7 +41,7 @@ class GridStateMachine(
         action: LoadShows,
     ): ChangedState<GridState> {
         var nextState: ChangedState<GridState> = state.noChange()
-        repository.observeRecommendedShows(action.category)
+        repository.observeShowsByCategory(action.category)
             .collect { result ->
                 nextState = when (result) {
                     is StoreReadResponse.NoNewData -> state.noChange()

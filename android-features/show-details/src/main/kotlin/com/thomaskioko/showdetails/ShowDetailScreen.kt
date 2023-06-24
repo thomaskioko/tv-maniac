@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -39,6 +38,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -73,10 +73,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.showdetails.DetailConstants.HEADER_HEIGHT
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
-import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
-import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.SnackBarErrorRetry
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -90,11 +88,8 @@ import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.presentation.showdetails.DismissWebViewError
 import com.thomaskioko.tvmaniac.presentation.showdetails.FollowShowClicked
-import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonState
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowState
-import com.thomaskioko.tvmaniac.presentation.showdetails.SimilarShowsState
-import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState
 import com.thomaskioko.tvmaniac.presentation.showdetails.WebViewError
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
@@ -140,10 +135,16 @@ internal fun ShowDetailScreen(
     modifier: Modifier = Modifier,
 ) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val listState = rememberLazyListState()
+    val title = (viewState as? ShowDetailsLoaded)?.show?.title ?: ""
 
     ShowDetailScreen(
         state = viewState,
+        title = title,
         modifier = modifier,
+        snackbarHostState = snackbarHostState,
+        listState = listState,
         onBackClicked = onBackClicked,
         onSeasonClicked = onSeasonClicked,
         onShowClicked = onShowClicked,
@@ -162,19 +163,17 @@ internal fun ShowDetailScreen(
 @Composable
 internal fun ShowDetailScreen(
     state: ShowDetailsState,
+    title: String,
     onBackClicked: () -> Unit,
     onSeasonClicked: (Long, String) -> Unit,
     onShowClicked: (Long) -> Unit,
     onWatchTrailerClicked: (Boolean, Long, String?) -> Unit,
     onUpdateFavoriteClicked: (Boolean) -> Unit,
+    snackbarHostState: SnackbarHostState,
+    listState: LazyListState,
     modifier: Modifier = Modifier,
     onDismissTrailerErrorClicked: () -> Unit,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val listState = rememberLazyListState()
-
-    val title = (state as? ShowState.ShowLoaded)?.show?.title ?: ""
-
     Scaffold(
         topBar = {
             ShowTopBar(
@@ -183,37 +182,27 @@ internal fun ShowDetailScreen(
                 onNavUpClick = onBackClicked,
             )
         },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         content = { contentPadding ->
 
             when (state) {
-                ShowDetailsState.Loading -> LoadingIndicator(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(Alignment.Center),
+                is ShowDetailsLoaded -> ShowDetailContent(
+                    show = state.show,
+                    trailerContent = state.trailersContent,
+                    seasonsContent = state.seasonsContent,
+                    similarShowsContent = state.similarShowsContent,
+                    contentPadding = contentPadding,
+                    snackBarHostState = snackbarHostState,
+                    listState = listState,
+                    modifier = modifier,
+                    onSeasonClicked = onSeasonClicked,
+                    onShowClicked = onShowClicked,
+                    onWatchTrailerClicked = onWatchTrailerClicked,
+                    onUpdateFavoriteClicked = onUpdateFavoriteClicked,
+                    onDismissTrailerErrorClicked = onDismissTrailerErrorClicked,
                 )
-
-                is ShowDetailsState.ShowDetailsError -> ErrorUi(
-                    errorMessage = state.errorMessage,
-                    onRetry = {},
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(Alignment.Center),
-                )
-
-                is ShowDetailsState.ShowDetailsLoaded -> {
-                    ShowDetailContent(
-                        contentPadding = contentPadding,
-                        snackBarHostState = snackbarHostState,
-                        viewState = state,
-                        listState = listState,
-                        modifier = modifier,
-                        onSeasonClicked = onSeasonClicked,
-                        onShowClicked = onShowClicked,
-                        onWatchTrailerClicked = onWatchTrailerClicked,
-                        onUpdateFavoriteClicked = onUpdateFavoriteClicked,
-                        onDismissTrailerErrorClicked = onDismissTrailerErrorClicked,
-                    )
-                }
             }
         },
     )
@@ -258,10 +247,13 @@ private fun ShowTopBar(
 
 @Composable
 private fun ShowDetailContent(
+    show: Show,
+    trailerContent: ShowDetailsLoaded.TrailersContent?,
+    seasonsContent: ShowDetailsLoaded.SeasonsContent?,
+    similarShowsContent: ShowDetailsLoaded.SimilarShowsContent?,
     listState: LazyListState,
     snackBarHostState: SnackbarHostState,
     contentPadding: PaddingValues,
-    viewState: ShowDetailsState.ShowDetailsLoaded,
     onSeasonClicked: (Long, String) -> Unit,
     onShowClicked: (Long) -> Unit,
     onWatchTrailerClicked: (Boolean, Long, String?) -> Unit,
@@ -275,39 +267,30 @@ private fun ShowDetailContent(
         contentPadding = contentPadding.copy(copyTop = false),
     ) {
         item {
-            val trailerState = (viewState.trailerState as? TrailersState.TrailersLoaded)
-
             HeaderContent(
                 listState = listState,
-                showState = viewState.showState,
-                trailerKey = trailerState?.trailersList?.firstOrNull()?.key,
+                show = show,
+                trailerKey = trailerContent?.trailersList?.firstOrNull()?.key,
                 onUpdateFavoriteClicked = onUpdateFavoriteClicked,
             ) { showId, key ->
-                val hasWebView = trailerState?.hasWebViewInstalled ?: false
+                val hasWebView = trailerContent?.hasWebViewInstalled ?: false
                 onWatchTrailerClicked(hasWebView, showId, key)
             }
         }
 
         item {
-            when (viewState.seasonState) {
-                is SeasonState.SeasonsLoaded -> {
-                    val state = (viewState.seasonState as SeasonState.SeasonsLoaded)
-                    SeasonsContent(
-                        isLoading = state.isLoading,
-                        seasonsList = state.seasonsList,
-                        onSeasonClicked = onSeasonClicked,
-                    )
-                }
-
-                is SeasonState.SeasonsError -> {
-                    // TODO:: Show Error view with retry
-                }
+            if (seasonsContent != null) {
+                SeasonsContent(
+                    isLoading = seasonsContent.isLoading,
+                    seasonsList = seasonsContent.seasonsList,
+                    onSeasonClicked = onSeasonClicked,
+                )
             }
         }
 
         item {
             TrailersContent(
-                trailersState = viewState.trailerState,
+                trailersState = trailerContent,
                 snackBarHostState = snackBarHostState,
                 onDismissTrailerErrorClicked = onDismissTrailerErrorClicked,
                 onWatchTrailerClicked = onWatchTrailerClicked,
@@ -315,73 +298,54 @@ private fun ShowDetailContent(
         }
 
         item {
-            when (viewState.similarShowsState) {
-                is SimilarShowsState.SimilarShowsError -> {
-                    // TODO:: Show Error view with retry
-                }
-
-                is SimilarShowsState.SimilarShowsLoaded -> {
-                    val state =
-                        viewState.similarShowsState as SimilarShowsState.SimilarShowsLoaded
-                    SimilarShowsContent(
-                        isLoading = state.isLoading,
-                        similarShows = state.similarShows,
-                        onShowClicked = onShowClicked,
-                    )
-                }
-            }
+            SimilarShowsContent(
+                isLoading = similarShowsContent?.isLoading ?: false,
+                similarShows = similarShowsContent?.similarShows ?: emptyList(),
+                onShowClicked = onShowClicked,
+            )
         }
     }
 }
 
 @Composable
 private fun HeaderContent(
-    showState: ShowState,
+    show: Show?,
     trailerKey: String?,
     listState: LazyListState,
     onUpdateFavoriteClicked: (Boolean) -> Unit,
     onWatchTrailerClicked: (Long, String?) -> Unit,
 ) {
-    when (showState) {
-        is ShowState.ShowError -> {
-            ErrorUi(
-                errorMessage = showState.errorMessage,
-                onRetry = {},
-            )
-        }
-
-        is ShowState.ShowLoaded -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(HEADER_HEIGHT)
-                    .clipToBounds()
-                    .offset {
-                        IntOffset(
-                            x = 0,
-                            y = if (listState.firstVisibleItemIndex == 0) {
-                                listState.firstVisibleItemScrollOffset / 2
-                            } else {
-                                0
-                            },
-                        )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(HEADER_HEIGHT)
+            .clipToBounds()
+            .offset {
+                IntOffset(
+                    x = 0,
+                    y = if (listState.firstVisibleItemIndex == 0) {
+                        listState.firstVisibleItemScrollOffset / 2
+                    } else {
+                        0
                     },
-            ) {
-                KenBurnsViewImage(
-                    imageUrl = showState.show.backdropImageUrl,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(HEADER_HEIGHT)
-                        .clipToBounds(),
                 )
+            },
+    ) {
+        KenBurnsViewImage(
+            imageUrl = show?.backdropImageUrl,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(HEADER_HEIGHT)
+                .clipToBounds(),
+        )
 
-                Body(
-                    show = showState.show,
-                    trailerKey = trailerKey,
-                    onUpdateFavoriteClicked = onUpdateFavoriteClicked,
-                    onWatchTrailerClicked = onWatchTrailerClicked,
-                )
-            }
+        if (show != null) {
+            Body(
+                show = show,
+                trailerKey = trailerKey,
+                onUpdateFavoriteClicked = onUpdateFavoriteClicked,
+                onWatchTrailerClicked = onWatchTrailerClicked,
+            )
         }
     }
 }
@@ -687,41 +651,30 @@ private fun SeasonsContent(
 
 @Composable
 private fun TrailersContent(
-    trailersState: TrailersState,
+    trailersState: ShowDetailsLoaded.TrailersContent?,
     snackBarHostState: SnackbarHostState,
     onDismissTrailerErrorClicked: () -> Unit,
     onWatchTrailerClicked: (Boolean, Long, String?) -> Unit,
 ) {
-    when (trailersState) {
-        is TrailersState.TrailersError -> {
-            SnackBarErrorRetry(
-                snackBarHostState = snackBarHostState,
-                errorMessage = trailersState.errorMessage,
-                onErrorAction = onDismissTrailerErrorClicked,
-                actionLabel = "Dismiss",
-            )
-        }
+    SnackBarErrorRetry(
+        snackBarHostState = snackBarHostState,
+        errorMessage = trailersState?.playerErrorMessage,
+        onErrorAction = onDismissTrailerErrorClicked,
+        actionLabel = "Dismiss",
+    )
 
-        is TrailersState.TrailersLoaded -> {
-            SnackBarErrorRetry(
-                snackBarHostState = snackBarHostState,
-                errorMessage = trailersState.playerErrorMessage,
-                onErrorAction = onDismissTrailerErrorClicked,
-                actionLabel = "Dismiss",
-            )
-
-            TrailersRowContent(
-                isLoading = trailersState.isLoading,
-                trailersList = trailersState.trailersList,
-                onTrailerClicked = { showId, videoKey ->
-                    onWatchTrailerClicked(
-                        trailersState.hasWebViewInstalled,
-                        showId,
-                        videoKey,
-                    )
-                },
-            )
-        }
+    if (trailersState != null) {
+        TrailersRowContent(
+            isLoading = trailersState.isLoading,
+            trailersList = trailersState.trailersList,
+            onTrailerClicked = { showId, videoKey ->
+                onWatchTrailerClicked(
+                    trailersState.hasWebViewInstalled,
+                    showId,
+                    videoKey,
+                )
+            },
+        )
     }
 }
 
@@ -842,12 +795,15 @@ private fun ShowDetailScreenPreview(
         Surface {
             ShowDetailScreen(
                 state = state,
+                title = "",
+                onBackClicked = {},
                 onSeasonClicked = { _, _ -> },
                 onShowClicked = {},
                 onWatchTrailerClicked = { _, _, _ -> },
                 onUpdateFavoriteClicked = {},
+                snackbarHostState = SnackbarHostState(),
                 onDismissTrailerErrorClicked = {},
-                onBackClicked = {},
+                listState = LazyListState(),
             )
         }
     }

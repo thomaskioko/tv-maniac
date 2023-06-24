@@ -65,6 +65,8 @@ dependencies {
     implementation(projects.data.profile.implementation)
     implementation(projects.data.profilestats.api)
     implementation(projects.data.profilestats.implementation)
+    implementation(projects.data.requestManager.api)
+    implementation(projects.data.requestManager.implementation)
     implementation(projects.data.similar.api)
     implementation(projects.data.similar.implementation)
     implementation(projects.data.seasons.api)

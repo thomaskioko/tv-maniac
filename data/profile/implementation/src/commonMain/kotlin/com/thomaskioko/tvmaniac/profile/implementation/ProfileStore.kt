@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.profile.implementation
 import com.thomaskioko.tvmaniac.core.db.User
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.profile.api.ProfileDao
+import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
@@ -15,6 +17,7 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 @Inject
 class ProfileStore(
     private val traktRemoteDataSource: TraktRemoteDataSource,
+    private val requestManagerRepository: RequestManagerRepository,
     private val profileDao: ProfileDao,
     private val logger: KermitLogger,
     private val scope: AppCoroutineScope,
@@ -25,24 +28,37 @@ class ProfileStore(
             is ApiResponse.Success -> apiResult.body.toUser(slug)
 
             is ApiResponse.Error.GenericError -> {
-                logger.error("GenericError", "${apiResult.errorMessage}")
+                logger.error("ProfileStore GenericError", "${apiResult.errorMessage}")
                 throw Throwable("${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
-                logger.error("HttpError", "${apiResult.code} - ${apiResult.errorBody?.message}")
+                logger.error(" ProfileStore HttpError", "${apiResult.code} - ${apiResult.errorBody?.message}")
                 throw Throwable("${apiResult.code} - ${apiResult.errorBody?.message}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("SerializationError", "$apiResult")
+                logger.error("ProfileStore SerializationError", "$apiResult")
+                throw Throwable("$apiResult")
+            }
+            is ApiResponse.Error.JsonConvertException -> {
+                logger.error("ProfileStore JsonConvertException", "$apiResult")
                 throw Throwable("$apiResult")
             }
         }
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { _ -> profileDao.observeUser() },
-        writer = { _, user -> profileDao.insert(user) },
+        writer = { _, user ->
+            profileDao.insert(user)
+
+            requestManagerRepository.insert(
+                LastRequest(
+                    entityId = 0,
+                    requestType = "USER_PROFILE",
+                ),
+            )
+        },
         delete = profileDao::delete,
         deleteAll = profileDao::deleteAll,
     ),

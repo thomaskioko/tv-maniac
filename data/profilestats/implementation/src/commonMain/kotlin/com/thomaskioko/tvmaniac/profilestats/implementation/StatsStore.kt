@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.profilestats.implementation
 import com.thomaskioko.tvmaniac.core.db.Stats
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.profilestats.api.StatsDao
+import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
@@ -15,6 +17,7 @@ import org.mobilenativefoundation.store.store5.impl.storeBuilderFromFetcherAndSo
 @Inject
 class StatsStore(
     private val traktRemoteDataSource: TraktRemoteDataSource,
+    private val requestManagerRepository: RequestManagerRepository,
     private val statsDao: StatsDao,
     private val mapper: StatsMapper,
     private val logger: KermitLogger,
@@ -26,24 +29,36 @@ class StatsStore(
             is ApiResponse.Success -> mapper.toTraktStats(slug, response.body)
 
             is ApiResponse.Error.GenericError -> {
-                logger.error("GenericError", "${response.errorMessage}")
+                logger.error("StatsStore GenericError", "${response.errorMessage}")
                 throw Throwable("${response.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
-                logger.error("HttpError", "${response.code} - ${response.errorBody?.message}")
+                logger.error("StatsStore HttpError", "${response.code} - ${response.errorBody?.message}")
                 throw Throwable("${response.code} - ${response.errorBody?.message}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("SerializationError", "$response")
+                logger.error("StatsStore SerializationError", "$response")
+                throw Throwable("$response")
+            }
+            is ApiResponse.Error.JsonConvertException -> {
+                logger.error("StatsStore JsonConvertException", "$response")
                 throw Throwable("$response")
             }
         }
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { slug -> statsDao.observeStats(slug) },
-        writer = { _, stats -> statsDao.insert(stats) },
+        writer = { _, stats ->
+            statsDao.insert(stats)
+            requestManagerRepository.insert(
+                LastRequest(
+                    entityId = 0,
+                    requestType = "USER_STATS",
+                ),
+            )
+        },
         delete = statsDao::delete,
         deleteAll = statsDao::deleteAll,
     ),

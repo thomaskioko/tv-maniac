@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.Configs
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import io.ktor.client.HttpClient
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Provides
 
@@ -14,14 +13,12 @@ typealias TraktJson = Json
 
 interface TraktComponent {
 
-    @OptIn(ExperimentalSerializationApi::class)
     @ApplicationScope
     @Provides
     fun provideJson(): TraktJson = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
-        isLenient = true
-        explicitNulls = false
+        encodeDefaults = true
     }
 
     @ApplicationScope

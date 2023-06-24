@@ -1,84 +1,78 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.SeasonsContent.Companion.EMPTY_SEASONS
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.SimilarShowsContent.Companion.EMPTY_SIMILAR_SHOWS
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.TrailersContent.Companion.EMPTY_TRAILERS
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 
-sealed interface ShowDetailsState {
-    object Loading : ShowDetailsState
-    data class ShowDetailsLoaded(
-        val showState: ShowState,
-        val similarShowsState: SimilarShowsState,
-        val seasonState: SeasonState,
-        val trailerState: TrailersState,
-        val followShowState: FollowShowsState,
-    ) : ShowDetailsState
+sealed interface ShowDetailsState
 
-    data class ShowDetailsError(val errorMessage: String) : ShowDetailsState
-}
+data class ShowDetailsLoaded(
+    val show: Show,
+    val isLoading: Boolean = false,
+    val errorMessage: String?,
+    val similarShowsContent: SimilarShowsContent,
+    val seasonsContent: SeasonsContent,
+    val trailersContent: TrailersContent,
+) : ShowDetailsState {
+    companion object {
+        val EMPTY_DETAIL_STATE = ShowDetailsLoaded(
+            show = Show.EMPTY_SHOW,
+            errorMessage = null,
+            similarShowsContent = EMPTY_SIMILAR_SHOWS,
+            seasonsContent = EMPTY_SEASONS,
+            trailersContent = EMPTY_TRAILERS,
+        )
+    }
 
-sealed interface ShowState {
-    data class ShowLoaded(
-        val show: Show,
-    ) : ShowState
-
-    data class ShowError(val errorMessage: String) : ShowState
-}
-
-sealed interface SeasonState {
-    data class SeasonsLoaded(
+    data class SeasonsContent(
         val isLoading: Boolean,
         val seasonsList: List<Season>,
-    ) : SeasonState {
+        val errorMessage: String? = null,
+    ) {
         companion object {
-            val EmptySeasons = SeasonsLoaded(
-                isLoading = true,
+            val EMPTY_SEASONS = SeasonsContent(
+                errorMessage = null,
+                isLoading = false,
                 seasonsList = emptyList(),
             )
         }
     }
 
-    data class SeasonsError(val errorMessage: String) : SeasonState
-}
-
-sealed interface TrailersState {
-    data class TrailersError(val errorMessage: String?) : TrailersState
-    data class TrailersLoaded(
+    data class TrailersContent(
         val isLoading: Boolean,
         val hasWebViewInstalled: Boolean,
         val playerErrorMessage: String? = null,
         val trailersList: List<Trailer>,
-    ) : TrailersState {
+        val errorMessage: String? = null,
+    ) {
         companion object {
             const val playerErrorMessage: String =
                 "Please make sure you have Android WebView installed or enabled."
 
-            val EmptyTrailers = TrailersLoaded(
+            val EMPTY_TRAILERS = TrailersContent(
                 isLoading = true,
                 hasWebViewInstalled = false,
                 playerErrorMessage = null,
                 trailersList = emptyList(),
+                errorMessage = null,
             )
         }
     }
-}
 
-sealed interface SimilarShowsState {
-    data class SimilarShowsError(val errorMessage: String) : SimilarShowsState
-    data class SimilarShowsLoaded(
+    data class SimilarShowsContent(
         val isLoading: Boolean,
         val similarShows: List<Show>,
-    ) : SimilarShowsState {
+        val errorMessage: String? = null,
+    ) {
         companion object {
-            val EmptyShows = SimilarShowsLoaded(
+            val EMPTY_SIMILAR_SHOWS = SimilarShowsContent(
                 isLoading = true,
                 similarShows = emptyList(),
+                errorMessage = null,
             )
         }
     }
-}
-
-sealed interface FollowShowsState {
-    object Idle : FollowShowsState
-    data class FollowUpdateError(val errorMessage: String) : FollowShowsState
 }

@@ -1,0 +1,36 @@
+import kotlinx.datetime.Instant;
+
+CREATE TABLE IF NOT EXISTS last_requests (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `entity_id` INTEGER NOT NULL,
+    `request_type` TEXT NOT NULL,
+    `timestamp` INTEGER AS Instant NOT NULL
+);
+
+insert:
+INSERT INTO last_requests (
+    `id`,
+    `entity_id`,
+    `request_type`,
+    `timestamp`
+) VALUES (?, ?,?,?);
+
+update:
+UPDATE last_requests SET
+    `entity_id` = :entity_id,
+    `request_type` = :request_type,
+    `timestamp` = :timestamp
+WHERE entity_id = :entity_id;
+
+getLastRequestForId:
+SELECT * FROM last_requests
+WHERE request_type = :request AND entity_id = :entityId;
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+delete:
+DELETE FROM last_requests WHERE entity_id = :entityId;
+
+deleteAll:
+DELETE FROM last_requests;
