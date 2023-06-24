@@ -1,19 +1,13 @@
 package com.thomaskioko.showdetails
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.presentation.showdetails.FollowShowsState
-import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonState
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.ShowDetailsError
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.ShowDetailsLoaded
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowState
-import com.thomaskioko.tvmaniac.presentation.showdetails.SimilarShowsState
-import com.thomaskioko.tvmaniac.presentation.showdetails.TrailersState
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 
-val trailerLoaded = TrailersState.TrailersLoaded(
+val trailerLoaded = ShowDetailsLoaded.TrailersContent(
     isLoading = true,
     hasWebViewInstalled = false,
     playerErrorMessage = null,
@@ -31,30 +25,29 @@ val trailerLoaded = TrailersState.TrailersLoaded(
             youtubeThumbnailUrl = "",
         ),
     ),
+    errorMessage = null,
 )
 
 private val showDetailsLoaded = ShowDetailsLoaded(
-    showState = ShowState.ShowLoaded(
-        show = Show(
-            traktId = 84958,
-            title = "Loki",
-            overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                "an alternate version of Loki is brought to the mysterious Time Variance " +
-                "Authority, a bureaucratic organization that exists outside of time and " +
-                "space and monitors the timeline. They give Loki a choice: face being " +
-                "erased from existence due to being a “time variant”or help fix " +
-                "the timeline and stop a greater threat.",
-            posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            language = "en",
-            votes = 4958,
-            rating = 8.1,
-            genres = listOf("Horror", "Action"),
-            status = "Returning Series",
-            year = "2024",
-        ),
+    show = Show(
+        traktId = 84958,
+        title = "Loki",
+        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+            "an alternate version of Loki is brought to the mysterious Time Variance " +
+            "Authority, a bureaucratic organization that exists outside of time and " +
+            "space and monitors the timeline. They give Loki a choice: face being " +
+            "erased from existence due to being a “time variant”or help fix " +
+            "the timeline and stop a greater threat.",
+        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        language = "en",
+        votes = 4958,
+        rating = 8.1,
+        genres = listOf("Horror", "Action"),
+        status = "Returning Series",
+        year = "2024",
     ),
-    seasonState = SeasonState.SeasonsLoaded(
+    seasonsContent = ShowDetailsLoaded.SeasonsContent(
         isLoading = false,
         seasonsList = listOf(
             Season(
@@ -63,13 +56,15 @@ private val showDetailsLoaded = ShowDetailsLoaded(
                 name = "Season 1",
             ),
         ),
+        errorMessage = null,
     ),
-    trailerState = trailerLoaded,
-    similarShowsState = SimilarShowsState.SimilarShowsLoaded(
+    trailersContent = trailerLoaded,
+    similarShowsContent = ShowDetailsLoaded.SimilarShowsContent(
         isLoading = false,
         similarShows = emptyList(),
+        errorMessage = null,
     ),
-    followShowState = FollowShowsState.Idle,
+    errorMessage = null,
 )
 
 val showList = List(4) {
@@ -98,7 +93,6 @@ class DetailPreviewParameterProvider : PreviewParameterProvider<ShowDetailsState
         get() {
             return sequenceOf(
                 showDetailsLoaded,
-                ShowDetailsError(errorMessage = "Opps! Something went wrong"),
             )
         }
 }
