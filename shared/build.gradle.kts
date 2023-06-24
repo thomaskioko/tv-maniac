@@ -76,6 +76,8 @@ kotlin {
                 implementation(projects.data.shows.implementation)
                 implementation(projects.data.showimages.implementation)
                 implementation(projects.data.trailers.implementation)
+                implementation(projects.data.requestManager.api)
+                implementation(projects.data.requestManager.implementation)
 
                 implementation(libs.kotlinInject.runtime)
             }

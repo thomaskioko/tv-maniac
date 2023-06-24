@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.data.trailers.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
+import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbNetworkDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
@@ -17,6 +19,7 @@ class TrailerStore(
     private val apiService: TmdbNetworkDataSource,
     private val trailerDao: TrailerDao,
     private val showsDao: ShowsDao,
+    private val requestManagerRepository: RequestManagerRepository,
     private val logger: KermitLogger,
     private val scope: AppCoroutineScope,
 ) : Store<Long, List<Trailers>> by StoreBuilder.from<Long, List<Trailers>, List<Trailers>>(
@@ -28,25 +31,37 @@ class TrailerStore(
             is ApiResponse.Success -> apiResult.body.results.toEntity(id)
 
             is ApiResponse.Error.GenericError -> {
-                logger.error("GenericError", "$apiResult")
+                logger.error("TrailerStore GenericError", "$apiResult")
                 throw Throwable("${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
-                logger.error("HttpError", "$apiResult")
+                logger.error("TrailerStore HttpError", "$apiResult")
                 throw Throwable("${apiResult.code} - ${apiResult.errorBody?.message}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("SerializationError", "$apiResult")
+                logger.error("TrailerStore SerializationError", "$apiResult")
+                throw Throwable("$apiResult")
+            }
+
+            is ApiResponse.Error.JsonConvertException -> {
+                logger.error("TrailerStore JsonConvertException", "$apiResult")
                 throw Throwable("$apiResult")
             }
         }
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { id -> trailerDao.observeTrailersById(id) },
-        writer = { _, response ->
-            trailerDao.insert(response)
+        writer = { id, list ->
+            trailerDao.insert(list)
+            requestManagerRepository.insert(
+                LastRequest(
+                    id = list.first().trakt_id,
+                    entityId = id,
+                    requestType = "TRAILERS",
+                ),
+            )
         },
         delete = trailerDao::delete,
         deleteAll = trailerDao::deleteAll,

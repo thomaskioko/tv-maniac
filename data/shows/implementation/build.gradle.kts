@@ -14,6 +14,7 @@ kotlin {
             implementation(projects.core.traktApi.api)
             implementation(projects.core.util)
             implementation(projects.data.shows.api)
+            implementation(projects.data.requestManager.api)
 
             api(libs.coroutines.core)
 

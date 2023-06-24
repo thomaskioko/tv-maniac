@@ -79,6 +79,11 @@ class SeasonDetailsRepositoryImpl(
                 logger.error("observeSeasonDetails", "$response")
                 throw Throwable("$response")
             }
+
+            is ApiResponse.Error.JsonConvertException -> {
+                logger.error("observeSeasonDetails", "$response")
+                throw Throwable("$response")
+            }
         }
     }
 }

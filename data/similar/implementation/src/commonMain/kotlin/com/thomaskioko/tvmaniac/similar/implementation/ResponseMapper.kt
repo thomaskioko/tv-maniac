@@ -15,7 +15,7 @@ fun List<TraktShowResponse>.responseToShow(): List<SimilarShows> {
             votes = it.votes.toLong(),
             rating = it.rating,
             genres = it.genres,
-            year = it.year ?: "--",
+            year = it.year?.toString() ?: "--",
             status = it.status,
             runtime = it.runtime.toLong(),
             poster_url = null,

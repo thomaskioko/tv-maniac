@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.core.db
 
 import app.cash.sqldelight.db.SqlDriver
+import com.thomaskioko.tvmaniac.db.InstantColumnAdapter
 import com.thomaskioko.tvmaniac.db.stringColumnAdapter
 import kotlin.test.AfterTest
 
@@ -17,6 +18,9 @@ abstract class BaseDatabaseTest {
         driver = sqlDriver,
         showAdapter = Show.Adapter(
             genresAdapter = stringColumnAdapter,
+        ),
+        last_requestsAdapter = Last_requests.Adapter(
+            timestampAdapter = InstantColumnAdapter,
         ),
     )
 

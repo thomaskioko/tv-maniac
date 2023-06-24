@@ -10,6 +10,7 @@ kotlin {
     sourceSets {
         sourceSets["commonMain"].dependencies {
             implementation(projects.data.profile.api)
+            implementation(projects.data.requestManager.api)
             implementation(projects.data.shows.api)
             implementation(projects.core.traktApi.api)
 

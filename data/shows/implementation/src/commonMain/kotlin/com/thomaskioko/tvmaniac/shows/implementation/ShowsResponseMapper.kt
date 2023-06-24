@@ -22,17 +22,21 @@ class ShowsResponseMapper(
         when (response) {
             is ApiResponse.Success -> response.body.map { responseToEntity(it) }
             is ApiResponse.Error.GenericError -> {
-                logger.error("GenericError", "${response.errorMessage}")
+                logger.error("ShowsResponse GenericError", "${response.errorMessage}")
                 throw Throwable("${response.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
-                logger.error("HttpError", "${response.code} - ${response.errorBody?.message}")
+                logger.error("ShowsResponse HttpError", "${response.code} - ${response.errorBody?.message}")
                 throw Throwable("${response.code} - ${response.errorBody?.message}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("SerializationError", "$response")
+                logger.error("ShowsResponse SerializationError", "$response")
+                throw Throwable("$response")
+            }
+            is ApiResponse.Error.JsonConvertException -> {
+                logger.error("ShowsResponse JsonConvertException", "$response")
                 throw Throwable("$response")
             }
         }
@@ -43,7 +47,7 @@ class ShowsResponseMapper(
         title = response.title,
         overview = response.overview ?: "",
         votes = response.votes.toLong(),
-        year = response.year ?: "--",
+        year = response.year?.toString() ?: "--",
         runtime = response.runtime.toLong(),
         aired_episodes = response.airedEpisodes.toLong(),
         language = response.language?.uppercase(),
@@ -55,28 +59,13 @@ class ShowsResponseMapper(
         category_id = null,
     )
 
-    fun responseToCache(response: TraktShowResponse) = Show(
-        trakt_id = response.ids.trakt.toLong(),
-        tmdb_id = response.ids.tmdb?.toLong(),
-        title = response.title,
-        overview = response.overview ?: "",
-        votes = response.votes.toLong(),
-        year = response.year ?: "--",
-        runtime = response.runtime.toLong(),
-        aired_episodes = response.airedEpisodes.toLong(),
-        language = response.language?.uppercase(),
-        rating = formatterUtil.formatDouble(response.rating, 1),
-        genres = response.genres.map { it.replaceFirstChar { it.uppercase() } },
-        status = response.status.replaceFirstChar { it.uppercase() },
-    )
-
     fun responseToShow(response: TraktShowResponse) = ShowById(
         trakt_id = response.ids.trakt.toLong(),
         tmdb_id = response.ids.tmdb?.toLong(),
         title = response.title,
         overview = response.overview ?: "",
         votes = response.votes.toLong(),
-        year = response.year ?: "--",
+        year = response.year?.toString() ?: "--",
         runtime = response.runtime.toLong(),
         aired_episodes = response.airedEpisodes.toLong(),
         language = response.language?.uppercase(),
@@ -112,17 +101,21 @@ class ShowsResponseMapper(
         when (response) {
             is ApiResponse.Success -> response.body.map { showResponseToCacheList(it) }
             is ApiResponse.Error.GenericError -> {
-                logger.error("GenericError", "${response.errorMessage}")
+                logger.error("ShowsResponse GenericError", "${response.errorMessage}")
                 throw Throwable("${response.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
-                logger.error("HttpError", "${response.code} - ${response.errorBody?.message}")
+                logger.error("ShowsResponse HttpError", "${response.code} - ${response.errorBody?.message}")
                 throw Throwable("${response.code} - ${response.errorBody?.message}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("SerializationError", "$response")
+                logger.error("ShowsResponse SerializationError", "$response")
+                throw Throwable("$response")
+            }
+            is ApiResponse.Error.JsonConvertException -> {
+                logger.error("ShowsResponse JsonConvertException", "$response")
                 throw Throwable("$response")
             }
         }
@@ -133,7 +126,7 @@ class ShowsResponseMapper(
         title = response.show.title,
         overview = response.show.overview ?: "",
         votes = response.show.votes.toLong(),
-        year = response.show.year ?: "--",
+        year = response.show.year?.toString() ?: "--",
         runtime = response.show.runtime.toLong(),
         aired_episodes = response.show.airedEpisodes.toLong(),
         language = response.show.language?.uppercase(),

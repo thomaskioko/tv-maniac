@@ -43,7 +43,7 @@ class FakeShowsRepository : ShowsRepository {
 
     override fun observeShow(traktId: Long): Flow<StoreReadResponse<ShowById>> = showResult
 
-    override fun observeRecommendedShows(
+    override fun observeShowsByCategory(
         categoryId: Long,
     ): Flow<StoreReadResponse<List<ShowsByCategory>>> = featuredResult
 
@@ -67,7 +67,7 @@ class FakeShowsRepository : ShowsRepository {
 
     override suspend fun fetchShows(category: Category): List<ShowsByCategory> = emptyList()
 
-    override suspend fun fetchShow(traktId: Long): ShowById = selectedShow
+    override suspend fun getShowById(traktId: Long): ShowById = selectedShow
 }
 
 val selectedShow = ShowById(

@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.shared.base
 
 import com.thomaskioko.trakt.service.implementation.TraktComponent
 import com.thomaskioko.trakt.service.implementation.TraktPlatformComponent
-import com.thomaskioko.tvmaniac.core.networkutil.NetworkUtilComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
 import com.thomaskioko.tvmaniac.datastore.implementation.DataStorePlatformComponent
@@ -11,6 +10,7 @@ import com.thomaskioko.tvmaniac.episodeimages.implementation.EpisodeImageCompone
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeComponent
 import com.thomaskioko.tvmaniac.profile.implementation.ProfileComponent
 import com.thomaskioko.tvmaniac.profilestats.implementation.StatsComponent
+import com.thomaskioko.tvmaniac.resourcemanager.implementation.RequestManagerComponent
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsComponent
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsComponent
 import com.thomaskioko.tvmaniac.shared.base.wrappers.DiscoverStateMachineWrapper
@@ -38,8 +38,8 @@ abstract class ApplicationComponent :
     DataStorePlatformComponent,
     EpisodeComponent,
     EpisodeImageComponent,
-    NetworkUtilComponent,
     ProfileComponent,
+    RequestManagerComponent,
     SeasonsComponent,
     SeasonDetailsComponent,
     ShowsComponent,
