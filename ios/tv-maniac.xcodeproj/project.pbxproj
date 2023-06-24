@@ -13,8 +13,9 @@
 		CBDFC60AF859A44365A90BA5 /* TopNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC4463ABF8E9F9AEB156C /* TopNavBar.swift */; };
 		CBDFCA9D24126097D232D988 /* BlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFC78A5C2441FF7F2BB401 /* BlurView.swift */; };
 		CBDFCFDED77DDE3DC67E3C28 /* ShowDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFCB6603736674C1A12CEE /* ShowDetailsViewModel.swift */; };
-		D626573829EE3DEC008782BB /* config.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D626573729EE3DEC008782BB /* config.yaml */; };
-		D63B9C2629EA341B00A02A43 /* TvManiac in Frameworks */ = {isa = PBXBuildFile; productRef = D63B9C2529EA341B00A02A43 /* TvManiac */; };
+		D601C5902A0BDFD500A53E84 /* TvManiac in Frameworks */ = {isa = PBXBuildFile; productRef = D601C58F2A0BDFD500A53E84 /* TvManiac */; };
+		D628B5C02A0C167E00015E45 /* config.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5BF2A0C167E00015E45 /* config.yaml */; };
+		D628B5C42A0C171300015E45 /* dev.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5C32A0C171300015E45 /* dev.yaml */; };
 		D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D653924729D8B6A6000EE673 /* OAuthSwift */; };
 		D653924D29D8B70E000EE673 /* TraktManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653924C29D8B70E000EE673 /* TraktManagerError.swift */; };
 		D653924F29D8BC7E000EE673 /* TraktAuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653924E29D8BC7E000EE673 /* TraktAuthViewModel.swift */; };
@@ -77,7 +78,8 @@
 		CBDFC78A5C2441FF7F2BB401 /* BlurView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlurView.swift; sourceTree = "<group>"; };
 		CBDFC8F86D71D33205E42D7F /* OffsetModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OffsetModifier.swift; sourceTree = "<group>"; };
 		CBDFCB6603736674C1A12CEE /* ShowDetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDetailsViewModel.swift; sourceTree = "<group>"; };
-		D626573729EE3DEC008782BB /* config.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; name = config.yaml; path = ../../../shared/core/util/src/commonMain/resources/config.yaml; sourceTree = "<group>"; };
+		D628B5BF2A0C167E00015E45 /* config.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; name = config.yaml; path = ../../../core/util/src/commonMain/resources/config.yaml; sourceTree = "<group>"; };
+		D628B5C32A0C171300015E45 /* dev.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = dev.yaml; sourceTree = "<group>"; };
 		D653924C29D8B70E000EE673 /* TraktManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktManagerError.swift; sourceTree = "<group>"; };
 		D653924E29D8BC7E000EE673 /* TraktAuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktAuthViewModel.swift; sourceTree = "<group>"; };
 		D653925229DABCEA000EE673 /* ConfigLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigLoader.swift; sourceTree = "<group>"; };
@@ -136,7 +138,7 @@
 			files = (
 				E9C6114E27FF863600F8A23F /* Kingfisher in Frameworks */,
 				D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */,
-				D63B9C2629EA341B00A02A43 /* TvManiac in Frameworks */,
+				D601C5902A0BDFD500A53E84 /* TvManiac in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,9 +165,9 @@
 		7555FF7D242A565900829871 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				D628B5BE2A0C165400015E45 /* Resources */,
 				D653925129DABCBA000EE673 /* Configuration */,
 				E9B6868F278736FA001698B7 /* Feature */,
-				D63B9C2129EA012A00A02A43 /* Resources */,
 				E9B6869327873774001698B7 /* Ui */,
 				E9AC834B26CEE00D00829A0D /* Assets.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
@@ -175,10 +177,11 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
-		D63B9C2129EA012A00A02A43 /* Resources */ = {
+		D628B5BE2A0C165400015E45 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D626573729EE3DEC008782BB /* config.yaml */,
+				D628B5C32A0C171300015E45 /* dev.yaml */,
+				D628B5BF2A0C167E00015E45 /* config.yaml */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -402,7 +405,7 @@
 			packageProductDependencies = (
 				E9C6114D27FF863600F8A23F /* Kingfisher */,
 				D653924729D8B6A6000EE673 /* OAuthSwift */,
-				D63B9C2529EA341B00A02A43 /* TvManiac */,
+				D601C58F2A0BDFD500A53E84 /* TvManiac */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -435,7 +438,7 @@
 			packageReferences = (
 				E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */,
-				D63B9C2429EA341B00A02A43 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */,
+				D601C58E2A0BDFD500A53E84 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -454,7 +457,8 @@
 				E98381AD27937ABF0039CB08 /* FjallaOne-Regular.ttf in Resources */,
 				E98381CC2793A0A50039CB08 /* WorkSans-ExtraBold.ttf in Resources */,
 				E98381CF2793A0A50039CB08 /* WorkSans-SemiBold.ttf in Resources */,
-				D626573829EE3DEC008782BB /* config.yaml in Resources */,
+				D628B5C02A0C167E00015E45 /* config.yaml in Resources */,
+				D628B5C42A0C171300015E45 /* dev.yaml in Resources */,
 				E98381CE2793A0A50039CB08 /* WorkSans-Thin.ttf in Resources */,
 				E98381D02793A0A50039CB08 /* WorkSans-Medium.ttf in Resources */,
 				D653926B29DAD8FA000EE673 /* config.json in Resources */,
@@ -729,9 +733,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		D63B9C2429EA341B00A02A43 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */ = {
+		D601C58E2A0BDFD500A53E84 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/c0de-wizard/tvmaniac-swift-packages";
+			repositoryURL = "https://github.com/c0de-wizard/tvmaniac-swift-packages.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.7.0;
@@ -750,15 +754,15 @@
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 7.0.0;
+				minimumVersion = 7.6.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D63B9C2529EA341B00A02A43 /* TvManiac */ = {
+		D601C58F2A0BDFD500A53E84 /* TvManiac */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D63B9C2429EA341B00A02A43 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */;
+			package = D601C58E2A0BDFD500A53E84 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */;
 			productName = TvManiac;
 		};
 		D653924729D8B6A6000EE673 /* OAuthSwift */ = {
