@@ -1,0 +1,29 @@
+CREATE TABLE stats(
+slug TEXT NOT NULL PRIMARY KEY,
+months Text NOT NULL,
+days Text NOT NULL,
+hours Text NOT NULL,
+collected_shows Text NOT NULL,
+episodes_watched Text NOT NULL
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO stats(
+slug,
+months,
+days,
+hours,
+collected_shows,
+episodes_watched
+)
+VALUES(?,?,?,?,?,?);
+
+select:
+SELECT *
+FROM stats WHERE slug = ?;
+
+delete:
+DELETE FROM stats WHERE slug = ?;
+
+deleteAll:
+DELETE FROM stats;

@@ -1,0 +1,35 @@
+import kotlin.Boolean;
+
+CREATE TABLE user (
+slug TEXT NOT NULL PRIMARY KEY,
+user_name Text NOT NULL,
+full_name TEXT,
+profile_picture TEXT,
+is_me INTEGER AS Boolean NOT NULL DEFAULT 0
+);
+
+insertOrReplace:
+INSERT OR REPLACE INTO user(
+slug,
+user_name,
+full_name,
+profile_picture,
+is_me
+)
+VALUES(?,?,?,?,? );
+
+userBySlug:
+SELECT *
+FROM user
+WHERE slug = ?;
+
+getCurrentUser:
+SELECT *
+FROM user
+WHERE is_me != 0;
+
+delete:
+DELETE FROM user WHERE slug = ?;
+
+deleteAll:
+DELETE FROM user;

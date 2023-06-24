@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.thomaskioko.tvmaniac.core.networkutil">
+
+    <queries>
+        <package android:name="com.google.android.webview" />
+    </queries>
+</manifest>

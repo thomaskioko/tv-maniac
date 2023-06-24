@@ -1,8 +1,0 @@
-framework module TvManiac {
-    umbrella header "TvManiac.h"
-
-    export *
-    module * { export * }
-
-    use Foundation
-}
