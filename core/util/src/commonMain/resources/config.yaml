@@ -1,4 +1,4 @@
-isDebug: false
+isDebug: true
 tmdbApiKey: "PUT_API_KEY_HERE"
 traktClientId: "PUT_CLIENT_ID_HERE"
 traktClientSecret: "PUT_CLIENT_SECRET_HERE"
