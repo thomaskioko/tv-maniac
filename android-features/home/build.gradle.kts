@@ -9,7 +9,7 @@ android {
 dependencies {
     api(libs.androidx.compose.ui.ui)
 
-    implementation(projects.android.core.resources)
+    implementation(projects.androidCore.resources)
 
     implementation(libs.accompanist.navigation.material)
     implementation(libs.androidx.compose.material)

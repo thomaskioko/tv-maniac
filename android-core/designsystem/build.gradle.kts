@@ -13,7 +13,7 @@ dependencies {
     api(libs.androidx.compose.ui.tooling)
     api(libs.androidx.palette)
     api(libs.androidx.compose.material3)
-    api(libs.androidx.compose.ui.runtime)
+    api(libs.androidx.compose.ui.ui)
 
     implementation(projects.androidCore.resources)
 
