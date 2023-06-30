@@ -224,10 +224,7 @@ private fun ShowTopBar(
                 else -> {
                     val firstVisibleItem = visibleItemsInfo[0]
                     when {
-                        // If the first visible item is > 0, we want to show the app bar background
                         firstVisibleItem.index > 0 -> true
-                        // If the first item is visible, only show the app bar background once the only
-                        // remaining part of the item is <= the app bar
                         else -> firstVisibleItem.size + firstVisibleItem.offset - 5 <= appBarHeight
                     }
                 }
@@ -272,10 +269,11 @@ private fun ShowDetailContent(
                 show = show,
                 trailerKey = trailerContent?.trailersList?.firstOrNull()?.key,
                 onUpdateFavoriteClicked = onUpdateFavoriteClicked,
-            ) { showId, key ->
-                val hasWebView = trailerContent?.hasWebViewInstalled ?: false
-                onWatchTrailerClicked(hasWebView, showId, key)
-            }
+                onWatchTrailerClicked = { showId, key ->
+                    val hasWebView = trailerContent?.hasWebViewInstalled ?: false
+                    onWatchTrailerClicked(hasWebView, showId, key)
+                },
+            )
         }
 
         item {
@@ -289,20 +287,24 @@ private fun ShowDetailContent(
         }
 
         item {
-            TrailersContent(
-                trailersState = trailerContent,
-                snackBarHostState = snackBarHostState,
-                onDismissTrailerErrorClicked = onDismissTrailerErrorClicked,
-                onWatchTrailerClicked = onWatchTrailerClicked,
-            )
+            if (trailerContent != null) {
+                TrailersContent(
+                    trailersState = trailerContent,
+                    snackBarHostState = snackBarHostState,
+                    onDismissTrailerErrorClicked = onDismissTrailerErrorClicked,
+                    onWatchTrailerClicked = onWatchTrailerClicked,
+                )
+            }
         }
 
         item {
-            SimilarShowsContent(
-                isLoading = similarShowsContent?.isLoading ?: false,
-                similarShows = similarShowsContent?.similarShows ?: emptyList(),
-                onShowClicked = onShowClicked,
-            )
+            if (similarShowsContent != null) {
+                SimilarShowsContent(
+                    isLoading = similarShowsContent.isLoading,
+                    similarShows = similarShowsContent.similarShows,
+                    onShowClicked = onShowClicked,
+                )
+            }
         }
     }
 }
@@ -334,8 +336,7 @@ private fun HeaderContent(
         KenBurnsViewImage(
             imageUrl = show?.backdropImageUrl,
             modifier = Modifier
-                .fillMaxWidth()
-                .height(HEADER_HEIGHT)
+                .fillMaxSize()
                 .clipToBounds(),
         )
 
@@ -361,8 +362,7 @@ private fun Body(
 
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(HEADER_HEIGHT)
+            .fillMaxSize()
             .clipToBounds()
             .background(Brush.verticalGradient(surfaceGradient))
             .padding(horizontal = 16.dp),
