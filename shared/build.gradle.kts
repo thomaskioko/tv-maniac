@@ -110,9 +110,9 @@ addGithubPackagesRepository()
 kmmbridge {
     frameworkName.set("TvManiac")
     mavenPublishArtifacts()
-    githubReleaseVersions()
+    manualVersions()
     spm()
-    versionPrefix.set("0.2.5")
+    versionPrefix.set("0.0.1")
 }
 
 //TODO:: Get rid of this once we fully migrate to kmmbridge
