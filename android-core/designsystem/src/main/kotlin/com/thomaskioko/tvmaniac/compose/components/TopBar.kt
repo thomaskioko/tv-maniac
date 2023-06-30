@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.ui.TopAppBar
@@ -125,6 +126,9 @@ fun CollapsableAppBar(
                         style = MaterialTheme.typography.headlineSmall.copy(
                             color = MaterialTheme.colorScheme.onSurface,
                         ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontWeight = FontWeight.Bold,
                     )
                 }
             }
@@ -140,6 +144,7 @@ fun CollapsableAppBar(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = stringResource(R.string.cd_navigate_back),
+                    tint = MaterialTheme.colorScheme.onBackground,
                 )
             }
         },
