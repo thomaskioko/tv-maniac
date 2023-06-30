@@ -1,9 +1,16 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.thomaskioko.tvmaniac.discover
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -13,9 +20,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -24,25 +31,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Surface
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.HorizontalPagerIndicator
-import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.calculateCurrentOffsetForPage
-import com.google.accompanist.pager.rememberPagerState
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.EmptyUi
@@ -53,13 +59,13 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.verticalGradientScrim
+import com.thomaskioko.tvmaniac.compose.theme.MinContrastOfPrimaryVsSurface
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
 import com.thomaskioko.tvmaniac.compose.util.DominantColorState
 import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
-import com.thomaskioko.tvmaniac.presentation.discover.ContentError
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverContent
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.Loading
@@ -133,39 +139,39 @@ private fun DiscoverScreen(
             )
 
         is DiscoverContent ->
-            when (state.contentState) {
-                is DiscoverContent.DataLoaded -> {
-                    val resultState = (state.contentState as DiscoverContent.DataLoaded)
 
-                    DiscoverContent(
-                        trendingShows = resultState.trendingShows,
-                        popularShows = resultState.popularShows,
-                        anticipatedShows = resultState.anticipatedShows,
-                        recommendedShows = resultState.recommendedShows,
-                        onReloadClicked = onReloadClicked,
-                        modifier = modifier,
-                        onShowClicked = onShowClicked,
-                        onMoreClicked = onMoreClicked,
-                    )
-                }
-
-                DiscoverContent.EmptyResult -> {
+            when {
+                state.isContentEmpty -> {
                     EmptyUi(
                         modifier = Modifier
                             .fillMaxSize()
                             .wrapContentSize(Alignment.Center),
                     )
                 }
-            }
 
-        is ContentError ->
-            ErrorUi(
-                errorMessage = state.errorMessage,
-                onRetry = onRetry,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center),
-            )
+                state.isContentEmpty && state.errorMessage != null -> {
+                    ErrorUi(
+                        errorMessage = state.errorMessage,
+                        onRetry = onRetry,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center),
+                    )
+                }
+
+                else -> {
+                    DiscoverContent(
+                        trendingShows = state.trendingShows,
+                        popularShows = state.popularShows,
+                        anticipatedShows = state.anticipatedShows,
+                        recommendedShows = state.recommendedShows,
+                        onReloadClicked = onReloadClicked,
+                        modifier = modifier,
+                        onShowClicked = onShowClicked,
+                        onMoreClicked = onMoreClicked,
+                    )
+                }
+            }
     }
 }
 
@@ -182,11 +188,13 @@ private fun DiscoverContent(
 ) {
     LazyColumn {
         item {
-            RecommendedContent(
-                showList = recommendedShows,
-                onShowClicked = onShowClicked,
-                modifier = modifier,
-            )
+            AnimatedVisibility(visible = recommendedShows.isNotEmpty()) {
+                RecommendedContent(
+                    showList = recommendedShows,
+                    onShowClicked = onShowClicked,
+                    modifier = modifier,
+                )
+            }
         }
 
         item {
@@ -236,42 +244,30 @@ fun RecommendedContent(
                 WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
             ),
     ) {
-        val surfaceColor = MaterialTheme.colorScheme.secondary
+        val surfaceColor = MaterialTheme.colorScheme.surface
         val dominantColorState = rememberDominantColorState { color ->
             // We want a color which has sufficient contrast against the surface color
-            color.contrastAgainst(surfaceColor) >= 3f
+            color.contrastAgainst(surfaceColor) >= MinContrastOfPrimaryVsSurface
         }
-        val pagerState = rememberPagerState()
 
         DynamicThemePrimaryColorsFromImage(dominantColorState) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalGradientScrim(
-                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.38f),
-                        startYPercentage = 1f,
-                        endYPercentage = 0f,
-                    ),
-            ) {
-                Spacer(modifier = Modifier.height(90.dp))
+            val pagerState = rememberPagerState()
+            val selectedImageUrl = showList.getOrNull(pagerState.currentPage)?.posterImageUrl
 
-                HorizontalPagerItem(
-                    list = showList,
-                    pagerState = pagerState,
-                    dominantColorState = dominantColorState,
-                    onClick = onShowClicked,
-                )
+            // When the selected image url changes, call updateColorsFromImageUrl() or reset()
+            LaunchedEffect(selectedImageUrl) {
+                if (selectedImageUrl != null) {
+                    dominantColorState.updateColorsFromImageUrl(selectedImageUrl)
+                } else {
+                    dominantColorState.reset()
+                }
             }
-        }
 
-        if (showList.isNotEmpty()) {
-            HorizontalPagerIndicator(
+            HorizontalPagerItem(
+                list = showList,
                 pagerState = pagerState,
-                activeColor = MaterialTheme.colorScheme.secondary,
-                inactiveColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f),
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 16.dp),
+                dominantColorState = dominantColorState,
+                onClick = onShowClicked,
             )
         }
 
@@ -297,57 +293,89 @@ fun HorizontalPagerItem(
         }
     }
 
-    LaunchedEffect(list) {
-        if (list.size >= 4) {
-            pagerState.scrollToPage(2)
-        }
-    }
-
-    HorizontalPager(
-        count = list.size,
-        state = pagerState,
-        contentPadding = PaddingValues(horizontal = 45.dp),
+    Column(
         modifier = modifier
-            .fillMaxSize(),
-    ) { pageNumber ->
+            .fillMaxWidth()
+            .verticalGradientScrim(
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                startYPercentage = 1f,
+                endYPercentage = 0.5f,
+            ),
+    ) {
+        Spacer(modifier = Modifier.height(90.dp))
+        HorizontalPager(
+            pageCount = list.size,
+            state = pagerState,
+            beyondBoundsPageCount = 2,
+            contentPadding = PaddingValues(horizontal = 45.dp),
+            modifier = Modifier.fillMaxSize(),
+        ) { pageNumber ->
 
-        TvPosterCard(
-            title = list[pageNumber].title,
-            posterImageUrl = list[pageNumber].posterImageUrl,
-            onClick = { onClick(list[pageNumber].traktId) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .graphicsLayer {
-                    val pageOffset = calculateCurrentOffsetForPage(pageNumber).absoluteValue
+            TvPosterCard(
+                title = list[pageNumber].title,
+                posterImageUrl = list[pageNumber].posterImageUrl,
+                onClick = { onClick(list[pageNumber].traktId) },
+                modifier = Modifier
+                    .graphicsLayer {
+                        val pageOffset = (
+                            (pagerState.currentPage - pageNumber) + pagerState
+                                .currentPageOffsetFraction
+                            ).absoluteValue
 
-                    // We animate the scaleX + scaleY, between 85% and 100%
-                    lerp(
-                        start = 0.85f,
-                        stop = 1f,
-                        fraction = 1f - pageOffset.coerceIn(0f, 1f),
-                    ).also { scale ->
-                        scaleX = scale
-                        scaleY = scale
+                        // We animate the scaleX + scaleY, between 85% and 100%
+                        lerp(
+                            start = 0.85f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                        ).also { scale ->
+                            scaleX = scale
+                            scaleY = scale
+                        }
+
+                        // We animate the alpha, between 50% and 100%
+                        alpha = lerp(
+                            start = 0.5f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                        )
+                    }
+                    .fillMaxWidth()
+                    .aspectRatio(0.7f),
+            )
+        }
+
+        if (list.isNotEmpty()) {
+            LaunchedEffect(list) {
+                if (list.size >= 4) {
+                    pagerState.scrollToPage(2)
+                }
+            }
+
+            Row(
+                Modifier
+                    .height(50.dp)
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 16.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                repeat(list.size) { iteration ->
+                    val color = if (pagerState.currentPage == iteration) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
                     }
 
-                    // We animate the alpha, between 50% and 100%
-                    alpha = lerp(
-                        start = 0.5f,
-                        stop = 1f,
-                        fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                    Box(
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clip(CircleShape)
+                            .background(color)
+                            .size(8.dp),
                     )
                 }
-                .offset {
-                    val pageOffset = calculateCurrentOffsetForPage(pageNumber)
-                    // Then use it as a multiplier to apply an offset
-                    IntOffset(
-                        x = (37.dp * pageOffset).roundToPx(),
-                        y = 0,
-                    )
-                }
-                .fillMaxWidth()
-                .aspectRatio(0.7f),
-        )
+            }
+        }
     }
 }
 

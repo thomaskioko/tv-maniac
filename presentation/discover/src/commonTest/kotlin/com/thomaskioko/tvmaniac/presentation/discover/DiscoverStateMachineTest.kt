@@ -12,7 +12,7 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Ignore
-internal class ShowsStateMachineTest {
+internal class DiscoverStateMachineTest {
     private val exceptionHandler = object : ExceptionHandler {
         override fun resolveError(throwable: Throwable): String {
             return "Opps!! Something went wrong"
@@ -89,9 +89,7 @@ internal class ShowsStateMachineTest {
 
         stateMachine.state.test {
             awaitItem() shouldBe Loading
-            awaitItem() shouldBe DiscoverContent(
-                contentState = DiscoverContent.DataLoaded(),
-            )
+            awaitItem() shouldBe DiscoverContent()
         }
     }
 }

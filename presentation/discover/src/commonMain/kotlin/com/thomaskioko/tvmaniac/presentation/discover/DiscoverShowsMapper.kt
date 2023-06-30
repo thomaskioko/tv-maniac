@@ -26,42 +26,11 @@ fun toShowResultState(
     popular: StoreReadResponse<List<ShowsByCategory>>,
     anticipated: StoreReadResponse<List<ShowsByCategory>>,
     recommended: StoreReadResponse<List<ShowsByCategory>>,
-): DiscoverContent.DiscoverContentState {
-    val trendingShows = if (trending is StoreReadResponse.Data) {
-        trending.requireData()
-            .toTvShowList()
-    } else {
-        emptyList()
-    }
-    val popularShows = if (popular is StoreReadResponse.Data) {
-        popular.requireData()
-            .toTvShowList()
-    } else {
-        emptyList()
-    }
-    val anticipatedShows = if (anticipated is StoreReadResponse.Data) {
-        anticipated.requireData()
-            .toTvShowList()
-    } else {
-        emptyList()
-    }
-    val recommendedShows = if (recommended is StoreReadResponse.Data) {
-        recommended.requireData()
-            .toTvShowList()
-    } else {
-        emptyList()
-    }
-
-    return if (trendingShows.isEmpty() && popularShows.isEmpty() &&
-        anticipatedShows.isEmpty() && recommendedShows.isEmpty()
-    ) {
-        DiscoverContent.EmptyResult
-    } else {
-        DiscoverContent.DataLoaded(
-            trendingShows = trendingShows,
-            popularShows = popularShows,
-            anticipatedShows = anticipatedShows,
-            recommendedShows = recommendedShows.take(5),
-        )
-    }
+): DiscoverContent {
+    return DiscoverContent(
+        trendingShows = trending.requireData().toTvShowList(),
+        popularShows = popular.requireData().toTvShowList(),
+        anticipatedShows = anticipated.requireData().toTvShowList(),
+        recommendedShows = recommended.requireData().toTvShowList().take(5),
+    )
 }

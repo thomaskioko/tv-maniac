@@ -85,7 +85,7 @@ fun ConnectionStatus(
 
 @Composable
 fun ErrorUi(
-    errorMessage: String,
+    errorMessage: String?,
     modifier: Modifier = Modifier,
     onRetry: () -> Unit = {},
     showRetryButton: Boolean = true,
@@ -107,7 +107,7 @@ fun ErrorUi(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = errorMessage,
+                text = errorMessage ?: stringResource(id = R.string.unexpected_error_retry),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
             )
