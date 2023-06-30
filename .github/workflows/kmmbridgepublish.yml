@@ -1,6 +1,9 @@
-name: Publish SMP Package
+name: Publish TvManiac SMP
 on: workflow_dispatch
 
 jobs:
   call-kmmbridge-publish:
     uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@v0.8
+    with:
+      distribution: 'zulu'
+      jvmVersion: '17'
