@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.discover
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.presentation.discover.ContentError
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverContent
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
@@ -26,13 +25,11 @@ val shows = TvShow(
 )
 
 val discoverContentSuccess = DiscoverContent(
+    recommendedShows = List(5) { shows },
+    trendingShows = List(20) { shows },
+    popularShows = List(20) { shows },
+    anticipatedShows = List(20) { shows },
 
-    contentState = DiscoverContent.DataLoaded(
-        recommendedShows = List(5) { shows },
-        trendingShows = List(20) { shows },
-        popularShows = List(20) { shows },
-        anticipatedShows = List(20) { shows },
-    ),
 )
 
 class DiscoverPreviewParameterProvider : PreviewParameterProvider<DiscoverState> {
@@ -40,7 +37,7 @@ class DiscoverPreviewParameterProvider : PreviewParameterProvider<DiscoverState>
         get() {
             return sequenceOf(
                 discoverContentSuccess,
-                ContentError(errorMessage = "Opps! Something went wrong"),
+                DiscoverContent(errorMessage = "Opps! Something went wrong"),
             )
         }
 }
