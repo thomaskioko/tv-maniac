@@ -24,14 +24,14 @@ import coil.size.Scale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-private const val COVER_IMAGE_SIZE = 128
+private const val COVER_IMAGE_SIZE = 240
 private const val MAC_COLOR_COUNT = 8
 
 @Composable
 fun rememberDominantColorState(
     context: Context = LocalContext.current,
-    defaultColor: Color = MaterialTheme.colorScheme.secondary,
-    defaultOnColor: Color = MaterialTheme.colorScheme.onSecondary,
+    defaultColor: Color = MaterialTheme.colorScheme.primary,
+    defaultOnColor: Color = MaterialTheme.colorScheme.onPrimary,
     cacheSize: Int = 12,
     isColorValid: (Color) -> Boolean = { true },
 ): DominantColorState = remember {
@@ -39,7 +39,7 @@ fun rememberDominantColorState(
 }
 
 /**
- * A composable which allows dynamic theming of the [MaterialTheme.colorScheme]
+ * A composable which allows dynamic theming of the [androidx.compose.material.Colors.primary]
  * color from an image.
  */
 @Composable
@@ -47,19 +47,20 @@ fun DynamicThemePrimaryColorsFromImage(
     dominantColorState: DominantColorState = rememberDominantColorState(),
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = MaterialTheme.colorScheme.copy(
-        secondary = animateColorAsState(
+    val colors = MaterialTheme.colorScheme.copy(
+        primary = animateColorAsState(
             dominantColorState.color,
             spring(stiffness = Spring.StiffnessLow),
-            label = "secondaryColorAnimation",
+            label = "primaryColorAnimation",
         ).value,
-        onSecondary = animateColorAsState(
+        onPrimary = animateColorAsState(
             dominantColorState.onColor,
             spring(stiffness = Spring.StiffnessLow),
-            label = "onSecondaryColorAnimation",
+            label = "onPrimaryColorAnimation",
         ).value,
     )
-    MaterialTheme(colorScheme = colorScheme, content = content)
+
+    MaterialTheme(colorScheme = colors, content = content)
 }
 
 /**
@@ -101,24 +102,19 @@ class DominantColorState(
     private suspend fun calculateDominantColor(url: String): DominantColors? {
         val cached = cache?.get(url)
         if (cached != null) {
-            // If we already have the result cached, return early now...
             return cached
         }
 
         // Otherwise we calculate the swatches in the image, and return the first valid color
         return calculateSwatchesInImage(context, url)
-            // First we want to sort the list by the color's population
             .sortedByDescending { swatch -> swatch.population }
-            // Then we want to find the first valid color
             .firstOrNull { swatch -> isColorValid(Color(swatch.rgb)) }
-            // If we found a valid swatch, wrap it in a [DominantColors]
             ?.let { swatch ->
                 DominantColors(
                     color = Color(swatch.rgb),
                     onColor = Color(swatch.bodyTextColor).copy(alpha = 1f),
                 )
             }
-            // Cache the resulting [DominantColors]
             ?.also { result -> cache?.put(url, result) }
     }
 
@@ -143,11 +139,8 @@ private suspend fun calculateSwatchesInImage(
 ): List<Palette.Swatch> {
     val request = ImageRequest.Builder(context)
         .data(imageUrl)
-        // We scale the image to cover 128px x 128px (i.e. min dimension == 128px)
         .size(COVER_IMAGE_SIZE).scale(Scale.FILL)
-        // Disable hardware bitmaps, since Palette uses Bitmap.getPixels()
         .allowHardware(false)
-        // Set a custom memory cache key to avoid overwriting the displayed image in the cache
         .memoryCacheKey("$imageUrl.palette")
         .build()
 
@@ -159,12 +152,8 @@ private suspend fun calculateSwatchesInImage(
     return bitmap?.let {
         withContext(Dispatchers.Default) {
             val palette = Palette.Builder(bitmap)
-                // Disable any bitmap resizing in Palette. We've already loaded an appropriately
-                // sized bitmap through Coil
                 .resizeBitmapArea(0)
-                // Clear any built-in filters. We want the unfiltered dominant color
                 .clearFilters()
-                // We reduce the maximum color count down to 8
                 .maximumColorCount(MAC_COLOR_COUNT)
                 .generate()
 

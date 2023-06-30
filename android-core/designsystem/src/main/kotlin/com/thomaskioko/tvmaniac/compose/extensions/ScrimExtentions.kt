@@ -76,7 +76,7 @@ fun Modifier.iconButtonBackgroundScrim(
         Modifier
             .padding(start = 8.dp, end = 16.dp)
             .background(
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
+                color = MaterialTheme.colorScheme.background.copy(alpha = alpha),
                 shape = shape,
             )
     } else {

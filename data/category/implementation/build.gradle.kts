@@ -12,6 +12,7 @@ kotlin {
             implementation(projects.core.util)
             implementation(projects.data.category.api)
 
+            implementation(libs.coroutines.core)
             implementation(libs.kotlinInject.runtime)
             implementation(libs.sqldelight.extensions)
         }
