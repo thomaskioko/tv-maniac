@@ -24,16 +24,14 @@ val show = TvShow(
 )
 
 val discoverContent = DiscoverContent(
-    contentState = DiscoverContent.DataLoaded(
-        recommendedShows = listOf(show),
-        trendingShows = listOf(show),
-        popularShows = listOf(show),
-        anticipatedShows = listOf(show),
-    ),
+    recommendedShows = listOf(show),
+    trendingShows = listOf(show),
+    popularShows = listOf(show),
+    anticipatedShows = listOf(show),
 )
 
 val errorDiscoverContent = DiscoverContent(
-    contentState = DiscoverContent.EmptyResult,
+    errorMessage = "Something went wrong",
 )
 
 fun categoryResult(categoryId: Long) = listOf(
