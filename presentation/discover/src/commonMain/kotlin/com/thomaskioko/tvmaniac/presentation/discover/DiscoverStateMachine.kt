@@ -33,7 +33,10 @@ class DiscoverStateMachine(
                 collectWhileInState(observeShowData()) { result, state ->
                     state.mutate {
                         copy(
-                            contentState = result,
+                            recommendedShows = result.recommendedShows,
+                            trendingShows = result.trendingShows,
+                            popularShows = result.popularShows,
+                            anticipatedShows = result.anticipatedShows,
                         )
                     }
                 }
@@ -46,9 +49,7 @@ class DiscoverStateMachine(
                     // TODO:: Implement reloading category data
                     state.noChange()
                 }
-            }
 
-            inState<ContentError> {
                 on<RetryLoading> { _, state ->
                     state.override { Loading }
                 }
@@ -64,17 +65,15 @@ class DiscoverStateMachine(
 
         return state.override {
             DiscoverContent(
-                contentState = DiscoverContent.DataLoaded(
-                    trendingShows = trendingResponse.toTvShowList(),
-                    popularShows = popularResponse.toTvShowList(),
-                    anticipatedShows = anticipatedResponse.toTvShowList(),
-                    recommendedShows = recommendedResponse.toTvShowList().take(5),
-                ),
+                trendingShows = trendingResponse.toTvShowList(),
+                popularShows = popularResponse.toTvShowList(),
+                anticipatedShows = anticipatedResponse.toTvShowList(),
+                recommendedShows = recommendedResponse.toTvShowList().take(5),
             )
         }
     }
 
-    private fun observeShowData(): Flow<DiscoverContent.DiscoverContentState> =
+    private fun observeShowData(): Flow<DiscoverContent> =
         combine(
             showsRepository.observeTrendingShows(),
             showsRepository.observePopularShows(),
@@ -84,6 +83,6 @@ class DiscoverStateMachine(
             toShowResultState(trending, popular, anticipated, featured)
         }
             .catch {
-                ContentError(exceptionHandler.resolveError(it))
+                DiscoverContent(errorMessage = exceptionHandler.resolveError(it))
             }
 }
