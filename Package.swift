@@ -1,7 +1,6 @@
-// swift-tools-version:5.3
 import PackageDescription
 
-let remoteKotlinUrl = "https://github.com/c0de-wizard/tv-maniac/packages/1845300" //TODO Remove hardcoded url
+let remoteKotlinUrl = "https://maven.pkg.github.com/c0de-wizard/tv-maniac/tv-maniac/shared-kmmbridge/0.0.1/shared-kmmbridge-0.0.1.zip"
 let packageName = "TvManiac"
 
 let package = Package(
