@@ -112,6 +112,7 @@ kmmbridge {
     mavenPublishArtifacts()
     manualVersions()
     spm()
+    noGitOperations()
     versionPrefix.set("0.0.1")
 }
 
