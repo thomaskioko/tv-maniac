@@ -1,8 +1,8 @@
-name: Publish KMMBridge
+name: Publish TvManiac SMP
 on: workflow_dispatch
 
 jobs:
   call-kmmbridge-publish:
-    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@v0.8
+    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@v0.9
     with:
-      jvmVersion: '17'
+      jvmVersion: 17
