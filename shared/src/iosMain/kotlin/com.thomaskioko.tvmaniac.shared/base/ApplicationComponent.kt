@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.shared.base
 
 import com.thomaskioko.trakt.service.implementation.TraktComponent
 import com.thomaskioko.trakt.service.implementation.TraktPlatformComponent
+import com.thomaskioko.tvmaniac.core.networkutil.inject.NetworkPlatformComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
 import com.thomaskioko.tvmaniac.datastore.implementation.DataStorePlatformComponent
@@ -52,7 +53,8 @@ abstract class ApplicationComponent :
     TraktAuthenticationComponent,
     TrailerComponent,
     UtilPlatformComponent,
-    WatchlistComponent {
+    WatchlistComponent,
+    NetworkPlatformComponent {
 
     abstract val discoverStateMachine: DiscoverStateMachineWrapper
     abstract val seasonDetailsStateMachineWrapper: SeasonDetailsStateMachineWrapper
