@@ -9,7 +9,7 @@ import java.net.UnknownHostException
 
 @Inject
 class AndroidNetworkExceptionHandlerUtil(
-    private val configs: Configs
+    private val configs: Configs,
 ) : NetworkExceptionHandler {
     val errorMessage = "Something went wrong"
 
@@ -17,9 +17,11 @@ class AndroidNetworkExceptionHandlerUtil(
         when (throwable) {
             is HttpExceptions -> if (configs.isDebug) throwable.message else errorMessage
             is ClientRequestException -> {
-                if (configs.isDebug)
+                if (configs.isDebug) {
                     "${throwable.response.status.value} Missing Api Key"
-                else errorMessage
+                } else {
+                    errorMessage
+                }
             }
 
             is UnknownHostException -> "No Internet Connection!"

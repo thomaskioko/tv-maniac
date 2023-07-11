@@ -9,10 +9,9 @@ import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.TrailersContent.Companion.playerErrorMessage
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
-import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
+import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -22,12 +21,11 @@ import org.mobilenativefoundation.store.store5.StoreReadResponse
 @Inject
 class ShowDetailsStateMachine constructor(
     @Assisted private val traktShowId: Long,
-    private val showsRepository: ShowsRepository,
+    private val discoverRepository: DiscoverRepository,
     private val similarShowsRepository: SimilarShowsRepository,
     private val seasonsRepository: SeasonsRepository,
     private val trailerRepository: TrailerRepository,
     private val watchlistRepository: WatchlistRepository,
-    private val exceptionHandler: ExceptionHandler,
 ) : FlowReduxStateMachine<ShowDetailsState, ShowDetailsAction>(
     initialState = ShowDetailsLoaded.EMPTY_DETAIL_STATE,
 ) {
@@ -41,7 +39,7 @@ class ShowDetailsStateMachine constructor(
                     fetchShowDetails(state)
                 }
 
-                collectWhileInState(showsRepository.observeShow(traktShowId)) { response, state ->
+                collectWhileInState(discoverRepository.observeShow(traktShowId)) { response, state ->
                     when (response) {
                         is StoreReadResponse.NoNewData -> state.noChange()
                         is StoreReadResponse.Loading -> state.mutate {
@@ -150,7 +148,7 @@ class ShowDetailsStateMachine constructor(
             state.mutate {
                 copy(
                     similarShowsContent = similarShowsContent.copy(
-                        errorMessage = exceptionHandler.resolveError(response.error),
+                        errorMessage = response.error.message,
                     ),
                 )
             }
@@ -195,7 +193,7 @@ class ShowDetailsStateMachine constructor(
             state.mutate {
                 copy(
                     trailersContent = trailersContent.copy(
-                        errorMessage = exceptionHandler.resolveError(response.error),
+                        errorMessage = response.error.message,
                     ),
                 )
             }
@@ -258,7 +256,7 @@ class ShowDetailsStateMachine constructor(
     }
 
     private suspend fun fetchShowDetails(state: State<ShowDetailsLoaded>): ChangedState<ShowDetailsState> {
-        val show = showsRepository.getShowById(traktShowId)
+        val show = discoverRepository.getShowById(traktShowId)
         val similar = similarShowsRepository.fetchSimilarShows(traktShowId)
         val season = seasonsRepository.getSeasons(traktShowId)
         val trailers = trailerRepository.fetchTrailersByShowId(traktShowId)

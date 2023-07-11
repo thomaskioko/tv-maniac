@@ -19,7 +19,7 @@ class ShowStore(
     private val showsDao: ShowsDao,
     private val traktRemoteDataSource: TraktRemoteDataSource,
     private val requestManagerRepository: RequestManagerRepository,
-    private val mapper: ShowsResponseMapper,
+    private val mapper: DiscoverResponseMapper,
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
 ) : Store<Long, ShowById> by StoreBuilder.from<Long, ShowById, ShowById>(

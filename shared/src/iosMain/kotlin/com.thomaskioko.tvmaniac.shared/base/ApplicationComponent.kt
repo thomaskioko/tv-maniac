@@ -22,7 +22,7 @@ import com.thomaskioko.tvmaniac.shared.base.wrappers.ShowDetailsStateMachineWrap
 import com.thomaskioko.tvmaniac.shared.base.wrappers.TrailersStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.base.wrappers.WatchlistStateMachineWrapper
 import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
-import com.thomaskioko.tvmaniac.shows.implementation.ShowsComponent
+import com.thomaskioko.tvmaniac.shows.implementation.DiscoverComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbPlatformComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthenticationComponent
@@ -43,7 +43,7 @@ abstract class ApplicationComponent :
     RequestManagerComponent,
     SeasonsComponent,
     SeasonDetailsComponent,
-    ShowsComponent,
+    DiscoverComponent,
     ShowImagesComponent,
     SimilarShowsComponent,
     StatsComponent,

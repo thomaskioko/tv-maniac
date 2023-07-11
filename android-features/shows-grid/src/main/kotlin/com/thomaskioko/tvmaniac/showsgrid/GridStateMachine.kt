@@ -3,8 +3,7 @@ package com.thomaskioko.tvmaniac.showsgrid
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Inject
@@ -13,8 +12,7 @@ import org.mobilenativefoundation.store.store5.StoreReadResponse
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Inject
 class GridStateMachine(
-    private val repository: ShowsRepository,
-    private val exceptionHandler: ExceptionHandler,
+    private val repository: DiscoverRepository,
 ) : FlowReduxStateMachine<GridState, GridActions>(initialState = LoadingContent) {
 
     init {
@@ -52,7 +50,7 @@ class GridStateMachine(
                         )
                     }
                     is StoreReadResponse.Error.Exception -> state.override {
-                        LoadingContentError(exceptionHandler.resolveError(result.error))
+                        LoadingContentError(result.error.message)
                     }
                     is StoreReadResponse.Error.Message -> state.override {
                         LoadingContentError(result.message)

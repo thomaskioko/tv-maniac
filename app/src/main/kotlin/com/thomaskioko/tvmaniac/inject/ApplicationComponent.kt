@@ -19,7 +19,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.implementation.RequestManagerCom
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsComponent
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsComponent
 import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
-import com.thomaskioko.tvmaniac.shows.implementation.ShowsComponent
+import com.thomaskioko.tvmaniac.shows.implementation.DiscoverComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbPlatformComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthComponent
@@ -49,7 +49,7 @@ abstract class ApplicationComponent(
     RequestManagerComponent,
     SeasonsComponent,
     SeasonDetailsComponent,
-    ShowsComponent,
+    DiscoverComponent,
     ShowImagesComponent,
     SimilarShowsComponent,
     StatsComponent,
