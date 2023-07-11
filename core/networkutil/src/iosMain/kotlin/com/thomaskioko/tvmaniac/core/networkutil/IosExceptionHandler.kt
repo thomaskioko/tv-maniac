@@ -8,7 +8,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class IosExceptionHandler(
-    private val configs: Configs
+    private val configs: Configs,
 ) : NetworkExceptionHandler {
     val errorMessage = "Something went wrong"
 
@@ -16,9 +16,11 @@ class IosExceptionHandler(
         when (throwable) {
             is HttpExceptions -> if (configs.isDebug) throwable.message else errorMessage
             is ClientRequestException -> {
-                if (configs.isDebug)
+                if (configs.isDebug) {
                     "${throwable.response.status.value} Missing Api Key"
-                else errorMessage
+                } else {
+                    errorMessage
+                }
             }
 
             is JsonConvertException -> "Error Parsing Response"

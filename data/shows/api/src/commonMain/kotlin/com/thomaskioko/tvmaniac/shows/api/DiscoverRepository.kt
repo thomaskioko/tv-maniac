@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import kotlinx.coroutines.flow.Flow
 import org.mobilenativefoundation.store.store5.StoreReadResponse
 
-interface ShowsRepository {
+interface DiscoverRepository {
 
     fun observeShow(traktId: Long): Flow<StoreReadResponse<ShowById>>
 
@@ -18,7 +18,7 @@ interface ShowsRepository {
 
     fun observeAnticipatedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>>
 
-    fun observeFeaturedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>>
+    fun observeRecommendedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>>
 
     suspend fun fetchDiscoverShows()
 

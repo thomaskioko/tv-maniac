@@ -9,5 +9,4 @@ actual interface NetworkPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideExceptionHandler(bind: IosExceptionHandler): NetworkExceptionHandler = bind
-
 }

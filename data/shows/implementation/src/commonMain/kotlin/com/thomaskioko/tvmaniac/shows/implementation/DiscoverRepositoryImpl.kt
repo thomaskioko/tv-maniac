@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.category.api.model.getCategory
 import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
+import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -20,12 +20,12 @@ import org.mobilenativefoundation.store.store5.impl.extensions.get
 import kotlin.time.Duration.Companion.days
 
 @Inject
-class ShowsRepositoryImpl constructor(
+class DiscoverRepositoryImpl constructor(
     private val showStore: ShowStore,
     private val discoverShowsStore: DiscoverShowsStore,
     private val requestManagerRepository: RequestManagerRepository,
     private val dispatchers: AppCoroutineDispatchers,
-) : ShowsRepository {
+) : DiscoverRepository {
 
     override suspend fun getShowById(traktId: Long): ShowById =
         showStore.get(key = traktId)
@@ -98,7 +98,7 @@ class ShowsRepositoryImpl constructor(
         )
             .flowOn(dispatchers.io)
 
-    override fun observeFeaturedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> =
+    override fun observeRecommendedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> =
         discoverShowsStore.stream(
             StoreReadRequest.cached(
                 key = RECOMMENDED,

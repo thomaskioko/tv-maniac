@@ -5,12 +5,11 @@ import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-interface NetworkPlatformComponent {
+actual interface NetworkPlatformComponent {
 
     @ApplicationScope
     @Provides
     fun provideNetworkExceptionHandler(
-        bind: AndroidNetworkExceptionHandlerUtil
+        bind: AndroidNetworkExceptionHandlerUtil,
     ): NetworkExceptionHandler = bind
-
 }

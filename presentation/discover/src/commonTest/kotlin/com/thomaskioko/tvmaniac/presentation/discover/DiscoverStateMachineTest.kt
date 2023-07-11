@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.discover
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.shows.testing.FakeShowsRepository
+import com.thomaskioko.tvmaniac.shows.testing.FakeDiscoverRepository
 import com.thomaskioko.tvmaniac.tmdb.testing.FakeShowImagesRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
@@ -13,7 +13,7 @@ import kotlin.test.Test
 @Ignore
 internal class DiscoverStateMachineTest {
 
-    private val traktRepository = FakeShowsRepository()
+    private val traktRepository = FakeDiscoverRepository()
     private val imagesRepository = FakeShowImagesRepository()
     private val stateMachine = DiscoverStateMachine(
         traktRepository,

@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
+import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsDao
-import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
-interface ShowsComponent {
+interface DiscoverComponent {
 
     @ApplicationScope
     @Provides
@@ -13,5 +13,5 @@ interface ShowsComponent {
 
     @ApplicationScope
     @Provides
-    fun provideShowsRepository(bind: ShowsRepositoryImpl): ShowsRepository = bind
+    fun provideDiscoverRepository(bind: DiscoverRepositoryImpl): DiscoverRepository = bind
 }

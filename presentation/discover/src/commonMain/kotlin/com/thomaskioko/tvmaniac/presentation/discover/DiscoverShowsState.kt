@@ -19,5 +19,5 @@ data class DataLoaded(
     val errorMessage: String? = null,
 ) : DiscoverState {
     override val isContentEmpty: Boolean = recommendedShows.isNullOrEmpty() &&
-            trendingShows.isNullOrEmpty() && popularShows.isNullOrEmpty() && anticipatedShows.isNullOrEmpty()
+        trendingShows.isNullOrEmpty() && popularShows.isNullOrEmpty() && anticipatedShows.isNullOrEmpty()
 }
