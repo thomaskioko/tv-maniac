@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.core.db.Season_episodes
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
-import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
@@ -17,7 +17,7 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 
 @Inject
 class SeasonDetailsStore(
-    private val traktRemoteDataSource: TraktRemoteDataSource,
+    private val remoteDataSource: TraktShowsRemoteDataSource,
     private val seasonDetailsDao: SeasonDetailsDao,
     private val episodesDao: EpisodesDao,
     private val scope: AppCoroutineScope,
@@ -25,7 +25,7 @@ class SeasonDetailsStore(
 ) : Store<Long, List<SeasonWithEpisodes>> by StoreBuilder
     .from<Long, List<SeasonWithEpisodes>, List<SeasonWithEpisodes>>(
         fetcher = Fetcher.of { id: Long ->
-            when (val response = traktRemoteDataSource.getSeasonEpisodes(id)) {
+            when (val response = remoteDataSource.getSeasonEpisodes(id)) {
                 is ApiResponse.Success -> response.body.toSeasonWithEpisodes()
                 is ApiResponse.Error.GenericError -> {
                     logger.error("SeasonDetailsStore GenericError", "$response")

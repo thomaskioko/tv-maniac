@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsDao
-import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
@@ -16,15 +16,15 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 
 @Inject
 class ShowStore(
+    private val remoteDataSource: TraktShowsRemoteDataSource,
     private val showsDao: ShowsDao,
-    private val traktRemoteDataSource: TraktRemoteDataSource,
     private val requestManagerRepository: RequestManagerRepository,
     private val mapper: DiscoverResponseMapper,
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
 ) : Store<Long, ShowById> by StoreBuilder.from<Long, ShowById, ShowById>(
     fetcher = Fetcher.of { traktId ->
-        when (val apiResult = traktRemoteDataSource.getSeasonDetails(traktId)) {
+        when (val apiResult = remoteDataSource.getSeasonDetails(traktId)) {
             is ApiResponse.Success -> {
                 mapper.responseToShow(apiResult.body)
             }
