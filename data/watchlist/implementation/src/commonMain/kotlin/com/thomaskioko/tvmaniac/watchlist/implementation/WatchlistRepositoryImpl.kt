@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.profile.api.ProfileDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.util.DateFormatter
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +21,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class WatchlistRepositoryImpl constructor(
-    private val traktRemoteDataSource: TraktRemoteDataSource,
+    private val remoteDataSource: TraktListRemoteDataSource,
     private val watchlistDao: WatchlistDao,
     private val profileDao: ProfileDao,
     private val dateFormatter: DateFormatter,
@@ -36,7 +36,7 @@ class WatchlistRepositoryImpl constructor(
                 if (user.slug.isNotBlank()) {
                     watchlistDao.getUnSyncedShows()
                         .map {
-                            traktRemoteDataSource.addShowToWatchList(it.id)
+                            remoteDataSource.addShowToWatchList(it.id)
 
                             watchlistDao.insert(
                                 Watchlist(

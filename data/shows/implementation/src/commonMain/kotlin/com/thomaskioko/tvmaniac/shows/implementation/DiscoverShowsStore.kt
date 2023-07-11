@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.shows.api.ShowsDao
-import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
@@ -15,28 +15,28 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 
 @Inject
 class DiscoverShowsStore(
+    private val remoteDataSource: TraktShowsRemoteDataSource,
     private val showsDao: ShowsDao,
     private val categoryCache: CategoryCache,
-    private val traktRemoteDataSource: TraktRemoteDataSource,
     private val mapper: DiscoverResponseMapper,
     private val scope: AppCoroutineScope,
 ) : Store<Category, List<ShowsByCategory>> by StoreBuilder.from<Category, List<ShowsByCategory>, List<ShowsByCategory>>(
     fetcher = Fetcher.of { category ->
         when (category) {
             Category.POPULAR -> {
-                val apiResponse = traktRemoteDataSource.getPopularShows()
+                val apiResponse = remoteDataSource.getPopularShows()
                 mapper.showResponseToCacheList(category, apiResponse)
             }
             Category.TRENDING -> {
-                val apiResponse = traktRemoteDataSource.getTrendingShows()
+                val apiResponse = remoteDataSource.getTrendingShows()
                 mapper.responseToEntityList(category, apiResponse)
             }
             Category.ANTICIPATED -> {
-                val apiResponse = traktRemoteDataSource.getAnticipatedShows()
+                val apiResponse = remoteDataSource.getAnticipatedShows()
                 mapper.responseToEntityList(category, apiResponse)
             }
             Category.RECOMMENDED -> {
-                val apiResponse = traktRemoteDataSource.getRecommendedShows()
+                val apiResponse = remoteDataSource.getRecommendedShows()
                 mapper.responseToEntityList(category, apiResponse)
             }
         }

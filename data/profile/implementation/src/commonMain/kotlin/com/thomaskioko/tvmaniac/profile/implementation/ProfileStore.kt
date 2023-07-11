@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.profile.api.ProfileDao
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
@@ -16,7 +16,7 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 
 @Inject
 class ProfileStore(
-    private val traktRemoteDataSource: TraktRemoteDataSource,
+    private val remoteDataSource: TraktUserRemoteDataSource,
     private val requestManagerRepository: RequestManagerRepository,
     private val profileDao: ProfileDao,
     private val logger: KermitLogger,
@@ -24,7 +24,7 @@ class ProfileStore(
 ) : Store<String, User> by StoreBuilder.from<String, User, User>(
     fetcher = Fetcher.of { slug ->
 
-        when (val apiResult = traktRemoteDataSource.getUser(slug)) {
+        when (val apiResult = remoteDataSource.getUser(slug)) {
             is ApiResponse.Success -> apiResult.body.toUser(slug)
 
             is ApiResponse.Error.GenericError -> {

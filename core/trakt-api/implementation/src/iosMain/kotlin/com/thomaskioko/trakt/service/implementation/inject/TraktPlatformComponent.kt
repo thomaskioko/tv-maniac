@@ -1,4 +1,4 @@
-package com.thomaskioko.trakt.service.implementation
+package com.thomaskioko.trakt.service.implementation.inject
 
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import io.ktor.client.engine.darwin.Darwin

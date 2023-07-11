@@ -1,4 +1,4 @@
-package com.thomaskioko.trakt.service.implementation
+package com.thomaskioko.trakt.service.implementation.inject
 
 import io.ktor.client.engine.HttpClientEngine
 
