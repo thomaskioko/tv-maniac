@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
@@ -13,7 +14,6 @@ import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
@@ -26,7 +26,7 @@ class SeasonDetailsRepositoryImpl(
     private val traktRemoteDataSource: TraktRemoteDataSource,
     private val seasonCache: SeasonDetailsDao,
     private val episodesDao: EpisodesDao,
-    private val exceptionHandler: ExceptionHandler,
+    private val exceptionHandler: NetworkExceptionHandler,
     private val dispatcher: AppCoroutineDispatchers,
     private val logger: KermitLogger,
 ) : SeasonDetailsRepository {
