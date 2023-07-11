@@ -5,10 +5,10 @@ import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.showimages.api.ShowImagesDao
 import com.thomaskioko.tvmaniac.showimages.api.ShowImagesRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbNetworkDataSource
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
@@ -23,7 +23,7 @@ class ShowImagesRepositoryImpl(
     private val networkDataSource: TmdbNetworkDataSource,
     private val imageCache: ShowImagesDao,
     private val formatterUtil: FormatterUtil,
-    private val exceptionHandler: ExceptionHandler,
+    private val exceptionHandler: NetworkExceptionHandler,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: KermitLogger,
 ) : ShowImagesRepository {

@@ -1,6 +1,7 @@
 package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.safeRequest
 import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.AccessTokenBody
@@ -23,7 +24,6 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserStatsResponse
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.util.model.Configs
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -42,7 +42,7 @@ private const val PAGE_LIMIT_SIZE = 20
 class TraktRemoteDataSourceImpl(
     private val configs: Configs,
     private val httpClient: TraktHttpClient,
-    private val exceptionHandler: ExceptionHandler,
+    private val exceptionHandler: NetworkExceptionHandler,
 ) : TraktRemoteDataSource {
 
     override suspend fun getAccessToken(

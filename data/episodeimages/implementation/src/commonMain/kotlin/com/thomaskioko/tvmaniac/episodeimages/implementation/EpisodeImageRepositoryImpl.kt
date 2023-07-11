@@ -5,10 +5,10 @@ import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.episodeimages.api.EpisodeImageDao
 import com.thomaskioko.tvmaniac.episodeimages.api.EpisodeImageRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbNetworkDataSource
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +22,7 @@ class EpisodeImageRepositoryImpl(
     private val episodeImageDao: EpisodeImageDao,
     private val formatterUtil: FormatterUtil,
     private val logger: KermitLogger,
-    private val exceptionHandler: ExceptionHandler,
+    private val exceptionHandler: NetworkExceptionHandler,
 ) : EpisodeImageRepository {
 
     override fun updateEpisodeImage(): Flow<Either<Failure, Unit>> =

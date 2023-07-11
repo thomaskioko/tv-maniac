@@ -33,7 +33,6 @@ kotlin {
 
         sourceSets["iosMain"].dependencies {
             implementation(libs.ktor.darwin)
-            implementation(libs.ktor.logging)
             implementation(libs.ktor.negotiation)
         }
     }

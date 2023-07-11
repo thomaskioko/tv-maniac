@@ -4,11 +4,9 @@ import com.thomaskioko.tvmaniac.util.AppUtils
 import com.thomaskioko.tvmaniac.util.BundleProvider
 import com.thomaskioko.tvmaniac.util.BundleResourceReader
 import com.thomaskioko.tvmaniac.util.DateFormatter
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.IosAppUtils
 import com.thomaskioko.tvmaniac.util.IosDateFormatter
-import com.thomaskioko.tvmaniac.util.IosExceptionHandler
 import com.thomaskioko.tvmaniac.util.IosFormatterUtil
 import com.thomaskioko.tvmaniac.util.ResourceReader
 import com.thomaskioko.tvmaniac.util.YamlResourceReader
@@ -32,10 +30,6 @@ actual interface UtilPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideIosFormatterUtil(bind: IosFormatterUtil): FormatterUtil = bind
-
-    @ApplicationScope
-    @Provides
-    fun provideExceptionHandler(bind: IosExceptionHandler): ExceptionHandler = bind
 
     @ApplicationScope
     @Provides
