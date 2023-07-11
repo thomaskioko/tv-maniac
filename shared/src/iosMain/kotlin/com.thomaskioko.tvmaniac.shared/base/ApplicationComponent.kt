@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.shared.base
 
-import com.thomaskioko.trakt.service.implementation.TraktComponent
-import com.thomaskioko.trakt.service.implementation.TraktPlatformComponent
+import com.thomaskioko.trakt.service.implementation.inject.TraktComponent
+import com.thomaskioko.trakt.service.implementation.inject.TraktPlatformComponent
 import com.thomaskioko.tvmaniac.core.networkutil.inject.NetworkPlatformComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent

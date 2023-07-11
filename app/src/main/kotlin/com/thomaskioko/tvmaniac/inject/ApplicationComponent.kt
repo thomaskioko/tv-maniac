@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.inject
 
 import android.app.Application
 import android.content.Context
-import com.thomaskioko.trakt.service.implementation.TraktComponent
-import com.thomaskioko.trakt.service.implementation.TraktPlatformComponent
+import com.thomaskioko.trakt.service.implementation.inject.TraktComponent
+import com.thomaskioko.trakt.service.implementation.inject.TraktPlatformComponent
 import com.thomaskioko.tvmaniac.TvManicApplication
 import com.thomaskioko.tvmaniac.core.networkutil.inject.NetworkPlatformComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
