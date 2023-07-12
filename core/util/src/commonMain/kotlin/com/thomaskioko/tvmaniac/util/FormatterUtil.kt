@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.util
 
 interface FormatterUtil {
     /**
-     * Formats TMDB image url. If the url is null, we return a default imageUrl
+     * Formats TMDB image url.
      */
-    fun formatTmdbPosterPath(imageUrl: String?): String
+    fun formatTmdbPosterPath(imageUrl: String): String
 
     /**
      * Rounds of a double number to the set decimal point.
