@@ -2,7 +2,6 @@ package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.trakt.service.implementation.inject.TraktHttpClient
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
-import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.safeRequest
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
@@ -20,11 +19,10 @@ private const val PAGE_LIMIT_SIZE = 20
 @Inject
 class TraktShowsShowsRemoteDataSourceImpl(
     private val httpClient: TraktHttpClient,
-    private val exceptionHandler: NetworkExceptionHandler,
 ) : TraktShowsRemoteDataSource {
 
     override suspend fun getTrendingShows(page: Long): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
-        httpClient.safeRequest(exceptionHandler) {
+        httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("shows/trending")
@@ -38,7 +36,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
         page: Long,
         period: String,
     ): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
-        httpClient.safeRequest(exceptionHandler) {
+        httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("shows/recommended/$period")
@@ -49,7 +47,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
         }
 
     override suspend fun getAnticipatedShows(page: Long): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
-        httpClient.safeRequest(exceptionHandler) {
+        httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("shows/anticipated")
@@ -60,7 +58,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
         }
 
     override suspend fun getPopularShows(page: Long): ApiResponse<List<TraktShowResponse>, ErrorResponse> =
-        httpClient.safeRequest(exceptionHandler) {
+        httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("shows/popular")
@@ -71,7 +69,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
         }
 
     override suspend fun getSimilarShows(traktId: Long): ApiResponse<List<TraktShowResponse>, ErrorResponse> =
-        httpClient.safeRequest(exceptionHandler) {
+        httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("shows/$traktId/related")
@@ -80,7 +78,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
         }
 
     override suspend fun getShowSeasons(traktId: Long): ApiResponse<List<TraktSeasonsResponse>, ErrorResponse> =
-        httpClient.safeRequest(exceptionHandler) {
+        httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("shows/$traktId/seasons")
@@ -91,7 +89,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
     override suspend fun getSeasonEpisodes(
         traktId: Long,
     ): ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse> =
-        httpClient.safeRequest(exceptionHandler) {
+        httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("shows/$traktId/seasons")
@@ -100,7 +98,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
         }
 
     override suspend fun getSeasonDetails(traktId: Long): ApiResponse<TraktShowResponse, ErrorResponse> =
-        httpClient.safeRequest(exceptionHandler) {
+        httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("shows/$traktId")

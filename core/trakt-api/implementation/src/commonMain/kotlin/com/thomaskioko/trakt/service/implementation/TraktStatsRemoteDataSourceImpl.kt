@@ -2,7 +2,6 @@ package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.trakt.service.implementation.inject.TraktHttpClient
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
-import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.safeRequest
 import com.thomaskioko.tvmaniac.trakt.api.TraktStatsRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
@@ -14,13 +13,12 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TraktStatsRemoteDataSourceImpl(
     private val httpClient: TraktHttpClient,
-    private val exceptionHandler: NetworkExceptionHandler,
 ) : TraktStatsRemoteDataSource {
 
     override suspend fun getStats(
         userId: String,
     ): ApiResponse<TraktUserStatsResponse, ErrorResponse> =
-        httpClient.safeRequest(exceptionHandler) {
+        httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("users/$userId/stats")
