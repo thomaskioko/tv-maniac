@@ -33,16 +33,12 @@ class SeasonsStore(
 
             is ApiResponse.Error.HttpError -> {
                 logger.error("SeasonsStore HttpError", "$response")
-                throw Throwable("${response.code} - ${response.errorBody?.message}")
+                throw Throwable("${response.code} - ${response.errorMessage}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("SeasonsStore SerializationError", "$response")
-                throw Throwable("$response")
-            }
-            is ApiResponse.Error.JsonConvertException -> {
-                logger.error("SeasonsStore JsonConvertException", "$response")
-                throw Throwable("$response")
+                logger.error("SeasonsStore SerializationError", "${response.message}")
+                throw Throwable("${response.errorMessage}")
             }
         }
     },

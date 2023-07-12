@@ -31,12 +31,18 @@ class DiscoverResponseMapper(
             response.body.map { responseToEntity(it) }
         }
 
-        is ApiResponse.Error.HttpError ->
-            throw Throwable("${response.code} - ${response.errorBody?.message}")
-
-        is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
-        is ApiResponse.Error.SerializationError -> throw Throwable("$response")
-        is ApiResponse.Error.JsonConvertException -> throw Throwable("$response")
+        is ApiResponse.Error.HttpError -> {
+            logger.error("ShowStore GenericError", "${response.errorBody}")
+            throw Throwable("${response.errorMessage}")
+        }
+        is ApiResponse.Error.GenericError -> {
+            logger.error("ShowStore GenericError", "${response.message}")
+            throw Throwable("${response.errorMessage}")
+        }
+        is ApiResponse.Error.SerializationError -> {
+            logger.error("ShowStore GenericError", "${response.message}")
+            throw Throwable("${response.errorMessage}")
+        }
     }
 
     fun responseToEntityList(
@@ -48,12 +54,18 @@ class DiscoverResponseMapper(
             response.body.map { showResponseToCacheList(it) }
         }
 
-        is ApiResponse.Error.HttpError ->
-            throw Throwable("${response.code} - ${response.errorBody?.message}")
-
-        is ApiResponse.Error.SerializationError -> throw Throwable("$response")
-        is ApiResponse.Error.JsonConvertException -> throw Throwable("$response")
-        is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
+        is ApiResponse.Error.HttpError -> {
+            logger.error("ShowStore GenericError", "${response.errorBody}")
+            throw Throwable("${response.errorMessage}")
+        }
+        is ApiResponse.Error.SerializationError -> {
+            logger.error("ShowStore GenericError", "${response.message}")
+            throw Throwable("${response.errorMessage}")
+        }
+        is ApiResponse.Error.GenericError -> {
+            logger.error("ShowStore GenericError", "${response.message}")
+            throw Throwable("${response.errorMessage}")
+        }
     }
 
     private fun responseToEntity(response: TraktShowResponse) = ShowsByCategory(

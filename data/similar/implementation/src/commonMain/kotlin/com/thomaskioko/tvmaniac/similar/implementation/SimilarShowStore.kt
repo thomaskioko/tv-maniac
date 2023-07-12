@@ -30,22 +30,18 @@ class SimilarShowStore(
             is ApiResponse.Success -> apiResult.body.responseToShow()
 
             is ApiResponse.Error.GenericError -> {
-                logger.error("SimilarShowStore GenericError", "${apiResult.errorMessage}")
+                logger.error("SimilarShowStore GenericError", "${apiResult.message}")
                 throw Throwable("${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
-                logger.error("SimilarShowStore HttpError", "${apiResult.code} - ${apiResult.errorBody?.message}")
-                throw Throwable("${apiResult.code} - ${apiResult.errorBody?.message}")
+                logger.error("SimilarShowStore HttpError", "${apiResult.code} - ${apiResult.errorBody}")
+                throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("SimilarShowStore SerializationError", "$apiResult")
-                throw Throwable("$apiResult")
-            }
-            is ApiResponse.Error.JsonConvertException -> {
-                logger.error("SimilarShowStore JsonConvertException", "$apiResult")
-                throw Throwable("$apiResult")
+                logger.error("SimilarShowStore SerializationError", "${apiResult.message}")
+                throw Throwable("${apiResult.errorMessage}")
             }
         }
     },
