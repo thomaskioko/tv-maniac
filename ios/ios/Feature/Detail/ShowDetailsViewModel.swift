@@ -8,17 +8,18 @@ import TvManiac
 
 class ShowDetailsViewModel: ObservableObject {
     private let stateMachine: ShowDetailsStateMachineWrapper = ApplicationComponentKt.showDetailsStateMachine()
-    @Published private(set) var detailState: ShowDetailsState = ShowDetailsStateLoading()
-
-    func startStateMachine(action: ShowDetailsAction) {
-        stateMachine.start(stateChangeListener: { (state: ShowDetailsState) -> Void in
+    
+    @Published private(set) var detailState: ShowDetailsState = ShowDetailsLoaded.companion.EMPTY_DETAIL_STATE
+    
+    func startStateMachine(showId: Int64, action: ShowDetailsAction) {
+        stateMachine.start(showId: showId, stateChangeListener: { (state: ShowDetailsState) -> Void in
             self.detailState = state
         })
-        stateMachine.dispatch(action: action)
+        stateMachine.dispatch(showId: showId, action: action)
     }
-
-    func dispatchAction(action: ShowDetailsAction){
-        stateMachine.dispatch(action: action)
+    
+    func dispatchAction(showId: Int64, action: ShowDetailsAction){
+        stateMachine.dispatch(showId: showId, action: action)
     }
-
+    
 }
