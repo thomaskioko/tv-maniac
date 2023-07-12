@@ -12,10 +12,10 @@ import TvManiac
 
 class DiscoverShowsViewModel: ObservableObject {
     private let stateMachine: DiscoverStateMachineWrapper = ApplicationComponentKt.discoverStateMachine()
-    @Published private(set) var showState: ShowsState = Loading()
-
+    @Published private(set) var showState: DiscoverState = Loading()
+    
     func startStateMachine() {
-        stateMachine.start(stateChangeListener: { (state: ShowsState) -> Void in
+        stateMachine.start(stateChangeListener: { (state: DiscoverState) -> Void in
             self.showState = state
         })
     }
