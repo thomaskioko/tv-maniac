@@ -42,7 +42,9 @@ class EpisodeImageRepositoryImpl(
                                     Episode_image(
                                         trakt_id = episodeArt.trakt_id,
                                         tmdb_id = response.body.id.toLong(),
-                                        image_url = formatterUtil.formatTmdbPosterPath(response.body.imageUrl),
+                                        image_url = response.body.imageUrl?.let {
+                                            formatterUtil.formatTmdbPosterPath(it)
+                                        },
                                     ),
                                 )
                             }

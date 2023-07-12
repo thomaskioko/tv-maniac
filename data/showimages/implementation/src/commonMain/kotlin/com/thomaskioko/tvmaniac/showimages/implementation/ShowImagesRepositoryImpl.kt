@@ -44,8 +44,12 @@ class ShowImagesRepositoryImpl(
                                     Show_image(
                                         trakt_id = show.trakt_id,
                                         tmdb_id = tmdbId,
-                                        poster_url = formatterUtil.formatTmdbPosterPath(response.body.posterPath),
-                                        backdrop_url = formatterUtil.formatTmdbPosterPath(response.body.backdropPath),
+                                        poster_url = response.body.posterPath?.let {
+                                            formatterUtil.formatTmdbPosterPath(it)
+                                        },
+                                        backdrop_url = response.body.backdropPath?.let {
+                                            formatterUtil.formatTmdbPosterPath(it)
+                                        },
                                     ),
                                 )
                             }
