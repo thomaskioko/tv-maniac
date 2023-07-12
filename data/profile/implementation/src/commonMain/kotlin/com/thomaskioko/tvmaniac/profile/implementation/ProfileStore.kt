@@ -28,22 +28,18 @@ class ProfileStore(
             is ApiResponse.Success -> apiResult.body.toUser(slug)
 
             is ApiResponse.Error.GenericError -> {
-                logger.error("ProfileStore GenericError", "${apiResult.errorMessage}")
+                logger.error("ProfileStore GenericError", "${apiResult.message}")
                 throw Throwable("${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
-                logger.error(" ProfileStore HttpError", "${apiResult.code} - ${apiResult.errorBody?.message}")
-                throw Throwable("${apiResult.code} - ${apiResult.errorBody?.message}")
+                logger.error(" ProfileStore HttpError", "${apiResult.code} - ${apiResult.errorBody}")
+                throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("ProfileStore SerializationError", "$apiResult")
-                throw Throwable("$apiResult")
-            }
-            is ApiResponse.Error.JsonConvertException -> {
-                logger.error("ProfileStore JsonConvertException", "$apiResult")
-                throw Throwable("$apiResult")
+                logger.error("ProfileStore SerializationError", "${apiResult.message}")
+                throw Throwable("${apiResult.errorMessage}")
             }
         }
     },

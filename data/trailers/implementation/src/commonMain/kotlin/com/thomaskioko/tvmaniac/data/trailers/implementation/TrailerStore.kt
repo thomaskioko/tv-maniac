@@ -37,17 +37,12 @@ class TrailerStore(
 
             is ApiResponse.Error.HttpError -> {
                 logger.error("TrailerStore HttpError", "$apiResult")
-                throw Throwable("${apiResult.code} - ${apiResult.errorBody?.message}")
+                throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("TrailerStore SerializationError", "$apiResult")
-                throw Throwable("$apiResult")
-            }
-
-            is ApiResponse.Error.JsonConvertException -> {
-                logger.error("TrailerStore JsonConvertException", "$apiResult")
-                throw Throwable("$apiResult")
+                logger.error("TrailerStore SerializationError", "${apiResult.message}")
+                throw Throwable("${apiResult.errorMessage}")
             }
         }
     },
