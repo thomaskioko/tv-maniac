@@ -9,24 +9,24 @@
 import SwiftUI
 
 struct WatchlistView: View {
-	var body: some View {
-		ZStack {
-			VStack {
-				Text("Watchlist")
-					
-				Spacer()
-			}
-			.frame(width : CGFloat(480.0))
-			.background(Color("Background"))
-		}
-	}
+    var body: some View {
+        ZStack {
+            VStack {
+                Text("Watchlist")
+                
+                Spacer()
+            }
+            .frame(width : CGFloat(480.0))
+            .background(Color("Background"))
+        }
+    }
 }
 
 struct WatchlistView_Previews: PreviewProvider {
     static var previews: some View {
         WatchlistView()
-		
-		WatchlistView()
-			.preferredColorScheme(.dark)
+        
+        WatchlistView()
+            .preferredColorScheme(.dark)
     }
 }
