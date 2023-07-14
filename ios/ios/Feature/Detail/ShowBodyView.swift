@@ -60,7 +60,8 @@ struct ShowBodyView: View {
                             NavigationLink(destination: ShowDetailView(showId: show.traktId)) {
                                 ShowPosterImage(
                                     posterSize: .medium,
-                                    imageUrl: show.posterImageUrl
+                                    imageUrl: show.posterImageUrl,
+                                    showTitle: show.title
                                 )
                             }
                         }
