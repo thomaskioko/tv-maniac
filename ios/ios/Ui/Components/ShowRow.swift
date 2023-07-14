@@ -37,11 +37,14 @@ struct ShowRow: View {
                             NavigationLink(destination: ShowDetailView(showId: show.traktId)) {
                                 ShowPosterImage(
                                     posterSize: .medium,
-                                    imageUrl: show.posterImageUrl
+                                    imageUrl: show.posterImageUrl,
+                                    showTitle: show.title
                                 )
                             }
                         }
                     }
+                    .ignoresSafeArea()
+                    .navigationBarHidden(true)
                     .padding(.trailing, 16)
                     .padding(.leading, 16)
                 }

@@ -11,11 +11,10 @@ class ShowDetailsViewModel: ObservableObject {
     
     @Published private(set) var detailState: ShowDetailsState = ShowDetailsLoaded.companion.EMPTY_DETAIL_STATE
     
-    func startStateMachine(showId: Int64, action: ShowDetailsAction) {
+    func startStateMachine(showId: Int64) {
         stateMachine.start(showId: showId, stateChangeListener: { (state: ShowDetailsState) -> Void in
             self.detailState = state
         })
-        stateMachine.dispatch(showId: showId, action: action)
     }
     
     func dispatchAction(showId: Int64, action: ShowDetailsAction){
