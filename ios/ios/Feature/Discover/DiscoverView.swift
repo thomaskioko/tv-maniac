@@ -6,13 +6,11 @@ struct DiscoverView: View {
 
     @ObservedObject var viewModel: DiscoverShowsViewModel = DiscoverShowsViewModel()
 
-    @Namespace var animation
     @Environment(\.colorScheme) var scheme
     
     @State var currentIndex: Int = 2
-    @State var size: CGSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
     @State private var show: Bool = false
-    @State private var selectedRow: Int64 = -1
+    @State private var showId: Int64 = -1
     @State private var regularSheet: Bool = false
     
     var body: some View {
@@ -81,7 +79,7 @@ struct DiscoverView: View {
                                 let _ = print("Unhandled case: \(contentState)")
                             }
                         }
-                        .frame(width: geometry.size.width)      // Make the scroll view full-width
+                        .frame(width: geometry.size.width)
                         .frame(minHeight: geometry.size.height)
                     }
                 }
@@ -94,25 +92,18 @@ struct DiscoverView: View {
     func FeaturedContentView(tvShows: [TvShow]?) -> some View {
         if let shows = tvShows {
             if !shows.isEmpty {
-                /**
-                 * This is a temporary implementation for navigation to the detail view. The problem is NavigationView
-                 * does not support MatchedGeometry effect. The other alternative would be to use an overlay
-                 * for the detailView.
-                 */
-                NavigationLink(destination: ShowDetailView(showId: (shows[currentIndex].traktId))) {
-                    SnapCarousel(spacing: 10, trailingSpace: 70, index: $currentIndex, items: shows) { show in
+                SnapCarousel(spacing: 10, trailingSpace: 70, index: $currentIndex, items: shows) { item in
+                    
+                    GeometryReader { proxy in
+                        let size = proxy.size
                         
-                        GeometryReader { proxy in
-                            let size = proxy.size
-                            
-                            ShowPosterImage(
-                                posterSize: .big,
-                                imageUrl: show.posterImageUrl,
-                                showTitle: show.title
-                            )
-                            .frame(width: size.width, height: size.height)
-                            .matchedGeometryEffect(id: show.traktId, in: animation)
-                        }
+                        ShowPosterImage(
+                            posterSize: .big,
+                            imageUrl: item.posterImageUrl,
+                            showTitle: item.title,
+                            showId: item.traktId
+                        )
+                        .frame(width: size.width, height: size.height)
                     }
                 }
                 .frame(height: 450)
@@ -138,7 +129,8 @@ struct DiscoverView: View {
                                 ShowPosterImage(
                                     posterSize: .big,
                                     imageUrl: tvShows[index].posterImageUrl,
-                                    showTitle: tvShows[index].title
+                                    showTitle: tvShows[index].title,
+                                    showId: tvShows[index].traktId
                                 )
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: size.width, height: size.height)
