@@ -12,12 +12,20 @@ import TvManiac
 struct ShowBodyView: View {
     
     @Environment(\.colorScheme) var scheme
-    var detailLoadedState: ShowDetailsLoaded
+    @Namespace var animation
+    @State private var detailShowId: Int64 = -1
+    @State private var showView: Bool = false
+    
+    
+    var seasonList: [Season]
+    var trailerList: [Trailer]
+    var similarShowsList: [Show]
+    
     
     var body: some View {
         
         VStack(alignment: .leading) {
-            if !detailLoadedState.seasonsContent.seasonsList.isEmpty {
+            if !seasonList.isEmpty {
                 Text("Browse Seasons")
                     .titleSemiBoldFont(size: 23)
                     .foregroundColor(Color.text_color_bg)
@@ -27,7 +35,7 @@ struct ShowBodyView: View {
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center) {
-                        ForEach(detailLoadedState.seasonsContent.seasonsList, id: \.self) { season in
+                        ForEach(seasonList, id: \.self) { season in
                             
                             Button(action: {}) {
                                 Text(season.name)
@@ -46,7 +54,7 @@ struct ShowBodyView: View {
             }
             
             
-            if !detailLoadedState.similarShowsContent.similarShows.isEmpty {
+            if !similarShowsList.isEmpty {
                 Text("More like this")
                     .titleSemiBoldFont(size: 23)
                     .padding(.top, 8)
@@ -56,14 +64,14 @@ struct ShowBodyView: View {
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .top) {
-                        ForEach(detailLoadedState.similarShowsContent.similarShows, id: \.traktId) { show in
-                            NavigationLink(destination: ShowDetailView(showId: show.traktId)) {
-                                ShowPosterImage(
-                                    posterSize: .medium,
-                                    imageUrl: show.posterImageUrl,
-                                    showTitle: show.title
-                                )
-                            }
+                        ForEach(similarShowsList, id: \.traktId) { item in
+                            ShowPosterImage(
+                                posterSize: .medium,
+                                imageUrl: item.posterImageUrl,
+                                showTitle: item.title,
+                                showId: item.traktId
+                            )
+                            
                         }
                     }
                     .padding(.trailing, 16)
@@ -71,7 +79,7 @@ struct ShowBodyView: View {
                 }
                 
             }
-            if !detailLoadedState.trailersContent.trailersList.isEmpty {
+            if !trailerList.isEmpty {
                 //TODO::#93 Add show content
             }
         }
@@ -83,6 +91,10 @@ struct ShowBodyView: View {
 
 struct ShowBodyView_Previews: PreviewProvider {
     static var previews: some View {
-        ShowBodyView(detailLoadedState: detailState)
+        ShowBodyView(
+            seasonList: detailState.seasonsContent.seasonsList,
+            trailerList: detailState.trailersContent.trailersList,
+            similarShowsList: detailState.similarShowsContent.similarShows
+        )
     }
 }

@@ -11,23 +11,21 @@ import TvManiac
 
 struct ShowDetailView: View {
     
+    @Binding var showId: Int64
+    var animationID: Namespace.ID
+    
     @ObservedObject var viewModel: ShowDetailsViewModel = ShowDetailsViewModel()
     
-    @SwiftUI.State var offset: CGFloat = 0
-    @SwiftUI.State var titleOffset: CGFloat = 0
-    @SwiftUI.State var size: CGSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-    
-    
-    var showId: Int64
+    @State var offset: CGFloat = 0
+    @State var titleOffset: CGFloat = 0
+    @State var size: CGSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+
     let maxHeight = CGFloat(520)
-    
-    init(showId: Int64) {
-        self.showId = showId
-    }
     
     var body: some View {
         
         VStack {
+            
             switch viewModel.detailState {
                 
             case is ShowDetailsLoaded:
@@ -36,21 +34,22 @@ struct ShowDetailView: View {
                 if(state.isLoading){
                     LoadingIndicatorView()
                         .frame(maxWidth: size.width, maxHeight: size.height,  alignment: .center)
-                }
-                
-                if(state.errorMessage != nil){
+                } else if(state.errorMessage != nil){
                     //TODO:: Show Toast
-                }
-                
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack {
-                        ArtWork(state: state)
-                        
-                        ShowBodyView(detailLoadedState: state)
+                } else {
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack {
+                            ArtWork(show: state.show)
+                            
+                            ShowBodyView(
+                                seasonList: state.seasonsContent.seasonsList,
+                                trailerList: state.trailersContent.trailersList,
+                                similarShowsList: state.similarShowsContent.similarShows
+                            )
+                        }
                     }
+                    .coordinateSpace(name: "SCROLL")
                 }
-                .coordinateSpace(name: "SCROLL")
-                
                 
             default:
                 let _ = print("Unhandled case: \(viewModel.detailState)")
@@ -66,10 +65,11 @@ struct ShowDetailView: View {
         .background(Color.background)
         .navigationBarHidden(true)
         .ignoresSafeArea()
+        .onAppear { viewModel.startStateMachine(showId: showId) }
     }
     
     @ViewBuilder
-    func ArtWork(state: ShowDetailsLoaded) -> some View {
+    func ArtWork(show: Show) -> some View {
         let height = size.height * 0.45
         
         GeometryReader { proxy in
@@ -79,7 +79,9 @@ struct ShowDetailView: View {
             
             ShowPosterImage(
                 posterSize: .max,
-                imageUrl: state.show.backdropImageUrl
+                imageUrl: show.backdropImageUrl,
+                showTitle: show.title,
+                showId: show.traktId
             )
             .aspectRatio(contentMode: .fill)
             .frame(width: size.width, height: size.height + (minY > 0 ? minY : 0))
@@ -102,7 +104,7 @@ struct ShowDetailView: View {
                         )
                     
                     //Header Content
-                    HeaderContentView(show: state.show)
+                    HeaderContentView(show: show)
                         .opacity(1 + (progress > 0 ? -progress : progress))
                         .padding(.horizontal,16)
                     // Moving With ScrollView
@@ -186,12 +188,5 @@ struct ShowDetailView: View {
             .padding(.top, 10)
         }
         
-    }
-}
-
-
-struct ShowDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        ShowDetailView(showId: 1234)
     }
 }

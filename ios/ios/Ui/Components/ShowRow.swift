@@ -3,9 +3,10 @@ import TvManiac
 
 struct ShowRow: View {
     
+    @Namespace var animation
     var categoryName: String
     var shows: [TvShow]?
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             if(shows?.isEmpty != true){
@@ -33,14 +34,13 @@ struct ShowRow: View {
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .top) {
-                        ForEach(shows!, id: \.title) { show in
-                            NavigationLink(destination: ShowDetailView(showId: show.traktId)) {
-                                ShowPosterImage(
-                                    posterSize: .medium,
-                                    imageUrl: show.posterImageUrl,
-                                    showTitle: show.title
-                                )
-                            }
+                        ForEach(shows!, id: \.title) { item in
+                            ShowPosterImage(
+                                posterSize: .medium,
+                                imageUrl: item.posterImageUrl,
+                                showTitle: item.title,
+                                showId: item.traktId
+                            )
                         }
                     }
                     .ignoresSafeArea()

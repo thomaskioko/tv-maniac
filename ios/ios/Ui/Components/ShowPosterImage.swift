@@ -3,9 +3,15 @@ import Kingfisher
 
 struct ShowPosterImage: View {
     
+    @Namespace var animation
+    @State private var show: Bool = false
+    @State private var selectedShow: Int64 = -1
+    
     let posterSize: PosterStyle.Size
     let imageUrl: String?
     let showTitle: String
+    let showId: Int64
+
     
     var body: some View {
         
@@ -31,6 +37,18 @@ struct ShowPosterImage: View {
                 .aspectRatio(contentMode: .fill)
                 .cornerRadius(5)
                 .frame(width: posterSize.width(), height: posterSize.height())
+                .matchedGeometryEffect(id: showId, in: animation)
+                .onTapGesture {
+                    /// Adding Animation
+                    withAnimation(.interactiveSpring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.8)) {
+                        selectedShow = showId
+                        show.toggle()
+                    }
+                }
+                .detailScreenCover(show: $show) {
+                    /// Detail View
+                    ShowDetailView(showId: $selectedShow, animationID: animation)
+                }
         } else {
             ZStack {
                 
@@ -45,6 +63,18 @@ struct ShowPosterImage: View {
                     .foregroundColor(Color.accent)
                     .frame(width: posterSize.width(), height: posterSize.height())
                     .posterStyle(loaded: false, size: posterSize)
+                    .matchedGeometryEffect(id: showId, in: animation)
+                    .onTapGesture {
+                        /// Adding Animation
+                        withAnimation(.interactiveSpring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.8)) {
+                            selectedShow = showId
+                            show.toggle()
+                        }
+                    }
+                    .detailScreenCover(show: $show) {
+                        /// Detail View
+                        ShowDetailView(showId: $selectedShow, animationID: animation)
+                    }
             }
         }
     }
