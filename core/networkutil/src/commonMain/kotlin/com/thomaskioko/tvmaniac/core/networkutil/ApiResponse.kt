@@ -7,7 +7,6 @@ import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
-import io.ktor.serialization.JsonConvertException
 import kotlinx.serialization.SerializationException
 
 suspend inline fun <reified T, reified E> HttpClient.safeRequest(
@@ -22,8 +21,6 @@ suspend inline fun <reified T, reified E> HttpClient.safeRequest(
         ApiResponse.Error.HttpError(e.response.status.value, e.errorBody())
     } catch (e: SerializationException) {
         ApiResponse.Error.SerializationError(e.message)
-    } catch (e: JsonConvertException) {
-        ApiResponse.Error.JsonConvertException(e.message)
     } catch (e: Exception) {
         ApiResponse.Error.GenericError(e.message)
     }
@@ -51,11 +48,6 @@ sealed class ApiResponse<out T, out E> {
          * Represent SerializationExceptions.
          */
         data class SerializationError(val errorMessage: String?) : Error<Nothing>()
-
-        /**
-         * Represent JsonConvertException.
-         */
-        data class JsonConvertException(val errorMessage: String?) : Error<Nothing>()
 
         /**
          * Represent other exceptions.

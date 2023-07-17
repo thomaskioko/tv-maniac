@@ -72,11 +72,11 @@ class SeasonDetailsRepositoryImpl(
 
             is ApiResponse.Error.HttpError -> {
                 logger.error("observeSeasonDetails", "$response")
-                throw Throwable("${response.code} - ${response.errorMessage}")
+                throw Throwable("${response.code} - ${response.errorBody}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("observeSeasonDetails", "${response.message}")
+                logger.error("observeSeasonDetails", "${response.errorMessage}")
                 throw Throwable("${response.errorMessage}")
             }
         }
