@@ -11,4 +11,4 @@ data class SeasonDetailsLoaded(
     val seasonDetailsList: List<SeasonDetails> = emptyList(),
 ) : SeasonDetailsState
 
-data class LoadingError(val message: String) : SeasonDetailsState
+data class LoadingError(val message: String? = null) : SeasonDetailsState

@@ -6,14 +6,14 @@ import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
@@ -23,10 +23,10 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SeasonDetailsRepositoryImpl(
-    private val traktRemoteDataSource: TraktRemoteDataSource,
+    private val remoteDataSource: TraktShowsRemoteDataSource,
     private val seasonCache: SeasonDetailsDao,
     private val episodesDao: EpisodesDao,
-    private val exceptionHandler: ExceptionHandler,
+    private val exceptionHandler: NetworkExceptionHandler,
     private val dispatcher: AppCoroutineDispatchers,
     private val logger: KermitLogger,
 ) : SeasonDetailsRepository {
@@ -35,7 +35,7 @@ class SeasonDetailsRepositoryImpl(
         networkBoundResult(
             query = { seasonCache.observeShowEpisodes(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
-            fetch = { traktRemoteDataSource.getSeasonEpisodes(traktId) },
+            fetch = { remoteDataSource.getSeasonEpisodes(traktId) },
             saveFetchResult = { mapResponse(traktId, it) },
             exceptionHandler = exceptionHandler,
             coroutineDispatcher = dispatcher.io,
@@ -72,17 +72,12 @@ class SeasonDetailsRepositoryImpl(
 
             is ApiResponse.Error.HttpError -> {
                 logger.error("observeSeasonDetails", "$response")
-                throw Throwable("${response.code} - ${response.errorBody?.message}")
+                throw Throwable("${response.code} - ${response.errorBody}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("observeSeasonDetails", "$response")
-                throw Throwable("$response")
-            }
-
-            is ApiResponse.Error.JsonConvertException -> {
-                logger.error("observeSeasonDetails", "$response")
-                throw Throwable("$response")
+                logger.error("observeSeasonDetails", "${response.errorMessage}")
+                throw Throwable("${response.errorMessage}")
             }
         }
     }

@@ -3,53 +3,54 @@ import SwiftUI
 
 struct HomeUIView: View {
 
-
-	var body: some View {
-	
-		TabView {
-			DiscoverView()
-				   .font(.system(size: 30, weight: .bold, design: .rounded))
-				   .tabItem {
-					   Image(systemName: "film")
-					   Text("Discover")
-						
-				   }
-			
-			   SearchView()
-				   .font(.system(size: 30, weight: .bold, design: .rounded))
-				   .tabItem {
-					   Image(systemName: "magnifyingglass")
-					   Text("Search")
-				   }
-			
-			   WatchlistView()
-				   .font(.system(size: 30, weight: .bold, design: .rounded))
-				   .tabItem {
-					   Image(systemName: "list.bullet.below.rectangle")
-					   Text("Watchlist")
-				   }
-			
+    
+    var body: some View {
+        
+        TabView {
+            DiscoverView()
+                .setTabItem("Discover", "film")
+                .setTabBarBackground(.init(.ultraThickMaterial))
+               
+            
+            SearchView()
+                .setTabItem("Search", "magnifyingglass")
+                .setTabBarBackground(.init(.ultraThickMaterial))
+            
+            WatchlistView()
+                .setTabItem("Watchlist", "list.bullet.below.rectangle")
+                .setTabBarBackground(.init(.ultraThickMaterial))
+            
+            
             ProfileView()
-				.font(.system(size: 30, weight: .bold, design: .rounded))
-				.tabItem {
-					Image(systemName: "person.circle")
-					Text("Profile")
-				}
-		}
-		.onAppear {
-			UITabBar.appearance().barTintColor = UIColor(Color("TabBackgroundColor"))
-		}
-		.accentColor(Color.accent)
-	}
+                .setTabItem("Profile", "person.circle")
+                .setTabBarBackground(.init(.ultraThickMaterial))
+            
+        }
+        .tint(Color.accent_color)
+    }
 }
 
-struct HomeUIView_Previews: PreviewProvider {
-
-	
-    static var previews: some View {
-		HomeUIView()
-		
-		HomeUIView()
-			.preferredColorScheme(.dark)
+/// Custom View Modifier's
+extension View {
+    @ViewBuilder
+    func setTabItem(_ title: String, _ icon: String) -> some View {
+        self
+            .tabItem {
+                Image(systemName: icon)
+                Text(title)
+            }
+    }
+    
+    @ViewBuilder
+    func setTabBarBackground(_ style: AnyShapeStyle) -> some View {
+        self
+            .toolbarBackground(.visible, for: .tabBar)
+            .toolbarBackground(style, for: .tabBar)
+    }
+    
+    @ViewBuilder
+    func hideTabBar(_ status: Bool) -> some View {
+        self
+            .toolbar(status ? .hidden : .visible, for: .tabBar)
     }
 }

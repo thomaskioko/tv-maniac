@@ -2,9 +2,10 @@ package com.thomaskioko.tvmaniac.inject
 
 import android.app.Application
 import android.content.Context
-import com.thomaskioko.trakt.service.implementation.TraktComponent
-import com.thomaskioko.trakt.service.implementation.TraktPlatformComponent
+import com.thomaskioko.trakt.service.implementation.inject.TraktComponent
+import com.thomaskioko.trakt.service.implementation.inject.TraktPlatformComponent
 import com.thomaskioko.tvmaniac.TvManicApplication
+import com.thomaskioko.tvmaniac.core.networkutil.inject.NetworkPlatformComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
 import com.thomaskioko.tvmaniac.datastore.implementation.DataStorePlatformComponent
@@ -18,7 +19,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.implementation.RequestManagerCom
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsComponent
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsComponent
 import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
-import com.thomaskioko.tvmaniac.shows.implementation.ShowsComponent
+import com.thomaskioko.tvmaniac.shows.implementation.DiscoverComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbPlatformComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthComponent
@@ -36,6 +37,7 @@ import me.tatarka.inject.annotations.Provides
 abstract class ApplicationComponent(
     @get:Provides val application: Application,
 ) : UtilPlatformComponent,
+    NetworkPlatformComponent,
     CategoryComponent,
     DatabaseComponent,
     DataStorePlatformComponent,
@@ -47,7 +49,7 @@ abstract class ApplicationComponent(
     RequestManagerComponent,
     SeasonsComponent,
     SeasonDetailsComponent,
-    ShowsComponent,
+    DiscoverComponent,
     ShowImagesComponent,
     SimilarShowsComponent,
     StatsComponent,

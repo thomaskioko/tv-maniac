@@ -10,81 +10,91 @@ import SwiftUI
 import TvManiac
 
 struct ShowBodyView: View {
-
+    
     @Environment(\.colorScheme) var scheme
-    var detailLoadedState: ShowDetailsStateShowDetailsLoaded
-
+    @Namespace var animation
+    @State private var detailShowId: Int64 = -1
+    @State private var showView: Bool = false
+    
+    
+    var seasonList: [Season]
+    var trailerList: [Trailer]
+    var similarShowsList: [Show]
+    
+    
     var body: some View {
-
+        
         VStack(alignment: .leading) {
-            if let state = detailLoadedState.seasonState as? SeasonStateSeasonsLoaded {
+            if !seasonList.isEmpty {
                 Text("Browse Seasons")
-                        .titleSemiBoldFont(size: 23)
-                        .foregroundColor(Color.text_color_bg)
-                        .padding(.trailing, 16)
-                        .padding(.leading, 16)
-                        .padding(.top, 5)
-
+                    .titleSemiBoldFont(size: 23)
+                    .foregroundColor(Color.text_color_bg)
+                    .padding(.trailing, 16)
+                    .padding(.leading, 16)
+                    .padding(.top, 5)
+                
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center) {
-                        ForEach(state.seasonsList, id: \.self) { season in
-
+                        ForEach(seasonList, id: \.self) { season in
+                            
                             Button(action: {}) {
                                 Text(season.name)
-                                        .bodyMediumFont(size: 16)
-                                        .foregroundColor(Color.accent)
-                                        .padding(10)
-                                        .background(Color.accent.opacity(0.12))
-                                        .cornerRadius(5)
+                                    .bodyMediumFont(size: 16)
+                                    .foregroundColor(Color.accent)
+                                    .padding(10)
+                                    .background(Color.accent.opacity(0.12))
+                                    .cornerRadius(5)
                             }
-
+                            
                         }
                     }
-                            .padding(.trailing, 16)
-                            .padding(.leading, 16)
+                    .padding(.trailing, 16)
+                    .padding(.leading, 16)
                 }
             }
-
-            if let state = detailLoadedState.similarShowsState as? SimilarShowsStateSimilarShowsLoaded {
-                if !state.similarShows.isEmpty {
-                    Text("More like this")
-                            .titleSemiBoldFont(size: 23)
-                            .padding(.top, 8)
-                            .foregroundColor(Color.text_color_bg)
-                            .padding(.trailing, 16)
-                            .padding(.leading, 16)
-
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(alignment: .top) {
-                            ForEach(state.similarShows, id: \.traktId) { show in
-                                NavigationLink(destination: ShowDetailView(showId: show.traktId)) {
-                                    ShowPosterImage(
-                                            posterSize: .medium,
-                                            imageUrl: show.posterImageUrl
-                                    )
-                                }
-                            }
+            
+            
+            if !similarShowsList.isEmpty {
+                Text("More like this")
+                    .titleSemiBoldFont(size: 23)
+                    .padding(.top, 8)
+                    .foregroundColor(Color.text_color_bg)
+                    .padding(.trailing, 16)
+                    .padding(.leading, 16)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .top) {
+                        ForEach(similarShowsList, id: \.traktId) { item in
+                            ShowPosterImage(
+                                posterSize: .medium,
+                                imageUrl: item.posterImageUrl,
+                                showTitle: item.title,
+                                showId: item.traktId
+                            )
+                            
                         }
-                                .padding(.trailing, 16)
-                                .padding(.leading, 16)
                     }
+                    .padding(.trailing, 16)
+                    .padding(.leading, 16)
                 }
+                
             }
-            if let state = detailLoadedState.trailerState as? TrailersStateTrailersLoaded {
-
-            }
-            if let state = detailLoadedState.trailerState as? TrailersStateTrailersError {
-
+            if !trailerList.isEmpty {
+                //TODO::#93 Add show content
             }
         }
-                .padding(.bottom, 220)
-                .background(Color.background)
+        .padding(.bottom, 220)
+        .background(Color.background)
     }
-
+    
 }
 
 struct ShowBodyView_Previews: PreviewProvider {
     static var previews: some View {
-        ShowBodyView(detailLoadedState: detailState)
+        ShowBodyView(
+            seasonList: detailState.seasonsContent.seasonsList,
+            trailerList: detailState.trailersContent.trailersList,
+            similarShowsList: detailState.similarShowsContent.similarShows
+        )
     }
 }

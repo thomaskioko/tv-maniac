@@ -8,4 +8,4 @@ data class WatchlistContent(
     val list: List<WatchlistItem> = emptyList(),
 ) : WatchlistState
 
-data class ErrorLoadingShows(val message: String) : WatchlistState
+data class ErrorLoadingShows(val message: String? = null) : WatchlistState

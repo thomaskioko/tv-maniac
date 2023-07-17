@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.discover
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverContent
+import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 
@@ -24,20 +24,21 @@ val shows = TvShow(
     year = "2024",
 )
 
-val discoverContentSuccess = DiscoverContent(
-    recommendedShows = List(5) { shows },
-    trendingShows = List(20) { shows },
-    popularShows = List(20) { shows },
-    anticipatedShows = List(20) { shows },
-
+val discoverContentSuccess = DataLoaded(
+    recommendedShows = createShowList(5),
+    trendingShows = createShowList(),
+    popularShows = createShowList(),
+    anticipatedShows = createShowList(),
 )
+
+private fun createShowList(size: Int = 20) = List(size) { shows }
 
 class DiscoverPreviewParameterProvider : PreviewParameterProvider<DiscoverState> {
     override val values: Sequence<DiscoverState>
         get() {
             return sequenceOf(
                 discoverContentSuccess,
-                DiscoverContent(errorMessage = "Opps! Something went wrong"),
+                DataLoaded(errorMessage = "Opps! Something went wrong"),
             )
         }
 }

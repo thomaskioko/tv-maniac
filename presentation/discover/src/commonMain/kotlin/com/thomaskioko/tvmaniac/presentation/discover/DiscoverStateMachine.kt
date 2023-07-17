@@ -5,19 +5,16 @@ import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.showimages.api.ShowImagesRepository
-import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
+import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import me.tatarka.inject.annotations.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class DiscoverStateMachine(
-    private val exceptionHandler: ExceptionHandler,
-    private val showsRepository: ShowsRepository,
+    private val discoverRepository: DiscoverRepository,
     private val showImagesRepository: ShowImagesRepository,
 ) : FlowReduxStateMachine<DiscoverState, ShowsAction>(initialState = Loading) {
 
@@ -29,7 +26,7 @@ class DiscoverStateMachine(
                 }
             }
 
-            inState<DiscoverContent> {
+            inState<DataLoaded> {
                 collectWhileInState(observeShowData()) { result, state ->
                     state.mutate {
                         copy(
@@ -37,6 +34,8 @@ class DiscoverStateMachine(
                             trendingShows = result.trendingShows,
                             popularShows = result.popularShows,
                             anticipatedShows = result.anticipatedShows,
+                            errorMessage = result.errorMessage,
+                            isContentEmpty = result.isContentEmpty,
                         )
                     }
                 }
@@ -57,32 +56,29 @@ class DiscoverStateMachine(
         }
     }
 
-    private suspend fun fetchShowData(state: State<Loading>): ChangedState<DiscoverContent> {
-        val trendingResponse = showsRepository.fetchShows(Category.TRENDING)
-        val recommendedResponse = showsRepository.fetchShows(Category.RECOMMENDED)
-        val popularResponse = showsRepository.fetchShows(Category.POPULAR)
-        val anticipatedResponse = showsRepository.fetchShows(Category.ANTICIPATED)
+    private suspend fun fetchShowData(state: State<Loading>): ChangedState<DiscoverState> {
+        val trendingResponse = discoverRepository.fetchShows(Category.TRENDING)
+        val recommendedResponse = discoverRepository.fetchShows(Category.RECOMMENDED)
+        val popularResponse = discoverRepository.fetchShows(Category.POPULAR)
+        val anticipatedResponse = discoverRepository.fetchShows(Category.ANTICIPATED)
 
         return state.override {
-            DiscoverContent(
+            DataLoaded(
                 trendingShows = trendingResponse.toTvShowList(),
                 popularShows = popularResponse.toTvShowList(),
                 anticipatedShows = anticipatedResponse.toTvShowList(),
-                recommendedShows = recommendedResponse.toTvShowList().take(5),
+                recommendedShows = recommendedResponse.take(5).toTvShowList(),
             )
         }
     }
 
-    private fun observeShowData(): Flow<DiscoverContent> =
+    private fun observeShowData(): Flow<DataLoaded> =
         combine(
-            showsRepository.observeTrendingShows(),
-            showsRepository.observePopularShows(),
-            showsRepository.observeAnticipatedShows(),
-            showsRepository.observeFeaturedShows(),
+            discoverRepository.observeTrendingShows(),
+            discoverRepository.observePopularShows(),
+            discoverRepository.observeAnticipatedShows(),
+            discoverRepository.observeRecommendedShows(),
         ) { trending, popular, anticipated, featured ->
             toShowResultState(trending, popular, anticipated, featured)
         }
-            .catch {
-                DiscoverContent(errorMessage = exceptionHandler.resolveError(it))
-            }
 }

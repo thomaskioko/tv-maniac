@@ -1,17 +1,17 @@
-    //
-    //  SettingsUIView.swift
-    //  tv-maniac
-    //
-    //  Created by Thomas Kioko on 07.12.22.
-    //  Copyright © 2022 orgName. All rights reserved.
-    //
+//
+//  SettingsUIView.swift
+//  tv-maniac
+//
+//  Created by Thomas Kioko on 07.12.22.
+//  Copyright © 2022 orgName. All rights reserved.
+//
 
 import SwiftUI
 import TvManiac
 
 struct SettingsUIView: View {
     
-    @ObservedObject var viewModel: SettingsViewModel = SettingsViewModel()
+    @StateObject var viewModel: SettingsViewModel = SettingsViewModel()
     @ObservedObject private var model = TraktAuthViewModel()
     
     @Environment(\.openURL) var openURL
@@ -22,18 +22,18 @@ struct SettingsUIView: View {
     var body: some View {
         NavigationView {
             SettingsForm()
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button (
-                        action: {
-                            self.presentationMode.wrappedValue.dismiss()
-                        },
-                        label: {
-                            LabelText(text: "Done")
-                        }
-                    )
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button (
+                            action: {
+                                self.presentationMode.wrappedValue.dismiss()
+                            },
+                            label: {
+                                LabelText(text: "Done")
+                            }
+                        )
+                    }
                 }
-            }
         }
     }
     
@@ -126,12 +126,5 @@ struct SettingsItem: View {
         }
         
         .onTapGesture(perform: onClick)
-    }
-}
-
-
-struct SettingsUIView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsUIView()
     }
 }

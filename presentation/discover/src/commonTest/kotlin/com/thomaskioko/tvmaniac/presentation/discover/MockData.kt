@@ -23,15 +23,11 @@ val show = TvShow(
     backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
 )
 
-val discoverContent = DiscoverContent(
+val discoverContent = DataLoaded(
     recommendedShows = listOf(show),
     trendingShows = listOf(show),
     popularShows = listOf(show),
     anticipatedShows = listOf(show),
-)
-
-val errorDiscoverContent = DiscoverContent(
-    errorMessage = "Something went wrong",
 )
 
 fun categoryResult(categoryId: Long) = listOf(

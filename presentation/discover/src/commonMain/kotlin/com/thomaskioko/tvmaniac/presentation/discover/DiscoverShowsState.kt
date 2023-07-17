@@ -2,22 +2,15 @@ package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 
-sealed interface DiscoverState {
-    val isContentEmpty: Boolean
-}
+sealed interface DiscoverState
 
-object Loading : DiscoverState {
-    override val isContentEmpty: Boolean = true
-}
+object Loading : DiscoverState
 
-data class DiscoverContent(
-    val recommendedShows: List<TvShow> = emptyList(),
-    val trendingShows: List<TvShow> = emptyList(),
-    val popularShows: List<TvShow> = emptyList(),
-    val anticipatedShows: List<TvShow> = emptyList(),
+data class DataLoaded(
+    val recommendedShows: List<TvShow>? = null,
+    val trendingShows: List<TvShow>? = null,
+    val popularShows: List<TvShow>? = null,
+    val anticipatedShows: List<TvShow>? = null,
     val errorMessage: String? = null,
-) : DiscoverState {
-
-    override val isContentEmpty: Boolean = recommendedShows.isEmpty() &&
-        trendingShows.isEmpty() && popularShows.isEmpty() && anticipatedShows.isEmpty()
-}
+    val isContentEmpty: Boolean = true,
+) : DiscoverState
