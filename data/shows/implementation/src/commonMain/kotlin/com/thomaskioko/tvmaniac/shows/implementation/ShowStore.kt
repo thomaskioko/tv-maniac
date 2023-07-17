@@ -30,17 +30,17 @@ class ShowStore(
             }
 
             is ApiResponse.Error.GenericError -> {
-                logger.error("ShowStore GenericError", "${apiResult.message}")
+                logger.error("ShowStore GenericError", "${apiResult.errorMessage}")
                 throw Throwable("${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
                 logger.error("ShowStore HttpError", "${apiResult.code} - ${apiResult.errorBody}")
-                throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
+                throw Throwable("${apiResult.code} - ${apiResult.errorBody}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("ShowStore SerializationError", "${apiResult.message}")
+                logger.error("ShowStore SerializationError", "${apiResult.errorMessage}")
                 throw Throwable("${apiResult.errorMessage}")
             }
         }

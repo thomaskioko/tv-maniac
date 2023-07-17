@@ -29,17 +29,17 @@ class StatsStore(
             is ApiResponse.Success -> mapper.toTraktStats(slug, response.body)
 
             is ApiResponse.Error.GenericError -> {
-                logger.error("StatsStore GenericError", "${response.message}")
+                logger.error("StatsStore GenericError", "${response.errorMessage}")
                 throw Throwable("${response.errorMessage}")
             }
 
             is ApiResponse.Error.HttpError -> {
                 logger.error("StatsStore HttpError", "${response.code} - ${response.errorBody}")
-                throw Throwable("${response.code} - ${response.errorMessage}")
+                throw Throwable("${response.code} - ${response.errorBody?.message}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("StatsStore SerializationError", "${response.message}")
+                logger.error("StatsStore SerializationError", "${response.errorMessage}")
                 throw Throwable("${response.errorMessage}")
             }
         }

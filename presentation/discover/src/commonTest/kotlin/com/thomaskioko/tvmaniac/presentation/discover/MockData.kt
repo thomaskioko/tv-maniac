@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
-import kotlinx.collections.immutable.toImmutableList
 
 val show = TvShow(
     traktId = 84958,
@@ -25,10 +24,10 @@ val show = TvShow(
 )
 
 val discoverContent = DataLoaded(
-    recommendedShows = listOf(show).toImmutableList(),
-    trendingShows = listOf(show).toImmutableList(),
-    popularShows = listOf(show).toImmutableList(),
-    anticipatedShows = listOf(show).toImmutableList(),
+    recommendedShows = listOf(show),
+    trendingShows = listOf(show),
+    popularShows = listOf(show),
+    anticipatedShows = listOf(show),
 )
 
 fun categoryResult(categoryId: Long) = listOf(
