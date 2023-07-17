@@ -28,7 +28,6 @@ actual interface TmdbPlatformComponent {
         json: TmdbJson,
         httpClientEngine: TmdbHttpClientEngine,
     ): TmdbHttpClient = tmdbHttpClient(
-        isDebug = configs.isDebug,
         tmdbApiKey = configs.tmdbApiKey,
         json = json,
         httpClientEngine = httpClientEngine,

@@ -45,8 +45,8 @@ struct ShowRow: View {
                     }
                     .ignoresSafeArea()
                     .navigationBarHidden(true)
-                    .padding(.trailing, 16)
-                    .padding(.leading, 16)
+                    .padding(.trailing, 8)
+                    .padding(.leading, 8)
                 }
             }
         }
