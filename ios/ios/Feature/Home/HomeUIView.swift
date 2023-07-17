@@ -54,14 +54,3 @@ extension View {
             .toolbar(status ? .hidden : .visible, for: .tabBar)
     }
 }
-
-struct HomeUIView_Previews: PreviewProvider {
-    
-    
-    static var previews: some View {
-        HomeUIView()
-        
-        HomeUIView()
-            .preferredColorScheme(.dark)
-    }
-}

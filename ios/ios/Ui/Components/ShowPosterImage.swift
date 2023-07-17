@@ -35,8 +35,9 @@ struct ShowPosterImage: View {
                         .posterStyle(loaded: false, size: posterSize)
                 }
                 .aspectRatio(contentMode: .fill)
-                .cornerRadius(5)
                 .frame(width: posterSize.width(), height: posterSize.height())
+                .cornerRadius(5)
+                .shadow(radius: 10)
                 .matchedGeometryEffect(id: showId, in: animation)
                 .onTapGesture {
                     /// Adding Animation
@@ -53,16 +54,22 @@ struct ShowPosterImage: View {
             ZStack {
                 
                 Text(showTitle)
+                    .padding(.trailing, 16)
+                    .padding(.leading, 16)
                     .captionFont(size: 14)
-                    .lineLimit(1)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
                     .foregroundColor(Color.text_color_bg)
                     .frame(width: posterSize.width(), height: posterSize.height())
                     .cornerRadius(10)
+                  
                 
                 Rectangle()
                     .foregroundColor(Color.accent)
                     .frame(width: posterSize.width(), height: posterSize.height())
                     .posterStyle(loaded: false, size: posterSize)
+                    .cornerRadius(5)
+                    .shadow(radius: 10)
                     .matchedGeometryEffect(id: showId, in: animation)
                     .onTapGesture {
                         /// Adding Animation

@@ -53,6 +53,7 @@ struct ShowDetailView: View {
                 
             default:
                 let _ = print("Unhandled case: \(viewModel.detailState)")
+                FullScreenView(systemName: "exclamationmark.triangle", message: "Something went wrong")
             }
         }
         .overlay(alignment: .top){

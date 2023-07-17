@@ -11,7 +11,7 @@ import TvManiac
 
 struct SettingsUIView: View {
     
-    @ObservedObject var viewModel: SettingsViewModel = SettingsViewModel()
+    @StateObject var viewModel: SettingsViewModel = SettingsViewModel()
     @ObservedObject private var model = TraktAuthViewModel()
     
     @Environment(\.openURL) var openURL
@@ -126,12 +126,5 @@ struct SettingsItem: View {
         }
         
         .onTapGesture(perform: onClick)
-    }
-}
-
-
-struct SettingsUIView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsUIView()
     }
 }
