@@ -35,6 +35,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -66,7 +67,7 @@ import com.thomaskioko.tvmaniac.compose.util.DominantColorState
 import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverContent
+import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.Loading
 import com.thomaskioko.tvmaniac.presentation.discover.RetryLoading
@@ -84,6 +85,7 @@ typealias Discover = @Composable (
     onMoreClicked: (showType: Long) -> Unit,
 ) -> Unit
 
+@ExperimentalMaterialApi
 @Inject
 @Composable
 fun Discover(
@@ -98,6 +100,7 @@ fun Discover(
     )
 }
 
+@ExperimentalMaterialApi
 @Composable
 internal fun DiscoverScreen(
     viewModel: DiscoverViewModel,
@@ -138,8 +141,7 @@ private fun DiscoverScreen(
                     .wrapContentSize(Alignment.Center),
             )
 
-        is DiscoverContent ->
-
+        is DataLoaded ->
             when {
                 state.isContentEmpty -> {
                     EmptyUi(
@@ -160,15 +162,14 @@ private fun DiscoverScreen(
                 }
 
                 else -> {
-                    DiscoverContent(
+                    DiscoverScrollContent(
+                        modifier = modifier,
+                        onShowClicked = onShowClicked,
+                        onMoreClicked = onMoreClicked,
                         trendingShows = state.trendingShows,
                         popularShows = state.popularShows,
                         anticipatedShows = state.anticipatedShows,
                         recommendedShows = state.recommendedShows,
-                        onReloadClicked = onReloadClicked,
-                        modifier = modifier,
-                        onShowClicked = onShowClicked,
-                        onMoreClicked = onMoreClicked,
                     )
                 }
             }
@@ -176,29 +177,33 @@ private fun DiscoverScreen(
 }
 
 @Composable
-private fun DiscoverContent(
-    trendingShows: List<TvShow>,
-    popularShows: List<TvShow>,
-    anticipatedShows: List<TvShow>,
-    recommendedShows: List<TvShow>,
-    onReloadClicked: (ShowsAction) -> Unit,
+private fun DiscoverScrollContent(
+    trendingShows: List<TvShow>?,
+    popularShows: List<TvShow>?,
+    anticipatedShows: List<TvShow>?,
+    recommendedShows: List<TvShow>?,
     onShowClicked: (showId: Long) -> Unit,
     modifier: Modifier = Modifier,
     onMoreClicked: (showType: Long) -> Unit,
 ) {
-    LazyColumn {
-        item {
-            AnimatedVisibility(visible = recommendedShows.isNotEmpty()) {
-                RecommendedContent(
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .windowInsetsPadding(
+                WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
+            ),
+    ) {
+        recommendedShows?.let {
+            item {
+                DiscoverHeaderContent(
                     showList = recommendedShows,
                     onShowClicked = onShowClicked,
-                    modifier = modifier,
                 )
             }
         }
 
-        item {
-            AnimatedVisibility(visible = trendingShows.isNotEmpty()) {
+        trendingShows?.let {
+            item {
                 RowContent(
                     category = Category.TRENDING,
                     tvShows = trendingShows,
@@ -208,8 +213,8 @@ private fun DiscoverContent(
             }
         }
 
-        item {
-            AnimatedVisibility(visible = anticipatedShows.isNotEmpty()) {
+        anticipatedShows?.let {
+            item {
                 RowContent(
                     category = Category.ANTICIPATED,
                     tvShows = anticipatedShows,
@@ -219,8 +224,8 @@ private fun DiscoverContent(
             }
         }
 
-        item {
-            AnimatedVisibility(visible = popularShows.isNotEmpty()) {
+        popularShows?.let {
+            item {
                 RowContent(
                     category = Category.POPULAR,
                     tvShows = popularShows,
@@ -233,7 +238,7 @@ private fun DiscoverContent(
 }
 
 @Composable
-fun RecommendedContent(
+fun DiscoverHeaderContent(
     showList: List<TvShow>,
     modifier: Modifier = Modifier,
     onShowClicked: (Long) -> Unit,
@@ -302,7 +307,6 @@ fun HorizontalPagerItem(
                 endYPercentage = 0.5f,
             ),
     ) {
-        Spacer(modifier = Modifier.height(90.dp))
         HorizontalPager(
             pageCount = list.size,
             state = pagerState,
@@ -403,7 +407,7 @@ private fun RowContent(
             ) {
                 itemsIndexed(tvShows) { index, tvShow ->
 
-                    val value = if (index == 0) 16 else 4
+                    val value = if (index == 0) 16 else 8
 
                     Spacer(modifier = Modifier.width(value.dp))
 
