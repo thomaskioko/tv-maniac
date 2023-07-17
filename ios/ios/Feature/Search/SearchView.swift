@@ -9,25 +9,25 @@
 import SwiftUI
 
 struct SearchView: View {
-	var body: some View {
-		ZStack {
-			VStack {
-				Text("Search Shows")
-					
-				Spacer()
-			}
-			.frame(width : CGFloat(480.0))
-			.background(Color("Background"))
-			
-		}
-	}
+    var body: some View {
+        ZStack {
+            VStack {
+                Text("Search Shows")
+                
+                Spacer()
+            }
+            .frame(width : CGFloat(480.0))
+            .background(Color("Background"))
+            
+        }
+    }
 }
 
 struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
         SearchView()
-		
-		SearchView()
-			.preferredColorScheme(.dark)
+        
+        SearchView()
+            .preferredColorScheme(.dark)
     }
 }

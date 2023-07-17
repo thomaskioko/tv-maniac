@@ -8,19 +8,12 @@ import kotlin.math.log10
 import kotlin.math.pow
 
 const val POSTER_PATH = "https://image.tmdb.org/t/p/original%s"
-const val DEFAULT_IMAGE_URL =
-    "https://play-lh.googleusercontent.com/IO3niAyss5tFXAQP176P0Jk5rg_A_hfKPNqzC4gb15WjLPjo5I-f7oIZ9Dqxw2wPBAg"
 
 @Inject
 class AndroidFormatterUtil : FormatterUtil {
 
-    override fun formatTmdbPosterPath(imageUrl: String?): String {
-        return if (imageUrl.isNullOrBlank()) {
-            DEFAULT_IMAGE_URL
-        } else {
-            String.format(POSTER_PATH, imageUrl)
-        }
-    }
+    override fun formatTmdbPosterPath(imageUrl: String): String =
+        String.format(POSTER_PATH, imageUrl)
 
     override fun formatDouble(number: Double?, scale: Int): Double {
         return number?.toBigDecimal()?.setScale(scale, RoundingMode.UP)?.toDouble() ?: 0.0

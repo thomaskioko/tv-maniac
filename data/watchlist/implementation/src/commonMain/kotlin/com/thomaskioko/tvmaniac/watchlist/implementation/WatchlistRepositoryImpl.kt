@@ -5,12 +5,12 @@ import com.thomaskioko.tvmaniac.core.db.Watchlist
 import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.profile.api.ProfileDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.util.DateFormatter
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -21,11 +21,11 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class WatchlistRepositoryImpl constructor(
-    private val traktRemoteDataSource: TraktRemoteDataSource,
+    private val remoteDataSource: TraktListRemoteDataSource,
     private val watchlistDao: WatchlistDao,
     private val profileDao: ProfileDao,
     private val dateFormatter: DateFormatter,
-    private val exceptionHandler: ExceptionHandler,
+    private val exceptionHandler: NetworkExceptionHandler,
     private val dispatchers: AppCoroutineDispatchers,
 ) : WatchlistRepository {
 
@@ -36,7 +36,7 @@ class WatchlistRepositoryImpl constructor(
                 if (user.slug.isNotBlank()) {
                     watchlistDao.getUnSyncedShows()
                         .map {
-                            traktRemoteDataSource.addShowToWatchList(it.id)
+                            remoteDataSource.addShowToWatchList(it.id)
 
                             watchlistDao.insert(
                                 Watchlist(

@@ -1,9 +1,8 @@
 package com.thomaskioko.tvmaniac.presentation.discover
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.shows.testing.FakeShowsRepository
+import com.thomaskioko.tvmaniac.shows.testing.FakeDiscoverRepository
 import com.thomaskioko.tvmaniac.tmdb.testing.FakeShowImagesRepository
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import org.mobilenativefoundation.store.store5.StoreReadResponse
@@ -13,16 +12,10 @@ import kotlin.test.Test
 
 @Ignore
 internal class DiscoverStateMachineTest {
-    private val exceptionHandler = object : ExceptionHandler {
-        override fun resolveError(throwable: Throwable): String {
-            return "Opps!! Something went wrong"
-        }
-    }
 
-    private val traktRepository = FakeShowsRepository()
+    private val traktRepository = FakeDiscoverRepository()
     private val imagesRepository = FakeShowImagesRepository()
     private val stateMachine = DiscoverStateMachine(
-        exceptionHandler,
         traktRepository,
         imagesRepository,
     )
@@ -89,7 +82,7 @@ internal class DiscoverStateMachineTest {
 
         stateMachine.state.test {
             awaitItem() shouldBe Loading
-            awaitItem() shouldBe DiscoverContent()
+            awaitItem() shouldBe DataLoaded()
         }
     }
 }

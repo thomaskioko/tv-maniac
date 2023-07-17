@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.tmdb.api.model.EpisodesResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
 import me.tatarka.inject.annotations.Inject
@@ -15,11 +14,10 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TmdbNetworkDataSourceImpl(
     private val httpClient: TmdbHttpClient,
-    private val exceptionHandler: ExceptionHandler,
 ) : TmdbNetworkDataSource {
 
     override suspend fun getTvShowDetails(showId: Long): ApiResponse<ShowDetailResponse, ErrorResponse> =
-        httpClient.safeRequest(exceptionHandler) {
+        httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("3/tv/$showId")
@@ -31,7 +29,7 @@ class TmdbNetworkDataSourceImpl(
         ssnNumber: Long,
         epNumber: Long,
     ): ApiResponse<EpisodesResponse, ErrorResponse> =
-        httpClient.safeRequest(exceptionHandler) {
+        httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("3/tv/$tmdbShow/season/$ssnNumber/episode/$epNumber")
@@ -39,7 +37,7 @@ class TmdbNetworkDataSourceImpl(
         }
 
     override suspend fun getTrailers(showId: Long): ApiResponse<TrailersResponse, ErrorResponse> =
-        httpClient.safeRequest(exceptionHandler) {
+        httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("3/tv/$showId/videos")

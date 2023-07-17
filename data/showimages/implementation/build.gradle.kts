@@ -15,6 +15,7 @@ kotlin {
 
         sourceSets["commonMain"].dependencies {
             implementation(projects.core.util)
+            implementation(projects.data.requestManager.api)
             implementation(projects.data.showimages.api)
             implementation(projects.core.tmdbApi.api)
 

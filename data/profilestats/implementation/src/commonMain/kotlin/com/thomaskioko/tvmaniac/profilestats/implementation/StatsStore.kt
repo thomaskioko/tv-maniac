@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.profilestats.api.StatsDao
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.TraktStatsRemoteDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
@@ -16,7 +16,7 @@ import org.mobilenativefoundation.store.store5.impl.storeBuilderFromFetcherAndSo
 
 @Inject
 class StatsStore(
-    private val traktRemoteDataSource: TraktRemoteDataSource,
+    private val remoteDataSource: TraktStatsRemoteDataSource,
     private val requestManagerRepository: RequestManagerRepository,
     private val statsDao: StatsDao,
     private val mapper: StatsMapper,
@@ -25,7 +25,7 @@ class StatsStore(
 ) : Store<String, Stats> by storeBuilderFromFetcherAndSourceOfTruth<String, Stats, Stats>(
     fetcher = Fetcher.of { slug ->
 
-        when (val response = traktRemoteDataSource.getStats(slug)) {
+        when (val response = remoteDataSource.getStats(slug)) {
             is ApiResponse.Success -> mapper.toTraktStats(slug, response.body)
 
             is ApiResponse.Error.GenericError -> {
@@ -34,17 +34,13 @@ class StatsStore(
             }
 
             is ApiResponse.Error.HttpError -> {
-                logger.error("StatsStore HttpError", "${response.code} - ${response.errorBody?.message}")
+                logger.error("StatsStore HttpError", "${response.code} - ${response.errorBody}")
                 throw Throwable("${response.code} - ${response.errorBody?.message}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("StatsStore SerializationError", "$response")
-                throw Throwable("$response")
-            }
-            is ApiResponse.Error.JsonConvertException -> {
-                logger.error("StatsStore JsonConvertException", "$response")
-                throw Throwable("$response")
+                logger.error("StatsStore SerializationError", "${response.errorMessage}")
+                throw Throwable("${response.errorMessage}")
             }
         }
     },

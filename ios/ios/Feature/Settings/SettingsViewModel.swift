@@ -10,24 +10,24 @@ import Foundation
 import TvManiac
 
 class SettingsViewModel: ObservableObject {
-
+    
     private var stateMachine: SettingsStateMachineWrapper = ApplicationComponentKt.settingsStateMachine()
-	@Published private (set) var settingsState: SettingsState = SettingsContent.companion.EMPTY
-	@Published var appTheme: AppTheme = AppTheme.System
-
-	func startStateMachine() {
-		stateMachine.start(stateChangeListener: { (state: SettingsState) -> Void in
-			self.settingsState = state
-			
-			if let themeState = state as? SettingsContent {
-				self.appTheme = toAppTheme(theme: themeState.theme)
-			}
-		})
-	}
-
-	func dispatchAction(action: SettingsActions){
-		stateMachine.dispatch(action: action)
-	}
+    @Published private (set) var settingsState: SettingsState = Default.companion.EMPTY
+    @Published var appTheme: AppTheme = AppTheme.System
+    
+    func startStateMachine() {
+        stateMachine.start(stateChangeListener: { (state: SettingsState) -> Void in
+            self.settingsState = state
+            
+            if let themeState = state as? Default {
+                self.appTheme = toAppTheme(theme: themeState.theme)
+            }
+        })
+    }
+    
+    func dispatchAction(action: SettingsActions){
+        stateMachine.dispatch(action: action)
+    }
     
     func cancel() {
         stateMachine.cancel()

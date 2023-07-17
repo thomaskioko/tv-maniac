@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
-import com.thomaskioko.tvmaniac.trakt.api.TraktRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import kotlinx.datetime.Clock
@@ -17,14 +17,14 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 
 @Inject
 class SeasonsStore(
-    private val traktRemoteDataSource: TraktRemoteDataSource,
+    private val remoteDataSource: TraktShowsRemoteDataSource,
     private val requestManagerRepository: RequestManagerRepository,
     private val seasonsDao: SeasonsDao,
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
 ) : Store<Long, List<Seasons>> by StoreBuilder.from<Long, List<Seasons>, List<Seasons>>(
     fetcher = Fetcher.of { id ->
-        when (val response = traktRemoteDataSource.getShowSeasons(id)) {
+        when (val response = remoteDataSource.getShowSeasons(id)) {
             is ApiResponse.Success -> response.body.toSeasonCacheList(id)
             is ApiResponse.Error.GenericError -> {
                 logger.error("SeasonsStore GenericError", "$response")
@@ -33,16 +33,12 @@ class SeasonsStore(
 
             is ApiResponse.Error.HttpError -> {
                 logger.error("SeasonsStore HttpError", "$response")
-                throw Throwable("${response.code} - ${response.errorBody?.message}")
+                throw Throwable("${response.code} - ${response.errorBody}")
             }
 
             is ApiResponse.Error.SerializationError -> {
-                logger.error("SeasonsStore SerializationError", "$response")
-                throw Throwable("$response")
-            }
-            is ApiResponse.Error.JsonConvertException -> {
-                logger.error("SeasonsStore JsonConvertException", "$response")
-                throw Throwable("$response")
+                logger.error("SeasonsStore SerializationError", "${response.errorMessage}")
+                throw Throwable("${response.errorMessage}")
             }
         }
     },

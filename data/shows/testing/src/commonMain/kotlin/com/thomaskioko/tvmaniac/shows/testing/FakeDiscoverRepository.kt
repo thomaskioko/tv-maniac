@@ -3,13 +3,13 @@ package com.thomaskioko.tvmaniac.shows.testing
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
-import com.thomaskioko.tvmaniac.shows.api.ShowsRepository
+import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import org.mobilenativefoundation.store.store5.StoreReadResponse
 
-class FakeShowsRepository : ShowsRepository {
+class FakeDiscoverRepository : DiscoverRepository {
 
     private var featuredResult = flowOf<StoreReadResponse<List<ShowsByCategory>>>()
 
@@ -59,7 +59,7 @@ class FakeShowsRepository : ShowsRepository {
         return anticipatedResult
     }
 
-    override fun observeFeaturedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> {
+    override fun observeRecommendedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> {
         return featuredResult
     }
 

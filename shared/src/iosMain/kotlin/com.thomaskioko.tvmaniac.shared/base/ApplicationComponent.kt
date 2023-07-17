@@ -1,7 +1,8 @@
 package com.thomaskioko.tvmaniac.shared.base
 
-import com.thomaskioko.trakt.service.implementation.TraktComponent
-import com.thomaskioko.trakt.service.implementation.TraktPlatformComponent
+import com.thomaskioko.trakt.service.implementation.inject.TraktComponent
+import com.thomaskioko.trakt.service.implementation.inject.TraktPlatformComponent
+import com.thomaskioko.tvmaniac.core.networkutil.inject.NetworkPlatformComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
 import com.thomaskioko.tvmaniac.datastore.implementation.DataStorePlatformComponent
@@ -21,7 +22,7 @@ import com.thomaskioko.tvmaniac.shared.base.wrappers.ShowDetailsStateMachineWrap
 import com.thomaskioko.tvmaniac.shared.base.wrappers.TrailersStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.base.wrappers.WatchlistStateMachineWrapper
 import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
-import com.thomaskioko.tvmaniac.shows.implementation.ShowsComponent
+import com.thomaskioko.tvmaniac.shows.implementation.DiscoverComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbPlatformComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthenticationComponent
@@ -42,7 +43,7 @@ abstract class ApplicationComponent :
     RequestManagerComponent,
     SeasonsComponent,
     SeasonDetailsComponent,
-    ShowsComponent,
+    DiscoverComponent,
     ShowImagesComponent,
     SimilarShowsComponent,
     StatsComponent,
@@ -52,7 +53,8 @@ abstract class ApplicationComponent :
     TraktAuthenticationComponent,
     TrailerComponent,
     UtilPlatformComponent,
-    WatchlistComponent {
+    WatchlistComponent,
+    NetworkPlatformComponent {
 
     abstract val discoverStateMachine: DiscoverStateMachineWrapper
     abstract val seasonDetailsStateMachineWrapper: SeasonDetailsStateMachineWrapper

@@ -5,11 +5,10 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.Seaso
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.SimilarShowsContent.Companion.EMPTY_SIMILAR_SHOWS
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.TrailersContent.Companion.EMPTY_TRAILERS
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
-import com.thomaskioko.tvmaniac.shows.testing.FakeShowsRepository
+import com.thomaskioko.tvmaniac.shows.testing.FakeDiscoverRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
-import com.thomaskioko.tvmaniac.util.ExceptionHandler
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
@@ -18,27 +17,22 @@ import org.mobilenativefoundation.store.store5.StoreReadResponseOrigin
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-@Ignore // TODO:: Fix test
+@Ignore
 internal class ShowDetailsStateMachineTest {
-
-    private val exceptionHandler = object : ExceptionHandler {
-        override fun resolveError(throwable: Throwable): String = "Something went wrong"
-    }
 
     private val seasonsRepository = FakeSeasonsRepository()
     private val trailerRepository = FakeTrailerRepository()
-    private val traktRepository = FakeShowsRepository()
+    private val traktRepository = FakeDiscoverRepository()
     private val similarShowsRepository = FakeSimilarShowsRepository()
     private val watchlistRepository = FakeWatchlistRepository()
 
     private val stateMachine = ShowDetailsStateMachine(
         traktShowId = 84958,
-        showsRepository = traktRepository,
+        discoverRepository = traktRepository,
         trailerRepository = trailerRepository,
         seasonsRepository = seasonsRepository,
         similarShowsRepository = similarShowsRepository,
         watchlistRepository = watchlistRepository,
-        exceptionHandler = exceptionHandler,
     )
 
     @Test

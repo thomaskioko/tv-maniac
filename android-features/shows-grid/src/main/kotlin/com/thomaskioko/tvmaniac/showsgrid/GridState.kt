@@ -10,4 +10,4 @@ data class ShowsLoaded(
     val list: List<TvShow>,
 ) : GridState
 
-data class LoadingContentError(val errorMessage: String) : GridState
+data class LoadingContentError(val errorMessage: String? = null) : GridState

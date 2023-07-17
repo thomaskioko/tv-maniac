@@ -31,7 +31,6 @@ kotlin {
         sourceSets["iosMain"].dependencies {
             implementation(projects.core.traktApi.api)
 
-            implementation(libs.ktor.logging)
             implementation(libs.ktor.darwin)
         }
 
