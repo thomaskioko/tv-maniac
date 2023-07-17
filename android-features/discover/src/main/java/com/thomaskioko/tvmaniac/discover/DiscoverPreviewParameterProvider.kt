@@ -4,7 +4,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
-import kotlinx.collections.immutable.toImmutableList
 
 val shows = TvShow(
     traktId = 84958,
@@ -32,7 +31,7 @@ val discoverContentSuccess = DataLoaded(
     anticipatedShows = createShowList(),
 )
 
-private fun createShowList(size: Int = 20) = List(size) { shows }.toImmutableList()
+private fun createShowList(size: Int = 20) = List(size) { shows }
 
 class DiscoverPreviewParameterProvider : PreviewParameterProvider<DiscoverState> {
     override val values: Sequence<DiscoverState>

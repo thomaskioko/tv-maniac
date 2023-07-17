@@ -17,7 +17,6 @@ class AndroidNetworkExceptionHandlerUtil(
     override fun resolveError(throwable: Throwable) =
         when (throwable) {
             is UnknownHostException -> "No Internet Connection!"
-            is HttpExceptions -> if (configs.isDebug) throwable.message else errorMessage
             is ClientRequestException -> {
                 if (configs.isDebug) {
                     "Status Code ${throwable.response.status.value}: Missing Api Key"

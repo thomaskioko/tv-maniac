@@ -1,23 +1,16 @@
 package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
-import kotlinx.collections.immutable.ImmutableList
 
-sealed interface DiscoverState {
-    val isContentEmpty: Boolean
-}
+sealed interface DiscoverState
 
-object Loading : DiscoverState {
-    override val isContentEmpty: Boolean = true
-}
+object Loading : DiscoverState
 
 data class DataLoaded(
-    val recommendedShows: ImmutableList<TvShow>? = null,
-    val trendingShows: ImmutableList<TvShow>? = null,
-    val popularShows: ImmutableList<TvShow>? = null,
-    val anticipatedShows: ImmutableList<TvShow>? = null,
+    val recommendedShows: List<TvShow>? = null,
+    val trendingShows: List<TvShow>? = null,
+    val popularShows: List<TvShow>? = null,
+    val anticipatedShows: List<TvShow>? = null,
     val errorMessage: String? = null,
-) : DiscoverState {
-    override val isContentEmpty: Boolean = recommendedShows.isNullOrEmpty() &&
-        trendingShows.isNullOrEmpty() && popularShows.isNullOrEmpty() && anticipatedShows.isNullOrEmpty()
-}
+    val isContentEmpty: Boolean = true,
+) : DiscoverState

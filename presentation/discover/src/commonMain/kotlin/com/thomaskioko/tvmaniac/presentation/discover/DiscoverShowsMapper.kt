@@ -26,11 +26,21 @@ fun toShowResultState(
     popular: StoreReadResponse<List<ShowsByCategory>>,
     anticipated: StoreReadResponse<List<ShowsByCategory>>,
     recommended: StoreReadResponse<List<ShowsByCategory>>,
-): DiscoverContent {
-    return DiscoverContent(
-        trendingShows = trending.requireData().toTvShowList(),
-        popularShows = popular.requireData().toTvShowList(),
-        anticipatedShows = anticipated.requireData().toTvShowList(),
-        recommendedShows = recommended.requireData().toTvShowList().take(5),
-    )
-}
+): DataLoaded = DataLoaded(
+    trendingShows = trending.requireData().toTvShowList(),
+    popularShows = popular.requireData().toTvShowList(),
+    anticipatedShows = anticipated.requireData().toTvShowList(),
+    recommendedShows = recommended.requireData().take(5).toTvShowList(),
+    errorMessage = getErrorMessage(trending, popular, anticipated, recommended),
+    isContentEmpty = trending.dataOrNull().isNullOrEmpty() &&
+        popular.dataOrNull().isNullOrEmpty() && anticipated.dataOrNull().isNullOrEmpty() &&
+        recommended.dataOrNull().isNullOrEmpty(),
+)
+
+private fun getErrorMessage(
+    trending: StoreReadResponse<List<ShowsByCategory>>,
+    popular: StoreReadResponse<List<ShowsByCategory>>,
+    anticipated: StoreReadResponse<List<ShowsByCategory>>,
+    recommended: StoreReadResponse<List<ShowsByCategory>>,
+) = trending.errorMessageOrNull() ?: popular.errorMessageOrNull()
+    ?: anticipated.errorMessageOrNull() ?: recommended.errorMessageOrNull()
