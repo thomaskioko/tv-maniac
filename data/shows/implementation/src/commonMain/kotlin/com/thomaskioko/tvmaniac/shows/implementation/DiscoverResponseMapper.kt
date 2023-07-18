@@ -33,7 +33,7 @@ class DiscoverResponseMapper(
 
         is ApiResponse.Error.HttpError -> {
             logger.error("ShowStore GenericError", "${response.errorBody}")
-            throw Throwable("${response.errorBody}")
+            throw Throwable("${response.errorMessage}")
         }
         is ApiResponse.Error.GenericError -> {
             logger.error("ShowStore GenericError", "${response.errorMessage}")
@@ -56,7 +56,7 @@ class DiscoverResponseMapper(
 
         is ApiResponse.Error.HttpError -> {
             logger.error("ShowStore GenericError", "${response.errorBody}")
-            throw Throwable("${response.errorBody}")
+            throw Throwable("${response.errorMessage}")
         }
         is ApiResponse.Error.SerializationError -> {
             logger.error("ShowStore GenericError", "${response.errorMessage}")

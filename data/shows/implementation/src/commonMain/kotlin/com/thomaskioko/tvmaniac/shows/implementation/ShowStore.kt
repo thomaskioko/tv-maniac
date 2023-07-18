@@ -36,7 +36,7 @@ class ShowStore(
 
             is ApiResponse.Error.HttpError -> {
                 logger.error("ShowStore HttpError", "${apiResult.code} - ${apiResult.errorBody}")
-                throw Throwable("${apiResult.code} - ${apiResult.errorBody}")
+                throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.SerializationError -> {
