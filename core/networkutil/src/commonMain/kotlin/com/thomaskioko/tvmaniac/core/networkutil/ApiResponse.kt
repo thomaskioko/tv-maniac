@@ -4,9 +4,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ResponseException
-import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
+import io.ktor.client.statement.HttpResponse
 import kotlinx.serialization.SerializationException
 
 suspend inline fun <reified T, reified E> HttpClient.safeRequest(
@@ -15,21 +15,28 @@ suspend inline fun <reified T, reified E> HttpClient.safeRequest(
     try {
         val response = request { block() }
         ApiResponse.Success(response.body())
-    } catch (e: ClientRequestException) {
-        ApiResponse.Error.HttpError(e.response.status.value, e.errorBody())
-    } catch (e: ServerResponseException) {
-        ApiResponse.Error.HttpError(e.response.status.value, e.errorBody())
+    } catch (exception: ClientRequestException) {
+        ApiResponse.Error.HttpError(
+            code = exception.response.status.value,
+            errorBody = exception.response.body(),
+            errorMessage = "Status Code: ${exception.response.status.value} - API Key Missing",
+        )
+    } catch (exception: HttpExceptions) {
+        ApiResponse.Error.HttpError(
+            code = exception.response.status.value,
+            errorBody = exception.response.body(),
+            errorMessage = exception.message,
+        )
     } catch (e: SerializationException) {
-        ApiResponse.Error.SerializationError(e.message)
+        ApiResponse.Error.SerializationError(
+            message = e.message,
+            errorMessage = "Something went wrong",
+        )
     } catch (e: Exception) {
-        ApiResponse.Error.GenericError(e.message)
-    }
-
-suspend inline fun <reified E> ResponseException.errorBody(): E? =
-    try {
-        response.body()
-    } catch (e: SerializationException) {
-        null
+        ApiResponse.Error.GenericError(
+            message = e.message,
+            errorMessage = "Something went wrong",
+        )
     }
 
 sealed class ApiResponse<out T, out E> {
@@ -40,18 +47,43 @@ sealed class ApiResponse<out T, out E> {
 
     sealed class Error<E> : ApiResponse<Nothing, E>() {
         /**
-         * Represents server (50x) and client (40x) errors.
+         * Represents server errors.
+         * @param code HTTP Status code
+         * @param errorBody Response body
+         * @param errorMessage Custom error message
          */
-        data class HttpError<E>(val code: Int, val errorBody: E?) : Error<E>()
+        data class HttpError<E>(
+            val code: Int,
+            val errorBody: String?,
+            val errorMessage: String?,
+        ) : Error<E>()
 
         /**
          * Represent SerializationExceptions.
+         * @param message Detail exception message
+         * @param errorMessage Formatted error message
          */
-        data class SerializationError(val errorMessage: String?) : Error<Nothing>()
+        data class SerializationError(
+            val message: String?,
+            val errorMessage: String?,
+        ) : Error<Nothing>()
 
         /**
          * Represent other exceptions.
+         * @param message Detail exception message
+         * @param errorMessage Formatted error message
          */
-        data class GenericError(val errorMessage: String?) : Error<Nothing>()
+        data class GenericError(
+            val message: String?,
+            val errorMessage: String?,
+        ) : Error<Nothing>()
     }
+}
+
+class HttpExceptions(
+    response: HttpResponse,
+    failureReason: String?,
+    cachedResponseText: String,
+) : ResponseException(response, cachedResponseText) {
+    override val message: String = "Status: ${response.status}" + " Failure: $failureReason"
 }
