@@ -35,7 +35,7 @@ class StatsStore(
 
             is ApiResponse.Error.HttpError -> {
                 logger.error("StatsStore HttpError", "${response.code} - ${response.errorBody}")
-                throw Throwable("${response.code} - ${response.errorBody?.message}")
+                throw Throwable("${response.code} - ${response.errorMessage}")
             }
 
             is ApiResponse.Error.SerializationError -> {

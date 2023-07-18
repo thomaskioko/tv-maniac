@@ -36,7 +36,7 @@ class SimilarShowStore(
 
             is ApiResponse.Error.HttpError -> {
                 logger.error("SimilarShowStore HttpError", "${apiResult.code} - ${apiResult.errorBody}")
-                throw Throwable("${apiResult.code} - ${apiResult.errorBody}")
+                throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.SerializationError -> {
