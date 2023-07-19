@@ -3,9 +3,9 @@ import TvManiac
 import os.log
 
 struct DiscoverView: View {
-
-    @ObservedObject var viewModel: DiscoverShowsViewModel = DiscoverShowsViewModel()
-
+    
+    @StateObject private var viewModel: DiscoverShowsViewModel = DiscoverShowsViewModel()
+    
     @Environment(\.colorScheme) var scheme
     
     @State var currentIndex: Int = 2
@@ -44,12 +44,10 @@ struct DiscoverView: View {
                             case is DataLoaded:
                                 let state = contentState as! DataLoaded
                                 
-                                if(state.isContentEmpty && state.errorMessage != nil){
+                                if(state.isContentEmpty && state.errorMessage != nil) {
                                     FullScreenView(systemName: "exclamationmark.triangle", message: state.errorMessage!)
                                 } else if(state.isContentEmpty){
                                     FullScreenView(systemName: "list.and.film", message: "Looks like your stash is empty")
-                                } else if(!state.isContentEmpty && state.errorMessage != nil){
-                                    //TODO:: Show Toast
                                 } else {
                                     
                                     //Featured Shows
@@ -84,7 +82,7 @@ struct DiscoverView: View {
                     }
                 }
             }
-        }
+        }.toastView(toast: $viewModel.toast)
     }
     
     

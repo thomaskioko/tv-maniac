@@ -34,7 +34,7 @@ class ProfileStore(
 
             is ApiResponse.Error.HttpError -> {
                 logger.error(" ProfileStore HttpError", "${apiResult.code} - ${apiResult.errorBody}")
-                throw Throwable("${apiResult.code} - ${apiResult.errorBody?.message}")
+                throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.SerializationError -> {
