@@ -40,6 +40,7 @@ import com.thomaskioko.tvmaniac.resources.R
 @Composable
 fun TvManiacTopBar(
     modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colorScheme.background,
     title: String? = null,
     showNavigationIcon: Boolean = false,
     actionImageVector: ImageVector? = null,
@@ -72,7 +73,7 @@ fun TvManiacTopBar(
                 )
             }
         },
-        backgroundColor = MaterialTheme.colorScheme.background,
+        backgroundColor = backgroundColor,
         actions = {
             if (actionImageVector != null) {
                 IconButton(
