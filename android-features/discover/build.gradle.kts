@@ -15,5 +15,6 @@ dependencies {
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.compose.ui.util)
     implementation(libs.flowredux)
+    implementation(libs.kotlinx.collections)
     implementation(libs.snapper)
 }
