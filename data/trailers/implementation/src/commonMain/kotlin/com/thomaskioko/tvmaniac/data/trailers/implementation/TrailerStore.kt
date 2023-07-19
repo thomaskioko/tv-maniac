@@ -37,7 +37,7 @@ class TrailerStore(
 
             is ApiResponse.Error.HttpError -> {
                 logger.error("TrailerStore HttpError", "$apiResult")
-                throw Throwable("${apiResult.code} - ${apiResult.errorBody}")
+                throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
             }
 
             is ApiResponse.Error.SerializationError -> {

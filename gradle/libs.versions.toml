@@ -37,11 +37,12 @@ kermit = "1.2.2"
 kmmbridge = "0.3.7"
 kotest = "5.5.4"
 kotlin = "1.8.20"
+kotlinx-collections = "0.3.5"
 kotlininject = "0.6.1"
 ktor = "2.3.2"
 ksp = "1.8.21-1.0.11"
 lint = "1.2.0"
-shared-module-version = "0.7.1"
+shared-module-version = "0.8.0"
 snapper = "0.3.0"
 sqldelight = "2.0.0-rc01"
 store5 = "5.0.0-beta01"
@@ -109,6 +110,7 @@ kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref =
 kotlinInject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlininject" }
 kotlinInject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlininject" }
 kotlinx-atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu" }
+kotlinx-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
 
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }

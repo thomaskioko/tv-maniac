@@ -12,6 +12,8 @@ kotlin {
             implementation(projects.data.category.api)
             implementation(projects.data.showimages.api)
             implementation(projects.data.shows.api)
+
+            implementation(libs.kotlinx.collections)
         }
 
         sourceSets["commonTest"].dependencies {
