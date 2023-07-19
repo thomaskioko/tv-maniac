@@ -76,6 +76,7 @@ import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.collections.immutable.ImmutableList
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import kotlin.math.absoluteValue
@@ -178,10 +179,10 @@ private fun DiscoverScreen(
 
 @Composable
 private fun DiscoverScrollContent(
-    trendingShows: List<TvShow>?,
-    popularShows: List<TvShow>?,
-    anticipatedShows: List<TvShow>?,
-    recommendedShows: List<TvShow>?,
+    trendingShows: ImmutableList<TvShow>?,
+    popularShows: ImmutableList<TvShow>?,
+    anticipatedShows: ImmutableList<TvShow>?,
+    recommendedShows: ImmutableList<TvShow>?,
     onShowClicked: (showId: Long) -> Unit,
     modifier: Modifier = Modifier,
     onMoreClicked: (showType: Long) -> Unit,
@@ -239,7 +240,7 @@ private fun DiscoverScrollContent(
 
 @Composable
 fun DiscoverHeaderContent(
-    showList: List<TvShow>,
+    showList: ImmutableList<TvShow>,
     modifier: Modifier = Modifier,
     onShowClicked: (Long) -> Unit,
 ) {
