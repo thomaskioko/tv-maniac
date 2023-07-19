@@ -52,6 +52,12 @@ class DiscoverStateMachine(
                 on<RetryLoading> { _, state ->
                     state.override { Loading }
                 }
+
+                on<SnackBarDismissed> { _, state ->
+                    state.mutate {
+                        copy(errorMessage = null)
+                    }
+                }
             }
         }
     }
