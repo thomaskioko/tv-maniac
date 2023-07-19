@@ -1,20 +1,20 @@
 TvManiac
 -------------------------
-![Check](https://github.com/c0de-wizard/tv-maniac/actions/workflows/build.yml/badge.svg)  ![android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat) ![ios](http://img.shields.io/badge/platform-ios-CDCDCD.svg?style=flat)
+![Check](https://github.com/c0de-wizard/tv-maniac/actions/workflows/build.yml/badge.svg)  ![android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat) ![ios](http://img.shields.io/badge/platform-ios-CDCDCD.svg?style=flat) [![TvManiac Debug](https://img.shields.io/badge/Debug--Apk-download-green?style=for-the-badge&logo=android)](https://github.com/c0de-wizard/tv-maniac/releases/latest/download/app-debug.apk)
 
-**TvManiac** is a personalized entertainment tracking and recommendation Multiplatform app (Android & iOS). By utilizing
-[Trakt](https://trakt.tv/), we are able to view shows, create a watchlist get statistics and much more. The aim of this project is do demonstrate KMM development capabilities.
-
-You can Install and test latest android app from below 👇
-
-[![TvManiac Debug](https://img.shields.io/badge/Debug--Apk-download-green?style=for-the-badge&logo=android)](https://github.com/c0de-wizard/tv-maniac/releases/latest/download/app-debug.apk)
+**TvManiac** is a personalized entertainment tracking and recommendation Multiplatform app. By utilizing
+[Trakt](https://trakt.tv/), we can view shows, create a watchlist get statistics, and much more. This project aims to demonstrate KMP development capabilities. This is currently running on:
+- Android: Compose
+- iOS: SwiftUI
 
 
 ## 🚧 Under Heavy Development 🚧
-This is my playground for learning Kotlin Multiplatform. With that said, I'm sure it's filled bugs are crawling everywhere, and I'm probably doing a couple of things wrong. So a lot is changing, but that shouldn't stop you from checking it out.
+This is my playground for learning Kotlin Multiplatform. With that said, I'm sure it's filled with bugs crawling everywhere, and I'm probably doing a couple of things wrong. So a lot is changing, but that shouldn't stop you from checking it out.
 
-### Android Demo
-https://user-images.githubusercontent.com/841885/223576880-c7391d14-63b8-47cd-a7f9-97aee5e47892.mp4
+| Android | iOS | 
+| -- | -- | 
+| <img src="https://user-images.githubusercontent.com/841885/223576880-c7391d14-63b8-47cd-a7f9-97aee5e47892.mp4" width=350/> | <img src="https://github.com/c0de-wizard/tv-maniac/assets/841885/c26f3857-9b4e-409d-9bfb-6be32cd5111b" width=350/> |
+
 
 ## 🖥 Project Setup & Environment
 
@@ -24,8 +24,8 @@ https://user-images.githubusercontent.com/841885/223576880-c7391d14-63b8-47cd-a7
 - Install Kmm Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/kmm-setup.html).
 
 ### API Keys
-To use the Trakt API, you'll need to [create a new API app](https://trakt.tv/oauth/applications/new). & for [TMDb](https://www.themoviedb.org/settings/api) create an account and generate an API key if you don't have one.
-Once you have your keys, add them to `config.yaml`. If the file is not available, navigate to the root dir and create a symlink
+To use the Trakt API, you'll need to [create a new API app](https://trakt.tv/oauth/applications/new). & for [TMDb](https://www.themoviedb.org/settings/api), create an account and generate an API key if you don't have one.
+Once you have your keys, add them to `config.yaml`. If the file is unavailable, navigate to the root dir and create a symlink.
 
 `ln -s core/util/src/commonMain/resources/config.yaml config.yaml`
 
@@ -37,7 +37,7 @@ traktRedirectUri: "PUT_CALLBACK_URI_HERE"
 ```
 
 ### Opening iOS Project
-- Navigate to ios directory & open `.xcodeproj`
+- Navigate to the ios directory & open `.xcodeproj`
 
 ### Android Screenshots
 
@@ -116,7 +116,7 @@ traktRedirectUri: "PUT_CALLBACK_URI_HERE"
     * [Navigation](https://developer.android.com/jetpack/compose/navigation) - Navigation
 * [KenBurnsView](https://github.com/flavioarfaria/KenBurnsView) - Immersive image.
 * [Leakcanary](https://github.com/square/leakcanary) - Memory leak detection.
-* [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) UI related data holder, lifecycle
+* [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) UI-related data holder, lifecycle
   aware.
 * [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager?gclsrc=ds&gclsrc=ds) Handle persistent work
 
@@ -135,7 +135,7 @@ traktRedirectUri: "PUT_CALLBACK_URI_HERE"
 
 ### iOS
 * [Kingfisher](https://github.com/onevcat/Kingfisher) - Image library.
-* [OAuthSwift](https://github.com/OAuthSwift/OAuthSwift) Swift based OAuth library for iOS and macOS.
+* [OAuthSwift](https://github.com/OAuthSwift/OAuthSwift) Swift-based OAuth library for iOS and macOS.
 * [TvManiac](https://github.com/c0de-wizard/tvmaniac-swift-packages) - TvManiac SwiftPackage.
 
 
@@ -160,24 +160,21 @@ iOS
 - [x] Implement Discover UI
 - [x] Show Detail Screen
 - [x] Add Settings panel.
-- [ ] Implement trakt auth & sign in
+- [x] Implement trakt auth & sign in
 - [ ] Add Seasons UI
 - [ ] Implement Search UI
 - [ ] Implement Watchlist UI
-- [ ] Implement Load more
 
 Shared
 - [x] Use SQLDelight extensions to consume queries as Flow
 - [x] Refactor interactor implementation.
 - [x] Use koin for injection
 - [x] Modularize `shared` module
-- [x] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux) 
-- [ ] Improve error handling, add retry.
-- [ ] Add test cases.
+- [x] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux)
+- [ ] Improve error handling.
 - [ ] Fix paging
-- [ ] Observe Internet connection
-    - [x] Android
-    - [ ] iOS
+- [ ] Add test cases.
+
 
 
 ### References
