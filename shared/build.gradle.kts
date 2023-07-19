@@ -19,6 +19,7 @@ kotlin {
             baseName = "TvManiac"
             isStatic = false
             linkerOpts.add("-lsqlite3")
+            freeCompilerArgs += "-Xadd-light-debug=enable"
 
             export(projects.core.datastore.api)
             export(projects.core.traktAuth.api)
