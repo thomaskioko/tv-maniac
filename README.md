@@ -19,9 +19,9 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 ## 🖥 Project Setup & Environment
 
 #### Requirements
-- [Zulu Java 17](https://www.azul.com/downloads-new/?package=jdk#zulu)
+- [Zulu Java 17](https://www.azul.com/downloads/?package=jdk#zulu)
 - You require the latest [Android Studio](https://developer.android.com/studio/preview) release to be able to build the app.
-- Install Kmm Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/kmm-setup.html).
+- Install KMP Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/multiplatform-mobile-setup.html).
 
 ### API Keys
 To use the Trakt API, you'll need to [create a new API app](https://trakt.tv/oauth/applications/new). & for [TMDb](https://www.themoviedb.org/settings/api), create an account and generate an API key if you don't have one.
