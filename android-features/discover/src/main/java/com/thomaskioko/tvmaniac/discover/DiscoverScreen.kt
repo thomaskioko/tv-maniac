@@ -114,7 +114,9 @@ internal fun DiscoverScreen(
     onMoreClicked: (showType: Long) -> Unit,
 ) {
     val discoverViewState by viewModel.state.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(pageCount = {
+        (discoverViewState as? DataLoaded)?.recommendedShows?.size ?: 0
+    })
     val snackBarHostState = remember { SnackbarHostState() }
 
     DiscoverScreen(
@@ -360,7 +362,6 @@ fun HorizontalPagerItem(
             ),
     ) {
         HorizontalPager(
-            pageCount = list.size,
             state = pagerState,
             beyondBoundsPageCount = 2,
             contentPadding = PaddingValues(horizontal = 45.dp),
@@ -483,7 +484,7 @@ private fun DiscoverScreenPreview(
     TvManiacTheme {
         TvManiacBackground {
             Surface(Modifier.fillMaxWidth()) {
-                val pagerState = rememberPagerState()
+                val pagerState = rememberPagerState(pageCount = { 5 })
                 val snackBarHostState = remember { SnackbarHostState() }
                 DiscoverScreen(
                     state = state,
