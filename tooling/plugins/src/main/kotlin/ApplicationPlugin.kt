@@ -6,7 +6,9 @@ import com.thomaskioko.tvmaniac.extensions.configureKotlinAndroid
 import com.thomaskioko.tvmaniac.extensions.FlavorDimension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.getByType
 
 @Suppress("UnstableApiUsage")
 class ApplicationPlugin : Plugin<Project> {
@@ -19,9 +21,16 @@ class ApplicationPlugin : Plugin<Project> {
             }
 
             extensions.configure<ApplicationExtension> {
+                val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
+                val sdkVersion = libs.findVersion("android-compileSdk")
+                    .get().toString().toInt()
+
                 defaultConfig {
-                    targetSdk = 33
-                    missingDimensionStrategy(FlavorDimension.contentType.name, TvManiacFlavor.demo.name)
+                    targetSdk = sdkVersion
+                    missingDimensionStrategy(
+                        FlavorDimension.contentType.name,
+                        TvManiacFlavor.demo.name
+                    )
                 }
 
                 buildFeatures {
