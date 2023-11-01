@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -104,8 +103,7 @@ private fun TrailersScreen(
 
     Scaffold(
         modifier = modifier
-            .background(color = MaterialTheme.colorScheme.background)
-            .statusBarsPadding(),
+            .background(color = MaterialTheme.colorScheme.background),
         content = { contentPadding ->
 
             when (state) {

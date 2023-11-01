@@ -12,5 +12,4 @@ dependencies {
 
     implementation(libs.androidx.compose.paging)
     implementation(libs.flowredux)
-    implementation(libs.accompanist.insetsui)
 }

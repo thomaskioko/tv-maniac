@@ -32,7 +32,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
@@ -90,7 +89,6 @@ typealias Discover = @Composable (
     onMoreClicked: (showType: Long) -> Unit,
 ) -> Unit
 
-@ExperimentalMaterialApi
 @Inject
 @Composable
 fun Discover(
@@ -105,7 +103,6 @@ fun Discover(
     )
 }
 
-@ExperimentalMaterialApi
 @Composable
 internal fun DiscoverScreen(
     viewModel: DiscoverViewModel,
@@ -114,7 +111,9 @@ internal fun DiscoverScreen(
     onMoreClicked: (showType: Long) -> Unit,
 ) {
     val discoverViewState by viewModel.state.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(pageCount = {
+        (discoverViewState as? DataLoaded)?.recommendedShows?.size ?: 0
+    })
     val snackBarHostState = remember { SnackbarHostState() }
 
     DiscoverScreen(
@@ -360,7 +359,6 @@ fun HorizontalPagerItem(
             ),
     ) {
         HorizontalPager(
-            pageCount = list.size,
             state = pagerState,
             beyondBoundsPageCount = 2,
             contentPadding = PaddingValues(horizontal = 45.dp),
@@ -483,7 +481,7 @@ private fun DiscoverScreenPreview(
     TvManiacTheme {
         TvManiacBackground {
             Surface(Modifier.fillMaxWidth()) {
-                val pagerState = rememberPagerState()
+                val pagerState = rememberPagerState(pageCount = { 5 })
                 val snackBarHostState = remember { SnackbarHostState() }
                 DiscoverScreen(
                     state = state,

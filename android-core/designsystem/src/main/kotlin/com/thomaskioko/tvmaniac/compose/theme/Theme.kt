@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
+    primaryContainer = md_theme_light_primaryContainer,
     secondary = md_theme_light_secondary,
     onSecondary = md_theme_light_onSecondary,
     error = md_theme_light_error,
@@ -24,6 +25,7 @@ private val LightColorScheme = lightColorScheme(
 private val DarkColorScheme = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
+    primaryContainer = md_theme_dark_primaryContainer,
     secondary = md_theme_dark_secondary,
     onSecondary = md_theme_dark_onSecondary,
     error = md_theme_dark_error,
@@ -51,8 +53,8 @@ fun TvManiacTheme(
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
+            typography = tvManiacTypography,
             content = content,
-            // TODO:: Add Typography
         )
     }
 }

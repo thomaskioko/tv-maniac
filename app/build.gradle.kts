@@ -90,8 +90,8 @@ dependencies {
     implementation(projects.presentation.showDetails)
     implementation(projects.presentation.trailers)
 
-    implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.compose.activity)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.appauth)
 
     implementation(libs.kotlinInject.runtime)
