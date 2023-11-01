@@ -25,24 +25,21 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Icon
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.Tab
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -277,7 +274,7 @@ private fun ShowDetailContent(
         }
 
         item {
-            if (seasonsContent != null) {
+            seasonsContent?.let {
                 SeasonsContent(
                     isLoading = seasonsContent.isLoading,
                     seasonsList = seasonsContent.seasonsList,
@@ -377,7 +374,7 @@ private fun Body(
         ) {
             Text(
                 text = show.title,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 overflow = TextOverflow.Ellipsis,
@@ -386,12 +383,11 @@ private fun Body(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                ExpandingText(
-                    text = show.overview,
-                    textStyle = MaterialTheme.typography.bodyMedium,
-                )
-            }
+            ExpandingText(
+                text = show.overview,
+                textStyle = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Normal,
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -491,15 +487,14 @@ fun ShowMetadata(
             append(divider)
         }
 
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.fillMaxWidth(),
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-            )
-        }
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.fillMaxWidth(),
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            fontWeight = FontWeight.Medium,
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -516,23 +511,21 @@ private fun GenreText(
 
             Spacer(modifier = Modifier.width(4.dp))
 
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                TvManiacTextButton(
-                    onClick = {},
-                    shape = RoundedCornerShape(4.dp),
-                    buttonColors = ButtonDefaults.buttonColors(
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
-                    ),
-                    content = {
-                        Text(
-                            text = genre,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.secondary,
-                        )
-                    },
-                )
-            }
+            TvManiacTextButton(
+                onClick = {},
+                shape = RoundedCornerShape(4.dp),
+                buttonColors = ButtonDefaults.buttonColors(
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                    containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
+                ),
+                content = {
+                    Text(
+                        text = genre,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.secondary,
+                    )
+                },
+            )
         }
     }
 }
@@ -604,46 +597,45 @@ private fun SeasonsContent(
     seasonsList: List<Season>,
     onSeasonClicked: (Long, String) -> Unit,
 ) {
-    AnimatedVisibility(visible = seasonsList.isNotEmpty()) {
+    if (seasonsList.isNotEmpty()) {
         TextLoadingItem(
             isLoading = isLoading,
             text = stringResource(id = R.string.title_seasons),
         )
-    }
+        val selectedIndex by remember { mutableStateOf(0) }
 
-    val selectedIndex by remember { mutableStateOf(0) }
-
-    ScrollableTabRow(
-        selectedTabIndex = selectedIndex,
-        divider = {}, /* Disable the built-in divider */
-        indicator = {},
-        edgePadding = 0.dp,
-        containerColor = Color.Transparent,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp),
-    ) {
-        seasonsList.forEach { season ->
-            Tab(
-                modifier = Modifier
-                    .padding(end = 4.dp),
-                selected = true,
-                onClick = {
-                    onSeasonClicked(
-                        season.tvShowId,
-                        season.name,
-                    )
-                },
-            ) {
-                TvManiacChip(
-                    text = season.name,
+        ScrollableTabRow(
+            selectedTabIndex = selectedIndex,
+            divider = {}, /* Disable the built-in divider */
+            indicator = {},
+            edgePadding = 0.dp,
+            containerColor = Color.Transparent,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
+        ) {
+            seasonsList.forEach { season ->
+                Tab(
+                    modifier = Modifier
+                        .padding(end = 4.dp),
+                    selected = true,
                     onClick = {
                         onSeasonClicked(
                             season.tvShowId,
                             season.name,
                         )
                     },
-                )
+                ) {
+                    TvManiacChip(
+                        text = season.name,
+                        onClick = {
+                            onSeasonClicked(
+                                season.tvShowId,
+                                season.name,
+                            )
+                        },
+                    )
+                }
             }
         }
     }

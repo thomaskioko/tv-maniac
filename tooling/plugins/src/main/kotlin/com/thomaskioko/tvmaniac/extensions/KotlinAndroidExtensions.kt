@@ -11,13 +11,18 @@ import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
 internal fun Project.configureKotlinAndroid(
-    commonExtension: CommonExtension<*, *, *, *>,
+    commonExtension: CommonExtension<*, *, *, *, *>,
 ) {
+
     commonExtension.apply {
-        compileSdk = 33
+        val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
+        val sdkVersion = libs.findVersion("android-compileSdk").get().toString().toInt()
+        val minSdkVersion = libs.findVersion("android-minSdk").get().toString().toInt()
+
+        compileSdk = sdkVersion
 
         defaultConfig {
-            minSdk = 23
+            minSdk = minSdkVersion
             manifestPlaceholders["appAuthRedirectScheme"] = "empty"
         }
 
@@ -51,6 +56,6 @@ internal fun Project.configureKotlinAndroid(
     }
 }
 
-fun CommonExtension<*, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
+fun CommonExtension<*, *, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
     (this as ExtensionAware).extensions.configure("kotlinOptions", block)
 }

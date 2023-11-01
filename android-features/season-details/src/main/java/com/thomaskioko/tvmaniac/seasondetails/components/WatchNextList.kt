@@ -47,7 +47,8 @@ fun WatchNextContent(
     episodeList?.let {
         Box(
             modifier = modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             contentAlignment = Alignment.Center,
         ) {
             Spacer(modifier = Modifier.height(8.dp))

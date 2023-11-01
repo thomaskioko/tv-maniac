@@ -12,7 +12,7 @@ dependencies {
     implementation(projects.androidCore.resources)
 
     implementation(libs.accompanist.navigation.material)
-    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation.common)

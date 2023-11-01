@@ -18,8 +18,12 @@ class KotlinMultiplatformDomainPlugin : Plugin<Project> {
             }
 
             extensions.configure<LibraryExtension> {
-                defaultConfig.targetSdk = 33
-                compileSdk = 33
+                val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
+                val sdkVersion = libs.findVersion("android-compileSdk")
+                    .get().toString().toInt()
+
+                defaultConfig.targetSdk = 34
+                compileSdk = sdkVersion
                 compileOptions {
                     sourceCompatibility = JavaVersion.VERSION_17
                     targetCompatibility = JavaVersion.VERSION_17

@@ -18,7 +18,6 @@ dependencies {
     implementation(projects.androidCore.resources)
 
     implementation(libs.kenburns)
-    implementation(libs.accompanist.insetsui)
     implementation(libs.androidx.core)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material.icons)

@@ -15,19 +15,20 @@ class MainActivityViewModel(
     datastoreRepository: DatastoreRepository,
 ) : ViewModel() {
 
-    val state: StateFlow<MainState> = datastoreRepository.observeTheme()
+    val state: StateFlow<MainActivityUiState> = datastoreRepository.observeTheme()
         .map { theme ->
-            MainState(
-                theme = theme,
-            )
+            MainActivityUiState.DataLoaded(theme = theme)
         }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = MainState(),
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = MainActivityUiState.Loading,
         )
 }
 
-data class MainState(
-    val theme: Theme = Theme.SYSTEM,
-)
+sealed interface MainActivityUiState {
+    data object Loading : MainActivityUiState
+    data class DataLoaded(
+        val theme: Theme = Theme.SYSTEM,
+    ) : MainActivityUiState
+}

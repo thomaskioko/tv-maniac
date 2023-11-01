@@ -12,7 +12,6 @@ dependencies {
 
     implementation(libs.flowredux)
     implementation(libs.snapper)
-    implementation(libs.accompanist.insetsui)
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.compose.material.icons)
 }

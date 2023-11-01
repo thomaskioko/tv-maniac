@@ -12,7 +12,7 @@
             android:icon="@drawable/ic_app_launcher"
             android:label="Tv Maniac"
             android:supportsRtl="true"
-            android:theme="@style/Theme.TvManiac">
+            android:theme="@style/Theme.TvManiac.Splash">
 
         <profileable
             android:shell="true"
