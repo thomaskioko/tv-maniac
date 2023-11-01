@@ -8,6 +8,7 @@ androidx-activity = "1.8.0"
 androidx-appCompat = "1.5.1"
 androidx-browser = "1.6.0"
 androidx-core = "1.12.0"
+androidx-core-splashscreen = "1.0.1"
 androidx-datastore = "1.1.0-alpha05"
 androidx-lifecycle = "2.6.2"
 androidx-material3 = "1.1.2"
@@ -49,7 +50,7 @@ yamlkt = "0.12.0"
 youtubePlayer = "11.0.1"
 
 android-compileSdk = "34"
-android-minSdk = "23"
+android-minSdk = "21"
 
 [libraries]
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar" }
@@ -75,6 +76,7 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "androidx-material3" }
 androidx-compose-paging = { module = "androidx.paging:paging-compose", version.ref = "compose-paging" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidx-core-splashscreen" }
 androidx-datastore-preference = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
