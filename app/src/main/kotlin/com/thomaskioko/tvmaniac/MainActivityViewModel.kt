@@ -27,7 +27,7 @@ class MainActivityViewModel(
 }
 
 sealed interface MainActivityUiState {
-    data object Loading: MainActivityUiState
+    data object Loading : MainActivityUiState
     data class DataLoaded(
         val theme: Theme = Theme.SYSTEM,
     ) : MainActivityUiState

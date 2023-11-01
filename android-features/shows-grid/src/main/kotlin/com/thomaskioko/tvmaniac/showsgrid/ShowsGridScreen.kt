@@ -100,7 +100,7 @@ private fun GridScreen(
                 onBackClick = onBackClicked,
             )
         },
-        modifier = Modifier
+        modifier = Modifier,
     ) { contentPadding ->
         when (state) {
             LoadingContent -> LoadingIndicator(

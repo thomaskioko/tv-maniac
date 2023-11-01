@@ -472,7 +472,7 @@ private fun ThemeMenu(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.surface),
 
-            ) {
+        ) {
             ThemeMenuItem(
                 theme = Theme.LIGHT,
                 selectedTheme = selectedTheme,
@@ -531,7 +531,7 @@ private fun ThemeMenuItem(
                 RadioButton(
                     selected = selectedTheme == theme,
                     colors = RadioButtonDefaults.colors(
-                        selectedColor = MaterialTheme.colorScheme.secondary
+                        selectedColor = MaterialTheme.colorScheme.secondary,
                     ),
                     onClick = {
                         onThemeSelected(theme)
@@ -539,7 +539,7 @@ private fun ThemeMenuItem(
                     },
                 )
             }
-        }
+        },
     )
 }
 
@@ -560,7 +560,7 @@ private fun AboutSettingsItem() {
         Text(
             text = stringResource(R.string.settings_about_description),
             style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Normal
+            fontWeight = FontWeight.Normal,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -602,7 +602,7 @@ fun SettingDescription(
         text = description,
         style = MaterialTheme.typography.bodyMedium,
         modifier = modifier,
-        fontWeight = FontWeight.Normal
+        fontWeight = FontWeight.Normal,
     )
 }
 

@@ -149,7 +149,7 @@ private fun TopBar(
         title = title,
         showNavigationIcon = true,
         onBackClick = navigateUp,
-        elevation = 8.dp
+        elevation = 8.dp,
     )
 }
 
@@ -179,7 +179,7 @@ private fun SeasonContent(
         LazyColumn(
             state = listState,
             contentPadding = contentPadding.copy(copyTop = false),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             item { Spacer(modifier = Modifier.height(64.dp)) }
 

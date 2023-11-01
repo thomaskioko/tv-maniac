@@ -50,7 +50,7 @@ internal fun SearchScreen(
 ) {
     Scaffold(
         modifier = modifier
-            .statusBarsPadding()
+            .statusBarsPadding(),
     ) { padding ->
         Column(
             modifier = Modifier

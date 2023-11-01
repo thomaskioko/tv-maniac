@@ -105,32 +105,31 @@ private fun TvManiacBottomNavigation(
             imageVector = Icons.Outlined.Movie,
             title = stringResource(id = R.string.menu_item_discover),
             selected = currentSelectedItem == NavigationScreen.DiscoverNavScreen,
-            onClick = { onNavigationSelected(NavigationScreen.DiscoverNavScreen)},
+            onClick = { onNavigationSelected(NavigationScreen.DiscoverNavScreen) },
         )
 
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.Search,
             title = stringResource(id = R.string.menu_item_search),
             selected = currentSelectedItem == NavigationScreen.SearchNavScreen,
-            onClick = { onNavigationSelected(NavigationScreen.SearchNavScreen)},
+            onClick = { onNavigationSelected(NavigationScreen.SearchNavScreen) },
         )
 
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.Star,
             title = stringResource(id = R.string.menu_item_follow),
             selected = currentSelectedItem == NavigationScreen.WatchlistNavScreen,
-            onClick = { onNavigationSelected(NavigationScreen.WatchlistNavScreen)},
+            onClick = { onNavigationSelected(NavigationScreen.WatchlistNavScreen) },
         )
 
         TvManiacBottomNavigationItem(
             imageVector = Icons.Filled.Settings,
             title = stringResource(id = R.string.menu_item_settings),
             selected = currentSelectedItem == NavigationScreen.SettingsNavScreen,
-            onClick = { onNavigationSelected(NavigationScreen.SettingsNavScreen)},
+            onClick = { onNavigationSelected(NavigationScreen.SettingsNavScreen) },
         )
     }
 }
-
 
 @Composable
 private fun currentRoute(navController: NavHostController): String {

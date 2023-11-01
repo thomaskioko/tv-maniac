@@ -159,7 +159,7 @@ fun CollapsableAppBar(
         modifier = modifier
             .windowInsetsPadding(
                 WindowInsets.systemBars
-                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
             )
             .shadow(elevation = elevation),
     )

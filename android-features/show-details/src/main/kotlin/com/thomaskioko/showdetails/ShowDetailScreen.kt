@@ -386,7 +386,7 @@ private fun Body(
             ExpandingText(
                 text = show.overview,
                 textStyle = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Normal
+                fontWeight = FontWeight.Normal,
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -493,7 +493,7 @@ fun ShowMetadata(
             modifier = Modifier.fillMaxWidth(),
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -597,7 +597,7 @@ private fun SeasonsContent(
     seasonsList: List<Season>,
     onSeasonClicked: (Long, String) -> Unit,
 ) {
-    if(seasonsList.isNotEmpty()){
+    if (seasonsList.isNotEmpty()) {
         TextLoadingItem(
             isLoading = isLoading,
             text = stringResource(id = R.string.title_seasons),
