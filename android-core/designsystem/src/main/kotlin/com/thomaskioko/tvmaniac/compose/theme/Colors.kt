@@ -11,6 +11,7 @@ import kotlin.math.min
 val green = Color(0xFF00b300)
 
 val md_theme_light_primary = Color(0xFF0049c7)
+val md_theme_light_primaryContainer = Color(0xFFdbe8f8)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 val md_theme_light_secondary = Color(0xFF3947EA)
 val md_theme_light_onSecondary = Color(0xFFFFFFFF)
@@ -22,6 +23,7 @@ val md_theme_light_onSurface = Color(0xFF1F2123)
 val md_theme_light_outline = Color(0xFF1646F7)
 
 val md_theme_dark_primary = Color(0xFF1F2123)
+val md_theme_dark_primaryContainer = Color(0xFF1F2123)
 val md_theme_dark_onPrimary = Color(0xFFE0E0FF)
 val md_theme_dark_secondary = Color(0xFFF7d633)
 val md_theme_dark_onSecondary = Color(0xFFFFFFFF)

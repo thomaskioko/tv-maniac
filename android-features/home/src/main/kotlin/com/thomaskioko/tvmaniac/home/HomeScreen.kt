@@ -1,14 +1,8 @@
 package com.thomaskioko.tvmaniac.home
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Movie
@@ -25,7 +19,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -38,6 +31,8 @@ import androidx.navigation.plusAssign
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
+import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
+import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import com.thomaskioko.tvmaniac.navigation.addNavigation
@@ -55,8 +50,7 @@ fun HomeScreen(
     navController.navigatorProvider += bottomSheetNavigator
 
     Scaffold(
-        modifier = modifier
-            .navigationBarsPadding(),
+        modifier = modifier,
         containerColor = Color.Transparent,
         contentColor = MaterialTheme.colorScheme.onBackground,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -104,69 +98,39 @@ private fun TvManiacBottomNavigation(
     onNavigationSelected: (NavigationScreen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    BottomNavigation(
+    TvManiacNavigationBar(
         modifier = modifier,
-        backgroundColor = MaterialTheme.colorScheme.surface,
     ) {
         TvManiacBottomNavigationItem(
-            screen = NavigationScreen.DiscoverNavScreen,
             imageVector = Icons.Outlined.Movie,
             title = stringResource(id = R.string.menu_item_discover),
             selected = currentSelectedItem == NavigationScreen.DiscoverNavScreen,
-            onNavigationSelected = onNavigationSelected,
+            onClick = { onNavigationSelected(NavigationScreen.DiscoverNavScreen)},
         )
 
         TvManiacBottomNavigationItem(
-            screen = NavigationScreen.SearchNavScreen,
             imageVector = Icons.Outlined.Search,
             title = stringResource(id = R.string.menu_item_search),
             selected = currentSelectedItem == NavigationScreen.SearchNavScreen,
-            onNavigationSelected = onNavigationSelected,
+            onClick = { onNavigationSelected(NavigationScreen.SearchNavScreen)},
         )
 
         TvManiacBottomNavigationItem(
-            screen = NavigationScreen.WatchlistNavScreen,
             imageVector = Icons.Outlined.Star,
             title = stringResource(id = R.string.menu_item_follow),
             selected = currentSelectedItem == NavigationScreen.WatchlistNavScreen,
-            onNavigationSelected = onNavigationSelected,
+            onClick = { onNavigationSelected(NavigationScreen.WatchlistNavScreen)},
         )
 
         TvManiacBottomNavigationItem(
-            screen = NavigationScreen.SettingsNavScreen,
             imageVector = Icons.Filled.Settings,
             title = stringResource(id = R.string.menu_item_settings),
             selected = currentSelectedItem == NavigationScreen.SettingsNavScreen,
-            onNavigationSelected = onNavigationSelected,
+            onClick = { onNavigationSelected(NavigationScreen.SettingsNavScreen)},
         )
     }
 }
 
-@Composable
-fun RowScope.TvManiacBottomNavigationItem(
-    screen: NavigationScreen,
-    imageVector: ImageVector,
-    title: String,
-    selected: Boolean,
-    modifier: Modifier = Modifier,
-    onNavigationSelected: (NavigationScreen) -> Unit,
-) {
-    BottomNavigationItem(
-        modifier = modifier,
-        icon = {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = title,
-            )
-        },
-        label = { Text(title) },
-        selected = selected,
-        alwaysShowLabel = true,
-        selectedContentColor = MaterialTheme.colorScheme.secondary,
-        unselectedContentColor = MaterialTheme.colorScheme.onSurface,
-        onClick = { onNavigationSelected(screen) },
-    )
-}
 
 @Composable
 private fun currentRoute(navController: NavHostController): String {

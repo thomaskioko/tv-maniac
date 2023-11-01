@@ -65,7 +65,6 @@ fun SearchBar(
 val KeyboardShownKey = SemanticsPropertyKey<Boolean>("KeyboardShownKey")
 var SemanticsPropertyReceiver.keyboardShownProperty by KeyboardShownKey
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SearchInputText(
     onTextChanged: (TextFieldValue) -> Unit,

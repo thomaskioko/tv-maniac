@@ -91,6 +91,7 @@ dependencies {
     implementation(projects.presentation.trailers)
 
     implementation(libs.androidx.compose.activity)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.appauth)
 
     implementation(libs.kotlinInject.runtime)

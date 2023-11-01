@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Collections
 import androidx.compose.material.icons.outlined.ErrorOutline
@@ -57,7 +57,6 @@ fun ConnectionStatus(
     Box(
         modifier = modifier
             .background(backgroundColor)
-            .statusBarsPadding()
             .fillMaxWidth()
             .padding(8.dp),
         contentAlignment = Alignment.TopCenter,

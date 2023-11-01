@@ -71,7 +71,6 @@ androidx-browser =  { module = "androidx.browser:browser", version.ref = "androi
 
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "compose-constraintlayout" }
-androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose-material" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidx-material3" }
 androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "androidx-material3" }
 androidx-compose-paging = { module = "androidx.paging:paging-compose", version.ref = "compose-paging" }

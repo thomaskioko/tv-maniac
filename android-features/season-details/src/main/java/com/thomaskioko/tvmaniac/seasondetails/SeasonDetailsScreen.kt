@@ -89,7 +89,6 @@ internal fun SeasonDetailScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SeasonDetailScreen(
     state: SeasonDetailsState,
@@ -140,6 +139,7 @@ internal fun SeasonDetailScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(
     title: String,
@@ -149,6 +149,7 @@ private fun TopBar(
         title = title,
         showNavigationIcon = true,
         onBackClick = navigateUp,
+        elevation = 8.dp
     )
 }
 
@@ -178,6 +179,7 @@ private fun SeasonContent(
         LazyColumn(
             state = listState,
             contentPadding = contentPadding.copy(copyTop = false),
+            modifier = Modifier.fillMaxSize()
         ) {
             item { Spacer(modifier = Modifier.height(64.dp)) }
 

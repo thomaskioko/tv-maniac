@@ -75,8 +75,7 @@ private fun WatchlistScreen(
 ) {
     Scaffold(
         modifier = modifier
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+            .statusBarsPadding(),
         content = { contentPadding ->
 
             when (state) {
