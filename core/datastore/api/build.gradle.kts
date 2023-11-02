@@ -1,29 +1,24 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("plugin.tvmaniac.multiplatform")
 }
 
 
 kotlin {
-    android()
-    ios()
-
     sourceSets {
-
-        sourceSets["commonMain"].dependencies {
-            api(libs.coroutines.core)
+        commonMain {
+            dependencies {
+                api(libs.coroutines.core)
+            }
         }
 
-        sourceSets["commonTest"].dependencies {
-            implementation(kotlin("test"))
+        commonMain {
+            dependencies {
+                implementation(kotlin("test"))
 
-            implementation(libs.coroutines.test)
-            implementation(libs.kotest.assertions)
-            implementation(libs.turbine)
+                implementation(libs.coroutines.test)
+                implementation(libs.kotest.assertions)
+                implementation(libs.turbine)
+            }
         }
-
     }
-}
-
-android {
-    namespace = "com.thomaskioko.tvmaniac.shared.domain.datastore.api"
 }

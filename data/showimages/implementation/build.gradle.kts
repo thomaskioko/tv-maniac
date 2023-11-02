@@ -1,33 +1,24 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("plugin.tvmaniac.multiplatform")
     alias(libs.plugins.ksp)
 }
 
 kotlin {
-    android()
-    ios()
-
     sourceSets {
 
-        sourceSets["androidMain"].dependencies {
-            implementation(libs.ktor.okhttp)
-        }
+        commonMain {
+            dependencies {
+                implementation(projects.core.util)
+                implementation(projects.data.requestManager.api)
+                implementation(projects.data.showimages.api)
+                implementation(projects.core.tmdbApi.api)
 
-        sourceSets["commonMain"].dependencies {
-            implementation(projects.core.util)
-            implementation(projects.data.requestManager.api)
-            implementation(projects.data.showimages.api)
-            implementation(projects.core.tmdbApi.api)
-
-            implementation(libs.kotlinInject.runtime)
-            implementation(libs.sqldelight.extensions)
+                implementation(libs.kotlinInject.runtime)
+                implementation(libs.sqldelight.extensions)
+            }
         }
 
     }
-}
-
-android {
-    namespace = "com.thomaskioko.tvmaniac.showimages.implementation"
 }
 
 dependencies {

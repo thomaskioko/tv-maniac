@@ -1,30 +1,35 @@
 plugins {
-    id("tvmaniac.kmm.domain")
+    id("plugin.tvmaniac.multiplatform")
+    alias(libs.plugins.ksp)
 }
 
 
 kotlin {
-    android()
-    ios()
-
     sourceSets {
 
-        sourceSets["commonMain"].dependencies {
-            implementation(projects.data.trailers.api)
+        commonMain {
+            dependencies {
+                implementation(projects.data.trailers.api)
+
+                implementation(libs.flowredux)
+                implementation(libs.kotlinInject.runtime)
+            }
         }
 
-        sourceSets["commonTest"].dependencies {
-            implementation(projects.data.trailers.testing)
-        }
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(projects.data.trailers.testing)
 
+                implementation(libs.coroutines.test)
+                implementation(libs.kotest.assertions)
+                implementation(libs.turbine)
+            }
+        }
     }
 }
 
 dependencies {
     add("kspIosX64", libs.kotlinInject.compiler)
     add("kspIosArm64", libs.kotlinInject.compiler)
-}
-
-android {
-    namespace = "com.thomaskioko.tvmaniac.presentation.trailers"
 }

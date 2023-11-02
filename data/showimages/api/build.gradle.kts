@@ -1,21 +1,16 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("plugin.tvmaniac.multiplatform")
 }
 
 kotlin {
-    android()
-    ios()
-
     sourceSets {
-        sourceSets["commonMain"].dependencies {
-            api(projects.core.database)
-            api(projects.core.networkutil)
+        commonMain {
+            dependencies {
+                api(projects.core.database)
+                api(projects.core.networkutil)
 
-            api(libs.coroutines.core)
+                api(libs.coroutines.core)
+            }
         }
     }
-}
-
-android {
-    namespace = "com.thomaskioko.tvmaniac.showimages.api"
 }

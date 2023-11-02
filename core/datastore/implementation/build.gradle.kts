@@ -1,29 +1,31 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("plugin.tvmaniac.android.library")
+    id("plugin.tvmaniac.multiplatform")
     alias(libs.plugins.ksp)
 }
 
 
 kotlin {
-    android()
-    ios()
-
     sourceSets {
-        sourceSets["commonMain"].dependencies {
-            implementation(projects.core.datastore.api)
-            implementation(projects.core.util)
+        commonMain {
+            dependencies {
+                implementation(projects.core.datastore.api)
+                implementation(projects.core.util)
 
-            api(libs.androidx.datastore.preference)
+                api(libs.androidx.datastore.preference)
 
-            implementation(libs.kotlinInject.runtime)
+                implementation(libs.kotlinInject.runtime)
+            }
         }
 
-        sourceSets["commonTest"].dependencies {
-            implementation(kotlin("test"))
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
 
-            implementation(libs.coroutines.test)
-            implementation(libs.kotest.assertions)
-            implementation(libs.turbine)
+                implementation(libs.coroutines.test)
+                implementation(libs.kotest.assertions)
+                implementation(libs.turbine)
+            }
         }
     }
 }

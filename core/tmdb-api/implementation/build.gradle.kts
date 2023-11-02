@@ -1,38 +1,43 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("plugin.tvmaniac.android.library")
+    id("plugin.tvmaniac.multiplatform")
     alias(libs.plugins.ksp)
     alias(libs.plugins.serialization)
 }
 
 kotlin {
-    android()
-    ios()
-
     sourceSets {
-
-        sourceSets["androidMain"].dependencies {
-            implementation(libs.ktor.okhttp)
+        androidMain {
+            dependencies {
+                implementation(libs.ktor.okhttp)
+            }
         }
 
-        sourceSets["commonMain"].dependencies {
-            implementation(projects.core.util)
-            implementation(projects.core.tmdbApi.api)
+        commonMain {
+            dependencies {
+                implementation(projects.core.util)
+                implementation(projects.core.tmdbApi.api)
 
-            implementation(libs.kotlinInject.runtime)
-            implementation(libs.ktor.core)
-            implementation(libs.ktor.negotiation)
-            implementation(libs.ktor.serialization.json)
-            implementation(libs.sqldelight.extensions)
-            implementation(libs.sqldelight.extensions)
+                implementation(libs.kotlinInject.runtime)
+                implementation(libs.ktor.core)
+                implementation(libs.ktor.negotiation)
+                implementation(libs.ktor.serialization.json)
+                implementation(libs.sqldelight.extensions)
+                implementation(libs.sqldelight.extensions)
+            }
         }
 
-        sourceSets["commonTest"].dependencies {
-            implementation(libs.ktor.serialization)
+        commonTest {
+            dependencies {
+                implementation(libs.ktor.serialization)
+            }
         }
 
-        sourceSets["iosMain"].dependencies {
-            implementation(libs.ktor.darwin)
-            implementation(libs.ktor.negotiation)
+        iosMain {
+            dependencies {
+                implementation(libs.ktor.darwin)
+                implementation(libs.ktor.negotiation)
+            }
         }
     }
 }

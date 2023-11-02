@@ -1,21 +1,20 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("plugin.tvmaniac.multiplatform")
     alias(libs.plugins.ksp)
 }
 
 kotlin {
-    android()
-    ios()
-
     sourceSets {
-        sourceSets["commonMain"].dependencies {
-            implementation(projects.data.profilestats.api)
-            implementation(projects.data.requestManager.api)
-            implementation(projects.data.shows.api)
-            implementation(projects.core.traktApi.api)
+        commonMain {
+            dependencies {
+                implementation(projects.data.profilestats.api)
+                implementation(projects.data.requestManager.api)
+                implementation(projects.data.shows.api)
+                implementation(projects.core.traktApi.api)
 
-            implementation(libs.kotlinInject.runtime)
-            implementation(libs.sqldelight.extensions)
+                implementation(libs.kotlinInject.runtime)
+                implementation(libs.sqldelight.extensions)
+            }
         }
     }
 }
@@ -23,8 +22,4 @@ kotlin {
 dependencies {
     add("kspIosX64", libs.kotlinInject.compiler)
     add("kspIosArm64", libs.kotlinInject.compiler)
-}
-
-android {
-    namespace = "com.thomaskioko.tvmaniac.trakt.profile.implementation"
 }
