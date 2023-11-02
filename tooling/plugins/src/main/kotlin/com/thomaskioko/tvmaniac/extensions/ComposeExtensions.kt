@@ -3,28 +3,23 @@ package com.thomaskioko.tvmaniac.extensions
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.getByType
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
 
 internal fun Project.configureAndroidCompose(
     commonExtension: CommonExtension<*, *, *, *, *>,
 ) {
-    val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-
     commonExtension.apply {
 
         defaultConfig {
-            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-            val minSdkSdkVersion = libs.findVersion("android-minSdk").get().toString().toInt()
-
-            minSdk = minSdkSdkVersion
+            minSdk = Versions.MIN_SDK
         }
 
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
+            sourceCompatibility = JavaVersion.VERSION_18
+            targetCompatibility = JavaVersion.VERSION_18
         }
 
         buildFeatures {
@@ -39,8 +34,6 @@ internal fun Project.configureAndroidCompose(
             freeCompilerArgs = freeCompilerArgs
         }
 
-        val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-
         dependencies {
             val bom = libs.findLibrary("androidx-compose-bom").get()
 
@@ -48,4 +41,8 @@ internal fun Project.configureAndroidCompose(
             add("lintChecks", libs.findLibrary("lint-compose").get())
         }
     }
+}
+
+fun CommonExtension<*, *, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
+    (this as ExtensionAware).extensions.configure("kotlinOptions", block)
 }

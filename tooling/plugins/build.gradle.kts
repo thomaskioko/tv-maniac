@@ -20,29 +20,25 @@ dependencies {
 
 gradlePlugin {
     plugins {
+        register("kotlinMultiplatformPlugin") {
+            id = "plugin.tvmaniac.multiplatform"
+            implementationClass = "com.thomaskioko.tvmaniac.plugins.KotlinMultiplatformConventionPlugin"
+        }
         register("androidApplication") {
             id = "tvmaniac.application"
-            implementationClass = "ApplicationPlugin"
+            implementationClass = "com.thomaskioko.tvmaniac.plugins.ApplicationPlugin"
         }
         register("androidLibrary") {
-            id = "tvmaniac.android.library"
-            implementationClass = "AndroidLibraryPlugin"
+            id = "plugin.tvmaniac.android.library"
+            implementationClass = "com.thomaskioko.tvmaniac.plugins.AndroidLibraryPlugin"
         }
         register("androidComposeLibrary") {
             id = "tvmaniac.compose.library"
-            implementationClass = "ComposeLibraryPlugin"
+            implementationClass = "com.thomaskioko.tvmaniac.plugins.ComposeLibraryPlugin"
         }
         register("androidFeature") {
             id = "tvmaniac.android.feature"
-            implementationClass = "FeaturePlugin"
-        }
-        register("kmmDomain") {
-            id = "tvmaniac.kmm.domain"
-            implementationClass = "KotlinMultiplatformDomainPlugin"
-        }
-        register("kmmLibrary") {
-            id = "tvmaniac.kmm.library"
-            implementationClass = "KotlinMultiplatformLibraryPlugin"
+            implementationClass = "com.thomaskioko.tvmaniac.plugins.FeaturePlugin"
         }
     }
 }
