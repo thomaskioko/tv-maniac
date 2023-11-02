@@ -1,5 +1,5 @@
 plugins {
-    id("tvmaniac.android.library")
+    id("plugin.tvmaniac.android.library")
     alias(libs.plugins.ksp)
 }
 

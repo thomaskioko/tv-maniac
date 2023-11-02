@@ -1,4 +1,4 @@
-
+package com.thomaskioko.tvmaniac.plugins
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
