@@ -1,19 +1,18 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("plugin.tvmaniac.android.library")
+    id("plugin.tvmaniac.multiplatform")
     alias(libs.plugins.ksp)
 }
 
 kotlin {
-    android()
-    ios()
-
     sourceSets {
+        commonMain {
+            dependencies {
+                implementation(projects.core.util)
 
-        sourceSets["commonMain"].dependencies {
-            implementation(projects.core.util)
-
-            implementation(libs.coroutines.core)
-            implementation(libs.kotlinInject.runtime)
+                implementation(libs.coroutines.core)
+                implementation(libs.kotlinInject.runtime)
+            }
         }
     }
 }

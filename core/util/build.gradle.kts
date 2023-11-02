@@ -1,32 +1,36 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("plugin.tvmaniac.android.library")
+    id("plugin.tvmaniac.multiplatform")
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
 }
 
 
 kotlin {
-    android()
-    ios()
-
     sourceSets {
-        sourceSets["androidMain"].dependencies {
-            implementation(libs.kotlinx.datetime)
+        androidMain {
+            dependencies {
+                implementation(libs.kotlinx.datetime)
+            }
         }
 
-        sourceSets["commonMain"].dependencies {
-            api(libs.ktor.serialization)
+        commonMain {
+            dependencies {
+                api(libs.ktor.serialization)
 
-            implementation(libs.coroutines.core)
-            implementation(libs.kermit)
-            implementation(libs.kotlinInject.runtime)
-            implementation(libs.ktor.core)
-            implementation(libs.yamlkt)
+                implementation(libs.coroutines.core)
+                implementation(libs.kermit)
+                implementation(libs.kotlinInject.runtime)
+                implementation(libs.ktor.core)
+                implementation(libs.yamlkt)
+            }
         }
 
 
-        sourceSets["iosMain"].dependencies {
-            implementation(libs.kotlinx.datetime)
+        iosMain {
+            dependencies {
+                implementation(libs.kotlinx.datetime)
+            }
         }
 
     }
