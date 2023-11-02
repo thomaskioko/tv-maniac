@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.util
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
@@ -19,6 +20,7 @@ class BundleResourceReader(
     private val bundle: NSBundle = NSBundle.bundleForClass(BundleMarker),
 ) : ResourceReader {
 
+    @OptIn(ExperimentalForeignApi::class)
     override fun readResource(name: String): String {
         // TODO: Catch iOS-only exceptions and map them to common ones.
         val (filename, type) = when (val lastPeriodIndex = name.lastIndexOf('.')) {
