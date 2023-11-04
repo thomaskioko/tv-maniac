@@ -1,23 +1,17 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("plugin.tvmaniac.multiplatform")
     alias(libs.plugins.serialization)
 }
 
 kotlin {
-    android()
-    ios()
-
     sourceSets {
-        sourceSets["commonMain"].dependencies {
-            api(projects.core.database)
-            api(projects.core.networkutil)
+        commonMain {
+            dependencies {
+                api(projects.core.database)
+                api(projects.core.networkutil)
 
-            implementation(libs.ktor.serialization)
+                implementation(libs.ktor.serialization)
+            }
         }
-
     }
-}
-
-android {
-    namespace = "com.thomaskioko.tvmaniac.tmdb.api"
 }

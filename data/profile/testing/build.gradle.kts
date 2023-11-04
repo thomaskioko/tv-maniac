@@ -1,21 +1,15 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("plugin.tvmaniac.multiplatform")
 }
 
 kotlin {
-    android()
-    ios()
-
     sourceSets {
-        sourceSets["commonMain"].dependencies {
-            api(projects.core.database)
-            implementation(projects.data.profile.api)
-            implementation(libs.coroutines.core)
+        commonMain {
+            dependencies {
+                api(projects.core.database)
+                implementation(projects.data.profile.api)
+                implementation(libs.coroutines.core)
+            }
         }
     }
-}
-
-
-android {
-    namespace = "com.thomaskioko.tvmaniac.trakt.profile.testing"
 }

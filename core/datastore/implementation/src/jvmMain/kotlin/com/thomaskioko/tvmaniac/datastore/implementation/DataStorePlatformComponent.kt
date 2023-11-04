@@ -1,0 +1,3 @@
+package com.thomaskioko.tvmaniac.datastore.implementation
+
+actual interface DataStorePlatformComponent
