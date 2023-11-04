@@ -5,11 +5,11 @@ plugins {
 group = "com.thomaskioko.tvmaniac.plugins"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_18
+    targetCompatibility = JavaVersion.VERSION_18
 
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(18))
     }
 }
 
@@ -31,6 +31,10 @@ gradlePlugin {
         register("androidLibrary") {
             id = "plugin.tvmaniac.android.library"
             implementationClass = "com.thomaskioko.tvmaniac.plugins.AndroidLibraryPlugin"
+        }
+        register("kotlinAndroid") {
+            id = "plugin.tvmaniac.kotlin.android"
+            implementationClass = "com.thomaskioko.tvmaniac.plugins.KotlinAndroidPlugin"
         }
         register("androidComposeLibrary") {
             id = "tvmaniac.compose.library"
