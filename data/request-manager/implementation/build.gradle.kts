@@ -1,21 +1,12 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("plugin.tvmaniac.multiplatform")
     alias(libs.plugins.ksp)
 }
 
 
-@OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
-    targetHierarchy.default()
-
-    android()
-    listOf(
-        iosX64(),
-        iosArm64(),
-    )
-
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation(projects.data.requestManager.api)
 
@@ -30,8 +21,4 @@ kotlin {
 dependencies {
     add("kspIosX64", libs.kotlinInject.compiler)
     add("kspIosArm64", libs.kotlinInject.compiler)
-}
-
-android {
-    namespace = "com.thomaskioko.tvmaniac.resourcemanager.implementation"
 }

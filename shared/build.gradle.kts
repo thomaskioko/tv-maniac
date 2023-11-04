@@ -1,5 +1,5 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("org.jetbrains.kotlin.multiplatform")
     id("maven-publish")
     alias(libs.plugins.kmmbridge)
     alias(libs.plugins.ksp)
@@ -9,7 +9,6 @@ plugins {
 version = libs.versions.shared.module.version.get()
 
 kotlin {
-    android()
 
     listOf(
         iosX64(),
@@ -36,7 +35,7 @@ kotlin {
 
 
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
 
                 api(projects.core.datastore.api)
@@ -84,13 +83,10 @@ kotlin {
             }
         }
 
-        val commonTest by getting
-        val androidMain by getting
-        val androidUnitTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosMain by creating {
-            dependsOn(commonMain)
+            dependsOn(commonMain.get())
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
         }
@@ -100,10 +96,6 @@ kotlin {
 dependencies {
     add("kspIosX64", libs.kotlinInject.compiler)
     add("kspIosArm64", libs.kotlinInject.compiler)
-}
-
-android {
-    namespace = "com.thomaskioko.tvmaniac.shared.base"
 }
 
 addGithubPackagesRepository()

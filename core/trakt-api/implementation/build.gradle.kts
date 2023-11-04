@@ -1,39 +1,41 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("plugin.tvmaniac.kotlin.android")
+    id("plugin.tvmaniac.multiplatform")
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
 }
 
 kotlin {
-    android()
-    ios()
-
     sourceSets {
-        sourceSets["androidMain"].dependencies {
-            implementation(libs.appauth)
-            implementation(libs.ktor.okhttp)
+        androidMain {
+            dependencies {
+                implementation(libs.appauth)
+                implementation(libs.ktor.okhttp)
+            }
         }
 
+        commonMain {
+            dependencies {
+                implementation(projects.core.util)
+                implementation(projects.core.traktApi.api)
+                implementation(projects.core.datastore.api)
 
-        sourceSets["commonMain"].dependencies {
-            implementation(projects.core.util)
-            implementation(projects.core.traktApi.api)
-            implementation(projects.core.datastore.api)
-
-            implementation(libs.ktor.core)
-            implementation(libs.ktor.logging)
-            implementation(libs.ktor.negotiation)
-            implementation(libs.ktor.serialization.json)
-            implementation(libs.kotlinInject.runtime)
-            implementation(libs.sqldelight.extensions)
+                implementation(libs.ktor.core)
+                implementation(libs.ktor.logging)
+                implementation(libs.ktor.negotiation)
+                implementation(libs.ktor.serialization.json)
+                implementation(libs.kotlinInject.runtime)
+                implementation(libs.sqldelight.extensions)
+            }
         }
 
-        sourceSets["iosMain"].dependencies {
-            implementation(projects.core.traktApi.api)
+        iosMain {
+            dependencies {
+                implementation(projects.core.traktApi.api)
 
-            implementation(libs.ktor.darwin)
+                implementation(libs.ktor.darwin)
+            }
         }
-
     }
 }
 

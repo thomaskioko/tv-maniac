@@ -1,11 +1,12 @@
+package com.thomaskioko.tvmaniac.plugins
+
 import com.android.build.gradle.LibraryExtension
+import com.thomaskioko.tvmaniac.extensions.Versions
 import com.thomaskioko.tvmaniac.extensions.configureAndroidCompose
 import com.thomaskioko.tvmaniac.extensions.configureFlavors
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.getByType
 
 class ComposeLibraryPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -17,11 +18,7 @@ class ComposeLibraryPlugin : Plugin<Project> {
             }
 
             extensions.configure<LibraryExtension> {
-                val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-                val sdkVersion = libs.findVersion("android-compileSdk")
-                    .get().toString().toInt()
-
-                compileSdk = sdkVersion
+                compileSdk = Versions.COMPILE_SDK
 
                 configureAndroidCompose(this)
                 configureFlavors(this)

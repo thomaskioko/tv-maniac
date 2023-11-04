@@ -5,11 +5,11 @@ plugins {
 group = "com.thomaskioko.tvmaniac.plugins"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_18
+    targetCompatibility = JavaVersion.VERSION_18
 
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(18))
     }
 }
 
@@ -20,29 +20,29 @@ dependencies {
 
 gradlePlugin {
     plugins {
+        register("kotlinMultiplatformPlugin") {
+            id = "plugin.tvmaniac.multiplatform"
+            implementationClass = "com.thomaskioko.tvmaniac.plugins.KotlinMultiplatformConventionPlugin"
+        }
         register("androidApplication") {
             id = "tvmaniac.application"
-            implementationClass = "ApplicationPlugin"
+            implementationClass = "com.thomaskioko.tvmaniac.plugins.ApplicationPlugin"
         }
         register("androidLibrary") {
-            id = "tvmaniac.android.library"
-            implementationClass = "AndroidLibraryPlugin"
+            id = "plugin.tvmaniac.android.library"
+            implementationClass = "com.thomaskioko.tvmaniac.plugins.AndroidLibraryPlugin"
+        }
+        register("kotlinAndroid") {
+            id = "plugin.tvmaniac.kotlin.android"
+            implementationClass = "com.thomaskioko.tvmaniac.plugins.KotlinAndroidPlugin"
         }
         register("androidComposeLibrary") {
             id = "tvmaniac.compose.library"
-            implementationClass = "ComposeLibraryPlugin"
+            implementationClass = "com.thomaskioko.tvmaniac.plugins.ComposeLibraryPlugin"
         }
         register("androidFeature") {
             id = "tvmaniac.android.feature"
-            implementationClass = "FeaturePlugin"
-        }
-        register("kmmDomain") {
-            id = "tvmaniac.kmm.domain"
-            implementationClass = "KotlinMultiplatformDomainPlugin"
-        }
-        register("kmmLibrary") {
-            id = "tvmaniac.kmm.library"
-            implementationClass = "KotlinMultiplatformLibraryPlugin"
+            implementationClass = "com.thomaskioko.tvmaniac.plugins.FeaturePlugin"
         }
     }
 }

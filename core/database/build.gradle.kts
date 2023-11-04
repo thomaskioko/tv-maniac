@@ -1,41 +1,52 @@
 plugins {
-    id("tvmaniac.kmm.library")
+    id("plugin.tvmaniac.kotlin.android")
+    id("plugin.tvmaniac.multiplatform")
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.ksp)
 }
 
 
 kotlin {
-    android()
-    ios()
-
     sourceSets {
-
-        sourceSets["androidMain"].dependencies {
-            implementation(libs.sqldelight.driver.android)
+        androidMain {
+            dependencies {
+                implementation(libs.sqldelight.driver.android)
+            }
         }
 
-        sourceSets["commonMain"].dependencies {
-            implementation(projects.core.util)
-            implementation(libs.sqldelight.primitive.adapters)
-            implementation(libs.kotlinInject.runtime)
-            implementation(libs.kotlinx.datetime)
+        commonMain {
+            dependencies {
+                implementation(projects.core.util)
+                implementation(libs.sqldelight.primitive.adapters)
+                implementation(libs.kotlinInject.runtime)
+                implementation(libs.kotlinx.datetime)
+            }
         }
 
-
-        sourceSets["androidUnitTest"].dependencies {
-            implementation(kotlin("test"))
-            implementation(libs.sqldelight.driver.jvm)
+        androidUnitTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.sqldelight.driver.jvm)
+            }
         }
 
-
-        sourceSets["commonTest"].dependencies {
-            implementation(kotlin("test"))
-            implementation(libs.kotest.assertions)
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.kotest.assertions)
+            }
         }
 
-        sourceSets["iosMain"].dependencies {
-            implementation(libs.sqldelight.driver.native)
+        iosMain {
+            dependencies {
+                implementation(libs.sqldelight.driver.native)
+            }
+        }
+
+        jvmTest {
+            dependencies {
+                implementation(libs.sqldelight.driver.jvm)
+            }
         }
     }
 }
