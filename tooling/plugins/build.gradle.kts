@@ -14,8 +14,8 @@ java {
 }
 
 dependencies {
-    compileOnly(libs.android.gradle.tools)
-    compileOnly(libs.kotlin.gradle)
+    compileOnly(libs.android.gradlePlugin)
+    compileOnly(libs.kotlin.gradlePlugin)
 }
 
 gradlePlugin {
