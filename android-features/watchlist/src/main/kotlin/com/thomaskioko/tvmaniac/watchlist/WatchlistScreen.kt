@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LazyGridItems
@@ -98,7 +99,7 @@ private fun WatchlistScreen(
                     when {
                         state.list.isEmpty() -> EmptyContent(
                             painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                            message = stringResource(id = R.string.msg_empty_favorites),
+                            message = stringResource(id = MR.strings.msg_empty_favorites.resourceId),
                         )
 
                         else -> FollowingGridContent(

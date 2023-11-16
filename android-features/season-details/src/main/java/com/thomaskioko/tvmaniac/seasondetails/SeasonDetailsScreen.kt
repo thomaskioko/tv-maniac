@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -42,7 +43,6 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.LoadingError
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetails
-import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.components.CollapsableContent
 import com.thomaskioko.tvmaniac.seasondetails.components.WatchNextContent
 import me.tatarka.inject.annotations.Assisted
@@ -217,7 +217,7 @@ private fun AllSeasonsTitle(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = stringResource(id = R.string.title_all_seasons),
+            text = stringResource(id = MR.strings.title_all_seasons.resourceId),
             style = MaterialTheme.typography.labelMedium.copy(MaterialTheme.colorScheme.secondary),
         )
     }

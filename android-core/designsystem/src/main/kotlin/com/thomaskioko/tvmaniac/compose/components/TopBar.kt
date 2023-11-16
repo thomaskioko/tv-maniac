@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.resources.R
@@ -148,7 +149,7 @@ fun CollapsableAppBar(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(R.string.cd_navigate_back),
+                    contentDescription = stringResource(MR.strings.cd_navigate_back.resourceId),
                     tint = MaterialTheme.colorScheme.onBackground,
                 )
             }

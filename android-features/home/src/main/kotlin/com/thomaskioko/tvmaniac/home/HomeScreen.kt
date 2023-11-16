@@ -31,12 +31,12 @@ import androidx.navigation.plusAssign
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
 import com.thomaskioko.tvmaniac.navigation.NavigationScreen
 import com.thomaskioko.tvmaniac.navigation.addNavigation
-import com.thomaskioko.tvmaniac.resources.R
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
@@ -103,28 +103,28 @@ private fun TvManiacBottomNavigation(
     ) {
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.Movie,
-            title = stringResource(id = R.string.menu_item_discover),
+            title = stringResource(id = MR.strings.tab_item_discover.resourceId),
             selected = currentSelectedItem == NavigationScreen.DiscoverNavScreen,
             onClick = { onNavigationSelected(NavigationScreen.DiscoverNavScreen) },
         )
 
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.Search,
-            title = stringResource(id = R.string.menu_item_search),
+            title = stringResource(id = MR.strings.tab_item_search.resourceId),
             selected = currentSelectedItem == NavigationScreen.SearchNavScreen,
             onClick = { onNavigationSelected(NavigationScreen.SearchNavScreen) },
         )
 
         TvManiacBottomNavigationItem(
             imageVector = Icons.Outlined.Star,
-            title = stringResource(id = R.string.menu_item_follow),
+            title = stringResource(id = MR.strings.tab_item_follow.resourceId),
             selected = currentSelectedItem == NavigationScreen.WatchlistNavScreen,
             onClick = { onNavigationSelected(NavigationScreen.WatchlistNavScreen) },
         )
 
         TvManiacBottomNavigationItem(
             imageVector = Icons.Filled.Settings,
-            title = stringResource(id = R.string.menu_item_settings),
+            title = stringResource(id = MR.strings.tab_item_settings.resourceId),
             selected = currentSelectedItem == NavigationScreen.SettingsNavScreen,
             onClick = { onNavigationSelected(NavigationScreen.SettingsNavScreen) },
         )

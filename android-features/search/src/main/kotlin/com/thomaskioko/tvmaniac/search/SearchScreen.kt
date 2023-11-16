@@ -16,10 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
-import com.thomaskioko.tvmaniac.resources.R
 import me.tatarka.inject.annotations.Inject
 
 typealias Search = @Composable () -> Unit
@@ -65,7 +65,7 @@ internal fun SearchScreen(
             SearchBar(
                 modifier = Modifier
                     .fillMaxWidth(),
-                hint = stringResource(id = R.string.msg_search_show_hint),
+                hint = stringResource(id = MR.strings.msg_search_show_hint.resourceId),
                 onValueChange = {},
             )
         }

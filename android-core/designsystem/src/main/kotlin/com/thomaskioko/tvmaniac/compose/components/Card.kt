@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.common.localization.MR
 
 @Composable
 fun TvPosterCard(
@@ -53,7 +53,7 @@ fun TvPosterCard(
 
             AsyncImageComposable(
                 model = posterImageUrl,
-                contentDescription = stringResource(R.string.cd_show_poster, title),
+                contentDescription = stringResource(MR.strings.cd_show_poster.resourceId, title),
                 modifier = Modifier
                     .fillMaxSize()
                     .aspectRatio(2 / 3f),

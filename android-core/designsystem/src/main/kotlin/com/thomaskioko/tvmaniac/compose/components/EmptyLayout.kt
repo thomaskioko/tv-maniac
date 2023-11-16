@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.resources.R
 
@@ -62,7 +63,7 @@ fun EmptyContentViewPreview() {
         Surface {
             EmptyContent(
                 painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                message = stringResource(id = R.string.generic_empty_content),
+                message = stringResource(id = MR.strings.generic_empty_content.resourceId),
             )
         }
     }

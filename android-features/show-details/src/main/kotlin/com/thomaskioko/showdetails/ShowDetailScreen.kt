@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.Slideshow
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -42,6 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -68,6 +70,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.showdetails.DetailConstants.HEADER_HEIGHT
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -469,7 +472,13 @@ fun ShowMetadata(
                 seasonNumber?.let {
                     append(divider)
                     withStyle(tagStyle) {
-                        append(resources.getQuantityString(R.plurals.season_count, it, it))
+                        append(
+                            resources.getQuantityString(
+                                MR.plurals.season_count.resourceId,
+                                it,
+                                it
+                            )
+                        )
                     }
                 }
             }
@@ -546,7 +555,7 @@ fun ShowDetailButtons(
         TvManiacOutlinedButton(
             leadingIcon = {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_trailer_24),
+                    imageVector = Icons.Filled.Slideshow,
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(
                         MaterialTheme.colorScheme.secondary.copy(
@@ -555,7 +564,7 @@ fun ShowDetailButtons(
                     ),
                 )
             },
-            text = stringResource(id = R.string.btn_trailer),
+            text = stringResource(id = MR.strings.watch_trailer_cta.resourceId),
             textPadding = 8.dp,
             borderColor = MaterialTheme.colorScheme.secondary,
             onClick = { onWatchTrailerClicked(traktId, trailerKey) },
@@ -580,9 +589,9 @@ fun ShowDetailButtons(
                 )
             },
             text = if (isFollowed) {
-                stringResource(id = R.string.unfollow)
+                stringResource(id = MR.strings.unfollow_cta.resourceId)
             } else {
-                stringResource(id = R.string.following)
+                stringResource(id = MR.strings.follow_cta.resourceId)
             },
             textPadding = 8.dp,
             onClick = { onUpdateFavoriteClicked(isFollowed) },
@@ -600,9 +609,9 @@ private fun SeasonsContent(
     if (seasonsList.isNotEmpty()) {
         TextLoadingItem(
             isLoading = isLoading,
-            text = stringResource(id = R.string.title_seasons),
+            text = stringResource(id = MR.strings.label_browse_seasons.resourceId),
         )
-        val selectedIndex by remember { mutableStateOf(0) }
+        val selectedIndex by remember { mutableIntStateOf(0) }
 
         ScrollableTabRow(
             selectedTabIndex = selectedIndex,
@@ -682,7 +691,7 @@ fun SimilarShowsContent(
 
     TextLoadingItem(
         isLoading = isLoading,
-        text = stringResource(id = R.string.title_similar),
+        text = stringResource(id = MR.strings.label_more_like_this.resourceId),
     )
 
     LazyRow(
@@ -715,7 +724,7 @@ fun TrailersRowContent(
 ) {
     TextLoadingItem(
         isLoading = isLoading,
-        text = stringResource(id = R.string.title_trailer),
+        text = stringResource(id = MR.strings.label_trailer.resourceId),
     )
 
     val lazyListState = rememberLazyListState()

@@ -39,12 +39,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
-import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.episode
 import com.thomaskioko.tvmaniac.seasondetails.seasonDetails
 
@@ -231,7 +231,7 @@ fun EpisodeItem(
             AsyncImageComposable(
                 model = episode.imageUrl,
                 contentDescription = stringResource(
-                    R.string.cd_show_poster,
+                    MR.strings.cd_show_poster.resourceId,
                     episode.episodeNumberTitle,
                 ),
                 contentScale = ContentScale.Crop,
@@ -289,7 +289,7 @@ fun EpisodeItem(
             ) {
                 Icon(
                     imageVector = Icons.Filled.CheckCircle,
-                    contentDescription = stringResource(R.string.cd_navigate_back),
+                    contentDescription = stringResource(MR.strings.cd_navigate_back.resourceId),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .size(32.dp),

@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.category.api.model.Category
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.EmptyUi
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
@@ -76,7 +77,6 @@ import com.thomaskioko.tvmaniac.presentation.discover.Loading
 import com.thomaskioko.tvmaniac.presentation.discover.RetryLoading
 import com.thomaskioko.tvmaniac.presentation.discover.SnackBarDismissed
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
-import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
@@ -372,9 +372,9 @@ fun HorizontalPagerItem(
                 modifier = Modifier
                     .graphicsLayer {
                         val pageOffset = (
-                            (pagerState.currentPage - pageNumber) + pagerState
-                                .currentPageOffsetFraction
-                            ).absoluteValue
+                                (pagerState.currentPage - pageNumber) + pagerState
+                                    .currentPageOffsetFraction
+                                ).absoluteValue
 
                         // We animate the scaleX + scaleY, between 85% and 100%
                         lerp(
@@ -445,7 +445,7 @@ private fun RowContent(
         Column {
             BoxTextItems(
                 title = category.title,
-                label = stringResource(id = R.string.str_more),
+                label = stringResource(id = MR.strings.label_more.resourceId),
                 onMoreClicked = { onLabelClicked(category.id) },
             )
 
@@ -472,6 +472,7 @@ private fun RowContent(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @ThemePreviews
 @Composable
 private fun DiscoverScreenPreview(

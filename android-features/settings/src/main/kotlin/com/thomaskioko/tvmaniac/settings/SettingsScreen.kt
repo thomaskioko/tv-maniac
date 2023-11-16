@@ -49,6 +49,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -131,7 +132,7 @@ internal fun SettingsScreen(
     Scaffold(
         topBar = {
             TvManiacTopBar(
-                title = stringResource(R.string.title_settings),
+                title = stringResource(MR.strings.title_settings.resourceId),
                 showNavigationIcon = false,
                 onBackClick = onBackClicked,
                 modifier = Modifier,
@@ -260,11 +261,11 @@ private fun TraktProfileSettingsItem(
 ) {
     val titleId = if (loggedIn) {
         stringResource(
-            R.string.settings_title_disconnect_trakt,
+            MR.strings.settings_title_disconnect_trakt.resourceId,
             traktUserName ?: traktFullName ?: "",
         )
     } else {
-        stringResource(R.string.settings_title_connect_trakt)
+        stringResource(MR.strings.settings_title_connect_trakt.resourceId)
     }
 
     Column(
@@ -275,7 +276,7 @@ private fun TraktProfileSettingsItem(
     ) {
         Spacer(modifier = Modifier.height(8.dp))
 
-        SettingHeaderTitle(title = stringResource(R.string.settings_title_trakt))
+        SettingHeaderTitle(title = stringResource(MR.strings.settings_title_trakt.resourceId))
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -295,7 +296,7 @@ private fun TraktProfileSettingsItem(
                     AsyncImageComposable(
                         model = traktUserPicUrl,
                         contentDescription = stringResource(
-                            R.string.cd_profile_pic,
+                            MR.strings.cd_profile_pic.resourceId,
                             traktUserName ?: traktFullName ?: "",
                         ),
                         modifier = Modifier
@@ -321,7 +322,7 @@ private fun TraktProfileSettingsItem(
                     .weight(1f),
             ) {
                 TitleItem(titleId)
-                SettingDescription(stringResource(R.string.trakt_description))
+                SettingDescription(stringResource(MR.strings.trakt_description.resourceId))
             }
 
             TrackDialog(
@@ -348,15 +349,15 @@ fun TrackDialog(
     onDismissDialog: () -> Unit,
 ) {
     val title = if (loggedIn) {
-        stringResource(id = R.string.trakt_dialog_logout_title)
+        stringResource(id = MR.strings.trakt_dialog_logout_title.resourceId)
     } else {
-        stringResource(id = R.string.trakt_dialog_login_title)
+        stringResource(id = MR.strings.trakt_dialog_login_title.resourceId)
     }
 
     val message = if (loggedIn) {
-        stringResource(id = R.string.trakt_dialog_logout_message)
+        stringResource(id = MR.strings.trakt_dialog_logout_message.resourceId)
     } else {
-        stringResource(id = R.string.trakt_dialog_login_message)
+        stringResource(id = MR.strings.trakt_dialog_login_message.resourceId)
     }
     AnimatedVisibility(
         visible = isVisible,
@@ -371,8 +372,8 @@ fun TrackDialog(
         BasicDialog(
             dialogTitle = title,
             dialogMessage = message,
-            confirmButtonText = stringResource(id = R.string.login),
-            dismissButtonText = stringResource(id = R.string.logout),
+            confirmButtonText = stringResource(id = MR.strings.login.resourceId),
+            dismissButtonText = stringResource(id = MR.strings.logout.resourceId),
             onDismissDialog = onDismissDialog,
             confirmButtonClicked = onLoginClicked,
             dismissButtonClicked = onLogoutClicked,
@@ -391,9 +392,9 @@ private fun SettingsThemeItem(
     onDismissTheme: () -> Unit,
 ) {
     val themeTitle = when (theme) {
-        Theme.LIGHT -> stringResource(R.string.settings_title_theme_dark)
-        Theme.DARK -> stringResource(R.string.settings_title_theme_light)
-        Theme.SYSTEM -> stringResource(R.string.settings_title_theme_system)
+        Theme.LIGHT -> stringResource(MR.strings.settings_title_theme_dark.resourceId)
+        Theme.DARK -> stringResource(MR.strings.settings_title_theme_light.resourceId)
+        Theme.SYSTEM -> stringResource(MR.strings.settings_title_theme_system.resourceId)
     }
 
     Column(
@@ -405,7 +406,7 @@ private fun SettingsThemeItem(
         Spacer(modifier = Modifier.height(8.dp))
 
         SettingHeaderTitle(
-            title = stringResource(R.string.settings_title_ui),
+            title = stringResource(MR.strings.settings_title_ui.resourceId),
             modifier = Modifier,
         )
 
@@ -430,7 +431,7 @@ private fun SettingsThemeItem(
                     .weight(1f),
             ) {
                 TitleItem(themeTitle)
-                SettingDescription(stringResource(R.string.settings_theme_description))
+                SettingDescription(stringResource(MR.strings.settings_theme_description.resourceId))
             }
 
             ThemeMenu(
@@ -472,7 +473,7 @@ private fun ThemeMenu(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.surface),
 
-        ) {
+            ) {
             ThemeMenuItem(
                 theme = Theme.LIGHT,
                 selectedTheme = selectedTheme,
@@ -551,14 +552,14 @@ private fun AboutSettingsItem() {
             .clickable { }
             .padding(start = 16.dp, end = 16.dp),
     ) {
-        SettingHeaderTitle(title = stringResource(R.string.settings_title_info))
+        SettingHeaderTitle(title = stringResource(MR.strings.settings_title_info.resourceId))
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        TitleItem(title = stringResource(R.string.settings_title_about))
+        TitleItem(title = stringResource(MR.strings.settings_title_about.resourceId))
 
         Text(
-            text = stringResource(R.string.settings_about_description),
+            text = stringResource(MR.strings.settings_about_description.resourceId),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Normal,
         )
