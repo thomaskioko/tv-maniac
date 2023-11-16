@@ -37,6 +37,7 @@ include(
     ":android-features:profile",
     ":android-features:watchlist",
     ":shared",
+    ":common:localization",
     ":core:util",
     ":core:networkutil",
     ":core:database",
