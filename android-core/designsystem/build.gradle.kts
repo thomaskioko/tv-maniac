@@ -7,19 +7,18 @@ android {
 }
 
 dependencies {
-    api(libs.coroutines.jvm)
+    api(libs.androidx.compose.material.icons)
+    api(libs.androidx.compose.material3)
+    api(libs.androidx.compose.ui.tooling)
+    api(libs.androidx.compose.ui.ui)
+    api(libs.androidx.palette)
     api(libs.coil.coil)
     api(libs.coil.compose)
-    api(libs.androidx.compose.ui.tooling)
-    api(libs.androidx.palette)
-    api(libs.androidx.compose.material3)
-    api(libs.androidx.compose.ui.ui)
+    api(libs.coroutines.jvm)
 
-    implementation(projects.androidCore.resources)
     implementation(projects.common.localization)
 
-    implementation(libs.kenburns)
-    implementation(libs.androidx.core)
     implementation(libs.androidx.compose.foundation)
-    implementation(libs.androidx.compose.material.icons)
+    implementation(libs.androidx.core)
+    implementation(libs.kenburns)
 }
