@@ -7,32 +7,32 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.common.localization.MR
 
 private val workSansFontFamily = FontFamily(
     fonts = listOf(
         Font(
-            resId = R.font.work_sans_thin,
+            resId = MR.fonts.work_sans_thin.work_sans_thin.fontResourceId,
             weight = FontWeight.W200,
             style = FontStyle.Normal,
         ),
         Font(
-            resId = R.font.work_sans_medium,
+            resId = MR.fonts.work_sans_medium.work_sans_medium.fontResourceId,
             weight = FontWeight.W400,
             style = FontStyle.Normal,
         ),
         Font(
-            resId = R.font.work_sans_semibold,
+            resId = MR.fonts.work_sans_semibold.work_sans_semibold.fontResourceId,
             weight = FontWeight.W500,
             style = FontStyle.Normal,
         ),
         Font(
-            resId = R.font.work_sans_bold,
+            resId = MR.fonts.work_sans_bold.work_sans_bold.fontResourceId,
             weight = FontWeight.W600,
             style = FontStyle.Normal,
         ),
         Font(
-            resId = R.font.work_sans_extrabold,
+            resId = MR.fonts.work_sans_extrabold.work_sans_extrabold.fontResourceId,
             weight = FontWeight.W700,
             style = FontStyle.Normal,
         ),
