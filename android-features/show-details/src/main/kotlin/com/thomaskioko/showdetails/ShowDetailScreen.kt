@@ -26,8 +26,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LibraryAdd
+import androidx.compose.material.icons.filled.LibraryAddCheck
+import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.PlayCircle
-import androidx.compose.material.icons.filled.Slideshow
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -58,7 +60,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -94,7 +95,6 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.WebViewError
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
-import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import me.tatarka.inject.annotations.Assisted
@@ -555,7 +555,7 @@ fun ShowDetailButtons(
         TvManiacOutlinedButton(
             leadingIcon = {
                 Image(
-                    imageVector = Icons.Filled.Slideshow,
+                    imageVector = Icons.Filled.Movie,
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(
                         MaterialTheme.colorScheme.secondary.copy(
@@ -575,10 +575,10 @@ fun ShowDetailButtons(
         TvManiacOutlinedButton(
             leadingIcon = {
                 Image(
-                    painter = if (isFollowed) {
-                        painterResource(id = R.drawable.ic_baseline_check_box_24)
+                    imageVector = if (isFollowed) {
+                        Icons.Filled.LibraryAddCheck
                     } else {
-                        painterResource(id = R.drawable.ic_baseline_add_box_24)
+                        Icons.Filled.LibraryAdd
                     },
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(

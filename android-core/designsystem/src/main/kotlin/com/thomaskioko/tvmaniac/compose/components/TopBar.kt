@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -39,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.resources.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +70,7 @@ fun TvManiacTopBar(
         navigationIcon = {
             if (showNavigationIcon) {
                 Image(
-                    painter = painterResource(R.drawable.ic_baseline_arrow_back_24),
+                    imageVector = Icons.Filled.ArrowBack,
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
                     modifier = Modifier

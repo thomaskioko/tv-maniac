@@ -63,7 +63,6 @@ import com.thomaskioko.tvmaniac.presentation.profile.LoggedOutContent
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStats
 import com.thomaskioko.tvmaniac.presentation.profile.ShowTraktDialog
-import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -167,8 +166,9 @@ fun LoggedOutUi(
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp),
     ) {
+
         Icon(
-            painter = painterResource(id = R.drawable.trakt_icon_red),
+            painter = painterResource(id = MR.images.trakt_logo.drawableResId),
             tint = MaterialTheme.colorScheme.error,
             contentDescription = null,
             modifier = Modifier
