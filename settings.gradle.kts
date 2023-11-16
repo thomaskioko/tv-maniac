@@ -24,7 +24,6 @@ include(
     ":app",
     ":android-core:designsystem",
     ":android-core:navigation",
-    ":android-core:resources",
     ":android-core:workmanager",
     ":android-features:discover",
     ":android-features:home",
