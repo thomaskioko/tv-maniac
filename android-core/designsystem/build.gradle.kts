@@ -16,6 +16,7 @@ dependencies {
     api(libs.androidx.compose.ui.ui)
 
     implementation(projects.androidCore.resources)
+    implementation(projects.common.localization)
 
     implementation(libs.kenburns)
     implementation(libs.androidx.core)
