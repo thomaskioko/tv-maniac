@@ -41,6 +41,7 @@ kotlininject = "0.6.1"
 ktor = "2.3.2"
 ksp = "1.9.10-1.0.13"
 lint = "1.2.0"
+moko-resources = "0.23.0"
 shared-module-version = "0.8.0"
 snapper = "0.3.0"
 sqldelight = "2.0.0-rc01"
@@ -123,6 +124,8 @@ ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", 
 
 lint-compose = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "lint" }
 
+moko-core = { module = "dev.icerock.moko:resources", version.ref = "moko-resources" }
+
 snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 
 sqldelight-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
@@ -149,3 +152,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }
