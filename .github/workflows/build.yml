@@ -2,11 +2,9 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    types: [ opened, synchronize ]
 
 concurrency:
   group: ci-${{ github.ref }}-${{ github.head_ref }}
@@ -29,7 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install JDK
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
@@ -46,20 +44,87 @@ jobs:
           echo -e "\TRAKT_CLIENT_SECRET=$TRAKT_CLIENT_SECRET" >> ./local.properties
           echo -e "\TRAKT_REDIRECT_URI=$TRAKT_REDIRECT_URI" >> ./local.properties          
 
-      - name: Check lint
-        run: ./gradlew lint
-
-      - name: Check spotless
-        run: ./gradlew spotlessCheck --init-script tooling/checks/spotless.gradle.kts --no-configuration-cache
-
       - name: Build with gradle
         run: ./gradlew assemble
 
-      - name: Run local tests
+  android-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 18
+
+      - name: lintDebug
+        run: ./gradlew lint
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: android-lint-report
+          path: ~/**/build/reports/lint-results*.html
+
+  spotless:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 18
+          distribution: 'zulu'
+
+      - name: spotless
+        run: ./gradlew spotlessCheck --init-script tooling/checks/spotless.gradle.kts --no-configuration-cache
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: detekt-report
+          path: ./**/build/reports/detekt/detekt.*
+
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 18
+          distribution: 'zulu'
+
+      - name: unitTest
         run: ./gradlew testDemoDebug
 
-      - name: Build
-        run: ./gradlew assembleDemoDebug
+      - uses: actions/upload-artifact@v3
+        with:
+          name: unit-test-report
+          path: ./**/build/reports/tests/
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [
+      build,
+      android-lint,
+      spotless,
+      unit-test
+    ]
+    if: ${{ always() && !cancelled() && needs.build.result == 'success' }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 18
+          distribution: 'zulu'
 
       - name: Create release
         uses: softprops/action-gh-release@v1
