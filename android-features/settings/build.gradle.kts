@@ -12,6 +12,8 @@ dependencies {
     implementation(projects.data.shows.api)
     implementation(projects.presentation.settings)
 
+    implementation(projects.common.localization)
+
     implementation(libs.flowredux)
 
 }

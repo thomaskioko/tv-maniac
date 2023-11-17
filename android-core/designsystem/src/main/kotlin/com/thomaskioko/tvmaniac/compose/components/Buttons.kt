@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LibraryAddCheck
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -23,11 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun TvManiacTextButton(
@@ -116,7 +116,7 @@ fun TvManiacOutlinedButton(
             },
         ),
 
-    )
+        )
 }
 
 @Composable
@@ -204,7 +204,7 @@ fun TvManiacOutlinedButtonPreview() {
                 enabled = true,
                 leadingIcon = {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_baseline_check_box_24),
+                        imageVector = Icons.Filled.LibraryAddCheck,
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(
                             MaterialTheme.colorScheme.secondary.copy(

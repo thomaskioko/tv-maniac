@@ -48,6 +48,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -62,7 +63,6 @@ import com.thomaskioko.tvmaniac.presentation.profile.LoggedOutContent
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStats
 import com.thomaskioko.tvmaniac.presentation.profile.ShowTraktDialog
-import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -120,7 +120,7 @@ private fun ProfileScreen(
     Scaffold(
         topBar = {
             TvManiacTopBar(
-                title = stringResource(id = R.string.menu_item_profile),
+                title = stringResource(id = MR.strings.title_profile.resourceId),
                 onActionClicked = onSettingsClicked,
                 actionImageVector = Icons.Filled.Settings,
             )
@@ -166,8 +166,9 @@ fun LoggedOutUi(
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp),
     ) {
+
         Icon(
-            painter = painterResource(id = R.drawable.trakt_icon_red),
+            painter = painterResource(id = MR.images.trakt_logo.drawableResId),
             tint = MaterialTheme.colorScheme.error,
             contentDescription = null,
             modifier = Modifier
@@ -185,7 +186,7 @@ fun LoggedOutUi(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = stringResource(id = R.string.trakt_description),
+            text = stringResource(id = MR.strings.trakt_description.resourceId),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground,
@@ -195,10 +196,10 @@ fun LoggedOutUi(
         Spacer(modifier = Modifier.height(8.dp))
 
         val supportItems = listOf(
-            stringResource(id = R.string.trakt_sync),
-            stringResource(id = R.string.trakt_history),
-            stringResource(id = R.string.trakt_release),
-            stringResource(id = R.string.trakt_more),
+            stringResource(id = MR.strings.trakt_sync.resourceId),
+            stringResource(id = MR.strings.trakt_history.resourceId),
+            stringResource(id = MR.strings.trakt_release.resourceId),
+            stringResource(id = MR.strings.trakt_more.resourceId),
         )
 
         LazyColumn(
@@ -223,7 +224,7 @@ fun LoggedOutUi(
             ),
             content = {
                 Text(
-                    text = stringResource(R.string.settings_title_connect_trakt),
+                    text = stringResource(MR.strings.settings_title_connect_trakt.resourceId),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSecondary,
                 )
@@ -310,7 +311,7 @@ fun UserProfile(
                     AsyncImageComposable(
                         model = picUrl,
                         contentDescription = stringResource(
-                            R.string.cd_profile_pic,
+                            MR.strings.cd_profile_pic.resourceId,
                             fullName ?: userName ?: "",
                         ),
                         modifier = Modifier
@@ -318,14 +319,14 @@ fun UserProfile(
                             .clip(CircleShape)
                             .align(Alignment.CenterHorizontally),
 
-                    )
+                        )
                 }
             }
 
             else -> {
                 Icon(
                     imageVector = Icons.Outlined.Person,
-                    contentDescription = stringResource(R.string.cd_user_profile),
+                    contentDescription = stringResource(MR.strings.cd_user_profile.resourceId),
                 )
             }
         }
@@ -333,7 +334,10 @@ fun UserProfile(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = stringResource(R.string.trakt_user_name, fullName ?: userName ?: "Stranger"),
+            text = stringResource(
+                MR.strings.trakt_user_name.resourceId,
+                fullName ?: userName ?: "Stranger"
+            ),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
@@ -490,9 +494,9 @@ fun TrackDialog(
         ),
     ) {
         BasicDialog(
-            dialogTitle = stringResource(id = R.string.trakt_dialog_login_title),
-            dialogMessage = stringResource(id = R.string.trakt_dialog_login_message),
-            confirmButtonText = stringResource(id = R.string.login),
+            dialogTitle = stringResource(id = MR.strings.trakt_dialog_login_title.resourceId),
+            dialogMessage = stringResource(id = MR.strings.trakt_dialog_login_message.resourceId),
+            confirmButtonText = stringResource(id = MR.strings.login.resourceId),
             onDismissDialog = onDismissDialog,
             confirmButtonClicked = onLoginClicked,
         )

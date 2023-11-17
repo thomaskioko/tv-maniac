@@ -10,6 +10,8 @@ dependencies {
     implementation(projects.data.category.api)
     implementation(projects.data.shows.api)
 
+    implementation(projects.common.localization)
+
     implementation(libs.androidx.compose.paging)
     implementation(libs.flowredux)
 }

@@ -29,11 +29,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
-import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.episode
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -54,7 +54,7 @@ fun WatchNextContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = stringResource(id = R.string.title_watch_next),
+                text = stringResource(id = MR.strings.title_watch_next.resourceId),
                 style = MaterialTheme.typography.labelMedium.copy(MaterialTheme.colorScheme.secondary),
             )
         }
@@ -102,7 +102,7 @@ fun WatchNextItem(
             AsyncImageComposable(
                 model = episode.imageUrl,
                 contentDescription = stringResource(
-                    R.string.cd_show_poster,
+                    MR.strings.cd_show_poster.resourceId,
                     episode.episodeNumberTitle,
                 ),
                 contentScale = ContentScale.Crop,

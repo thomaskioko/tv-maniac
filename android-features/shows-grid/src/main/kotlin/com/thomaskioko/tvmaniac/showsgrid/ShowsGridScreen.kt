@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.category.api.model.getCategory
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -40,7 +41,6 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
-import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.showsgrid.model.TvShow
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -172,7 +172,7 @@ fun GridContent(
                             AsyncImageComposable(
                                 model = show.posterImageUrl,
                                 contentDescription = stringResource(
-                                    R.string.cd_show_poster,
+                                    MR.strings.cd_show_poster.resourceId,
                                     show.title,
                                 ),
                                 modifier = Modifier

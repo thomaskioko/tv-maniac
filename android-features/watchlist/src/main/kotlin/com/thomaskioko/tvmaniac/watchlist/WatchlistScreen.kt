@@ -5,16 +5,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thomaskioko.tvmaniac.common.localization.MR
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LazyGridItems
@@ -29,7 +31,6 @@ import com.thomaskioko.tvmaniac.presentation.watchlist.ReloadWatchlist
 import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistContent
 import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistItem
 import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistState
-import com.thomaskioko.tvmaniac.resources.R
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -97,8 +98,8 @@ private fun WatchlistScreen(
                 is WatchlistContent -> {
                     when {
                         state.list.isEmpty() -> EmptyContent(
-                            painter = painterResource(id = R.drawable.ic_watchlist_empty),
-                            message = stringResource(id = R.string.msg_empty_favorites),
+                            imageVector = Icons.Outlined.Inbox,
+                            message = stringResource(id = MR.strings.msg_empty_favorites.resourceId),
                         )
 
                         else -> FollowingGridContent(

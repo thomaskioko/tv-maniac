@@ -10,6 +10,8 @@ dependencies {
     implementation(projects.core.traktAuth.api)
     implementation(projects.presentation.profile)
 
+    implementation(projects.common.localization)
+
     implementation(libs.flowredux)
     implementation(libs.snapper)
     implementation(libs.androidx.compose.constraintlayout)

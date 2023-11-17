@@ -7,4 +7,5 @@ android {
 }
 
 dependencies {
+    implementation(projects.common.localization)
 }
