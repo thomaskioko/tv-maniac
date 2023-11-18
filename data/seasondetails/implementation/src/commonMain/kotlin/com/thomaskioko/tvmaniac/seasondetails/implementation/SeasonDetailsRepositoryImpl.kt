@@ -41,7 +41,7 @@ class SeasonDetailsRepositoryImpl(
             coroutineDispatcher = dispatcher.io,
         )
 
-    override fun observeSeasonDetails(traktId: Long): Flow<Either<Failure, List<SeasonWithEpisodes>>> =
+    override fun observeCachedSeasonDetails(traktId: Long): Flow<Either<Failure, List<SeasonWithEpisodes>>> =
         seasonCache.observeShowEpisodes(traktId)
             .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
             .map { Either.Right(it) }

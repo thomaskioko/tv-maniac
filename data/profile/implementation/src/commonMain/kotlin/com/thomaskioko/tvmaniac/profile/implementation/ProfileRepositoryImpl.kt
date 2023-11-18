@@ -1,10 +1,17 @@
 package com.thomaskioko.tvmaniac.profile.implementation
 
 import com.thomaskioko.tvmaniac.core.db.User
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.ExperimentalStoreApi
@@ -12,7 +19,7 @@ import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.StoreReadResponse
 import kotlin.time.Duration.Companion.days
 
-@OptIn(ExperimentalStoreApi::class)
+@OptIn(ExperimentalStoreApi::class, ExperimentalCoroutinesApi::class)
 @Inject
 class ProfileRepositoryImpl constructor(
     private val store: ProfileStore,
@@ -20,7 +27,7 @@ class ProfileRepositoryImpl constructor(
     private val dispatchers: AppCoroutineDispatchers,
 ) : ProfileRepository {
 
-    override fun observeProfile(slug: String): Flow<StoreReadResponse<User>> =
+    override fun observeProfile(slug: String): Flow<Either<Failure, User>> =
         store.stream(
             StoreReadRequest.cached(
                 key = slug,
@@ -31,9 +38,21 @@ class ProfileRepositoryImpl constructor(
                 ),
             ),
         )
-            .flowOn(dispatchers.io)
+            .mapResult()
 
     override suspend fun clearProfile() {
         store.clear()
     }
+
+    private fun <T> Flow<StoreReadResponse<T>>.mapResult(): Flow<Either<Failure, T>> =
+        distinctUntilChanged()
+            .flatMapLatest {
+                val data = it.dataOrNull()
+                if (data != null) {
+                    flowOf(Either.Right(data))
+                } else {
+                    emptyFlow()
+                }
+            }
+            .flowOn(dispatchers.io)
 }
