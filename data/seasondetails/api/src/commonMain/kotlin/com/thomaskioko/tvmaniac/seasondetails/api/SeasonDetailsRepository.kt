@@ -9,5 +9,5 @@ interface SeasonDetailsRepository {
 
     fun observeSeasonDetailsStream(traktId: Long): Flow<Either<Failure, List<SeasonWithEpisodes>>>
 
-    fun observeSeasonDetails(traktId: Long): Flow<Either<Failure, List<SeasonWithEpisodes>>>
+    fun observeCachedSeasonDetails(traktId: Long): Flow<Either<Failure, List<SeasonWithEpisodes>>>
 }

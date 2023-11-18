@@ -10,8 +10,6 @@ kotlin {
                 api(projects.core.networkutil)
 
                 api(libs.coroutines.core)
-                api(libs.kotlinx.atomicfu)
-                api(libs.store5)
             }
         }
     }

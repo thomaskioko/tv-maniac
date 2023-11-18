@@ -5,26 +5,33 @@ import com.thomaskioko.tvmaniac.core.db.Seasons
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import org.mobilenativefoundation.store.store5.StoreReadResponse
+import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeSeasonsRepository : SeasonsRepository {
 
-    private var seasonsResult = flowOf<StoreReadResponse<List<Seasons>>>()
+    private var seasonsList: Channel<List<Seasons>> = Channel(Channel.UNLIMITED)
+    private var seasonsResult: Channel<Either<Failure, List<Seasons>>> = Channel(Channel.UNLIMITED)
 
-    private var seasonEpisodesResult = flowOf<Either<Failure, List<SeasonWithEpisodes>>>()
+    private var seasonEpisodesResult: Channel<Either<Failure, List<SeasonWithEpisodes>>> =
+        Channel(Channel.UNLIMITED)
 
-    suspend fun setSeasonsResult(result: StoreReadResponse<List<Seasons>>) {
-        seasonsResult = flow { emit(result) }
+    suspend fun setSeasonWithEpisodes(result: Either<Failure, List<SeasonWithEpisodes>>) {
+        seasonEpisodesResult.send(result)
     }
 
-    suspend fun setSeasonDetails(result: Either<Failure, List<SeasonWithEpisodes>>) {
-        seasonEpisodesResult = flow { emit(result) }
+    suspend fun setSeasons(result: List<Seasons>) {
+        seasonsList.send(result)
     }
 
-    override suspend fun getSeasons(traktId: Long): List<Seasons> = emptyList()
+    suspend fun setSeasonsResult(result: Either<Failure, List<Seasons>>) {
+        seasonsResult.send(result)
+    }
 
-    override fun observeSeasonsStoreResponse(traktId: Long): Flow<StoreReadResponse<List<Seasons>>> = seasonsResult
+    override suspend fun getSeasons(traktId: Long): List<Seasons> = seasonsList.receive()
+
+    override fun observeSeasonsStoreResponse(
+        traktId: Long,
+    ): Flow<Either<Failure, List<Seasons>>> = seasonsResult.receiveAsFlow()
 }

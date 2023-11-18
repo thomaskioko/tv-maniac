@@ -1,21 +1,22 @@
 package com.thomaskioko.tvmaniac.trakt.profile.testing
 
 import com.thomaskioko.tvmaniac.core.db.User
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
-import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 class FakeProfileRepository : ProfileRepository {
 
-    private val userFlow: Channel<StoreReadResponse<User>> = Channel(Channel.UNLIMITED)
+    private val userFlow: Channel<Either<Failure, User>> = Channel(Channel.UNLIMITED)
 
-    suspend fun setUserData(response: StoreReadResponse<User>) {
+    suspend fun setUserData(response: Either<Failure, User>) {
         userFlow.send(response)
     }
 
-    override fun observeProfile(slug: String): Flow<StoreReadResponse<User>> =
+    override fun observeProfile(slug: String): Flow<Either<Failure, User>> =
         userFlow.receiveAsFlow()
 
     override suspend fun clearProfile() {

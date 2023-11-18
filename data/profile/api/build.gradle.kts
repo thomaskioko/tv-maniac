@@ -11,8 +11,6 @@ kotlin {
                 api(projects.core.util)
 
                 api(libs.coroutines.core)
-                api(libs.kotlinx.atomicfu)
-                api(libs.store5)
             }
         }
     }

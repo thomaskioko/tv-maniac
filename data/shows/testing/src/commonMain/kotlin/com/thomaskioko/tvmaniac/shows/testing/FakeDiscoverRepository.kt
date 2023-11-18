@@ -3,71 +3,53 @@ package com.thomaskioko.tvmaniac.shows.testing
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import org.mobilenativefoundation.store.store5.StoreReadResponse
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlin.time.Duration
 
 class FakeDiscoverRepository : DiscoverRepository {
 
-    private var featuredResult = flowOf<StoreReadResponse<List<ShowsByCategory>>>()
+    private var showById: Channel<ShowById> = Channel(Channel.UNLIMITED)
+    private var updatedShowCategoryResult: Channel<Either<Failure, List<ShowsByCategory>>> =
+        Channel(Channel.UNLIMITED)
 
-    private var anticipatedResult = flowOf<StoreReadResponse<List<ShowsByCategory>>>()
+    private var showCategoryResult: Channel<List<ShowsByCategory>> = Channel(Channel.UNLIMITED)
 
-    private var popularResult = flowOf<StoreReadResponse<List<ShowsByCategory>>>()
+    private var showByIdResult: Channel<Either<Failure, ShowById>> =
+        Channel(Channel.UNLIMITED)
 
-    private var trendingResult = flowOf<StoreReadResponse<List<ShowsByCategory>>>()
-
-    private var showResult = flowOf<StoreReadResponse<ShowById>>()
-
-    suspend fun setFeaturedResult(result: StoreReadResponse<List<ShowsByCategory>>) {
-        featuredResult = flow { emit(result) }
+    suspend fun setShowCategory(result: List<ShowsByCategory>) {
+        showCategoryResult.send(result)
     }
 
-    suspend fun setAnticipatedResult(result: StoreReadResponse<List<ShowsByCategory>>) {
-        anticipatedResult = flow { emit(result) }
+    suspend fun setShowById(result: ShowById) {
+        showById.send(result)
     }
 
-    suspend fun setPopularResult(result: StoreReadResponse<List<ShowsByCategory>>) {
-        popularResult = flow { emit(result) }
+    suspend fun setTrendingResult(result: Either<Failure, List<ShowsByCategory>>) {
+        updatedShowCategoryResult.send(result)
     }
 
-    suspend fun setTrendingResult(result: StoreReadResponse<List<ShowsByCategory>>) {
-        trendingResult = flow { emit(result) }
+    suspend fun setShowResult(result: Either<Failure, ShowById>) {
+        showByIdResult.send(result)
     }
 
-    suspend fun setShowResult(result: StoreReadResponse<ShowById>) {
-        showResult = flow { emit(result) }
-    }
+    override fun observeShow(traktId: Long): Flow<Either<Failure, ShowById>> = showByIdResult.receiveAsFlow()
 
-    override fun observeShow(traktId: Long): Flow<StoreReadResponse<ShowById>> = showResult
-
-    override fun observeShowsByCategory(
-        categoryId: Long,
-    ): Flow<StoreReadResponse<List<ShowsByCategory>>> = featuredResult
-
-    override fun observeTrendingShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> {
-        return trendingResult
-    }
-
-    override fun observePopularShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> {
-        return popularResult
-    }
-
-    override fun observeAnticipatedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> {
-        return anticipatedResult
-    }
-
-    override fun observeRecommendedShows(): Flow<StoreReadResponse<List<ShowsByCategory>>> {
-        return featuredResult
-    }
+    override fun observeShowCategory(
+        category: Category,
+        duration: Duration,
+    ): Flow<Either<Failure, List<ShowsByCategory>>> = updatedShowCategoryResult.receiveAsFlow()
 
     override suspend fun fetchDiscoverShows() {}
 
-    override suspend fun fetchShows(category: Category): List<ShowsByCategory> = emptyList()
+    override suspend fun fetchShows(category: Category): List<ShowsByCategory> = showCategoryResult.receive()
 
-    override suspend fun getShowById(traktId: Long): ShowById = selectedShow
+    override suspend fun getShowById(traktId: Long): ShowById = showById.receive()
 }
 
 val selectedShow = ShowById(
