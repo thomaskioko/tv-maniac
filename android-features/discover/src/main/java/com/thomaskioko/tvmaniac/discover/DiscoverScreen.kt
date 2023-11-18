@@ -57,7 +57,6 @@ import androidx.compose.ui.util.lerp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
-import com.thomaskioko.tvmaniac.compose.components.EmptyUi
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -72,6 +71,7 @@ import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
+import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
 import com.thomaskioko.tvmaniac.presentation.discover.Loading
 import com.thomaskioko.tvmaniac.presentation.discover.RetryLoading
 import com.thomaskioko.tvmaniac.presentation.discover.SnackBarDismissed
@@ -140,49 +140,33 @@ private fun DiscoverScreen(
     onMoreClicked: (showType: Long) -> Unit,
 ) {
     when (state) {
-        Loading ->
-            LoadingIndicator(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center),
-            )
+        Loading -> LoadingIndicator(
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.Center),
+        )
 
-        is DataLoaded ->
-            when {
-                state.isContentEmpty && state.errorMessage != null -> {
-                    ErrorUi(
-                        errorMessage = state.errorMessage,
-                        onRetry = onRetry,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .wrapContentSize(Alignment.Center),
-                    )
-                }
+        is DataLoaded -> DiscoverScrollContent(
+            modifier = modifier,
+            pagerState = pagerState,
+            snackBarHostState = snackBarHostState,
+            onShowClicked = onShowClicked,
+            onMoreClicked = onMoreClicked,
+            onSnackBarErrorDismissed = onErrorDismissed,
+            trendingShows = state.trendingShows,
+            popularShows = state.popularShows,
+            anticipatedShows = state.anticipatedShows,
+            recommendedShows = state.recommendedShows,
+            errorMessage = state.errorMessage,
+        )
 
-                state.isContentEmpty -> {
-                    EmptyUi(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .wrapContentSize(Alignment.Center),
-                    )
-                }
-
-                else -> {
-                    DiscoverScrollContent(
-                        modifier = modifier,
-                        pagerState = pagerState,
-                        snackBarHostState = snackBarHostState,
-                        onShowClicked = onShowClicked,
-                        onMoreClicked = onMoreClicked,
-                        onSnackBarErrorDismissed = onErrorDismissed,
-                        trendingShows = state.trendingShows,
-                        popularShows = state.popularShows,
-                        anticipatedShows = state.anticipatedShows,
-                        recommendedShows = state.recommendedShows,
-                        errorMessage = state.errorMessage,
-                    )
-                }
-            }
+        is ErrorState -> ErrorUi(
+            errorMessage = state.errorMessage,
+            onRetry = onRetry,
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.Center),
+        )
     }
 }
 
