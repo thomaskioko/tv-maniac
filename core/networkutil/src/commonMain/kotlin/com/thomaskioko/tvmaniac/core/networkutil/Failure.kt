@@ -9,3 +9,8 @@ class DefaultError(val message: String?) : Failure(
     throwable = Throwable(message),
     errorMessage = message,
 )
+
+data class ServerError(val message: String?) : Failure(
+    throwable = Throwable(message),
+    errorMessage = message,
+)
