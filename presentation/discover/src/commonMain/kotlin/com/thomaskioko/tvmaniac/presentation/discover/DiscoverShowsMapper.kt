@@ -1,11 +1,12 @@
 package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 fun List<ShowsByCategory>?.toTvShowList(): ImmutableList<TvShow> =
     this?.map { it.toTvShow() }?.toImmutableList() ?: persistentListOf()
@@ -25,26 +26,18 @@ fun ShowsByCategory.toTvShow(): TvShow = TvShow(
     status = status,
 )
 
-fun toShowResultState(
-    trending: StoreReadResponse<List<ShowsByCategory>>,
-    popular: StoreReadResponse<List<ShowsByCategory>>,
-    anticipated: StoreReadResponse<List<ShowsByCategory>>,
-    recommended: StoreReadResponse<List<ShowsByCategory>>,
-): DataLoaded = DataLoaded(
-    trendingShows = trending.dataOrNull().toTvShowList(),
-    popularShows = popular.dataOrNull().toTvShowList(),
-    anticipatedShows = anticipated.dataOrNull().toTvShowList(),
-    recommendedShows = recommended.dataOrNull()?.take(5).toTvShowList(),
-    errorMessage = getErrorMessage(trending, popular, anticipated, recommended),
-    isContentEmpty = trending.dataOrNull().isNullOrEmpty() &&
-        popular.dataOrNull().isNullOrEmpty() && anticipated.dataOrNull().isNullOrEmpty() &&
-        recommended.dataOrNull().isNullOrEmpty(),
-)
+fun getErrorMessage(
+    trending: Either<Failure, List<ShowsByCategory>>,
+    popular: Either<Failure, List<ShowsByCategory>>,
+    anticipated: Either<Failure, List<ShowsByCategory>>,
+    recommended: Either<Failure, List<ShowsByCategory>>,
+) = trending.getErrorOrNull()?.errorMessage ?: popular.getErrorOrNull()?.errorMessage
+    ?: anticipated.getErrorOrNull()?.errorMessage ?: recommended.getErrorOrNull()?.errorMessage
 
-private fun getErrorMessage(
-    trending: StoreReadResponse<List<ShowsByCategory>>,
-    popular: StoreReadResponse<List<ShowsByCategory>>,
-    anticipated: StoreReadResponse<List<ShowsByCategory>>,
-    recommended: StoreReadResponse<List<ShowsByCategory>>,
-) = trending.errorMessageOrNull() ?: popular.errorMessageOrNull()
-    ?: anticipated.errorMessageOrNull() ?: recommended.errorMessageOrNull()
+fun getIsContentEmpty(
+    trending: Either<Failure, List<ShowsByCategory>>,
+    popular: Either<Failure, List<ShowsByCategory>>,
+    anticipated: Either<Failure, List<ShowsByCategory>>,
+    recommended: Either<Failure, List<ShowsByCategory>>,
+) = trending.getOrNull().isNullOrEmpty() && popular.getOrNull().isNullOrEmpty() &&
+    anticipated.getOrNull().isNullOrEmpty() && recommended.getOrNull().isNullOrEmpty()

@@ -8,13 +8,11 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.Loading
 import com.thomaskioko.tvmaniac.presentation.seasondetails.LoadingError
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsStateMachine
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
-import com.thomaskioko.tvmaniac.seasondetails.testing.seasonDetails
+import com.thomaskioko.tvmaniac.seasondetails.testing.SeasonWithEpisodeList
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 
-@Ignore // TODO:: Fix test
 class SeasonDetailsStateMachineTest {
 
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
@@ -28,7 +26,7 @@ class SeasonDetailsStateMachineTest {
     @Test
     fun onLoadSeasonDetails_correct_state_is_emitted() = runTest {
         stateMachine.state.test {
-            seasonDetailsRepository.setSeasonDetails(Either.Right(seasonDetails))
+            seasonDetailsRepository.setSeasonsResult(Either.Right(SeasonWithEpisodeList))
 
             awaitItem() shouldBe Loading
             awaitItem() shouldBe seasonDetailsLoaded
@@ -39,7 +37,7 @@ class SeasonDetailsStateMachineTest {
     fun onLoadSeasonDetails_andErrorOccurs_correctStateIsEmitted() = runTest {
         stateMachine.state.test {
             val errorMessage = "Something went wrong"
-            seasonDetailsRepository.setSeasonDetails(Either.Left(DefaultError(errorMessage)))
+            seasonDetailsRepository.setSeasonsResult(Either.Left(DefaultError(errorMessage)))
 
             awaitItem() shouldBe Loading
             awaitItem() shouldBe LoadingError(errorMessage)

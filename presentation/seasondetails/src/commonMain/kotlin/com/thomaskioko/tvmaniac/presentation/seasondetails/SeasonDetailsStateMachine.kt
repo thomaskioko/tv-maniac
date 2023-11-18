@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.presentation.seasondetails
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.episodeimages.api.EpisodeImageRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -12,7 +11,7 @@ import me.tatarka.inject.annotations.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Inject
-class SeasonDetailsStateMachine constructor(
+class SeasonDetailsStateMachine(
     @Assisted private val traktId: Long,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val episodeImageRepository: EpisodeImageRepository,
@@ -24,10 +23,28 @@ class SeasonDetailsStateMachine constructor(
                 onEnter { state ->
                     fetchSeasonDetails(state)
                 }
+
+                untilIdentityChanges({ state -> state }) {
+                    collectWhileInState(seasonDetailsRepository.observeSeasonDetailsStream(traktId)) { result, state ->
+                        result.fold(
+                            {
+                                state.override { LoadingError(it.errorMessage) }
+                            },
+                            {
+                                state.override {
+                                    SeasonDetailsLoaded(
+                                        showTitle = it.getTitle(),
+                                        seasonDetailsList = it.toSeasonWithEpisodes(),
+                                    )
+                                }
+                            },
+                        )
+                    }
+                }
             }
 
             inState<SeasonDetailsLoaded> {
-                collectWhileInState(seasonDetailsRepository.observeSeasonDetails(traktId)) { result, state ->
+                collectWhileInState(seasonDetailsRepository.observeSeasonDetailsStream(traktId)) { result, state ->
                     result.fold(
                         {
                             state.override { LoadingError(it.errorMessage) }
@@ -46,19 +63,7 @@ class SeasonDetailsStateMachine constructor(
             }
 
             inState<LoadingError> {
-                on<ReloadSeasonDetails> { action, state ->
-                    var nextState: SeasonDetailsState = state.snapshot
-
-                    seasonDetailsRepository.observeSeasonDetailsStream(traktId = action.showId)
-                        .collect { result ->
-                            nextState = when (result) {
-                                is Either.Left -> LoadingError(result.error.errorMessage)
-                                is Either.Right -> SeasonDetailsLoaded(
-                                    showTitle = result.getTitle(),
-                                    seasonDetailsList = result.toSeasonWithEpisodes(),
-                                )
-                            }
-                        }
+                on<ReloadSeasonDetails> { _, state ->
 
                     state.override { Loading }
                 }
@@ -69,9 +74,8 @@ class SeasonDetailsStateMachine constructor(
     private suspend fun fetchSeasonDetails(state: State<Loading>): ChangedState<SeasonDetailsState> {
         var nextState: SeasonDetailsState = Loading
 
-        seasonDetailsRepository.observeSeasonDetailsStream(traktId)
+        seasonDetailsRepository.observeCachedSeasonDetails(traktId)
             .collect { result ->
-
                 nextState = result.fold(
                     { LoadingError(it.errorMessage) },
                     {

@@ -1,16 +1,15 @@
 package com.thomaskioko.tvmaniac.presentation.settings
 
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
+import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.StoreReadResponse
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class SettingsStateMachine(
     private val datastoreRepository: DatastoreRepository,
@@ -109,37 +108,22 @@ class SettingsStateMachine(
                 }
 
                 collectWhileInState(profileRepository.observeProfile("me")) { response, state ->
-
                     when (response) {
-                        is StoreReadResponse.NoNewData -> state.noChange()
-                        is StoreReadResponse.Loading -> state.mutate {
+                        is Either.Left -> state.mutate {
                             copy(
-                                isLoading = true,
+                                isLoading = false,
+                                errorMessage = response.error.errorMessage,
                             )
                         }
-                        is StoreReadResponse.Data -> state.mutate {
+                        is Either.Right -> state.mutate {
                             copy(
                                 isLoading = false,
                                 userInfo = UserInfo(
-                                    slug = response.requireData().slug,
-                                    userName = response.requireData().user_name,
-                                    fullName = response.requireData().full_name,
-                                    userPicUrl = response.requireData().profile_picture,
+                                    slug = response.data.slug,
+                                    userName = response.data.user_name,
+                                    fullName = response.data.full_name,
+                                    userPicUrl = response.data.profile_picture,
                                 ),
-                            )
-                        }
-
-                        is StoreReadResponse.Error.Exception -> state.mutate {
-                            copy(
-                                isLoading = false,
-                                errorMessage = response.error.message,
-                            )
-                        }
-
-                        is StoreReadResponse.Error.Message -> state.mutate {
-                            copy(
-                                isLoading = false,
-                                errorMessage = response.message,
                             )
                         }
                     }

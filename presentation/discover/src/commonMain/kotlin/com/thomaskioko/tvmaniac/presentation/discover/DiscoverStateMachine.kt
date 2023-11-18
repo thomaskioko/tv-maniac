@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.showimages.api.ShowImagesRepository
 import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import me.tatarka.inject.annotations.Inject
 
@@ -35,7 +36,6 @@ class DiscoverStateMachine(
                             popularShows = result.popularShows,
                             anticipatedShows = result.anticipatedShows,
                             errorMessage = result.errorMessage,
-                            isContentEmpty = result.isContentEmpty,
                         )
                     }
                 }
@@ -52,7 +52,9 @@ class DiscoverStateMachine(
                 on<RetryLoading> { _, state ->
                     state.override { Loading }
                 }
+            }
 
+            inState<ErrorState> {
                 on<SnackBarDismissed> { _, state ->
                     state.mutate {
                         copy(errorMessage = null)
@@ -80,11 +82,18 @@ class DiscoverStateMachine(
 
     private fun observeShowData(): Flow<DataLoaded> =
         combine(
-            discoverRepository.observeTrendingShows(),
-            discoverRepository.observePopularShows(),
-            discoverRepository.observeAnticipatedShows(),
-            discoverRepository.observeRecommendedShows(),
-        ) { trending, popular, anticipated, featured ->
-            toShowResultState(trending, popular, anticipated, featured)
+            discoverRepository.observeShowCategory(Category.TRENDING),
+            discoverRepository.observeShowCategory(Category.POPULAR),
+            discoverRepository.observeShowCategory(Category.ANTICIPATED),
+            discoverRepository.observeShowCategory(Category.RECOMMENDED),
+        ) { trending, popular, anticipated, recommended ->
+            DataLoaded(
+                trendingShows = trending.getOrNull().toTvShowList(),
+                popularShows = popular.getOrNull().toTvShowList(),
+                anticipatedShows = anticipated.getOrNull().toTvShowList(),
+                recommendedShows = recommended.getOrNull()?.take(5).toTvShowList(),
+                errorMessage = getErrorMessage(trending, popular, anticipated, recommended),
+            )
         }
+            .catch { ErrorState(errorMessage = it.message) }
 }

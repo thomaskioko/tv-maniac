@@ -11,4 +11,4 @@ data class TrailersContent(
     val trailersList: List<Trailer> = emptyList(),
 ) : TrailersState
 
-data class TrailerError(val errorMessage: String) : TrailersState
+data class TrailerError(val errorMessage: String?) : TrailersState

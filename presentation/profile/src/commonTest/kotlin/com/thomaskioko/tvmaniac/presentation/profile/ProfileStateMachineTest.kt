@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.presentation.profile
 
 import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.core.networkutil.Either
+import com.thomaskioko.tvmaniac.core.networkutil.ServerError
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.testing.authenticatedAuthState
 import com.thomaskioko.tvmaniac.trakt.profile.testing.FakeProfileRepository
@@ -9,8 +11,6 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
-import org.mobilenativefoundation.store.store5.StoreReadResponse
-import org.mobilenativefoundation.store.store5.StoreReadResponseOrigin
 import kotlin.test.Test
 
 class ProfileStateMachineTest {
@@ -53,12 +53,7 @@ class ProfileStateMachineTest {
 
             traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
             datastoreRepository.setAuthState(authenticatedAuthState)
-            profileRepository.setUserData(
-                StoreReadResponse.Data(
-                    value = user,
-                    origin = StoreReadResponseOrigin.Cache,
-                ),
-            )
+            profileRepository.setUserData(Either.Right(user))
 
             awaitItem() shouldBe LoggedInContent()
             awaitItem() shouldBe LoggedInContent()
@@ -96,10 +91,7 @@ class ProfileStateMachineTest {
             traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
             datastoreRepository.setAuthState(authenticatedAuthState)
             profileRepository.setUserData(
-                StoreReadResponse.Error.Exception(
-                    error = Throwable(errorMessage),
-                    origin = StoreReadResponseOrigin.Cache,
-                ),
+                Either.Left(ServerError(errorMessage)),
             )
 
             awaitItem() shouldBe LoggedInContent()
@@ -117,12 +109,7 @@ class ProfileStateMachineTest {
 
             traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
             datastoreRepository.setAuthState(authenticatedAuthState)
-            profileRepository.setUserData(
-                StoreReadResponse.Data(
-                    value = user,
-                    origin = StoreReadResponseOrigin.Cache,
-                ),
-            )
+            profileRepository.setUserData(Either.Right(user))
 
             awaitItem() shouldBe LoggedInContent()
             awaitItem() shouldBe LoggedInContent()
