@@ -20,6 +20,7 @@ import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsComponent
 import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
 import com.thomaskioko.tvmaniac.shows.implementation.DiscoverComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
+import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbPlatformComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthenticationComponent
@@ -52,6 +53,7 @@ abstract class ApplicationComponent(
     SimilarShowsComponent,
     StatsComponent,
     TasksComponent,
+    TmdbComponent,
     TmdbPlatformComponent,
     TraktComponent,
     TraktPlatformComponent,

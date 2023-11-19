@@ -23,6 +23,7 @@ import com.thomaskioko.tvmaniac.shared.base.wrappers.WatchlistStateMachineWrappe
 import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
 import com.thomaskioko.tvmaniac.shows.implementation.DiscoverComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
+import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbPlatformComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthenticationComponent
 import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
@@ -46,6 +47,7 @@ abstract class ApplicationComponent :
     ShowImagesComponent,
     SimilarShowsComponent,
     StatsComponent,
+    TmdbComponent,
     TmdbPlatformComponent,
     TraktComponent,
     TraktPlatformComponent,
