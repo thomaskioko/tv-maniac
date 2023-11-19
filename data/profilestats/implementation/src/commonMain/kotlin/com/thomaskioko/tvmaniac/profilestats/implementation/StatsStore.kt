@@ -22,7 +22,7 @@ class StatsStore(
     private val mapper: StatsMapper,
     private val logger: KermitLogger,
     private val scope: AppCoroutineScope,
-) : Store<String, Stats> by storeBuilderFromFetcherAndSourceOfTruth<String, Stats, Stats>(
+) : Store<String, Stats> by storeBuilderFromFetcherAndSourceOfTruth(
     fetcher = Fetcher.of { slug ->
 
         when (val response = remoteDataSource.getStats(slug)) {

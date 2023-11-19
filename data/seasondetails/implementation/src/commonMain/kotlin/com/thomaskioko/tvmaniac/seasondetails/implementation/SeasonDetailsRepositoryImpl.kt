@@ -1,39 +1,37 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
-import com.thomaskioko.tvmaniac.core.db.SeasonWithEpisodes
-import com.thomaskioko.tvmaniac.core.db.Season_episodes
+import com.thomaskioko.tvmaniac.core.db.Season
+import com.thomaskioko.tvmaniac.core.db.SeasonEpisodeDetailsById
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
-import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
-import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
+import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SeasonDetailsRepositoryImpl(
     private val remoteDataSource: TraktShowsRemoteDataSource,
-    private val seasonCache: SeasonDetailsDao,
+    private val seasonCache: SeasonsDao,
     private val episodesDao: EpisodesDao,
     private val exceptionHandler: NetworkExceptionHandler,
     private val dispatcher: AppCoroutineDispatchers,
     private val logger: KermitLogger,
 ) : SeasonDetailsRepository {
 
-    override fun observeSeasonDetailsStream(traktId: Long): Flow<Either<Failure, List<SeasonWithEpisodes>>> =
+    override fun observeSeasonDetailsStream(traktId: Long): Flow<Either<Failure, List<SeasonEpisodeDetailsById>>> =
         networkBoundResult(
-            query = { seasonCache.observeShowEpisodes(traktId) },
+            query = { seasonCache.observeSeasonEpisodeDetailsById(traktId) },
             shouldFetch = { it.isNullOrEmpty() },
             fetch = { remoteDataSource.getSeasonEpisodes(traktId) },
             saveFetchResult = { mapResponse(traktId, it) },
@@ -41,10 +39,8 @@ class SeasonDetailsRepositoryImpl(
             coroutineDispatcher = dispatcher.io,
         )
 
-    override fun observeCachedSeasonDetails(traktId: Long): Flow<Either<Failure, List<SeasonWithEpisodes>>> =
-        seasonCache.observeShowEpisodes(traktId)
-            .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
-            .map { Either.Right(it) }
+    override suspend fun fetchSeasonDetails(traktId: Long): List<SeasonEpisodeDetailsById> =
+        seasonCache.fetchSeasonDetails(traktId)
 
     private fun mapResponse(
         showId: Long,
@@ -55,11 +51,14 @@ class SeasonDetailsRepositoryImpl(
                 response.body.forEach { season ->
                     episodesDao.insert(season.toEpisodeCacheList())
 
-                    seasonCache.insert(
-                        Season_episodes(
-                            show_id = showId,
-                            season_id = season.ids.trakt.toLong(),
+                    seasonCache.upsert(
+                        Season(
+                            id = Id(season.ids.trakt.toLong()),
+                            show_id = Id(showId),
                             season_number = season.number.toLong(),
+                            title = season.title,
+                            episode_count = season.episodeCount.toLong(),
+                            overview = season.overview,
                         ),
                     )
                 }

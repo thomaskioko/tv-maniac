@@ -12,7 +12,7 @@ fun List<ShowsByCategory>?.toTvShowList(): ImmutableList<TvShow> =
     this?.map { it.toTvShow() }?.toImmutableList() ?: persistentListOf()
 
 fun ShowsByCategory.toTvShow(): TvShow = TvShow(
-    traktId = trakt_id,
+    traktId = id.id,
     tmdbId = tmdb_id,
     title = title,
     overview = overview,

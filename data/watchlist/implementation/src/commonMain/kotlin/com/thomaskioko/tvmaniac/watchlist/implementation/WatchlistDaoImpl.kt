@@ -2,9 +2,10 @@ package com.thomaskioko.tvmaniac.watchlist.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.thomaskioko.tvmaniac.core.db.SelectWatchlist
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.db.WatchedShow
 import com.thomaskioko.tvmaniac.core.db.Watchlist
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
@@ -16,41 +17,41 @@ class WatchlistDaoImpl(
     private val dispatchers: AppCoroutineDispatchers,
 ) : WatchlistDao {
 
-    override fun insert(followedShow: Watchlist) {
+    override fun upsert(watchlist: Watchlist) {
         database.transaction {
             database.watchlistQueries.insertOrReplace(
-                id = followedShow.id,
-                synced = followedShow.synced,
-                created_at = followedShow.created_at,
+                id = watchlist.id,
+                synced = watchlist.synced,
+                created_at = watchlist.created_at,
             )
         }
     }
 
-    override fun insert(followedShows: List<Watchlist>) {
-        followedShows.forEach { insert(it) }
+    override fun upsert(watchedShowList: List<Watchlist>) {
+        watchedShowList.forEach { upsert(it) }
     }
 
-    override fun getWatchlist(): List<SelectWatchlist> =
-        database.watchlistQueries.selectWatchlist()
+    override fun getWatchedShows(): List<WatchedShow> =
+        database.watchlistQueries.watchedShow()
             .executeAsList()
 
-    override fun getUnSyncedShows(): List<Watchlist> =
-        database.watchlistQueries.selectUnsyncedShows()
-            .executeAsList()
-
-    override fun observeWatchlist(): Flow<List<SelectWatchlist>> =
-        database.watchlistQueries.selectWatchlist()
+    override fun observeWatchedShows(): Flow<List<WatchedShow>> =
+        database.watchlistQueries.watchedShow()
             .asFlow()
             .mapToList(dispatchers.io)
 
+    override fun getUnSyncedShows(): List<Watchlist> =
+        database.watchlistQueries.unsyncedShows()
+            .executeAsList()
+
     override fun updateShowSyncState(traktId: Long) {
         database.watchlistQueries.updateFollowedState(
-            id = traktId,
+            id = Id(traktId),
             synced = true,
         )
     }
 
     override fun removeShow(traktId: Long) {
-        database.watchlistQueries.removeShow(traktId)
+        database.watchlistQueries.removeShowFromWatchlist(Id(traktId))
     }
 }

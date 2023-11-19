@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -38,7 +39,8 @@ class FakeDiscoverRepository : DiscoverRepository {
         showByIdResult.send(result)
     }
 
-    override fun observeShow(traktId: Long): Flow<Either<Failure, ShowById>> = showByIdResult.receiveAsFlow()
+    override fun observeShow(traktId: Long): Flow<Either<Failure, ShowById>> =
+        showByIdResult.receiveAsFlow()
 
     override fun observeShowCategory(
         category: Category,
@@ -47,13 +49,14 @@ class FakeDiscoverRepository : DiscoverRepository {
 
     override suspend fun fetchDiscoverShows() {}
 
-    override suspend fun fetchShows(category: Category): List<ShowsByCategory> = showCategoryResult.receive()
+    override suspend fun fetchShows(category: Category): List<ShowsByCategory> =
+        showCategoryResult.receive()
 
     override suspend fun getShowById(traktId: Long): ShowById = showById.receive()
 }
 
 val selectedShow = ShowById(
-    trakt_id = 84958,
+    id = Id(84958),
     tmdb_id = 849583,
     title = "Loki",
     overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
@@ -72,9 +75,5 @@ val selectedShow = ShowById(
     poster_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     backdrop_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     aired_episodes = 12,
-    trakt_id_ = 1234,
-    id = 12345,
-    created_at = null,
-    synced = false,
-    tmdb_id_ = 1232,
+    in_watchlist = 0,
 )

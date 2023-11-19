@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.episodeimages.api.EpisodeImageDao
 import com.thomaskioko.tvmaniac.episodeimages.api.EpisodeImageRepository
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbNetworkDataSource
@@ -38,10 +39,10 @@ class EpisodeImageRepositoryImpl(
 
                         when (response) {
                             is ApiResponse.Success -> {
-                                episodeImageDao.insert(
+                                episodeImageDao.upsert(
                                     Episode_image(
-                                        trakt_id = episodeArt.trakt_id,
-                                        tmdb_id = response.body.id.toLong(),
+                                        id = Id(id = response.body.id.toLong()),
+                                        tmdb_id = Id(id = tmdbId),
                                         image_url = response.body.imageUrl?.let {
                                             formatterUtil.formatTmdbPosterPath(it)
                                         },

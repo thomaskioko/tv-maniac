@@ -23,7 +23,7 @@ class SimilarShowStore(
     private val requestManagerRepository: RequestManagerRepository,
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
-) : Store<Long, List<SimilarShows>> by StoreBuilder.from<Long, List<SimilarShows>, List<SimilarShows>>(
+) : Store<Long, List<SimilarShows>> by StoreBuilder.from(
     fetcher = Fetcher.of { id ->
 
         when (val apiResult = remoteDataSource.getSimilarShows(id)) {
@@ -50,11 +50,11 @@ class SimilarShowStore(
         writer = { id, list ->
 
             list.forEach {
-                showsDao.insert(it.toShow())
+                showsDao.upsert(it.toShow())
 
-                similarShowsDao.insert(
-                    traktId = id,
-                    similarShowId = it.trakt_id,
+                similarShowsDao.upsert(
+                    similarShowId = it.id.id,
+                    showId = id,
                 )
             }
 
