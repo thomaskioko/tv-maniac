@@ -14,7 +14,9 @@ kotlin {
                 implementation(projects.core.tmdbApi.api)
 
                 implementation(libs.kotlinInject.runtime)
+                implementation(libs.kotlinx.atomicfu)
                 implementation(libs.sqldelight.extensions)
+                implementation(libs.store5)
             }
         }
 
