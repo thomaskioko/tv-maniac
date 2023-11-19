@@ -83,7 +83,7 @@ class DiscoverStateMachine(
             discoverRepository.observeShowCategory(Category.ANTICIPATED),
             discoverRepository.observeShowCategory(Category.RECOMMENDED),
             showImagesRepository.updateShowArtWork(),
-        ) { trending, popular, anticipated, recommended, _->
+        ) { trending, popular, anticipated, recommended, _ ->
             DataLoaded(
                 trendingShows = trending.getOrNull().toTvShowList(),
                 popularShows = popular.getOrNull().toTvShowList(),
