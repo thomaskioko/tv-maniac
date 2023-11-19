@@ -38,7 +38,6 @@ include(
     ":android-features:watchlist",
     ":shared",
     ":core:util",
-    ":core:networkutil",
     ":core:database",
     ":core:datastore:api",
     ":core:datastore:implementation",

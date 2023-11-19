@@ -45,7 +45,6 @@ dependencies {
     implementation(projects.androidFeatures.watchlist)
 
     implementation(projects.core.database)
-    implementation(projects.core.networkutil)
     implementation(projects.core.util)
     implementation(projects.core.datastore.api)
     implementation(projects.core.datastore.implementation)
