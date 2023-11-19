@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.presentation.showdetails
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.core.db.Seasons
+import com.thomaskioko.tvmaniac.core.db.SeasonsByShowId
 import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
@@ -51,7 +51,7 @@ class ShowDetailsStateMachine(
                     updateShowDetails(response, state)
                 }
 
-                collectWhileInState(seasonsRepository.observeSeasonsStoreResponse(traktShowId)) { result, state ->
+                collectWhileInState(seasonsRepository.observeSeasonsByShowId(traktShowId)) { result, state ->
                     updateSeasonDetailsState(result, state)
                 }
 
@@ -164,7 +164,7 @@ class ShowDetailsStateMachine(
     }
 
     private fun updateSeasonDetailsState(
-        response: Either<Failure, List<Seasons>>,
+        response: Either<Failure, List<SeasonsByShowId>>,
         state: State<ShowDetailsLoaded>,
     ) = when (response) {
         is Either.Left -> {
@@ -193,7 +193,7 @@ class ShowDetailsStateMachine(
     private suspend fun fetchShowDetails(state: State<ShowDetailsLoaded>): ChangedState<ShowDetailsState> {
         val show = discoverRepository.getShowById(traktShowId)
         val similar = similarShowsRepository.fetchSimilarShows(traktShowId)
-        val season = seasonsRepository.getSeasons(traktShowId)
+        val season = seasonsRepository.fetchSeasonsByShowId(traktShowId)
         val trailers = trailerRepository.fetchTrailersByShowId(traktShowId)
 
         return state.mutate {

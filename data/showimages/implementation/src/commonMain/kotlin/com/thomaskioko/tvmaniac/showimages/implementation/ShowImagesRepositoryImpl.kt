@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.showimages.api.ShowImagesDao
@@ -42,9 +43,9 @@ class ShowImagesRepositoryImpl(
                             }
 
                             is ApiResponse.Success -> {
-                                imageCache.insert(
+                                imageCache.upsert(
                                     Show_image(
-                                        trakt_id = show.trakt_id,
+                                        id = Id(id = show.id.id),
                                         tmdb_id = tmdbId,
                                         poster_url = response.body.posterPath?.let {
                                             formatterUtil.formatTmdbPosterPath(it)
@@ -58,7 +59,7 @@ class ShowImagesRepositoryImpl(
                                 requestManagerRepository.insert(
                                     LastRequest(
                                         id = tmdbId,
-                                        entityId = show.trakt_id,
+                                        entityId = show.id.id,
                                         requestType = "SHOW_ARTWORK",
                                     ),
                                 )

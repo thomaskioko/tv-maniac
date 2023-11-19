@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Episodes
-import com.thomaskioko.tvmaniac.core.db.SeasonWithEpisodes
-import com.thomaskioko.tvmaniac.core.db.Season_episodes
+import com.thomaskioko.tvmaniac.core.db.Season
+import com.thomaskioko.tvmaniac.core.db.SeasonEpisodeDetailsById
 import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
-import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
+import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
@@ -18,12 +18,12 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 @Inject
 class SeasonDetailsStore(
     private val remoteDataSource: TraktShowsRemoteDataSource,
-    private val seasonDetailsDao: SeasonDetailsDao,
+    private val seasonCache: SeasonsDao,
     private val episodesDao: EpisodesDao,
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
-) : Store<Long, List<SeasonWithEpisodes>> by StoreBuilder
-    .from<Long, List<SeasonWithEpisodes>, List<SeasonWithEpisodes>>(
+) : Store<Long, List<SeasonEpisodeDetailsById>> by StoreBuilder
+    .from(
         fetcher = Fetcher.of { id: Long ->
             when (val response = remoteDataSource.getSeasonEpisodes(id)) {
                 is ApiResponse.Success -> response.body.toSeasonWithEpisodes()
@@ -44,34 +44,25 @@ class SeasonDetailsStore(
             }
         },
         sourceOfTruth = SourceOfTruth.of(
-            reader = seasonDetailsDao::observeShowEpisodes,
+            reader = seasonCache::observeSeasonEpisodeDetailsById,
             writer = { id, list ->
                 list.forEach { season ->
-                    episodesDao.insert(
-                        Episodes(
-                            trakt_id = season.trakt_id,
-                            season_id = season.season_id,
+                    seasonCache.upsert(
+                        Season(
+                            id = Id(season.seasonId),
+                            show_id = Id(id),
+                            season_number = season.seasonNumber,
                             title = season.title,
-                            tmdb_id = season.tmdb_id,
+                            episode_count = season.episodeCount,
                             overview = season.overview,
-                            ratings = season.ratings,
-                            runtime = season.runtime,
-                            votes = season.votes,
-                            episode_number = season.episode_number,
                         ),
                     )
 
-                    seasonDetailsDao.insert(
-                        Season_episodes(
-                            show_id = id,
-                            season_id = season.trakt_id,
-                            season_number = season.season_number,
-                        ),
-                    )
+                    episodesDao.insert(season.episodes)
                 }
             },
-            delete = seasonDetailsDao::delete,
-            deleteAll = seasonDetailsDao::deleteAll,
+            delete = seasonCache::delete,
+            deleteAll = seasonCache::deleteAll,
         ),
     )
     .scope(scope.io)

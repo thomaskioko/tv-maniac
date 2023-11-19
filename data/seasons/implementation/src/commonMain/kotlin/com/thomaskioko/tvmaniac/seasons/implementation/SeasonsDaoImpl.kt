@@ -2,8 +2,11 @@ package com.thomaskioko.tvmaniac.seasons.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.thomaskioko.tvmaniac.core.db.Seasons
+import com.thomaskioko.tvmaniac.core.db.Season
+import com.thomaskioko.tvmaniac.core.db.SeasonEpisodeDetailsById
+import com.thomaskioko.tvmaniac.core.db.SeasonsByShowId
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
@@ -17,31 +20,40 @@ class SeasonsDaoImpl(
 
     private val seasonQueries get() = database.seasonQueries
 
-    override fun insertSeason(season: Seasons) {
+    override fun upsert(season: Season) {
         database.transaction {
             seasonQueries.insertOrReplace(
                 id = season.id,
-                show_trakt_id = season.show_trakt_id,
+                show_id = season.show_id,
                 season_number = season.season_number,
                 episode_count = season.episode_count,
-                name = season.name,
+                title = season.title,
                 overview = season.overview,
             )
         }
     }
 
-    override fun insertSeasons(entityList: List<Seasons>) {
-        entityList.forEach { insertSeason(it) }
+    override fun upsert(entityList: List<Season>) {
+        entityList.forEach { upsert(it) }
     }
 
-    override fun observeSeasons(traktId: Long): Flow<List<Seasons>> {
-        return seasonQueries.seasonById(traktId)
+    override fun observeSeasonsByShowId(traktId: Long): Flow<List<SeasonsByShowId>> {
+        return database.seasonQueries.seasonsByShowId(Id(traktId))
             .asFlow()
             .mapToList(dispatcher.io)
     }
 
+    override fun fetchSeasonDetails(traktId: Long): List<SeasonEpisodeDetailsById> =
+        database.seasonQueries.seasonEpisodeDetailsById(id = Id(traktId))
+            .executeAsList()
+
+    override fun observeSeasonEpisodeDetailsById(showId: Long): Flow<List<SeasonEpisodeDetailsById>> =
+        database.seasonQueries.seasonEpisodeDetailsById(id = Id(showId))
+            .asFlow()
+            .mapToList(dispatcher.io)
+
     override fun delete(id: Long) {
-        seasonQueries.delete(id)
+        seasonQueries.delete(Id(id))
     }
 
     override fun deleteAll() {

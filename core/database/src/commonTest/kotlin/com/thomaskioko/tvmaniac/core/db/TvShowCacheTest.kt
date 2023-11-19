@@ -19,7 +19,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         shows.insertTvShowsEntityList()
 
         for (show in shows) {
-            showCategory(show.trakt_id, 1).insertCategory()
+            showCategory(show.id.id, 1).insertCategory()
         }
 
         val entities = tvShowQueries.shows().executeAsList()
@@ -31,7 +31,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     fun verify_selectByShowId_returnTvShowEntity_afterInsertHasBeenDone() {
         getShow().insertTvShowQuery()
 
-        val entity = tvShowQueries.showById(getShow().trakt_id)
+        val entity = tvShowQueries.showById(getShow().id)
             .executeAsOne()
 
         entity shouldNotBe null
@@ -48,7 +48,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         tvShowQueries.deleteAll()
 
-        val entity = tvShowQueries.showById(getShow().trakt_id)
+        val entity = tvShowQueries.showById(getShow().id)
             .executeAsOneOrNull()
 
         entity shouldBe null
@@ -60,7 +60,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
     private fun Show.insertTvShowQuery() {
         tvShowQueries.insertOrReplace(
-            trakt_id = trakt_id,
+            id = id,
             title = title,
             overview = overview,
             language = language,
@@ -76,7 +76,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
     private fun Show_category.insertCategory() {
         showCategoryQueries.insertOrReplace(
-            trakt_id = trakt_id,
+            id = id,
             category_id = category_id,
         )
     }

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.seasons.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Seasons
+import com.thomaskioko.tvmaniac.core.db.SeasonsByShowId
 import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -26,10 +26,10 @@ class SeasonsRepositoryImpl(
     private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonsRepository {
 
-    override suspend fun getSeasons(traktId: Long): List<Seasons> =
+    override suspend fun fetchSeasonsByShowId(traktId: Long): List<SeasonsByShowId> =
         seasonsStore.get(traktId)
 
-    override fun observeSeasonsStoreResponse(traktId: Long): Flow<Either<Failure, List<Seasons>>> =
+    override fun observeSeasonsByShowId(traktId: Long): Flow<Either<Failure, List<SeasonsByShowId>>> =
         seasonsStore.stream(
             StoreReadRequest.cached(
                 key = traktId,

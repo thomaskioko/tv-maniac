@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.core.db
 
 import com.thomaskioko.tvmaniac.core.db.MockData.getEpisodeCacheList
+import com.thomaskioko.tvmaniac.db.Id
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
@@ -13,9 +14,9 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         getEpisodeCacheList().insertEpisodeEntityQuery()
         val entity = getEpisodeCacheList().first()
 
-        val queryResult = episodeQueries.episodeById(2534997).executeAsOne()
+        val queryResult = episodeQueries.episodesById(Id(2534997)).executeAsOne()
 
-        queryResult.trakt_id shouldBe entity.trakt_id
+        queryResult.id.id shouldBe entity.id.id
         queryResult.season_id shouldBe entity.season_id
         queryResult.title shouldBe entity.title
         queryResult.overview shouldBe entity.overview
@@ -23,13 +24,13 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         queryResult.votes shouldBe entity.votes
     }
 
-    private fun List<Episodes>.insertEpisodeEntityQuery() {
+    private fun List<Episode>.insertEpisodeEntityQuery() {
         map { it.insertEpisodeEntityQuery() }
     }
 
-    private fun Episodes.insertEpisodeEntityQuery() {
+    private fun Episode.insertEpisodeEntityQuery() {
         episodeQueries.insertOrReplace(
-            trakt_id = trakt_id,
+            id = id,
             season_id = season_id,
             title = title,
             overview = overview,

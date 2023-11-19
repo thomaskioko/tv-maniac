@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
 internal fun List<Trailers>.toTrailerList(): List<Trailer> {
     return map {
         Trailer(
-            showId = it.trakt_id,
+            showId = it.show_id.id,
             key = it.key,
             name = it.name,
             youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg",

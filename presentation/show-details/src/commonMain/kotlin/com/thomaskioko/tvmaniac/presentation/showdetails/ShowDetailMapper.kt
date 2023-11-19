@@ -6,11 +6,11 @@ import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
-import com.thomaskioko.tvmaniac.core.db.Seasons as SeasonCache
+import com.thomaskioko.tvmaniac.core.db.SeasonsByShowId as SeasonCache
 
 fun List<SimilarShows>?.toSimilarShowList(): List<Show> = this?.map {
     Show(
-        traktId = it.trakt_id,
+        traktId = it.id.id,
         tmdbId = it.tmdb_id,
         title = it.title,
         overview = it.overview,
@@ -27,7 +27,7 @@ fun List<SimilarShows>?.toSimilarShowList(): List<Show> = this?.map {
 
 fun ShowById?.toTvShow(): Show = this?.let {
     Show(
-        traktId = it.trakt_id,
+        traktId = it.id.id,
         tmdbId = it.tmdb_id,
         title = it.title,
         overview = it.overview,
@@ -39,22 +39,21 @@ fun ShowById?.toTvShow(): Show = this?.let {
         genres = it.genres,
         year = it.year,
         status = it.status,
-        isFollowed = it.id != null && it.id == it.trakt_id,
-        // TODO:: Get season count
+        isFollowed = it.in_watchlist == 1L,
     )
 } ?: Show.EMPTY_SHOW
 
 fun List<SeasonCache>?.toSeasonsList(): List<Season> = this?.map {
     Season(
-        seasonId = it.id,
-        tvShowId = it.show_trakt_id,
-        name = it.name,
+        seasonId = it.season_id.id,
+        tvShowId = it.show_id.id,
+        name = it.season_title,
     )
 } ?: emptyList()
 
 fun List<Trailers>?.toTrailerList(): List<Trailer> = this?.map {
     Trailer(
-        showId = it.trakt_id,
+        showId = it.show_id.id,
         key = it.key,
         name = it.name,
         youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg",

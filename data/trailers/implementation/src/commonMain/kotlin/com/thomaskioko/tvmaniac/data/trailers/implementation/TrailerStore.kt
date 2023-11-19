@@ -22,7 +22,7 @@ class TrailerStore(
     private val requestManagerRepository: RequestManagerRepository,
     private val logger: KermitLogger,
     private val scope: AppCoroutineScope,
-) : Store<Long, List<Trailers>> by StoreBuilder.from<Long, List<Trailers>, List<Trailers>>(
+) : Store<Long, List<Trailers>> by StoreBuilder.from(
     fetcher = Fetcher.of { id ->
 
         val show = showsDao.getTvShow(id)
@@ -49,10 +49,10 @@ class TrailerStore(
     sourceOfTruth = SourceOfTruth.of(
         reader = { id -> trailerDao.observeTrailersById(id) },
         writer = { id, list ->
-            trailerDao.insert(list)
+            trailerDao.upsert(list)
             requestManagerRepository.insert(
                 LastRequest(
-                    id = list.first().trakt_id,
+                    id = list.first().show_id.id,
                     entityId = id,
                     requestType = "TRAILERS",
                 ),

@@ -49,11 +49,11 @@ class ShowStore(
         reader = { traktId -> showsDao.observeTvShow(traktId) },
         writer = { id, show ->
 
-            showsDao.insert(mapper.toShow(show))
+            showsDao.upsert(mapper.toShow(show))
 
             requestManagerRepository.insert(
                 LastRequest(
-                    id = id + show.trakt_id,
+                    id = id + show.id.id,
                     entityId = id,
                     requestType = "SHOW_DETAILS",
                 ),

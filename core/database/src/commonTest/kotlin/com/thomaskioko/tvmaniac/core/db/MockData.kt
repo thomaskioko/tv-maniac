@@ -1,13 +1,14 @@
 package com.thomaskioko.tvmaniac.core.db
 
-import com.thomaskioko.tvmaniac.core.db.Episodes as EpisodeCache
+import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.core.db.Episode as EpisodeCache
 
 object MockData {
 
     fun getEpisodeCacheList() = listOf(
         EpisodeCache(
-            trakt_id = 2534997,
-            season_id = 114355,
+            id = Id(2534997),
+            season_id = Id(114355),
             title = "Glorious Purpose",
             overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
             votes = 42,
@@ -17,8 +18,8 @@ object MockData {
             tmdb_id = 1,
         ),
         EpisodeCache(
-            trakt_id = 2927202,
-            season_id = 114355,
+            id = Id(2927202),
+            season_id = Id(114355),
             title = "The Variant",
             overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
             votes = 23,
@@ -30,7 +31,7 @@ object MockData {
     )
 
     fun getShow() = Show(
-        trakt_id = 84958,
+        id = Id(84958),
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
             "an alternate version of Loki is brought to the mysterious Time Variance " +
@@ -51,7 +52,7 @@ object MockData {
 
     fun showList() = listOf(
         Show(
-            trakt_id = 84958,
+            id = Id(84958),
             title = "Loki",
             overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
                 "an alternate version of Loki is brought to the mysterious Time Variance " +
@@ -70,7 +71,7 @@ object MockData {
             aired_episodes = 12,
         ),
         Show(
-            trakt_id = 126280,
+            id = Id(126280),
             title = "Sex/Life",
             overview = "A woman's daring sexual past collides with her married-with-kids " +
                 "present when the bad-boy ex she can't stop fantasizing about crashes " +
@@ -88,7 +89,7 @@ object MockData {
     )
 
     fun showCategory(traktId: Long, categoryId: Long) = Show_category(
-        trakt_id = traktId,
-        category_id = categoryId,
+        id = Id(traktId),
+        category_id = Id(categoryId),
     )
 }

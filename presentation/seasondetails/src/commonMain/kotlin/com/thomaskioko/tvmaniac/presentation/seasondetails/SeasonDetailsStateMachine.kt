@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.seasondetails
 
-import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
-import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.episodeimages.api.EpisodeImageRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,23 +19,12 @@ class SeasonDetailsStateMachine(
         spec {
             inState<Loading> {
                 onEnter { state ->
-                    fetchSeasonDetails(state)
-                }
+                    val seasonList = seasonDetailsRepository.fetchSeasonDetails(traktId)
 
-                untilIdentityChanges({ state -> state }) {
-                    collectWhileInState(seasonDetailsRepository.observeSeasonDetailsStream(traktId)) { result, state ->
-                        result.fold(
-                            {
-                                state.override { LoadingError(it.errorMessage) }
-                            },
-                            {
-                                state.override {
-                                    SeasonDetailsLoaded(
-                                        showTitle = it.getTitle(),
-                                        seasonDetailsList = it.toSeasonWithEpisodes(),
-                                    )
-                                }
-                            },
+                    state.override {
+                        SeasonDetailsLoaded(
+                            showTitle = seasonList.getTitle(),
+                            seasonDetailsList = seasonList.toSeasonWithEpisodes(),
                         )
                     }
                 }
@@ -69,24 +56,5 @@ class SeasonDetailsStateMachine(
                 }
             }
         }
-    }
-
-    private suspend fun fetchSeasonDetails(state: State<Loading>): ChangedState<SeasonDetailsState> {
-        var nextState: SeasonDetailsState = Loading
-
-        seasonDetailsRepository.observeCachedSeasonDetails(traktId)
-            .collect { result ->
-                nextState = result.fold(
-                    { LoadingError(it.errorMessage) },
-                    {
-                        SeasonDetailsLoaded(
-                            showTitle = it.getTitle(),
-                            seasonDetailsList = it.toSeasonWithEpisodes(),
-                        )
-                    },
-                )
-            }
-
-        return state.override { nextState }
     }
 }

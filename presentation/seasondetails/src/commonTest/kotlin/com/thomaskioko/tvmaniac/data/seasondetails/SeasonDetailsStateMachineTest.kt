@@ -26,7 +26,7 @@ class SeasonDetailsStateMachineTest {
     @Test
     fun onLoadSeasonDetails_correct_state_is_emitted() = runTest {
         stateMachine.state.test {
-            seasonDetailsRepository.setSeasonsResult(Either.Right(SeasonWithEpisodeList))
+            seasonDetailsRepository.setCachedResults(SeasonWithEpisodeList)
 
             awaitItem() shouldBe Loading
             awaitItem() shouldBe seasonDetailsLoaded
@@ -37,9 +37,11 @@ class SeasonDetailsStateMachineTest {
     fun onLoadSeasonDetails_andErrorOccurs_correctStateIsEmitted() = runTest {
         stateMachine.state.test {
             val errorMessage = "Something went wrong"
+            seasonDetailsRepository.setCachedResults(SeasonWithEpisodeList)
             seasonDetailsRepository.setSeasonsResult(Either.Left(DefaultError(errorMessage)))
 
             awaitItem() shouldBe Loading
+            awaitItem() shouldBe seasonDetailsLoaded
             awaitItem() shouldBe LoadingError(errorMessage)
         }
     }
