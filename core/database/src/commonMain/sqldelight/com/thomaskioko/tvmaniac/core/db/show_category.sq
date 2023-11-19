@@ -1,12 +1,45 @@
+import com.thomaskioko.tvmaniac.db.CategoryId;
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.ShowId;
+
 CREATE TABLE show_category (
-trakt_id INTEGER DEFAULT NULL PRIMARY KEY,
-category_id INTEGER DEFAULT NULL,
-FOREIGN KEY (trakt_id) REFERENCES show(trakt_id)
+    id INTEGER AS Id<ShowId> DEFAULT NULL,
+    category_id INTEGER AS Id<CategoryId> DEFAULT NULL,
+    FOREIGN KEY(id) REFERENCES show(id),
+    PRIMARY KEY(id, category_id)
 );
 
 insertOrReplace:
 INSERT OR REPLACE INTO show_category(
-trakt_id,
-category_id
+    id,
+    category_id
 )
 VALUES(?,?);
+
+showsByCategory:
+SELECT
+    show.id,
+    show.tmdb_id ,
+    show.title,
+    show.overview,
+    show.language,
+    show.year,
+    show.rating,
+    show.votes,
+    show.status,
+    show.runtime,
+    show.genres,
+    show.aired_episodes,
+    show_image.poster_url,
+    show_image.backdrop_url,
+    show_category.category_id
+FROM
+    show
+INNER JOIN
+    show_category ON show_category.id = show.id
+LEFT OUTER JOIN
+    show_image ON show_image.id = show.id
+WHERE
+    show_category.category_id = ?
+ORDER BY
+    show.rating, show.year DESC;

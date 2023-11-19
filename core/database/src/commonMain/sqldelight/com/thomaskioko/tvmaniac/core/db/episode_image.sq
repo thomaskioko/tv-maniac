@@ -1,28 +1,35 @@
+import com.thomaskioko.tvmaniac.db.EpisodeId;
+import com.thomaskioko.tvmaniac.db.EpisodeImageId;
+import com.thomaskioko.tvmaniac.db.Id;
+
 CREATE TABLE episode_image (
-trakt_id INTEGER NOT NULL PRIMARY KEY,
-tmdb_id INTEGER NOT NULL,
-image_url TEXT DEFAULT NULL,
-FOREIGN KEY (trakt_id) REFERENCES episodes(trakt_id) ON DELETE CASCADE
+    id INTEGER AS Id<EpisodeId> NOT NULL PRIMARY KEY,
+    tmdb_id INTEGER AS Id<EpisodeImageId>,
+    image_url TEXT DEFAULT NULL,
+    FOREIGN KEY(id) REFERENCES episode(id) ON DELETE CASCADE,
+    UNIQUE(id)
 );
 
 insertOrReplace:
 INSERT OR REPLACE INTO episode_image(
-trakt_id,
-tmdb_id,
-image_url
+    id,
+    tmdb_id,
+    image_url
 )
 VALUES(?,?,?);
 
 episodeImage:
-SELECT show.tmdb_id, seasons.season_number, episodes.trakt_id, episodes.episode_number
-FROM episodes
-LEFT JOIN seasons ON seasons.id = episodes.season_id
-LEFT JOIN show ON show.trakt_id = seasons.show_trakt_id
-LEFT OUTER JOIN episode_image ON episode_image.trakt_id = episodes.trakt_id
-WHERE episode_image.image_url IS NULL;
-
-delete:
-DELETE FROM episode_image WHERE trakt_id = ?;
-
-deleteAll:
-DELETE FROM episode_image;
+SELECT
+    show.tmdb_id,
+    season.season_number,
+    episode.episode_number
+FROM
+    episode
+LEFT JOIN
+    season ON season.id = episode.season_id
+LEFT JOIN
+    show ON show.id = season.show_id
+LEFT OUTER JOIN
+    episode_image ON episode_image.id = episode.id
+WHERE
+    episode_image.image_url IS NULL;

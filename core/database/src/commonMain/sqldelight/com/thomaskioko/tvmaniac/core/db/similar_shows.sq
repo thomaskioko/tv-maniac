@@ -1,26 +1,48 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.ShowId;
+import com.thomaskioko.tvmaniac.db.SimilarShowId;
+
 CREATE TABLE similar_shows (
-id INTEGER DEFAULT NULL PRIMARY KEY,
-trakt_id INTEGER NOT NULL,
-FOREIGN KEY (trakt_id) REFERENCES show(trakt_id)
+    id INTEGER AS Id<ShowId>,
+    similar_show_id INTEGER AS Id<SimilarShowId> NOT NULL,
+    PRIMARY KEY (similar_show_id, id),
+    FOREIGN KEY(similar_show_id) REFERENCES show(id),
+    FOREIGN KEY(id) REFERENCES show(id)
 );
 
 insertOrReplace:
 INSERT OR REPLACE INTO similar_shows(
-id,
-trakt_id
+    id,
+    similar_show_id
 )
 VALUES(?,?);
 
 similarShows:
-SELECT show.trakt_id, show.tmdb_id ,show.title, show.overview, show.language, show.year, show.rating, show.votes, show.status,
-show.runtime, show.genres, show_image.poster_url, show_image.backdrop_url
-FROM show
-JOIN similar_shows ON show.trakt_id = similar_shows.id
-INNER JOIN show_image ON show_image.trakt_id = similar_shows.id
-WHERE similar_shows.trakt_id = ?;
+SELECT
+    show.id,
+    show.tmdb_id ,
+    show.title,
+    show.overview,
+    show.language,
+    show.year,
+    show.rating,
+    show.votes,
+    show.status,
+    show.runtime,
+    show.genres,
+    show_image.poster_url,
+    show_image.backdrop_url
+FROM
+    show
+JOIN
+    similar_shows ON show.id = similar_shows.id
+INNER JOIN
+    show_image ON show_image.id = similar_shows.id
+WHERE
+    similar_shows.similar_show_id = ?;
 
 delete:
-DELETE FROM similar_shows WHERE trakt_id = ?;
+DELETE FROM similar_shows WHERE similar_show_id = ?;
 
 deleteAll:
 DELETE FROM similar_shows;

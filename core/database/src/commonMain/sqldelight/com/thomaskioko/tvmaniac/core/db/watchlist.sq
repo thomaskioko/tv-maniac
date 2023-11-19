@@ -1,36 +1,67 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.ShowId;
 import kotlin.Boolean;
 
 CREATE TABLE watchlist (
-id INTEGER  PRIMARY KEY,
-synced INTEGER AS Boolean NOT NULL DEFAULT 0,
-created_at INTEGER NOT NULL,
-FOREIGN KEY (id) REFERENCES show(trakt_id) ON DELETE CASCADE
+    id INTEGER AS Id<ShowId> PRIMARY KEY,
+    synced INTEGER AS Boolean NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL,
+    FOREIGN KEY(id) REFERENCES show(id) ON DELETE CASCADE,
+    UNIQUE(id)
 );
 
 insertOrReplace:
 INSERT OR REPLACE INTO watchlist(
-id,
-synced,
-created_at
+    id,
+    synced,
+    created_at
 )
-VALUES(?, ?, ?);
+VALUES( ?, ?, ?);
 
-selectUnsyncedShows:
-SELECT * FROM watchlist
-WHERE synced != 1;
+unsyncedShows:
+SELECT
+    *
+FROM
+    watchlist
+WHERE
+    synced != 1;
 
-selectWatchlist:
-SELECT *
-FROM watchlist
-INNER JOIN show ON show.trakt_id = watchlist.id
-INNER JOIN show_image ON show_image.trakt_id = watchlist.id
-ORDER BY created_at DESC;
-
-removeShow:
-DELETE FROM watchlist
-WHERE id = ?;
+watchedShow:
+SELECT
+    show.id AS show_id,
+    show.tmdb_id,
+    show.title,
+    show.overview,
+    show.language,
+    show.year,
+    show.rating,
+    show.votes,
+    show.status,
+    show.runtime,
+    show.genres,
+    show.aired_episodes,
+    show_image.poster_url,
+    show_image.backdrop_url,
+    watchlist.created_at
+FROM
+    show
+JOIN
+    watchlist ON show.id = watchlist.id
+INNER JOIN
+    show_image ON show_image.id = watchlist.id
+ORDER BY
+    watchlist.created_at DESC;
 
 updateFollowedState:
-UPDATE watchlist
-SET synced = ?
-WHERE id = ?;
+UPDATE
+    watchlist
+SET
+    synced = ?
+WHERE
+    id = ?;
+
+removeShowFromWatchlist:
+DELETE FROM
+    watchlist
+WHERE
+    id = ?;

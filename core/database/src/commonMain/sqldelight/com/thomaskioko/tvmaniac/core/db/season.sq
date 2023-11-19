@@ -1,32 +1,76 @@
-CREATE TABLE seasons (
-id INTEGER NOT NULL PRIMARY KEY,
-show_trakt_id INTEGER NOT NULL,
-season_number INTEGER NOT NULL,
-episode_count INTEGER NOT NULL,
-name TEXT NOT NULL,
-overview TEXT,
-FOREIGN KEY (show_trakt_id) REFERENCES show(trakt_id)
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.SeasonId;
+import com.thomaskioko.tvmaniac.db.ShowId;
+
+CREATE TABLE season (
+    id INTEGER AS Id<SeasonId>  NOT NULL PRIMARY KEY,
+    show_id INTEGER AS Id<ShowId> NOT NULL,
+    season_number INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    episode_count INTEGER NOT NULL,
+    overview TEXT,
+    FOREIGN KEY(show_id) REFERENCES show(id)
 );
 
 insertOrReplace:
-INSERT OR REPLACE INTO seasons(
-id,
-show_trakt_id,
-season_number,
-episode_count,
-name,
-overview
+INSERT OR REPLACE INTO season(
+    id,
+    show_id,
+    season_number,
+    episode_count,
+    title,
+    overview
 )
 VALUES(?,?,?,?,?,?);
 
-seasonById:
-SELECT *
-FROM seasons
-WHERE seasons.show_trakt_id = ? AND season_number != 0
-ORDER BY season_number ASC;
+seasonsByShowId:
+SELECT
+    show.id AS show_id,
+    season.id AS season_id,
+    season.title AS season_title,
+    season.season_number
+FROM
+    show
+JOIN
+    season ON show.id = season.show_id
+WHERE
+    show.id = ?;
+
+seasonEpisodeDetailsById:
+SELECT
+    show.id AS show_id,
+    show.title AS show_title,
+    season.id AS season_id,
+    season.title AS season_title,
+    season.overview AS season_overview,
+    season.season_number,
+    season.episode_count,
+    episode.id AS episode_id,
+    episode.season_id AS episode_season_id,
+    episode.title AS episode_title,
+    episode.episode_number,
+    episode.overview,
+    episode.runtime,
+    episode.ratings,
+    episode.votes,
+    episode_image.image_url AS episode_image_url
+FROM
+    show
+INNER JOIN
+    season ON season.show_id = show.id
+INNER JOIN
+    episode ON episode.season_id = season.id
+LEFT OUTER JOIN
+    episode_image ON episode_image.id = episode.id
+WHERE
+    show.id = ?
+AND
+    season_number != 0
+ORDER BY
+    season.season_number, episode_number ASC;
 
 delete:
-DELETE FROM seasons WHERE show_trakt_id = ?;
+DELETE FROM season WHERE show_id = ?;
 
 deleteAll:
-DELETE FROM seasons;
+DELETE FROM season;
