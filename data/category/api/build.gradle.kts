@@ -9,7 +9,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.database)
-                api(projects.core.networkutil)
+                api(projects.core.util)
                 implementation(projects.core.tmdbApi.api)
 
                 api(libs.coroutines.core)

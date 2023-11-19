@@ -55,7 +55,7 @@ kotlin {
                 implementation(projects.core.datastore.implementation)
                 implementation(projects.data.episodeimages.api)
                 implementation(projects.data.watchlist.api)
-                implementation(projects.core.networkutil)
+                implementation(projects.core.util)
                 implementation(projects.data.showimages.api)
                 implementation(projects.core.traktApi.api)
                 implementation(projects.core.traktApi.implementation)
