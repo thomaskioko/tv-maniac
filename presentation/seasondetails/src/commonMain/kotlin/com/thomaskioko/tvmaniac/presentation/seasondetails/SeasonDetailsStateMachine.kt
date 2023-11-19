@@ -34,7 +34,9 @@ class SeasonDetailsStateMachine(
                 collectWhileInState(seasonDetailsRepository.observeSeasonDetailsStream(traktId)) { result, state ->
                     result.fold(
                         {
-                            state.override { LoadingError(it.errorMessage) }
+                            state.mutate {
+                                copy(errorMessage = it.errorMessage)
+                            }
                         },
                         {
                             state.mutate {
@@ -44,7 +46,7 @@ class SeasonDetailsStateMachine(
                     )
                 }
 
-                collectWhileInStateEffect(episodeImageRepository.updateEpisodeImage()) { _, _ ->
+                collectWhileInStateEffect(episodeImageRepository.updateEpisodeImage(traktId)) { _, _ ->
                     /** No need to do anything. Just trigger artwork download. **/
                 }
             }

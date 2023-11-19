@@ -9,6 +9,7 @@ object Loading : SeasonDetailsState
 data class SeasonDetailsLoaded(
     val showTitle: String = "",
     val seasonDetailsList: List<SeasonDetails> = emptyList(),
+    val errorMessage: String? = null,
 ) : SeasonDetailsState
 
 data class LoadingError(val message: String? = null) : SeasonDetailsState

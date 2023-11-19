@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.data.seasondetails
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeImageRepository
 import com.thomaskioko.tvmaniac.presentation.seasondetails.Loading
-import com.thomaskioko.tvmaniac.presentation.seasondetails.LoadingError
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsStateMachine
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.SeasonWithEpisodeList
@@ -42,7 +41,8 @@ class SeasonDetailsStateMachineTest {
 
             awaitItem() shouldBe Loading
             awaitItem() shouldBe seasonDetailsLoaded
-            awaitItem() shouldBe LoadingError(errorMessage)
+            awaitItem() shouldBe seasonDetailsLoaded
+                .copy(errorMessage = errorMessage)
         }
     }
 }
