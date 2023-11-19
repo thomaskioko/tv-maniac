@@ -1,83 +1,55 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.core.db.SeasonEpisodeDetailsById
-import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.Failure
-import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
-import com.thomaskioko.tvmaniac.core.networkutil.networkBoundResult
-import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
-import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
-import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
-import com.thomaskioko.tvmaniac.util.KermitLogger
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.Failure
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
+import org.mobilenativefoundation.store.store5.StoreReadRequest
+import org.mobilenativefoundation.store.store5.impl.extensions.get
+import kotlin.time.Duration.Companion.days
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class SeasonDetailsRepositoryImpl(
-    private val remoteDataSource: TraktShowsRemoteDataSource,
-    private val seasonCache: SeasonsDao,
-    private val episodesDao: EpisodesDao,
-    private val exceptionHandler: NetworkExceptionHandler,
+    private val seasonDetailsStore: SeasonDetailsStore,
+    private val requestManagerRepository: RequestManagerRepository,
     private val dispatcher: AppCoroutineDispatchers,
-    private val logger: KermitLogger,
 ) : SeasonDetailsRepository {
 
-    override fun observeSeasonDetailsStream(traktId: Long): Flow<Either<Failure, List<SeasonEpisodeDetailsById>>> =
-        networkBoundResult(
-            query = { seasonCache.observeSeasonEpisodeDetailsById(traktId) },
-            shouldFetch = { it.isNullOrEmpty() },
-            fetch = { remoteDataSource.getSeasonEpisodes(traktId) },
-            saveFetchResult = { mapResponse(traktId, it) },
-            exceptionHandler = exceptionHandler,
-            coroutineDispatcher = dispatcher.io,
+    override fun observeSeasonDetailsStream(
+        traktId: Long,
+    ): Flow<Either<Failure, List<SeasonEpisodeDetailsById>>> =
+        seasonDetailsStore.stream(
+            StoreReadRequest.cached(
+                key = traktId,
+                refresh = requestManagerRepository.isRequestExpired(
+                    entityId = traktId,
+                    requestType = "SEASON_DETAILS",
+                    threshold = 3.days,
+                ),
+            ),
         )
-
-    override suspend fun fetchSeasonDetails(traktId: Long): List<SeasonEpisodeDetailsById> =
-        seasonCache.fetchSeasonDetails(traktId)
-
-    private fun mapResponse(
-        showId: Long,
-        response: ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse>,
-    ) {
-        when (response) {
-            is ApiResponse.Success -> {
-                response.body.forEach { season ->
-                    episodesDao.insert(season.toEpisodeCacheList())
-
-                    seasonCache.upsert(
-                        Season(
-                            id = Id(season.ids.trakt.toLong()),
-                            show_id = Id(showId),
-                            season_number = season.number.toLong(),
-                            title = season.title,
-                            episode_count = season.episodeCount.toLong(),
-                            overview = season.overview,
-                        ),
-                    )
+            .distinctUntilChanged()
+            .flatMapLatest {
+                val data = it.dataOrNull()
+                if (data != null) {
+                    flowOf(Either.Right(data))
+                } else {
+                    emptyFlow()
                 }
             }
+            .flowOn(dispatcher.io)
 
-            is ApiResponse.Error.GenericError -> {
-                logger.error("observeSeasonDetails", "$response")
-                throw Throwable("${response.errorMessage}")
-            }
-
-            is ApiResponse.Error.HttpError -> {
-                logger.error("observeSeasonDetails", "$response")
-                throw Throwable("${response.code} - ${response.errorMessage}")
-            }
-
-            is ApiResponse.Error.SerializationError -> {
-                logger.error("observeSeasonDetails", "${response.errorMessage}")
-                throw Throwable("${response.errorMessage}")
-            }
-        }
-    }
+    override suspend fun fetchSeasonDetails(traktId: Long): List<SeasonEpisodeDetailsById> =
+        seasonDetailsStore.get(traktId)
 }
