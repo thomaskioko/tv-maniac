@@ -4,8 +4,8 @@ import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.category.api.model.getCategory
-import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
+import com.thomaskioko.tvmaniac.util.model.Either
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.tatarka.inject.annotations.Inject
 

@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.presentation.trailers
 
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
-import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
+import com.thomaskioko.tvmaniac.util.model.Either
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject

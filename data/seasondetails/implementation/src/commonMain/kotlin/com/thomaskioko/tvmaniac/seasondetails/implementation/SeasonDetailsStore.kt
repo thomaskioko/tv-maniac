@@ -2,12 +2,12 @@ package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.core.db.SeasonEpisodeDetailsById
-import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
+import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher

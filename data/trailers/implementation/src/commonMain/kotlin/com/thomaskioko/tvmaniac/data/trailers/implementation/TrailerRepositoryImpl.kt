@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.data.trailers.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.util.AppUtils
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged

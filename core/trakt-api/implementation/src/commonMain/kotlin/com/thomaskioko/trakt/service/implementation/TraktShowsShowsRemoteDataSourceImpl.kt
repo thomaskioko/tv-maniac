@@ -1,14 +1,14 @@
 package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.trakt.service.implementation.inject.TraktHttpClient
-import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
-import com.thomaskioko.tvmaniac.core.networkutil.safeRequest
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
+import com.thomaskioko.tvmaniac.util.model.ApiResponse
+import com.thomaskioko.tvmaniac.util.model.safeRequest
 import io.ktor.client.request.parameter
 import io.ktor.http.HttpMethod
 import io.ktor.http.path

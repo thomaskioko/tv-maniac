@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.presentation.trailers
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.ServerError
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.ServerError
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test

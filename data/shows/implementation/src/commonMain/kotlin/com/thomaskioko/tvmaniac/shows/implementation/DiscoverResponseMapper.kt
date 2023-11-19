@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.Show_category
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
-import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -14,6 +13,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.KermitLogger
+import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import me.tatarka.inject.annotations.Inject
 
 @Inject

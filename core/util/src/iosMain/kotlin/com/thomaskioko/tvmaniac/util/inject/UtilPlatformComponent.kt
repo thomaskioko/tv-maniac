@@ -7,7 +7,9 @@ import com.thomaskioko.tvmaniac.util.DateFormatter
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.IosAppUtils
 import com.thomaskioko.tvmaniac.util.IosDateFormatter
+import com.thomaskioko.tvmaniac.util.IosExceptionHandler
 import com.thomaskioko.tvmaniac.util.IosFormatterUtil
+import com.thomaskioko.tvmaniac.util.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.util.ResourceReader
 import com.thomaskioko.tvmaniac.util.YamlResourceReader
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
@@ -66,4 +68,8 @@ actual interface UtilPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideResourceReader(bind: BundleResourceReader): ResourceReader = bind
+
+    @ApplicationScope
+    @Provides
+    fun provideExceptionHandler(bind: IosExceptionHandler): NetworkExceptionHandler = bind
 }

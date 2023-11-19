@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.watchlist.testing
 
 import com.thomaskioko.tvmaniac.core.db.WatchedShow
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow

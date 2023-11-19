@@ -7,11 +7,11 @@ import com.thomaskioko.tvmaniac.category.api.model.Category.RECOMMENDED
 import com.thomaskioko.tvmaniac.category.api.model.Category.TRENDING
 import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
