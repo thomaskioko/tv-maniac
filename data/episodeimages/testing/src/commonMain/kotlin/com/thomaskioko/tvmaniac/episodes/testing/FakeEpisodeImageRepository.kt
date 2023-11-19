@@ -8,5 +8,7 @@ import kotlinx.coroutines.flow.flowOf
 
 class FakeEpisodeImageRepository : EpisodeImageRepository {
 
-    override fun updateEpisodeImage(): Flow<Either<Failure, Unit>> = flowOf(Either.Right(Unit))
+    override fun updateEpisodeImage(
+        traktId: Long,
+    ): Flow<Either<Failure, Unit>> = flowOf(Either.Right(Unit))
 }

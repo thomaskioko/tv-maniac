@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface EpisodeImageRepository {
 
-    fun updateEpisodeImage(): Flow<Either<Failure, Unit>>
+    fun updateEpisodeImage(traktId: Long): Flow<Either<Failure, Unit>>
 }

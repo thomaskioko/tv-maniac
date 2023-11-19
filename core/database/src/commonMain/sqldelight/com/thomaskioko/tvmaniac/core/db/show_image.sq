@@ -22,10 +22,18 @@ VALUES(?,?,?,?);
 emptyShowImage:
 SELECT
     show.id,
-    show.tmdb_id
+    show.tmdb_id,
+    show_image.poster_url,
+    show_image.backdrop_url
 FROM
     show
 LEFT OUTER JOIN
     show_image ON show_image.id = show.id
 WHERE
     poster_url IS NULL AND backdrop_url IS NULL;
+
+delete:
+DELETE FROM show_image WHERE id = ?;
+
+deleteAll:
+DELETE FROM show_image;
