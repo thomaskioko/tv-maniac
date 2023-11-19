@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.ServerError
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.Companion.EMPTY_DETAIL_STATE
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.SeasonsContent.Companion.EMPTY_SEASONS
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.SimilarShowsContent.Companion.EMPTY_SIMILAR_SHOWS
@@ -13,6 +11,8 @@ import com.thomaskioko.tvmaniac.shows.testing.selectedShow
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.ServerError
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest

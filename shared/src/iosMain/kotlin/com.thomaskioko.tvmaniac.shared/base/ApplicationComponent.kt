@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.shared.base
 
 import com.thomaskioko.trakt.service.implementation.inject.TraktComponent
 import com.thomaskioko.trakt.service.implementation.inject.TraktPlatformComponent
-import com.thomaskioko.tvmaniac.core.networkutil.inject.NetworkPlatformComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
 import com.thomaskioko.tvmaniac.datastore.implementation.DataStorePlatformComponent
@@ -24,6 +23,7 @@ import com.thomaskioko.tvmaniac.shared.base.wrappers.WatchlistStateMachineWrappe
 import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
 import com.thomaskioko.tvmaniac.shows.implementation.DiscoverComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
+import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbPlatformComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthenticationComponent
 import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
@@ -47,14 +47,14 @@ abstract class ApplicationComponent :
     ShowImagesComponent,
     SimilarShowsComponent,
     StatsComponent,
+    TmdbComponent,
     TmdbPlatformComponent,
     TraktComponent,
     TraktPlatformComponent,
     TraktAuthenticationComponent,
     TrailerComponent,
     UtilPlatformComponent,
-    WatchlistComponent,
-    NetworkPlatformComponent {
+    WatchlistComponent {
 
     abstract val discoverStateMachine: DiscoverStateMachineWrapper
     abstract val seasonDetailsStateMachineWrapper: SeasonDetailsStateMachineWrapper

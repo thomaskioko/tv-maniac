@@ -3,10 +3,12 @@ package com.thomaskioko.tvmaniac.util.inject
 import com.thomaskioko.tvmaniac.util.AndroidAppUtils
 import com.thomaskioko.tvmaniac.util.AndroidDateUtil
 import com.thomaskioko.tvmaniac.util.AndroidFormatterUtil
+import com.thomaskioko.tvmaniac.util.AndroidNetworkExceptionHandlerUtil
 import com.thomaskioko.tvmaniac.util.AppUtils
 import com.thomaskioko.tvmaniac.util.ClasspathResourceReader
 import com.thomaskioko.tvmaniac.util.DateFormatter
 import com.thomaskioko.tvmaniac.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.util.ResourceReader
 import com.thomaskioko.tvmaniac.util.YamlResourceReader
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
@@ -59,4 +61,10 @@ actual interface UtilPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideResourceReader(bind: ClasspathResourceReader): ResourceReader = bind
+
+    @ApplicationScope
+    @Provides
+    fun provideNetworkExceptionHandler(
+        bind: AndroidNetworkExceptionHandlerUtil,
+    ): NetworkExceptionHandler = bind
 }

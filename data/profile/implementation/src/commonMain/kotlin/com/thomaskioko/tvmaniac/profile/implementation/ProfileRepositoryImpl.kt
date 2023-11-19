@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.profile.implementation
 
 import com.thomaskioko.tvmaniac.core.db.User
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.Failure
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -21,7 +21,7 @@ import kotlin.time.Duration.Companion.days
 
 @OptIn(ExperimentalStoreApi::class, ExperimentalCoroutinesApi::class)
 @Inject
-class ProfileRepositoryImpl constructor(
+class ProfileRepositoryImpl(
     private val store: ProfileStore,
     private val requestManagerRepository: RequestManagerRepository,
     private val dispatchers: AppCoroutineDispatchers,

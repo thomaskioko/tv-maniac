@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.networkutil
+package com.thomaskioko.tvmaniac.util.model
 
 sealed class Failure(
     val throwable: Throwable,

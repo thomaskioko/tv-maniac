@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.settings
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.ServerError
 import com.thomaskioko.tvmaniac.datastore.api.Theme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.testing.authenticatedAuthState
@@ -10,6 +8,8 @@ import com.thomaskioko.tvmaniac.trakt.profile.testing.FakeProfileRepository
 import com.thomaskioko.tvmaniac.trakt.profile.testing.user
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.ServerError
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test

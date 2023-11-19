@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
-import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
-import com.thomaskioko.tvmaniac.core.networkutil.safeRequest
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.EpisodesResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
+import com.thomaskioko.tvmaniac.util.model.ApiResponse
+import com.thomaskioko.tvmaniac.util.model.safeRequest
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
 import me.tatarka.inject.annotations.Inject

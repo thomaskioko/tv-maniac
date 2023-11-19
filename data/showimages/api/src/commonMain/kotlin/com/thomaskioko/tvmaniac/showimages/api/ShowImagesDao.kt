@@ -6,7 +6,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface ShowImagesDao {
 
+    fun upsert(images: List<Show_image>)
+
     fun upsert(image: Show_image)
 
     fun observeShowImages(): Flow<List<EmptyShowImage>>
+
+    fun fetchShowImages(): List<EmptyShowImage>
+
+    fun delete(id: Long)
+
+    fun deleteAll()
 }

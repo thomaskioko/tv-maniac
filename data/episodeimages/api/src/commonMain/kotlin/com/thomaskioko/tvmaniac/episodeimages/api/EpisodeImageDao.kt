@@ -10,5 +10,11 @@ interface EpisodeImageDao {
 
     fun upsert(list: List<Episode_image>)
 
-    fun observeEpisodeImage(): Flow<List<EpisodeImage>>
+    fun observeEpisodeImage(showId: Long): Flow<List<EpisodeImage>>
+
+    fun getEpisodeImage(showId: Long): List<EpisodeImage>
+
+    fun delete(id: Long)
+
+    fun deleteAll()
 }

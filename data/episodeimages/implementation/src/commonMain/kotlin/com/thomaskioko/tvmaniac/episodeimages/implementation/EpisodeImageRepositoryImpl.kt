@@ -1,63 +1,38 @@
 package com.thomaskioko.tvmaniac.episodeimages.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Episode_image
-import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
-import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.Failure
-import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
-import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.episodeimages.api.EpisodeImageDao
 import com.thomaskioko.tvmaniac.episodeimages.api.EpisodeImageRepository
-import com.thomaskioko.tvmaniac.tmdb.api.TmdbNetworkDataSource
-import com.thomaskioko.tvmaniac.util.FormatterUtil
-import com.thomaskioko.tvmaniac.util.KermitLogger
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.Failure
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
+import org.mobilenativefoundation.store.store5.StoreReadRequest
+import kotlin.time.Duration.Companion.hours
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class EpisodeImageRepositoryImpl(
-    private val tmdbNetworkDataSource: TmdbNetworkDataSource,
-    private val episodeImageDao: EpisodeImageDao,
-    private val formatterUtil: FormatterUtil,
-    private val logger: KermitLogger,
-    private val exceptionHandler: NetworkExceptionHandler,
+    private val dispatchers: AppCoroutineDispatchers,
+    private val requestManagerRepository: RequestManagerRepository,
+    private val store: EpisodeImageStore,
 ) : EpisodeImageRepository {
 
-    override fun updateEpisodeImage(): Flow<Either<Failure, Unit>> =
-        episodeImageDao.observeEpisodeImage()
-            .map { episode ->
-                episode.forEach { episodeArt ->
-                    episodeArt.tmdb_id?.let { tmdbId ->
-                        val response = tmdbNetworkDataSource.getEpisodeDetails(
-                            tmdbShow = tmdbId,
-                            ssnNumber = episodeArt.season_number!!,
-                            epNumber = episodeArt.episode_number.toLong(),
-                        )
-
-                        when (response) {
-                            is ApiResponse.Success -> {
-                                episodeImageDao.upsert(
-                                    Episode_image(
-                                        id = Id(id = response.body.id.toLong()),
-                                        tmdb_id = Id(id = tmdbId),
-                                        image_url = response.body.imageUrl?.let {
-                                            formatterUtil.formatTmdbPosterPath(it)
-                                        },
-                                    ),
-                                )
-                            }
-
-                            is ApiResponse.Error -> {
-                                logger.error("updateEpisodeArtWork", "$response")
-                            }
-                        }
-                    }
-                }
-
-                Either.Right(Unit)
-            }
-            .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
+    override fun updateEpisodeImage(traktId: Long): Flow<Either<Failure, Unit>> =
+        store.stream(
+            StoreReadRequest.cached(
+                key = traktId,
+                refresh = requestManagerRepository.isRequestExpired(
+                    entityId = traktId,
+                    requestType = "EPISODE_IMAGE",
+                    threshold = 1.hours,
+                ),
+            ),
+        )
+            .flatMapLatest { flowOf(Either.Right(Unit)) }
+            .flowOn(dispatchers.io)
 }

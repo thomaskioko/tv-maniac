@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.networkutil
+package com.thomaskioko.tvmaniac.util
 
 import com.thomaskioko.tvmaniac.util.model.Configs
 import io.ktor.client.call.NoTransformationFoundException

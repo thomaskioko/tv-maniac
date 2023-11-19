@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.presentation.settings
 
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
-import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import com.thomaskioko.tvmaniac.util.model.Either
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.tatarka.inject.annotations.Inject
 

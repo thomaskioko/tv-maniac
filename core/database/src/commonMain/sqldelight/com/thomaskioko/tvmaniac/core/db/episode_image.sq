@@ -22,7 +22,9 @@ episodeImage:
 SELECT
     show.tmdb_id,
     season.season_number,
-    episode.episode_number
+    episode.id,
+    episode.episode_number,
+    episode_image.image_url
 FROM
     episode
 LEFT JOIN
@@ -32,4 +34,10 @@ LEFT JOIN
 LEFT OUTER JOIN
     episode_image ON episode_image.id = episode.id
 WHERE
-    episode_image.image_url IS NULL;
+    show.id = :showId AND episode_image.image_url IS NULL;
+
+delete:
+DELETE FROM episode_image WHERE id = ?;
+
+deleteAll:
+DELETE FROM episode_image;

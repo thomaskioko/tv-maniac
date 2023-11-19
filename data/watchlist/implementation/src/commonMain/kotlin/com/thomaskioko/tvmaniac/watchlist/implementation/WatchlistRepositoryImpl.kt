@@ -2,17 +2,17 @@ package com.thomaskioko.tvmaniac.watchlist.implementation
 
 import com.thomaskioko.tvmaniac.core.db.WatchedShow
 import com.thomaskioko.tvmaniac.core.db.Watchlist
-import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.Failure
-import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.profile.api.ProfileDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.util.DateFormatter
+import com.thomaskioko.tvmaniac.util.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.DefaultError
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
