@@ -72,4 +72,10 @@ actual interface DatabaseComponent {
             show_idAdapter = IdAdapter(),
         ),
     )
+
+    @ApplicationScope
+    @Provides
+    fun provideDbTransactionRunner(
+        bind: DbTransactionRunner,
+    ): DatabaseTransactionRunner = bind
 }
