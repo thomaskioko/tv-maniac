@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.networkutil
+package com.thomaskioko.tvmaniac.util.model
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
