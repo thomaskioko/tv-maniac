@@ -40,10 +40,6 @@ class DiscoverStateMachine(
                     }
                 }
 
-                collectWhileInStateEffect(showImagesRepository.updateShowArtWork()) { _, _ ->
-                    /** No need to do anything. Just trigger artwork download. **/
-                }
-
                 on<ReloadCategory> { _, state ->
                     // TODO:: Implement reloading category data
                     state.noChange()
@@ -86,7 +82,8 @@ class DiscoverStateMachine(
             discoverRepository.observeShowCategory(Category.POPULAR),
             discoverRepository.observeShowCategory(Category.ANTICIPATED),
             discoverRepository.observeShowCategory(Category.RECOMMENDED),
-        ) { trending, popular, anticipated, recommended ->
+            showImagesRepository.updateShowArtWork(),
+        ) { trending, popular, anticipated, recommended, _->
             DataLoaded(
                 trendingShows = trending.getOrNull().toTvShowList(),
                 popularShows = popular.getOrNull().toTvShowList(),
