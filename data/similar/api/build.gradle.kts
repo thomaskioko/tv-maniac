@@ -8,7 +8,6 @@ kotlin {
 
         commonMain {
             dependencies {
-                api(projects.core.networkutil)
                 api(projects.core.database)
                 implementation(projects.data.shows.api)
 
