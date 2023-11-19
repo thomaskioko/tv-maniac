@@ -5,7 +5,6 @@ import android.content.Context
 import com.thomaskioko.trakt.service.implementation.inject.TraktComponent
 import com.thomaskioko.trakt.service.implementation.inject.TraktPlatformComponent
 import com.thomaskioko.tvmaniac.TvManicApplication
-import com.thomaskioko.tvmaniac.core.networkutil.inject.NetworkPlatformComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
 import com.thomaskioko.tvmaniac.datastore.implementation.DataStorePlatformComponent
@@ -37,7 +36,6 @@ import me.tatarka.inject.annotations.Provides
 abstract class ApplicationComponent(
     @get:Provides val application: Application,
 ) : UtilPlatformComponent,
-    NetworkPlatformComponent,
     CategoryComponent,
     DatabaseComponent,
     DataStorePlatformComponent,
