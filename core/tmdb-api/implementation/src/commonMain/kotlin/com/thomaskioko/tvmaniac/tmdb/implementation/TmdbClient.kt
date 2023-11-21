@@ -52,11 +52,11 @@ fun tmdbHttpClient(
     }
 
     install(Logging) {
-        level = LogLevel.BODY
+        level = LogLevel.INFO
         logger = if (isDebug) {
             object : Logger {
                 override fun log(message: String) {
-                    kermitLogger.debug(message)
+                    kermitLogger.info("TmbdHttp", message)
                 }
             }
         } else {
