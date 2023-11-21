@@ -31,7 +31,6 @@ class EpisodeImageStore(
     private val scope: AppCoroutineScope,
 ) : Store<Long, List<EpisodeImage>> by StoreBuilder.from(
     fetcher = Fetcher.of { id ->
-
         episodeImageDao.getEpisodeImage(id)
             .filter { it.tmdb_id != null && it.image_url == null }
             .map { episodeArt ->
