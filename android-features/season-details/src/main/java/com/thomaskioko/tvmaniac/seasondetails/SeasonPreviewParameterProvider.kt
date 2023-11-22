@@ -6,6 +6,8 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetails
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 
 val episode = Episode(
     id = 2534997,
@@ -27,7 +29,7 @@ val seasonDetails = SeasonDetails(
     watchProgress = 0.4f,
     episodes = List(8) {
         episode
-    },
+    }.toPersistentList(),
 )
 
 class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsState> {
@@ -36,7 +38,7 @@ class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsSta
             return sequenceOf(
                 SeasonDetailsLoaded(
                     showTitle = "Loki",
-                    seasonDetailsList = listOf(seasonDetails),
+                    seasonDetailsList = persistentListOf(seasonDetails),
                 ),
                 LoadingError(message = "Something went Wrong "),
             )
