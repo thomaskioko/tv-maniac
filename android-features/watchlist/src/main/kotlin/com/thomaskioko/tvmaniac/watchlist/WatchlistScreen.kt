@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.watchlist
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -113,6 +114,7 @@ private fun WatchlistScreen(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun FollowingGridContent(
     list: List<WatchlistItem>,
@@ -128,6 +130,8 @@ private fun FollowingGridContent(
     ) { show ->
 
         TvPosterCard(
+            modifier = Modifier
+                .animateItemPlacement(),
             posterImageUrl = show.posterImageUrl,
             title = show.title,
             onClick = { onItemClicked(show.traktId) },

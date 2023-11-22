@@ -417,7 +417,7 @@ fun HorizontalPagerItem(
     }
 }
 
-@OptIn(ExperimentalSnapperApi::class)
+@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun RowContent(
     category: Category,
@@ -449,6 +449,8 @@ private fun RowContent(
                         posterImageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,
                         onClick = { onItemClicked(tvShow.traktId) },
+                        modifier = Modifier
+                            .animateItemPlacement(),
                     )
                 }
             }
