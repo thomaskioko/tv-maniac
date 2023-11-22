@@ -1,3 +1,3 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
-interface TmdbPlatformComponent
+actual  interface TmdbPlatformComponent

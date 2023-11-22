@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import io.ktor.client.engine.okhttp.OkHttp
 import me.tatarka.inject.annotations.Provides
 
-interface TmdbPlatformComponent {
+actual interface TmdbPlatformComponent {
 
     @ApplicationScope
     @Provides

@@ -20,7 +20,4 @@ actual interface DataStorePlatformComponent {
         producePath = { context.filesDir.resolve(dataStoreFileName).absolutePath },
     )
 
-    @ApplicationScope
-    @Provides
-    fun provideDatastoreRepository(bind: DatastoreRepositoryImpl): DatastoreRepository = bind
 }

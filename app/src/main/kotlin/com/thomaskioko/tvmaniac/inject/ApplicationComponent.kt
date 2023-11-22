@@ -3,11 +3,10 @@ package com.thomaskioko.tvmaniac.inject
 import android.app.Application
 import android.content.Context
 import com.thomaskioko.trakt.service.implementation.inject.TraktComponent
-import com.thomaskioko.trakt.service.implementation.inject.TraktPlatformComponent
 import com.thomaskioko.tvmaniac.TvManicApplication
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
-import com.thomaskioko.tvmaniac.datastore.implementation.DataStorePlatformComponent
+import com.thomaskioko.tvmaniac.datastore.implementation.DataStoreComponent
 import com.thomaskioko.tvmaniac.db.DatabaseComponent
 import com.thomaskioko.tvmaniac.episodeimages.implementation.EpisodeImageComponent
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeComponent
@@ -21,7 +20,6 @@ import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
 import com.thomaskioko.tvmaniac.shows.implementation.DiscoverComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbComponent
-import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbPlatformComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthenticationComponent
 import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
@@ -39,7 +37,7 @@ abstract class ApplicationComponent(
 ) : UtilPlatformComponent,
     CategoryComponent,
     DatabaseComponent,
-    DataStorePlatformComponent,
+    DataStoreComponent,
     EpisodeComponent,
     EpisodeImageComponent,
     WatchlistComponent,
@@ -54,9 +52,7 @@ abstract class ApplicationComponent(
     StatsComponent,
     TasksComponent,
     TmdbComponent,
-    TmdbPlatformComponent,
     TraktComponent,
-    TraktPlatformComponent,
     TrailerComponent,
     TraktAuthComponent,
     TraktAuthenticationComponent {

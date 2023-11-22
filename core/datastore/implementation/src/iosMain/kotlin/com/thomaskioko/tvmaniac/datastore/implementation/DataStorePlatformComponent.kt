@@ -33,7 +33,4 @@ actual interface DataStorePlatformComponent {
         },
     )
 
-    @ApplicationScope
-    @Provides
-    fun provideDatastoreRepository(bind: DatastoreRepositoryImpl): DatastoreRepository = bind
 }
