@@ -17,7 +17,6 @@ import me.tatarka.inject.annotations.Provides
 
 expect interface DatabasePlatformComponent
 
-
 interface DatabaseComponent : DatabasePlatformComponent {
     @ApplicationScope
     @Provides

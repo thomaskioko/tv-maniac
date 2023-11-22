@@ -6,7 +6,6 @@ import me.tatarka.inject.annotations.Provides
 
 expect interface DataStorePlatformComponent
 
-
 interface DataStoreComponent : DataStorePlatformComponent {
 
     @ApplicationScope

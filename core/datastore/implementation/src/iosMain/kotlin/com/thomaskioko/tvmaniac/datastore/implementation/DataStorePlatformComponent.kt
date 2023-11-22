@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.datastore.implementation
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -32,5 +31,4 @@ actual interface DataStorePlatformComponent {
             requireNotNull(documentDirectory).path + "/$dataStoreFileName"
         },
     )
-
 }

@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.datastore.implementation
 import android.app.Application
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import me.tatarka.inject.annotations.Provides
@@ -19,5 +18,4 @@ actual interface DataStorePlatformComponent {
         coroutineScope = scope.io,
         producePath = { context.filesDir.resolve(dataStoreFileName).absolutePath },
     )
-
 }
