@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,10 +44,14 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.Loading
 import com.thomaskioko.tvmaniac.presentation.seasondetails.LoadingError
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsState
+import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetails
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.components.CollapsableContent
-import com.thomaskioko.tvmaniac.seasondetails.components.WatchNextContent
+import com.thomaskioko.tvmaniac.seasondetails.components.EpisodeItem
+import dev.chrisbanes.snapper.ExperimentalSnapperApi
+import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.collections.immutable.ImmutableList
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -106,8 +113,7 @@ internal fun SeasonDetailScreen(
                 navigateUp = onBackClicked,
             )
         },
-        modifier = modifier
-            .statusBarsPadding(),
+        modifier = modifier.statusBarsPadding(),
         content = { contentPadding ->
             when (state) {
                 Loading -> LoadingIndicator(
@@ -116,14 +122,13 @@ internal fun SeasonDetailScreen(
                         .wrapContentSize(Alignment.Center),
                 )
 
-                is LoadingError ->
-                    ErrorUi(
-                        errorMessage = state.message,
-                        onRetry = {},
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .wrapContentSize(Alignment.Center),
-                    )
+                is LoadingError -> ErrorUi(
+                    errorMessage = state.message,
+                    onRetry = {},
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.Center),
+                )
 
                 is SeasonDetailsLoaded -> {
                     SeasonContent(
@@ -155,7 +160,7 @@ private fun TopBar(
 
 @Composable
 private fun SeasonContent(
-    seasonsEpList: List<SeasonDetails>?,
+    seasonsEpList: ImmutableList<SeasonDetails>?,
     initialSeasonName: String?,
     listState: LazyListState,
     contentPadding: PaddingValues,
@@ -179,7 +184,9 @@ private fun SeasonContent(
         LazyColumn(
             state = listState,
             contentPadding = contentPadding.copy(copyTop = false),
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxSize(),
         ) {
             item { Spacer(modifier = Modifier.height(64.dp)) }
 
@@ -187,7 +194,11 @@ private fun SeasonContent(
 
             item { Spacer(modifier = Modifier.height(16.dp)) }
 
-            item { AllSeasonsTitle() }
+            item {
+                LabelTitle(
+                    label = stringResource(id = R.string.title_all_episodes),
+                )
+            }
 
             itemsIndexed(seasonsEpList) { index, season ->
                 CollapsableContent(
@@ -204,20 +215,57 @@ private fun SeasonContent(
     }
 }
 
+@OptIn(ExperimentalSnapperApi::class)
 @Composable
-private fun AllSeasonsTitle(
+fun WatchNextContent(
+    episodeList: ImmutableList<Episode>?,
+    modifier: Modifier = Modifier,
+    onEpisodeClicked: () -> Unit = {},
+) {
+    episodeList?.let {
+        LabelTitle(
+            modifier = modifier
+                .padding(top = 16.dp, bottom = 8.dp),
+            label = stringResource(id = R.string.title_watch_next),
+        )
+
+        val lazyListState = rememberLazyListState()
+
+        LazyRow(
+            state = lazyListState,
+            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+        ) {
+            itemsIndexed(episodeList) { index, episode ->
+                val value = if (index == 0) 0 else 8
+                Spacer(modifier = Modifier.width(value.dp))
+
+                EpisodeItem(
+                    modifier = modifier.size(width = 320.dp, height = 90.dp),
+                    imageUrl = episode.imageUrl,
+                    title = episode.seasonEpisodeNumber,
+                    episodeOverview = episode.overview,
+                    onEpisodeClicked = onEpisodeClicked,
+                )
+            }
+
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+        }
+    }
+}
+
+@Composable
+private fun LabelTitle(
+    label: String,
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(2.dp),
+        modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = stringResource(id = R.string.title_all_seasons),
+            text = label,
             style = MaterialTheme.typography.labelMedium.copy(MaterialTheme.colorScheme.secondary),
         )
     }
@@ -226,8 +274,7 @@ private fun AllSeasonsTitle(
 @ThemePreviews
 @Composable
 private fun SeasonDetailScreenPreview(
-    @PreviewParameter(SeasonPreviewParameterProvider::class)
-    state: SeasonDetailsState,
+    @PreviewParameter(SeasonPreviewParameterProvider::class) state: SeasonDetailsState,
 ) {
     TvManiacTheme {
         Surface {

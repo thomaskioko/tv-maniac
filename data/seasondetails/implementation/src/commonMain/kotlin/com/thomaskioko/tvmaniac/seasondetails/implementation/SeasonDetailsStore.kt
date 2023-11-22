@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.core.db.SeasonEpisodeDetailsById
+import com.thomaskioko.tvmaniac.db.DbTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
@@ -21,6 +22,7 @@ class SeasonDetailsStore(
     private val seasonCache: SeasonsDao,
     private val episodesDao: EpisodesDao,
     private val scope: AppCoroutineScope,
+    private val dbTransactionRunner: DbTransactionRunner,
     private val logger: KermitLogger,
 ) : Store<Long, List<SeasonEpisodeDetailsById>> by StoreBuilder
     .from(
@@ -46,19 +48,21 @@ class SeasonDetailsStore(
         sourceOfTruth = SourceOfTruth.of(
             reader = seasonCache::observeSeasonEpisodeDetailsById,
             writer = { id, list ->
-                list.forEach { season ->
-                    seasonCache.upsert(
-                        Season(
-                            id = Id(season.seasonId),
-                            show_id = Id(id),
-                            season_number = season.seasonNumber,
-                            title = season.title,
-                            episode_count = season.episodeCount,
-                            overview = season.overview,
-                        ),
-                    )
+                dbTransactionRunner {
+                    list.forEach { season ->
+                        seasonCache.upsert(
+                            Season(
+                                id = Id(season.seasonId),
+                                show_id = Id(id),
+                                season_number = season.seasonNumber,
+                                title = season.title,
+                                episode_count = season.episodeCount,
+                                overview = season.overview,
+                            ),
+                        )
 
-                    episodesDao.insert(season.episodes)
+                        episodesDao.insert(season.episodes)
+                    }
                 }
             },
             delete = seasonCache::delete,

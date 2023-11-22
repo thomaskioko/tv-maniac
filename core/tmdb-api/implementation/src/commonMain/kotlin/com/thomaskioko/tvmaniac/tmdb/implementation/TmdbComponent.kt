@@ -14,7 +14,9 @@ typealias TmdbHttpClient = HttpClient
 typealias TmdbHttpClientEngine = HttpClientEngine
 typealias TmdbJson = Json
 
-interface TmdbComponent {
+expect interface TmdbPlatformComponent
+
+interface TmdbComponent : TmdbPlatformComponent {
 
     @OptIn(ExperimentalSerializationApi::class)
     @ApplicationScope

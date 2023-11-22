@@ -87,7 +87,7 @@ fun traktHttpClient(
         logger = if (isDebug) {
             object : Logger {
                 override fun log(message: String) {
-                    kermitLogger.debug(message)
+                    kermitLogger.info("TraktHttp", message)
                 }
             }
         } else {

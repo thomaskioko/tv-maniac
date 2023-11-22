@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.episodeimages.implementation
 
+import com.thomaskioko.tvmaniac.episodeimages.api.EpisodeImageDao
 import com.thomaskioko.tvmaniac.episodeimages.api.EpisodeImageRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
@@ -20,19 +21,23 @@ class EpisodeImageRepositoryImpl(
     private val dispatchers: AppCoroutineDispatchers,
     private val requestManagerRepository: RequestManagerRepository,
     private val store: EpisodeImageStore,
+    private val episodeImageDao: EpisodeImageDao,
 ) : EpisodeImageRepository {
 
     override fun updateEpisodeImage(traktId: Long): Flow<Either<Failure, Unit>> =
-        store.stream(
-            StoreReadRequest.cached(
-                key = traktId,
-                refresh = requestManagerRepository.isRequestExpired(
-                    entityId = traktId,
-                    requestType = "EPISODE_IMAGE",
-                    threshold = 1.hours,
-                ),
-            ),
-        )
+        episodeImageDao.observeEpisodeImage(traktId)
+            .flatMapLatest {
+                store.stream(
+                    StoreReadRequest.cached(
+                        key = traktId,
+                        refresh = requestManagerRepository.isRequestExpired(
+                            entityId = traktId,
+                            requestType = "EPISODE_IMAGE",
+                            threshold = 1.hours,
+                        ),
+                    ),
+                )
+            }
             .flatMapLatest { flowOf(Either.Right(Unit)) }
             .flowOn(dispatchers.io)
 }

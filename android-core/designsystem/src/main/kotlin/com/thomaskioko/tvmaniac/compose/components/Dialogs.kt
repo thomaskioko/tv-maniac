@@ -9,7 +9,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
@@ -24,7 +23,7 @@ fun BasicDialog(
     enableConfirmButton: Boolean = true,
     enableDismissButton: Boolean = true,
     dismissButtonText: String? = null,
-    shape: Shape = RectangleShape,
+    shape: Shape = MaterialTheme.shapes.small,
     onDismissDialog: () -> Unit = {},
     confirmButtonClicked: () -> Unit = {},
     dismissButtonClicked: () -> Unit = {},
