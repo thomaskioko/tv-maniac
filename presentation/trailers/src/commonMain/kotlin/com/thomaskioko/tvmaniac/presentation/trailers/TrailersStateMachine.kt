@@ -1,16 +1,13 @@
 package com.thomaskioko.tvmaniac.presentation.trailers
 
-import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
-import com.freeletics.flowredux.dsl.State
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
+import com.thomaskioko.tvmaniac.util.model.Either
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.StoreReadResponse
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class TrailersStateMachine(
     @Assisted private val traktShowId: Long,
@@ -31,6 +28,25 @@ class TrailersStateMachine(
                     }
                 }
 
+                untilIdentityChanges({ state -> state }) {
+                    collectWhileInState(repository.observeTrailersStoreResponse(traktShowId)) { response, state ->
+                        when (response) {
+                            is Either.Left -> {
+                                state.override { TrailerError(response.error.errorMessage) }
+                            }
+
+                            is Either.Right -> {
+                                state.override {
+                                    TrailersContent(
+                                        selectedVideoKey = response.data.toTrailerList()
+                                            .firstOrNull()?.key,
+                                        trailersList = response.data.toTrailerList(),
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
                 on<VideoPlayerError> { action, state ->
                     state.override { TrailerError(action.errorMessage) }
                 }
@@ -45,64 +61,33 @@ class TrailersStateMachine(
 
                 collectWhileInState(repository.observeTrailersStoreResponse(traktShowId)) { response, state ->
                     when (response) {
-                        is StoreReadResponse.Loading -> state.override { LoadingTrailers }
-                        is StoreReadResponse.NoNewData -> state.noChange()
-                        is StoreReadResponse.Data -> {
+                        is Either.Left -> {
+                            state.override { TrailerError(response.error.errorMessage) }
+                        }
+
+                        is Either.Right -> {
                             state.mutate {
                                 copy(
-                                    selectedVideoKey = response.requireData().toTrailerList()
+                                    selectedVideoKey = response.data.toTrailerList()
                                         .firstOrNull()?.key,
-                                    trailersList = response.requireData().toTrailerList(),
+                                    trailersList = response.data.toTrailerList(),
                                 )
                             }
                         }
-
-                        is StoreReadResponse.Error.Exception -> {
-                            state.override { TrailerError("") }
-                        }
-
-                        is StoreReadResponse.Error.Message -> {
-                            state.override { TrailerError(response.message) }
-                        }
                     }
+                }
+
+                on<ReloadTrailers> { _, state ->
+                    state.override { LoadingTrailers }
                 }
             }
 
             inState<TrailerError> {
 
                 on<ReloadTrailers> { _, state ->
-                    reloadTrailers(state)
+                    state.override { LoadingTrailers }
                 }
             }
         }
-    }
-
-    private suspend fun reloadTrailers(state: State<TrailerError>): ChangedState<TrailersState> {
-        var trailerState: ChangedState<TrailersState> = state.override { LoadingTrailers }
-        repository.observeTrailersStoreResponse(traktShowId)
-            .collect { response ->
-                trailerState = when (response) {
-                    is StoreReadResponse.Loading -> state.override { LoadingTrailers }
-                    is StoreReadResponse.NoNewData -> state.noChange()
-                    is StoreReadResponse.Data -> {
-                        state.override {
-                            TrailersContent(
-                                selectedVideoKey = response.requireData().toTrailerList()
-                                    .firstOrNull()?.key,
-                                trailersList = response.requireData().toTrailerList(),
-                            )
-                        }
-                    }
-
-                    is StoreReadResponse.Error.Exception -> {
-                        state.override { TrailerError("") }
-                    }
-
-                    is StoreReadResponse.Error.Message -> {
-                        state.override { TrailerError(response.message) }
-                    }
-                }
-            }
-        return trailerState
     }
 }

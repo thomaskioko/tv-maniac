@@ -13,12 +13,14 @@ kotlin {
                 implementation(projects.core.traktApi.api)
                 implementation(projects.core.util)
                 implementation(projects.data.episodes.api)
-                implementation(projects.data.seasons.api)
+                implementation(projects.data.requestManager.api)
                 implementation(projects.data.seasondetails.api)
+                implementation(projects.data.seasons.api)
 
                 implementation(libs.kotlinInject.runtime)
+                implementation(libs.kotlinx.atomicfu)
                 implementation(libs.sqldelight.extensions)
-
+                implementation(libs.store5)
             }
         }
 

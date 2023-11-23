@@ -1,17 +1,18 @@
 package com.thomaskioko.tvmaniac.watchlist.implementation
 
-import com.thomaskioko.tvmaniac.core.db.SelectWatchlist
+import com.thomaskioko.tvmaniac.core.db.WatchedShow
 import com.thomaskioko.tvmaniac.core.db.Watchlist
-import com.thomaskioko.tvmaniac.core.networkutil.DefaultError
-import com.thomaskioko.tvmaniac.core.networkutil.Either
-import com.thomaskioko.tvmaniac.core.networkutil.Failure
-import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.profile.api.ProfileDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.util.DateFormatter
+import com.thomaskioko.tvmaniac.util.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.DefaultError
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -20,7 +21,7 @@ import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class WatchlistRepositoryImpl constructor(
+class WatchlistRepositoryImpl(
     private val remoteDataSource: TraktListRemoteDataSource,
     private val watchlistDao: WatchlistDao,
     private val profileDao: ProfileDao,
@@ -36,9 +37,9 @@ class WatchlistRepositoryImpl constructor(
                 if (user.slug.isNotBlank()) {
                     watchlistDao.getUnSyncedShows()
                         .map {
-                            remoteDataSource.addShowToWatchList(it.id)
+                            remoteDataSource.addShowToWatchList(it.id.id)
 
-                            watchlistDao.insert(
+                            watchlistDao.upsert(
                                 Watchlist(
                                     id = it.id,
                                     synced = true,
@@ -53,9 +54,9 @@ class WatchlistRepositoryImpl constructor(
     override suspend fun updateWatchlist(traktId: Long, addToWatchList: Boolean) {
         // TODO:: Check if user is signed into trakt and sync followed shows.
         when {
-            addToWatchList -> watchlistDao.insert(
+            addToWatchList -> watchlistDao.upsert(
                 Watchlist(
-                    id = traktId,
+                    id = Id(traktId),
                     synced = false,
                     created_at = dateFormatter.getTimestampMilliseconds(),
                 ),
@@ -65,11 +66,11 @@ class WatchlistRepositoryImpl constructor(
         }
     }
 
-    override fun observeWatchList(): Flow<Either<Failure, List<SelectWatchlist>>> =
-        watchlistDao.observeWatchlist()
+    override fun observeWatchList(): Flow<Either<Failure, List<WatchedShow>>> =
+        watchlistDao.observeWatchedShows()
             .distinctUntilChanged()
             .map { Either.Right(it) }
             .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
 
-    override fun getWatchlist(): List<SelectWatchlist> = watchlistDao.getWatchlist()
+    override suspend fun getWatchlist(): List<WatchedShow> = watchlistDao.getWatchedShows()
 }

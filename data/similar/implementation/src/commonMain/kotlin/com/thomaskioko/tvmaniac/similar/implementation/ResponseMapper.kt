@@ -2,12 +2,13 @@ package com.thomaskioko.tvmaniac.similar.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 
 fun List<TraktShowResponse>.responseToShow(): List<SimilarShows> {
     return map {
         SimilarShows(
-            trakt_id = it.ids.trakt.toLong(),
+            id = Id(it.ids.trakt.toLong()),
             tmdb_id = it.ids.tmdb?.toLong(),
             title = it.title,
             overview = it.overview ?: "",
@@ -26,7 +27,7 @@ fun List<TraktShowResponse>.responseToShow(): List<SimilarShows> {
 
 fun SimilarShows.toShow(): Show {
     return Show(
-        trakt_id = trakt_id,
+        id = id,
         tmdb_id = tmdb_id,
         title = title,
         overview = overview,

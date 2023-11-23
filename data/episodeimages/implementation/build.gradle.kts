@@ -10,9 +10,12 @@ kotlin {
             dependencies {
                 implementation(projects.core.tmdbApi.api)
                 implementation(projects.data.episodeimages.api)
+                implementation(projects.data.requestManager.api)
 
                 implementation(libs.kotlinInject.runtime)
+                implementation(libs.kotlinx.atomicfu)
                 implementation(libs.sqldelight.extensions)
+                implementation(libs.store5)
             }
         }
 

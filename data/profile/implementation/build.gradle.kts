@@ -14,6 +14,8 @@ kotlin {
 
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.sqldelight.extensions)
+                implementation(libs.kotlinx.atomicfu)
+                implementation(libs.store5)
             }
         }
     }

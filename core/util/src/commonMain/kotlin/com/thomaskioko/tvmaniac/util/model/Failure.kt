@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.networkutil
+package com.thomaskioko.tvmaniac.util.model
 
 sealed class Failure(
     val throwable: Throwable,
@@ -6,6 +6,11 @@ sealed class Failure(
 )
 
 class DefaultError(val message: String?) : Failure(
+    throwable = Throwable(message),
+    errorMessage = message,
+)
+
+data class ServerError(val message: String?) : Failure(
     throwable = Throwable(message),
     errorMessage = message,
 )

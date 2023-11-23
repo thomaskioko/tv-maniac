@@ -1,6 +1,7 @@
 package com.thomaskioko.showdetails
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -670,7 +671,7 @@ private fun TrailersContent(
     }
 }
 
-@OptIn(ExperimentalSnapperApi::class)
+@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun SimilarShowsContent(
     isLoading: Boolean,
@@ -696,6 +697,8 @@ fun SimilarShowsContent(
             Spacer(modifier = Modifier.width(value.dp))
 
             TvPosterCard(
+                modifier = Modifier
+                    .animateItemPlacement(),
                 posterImageUrl = tvShow.posterImageUrl,
                 title = tvShow.title,
                 onClick = { onShowClicked(tvShow.traktId) },

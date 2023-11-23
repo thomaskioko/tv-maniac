@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.discover
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
+import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 import kotlinx.collections.immutable.toImmutableList
 
@@ -39,7 +40,7 @@ class DiscoverPreviewParameterProvider : PreviewParameterProvider<DiscoverState>
         get() {
             return sequenceOf(
                 discoverContentSuccess,
-                DataLoaded(errorMessage = "Opps! Something went wrong"),
+                ErrorState(errorMessage = "Opps! Something went wrong"),
             )
         }
 }

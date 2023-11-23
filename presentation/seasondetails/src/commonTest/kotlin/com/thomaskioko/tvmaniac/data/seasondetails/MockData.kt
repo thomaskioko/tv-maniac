@@ -3,8 +3,9 @@ package com.thomaskioko.tvmaniac.data.seasondetails
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetails
+import kotlinx.collections.immutable.persistentListOf
 
-val episodes = listOf(
+val episodes = persistentListOf(
     Episode(
         id = 12345,
         seasonId = 12343,
@@ -19,7 +20,7 @@ val episodes = listOf(
     ),
 )
 
-val seasonDetailsList = listOf(
+val seasonDetailsList = persistentListOf(
     SeasonDetails(
         seasonId = 12343,
         seasonName = "Season 01",

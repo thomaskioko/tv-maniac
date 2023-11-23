@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface ShowsDao {
 
-    fun insert(show: Show)
+    fun upsert(show: Show)
 
-    fun insert(list: List<Show>)
+    fun upsert(list: List<Show>)
 
     fun observeTvShow(showId: Long): Flow<ShowById>
 
@@ -21,6 +21,4 @@ interface ShowsDao {
     fun getTvShow(traktId: Long): ShowById
 
     fun deleteTvShows()
-
-    fun getShowsByCategoryID(categoryId: Long): List<ShowsByCategory>
 }

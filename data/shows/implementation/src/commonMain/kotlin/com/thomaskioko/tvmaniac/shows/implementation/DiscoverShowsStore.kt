@@ -47,7 +47,7 @@ class DiscoverShowsStore(
 
             val shows = list.map {
                 Show(
-                    trakt_id = it.trakt_id,
+                    id = it.id,
                     tmdb_id = it.tmdb_id,
                     title = it.title,
                     overview = it.overview,
@@ -61,8 +61,8 @@ class DiscoverShowsStore(
                     genres = it.genres,
                 )
             }
-            showsDao.insert(shows)
-            categoryCache.insert(mapper.toCategoryCache(shows, category.id))
+            showsDao.upsert(shows)
+            categoryCache.upsert(mapper.toCategoryCache(shows, category.id))
         },
     ),
 )

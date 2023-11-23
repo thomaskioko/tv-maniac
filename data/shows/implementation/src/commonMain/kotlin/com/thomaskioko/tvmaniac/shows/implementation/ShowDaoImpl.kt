@@ -8,21 +8,22 @@ import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.Shows
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.shows.api.ShowsDao
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ShowDaoImpl constructor(
+class ShowDaoImpl(
     private val database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
 ) : ShowsDao {
 
-    override fun insert(show: Show) {
+    override fun upsert(show: Show) {
         database.showQueries.transaction {
             database.showQueries.insertOrReplace(
-                trakt_id = show.trakt_id,
+                id = show.id,
                 tmdb_id = show.tmdb_id,
                 title = show.title,
                 overview = show.overview,
@@ -37,18 +38,18 @@ class ShowDaoImpl constructor(
         }
     }
 
-    override fun insert(list: List<Show>) {
-        list.forEach { insert(it) }
+    override fun upsert(list: List<Show>) {
+        list.forEach { upsert(it) }
     }
 
     override fun observeTvShow(showId: Long): Flow<ShowById> {
-        return database.showQueries.showById(showId)
+        return database.showQueries.showById(Id(showId))
             .asFlow()
             .mapToOne(dispatchers.io)
     }
 
     override fun observeCachedShows(categoryId: Long): Flow<List<ShowsByCategory>> {
-        return database.showQueries.showsByCategory(categoryId)
+        return database.show_categoryQueries.showsByCategory(Id(categoryId))
             .asFlow()
             .mapToList(dispatchers.io)
     }
@@ -60,14 +61,10 @@ class ShowDaoImpl constructor(
     }
 
     override fun getTvShow(traktId: Long): ShowById =
-        database.showQueries.showById(traktId)
+        database.showQueries.showById(Id(traktId))
             .executeAsOne()
 
     override fun deleteTvShows() {
         database.showQueries.deleteAll()
     }
-
-    override fun getShowsByCategoryID(categoryId: Long): List<ShowsByCategory> =
-        database.showQueries.showsByCategory(categoryId)
-            .executeAsList()
 }

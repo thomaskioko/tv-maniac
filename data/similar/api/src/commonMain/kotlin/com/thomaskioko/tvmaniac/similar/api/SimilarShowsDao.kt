@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface SimilarShowsDao {
 
-    fun insert(traktId: Long, similarShowId: Long)
+    fun upsert(showId: Long, similarShowId: Long)
 
     fun observeSimilarShows(traktId: Long): Flow<List<SimilarShows>>
 

@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.data.trailers.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbNetworkDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
+import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
@@ -22,7 +22,7 @@ class TrailerStore(
     private val requestManagerRepository: RequestManagerRepository,
     private val logger: KermitLogger,
     private val scope: AppCoroutineScope,
-) : Store<Long, List<Trailers>> by StoreBuilder.from<Long, List<Trailers>, List<Trailers>>(
+) : Store<Long, List<Trailers>> by StoreBuilder.from(
     fetcher = Fetcher.of { id ->
 
         val show = showsDao.getTvShow(id)
@@ -49,10 +49,10 @@ class TrailerStore(
     sourceOfTruth = SourceOfTruth.of(
         reader = { id -> trailerDao.observeTrailersById(id) },
         writer = { id, list ->
-            trailerDao.insert(list)
+            trailerDao.upsert(list)
             requestManagerRepository.insert(
                 LastRequest(
-                    id = list.first().trakt_id,
+                    id = list.first().show_id.id,
                     entityId = id,
                     requestType = "TRAILERS",
                 ),

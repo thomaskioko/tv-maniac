@@ -12,16 +12,16 @@ class CategoryCacheImpl(
 
     private val showCategoryQuery get() = database.show_categoryQueries
 
-    override fun insert(category: Show_category) {
+    override fun upsert(category: Show_category) {
         database.transaction {
             showCategoryQuery.insertOrReplace(
-                trakt_id = category.trakt_id,
+                id = category.id,
                 category_id = category.category_id,
             )
         }
     }
 
-    override fun insert(category: List<Show_category>) {
-        category.forEach { insert(it) }
+    override fun upsert(category: List<Show_category>) {
+        category.forEach { upsert(it) }
     }
 }

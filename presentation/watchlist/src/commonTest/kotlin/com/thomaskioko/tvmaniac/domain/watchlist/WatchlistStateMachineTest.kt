@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.watchlist
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.core.networkutil.Either
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistContent
 import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistStateMachine
@@ -18,7 +17,7 @@ class WatchlistStateMachineTest {
 
     @Test
     fun initial_state_emits_expected_result() = runTest {
-        repository.setFollowedResult(Either.Right(data = watchlistResult))
+        repository.setFollowedResult(watchlistResult)
 
         stateMachine.state.test {
             awaitItem() shouldBe LoadingShows

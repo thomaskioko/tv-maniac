@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.seasons.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Seasons
-import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
+import com.thomaskioko.tvmaniac.core.db.SeasonsByShowId
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
+import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
@@ -22,7 +22,7 @@ class SeasonsStore(
     private val seasonsDao: SeasonsDao,
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
-) : Store<Long, List<Seasons>> by StoreBuilder.from<Long, List<Seasons>, List<Seasons>>(
+) : Store<Long, List<SeasonsByShowId>> by StoreBuilder.from(
     fetcher = Fetcher.of { id ->
         when (val response = remoteDataSource.getShowSeasons(id)) {
             is ApiResponse.Success -> response.body.toSeasonCacheList(id)
@@ -43,14 +43,14 @@ class SeasonsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of(
-        reader = seasonsDao::observeSeasons,
+        reader = seasonsDao::observeSeasonsByShowId,
         writer = { id, list ->
 
-            seasonsDao.insertSeasons(list)
+            seasonsDao.upsert(list)
 
             requestManagerRepository.insert(
                 LastRequest(
-                    id = list.first().id,
+                    id = list.first().id.id,
                     entityId = id,
                     requestType = "SEASON",
                     timestamp = Clock.System.now(),

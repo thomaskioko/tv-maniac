@@ -1,31 +1,39 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.ShowId;
+
 CREATE TABLE show_image (
-trakt_id INTEGER NOT NULL PRIMARY KEY,
-tmdb_id INTEGER DEFAULT NULL,
-poster_url TEXT DEFAULT NULL,
-backdrop_url TEXT DEFAULT NULL,
-FOREIGN KEY (trakt_id) REFERENCES show(trakt_id) ON DELETE CASCADE
+    id INTEGER AS Id<ShowId> NOT NULL PRIMARY KEY,
+    tmdb_id INTEGER DEFAULT NULL,
+    poster_url TEXT DEFAULT NULL,
+    backdrop_url TEXT DEFAULT NULL,
+    FOREIGN KEY(id) REFERENCES show(id) ON DELETE CASCADE,
+    UNIQUE(id)
 );
 
 insertOrReplace:
 INSERT OR REPLACE INTO show_image(
-trakt_id,
-tmdb_id,
-poster_url,
-backdrop_url
+    id,
+    tmdb_id,
+    poster_url,
+    backdrop_url
 )
 VALUES(?,?,?,?);
 
-selectImages:
-SELECT * FROM show_image
-WHERE poster_url IS NULL;
-
-selectShowImages:
-SELECT show.trakt_id, show.tmdb_id FROM show
-LEFT OUTER JOIN show_image ON show_image.trakt_id = show.trakt_id
-WHERE poster_url IS NULL AND backdrop_url IS NULL;
+emptyShowImage:
+SELECT
+    show.id,
+    show.tmdb_id,
+    show_image.poster_url,
+    show_image.backdrop_url
+FROM
+    show
+LEFT OUTER JOIN
+    show_image ON show_image.id = show.id
+WHERE
+    poster_url IS NULL AND backdrop_url IS NULL;
 
 delete:
-DELETE FROM show_image WHERE trakt_id = ?;
+DELETE FROM show_image WHERE id = ?;
 
 deleteAll:
 DELETE FROM show_image;

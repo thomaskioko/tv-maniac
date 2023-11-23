@@ -1,20 +1,20 @@
 package com.thomaskioko.tvmaniac.shows.api
 
-import com.thomaskioko.tvmaniac.core.db.SelectWatchlist
+import com.thomaskioko.tvmaniac.core.db.WatchedShow
 import com.thomaskioko.tvmaniac.core.db.Watchlist
 import kotlinx.coroutines.flow.Flow
 
 interface WatchlistDao {
 
-    fun insert(followedShow: Watchlist)
+    fun upsert(watchlist: Watchlist)
 
-    fun insert(followedShows: List<Watchlist>)
+    fun upsert(watchedShowList: List<Watchlist>)
 
-    fun getWatchlist(): List<SelectWatchlist>
+    fun getWatchedShows(): List<WatchedShow>
 
     fun getUnSyncedShows(): List<Watchlist>
 
-    fun observeWatchlist(): Flow<List<SelectWatchlist>>
+    fun observeWatchedShows(): Flow<List<WatchedShow>>
 
     fun updateShowSyncState(traktId: Long)
 

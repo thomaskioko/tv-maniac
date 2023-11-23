@@ -13,6 +13,8 @@ kotlin {
                 implementation(projects.data.episodes.api)
                 implementation(projects.data.seasondetails.api)
 
+                api(libs.kotlinx.collections)
+
                 implementation(libs.flowredux)
                 implementation(libs.kotlinInject.runtime)
             }

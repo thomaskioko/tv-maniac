@@ -1,11 +1,12 @@
 package com.thomaskioko.tvmaniac.seasons.api
 
-import com.thomaskioko.tvmaniac.core.db.Seasons
+import com.thomaskioko.tvmaniac.core.db.SeasonsByShowId
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.flow.Flow
-import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 interface SeasonsRepository {
 
-    suspend fun getSeasons(traktId: Long): List<Seasons>
-    fun observeSeasonsStoreResponse(traktId: Long): Flow<StoreReadResponse<List<Seasons>>>
+    suspend fun fetchSeasonsByShowId(traktId: Long): List<SeasonsByShowId>
+    fun observeSeasonsByShowId(traktId: Long): Flow<Either<Failure, List<SeasonsByShowId>>>
 }

@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.Show_category
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
-import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.KermitLogger
+import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -35,10 +36,12 @@ class DiscoverResponseMapper(
             logger.error("ShowStore GenericError", "${response.errorBody}")
             throw Throwable("${response.errorMessage}")
         }
+
         is ApiResponse.Error.GenericError -> {
             logger.error("ShowStore GenericError", "${response.errorMessage}")
             throw Throwable("${response.errorMessage}")
         }
+
         is ApiResponse.Error.SerializationError -> {
             logger.error("ShowStore GenericError", "${response.errorMessage}")
             throw Throwable("${response.errorMessage}")
@@ -58,10 +61,12 @@ class DiscoverResponseMapper(
             logger.error("ShowStore GenericError", "${response.errorBody}")
             throw Throwable("${response.errorMessage}")
         }
+
         is ApiResponse.Error.SerializationError -> {
             logger.error("ShowStore GenericError", "${response.errorMessage}")
             throw Throwable("${response.errorMessage}")
         }
+
         is ApiResponse.Error.GenericError -> {
             logger.error("ShowStore GenericError", "${response.errorMessage}")
             throw Throwable("${response.errorMessage}")
@@ -69,7 +74,7 @@ class DiscoverResponseMapper(
     }
 
     private fun responseToEntity(response: TraktShowResponse) = ShowsByCategory(
-        trakt_id = response.ids.trakt.toLong(),
+        id = Id(id = response.ids.trakt.toLong()),
         tmdb_id = response.ids.tmdb?.toLong(),
         title = response.title,
         overview = response.overview ?: "",
@@ -87,7 +92,7 @@ class DiscoverResponseMapper(
     )
 
     fun responseToShow(response: TraktShowResponse) = ShowById(
-        trakt_id = response.ids.trakt.toLong(),
+        id = Id(id = response.ids.trakt.toLong()),
         tmdb_id = response.ids.tmdb?.toLong(),
         title = response.title,
         overview = response.overview ?: "",
@@ -99,18 +104,14 @@ class DiscoverResponseMapper(
         rating = formatterUtil.formatDouble(response.rating, 1),
         genres = response.genres.map { it.replaceFirstChar { it.uppercase() } },
         status = response.status.replaceFirstChar { it.uppercase() },
-        trakt_id_ = null,
-        tmdb_id_ = null,
         poster_url = null,
         backdrop_url = null,
-        id = null,
-        created_at = null,
-        synced = false,
+        in_watchlist = 0L,
     )
 
     fun toShow(showById: ShowById) =
         Show(
-            trakt_id = showById.trakt_id,
+            id = showById.id,
             tmdb_id = showById.tmdb_id,
             title = showById.title,
             overview = showById.overview,
@@ -126,7 +127,7 @@ class DiscoverResponseMapper(
 
     private fun showResponseToCacheList(response: TraktShowsResponse): ShowsByCategory =
         ShowsByCategory(
-            trakt_id = response.show.ids.trakt.toLong(),
+            id = Id(id = response.show.ids.trakt.toLong()),
             tmdb_id = response.show.ids.tmdb?.toLong(),
             title = response.show.title,
             overview = response.show.overview ?: "",
@@ -145,8 +146,8 @@ class DiscoverResponseMapper(
 
     fun toCategoryCache(shows: List<Show>, categoryId: Long) = shows.map {
         Show_category(
-            trakt_id = it.trakt_id,
-            category_id = categoryId,
+            id = Id(id = it.id.id),
+            category_id = Id(categoryId),
         )
     }
 }

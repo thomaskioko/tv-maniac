@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.trakt.api
 
-import com.thomaskioko.tvmaniac.core.networkutil.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
+import com.thomaskioko.tvmaniac.util.model.ApiResponse
 
 private const val DEFAULT_API_PAGE: Long = 1
 private const val FETCH_PERIOD: String = "daily"

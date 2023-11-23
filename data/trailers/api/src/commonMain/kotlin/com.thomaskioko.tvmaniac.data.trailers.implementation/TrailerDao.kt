@@ -5,9 +5,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface TrailerDao {
 
-    fun insert(trailer: Trailers)
+    fun upsert(trailer: Trailers)
 
-    fun insert(trailerList: List<Trailers>)
+    fun upsert(trailerList: List<Trailers>)
 
     fun observeTrailersById(showId: Long): Flow<List<Trailers>>
 

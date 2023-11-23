@@ -1,9 +1,10 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import me.tatarka.inject.annotations.Inject
-import com.thomaskioko.tvmaniac.core.db.Episodes as EpisodeCache
+import com.thomaskioko.tvmaniac.core.db.Episode as EpisodeCache
 
 @Inject
 class EpisodesDaoImpl(
@@ -15,7 +16,7 @@ class EpisodesDaoImpl(
     override fun insert(entity: EpisodeCache) {
         database.transaction {
             episodeQueries.insertOrReplace(
-                trakt_id = entity.trakt_id,
+                id = entity.id,
                 season_id = entity.season_id,
                 tmdb_id = entity.tmdb_id,
                 title = entity.title,
@@ -33,7 +34,7 @@ class EpisodesDaoImpl(
     }
 
     override fun delete(id: Long) {
-        episodeQueries.delete(id)
+        episodeQueries.delete(Id(id))
     }
 
     override fun deleteAll() {

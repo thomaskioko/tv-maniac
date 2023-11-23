@@ -3,13 +3,13 @@ package com.thomaskioko.tvmaniac.presentation.trailers
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
 
-internal fun List<Trailers>?.toTrailerList(): List<Trailer> {
-    return this?.map {
+internal fun List<Trailers>.toTrailerList(): List<Trailer> {
+    return map {
         Trailer(
-            showId = it.trakt_id,
+            showId = it.show_id.id,
             key = it.key,
             name = it.name,
             youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg",
         )
-    } ?: emptyList()
+    }
 }

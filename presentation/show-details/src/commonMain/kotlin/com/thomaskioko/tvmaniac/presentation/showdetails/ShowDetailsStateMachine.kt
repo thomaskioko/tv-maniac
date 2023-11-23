@@ -3,7 +3,8 @@ package com.thomaskioko.tvmaniac.presentation.showdetails
 import com.freeletics.flowredux.dsl.ChangedState
 import com.freeletics.flowredux.dsl.FlowReduxStateMachine
 import com.freeletics.flowredux.dsl.State
-import com.thomaskioko.tvmaniac.core.db.Seasons
+import com.thomaskioko.tvmaniac.core.db.SeasonsByShowId
+import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
@@ -12,14 +13,15 @@ import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Inject
-class ShowDetailsStateMachine constructor(
+class ShowDetailsStateMachine(
     @Assisted private val traktShowId: Long,
     private val discoverRepository: DiscoverRepository,
     private val similarShowsRepository: SimilarShowsRepository,
@@ -39,38 +41,17 @@ class ShowDetailsStateMachine constructor(
                     fetchShowDetails(state)
                 }
 
-                collectWhileInState(discoverRepository.observeShow(traktShowId)) { response, state ->
-                    when (response) {
-                        is StoreReadResponse.NoNewData -> state.noChange()
-                        is StoreReadResponse.Loading -> state.mutate {
-                            copy(isLoading = true)
-                        }
-
-                        is StoreReadResponse.Data -> state.mutate {
-                            copy(
-                                isLoading = false,
-                                show = response.requireData().toTvShow(),
-                            )
-                        }
-
-                        is StoreReadResponse.Error.Exception ->
-                            state.mutate {
-                                copy(
-                                    isLoading = false,
-                                    errorMessage = response.errorMessageOrNull(),
-                                )
-                            }
-
-                        is StoreReadResponse.Error.Message -> state.mutate {
-                            copy(
-                                isLoading = false,
-                                errorMessage = response.message,
-                            )
-                        }
+                untilIdentityChanges({ state -> state.show.traktId }) {
+                    collectWhileInState(discoverRepository.observeShow(traktShowId)) { result, state ->
+                        updateShowDetails(result, state)
                     }
                 }
 
-                collectWhileInState(seasonsRepository.observeSeasonsStoreResponse(traktShowId)) { result, state ->
+                collectWhileInState(discoverRepository.observeShow(traktShowId)) { response, state ->
+                    updateShowDetails(response, state)
+                }
+
+                collectWhileInState(seasonsRepository.observeSeasonsByShowId(traktShowId)) { result, state ->
                     updateSeasonDetailsState(result, state)
                 }
 
@@ -119,136 +100,90 @@ class ShowDetailsStateMachine constructor(
         }
     }
 
-    private fun updateSimilarShowsState(
-        response: StoreReadResponse<List<SimilarShows>>,
+    private fun updateShowDetails(
+        response: Either<Failure, ShowById>,
         state: State<ShowDetailsLoaded>,
     ) = when (response) {
-        is StoreReadResponse.NoNewData -> state.noChange()
-        is StoreReadResponse.Loading -> {
-            state.mutate {
-                copy(
-                    similarShowsContent = similarShowsContent
-                        .copy(isLoading = true),
-                )
-            }
+        is Either.Left -> state.mutate {
+            copy(
+                isLoading = false,
+                errorMessage = response.error.errorMessage,
+            )
         }
 
-        is StoreReadResponse.Data -> {
-            state.mutate {
-                copy(
-                    similarShowsContent = similarShowsContent.copy(
-                        isLoading = false,
-                        similarShows = response.requireData().toSimilarShowList(),
-                    ),
-                )
-            }
-        }
-
-        is StoreReadResponse.Error.Exception -> {
-            state.mutate {
-                copy(
-                    similarShowsContent = similarShowsContent.copy(
-                        errorMessage = response.error.message,
-                    ),
-                )
-            }
-        }
-
-        is StoreReadResponse.Error.Message -> {
-            state.mutate {
-                copy(
-                    similarShowsContent = similarShowsContent.copy(
-                        errorMessage = response.message,
-                    ),
-                )
-            }
+        is Either.Right -> state.mutate {
+            copy(
+                isLoading = false,
+                show = response.data.toTvShow(),
+            )
         }
     }
 
-    private fun updateTrailerState(
-        response: StoreReadResponse<List<Trailers>>,
+    private fun updateSimilarShowsState(
+        response: Either<Failure, List<SimilarShows>>,
         state: State<ShowDetailsLoaded>,
     ) = when (response) {
-        is StoreReadResponse.NoNewData -> state.noChange()
-        is StoreReadResponse.Loading -> state.mutate {
+        is Either.Left -> state.mutate {
             copy(
-                trailersContent = trailersContent.copy(
-                    isLoading = true,
+                similarShowsContent = similarShowsContent.copy(
+                    errorMessage = response.error.errorMessage,
                 ),
             )
         }
 
-        is StoreReadResponse.Data -> {
+        is Either.Right -> state.mutate {
+            copy(
+                similarShowsContent = similarShowsContent.copy(
+                    isLoading = false,
+                    similarShows = response.data.toSimilarShowList(),
+                ),
+            )
+        }
+    }
+
+    private fun updateTrailerState(
+        response: Either<Failure, List<Trailers>>,
+        state: State<ShowDetailsLoaded>,
+    ) = when (response) {
+        is Either.Left -> {
+            state.mutate {
+                copy(trailersContent = trailersContent.copy(errorMessage = response.error.errorMessage))
+            }
+        }
+
+        is Either.Right -> {
             state.mutate {
                 copy(
                     trailersContent = trailersContent.copy(
                         isLoading = false,
-                        trailersList = response.requireData().toTrailerList(),
+                        trailersList = response.data.toTrailerList(),
                     ),
                 )
-            }
-        }
-
-        is StoreReadResponse.Error.Exception -> {
-            state.mutate {
-                copy(
-                    trailersContent = trailersContent.copy(
-                        errorMessage = response.error.message,
-                    ),
-                )
-            }
-        }
-
-        is StoreReadResponse.Error.Message -> {
-            state.mutate {
-                copy(trailersContent = trailersContent.copy(errorMessage = response.message))
             }
         }
     }
 
     private fun updateSeasonDetailsState(
-        response: StoreReadResponse<List<Seasons>>,
+        response: Either<Failure, List<SeasonsByShowId>>,
         state: State<ShowDetailsLoaded>,
     ) = when (response) {
-        is StoreReadResponse.NoNewData -> state.noChange()
-        is StoreReadResponse.Loading -> {
+        is Either.Left -> {
             state.mutate {
                 copy(
                     seasonsContent = seasonsContent.copy(
                         isLoading = true,
+                        errorMessage = response.error.errorMessage,
                     ),
                 )
             }
         }
 
-        is StoreReadResponse.Data -> {
+        is Either.Right -> {
             state.mutate {
                 copy(
                     seasonsContent = seasonsContent.copy(
                         isLoading = false,
-                        seasonsList = response.requireData().toSeasonsList(),
-                    ),
-                )
-            }
-        }
-
-        is StoreReadResponse.Error.Exception -> {
-            state.mutate {
-                copy(
-                    seasonsContent = seasonsContent.copy(
-                        isLoading = true,
-                        errorMessage = response.error.message,
-                    ),
-                )
-            }
-        }
-
-        is StoreReadResponse.Error.Message -> {
-            state.mutate {
-                copy(
-                    seasonsContent = seasonsContent.copy(
-                        isLoading = true,
-                        errorMessage = response.message,
+                        seasonsList = response.data.toSeasonsList(),
                     ),
                 )
             }
@@ -258,7 +193,7 @@ class ShowDetailsStateMachine constructor(
     private suspend fun fetchShowDetails(state: State<ShowDetailsLoaded>): ChangedState<ShowDetailsState> {
         val show = discoverRepository.getShowById(traktShowId)
         val similar = similarShowsRepository.fetchSimilarShows(traktShowId)
-        val season = seasonsRepository.getSeasons(traktShowId)
+        val season = seasonsRepository.fetchSeasonsByShowId(traktShowId)
         val trailers = trailerRepository.fetchTrailersByShowId(traktShowId)
 
         return state.mutate {

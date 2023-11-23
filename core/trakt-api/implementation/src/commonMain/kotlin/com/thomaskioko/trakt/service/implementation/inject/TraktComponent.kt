@@ -21,7 +21,7 @@ import me.tatarka.inject.annotations.Provides
 typealias TraktHttpClient = HttpClient
 typealias TraktJson = Json
 
-interface TraktComponent {
+interface TraktComponent : TraktPlatformComponent {
 
     @ApplicationScope
     @Provides

@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.core.db
 
 import app.cash.sqldelight.db.SqlDriver
+import com.thomaskioko.tvmaniac.db.IdAdapter
 import com.thomaskioko.tvmaniac.db.InstantColumnAdapter
 import com.thomaskioko.tvmaniac.db.stringColumnAdapter
 import kotlin.test.AfterTest
@@ -18,9 +19,39 @@ abstract class BaseDatabaseTest {
         driver = sqlDriver,
         showAdapter = Show.Adapter(
             genresAdapter = stringColumnAdapter,
+            idAdapter = IdAdapter(),
         ),
         last_requestsAdapter = Last_requests.Adapter(
             timestampAdapter = InstantColumnAdapter,
+        ),
+        episode_imageAdapter = Episode_image.Adapter(
+            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+        ),
+        episodeAdapter = Episode.Adapter(
+            idAdapter = IdAdapter(),
+            season_idAdapter = IdAdapter(),
+        ),
+        seasonAdapter = Season.Adapter(
+            idAdapter = IdAdapter(),
+            show_idAdapter = IdAdapter(),
+        ),
+        show_imageAdapter = Show_image.Adapter(
+            idAdapter = IdAdapter(),
+        ),
+        similar_showsAdapter = Similar_shows.Adapter(
+            idAdapter = IdAdapter(),
+            similar_show_idAdapter = IdAdapter(),
+        ),
+        watchlistAdapter = Watchlist.Adapter(
+            idAdapter = IdAdapter(),
+        ),
+        show_categoryAdapter = Show_category.Adapter(
+            idAdapter = IdAdapter(),
+            category_idAdapter = IdAdapter(),
+        ),
+        trailersAdapter = Trailers.Adapter(
+            show_idAdapter = IdAdapter(),
         ),
     )
 
