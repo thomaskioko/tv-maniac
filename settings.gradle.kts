@@ -36,6 +36,7 @@ include(
     ":android-features:trailers",
     ":android-features:watchlist",
     ":app",
+    ":common:navigation",
     ":core:database",
     ":core:datastore:api",
     ":core:datastore:implementation",
