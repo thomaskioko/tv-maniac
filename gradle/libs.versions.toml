@@ -38,6 +38,7 @@ snapper = "0.3.0"
 sqldelight = "2.0.0"
 store5 = "5.0.0"
 turbine = "1.0.0"
+voyager = "1.0.0-rc10"
 yamlkt = "0.12.0"
 youtubePlayer = "11.0.1"
 
@@ -105,6 +106,12 @@ sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapte
 store5 = { module = "org.mobilenativefoundation.store:store5", version.ref = "store5" }
 
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+
+voyager-core = { module = "cafe.adriel.voyager:voyager-core", version.ref = "voyager" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-bottomSheetNavigator = { module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+
 yamlkt = { module = "net.mamoe.yamlkt:yamlkt", version.ref = "yamlkt" }
 youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "youtubePlayer" }
 
