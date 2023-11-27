@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.workmanager
+package com.thomaskioko.tvmaniac.util
 
 /**
  * This would ideally be in a 'core' module but since we are only using it in the work manager,

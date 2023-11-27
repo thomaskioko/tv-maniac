@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.initializers
 
-import com.thomaskioko.tvmaniac.workmanager.AppInitializer
+import com.thomaskioko.tvmaniac.util.AppInitializer
 import me.tatarka.inject.annotations.Inject
 
 @Inject
