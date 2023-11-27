@@ -9,7 +9,6 @@ kotlin {
 
         androidMain {
             dependencies {
-                implementation(projects.androidCore.workmanager)
                 implementation(projects.core.traktAuth.api)
                 implementation(projects.core.util)
 
