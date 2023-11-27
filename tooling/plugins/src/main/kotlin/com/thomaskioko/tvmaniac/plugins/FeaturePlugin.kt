@@ -11,7 +11,7 @@ class FeaturePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             pluginManager.apply {
-                apply("tvmaniac.compose.library")
+                apply("plugin.tvmaniac.compose.library")
                 apply("com.google.devtools.ksp")
             }
             extensions.configure<LibraryExtension> {

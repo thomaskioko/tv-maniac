@@ -37,7 +37,7 @@ gradlePlugin {
             implementationClass = "com.thomaskioko.tvmaniac.plugins.KotlinAndroidPlugin"
         }
         register("androidComposeLibrary") {
-            id = "tvmaniac.compose.library"
+            id = "plugin.tvmaniac.compose.library"
             implementationClass = "com.thomaskioko.tvmaniac.plugins.ComposeLibraryPlugin"
         }
         register("androidFeature") {

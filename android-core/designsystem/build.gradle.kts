@@ -1,5 +1,5 @@
 plugins {
-    id("tvmaniac.compose.library")
+    id("plugin.tvmaniac.compose.library")
 }
 
 android {
