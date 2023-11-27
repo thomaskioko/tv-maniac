@@ -41,6 +41,8 @@ dependencies {
     implementation(projects.androidFeatures.trailers)
     implementation(projects.androidFeatures.watchlist)
 
+    implementation(projects.common.navigation)
+
     implementation(projects.core.database)
     implementation(projects.core.datastore.api)
     implementation(projects.core.datastore.implementation)

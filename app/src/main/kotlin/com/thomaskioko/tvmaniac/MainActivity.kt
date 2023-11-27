@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,23 +21,21 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.viewModelFactory
+import cafe.adriel.voyager.navigator.Navigator
 import com.thomaskioko.tvmaniac.MainActivityUiState.DataLoaded
 import com.thomaskioko.tvmaniac.MainActivityUiState.Loading
+import com.thomaskioko.tvmaniac.compose.MainUiContent
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.Theme
-import com.thomaskioko.tvmaniac.home.HomeScreen
+import com.thomaskioko.tvmaniac.discover.DiscoverScreen
 import com.thomaskioko.tvmaniac.inject.MainActivityComponent
 import com.thomaskioko.tvmaniac.inject.create
-import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
-import com.thomaskioko.tvmaniac.util.extensions.unsafeLazy
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private lateinit var component: MainActivityComponent
-
-    private val navFactorySet: Set<ComposeNavigationFactory> by unsafeLazy { component.navFactorySet }
 
     private val viewModel: MainActivityViewModel by viewModels {
         viewModelFactory {
@@ -75,25 +74,29 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            val darkTheme = shouldUseDarkTheme(uiState)
+            CompositionLocalProvider(*component.hooks) {
+                val darkTheme = shouldUseDarkTheme(uiState)
 
-            DisposableEffect(darkTheme) {
-                enableEdgeToEdge(
-                    statusBarStyle = SystemBarStyle.auto(
-                        Color.TRANSPARENT,
-                        Color.TRANSPARENT,
-                    ) { darkTheme },
-                    navigationBarStyle = SystemBarStyle.auto(
-                        lightScrim,
-                        darkScrim,
-                    ) { darkTheme },
-                )
-                onDispose {}
-            }
+                DisposableEffect(darkTheme) {
+                    enableEdgeToEdge(
+                        statusBarStyle = SystemBarStyle.auto(
+                            Color.TRANSPARENT,
+                            Color.TRANSPARENT,
+                        ) { darkTheme },
+                        navigationBarStyle = SystemBarStyle.auto(
+                            lightScrim,
+                            darkScrim,
+                        ) { darkTheme },
+                    )
+                    onDispose {}
+                }
 
-            TvManiacTheme(darkTheme = darkTheme) {
-                Surface {
-                    HomeScreen(navFactorySet)
+                TvManiacTheme(darkTheme = darkTheme) {
+                    Surface {
+                        Navigator(screen = DiscoverScreen) { navigator ->
+                            MainUiContent(navigator)
+                        }
+                    }
                 }
             }
         }
