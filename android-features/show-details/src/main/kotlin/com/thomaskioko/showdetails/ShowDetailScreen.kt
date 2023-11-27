@@ -66,8 +66,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
 import com.thomaskioko.showdetails.DetailConstants.HEADER_HEIGHT
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
@@ -83,79 +82,19 @@ import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
-import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
-import com.thomaskioko.tvmaniac.presentation.showdetails.DismissWebViewError
-import com.thomaskioko.tvmaniac.presentation.showdetails.FollowShowClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
-import com.thomaskioko.tvmaniac.presentation.showdetails.WebViewError
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 
-typealias ShowDetail = @Composable (
-    onBackClicked: () -> Unit,
-    onShowClicked: (Long) -> Unit,
-    onSeasonClicked: (Long, String) -> Unit,
-    onWatchTrailerClicked: (Long, String?) -> Unit,
-) -> Unit
-
-@Inject
-@Composable
-fun ShowDetail(
-    viewModelFactory: (SavedStateHandle) -> ShowDetailsViewModel,
-    @Assisted onBackClicked: () -> Unit,
-    @Assisted onShowClicked: (Long) -> Unit,
-    @Assisted onSeasonClicked: (Long, String) -> Unit,
-    @Assisted onWatchTrailerClicked: (Long, String?) -> Unit = { _, _ -> },
-) {
-    ShowDetailScreen(
-        viewModel = viewModel(factory = viewModelFactory),
-        onBackClicked = onBackClicked,
-        onSeasonClicked = onSeasonClicked,
-        onShowClicked = onShowClicked,
-        onWatchTrailerClicked = onWatchTrailerClicked,
-    )
-}
-
-@Composable
-internal fun ShowDetailScreen(
-    viewModel: ShowDetailsViewModel,
-    onBackClicked: () -> Unit,
-    onSeasonClicked: (Long, String) -> Unit,
-    onShowClicked: (Long) -> Unit,
-    onWatchTrailerClicked: (Long, String?) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
-    val listState = rememberLazyListState()
-    val title = (viewState as? ShowDetailsLoaded)?.show?.title ?: ""
-
-    ShowDetailScreen(
-        state = viewState,
-        title = title,
-        modifier = modifier,
-        snackbarHostState = snackbarHostState,
-        listState = listState,
-        onBackClicked = onBackClicked,
-        onSeasonClicked = onSeasonClicked,
-        onShowClicked = onShowClicked,
-        onWatchTrailerClicked = { canPlay, traktId, trailerKey ->
-            if (canPlay) {
-                onWatchTrailerClicked(traktId, trailerKey)
-            } else {
-                viewModel.dispatch(WebViewError)
-            }
-        },
-        onUpdateFavoriteClicked = { viewModel.dispatch(FollowShowClicked(it)) },
-        onDismissTrailerErrorClicked = { viewModel.dispatch(DismissWebViewError) },
-    )
+data class ShowDetailsScreen(val id: Long) : Screen {
+    @Composable
+    override fun Content() {
+    }
 }
 
 @Composable

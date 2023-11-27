@@ -7,6 +7,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.common.navigation)
     implementation(projects.core.traktAuth.api)
     implementation(projects.presentation.profile)
 

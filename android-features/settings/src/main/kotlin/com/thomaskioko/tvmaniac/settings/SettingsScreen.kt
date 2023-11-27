@@ -38,7 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,69 +47,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.Theme
-import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
-import com.thomaskioko.tvmaniac.presentation.settings.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.presentation.settings.Default
-import com.thomaskioko.tvmaniac.presentation.settings.DimissThemeClicked
-import com.thomaskioko.tvmaniac.presentation.settings.DismissTraktDialog
 import com.thomaskioko.tvmaniac.presentation.settings.LoggedInContent
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsState
-import com.thomaskioko.tvmaniac.presentation.settings.ShowTraktDialog
-import com.thomaskioko.tvmaniac.presentation.settings.ThemeSelected
-import com.thomaskioko.tvmaniac.presentation.settings.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.presentation.settings.UserInfo
 import com.thomaskioko.tvmaniac.resources.R
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 
-typealias Settings = @Composable (
-    onBackClicked: () -> Unit,
-) -> Unit
-
-@Inject
-@Composable
-fun Settings(
-    viewModelFactory: () -> SettingsViewModel,
-    @Assisted onBackClicked: () -> Unit,
-) {
-    SettingsScreen(
-        viewModel = viewModel(factory = viewModelFactory),
-        onBackClicked = onBackClicked,
-    )
-}
-
-@Composable
-internal fun SettingsScreen(
-    onBackClicked: () -> Unit,
-    viewModel: SettingsViewModel,
-    modifier: Modifier = Modifier,
-) {
-    val settingsState by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    SettingsScreen(
-        state = settingsState,
-        snackbarHostState = snackbarHostState,
-        modifier = modifier,
-        onBackClicked = onBackClicked,
-        onThemeChanged = { viewModel.dispatch(ThemeSelected(it)) },
-        onThemeClicked = { viewModel.dispatch(ChangeThemeClicked) },
-        onDismissTheme = { viewModel.dispatch(DimissThemeClicked) },
-        onLogoutClicked = { viewModel.dispatch(TraktLogoutClicked) },
-        onLoginClicked = {
-            viewModel.login()
-            viewModel.dispatch(DismissTraktDialog)
-        },
-        onConnectClicked = { viewModel.dispatch(ShowTraktDialog) },
-        onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
-    )
+data object SettingsScreen : Screen {
+    @Composable
+    override fun Content() {
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -8,6 +8,7 @@ android {
 
 dependencies {
     implementation(projects.presentation.seasondetails)
+    implementation(projects.common.navigation)
 
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.compose.material.icons)

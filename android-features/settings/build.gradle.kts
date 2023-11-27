@@ -11,6 +11,7 @@ dependencies {
     implementation(projects.core.traktAuth.api)
     implementation(projects.data.shows.api)
     implementation(projects.presentation.settings)
+    implementation(projects.common.navigation)
 
     implementation(libs.flowredux)
 

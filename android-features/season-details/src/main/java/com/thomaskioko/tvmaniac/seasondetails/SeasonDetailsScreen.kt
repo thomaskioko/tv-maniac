@@ -31,15 +31,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.Loading
 import com.thomaskioko.tvmaniac.presentation.seasondetails.LoadingError
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
@@ -52,48 +50,11 @@ import com.thomaskioko.tvmaniac.seasondetails.components.EpisodeItem
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 
-typealias SeasonDetails = @Composable (
-    onBackClicked: () -> Unit,
-    onEpisodeClicked: (Long) -> Unit,
-    initialSeasonName: String?,
-) -> Unit
-
-@Inject
-@Composable
-fun SeasonDetails(
-    viewModelFactory: (SavedStateHandle) -> SeasonDetailsViewModel,
-    @Assisted onBackClicked: () -> Unit,
-    @Assisted onEpisodeClicked: (Long) -> Unit,
-    @Assisted initialSeasonName: String? = null,
-) {
-    SeasonDetailScreen(
-        viewModel = viewModel(factory = viewModelFactory),
-        onBackClicked = onBackClicked,
-        seasonName = initialSeasonName,
-        onEpisodeClicked = onEpisodeClicked,
-    )
-}
-
-@Composable
-internal fun SeasonDetailScreen(
-    viewModel: SeasonDetailsViewModel,
-    onBackClicked: () -> Unit,
-    seasonName: String?,
-    modifier: Modifier = Modifier,
-    onEpisodeClicked: (Long) -> Unit,
-) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle()
-
-    SeasonDetailScreen(
-        state = viewState,
-        onBackClicked = onBackClicked,
-        modifier = modifier,
-        seasonName = seasonName,
-        onEpisodeClicked = onEpisodeClicked,
-    )
+data object SeasonDetailScreen : Screen {
+    @Composable
+    override fun Content() {
+    }
 }
 
 @Composable

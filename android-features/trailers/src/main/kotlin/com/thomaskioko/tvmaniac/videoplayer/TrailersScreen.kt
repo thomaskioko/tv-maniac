@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -38,8 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -50,49 +48,21 @@ import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.presentation.trailers.LoadingTrailers
-import com.thomaskioko.tvmaniac.presentation.trailers.ReloadTrailers
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailerError
-import com.thomaskioko.tvmaniac.presentation.trailers.TrailerSelected
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersContent
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersState
-import com.thomaskioko.tvmaniac.presentation.trailers.VideoPlayerError
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
-import me.tatarka.inject.annotations.Inject
 
-typealias Trailers = @Composable () -> Unit
-
-@Inject
-@Composable
-fun Trailers(
-    viewModelFactory: (SavedStateHandle) -> TrailersViewModel,
-) {
-    TrailersScreen(
-        viewModel = viewModel(factory = viewModelFactory),
-    )
+data object TrailersScreen : Screen {
+    @Composable
+    override fun Content() {
+    }
 }
 
 @Composable
-internal fun TrailersScreen(
-    viewModel: TrailersViewModel,
-    modifier: Modifier = Modifier,
-) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle()
-
-    TrailersScreen(
-        modifier = modifier,
-        state = viewState,
-        onRetryClicked = { viewModel.dispatch(ReloadTrailers) },
-        onYoutubeError = { viewModel.dispatch(VideoPlayerError(it)) },
-        onTrailerClicked = { viewModel.dispatch(TrailerSelected(it)) },
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TrailersScreen(
+private fun TrailersContent(
     state: TrailersState,
     onRetryClicked: () -> Unit,
     onYoutubeError: (String) -> Unit,
@@ -283,7 +253,7 @@ private fun TrailerListContentPreview(
 ) {
     TvManiacTheme {
         Surface {
-            TrailersScreen(
+            TrailersContent(
                 state = state,
                 onRetryClicked = {},
                 onTrailerClicked = {},

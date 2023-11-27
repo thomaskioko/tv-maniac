@@ -43,7 +43,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +53,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
@@ -68,64 +67,21 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
 import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
-import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
 import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
 import com.thomaskioko.tvmaniac.presentation.discover.Loading
-import com.thomaskioko.tvmaniac.presentation.discover.RetryLoading
-import com.thomaskioko.tvmaniac.presentation.discover.SnackBarDismissed
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 import kotlin.math.absoluteValue
 
-typealias Discover = @Composable (
-    onShowClicked: (showId: Long) -> Unit,
-    onMoreClicked: (showType: Long) -> Unit,
-) -> Unit
-
-@Inject
-@Composable
-fun Discover(
-    viewModelFactory: () -> DiscoverViewModel,
-    @Assisted onShowClicked: (showId: Long) -> Unit,
-    @Assisted onMoreClicked: (showType: Long) -> Unit,
-) {
-    DiscoverScreen(
-        viewModel = viewModel(factory = viewModelFactory),
-        onShowClicked = onShowClicked,
-        onMoreClicked = onMoreClicked,
-    )
-}
-
-@Composable
-internal fun DiscoverScreen(
-    viewModel: DiscoverViewModel,
-    onShowClicked: (showId: Long) -> Unit,
-    modifier: Modifier = Modifier,
-    onMoreClicked: (showType: Long) -> Unit,
-) {
-    val discoverViewState by viewModel.state.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState(pageCount = {
-        (discoverViewState as? DataLoaded)?.recommendedShows?.size ?: 0
-    })
-    val snackBarHostState = remember { SnackbarHostState() }
-
-    DiscoverScreen(
-        modifier = modifier,
-        state = discoverViewState,
-        snackBarHostState = snackBarHostState,
-        pagerState = pagerState,
-        onShowClicked = onShowClicked,
-        onMoreClicked = onMoreClicked,
-        onRetry = { viewModel.dispatch(RetryLoading) },
-        onErrorDismissed = { viewModel.dispatch(SnackBarDismissed) },
-    )
+data object DiscoverScreen : Screen {
+    @Composable
+    override fun Content() {
+    }
 }
 
 @Composable

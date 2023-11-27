@@ -47,7 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -55,55 +55,19 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTextButton
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.navigation.extensions.viewModel
-import com.thomaskioko.tvmaniac.presentation.profile.DismissTraktDialog
 import com.thomaskioko.tvmaniac.presentation.profile.LoggedInContent
 import com.thomaskioko.tvmaniac.presentation.profile.LoggedOutContent
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStats
-import com.thomaskioko.tvmaniac.presentation.profile.ShowTraktDialog
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 
-typealias Profile = @Composable (
-    settingsClicked: () -> Unit,
-) -> Unit
-
-@Inject
-@Composable
-fun Profile(
-    viewModelFactory: () -> ProfileViewModel,
-    @Assisted settingsClicked: () -> Unit,
-) {
-    ProfileScreen(
-        viewModel = viewModel(factory = viewModelFactory),
-        onSettingsClicked = settingsClicked,
-    )
-}
-
-@Composable
-internal fun ProfileScreen(
-    viewModel: ProfileViewModel,
-    modifier: Modifier = Modifier,
-    onSettingsClicked: () -> Unit,
-) {
-    val profileState by viewModel.state.collectAsStateWithLifecycle()
-
-    ProfileScreen(
-        onSettingsClicked = onSettingsClicked,
-        modifier = modifier,
-        state = profileState,
-        onLoginClicked = {
-            viewModel.login()
-            viewModel.dispatch(DismissTraktDialog)
-        },
-        onConnectClicked = { viewModel.dispatch(ShowTraktDialog) },
-        onDismissDialogClicked = { viewModel.dispatch(DismissTraktDialog) },
-    )
+data object ProfileScreen : Screen {
+    @Composable
+    override fun Content() {
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

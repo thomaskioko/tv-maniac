@@ -8,6 +8,7 @@ android {
 
 dependencies {
     api(projects.presentation.trailers)
+    implementation(projects.common.navigation)
 
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.flowredux)

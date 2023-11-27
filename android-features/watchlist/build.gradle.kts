@@ -9,6 +9,7 @@ android {
 dependencies {
     implementation(projects.data.shows.api)
     implementation(projects.presentation.watchlist)
+    implementation(projects.common.navigation)
 
     implementation(libs.flowredux)
 }
