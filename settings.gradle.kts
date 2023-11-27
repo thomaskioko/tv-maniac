@@ -25,7 +25,6 @@ include(
     ":android-core:resources",
     ":android-core:workmanager",
     ":android-features:discover",
-    ":android-features:home",
     ":android-features:profile",
     ":android-features:search",
     ":android-features:season-details",

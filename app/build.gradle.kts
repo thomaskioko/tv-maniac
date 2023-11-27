@@ -33,7 +33,6 @@ dependencies {
     implementation(projects.androidCore.designsystem)
     implementation(projects.androidCore.workmanager)
     implementation(projects.androidFeatures.discover)
-    implementation(projects.androidFeatures.home)
     implementation(projects.androidFeatures.profile)
     implementation(projects.androidFeatures.search)
     implementation(projects.androidFeatures.seasonDetails)
