@@ -1,83 +1,81 @@
 package com.thomaskioko.tvmaniac.inject
 
-import com.thomaskioko.showdetails.ShowDetailNavigationFactory
-import com.thomaskioko.tvmaniac.discover.DiscoverNavigationFactory
-import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
-import com.thomaskioko.tvmaniac.profile.ProfileNavigationFactory
-import com.thomaskioko.tvmaniac.search.SearchNavigationFactory
-import com.thomaskioko.tvmaniac.seasondetails.SeasonDetailsNavigationFactory
-import com.thomaskioko.tvmaniac.settings.SettingsNavigationFactory
-import com.thomaskioko.tvmaniac.showsgrid.ShowsGridNavigationFactory
-import com.thomaskioko.tvmaniac.videoplayer.TrailerNavigationFactory
-import com.thomaskioko.tvmaniac.watchlist.WatchlistNavigationFactory
+import com.thomaskioko.showdetails.ShowDetailsRegistryFeature
+import com.thomaskioko.tvmaniac.common.navigation.Feature
+import com.thomaskioko.tvmaniac.common.navigation.inject.VoyagerNavigationInitializer
+import com.thomaskioko.tvmaniac.discover.DiscoverRegistryFeature
+import com.thomaskioko.tvmaniac.profile.ProfileRegistryFeature
+import com.thomaskioko.tvmaniac.search.SearchRegistryFeature
+import com.thomaskioko.tvmaniac.seasondetails.SeasonDetailRegistryFeature
+import com.thomaskioko.tvmaniac.settings.SettingsRegistryFeature
+import com.thomaskioko.tvmaniac.showsgrid.LibraryRegistryFeature
+import com.thomaskioko.tvmaniac.util.AppInitializer
+import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
+import com.thomaskioko.tvmaniac.videoplayer.TrailersRegistryFeature
+import com.thomaskioko.tvmaniac.watchlist.WatchlistRegistryFeature
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface NavigationComponent {
 
+    @ApplicationScope
     @Provides
     @IntoSet
-    fun provideSettingsNavigationFactory(
-        bind: SettingsNavigationFactory,
-    ): ComposeNavigationFactory = bind
+    fun provideNavigationInitializer(
+        bind: VoyagerNavigationInitializer,
+    ): AppInitializer = bind
 
     @Provides
     @IntoSet
-    fun provideShowDetailNavigationFactory(
-        bind: ShowDetailNavigationFactory,
-    ): ComposeNavigationFactory = bind
+    fun bindDiscoverRegistryFeature(
+        feature: DiscoverRegistryFeature,
+    ): Feature = feature
 
     @Provides
     @IntoSet
-    fun bindDiscoverNavigation(
-        factory: DiscoverNavigationFactory,
-    ): ComposeNavigationFactory = factory
+    fun bindProfileRegistryFeature(
+        feature: ProfileRegistryFeature,
+    ): Feature = feature
 
     @Provides
     @IntoSet
-    fun bindSearchNavigation(
-        factory: SearchNavigationFactory,
-    ): ComposeNavigationFactory = factory
+    fun bindSearchRegistryFeature(
+        feature: SearchRegistryFeature,
+    ): Feature = feature
 
     @Provides
     @IntoSet
-    fun bindWatchlistNavigation(
-        factory: WatchlistNavigationFactory,
-    ): ComposeNavigationFactory = factory
+    fun bindSettingsRegistryFeature(
+        feature: SettingsRegistryFeature,
+    ): Feature = feature
 
     @Provides
     @IntoSet
-    fun bindShowDetailNavigationFactory(
-        factory: ShowDetailNavigationFactory,
-    ): ComposeNavigationFactory = factory
+    fun bindSeasonDetailRegistryFeature(
+        feature: SeasonDetailRegistryFeature,
+    ): Feature = feature
 
     @Provides
     @IntoSet
-    fun bindShowsGridNavigationFactory(
-        factory: ShowsGridNavigationFactory,
-    ): ComposeNavigationFactory = factory
+    fun bindShowDetailsRegistryFeature(
+        feature: ShowDetailsRegistryFeature,
+    ): Feature = feature
 
     @Provides
     @IntoSet
-    fun bindSettingsNavigationFactory(
-        factory: SettingsNavigationFactory,
-    ): ComposeNavigationFactory = factory
+    fun bindLibraryRegistryFeature(
+        feature: LibraryRegistryFeature,
+    ): Feature = feature
 
     @Provides
     @IntoSet
-    fun bindSeasonsNavigationFactory(
-        factory: SeasonDetailsNavigationFactory,
-    ): ComposeNavigationFactory = factory
+    fun bindTrailersRegistryFeature(
+        feature: TrailersRegistryFeature,
+    ): Feature = feature
 
     @Provides
     @IntoSet
-    fun bindProfileNavigationFactory(
-        factory: ProfileNavigationFactory,
-    ): ComposeNavigationFactory = factory
-
-    @Provides
-    @IntoSet
-    fun bindTrailerNavigationFactory(
-        factory: TrailerNavigationFactory,
-    ): ComposeNavigationFactory = factory
+    fun bindWatchlistFeature(
+        feature: WatchlistRegistryFeature,
+    ): Feature = feature
 }
