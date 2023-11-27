@@ -11,7 +11,7 @@ import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.TrailersContent.Companion.playerErrorMessage
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
-import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
+import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
@@ -27,7 +27,7 @@ class ShowDetailsStateMachine(
     private val similarShowsRepository: SimilarShowsRepository,
     private val seasonsRepository: SeasonsRepository,
     private val trailerRepository: TrailerRepository,
-    private val watchlistRepository: WatchlistRepository,
+    private val libraryRepository: LibraryRepository,
 ) : FlowReduxStateMachine<ShowDetailsState, ShowDetailsAction>(
     initialState = ShowDetailsLoaded.EMPTY_DETAIL_STATE,
 ) {
@@ -72,9 +72,9 @@ class ShowDetailsStateMachine(
                 }
 
                 onActionEffect<FollowShowClicked> { action, _ ->
-                    watchlistRepository.updateWatchlist(
+                    libraryRepository.updateLibrary(
                         traktId = traktShowId,
-                        addToWatchList = !action.addToFollowed,
+                        addToLibrary = !action.addToLibrary,
                     )
                 }
 

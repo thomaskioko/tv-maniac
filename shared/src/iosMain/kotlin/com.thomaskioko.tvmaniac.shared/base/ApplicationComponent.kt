@@ -26,7 +26,7 @@ import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthenticationComponent
 import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
-import com.thomaskioko.tvmaniac.watchlist.implementation.WatchlistComponent
+import com.thomaskioko.tvmaniac.watchlist.implementation.LibraryComponent
 import me.tatarka.inject.annotations.Component
 
 @ApplicationScope
@@ -50,7 +50,7 @@ abstract class ApplicationComponent :
     TraktAuthenticationComponent,
     TrailerComponent,
     UtilPlatformComponent,
-    WatchlistComponent {
+    LibraryComponent {
 
     abstract val discoverStateMachine: DiscoverStateMachineWrapper
     abstract val seasonDetailsStateMachineWrapper: SeasonDetailsStateMachineWrapper

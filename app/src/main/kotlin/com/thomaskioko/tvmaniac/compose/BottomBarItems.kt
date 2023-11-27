@@ -4,7 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.discover.DiscoverScreen
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.search.SearchScreen
 import com.thomaskioko.tvmaniac.settings.SettingsScreen
-import com.thomaskioko.tvmaniac.showsgrid.LibraryScreen
+import com.thomaskioko.tvmaniac.watchlist.LibraryScreen
 import kotlin.reflect.KClass
 
 interface BottomBarItem {
@@ -43,8 +43,8 @@ enum class BottomBarItems(
         screen = { SearchScreen },
     ),
     LIBRARY(
-        stringResourceId = R.string.menu_item_follow,
-        imageVector = Icons.Outlined.Star,
+        stringResourceId = R.string.menu_item_library,
+        imageVector = Icons.Outlined.VideoLibrary,
         screenKlass = LibraryScreen::class,
         screen = { LibraryScreen },
     ),

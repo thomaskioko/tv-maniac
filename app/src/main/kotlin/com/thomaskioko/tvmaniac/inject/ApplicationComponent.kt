@@ -24,7 +24,7 @@ import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthenticationComponent
 import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
-import com.thomaskioko.tvmaniac.watchlist.implementation.WatchlistComponent
+import com.thomaskioko.tvmaniac.watchlist.implementation.LibraryComponent
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -38,7 +38,7 @@ abstract class ApplicationComponent(
     DataStoreComponent,
     EpisodeComponent,
     EpisodeImageComponent,
-    WatchlistComponent,
+    LibraryComponent,
     NavigationComponent,
     ProfileComponent,
     RequestManagerComponent,

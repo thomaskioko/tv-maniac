@@ -13,5 +13,5 @@ data class LoadShowDetails(
 ) : ShowDetailsAction
 
 data class FollowShowClicked(
-    val addToFollowed: Boolean,
+    val addToLibrary: Boolean,
 ) : ShowDetailsAction

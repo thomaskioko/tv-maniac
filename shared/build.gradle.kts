@@ -29,7 +29,7 @@ kotlin {
             export(projects.presentation.settings)
             export(projects.presentation.showDetails)
             export(projects.presentation.trailers)
-            export(projects.presentation.watchlist)
+            export(projects.presentation.library)
         }
     }
 
@@ -49,12 +49,12 @@ kotlin {
                 api(projects.presentation.seasondetails)
                 api(projects.presentation.showDetails)
                 api(projects.presentation.trailers)
-                api(projects.presentation.watchlist)
+                api(projects.presentation.library)
 
                 implementation(projects.core.database)
                 implementation(projects.core.datastore.implementation)
                 implementation(projects.data.episodeimages.api)
-                implementation(projects.data.watchlist.api)
+                implementation(projects.data.library.api)
                 implementation(projects.core.util)
                 implementation(projects.data.showimages.api)
                 implementation(projects.core.traktApi.api)
@@ -67,7 +67,7 @@ kotlin {
                 implementation(projects.data.category.implementation)
                 implementation(projects.data.episodes.implementation)
                 implementation(projects.data.episodeimages.implementation)
-                implementation(projects.data.watchlist.implementation)
+                implementation(projects.data.library.implementation)
                 implementation(projects.data.profile.implementation)
                 implementation(projects.data.profilestats.implementation)
                 implementation(projects.data.similar.implementation)

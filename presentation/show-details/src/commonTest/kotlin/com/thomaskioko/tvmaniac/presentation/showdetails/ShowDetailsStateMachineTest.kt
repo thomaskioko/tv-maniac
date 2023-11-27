@@ -13,7 +13,7 @@ import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.ServerError
-import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
+import com.thomaskioko.tvmaniac.watchlist.testing.FakeLibraryRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Ignore
@@ -26,7 +26,7 @@ internal class ShowDetailsStateMachineTest {
     private val trailerRepository = FakeTrailerRepository()
     private val discoverRepository = FakeDiscoverRepository()
     private val similarShowsRepository = FakeSimilarShowsRepository()
-    private val watchlistRepository = FakeWatchlistRepository()
+    private val fakeLibraryRepository = FakeLibraryRepository()
 
     private val stateMachine = ShowDetailsStateMachine(
         traktShowId = 84958,
@@ -34,7 +34,7 @@ internal class ShowDetailsStateMachineTest {
         trailerRepository = trailerRepository,
         seasonsRepository = seasonsRepository,
         similarShowsRepository = similarShowsRepository,
-        watchlistRepository = watchlistRepository,
+        libraryRepository = fakeLibraryRepository,
     )
 
     @Test
