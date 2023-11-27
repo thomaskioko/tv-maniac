@@ -23,7 +23,6 @@ rootProject.name = "tv-maniac"
 include(
     ":android-core:designsystem",
     ":android-core:resources",
-    ":android-core:workmanager",
     ":android-features:discover",
     ":android-features:profile",
     ":android-features:search",
