@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.watchlist
+package com.thomaskioko.tvmaniac.showsgrid
 
 import cafe.adriel.voyager.core.registry.ScreenRegistry
 import cafe.adriel.voyager.core.registry.screenModule
@@ -7,10 +7,10 @@ import com.thomaskioko.tvmaniac.common.navigation.TvManiacScreens
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class WatchlistRegistryFeature : Feature {
+class ShowsGridRegistryFeature : Feature {
     override val screens: ScreenRegistry.() -> Unit = screenModule {
-        register<TvManiacScreens.WatchlistScreen> {
-            WatchlistScreen
+        register<TvManiacScreens.ShowsGridScreen> {
+            ShowsGridScreen
         }
     }
 }

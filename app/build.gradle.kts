@@ -39,7 +39,7 @@ dependencies {
     implementation(projects.androidFeatures.showDetails)
     implementation(projects.androidFeatures.showsGrid)
     implementation(projects.androidFeatures.trailers)
-    implementation(projects.androidFeatures.watchlist)
+    implementation(projects.androidFeatures.library)
 
     implementation(projects.common.navigation)
 
@@ -78,8 +78,8 @@ dependencies {
     implementation(projects.data.similar.implementation)
     implementation(projects.data.trailers.api)
     implementation(projects.data.trailers.implementation)
-    implementation(projects.data.watchlist.api)
-    implementation(projects.data.watchlist.implementation)
+    implementation(projects.data.library.api)
+    implementation(projects.data.library.implementation)
 
     implementation(projects.presentation.discover)
     implementation(projects.presentation.profile)
@@ -87,7 +87,7 @@ dependencies {
     implementation(projects.presentation.settings)
     implementation(projects.presentation.showDetails)
     implementation(projects.presentation.trailers)
-    implementation(projects.presentation.watchlist)
+    implementation(projects.presentation.library)
 
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.core.splashscreen)

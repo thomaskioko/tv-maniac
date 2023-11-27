@@ -8,11 +8,11 @@ import com.thomaskioko.tvmaniac.profile.ProfileRegistryFeature
 import com.thomaskioko.tvmaniac.search.SearchRegistryFeature
 import com.thomaskioko.tvmaniac.seasondetails.SeasonDetailRegistryFeature
 import com.thomaskioko.tvmaniac.settings.SettingsRegistryFeature
-import com.thomaskioko.tvmaniac.showsgrid.LibraryRegistryFeature
+import com.thomaskioko.tvmaniac.showsgrid.ShowsGridRegistryFeature
 import com.thomaskioko.tvmaniac.util.AppInitializer
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.videoplayer.TrailersRegistryFeature
-import com.thomaskioko.tvmaniac.watchlist.WatchlistRegistryFeature
+import com.thomaskioko.tvmaniac.watchlist.LibraryRegistryFeature
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
@@ -63,8 +63,8 @@ interface NavigationComponent {
 
     @Provides
     @IntoSet
-    fun bindLibraryRegistryFeature(
-        feature: LibraryRegistryFeature,
+    fun bindShowsGridRegistryFeature(
+        feature: ShowsGridRegistryFeature,
     ): Feature = feature
 
     @Provides
@@ -75,7 +75,7 @@ interface NavigationComponent {
 
     @Provides
     @IntoSet
-    fun bindWatchlistFeature(
-        feature: WatchlistRegistryFeature,
+    fun bindLibraryRegistryFeature(
+        feature: LibraryRegistryFeature,
     ): Feature = feature
 }
