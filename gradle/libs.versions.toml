@@ -8,9 +8,7 @@ androidx-core-splashscreen = "1.0.1"
 androidx-datastore = "1.1.0-alpha06"
 androidx-lifecycle = "2.6.2"
 androidx-material3 = "1.1.2"
-androidx-navigation = "2.7.5"
 androidx-palette = "1.0.0"
-androidx-work = "2.8.1"
 appauth = "0.11.1"
 atomicfu = "0.22.0"
 coil = "2.5.0"
@@ -35,7 +33,6 @@ kotlinx-collections = "0.3.6"
 ksp = "1.9.20-1.0.13"
 ktor = "2.3.6"
 lint = "1.2.0"
-moko-resources = "0.23.0"
 shared-module-version = "0.8.0"
 snapper = "0.3.0"
 sqldelight = "2.0.0"
@@ -59,16 +56,12 @@ androidx-compose-activity = { module = "androidx.activity:activity-compose", ver
 androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "compose-constraintlayout" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidx-material3" }
 androidx-compose-paging = { module = "androidx.paging:paging-compose", version.ref = "compose-paging" }
+androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "composecompiler" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidx-core-splashscreen" }
 androidx-datastore-preference = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
-androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
-androidx-navigation-common = { module = "androidx.navigation:navigation-common", version.ref = "androidx-navigation" }
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
-androidx-navigation-runtime = { module = "androidx.navigation:navigation-runtime", version.ref = "androidx-navigation" }
 androidx-palette = { module = "androidx.palette:palette-ktx", version.ref = "androidx-palette" }
-androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
 
 appauth = { module = "net.openid:appauth", version.ref = "appauth" }
 
@@ -102,8 +95,6 @@ ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", 
 
 lint-compose = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "lint" }
 
-moko-core = { module = "dev.icerock.moko:resources", version.ref = "moko-resources" }
-
 snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
@@ -131,7 +122,6 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kmmbridge = { id = "co.touchlab.faktory.kmmbridge", version.ref = "kmmbridge" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
