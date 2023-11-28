@@ -55,7 +55,6 @@ data object LibraryScreen : Screen {
     }
 }
 
-
 @Composable
 internal fun LibraryContent(
     state: LibraryState,

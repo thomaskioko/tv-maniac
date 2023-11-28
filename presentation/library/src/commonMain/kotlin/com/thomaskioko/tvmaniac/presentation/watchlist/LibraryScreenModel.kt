@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class LibraryScreenModel @Inject constructor(
-    private val repository: LibraryRepository
+    private val repository: LibraryRepository,
 ) : ScreenModel {
 
     private val _state = MutableStateFlow<LibraryState>(LoadingShows)
