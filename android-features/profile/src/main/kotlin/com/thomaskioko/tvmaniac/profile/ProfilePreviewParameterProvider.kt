@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.profile
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.presentation.profile.LoggedInContent
-import com.thomaskioko.tvmaniac.presentation.profile.LoggedOutContent
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStats
 import com.thomaskioko.tvmaniac.presentation.profile.UserInfo
@@ -11,15 +9,15 @@ class ProfilePreviewParameterProvider : PreviewParameterProvider<ProfileState> {
     override val values: Sequence<ProfileState>
         get() {
             return sequenceOf(
-                LoggedOutContent(),
-                LoggedInContent(
+                ProfileState(),
+                ProfileState(
                     isLoading = true,
                     showLogoutDialog = false,
                     loggedIn = false,
                     userInfo = null,
                     profileStats = null,
                 ),
-                LoggedInContent(
+                ProfileState(
                     isLoading = false,
                     showLogoutDialog = false,
                     loggedIn = true,

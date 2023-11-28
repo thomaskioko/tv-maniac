@@ -14,7 +14,9 @@ kotlin {
 
                 implementation(libs.flowredux)
                 implementation(libs.kotlinInject.runtime)
+                implementation(libs.kotlinx.collections)
                 implementation(libs.sqldelight.extensions)
+                implementation(libs.voyager.core)
             }
         }
 

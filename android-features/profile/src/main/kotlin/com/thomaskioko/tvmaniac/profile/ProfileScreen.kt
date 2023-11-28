@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.profile
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -47,7 +46,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.registry.ScreenRegistry
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.thomaskioko.tvmaniac.common.navigation.TvManiacScreens.SettingsScreen
+import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -55,30 +60,42 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTextButton
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.presentation.profile.LoggedInContent
-import com.thomaskioko.tvmaniac.presentation.profile.LoggedOutContent
+import com.thomaskioko.tvmaniac.presentation.profile.DismissTraktDialog
+import com.thomaskioko.tvmaniac.presentation.profile.ProfileActions
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStats
+import com.thomaskioko.tvmaniac.presentation.profile.ShowTraktDialog
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
-data object ProfileScreen : Screen {
+data class ProfileScreen(
+    private val launchWebView: () -> Unit,
+) : Screen {
     @Composable
     override fun Content() {
+        val screenModel = viewModel { profileScreenModel() }
+        val state by screenModel.state.collectAsStateWithLifecycle()
+
+        val navigator = LocalNavigator.currentOrThrow
+
+        ProfileContent(
+            state = state,
+            onAction = screenModel::dispatch,
+            onSettingsClicked = { navigator.push(ScreenRegistry.get(SettingsScreen)) },
+            onLoginClicked = launchWebView,
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-private fun ProfileScreen(
+internal fun ProfileContent(
     onSettingsClicked: () -> Unit,
     state: ProfileState,
-    onConnectClicked: () -> Unit,
     onLoginClicked: () -> Unit,
-    onDismissDialogClicked: () -> Unit,
+    onAction: (ProfileActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -93,24 +110,25 @@ private fun ProfileScreen(
             .background(color = MaterialTheme.colorScheme.background),
         content = { contentPadding ->
 
-            when (state) {
-                is LoggedOutContent -> {
-                    LoggedOutUi(
-                        showTraktDialog = state.showTraktDialog,
-                        onConnectClicked = onConnectClicked,
-                        onLoginClicked = onLoginClicked,
-                        onDismissDialogClicked = onDismissDialogClicked,
-                    )
-                }
-
-                is LoggedInContent -> {
-                    UserProfile(
-                        picUrl = state.userInfo?.userPicUrl,
-                        userName = state.userInfo?.userName,
-                        fullName = state.userInfo?.fullName,
-                        profileStats = state.profileStats,
-                    )
-                }
+            if (state.userInfo != null) {
+                UserProfile(
+                    picUrl = state.userInfo?.userPicUrl,
+                    userName = state.userInfo?.userName,
+                    fullName = state.userInfo?.fullName,
+                    profileStats = state.profileStats,
+                    paddingValues = contentPadding,
+                )
+            } else {
+                LoggedOutUi(
+                    showTraktDialog = state.showTraktDialog,
+                    paddingValues = contentPadding,
+                    onConnectClicked = { onAction(ShowTraktDialog) },
+                    onLoginClicked = {
+                        onAction(DismissTraktDialog)
+                        onLoginClicked()
+                    },
+                    onDismissDialogClicked = { onAction(DismissTraktDialog) },
+                )
             }
         },
     )
@@ -122,12 +140,14 @@ fun LoggedOutUi(
     onLoginClicked: () -> Unit,
     onDismissDialogClicked: () -> Unit,
     onConnectClicked: () -> Unit,
+    paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = modifier
             .fillMaxWidth()
+            .padding(paddingValues)
             .padding(start = 16.dp, end = 16.dp),
     ) {
         Icon(
@@ -246,11 +266,13 @@ fun UserProfile(
     fullName: String?,
     picUrl: String?,
     profileStats: ProfileStats?,
+    paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .padding(paddingValues)
             .padding(start = 16.dp, end = 16.dp, top = 64.dp),
         verticalArrangement = Arrangement.Center,
     ) {
@@ -471,12 +493,11 @@ private fun ProfileScreenPreview(
 ) {
     TvManiacTheme {
         Surface {
-            ProfileScreen(
+            ProfileContent(
                 state = state,
-                onConnectClicked = {},
                 onSettingsClicked = {},
                 onLoginClicked = {},
-                onDismissDialogClicked = {},
+                onAction = {},
             )
         }
     }

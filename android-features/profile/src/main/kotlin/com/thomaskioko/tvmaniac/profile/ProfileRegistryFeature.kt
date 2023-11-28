@@ -10,7 +10,11 @@ import me.tatarka.inject.annotations.Inject
 class ProfileRegistryFeature : Feature {
     override val screens: ScreenRegistry.() -> Unit = screenModule {
         register<TvManiacScreens.ProfileScreen> {
-            ProfileScreen
+            ProfileScreen(
+                launchWebView = {
+                    // TODO:: Implement TraktAuthManager#launchWebView
+                },
+            )
         }
     }
 }

@@ -10,53 +10,68 @@ import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.ServerError
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class ProfileStateMachineTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class ProfileScreenModelTest {
 
     private val datastoreRepository = FakeDatastoreRepository()
     private val profileRepository = FakeProfileRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
 
-    private val stateMachine = ProfileStateMachine(
-        datastoreRepository = datastoreRepository,
-        profileRepository = profileRepository,
-        traktAuthRepository = traktAuthRepository,
-    )
+    private val testDispatcher = StandardTestDispatcher()
+    private lateinit var stateMachine: ProfileScreenModel
+
+    @BeforeTest
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+        stateMachine = ProfileScreenModel(
+            datastoreRepository = datastoreRepository,
+            profileRepository = profileRepository,
+            traktAuthRepository = traktAuthRepository,
+        )
+    }
+
+    @AfterTest
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
 
     @Test
     fun initial_state_emits_expected_result() = runTest {
         stateMachine.state.test {
-            awaitItem() shouldBe LoggedOutContent()
+            awaitItem() shouldBe ProfileState()
         }
     }
 
     @Test
     fun given_ShowTraktDialog_andUserIsAuthenticated_expectedResultIsEmitted() = runTest {
         stateMachine.state.test {
-            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE // Initial State
+            awaitItem() shouldBe ProfileState() // Initial State
 
             stateMachine.dispatch(ShowTraktDialog)
 
-            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE
-                .copy(
-                    showTraktDialog = true,
-                )
+            awaitItem() shouldBe ProfileState()
+                .copy(showTraktDialog = true)
 
             stateMachine.dispatch(TraktLoginClicked)
 
-            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE
-                .copy(
-                    showTraktDialog = false,
-                )
+            awaitItem() shouldBe ProfileState()
+                .copy(showTraktDialog = false)
 
             traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
             datastoreRepository.setAuthState(authenticatedAuthState)
             profileRepository.setUserData(Either.Right(user))
 
-            awaitItem() shouldBe LoggedInContent()
-            awaitItem() shouldBe LoggedInContent()
+            awaitItem() shouldBe ProfileState()
                 .copy(
                     errorMessage = null,
                     userInfo = UserInfo(
@@ -74,17 +89,17 @@ class ProfileStateMachineTest {
         stateMachine.state.test {
             val errorMessage = "Something happened"
 
-            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE
+            awaitItem() shouldBe ProfileState()
 
             stateMachine.dispatch(ShowTraktDialog)
 
-            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE.copy(
+            awaitItem() shouldBe ProfileState().copy(
                 showTraktDialog = true,
             )
 
             stateMachine.dispatch(TraktLoginClicked)
 
-            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE.copy(
+            awaitItem() shouldBe ProfileState().copy(
                 showTraktDialog = false,
             )
 
@@ -94,25 +109,21 @@ class ProfileStateMachineTest {
                 Either.Left(ServerError(errorMessage)),
             )
 
-            awaitItem() shouldBe LoggedInContent()
-            awaitItem() shouldBe LoggedInContent()
-                .copy(
-                    errorMessage = errorMessage,
-                )
+            awaitItem() shouldBe ProfileState()
+                .copy(errorMessage = errorMessage)
         }
     }
 
     @Test
     fun given_TraktLogoutClicked_expectedResultIsEmitted() = runTest {
         stateMachine.state.test {
-            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE
+            awaitItem() shouldBe ProfileState()
 
             traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
             datastoreRepository.setAuthState(authenticatedAuthState)
             profileRepository.setUserData(Either.Right(user))
 
-            awaitItem() shouldBe LoggedInContent()
-            awaitItem() shouldBe LoggedInContent()
+            awaitItem() shouldBe ProfileState()
                 .copy(
                     errorMessage = null,
                     userInfo = UserInfo(
@@ -125,7 +136,7 @@ class ProfileStateMachineTest {
 
             stateMachine.dispatch(TraktLogoutClicked)
 
-            awaitItem() shouldBe LoggedOutContent.DEFAULT_STATE
+            awaitItem() shouldBe ProfileState()
         }
     }
 }
