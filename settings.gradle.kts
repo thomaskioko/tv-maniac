@@ -34,6 +34,7 @@ include(
     ":android-features:trailers",
     ":app",
     ":common:navigation",
+    ":common:voyagerutil",
     ":core:database",
     ":core:datastore:api",
     ":core:datastore:implementation",
