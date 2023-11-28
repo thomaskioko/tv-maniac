@@ -40,7 +40,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.showsgrid.model.TvShow
 
-data object LibraryScreen : Screen {
+data object ShowsGridScreen : Screen {
     @Composable
     override fun Content() {
     }
