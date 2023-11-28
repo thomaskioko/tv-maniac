@@ -7,9 +7,9 @@ data class ThemeSelected(
     val theme: Theme,
 ) : SettingsActions()
 
-object ChangeThemeClicked : SettingsActions()
-object DimissThemeClicked : SettingsActions()
-object ShowTraktDialog : SettingsActions()
-object DismissTraktDialog : SettingsActions()
-object TraktLogoutClicked : SettingsActions()
-object TraktLoginClicked : SettingsActions()
+data object ChangeThemeClicked : SettingsActions()
+data object DismissThemeClicked : SettingsActions()
+data object ShowTraktDialog : SettingsActions()
+data object DismissTraktDialog : SettingsActions()
+data object TraktLogoutClicked : SettingsActions()
+data object TraktLoginClicked : SettingsActions()

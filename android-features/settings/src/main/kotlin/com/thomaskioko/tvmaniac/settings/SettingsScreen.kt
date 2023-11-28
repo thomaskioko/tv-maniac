@@ -38,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,46 +48,59 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.Theme
-import com.thomaskioko.tvmaniac.presentation.settings.Default
-import com.thomaskioko.tvmaniac.presentation.settings.LoggedInContent
+import com.thomaskioko.tvmaniac.presentation.settings.ChangeThemeClicked
+import com.thomaskioko.tvmaniac.presentation.settings.DismissThemeClicked
+import com.thomaskioko.tvmaniac.presentation.settings.DismissTraktDialog
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsActions
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsState
+import com.thomaskioko.tvmaniac.presentation.settings.ShowTraktDialog
+import com.thomaskioko.tvmaniac.presentation.settings.ThemeSelected
+import com.thomaskioko.tvmaniac.presentation.settings.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.presentation.settings.UserInfo
 import com.thomaskioko.tvmaniac.resources.R
 
-data object SettingsScreen : Screen {
+data class SettingsScreen(
+    private val launchWebView: () -> Unit,
+) : Screen {
     @Composable
     override fun Content() {
+        val screenModel = viewModel { settingsScreenModel() }
+        val state by screenModel.state.collectAsStateWithLifecycle()
+
+        val snackbarHostState = remember { SnackbarHostState() }
+
+        SettingsContent(
+            state = state,
+            snackbarHostState = snackbarHostState,
+            onAction = screenModel::dispatch,
+            onLoginClicked = launchWebView,
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun SettingsScreen(
-    onBackClicked: () -> Unit,
+internal fun SettingsContent(
     state: SettingsState,
-    onThemeChanged: (Theme) -> Unit,
-    onThemeClicked: () -> Unit,
-    onDismissTheme: () -> Unit,
-    onConnectClicked: () -> Unit,
-    onLoginClicked: () -> Unit,
-    onLogoutClicked: () -> Unit,
     snackbarHostState: SnackbarHostState,
+    onLoginClicked: () -> Unit,
+    onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
-    onDismissDialogClicked: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             TvManiacTopBar(
                 title = stringResource(R.string.title_settings),
                 showNavigationIcon = false,
-                onBackClick = onBackClicked,
                 modifier = Modifier,
             )
         },
@@ -105,43 +119,18 @@ internal fun SettingsScreen(
                 }
             }
 
-            when (state) {
-                is Default -> SettingsContent(
-                    userInfo = state.userInfo,
-                    theme = state.theme,
-                    showPopup = state.showPopup,
-                    showTraktDialog = state.showTraktDialog,
-                    isLoading = false,
-                    onThemeChanged = onThemeChanged,
-                    onThemeClicked = onThemeClicked,
-                    onDismissTheme = onDismissTheme,
-                    onLogoutClicked = onLogoutClicked,
-                    onLoginClicked = onLoginClicked,
-                    onConnectClicked = onConnectClicked,
-                    onDismissDialogClicked = onDismissDialogClicked,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                )
-
-                is LoggedInContent -> SettingsContent(
-                    userInfo = state.userInfo,
-                    theme = state.theme,
-                    showPopup = state.showPopup,
-                    showTraktDialog = state.showTraktDialog,
-                    isLoading = state.isLoading,
-                    onThemeChanged = onThemeChanged,
-                    onThemeClicked = onThemeClicked,
-                    onDismissTheme = onDismissTheme,
-                    onLogoutClicked = onLogoutClicked,
-                    onLoginClicked = onLoginClicked,
-                    onConnectClicked = onConnectClicked,
-                    onDismissDialogClicked = onDismissDialogClicked,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                )
-            }
+            SettingsContent(
+                userInfo = state.userInfo,
+                theme = state.theme,
+                showPopup = state.showthemePopup,
+                showTraktDialog = state.showTraktDialog,
+                isLoading = state.isLoading,
+                onLoginClicked = onLoginClicked,
+                onAction = onAction,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+            )
         },
     )
 }
@@ -153,13 +142,8 @@ fun SettingsContent(
     showPopup: Boolean,
     showTraktDialog: Boolean,
     isLoading: Boolean,
-    onThemeChanged: (Theme) -> Unit,
-    onThemeClicked: () -> Unit,
-    onDismissTheme: () -> Unit,
-    onConnectClicked: () -> Unit,
+    onAction: (SettingsActions) -> Unit,
     onLoginClicked: () -> Unit,
-    onLogoutClicked: () -> Unit,
-    onDismissDialogClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -175,10 +159,11 @@ fun SettingsContent(
                 traktUserName = userInfo?.userName,
                 traktFullName = userInfo?.fullName,
                 traktUserPicUrl = userInfo?.userPicUrl,
-                onLoginClicked = onLoginClicked,
-                onLogoutClicked = onLogoutClicked,
-                onDismissDialogClicked = onDismissDialogClicked,
-                onConnectClicked = onConnectClicked,
+                onLoginClicked = {
+                    onLoginClicked()
+                    onAction(TraktLogoutClicked)
+                },
+                onAction = onAction,
             )
         }
 
@@ -186,9 +171,9 @@ fun SettingsContent(
             SettingsThemeItem(
                 showPopup = showPopup,
                 theme = theme,
-                onThemeSelected = onThemeChanged,
-                onThemeClicked = onThemeClicked,
-                onDismissTheme = onDismissTheme,
+                onThemeSelected = { onAction(ThemeSelected(it)) },
+                onThemeClicked = { onAction(ChangeThemeClicked) },
+                onDismissTheme = { onAction(DismissThemeClicked) },
             )
         }
 
@@ -206,10 +191,8 @@ private fun TraktProfileSettingsItem(
     traktUserName: String?,
     traktFullName: String?,
     traktUserPicUrl: String?,
-    onConnectClicked: () -> Unit,
     onLoginClicked: () -> Unit,
-    onLogoutClicked: () -> Unit,
-    onDismissDialogClicked: () -> Unit,
+    onAction: (SettingsActions) -> Unit,
 ) {
     val titleId = if (loggedIn) {
         stringResource(
@@ -223,7 +206,7 @@ private fun TraktProfileSettingsItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onConnectClicked() }
+            .clickable { onAction(ShowTraktDialog) }
             .padding(start = 16.dp, end = 16.dp),
     ) {
         Spacer(modifier = Modifier.height(8.dp))
@@ -281,8 +264,8 @@ private fun TraktProfileSettingsItem(
                 loggedIn = loggedIn,
                 isVisible = showTraktDialog,
                 onLoginClicked = onLoginClicked,
-                onLogoutClicked = onLogoutClicked,
-                onDismissDialog = onDismissDialogClicked,
+                onLogoutClicked = { onAction(TraktLogoutClicked) },
+                onDismissDialog = { onAction(DismissTraktDialog) },
             )
         }
 
@@ -575,17 +558,11 @@ private fun SettingsScreenPreview(
 ) {
     TvManiacTheme {
         Surface {
-            SettingsScreen(
+            SettingsContent(
                 state = state,
                 snackbarHostState = SnackbarHostState(),
-                onThemeChanged = {},
-                onThemeClicked = {},
-                onDismissTheme = {},
-                onLogoutClicked = {},
+                onAction = {},
                 onLoginClicked = {},
-                onDismissDialogClicked = {},
-                onConnectClicked = {},
-                onBackClicked = {},
             )
         }
     }
