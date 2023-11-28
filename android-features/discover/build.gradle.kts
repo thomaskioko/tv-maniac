@@ -7,9 +7,9 @@ android {
 }
 
 dependencies {
-    api(projects.presentation.discover)
+    api(projects.common.voyagerutil)
 
-    api(projects.common.navigation)
+    implementation(projects.common.navigation)
     implementation(projects.data.category.api)
 
     implementation(libs.androidx.compose.foundation)

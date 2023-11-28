@@ -43,6 +43,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,8 +54,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.registry.ScreenRegistry
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.ScreenKey
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.thomaskioko.tvmaniac.category.api.model.Category
+import com.thomaskioko.tvmaniac.common.navigation.TvManiacScreens.ShowDetailsScreen
+import com.thomaskioko.tvmaniac.common.navigation.TvManiacScreens.ShowsGridScreen
+import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -71,6 +80,9 @@ import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
 import com.thomaskioko.tvmaniac.presentation.discover.Loading
+import com.thomaskioko.tvmaniac.presentation.discover.RetryLoading
+import com.thomaskioko.tvmaniac.presentation.discover.ShowsAction
+import com.thomaskioko.tvmaniac.presentation.discover.SnackBarDismissed
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
@@ -78,21 +90,40 @@ import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 import kotlin.math.absoluteValue
 
+@OptIn(ExperimentalFoundationApi::class)
 data object DiscoverScreen : Screen {
+    override val key: ScreenKey = "discover_screen"
+
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
+
+        val discoverScreenModel = viewModel { discoverScreenModel() }
+        val discoverState by discoverScreenModel.state.collectAsStateWithLifecycle()
+        val pagerState = rememberPagerState(pageCount = {
+            (discoverState as? DataLoaded)?.recommendedShows?.size ?: 0
+        })
+        val snackBarHostState = remember { SnackbarHostState() }
+
+        DiscoverScreen(
+            state = discoverState,
+            snackBarHostState = snackBarHostState,
+            pagerState = pagerState,
+            onAction = discoverScreenModel::dispatch,
+            onShowClicked = { navigator.push(ScreenRegistry.get(ShowDetailsScreen(id = it))) },
+            onMoreClicked = { navigator.push(ScreenRegistry.get(ShowsGridScreen(id = it))) },
+        )
     }
 }
 
 @Composable
-private fun DiscoverScreen(
+internal fun DiscoverScreen(
     state: DiscoverState,
     snackBarHostState: SnackbarHostState,
     pagerState: PagerState,
     onShowClicked: (showId: Long) -> Unit,
-    onErrorDismissed: () -> Unit,
+    onAction: (ShowsAction) -> Unit,
     modifier: Modifier = Modifier,
-    onRetry: () -> Unit = {},
     onMoreClicked: (showType: Long) -> Unit,
 ) {
     when (state) {
@@ -108,17 +139,17 @@ private fun DiscoverScreen(
             snackBarHostState = snackBarHostState,
             onShowClicked = onShowClicked,
             onMoreClicked = onMoreClicked,
-            onSnackBarErrorDismissed = onErrorDismissed,
             trendingShows = state.trendingShows,
             popularShows = state.popularShows,
             anticipatedShows = state.anticipatedShows,
             recommendedShows = state.recommendedShows,
             errorMessage = state.errorMessage,
+            onAction = onAction,
         )
 
         is ErrorState -> ErrorUi(
             errorMessage = state.errorMessage,
-            onRetry = onRetry,
+            onRetry = { onAction(RetryLoading) },
             modifier = Modifier
                 .fillMaxSize()
                 .wrapContentSize(Alignment.Center),
@@ -135,7 +166,7 @@ private fun DiscoverScrollContent(
     errorMessage: String?,
     snackBarHostState: SnackbarHostState,
     pagerState: PagerState,
-    onSnackBarErrorDismissed: () -> Unit,
+    onAction: (ShowsAction) -> Unit,
     onShowClicked: (showId: Long) -> Unit,
     modifier: Modifier = Modifier,
     onMoreClicked: (showType: Long) -> Unit,
@@ -148,7 +179,7 @@ private fun DiscoverScrollContent(
             )
             when (snackBarResult) {
                 SnackbarResult.ActionPerformed, SnackbarResult.Dismissed ->
-                    onSnackBarErrorDismissed()
+                    onAction(SnackBarDismissed)
             }
         }
     }
@@ -431,7 +462,7 @@ private fun DiscoverScreenPreview(
                     snackBarHostState = snackBarHostState,
                     onShowClicked = {},
                     onMoreClicked = {},
-                    onErrorDismissed = {},
+                    onAction = {},
                 )
             }
         }

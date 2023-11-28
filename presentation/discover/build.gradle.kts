@@ -12,6 +12,8 @@ kotlin {
                 implementation(projects.data.showimages.api)
                 implementation(projects.data.shows.api)
 
+                implementation(libs.voyager.core)
+
                 implementation(libs.flowredux)
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.kotlinx.collections)
