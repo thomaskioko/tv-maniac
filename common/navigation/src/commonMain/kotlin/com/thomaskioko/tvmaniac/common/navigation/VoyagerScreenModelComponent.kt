@@ -1,5 +1,0 @@
-package com.thomaskioko.tvmaniac.common.navigation
-
-interface SharedScreenModelComponent
-
-expect interface VoyagerScreenModelComponent : SharedScreenModelComponent
