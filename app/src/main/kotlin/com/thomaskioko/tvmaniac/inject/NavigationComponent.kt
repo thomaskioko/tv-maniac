@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.inject
 
 import com.thomaskioko.showdetails.ShowDetailsRegistryFeature
 import com.thomaskioko.tvmaniac.common.navigation.Feature
-import com.thomaskioko.tvmaniac.common.navigation.inject.VoyagerNavigationInitializer
+import com.thomaskioko.tvmaniac.common.navigation.inject.FeatureRegistryInitializer
 import com.thomaskioko.tvmaniac.discover.DiscoverRegistryFeature
 import com.thomaskioko.tvmaniac.profile.ProfileRegistryFeature
 import com.thomaskioko.tvmaniac.search.SearchRegistryFeature
@@ -21,8 +21,8 @@ interface NavigationComponent {
     @ApplicationScope
     @Provides
     @IntoSet
-    fun provideNavigationInitializer(
-        bind: VoyagerNavigationInitializer,
+    fun provideFeatureRegistryInitializer(
+        bind: FeatureRegistryInitializer,
     ): AppInitializer = bind
 
     @Provides

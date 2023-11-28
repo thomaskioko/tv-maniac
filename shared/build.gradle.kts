@@ -51,6 +51,8 @@ kotlin {
                 api(projects.presentation.trailers)
                 api(projects.presentation.library)
 
+                implementation(projects.common.voyagerutil)
+
                 implementation(projects.core.database)
                 implementation(projects.core.datastore.implementation)
                 implementation(projects.data.episodeimages.api)

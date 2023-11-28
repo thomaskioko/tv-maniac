@@ -7,7 +7,7 @@ import me.tatarka.inject.annotations.Inject
 import kotlin.jvm.JvmSuppressWildcards
 
 @Inject
-class VoyagerNavigationInitializer(
+class FeatureRegistryInitializer(
     private val features: Set<@JvmSuppressWildcards Feature>,
 ) : AppInitializer {
 

@@ -14,8 +14,6 @@ kotlin {
 
         commonMain {
             dependencies {
-                implementation(projects.presentation.discover)
-
                 implementation(projects.core.util)
 
                 api(libs.voyager.navigator)
