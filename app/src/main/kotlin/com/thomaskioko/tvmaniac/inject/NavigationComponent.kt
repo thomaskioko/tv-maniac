@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.showsgrid.ShowsGridRegistryFeature
 import com.thomaskioko.tvmaniac.util.AppInitializer
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.videoplayer.TrailersRegistryFeature
-import com.thomaskioko.tvmaniac.watchlist.LibraryRegistryFeature
+import com.thomaskioko.tvmaniac.library.LibraryRegistryFeature
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 

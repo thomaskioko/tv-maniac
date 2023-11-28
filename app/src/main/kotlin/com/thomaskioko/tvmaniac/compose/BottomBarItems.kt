@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.discover.DiscoverScreen
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.search.SearchScreen
 import com.thomaskioko.tvmaniac.settings.SettingsScreen
-import com.thomaskioko.tvmaniac.watchlist.LibraryScreen
+import com.thomaskioko.tvmaniac.library.LibraryScreen
 import kotlin.reflect.KClass
 
 interface BottomBarItem {
