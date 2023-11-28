@@ -10,7 +10,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class LibraryStateMachine(
     private val repository: LibraryRepository,
-) : FlowReduxStateMachine<LibraryState, WatchlistAction>(initialState = LoadingShows) {
+) : FlowReduxStateMachine<LibraryState, LibraryAction>(initialState = LoadingShows) {
 
     init {
         spec {
@@ -18,7 +18,7 @@ class LibraryStateMachine(
                 onEnter { state ->
                     val result = repository.getLibraryShows()
 
-                    state.override { LibraryContent(result.entityToWatchlist()) }
+                    state.override { LibraryContent(result.entityToLibraryShowList()) }
                 }
             }
 
@@ -26,13 +26,13 @@ class LibraryStateMachine(
                 collectWhileInState(repository.observeLibrary()) { result, state ->
                     result.fold(
                         { state.override { ErrorLoadingShows(it.errorMessage) } },
-                        { state.mutate { copy(list = it.entityToWatchlist()) } },
+                        { state.mutate { copy(list = it.entityToLibraryShowList()) } },
                     )
                 }
             }
 
             inState<ErrorLoadingShows> {
-                on<ReloadWatchlist> { _, state ->
+                on<ReloadLibrary> { _, state ->
                     state.override { LoadingShows }
                 }
             }

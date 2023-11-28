@@ -1,5 +1,5 @@
 package com.thomaskioko.tvmaniac.presentation.watchlist
 
-sealed interface WatchlistAction
+sealed interface LibraryAction
 
-object ReloadWatchlist : WatchlistAction
+data object ReloadLibrary : LibraryAction

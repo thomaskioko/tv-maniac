@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.watchlist
+package com.thomaskioko.tvmaniac.library
 
 import cafe.adriel.voyager.core.registry.ScreenRegistry
 import cafe.adriel.voyager.core.registry.screenModule

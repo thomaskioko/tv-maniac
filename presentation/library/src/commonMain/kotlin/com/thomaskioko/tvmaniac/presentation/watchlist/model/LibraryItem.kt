@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.watchlist
+package com.thomaskioko.tvmaniac.presentation.watchlist.model
 
 data class LibraryItem(
     val traktId: Long = 0,

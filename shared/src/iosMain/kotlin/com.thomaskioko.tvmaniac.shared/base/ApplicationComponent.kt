@@ -19,7 +19,7 @@ import com.thomaskioko.tvmaniac.shared.base.wrappers.SeasonDetailsStateMachineWr
 import com.thomaskioko.tvmaniac.shared.base.wrappers.SettingsStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.base.wrappers.ShowDetailsStateMachineWrapper
 import com.thomaskioko.tvmaniac.shared.base.wrappers.TrailersStateMachineWrapper
-import com.thomaskioko.tvmaniac.shared.base.wrappers.WatchlistStateMachineWrapper
+import com.thomaskioko.tvmaniac.shared.base.wrappers.LibraryStateMachineWrapper
 import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
 import com.thomaskioko.tvmaniac.shows.implementation.DiscoverComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
@@ -59,14 +59,14 @@ abstract class ApplicationComponent :
     abstract val settingsStateMachineWrapper: SettingsStateMachineWrapper
     abstract val showDetailsStateMachineWrapper: ShowDetailsStateMachineWrapper
     abstract val trailerStateMachineWrapper: TrailersStateMachineWrapper
-    abstract val watchlistStateMachineWrapper: WatchlistStateMachineWrapper
+    abstract val libraryStateMachineWrapper: LibraryStateMachineWrapper
     abstract val profileStateMachineWrapper: ProfileStateMachineWrapper
 }
 
 fun discoverStateMachine(): DiscoverStateMachineWrapper =
     ApplicationComponent::class.create().discoverStateMachine
 
-fun watchlistStateMachineWrapper(): WatchlistStateMachineWrapper =
+fun watchlistStateMachineWrapper(): LibraryStateMachineWrapper =
     ApplicationComponent::class.create().watchlistStateMachineWrapper
 
 fun seasonDetailsStateMachine(): SeasonDetailsStateMachineWrapper =

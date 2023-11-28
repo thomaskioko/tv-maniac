@@ -12,6 +12,8 @@ kotlin {
 
                 implementation(libs.flowredux)
                 implementation(libs.kotlinInject.runtime)
+                implementation(libs.kotlinx.collections)
+                implementation(libs.voyager.core)
             }
         }
 

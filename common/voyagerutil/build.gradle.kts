@@ -15,10 +15,9 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.presentation.discover)
+                api(projects.presentation.library)
 
                 api(libs.voyager.navigator)
-                api(libs.voyager.bottomSheetNavigator)
-                api(libs.voyager.transitions)
 
                 implementation(libs.kotlinInject.runtime)
             }
