@@ -7,11 +7,13 @@ android {
 }
 
 dependencies {
-    api(projects.presentation.showDetails)
+    implementation(projects.common.voyagerutil)
+    implementation(projects.presentation.showDetails)
     implementation(projects.common.navigation)
 
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.compose.material.icons)
     implementation(libs.flowredux)
+    implementation(libs.kotlinx.collections)
     implementation(libs.snapper)
 }

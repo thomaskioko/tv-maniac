@@ -1,5 +1,8 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails.model
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+
 data class Show(
     val traktId: Long = 0,
     val tmdbId: Long? = 0,
@@ -14,7 +17,7 @@ data class Show(
     val numberOfSeasons: Int? = null,
     val numberOfEpisodes: Long? = null,
     val rating: Double = 0.0,
-    val genres: List<String> = listOf(),
+    val genres: ImmutableList<String> = persistentListOf(),
     val isFollowed: Boolean = false,
 ) {
     companion object {

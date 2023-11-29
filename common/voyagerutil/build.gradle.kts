@@ -18,6 +18,7 @@ kotlin {
                 api(projects.presentation.library)
                 api(projects.presentation.profile)
                 api(projects.presentation.settings)
+                implementation(projects.presentation.showDetails)
 
                 api(libs.voyager.navigator)
                 implementation(libs.coroutines.core)

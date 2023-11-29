@@ -43,7 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -66,8 +66,16 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.registry.ScreenRegistry
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.ScreenKey
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.thomaskioko.showdetails.DetailConstants.HEADER_HEIGHT
+import com.thomaskioko.tvmaniac.common.navigation.TvManiacScreens
+import com.thomaskioko.tvmaniac.common.navigation.TvManiacScreens.ShowDetailsScreen
+import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -82,34 +90,59 @@ import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded
+import com.thomaskioko.tvmaniac.presentation.showdetails.DismissWebViewError
+import com.thomaskioko.tvmaniac.presentation.showdetails.FollowShowClicked
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.presentation.showdetails.WebViewError
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.collections.immutable.ImmutableList
 
 data class ShowDetailsScreen(val id: Long) : Screen {
+    override val key: ScreenKey = "_show_details_$id"
+
     @Composable
     override fun Content() {
+        val screenModel = viewModel { showDetailsScreenModel(id) }
+        val state by screenModel.state.collectAsStateWithLifecycle()
+
+        val navigator = LocalNavigator.currentOrThrow
+        val snackbarHostState = remember { SnackbarHostState() }
+        val listState = rememberLazyListState()
+
+        ShowDetailsUi(
+            state = state,
+            title = state.show.title,
+            onBackClicked = { navigator.pop() },
+            onSeasonClicked = { id, season -> },
+            onShowClicked = { navigator.push(ScreenRegistry.get(ShowDetailsScreen(it))) },
+            onWatchTrailerClicked = { id ->
+                navigator.push(ScreenRegistry.get(TvManiacScreens.TrailersScreen(id)))
+            },
+            snackbarHostState = snackbarHostState,
+            listState = listState,
+            onAction = screenModel::dispatch,
+        )
     }
 }
 
 @Composable
-internal fun ShowDetailScreen(
+internal fun ShowDetailsUi(
     state: ShowDetailsState,
     title: String,
     onBackClicked: () -> Unit,
     onSeasonClicked: (Long, String) -> Unit,
     onShowClicked: (Long) -> Unit,
-    onWatchTrailerClicked: (Boolean, Long, String?) -> Unit,
-    onUpdateFavoriteClicked: (Boolean) -> Unit,
+    onWatchTrailerClicked: (Long) -> Unit,
     snackbarHostState: SnackbarHostState,
     listState: LazyListState,
+    onAction: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
-    onDismissTrailerErrorClicked: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -124,23 +157,20 @@ internal fun ShowDetailScreen(
         },
         content = { contentPadding ->
 
-            when (state) {
-                is ShowDetailsLoaded -> ShowDetailContent(
-                    show = state.show,
-                    trailerContent = state.trailersContent,
-                    seasonsContent = state.seasonsContent,
-                    similarShowsContent = state.similarShowsContent,
-                    contentPadding = contentPadding,
-                    snackBarHostState = snackbarHostState,
-                    listState = listState,
-                    modifier = modifier,
-                    onSeasonClicked = onSeasonClicked,
-                    onShowClicked = onShowClicked,
-                    onWatchTrailerClicked = onWatchTrailerClicked,
-                    onUpdateFavoriteClicked = onUpdateFavoriteClicked,
-                    onDismissTrailerErrorClicked = onDismissTrailerErrorClicked,
-                )
-            }
+            ShowDetailsUi(
+                show = state.show,
+                trailerContent = state.trailersContent,
+                seasonsContent = state.seasonsContent,
+                similarShowsContent = state.similarShowsContent,
+                contentPadding = contentPadding,
+                snackBarHostState = snackbarHostState,
+                listState = listState,
+                modifier = modifier,
+                onSeasonClicked = onSeasonClicked,
+                onShowClicked = onShowClicked,
+                onWatchTrailerClicked = onWatchTrailerClicked,
+                onAction = onAction,
+            )
         },
     )
 }
@@ -151,7 +181,7 @@ private fun ShowTopBar(
     title: String,
     onNavUpClick: () -> Unit,
 ) {
-    var appBarHeight by remember { mutableStateOf(0) }
+    var appBarHeight by remember { mutableIntStateOf(0) }
     val showAppBarBackground by remember {
         derivedStateOf {
             val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
@@ -180,20 +210,19 @@ private fun ShowTopBar(
 }
 
 @Composable
-private fun ShowDetailContent(
+private fun ShowDetailsUi(
     show: Show,
-    trailerContent: ShowDetailsLoaded.TrailersContent?,
-    seasonsContent: ShowDetailsLoaded.SeasonsContent?,
-    similarShowsContent: ShowDetailsLoaded.SimilarShowsContent?,
+    trailerContent: ShowDetailsState.TrailersContent,
+    seasonsContent: ShowDetailsState.SeasonsContent,
+    similarShowsContent: ShowDetailsState.SimilarShowsContent,
     listState: LazyListState,
     snackBarHostState: SnackbarHostState,
     contentPadding: PaddingValues,
     onSeasonClicked: (Long, String) -> Unit,
     onShowClicked: (Long) -> Unit,
-    onWatchTrailerClicked: (Boolean, Long, String?) -> Unit,
-    onUpdateFavoriteClicked: (Boolean) -> Unit,
+    onWatchTrailerClicked: (Long) -> Unit,
+    onAction: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
-    onDismissTrailerErrorClicked: () -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -204,44 +233,35 @@ private fun ShowDetailContent(
             HeaderContent(
                 listState = listState,
                 show = show,
-                trailerKey = trailerContent?.trailersList?.firstOrNull()?.key,
-                onUpdateFavoriteClicked = onUpdateFavoriteClicked,
-                onWatchTrailerClicked = { showId, key ->
-                    val hasWebView = trailerContent?.hasWebViewInstalled ?: false
-                    onWatchTrailerClicked(hasWebView, showId, key)
-                },
+                onUpdateFavoriteClicked = { onAction(FollowShowClicked(it)) },
+                onWatchTrailerClicked = onWatchTrailerClicked,
             )
         }
 
         item {
-            seasonsContent?.let {
-                SeasonsContent(
-                    isLoading = seasonsContent.isLoading,
-                    seasonsList = seasonsContent.seasonsList,
-                    onSeasonClicked = onSeasonClicked,
-                )
-            }
+            SeasonsContent(
+                isLoading = seasonsContent.isLoading,
+                seasonsList = seasonsContent.seasonsList,
+                onSeasonClicked = onSeasonClicked,
+            )
         }
 
         item {
-            if (trailerContent != null) {
-                TrailersContent(
-                    trailersState = trailerContent,
-                    snackBarHostState = snackBarHostState,
-                    onDismissTrailerErrorClicked = onDismissTrailerErrorClicked,
-                    onWatchTrailerClicked = onWatchTrailerClicked,
-                )
-            }
+            TrailersContent(
+                trailersState = trailerContent,
+                snackBarHostState = snackBarHostState,
+                onDismissTrailerErrorClicked = { onAction(DismissWebViewError) },
+                onWatchTrailerClicked = onWatchTrailerClicked,
+                onAction = onAction,
+            )
         }
 
         item {
-            if (similarShowsContent != null) {
-                SimilarShowsContent(
-                    isLoading = similarShowsContent.isLoading,
-                    similarShows = similarShowsContent.similarShows,
-                    onShowClicked = onShowClicked,
-                )
-            }
+            SimilarShowsContent(
+                isLoading = similarShowsContent.isLoading,
+                similarShows = similarShowsContent.similarShows,
+                onShowClicked = onShowClicked,
+            )
         }
     }
 }
@@ -249,10 +269,9 @@ private fun ShowDetailContent(
 @Composable
 private fun HeaderContent(
     show: Show?,
-    trailerKey: String?,
     listState: LazyListState,
     onUpdateFavoriteClicked: (Boolean) -> Unit,
-    onWatchTrailerClicked: (Long, String?) -> Unit,
+    onWatchTrailerClicked: (Long) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -280,7 +299,6 @@ private fun HeaderContent(
         if (show != null) {
             Body(
                 show = show,
-                trailerKey = trailerKey,
                 onUpdateFavoriteClicked = onUpdateFavoriteClicked,
                 onWatchTrailerClicked = onWatchTrailerClicked,
             )
@@ -291,9 +309,8 @@ private fun HeaderContent(
 @Composable
 private fun Body(
     show: Show,
-    trailerKey: String?,
     onUpdateFavoriteClicked: (Boolean) -> Unit,
-    onWatchTrailerClicked: (Long, String?) -> Unit,
+    onWatchTrailerClicked: (Long) -> Unit,
 ) {
     val surfaceGradient = backgroundGradient().reversed()
 
@@ -345,7 +362,6 @@ private fun Body(
 
             ShowDetailButtons(
                 traktId = show.traktId,
-                trailerKey = trailerKey,
                 isFollowed = show.isFollowed,
                 onUpdateFavoriteClicked = onUpdateFavoriteClicked,
                 onWatchTrailerClicked = onWatchTrailerClicked,
@@ -442,7 +458,7 @@ fun ShowMetadata(
 
 @Composable
 private fun GenreText(
-    genreList: List<String>,
+    genreList: ImmutableList<String>,
 ) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
@@ -474,9 +490,8 @@ private fun GenreText(
 fun ShowDetailButtons(
     isFollowed: Boolean,
     traktId: Long,
-    trailerKey: String?,
     onUpdateFavoriteClicked: (Boolean) -> Unit,
-    onWatchTrailerClicked: (Long, String?) -> Unit,
+    onWatchTrailerClicked: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -498,7 +513,7 @@ fun ShowDetailButtons(
             text = stringResource(id = R.string.btn_trailer),
             textPadding = 8.dp,
             borderColor = MaterialTheme.colorScheme.secondary,
-            onClick = { onWatchTrailerClicked(traktId, trailerKey) },
+            onClick = { onWatchTrailerClicked(traktId) },
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -534,7 +549,7 @@ fun ShowDetailButtons(
 @Composable
 private fun SeasonsContent(
     isLoading: Boolean,
-    seasonsList: List<Season>,
+    seasonsList: ImmutableList<Season>,
     onSeasonClicked: (Long, String) -> Unit,
 ) {
     if (seasonsList.isNotEmpty()) {
@@ -542,7 +557,7 @@ private fun SeasonsContent(
             isLoading = isLoading,
             text = stringResource(id = R.string.title_seasons),
         )
-        val selectedIndex by remember { mutableStateOf(0) }
+        val selectedIndex by remember { mutableIntStateOf(0) }
 
         ScrollableTabRow(
             selectedTabIndex = selectedIndex,
@@ -583,28 +598,29 @@ private fun SeasonsContent(
 
 @Composable
 private fun TrailersContent(
-    trailersState: ShowDetailsLoaded.TrailersContent?,
+    trailersState: ShowDetailsState.TrailersContent,
     snackBarHostState: SnackbarHostState,
     onDismissTrailerErrorClicked: () -> Unit,
-    onWatchTrailerClicked: (Boolean, Long, String?) -> Unit,
+    onAction: (ShowDetailsAction) -> Unit,
+    onWatchTrailerClicked: (Long) -> Unit,
 ) {
     SnackBarErrorRetry(
         snackBarHostState = snackBarHostState,
-        errorMessage = trailersState?.playerErrorMessage,
+        errorMessage = trailersState.playerErrorMessage,
         onErrorAction = onDismissTrailerErrorClicked,
         actionLabel = "Dismiss",
     )
 
-    if (trailersState != null) {
+    if (trailersState.trailersList.isNotEmpty()) {
         TrailersRowContent(
             isLoading = trailersState.isLoading,
             trailersList = trailersState.trailersList,
-            onTrailerClicked = { showId, videoKey ->
-                onWatchTrailerClicked(
-                    trailersState.hasWebViewInstalled,
-                    showId,
-                    videoKey,
-                )
+            onTrailerClicked = { showId ->
+                if (trailersState.hasWebViewInstalled) {
+                    onWatchTrailerClicked(showId)
+                } else {
+                    onAction(WebViewError)
+                }
             },
         )
     }
@@ -614,35 +630,37 @@ private fun TrailersContent(
 @Composable
 fun SimilarShowsContent(
     isLoading: Boolean,
-    similarShows: List<Show>,
+    similarShows: ImmutableList<Show>,
     modifier: Modifier = Modifier,
     onShowClicked: (Long) -> Unit = {},
 ) {
     val lazyListState = rememberLazyListState()
 
-    TextLoadingItem(
-        isLoading = isLoading,
-        text = stringResource(id = R.string.title_similar),
-    )
+    if (similarShows.isNotEmpty()) {
+        TextLoadingItem(
+            isLoading = isLoading,
+            text = stringResource(id = R.string.title_similar),
+        )
 
-    LazyRow(
-        modifier = modifier,
-        state = lazyListState,
-        flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-    ) {
-        itemsIndexed(similarShows) { index, tvShow ->
-            val value = if (index == 0) 16 else 4
+        LazyRow(
+            modifier = modifier,
+            state = lazyListState,
+            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+        ) {
+            itemsIndexed(similarShows) { index, tvShow ->
+                val value = if (index == 0) 16 else 4
 
-            Spacer(modifier = Modifier.width(value.dp))
+                Spacer(modifier = Modifier.width(value.dp))
 
-            TvPosterCard(
-                modifier = Modifier
-                    .animateItemPlacement(),
-                posterImageUrl = tvShow.posterImageUrl,
-                title = tvShow.title,
-                onClick = { onShowClicked(tvShow.traktId) },
-                imageWidth = 84.dp,
-            )
+                TvPosterCard(
+                    modifier = Modifier
+                        .animateItemPlacement(),
+                    posterImageUrl = tvShow.posterImageUrl,
+                    title = tvShow.title,
+                    onClick = { onShowClicked(tvShow.traktId) },
+                    imageWidth = 84.dp,
+                )
+            }
         }
     }
 }
@@ -651,9 +669,9 @@ fun SimilarShowsContent(
 @Composable
 fun TrailersRowContent(
     isLoading: Boolean,
-    trailersList: List<Trailer>,
+    trailersList: ImmutableList<Trailer>,
     modifier: Modifier = Modifier,
-    onTrailerClicked: (Long, String) -> Unit,
+    onTrailerClicked: (Long) -> Unit,
 ) {
     TextLoadingItem(
         isLoading = isLoading,
@@ -674,7 +692,7 @@ fun TrailersRowContent(
 
             Card(
                 modifier = Modifier
-                    .clickable { onTrailerClicked(trailer.showId, trailer.key) },
+                    .clickable { onTrailerClicked(trailer.showId) },
                 shape = RoundedCornerShape(4.dp),
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 4.dp,
@@ -727,17 +745,16 @@ private fun ShowDetailScreenPreview(
 ) {
     TvManiacTheme {
         Surface {
-            ShowDetailScreen(
+            ShowDetailsUi(
                 state = state,
                 title = "",
                 onBackClicked = {},
                 onSeasonClicked = { _, _ -> },
                 onShowClicked = {},
-                onWatchTrailerClicked = { _, _, _ -> },
-                onUpdateFavoriteClicked = {},
+                onWatchTrailerClicked = { _ -> },
                 snackbarHostState = SnackbarHostState(),
-                onDismissTrailerErrorClicked = {},
                 listState = LazyListState(),
+                onAction = {},
             )
         }
     }

@@ -1,17 +1,17 @@
 package com.thomaskioko.showdetails
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
+import kotlinx.collections.immutable.persistentListOf
 
-val trailerLoaded = ShowDetailsLoaded.TrailersContent(
+val trailerLoaded = ShowDetailsState.TrailersContent(
     isLoading = true,
     hasWebViewInstalled = false,
     playerErrorMessage = null,
-    trailersList = listOf(
+    trailersList = persistentListOf(
         Trailer(
             showId = 1232,
             key = "",
@@ -28,7 +28,7 @@ val trailerLoaded = ShowDetailsLoaded.TrailersContent(
     errorMessage = null,
 )
 
-private val showDetailsLoaded = ShowDetailsLoaded(
+private val showDetailsLoaded = ShowDetailsState(
     show = Show(
         traktId = 84958,
         title = "Loki",
@@ -43,13 +43,13 @@ private val showDetailsLoaded = ShowDetailsLoaded(
         language = "en",
         votes = 4958,
         rating = 8.1,
-        genres = listOf("Horror", "Action"),
+        genres = persistentListOf("Horror", "Action"),
         status = "Returning Series",
         year = "2024",
     ),
-    seasonsContent = ShowDetailsLoaded.SeasonsContent(
+    seasonsContent = ShowDetailsState.SeasonsContent(
         isLoading = false,
-        seasonsList = listOf(
+        seasonsList = persistentListOf(
             Season(
                 seasonId = 114355,
                 tvShowId = 84958,
@@ -59,9 +59,9 @@ private val showDetailsLoaded = ShowDetailsLoaded(
         errorMessage = null,
     ),
     trailersContent = trailerLoaded,
-    similarShowsContent = ShowDetailsLoaded.SimilarShowsContent(
+    similarShowsContent = ShowDetailsState.SimilarShowsContent(
         isLoading = false,
-        similarShows = emptyList(),
+        similarShows = persistentListOf(),
         errorMessage = null,
     ),
     errorMessage = null,
@@ -82,7 +82,7 @@ val showList = List(4) {
         language = "en",
         votes = 4958,
         rating = 8.1,
-        genres = listOf("Horror", "Action"),
+        genres = persistentListOf("Horror", "Action"),
         status = "Returning Series",
         year = "2024",
     )
