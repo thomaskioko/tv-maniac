@@ -198,6 +198,7 @@ private fun SeasonContent(
                     collapsed = collapsedState[index],
                     onEpisodeClicked = { onEpisodeClicked(it) },
                     onSeasonHeaderClicked = { collapsedState[index] = !collapsedState[index] },
+                    onAction = onAction,
                 )
             }
         }

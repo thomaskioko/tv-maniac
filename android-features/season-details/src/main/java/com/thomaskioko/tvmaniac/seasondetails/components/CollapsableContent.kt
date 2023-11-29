@@ -38,16 +38,19 @@ import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.green
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.seasondetails.seasonDetails
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun CollapsableContent(
     headerTitle: String,
     episodesCount: Long,
     watchProgress: Float,
-    episodeList: List<Episode>,
+    episodeList: ImmutableList<Episode>,
     collapsed: Boolean,
+    onAction: (SeasonDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
     onEpisodeClicked: (Long) -> Unit = {},
     onSeasonHeaderClicked: () -> Unit = {},
@@ -79,6 +82,7 @@ fun CollapsableContent(
                     title = episode.episodeNumberTitle,
                     episodeOverview = episode.overview,
                     onEpisodeClicked = { onEpisodeClicked(episode.id) },
+                    onAction = onAction,
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -233,6 +237,7 @@ fun CollapsableContentPreview() {
                 episodeList = seasonDetails.episodes,
                 headerTitle = seasonDetails.seasonName,
                 collapsed = false,
+                onAction = {},
             )
         }
     }
