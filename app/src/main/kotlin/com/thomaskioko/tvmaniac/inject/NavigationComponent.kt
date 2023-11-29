@@ -4,12 +4,12 @@ import com.thomaskioko.showdetails.ShowDetailsRegistryFeature
 import com.thomaskioko.tvmaniac.common.navigation.Feature
 import com.thomaskioko.tvmaniac.common.navigation.inject.FeatureRegistryInitializer
 import com.thomaskioko.tvmaniac.discover.DiscoverRegistryFeature
+import com.thomaskioko.tvmaniac.feature.moreshows.MoreShowsRegistryFeature
 import com.thomaskioko.tvmaniac.library.LibraryRegistryFeature
 import com.thomaskioko.tvmaniac.profile.ProfileRegistryFeature
 import com.thomaskioko.tvmaniac.search.SearchRegistryFeature
 import com.thomaskioko.tvmaniac.seasondetails.SeasonDetailRegistryFeature
 import com.thomaskioko.tvmaniac.settings.SettingsRegistryFeature
-import com.thomaskioko.tvmaniac.showsgrid.ShowsGridRegistryFeature
 import com.thomaskioko.tvmaniac.util.AppInitializer
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.videoplayer.TrailersRegistryFeature
@@ -64,7 +64,7 @@ interface NavigationComponent {
     @Provides
     @IntoSet
     fun bindShowsGridRegistryFeature(
-        feature: ShowsGridRegistryFeature,
+        feature: MoreShowsRegistryFeature,
     ): Feature = feature
 
     @Provides

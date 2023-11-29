@@ -32,12 +32,12 @@ dependencies {
 
     implementation(projects.androidCore.designsystem)
     implementation(projects.androidFeatures.discover)
+    implementation(projects.androidFeatures.moreShows)
     implementation(projects.androidFeatures.profile)
     implementation(projects.androidFeatures.search)
     implementation(projects.androidFeatures.seasonDetails)
     implementation(projects.androidFeatures.settings)
     implementation(projects.androidFeatures.showDetails)
-    implementation(projects.androidFeatures.showsGrid)
     implementation(projects.androidFeatures.trailers)
     implementation(projects.androidFeatures.library)
 

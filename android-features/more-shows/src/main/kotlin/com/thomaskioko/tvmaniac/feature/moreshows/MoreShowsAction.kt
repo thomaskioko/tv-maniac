@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.showsgrid
+package com.thomaskioko.tvmaniac.feature.moreshows
 
 sealed interface GridActions
 

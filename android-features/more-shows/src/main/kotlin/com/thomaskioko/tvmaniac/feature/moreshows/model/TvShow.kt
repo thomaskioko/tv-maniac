@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.showsgrid.model
+package com.thomaskioko.tvmaniac.feature.moreshows.model
 
 data class TvShow(
     val traktId: Long = 0,

@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.showsgrid
+package com.thomaskioko.tvmaniac.feature.moreshows.compose
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement

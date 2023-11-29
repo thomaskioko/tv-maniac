@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.showsgrid
+package com.thomaskioko.tvmaniac.feature.moreshows
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -23,7 +23,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -37,10 +36,11 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.feature.moreshows.model.TvShow
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.showsgrid.model.TvShow
+import kotlinx.collections.immutable.ImmutableList
 
-data object ShowsGridScreen : Screen {
+data object MoreShowsScreen : Screen {
     @Composable
     override fun Content() {
     }
@@ -48,7 +48,7 @@ data object ShowsGridScreen : Screen {
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
-private fun GridScreen(
+internal fun MoreShowsUiContent(
     onBackClicked: () -> Unit,
     state: GridState,
     title: String,
@@ -94,7 +94,7 @@ private fun GridScreen(
 @ExperimentalFoundationApi
 @Composable
 fun GridContent(
-    list: List<TvShow>,
+    list: ImmutableList<TvShow>,
     contentPadding: PaddingValues,
     onItemClicked: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -153,12 +153,12 @@ fun GridContent(
 @ThemePreviews
 @Composable
 private fun ShowsGridContentPreview(
-    @PreviewParameter(GridPreviewParameterProvider::class)
+    @PreviewParameter(MoreShowsPreviewParameterProvider::class)
     state: GridState,
 ) {
     TvManiacTheme {
         Surface {
-            GridScreen(
+            MoreShowsUiContent(
                 state = state,
                 title = "Anticipated",
                 onShowClicked = {},

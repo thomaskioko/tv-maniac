@@ -1,7 +1,8 @@
-package com.thomaskioko.tvmaniac.showsgrid
+package com.thomaskioko.tvmaniac.feature.moreshows
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.showsgrid.model.TvShow
+import com.thomaskioko.tvmaniac.feature.moreshows.model.TvShow
+import kotlinx.collections.immutable.toPersistentList
 
 private val showList = List(6) {
     TvShow(
@@ -10,9 +11,9 @@ private val showList = List(6) {
         posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     )
-}
+}.toPersistentList()
 
-class GridPreviewParameterProvider : PreviewParameterProvider<GridState> {
+class MoreShowsPreviewParameterProvider : PreviewParameterProvider<GridState> {
     override val values: Sequence<GridState>
         get() {
             return sequenceOf(
