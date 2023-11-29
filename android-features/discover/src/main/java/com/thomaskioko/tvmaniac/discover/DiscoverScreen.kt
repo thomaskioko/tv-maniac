@@ -32,19 +32,17 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,7 +60,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.common.navigation.TvManiacScreens.ShowDetailsScreen
-import com.thomaskioko.tvmaniac.common.navigation.TvManiacScreens.ShowsGridScreen
 import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
@@ -111,7 +108,11 @@ data object DiscoverScreen : Screen {
             pagerState = pagerState,
             onAction = discoverScreenModel::dispatch,
             onShowClicked = { navigator.push(ScreenRegistry.get(ShowDetailsScreen(id = it))) },
-            onMoreClicked = { navigator.push(ScreenRegistry.get(ShowsGridScreen(id = it))) },
+            onMoreClicked = {
+                /** Ucomment when more screen is implemented
+                 * navigator.push(ScreenRegistry.get(ShowsGridScreen(id = it)))
+                 */
+            },
         )
     }
 }
@@ -259,8 +260,6 @@ fun DiscoverHeaderContent(
         ) {
             val backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
 
-            DiscoverTopBar(backgroundColor = backgroundColor)
-
             HorizontalPagerItem(
                 list = showList,
                 pagerState = pagerState,
@@ -271,20 +270,6 @@ fun DiscoverHeaderContent(
 
         Spacer(modifier = Modifier.height(16.dp))
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DiscoverTopBar(
-    backgroundColor: Color,
-) {
-    TopAppBar(
-        title = { },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = backgroundColor,
-        ),
-        modifier = Modifier.fillMaxWidth(),
-    )
 }
 
 @Composable
@@ -322,12 +307,16 @@ fun HorizontalPagerItem(
 ) {
     Column(
         modifier = modifier
+            .windowInsetsPadding(
+                WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
+            )
             .fillMaxWidth()
             .verticalGradientScrim(
                 color = backgroundColor,
                 startYPercentage = 1f,
                 endYPercentage = 0.5f,
-            ),
+            )
+            .padding(top = 84.dp),
     ) {
         HorizontalPager(
             state = pagerState,
@@ -370,9 +359,9 @@ fun HorizontalPagerItem(
         }
 
         if (list.isNotEmpty()) {
-            LaunchedEffect(list) {
-                if (list.size >= 4) {
-                    pagerState.scrollToPage(2)
+            LaunchedEffect(pagerState) {
+                snapshotFlow { pagerState.currentPage }.collect { page ->
+                    pagerState.scrollToPage(page)
                 }
             }
 
