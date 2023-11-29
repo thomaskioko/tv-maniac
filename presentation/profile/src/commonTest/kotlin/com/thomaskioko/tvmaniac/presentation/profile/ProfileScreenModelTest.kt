@@ -28,12 +28,12 @@ class ProfileScreenModelTest {
     private val traktAuthRepository = FakeTraktAuthRepository()
 
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var stateMachine: ProfileScreenModel
+    private lateinit var screenModel: ProfileScreenModel
 
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        stateMachine = ProfileScreenModel(
+        screenModel = ProfileScreenModel(
             datastoreRepository = datastoreRepository,
             profileRepository = profileRepository,
             traktAuthRepository = traktAuthRepository,
@@ -47,22 +47,22 @@ class ProfileScreenModelTest {
 
     @Test
     fun initial_state_emits_expected_result() = runTest {
-        stateMachine.state.test {
+        screenModel.state.test {
             awaitItem() shouldBe ProfileState()
         }
     }
 
     @Test
     fun given_ShowTraktDialog_andUserIsAuthenticated_expectedResultIsEmitted() = runTest {
-        stateMachine.state.test {
+        screenModel.state.test {
             awaitItem() shouldBe ProfileState() // Initial State
 
-            stateMachine.dispatch(ShowTraktDialog)
+            screenModel.dispatch(ShowTraktDialog)
 
             awaitItem() shouldBe ProfileState()
                 .copy(showTraktDialog = true)
 
-            stateMachine.dispatch(TraktLoginClicked)
+            screenModel.dispatch(TraktLoginClicked)
 
             awaitItem() shouldBe ProfileState()
                 .copy(showTraktDialog = false)
@@ -86,18 +86,18 @@ class ProfileScreenModelTest {
 
     @Test
     fun given_TraktLoginClicked_andErrorOccurs_expectedResultIsEmitted() = runTest {
-        stateMachine.state.test {
+        screenModel.state.test {
             val errorMessage = "Something happened"
 
             awaitItem() shouldBe ProfileState()
 
-            stateMachine.dispatch(ShowTraktDialog)
+            screenModel.dispatch(ShowTraktDialog)
 
             awaitItem() shouldBe ProfileState().copy(
                 showTraktDialog = true,
             )
 
-            stateMachine.dispatch(TraktLoginClicked)
+            screenModel.dispatch(TraktLoginClicked)
 
             awaitItem() shouldBe ProfileState().copy(
                 showTraktDialog = false,
@@ -116,7 +116,7 @@ class ProfileScreenModelTest {
 
     @Test
     fun given_TraktLogoutClicked_expectedResultIsEmitted() = runTest {
-        stateMachine.state.test {
+        screenModel.state.test {
             awaitItem() shouldBe ProfileState()
 
             traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
@@ -134,7 +134,7 @@ class ProfileScreenModelTest {
                     ),
                 )
 
-            stateMachine.dispatch(TraktLogoutClicked)
+            screenModel.dispatch(TraktLogoutClicked)
 
             awaitItem() shouldBe ProfileState()
         }

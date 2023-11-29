@@ -18,7 +18,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class LibraryStateMachineTest {
+class LibraryScreenModelTest {
 
     private val repository = FakeLibraryRepository()
     private val testDispatcher = StandardTestDispatcher()

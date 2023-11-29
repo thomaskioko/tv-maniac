@@ -31,12 +31,12 @@ class SettingsScreenModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
 
-    private lateinit var stateMachine: SettingsScreenModel
+    private lateinit var screenModel: SettingsScreenModel
 
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        stateMachine = SettingsScreenModel(
+        screenModel = SettingsScreenModel(
             datastoreRepository = datastoreRepository,
             profileRepository = profileRepository,
             traktAuthRepository = traktAuthRepository,
@@ -50,23 +50,23 @@ class SettingsScreenModelTest {
 
     @Test
     fun initial_state_emits_expected_result() = runTest {
-        stateMachine.state.test {
+        screenModel.state.test {
             awaitItem() shouldBe SettingsState.DEFAULT_STATE
         }
     }
 
     @Test
     fun when_theme_is_updated_expected_result_is_emitted() = runTest {
-        stateMachine.state.test {
+        screenModel.state.test {
             awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-            stateMachine.dispatch(ChangeThemeClicked)
+            screenModel.dispatch(ChangeThemeClicked)
             awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(
                 showthemePopup = true,
             )
 
             datastoreRepository.setTheme(Theme.DARK)
-            stateMachine.dispatch(ThemeSelected(Theme.DARK))
+            screenModel.dispatch(ThemeSelected(Theme.DARK))
 
             awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(
                 showthemePopup = true,
@@ -81,16 +81,16 @@ class SettingsScreenModelTest {
 
     @Test
     fun when_dialog_is_dismissed_expected_result_is_emitted() = runTest {
-        stateMachine.state.test {
+        screenModel.state.test {
             awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-            stateMachine.dispatch(ChangeThemeClicked)
+            screenModel.dispatch(ChangeThemeClicked)
 
             awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(
                 showthemePopup = true,
             )
 
-            stateMachine.dispatch(DismissThemeClicked)
+            screenModel.dispatch(DismissThemeClicked)
 
             awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(
                 showthemePopup = false,
@@ -100,16 +100,16 @@ class SettingsScreenModelTest {
 
     @Test
     fun when_ShowTraktDialog_is_clicked_expected_result_is_emitted() = runTest {
-        stateMachine.state.test {
+        screenModel.state.test {
             awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-            stateMachine.dispatch(ShowTraktDialog)
+            screenModel.dispatch(ShowTraktDialog)
 
             awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(
                 showTraktDialog = true,
             )
 
-            stateMachine.dispatch(DismissTraktDialog)
+            screenModel.dispatch(DismissTraktDialog)
 
             awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(
                 showTraktDialog = false,
@@ -120,15 +120,15 @@ class SettingsScreenModelTest {
     @Ignore // "Fix once TraktAuthManager is implemented"
     @Test
     fun given_TraktLoginClicked_andUserIsAuthenticated_expectedResultIsEmitted() = runTest {
-        stateMachine.state.test {
+        screenModel.state.test {
             awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-            stateMachine.dispatch(ShowTraktDialog)
+            screenModel.dispatch(ShowTraktDialog)
 
             awaitItem() shouldBe SettingsState.DEFAULT_STATE
                 .copy(showTraktDialog = true)
 
-            stateMachine.dispatch(TraktLoginClicked)
+            screenModel.dispatch(TraktLoginClicked)
 
             awaitItem() shouldBe SettingsState.DEFAULT_STATE
                 .copy(showTraktDialog = false)
@@ -153,17 +153,17 @@ class SettingsScreenModelTest {
     @Ignore // "Fix once TraktAuthManager is implemented"
     @Test
     fun given_TraktLoginClicked_andErrorOccurs_expectedResultIsEmitted() = runTest {
-        stateMachine.state.test {
+        screenModel.state.test {
             val errorMessage = "Something happened"
 
             awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-            stateMachine.dispatch(ShowTraktDialog)
+            screenModel.dispatch(ShowTraktDialog)
 
             awaitItem() shouldBe SettingsState.DEFAULT_STATE
                 .copy(showTraktDialog = true)
 
-            stateMachine.dispatch(TraktLoginClicked)
+            screenModel.dispatch(TraktLoginClicked)
 
             awaitItem() shouldBe SettingsState.DEFAULT_STATE
                 .copy(showTraktDialog = false)
@@ -180,15 +180,15 @@ class SettingsScreenModelTest {
     @Ignore // "Fix once TraktAuthManager is implemented"
     @Test
     fun given_TraktLogoutClicked_expectedResultIsEmitted() = runTest {
-        stateMachine.state.test {
+        screenModel.state.test {
             awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-            stateMachine.dispatch(ShowTraktDialog)
+            screenModel.dispatch(ShowTraktDialog)
 
             awaitItem() shouldBe SettingsState.DEFAULT_STATE
                 .copy(showTraktDialog = true)
 
-            stateMachine.dispatch(TraktLoginClicked)
+            screenModel.dispatch(TraktLoginClicked)
 
             traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
             datastoreRepository.setAuthState(authenticatedAuthState)
@@ -200,7 +200,7 @@ class SettingsScreenModelTest {
                     userInfo = null,
                 )
 
-            stateMachine.dispatch(TraktLogoutClicked)
+            screenModel.dispatch(TraktLogoutClicked)
 
             traktAuthRepository.setAuthState(TraktAuthState.LOGGED_OUT)
 
