@@ -9,10 +9,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import com.thomaskioko.tvmaniac.discover.DiscoverScreen
+import com.thomaskioko.tvmaniac.library.LibraryScreen
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.search.SearchScreen
 import com.thomaskioko.tvmaniac.settings.SettingsScreen
-import com.thomaskioko.tvmaniac.library.LibraryScreen
 import kotlin.reflect.KClass
 
 interface BottomBarItem {
@@ -52,6 +52,6 @@ enum class BottomBarItems(
         stringResourceId = R.string.menu_item_settings,
         imageVector = Icons.Outlined.Settings,
         screenKlass = SettingsScreen::class,
-        screen = { SettingsScreen },
+        screen = { SettingsScreen {} },
     ),
 }
