@@ -7,6 +7,8 @@ android {
 }
 
 dependencies {
+    api(projects.common.voyagerutil)
+
     implementation(projects.core.datastore.api)
     implementation(projects.core.traktAuth.api)
     implementation(projects.data.shows.api)
@@ -14,5 +16,6 @@ dependencies {
     implementation(projects.common.navigation)
 
     implementation(libs.flowredux)
+    implementation(libs.kotlinx.collections)
 
 }

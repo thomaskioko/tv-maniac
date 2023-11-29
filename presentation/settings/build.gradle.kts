@@ -13,6 +13,7 @@ kotlin {
 
                 implementation(libs.flowredux)
                 implementation(libs.kotlinInject.runtime)
+                implementation(libs.voyager.core)
             }
         }
 

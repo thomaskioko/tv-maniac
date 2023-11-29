@@ -16,9 +16,11 @@ kotlin {
             dependencies {
                 api(projects.presentation.discover)
                 api(projects.presentation.library)
+                api(projects.presentation.profile)
+                api(projects.presentation.settings)
 
                 api(libs.voyager.navigator)
-
+                implementation(libs.coroutines.core)
                 implementation(libs.kotlinInject.runtime)
             }
         }
