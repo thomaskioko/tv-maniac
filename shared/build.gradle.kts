@@ -1,39 +1,11 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform")
-    id("maven-publish")
-    alias(libs.plugins.kmmbridge)
-    alias(libs.plugins.ksp)
+    id("plugin.tvmaniac.multiplatform")
     id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
+    alias(libs.plugins.ksp)
 }
 
-version = libs.versions.shared.module.version.get()
 
 kotlin {
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-    ).forEach {
-        it.binaries.framework {
-            baseName = "TvManiac"
-            isStatic = false
-            linkerOpts.add("-lsqlite3")
-            freeCompilerArgs += "-Xadd-light-debug=enable"
-
-            export(projects.core.datastore.api)
-            export(projects.core.traktAuth.api)
-            export(projects.core.util)
-            export(projects.presentation.discover)
-            export(projects.presentation.profile)
-            export(projects.presentation.seasondetails)
-            export(projects.presentation.settings)
-            export(projects.presentation.showDetails)
-            export(projects.presentation.trailers)
-            export(projects.presentation.library)
-        }
-    }
-
-
     sourceSets {
         commonMain {
             dependencies {
@@ -84,15 +56,11 @@ kotlin {
                 implementation(libs.kotlinInject.runtime)
             }
         }
-
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain.get())
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-        }
     }
+}
+
+ksp {
+    arg("me.tatarka.inject.generateCompanionExtensions", "true")
 }
 
 dependencies {
@@ -100,18 +68,6 @@ dependencies {
     add("kspIosArm64", libs.kotlinInject.compiler)
 }
 
-addGithubPackagesRepository()
-
-kmmbridge {
-    frameworkName.set("TvManiac")
-    mavenPublishArtifacts()
-    manualVersions()
-    spm()
-    noGitOperations()
-    versionPrefix.set("0.0.1")
-}
-
-//TODO:: Get rid of this once we fully migrate to kmmbridge
 multiplatformSwiftPackage {
     packageName("TvManiac")
     swiftToolsVersion("5.3")
