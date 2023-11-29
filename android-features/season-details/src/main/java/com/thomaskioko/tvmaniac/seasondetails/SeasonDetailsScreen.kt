@@ -31,7 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -40,6 +44,7 @@ import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.seasondetails.Loading
 import com.thomaskioko.tvmaniac.presentation.seasondetails.LoadingError
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
@@ -51,9 +56,24 @@ import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
-data object SeasonDetailScreen : Screen {
+data class SeasonDetailScreen(val id: Long) : Screen {
     @Composable
     override fun Content() {
+        val screenModel = viewModel { seasonDetailsScreenModel(id) }
+        val state by screenModel.state.collectAsStateWithLifecycle()
+        val navigator = LocalNavigator.currentOrThrow
+
+        SeasonDetailScreen(
+            state = state,
+            seasonName = null,
+            onBackClicked = navigator::pop,
+            onAction = screenModel::dispatch,
+            onEpisodeClicked = {
+                /** Uncomment this once the episode detail screen is implemented
+                 navigator.push(ScreenRegistry.get(EpisodeDetailScreen(it)))
+                 **/
+            },
+        )
     }
 }
 
@@ -62,6 +82,7 @@ internal fun SeasonDetailScreen(
     state: SeasonDetailsState,
     onBackClicked: () -> Unit,
     seasonName: String?,
+    onAction: (SeasonDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
     onEpisodeClicked: (Long) -> Unit,
 ) {
@@ -98,6 +119,7 @@ internal fun SeasonDetailScreen(
                         onEpisodeClicked = onEpisodeClicked,
                         listState = listState,
                         contentPadding = contentPadding,
+                        onAction = onAction,
                     )
                 }
             }
@@ -126,6 +148,7 @@ private fun SeasonContent(
     listState: LazyListState,
     contentPadding: PaddingValues,
     onEpisodeClicked: (Long) -> Unit = {},
+    onAction: (SeasonDetailsAction) -> Unit,
 ) {
     seasonsEpList?.let {
         LaunchedEffect(initialSeasonName) {
@@ -151,7 +174,12 @@ private fun SeasonContent(
         ) {
             item { Spacer(modifier = Modifier.height(64.dp)) }
 
-            item { WatchNextContent(seasonsEpList.firstOrNull()?.episodes) }
+            item {
+                WatchNextContent(
+                    episodeList = seasonsEpList.firstOrNull()?.episodes,
+                    onAction = onAction,
+                )
+            }
 
             item { Spacer(modifier = Modifier.height(16.dp)) }
 
@@ -180,6 +208,7 @@ private fun SeasonContent(
 @Composable
 fun WatchNextContent(
     episodeList: ImmutableList<Episode>?,
+    onAction: (SeasonDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
     onEpisodeClicked: () -> Unit = {},
 ) {
@@ -206,6 +235,7 @@ fun WatchNextContent(
                     title = episode.seasonEpisodeNumber,
                     episodeOverview = episode.overview,
                     onEpisodeClicked = onEpisodeClicked,
+                    onAction = onAction,
                 )
             }
 
@@ -244,6 +274,7 @@ private fun SeasonDetailScreenPreview(
                 seasonName = "Specials",
                 onBackClicked = {},
                 onEpisodeClicked = {},
+                onAction = {},
             )
         }
     }

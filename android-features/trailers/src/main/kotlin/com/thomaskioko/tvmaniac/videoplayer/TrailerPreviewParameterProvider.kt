@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.presentation.trailers.TrailerError
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersContent
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersState
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
+import kotlinx.collections.immutable.toPersistentList
 
 private val trailersList = List(4) {
     Trailer(
@@ -13,7 +14,7 @@ private val trailersList = List(4) {
         name = "Trailer Name",
         youtubeThumbnailUrl = "",
     )
-}
+}.toPersistentList()
 
 class TrailerPreviewParameterProvider : PreviewParameterProvider<TrailersState> {
     override val values: Sequence<TrailersState>

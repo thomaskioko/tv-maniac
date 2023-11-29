@@ -2,12 +2,7 @@ package com.thomaskioko.tvmaniac.presentation.trailers
 
 sealed interface TrailersAction
 
-object ReloadTrailers : TrailersAction
-
-data class LoadTrailers(
-    val showId: Long,
-    val trailerId: String,
-) : TrailersAction
+data object ReloadTrailers : TrailersAction
 
 data class TrailerSelected(
     val trailerKey: String,

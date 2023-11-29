@@ -19,6 +19,8 @@ kotlin {
                 implementation(projects.presentation.profile)
                 implementation(projects.presentation.settings)
                 implementation(projects.presentation.showDetails)
+                implementation(projects.presentation.trailers)
+                implementation(projects.presentation.seasondetails)
 
                 api(libs.voyager.navigator)
                 implementation(libs.coroutines.core)

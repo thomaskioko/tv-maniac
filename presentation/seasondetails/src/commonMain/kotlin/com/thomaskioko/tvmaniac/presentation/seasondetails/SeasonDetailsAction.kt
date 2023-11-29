@@ -2,10 +2,10 @@ package com.thomaskioko.tvmaniac.presentation.seasondetails
 
 sealed interface SeasonDetailsAction
 
-data class LoadSeasonDetails(
+data class ReloadSeasonDetails(
     val showId: Long,
 ) : SeasonDetailsAction
 
-data class ReloadSeasonDetails(
-    val showId: Long,
+data class UpdateEpisodeStatus(
+    val id: Long,
 ) : SeasonDetailsAction

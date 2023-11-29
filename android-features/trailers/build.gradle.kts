@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    api(projects.presentation.trailers)
+    implementation(projects.presentation.trailers)
     implementation(projects.common.navigation)
     implementation(projects.common.voyagerutil)
 

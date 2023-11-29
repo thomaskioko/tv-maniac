@@ -13,8 +13,8 @@ kotlin {
                 implementation(projects.data.episodes.api)
                 implementation(projects.data.seasondetails.api)
 
-                api(libs.kotlinx.collections)
-
+                implementation(libs.kotlinx.collections)
+                implementation(libs.voyager.core)
                 implementation(libs.kotlinInject.runtime)
             }
         }
@@ -25,9 +25,7 @@ kotlin {
                 implementation(projects.data.episodeimages.testing)
                 implementation(projects.data.seasondetails.testing)
 
-                implementation(libs.coroutines.test)
-                implementation(libs.kotest.assertions)
-                implementation(libs.turbine)
+                implementation(libs.bundles.unittest)
             }
         }
     }

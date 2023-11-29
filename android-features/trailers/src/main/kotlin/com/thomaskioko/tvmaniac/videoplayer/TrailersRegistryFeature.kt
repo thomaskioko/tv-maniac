@@ -9,8 +9,8 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TrailersRegistryFeature : Feature {
     override val screens: ScreenRegistry.() -> Unit = screenModule {
-        register<TvManiacScreens.TrailersScreen> {
-            TrailersScreen
+        register<TvManiacScreens.TrailersScreen> { provider ->
+            TrailersScreen(provider.id)
         }
     }
 }

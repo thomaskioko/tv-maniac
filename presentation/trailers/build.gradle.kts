@@ -12,6 +12,8 @@ kotlin {
                 implementation(projects.data.trailers.api)
 
                 implementation(libs.kotlinInject.runtime)
+                implementation(libs.kotlinx.collections)
+                implementation(libs.voyager.core)
             }
         }
 
@@ -20,9 +22,7 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(projects.data.trailers.testing)
 
-                implementation(libs.coroutines.test)
-                implementation(libs.kotest.assertions)
-                implementation(libs.turbine)
+                implementation(libs.bundles.unittest)
             }
         }
     }

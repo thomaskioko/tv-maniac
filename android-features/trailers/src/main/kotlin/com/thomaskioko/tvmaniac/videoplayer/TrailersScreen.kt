@@ -37,11 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -49,24 +51,34 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.trailers.LoadingTrailers
+import com.thomaskioko.tvmaniac.presentation.trailers.ReloadTrailers
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailerError
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailerSelected
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailersAction
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersContent
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersState
+import com.thomaskioko.tvmaniac.presentation.trailers.VideoPlayerError
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
+import kotlinx.collections.immutable.ImmutableList
 
-data object TrailersScreen : Screen {
+data class TrailersScreen(val id: Long) : Screen {
     @Composable
     override fun Content() {
+        val screenModel = viewModel { trailerScreenModel(id) }
+        val state by screenModel.state.collectAsStateWithLifecycle()
+
+        TrailersContent(
+            state = state,
+            onAction = screenModel::dispatch,
+        )
     }
 }
 
 @Composable
-private fun TrailersContent(
+internal fun TrailersContent(
     state: TrailersState,
-    onRetryClicked: () -> Unit,
-    onYoutubeError: (String) -> Unit,
-    onTrailerClicked: (String) -> Unit,
+    onAction: (TrailersAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
@@ -88,15 +100,15 @@ private fun TrailersContent(
                         listState = listState,
                         trailersList = state.trailersList,
                         videoKey = state.selectedVideoKey,
-                        onYoutubeError = onYoutubeError,
-                        onTrailerClicked = onTrailerClicked,
+                        onYoutubeError = { onAction(VideoPlayerError(it)) },
+                        onTrailerClicked = { onAction(TrailerSelected(it)) },
                         contentPadding = contentPadding,
                     )
                 }
 
                 is TrailerError -> ErrorUi(
                     errorMessage = state.errorMessage,
-                    onRetry = onRetryClicked,
+                    onRetry = { onAction(ReloadTrailers) },
                     modifier = Modifier
                         .fillMaxSize()
                         .wrapContentSize(Alignment.Center),
@@ -109,7 +121,7 @@ private fun TrailersContent(
 @Composable
 private fun VideoPlayerContent(
     listState: LazyListState,
-    trailersList: List<Trailer>,
+    trailersList: ImmutableList<Trailer>,
     videoKey: String?,
     onYoutubeError: (String) -> Unit,
     contentPadding: PaddingValues,
@@ -169,7 +181,7 @@ private fun VideoPlayerContent(
 @Composable
 private fun TrailerList(
     listState: LazyListState,
-    trailerList: List<Trailer>,
+    trailerList: ImmutableList<Trailer>,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     onTrailerClicked: (String) -> Unit = {},
@@ -255,9 +267,7 @@ private fun TrailerListContentPreview(
         Surface {
             TrailersContent(
                 state = state,
-                onRetryClicked = {},
-                onTrailerClicked = {},
-                onYoutubeError = {},
+                onAction = {},
             )
         }
     }
