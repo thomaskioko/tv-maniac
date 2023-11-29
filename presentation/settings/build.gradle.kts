@@ -11,7 +11,6 @@ kotlin {
                 implementation(projects.data.profile.api)
                 implementation(projects.core.traktAuth.api)
 
-                implementation(libs.flowredux)
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.voyager.core)
             }

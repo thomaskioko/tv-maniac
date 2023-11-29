@@ -11,7 +11,7 @@ dependencies {
 
     implementation(projects.common.navigation)
     implementation(projects.data.shows.api)
+    implementation(projects.presentation.library)
 
-    implementation(libs.flowredux)
     implementation(libs.kotlinx.collections)
 }

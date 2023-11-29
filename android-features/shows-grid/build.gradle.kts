@@ -12,5 +12,4 @@ dependencies {
     implementation(projects.common.navigation)
 
     implementation(libs.androidx.compose.paging)
-    implementation(libs.flowredux)
 }

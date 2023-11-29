@@ -14,10 +14,10 @@ kotlin {
 
         commonMain {
             dependencies {
-                api(projects.presentation.discover)
-                api(projects.presentation.library)
-                api(projects.presentation.profile)
-                api(projects.presentation.settings)
+                implementation(projects.presentation.discover)
+                implementation(projects.presentation.library)
+                implementation(projects.presentation.profile)
+                implementation(projects.presentation.settings)
                 implementation(projects.presentation.showDetails)
 
                 api(libs.voyager.navigator)

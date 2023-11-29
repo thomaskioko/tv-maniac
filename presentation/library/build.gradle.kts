@@ -10,7 +10,6 @@ kotlin {
             dependencies {
                 implementation(projects.data.library.api)
 
-                implementation(libs.flowredux)
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.kotlinx.collections)
                 implementation(libs.voyager.core)

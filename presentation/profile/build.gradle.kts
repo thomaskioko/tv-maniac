@@ -12,7 +12,6 @@ kotlin {
                 implementation(projects.data.profile.api)
                 implementation(projects.data.profilestats.api)
 
-                implementation(libs.flowredux)
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.kotlinx.collections)
                 implementation(libs.sqldelight.extensions)

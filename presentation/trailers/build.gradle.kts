@@ -11,7 +11,6 @@ kotlin {
             dependencies {
                 implementation(projects.data.trailers.api)
 
-                implementation(libs.flowredux)
                 implementation(libs.kotlinInject.runtime)
             }
         }

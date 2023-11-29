@@ -13,7 +13,6 @@ dependencies {
 
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.compose.material.icons)
-    implementation(libs.flowredux)
     implementation(libs.kotlinx.collections)
     implementation(libs.snapper)
 }

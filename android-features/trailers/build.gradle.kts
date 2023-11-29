@@ -9,8 +9,9 @@ android {
 dependencies {
     api(projects.presentation.trailers)
     implementation(projects.common.navigation)
+    implementation(projects.common.voyagerutil)
 
     implementation(libs.androidx.compose.constraintlayout)
-    implementation(libs.flowredux)
+    implementation(libs.kotlinx.collections)
     implementation(libs.youtubePlayer)
 }

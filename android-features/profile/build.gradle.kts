@@ -11,10 +11,10 @@ dependencies {
 
     implementation(projects.common.navigation)
     implementation(projects.core.traktAuth.api)
+    implementation(projects.presentation.profile)
 
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.compose.material.icons)
-    implementation(libs.flowredux)
     implementation(libs.kotlinx.collections)
     implementation(libs.snapper)
 }

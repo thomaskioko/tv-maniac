@@ -15,7 +15,6 @@ kotlin {
 
                 api(libs.kotlinx.collections)
 
-                implementation(libs.flowredux)
                 implementation(libs.kotlinInject.runtime)
             }
         }
