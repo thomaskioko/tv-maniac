@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.shared.base
 
 import com.thomaskioko.trakt.service.implementation.inject.TraktComponent
+import com.thomaskioko.tvmaniac.common.voyagerutil.ScreenModelComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
 import com.thomaskioko.tvmaniac.datastore.implementation.DataStoreComponent
@@ -21,6 +22,7 @@ import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.watchlist.implementation.LibraryComponent
 import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
 @ApplicationScope
 @Component
@@ -43,4 +45,9 @@ abstract class ApplicationComponent :
     TraktAuthenticationComponent,
     TrailerComponent,
     UtilPlatformComponent,
-    LibraryComponent
+    LibraryComponent,
+    ScreenModelComponent {
+
+    val bind: ScreenModelComponent
+        @Provides get() = this
+}

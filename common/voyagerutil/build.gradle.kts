@@ -8,6 +8,7 @@ kotlin {
     sourceSets {
         androidMain {
             dependencies {
+                api(libs.voyager.navigator)
                 implementation(libs.androidx.compose.runtime)
             }
         }
@@ -22,7 +23,6 @@ kotlin {
                 implementation(projects.presentation.trailers)
                 implementation(projects.presentation.seasondetails)
 
-                api(libs.voyager.navigator)
                 implementation(libs.coroutines.core)
                 implementation(libs.kotlinInject.runtime)
             }

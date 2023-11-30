@@ -1,6 +1,7 @@
+import org.jetbrains.compose.compose
+
 plugins {
     id("plugin.tvmaniac.multiplatform")
-    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -12,10 +13,12 @@ kotlin {
                 implementation(projects.data.showimages.api)
                 implementation(projects.data.shows.api)
 
-                implementation(libs.voyager.core)
+                api(compose("org.jetbrains.compose.runtime:runtime"))
+                api(compose("org.jetbrains.compose.runtime:runtime-saveable"))
 
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.kotlinx.collections)
+                implementation(libs.voyager.core)
             }
         }
 
@@ -26,15 +29,8 @@ kotlin {
                 implementation(projects.data.showimages.testing)
                 implementation(projects.data.shows.testing)
 
-                implementation(libs.coroutines.test)
-                implementation(libs.kotest.assertions)
-                implementation(libs.turbine)
+                implementation(libs.bundles.unittest)
             }
         }
     }
-}
-
-dependencies {
-    add("kspIosX64", libs.kotlinInject.compiler)
-    add("kspIosArm64", libs.kotlinInject.compiler)
 }

@@ -21,6 +21,7 @@ datetime = "0.4.1"
 dependency-analysis = "1.25.0"
 dependency-check = "0.50.0"
 desugar = "2.0.4"
+compose-plugin = "1.5.11"
 kenburns = "1.0.7"
 kermit = "1.2.3"
 kmmbridge = "0.3.7"
@@ -121,7 +122,7 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependency-analysis" }
 dependency-check = { id = "com.github.ben-manes.versions", version.ref = "dependency-check" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 kmmbridge = { id = "co.touchlab.faktory.kmmbridge", version.ref = "kmmbridge" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
