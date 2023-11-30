@@ -31,15 +31,15 @@ android {
 dependencies {
 
     implementation(projects.androidCore.designsystem)
-    implementation(projects.androidFeatures.discover)
-    implementation(projects.androidFeatures.moreShows)
-    implementation(projects.androidFeatures.profile)
-    implementation(projects.androidFeatures.search)
-    implementation(projects.androidFeatures.seasonDetails)
-    implementation(projects.androidFeatures.settings)
-    implementation(projects.androidFeatures.showDetails)
-    implementation(projects.androidFeatures.trailers)
-    implementation(projects.androidFeatures.library)
+    implementation(projects.feature.discover)
+    implementation(projects.feature.moreShows)
+    implementation(projects.feature.profile)
+    implementation(projects.feature.search)
+    implementation(projects.feature.seasonDetails)
+    implementation(projects.feature.settings)
+    implementation(projects.feature.showDetails)
+    implementation(projects.feature.trailers)
+    implementation(projects.feature.library)
 
     implementation(projects.common.navigation)
 
