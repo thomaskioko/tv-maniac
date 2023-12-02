@@ -31,18 +31,6 @@ android {
 dependencies {
 
     implementation(projects.androidCore.designsystem)
-    implementation(projects.feature.discover)
-    implementation(projects.feature.moreShows)
-    implementation(projects.feature.profile)
-    implementation(projects.feature.search)
-    implementation(projects.feature.seasonDetails)
-    implementation(projects.feature.settings)
-    implementation(projects.feature.showDetails)
-    implementation(projects.feature.trailers)
-    implementation(projects.feature.library)
-
-    implementation(projects.common.navigation)
-
     implementation(projects.core.database)
     implementation(projects.core.datastore.api)
     implementation(projects.core.datastore.implementation)
@@ -81,13 +69,7 @@ dependencies {
     implementation(projects.data.library.api)
     implementation(projects.data.library.implementation)
 
-    implementation(projects.presentation.discover)
-    implementation(projects.presentation.profile)
-    implementation(projects.presentation.seasondetails)
-    implementation(projects.presentation.settings)
-    implementation(projects.presentation.showDetails)
-    implementation(projects.presentation.trailers)
-    implementation(projects.presentation.library)
+    implementation(projects.navigation)
 
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.core.splashscreen)
@@ -96,6 +78,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.util)
     implementation(libs.appauth)
 
+    implementation(libs.decompose.decompose)
     implementation(libs.kotlinInject.runtime)
     ksp(libs.kotlinInject.compiler)
 }
