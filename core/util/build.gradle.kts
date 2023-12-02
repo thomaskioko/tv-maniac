@@ -20,6 +20,7 @@ kotlin {
 
                 implementation(libs.coroutines.core)
                 implementation(libs.kermit)
+                implementation(libs.napier)
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.ktor.core)
                 implementation(libs.yamlkt)
@@ -46,6 +47,7 @@ android {
 
 
 dependencies {
+    add("kspAndroid", libs.kotlinInject.compiler)
     add("kspIosX64", libs.kotlinInject.compiler)
     add("kspIosArm64", libs.kotlinInject.compiler)
 }

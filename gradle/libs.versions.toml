@@ -32,6 +32,7 @@ kotlinx-collections = "0.3.6"
 ksp = "1.9.20-1.0.13"
 ktor = "2.3.6"
 lint = "1.2.0"
+napier = "2.6.1"
 shared-module-version = "0.8.1"
 snapper = "0.3.0"
 sqldelight = "2.0.0"
@@ -93,6 +94,7 @@ ktor-serialization = { module = "io.ktor:ktor-client-serialization", version.ref
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 lint-compose = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "lint" }
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 

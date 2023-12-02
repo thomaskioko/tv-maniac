@@ -1,14 +1,14 @@
 package com.thomaskioko.tvmaniac.util.logging
 
 import com.thomaskioko.tvmaniac.util.AppInitializer
-import com.thomaskioko.tvmaniac.util.KermitLogger
-import com.thomaskioko.tvmaniac.util.model.Configs
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class LoggingInitializer(private val configs: Configs) : AppInitializer {
+class LoggingInitializer : AppInitializer {
 
     override fun init() {
-        KermitLogger(configs)
+        Napier.base(DebugAntilog())
     }
 }
