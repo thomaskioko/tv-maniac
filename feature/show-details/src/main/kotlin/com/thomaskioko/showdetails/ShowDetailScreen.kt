@@ -41,6 +41,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -66,16 +67,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.core.registry.ScreenRegistry
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.core.screen.ScreenKey
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.thomaskioko.showdetails.DetailConstants.HEADER_HEIGHT
-import com.thomaskioko.tvmaniac.common.navigation.TvManiacScreens
-import com.thomaskioko.tvmaniac.common.navigation.TvManiacScreens.ShowDetailsScreen
-import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -90,10 +82,15 @@ import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
+import com.thomaskioko.tvmaniac.presentation.showdetails.BackClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.DismissWebViewError
 import com.thomaskioko.tvmaniac.presentation.showdetails.FollowShowClicked
+import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonClicked
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsAction
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.presentation.showdetails.WatchTrailerClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.WebViewError
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
@@ -103,42 +100,30 @@ import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
-data class ShowDetailsScreen(val id: Long) : Screen {
-    override val key: ScreenKey = "_show_details_$id"
+@Composable
+fun ShowDetailsScreen(
+    presenter: ShowDetailsPresenter,
+    modifier: Modifier = Modifier,
+) {
+    val state by presenter.state.collectAsState()
 
-    @Composable
-    override fun Content() {
-        val screenModel = viewModel { showDetailsScreenModel(id) }
-        val state by screenModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val listState = rememberLazyListState()
 
-        val navigator = LocalNavigator.currentOrThrow
-        val snackbarHostState = remember { SnackbarHostState() }
-        val listState = rememberLazyListState()
-
-        ShowDetailsUi(
-            state = state,
-            title = state.show.title,
-            onBackClicked = { navigator.pop() },
-            onSeasonClicked = { id, season -> },
-            onShowClicked = { navigator.push(ScreenRegistry.get(ShowDetailsScreen(it))) },
-            onWatchTrailerClicked = { id ->
-                navigator.push(ScreenRegistry.get(TvManiacScreens.TrailersScreen(id)))
-            },
-            snackbarHostState = snackbarHostState,
-            listState = listState,
-            onAction = screenModel::dispatch,
-        )
-    }
+    ShowDetailsScreen(
+        modifier = modifier,
+        state = state,
+        title = state.show.title,
+        snackbarHostState = snackbarHostState,
+        listState = listState,
+        onAction = presenter::dispatch,
+    )
 }
 
 @Composable
-internal fun ShowDetailsUi(
+internal fun ShowDetailsScreen(
     state: ShowDetailsState,
     title: String,
-    onBackClicked: () -> Unit,
-    onSeasonClicked: (Long, String) -> Unit,
-    onShowClicked: (Long) -> Unit,
-    onWatchTrailerClicked: (Long) -> Unit,
     snackbarHostState: SnackbarHostState,
     listState: LazyListState,
     onAction: (ShowDetailsAction) -> Unit,
@@ -149,7 +134,7 @@ internal fun ShowDetailsUi(
             ShowTopBar(
                 listState = listState,
                 title = title,
-                onNavUpClick = onBackClicked,
+                onNavUpClick = { onAction(BackClicked) },
             )
         },
         snackbarHost = {
@@ -157,7 +142,7 @@ internal fun ShowDetailsUi(
         },
         content = { contentPadding ->
 
-            ShowDetailsUi(
+            ShowDetailsContent(
                 show = state.show,
                 trailerContent = state.trailersContent,
                 seasonsContent = state.seasonsContent,
@@ -166,13 +151,66 @@ internal fun ShowDetailsUi(
                 snackBarHostState = snackbarHostState,
                 listState = listState,
                 modifier = modifier,
-                onSeasonClicked = onSeasonClicked,
-                onShowClicked = onShowClicked,
-                onWatchTrailerClicked = onWatchTrailerClicked,
                 onAction = onAction,
             )
         },
     )
+}
+
+@Composable
+private fun ShowDetailsContent(
+    show: Show,
+    trailerContent: ShowDetailsState.TrailersContent,
+    seasonsContent: ShowDetailsState.SeasonsContent,
+    similarShowsContent: ShowDetailsState.SimilarShowsContent,
+    listState: LazyListState,
+    snackBarHostState: SnackbarHostState,
+    contentPadding: PaddingValues,
+    onAction: (ShowDetailsAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier,
+        state = listState,
+        contentPadding = contentPadding.copy(copyTop = false),
+    ) {
+        item {
+            HeaderContent(
+                listState = listState,
+                show = show,
+                onUpdateFavoriteClicked = { onAction(FollowShowClicked(it)) },
+                onWatchTrailerClicked = { onAction(WatchTrailerClicked(it)) },
+            )
+        }
+
+        item {
+            SeasonsContent(
+                isLoading = seasonsContent.isLoading,
+                seasonsList = seasonsContent.seasonsList,
+                onSeasonClicked = { id, name ->
+                    onAction(SeasonClicked(id, name))
+                },
+            )
+        }
+
+        item {
+            TrailersContent(
+                trailersState = trailerContent,
+                snackBarHostState = snackBarHostState,
+                onDismissTrailerErrorClicked = { onAction(DismissWebViewError) },
+                onWatchTrailerClicked = { onAction(WatchTrailerClicked(it)) },
+                onAction = onAction,
+            )
+        }
+
+        item {
+            SimilarShowsContent(
+                isLoading = similarShowsContent.isLoading,
+                similarShows = similarShowsContent.similarShows,
+                onShowClicked = { onAction(ShowClicked(it)) },
+            )
+        }
+    }
 }
 
 @Composable
@@ -207,63 +245,6 @@ private fun ShowTopBar(
             .fillMaxWidth()
             .onSizeChanged { appBarHeight = it.height },
     )
-}
-
-@Composable
-private fun ShowDetailsUi(
-    show: Show,
-    trailerContent: ShowDetailsState.TrailersContent,
-    seasonsContent: ShowDetailsState.SeasonsContent,
-    similarShowsContent: ShowDetailsState.SimilarShowsContent,
-    listState: LazyListState,
-    snackBarHostState: SnackbarHostState,
-    contentPadding: PaddingValues,
-    onSeasonClicked: (Long, String) -> Unit,
-    onShowClicked: (Long) -> Unit,
-    onWatchTrailerClicked: (Long) -> Unit,
-    onAction: (ShowDetailsAction) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LazyColumn(
-        modifier = modifier,
-        state = listState,
-        contentPadding = contentPadding.copy(copyTop = false),
-    ) {
-        item {
-            HeaderContent(
-                listState = listState,
-                show = show,
-                onUpdateFavoriteClicked = { onAction(FollowShowClicked(it)) },
-                onWatchTrailerClicked = onWatchTrailerClicked,
-            )
-        }
-
-        item {
-            SeasonsContent(
-                isLoading = seasonsContent.isLoading,
-                seasonsList = seasonsContent.seasonsList,
-                onSeasonClicked = onSeasonClicked,
-            )
-        }
-
-        item {
-            TrailersContent(
-                trailersState = trailerContent,
-                snackBarHostState = snackBarHostState,
-                onDismissTrailerErrorClicked = { onAction(DismissWebViewError) },
-                onWatchTrailerClicked = onWatchTrailerClicked,
-                onAction = onAction,
-            )
-        }
-
-        item {
-            SimilarShowsContent(
-                isLoading = similarShowsContent.isLoading,
-                similarShows = similarShowsContent.similarShows,
-                onShowClicked = onShowClicked,
-            )
-        }
-    }
 }
 
 @Composable
@@ -745,13 +726,9 @@ private fun ShowDetailScreenPreview(
 ) {
     TvManiacTheme {
         Surface {
-            ShowDetailsUi(
+            ShowDetailsScreen(
                 state = state,
                 title = "",
-                onBackClicked = {},
-                onSeasonClicked = { _, _ -> },
-                onShowClicked = {},
-                onWatchTrailerClicked = { _ -> },
                 snackbarHostState = SnackbarHostState(),
                 listState = LazyListState(),
                 onAction = {},

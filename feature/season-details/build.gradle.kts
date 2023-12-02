@@ -1,5 +1,5 @@
 plugins {
-    id("tvmaniac.android.feature")
+    id("plugin.tvmaniac.compose.library")
 }
 
 android {
@@ -7,12 +7,15 @@ android {
 }
 
 dependencies {
-    implementation(projects.presentation.seasondetails)
-    implementation(projects.common.navigation)
-    implementation(projects.common.voyagerutil)
+    api(projects.presentation.seasondetails)
+
+    implementation(projects.androidCore.designsystem)
+    implementation(projects.androidCore.resources)
 
     implementation(libs.androidx.compose.constraintlayout)
+    implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material.icons)
-    implementation(libs.kotlinx.collections)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.runtime)
     implementation(libs.snapper)
 }

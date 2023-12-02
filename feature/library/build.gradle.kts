@@ -1,17 +1,20 @@
 plugins {
-    id("tvmaniac.android.feature")
+    id("plugin.tvmaniac.compose.library")
 }
 
 android {
-    namespace = "com.thomaskioko.tvmaniac.library"
+    namespace = "com.thomaskioko.tvmaniac.feature.library"
 }
 
 dependencies {
-    api(projects.common.voyagerutil)
+    api(projects.presentation.library)
 
-    implementation(projects.common.navigation)
-    implementation(projects.data.shows.api)
-    implementation(projects.presentation.library)
+    implementation(projects.androidCore.designsystem)
+    implementation(projects.androidCore.resources)
+    implementation(projects.data.shows.api) //TODO:: Remove this
 
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.runtime)
     implementation(libs.kotlinx.collections)
 }

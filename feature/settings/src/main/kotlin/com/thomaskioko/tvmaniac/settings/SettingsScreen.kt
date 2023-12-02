@@ -37,6 +37,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -48,9 +49,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.core.screen.Screen
-import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -61,38 +59,36 @@ import com.thomaskioko.tvmaniac.presentation.settings.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.presentation.settings.DismissThemeClicked
 import com.thomaskioko.tvmaniac.presentation.settings.DismissTraktDialog
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsActions
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenter
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsState
 import com.thomaskioko.tvmaniac.presentation.settings.ShowTraktDialog
 import com.thomaskioko.tvmaniac.presentation.settings.ThemeSelected
+import com.thomaskioko.tvmaniac.presentation.settings.TraktLoginClicked
 import com.thomaskioko.tvmaniac.presentation.settings.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.presentation.settings.UserInfo
 import com.thomaskioko.tvmaniac.resources.R
 
-data class SettingsScreen(
-    private val launchWebView: () -> Unit,
-) : Screen {
-    @Composable
-    override fun Content() {
-        val screenModel = viewModel { settingsScreenModel() }
-        val state by screenModel.state.collectAsStateWithLifecycle()
+@Composable
+fun SettingsScreen(
+    presenter: SettingsPresenter,
+    modifier: Modifier = Modifier,
+) {
+    val state by presenter.state.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-        val snackbarHostState = remember { SnackbarHostState() }
-
-        SettingsContent(
-            state = state,
-            snackbarHostState = snackbarHostState,
-            onAction = screenModel::dispatch,
-            onLoginClicked = launchWebView,
-        )
-    }
+    SettingsScreen(
+        modifier = modifier,
+        state = state,
+        snackbarHostState = snackbarHostState,
+        onAction = presenter::dispatch,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun SettingsContent(
+internal fun SettingsScreen(
     state: SettingsState,
     snackbarHostState: SnackbarHostState,
-    onLoginClicked: () -> Unit,
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -119,13 +115,12 @@ internal fun SettingsContent(
                 }
             }
 
-            SettingsContent(
+            SettingsScreen(
                 userInfo = state.userInfo,
                 theme = state.theme,
                 showPopup = state.showthemePopup,
                 showTraktDialog = state.showTraktDialog,
                 isLoading = state.isLoading,
-                onLoginClicked = onLoginClicked,
                 onAction = onAction,
                 modifier = Modifier
                     .fillMaxSize()
@@ -136,14 +131,13 @@ internal fun SettingsContent(
 }
 
 @Composable
-fun SettingsContent(
+fun SettingsScreen(
     userInfo: UserInfo?,
     theme: Theme,
     showPopup: Boolean,
     showTraktDialog: Boolean,
     isLoading: Boolean,
     onAction: (SettingsActions) -> Unit,
-    onLoginClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -159,10 +153,6 @@ fun SettingsContent(
                 traktUserName = userInfo?.userName,
                 traktFullName = userInfo?.fullName,
                 traktUserPicUrl = userInfo?.userPicUrl,
-                onLoginClicked = {
-                    onLoginClicked()
-                    onAction(TraktLogoutClicked)
-                },
                 onAction = onAction,
             )
         }
@@ -191,7 +181,6 @@ private fun TraktProfileSettingsItem(
     traktUserName: String?,
     traktFullName: String?,
     traktUserPicUrl: String?,
-    onLoginClicked: () -> Unit,
     onAction: (SettingsActions) -> Unit,
 ) {
     val titleId = if (loggedIn) {
@@ -263,7 +252,7 @@ private fun TraktProfileSettingsItem(
             TrackDialog(
                 loggedIn = loggedIn,
                 isVisible = showTraktDialog,
-                onLoginClicked = onLoginClicked,
+                onLoginClicked = { onAction(TraktLoginClicked) },
                 onLogoutClicked = { onAction(TraktLogoutClicked) },
                 onDismissDialog = { onAction(DismissTraktDialog) },
             )
@@ -558,11 +547,10 @@ private fun SettingsScreenPreview(
 ) {
     TvManiacTheme {
         Surface {
-            SettingsContent(
+            SettingsScreen(
                 state = state,
                 snackbarHostState = SnackbarHostState(),
                 onAction = {},
-                onLoginClicked = {},
             )
         }
     }

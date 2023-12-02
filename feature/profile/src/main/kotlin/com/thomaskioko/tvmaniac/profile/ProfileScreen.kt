@@ -47,12 +47,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.core.registry.ScreenRegistry
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.thomaskioko.tvmaniac.common.navigation.TvManiacScreens.SettingsScreen
-import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -62,39 +56,34 @@ import com.thomaskioko.tvmaniac.compose.extensions.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.profile.DismissTraktDialog
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileActions
+import com.thomaskioko.tvmaniac.presentation.profile.ProfilePresenter
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileState
 import com.thomaskioko.tvmaniac.presentation.profile.ProfileStats
+import com.thomaskioko.tvmaniac.presentation.profile.SettingsClicked
 import com.thomaskioko.tvmaniac.presentation.profile.ShowTraktDialog
+import com.thomaskioko.tvmaniac.presentation.profile.TraktLoginClicked
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
-data class ProfileScreen(
-    private val launchWebView: () -> Unit,
-) : Screen {
-    @Composable
-    override fun Content() {
-        val screenModel = viewModel { profileScreenModel() }
-        val state by screenModel.state.collectAsStateWithLifecycle()
+@Composable
+fun ProfileScreen(
+    presenter: ProfilePresenter,
+    modifier: Modifier = Modifier,
+) {
+    val state by presenter.state.collectAsStateWithLifecycle()
 
-        val navigator = LocalNavigator.currentOrThrow
-
-        ProfileContent(
-            state = state,
-            onAction = screenModel::dispatch,
-            onSettingsClicked = { navigator.push(ScreenRegistry.get(SettingsScreen)) },
-            onLoginClicked = launchWebView,
-        )
-    }
+    ProfileScreen(
+        state = state,
+        onAction = presenter::dispatch,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ProfileContent(
-    onSettingsClicked: () -> Unit,
+internal fun ProfileScreen(
     state: ProfileState,
-    onLoginClicked: () -> Unit,
     onAction: (ProfileActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -102,7 +91,7 @@ internal fun ProfileContent(
         topBar = {
             TvManiacTopBar(
                 title = stringResource(id = R.string.menu_item_profile),
-                onActionClicked = onSettingsClicked,
+                onActionClicked = { onAction(SettingsClicked) },
                 actionImageVector = Icons.Filled.Settings,
             )
         },
@@ -122,12 +111,7 @@ internal fun ProfileContent(
                 LoggedOutUi(
                     showTraktDialog = state.showTraktDialog,
                     paddingValues = contentPadding,
-                    onConnectClicked = { onAction(ShowTraktDialog) },
-                    onLoginClicked = {
-                        onAction(DismissTraktDialog)
-                        onLoginClicked()
-                    },
-                    onDismissDialogClicked = { onAction(DismissTraktDialog) },
+                    onAction = onAction,
                 )
             }
         },
@@ -137,9 +121,7 @@ internal fun ProfileContent(
 @Composable
 fun LoggedOutUi(
     showTraktDialog: Boolean,
-    onLoginClicked: () -> Unit,
-    onDismissDialogClicked: () -> Unit,
-    onConnectClicked: () -> Unit,
+    onAction: (ProfileActions) -> Unit,
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
@@ -196,7 +178,7 @@ fun LoggedOutUi(
         Spacer(modifier = Modifier.height(16.dp))
 
         TvManiacTextButton(
-            onClick = onConnectClicked,
+            onClick = { onAction(ShowTraktDialog) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(2.dp)
@@ -216,8 +198,8 @@ fun LoggedOutUi(
 
         TrackDialog(
             isVisible = showTraktDialog,
-            onLoginClicked = onLoginClicked,
-            onDismissDialog = onDismissDialogClicked,
+            onLoginClicked = { onAction(TraktLoginClicked) },
+            onDismissDialog = { onAction(DismissTraktDialog) },
         )
     }
 }
@@ -493,10 +475,8 @@ private fun ProfileScreenPreview(
 ) {
     TvManiacTheme {
         Surface {
-            ProfileContent(
+            ProfileScreen(
                 state = state,
-                onSettingsClicked = {},
-                onLoginClicked = {},
                 onAction = {},
             )
         }

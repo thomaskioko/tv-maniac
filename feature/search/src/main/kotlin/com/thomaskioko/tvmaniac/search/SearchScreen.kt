@@ -17,20 +17,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.presentation.search.SearchPresenter
 import com.thomaskioko.tvmaniac.resources.R
 
-data object SearchScreen : Screen {
-    @Composable
-    override fun Content() {
-    }
+@Composable
+fun SearchScreen(
+    presenter: SearchPresenter,
+    modifier: Modifier = Modifier,
+) {
+    SearchScreen(modifier = modifier)
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun SearchContent(
+internal fun SearchScreen(
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -62,7 +64,7 @@ internal fun SearchContent(
 fun SearchContentPreview() {
     TvManiacTheme {
         Surface {
-            SearchContent()
+            SearchScreen()
         }
     }
 }

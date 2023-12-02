@@ -9,19 +9,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.core.registry.ScreenRegistry
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.thomaskioko.tvmaniac.common.navigation.TvManiacScreens
-import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LazyGridItems
@@ -32,33 +26,32 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.watchlist.ErrorLoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryAction
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryContent
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryState
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.ReloadLibrary
+import com.thomaskioko.tvmaniac.presentation.watchlist.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.watchlist.model.LibraryItem
 import com.thomaskioko.tvmaniac.resources.R
 import kotlinx.collections.immutable.ImmutableList
 
-data object LibraryScreen : Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val libraryScreenModel = viewModel { libraryScreenModel() }
-        val libraryState by libraryScreenModel.state.collectAsStateWithLifecycle()
+@Composable
+fun LibraryScreen(
+    presenter: LibraryPresenter,
+    modifier: Modifier = Modifier,
+) {
+    val libraryState by presenter.state.collectAsState()
 
-        LibraryContent(
-            state = libraryState,
-            onShowClicked = { navigator.push(ScreenRegistry.get(TvManiacScreens.ShowDetailsScreen(id = it))) },
-            modifier = Modifier,
-            onAction = libraryScreenModel::dispatch,
-        )
-    }
+    LibraryScreen(
+        modifier = modifier,
+        state = libraryState,
+        onAction = presenter::dispatch,
+    )
 }
 
 @Composable
-internal fun LibraryContent(
+internal fun LibraryScreen(
     state: LibraryState,
-    onShowClicked: (showId: Long) -> Unit,
     modifier: Modifier = Modifier,
     onAction: (LibraryAction) -> Unit,
 ) {
@@ -91,10 +84,10 @@ internal fun LibraryContent(
                             message = stringResource(id = R.string.error_empty_library),
                         )
 
-                        else -> FollowingGridContent(
+                        else -> LibraryGridContent(
                             list = state.list,
                             paddingValues = contentPadding,
-                            onItemClicked = onShowClicked,
+                            onItemClicked = { onAction(ShowClicked(it)) },
                         )
                     }
                 }
@@ -105,7 +98,7 @@ internal fun LibraryContent(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun FollowingGridContent(
+private fun LibraryGridContent(
     list: ImmutableList<LibraryItem>,
     paddingValues: PaddingValues,
     onItemClicked: (Long) -> Unit,
@@ -136,9 +129,8 @@ private fun LibraryScreenPreview(
 ) {
     TvManiacTheme {
         Surface {
-            LibraryContent(
+            LibraryScreen(
                 state = state,
-                onShowClicked = {},
                 onAction = {},
             )
         }

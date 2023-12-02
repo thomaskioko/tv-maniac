@@ -23,6 +23,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
@@ -31,21 +32,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.presentation.seasondetails.BackClicked
+import com.thomaskioko.tvmaniac.presentation.seasondetails.EpisodeClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.Loading
 import com.thomaskioko.tvmaniac.presentation.seasondetails.LoadingError
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetails
@@ -56,35 +55,25 @@ import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
-data class SeasonDetailScreen(val id: Long) : Screen {
-    @Composable
-    override fun Content() {
-        val screenModel = viewModel { seasonDetailsScreenModel(id) }
-        val state by screenModel.state.collectAsStateWithLifecycle()
-        val navigator = LocalNavigator.currentOrThrow
+@Composable
+fun SeasonDetailsScreen(
+    presenter: SeasonDetailsPresenter,
+    modifier: Modifier = Modifier,
+) {
+    val state by presenter.state.collectAsState()
 
-        SeasonDetailScreen(
-            state = state,
-            seasonName = null,
-            onBackClicked = navigator::pop,
-            onAction = screenModel::dispatch,
-            onEpisodeClicked = {
-                /** Uncomment this once the episode detail screen is implemented
-                 navigator.push(ScreenRegistry.get(EpisodeDetailScreen(it)))
-                 **/
-            },
-        )
-    }
+    SeasonDetailsScreen(
+        modifier = modifier,
+        state = state,
+        onAction = presenter::dispatch,
+    )
 }
 
 @Composable
-internal fun SeasonDetailScreen(
+internal fun SeasonDetailsScreen(
     state: SeasonDetailsState,
-    onBackClicked: () -> Unit,
-    seasonName: String?,
     onAction: (SeasonDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
-    onEpisodeClicked: (Long) -> Unit,
 ) {
     val listState = rememberLazyListState()
 
@@ -92,7 +81,7 @@ internal fun SeasonDetailScreen(
         topBar = {
             TopBar(
                 title = (state as? SeasonDetailsLoaded)?.showTitle ?: "",
-                navigateUp = onBackClicked,
+                navigateUp = { onAction(BackClicked) },
             )
         },
         modifier = modifier.statusBarsPadding(),
@@ -115,8 +104,8 @@ internal fun SeasonDetailScreen(
                 is SeasonDetailsLoaded -> {
                     SeasonContent(
                         seasonsEpList = state.seasonDetailsList,
-                        initialSeasonName = seasonName,
-                        onEpisodeClicked = onEpisodeClicked,
+                        initialSeasonName = state.selectedSeason,
+                        onEpisodeClicked = { onAction(EpisodeClicked(it)) },
                         listState = listState,
                         contentPadding = contentPadding,
                         onAction = onAction,
@@ -270,11 +259,8 @@ private fun SeasonDetailScreenPreview(
 ) {
     TvManiacTheme {
         Surface {
-            SeasonDetailScreen(
+            SeasonDetailsScreen(
                 state = state,
-                seasonName = "Specials",
-                onBackClicked = {},
-                onEpisodeClicked = {},
                 onAction = {},
             )
         }

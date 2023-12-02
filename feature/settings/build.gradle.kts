@@ -1,5 +1,5 @@
 plugins {
-    id("tvmaniac.android.feature")
+    id("plugin.tvmaniac.compose.library")
 }
 
 android {
@@ -7,14 +7,18 @@ android {
 }
 
 dependencies {
-    api(projects.common.voyagerutil)
+    api(projects.presentation.settings)
 
-    implementation(projects.common.navigation)
+    //TODO:: Get rid of core and data dependencies.
     implementation(projects.core.datastore.api)
-    implementation(projects.core.traktAuth.api)
     implementation(projects.data.shows.api)
-    implementation(projects.presentation.settings)
-    implementation(projects.presentation.settings)
+
+    implementation(projects.androidCore.designsystem)
+    implementation(projects.androidCore.resources)
+
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.runtime)
 
     implementation(libs.kotlinx.collections)
 

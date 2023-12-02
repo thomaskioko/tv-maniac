@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,13 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.core.screen.Screen
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -56,27 +54,29 @@ import com.thomaskioko.tvmaniac.presentation.trailers.TrailerError
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailerSelected
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersAction
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersContent
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersState
 import com.thomaskioko.tvmaniac.presentation.trailers.VideoPlayerError
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
 import kotlinx.collections.immutable.ImmutableList
 
-data class TrailersScreen(val id: Long) : Screen {
-    @Composable
-    override fun Content() {
-        val screenModel = viewModel { trailerScreenModel(id) }
-        val state by screenModel.state.collectAsStateWithLifecycle()
+@Composable
+fun TrailersScreen(
+    presenter: TrailersPresenter,
+    modifier: Modifier = Modifier,
+) {
+    val state by presenter.state.collectAsState()
 
-        TrailersContent(
-            state = state,
-            onAction = screenModel::dispatch,
-        )
-    }
+    TrailersScreen(
+        modifier = modifier,
+        state = state,
+        onAction = presenter::dispatch,
+    )
 }
 
 @Composable
-internal fun TrailersContent(
+internal fun TrailersScreen(
     state: TrailersState,
     onAction: (TrailersAction) -> Unit,
     modifier: Modifier = Modifier,
@@ -129,8 +129,7 @@ private fun VideoPlayerContent(
     onTrailerClicked: (String) -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start,
     ) {
@@ -265,7 +264,7 @@ private fun TrailerListContentPreview(
 ) {
     TvManiacTheme {
         Surface {
-            TrailersContent(
+            TrailersScreen(
                 state = state,
                 onAction = {},
             )

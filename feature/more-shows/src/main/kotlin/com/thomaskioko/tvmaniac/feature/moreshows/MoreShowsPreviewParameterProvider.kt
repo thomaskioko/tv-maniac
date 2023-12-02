@@ -1,7 +1,8 @@
 package com.thomaskioko.tvmaniac.feature.moreshows
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.feature.moreshows.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsState
+import com.thomaskioko.tvmaniac.presentation.moreshows.TvShow
 import kotlinx.collections.immutable.toPersistentList
 
 private val showList = List(6) {
@@ -13,12 +14,16 @@ private val showList = List(6) {
     )
 }.toPersistentList()
 
-class MoreShowsPreviewParameterProvider : PreviewParameterProvider<GridState> {
-    override val values: Sequence<GridState>
+class MoreShowsPreviewParameterProvider : PreviewParameterProvider<MoreShowsState> {
+    override val values: Sequence<MoreShowsState>
         get() {
             return sequenceOf(
-                ShowsLoaded(list = showList),
-                LoadingContentError(errorMessage = "Opps! Something went wrong"),
+                MoreShowsState(list = showList),
+                MoreShowsState(
+                    isLoading = true,
+                    list = showList,
+                    errorMessage = "Opps! Something went wrong",
+                ),
             )
         }
 }

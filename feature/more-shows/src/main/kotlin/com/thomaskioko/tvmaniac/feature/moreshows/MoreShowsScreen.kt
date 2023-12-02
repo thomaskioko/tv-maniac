@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -23,71 +22,66 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
-import com.thomaskioko.tvmaniac.compose.components.ErrorUi
-import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.feature.moreshows.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.moreshows.BackClicked
+import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsActions
+import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenter
+import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsState
+import com.thomaskioko.tvmaniac.presentation.moreshows.ShowClicked
+import com.thomaskioko.tvmaniac.presentation.moreshows.TvShow
 import com.thomaskioko.tvmaniac.resources.R
 import kotlinx.collections.immutable.ImmutableList
 
-data object MoreShowsScreen : Screen {
-    @Composable
-    override fun Content() {
-    }
+@Composable
+fun MoreShowsScreen(
+    presenter: MoreShowsPresenter,
+    modifier: Modifier = Modifier,
+) {
+    val state by presenter.state.collectAsState()
+
+    MoreShowsScreen(
+        modifier = modifier,
+        state = state,
+        onAction = presenter::dispatch,
+    )
 }
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
-internal fun MoreShowsUiContent(
-    onBackClicked: () -> Unit,
-    state: GridState,
-    title: String,
-    onShowClicked: (Long) -> Unit,
+internal fun MoreShowsScreen(
+    state: MoreShowsState,
+    onAction: (MoreShowsActions) -> Unit,
     modifier: Modifier = Modifier,
-    onRetry: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
             TvManiacTopBar(
-                title = title,
-                onBackClick = onBackClicked,
+                title = state.categoryTitle,
+                onBackClick = { onAction(BackClicked) },
             )
         },
         modifier = Modifier,
     ) { contentPadding ->
-        when (state) {
-            LoadingContent -> LoadingIndicator(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center),
-            )
 
-            is LoadingContentError -> ErrorUi(
-                errorMessage = state.errorMessage,
-                onRetry = onRetry,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center),
-            )
-
-            is ShowsLoaded -> GridContent(
-                modifier = modifier
-                    .fillMaxSize(),
-                contentPadding = contentPadding,
-                list = state.list,
-                onItemClicked = onShowClicked,
-            )
-        }
+        GridContent(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(contentPadding),
+            contentPadding = contentPadding,
+            list = state.list,
+            onItemClicked = { onAction(ShowClicked(it)) },
+        )
     }
 }
 
@@ -154,16 +148,13 @@ fun GridContent(
 @Composable
 private fun ShowsGridContentPreview(
     @PreviewParameter(MoreShowsPreviewParameterProvider::class)
-    state: GridState,
+    state: MoreShowsState,
 ) {
     TvManiacTheme {
         Surface {
-            MoreShowsUiContent(
+            MoreShowsScreen(
                 state = state,
-                title = "Anticipated",
-                onShowClicked = {},
-                onBackClicked = {},
-                onRetry = {},
+                onAction = {},
             )
         }
     }

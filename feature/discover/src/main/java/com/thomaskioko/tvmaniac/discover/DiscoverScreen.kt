@@ -40,6 +40,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
@@ -52,15 +53,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.core.registry.ScreenRegistry
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.core.screen.ScreenKey
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.thomaskioko.tvmaniac.category.api.model.Category
-import com.thomaskioko.tvmaniac.common.navigation.TvManiacScreens.ShowDetailsScreen
-import com.thomaskioko.tvmaniac.common.voyagerutil.viewModel
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -74,11 +67,14 @@ import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
 import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowAction
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
+import com.thomaskioko.tvmaniac.presentation.discover.LoadCategoryShows
 import com.thomaskioko.tvmaniac.presentation.discover.Loading
 import com.thomaskioko.tvmaniac.presentation.discover.RetryLoading
-import com.thomaskioko.tvmaniac.presentation.discover.ShowsAction
+import com.thomaskioko.tvmaniac.presentation.discover.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.discover.SnackBarDismissed
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 import com.thomaskioko.tvmaniac.resources.R
@@ -88,33 +84,24 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
-data object DiscoverScreen : Screen {
-    override val key: ScreenKey = "discover_screen"
+@Composable
+fun DiscoverScreen(
+    discoverShowsPresenter: DiscoverShowsPresenter,
+    modifier: Modifier = Modifier,
+) {
+    val discoverState by discoverShowsPresenter.state.collectAsState()
+    val pagerState = rememberPagerState(pageCount = {
+        (discoverState as? DataLoaded)?.recommendedShows?.size ?: 0
+    })
+    val snackBarHostState = remember { SnackbarHostState() }
 
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-
-        val discoverScreenModel = viewModel { discoverScreenModel() }
-        val discoverState by discoverScreenModel.state.collectAsStateWithLifecycle()
-        val pagerState = rememberPagerState(pageCount = {
-            (discoverState as? DataLoaded)?.recommendedShows?.size ?: 0
-        })
-        val snackBarHostState = remember { SnackbarHostState() }
-
-        DiscoverScreen(
-            state = discoverState,
-            snackBarHostState = snackBarHostState,
-            pagerState = pagerState,
-            onAction = discoverScreenModel::dispatch,
-            onShowClicked = { navigator.push(ScreenRegistry.get(ShowDetailsScreen(id = it))) },
-            onMoreClicked = {
-                /** Ucomment when more screen is implemented
-                 * navigator.push(ScreenRegistry.get(ShowsGridScreen(id = it)))
-                 */
-            },
-        )
-    }
+    DiscoverScreen(
+        modifier = modifier,
+        state = discoverState,
+        snackBarHostState = snackBarHostState,
+        pagerState = pagerState,
+        onAction = discoverShowsPresenter::dispatch,
+    )
 }
 
 @Composable
@@ -122,10 +109,8 @@ internal fun DiscoverScreen(
     state: DiscoverState,
     snackBarHostState: SnackbarHostState,
     pagerState: PagerState,
-    onShowClicked: (showId: Long) -> Unit,
-    onAction: (ShowsAction) -> Unit,
+    onAction: (DiscoverShowAction) -> Unit,
     modifier: Modifier = Modifier,
-    onMoreClicked: (showType: Long) -> Unit,
 ) {
     when (state) {
         Loading -> LoadingIndicator(
@@ -138,8 +123,6 @@ internal fun DiscoverScreen(
             modifier = modifier,
             pagerState = pagerState,
             snackBarHostState = snackBarHostState,
-            onShowClicked = onShowClicked,
-            onMoreClicked = onMoreClicked,
             trendingShows = state.trendingShows,
             popularShows = state.popularShows,
             anticipatedShows = state.anticipatedShows,
@@ -167,10 +150,8 @@ private fun DiscoverScrollContent(
     errorMessage: String?,
     snackBarHostState: SnackbarHostState,
     pagerState: PagerState,
-    onAction: (ShowsAction) -> Unit,
-    onShowClicked: (showId: Long) -> Unit,
+    onAction: (DiscoverShowAction) -> Unit,
     modifier: Modifier = Modifier,
-    onMoreClicked: (showType: Long) -> Unit,
 ) {
     LaunchedEffect(key1 = errorMessage) {
         errorMessage?.let {
@@ -199,7 +180,7 @@ private fun DiscoverScrollContent(
                     DiscoverHeaderContent(
                         pagerState = pagerState,
                         showList = recommendedShows,
-                        onShowClicked = onShowClicked,
+                        onShowClicked = { onAction(ShowClicked(it)) },
                     )
                 }
             }
@@ -209,8 +190,8 @@ private fun DiscoverScrollContent(
                     RowContent(
                         category = Category.TRENDING,
                         tvShows = trendingShows,
-                        onItemClicked = onShowClicked,
-                        onLabelClicked = onMoreClicked,
+                        onItemClicked = { onAction(ShowClicked(it)) },
+                        onLabelClicked = { onAction(LoadCategoryShows(it)) },
                     )
                 }
             }
@@ -220,8 +201,8 @@ private fun DiscoverScrollContent(
                     RowContent(
                         category = Category.ANTICIPATED,
                         tvShows = anticipatedShows,
-                        onItemClicked = onShowClicked,
-                        onLabelClicked = onMoreClicked,
+                        onItemClicked = { onAction(ShowClicked(it)) },
+                        onLabelClicked = { onAction(LoadCategoryShows(it)) },
                     )
                 }
             }
@@ -231,8 +212,8 @@ private fun DiscoverScrollContent(
                     RowContent(
                         category = Category.POPULAR,
                         tvShows = popularShows,
-                        onItemClicked = onShowClicked,
-                        onLabelClicked = onMoreClicked,
+                        onItemClicked = { onAction(ShowClicked(it)) },
+                        onLabelClicked = { onAction(LoadCategoryShows(it)) },
                     )
                 }
             }
@@ -332,9 +313,9 @@ fun HorizontalPagerItem(
                 modifier = Modifier
                     .graphicsLayer {
                         val pageOffset = (
-                                (pagerState.currentPage - pageNumber) + pagerState
-                                    .currentPageOffsetFraction
-                                ).absoluteValue
+                            (pagerState.currentPage - pageNumber) + pagerState
+                                .currentPageOffsetFraction
+                            ).absoluteValue
 
                         // We animate the scaleX + scaleY, between 85% and 100%
                         lerp(
@@ -449,8 +430,6 @@ private fun DiscoverScreenPreview(
                     state = state,
                     pagerState = pagerState,
                     snackBarHostState = snackBarHostState,
-                    onShowClicked = {},
-                    onMoreClicked = {},
                     onAction = {},
                 )
             }
