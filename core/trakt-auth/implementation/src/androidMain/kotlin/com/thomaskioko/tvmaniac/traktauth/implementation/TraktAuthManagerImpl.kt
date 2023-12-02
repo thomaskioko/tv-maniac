@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
-import android.app.Activity
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
@@ -13,7 +12,7 @@ import net.openid.appauth.ClientAuthentication
 
 @Inject
 class TraktAuthManagerImpl(
-    private val activity: Activity,
+    private val activity: ComponentActivity,
     private val traktActivityResultContract: TraktActivityResultContract,
     private val traktAuthRepository: TraktAuthRepository,
     private val clientAuth: Lazy<ClientAuthentication>,
@@ -24,8 +23,6 @@ class TraktAuthManagerImpl(
     private lateinit var launcher: ActivityResultLauncher<Unit>
 
     override fun registerResult() {
-        require(activity is ComponentActivity)
-
         launcher = activity.registerForActivityResult(traktActivityResultContract) { result ->
             if (result != null) {
                 onLoginResult(result)
