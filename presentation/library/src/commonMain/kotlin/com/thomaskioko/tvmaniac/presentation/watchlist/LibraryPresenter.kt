@@ -1,18 +1,32 @@
 package com.thomaskioko.tvmaniac.presentation.watchlist
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-class LibraryScreenModel @Inject constructor(
+typealias LibraryPresenterFactory = (
+    ComponentContext,
+    navigateToShowDetails: (showDetails: Long) -> Unit,
+) -> LibraryPresenter
+
+@Inject
+class LibraryPresenter(
+    dispatchersProvider: AppCoroutineDispatchers,
+    @Assisted componentContext: ComponentContext,
+    @Assisted private val navigateToShowDetails: (id: Long) -> Unit,
     private val repository: LibraryRepository,
-) : ScreenModel {
+) : ComponentContext by componentContext {
+
+    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.main)
 
     private val _state = MutableStateFlow<LibraryState>(LoadingShows)
     val state = _state.asStateFlow()
@@ -24,12 +38,13 @@ class LibraryScreenModel @Inject constructor(
 
     fun dispatch(action: LibraryAction) {
         when (action) {
-            is ReloadLibrary -> screenModelScope.launch { fetchShowData() }
+            is ReloadLibrary -> coroutineScope.launch { fetchShowData() }
+            is ShowClicked -> navigateToShowDetails(action.id)
         }
     }
 
     private fun fetchShowData() {
-        screenModelScope.launch {
+        coroutineScope.launch {
             val result = repository.getLibraryShows()
             _state.update {
                 LibraryContent(result.entityToLibraryShowList())
@@ -38,7 +53,7 @@ class LibraryScreenModel @Inject constructor(
     }
 
     private fun observeLibraryData() {
-        screenModelScope.launch {
+        coroutineScope.launch {
             repository.observeLibrary()
                 .collectLatest { result ->
                     result.fold(
