@@ -1,5 +1,3 @@
-import org.jetbrains.compose.compose
-
 plugins {
     id("plugin.tvmaniac.multiplatform")
 }
@@ -15,12 +13,10 @@ kotlin {
                 implementation(projects.data.shows.api)
                 implementation(projects.data.library.api)
 
-                api(compose("org.jetbrains.compose.runtime:runtime"))
-                api(compose("org.jetbrains.compose.runtime:runtime-saveable"))
+                api(libs.decompose.decompose)
+                api(libs.kotlinx.collections)
 
                 implementation(libs.kotlinInject.runtime)
-                implementation(libs.kotlinx.collections)
-                implementation(libs.voyager.core)
 
             }
         }

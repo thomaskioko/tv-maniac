@@ -27,7 +27,7 @@ import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Ignore
-internal class ShowDetailsScreenModelTest {
+internal class ShowDetailsPresenterTest {
 
     private val seasonsRepository = FakeSeasonsRepository()
     private val trailerRepository = FakeTrailerRepository()
@@ -36,19 +36,19 @@ internal class ShowDetailsScreenModelTest {
     private val fakeLibraryRepository = FakeLibraryRepository()
     private val testDispatcher = StandardTestDispatcher()
 
-    private lateinit var screenModel: ShowDetailsScreenModel
+    private lateinit var presenter: ShowDetailsPresenter
 
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        screenModel = ShowDetailsScreenModel(
+   /*     presenter = ShowDetailsPresenter(
             traktShowId = 84958,
             discoverRepository = discoverRepository,
             trailerRepository = trailerRepository,
             seasonsRepository = seasonsRepository,
             similarShowsRepository = similarShowsRepository,
             libraryRepository = fakeLibraryRepository,
-        )
+        )*/
     }
 
     @AfterTest
@@ -58,7 +58,7 @@ internal class ShowDetailsScreenModelTest {
 
     @Test
     fun initial_state_emits_expected_result() = runTest {
-        screenModel.state.test {
+        presenter.state.test {
             discoverRepository.setShowById(selectedShow)
 
             awaitItem() shouldBe EMPTY_DETAIL_STATE.copy(
@@ -69,7 +69,7 @@ internal class ShowDetailsScreenModelTest {
 
     @Test
     fun loadingData_state_emits_expected_result() = runTest {
-        screenModel.state.test {
+        presenter.state.test {
             discoverRepository.setShowResult(Either.Right(selectedShow))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))
             similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
@@ -94,7 +94,7 @@ internal class ShowDetailsScreenModelTest {
 
     @Test
     fun error_loading_similarShows_emits_expected_result() = runTest {
-        screenModel.state.test {
+        presenter.state.test {
             val errorMessage = "Something went wrong"
             discoverRepository.setShowResult(Either.Right(selectedShow))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))
@@ -122,7 +122,7 @@ internal class ShowDetailsScreenModelTest {
 
     @Test
     fun error_loading_trailers_emits_expected_result() = runTest {
-        screenModel.state.test {
+        presenter.state.test {
             val errorMessage = "Something went wrong"
             discoverRepository.setShowResult(Either.Right(selectedShow))
             seasonsRepository.setSeasonsResult(Either.Right(seasons))
@@ -152,7 +152,7 @@ internal class ShowDetailsScreenModelTest {
 
     @Test
     fun error_loading_seasons_emits_expected_result() = runTest {
-        screenModel.state.test {
+        presenter.state.test {
             val errorMessage = "Something went wrong"
             discoverRepository.setShowResult(Either.Right(selectedShow))
             similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
@@ -183,7 +183,7 @@ internal class ShowDetailsScreenModelTest {
 
     @Test
     fun error_state_emits_expected_result() = runTest {
-        screenModel.state.test {
+        presenter.state.test {
             val errorMessage = "Something went wrong"
             discoverRepository.setShowResult(Either.Left(ServerError(errorMessage)))
             similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
