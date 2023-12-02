@@ -1,9 +1,11 @@
 package com.thomaskioko.tvmaniac.presentation.seasondetails
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.episodeimages.api.EpisodeImageRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,25 +16,41 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-class SeasonDetailsScreenModel @Inject constructor(
+typealias SeasonDetailsPresenterFactory = (
+    ComponentContext,
+    id: Long,
+    title: String?,
+    onBack: () -> Unit,
+    onNavigateToEpisodeDetails: (id: Long) -> Unit,
+) -> SeasonDetailsPresenter
+
+class SeasonDetailsPresenter @Inject constructor(
+    dispatchersProvider: AppCoroutineDispatchers,
+    @Assisted componentContext: ComponentContext,
     @Assisted private val traktId: Long,
+    @Assisted private val title: String?,
+    @Assisted private val onBack: () -> Unit,
+    @Assisted private val onEpisodeClick: (id: Long) -> Unit,
     private val seasonDetailsRepository: SeasonDetailsRepository,
     private val episodeImageRepository: EpisodeImageRepository,
-) : ScreenModel {
+) : ComponentContext by componentContext {
 
+    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.main)
     private val _state = MutableStateFlow<SeasonDetailsState>(Loading)
     val state: StateFlow<SeasonDetailsState> = _state.asStateFlow()
 
     init {
-        screenModelScope.launch {
+        coroutineScope.launch {
             fetchSeasonDetails()
             observeSeasonDetails()
         }
     }
 
     fun dispatch(action: SeasonDetailsAction) {
-        screenModelScope.launch {
+        coroutineScope.launch {
             when (action) {
+                BackClicked -> onBack()
+                is EpisodeClicked -> onEpisodeClick(action.id)
                 is ReloadSeasonDetails -> fetchSeasonDetails()
                 is UpdateEpisodeStatus -> {
                     // TODO:: Add implementation
@@ -47,6 +65,7 @@ class SeasonDetailsScreenModel @Inject constructor(
         val seasonList = seasonDetailsRepository.fetchSeasonDetails(traktId)
 
         _state.value = SeasonDetailsLoaded(
+            selectedSeason = title,
             showTitle = seasonList.getTitle(),
             seasonDetailsList = seasonList.toSeasonWithEpisodes(),
         )

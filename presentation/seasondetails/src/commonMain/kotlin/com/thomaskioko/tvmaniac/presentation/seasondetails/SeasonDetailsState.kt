@@ -10,6 +10,7 @@ data object Loading : SeasonDetailsState
 
 data class SeasonDetailsLoaded(
     val showTitle: String = "",
+    val selectedSeason: String? = "",
     val seasonDetailsList: PersistentList<SeasonDetails> = persistentListOf(),
     val errorMessage: String? = null,
 ) : SeasonDetailsState
