@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.util.extensions.unsafeLazy
 
 class TvManicApplication : Application() {
 
-    val component: ApplicationComponent by unsafeLazy { ApplicationComponent::class.create(this) }
+    private val component: ApplicationComponent by unsafeLazy { ApplicationComponent.create(this) }
 
     override fun onCreate() {
         super.onCreate()

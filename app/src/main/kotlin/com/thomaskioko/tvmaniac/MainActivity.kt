@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        component = MainActivityComponent::class.create(this)
+        component = MainActivityComponent.create(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 

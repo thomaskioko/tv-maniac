@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shared.base
+package com.thomaskioko.tvmaniac.shared
 
 import com.thomaskioko.trakt.service.implementation.inject.TraktComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.datastore.implementation.DataStoreComponent
 import com.thomaskioko.tvmaniac.db.DatabaseComponent
 import com.thomaskioko.tvmaniac.episodeimages.implementation.EpisodeImageComponent
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeComponent
+import com.thomaskioko.tvmaniac.navigation.RootNavigationPresenter
 import com.thomaskioko.tvmaniac.profile.implementation.ProfileComponent
 import com.thomaskioko.tvmaniac.profilestats.implementation.StatsComponent
 import com.thomaskioko.tvmaniac.resourcemanager.implementation.RequestManagerComponent
@@ -43,4 +44,7 @@ abstract class ApplicationComponent :
     TraktAuthenticationComponent,
     TrailerComponent,
     UtilPlatformComponent,
-    LibraryComponent
+    LibraryComponent {
+
+    companion object
+}

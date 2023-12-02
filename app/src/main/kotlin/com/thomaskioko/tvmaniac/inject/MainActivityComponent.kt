@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.inject
 
+import android.content.Context
 import androidx.activity.ComponentActivity
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.defaultComponentContext
@@ -16,9 +17,11 @@ import me.tatarka.inject.annotations.Provides
 abstract class MainActivityComponent(
     @get:Provides val activity: ComponentActivity,
     @get:Provides val componentContext: ComponentContext = activity.defaultComponentContext(),
-    @Component val applicationComponent: ApplicationComponent = ApplicationComponent.from(activity),
+    @Component val applicationComponent: ApplicationComponent = ApplicationComponent.create(activity.application),
 ) : TraktAuthManagerComponent {
     abstract val traktAuthManager: TraktAuthManager
     abstract val presenter: RootNavigationPresenter
     abstract val rootScreen: RootScreen
+
+    companion object
 }

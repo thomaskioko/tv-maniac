@@ -47,3 +47,7 @@ dependencies {
     implementation(libs.kotlinInject.runtime)
     ksp(libs.kotlinInject.compiler)
 }
+
+ksp {
+    arg("me.tatarka.inject.generateCompanionExtensions", "true")
+}

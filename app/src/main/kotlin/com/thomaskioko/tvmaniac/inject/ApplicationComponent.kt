@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.inject
 
 import android.app.Application
-import android.content.Context
-import com.thomaskioko.tvmaniac.TvManicApplication
 import com.thomaskioko.tvmaniac.initializers.AppInitializers
 import com.thomaskioko.tvmaniac.shared.SharedComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthComponent
@@ -18,9 +16,5 @@ abstract class ApplicationComponent(
 
     abstract val initializers: AppInitializers
 
-    companion object {
-        fun from(context: Context): ApplicationComponent {
-            return (context.applicationContext as TvManicApplication).component
-        }
-    }
+    companion object
 }
