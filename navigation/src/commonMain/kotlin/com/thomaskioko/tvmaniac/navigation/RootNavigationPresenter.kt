@@ -9,6 +9,7 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
@@ -18,7 +19,14 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenterPre
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenterFactory
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.scope.ActivityScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.serialization.Serializable
 import me.tatarka.inject.annotations.Inject
 
@@ -36,7 +44,11 @@ class RootNavigationPresenter(
     private val seasonDetailsPresenterFactory: SeasonDetailsPresenterFactory,
     private val trailersPresenterFactory: TrailersPresenterFactory,
     private val traktAuthManager: TraktAuthManager,
+    datastoreRepository: DatastoreRepository,
+    dispatchers: AppCoroutineDispatchers,
 ) : ComponentContext by componentContext {
+
+    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchers.main)
 
     private val navigation = StackNavigation<Config>()
 
@@ -47,6 +59,16 @@ class RootNavigationPresenter(
             serializer = Config.serializer(),
             handleBackButton = true,
             childFactory = ::createScreen,
+        )
+
+    val state: StateFlow<ThemeState> = datastoreRepository.observeTheme()
+        .map { theme ->
+            ThemeLoaded(theme = theme)
+        }
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = Loading,
         )
 
     internal fun bringToFront(config: Config) {

@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.inject
 import androidx.activity.ComponentActivity
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.defaultComponentContext
-import com.thomaskioko.tvmaniac.MainActivityViewModel
+import com.thomaskioko.tvmaniac.navigation.RootNavigationPresenter
 import com.thomaskioko.tvmaniac.navigation.RootScreen
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthManagerComponent
@@ -19,6 +19,6 @@ abstract class MainActivityComponent(
     @Component val applicationComponent: ApplicationComponent = ApplicationComponent.from(activity),
 ) : TraktAuthManagerComponent {
     abstract val traktAuthManager: TraktAuthManager
-    abstract val viewModel: () -> MainActivityViewModel
+    abstract val presenter: RootNavigationPresenter
     abstract val rootScreen: RootScreen
 }
