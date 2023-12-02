@@ -1,9 +1,11 @@
 package com.thomaskioko.tvmaniac.presentation.trailers
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.model.Either
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -12,16 +14,24 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-class TrailerScreenModel @Inject constructor(
+typealias TrailersPresenterFactory = (
+    ComponentContext,
+    id: Long,
+) -> TrailersPresenter
+
+class TrailersPresenter @Inject constructor(
+    dispatchersProvider: AppCoroutineDispatchers,
+    @Assisted componentContext: ComponentContext,
     @Assisted private val traktShowId: Long,
     private val repository: TrailerRepository,
-) : ScreenModel {
+) : ComponentContext by componentContext {
 
+    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.main)
     private val _state = MutableStateFlow<TrailersState>(LoadingTrailers)
     val state = _state.asStateFlow()
 
     init {
-        screenModelScope.launch {
+        coroutineScope.launch {
             loadTrailerInfo()
             observeTrailerInfo()
         }
@@ -38,7 +48,7 @@ class TrailerScreenModel @Inject constructor(
             }
 
             ReloadTrailers -> {
-                screenModelScope.launch {
+                coroutineScope.launch {
                     loadTrailerInfo()
                 }
             }
@@ -63,6 +73,7 @@ class TrailerScreenModel @Inject constructor(
                     is Either.Left -> {
                         _state.update { TrailerError(result.error.errorMessage) }
                     }
+
                     is Either.Right -> {
                         _state.update {
                             TrailersContent(
