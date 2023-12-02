@@ -1,5 +1,3 @@
-import org.jetbrains.compose.compose
-
 plugins {
     id("plugin.tvmaniac.multiplatform")
 }
@@ -12,11 +10,9 @@ kotlin {
                 implementation(projects.data.profile.api)
                 implementation(projects.core.traktAuth.api)
 
-                api(compose("org.jetbrains.compose.runtime:runtime"))
-                api(compose("org.jetbrains.compose.runtime:runtime-saveable"))
+                api(libs.decompose.decompose)
 
                 implementation(libs.kotlinInject.runtime)
-                implementation(libs.voyager.core)
             }
         }
 

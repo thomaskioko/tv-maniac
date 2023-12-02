@@ -1,30 +1,45 @@
 package com.thomaskioko.tvmaniac.presentation.settings
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-class SettingsScreenModel @Inject constructor(
+typealias SettingsPresenterFactory = (
+    ComponentContext,
+    launchWebView: () -> Unit,
+) -> SettingsPresenter
+
+@Inject
+class SettingsPresenter(
+    dispatchersProvider: AppCoroutineDispatchers,
+    @Assisted componentContext: ComponentContext,
+    @Assisted private val launchWebView: () -> Unit,
     private val datastoreRepository: DatastoreRepository,
     private val profileRepository: ProfileRepository,
     private val traktAuthRepository: TraktAuthRepository,
-) : ScreenModel {
+) : ComponentContext by componentContext {
 
-    private val _state: MutableStateFlow<SettingsState> = MutableStateFlow(SettingsState.DEFAULT_STATE)
+    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.main)
+
+    private val _state: MutableStateFlow<SettingsState> =
+        MutableStateFlow(SettingsState.DEFAULT_STATE)
     val state: StateFlow<SettingsState> = _state.asStateFlow()
 
     init {
-        screenModelScope.launch {
+        coroutineScope.launch {
             observeTheme()
             observeTraktAuthState()
             observeProfile()
@@ -43,7 +58,8 @@ class SettingsScreenModel @Inject constructor(
             }
 
             TraktLoginClicked -> {
-                screenModelScope.launch {
+                launchWebView()
+                coroutineScope.launch {
                     _state.update { state ->
                         state.copy(showTraktDialog = !state.showTraktDialog)
                     }
@@ -51,7 +67,7 @@ class SettingsScreenModel @Inject constructor(
             }
 
             TraktLogoutClicked -> {
-                screenModelScope.launch {
+                coroutineScope.launch {
                     traktAuthRepository.clearAuth()
                     profileRepository.clearProfile()
 
@@ -64,7 +80,7 @@ class SettingsScreenModel @Inject constructor(
     }
 
     private fun updateThemeDialogState(showDialog: Boolean) {
-        screenModelScope.launch {
+        coroutineScope.launch {
             _state.update { state ->
                 state.copy(showthemePopup = showDialog)
             }
@@ -72,12 +88,13 @@ class SettingsScreenModel @Inject constructor(
     }
 
     private fun updateTrackDialogState(showDialog: Boolean) {
-        screenModelScope.launch {
+        coroutineScope.launch {
             _state.update { state ->
                 state.copy(showTraktDialog = showDialog)
             }
         }
     }
+
     private suspend fun observeTheme() {
         datastoreRepository.observeTheme()
             .collectLatest {
@@ -103,7 +120,7 @@ class SettingsScreenModel @Inject constructor(
     }
 
     private fun observeProfile() {
-        screenModelScope.launch {
+        coroutineScope.launch {
             profileRepository.observeProfile("me")
                 .collectLatest { response ->
                     response.fold(
