@@ -2,7 +2,8 @@ package com.thomaskioko.tvmaniac.presentation.profile
 
 sealed interface ProfileActions
 
-object ShowTraktDialog : ProfileActions
-object DismissTraktDialog : ProfileActions
-object TraktLogoutClicked : ProfileActions
-object TraktLoginClicked : ProfileActions
+data object ShowTraktDialog : ProfileActions
+data object DismissTraktDialog : ProfileActions
+data object TraktLogoutClicked : ProfileActions
+data object TraktLoginClicked : ProfileActions
+data object SettingsClicked : ProfileActions

@@ -1,23 +1,40 @@
 package com.thomaskioko.tvmaniac.presentation.profile
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-class ProfileScreenModel @Inject constructor(
+typealias ProfilePresenterFactory = (
+    ComponentContext,
+    goBack: () -> Unit,
+    navigateToSettings: () -> Unit,
+    launchTraktWebView: () -> Unit,
+) -> ProfilePresenter
+
+@Inject
+class ProfilePresenter(
+    dispatchersProvider: AppCoroutineDispatchers,
+    @Assisted componentContext: ComponentContext,
+    @Assisted private val navigateToSettings: () -> Unit,
+    @Assisted private val launchTraktWebView: () -> Unit,
     private val traktAuthRepository: TraktAuthRepository,
     private val datastoreRepository: DatastoreRepository,
     private val profileRepository: ProfileRepository,
-) : ScreenModel {
+) : ComponentContext by componentContext {
+
+    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.main)
 
     private val _state: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState())
     val state: StateFlow<ProfileState> = _state.asStateFlow()
@@ -32,15 +49,17 @@ class ProfileScreenModel @Inject constructor(
             DismissTraktDialog -> updateDialogState(false)
             ShowTraktDialog -> updateDialogState(true)
 
-            TraktLoginClicked ->
-                screenModelScope.launch {
+            TraktLoginClicked -> {
+                launchTraktWebView()
+                coroutineScope.launch {
                     _state.update { state ->
                         state.copy(showTraktDialog = !state.showTraktDialog)
                     }
                 }
+            }
 
             TraktLogoutClicked -> {
-                screenModelScope.launch {
+                coroutineScope.launch {
                     traktAuthRepository.clearAuth()
                     profileRepository.clearProfile()
 
@@ -49,11 +68,13 @@ class ProfileScreenModel @Inject constructor(
                     }
                 }
             }
+
+            SettingsClicked -> navigateToSettings()
         }
     }
 
     private fun updateDialogState(showDialog: Boolean) {
-        screenModelScope.launch {
+        coroutineScope.launch {
             _state.update { state ->
                 state.copy(showTraktDialog = showDialog)
             }
@@ -61,7 +82,7 @@ class ProfileScreenModel @Inject constructor(
     }
 
     private fun observeAuthState() {
-        screenModelScope.launch {
+        coroutineScope.launch {
             datastoreRepository.observeAuthState()
                 .collectLatest { authState ->
                     _state.update { state ->
@@ -76,7 +97,7 @@ class ProfileScreenModel @Inject constructor(
     }
 
     private fun observeProfile() {
-        screenModelScope.launch {
+        coroutineScope.launch {
             profileRepository.observeProfile("me")
                 .collectLatest { response ->
                     response.fold(
