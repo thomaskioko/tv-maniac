@@ -22,6 +22,7 @@ import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthenticationComponent
+import com.thomaskioko.tvmaniac.util.inject.LoggingComponent
 import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import com.thomaskioko.tvmaniac.watchlist.implementation.LibraryComponent
@@ -32,27 +33,27 @@ import me.tatarka.inject.annotations.Provides
 @ApplicationScope
 abstract class ApplicationComponent(
     @get:Provides val application: Application,
-) : UtilPlatformComponent,
-    CategoryComponent,
-    DatabaseComponent,
+) : CategoryComponent,
     DataStoreComponent,
+    DatabaseComponent,
+    DiscoverComponent,
     EpisodeComponent,
     EpisodeImageComponent,
     LibraryComponent,
-    NavigationComponent,
+    LoggingComponent,
     ProfileComponent,
     RequestManagerComponent,
-    SeasonsComponent,
     SeasonDetailsComponent,
-    DiscoverComponent,
+    SeasonsComponent,
     ShowImagesComponent,
     SimilarShowsComponent,
     StatsComponent,
     TmdbComponent,
-    TraktComponent,
     TrailerComponent,
     TraktAuthComponent,
-    TraktAuthenticationComponent {
+    TraktAuthenticationComponent,
+    TraktComponent,
+    UtilPlatformComponent {
 
     abstract val initializers: AppInitializers
 
