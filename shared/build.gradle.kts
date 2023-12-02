@@ -4,25 +4,16 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-
 kotlin {
     sourceSets {
         commonMain {
             dependencies {
 
-                api(projects.common.voyagerutil)
                 api(projects.core.datastore.api)
                 api(projects.core.traktAuth.api)
                 api(projects.core.util)
 
-                api(projects.presentation.discover)
-                api(projects.presentation.profile)
-                api(projects.presentation.seasondetails)
-                api(projects.presentation.settings)
-                api(projects.presentation.seasondetails)
-                api(projects.presentation.showDetails)
-                api(projects.presentation.trailers)
-                api(projects.presentation.library)
+                api(projects.navigation)
 
                 api(projects.core.database)
                 api(projects.core.datastore.implementation)
