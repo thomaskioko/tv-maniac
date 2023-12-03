@@ -1,12 +1,10 @@
 package com.thomaskioko.tvmaniac.presentation.moreshows
 
 import com.arkivanov.decompose.ComponentContext
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.util.decompose.asValue
+import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -19,17 +17,17 @@ typealias MoreShowsPresenterFactory = (
 
 @Inject
 class MoreShowsPresenter(
-    dispatchersProvider: AppCoroutineDispatchers,
     @Assisted componentContext: ComponentContext,
     @Assisted categoryId: Long,
     @Assisted onBack: () -> Unit,
     @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
-) {
+) : ComponentContext by componentContext {
 
-    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.main)
+    private val coroutineScope = coroutineScope()
 
     private val _state = MutableStateFlow(MoreShowsState())
-    val state: StateFlow<MoreShowsState> = _state.asStateFlow()
+    val state: Value<MoreShowsState> = _state
+        .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     fun dispatch(action: MoreShowsActions) {
     }

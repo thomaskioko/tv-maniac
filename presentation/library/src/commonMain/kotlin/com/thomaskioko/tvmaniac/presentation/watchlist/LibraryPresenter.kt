@@ -1,12 +1,11 @@
 package com.thomaskioko.tvmaniac.presentation.watchlist
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import com.thomaskioko.tvmaniac.util.decompose.asValue
+import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -20,16 +19,16 @@ typealias LibraryPresenterFactory = (
 
 @Inject
 class LibraryPresenter(
-    dispatchersProvider: AppCoroutineDispatchers,
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigateToShowDetails: (id: Long) -> Unit,
     private val repository: LibraryRepository,
 ) : ComponentContext by componentContext {
 
-    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.main)
+    private val coroutineScope = coroutineScope()
 
     private val _state = MutableStateFlow<LibraryState>(LoadingShows)
-    val state = _state.asStateFlow()
+    val state: Value<LibraryState> = _state
+        .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     init {
         fetchShowData()

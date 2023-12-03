@@ -1,16 +1,14 @@
 package com.thomaskioko.tvmaniac.presentation.settings
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import com.thomaskioko.tvmaniac.util.decompose.asValue
+import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -24,7 +22,6 @@ typealias SettingsPresenterFactory = (
 
 @Inject
 class SettingsPresenter(
-    dispatchersProvider: AppCoroutineDispatchers,
     @Assisted componentContext: ComponentContext,
     @Assisted private val launchWebView: () -> Unit,
     private val datastoreRepository: DatastoreRepository,
@@ -32,11 +29,12 @@ class SettingsPresenter(
     private val traktAuthRepository: TraktAuthRepository,
 ) : ComponentContext by componentContext {
 
-    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.main)
+    private val coroutineScope = coroutineScope()
 
     private val _state: MutableStateFlow<SettingsState> =
         MutableStateFlow(SettingsState.DEFAULT_STATE)
-    val state: StateFlow<SettingsState> = _state.asStateFlow()
+    val state: Value<SettingsState> = _state
+        .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     init {
         coroutineScope.launch {

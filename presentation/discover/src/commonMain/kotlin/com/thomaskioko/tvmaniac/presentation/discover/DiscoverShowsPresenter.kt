@@ -1,15 +1,13 @@
 package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.showimages.api.ShowImagesRepository
 import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import com.thomaskioko.tvmaniac.util.decompose.asValue
+import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -26,7 +24,6 @@ typealias DiscoverShowsPresenterFactory = (
 
 @Inject
 class DiscoverShowsPresenter(
-    dispatchersProvider: AppCoroutineDispatchers,
     @Assisted componentContext: ComponentContext,
     @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
     @Assisted private val onNavigateToMore: (Long) -> Unit,
@@ -34,10 +31,11 @@ class DiscoverShowsPresenter(
     private val showImagesRepository: ShowImagesRepository,
 ) : ComponentContext by componentContext {
 
-    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.main)
+    private val coroutineScope = coroutineScope()
 
     private val _state = MutableStateFlow<DiscoverState>(Loading)
-    val state: StateFlow<DiscoverState> = _state.asStateFlow()
+    val state: Value<DiscoverState> = _state
+        .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     init {
         coroutineScope.launch {
