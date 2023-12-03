@@ -19,6 +19,7 @@ kotlin {
                 api(libs.ktor.serialization)
 
                 implementation(libs.coroutines.core)
+                implementation(libs.decompose.decompose)
                 implementation(libs.kermit)
                 implementation(libs.napier)
                 implementation(libs.kotlinInject.runtime)

@@ -13,6 +13,7 @@ kotlin {
                 implementation(projects.data.shows.api)
 
                 api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
                 implementation(libs.kotlinInject.runtime)

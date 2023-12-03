@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.appauth)
 
     implementation(libs.decompose.decompose)
+    implementation(libs.decompose.extensions.compose)
     implementation(libs.kotlinInject.runtime)
     ksp(libs.kotlinInject.compiler)
 }

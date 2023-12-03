@@ -39,6 +39,9 @@ kotlin {
             implementation(projects.presentation.trailers)
 
             implementation(libs.kotlinInject.runtime)
+
+            api(libs.decompose.decompose)
+            api(libs.essenty.lifecycle)
         }
     }
 }

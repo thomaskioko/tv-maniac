@@ -8,6 +8,7 @@ kotlin {
             dependencies {
 
                 api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
                 implementation(libs.kotlinInject.runtime)
             }
         }
