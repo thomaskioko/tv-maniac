@@ -1,3 +1,5 @@
+import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
+
 plugins {
     id("plugin.tvmaniac.kotlin.android")
     id("plugin.tvmaniac.multiplatform")
@@ -60,8 +62,6 @@ kotlin {
                 api(projects.data.similar.implementation)
                 api(projects.data.trailers.api)
                 api(projects.data.trailers.implementation)
-
-                implementation(libs.kotlinInject.runtime)
             }
         }
     }
@@ -75,11 +75,7 @@ ksp {
     arg("me.tatarka.inject.generateCompanionExtensions", "true")
 }
 
-dependencies {
-    add("kspAndroid", libs.kotlinInject.compiler)
-    add("kspIosX64", libs.kotlinInject.compiler)
-    add("kspIosArm64", libs.kotlinInject.compiler)
-}
+addKspDependencyForAllTargets(libs.kotlinInject.compiler)
 
 multiplatformSwiftPackage {
     packageName("TvManiac")
