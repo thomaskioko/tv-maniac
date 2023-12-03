@@ -40,7 +40,6 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
@@ -53,6 +52,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
@@ -89,7 +89,7 @@ fun DiscoverScreen(
     discoverShowsPresenter: DiscoverShowsPresenter,
     modifier: Modifier = Modifier,
 ) {
-    val discoverState by discoverShowsPresenter.state.collectAsState()
+    val discoverState by discoverShowsPresenter.state.subscribeAsState()
     val pagerState = rememberPagerState(pageCount = {
         (discoverState as? DataLoaded)?.recommendedShows?.size ?: 0
     })

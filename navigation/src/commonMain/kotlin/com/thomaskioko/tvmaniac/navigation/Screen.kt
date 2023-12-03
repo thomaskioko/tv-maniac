@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
 
-internal sealed interface Screen {
+sealed interface Screen {
     class Discover(val presenter: DiscoverShowsPresenter) : Screen
     class Library(val presenter: LibraryPresenter) : Screen
     class MoreShows(val presenter: MoreShowsPresenter) : Screen

@@ -37,7 +37,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -49,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -73,7 +73,7 @@ fun SettingsScreen(
     presenter: SettingsPresenter,
     modifier: Modifier = Modifier,
 ) {
-    val state by presenter.state.collectAsState()
+    val state by presenter.state.subscribeAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     SettingsScreen(
