@@ -6,6 +6,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                implementation(projects.core.util)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
