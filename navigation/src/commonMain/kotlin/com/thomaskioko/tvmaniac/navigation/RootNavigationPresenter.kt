@@ -57,7 +57,7 @@ class RootNavigationPresenter(
         .map { theme -> ThemeLoaded(theme = theme) }
         .asValue(initialValue = Loading, lifecycle = lifecycle)
 
-    internal fun bringToFront(config: Config) {
+    fun bringToFront(config: Config) {
         navigation.bringToFront(config)
     }
 
@@ -135,7 +135,7 @@ class RootNavigationPresenter(
         }
 
     @Serializable
-    internal sealed interface Config {
+    sealed interface Config {
         @Serializable
         data object Discover : Config
 
