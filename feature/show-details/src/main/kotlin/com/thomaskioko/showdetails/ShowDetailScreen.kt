@@ -82,11 +82,11 @@ import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
-import com.thomaskioko.tvmaniac.presentation.showdetails.BackClicked
+import com.thomaskioko.tvmaniac.presentation.showdetails.DetailBackClicked
+import com.thomaskioko.tvmaniac.presentation.showdetails.DetailShowClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.DismissWebViewError
 import com.thomaskioko.tvmaniac.presentation.showdetails.FollowShowClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonClicked
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
@@ -134,7 +134,7 @@ internal fun ShowDetailsScreen(
             ShowTopBar(
                 listState = listState,
                 title = title,
-                onNavUpClick = { onAction(BackClicked) },
+                onNavUpClick = { onAction(DetailBackClicked) },
             )
         },
         snackbarHost = {
@@ -207,7 +207,7 @@ private fun ShowDetailsContent(
             SimilarShowsContent(
                 isLoading = similarShowsContent.isLoading,
                 similarShows = similarShowsContent.similarShows,
-                onShowClicked = { onAction(ShowClicked(it)) },
+                onShowClicked = { onAction(DetailShowClicked(it)) },
             )
         }
     }

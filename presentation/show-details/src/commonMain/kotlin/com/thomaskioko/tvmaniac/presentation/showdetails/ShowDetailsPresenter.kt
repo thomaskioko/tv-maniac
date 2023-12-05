@@ -61,9 +61,9 @@ class ShowDetailsPresenter @Inject constructor(
 
     fun dispatch(action: ShowDetailsAction) {
         when (action) {
-            BackClicked -> onBack()
+            DetailBackClicked -> onBack()
             is SeasonClicked -> onNavigateToSeason(action.id, action.title)
-            is ShowClicked -> onNavigateToShow(action.id)
+            is DetailShowClicked -> onNavigateToShow(action.id)
             is WatchTrailerClicked -> onNavigateToTrailer(action.id)
             DismissWebViewError -> {
                 coroutineScope.launch {
