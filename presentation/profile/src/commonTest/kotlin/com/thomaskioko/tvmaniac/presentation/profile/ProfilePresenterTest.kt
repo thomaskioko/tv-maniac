@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.presentation.profile
 
-import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.testing.authenticatedAuthState
 import com.thomaskioko.tvmaniac.trakt.profile.testing.FakeProfileRepository
@@ -35,11 +34,11 @@ class ProfilePresenterTest {
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-      /*  presenter = ProfilePresenter(
-            datastoreRepository = datastoreRepository,
-            profileRepository = profileRepository,
-            traktAuthRepository = traktAuthRepository,
-        )*/
+        /*  presenter = ProfilePresenter(
+              datastoreRepository = datastoreRepository,
+              profileRepository = profileRepository,
+              traktAuthRepository = traktAuthRepository,
+          )*/
     }
 
     @AfterTest
@@ -49,96 +48,88 @@ class ProfilePresenterTest {
 
     @Test
     fun initial_state_emits_expected_result() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe ProfileState()
-        }
+        presenter.state shouldBe ProfileState()
     }
 
     @Test
     fun given_ShowTraktDialog_andUserIsAuthenticated_expectedResultIsEmitted() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe ProfileState() // Initial State
+        presenter.state shouldBe ProfileState() // Initial State
 
-            presenter.dispatch(ShowTraktDialog)
+        presenter.dispatch(ShowTraktDialog)
 
-            awaitItem() shouldBe ProfileState()
-                .copy(showTraktDialog = true)
+        presenter.state shouldBe ProfileState()
+            .copy(showTraktDialog = true)
 
-            presenter.dispatch(TraktLoginClicked)
+        presenter.dispatch(TraktLoginClicked)
 
-            awaitItem() shouldBe ProfileState()
-                .copy(showTraktDialog = false)
+        presenter.state shouldBe ProfileState()
+            .copy(showTraktDialog = false)
 
-            traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
-            datastoreRepository.setAuthState(authenticatedAuthState)
-            profileRepository.setUserData(Either.Right(user))
+        traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
+        datastoreRepository.setAuthState(authenticatedAuthState)
+        profileRepository.setUserData(Either.Right(user))
 
-            awaitItem() shouldBe ProfileState()
-                .copy(
-                    errorMessage = null,
-                    userInfo = UserInfo(
-                        slug = user.slug,
-                        userName = user.user_name,
-                        fullName = user.full_name,
-                        userPicUrl = user.profile_picture,
-                    ),
-                )
-        }
+        presenter.state shouldBe ProfileState()
+            .copy(
+                errorMessage = null,
+                userInfo = UserInfo(
+                    slug = user.slug,
+                    userName = user.user_name,
+                    fullName = user.full_name,
+                    userPicUrl = user.profile_picture,
+                ),
+            )
     }
 
     @Test
     fun given_TraktLoginClicked_andErrorOccurs_expectedResultIsEmitted() = runTest {
-        presenter.state.test {
-            val errorMessage = "Something happened"
+        val errorMessage = "Something happened"
 
-            awaitItem() shouldBe ProfileState()
+        presenter.state shouldBe ProfileState()
 
-            presenter.dispatch(ShowTraktDialog)
+        presenter.dispatch(ShowTraktDialog)
 
-            awaitItem() shouldBe ProfileState().copy(
-                showTraktDialog = true,
-            )
+        presenter.state shouldBe ProfileState().copy(
+            showTraktDialog = true,
+        )
 
-            presenter.dispatch(TraktLoginClicked)
+        presenter.dispatch(TraktLoginClicked)
 
-            awaitItem() shouldBe ProfileState().copy(
-                showTraktDialog = false,
-            )
+        presenter.state shouldBe ProfileState().copy(
+            showTraktDialog = false,
+        )
 
-            traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
-            datastoreRepository.setAuthState(authenticatedAuthState)
-            profileRepository.setUserData(
-                Either.Left(ServerError(errorMessage)),
-            )
+        traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
+        datastoreRepository.setAuthState(authenticatedAuthState)
+        profileRepository.setUserData(
+            Either.Left(ServerError(errorMessage)),
+        )
 
-            awaitItem() shouldBe ProfileState()
-                .copy(errorMessage = errorMessage)
-        }
+        presenter.state shouldBe ProfileState()
+            .copy(errorMessage = errorMessage)
     }
 
     @Test
     fun given_TraktLogoutClicked_expectedResultIsEmitted() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe ProfileState()
+        presenter.state shouldBe ProfileState()
 
-            traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
-            datastoreRepository.setAuthState(authenticatedAuthState)
-            profileRepository.setUserData(Either.Right(user))
+        traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
+        datastoreRepository.setAuthState(authenticatedAuthState)
+        profileRepository.setUserData(Either.Right(user))
 
-            awaitItem() shouldBe ProfileState()
-                .copy(
-                    errorMessage = null,
-                    userInfo = UserInfo(
-                        slug = user.slug,
-                        userName = user.user_name,
-                        fullName = user.full_name,
-                        userPicUrl = user.profile_picture,
-                    ),
-                )
+        presenter.state shouldBe ProfileState()
+            .copy(
+                errorMessage = null,
+                userInfo = UserInfo(
+                    slug = user.slug,
+                    userName = user.user_name,
+                    fullName = user.full_name,
+                    userPicUrl = user.profile_picture,
+                ),
+            )
 
-            presenter.dispatch(TraktLogoutClicked)
+        presenter.dispatch(TraktLogoutClicked)
 
-            awaitItem() shouldBe ProfileState()
-        }
+        presenter.state shouldBe ProfileState()
     }
 }

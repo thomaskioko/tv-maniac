@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.presentation.trailers
 
-import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
@@ -43,62 +42,58 @@ internal class TrailersPresenterTest {
 
     @Test
     fun `given result is success correct state is emitted`() = runTest {
-        presenter.state.test {
-            repository.setTrailerList(trailers)
+        repository.setTrailerList(trailers)
 
-            awaitItem() shouldBe LoadingTrailers
-            awaitItem() shouldBe TrailersContent(
-                selectedVideoKey = "Fd43V",
-                trailersList = persistentListOf(
-                    Trailer(
-                        showId = 84958,
-                        key = "Fd43V",
-                        name = "Some title",
-                        youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
-                    ),
+        presenter.state shouldBe LoadingTrailers
+        presenter.state shouldBe TrailersContent(
+            selectedVideoKey = "Fd43V",
+            trailersList = persistentListOf(
+                Trailer(
+                    showId = 84958,
+                    key = "Fd43V",
+                    name = "Some title",
+                    youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
                 ),
-            )
-        }
+            ),
+        )
     }
 
     @Test
     fun `given reload is clicked then correct state is emitted`() = runTest {
-        presenter.state.test {
-            repository.setTrailerList(trailers)
+        repository.setTrailerList(trailers)
 
-            repository.setTrailerResult(Either.Left(ServerError("Something went wrong.")))
+        repository.setTrailerResult(Either.Left(ServerError("Something went wrong.")))
 
-            awaitItem() shouldBe LoadingTrailers
-            awaitItem() shouldBe TrailersContent(
-                selectedVideoKey = "Fd43V",
-                trailersList = persistentListOf(
-                    Trailer(
-                        showId = 84958,
-                        key = "Fd43V",
-                        name = "Some title",
-                        youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
-                    ),
+        presenter.state shouldBe LoadingTrailers
+        presenter.state shouldBe TrailersContent(
+            selectedVideoKey = "Fd43V",
+            trailersList = persistentListOf(
+                Trailer(
+                    showId = 84958,
+                    key = "Fd43V",
+                    name = "Some title",
+                    youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
                 ),
-            )
+            ),
+        )
 
-            awaitItem() shouldBe TrailerError("Something went wrong.")
+        presenter.state shouldBe TrailerError("Something went wrong.")
 
-            presenter.dispatch(ReloadTrailers)
+        presenter.dispatch(ReloadTrailers)
 
-            repository.setTrailerResult(Either.Right(trailers))
+        repository.setTrailerResult(Either.Right(trailers))
 
-            awaitItem() shouldBe LoadingTrailers
-            awaitItem() shouldBe TrailersContent(
-                selectedVideoKey = "Fd43V",
-                trailersList = persistentListOf(
-                    Trailer(
-                        showId = 84958,
-                        key = "Fd43V",
-                        name = "Some title",
-                        youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
-                    ),
+        presenter.state shouldBe LoadingTrailers
+        presenter.state shouldBe TrailersContent(
+            selectedVideoKey = "Fd43V",
+            trailersList = persistentListOf(
+                Trailer(
+                    showId = 84958,
+                    key = "Fd43V",
+                    name = "Some title",
+                    youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
                 ),
-            )
-        }
+            ),
+        )
     }
 }

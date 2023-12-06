@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.domain.watchlist
 
-import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryContent
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
@@ -42,9 +41,7 @@ class LibraryPresenterTest {
     fun initial_state_emits_expected_result() = runTest {
         repository.setFollowedResult(watchlistResult)
 
-        presenter.state.test {
-            awaitItem() shouldBe LoadingShows
-            awaitItem() shouldBe LibraryContent(list = libraryItems)
-        }
+        presenter.state shouldBe LoadingShows
+        presenter.state shouldBe LibraryContent(list = libraryItems)
     }
 }

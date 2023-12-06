@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.presentation.discover
 
-import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.shows.testing.FakeDiscoverRepository
 import com.thomaskioko.tvmaniac.tmdb.testing.FakeShowImagesRepository
 import io.kotest.matchers.shouldBe
@@ -43,9 +42,7 @@ internal class DiscoverShowsPresenterTest {
         discoverRepository.setShowCategory(categoryResult(3))
         discoverRepository.setShowCategory(categoryResult(4))
 
-        presenter.state.test {
-            awaitItem() shouldBe Loading
-            awaitItem() shouldBe discoverContent
-        }
+        presenter.state shouldBe Loading
+        presenter.state shouldBe discoverContent
     }
 }

@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.data.seasondetails
 
-import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeImageRepository
 import com.thomaskioko.tvmaniac.presentation.seasondetails.Loading
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
@@ -34,11 +33,11 @@ class SeasonPresenterTest {
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-     /*   presenter = SeasonDetailsPresenter(
-            traktId = 1231,
-            episodeImageRepository = episodeImageRepository,
-            seasonDetailsRepository = seasonDetailsRepository,
-        )*/
+        /*   presenter = SeasonDetailsPresenter(
+               traktId = 1231,
+               episodeImageRepository = episodeImageRepository,
+               seasonDetailsRepository = seasonDetailsRepository,
+           )*/
     }
 
     @AfterTest
@@ -48,25 +47,21 @@ class SeasonPresenterTest {
 
     @Test
     fun onLoadSeasonDetails_correct_state_is_emitted() = runTest {
-        presenter.state.test {
-            seasonDetailsRepository.setCachedResults(SeasonWithEpisodeList)
+        seasonDetailsRepository.setCachedResults(SeasonWithEpisodeList)
 
-            awaitItem() shouldBe Loading
-            awaitItem() shouldBe seasonDetailsLoaded
-        }
+        presenter.state shouldBe Loading
+        presenter.state shouldBe seasonDetailsLoaded
     }
 
     @Test
     fun onLoadSeasonDetails_andErrorOccurs_correctStateIsEmitted() = runTest {
-        presenter.state.test {
-            val errorMessage = "Something went wrong"
-            seasonDetailsRepository.setCachedResults(SeasonWithEpisodeList)
-            seasonDetailsRepository.setSeasonsResult(Either.Left(DefaultError(errorMessage)))
+        val errorMessage = "Something went wrong"
+        seasonDetailsRepository.setCachedResults(SeasonWithEpisodeList)
+        seasonDetailsRepository.setSeasonsResult(Either.Left(DefaultError(errorMessage)))
 
-            awaitItem() shouldBe Loading
-            awaitItem() shouldBe seasonDetailsLoaded
-            awaitItem() shouldBe seasonDetailsLoaded
-                .copy(errorMessage = errorMessage)
-        }
+        presenter.state shouldBe Loading
+        presenter.state shouldBe seasonDetailsLoaded
+        presenter.state shouldBe seasonDetailsLoaded
+            .copy(errorMessage = errorMessage)
     }
 }

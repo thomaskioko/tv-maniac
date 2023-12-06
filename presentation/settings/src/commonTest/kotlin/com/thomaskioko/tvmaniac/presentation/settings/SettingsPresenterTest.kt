@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.settings
 
-import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.datastore.api.Theme
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.testing.authenticatedAuthState
 import com.thomaskioko.tvmaniac.trakt.profile.testing.FakeProfileRepository
@@ -37,11 +36,11 @@ class SettingsPresenterTest {
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-     /*   screenModel = SettingsPresenter(
-            datastoreRepository = datastoreRepository,
-            profileRepository = profileRepository,
-            traktAuthRepository = traktAuthRepository,
-        )*/
+        /*   screenModel = SettingsPresenter(
+               datastoreRepository = datastoreRepository,
+               profileRepository = profileRepository,
+               traktAuthRepository = traktAuthRepository,
+           )*/
     }
 
     @AfterTest
@@ -51,161 +50,147 @@ class SettingsPresenterTest {
 
     @Test
     fun initial_state_emits_expected_result() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE
-        }
+        presenter.state shouldBe SettingsState.DEFAULT_STATE
     }
 
     @Test
     fun when_theme_is_updated_expected_result_is_emitted() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
+        presenter.state shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-            presenter.dispatch(ChangeThemeClicked)
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(
-                showthemePopup = true,
-            )
+        presenter.dispatch(ChangeThemeClicked)
+        presenter.state shouldBe SettingsState.DEFAULT_STATE.copy(
+            showthemePopup = true,
+        )
 
-            datastoreRepository.setTheme(Theme.DARK)
-            presenter.dispatch(ThemeSelected(Theme.DARK))
+        datastoreRepository.setTheme(AppTheme.DARK_THEME)
+        presenter.dispatch(ThemeSelected(AppTheme.DARK_THEME))
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(
-                showthemePopup = true,
-                theme = Theme.DARK,
-            )
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(
-                showthemePopup = false,
-                theme = Theme.DARK,
-            )
-        }
+        presenter.state shouldBe SettingsState.DEFAULT_STATE.copy(
+            showthemePopup = true,
+            appTheme = AppTheme.DARK_THEME,
+        )
+        presenter.state shouldBe SettingsState.DEFAULT_STATE.copy(
+            showthemePopup = false,
+            appTheme = AppTheme.DARK_THEME,
+        )
     }
 
     @Test
     fun when_dialog_is_dismissed_expected_result_is_emitted() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
+        presenter.state shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-            presenter.dispatch(ChangeThemeClicked)
+        presenter.dispatch(ChangeThemeClicked)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(
-                showthemePopup = true,
-            )
+        presenter.state shouldBe SettingsState.DEFAULT_STATE.copy(
+            showthemePopup = true,
+        )
 
-            presenter.dispatch(DismissThemeClicked)
+        presenter.dispatch(DismissThemeClicked)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(
-                showthemePopup = false,
-            )
-        }
+        presenter.state shouldBe SettingsState.DEFAULT_STATE.copy(
+            showthemePopup = false,
+        )
     }
 
     @Test
     fun when_ShowTraktDialog_is_clicked_expected_result_is_emitted() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
+        presenter.state shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-            presenter.dispatch(ShowTraktDialog)
+        presenter.dispatch(ShowTraktDialog)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(
-                showTraktDialog = true,
-            )
+        presenter.state shouldBe SettingsState.DEFAULT_STATE.copy(
+            showTraktDialog = true,
+        )
 
-            presenter.dispatch(DismissTraktDialog)
+        presenter.dispatch(DismissTraktDialog)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(
-                showTraktDialog = false,
-            )
-        }
+        presenter.state shouldBe SettingsState.DEFAULT_STATE.copy(
+            showTraktDialog = false,
+        )
     }
 
     @Ignore // "Fix once TraktAuthManager is implemented"
     @Test
     fun given_TraktLoginClicked_andUserIsAuthenticated_expectedResultIsEmitted() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
+        presenter.state shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-            presenter.dispatch(ShowTraktDialog)
+        presenter.dispatch(ShowTraktDialog)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE
-                .copy(showTraktDialog = true)
+        presenter.state shouldBe SettingsState.DEFAULT_STATE
+            .copy(showTraktDialog = true)
 
-            presenter.dispatch(TraktLoginClicked)
+        presenter.dispatch(TraktLoginClicked)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE
-                .copy(showTraktDialog = false)
+        presenter.state shouldBe SettingsState.DEFAULT_STATE
+            .copy(showTraktDialog = false)
 
-            traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
-            datastoreRepository.setAuthState(authenticatedAuthState)
-            profileRepository.setUserData(Either.Right(user))
+        traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
+        datastoreRepository.setAuthState(authenticatedAuthState)
+        profileRepository.setUserData(Either.Right(user))
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE
-                .copy(
-                    errorMessage = null,
-                    userInfo = UserInfo(
-                        slug = user.slug,
-                        userName = user.user_name,
-                        fullName = user.full_name,
-                        userPicUrl = user.profile_picture,
-                    ),
-                )
-        }
+        presenter.state shouldBe SettingsState.DEFAULT_STATE
+            .copy(
+                errorMessage = null,
+                userInfo = UserInfo(
+                    slug = user.slug,
+                    userName = user.user_name,
+                    fullName = user.full_name,
+                    userPicUrl = user.profile_picture,
+                ),
+            )
     }
 
     @Ignore // "Fix once TraktAuthManager is implemented"
     @Test
     fun given_TraktLoginClicked_andErrorOccurs_expectedResultIsEmitted() = runTest {
-        presenter.state.test {
-            val errorMessage = "Something happened"
+        val errorMessage = "Something happened"
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
+        presenter.state shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-            presenter.dispatch(ShowTraktDialog)
+        presenter.dispatch(ShowTraktDialog)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE
-                .copy(showTraktDialog = true)
+        presenter.state shouldBe SettingsState.DEFAULT_STATE
+            .copy(showTraktDialog = true)
 
-            presenter.dispatch(TraktLoginClicked)
+        presenter.dispatch(TraktLoginClicked)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE
-                .copy(showTraktDialog = false)
+        presenter.state shouldBe SettingsState.DEFAULT_STATE
+            .copy(showTraktDialog = false)
 
-            traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
-            datastoreRepository.setAuthState(authenticatedAuthState)
-            profileRepository.setUserData(Either.Left(ServerError(errorMessage)))
+        traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
+        datastoreRepository.setAuthState(authenticatedAuthState)
+        profileRepository.setUserData(Either.Left(ServerError(errorMessage)))
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE
-                .copy(errorMessage = errorMessage)
-        }
+        presenter.state shouldBe SettingsState.DEFAULT_STATE
+            .copy(errorMessage = errorMessage)
     }
 
     @Ignore // "Fix once TraktAuthManager is implemented"
     @Test
     fun given_TraktLogoutClicked_expectedResultIsEmitted() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
+        presenter.state shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-            presenter.dispatch(ShowTraktDialog)
+        presenter.dispatch(ShowTraktDialog)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE
-                .copy(showTraktDialog = true)
+        presenter.state shouldBe SettingsState.DEFAULT_STATE
+            .copy(showTraktDialog = true)
 
-            presenter.dispatch(TraktLoginClicked)
+        presenter.dispatch(TraktLoginClicked)
 
-            traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
-            datastoreRepository.setAuthState(authenticatedAuthState)
-            profileRepository.setUserData(Either.Right(user))
+        traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
+        datastoreRepository.setAuthState(authenticatedAuthState)
+        profileRepository.setUserData(Either.Right(user))
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE
-                .copy(
-                    errorMessage = null,
-                    userInfo = null,
-                )
+        presenter.state shouldBe SettingsState.DEFAULT_STATE
+            .copy(
+                errorMessage = null,
+                userInfo = null,
+            )
 
-            presenter.dispatch(TraktLogoutClicked)
+        presenter.dispatch(TraktLogoutClicked)
 
-            traktAuthRepository.setAuthState(TraktAuthState.LOGGED_OUT)
+        traktAuthRepository.setAuthState(TraktAuthState.LOGGED_OUT)
 
-            awaitItem() shouldBe SettingsState.DEFAULT_STATE
-        }
+        presenter.state shouldBe SettingsState.DEFAULT_STATE
     }
 }
