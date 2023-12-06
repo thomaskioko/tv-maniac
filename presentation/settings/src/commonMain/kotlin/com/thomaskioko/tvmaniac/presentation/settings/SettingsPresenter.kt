@@ -51,7 +51,7 @@ class SettingsPresenter(
             DismissTraktDialog -> updateTrackDialogState(false)
             ShowTraktDialog -> updateTrackDialogState(true)
             is ThemeSelected -> {
-                datastoreRepository.saveTheme(action.theme)
+                datastoreRepository.saveTheme(action.appTheme)
                 updateThemeDialogState(false)
             }
 
@@ -97,7 +97,7 @@ class SettingsPresenter(
         datastoreRepository.observeTheme()
             .collectLatest {
                 _state.update { state ->
-                    state.copy(theme = it)
+                    state.copy(appTheme = it)
                 }
             }
     }

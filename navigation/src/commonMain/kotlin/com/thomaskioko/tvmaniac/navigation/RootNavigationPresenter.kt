@@ -54,8 +54,8 @@ class RootNavigationPresenter(
         )
 
     val state: Value<ThemeState> = datastoreRepository.observeTheme()
-        .map { theme -> ThemeLoaded(theme = theme) }
-        .asValue(initialValue = Loading, lifecycle = lifecycle)
+        .map { theme -> ThemeState(isFetching = false, appTheme = theme) }
+        .asValue(initialValue = ThemeState(), lifecycle = lifecycle)
 
     fun bringToFront(config: Config) {
         navigation.bringToFront(config)

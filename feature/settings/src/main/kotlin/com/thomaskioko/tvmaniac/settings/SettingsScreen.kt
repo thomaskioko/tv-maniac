@@ -54,7 +54,7 @@ import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.datastore.api.Theme
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.presentation.settings.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.presentation.settings.DismissThemeClicked
 import com.thomaskioko.tvmaniac.presentation.settings.DismissTraktDialog
@@ -117,7 +117,7 @@ internal fun SettingsScreen(
 
             SettingsScreen(
                 userInfo = state.userInfo,
-                theme = state.theme,
+                appTheme = state.appTheme,
                 showPopup = state.showthemePopup,
                 showTraktDialog = state.showTraktDialog,
                 isLoading = state.isLoading,
@@ -133,7 +133,7 @@ internal fun SettingsScreen(
 @Composable
 fun SettingsScreen(
     userInfo: UserInfo?,
-    theme: Theme,
+    appTheme: AppTheme,
     showPopup: Boolean,
     showTraktDialog: Boolean,
     isLoading: Boolean,
@@ -160,7 +160,7 @@ fun SettingsScreen(
         item {
             SettingsThemeItem(
                 showPopup = showPopup,
-                theme = theme,
+                appTheme = appTheme,
                 onThemeSelected = { onAction(ThemeSelected(it)) },
                 onThemeClicked = { onAction(ChangeThemeClicked) },
                 onDismissTheme = { onAction(DismissThemeClicked) },
@@ -309,16 +309,16 @@ fun TrackDialog(
 
 @Composable
 private fun SettingsThemeItem(
-    theme: Theme,
+    appTheme: AppTheme,
     showPopup: Boolean,
-    onThemeSelected: (Theme) -> Unit,
+    onThemeSelected: (AppTheme) -> Unit,
     onThemeClicked: () -> Unit,
     onDismissTheme: () -> Unit,
 ) {
-    val themeTitle = when (theme) {
-        Theme.LIGHT -> stringResource(R.string.settings_title_theme_dark)
-        Theme.DARK -> stringResource(R.string.settings_title_theme_light)
-        Theme.SYSTEM -> stringResource(R.string.settings_title_theme_system)
+    val appThemeTitle = when (appTheme) {
+        AppTheme.LIGHT_THEME -> stringResource(R.string.settings_title_theme_dark)
+        AppTheme.DARK_THEME -> stringResource(R.string.settings_title_theme_light)
+        AppTheme.SYSTEM_THEME -> stringResource(R.string.settings_title_theme_system)
     }
 
     Column(
@@ -354,13 +354,13 @@ private fun SettingsThemeItem(
                     .padding(end = 8.dp, bottom = 8.dp)
                     .weight(1f),
             ) {
-                TitleItem(themeTitle)
+                TitleItem(appThemeTitle)
                 SettingDescription(stringResource(R.string.settings_theme_description))
             }
 
             ThemeMenu(
                 isVisible = showPopup,
-                selectedTheme = theme,
+                selectedAppTheme = appTheme,
                 onDismissTheme = onDismissTheme,
                 onThemeSelected = onThemeSelected,
             )
@@ -375,9 +375,9 @@ private fun SettingsThemeItem(
 @Composable
 private fun ThemeMenu(
     isVisible: Boolean,
-    selectedTheme: Theme,
+    selectedAppTheme: AppTheme,
     onDismissTheme: () -> Unit,
-    onThemeSelected: (Theme) -> Unit,
+    onThemeSelected: (AppTheme) -> Unit,
 ) {
     AnimatedVisibility(
         visible = isVisible,
@@ -399,22 +399,22 @@ private fun ThemeMenu(
 
         ) {
             ThemeMenuItem(
-                theme = Theme.LIGHT,
-                selectedTheme = selectedTheme,
+                appTheme = AppTheme.LIGHT_THEME,
+                selectedAppTheme = selectedAppTheme,
                 onThemeSelected = onThemeSelected,
                 onDismissTheme = onDismissTheme,
             )
 
             ThemeMenuItem(
-                theme = Theme.DARK,
-                selectedTheme = selectedTheme,
+                appTheme = AppTheme.DARK_THEME,
+                selectedAppTheme = selectedAppTheme,
                 onThemeSelected = onThemeSelected,
                 onDismissTheme = onDismissTheme,
             )
 
             ThemeMenuItem(
-                theme = Theme.SYSTEM,
-                selectedTheme = selectedTheme,
+                appTheme = AppTheme.SYSTEM_THEME,
+                selectedAppTheme = selectedAppTheme,
                 onThemeSelected = onThemeSelected,
                 onDismissTheme = onDismissTheme,
             )
@@ -424,19 +424,19 @@ private fun ThemeMenu(
 
 @Composable
 private fun ThemeMenuItem(
-    theme: Theme,
-    selectedTheme: Theme,
-    onThemeSelected: (Theme) -> Unit,
+    appTheme: AppTheme,
+    selectedAppTheme: AppTheme,
+    onThemeSelected: (AppTheme) -> Unit,
     onDismissTheme: () -> Unit,
 ) {
-    val themeTitle = when (theme) {
-        Theme.LIGHT -> "Light Theme"
-        Theme.DARK -> "Dark Theme"
-        Theme.SYSTEM -> "System Theme"
+    val appThemeTitle = when (appTheme) {
+        AppTheme.LIGHT_THEME -> "Light Theme"
+        AppTheme.DARK_THEME -> "Dark Theme"
+        AppTheme.SYSTEM_THEME -> "System Theme"
     }
     DropdownMenuItem(
         onClick = {
-            onThemeSelected(theme)
+            onThemeSelected(appTheme)
             onDismissTheme()
         },
         text = {
@@ -448,18 +448,18 @@ private fun ThemeMenuItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = themeTitle,
+                    text = appThemeTitle,
                     modifier = Modifier
                         .weight(1f),
                 )
 
                 RadioButton(
-                    selected = selectedTheme == theme,
+                    selected = selectedAppTheme == appTheme,
                     colors = RadioButtonDefaults.colors(
                         selectedColor = MaterialTheme.colorScheme.secondary,
                     ),
                     onClick = {
-                        onThemeSelected(theme)
+                        onThemeSelected(appTheme)
                         onDismissTheme()
                     },
                 )

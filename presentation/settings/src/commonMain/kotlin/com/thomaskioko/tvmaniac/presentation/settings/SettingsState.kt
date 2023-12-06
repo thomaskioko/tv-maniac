@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.presentation.settings
 
-import com.thomaskioko.tvmaniac.datastore.api.Theme
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 
 data class SettingsState(
     val userInfo: UserInfo?,
-    val theme: Theme,
+    val appTheme: AppTheme,
     val showTraktDialog: Boolean,
     val showthemePopup: Boolean,
     val errorMessage: String?,
@@ -14,7 +14,7 @@ data class SettingsState(
     companion object {
         val DEFAULT_STATE = SettingsState(
             userInfo = null,
-            theme = Theme.SYSTEM,
+            appTheme = AppTheme.SYSTEM_THEME,
             showTraktDialog = false,
             showthemePopup = false,
             isLoading = false,
