@@ -38,7 +38,7 @@ class LibraryPresenter(
     fun dispatch(action: LibraryAction) {
         when (action) {
             is ReloadLibrary -> coroutineScope.launch { fetchShowData() }
-            is ShowClicked -> navigateToShowDetails(action.id)
+            is LibraryShowClicked -> navigateToShowDetails(action.id)
         }
     }
 

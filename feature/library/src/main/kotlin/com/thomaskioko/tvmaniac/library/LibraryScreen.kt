@@ -27,10 +27,10 @@ import com.thomaskioko.tvmaniac.presentation.watchlist.ErrorLoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryAction
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryContent
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryShowClicked
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryState
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.ReloadLibrary
-import com.thomaskioko.tvmaniac.presentation.watchlist.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.watchlist.model.LibraryItem
 import com.thomaskioko.tvmaniac.resources.R
 import kotlinx.collections.immutable.ImmutableList
@@ -87,7 +87,7 @@ internal fun LibraryScreen(
                         else -> LibraryGridContent(
                             list = state.list,
                             paddingValues = contentPadding,
-                            onItemClicked = { onAction(ShowClicked(it)) },
+                            onItemClicked = { onAction(LibraryShowClicked(it)) },
                         )
                     }
                 }
