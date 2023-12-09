@@ -14,6 +14,7 @@ kotlin {
                 implementation(projects.data.library.api)
 
                 api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
                 implementation(libs.kotlinInject.runtime)

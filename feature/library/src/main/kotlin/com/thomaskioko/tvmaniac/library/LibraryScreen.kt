@@ -9,13 +9,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LazyGridItems
@@ -27,10 +27,10 @@ import com.thomaskioko.tvmaniac.presentation.watchlist.ErrorLoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryAction
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryContent
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryShowClicked
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryState
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.ReloadLibrary
-import com.thomaskioko.tvmaniac.presentation.watchlist.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.watchlist.model.LibraryItem
 import com.thomaskioko.tvmaniac.resources.R
 import kotlinx.collections.immutable.ImmutableList
@@ -40,7 +40,7 @@ fun LibraryScreen(
     presenter: LibraryPresenter,
     modifier: Modifier = Modifier,
 ) {
-    val libraryState by presenter.state.collectAsState()
+    val libraryState by presenter.state.subscribeAsState()
 
     LibraryScreen(
         modifier = modifier,
@@ -87,7 +87,7 @@ internal fun LibraryScreen(
                         else -> LibraryGridContent(
                             list = state.list,
                             paddingValues = contentPadding,
-                            onItemClicked = { onAction(ShowClicked(it)) },
+                            onItemClicked = { onAction(LibraryShowClicked(it)) },
                         )
                     }
                 }

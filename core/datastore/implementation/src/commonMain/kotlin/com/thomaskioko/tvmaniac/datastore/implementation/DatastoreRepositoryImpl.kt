@@ -5,9 +5,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.AuthState
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.datastore.api.Theme
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -21,19 +21,19 @@ class DatastoreRepositoryImpl(
     private val dataStore: DataStore<Preferences>,
 ) : DatastoreRepository {
 
-    override fun saveTheme(theme: Theme) {
+    override fun saveTheme(appTheme: AppTheme) {
         coroutineScope.io.launch {
             dataStore.edit { preferences ->
-                preferences[KEY_THEME] = theme.name
+                preferences[KEY_THEME] = appTheme.name
             }
         }
     }
 
-    override fun observeTheme(): Flow<Theme> = dataStore.data.map { preferences ->
+    override fun observeTheme(): Flow<AppTheme> = dataStore.data.map { preferences ->
         when (preferences[KEY_THEME]) {
-            Theme.LIGHT.name -> Theme.LIGHT
-            Theme.DARK.name -> Theme.DARK
-            else -> Theme.SYSTEM
+            AppTheme.LIGHT_THEME.name -> AppTheme.LIGHT_THEME
+            AppTheme.DARK_THEME.name -> AppTheme.DARK_THEME
+            else -> AppTheme.SYSTEM_THEME
         }
     }
 

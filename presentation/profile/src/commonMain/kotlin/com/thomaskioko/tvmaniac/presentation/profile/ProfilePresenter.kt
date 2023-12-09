@@ -1,15 +1,13 @@
 package com.thomaskioko.tvmaniac.presentation.profile
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import com.thomaskioko.tvmaniac.util.decompose.asValue
+import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -25,7 +23,6 @@ typealias ProfilePresenterFactory = (
 
 @Inject
 class ProfilePresenter(
-    dispatchersProvider: AppCoroutineDispatchers,
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigateToSettings: () -> Unit,
     @Assisted private val launchTraktWebView: () -> Unit,
@@ -34,10 +31,11 @@ class ProfilePresenter(
     private val profileRepository: ProfileRepository,
 ) : ComponentContext by componentContext {
 
-    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.main)
+    private val coroutineScope = coroutineScope()
 
     private val _state: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState())
-    val state: StateFlow<ProfileState> = _state.asStateFlow()
+    val state: Value<ProfileState> = _state
+        .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     init {
         observeAuthState()

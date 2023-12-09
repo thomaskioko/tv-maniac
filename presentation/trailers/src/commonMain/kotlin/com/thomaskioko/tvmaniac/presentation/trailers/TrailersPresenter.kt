@@ -1,13 +1,12 @@
 package com.thomaskioko.tvmaniac.presentation.trailers
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.decompose.asValue
+import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import com.thomaskioko.tvmaniac.util.model.Either
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -20,15 +19,15 @@ typealias TrailersPresenterFactory = (
 ) -> TrailersPresenter
 
 class TrailersPresenter @Inject constructor(
-    dispatchersProvider: AppCoroutineDispatchers,
     @Assisted componentContext: ComponentContext,
     @Assisted private val traktShowId: Long,
     private val repository: TrailerRepository,
 ) : ComponentContext by componentContext {
 
-    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.main)
+    private val coroutineScope = coroutineScope()
     private val _state = MutableStateFlow<TrailersState>(LoadingTrailers)
-    val state = _state.asStateFlow()
+    val state: Value<TrailersState> = _state
+        .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     init {
         coroutineScope.launch {

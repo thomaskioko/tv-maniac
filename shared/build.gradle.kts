@@ -2,12 +2,48 @@ import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
 
 plugins {
     id("plugin.tvmaniac.kotlin.android")
-    id("plugin.tvmaniac.multiplatform")
+    id("org.jetbrains.kotlin.multiplatform")
     id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
+    id("co.touchlab.skie") version "0.5.6"
     alias(libs.plugins.ksp)
 }
 
+version = libs.versions.shared.module.version.get()
+
 kotlin {
+
+    androidTarget()
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach {
+        it.binaries.framework {
+            baseName = "TvManiac"
+            isStatic = true
+            linkerOpts.add("-lsqlite3")
+            freeCompilerArgs += "-Xadd-light-debug=enable"
+
+            export(projects.navigation)
+            export(projects.core.datastore.api)
+            export(projects.presentation.discover)
+            export(projects.presentation.library)
+            export(projects.presentation.moreShows)
+            export(projects.presentation.profile)
+            export(projects.presentation.search)
+            export(projects.presentation.seasondetails)
+            export(projects.presentation.settings)
+            export(projects.presentation.showDetails)
+            export(projects.presentation.trailers)
+
+            export(libs.decompose.decompose)
+            export(libs.essenty.lifecycle)
+        }
+    }
+
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
         commonMain {
             dependencies {
@@ -62,6 +98,9 @@ kotlin {
                 api(projects.data.similar.implementation)
                 api(projects.data.trailers.api)
                 api(projects.data.trailers.implementation)
+
+                api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
             }
         }
     }

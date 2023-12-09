@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.db.SeasonsByShowId
 import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
@@ -11,14 +12,11 @@ import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.decompose.asValue
+import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
@@ -36,7 +34,6 @@ typealias ShowDetailsPresenterPresenterFactory = (
 ) -> ShowDetailsPresenter
 
 class ShowDetailsPresenter @Inject constructor(
-    dispatchersProvider: AppCoroutineDispatchers,
     @Assisted componentContext: ComponentContext,
     @Assisted private val traktShowId: Long,
     @Assisted private val onBack: () -> Unit,
@@ -50,9 +47,10 @@ class ShowDetailsPresenter @Inject constructor(
     private val libraryRepository: LibraryRepository,
 ) : ComponentContext by componentContext {
 
-    private val coroutineScope = CoroutineScope(SupervisorJob() + dispatchersProvider.main)
+    private val coroutineScope = coroutineScope()
     private val _state = MutableStateFlow(ShowDetailsState.EMPTY_DETAIL_STATE)
-    val state: StateFlow<ShowDetailsState> = _state.asStateFlow()
+    val state: Value<ShowDetailsState> = _state
+        .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     init {
         coroutineScope.launch {
@@ -63,9 +61,9 @@ class ShowDetailsPresenter @Inject constructor(
 
     fun dispatch(action: ShowDetailsAction) {
         when (action) {
-            BackClicked -> onBack()
+            DetailBackClicked -> onBack()
             is SeasonClicked -> onNavigateToSeason(action.id, action.title)
-            is ShowClicked -> onNavigateToShow(action.id)
+            is DetailShowClicked -> onNavigateToShow(action.id)
             is WatchTrailerClicked -> onNavigateToTrailer(action.id)
             DismissWebViewError -> {
                 coroutineScope.launch {

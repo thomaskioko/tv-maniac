@@ -9,16 +9,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.datastore.api.Theme
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.inject.MainActivityComponent
 import com.thomaskioko.tvmaniac.inject.create
-import com.thomaskioko.tvmaniac.navigation.Loading
-import com.thomaskioko.tvmaniac.navigation.ThemeLoaded
 import com.thomaskioko.tvmaniac.navigation.ThemeState
 
 class MainActivity : ComponentActivity() {
@@ -36,14 +34,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            val themeState by component.presenter.state.collectAsState()
+            val themeState by component.presenter.state.subscribeAsState()
             val darkTheme = shouldUseDarkTheme(themeState)
 
             splashScreen.setKeepOnScreenCondition {
-                when (themeState) {
-                    Loading -> true
-                    is ThemeLoaded -> false
-                }
+                themeState.isFetching
             }
 
             DisposableEffect(darkTheme) {
@@ -74,13 +69,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun shouldUseDarkTheme(
     uiState: ThemeState,
-): Boolean = when (uiState) {
-    Loading -> isSystemInDarkTheme()
-    is ThemeLoaded -> when (uiState.theme) {
-        Theme.LIGHT -> false
-        Theme.DARK -> true
-        Theme.SYSTEM -> isSystemInDarkTheme()
-    }
+): Boolean = when (uiState.appTheme) {
+    AppTheme.LIGHT_THEME -> false
+    AppTheme.DARK_THEME -> true
+    AppTheme.SYSTEM_THEME -> isSystemInDarkTheme()
 }
 
 /**

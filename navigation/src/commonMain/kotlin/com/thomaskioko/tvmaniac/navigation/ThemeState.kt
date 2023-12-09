@@ -1,10 +1,8 @@
 package com.thomaskioko.tvmaniac.navigation
 
-import com.thomaskioko.tvmaniac.datastore.api.Theme
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 
-sealed interface ThemeState
-
-data object Loading : ThemeState
-data class ThemeLoaded(
-    val theme: Theme = Theme.SYSTEM,
-) : ThemeState
+data class ThemeState(
+    val isFetching: Boolean = true,
+    val appTheme: AppTheme = AppTheme.SYSTEM_THEME,
+)

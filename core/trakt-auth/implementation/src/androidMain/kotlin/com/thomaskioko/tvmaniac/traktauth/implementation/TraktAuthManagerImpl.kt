@@ -11,7 +11,7 @@ import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
 
 @Inject
-class TraktAuthManagerImpl(
+actual class TraktAuthManagerImpl(
     private val activity: ComponentActivity,
     private val traktActivityResultContract: TraktActivityResultContract,
     private val traktAuthRepository: TraktAuthRepository,

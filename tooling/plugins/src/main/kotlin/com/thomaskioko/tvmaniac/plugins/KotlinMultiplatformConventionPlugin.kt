@@ -19,7 +19,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
             apply("org.jetbrains.kotlin.multiplatform")
         }
 
-        version = libs.findVersion("shared-module")
+        version = libs.findVersion("shared-module-version")
 
         extensions.configure<KotlinMultiplatformExtension> {
             applyDefaultHierarchyTemplate()
@@ -34,15 +34,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                 iosX64(),
                 iosArm64(),
                 iosSimulatorArm64(),
-            ).forEach { target ->
-                target.binaries.framework {
-                    baseName = path.substring(1).replace(':', '-')
-                    isStatic = true
-
-                    linkerOpts.add("-lsqlite3")
-                    freeCompilerArgs += "-Xadd-light-debug=enable"
-                }
-            }
+            )
 
             targets.withType<KotlinNativeTarget>().configureEach {
                 compilations.configureEach {

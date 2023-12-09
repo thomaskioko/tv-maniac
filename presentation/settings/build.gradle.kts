@@ -11,6 +11,7 @@ kotlin {
                 implementation(projects.core.traktAuth.api)
 
                 api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
 
                 implementation(libs.kotlinInject.runtime)
             }
