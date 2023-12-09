@@ -6,7 +6,8 @@ struct ShowRow: View {
     @Namespace var animation
     var categoryName: String
     var shows: [TvShow]?
-
+    var onClick : (Int64) -> Void
+    
     var body: some View {
         VStack(alignment: .leading) {
             if(shows?.isEmpty != true){
@@ -39,7 +40,8 @@ struct ShowRow: View {
                                 posterSize: .medium,
                                 imageUrl: item.posterImageUrl,
                                 showTitle: item.title,
-                                showId: item.traktId
+                                showId: item.traktId,
+                                onClick: { onClick(item.traktId) }
                             )
                         }
                     }
@@ -55,6 +57,6 @@ struct ShowRow: View {
 
 struct ShowRow_Previews: PreviewProvider {
     static var previews: some View {
-        ShowRow(categoryName: "Trending", shows: [mockTvShow,mockTvShow,mockTvShow])
+        ShowRow(categoryName: "Trending", shows: [mockTvShow,mockTvShow,mockTvShow], onClick: { _ in })
     }
 }

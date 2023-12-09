@@ -54,13 +54,13 @@ var seasonList = [
     Season(seasonId: 13, tvShowId: 13, name: "Season 2")
 ]
 
-var detailState = ShowDetailsLoaded(
+var detailState = ShowDetailsState(
     show: mockShow,
     isLoading: false,
     errorMessage: nil,
-    similarShowsContent: ShowDetailsLoaded.SimilarShowsContent.companion.EMPTY_SIMILAR_SHOWS,
-    seasonsContent: ShowDetailsLoaded.SeasonsContent.companion.EMPTY_SEASONS,
-    trailersContent: ShowDetailsLoaded.TrailersContent.companion.EMPTY_TRAILERS
+    similarShowsContent: ShowDetailsState.SimilarShowsContent.companion.EMPTY_SIMILAR_SHOWS,
+    seasonsContent: ShowDetailsState.SeasonsContent.companion.EMPTY_SEASONS,
+    trailersContent: ShowDetailsState.TrailersContent.companion.EMPTY_TRAILERS
 )
 
 //Get rid of this class once we implement show detail stateMachine

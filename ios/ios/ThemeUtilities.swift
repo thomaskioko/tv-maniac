@@ -9,8 +9,9 @@
 import Foundation
 import TvManiac
 import UIKit
+import SwiftUI
 
-enum AppTheme: Int, CaseIterable {
+enum DeveiceAppTheme: Int, CaseIterable {
     case Light = 0
     case Dark = 1
     case System = 2
@@ -25,26 +26,27 @@ enum AppTheme: Int, CaseIterable {
             return "Dark Theme"
         }
     }
-    
-    func toTheme() -> Theme {
-        switch self {
-        case .System:
-            return Theme.system
-        case .Light:
-            return Theme.light
-        case .Dark:
-            return Theme.dark
-        }
+  
+}
+
+func toTheme(appTheme: DeveiceAppTheme) -> AppTheme {
+    switch appTheme {
+    case .System:
+        return AppTheme.systemTheme
+    case .Light:
+        return AppTheme.lightTheme
+    case .Dark:
+        return AppTheme.darkTheme
     }
 }
 
-func toAppTheme(theme: Theme) -> AppTheme {
+func toAppTheme(theme: AppTheme) -> DeveiceAppTheme {
     switch theme {
-    case Theme.dark:
-        return AppTheme.Dark
-    case Theme.light:
-        return AppTheme.Light
+    case AppTheme.darkTheme:
+        return DeveiceAppTheme.Dark
+    case AppTheme.lightTheme:
+        return DeveiceAppTheme.Light
     default:
-        return AppTheme.System
+        return DeveiceAppTheme.System
     }
 }
