@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.tmdb.implementation
 
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.EpisodesResponse
-import com.thomaskioko.tvmaniac.tmdb.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.ShowDetailResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TrailersResponse
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
@@ -16,7 +15,7 @@ class TmdbNetworkDataSourceImpl(
     private val httpClient: TmdbHttpClient,
 ) : TmdbNetworkDataSource {
 
-    override suspend fun getTvShowDetails(showId: Long): ApiResponse<ShowDetailResponse, ErrorResponse> =
+    override suspend fun getTvShowDetails(showId: Long): ApiResponse<ShowDetailResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -28,7 +27,7 @@ class TmdbNetworkDataSourceImpl(
         tmdbShow: Long,
         ssnNumber: Long,
         epNumber: Long,
-    ): ApiResponse<EpisodesResponse, ErrorResponse> =
+    ): ApiResponse<EpisodesResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -36,7 +35,7 @@ class TmdbNetworkDataSourceImpl(
             }
         }
 
-    override suspend fun getTrailers(showId: Long): ApiResponse<TrailersResponse, ErrorResponse> =
+    override suspend fun getTrailers(showId: Long): ApiResponse<TrailersResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get

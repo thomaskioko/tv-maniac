@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.trakt.api
 
-import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
@@ -14,28 +13,28 @@ interface TraktShowsRemoteDataSource {
 
     suspend fun getTrendingShows(
         page: Long = DEFAULT_API_PAGE,
-    ): ApiResponse<List<TraktShowsResponse>, ErrorResponse>
+    ): ApiResponse<List<TraktShowsResponse>>
 
     suspend fun getRecommendedShows(
         page: Long = DEFAULT_API_PAGE,
         period: String = FETCH_PERIOD,
-    ): ApiResponse<List<TraktShowsResponse>, ErrorResponse>
+    ): ApiResponse<List<TraktShowsResponse>>
 
     suspend fun getAnticipatedShows(
         page: Long = DEFAULT_API_PAGE,
-    ): ApiResponse<List<TraktShowsResponse>, ErrorResponse>
+    ): ApiResponse<List<TraktShowsResponse>>
 
     suspend fun getPopularShows(
         page: Long = DEFAULT_API_PAGE,
-    ): ApiResponse<List<TraktShowResponse>, ErrorResponse>
+    ): ApiResponse<List<TraktShowResponse>>
 
-    suspend fun getSimilarShows(traktId: Long): ApiResponse<List<TraktShowResponse>, ErrorResponse>
+    suspend fun getSimilarShows(traktId: Long): ApiResponse<List<TraktShowResponse>>
 
-    suspend fun getShowSeasons(traktId: Long): ApiResponse<List<TraktSeasonsResponse>, ErrorResponse>
+    suspend fun getShowSeasons(traktId: Long): ApiResponse<List<TraktSeasonsResponse>>
 
     suspend fun getSeasonEpisodes(
         traktId: Long,
-    ): ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse>
+    ): ApiResponse<List<TraktSeasonEpisodesResponse>>
 
-    suspend fun getSeasonDetails(traktId: Long): ApiResponse<TraktShowResponse, ErrorResponse>
+    suspend fun getSeasonDetails(traktId: Long): ApiResponse<TraktShowResponse>
 }

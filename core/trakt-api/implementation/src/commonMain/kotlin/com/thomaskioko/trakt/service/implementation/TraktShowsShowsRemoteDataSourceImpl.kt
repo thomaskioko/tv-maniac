@@ -2,7 +2,6 @@ package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.trakt.service.implementation.inject.TraktHttpClient
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
@@ -21,7 +20,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
     private val httpClient: TraktHttpClient,
 ) : TraktShowsRemoteDataSource {
 
-    override suspend fun getTrendingShows(page: Long): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
+    override suspend fun getTrendingShows(page: Long): ApiResponse<List<TraktShowsResponse>> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -35,7 +34,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
     override suspend fun getRecommendedShows(
         page: Long,
         period: String,
-    ): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
+    ): ApiResponse<List<TraktShowsResponse>> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -46,7 +45,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
             }
         }
 
-    override suspend fun getAnticipatedShows(page: Long): ApiResponse<List<TraktShowsResponse>, ErrorResponse> =
+    override suspend fun getAnticipatedShows(page: Long): ApiResponse<List<TraktShowsResponse>> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -57,7 +56,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
             }
         }
 
-    override suspend fun getPopularShows(page: Long): ApiResponse<List<TraktShowResponse>, ErrorResponse> =
+    override suspend fun getPopularShows(page: Long): ApiResponse<List<TraktShowResponse>> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -68,7 +67,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
             }
         }
 
-    override suspend fun getSimilarShows(traktId: Long): ApiResponse<List<TraktShowResponse>, ErrorResponse> =
+    override suspend fun getSimilarShows(traktId: Long): ApiResponse<List<TraktShowResponse>> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -77,7 +76,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
             }
         }
 
-    override suspend fun getShowSeasons(traktId: Long): ApiResponse<List<TraktSeasonsResponse>, ErrorResponse> =
+    override suspend fun getShowSeasons(traktId: Long): ApiResponse<List<TraktSeasonsResponse>> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -88,7 +87,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
 
     override suspend fun getSeasonEpisodes(
         traktId: Long,
-    ): ApiResponse<List<TraktSeasonEpisodesResponse>, ErrorResponse> =
+    ): ApiResponse<List<TraktSeasonEpisodesResponse>> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
@@ -97,7 +96,7 @@ class TraktShowsShowsRemoteDataSourceImpl(
             }
         }
 
-    override suspend fun getSeasonDetails(traktId: Long): ApiResponse<TraktShowResponse, ErrorResponse> =
+    override suspend fun getSeasonDetails(traktId: Long): ApiResponse<TraktShowResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get

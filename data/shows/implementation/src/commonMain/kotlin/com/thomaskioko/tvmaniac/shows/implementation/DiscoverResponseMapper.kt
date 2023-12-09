@@ -8,7 +8,6 @@ import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
@@ -25,7 +24,7 @@ class DiscoverResponseMapper(
 
     fun showResponseToCacheList(
         category: Category,
-        response: ApiResponse<List<TraktShowResponse>, ErrorResponse>,
+        response: ApiResponse<List<TraktShowResponse>>,
     ) = when (response) {
         is ApiResponse.Success -> {
             category.insertRequest(requestManagerRepository)
@@ -50,7 +49,7 @@ class DiscoverResponseMapper(
 
     fun responseToEntityList(
         category: Category,
-        response: ApiResponse<List<TraktShowsResponse>, ErrorResponse>,
+        response: ApiResponse<List<TraktShowsResponse>>,
     ) = when (response) {
         is ApiResponse.Success -> {
             category.insertRequest(requestManagerRepository)
