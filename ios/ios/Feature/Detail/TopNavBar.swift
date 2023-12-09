@@ -10,6 +10,7 @@ struct TopNavBar: View {
     
     var titleProgress: CGFloat
     var title: String
+    let action: () -> Void
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
@@ -17,14 +18,16 @@ struct TopNavBar: View {
         
         HStack(spacing: 15) {
             
-            Button {
-                presentationMode.wrappedValue.dismiss()
-            } label: {
-                Image(systemName: "chevron.left")
+            Button(action: action) {
+                Image(systemName: "arrow.backward.circle.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 32, height: 34)
                     .font(.body.bold())
                     .foregroundColor(.white)
                     .padding([.top, .bottom,.trailing])
             }
+            .symbolVariant(.circle.fill)
             
             Spacer(minLength: 0)
             

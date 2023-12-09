@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.presentation.settings
 
-import com.thomaskioko.tvmaniac.datastore.api.Theme
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 
 sealed class SettingsActions
 data class ThemeSelected(
-    val theme: Theme,
+    val appTheme: AppTheme,
 ) : SettingsActions()
 
 data object ChangeThemeClicked : SettingsActions()

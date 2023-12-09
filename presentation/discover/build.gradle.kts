@@ -12,10 +12,11 @@ kotlin {
                 implementation(projects.data.showimages.api)
                 implementation(projects.data.shows.api)
 
-                implementation(libs.voyager.core)
+                api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
+                api(libs.kotlinx.collections)
 
                 implementation(libs.kotlinInject.runtime)
-                implementation(libs.kotlinx.collections)
             }
         }
 
@@ -26,15 +27,8 @@ kotlin {
                 implementation(projects.data.showimages.testing)
                 implementation(projects.data.shows.testing)
 
-                implementation(libs.coroutines.test)
-                implementation(libs.kotest.assertions)
-                implementation(libs.turbine)
+                implementation(libs.bundles.unittest)
             }
         }
     }
-}
-
-dependencies {
-    add("kspIosX64", libs.kotlinInject.compiler)
-    add("kspIosArm64", libs.kotlinInject.compiler)
 }

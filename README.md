@@ -132,7 +132,7 @@ traktRedirectUri: "PUT_CALLBACK_URI_HERE"
 * [Kotest Assertions](https://kotest.io/docs/assertions/assertions.html) - Testing
 * [SQLDelight](https://github.com/cashapp/sqldelight/) - Local storage
     - [Coroutines Extensions](https://cashapp.github.io/sqldelight/js_sqlite/coroutines/) Consume queries as Flow
-* [Voyager](https://github.com/adrielcafe/voyager) - A pragmatic navigation library for Jetpack Compose
+* [Decompose](https://arkivanov.github.io/Decompose/) - Kotlin Multiplatform library for breaking down your code into lifecycle-aware business logic components (aka BLoC).
 
 
 ### iOS

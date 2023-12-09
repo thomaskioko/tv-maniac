@@ -1,6 +1,5 @@
 plugins {
     id("plugin.tvmaniac.multiplatform")
-    alias(libs.plugins.ksp)
 }
 
 
@@ -11,9 +10,11 @@ kotlin {
             dependencies {
                 implementation(projects.data.trailers.api)
 
+                api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
+                api(libs.kotlinx.collections)
+
                 implementation(libs.kotlinInject.runtime)
-                implementation(libs.kotlinx.collections)
-                implementation(libs.voyager.core)
             }
         }
 
@@ -26,9 +27,4 @@ kotlin {
             }
         }
     }
-}
-
-dependencies {
-    add("kspIosX64", libs.kotlinInject.compiler)
-    add("kspIosArm64", libs.kotlinInject.compiler)
 }

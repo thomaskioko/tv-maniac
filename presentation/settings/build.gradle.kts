@@ -1,6 +1,5 @@
 plugins {
     id("plugin.tvmaniac.multiplatform")
-    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -11,8 +10,10 @@ kotlin {
                 implementation(projects.data.profile.api)
                 implementation(projects.core.traktAuth.api)
 
+                api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
+
                 implementation(libs.kotlinInject.runtime)
-                implementation(libs.voyager.core)
             }
         }
 
@@ -23,15 +24,8 @@ kotlin {
                 implementation(projects.data.profile.testing)
                 implementation(projects.core.traktAuth.testing)
 
-                implementation(libs.coroutines.test)
-                implementation(libs.kotest.assertions)
-                implementation(libs.turbine)
+                implementation(libs.bundles.unittest)
             }
         }
     }
-}
-
-dependencies {
-    add("kspIosX64", libs.kotlinInject.compiler)
-    add("kspIosArm64", libs.kotlinInject.compiler)
 }

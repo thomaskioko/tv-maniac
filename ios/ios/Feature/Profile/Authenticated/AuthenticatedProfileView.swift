@@ -10,8 +10,6 @@ import SwiftUI
 
 struct AuthenticatedProfileView: View {
     
-    @ObservedObject private var model = ProfileViewModel()
-    
     var body: some View {
         ZStack {
             VStack {

@@ -40,9 +40,5 @@ gradlePlugin {
             id = "plugin.tvmaniac.compose.library"
             implementationClass = "com.thomaskioko.tvmaniac.plugins.ComposeLibraryPlugin"
         }
-        register("androidFeature") {
-            id = "tvmaniac.android.feature"
-            implementationClass = "com.thomaskioko.tvmaniac.plugins.FeaturePlugin"
-        }
     }
 }

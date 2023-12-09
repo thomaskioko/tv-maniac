@@ -1,72 +1,120 @@
+import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
+
 plugins {
-    id("plugin.tvmaniac.multiplatform")
+    id("plugin.tvmaniac.kotlin.android")
+    id("org.jetbrains.kotlin.multiplatform")
     id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
+    id("co.touchlab.skie") version "0.5.6"
     alias(libs.plugins.ksp)
 }
 
+version = libs.versions.shared.module.version.get()
 
 kotlin {
+
+    androidTarget()
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach {
+        it.binaries.framework {
+            baseName = "TvManiac"
+            isStatic = true
+            linkerOpts.add("-lsqlite3")
+            freeCompilerArgs += "-Xadd-light-debug=enable"
+
+            export(projects.navigation)
+            export(projects.core.datastore.api)
+            export(projects.presentation.discover)
+            export(projects.presentation.library)
+            export(projects.presentation.moreShows)
+            export(projects.presentation.profile)
+            export(projects.presentation.search)
+            export(projects.presentation.seasondetails)
+            export(projects.presentation.settings)
+            export(projects.presentation.showDetails)
+            export(projects.presentation.trailers)
+
+            export(libs.decompose.decompose)
+            export(libs.essenty.lifecycle)
+        }
+    }
+
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
         commonMain {
             dependencies {
 
-                api(projects.core.datastore.api)
-                api(projects.core.traktAuth.api)
                 api(projects.core.util)
+                api(projects.navigation)
 
                 api(projects.presentation.discover)
+                api(projects.presentation.library)
+                api(projects.presentation.moreShows)
                 api(projects.presentation.profile)
+                api(projects.presentation.search)
                 api(projects.presentation.seasondetails)
                 api(projects.presentation.settings)
-                api(projects.presentation.seasondetails)
                 api(projects.presentation.showDetails)
                 api(projects.presentation.trailers)
-                api(projects.presentation.library)
 
-                implementation(projects.common.voyagerutil)
+                api(projects.core.database)
+                api(projects.core.datastore.api)
+                api(projects.core.datastore.implementation)
+                api(projects.core.tmdbApi.api)
+                api(projects.core.tmdbApi.implementation)
+                api(projects.core.traktApi.api)
+                api(projects.core.traktApi.implementation)
+                api(projects.core.traktAuth.api)
+                api(projects.core.traktAuth.implementation)
 
-                implementation(projects.core.database)
-                implementation(projects.core.datastore.implementation)
-                implementation(projects.data.episodeimages.api)
-                implementation(projects.data.library.api)
-                implementation(projects.core.util)
-                implementation(projects.data.showimages.api)
-                implementation(projects.core.traktApi.api)
-                implementation(projects.core.traktApi.implementation)
-                implementation(projects.core.traktAuth.implementation)
-                implementation(projects.core.tmdbApi.api)
-                implementation(projects.core.tmdbApi.implementation)
+                api(projects.data.category.api)
+                api(projects.data.category.implementation)
+                api(projects.data.episodeimages.api)
+                api(projects.data.episodeimages.implementation)
+                api(projects.data.episodes.api)
+                api(projects.data.episodes.implementation)
+                api(projects.data.library.api)
+                api(projects.data.library.implementation)
+                api(projects.data.profile.api)
+                api(projects.data.profile.implementation)
+                api(projects.data.profilestats.api)
+                api(projects.data.profilestats.implementation)
+                api(projects.data.requestManager.api)
+                api(projects.data.requestManager.api)
+                api(projects.data.requestManager.implementation)
+                api(projects.data.seasondetails.api)
+                api(projects.data.seasondetails.implementation)
+                api(projects.data.seasons.api)
+                api(projects.data.seasons.implementation)
+                api(projects.data.showimages.api)
+                api(projects.data.showimages.implementation)
+                api(projects.data.shows.api)
+                api(projects.data.shows.implementation)
+                api(projects.data.similar.api)
+                api(projects.data.similar.implementation)
+                api(projects.data.trailers.api)
+                api(projects.data.trailers.implementation)
 
-
-                implementation(projects.data.category.implementation)
-                implementation(projects.data.episodes.implementation)
-                implementation(projects.data.episodeimages.implementation)
-                implementation(projects.data.library.implementation)
-                implementation(projects.data.profile.implementation)
-                implementation(projects.data.profilestats.implementation)
-                implementation(projects.data.similar.implementation)
-                implementation(projects.data.seasons.implementation)
-                implementation(projects.data.seasondetails.implementation)
-                implementation(projects.data.shows.implementation)
-                implementation(projects.data.showimages.implementation)
-                implementation(projects.data.trailers.implementation)
-                implementation(projects.data.requestManager.api)
-                implementation(projects.data.requestManager.implementation)
-
-                implementation(libs.kotlinInject.runtime)
+                api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
             }
         }
     }
+}
+
+android {
+    namespace = "com.thomaskioko.tvmaniac.shared"
 }
 
 ksp {
     arg("me.tatarka.inject.generateCompanionExtensions", "true")
 }
 
-dependencies {
-    add("kspIosX64", libs.kotlinInject.compiler)
-    add("kspIosArm64", libs.kotlinInject.compiler)
-}
+addKspDependencyForAllTargets(libs.kotlinInject.compiler)
 
 multiplatformSwiftPackage {
     packageName("TvManiac")
