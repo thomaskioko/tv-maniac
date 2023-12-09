@@ -73,8 +73,8 @@ fileprivate func BottomNavigation(_ screen: Screen,_ rootPresenter: RootNavigati
         Spacer()
         
         BottomTabView(
-            title: "Profile",
-            systemImage: "person.circle",
+            title: "Settings",
+            systemImage: "gearshape",
             isActive: screen is ScreenSettings,
             action: { rootPresenter.bringToFront(config: RootNavigationPresenterConfigSettings()) }
         )
@@ -91,7 +91,7 @@ private struct ChildView: View {
         case let screen as ScreenDiscover : DiscoverView(presenter: screen.presenter)
         case let screen as ScreenSearch : SearchView(presenter: screen.presenter)
         case let screen as ScreenLibrary : LibraryView(presenter: screen.presenter)
-        case let screen as ScreenSettings : SettingsUIView(presenter: screen.presenter)
+        case let screen as ScreenSettings : SettingsView(presenter: screen.presenter)
         case let screen as ScreenShowDetails: ShowDetailView(presenter: screen.presenter)
         default: EmptyView()
         }
@@ -115,8 +115,8 @@ private struct BottomTabView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .foregroundColor(isActive ? Color.accent : Color.gray)
-                    .font(Font.title.weight(.light))
-                    .frame(width: 28, height: 28)
+                    .font(Font.title.weight(.thin))
+                    .frame(width: 26, height: 26)
                     .animation(.default)
                     .opacity(isActive ? 1 : 0.5)
                 
@@ -124,9 +124,10 @@ private struct BottomTabView: View {
                 
                 Text(title)
                     .foregroundColor(isActive ? Color.accent : .gray)
-                    .bodyMediumFont(size: 16)
+                    .bodyMediumFont(size: 14)
+                    .fontWeight(.medium)
             }
-            
         }
+        .buttonStyle(.plain)
     }
 }

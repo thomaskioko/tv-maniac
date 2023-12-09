@@ -6,56 +6,62 @@
 //  Copyright © 2022 orgName. All rights reserved.
 //
 
+import Foundation
 import SwiftUI
 import TvManiac
 
-struct SettingsUIView: View {
+struct SettingsView: View {
     
-    @StateObject var viewModel: SettingsViewModel = SettingsViewModel()
-    @ObservedObject private var model = TraktAuthViewModel()
-    
+    private let presenter: SettingsPresenter
+    @StateValue private var uiState: SettingsState
     @Environment(\.openURL) var openURL
     @Environment(\.presentationMode) var presentationMode
     
-    @SwiftUI.State private var showingAlert: Bool = false
+    @State private var theme: DeveiceAppTheme = DeveiceAppTheme.System
+    @State private var showingAlert: Bool = false
+    @ObservedObject private var model = TraktAuthViewModel()
+    
+    
+    init(presenter: SettingsPresenter){
+        self.presenter = presenter
+        _uiState = StateValue(presenter.state)
+        theme = toAppTheme(theme: uiState.appTheme)
+    }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             SettingsForm()
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button (
-                            action: {
-                                self.presentationMode.wrappedValue.dismiss()
-                            },
-                            label: {
-                                LabelText(text: "Done")
-                            }
-                        )
-                    }
+                .navigationTitle("Settings")
+                .navigationBarTitleDisplayMode(.large)
+                .onAppear {
+                    theme = toAppTheme(theme: uiState.appTheme)
                 }
         }
     }
     
-    fileprivate func SettingsForm() -> Form<TupleView<(Section<some View, some View, EmptyView>, Section<some View, some View, EmptyView>, some View)>> {
+    fileprivate func SettingsForm() -> Form<TupleView<(
+        Section<some View, some View, EmptyView>, Section<some View, some View, EmptyView>, some View
+    )>> {
         return Form {
             
             Section(header: Text("App Theme").bodyMediumFont(size: 16)) {
                 
                 Picker(
-                    selection: $viewModel.appTheme,
+                    selection: $theme,
                     label: Text("Change Theme")
                         .bodyMediumFont(size: 16),
                     content: {
-                        ForEach(AppTheme.allCases, id: \.self) { theme in
+                        ForEach(DeveiceAppTheme.allCases, id: \.self) { theme in
                             
                             Text(theme.getName())
                                 .tag(theme.rawValue)
                             
                         }
                     })
-                .onChange(of: viewModel.appTheme) { theme in
-                    viewModel.dispatchAction(action: ThemeSelected(theme: theme.toTheme()))
+                .pickerStyle(.segmented)
+                .padding(.vertical, 6)
+                .onChange(of: theme) { theme in
+                    presenter.dispatch(action: ThemeSelected(appTheme: toTheme(appTheme: theme)))
                 }
             }
             
@@ -66,13 +72,16 @@ struct SettingsUIView: View {
                     title: "Connect to Trakt",
                     description: "Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch."
                 ) {
-                    showingAlert = true
+                    showingAlert = !uiState.showTraktDialog
                 }
                 .alert(isPresented: $showingAlert) {
                     Alert(
                         title: Text("Trakt Coming Soon"),
                         message: Text("Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch."),
-                        primaryButton: .default(Text("Login")) { model.initiateAuthorization() },
+                        primaryButton: .default(Text("Login")) {
+                            model.initiateAuthorization()
+                            presenter.dispatch(action: TraktLoginClicked_())
+                        },
                         secondaryButton: .destructive(Text("Cancel"))
                     )
                 }
@@ -89,10 +98,6 @@ struct SettingsUIView: View {
                 }
             }
             .navigationBarTitle("Settings")
-            .background(Color.background)
-            .accentColor(Color.accent)
-            .onAppear { viewModel.startStateMachine() }
-            .onDisappear { viewModel.cancel() }
         }
     }
     
@@ -124,7 +129,6 @@ struct SettingsItem: View {
                     .padding(.top, 1.5)
             }
         }
-        
         .onTapGesture(perform: onClick)
     }
 }

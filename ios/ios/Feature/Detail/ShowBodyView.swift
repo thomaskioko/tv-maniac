@@ -20,6 +20,7 @@ struct ShowBodyView: View {
     var seasonList: [Season]
     var trailerList: [Trailer]
     var similarShowsList: [Show]
+    var onClick : (Int64) -> Void
     
     
     var body: some View {
@@ -69,7 +70,8 @@ struct ShowBodyView: View {
                                 posterSize: .medium,
                                 imageUrl: item.posterImageUrl,
                                 showTitle: item.title,
-                                showId: item.traktId
+                                showId: item.traktId,
+                                onClick: { onClick(item.traktId)}
                             )
                             
                         }
@@ -94,7 +96,8 @@ struct ShowBodyView_Previews: PreviewProvider {
         ShowBodyView(
             seasonList: detailState.seasonsContent.seasonsList,
             trailerList: detailState.trailersContent.trailersList,
-            similarShowsList: detailState.similarShowsContent.similarShows
+            similarShowsList: detailState.similarShowsContent.similarShows,
+            onClick: { _ in }
         )
     }
 }

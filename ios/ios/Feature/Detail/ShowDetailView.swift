@@ -11,66 +11,51 @@ import TvManiac
 
 struct ShowDetailView: View {
     
-    @Binding var showId: Int64
-    var animationID: Namespace.ID
+    private let presenter: ShowDetailsPresenter
     
-    @ObservedObject var viewModel: ShowDetailsViewModel = ShowDetailsViewModel()
+    @StateValue
+    private var uiState: ShowDetailsState
     
+    // var animationID: Namespace.ID
     @State var offset: CGFloat = 0
     @State var titleOffset: CGFloat = 0
     @State var size: CGSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-
+    
     let maxHeight = CGFloat(520)
+    
+    init(presenter: ShowDetailsPresenter){
+        self.presenter = presenter
+        _uiState = StateValue(presenter.state)
+    }
     
     var body: some View {
         
         VStack {
-            
-            switch viewModel.detailState {
-                
-            case is ShowDetailsLoaded:
-                let state = viewModel.detailState as! ShowDetailsLoaded
-                
-                if(state.isLoading){
-                    LoadingIndicatorView()
-                        .frame(maxWidth: size.width, maxHeight: size.height,  alignment: .center)
-                } else if(state.errorMessage != nil){
-                    //TODO:: Show Toast
-                } else {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack {
-                            ArtWork(show: state.show)
-                            
-                            ShowBodyView(
-                                seasonList: state.seasonsContent.seasonsList,
-                                trailerList: state.trailersContent.trailersList,
-                                similarShowsList: state.similarShowsContent.similarShows
-                            )
-                        }
-                    }
-                    .coordinateSpace(name: "SCROLL")
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack {
+                    
+                    ArtWork(show: uiState.show, presenter: presenter)
+                    
+                    ShowBodyView(
+                        seasonList: uiState.seasonsContent.seasonsList,
+                        trailerList: uiState.trailersContent.trailersList,
+                        similarShowsList: uiState.similarShowsContent.similarShows,
+                        onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id))}
+                    )
                 }
-                
-            default:
-                let _ = print("Unhandled case: \(viewModel.detailState)")
-                FullScreenView(systemName: "exclamationmark.triangle", message: "Something went wrong")
             }
+            .coordinateSpace(name: "SCROLL")
         }
         .overlay(alignment: .top){
-            if let state = viewModel.detailState as? ShowDetailsLoaded {
-                TopNavBarView(showTitle: state.show.title)
-            } else {
-                TopNavBarView(showTitle: "")
-            }
+            TopNavBarView(showTitle: uiState.show.title)
         }
         .background(Color.background)
         .navigationBarHidden(true)
         .ignoresSafeArea()
-        .onAppear { viewModel.startStateMachine(showId: showId) }
     }
     
     @ViewBuilder
-    func ArtWork(show: Show) -> some View {
+    func ArtWork(show: Show, presenter: ShowDetailsPresenter) -> some View {
         let height = size.height * 0.45
         
         GeometryReader { proxy in
@@ -82,10 +67,12 @@ struct ShowDetailView: View {
                 posterSize: .max,
                 imageUrl: show.backdropImageUrl,
                 showTitle: show.title,
-                showId: show.traktId
+                showId: show.traktId,
+                onClick: {  presenter.dispatch(action: DetailShowClicked(id: show.traktId))}
             )
             .aspectRatio(contentMode: .fill)
             .frame(width: size.width, height: size.height + (minY > 0 ? minY : 0))
+            .foregroundStyle(.ultraThinMaterial)
             .clipped()
             .overlay( content : {
                 ZStack(alignment: .bottom) {
@@ -105,7 +92,7 @@ struct ShowDetailView: View {
                         )
                     
                     //Header Content
-                    HeaderContentView(show: show)
+                    HeaderContentView(show: show, presenter: presenter)
                         .opacity(1 + (progress > 0 ? -progress : progress))
                         .padding(.horizontal,16)
                     // Moving With ScrollView
@@ -128,7 +115,8 @@ struct ShowDetailView: View {
             
             TopNavBar(
                 titleProgress: titleProgress,
-                title: showTitle
+                title: showTitle,
+                action: { presenter.dispatch(action: DetailBackClicked())}
             )
             .padding(.top, 45)
             .padding([.horizontal,],15)
@@ -141,7 +129,7 @@ struct ShowDetailView: View {
     }
     
     @ViewBuilder
-    func HeaderContentView(show: Show) -> some View {
+    func HeaderContentView(show: Show, presenter: ShowDetailsPresenter) -> some View {
         
         VStack(spacing: 0){
             Text(show.title)
@@ -170,19 +158,19 @@ struct ShowDetailView: View {
                     color: .accent,
                     borderColor: .grey_200,
                     isOn: false,
-                    action: {
-                        //TODO:: Navigate to trailer view
-                    })
+                    action: { presenter.dispatch(action: WatchTrailerClicked(id: show.traktId)) }
+                )
+                
+                let followText = if (!show.isFollowed) { "Follow Show" } else { "Unfollow Show"}
+                let buttonSystemImage = if (!show.isFollowed) { "plus.square.fill.on.square.fill" } else { "checkmark.square.fill"}
                 
                 BorderedButton(
-                    text: "Follow Show",
-                    systemImageName: "plus.app.fill",
+                    text: followText,
+                    systemImageName: buttonSystemImage,
                     color: .accent,
                     borderColor: .grey_200,
                     isOn: false,
-                    action: {
-                        viewModel.dispatchAction(showId: showId, action: FollowShowClicked(addToFollowed: show.isFollowed))
-                    }
+                    action: { presenter.dispatch(action: FollowShowClicked(addToLibrary: show.isFollowed)) }
                 )
             }
             .padding(.bottom, 16)
