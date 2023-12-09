@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.datastore.api.Theme
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.implementation.DatastoreRepositoryImpl
 import com.thomaskioko.tvmaniac.datastore.implementation.DatastoreRepositoryImpl.Companion.KEY_THEME
 import com.thomaskioko.tvmaniac.datastore.implementation.IgnoreIos
@@ -56,7 +56,7 @@ class DatastoreRepositoryImplTest {
     @Test
     fun default_theme_is_emitted() = runTest {
         repository.observeTheme().test {
-            awaitItem() shouldBe Theme.SYSTEM
+            awaitItem() shouldBe AppTheme.SYSTEM_THEME
         }
     }
 
@@ -64,9 +64,9 @@ class DatastoreRepositoryImplTest {
     @Test
     fun when_theme_is_changed_correct_value_is_set() = runTest {
         repository.observeTheme().test {
-            repository.saveTheme(Theme.DARK)
-            awaitItem() shouldBe Theme.SYSTEM // Default theme
-            awaitItem() shouldBe Theme.DARK
+            repository.saveTheme(AppTheme.DARK_THEME)
+            awaitItem() shouldBe AppTheme.SYSTEM_THEME // Default theme
+            awaitItem() shouldBe AppTheme.DARK_THEME
         }
     }
 }

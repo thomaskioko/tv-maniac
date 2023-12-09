@@ -3,9 +3,7 @@ package com.thomaskioko.tvmaniac.traktauth.implementation
 import android.app.Application
 import android.net.Uri
 import androidx.core.net.toUri
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.util.model.Configs
-import com.thomaskioko.tvmaniac.util.scope.ActivityScope
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 import net.openid.appauth.AuthorizationRequest
@@ -50,11 +48,4 @@ interface TraktAuthComponent {
     fun provideAuthorizationService(
         application: Application,
     ): AuthorizationService = AuthorizationService(application)
-}
-
-interface TraktAuthManagerComponent {
-
-    @ActivityScope
-    @Provides
-    fun provideTraktAuthManager(bind: TraktAuthManagerImpl): TraktAuthManager = bind
 }

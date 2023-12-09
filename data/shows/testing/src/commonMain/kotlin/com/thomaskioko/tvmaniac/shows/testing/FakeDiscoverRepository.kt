@@ -14,7 +14,7 @@ import kotlin.time.Duration
 
 class FakeDiscoverRepository : DiscoverRepository {
 
-    private var showById: Channel<ShowById> = Channel(Channel.UNLIMITED)
+    private var showById: Channel<ShowById> = Channel(Channel.BUFFERED)
     private var updatedShowCategoryResult: Channel<Either<Failure, List<ShowsByCategory>>> =
         Channel(Channel.UNLIMITED)
 
@@ -23,12 +23,12 @@ class FakeDiscoverRepository : DiscoverRepository {
     private var showByIdResult: Channel<Either<Failure, ShowById>> =
         Channel(Channel.UNLIMITED)
 
-    suspend fun setShowCategory(result: List<ShowsByCategory>) {
-        showCategoryResult.send(result)
-    }
-
     suspend fun setShowById(result: ShowById) {
         showById.send(result)
+    }
+
+    suspend fun setShowCategory(result: List<ShowsByCategory>) {
+        showCategoryResult.send(result)
     }
 
     suspend fun setTrendingResult(result: Either<Failure, List<ShowsByCategory>>) {
@@ -52,7 +52,7 @@ class FakeDiscoverRepository : DiscoverRepository {
     override suspend fun fetchShows(category: Category): List<ShowsByCategory> =
         showCategoryResult.receive()
 
-    override suspend fun getShowById(traktId: Long): ShowById = showById.receive()
+    override suspend fun getShowById(traktId: Long): ShowById = selectedShow
 }
 
 val selectedShow = ShowById(

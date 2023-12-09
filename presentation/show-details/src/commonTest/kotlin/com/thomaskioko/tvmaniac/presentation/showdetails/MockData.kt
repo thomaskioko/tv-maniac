@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
+import kotlinx.collections.immutable.persistentListOf
 
 val show = Show(
     traktId = 84958,
@@ -21,14 +22,14 @@ val show = Show(
     language = "en",
     votes = 4958,
     rating = 8.1,
-    genres = listOf("Horror", "Action"),
+    genres = persistentListOf("Horror", "Action"),
     status = "Returning Series",
     year = "2024",
     posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
 )
 
-val similarShows = listOf(
+val similarShows = persistentListOf(
     Show(
         traktId = 184958,
         tmdbId = 284958,
@@ -42,7 +43,7 @@ val similarShows = listOf(
         language = "en",
         votes = 4958,
         rating = 8.1,
-        genres = listOf("Horror", "Action"),
+        genres = persistentListOf("Horror", "Action"),
         status = "Returning Series",
         year = "2024",
         posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -50,27 +51,27 @@ val similarShows = listOf(
     ),
 )
 
-val showDetailsLoaded = ShowDetailsLoaded(
+val showDetailsLoaded = ShowDetailsState(
     show = show,
-    seasonsContent = ShowDetailsLoaded.SeasonsContent(
+    seasonsContent = ShowDetailsState.SeasonsContent(
         isLoading = true,
-        seasonsList = emptyList(),
+        seasonsList = persistentListOf(),
     ),
-    similarShowsContent = ShowDetailsLoaded.SimilarShowsContent(
+    similarShowsContent = ShowDetailsState.SimilarShowsContent(
         isLoading = true,
-        similarShows = emptyList(),
+        similarShows = persistentListOf(),
     ),
-    trailersContent = ShowDetailsLoaded.TrailersContent(
+    trailersContent = ShowDetailsState.TrailersContent(
         isLoading = true,
         hasWebViewInstalled = false,
         playerErrorMessage = null,
-        trailersList = emptyList(),
+        trailersList = persistentListOf(),
     ),
     errorMessage = null,
 )
-val seasonsShowDetailsLoaded = ShowDetailsLoaded.SeasonsContent(
+val seasonsShowDetailsLoaded = ShowDetailsState.SeasonsContent(
     isLoading = false,
-    seasonsList = listOf(
+    seasonsList = persistentListOf(
         Season(
             seasonId = 84958,
             tvShowId = 114355,
@@ -79,11 +80,11 @@ val seasonsShowDetailsLoaded = ShowDetailsLoaded.SeasonsContent(
     ),
 )
 
-val trailerShowDetailsLoaded = ShowDetailsLoaded.TrailersContent(
+val trailerShowDetailsLoaded = ShowDetailsState.TrailersContent(
     isLoading = false,
     hasWebViewInstalled = false,
     playerErrorMessage = null,
-    trailersList = listOf(
+    trailersList = persistentListOf(
         Trailer(
             showId = 84958,
             key = "Fd43V",
@@ -93,7 +94,7 @@ val trailerShowDetailsLoaded = ShowDetailsLoaded.TrailersContent(
     ),
 )
 
-val similarShowLoaded = ShowDetailsLoaded.SimilarShowsContent(
+val similarShowLoaded = ShowDetailsState.SimilarShowsContent(
     isLoading = false,
     similarShows = similarShows,
 )

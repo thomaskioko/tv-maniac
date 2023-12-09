@@ -13,8 +13,7 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 
 | Android | iOS | 
 | -- | -- | 
-| <video src="https://user-images.githubusercontent.com/841885/223576880-c7391d14-63b8-47cd-a7f9-97aee5e47892.mp4" width=350/> | <video src="https://github.com/c0de-wizard/tv-maniac/assets/841885/c26f3857-9b4e-409d-9bfb-6be32cd5111b" width=350/> |
-
+| <video src="https://github.com/c0de-wizard/tv-maniac/assets/841885/7ad4abd7-bba1-4afa-9e0a-61023269e868" width=350/> | <video src="https://github.com/thomaskioko/tv-maniac/assets/841885/a28f0cde-b5a6-42f0-ab56-80e4a2877a15" width=350/> |
 
 ## 🖥 Project Setup & Environment
 
@@ -113,25 +112,22 @@ traktRedirectUri: "PUT_CALLBACK_URI_HERE"
 * [Compose Lints](https://slackhq.github.io/compose-lints/) - Custom lint checks for Jetpack Compose.
 * [Jetpack Compose](https://developer.android.com/jetpack/compose)
     * [Coil](https://coil-kt.github.io/coil/compose/) - Image loading
-    * [Navigation](https://developer.android.com/jetpack/compose/navigation) - Navigation
 * [KenBurnsView](https://github.com/flavioarfaria/KenBurnsView) - Immersive image.
 * [Leakcanary](https://github.com/square/leakcanary) - Memory leak detection.
-* [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) UI-related data holder, lifecycle
-  aware.
-* [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager?gclsrc=ds&gclsrc=ds) Handle persistent work
 
 ### Kmp - Common
-* [Kotlinx Serialization](https://ktor.io/docs/kotlin-serialization.html) - De/Serializing JSON
 * [Coroutines](https://github.com/Kotlin/kotlinx.coroutines#multiplatform) - Concurrency & Threading
 * [DataStore Preferences](https://android-developers.googleblog.com/2022/10/announcing-experimental-preview-of-jetpack-multiplatform-libraries.html) - Data storage
 * [DateTime](https://github.com/Kotlin/kotlinx-datetime) - Date & Time
-* [Flow-Redux](https://github.com/freeletics/FlowRedux)
+* [Decompose](https://arkivanov.github.io/Decompose/) - Kotlin Multiplatform library for breaking down your code into lifecycle-aware business logic components (aka BLoC).
 * [Kermit](https://kermit.touchlab.co/) - Logging
 * [kotlin-inject](https://github.com/evant/kotlin-inject) - Injection library.
+* [Kotlinx Serialization](https://ktor.io/docs/kotlin-serialization.html) - De/Serializing JSON
 * [Ktor](https://ktor.io/) - Networking
 * [Kotest Assertions](https://kotest.io/docs/assertions/assertions.html) - Testing
 * [SQLDelight](https://github.com/cashapp/sqldelight/) - Local storage
     - [Coroutines Extensions](https://cashapp.github.io/sqldelight/js_sqlite/coroutines/) Consume queries as Flow
+
 
 ### iOS
 * [Kingfisher](https://github.com/onevcat/Kingfisher) - Image library.

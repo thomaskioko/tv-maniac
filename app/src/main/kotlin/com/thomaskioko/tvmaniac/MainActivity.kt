@@ -6,76 +6,40 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.thomaskioko.tvmaniac.MainActivityUiState.DataLoaded
-import com.thomaskioko.tvmaniac.MainActivityUiState.Loading
+import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.datastore.api.Theme
-import com.thomaskioko.tvmaniac.home.HomeScreen
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.inject.MainActivityComponent
 import com.thomaskioko.tvmaniac.inject.create
-import com.thomaskioko.tvmaniac.navigation.ComposeNavigationFactory
-import com.thomaskioko.tvmaniac.util.extensions.unsafeLazy
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
+import com.thomaskioko.tvmaniac.navigation.ThemeState
 
 class MainActivity : ComponentActivity() {
     private lateinit var component: MainActivityComponent
 
-    private val navFactorySet: Set<ComposeNavigationFactory> by unsafeLazy { component.navFactorySet }
-
-    private val viewModel: MainActivityViewModel by viewModels {
-        viewModelFactory {
-            addInitializer(MainActivityViewModel::class) { component.viewModel() }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        component = MainActivityComponent::class.create(this)
+        component = MainActivityComponent.create(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         component.traktAuthManager.registerResult()
 
-        var uiState: MainActivityUiState by mutableStateOf(Loading)
-
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state
-                    .onEach {
-                        uiState = it
-                    }
-                    .collect()
-            }
-        }
-
-        splashScreen.setKeepOnScreenCondition {
-            when (uiState) {
-                Loading -> true
-                is DataLoaded -> false
-            }
-        }
-
         enableEdgeToEdge()
 
         setContent {
-            val darkTheme = shouldUseDarkTheme(uiState)
+            val themeState by component.presenter.state.subscribeAsState()
+            val darkTheme = shouldUseDarkTheme(themeState)
+
+            splashScreen.setKeepOnScreenCondition {
+                themeState.isFetching
+            }
 
             DisposableEffect(darkTheme) {
                 enableEdgeToEdge(
@@ -92,9 +56,7 @@ class MainActivity : ComponentActivity() {
             }
 
             TvManiacTheme(darkTheme = darkTheme) {
-                Surface {
-                    HomeScreen(navFactorySet)
-                }
+                component.rootScreen()
             }
         }
     }
@@ -106,14 +68,11 @@ class MainActivity : ComponentActivity() {
  */
 @Composable
 private fun shouldUseDarkTheme(
-    uiState: MainActivityUiState,
-): Boolean = when (uiState) {
-    Loading -> isSystemInDarkTheme()
-    is DataLoaded -> when (uiState.theme) {
-        Theme.LIGHT -> false
-        Theme.DARK -> true
-        Theme.SYSTEM -> isSystemInDarkTheme()
-    }
+    uiState: ThemeState,
+): Boolean = when (uiState.appTheme) {
+    AppTheme.LIGHT_THEME -> false
+    AppTheme.DARK_THEME -> true
+    AppTheme.SYSTEM_THEME -> isSystemInDarkTheme()
 }
 
 /**

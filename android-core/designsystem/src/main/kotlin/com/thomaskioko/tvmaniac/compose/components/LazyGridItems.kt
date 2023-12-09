@@ -13,22 +13,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.extensions.copy
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun <T> LazyGridItems(
     listState: LazyListState,
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
-    items: List<T> = listOf(),
+    items: ImmutableList<T> = persistentListOf(),
     rows: Int = 3,
-    hPadding: Int = 8,
+    hPadding: Int = 0,
     itemContent: @Composable (LazyItemScope.(T) -> Unit),
 ) {
     val chunkedList = items.chunked(rows)
     LazyColumn(
         state = listState,
-        contentPadding = paddingValues.copy(copyTop = false),
+        contentPadding = paddingValues,
         modifier = modifier
             .padding(horizontal = hPadding.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),

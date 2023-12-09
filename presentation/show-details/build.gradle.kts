@@ -1,12 +1,9 @@
 plugins {
     id("plugin.tvmaniac.multiplatform")
-    alias(libs.plugins.ksp)
 }
 
 kotlin {
-
     sourceSets {
-
         commonMain {
             dependencies {
                 implementation(projects.core.util)
@@ -14,9 +11,12 @@ kotlin {
                 implementation(projects.data.similar.api)
                 implementation(projects.data.trailers.api)
                 implementation(projects.data.shows.api)
-                implementation(projects.data.watchlist.api)
+                implementation(projects.data.library.api)
 
-                implementation(libs.flowredux)
+                api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
+                api(libs.kotlinx.collections)
+
                 implementation(libs.kotlinInject.runtime)
 
             }
@@ -29,17 +29,10 @@ kotlin {
                 implementation(projects.data.seasons.testing)
                 implementation(projects.data.similar.testing)
                 implementation(projects.data.trailers.testing)
-                implementation(projects.data.watchlist.testing)
+                implementation(projects.data.library.testing)
 
-                implementation(libs.coroutines.test)
-                implementation(libs.kotest.assertions)
-                implementation(libs.turbine)
+                implementation(libs.bundles.unittest)
             }
         }
     }
-}
-
-dependencies {
-    add("kspIosX64", libs.kotlinInject.compiler)
-    add("kspIosArm64", libs.kotlinInject.compiler)
 }

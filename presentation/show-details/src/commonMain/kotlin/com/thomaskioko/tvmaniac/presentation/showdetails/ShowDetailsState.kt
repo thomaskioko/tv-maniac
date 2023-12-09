@@ -1,24 +1,24 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.SeasonsContent.Companion.EMPTY_SEASONS
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.SimilarShowsContent.Companion.EMPTY_SIMILAR_SHOWS
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsLoaded.TrailersContent.Companion.EMPTY_TRAILERS
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.SeasonsContent.Companion.EMPTY_SEASONS
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.SimilarShowsContent.Companion.EMPTY_SIMILAR_SHOWS
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.TrailersContent.Companion.EMPTY_TRAILERS
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
-sealed interface ShowDetailsState
-
-data class ShowDetailsLoaded(
+data class ShowDetailsState(
     val show: Show,
     val isLoading: Boolean = false,
     val errorMessage: String?,
     val similarShowsContent: SimilarShowsContent,
     val seasonsContent: SeasonsContent,
     val trailersContent: TrailersContent,
-) : ShowDetailsState {
+) {
     companion object {
-        val EMPTY_DETAIL_STATE = ShowDetailsLoaded(
+        val EMPTY_DETAIL_STATE = ShowDetailsState(
             show = Show.EMPTY_SHOW,
             errorMessage = null,
             similarShowsContent = EMPTY_SIMILAR_SHOWS,
@@ -29,14 +29,14 @@ data class ShowDetailsLoaded(
 
     data class SeasonsContent(
         val isLoading: Boolean,
-        val seasonsList: List<Season>,
+        val seasonsList: ImmutableList<Season>,
         val errorMessage: String? = null,
     ) {
         companion object {
             val EMPTY_SEASONS = SeasonsContent(
                 errorMessage = null,
                 isLoading = false,
-                seasonsList = emptyList(),
+                seasonsList = persistentListOf(),
             )
         }
     }
@@ -45,7 +45,7 @@ data class ShowDetailsLoaded(
         val isLoading: Boolean,
         val hasWebViewInstalled: Boolean,
         val playerErrorMessage: String? = null,
-        val trailersList: List<Trailer>,
+        val trailersList: ImmutableList<Trailer>,
         val errorMessage: String? = null,
     ) {
         companion object {
@@ -56,7 +56,7 @@ data class ShowDetailsLoaded(
                 isLoading = true,
                 hasWebViewInstalled = false,
                 playerErrorMessage = null,
-                trailersList = emptyList(),
+                trailersList = persistentListOf(),
                 errorMessage = null,
             )
         }
@@ -64,13 +64,13 @@ data class ShowDetailsLoaded(
 
     data class SimilarShowsContent(
         val isLoading: Boolean,
-        val similarShows: List<Show>,
+        val similarShows: ImmutableList<Show>,
         val errorMessage: String? = null,
     ) {
         companion object {
             val EMPTY_SIMILAR_SHOWS = SimilarShowsContent(
                 isLoading = true,
-                similarShows = emptyList(),
+                similarShows = persistentListOf(),
                 errorMessage = null,
             )
         }

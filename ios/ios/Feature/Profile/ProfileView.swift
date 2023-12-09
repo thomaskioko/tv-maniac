@@ -10,14 +10,15 @@ import SwiftUI
 
 struct ProfileView: View {
     
-    @ObservedObject private var model = ProfileViewModel()
+
     @State var isPresented = false
+    @State var isAuthenticated = false
     
     
     var body: some View {
         NavigationView {
             
-            if(!model.isAuthenticated){
+            if(!isAuthenticated){
                 UnauthentivatedProfileView()
                     .toolbar{
                         ToolbarItem(placement: .navigationBarTrailing) {
@@ -34,7 +35,9 @@ struct ProfileView: View {
                             )
                             .sheet(
                                 isPresented: $isPresented,
-                                content: { SettingsUIView() }
+                                content: {
+                                    //SettingsUIView()
+                                }
                             )
                         }
                     }

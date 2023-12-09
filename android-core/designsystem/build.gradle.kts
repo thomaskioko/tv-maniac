@@ -1,5 +1,5 @@
 plugins {
-    id("tvmaniac.compose.library")
+    id("plugin.tvmaniac.compose.library")
 }
 
 android {
@@ -17,8 +17,9 @@ dependencies {
 
     implementation(projects.androidCore.resources)
 
-    implementation(libs.kenburns)
     implementation(libs.androidx.core)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material.icons)
+    implementation(libs.kenburns)
+    implementation(libs.kotlinx.collections)
 }
