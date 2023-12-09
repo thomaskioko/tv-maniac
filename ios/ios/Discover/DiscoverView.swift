@@ -31,10 +31,8 @@ struct DiscoverView: View {
                 }
             }
             .background(Color.background)
-            .toolbar {
-                Button("Done") {  }
-            }
-            .navigationTitle("releaseDates")
+            .toolbar {}
+            .navigationTitle("")
         }
     }
     
@@ -104,8 +102,6 @@ struct DiscoverView: View {
                     
                     GeometryReader{ proxy in
                         
-                        let size = proxy.size
-                        
                         ShowPosterImage(
                             posterSize: .big,
                             imageUrl: post.posterImageUrl,
@@ -116,12 +112,11 @@ struct DiscoverView: View {
                         .cornerRadius(12)
                         .shadow(color: Color("shadow1"), radius: 4, x: 0, y: 4)
                         .transition(AnyTransition.slide)
-                        .animation(.spring())
                     }
                 }
                 .edgesIgnoringSafeArea(.all)
                 .frame(height: 450)
-                .padding(.top, 90)
+                .padding(.top, 70)
                 
                 
                 CustomIndicator(shows: shows)

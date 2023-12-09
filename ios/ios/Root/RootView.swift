@@ -11,13 +11,12 @@ import TvManiac
 
 struct RootView: View {
     
-    let rootPresenter: RootNavigationPresenter
-    
     @StateValue
     private var stack: ChildStack<AnyObject, Screen>
     
     @StateValue
     var uiState: ThemeState
+    let rootPresenter: RootNavigationPresenter
     
     init(rootPresenter: RootNavigationPresenter) {
         self.rootPresenter = rootPresenter
@@ -114,7 +113,7 @@ private struct BottomTabView: View {
                 Image(systemName: systemImage)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(isActive ? Color.accent : Color.gray)
+                    .foregroundColor(isActive ? .blue : .text_color_bg)
                     .font(Font.title.weight(.thin))
                     .frame(width: 26, height: 26)
                     .animation(.default)
@@ -123,7 +122,7 @@ private struct BottomTabView: View {
                 Spacer().frame(height: 4)
                 
                 Text(title)
-                    .foregroundColor(isActive ? Color.accent : .gray)
+                    .foregroundColor(isActive ? .blue  : .text_color_bg)
                     .bodyMediumFont(size: 14)
                     .fontWeight(.medium)
             }

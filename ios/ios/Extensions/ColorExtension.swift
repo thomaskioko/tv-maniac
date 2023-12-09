@@ -64,5 +64,8 @@ extension Color {
 		Color("Background", bundle: nil)
 	}
 	
+    public static var blue: Color {
+        Color("blue", bundle: nil)
+    }
 	
 }
