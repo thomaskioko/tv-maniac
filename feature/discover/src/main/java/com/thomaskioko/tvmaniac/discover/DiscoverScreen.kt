@@ -76,6 +76,7 @@ import com.thomaskioko.tvmaniac.presentation.discover.Loading
 import com.thomaskioko.tvmaniac.presentation.discover.RetryLoading
 import com.thomaskioko.tvmaniac.presentation.discover.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.discover.SnackBarDismissed
+import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
@@ -91,7 +92,7 @@ fun DiscoverScreen(
 ) {
     val discoverState by discoverShowsPresenter.state.subscribeAsState()
     val pagerState = rememberPagerState(pageCount = {
-        (discoverState as? DataLoaded)?.recommendedShows?.size ?: 0
+        (discoverState as? DataLoaded)?.featuredShows?.size ?: 0
     })
     val snackBarHostState = remember { SnackbarHostState() }
 
@@ -126,7 +127,8 @@ internal fun DiscoverScreen(
             trendingShows = state.trendingShows,
             popularShows = state.popularShows,
             anticipatedShows = state.anticipatedShows,
-            recommendedShows = state.recommendedShows,
+            featuredShows = state.featuredShows,
+            trendingToday = state.trendingToday,
             errorMessage = state.errorMessage,
             onAction = onAction,
         )
@@ -146,7 +148,8 @@ private fun DiscoverScrollContent(
     trendingShows: ImmutableList<TvShow>?,
     popularShows: ImmutableList<TvShow>?,
     anticipatedShows: ImmutableList<TvShow>?,
-    recommendedShows: ImmutableList<TvShow>?,
+    featuredShows: ImmutableList<DiscoverShow>?,
+    trendingToday: ImmutableList<DiscoverShow>,
     errorMessage: String?,
     snackBarHostState: SnackbarHostState,
     pagerState: PagerState,
@@ -175,14 +178,23 @@ private fun DiscoverScrollContent(
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
         ) {
-            recommendedShows?.let {
+            featuredShows?.let {
                 item {
                     DiscoverHeaderContent(
                         pagerState = pagerState,
-                        showList = recommendedShows,
+                        showList = featuredShows,
                         onShowClicked = { onAction(ShowClicked(it)) },
                     )
                 }
+            }
+
+            item {
+                HorizontalRowContent(
+                    category = Category.TRENDING_TODAY,
+                    tvShows = trendingToday,
+                    onItemClicked = { onAction(ShowClicked(it)) },
+                    onLabelClicked = { onAction(LoadCategoryShows(it)) },
+                )
             }
 
             trendingShows?.let {
@@ -225,7 +237,7 @@ private fun DiscoverScrollContent(
 
 @Composable
 fun DiscoverHeaderContent(
-    showList: ImmutableList<TvShow>,
+    showList: ImmutableList<DiscoverShow>,
     pagerState: PagerState,
     modifier: Modifier = Modifier,
     onShowClicked: (Long) -> Unit,
@@ -280,7 +292,7 @@ private fun DynamicColorContainer(
 
 @Composable
 fun HorizontalPagerItem(
-    list: ImmutableList<TvShow>,
+    list: ImmutableList<DiscoverShow>,
     pagerState: PagerState,
     backgroundColor: Color,
     modifier: Modifier = Modifier,
@@ -309,7 +321,7 @@ fun HorizontalPagerItem(
             TvPosterCard(
                 title = list[pageNumber].title,
                 posterImageUrl = list[pageNumber].posterImageUrl,
-                onClick = { onClick(list[pageNumber].traktId) },
+                onClick = { onClick(list[pageNumber].tmdbId) },
                 modifier = Modifier
                     .graphicsLayer {
                         val pageOffset = (
@@ -367,6 +379,47 @@ fun HorizontalPagerItem(
                             .clip(CircleShape)
                             .background(color)
                             .size(8.dp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
+@Composable
+private fun HorizontalRowContent(
+    category: Category,
+    tvShows: ImmutableList<DiscoverShow>,
+    onItemClicked: (Long) -> Unit,
+    onLabelClicked: (Long) -> Unit,
+) {
+    AnimatedVisibility(visible = tvShows.isNotEmpty()) {
+        Column {
+            BoxTextItems(
+                title = category.title,
+                label = stringResource(id = R.string.str_more),
+                onMoreClicked = { onLabelClicked(category.id) },
+            )
+
+            val lazyListState = rememberLazyListState()
+
+            LazyRow(
+                state = lazyListState,
+                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+            ) {
+                itemsIndexed(tvShows) { index, tvShow ->
+
+                    val value = if (index == 0) 16 else 8
+
+                    Spacer(modifier = Modifier.width(value.dp))
+
+                    TvPosterCard(
+                        posterImageUrl = tvShow.posterImageUrl,
+                        title = tvShow.title,
+                        onClick = { onItemClicked(tvShow.tmdbId) },
+                        modifier = Modifier
+                            .animateItemPlacement(),
                     )
                 }
             }

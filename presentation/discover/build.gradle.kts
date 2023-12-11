@@ -11,6 +11,7 @@ kotlin {
                 implementation(projects.data.category.api)
                 implementation(projects.data.showimages.api)
                 implementation(projects.data.shows.api)
+                implementation(projects.data.trendingshows.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)

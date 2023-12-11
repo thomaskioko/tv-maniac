@@ -4,6 +4,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
+import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 import kotlinx.collections.immutable.toImmutableList
 
@@ -26,13 +27,21 @@ val shows = TvShow(
     year = "2024",
 )
 
+val discoverShow = DiscoverShow(
+    tmdbId = 84958,
+    title = "Loki",
+    posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+    backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+)
+
 val discoverContentSuccess = DataLoaded(
-    recommendedShows = createShowList(5),
+    featuredShows = createDiscoverShowList(5),
     trendingShows = createShowList(),
     popularShows = createShowList(),
     anticipatedShows = createShowList(),
 )
 
+private fun createDiscoverShowList(size: Int = 20) = List(size) { discoverShow }.toImmutableList()
 private fun createShowList(size: Int = 20) = List(size) { shows }.toImmutableList()
 
 class DiscoverPreviewParameterProvider : PreviewParameterProvider<DiscoverState> {

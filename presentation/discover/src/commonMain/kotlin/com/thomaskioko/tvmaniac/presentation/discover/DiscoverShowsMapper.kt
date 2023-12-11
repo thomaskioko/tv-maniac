@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
+import com.thomaskioko.tvmaniac.core.db.TrendingShows
+import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
@@ -26,10 +28,19 @@ fun ShowsByCategory.toTvShow(): TvShow = TvShow(
     status = status,
 )
 
+fun List<TrendingShows>?.toDiscoverShowList(): ImmutableList<DiscoverShow> =
+    this?.map { it.toDiscoverShow() }?.toImmutableList() ?: persistentListOf()
+
+fun TrendingShows.toDiscoverShow(): DiscoverShow = DiscoverShow(
+    tmdbId = id.id,
+    posterImageUrl = poster_path,
+    backdropImageUrl = backdrop_path,
+)
+
 fun getErrorMessage(
     trending: Either<Failure, List<ShowsByCategory>>,
     popular: Either<Failure, List<ShowsByCategory>>,
     anticipated: Either<Failure, List<ShowsByCategory>>,
-    recommended: Either<Failure, List<ShowsByCategory>>,
+    featuredShows: Either<Failure, List<TrendingShows>>,
 ) = trending.getErrorOrNull()?.errorMessage ?: popular.getErrorOrNull()?.errorMessage
-    ?: anticipated.getErrorOrNull()?.errorMessage ?: recommended.getErrorOrNull()?.errorMessage
+    ?: anticipated.getErrorOrNull()?.errorMessage ?: featuredShows.getErrorOrNull()?.errorMessage

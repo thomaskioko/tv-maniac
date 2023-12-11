@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 import kotlinx.collections.immutable.toImmutableList
 
@@ -25,8 +26,15 @@ val show = TvShow(
     backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
 )
 
+val discoverShow = DiscoverShow(
+    tmdbId = 849583,
+    title = "Loki",
+    posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+    backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+)
+
 val discoverContent = DataLoaded(
-    recommendedShows = listOf(show).toImmutableList(),
+    featuredShows = listOf(discoverShow).toImmutableList(),
     trendingShows = listOf(show).toImmutableList(),
     popularShows = listOf(show).toImmutableList(),
     anticipatedShows = listOf(show).toImmutableList(),

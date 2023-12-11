@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
 import com.thomaskioko.tvmaniac.datastore.implementation.DataStoreComponent
 import com.thomaskioko.tvmaniac.db.DatabaseComponent
+import com.thomaskioko.tvmaniac.discover.implementation.TrendingShowsComponent
 import com.thomaskioko.tvmaniac.episodeimages.implementation.EpisodeImageComponent
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeComponent
 import com.thomaskioko.tvmaniac.profile.implementation.ProfileComponent
@@ -41,4 +42,5 @@ abstract class SharedComponent :
     TrailerComponent,
     TraktAuthenticationComponent,
     TraktComponent,
-    UtilPlatformComponent
+    UtilPlatformComponent,
+    TrendingShowsComponent

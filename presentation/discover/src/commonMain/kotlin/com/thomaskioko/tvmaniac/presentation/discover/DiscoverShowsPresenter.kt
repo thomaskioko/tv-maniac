@@ -3,14 +3,15 @@ package com.thomaskioko.tvmaniac.presentation.discover
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.category.api.model.Category
+import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.showimages.api.ShowImagesRepository
 import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import com.thomaskioko.tvmaniac.util.decompose.asValue
 import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
+import com.thomaskioko.tvmaniac.util.extensions.combine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -29,6 +30,7 @@ class DiscoverShowsPresenter(
     @Assisted private val onNavigateToMore: (Long) -> Unit,
     private val discoverRepository: DiscoverRepository,
     private val showImagesRepository: ShowImagesRepository,
+    private val trendingShowsRepository: TrendingShowsRepository,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -62,16 +64,18 @@ class DiscoverShowsPresenter(
 
     private suspend fun fetchShowData() {
         val trendingResponse = discoverRepository.fetchShows(Category.TRENDING)
-        val recommendedResponse = discoverRepository.fetchShows(Category.RECOMMENDED)
         val popularResponse = discoverRepository.fetchShows(Category.POPULAR)
         val anticipatedResponse = discoverRepository.fetchShows(Category.ANTICIPATED)
+        val featuredResponse = trendingShowsRepository.fetchFeaturedTrendingShows()
+        val trendingShows = trendingShowsRepository.fetchTrendingShows()
 
         _state.update {
             DataLoaded(
                 trendingShows = trendingResponse.toTvShowList(),
                 popularShows = popularResponse.toTvShowList(),
                 anticipatedShows = anticipatedResponse.toTvShowList(),
-                recommendedShows = recommendedResponse.take(5).toTvShowList(),
+                featuredShows = featuredResponse.toDiscoverShowList(),
+                trendingToday = trendingShows.toDiscoverShowList(),
             )
         }
     }
@@ -82,17 +86,19 @@ class DiscoverShowsPresenter(
 
     private suspend fun observeShowData() {
         combine(
+            trendingShowsRepository.observeFeaturedTrendingShows(),
             discoverRepository.observeShowCategory(Category.TRENDING),
             discoverRepository.observeShowCategory(Category.POPULAR),
             discoverRepository.observeShowCategory(Category.ANTICIPATED),
-            discoverRepository.observeShowCategory(Category.RECOMMENDED),
+            trendingShowsRepository.observeTrendingShows(),
             showImagesRepository.updateShowArtWork(),
-        ) { trending, popular, anticipated, recommended, _ ->
+        ) { recommended, trending, popular, anticipated, trendingToday, _ ->
             DataLoaded(
+                featuredShows = recommended.getOrNull().toDiscoverShowList(),
                 trendingShows = trending.getOrNull().toTvShowList(),
                 popularShows = popular.getOrNull().toTvShowList(),
                 anticipatedShows = anticipated.getOrNull().toTvShowList(),
-                recommendedShows = recommended.getOrNull()?.take(5).toTvShowList(),
+                trendingToday = trendingToday.getOrNull().toDiscoverShowList(),
                 errorMessage = getErrorMessage(trending, popular, anticipated, recommended),
             )
         }
@@ -104,7 +110,8 @@ class DiscoverShowsPresenter(
                         trendingShows = it.trendingShows,
                         popularShows = it.popularShows,
                         anticipatedShows = it.anticipatedShows,
-                        recommendedShows = it.recommendedShows,
+                        featuredShows = it.featuredShows,
+                        trendingToday = it.trendingToday,
                     ) ?: state
                 }
             }
