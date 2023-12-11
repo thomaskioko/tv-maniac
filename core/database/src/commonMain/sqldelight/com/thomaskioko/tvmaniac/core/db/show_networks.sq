@@ -1,0 +1,17 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.NetworkId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+CREATE TABLE show_networks (
+    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    network_id INTEGER AS Id<NetworkId> NOT NULL,
+    PRIMARY KEY (show_id, network_id),
+    FOREIGN KEY (show_id) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (network_id) REFERENCES networks(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+upsert:
+INSERT OR REPLACE INTO show_networks (
+    show_id,
+    network_id
+) VALUES (?, ?);

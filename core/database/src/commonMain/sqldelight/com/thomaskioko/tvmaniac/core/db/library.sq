@@ -1,0 +1,21 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+CREATE TABLE library(
+    id INTEGER AS Id<TmdbId> PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    FOREIGN KEY(id) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+upsert:
+INSERT OR REPLACE INTO library(
+    id,
+    created_at
+)
+VALUES( ?, ?);
+
+delete:
+DELETE FROM
+    library
+WHERE
+    id = ?;

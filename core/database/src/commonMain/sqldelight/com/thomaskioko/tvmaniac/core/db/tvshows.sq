@@ -1,0 +1,79 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+import kotlin.Int;
+import kotlin.collections.List;
+
+CREATE TABLE tvshows(
+    id INTEGER AS Id<TmdbId> NOT NULL PRIMARY KEY,
+    backdrop_path TEXT DEFAULT NULL,
+    first_air_date TEXT DEFAULT NULL,
+    language TEXT,
+    name TEXT NOT NULL,
+    overview TEXT NOT NULL,
+    popularity REAL NOT NULL,
+    poster_path TEXT,
+    episode_numbers TEXT DEFAULT NULL,
+    last_air_date TEXT DEFAULT NULL,
+    season_numbers TEXT DEFAULT NULL,
+    status TEXT DEFAULT NULL,
+    vote_average REAL NOT NULL,
+    vote_count INTEGER NOT NULL,
+    genre_ids TEXT AS List<Int> NOT NULL
+);
+
+upsert:
+INSERT OR REPLACE INTO tvshows(
+    id,
+    name,
+    overview,
+    language,
+    first_air_date,
+    vote_average,
+    vote_count,
+    popularity,
+    genre_ids,
+    status,
+    episode_numbers,
+    last_air_date,
+    season_numbers,
+    poster_path,
+    backdrop_path
+)
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?, ?,?);
+
+tvshowDetails:
+SELECT
+    tvshows.id,
+    tvshows.name,
+    tvshows.overview,
+    tvshows.language,
+    tvshows.first_air_date,
+    tvshows.popularity,
+    tvshows.vote_average,
+    tvshows.status,
+    tvshows.vote_count,
+    tvshows.genre_ids,
+    tvshows.poster_path,
+    tvshows.backdrop_path,
+    networks.id,
+    networks.name,
+    networks.logo_path,
+    CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    tvshows
+LEFT OUTER JOIN
+    library ON tvshows.id = library.id
+JOIN
+    show_networks ON tvshows.id = show_networks.show_id
+JOIN
+    networks ON show_networks.network_id = networks.id
+WHERE
+    tvshows.id = ?;
+
+delete:
+DELETE
+FROM tvshows
+WHERE id = ?;
+
+deleteAll:
+DELETE FROM tvshows;

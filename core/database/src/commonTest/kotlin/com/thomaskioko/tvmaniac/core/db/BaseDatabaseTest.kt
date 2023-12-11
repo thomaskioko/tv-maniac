@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.core.db
 import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.db.IdAdapter
 import com.thomaskioko.tvmaniac.db.InstantColumnAdapter
+import com.thomaskioko.tvmaniac.db.intColumnAdapter
 import com.thomaskioko.tvmaniac.db.stringColumnAdapter
 import kotlin.test.AfterTest
 
@@ -52,6 +53,25 @@ abstract class BaseDatabaseTest {
         ),
         trailersAdapter = Trailers.Adapter(
             show_idAdapter = IdAdapter(),
+        ),
+        libraryAdapter = Library.Adapter(
+            idAdapter = IdAdapter(),
+        ),
+        trending_showsAdapter = Trending_shows.Adapter(
+            idAdapter = IdAdapter(),
+            pageAdapter = IdAdapter(),
+        ),
+        tvshowsAdapter = Tvshows.Adapter(
+            idAdapter = IdAdapter(),
+            genre_idsAdapter = intColumnAdapter,
+        ),
+        networksAdapter = Networks.Adapter(
+            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+        ),
+        show_networksAdapter = Show_networks.Adapter(
+            show_idAdapter = IdAdapter(),
+            network_idAdapter = IdAdapter(),
         ),
     )
 
