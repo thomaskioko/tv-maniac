@@ -70,6 +70,8 @@ include(
     ":data:similar:api",
     ":data:similar:implementation",
     ":data:similar:testing",
+    ":data:trendingshows:api",
+    ":data:trendingshows:implementation",
     ":data:trailers:api",
     ":data:trailers:implementation",
     ":data:trailers:testing",
