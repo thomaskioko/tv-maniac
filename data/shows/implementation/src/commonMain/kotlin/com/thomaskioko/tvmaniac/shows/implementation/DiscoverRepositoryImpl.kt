@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.shows.implementation
 import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.category.api.model.Category.ANTICIPATED
 import com.thomaskioko.tvmaniac.category.api.model.Category.POPULAR
-import com.thomaskioko.tvmaniac.category.api.model.Category.RECOMMENDED
 import com.thomaskioko.tvmaniac.category.api.model.Category.TRENDING
+import com.thomaskioko.tvmaniac.category.api.model.Category.TRENDING_TODAY
 import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -68,7 +68,7 @@ class DiscoverRepositoryImpl(
         .mapResult()
 
     override suspend fun fetchDiscoverShows() {
-        val categories = listOf(TRENDING, POPULAR, ANTICIPATED, RECOMMENDED)
+        val categories = listOf(TRENDING, POPULAR, ANTICIPATED, TRENDING_TODAY)
 
         for (category in categories) {
             discoverShowsStore.get(category)
