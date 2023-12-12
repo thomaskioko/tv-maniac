@@ -7,6 +7,12 @@ CREATE TABLE library(
     FOREIGN KEY(id) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_libraries_library_id` ON `library` (`id`);
+
+-- queries
+
 upsert:
 INSERT OR REPLACE INTO library(
     id,

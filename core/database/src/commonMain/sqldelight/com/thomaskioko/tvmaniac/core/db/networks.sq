@@ -11,6 +11,12 @@ CREATE TABLE IF NOT EXISTS `networks` (
      FOREIGN KEY(tmdb_id) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_networks_network_id` ON `networks` (`id`);
+
+-- queries
+
 upsert:
 INSERT OR REPLACE INTO networks (
     id,

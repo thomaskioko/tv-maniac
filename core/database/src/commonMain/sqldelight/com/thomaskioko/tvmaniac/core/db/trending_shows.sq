@@ -8,6 +8,12 @@ CREATE TABLE IF NOT EXISTS trending_shows (
      FOREIGN KEY(`id`) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_trending_shows_show_id` ON `trending_shows` (`id`);
+
+-- queries
+
 insert:
 INSERT OR IGNORE INTO trending_shows(
     `id`,

@@ -18,6 +18,12 @@ CREATE TABLE show(
     genres TEXT AS List<String> NOT NULL
 );
 
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_shows_show_id` ON `show` (`id`);
+
+-- queries
+
 insertOrReplace:
 INSERT OR REPLACE INTO show(
     id,
