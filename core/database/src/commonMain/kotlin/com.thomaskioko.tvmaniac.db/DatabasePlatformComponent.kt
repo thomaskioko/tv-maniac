@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.db.Trending_shows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.db.Tvshows
+import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.core.db.Watchlist
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import me.tatarka.inject.annotations.Provides
@@ -83,6 +84,10 @@ interface DatabaseComponent : DatabasePlatformComponent {
         show_networksAdapter = Show_networks.Adapter(
             show_idAdapter = IdAdapter(),
             network_idAdapter = IdAdapter(),
+        ),
+        upcoming_showsAdapter = Upcoming_shows.Adapter(
+            idAdapter = IdAdapter(),
+            pageAdapter = IdAdapter(),
         ),
     )
 

@@ -73,6 +73,10 @@ abstract class BaseDatabaseTest {
             show_idAdapter = IdAdapter(),
             network_idAdapter = IdAdapter(),
         ),
+        upcoming_showsAdapter = Upcoming_shows.Adapter(
+            idAdapter = IdAdapter(),
+            pageAdapter = IdAdapter(),
+        ),
     )
 
     @AfterTest

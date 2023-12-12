@@ -1,0 +1,34 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.PageId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+CREATE TABLE IF NOT EXISTS upcoming_shows(
+    `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
+    `page` INTEGER AS Id<PageId> NOT NULL,
+     FOREIGN KEY(`id`) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+insert:
+INSERT OR IGNORE INTO upcoming_shows(
+    `id`,
+    `page`
+) VALUES (
+    :id,
+    :page
+);
+
+upcomingShows:
+SELECT * FROM upcoming_shows
+INNER JOIN tvshows ON tvshows.id = upcoming_shows.id;
+
+pagedUpcomingShows:
+SELECT * FROM upcoming_shows
+INNER JOIN tvshows ON tvshows.id = upcoming_shows.id
+WHERE upcoming_shows.page = :page;
+
+delete:
+DELETE FROM upcoming_shows
+WHERE id = :id;
+
+deleteAll:
+DELETE FROM upcoming_shows;
