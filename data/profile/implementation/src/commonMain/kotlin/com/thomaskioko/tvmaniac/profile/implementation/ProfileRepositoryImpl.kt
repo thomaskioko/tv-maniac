@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.profile.implementation
 import com.thomaskioko.tvmaniac.core.db.User
 import com.thomaskioko.tvmaniac.profile.api.ProfileRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.util.extensions.mapResult
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
@@ -39,20 +40,9 @@ class ProfileRepositoryImpl(
             ),
         )
             .mapResult()
+            .flowOn(dispatchers.io)
 
     override suspend fun clearProfile() {
         store.clear()
     }
-
-    private fun <T> Flow<StoreReadResponse<T>>.mapResult(): Flow<Either<Failure, T>> =
-        distinctUntilChanged()
-            .flatMapLatest {
-                val data = it.dataOrNull()
-                if (data != null) {
-                    flowOf(Either.Right(data))
-                } else {
-                    emptyFlow()
-                }
-            }
-            .flowOn(dispatchers.io)
 }

@@ -1,14 +1,15 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
 import com.thomaskioko.tvmaniac.category.api.model.Category
-import com.thomaskioko.tvmaniac.category.api.model.Category.ANTICIPATED
 import com.thomaskioko.tvmaniac.category.api.model.Category.POPULAR
 import com.thomaskioko.tvmaniac.category.api.model.Category.TRENDING
 import com.thomaskioko.tvmaniac.category.api.model.Category.TRENDING_TODAY
+import com.thomaskioko.tvmaniac.category.api.model.Category.UPCOMING
 import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
+import com.thomaskioko.tvmaniac.util.extensions.mapResult
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
@@ -66,24 +67,14 @@ class DiscoverRepositoryImpl(
         ),
     )
         .mapResult()
+        .flowOn(dispatchers.io)
 
     override suspend fun fetchDiscoverShows() {
-        val categories = listOf(TRENDING, POPULAR, ANTICIPATED, TRENDING_TODAY)
+        val categories = listOf(TRENDING, POPULAR, UPCOMING, TRENDING_TODAY)
 
         for (category in categories) {
             discoverShowsStore.get(category)
         }
     }
 
-    private fun <T> Flow<StoreReadResponse<T>>.mapResult(): Flow<Either<Failure, T>> =
-        distinctUntilChanged()
-            .flatMapLatest {
-                val data = it.dataOrNull()
-                if (data != null) {
-                    flowOf(Either.Right(data))
-                } else {
-                    emptyFlow()
-                }
-            }
-            .flowOn(dispatchers.io)
 }
