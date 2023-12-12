@@ -75,6 +75,8 @@ include(
     ":data:trailers:api",
     ":data:trailers:implementation",
     ":data:trailers:testing",
+    ":data:upcomingshows:api",
+    ":data:upcomingshows:implementation",
     ":feature:discover",
     ":feature:library",
     ":feature:more-shows",
