@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.discover
 
+import com.thomaskioko.tvmaniac.core.db.PagedTopRatedShows
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.TrendingShows
 import com.thomaskioko.tvmaniac.core.db.UpcomingShows
@@ -47,10 +48,19 @@ fun List<UpcomingShows>?.toUpcomingShowList(): ImmutableList<DiscoverShow> =
         )
     }?.toImmutableList() ?: persistentListOf()
 
+fun List<PagedTopRatedShows>?.toTopRatedList(): ImmutableList<DiscoverShow> =
+    this?.map {
+        DiscoverShow(
+            tmdbId = it.id.id,
+            posterImageUrl = it.poster_path,
+            backdropImageUrl = it.backdrop_path,
+        )
+    }?.toImmutableList() ?: persistentListOf()
+
 fun getErrorMessage(
-    trending: Either<Failure, List<ShowsByCategory>>,
+    topRated: Either<Failure, List<PagedTopRatedShows>>,
     popular: Either<Failure, List<ShowsByCategory>>,
     upcomingShows: Either<Failure, List<UpcomingShows>>,
     featuredShows: Either<Failure, List<TrendingShows>>,
-) = trending.getErrorOrNull()?.errorMessage ?: popular.getErrorOrNull()?.errorMessage
+) = topRated.getErrorOrNull()?.errorMessage ?: popular.getErrorOrNull()?.errorMessage
     ?: upcomingShows.getErrorOrNull()?.errorMessage ?: featuredShows.getErrorOrNull()?.errorMessage

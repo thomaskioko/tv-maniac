@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.core.db.Show_category
 import com.thomaskioko.tvmaniac.core.db.Show_image
 import com.thomaskioko.tvmaniac.core.db.Show_networks
 import com.thomaskioko.tvmaniac.core.db.Similar_shows
+import com.thomaskioko.tvmaniac.core.db.Toprated_shows
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.db.Trending_shows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
@@ -86,6 +87,10 @@ interface DatabaseComponent : DatabasePlatformComponent {
             network_idAdapter = IdAdapter(),
         ),
         upcoming_showsAdapter = Upcoming_shows.Adapter(
+            idAdapter = IdAdapter(),
+            pageAdapter = IdAdapter(),
+        ),
+        toprated_showsAdapter = Toprated_shows.Adapter(
             idAdapter = IdAdapter(),
             pageAdapter = IdAdapter(),
         ),

@@ -12,7 +12,7 @@ data class ErrorState(val errorMessage: String?) : DiscoverState
 
 data class DataLoaded(
     val featuredShows: ImmutableList<DiscoverShow> = persistentListOf(),
-    val trendingShows: ImmutableList<TvShow> = persistentListOf(),
+    val topRatedShows: ImmutableList<DiscoverShow> = persistentListOf(),
     val popularShows: ImmutableList<TvShow> = persistentListOf(),
     val upcomingShows: ImmutableList<DiscoverShow> = persistentListOf(),
     val trendingToday: ImmutableList<DiscoverShow> = persistentListOf(),

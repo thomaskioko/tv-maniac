@@ -18,6 +18,7 @@ import com.thomaskioko.tvmaniac.showimages.implementation.ShowImagesComponent
 import com.thomaskioko.tvmaniac.shows.implementation.DiscoverComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbComponent
+import com.thomaskioko.tvmaniac.toprated.data.implementation.TopRatedShowsComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthenticationComponent
 import com.thomaskioko.tvmaniac.util.inject.LoggingComponent
 import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
@@ -40,6 +41,7 @@ abstract class SharedComponent :
     SimilarShowsComponent,
     StatsComponent,
     TmdbComponent,
+    TopRatedShowsComponent,
     TrailerComponent,
     TraktAuthenticationComponent,
     TraktComponent,

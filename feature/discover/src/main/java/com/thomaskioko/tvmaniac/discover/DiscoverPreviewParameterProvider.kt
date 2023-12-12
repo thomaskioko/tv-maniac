@@ -36,7 +36,7 @@ val discoverShow = DiscoverShow(
 
 val discoverContentSuccess = DataLoaded(
     featuredShows = createDiscoverShowList(5),
-    trendingShows = createShowList(),
+    topRatedShows = createDiscoverShowList(),
     popularShows = createShowList(),
     upcomingShows = createDiscoverShowList(),
 )

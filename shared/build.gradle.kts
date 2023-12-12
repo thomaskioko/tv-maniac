@@ -96,6 +96,8 @@ kotlin {
                 api(projects.data.shows.implementation)
                 api(projects.data.similar.api)
                 api(projects.data.similar.implementation)
+                api(projects.data.topratedshows.api)
+                api(projects.data.topratedshows.implementation)
                 api(projects.data.trailers.api)
                 api(projects.data.trailers.implementation)
                 api(projects.data.trendingshows.api)

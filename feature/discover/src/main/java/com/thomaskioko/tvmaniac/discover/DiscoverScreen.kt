@@ -124,7 +124,7 @@ internal fun DiscoverScreen(
             modifier = modifier,
             pagerState = pagerState,
             snackBarHostState = snackBarHostState,
-            trendingShows = state.trendingShows,
+            topRatedShows = state.topRatedShows,
             popularShows = state.popularShows,
             upcomingShows = state.upcomingShows,
             featuredShows = state.featuredShows,
@@ -145,7 +145,7 @@ internal fun DiscoverScreen(
 
 @Composable
 private fun DiscoverScrollContent(
-    trendingShows: ImmutableList<TvShow>?,
+    topRatedShows: ImmutableList<DiscoverShow>,
     popularShows: ImmutableList<TvShow>?,
     upcomingShows: ImmutableList<DiscoverShow>,
     featuredShows: ImmutableList<DiscoverShow>?,
@@ -206,15 +206,13 @@ private fun DiscoverScrollContent(
                 )
             }
 
-            trendingShows?.let {
-                item {
-                    RowContent(
-                        category = Category.TRENDING,
-                        tvShows = trendingShows,
-                        onItemClicked = { onAction(ShowClicked(it)) },
-                        onLabelClicked = { onAction(LoadCategoryShows(it)) },
-                    )
-                }
+            item {
+                HorizontalRowContent(
+                    category = Category.TOP_RATED,
+                    tvShows = topRatedShows,
+                    onItemClicked = { onAction(ShowClicked(it)) },
+                    onLabelClicked = { onAction(LoadCategoryShows(it)) },
+                )
             }
 
             popularShows?.let {

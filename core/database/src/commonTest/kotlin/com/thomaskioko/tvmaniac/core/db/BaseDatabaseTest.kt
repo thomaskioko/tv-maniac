@@ -77,6 +77,10 @@ abstract class BaseDatabaseTest {
             idAdapter = IdAdapter(),
             pageAdapter = IdAdapter(),
         ),
+        toprated_showsAdapter = Toprated_shows.Adapter(
+            idAdapter = IdAdapter(),
+            pageAdapter = IdAdapter(),
+        ),
     )
 
     @AfterTest

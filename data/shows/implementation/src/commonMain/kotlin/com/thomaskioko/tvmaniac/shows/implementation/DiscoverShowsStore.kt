@@ -27,7 +27,7 @@ class DiscoverShowsStore(
                 val apiResponse = remoteDataSource.getPopularShows()
                 mapper.showResponseToCacheList(category, apiResponse)
             }
-            Category.TRENDING -> {
+            Category.TOP_RATED -> {
                 val apiResponse = remoteDataSource.getTrendingShows()
                 mapper.responseToEntityList(category, apiResponse)
             }

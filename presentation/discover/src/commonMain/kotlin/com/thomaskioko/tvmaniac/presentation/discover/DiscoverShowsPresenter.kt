@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
+import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
 import com.thomaskioko.tvmaniac.util.decompose.asValue
 import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,7 @@ class DiscoverShowsPresenter(
     private val discoverRepository: DiscoverRepository,
     private val trendingShowsRepository: TrendingShowsRepository,
     private val upcomingShowsRepository: UpcomingShowsRepository,
+    private val topRatedShowsRepository: TopRatedShowsRepository,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -63,7 +65,7 @@ class DiscoverShowsPresenter(
     }
 
     private suspend fun fetchShowData() {
-        val trendingResponse = discoverRepository.fetchShows(Category.TRENDING)
+        val topRatedResponse = topRatedShowsRepository.fetchTopRatedShows()
         val popularResponse = discoverRepository.fetchShows(Category.POPULAR)
         val upcomingResponse = upcomingShowsRepository.fetchUpcomingShows()
         val featuredResponse = trendingShowsRepository.fetchFeaturedTrendingShows()
@@ -71,7 +73,7 @@ class DiscoverShowsPresenter(
 
         _state.update {
             DataLoaded(
-                trendingShows = trendingResponse.toTvShowList(),
+                topRatedShows = topRatedResponse.toTopRatedList(),
                 popularShows = popularResponse.toTvShowList(),
                 upcomingShows = upcomingResponse.toUpcomingShowList(),
                 featuredShows = featuredResponse.toDiscoverShowList(),
@@ -87,14 +89,14 @@ class DiscoverShowsPresenter(
     private suspend fun observeShowData() {
         combine(
             trendingShowsRepository.observeFeaturedTrendingShows(),
-            discoverRepository.observeShowCategory(Category.TRENDING),
+            topRatedShowsRepository.observeTopRatedShows(),
             discoverRepository.observeShowCategory(Category.POPULAR),
             upcomingShowsRepository.observeUpcomingShows(),
             trendingShowsRepository.observeTrendingShows(),
         ) { recommended, trending, popular, upcomingShows, trendingToday ->
             DataLoaded(
                 featuredShows = recommended.getOrNull().toDiscoverShowList(),
-                trendingShows = trending.getOrNull().toTvShowList(),
+                topRatedShows = trending.getOrNull().toTopRatedList(),
                 popularShows = popular.getOrNull().toTvShowList(),
                 upcomingShows = upcomingShows.getOrNull().toUpcomingShowList(),
                 trendingToday = trendingToday.getOrNull().toDiscoverShowList(),
@@ -106,7 +108,7 @@ class DiscoverShowsPresenter(
                 _state.update { state ->
                     (state as? DataLoaded)?.copy(
                         errorMessage = it.errorMessage,
-                        trendingShows = it.trendingShows,
+                        topRatedShows = it.topRatedShows,
                         popularShows = it.popularShows,
                         upcomingShows = it.upcomingShows,
                         featuredShows = it.featuredShows,

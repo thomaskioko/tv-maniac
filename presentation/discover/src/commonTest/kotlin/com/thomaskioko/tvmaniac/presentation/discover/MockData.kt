@@ -35,7 +35,7 @@ val discoverShow = DiscoverShow(
 
 val discoverContent = DataLoaded(
     featuredShows = listOf(discoverShow).toImmutableList(),
-    trendingShows = listOf(show).toImmutableList(),
+    topRatedShows = listOf(discoverShow).toImmutableList(),
     popularShows = listOf(show).toImmutableList(),
     upcomingShows = listOf(discoverShow).toImmutableList(),
 )
