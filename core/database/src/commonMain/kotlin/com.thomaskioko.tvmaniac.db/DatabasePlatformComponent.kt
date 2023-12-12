@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.db.Episode_image
 import com.thomaskioko.tvmaniac.core.db.Last_requests
 import com.thomaskioko.tvmaniac.core.db.Library
 import com.thomaskioko.tvmaniac.core.db.Networks
+import com.thomaskioko.tvmaniac.core.db.Popular_shows
 import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.core.db.Show
 import com.thomaskioko.tvmaniac.core.db.Show_category
@@ -91,6 +92,10 @@ interface DatabaseComponent : DatabasePlatformComponent {
             pageAdapter = IdAdapter(),
         ),
         toprated_showsAdapter = Toprated_shows.Adapter(
+            idAdapter = IdAdapter(),
+            pageAdapter = IdAdapter(),
+        ),
+        popular_showsAdapter = Popular_shows.Adapter(
             idAdapter = IdAdapter(),
             pageAdapter = IdAdapter(),
         ),

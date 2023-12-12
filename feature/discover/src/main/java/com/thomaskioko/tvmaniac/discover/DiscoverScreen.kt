@@ -77,7 +77,6 @@ import com.thomaskioko.tvmaniac.presentation.discover.RetryLoading
 import com.thomaskioko.tvmaniac.presentation.discover.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.discover.SnackBarDismissed
 import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
-import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -146,7 +145,7 @@ internal fun DiscoverScreen(
 @Composable
 private fun DiscoverScrollContent(
     topRatedShows: ImmutableList<DiscoverShow>,
-    popularShows: ImmutableList<TvShow>?,
+    popularShows: ImmutableList<DiscoverShow>,
     upcomingShows: ImmutableList<DiscoverShow>,
     featuredShows: ImmutableList<DiscoverShow>?,
     trendingToday: ImmutableList<DiscoverShow>,
@@ -208,22 +207,20 @@ private fun DiscoverScrollContent(
 
             item {
                 HorizontalRowContent(
-                    category = Category.TOP_RATED,
-                    tvShows = topRatedShows,
+                    category = Category.POPULAR,
+                    tvShows = popularShows,
                     onItemClicked = { onAction(ShowClicked(it)) },
                     onLabelClicked = { onAction(LoadCategoryShows(it)) },
                 )
             }
 
-            popularShows?.let {
-                item {
-                    RowContent(
-                        category = Category.POPULAR,
-                        tvShows = popularShows,
-                        onItemClicked = { onAction(ShowClicked(it)) },
-                        onLabelClicked = { onAction(LoadCategoryShows(it)) },
-                    )
-                }
+            item {
+                HorizontalRowContent(
+                    category = Category.TOP_RATED,
+                    tvShows = topRatedShows,
+                    onItemClicked = { onAction(ShowClicked(it)) },
+                    onLabelClicked = { onAction(LoadCategoryShows(it)) },
+                )
             }
         }
 
@@ -414,47 +411,6 @@ private fun HorizontalRowContent(
                         posterImageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,
                         onClick = { onItemClicked(tvShow.tmdbId) },
-                        modifier = Modifier
-                            .animateItemPlacement(),
-                    )
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
-@Composable
-private fun RowContent(
-    category: Category,
-    tvShows: ImmutableList<TvShow>,
-    onItemClicked: (Long) -> Unit,
-    onLabelClicked: (Long) -> Unit,
-) {
-    AnimatedVisibility(visible = tvShows.isNotEmpty()) {
-        Column {
-            BoxTextItems(
-                title = category.title,
-                label = stringResource(id = R.string.str_more),
-                onMoreClicked = { onLabelClicked(category.id) },
-            )
-
-            val lazyListState = rememberLazyListState()
-
-            LazyRow(
-                state = lazyListState,
-                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-            ) {
-                itemsIndexed(tvShows) { index, tvShow ->
-
-                    val value = if (index == 0) 16 else 8
-
-                    Spacer(modifier = Modifier.width(value.dp))
-
-                    TvPosterCard(
-                        posterImageUrl = tvShow.posterImageUrl,
-                        title = tvShow.title,
-                        onClick = { onItemClicked(tvShow.traktId) },
                         modifier = Modifier
                             .animateItemPlacement(),
                     )

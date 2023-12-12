@@ -2,10 +2,9 @@ package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.category.api.model.Category
+import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
-import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
 import com.thomaskioko.tvmaniac.util.decompose.asValue
 import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
@@ -29,10 +28,10 @@ class DiscoverShowsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
     @Assisted private val onNavigateToMore: (Long) -> Unit,
-    private val discoverRepository: DiscoverRepository,
     private val trendingShowsRepository: TrendingShowsRepository,
     private val upcomingShowsRepository: UpcomingShowsRepository,
     private val topRatedShowsRepository: TopRatedShowsRepository,
+    private val popularShowsRepository: PopularShowsRepository,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -66,7 +65,7 @@ class DiscoverShowsPresenter(
 
     private suspend fun fetchShowData() {
         val topRatedResponse = topRatedShowsRepository.fetchTopRatedShows()
-        val popularResponse = discoverRepository.fetchShows(Category.POPULAR)
+        val popularResponse = popularShowsRepository.fetchPopularShows()
         val upcomingResponse = upcomingShowsRepository.fetchUpcomingShows()
         val featuredResponse = trendingShowsRepository.fetchFeaturedTrendingShows()
         val trendingShows = trendingShowsRepository.fetchTrendingShows()
@@ -74,7 +73,7 @@ class DiscoverShowsPresenter(
         _state.update {
             DataLoaded(
                 topRatedShows = topRatedResponse.toTopRatedList(),
-                popularShows = popularResponse.toTvShowList(),
+                popularShows = popularResponse.toPopularList(),
                 upcomingShows = upcomingResponse.toUpcomingShowList(),
                 featuredShows = featuredResponse.toDiscoverShowList(),
                 trendingToday = trendingShows.toDiscoverShowList(),
@@ -90,14 +89,14 @@ class DiscoverShowsPresenter(
         combine(
             trendingShowsRepository.observeFeaturedTrendingShows(),
             topRatedShowsRepository.observeTopRatedShows(),
-            discoverRepository.observeShowCategory(Category.POPULAR),
+            popularShowsRepository.observePopularShows(),
             upcomingShowsRepository.observeUpcomingShows(),
             trendingShowsRepository.observeTrendingShows(),
         ) { recommended, trending, popular, upcomingShows, trendingToday ->
             DataLoaded(
                 featuredShows = recommended.getOrNull().toDiscoverShowList(),
                 topRatedShows = trending.getOrNull().toTopRatedList(),
-                popularShows = popular.getOrNull().toTvShowList(),
+                popularShows = popular.getOrNull().toPopularList(),
                 upcomingShows = upcomingShows.getOrNull().toUpcomingShowList(),
                 trendingToday = trendingToday.getOrNull().toDiscoverShowList(),
                 errorMessage = getErrorMessage(trending, popular, upcomingShows, recommended),

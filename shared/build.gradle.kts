@@ -79,6 +79,8 @@ kotlin {
                 api(projects.data.episodes.implementation)
                 api(projects.data.library.api)
                 api(projects.data.library.implementation)
+                api(projects.data.popularshows.api)
+                api(projects.data.popularshows.implementation)
                 api(projects.data.profile.api)
                 api(projects.data.profile.implementation)
                 api(projects.data.profilestats.api)
