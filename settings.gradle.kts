@@ -47,6 +47,8 @@ include(
     ":data:library:api",
     ":data:library:implementation",
     ":data:library:testing",
+    ":data:popularshows:api",
+    ":data:popularshows:implementation",
     ":data:profile:api",
     ":data:profile:implementation",
     ":data:profile:testing",
