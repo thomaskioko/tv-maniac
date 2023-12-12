@@ -37,7 +37,7 @@ val discoverContent = DataLoaded(
     featuredShows = listOf(discoverShow).toImmutableList(),
     trendingShows = listOf(show).toImmutableList(),
     popularShows = listOf(show).toImmutableList(),
-    anticipatedShows = listOf(show).toImmutableList(),
+    upcomingShows = listOf(discoverShow).toImmutableList(),
 )
 
 fun categoryResult(categoryId: Long) = listOf(

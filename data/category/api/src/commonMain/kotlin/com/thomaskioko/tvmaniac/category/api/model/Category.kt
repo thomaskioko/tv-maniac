@@ -6,14 +6,14 @@ enum class Category(
 ) {
     TRENDING(1, "Being Watched"),
     POPULAR(2, "Popular"),
-    ANTICIPATED(3, "Anticipated"),
+    UPCOMING(3, "Upcoming"),
     TRENDING_TODAY(4, "Trending Today"),
 }
 
 fun Long.getCategory(): Category = when (this) {
     Category.POPULAR.id -> Category.POPULAR
     Category.TRENDING.id -> Category.TRENDING
-    Category.ANTICIPATED.id -> Category.ANTICIPATED
+    Category.UPCOMING.id -> Category.UPCOMING
     Category.TRENDING_TODAY.id -> Category.TRENDING_TODAY
     else -> Category.TRENDING
 }

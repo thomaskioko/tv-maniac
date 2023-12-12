@@ -31,7 +31,7 @@ class DiscoverShowsStore(
                 val apiResponse = remoteDataSource.getTrendingShows()
                 mapper.responseToEntityList(category, apiResponse)
             }
-            Category.ANTICIPATED -> {
+            Category.UPCOMING -> {
                 val apiResponse = remoteDataSource.getAnticipatedShows()
                 mapper.responseToEntityList(category, apiResponse)
             }

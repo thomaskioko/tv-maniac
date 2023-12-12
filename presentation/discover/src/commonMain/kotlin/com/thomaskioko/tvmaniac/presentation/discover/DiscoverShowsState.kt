@@ -14,7 +14,7 @@ data class DataLoaded(
     val featuredShows: ImmutableList<DiscoverShow> = persistentListOf(),
     val trendingShows: ImmutableList<TvShow> = persistentListOf(),
     val popularShows: ImmutableList<TvShow> = persistentListOf(),
-    val anticipatedShows: ImmutableList<TvShow> = persistentListOf(),
+    val upcomingShows: ImmutableList<DiscoverShow> = persistentListOf(),
     val trendingToday: ImmutableList<DiscoverShow> = persistentListOf(),
     val errorMessage: String? = null,
 ) : DiscoverState

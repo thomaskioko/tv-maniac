@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.core.db.TrendingShows
+import com.thomaskioko.tvmaniac.core.db.UpcomingShows
 import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
 import com.thomaskioko.tvmaniac.util.model.Either
@@ -29,18 +30,27 @@ fun ShowsByCategory.toTvShow(): TvShow = TvShow(
 )
 
 fun List<TrendingShows>?.toDiscoverShowList(): ImmutableList<DiscoverShow> =
-    this?.map { it.toDiscoverShow() }?.toImmutableList() ?: persistentListOf()
+    this?.map {
+        DiscoverShow(
+            tmdbId = it.id.id,
+            posterImageUrl = it.poster_path,
+            backdropImageUrl = it.backdrop_path,
+        )
+    }?.toImmutableList() ?: persistentListOf()
 
-fun TrendingShows.toDiscoverShow(): DiscoverShow = DiscoverShow(
-    tmdbId = id.id,
-    posterImageUrl = poster_path,
-    backdropImageUrl = backdrop_path,
-)
+fun List<UpcomingShows>?.toUpcomingShowList(): ImmutableList<DiscoverShow> =
+    this?.map {
+        DiscoverShow(
+            tmdbId = it.id.id,
+            posterImageUrl = it.poster_path,
+            backdropImageUrl = it.backdrop_path,
+        )
+    }?.toImmutableList() ?: persistentListOf()
 
 fun getErrorMessage(
     trending: Either<Failure, List<ShowsByCategory>>,
     popular: Either<Failure, List<ShowsByCategory>>,
-    anticipated: Either<Failure, List<ShowsByCategory>>,
+    upcomingShows: Either<Failure, List<UpcomingShows>>,
     featuredShows: Either<Failure, List<TrendingShows>>,
 ) = trending.getErrorOrNull()?.errorMessage ?: popular.getErrorOrNull()?.errorMessage
-    ?: anticipated.getErrorOrNull()?.errorMessage ?: featuredShows.getErrorOrNull()?.errorMessage
+    ?: upcomingShows.getErrorOrNull()?.errorMessage ?: featuredShows.getErrorOrNull()?.errorMessage

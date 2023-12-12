@@ -38,7 +38,7 @@ val discoverContentSuccess = DataLoaded(
     featuredShows = createDiscoverShowList(5),
     trendingShows = createShowList(),
     popularShows = createShowList(),
-    anticipatedShows = createShowList(),
+    upcomingShows = createDiscoverShowList(),
 )
 
 private fun createDiscoverShowList(size: Int = 20) = List(size) { discoverShow }.toImmutableList()

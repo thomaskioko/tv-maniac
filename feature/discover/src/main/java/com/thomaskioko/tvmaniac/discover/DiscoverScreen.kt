@@ -126,7 +126,7 @@ internal fun DiscoverScreen(
             snackBarHostState = snackBarHostState,
             trendingShows = state.trendingShows,
             popularShows = state.popularShows,
-            anticipatedShows = state.anticipatedShows,
+            upcomingShows = state.upcomingShows,
             featuredShows = state.featuredShows,
             trendingToday = state.trendingToday,
             errorMessage = state.errorMessage,
@@ -147,7 +147,7 @@ internal fun DiscoverScreen(
 private fun DiscoverScrollContent(
     trendingShows: ImmutableList<TvShow>?,
     popularShows: ImmutableList<TvShow>?,
-    anticipatedShows: ImmutableList<TvShow>?,
+    upcomingShows: ImmutableList<DiscoverShow>,
     featuredShows: ImmutableList<DiscoverShow>?,
     trendingToday: ImmutableList<DiscoverShow>,
     errorMessage: String?,
@@ -190,6 +190,15 @@ private fun DiscoverScrollContent(
 
             item {
                 HorizontalRowContent(
+                    category = Category.UPCOMING,
+                    tvShows = upcomingShows,
+                    onItemClicked = { onAction(ShowClicked(it)) },
+                    onLabelClicked = { onAction(LoadCategoryShows(it)) },
+                )
+            }
+
+            item {
+                HorizontalRowContent(
                     category = Category.TRENDING_TODAY,
                     tvShows = trendingToday,
                     onItemClicked = { onAction(ShowClicked(it)) },
@@ -202,17 +211,6 @@ private fun DiscoverScrollContent(
                     RowContent(
                         category = Category.TRENDING,
                         tvShows = trendingShows,
-                        onItemClicked = { onAction(ShowClicked(it)) },
-                        onLabelClicked = { onAction(LoadCategoryShows(it)) },
-                    )
-                }
-            }
-
-            anticipatedShows?.let {
-                item {
-                    RowContent(
-                        category = Category.ANTICIPATED,
-                        tvShows = anticipatedShows,
                         onItemClicked = { onAction(ShowClicked(it)) },
                         onLabelClicked = { onAction(LoadCategoryShows(it)) },
                     )

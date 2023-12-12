@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.shared
 import com.thomaskioko.trakt.service.implementation.inject.TraktComponent
 import com.thomaskioko.tvmaniac.data.category.implementation.CategoryComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
+import com.thomaskioko.tvmaniac.data.upcomingshows.implementation.UpcomingShowsComponent
 import com.thomaskioko.tvmaniac.datastore.implementation.DataStoreComponent
 import com.thomaskioko.tvmaniac.db.DatabaseComponent
 import com.thomaskioko.tvmaniac.discover.implementation.TrendingShowsComponent
@@ -42,5 +43,6 @@ abstract class SharedComponent :
     TrailerComponent,
     TraktAuthenticationComponent,
     TraktComponent,
+    TrendingShowsComponent,
     UtilPlatformComponent,
-    TrendingShowsComponent
+    UpcomingShowsComponent

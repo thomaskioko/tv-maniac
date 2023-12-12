@@ -100,6 +100,8 @@ kotlin {
                 api(projects.data.trailers.implementation)
                 api(projects.data.trendingshows.api)
                 api(projects.data.trendingshows.implementation)
+                api(projects.data.upcomingshows.api)
+                api(projects.data.upcomingshows.implementation)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
