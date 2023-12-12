@@ -13,14 +13,6 @@ interface DiscoverRepository {
 
     fun observeShow(traktId: Long): Flow<Either<Failure, ShowById>>
 
-    fun observeShowCategory(
-        category: Category,
-        duration: Duration = 3.days,
-    ): Flow<Either<Failure, List<ShowsByCategory>>>
-
-    suspend fun fetchDiscoverShows()
-
     suspend fun getShowById(traktId: Long): ShowById
 
-    suspend fun fetchShows(category: Category): List<ShowsByCategory>
 }

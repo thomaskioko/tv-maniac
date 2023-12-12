@@ -48,18 +48,6 @@ class ShowDaoImpl(
             .mapToOne(dispatchers.io)
     }
 
-    override fun observeCachedShows(categoryId: Long): Flow<List<ShowsByCategory>> {
-        return database.show_categoryQueries.showsByCategory(Id(categoryId))
-            .asFlow()
-            .mapToList(dispatchers.io)
-    }
-
-    override fun observeShows(): Flow<List<Shows>> {
-        return database.showQueries.shows()
-            .asFlow()
-            .mapToList(dispatchers.io)
-    }
-
     override fun getTvShow(traktId: Long): ShowById =
         database.showQueries.showById(Id(traktId))
             .executeAsOne()

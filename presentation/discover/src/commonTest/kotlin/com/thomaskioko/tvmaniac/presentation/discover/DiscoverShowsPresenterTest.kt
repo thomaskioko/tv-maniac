@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.thomaskioko.tvmaniac.shows.testing.FakeDiscoverRepository
-import com.thomaskioko.tvmaniac.tmdb.testing.FakeShowImagesRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,7 +19,6 @@ internal class DiscoverShowsPresenterTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val discoverRepository = FakeDiscoverRepository()
-    private val imagesRepository = FakeShowImagesRepository()
 
     private lateinit var presenter: DiscoverShowsPresenter
 

@@ -1,12 +1,6 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
-import com.thomaskioko.tvmaniac.category.api.model.Category
-import com.thomaskioko.tvmaniac.category.api.model.Category.POPULAR
-import com.thomaskioko.tvmaniac.category.api.model.Category.TOP_RATED
-import com.thomaskioko.tvmaniac.category.api.model.Category.TRENDING_TODAY
-import com.thomaskioko.tvmaniac.category.api.model.Category.UPCOMING
 import com.thomaskioko.tvmaniac.core.db.ShowById
-import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import com.thomaskioko.tvmaniac.util.extensions.mapResult
@@ -19,14 +13,11 @@ import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.get
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class DiscoverRepositoryImpl(
     private val showStore: ShowStore,
-    private val discoverShowsStore: DiscoverShowsStore,
     private val requestManagerRepository: RequestManagerRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : DiscoverRepository {
@@ -44,31 +35,6 @@ class DiscoverRepositoryImpl(
         ),
     )
         .mapResult()
-
-    override suspend fun fetchShows(category: Category): List<ShowsByCategory> =
-        discoverShowsStore.get(key = category)
-
-    override fun observeShowCategory(
-        category: Category,
-        duration: Duration,
-    ): Flow<Either<Failure, List<ShowsByCategory>>> = discoverShowsStore.stream(
-        StoreReadRequest.cached(
-            key = category,
-            refresh = requestManagerRepository.isRequestExpired(
-                entityId = category.id,
-                requestType = category.title,
-                threshold = duration,
-            ),
-        ),
-    )
-        .mapResult()
         .flowOn(dispatchers.io)
 
-    override suspend fun fetchDiscoverShows() {
-        val categories = listOf(TOP_RATED, POPULAR, UPCOMING, TRENDING_TODAY)
-
-        for (category in categories) {
-            discoverShowsStore.get(category)
-        }
-    }
 }

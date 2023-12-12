@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.shows.testing
 
-import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.core.db.ShowById
 import com.thomaskioko.tvmaniac.core.db.ShowsByCategory
 import com.thomaskioko.tvmaniac.db.Id
@@ -10,7 +9,6 @@ import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlin.time.Duration
 
 class FakeDiscoverRepository : DiscoverRepository {
 
@@ -41,16 +39,6 @@ class FakeDiscoverRepository : DiscoverRepository {
 
     override fun observeShow(traktId: Long): Flow<Either<Failure, ShowById>> =
         showByIdResult.receiveAsFlow()
-
-    override fun observeShowCategory(
-        category: Category,
-        duration: Duration,
-    ): Flow<Either<Failure, List<ShowsByCategory>>> = updatedShowCategoryResult.receiveAsFlow()
-
-    override suspend fun fetchDiscoverShows() {}
-
-    override suspend fun fetchShows(category: Category): List<ShowsByCategory> =
-        showCategoryResult.receive()
 
     override suspend fun getShowById(traktId: Long): ShowById = selectedShow
 }

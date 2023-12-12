@@ -14,10 +14,6 @@ interface ShowsDao {
 
     fun observeTvShow(showId: Long): Flow<ShowById>
 
-    fun observeCachedShows(categoryId: Long): Flow<List<ShowsByCategory>>
-
-    fun observeShows(): Flow<List<Shows>>
-
     fun getTvShow(traktId: Long): ShowById
 
     fun deleteTvShows()
