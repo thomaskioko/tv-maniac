@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 
 const val DEFAULT_API_PAGE: Long = 1
-private const val DEFAULT_SORT_ORDER: String = "popularity.desc"
+const val DEFAULT_SORT_ORDER: String = "popularity.desc"
 
 interface TmdbShowsNetworkDataSource {
 
@@ -77,8 +77,8 @@ interface TmdbShowsNetworkDataSource {
      */
     suspend fun getUpComingShows(
         page: Long,
-        firstAirDate: Int,
-        lastAirDate: Int,
+        firstAirDate: String,
+        lastAirDate: String,
         sortBy: String = DEFAULT_SORT_ORDER,
     ): ApiResponse<TmdbShowResult>
 }

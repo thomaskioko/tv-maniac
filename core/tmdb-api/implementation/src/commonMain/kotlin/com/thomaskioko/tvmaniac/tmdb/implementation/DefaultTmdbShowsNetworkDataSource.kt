@@ -79,8 +79,8 @@ class DefaultTmdbShowsNetworkDataSource(
 
     override suspend fun getUpComingShows(
         page: Long,
-        firstAirDate: Int,
-        lastAirDate: Int,
+        firstAirDate: String,
+        lastAirDate: String,
         sortBy: String,
     ): ApiResponse<TmdbShowResult> = httpClient.safeRequest {
         url {
