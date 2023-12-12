@@ -7,8 +7,8 @@ import com.thomaskioko.tvmaniac.profile.api.ProfileDao
 import com.thomaskioko.tvmaniac.shows.api.LibraryDao
 import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
-import com.thomaskioko.tvmaniac.util.DateFormatter
 import com.thomaskioko.tvmaniac.util.NetworkExceptionHandler
+import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.model.DefaultError
 import com.thomaskioko.tvmaniac.util.model.Either
@@ -25,7 +25,7 @@ class LibraryRepositoryImpl(
     private val remoteDataSource: TraktListRemoteDataSource,
     private val libraryDao: LibraryDao,
     private val profileDao: ProfileDao,
-    private val dateFormatter: DateFormatter,
+    private val dateFormatter: PlatformDateFormatter,
     private val exceptionHandler: NetworkExceptionHandler,
     private val dispatchers: AppCoroutineDispatchers,
 ) : LibraryRepository {
