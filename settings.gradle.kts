@@ -72,6 +72,8 @@ include(
     ":data:similar:testing",
     ":data:trendingshows:api",
     ":data:trendingshows:implementation",
+    ":data:topratedshows:api",
+    ":data:topratedshows:implementation",
     ":data:trailers:api",
     ":data:trailers:implementation",
     ":data:trailers:testing",
