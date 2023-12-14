@@ -53,7 +53,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
-import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -71,7 +70,6 @@ import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowAction
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
-import com.thomaskioko.tvmaniac.presentation.discover.LoadCategoryShows
 import com.thomaskioko.tvmaniac.presentation.discover.Loading
 import com.thomaskioko.tvmaniac.presentation.discover.RetryLoading
 import com.thomaskioko.tvmaniac.presentation.discover.ShowClicked
@@ -189,37 +187,45 @@ private fun DiscoverScrollContent(
 
             item {
                 HorizontalRowContent(
-                    category = Category.UPCOMING,
+                    category = stringResource(id = R.string.title_category_upcoming),
                     tvShows = upcomingShows,
                     onItemClicked = { onAction(ShowClicked(it)) },
-                    onLabelClicked = { onAction(LoadCategoryShows(it)) },
+                    onMoreClicked = {
+                        // Add Navigation
+                    },
                 )
             }
 
             item {
                 HorizontalRowContent(
-                    category = Category.TRENDING_TODAY,
+                    category = stringResource(id = R.string.title_category_trending_today),
                     tvShows = trendingToday,
                     onItemClicked = { onAction(ShowClicked(it)) },
-                    onLabelClicked = { onAction(LoadCategoryShows(it)) },
+                    onMoreClicked = {
+                        // Add Navigation
+                    },
                 )
             }
 
             item {
                 HorizontalRowContent(
-                    category = Category.POPULAR,
+                    category = stringResource(id = R.string.title_category_popular),
                     tvShows = popularShows,
                     onItemClicked = { onAction(ShowClicked(it)) },
-                    onLabelClicked = { onAction(LoadCategoryShows(it)) },
+                    onMoreClicked = {
+                        // Add Navigation
+                    },
                 )
             }
 
             item {
                 HorizontalRowContent(
-                    category = Category.TOP_RATED,
+                    category = stringResource(id = R.string.title_category_top_rated),
                     tvShows = topRatedShows,
                     onItemClicked = { onAction(ShowClicked(it)) },
-                    onLabelClicked = { onAction(LoadCategoryShows(it)) },
+                    onMoreClicked = {
+                        // Add Navigation
+                    },
                 )
             }
         }
@@ -318,9 +324,9 @@ fun HorizontalPagerItem(
                 modifier = Modifier
                     .graphicsLayer {
                         val pageOffset = (
-                            (pagerState.currentPage - pageNumber) + pagerState
-                                .currentPageOffsetFraction
-                            ).absoluteValue
+                                (pagerState.currentPage - pageNumber) + pagerState
+                                    .currentPageOffsetFraction
+                                ).absoluteValue
 
                         // We animate the scaleX + scaleY, between 85% and 100%
                         lerp(
@@ -382,17 +388,17 @@ fun HorizontalPagerItem(
 @OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun HorizontalRowContent(
-    category: Category,
+    category: String,
     tvShows: ImmutableList<DiscoverShow>,
     onItemClicked: (Long) -> Unit,
-    onLabelClicked: (Long) -> Unit,
+    onMoreClicked: () -> Unit,
 ) {
     AnimatedVisibility(visible = tvShows.isNotEmpty()) {
         Column {
             BoxTextItems(
-                title = category.title,
+                title = category,
                 label = stringResource(id = R.string.str_more),
-                onMoreClicked = { onLabelClicked(category.id) },
+                onMoreClicked = onMoreClicked,
             )
 
             val lazyListState = rememberLazyListState()

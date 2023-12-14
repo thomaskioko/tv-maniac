@@ -116,7 +116,7 @@ private fun LibraryGridContent(
                 .animateItemPlacement(),
             posterImageUrl = show.posterImageUrl,
             title = show.title,
-            onClick = { onItemClicked(show.traktId) },
+            onClick = { onItemClicked(show.tmdbId) },
         )
     }
 }

@@ -9,7 +9,6 @@ import kotlinx.collections.immutable.toPersistentList
 
 val list = List(6) {
     LibraryItem(
-        traktId = 84958,
         tmdbId = 84958,
         title = "Loki",
         posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",

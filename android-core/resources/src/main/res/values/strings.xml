@@ -41,6 +41,10 @@
 
     <string name="title_settings">Settings</string>
     <string name="title_all_seasons">All Seasons</string>
+    <string name="title_category_upcoming">Upcoming</string>
+    <string name="title_category_trending_today">Trending Today</string>
+    <string name="title_category_popular">Popular</string>
+    <string name="title_category_top_rated">Top Rated</string>
     <string name="title_all_episodes">All Episodes</string>
     <string name="title_watch_next">Watch Next</string>
     <string name="status_connected">Back Online!</string>

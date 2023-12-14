@@ -3,7 +3,7 @@ package com.thomaskioko.showdetails
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import kotlinx.collections.immutable.persistentListOf
 
@@ -29,8 +29,7 @@ val trailerLoaded = ShowDetailsState.TrailersContent(
 )
 
 private val showDetailsLoaded = ShowDetailsState(
-    show = Show(
-        traktId = 84958,
+    showDetails = ShowDetails(
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
             "an alternate version of Loki is brought to the mysterious Time Variance " +
@@ -61,15 +60,15 @@ private val showDetailsLoaded = ShowDetailsState(
     trailersContent = trailerLoaded,
     similarShowsContent = ShowDetailsState.SimilarShowsContent(
         isLoading = false,
-        similarShows = persistentListOf(),
+        similarSimilarShows = persistentListOf(),
         errorMessage = null,
     ),
     errorMessage = null,
 )
 
 val showList = List(4) {
-    Show(
-        traktId = 84958,
+    ShowDetails(
+        tmdbId = 84958,
         title = "Loki",
         overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
             "an alternate version of Loki is brought to the mysterious Time Variance " +
