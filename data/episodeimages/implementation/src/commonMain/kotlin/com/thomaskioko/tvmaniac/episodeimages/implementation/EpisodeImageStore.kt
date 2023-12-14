@@ -32,10 +32,10 @@ class EpisodeImageStore(
 ) : Store<Long, List<EpisodeImage>> by StoreBuilder.from(
     fetcher = Fetcher.of { id ->
         episodeImageDao.getEpisodeImage(id)
-            .filter { it.tmdb_id != null && it.image_url == null }
+            .filter { it.id != null && it.image_url == null }
             .map { episodeArt ->
                 val apiResponse = tmdbNetworkDataSource.getEpisodeDetails(
-                    tmdbShow = episodeArt.tmdb_id!!,
+                    tmdbShow = episodeArt.id?.id!!,
                     ssnNumber = episodeArt.season_number!!,
                     epNumber = episodeArt.episode_number.toLong(),
                 )
@@ -43,8 +43,8 @@ class EpisodeImageStore(
                 when (apiResponse) {
                     is ApiResponse.Success -> {
                         Episode_image(
-                            id = Id(id = episodeArt.id.id),
-                            tmdb_id = Id(id = episodeArt.tmdb_id!!),
+                            id = Id(id = episodeArt.id!!.id),
+                            tmdb_id = Id(id = episodeArt.id!!.id),
                             image_url = apiResponse.body.imageUrl?.let {
                                 formatterUtil.formatTmdbPosterPath(it)
                             },
@@ -72,12 +72,12 @@ class EpisodeImageStore(
     Validator.by { result ->
         if (result.isNotEmpty()) {
             requestManagerRepository.isRequestExpired(
-                entityId = result.first().tmdb_id!!,
+                entityId = result.first().id?.id!!,
                 requestType = "EPISODE_IMAGE",
                 threshold = 180.days,
             )
         } else {
-            result.firstOrNull()?.tmdb_id?.let {
+            result.firstOrNull()?.id?.id?.let {
                 requestManagerRepository.isRequestExpired(
                     entityId = it,
                     requestType = "EPISODE_IMAGE",

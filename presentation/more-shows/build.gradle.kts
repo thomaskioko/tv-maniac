@@ -7,7 +7,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.util)
-                implementation(projects.data.category.api)
                 implementation(projects.data.shows.api)
 
                 api(libs.decompose.decompose)

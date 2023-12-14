@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.watchlist.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.thomaskioko.tvmaniac.core.db.Library
+import com.thomaskioko.tvmaniac.core.db.LibraryShows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.core.db.WatchedShow
-import com.thomaskioko.tvmaniac.core.db.Watchlist
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.shows.api.LibraryDao
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
@@ -17,41 +17,29 @@ class LibraryDaoImpl(
     private val dispatchers: AppCoroutineDispatchers,
 ) : LibraryDao {
 
-    override fun upsert(watchlist: Watchlist) {
+    override fun upsert(watchlist: Library) {
         database.transaction {
-            database.watchlistQueries.insertOrReplace(
+            database.libraryQueries.upsert(
                 id = watchlist.id,
-                synced = watchlist.synced,
                 created_at = watchlist.created_at,
             )
         }
     }
 
-    override fun upsert(watchedShowList: List<Watchlist>) {
+    override fun upsert(watchedShowList: List<Library>) {
         watchedShowList.forEach { upsert(it) }
     }
 
-    override fun getWatchedShows(): List<WatchedShow> =
-        database.watchlistQueries.watchedShow()
+    override fun getShowsInLibrary(): List<LibraryShows> =
+        database.libraryQueries.libraryShows()
             .executeAsList()
 
-    override fun observeWatchedShows(): Flow<List<WatchedShow>> =
-        database.watchlistQueries.watchedShow()
+    override fun observeShowsInLibrary(): Flow<List<LibraryShows>> =
+        database.libraryQueries.libraryShows()
             .asFlow()
             .mapToList(dispatchers.io)
 
-    override fun getUnSyncedShows(): List<Watchlist> =
-        database.watchlistQueries.unsyncedShows()
-            .executeAsList()
-
-    override fun updateShowSyncState(traktId: Long) {
-        database.watchlistQueries.updateFollowedState(
-            id = Id(traktId),
-            synced = true,
-        )
-    }
-
-    override fun removeShow(traktId: Long) {
-        database.watchlistQueries.removeShowFromWatchlist(Id(traktId))
+    override fun delete(traktId: Long) {
+        database.libraryQueries.delete(Id(traktId))
     }
 }

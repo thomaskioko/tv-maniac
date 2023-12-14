@@ -1,22 +1,18 @@
 package com.thomaskioko.tvmaniac.shows.api
 
-import com.thomaskioko.tvmaniac.core.db.WatchedShow
-import com.thomaskioko.tvmaniac.core.db.Watchlist
+import com.thomaskioko.tvmaniac.core.db.Library
+import com.thomaskioko.tvmaniac.core.db.LibraryShows
 import kotlinx.coroutines.flow.Flow
 
 interface LibraryDao {
 
-    fun upsert(watchlist: Watchlist)
+    fun upsert(watchlist: Library)
 
-    fun upsert(watchedShowList: List<Watchlist>)
+    fun upsert(watchedShowList: List<Library>)
 
-    fun getWatchedShows(): List<WatchedShow>
+    fun getShowsInLibrary(): List<LibraryShows>
 
-    fun getUnSyncedShows(): List<Watchlist>
+    fun observeShowsInLibrary(): Flow<List<LibraryShows>>
 
-    fun observeWatchedShows(): Flow<List<WatchedShow>>
-
-    fun updateShowSyncState(traktId: Long)
-
-    fun removeShow(traktId: Long)
+    fun delete(traktId: Long)
 }
