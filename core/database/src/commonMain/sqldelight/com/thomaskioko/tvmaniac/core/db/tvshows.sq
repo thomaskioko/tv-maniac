@@ -48,6 +48,7 @@ SELECT
     tvshows.overview,
     tvshows.language,
     tvshows.first_air_date,
+    tvshows.last_air_date,
     tvshows.popularity,
     tvshows.vote_average,
     tvshows.status,

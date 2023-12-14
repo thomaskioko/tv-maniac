@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
@@ -24,6 +25,7 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 class PopularShowsStore(
     private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
     private val requestManagerRepository: RequestManagerRepository,
+    private val dateFormatter: PlatformDateFormatter,
     private val popularShowsDao: PopularShowsDao,
     private val tvShowsDao: TvShowsDao,
     private val formatterUtil: FormatterUtil,
@@ -52,7 +54,9 @@ class PopularShowsStore(
                         overview = show.overview,
                         language = show.originalLanguage,
                         status = null,
-                        first_air_date = show.firstAirDate,
+                        first_air_date = show.firstAirDate?.let {
+                            dateFormatter.getYear(it)
+                        },
                         popularity = show.popularity,
                         episode_numbers = null,
                         last_air_date = null,

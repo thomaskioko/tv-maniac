@@ -19,6 +19,13 @@ class PlatformDateFormatterTest {
     }
 
     @Test
+    fun `given a date verify year is returned`() {
+        val actual = underTest.getYear("2023-12-12")
+
+        actual shouldBeEqual "2023"
+    }
+
+    @Test
     fun `test format timeStamp plus months`() {
         val time = LocalDateTime(2023, 12, 12, 9, 0)
             .date.atStartOfDayIn(TimeZone.UTC)

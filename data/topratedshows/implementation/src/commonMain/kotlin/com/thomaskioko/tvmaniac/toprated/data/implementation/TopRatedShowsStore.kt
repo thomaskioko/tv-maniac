@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsDao
 import com.thomaskioko.tvmaniac.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
@@ -27,6 +28,7 @@ class TopRatedShowsStore(
     private val topRatedShowsDao: TopRatedShowsDao,
     private val tvShowsDao: TvShowsDao,
     private val formatterUtil: FormatterUtil,
+    private val dateFormatter: PlatformDateFormatter,
     private val scope: AppCoroutineScope,
 ) : Store<Long, List<PagedTopRatedShows>> by StoreBuilder.from<Long, List<TmdbShowResponse>, List<PagedTopRatedShows>>(
     fetcher = Fetcher.of { page ->
@@ -52,7 +54,9 @@ class TopRatedShowsStore(
                         overview = show.overview,
                         language = show.originalLanguage,
                         status = null,
-                        first_air_date = show.firstAirDate,
+                        first_air_date = show.firstAirDate?.let {
+                            dateFormatter.getYear(it)
+                        },
                         popularity = show.popularity,
                         episode_numbers = null,
                         last_air_date = null,

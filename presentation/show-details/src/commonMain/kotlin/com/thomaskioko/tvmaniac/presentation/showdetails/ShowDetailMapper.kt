@@ -31,7 +31,7 @@ fun TvshowDetails.toShowDetails(): ShowDetails = ShowDetails(
     votes = vote_count,
     rating = vote_average,
     genres = genre_list?.split(", ")?.toImmutableList() ?: persistentListOf(),
-    year = first_air_date ?: "",
+    year = last_air_date ?: first_air_date ?: "",
     status = status,
     isFollowed = in_library == 1L,
 )

@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.util
 
+import co.touchlab.kermit.Logger
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import me.tatarka.inject.annotations.Inject
 import java.time.Instant
 import java.time.ZoneId
@@ -16,5 +18,15 @@ actual class PlatformDateFormatter {
         val localDate = instant.atZone(ZoneId.of("UTC")).toLocalDate()
         val formatter = DateTimeFormatter.ofPattern(DATE_YYYY_MM_DD_PATTERN).withZone(ZoneId.of("UTC"))
         return localDate.format(formatter)
+    }
+
+    actual fun getYear(dateString: String): String {
+        return try {
+            val localDate = LocalDate.parse(dateString)
+            localDate.year.toString()
+        } catch (exception: Exception) {
+            Logger.e("formatDate::  $dateString ${exception.message}", exception)
+            "TBA"
+        }
     }
 }

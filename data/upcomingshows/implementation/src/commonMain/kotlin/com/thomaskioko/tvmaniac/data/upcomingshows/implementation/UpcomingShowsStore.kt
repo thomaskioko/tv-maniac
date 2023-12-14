@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
@@ -27,6 +28,7 @@ class UpcomingShowsStore(
     private val upcomingShowsDao: UpcomingShowsDao,
     private val tvShowsDao: TvShowsDao,
     private val formatterUtil: FormatterUtil,
+    private val dateFormatter: PlatformDateFormatter,
     private val scope: AppCoroutineScope,
 ) : Store<UpcomingParams, List<UpcomingShows>> by StoreBuilder.from<UpcomingParams, List<TmdbShowResponse>, List<UpcomingShows>>(
     fetcher = Fetcher.of { params: UpcomingParams ->
@@ -58,7 +60,9 @@ class UpcomingShowsStore(
                         overview = show.overview,
                         language = show.originalLanguage,
                         status = null,
-                        first_air_date = show.firstAirDate,
+                        first_air_date = show.firstAirDate?.let {
+                            dateFormatter.getYear(it)
+                        },
                         popularity = show.popularity,
                         episode_numbers = null,
                         last_air_date = null,

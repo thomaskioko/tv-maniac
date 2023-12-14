@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.util
 
+import co.touchlab.kermit.Logger
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSDate
 import platform.Foundation.NSDateFormatter
@@ -19,5 +21,15 @@ actual class PlatformDateFormatter {
             locale = NSLocale(localeIdentifier = "UTC")
         }
         return dateFormatter.stringFromDate(date)
+    }
+
+    actual fun getYear(dateString: String): String {
+        return try {
+            val localDate = LocalDate.parse(dateString)
+            localDate.year.toString()
+        } catch (exception: Exception) {
+            Logger.e("formatDate::  $dateString ${exception.message}", exception)
+            "TBA"
+        }
     }
 }

@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.similar.api.SimilarShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.KermitLogger
+import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
@@ -25,6 +26,7 @@ class SimilarShowStore(
     private val similarShowsDao: SimilarShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val formatterUtil: FormatterUtil,
+    private val dateFormatter: PlatformDateFormatter,
     private val scope: AppCoroutineScope,
     private val logger: KermitLogger,
 ) : Store<SimilarParams, List<SimilarShows>> by StoreBuilder.from(
@@ -60,7 +62,9 @@ class SimilarShowStore(
                         overview = show.overview,
                         language = show.originalLanguage,
                         status = null,
-                        first_air_date = show.firstAirDate,
+                        first_air_date = show.firstAirDate?.let {
+                            dateFormatter.getYear(it)
+                        },
                         popularity = show.popularity,
                         episode_numbers = null,
                         last_air_date = null,

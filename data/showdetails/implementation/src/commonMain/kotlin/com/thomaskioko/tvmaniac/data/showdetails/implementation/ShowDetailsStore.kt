@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowDetailsResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
+import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
@@ -37,6 +38,7 @@ class ShowDetailsStore(
     private val networkDao: NetworksDao,
     private val genreDao: DefaultGenreDao,
     private val formatterUtil: FormatterUtil,
+    private val dateFormatter: PlatformDateFormatter,
     private val requestManagerRepository: RequestManagerRepository,
     private val dbTransactionRunner: DatabaseTransactionRunner,
     private val scope: AppCoroutineScope,
@@ -63,10 +65,14 @@ class ShowDetailsStore(
                         overview = show.overview,
                         language = show.originalLanguage,
                         status = show.status,
-                        first_air_date = show.firstAirDate,
+                        first_air_date = show.firstAirDate?.let {
+                            dateFormatter.getYear(it)
+                        },
                         popularity = show.popularity,
                         episode_numbers = show.numberOfEpisodes.toString(),
-                        last_air_date = show.lastAirDate,
+                        last_air_date = show.lastAirDate?.let {
+                            dateFormatter.getYear(it)
+                        },
                         season_numbers = show.numberOfSeasons.toString(),
                         vote_average = show.voteAverage,
                         vote_count = show.voteCount.toLong(),

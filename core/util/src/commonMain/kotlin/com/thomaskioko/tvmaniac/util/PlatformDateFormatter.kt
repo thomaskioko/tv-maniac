@@ -28,4 +28,11 @@ expect class PlatformDateFormatter() {
      * @return String  formatted date
      */
     fun formatDate(epochMillis: Long): String
+
+    /**
+     *  Returns the formatted date string "2023"
+     *
+     *  @param dateString date string to be formatted
+     */
+    fun getYear(dateString: String): String
 }
