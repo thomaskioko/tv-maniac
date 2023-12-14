@@ -18,10 +18,6 @@ abstract class BaseDatabaseTest {
     private val sqlDriver: SqlDriver = inMemorySqlDriver()
     protected open val database: TvManiacDatabase = TvManiacDatabase(
         driver = sqlDriver,
-        showAdapter = Show.Adapter(
-            genresAdapter = stringColumnAdapter,
-            idAdapter = IdAdapter(),
-        ),
         last_requestsAdapter = Last_requests.Adapter(
             timestampAdapter = InstantColumnAdapter,
         ),
@@ -37,19 +33,9 @@ abstract class BaseDatabaseTest {
             idAdapter = IdAdapter(),
             show_idAdapter = IdAdapter(),
         ),
-        show_imageAdapter = Show_image.Adapter(
-            idAdapter = IdAdapter(),
-        ),
         similar_showsAdapter = Similar_shows.Adapter(
             idAdapter = IdAdapter(),
             similar_show_idAdapter = IdAdapter(),
-        ),
-        watchlistAdapter = Watchlist.Adapter(
-            idAdapter = IdAdapter(),
-        ),
-        show_categoryAdapter = Show_category.Adapter(
-            idAdapter = IdAdapter(),
-            category_idAdapter = IdAdapter(),
         ),
         trailersAdapter = Trailers.Adapter(
             show_idAdapter = IdAdapter(),
@@ -84,6 +70,10 @@ abstract class BaseDatabaseTest {
         popular_showsAdapter = Popular_shows.Adapter(
             idAdapter = IdAdapter(),
             pageAdapter = IdAdapter(),
+        ),
+        genresAdapter = Genres.Adapter(
+            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
         ),
     )
 

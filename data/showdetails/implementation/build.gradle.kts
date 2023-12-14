@@ -5,21 +5,24 @@ plugins {
 
 kotlin {
     sourceSets {
-
         commonMain {
             dependencies {
-                implementation(projects.core.util)
-                implementation(projects.data.requestManager.api)
-                implementation(projects.data.showimages.api)
+                implementation(projects.core.database)
+                implementation(projects.data.showdetails.api)
                 implementation(projects.core.tmdbApi.api)
+                implementation(projects.core.util)
+                implementation(projects.data.seasons.api)
+                implementation(projects.data.trailers.api)
+                implementation(projects.data.requestManager.api)
+
+                api(libs.coroutines.core)
 
                 implementation(libs.kotlinInject.runtime)
-                implementation(libs.kotlinx.atomicfu)
                 implementation(libs.sqldelight.extensions)
+                implementation(libs.kotlinx.atomicfu)
                 implementation(libs.store5)
             }
         }
-
     }
 }
 

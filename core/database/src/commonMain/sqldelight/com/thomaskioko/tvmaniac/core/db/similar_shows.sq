@@ -1,13 +1,13 @@
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.SimilarShowId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE similar_shows (
-    id INTEGER AS Id<ShowId>,
+    id INTEGER AS Id<TmdbId>,
     similar_show_id INTEGER AS Id<SimilarShowId> NOT NULL,
     PRIMARY KEY (similar_show_id, id),
-    FOREIGN KEY(similar_show_id) REFERENCES show(id),
-    FOREIGN KEY(id) REFERENCES show(id)
+    FOREIGN KEY(similar_show_id) REFERENCES tvshows(id),
+    FOREIGN KEY(id) REFERENCES tvshows(id)
 );
 
 insertOrReplace:
@@ -19,25 +19,14 @@ VALUES(?,?);
 
 similarShows:
 SELECT
-    show.id,
-    show.tmdb_id ,
-    show.title,
-    show.overview,
-    show.language,
-    show.year,
-    show.rating,
-    show.votes,
-    show.status,
-    show.runtime,
-    show.genres,
-    show_image.poster_url,
-    show_image.backdrop_url
+   tvshows.id,
+   tvshows.name,
+   tvshows.poster_path,
+   tvshows.backdrop_path
 FROM
-    show
+    tvshows
 JOIN
-    similar_shows ON show.id = similar_shows.id
-INNER JOIN
-    show_image ON show_image.id = similar_shows.id
+    similar_shows ON tvshows.id = similar_shows.id
 WHERE
     similar_shows.similar_show_id = ?;
 

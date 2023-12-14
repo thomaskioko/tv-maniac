@@ -11,6 +11,8 @@ interface TrailerDao {
 
     fun observeTrailersById(showId: Long): Flow<List<Trailers>>
 
+    fun getTrailersById(showId: Long): List<Trailers>
+
     fun delete(id: Long)
 
     fun deleteAll()

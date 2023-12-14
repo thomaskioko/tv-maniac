@@ -3,9 +3,8 @@ package com.thomaskioko.tvmaniac.presentation.showdetails.model
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-data class Show(
-    val traktId: Long = 0,
-    val tmdbId: Long? = 0,
+data class ShowDetails(
+    val tmdbId: Long = 0,
     val title: String = "",
     val overview: String = "",
     val language: String? = null,
@@ -21,6 +20,6 @@ data class Show(
     val isFollowed: Boolean = false,
 ) {
     companion object {
-        val EMPTY_SHOW = Show()
+        val EMPTY_SHOW = ShowDetails()
     }
 }

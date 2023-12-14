@@ -2,14 +2,14 @@ package com.thomaskioko.tvmaniac.presentation.showdetails
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.core.db.SeasonsByShowId
-import com.thomaskioko.tvmaniac.core.db.ShowById
+import com.thomaskioko.tvmaniac.core.db.ShowSeasons
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
+import com.thomaskioko.tvmaniac.core.db.TvshowDetails
+import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.TrailersContent.Companion.playerErrorMessage
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
-import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
 import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.util.decompose.asValue
@@ -35,12 +35,12 @@ typealias ShowDetailsPresenterPresenterFactory = (
 
 class ShowDetailsPresenter @Inject constructor(
     @Assisted componentContext: ComponentContext,
-    @Assisted private val traktShowId: Long,
+    @Assisted private val showId: Long,
     @Assisted private val onBack: () -> Unit,
     @Assisted private val onNavigateToShow: (id: Long) -> Unit,
     @Assisted private val onNavigateToSeason: (id: Long, title: String) -> Unit,
     @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
-    private val discoverRepository: DiscoverRepository,
+    private val showDetailsRepository: ShowDetailsRepository,
     private val similarShowsRepository: SimilarShowsRepository,
     private val seasonsRepository: SeasonsRepository,
     private val trailerRepository: TrailerRepository,
@@ -80,7 +80,7 @@ class ShowDetailsPresenter @Inject constructor(
             is FollowShowClicked -> {
                 coroutineScope.launch {
                     libraryRepository.updateLibrary(
-                        traktId = traktShowId,
+                        traktId = showId,
                         addToLibrary = !action.addToLibrary,
                     )
                 }
@@ -107,19 +107,14 @@ class ShowDetailsPresenter @Inject constructor(
     }
 
     private suspend fun fetchShowDetails() {
-        val show = discoverRepository.getShowById(traktShowId)
-        val similar = similarShowsRepository.fetchSimilarShows(traktShowId)
-        val season = seasonsRepository.fetchSeasonsByShowId(traktShowId)
-        val trailers = trailerRepository.fetchTrailersByShowId(traktShowId)
+        val showDetails = showDetailsRepository.getShowDetails(showId)
+        val season = seasonsRepository.fetchSeasonsByShowId(showId)
+        val trailers = trailerRepository.fetchTrailersByShowId(showId)
+        val similar = similarShowsRepository.fetchSimilarShows(showId)
 
         _state.update {
             it.copy(
-                show = show.toTvShow(),
-                similarShowsContent = ShowDetailsState.SimilarShowsContent(
-                    isLoading = false,
-                    similarShows = similar.toSimilarShowList(),
-                    errorMessage = null,
-                ),
+                showDetails = showDetails.toShowDetails(),
                 seasonsContent = ShowDetailsState.SeasonsContent(
                     isLoading = false,
                     seasonsList = season.toSeasonsList(),
@@ -131,6 +126,11 @@ class ShowDetailsPresenter @Inject constructor(
                     trailersList = trailers.toTrailerList(),
                     errorMessage = null,
                 ),
+                similarShowsContent = ShowDetailsState.SimilarShowsContent(
+                    isLoading = false,
+                    similarSimilarShows = similar.toSimilarShowList(),
+                    errorMessage = null,
+                ),
                 errorMessage = null,
             )
         }
@@ -138,108 +138,71 @@ class ShowDetailsPresenter @Inject constructor(
 
     private suspend fun observeShowDetails() {
         combine(
-            discoverRepository.observeShow(traktShowId),
-            seasonsRepository.observeSeasonsByShowId(traktShowId),
-            trailerRepository.observeTrailersStoreResponse(traktShowId),
-            similarShowsRepository.observeSimilarShows(traktShowId),
+            showDetailsRepository.observeShowDetails(showId),
+            seasonsRepository.observeSeasonsByShowId(showId),
+            similarShowsRepository.observeSimilarShows(showId),
+            trailerRepository.observeTrailersStoreResponse(showId),
             trailerRepository.isYoutubePlayerInstalled(),
-        ) { show, seasons, trailers, similarShows, isWebViewInstalled ->
+        ) { show, seasons, similarShows, trailers, isWebViewInstalled ->
             updateShowDetails(show)
-            updateSeasonDetailsState(seasons)
+            updateShowSeasons(seasons)
             updateTrailerState(trailers, isWebViewInstalled)
             updateSimilarShowsState(similarShows)
         }.collect()
     }
 
     private fun updateShowDetails(
-        response: Either<Failure, ShowById>,
-    ) = when (response) {
-        is Either.Left -> _state.update {
-            it.copy(
-                isLoading = false,
-                errorMessage = response.error.errorMessage,
-            )
-        }
-
-        is Either.Right -> _state.update {
-            it.copy(
-                isLoading = false,
-                show = response.data.toTvShow(),
-            )
-        }
-    }
-
-    private fun updateSeasonDetailsState(
-        response: Either<Failure, List<SeasonsByShowId>>,
-    ) = when (response) {
-        is Either.Left -> {
-            _state.update {
-                it.copy(
-                    seasonsContent = it.seasonsContent.copy(
-                        isLoading = true,
-                        errorMessage = response.error.errorMessage,
-                    ),
-                )
-            }
-        }
-
-        is Either.Right -> {
-            _state.update {
-                it.copy(
-                    seasonsContent = it.seasonsContent.copy(
-                        isLoading = false,
-                        seasonsList = response.data.toSeasonsList(),
-                    ),
-                )
-            }
-        }
+        response: Either<Failure, TvshowDetails>,
+    ) = updateState(response) {
+        copy(showDetails = response.getOrNull()!!.toShowDetails())
     }
 
     private fun updateTrailerState(
         response: Either<Failure, List<Trailers>>,
         isWebViewInstalled: Boolean,
-    ) = when (response) {
-        is Either.Left -> {
-            _state.update {
-                it.copy(
-                    trailersContent = it.trailersContent.copy(
-                        errorMessage = response.error.errorMessage,
-                    ),
-                )
-            }
-        }
-
-        is Either.Right -> {
-            _state.update {
-                it.copy(
-                    trailersContent = it.trailersContent.copy(
-                        isLoading = false,
-                        hasWebViewInstalled = isWebViewInstalled,
-                        trailersList = response.data.toTrailerList(),
-                    ),
-                )
-            }
-        }
+    ) = updateState(response) {
+        copy(
+            trailersContent = trailersContent.copy(
+                isLoading = false,
+                hasWebViewInstalled = isWebViewInstalled,
+                trailersList = response.getOrNull().toTrailerList(),
+            ),
+        )
     }
+
+    private fun updateShowSeasons(response: Either<Failure, List<ShowSeasons>>) =
+        updateState(response) {
+            copy(
+                seasonsContent = seasonsContent.copy(
+                    seasonsList = response.getOrNull().toSeasonsList(),
+                ),
+            )
+        }
 
     private fun updateSimilarShowsState(
         response: Either<Failure, List<SimilarShows>>,
-    ) = when (response) {
-        is Either.Left -> _state.update {
-            it.copy(
-                similarShowsContent = it.similarShowsContent.copy(
+    ) = updateState(response) {
+        copy(
+            similarShowsContent = similarShowsContent.copy(
+                isLoading = false,
+                similarSimilarShows = response.getOrNull().toSimilarShowList(),
+            ),
+        )
+    }
+
+    private inline fun <T> updateState(
+        response: Either<Failure, T>,
+        updateBlock: ShowDetailsState.(T) -> ShowDetailsState,
+    ) = _state.update {
+        when (response) {
+            is Either.Left -> it.copy(
+                seasonsContent = it.seasonsContent.copy(
+                    isLoading = true,
                     errorMessage = response.error.errorMessage,
                 ),
             )
-        }
 
-        is Either.Right -> _state.update {
-            it.copy(
-                similarShowsContent = it.similarShowsContent.copy(
-                    isLoading = false,
-                    similarShows = response.data.toSimilarShowList(),
-                ),
-            )
+            is Either.Right -> it.updateBlock(response.data)
         }
     }
 }

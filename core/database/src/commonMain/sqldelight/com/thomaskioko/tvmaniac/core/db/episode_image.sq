@@ -20,7 +20,7 @@ VALUES(?,?,?);
 
 episodeImage:
 SELECT
-    show.tmdb_id,
+    tvshows.id,
     season.season_number,
     episode.id,
     episode.episode_number,
@@ -30,11 +30,11 @@ FROM
 LEFT JOIN
     season ON season.id = episode.season_id
 LEFT JOIN
-    show ON show.id = season.show_id
+    tvshows ON tvshows.id = season.show_id
 LEFT OUTER JOIN
     episode_image ON episode_image.id = episode.id
 WHERE
-    show.id = :showId AND episode_image.image_url IS NULL;
+    tvshows.id = :showId AND episode_image.image_url IS NULL;
 
 delete:
 DELETE FROM episode_image WHERE id = ?;

@@ -8,6 +8,7 @@ kotlin {
             dependencies {
                 api(projects.core.database)
                 api(projects.core.util)
+                api(projects.data.shows.api)
 
                 api(libs.coroutines.core)
             }
