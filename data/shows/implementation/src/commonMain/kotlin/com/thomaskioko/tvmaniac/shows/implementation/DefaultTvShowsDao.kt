@@ -1,20 +1,13 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.core.db.TvshowDetails
 import com.thomaskioko.tvmaniac.core.db.Tvshows
-import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
-import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DefaultTvShowsDao(
     database: TvManiacDatabase,
-    private val dispatchers: AppCoroutineDispatchers,
 ) : TvShowsDao {
 
     private val tvShowsQueries = database.tvshowsQueries
@@ -43,19 +36,6 @@ class DefaultTvShowsDao(
 
     override fun upsert(list: List<Tvshows>) {
         list.forEach { upsert(it) }
-    }
-
-    override fun observeTvShows(id: Long): Flow<TvshowDetails> =
-        tvShowsQueries.tvshowDetails(Id(id))
-            .asFlow()
-            .mapToOne(dispatchers.io)
-
-    override fun getTvShow(id: Long): TvshowDetails =
-        tvShowsQueries.tvshowDetails(Id(id))
-            .executeAsOne()
-
-    override fun deleteTvShow(id: Long) {
-        tvShowsQueries.delete(Id(id))
     }
 
     override fun deleteTvShows() {
