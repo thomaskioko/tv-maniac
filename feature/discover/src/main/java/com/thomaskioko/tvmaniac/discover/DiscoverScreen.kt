@@ -324,9 +324,9 @@ fun HorizontalPagerItem(
                 modifier = Modifier
                     .graphicsLayer {
                         val pageOffset = (
-                                (pagerState.currentPage - pageNumber) + pagerState
-                                    .currentPageOffsetFraction
-                                ).absoluteValue
+                            (pagerState.currentPage - pageNumber) + pagerState
+                                .currentPageOffsetFraction
+                            ).absoluteValue
 
                         // We animate the scaleX + scaleY, between 85% and 100%
                         lerp(

@@ -25,5 +25,4 @@ class FakeLibraryRepository : LibraryRepository {
 
     override suspend fun updateLibrary(traktId: Long, addToLibrary: Boolean) {
     }
-
 }

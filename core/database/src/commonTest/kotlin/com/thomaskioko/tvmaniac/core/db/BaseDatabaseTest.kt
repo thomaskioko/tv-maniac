@@ -4,7 +4,6 @@ import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.db.IdAdapter
 import com.thomaskioko.tvmaniac.db.InstantColumnAdapter
 import com.thomaskioko.tvmaniac.db.intColumnAdapter
-import com.thomaskioko.tvmaniac.db.stringColumnAdapter
 import kotlin.test.AfterTest
 
 expect fun inMemorySqlDriver(): SqlDriver

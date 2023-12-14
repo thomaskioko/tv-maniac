@@ -54,7 +54,6 @@ internal class ShowDetailsPresenterTest {
 
     @Test
     fun initial_state_emits_expected_result() = runTest {
-
         presenter.state shouldBe EMPTY_DETAIL_STATE.copy(
             showDetails = similarShow,
         )
