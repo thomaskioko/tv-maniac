@@ -61,6 +61,16 @@ class RootNavigationPresenter(
         navigation.bringToFront(config)
     }
 
+    fun shouldShowBottomNav(screen: Screen): Boolean {
+        return when (screen) {
+            is Screen.Discover -> true
+            is Screen.Search -> true
+            is Screen.Library -> true
+            is Screen.Settings -> true
+            else -> false
+        }
+    }
+
     private fun createScreen(config: Config, componentContext: ComponentContext): Screen =
         when (config) {
             is Config.Discover -> Screen.Discover(
