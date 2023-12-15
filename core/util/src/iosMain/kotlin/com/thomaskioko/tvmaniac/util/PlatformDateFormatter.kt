@@ -24,6 +24,7 @@ actual class PlatformDateFormatter {
     }
 
     actual fun getYear(dateString: String): String {
+        if (dateString.isEmpty()) return "--"
         return try {
             val localDate = LocalDate.parse(dateString)
             localDate.year.toString()
