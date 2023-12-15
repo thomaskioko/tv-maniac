@@ -26,6 +26,6 @@ data class TmdbShowDetailsResponse(
     @SerialName("vote_average") var voteAverage: Double,
     @SerialName("vote_count") var voteCount: Int,
     @SerialName("videos") var videos: VideosResponse,
-    @SerialName("credits") var credits: Credits,
+    @SerialName("credits") var credits: CreditsResponse,
     @SerialName("original_language") var originalLanguage: String? = null,
 )

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
-import com.thomaskioko.tvmaniac.tmdb.api.TmdbNetworkDataSource
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbSeasonDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
@@ -46,9 +46,6 @@ interface TmdbComponent : TmdbPlatformComponent {
     )
 
     @Provides
-    fun provideTmdbService(bind: TmdbNetworkDataSourceImpl): TmdbNetworkDataSource = bind
-
-    @Provides
     fun provideTmdbShowsNetworkDataSource(
         bind: DefaultTmdbShowsNetworkDataSource,
     ): TmdbShowsNetworkDataSource = bind
@@ -57,4 +54,9 @@ interface TmdbComponent : TmdbPlatformComponent {
     fun provideTmdbShowDetailsNetworkDataSource(
         bind: DefaultTmdbShowDetailsNetworkDataSource,
     ): TmdbShowDetailsNetworkDataSource = bind
+
+    @Provides
+    fun provideTmdbSeasonDetailsNetworkDataSource(
+        bind: DefaultTmdbSeasonDetailsNetworkDataSource,
+    ): TmdbSeasonDetailsNetworkDataSource = bind
 }

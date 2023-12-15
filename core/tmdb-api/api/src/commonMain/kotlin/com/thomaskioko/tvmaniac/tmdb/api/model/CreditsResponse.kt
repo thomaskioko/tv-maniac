@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Credits(
+data class CreditsResponse(
     @SerialName("cast") var cast: ArrayList<CastResponse> = arrayListOf(),
 )
 

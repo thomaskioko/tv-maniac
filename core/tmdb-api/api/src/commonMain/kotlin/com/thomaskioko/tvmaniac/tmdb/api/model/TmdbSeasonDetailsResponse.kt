@@ -4,16 +4,16 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class EpisodesResponse(
+data class TmdbSeasonDetailsResponse(
     @SerialName("air_date") var airDate: String? = null,
-    @SerialName("episode_number") var episodeNumber: Int,
-    @SerialName("id") var id: Int,
+    @SerialName("episodes") var episodes: ArrayList<EpisodesResponse>,
     @SerialName("name") var name: String,
     @SerialName("overview") var overview: String,
-    @SerialName("runtime") var runtime: Int? = null,
+    @SerialName("id") var id: Int,
+    @SerialName("poster_path") var posterPath: String? = null,
     @SerialName("season_number") var seasonNumber: Int,
-    @SerialName("show_id") var showId: Int,
-    @SerialName("still_path") var stillPath: String? = null,
     @SerialName("vote_average") var voteAverage: Double,
-    @SerialName("vote_count") var voteCount: Int,
+    @SerialName("videos") var videos: VideosResponse,
+    @SerialName("images") var images: ImagesResponse,
+    @SerialName("credits") var credits: CreditsResponse,
 )
