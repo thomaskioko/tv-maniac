@@ -8,10 +8,7 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.implementation.UpcomingShowsC
 import com.thomaskioko.tvmaniac.datastore.implementation.DataStoreComponent
 import com.thomaskioko.tvmaniac.db.DatabaseComponent
 import com.thomaskioko.tvmaniac.discover.implementation.TrendingShowsComponent
-import com.thomaskioko.tvmaniac.episodeimages.implementation.EpisodeImageComponent
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeComponent
-import com.thomaskioko.tvmaniac.profile.implementation.ProfileComponent
-import com.thomaskioko.tvmaniac.profilestats.implementation.StatsComponent
 import com.thomaskioko.tvmaniac.resourcemanager.implementation.RequestManagerComponent
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsComponent
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsComponent
@@ -29,17 +26,14 @@ abstract class SharedComponent :
     DatabaseComponent,
     DiscoverComponent,
     EpisodeComponent,
-    EpisodeImageComponent,
     LibraryComponent,
     LoggingComponent,
     PopularShowsComponent,
-    ProfileComponent,
     RequestManagerComponent,
     SeasonDetailsComponent,
     SeasonsComponent,
     ShowDetailsComponent,
     SimilarShowsComponent,
-    StatsComponent,
     TmdbComponent,
     TopRatedShowsComponent,
     TrailerComponent,

@@ -31,7 +31,6 @@ kotlin {
             implementation(projects.presentation.discover)
             implementation(projects.presentation.library)
             implementation(projects.presentation.moreShows)
-            implementation(projects.presentation.profile)
             implementation(projects.presentation.search)
             implementation(projects.presentation.seasondetails)
             implementation(projects.presentation.settings)

@@ -7,8 +7,8 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.datastore.api)
-                implementation(projects.data.profile.api)
                 implementation(projects.core.traktAuth.api)
+                implementation(projects.core.util)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
@@ -21,8 +21,6 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(projects.core.datastore.testing)
-                implementation(projects.data.profile.testing)
-                implementation(projects.core.traktAuth.testing)
 
                 implementation(libs.bundles.unittest)
             }

@@ -12,7 +12,6 @@ kotlin {
                 implementation(projects.core.database)
                 implementation(projects.core.traktApi.api)
                 implementation(projects.core.util)
-                implementation(projects.data.profile.api)
                 implementation(projects.data.library.api)
 
                 implementation(libs.kotlinInject.runtime)

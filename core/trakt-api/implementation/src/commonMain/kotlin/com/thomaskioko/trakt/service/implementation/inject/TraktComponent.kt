@@ -1,14 +1,10 @@
 package com.thomaskioko.trakt.service.implementation.inject
 
 import com.thomaskioko.trakt.service.implementation.TraktListRemoteDataSourceImpl
-import com.thomaskioko.trakt.service.implementation.TraktShowsShowsRemoteDataSourceImpl
-import com.thomaskioko.trakt.service.implementation.TraktStatsRemoteDataSourceImpl
 import com.thomaskioko.trakt.service.implementation.TraktTokenRemoteDataSourceImpl
 import com.thomaskioko.trakt.service.implementation.TraktUserRemoteDataSourceImpl
 import com.thomaskioko.trakt.service.implementation.traktHttpClient
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.TraktStatsRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktTokenRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
 import com.thomaskioko.tvmaniac.util.KermitLogger
@@ -51,18 +47,6 @@ interface TraktComponent : TraktPlatformComponent {
     fun provideTraktListRemoteDataSource(
         bind: TraktListRemoteDataSourceImpl,
     ): TraktListRemoteDataSource = bind
-
-    @ApplicationScope
-    @Provides
-    fun provideTraktShowsRemoteDataSource(
-        bind: TraktShowsShowsRemoteDataSourceImpl,
-    ): TraktShowsRemoteDataSource = bind
-
-    @ApplicationScope
-    @Provides
-    fun provideTraktStatsRemoteDataSource(
-        bind: TraktStatsRemoteDataSourceImpl,
-    ): TraktStatsRemoteDataSource = bind
 
     @ApplicationScope
     @Provides
