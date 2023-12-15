@@ -10,7 +10,6 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
-import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
@@ -30,7 +29,7 @@ class UpcomingShowsStore(
     private val formatterUtil: FormatterUtil,
     private val dateFormatter: PlatformDateFormatter,
     private val scope: AppCoroutineScope,
-) : Store<UpcomingParams, List<UpcomingShows>> by StoreBuilder.from<UpcomingParams, List<TmdbShowResponse>, List<UpcomingShows>>(
+) : Store<UpcomingParams, List<UpcomingShows>> by StoreBuilder.from(
     fetcher = Fetcher.of { params: UpcomingParams ->
         when (
             val response = tmdbRemoteDataSource.getUpComingShows(

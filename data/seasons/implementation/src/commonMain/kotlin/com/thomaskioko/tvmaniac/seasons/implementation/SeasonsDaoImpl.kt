@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.seasons.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.db.Season
-import com.thomaskioko.tvmaniac.core.db.SeasonEpisodeDetailsById
 import com.thomaskioko.tvmaniac.core.db.ShowSeasons
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Id
@@ -29,6 +28,7 @@ class SeasonsDaoImpl(
                 episode_count = season.episode_count,
                 title = season.title,
                 overview = season.overview,
+                image_url = season.image_url,
             )
         }
     }
@@ -43,18 +43,9 @@ class SeasonsDaoImpl(
             .mapToList(dispatcher.io)
     }
 
-    override fun fetchSeasonDetails(id: Long): List<SeasonEpisodeDetailsById> =
-        database.seasonQueries.seasonEpisodeDetailsById(id = Id(id))
-            .executeAsList()
-
     override fun fetchShowSeasons(id: Long): List<ShowSeasons> =
         database.seasonQueries.showSeasons(id = Id(id))
             .executeAsList()
-
-    override fun observeSeasonEpisodeDetailsById(showId: Long): Flow<List<SeasonEpisodeDetailsById>> =
-        database.seasonQueries.seasonEpisodeDetailsById(id = Id(showId))
-            .asFlow()
-            .mapToList(dispatcher.io)
 
     override fun delete(id: Long) {
         seasonQueries.delete(Id(id))

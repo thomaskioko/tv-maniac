@@ -17,7 +17,6 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
-import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowDetailsResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
@@ -42,7 +41,7 @@ class ShowDetailsStore(
     private val requestManagerRepository: RequestManagerRepository,
     private val dbTransactionRunner: DatabaseTransactionRunner,
     private val scope: AppCoroutineScope,
-) : Store<Long, TvshowDetails> by StoreBuilder.from<Long, TmdbShowDetailsResponse, TvshowDetails>(
+) : Store<Long, TvshowDetails> by StoreBuilder.from(
     fetcher = Fetcher.of { id ->
         when (val response = remoteDataSource.getShowDetails(id)) {
             is ApiResponse.Success -> response.body
@@ -55,7 +54,7 @@ class ShowDetailsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.Companion.of(
-        reader = { id -> showDetailsDao.observeTvShows(id) },
+        reader = { id: Long -> showDetailsDao.observeTvShows(id) },
         writer = { id, show ->
             dbTransactionRunner {
                 tvShowsDao.upsert(
@@ -109,6 +108,9 @@ class ShowDetailsStore(
                             episode_count = season.episodeCount.toLong(),
                             title = season.name,
                             overview = season.overview,
+                            image_url = season.posterPath?.let {
+                                formatterUtil.formatTmdbPosterPath(it)
+                            },
                         ),
                     )
                 }

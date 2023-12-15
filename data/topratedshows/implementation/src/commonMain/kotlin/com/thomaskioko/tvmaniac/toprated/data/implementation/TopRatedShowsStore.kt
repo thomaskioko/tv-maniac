@@ -9,7 +9,6 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
-import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsDao
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
@@ -30,7 +29,7 @@ class TopRatedShowsStore(
     private val formatterUtil: FormatterUtil,
     private val dateFormatter: PlatformDateFormatter,
     private val scope: AppCoroutineScope,
-) : Store<Long, List<PagedTopRatedShows>> by StoreBuilder.from<Long, List<TmdbShowResponse>, List<PagedTopRatedShows>>(
+) : Store<Long, List<PagedTopRatedShows>> by StoreBuilder.from(
     fetcher = Fetcher.of { page ->
         when (val response = tmdbRemoteDataSource.getTopRatedShows(page = page)) {
             is ApiResponse.Success -> response.body.results
@@ -43,7 +42,7 @@ class TopRatedShowsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.Companion.of(
-        reader = { page -> topRatedShowsDao.observeTrendingShows(page) },
+        reader = { page: Long -> topRatedShowsDao.observeTrendingShows(page) },
         writer = { page, trendingShows ->
 
             trendingShows.forEach { show ->

@@ -10,7 +10,6 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
-import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
@@ -30,7 +29,7 @@ class PopularShowsStore(
     private val tvShowsDao: TvShowsDao,
     private val formatterUtil: FormatterUtil,
     private val scope: AppCoroutineScope,
-) : Store<Long, List<PagedPopularShows>> by StoreBuilder.from<Long, List<TmdbShowResponse>, List<PagedPopularShows>>(
+) : Store<Long, List<PagedPopularShows>> by StoreBuilder.from(
     fetcher = Fetcher.of { page ->
         when (val response = tmdbRemoteDataSource.getPopularShows(page = page)) {
             is ApiResponse.Success -> response.body.results
