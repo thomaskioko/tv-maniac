@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.data.seasondetails
 
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetails
+import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
+import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsModel
 import kotlinx.collections.immutable.persistentListOf
 
-val episodes = persistentListOf(
-    Episode(
+val episodeDetailModels = persistentListOf(
+    EpisodeDetailsModel(
         id = 12345,
         seasonId = 12343,
         episodeTitle = "Some title",
@@ -20,17 +20,13 @@ val episodes = persistentListOf(
     ),
 )
 
-val seasonDetailsList = persistentListOf(
-    SeasonDetails(
+val seasonDetailsLoaded = SeasonDetailsLoaded(
+    showTitle = "Loki",
+    seasonDetailsModel = SeasonDetailsModel(
         seasonId = 12343,
         seasonName = "Season 01",
         episodeCount = 1,
         watchProgress = 0.0f,
-        episodes = episodes,
+        episodeDetailModels = episodeDetailModels,
     ),
-)
-
-val seasonDetailsLoaded = SeasonDetailsLoaded(
-    showTitle = "Loki",
-    seasonDetailsList = seasonDetailsList,
 )

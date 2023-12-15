@@ -9,7 +9,8 @@ CREATE TABLE season (
     title TEXT NOT NULL,
     episode_count INTEGER NOT NULL,
     overview TEXT,
-    FOREIGN KEY(show_id) REFERENCES tvshows(id)
+    image_url TEXT DEFAULT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 upsert:
@@ -19,9 +20,10 @@ INSERT OR REPLACE INTO season(
     season_number,
     episode_count,
     title,
-    overview
+    overview,
+    image_url
 )
-VALUES(?,?,?,?,?,?);
+VALUES(?,?,?,?,?,?, ?);
 
 showSeasons:
 SELECT
@@ -34,9 +36,11 @@ FROM
 JOIN
     season ON tvshows.id = season.show_id
 WHERE
-    tvshows.id = ?;
+    tvshows.id = ?
+ORDER BY
+    season.season_number ASC       ;
 
-seasonEpisodeDetailsById:
+seasonDetails:
 SELECT
     tvshows.id AS show_id,
     tvshows.name AS show_title,
@@ -45,29 +49,25 @@ SELECT
     season.overview AS season_overview,
     season.season_number,
     season.episode_count,
+    season.image_url AS season_image_url,
     episode.id AS episode_id,
-    episode.season_id AS episode_season_id,
     episode.title AS episode_title,
     episode.episode_number,
     episode.overview,
     episode.runtime,
-    episode.ratings,
-    episode.votes,
-    episode_image.image_url AS episode_image_url
+    episode.vote_average,
+    episode.vote_count,
+    episode.image_url AS episode_image_url
 FROM
     tvshows
 INNER JOIN
     season ON season.show_id = tvshows.id
-INNER JOIN
-    episode ON episode.season_id = season.id
 LEFT OUTER JOIN
-    episode_image ON episode_image.id = episode.id
+    episode ON episode.season_id = season.id
 WHERE
-    tvshows.id = ?
-AND
-    season_number != 0
+    tvshows.id = :showId AND season.season_number = :seasonNumber
 ORDER BY
-    season.season_number, episode_number ASC;
+    episode_number ASC;
 
 delete:
 DELETE FROM season WHERE show_id = ?;

@@ -39,6 +39,7 @@ interface DatabaseComponent : DatabasePlatformComponent {
         episodeAdapter = Episode.Adapter(
             idAdapter = IdAdapter(),
             season_idAdapter = IdAdapter(),
+            show_idAdapter = IdAdapter(),
         ),
         seasonAdapter = Season.Adapter(
             idAdapter = IdAdapter(),
