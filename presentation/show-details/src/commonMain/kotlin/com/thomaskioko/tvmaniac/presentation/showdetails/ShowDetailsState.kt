@@ -29,14 +29,14 @@ data class ShowDetailsState(
     }
 
     data class SeasonsContent(
-        val isLoading: Boolean,
+        val isLoading: Boolean = true,
         val seasonsList: ImmutableList<Season>,
         val errorMessage: String? = null,
     ) {
         companion object {
             val EMPTY_SEASONS = SeasonsContent(
                 errorMessage = null,
-                isLoading = false,
+                isLoading = true,
                 seasonsList = persistentListOf(),
             )
         }

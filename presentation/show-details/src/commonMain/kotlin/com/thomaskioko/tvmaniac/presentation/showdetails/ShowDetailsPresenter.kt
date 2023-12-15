@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.core.db.TvshowDetails
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.TrailersContent.Companion.playerErrorMessage
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
@@ -29,7 +30,7 @@ typealias ShowDetailsPresenterPresenterFactory = (
     id: Long,
     onBack: () -> Unit,
     onNavigateToShow: (id: Long) -> Unit,
-    onNavigateToSeason: (id: Long, title: String) -> Unit,
+    onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
     onNavigateToTrailer: (id: Long) -> Unit,
 ) -> ShowDetailsPresenter
 
@@ -38,7 +39,7 @@ class ShowDetailsPresenter @Inject constructor(
     @Assisted private val showId: Long,
     @Assisted private val onBack: () -> Unit,
     @Assisted private val onNavigateToShow: (id: Long) -> Unit,
-    @Assisted private val onNavigateToSeason: (id: Long, title: String) -> Unit,
+    @Assisted private val onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
     @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
     private val showDetailsRepository: ShowDetailsRepository,
     private val similarShowsRepository: SimilarShowsRepository,
@@ -62,7 +63,7 @@ class ShowDetailsPresenter @Inject constructor(
     fun dispatch(action: ShowDetailsAction) {
         when (action) {
             DetailBackClicked -> onBack()
-            is SeasonClicked -> onNavigateToSeason(action.id, action.title)
+            is SeasonClicked -> onNavigateToSeason(action.params)
             is DetailShowClicked -> onNavigateToShow(action.id)
             is WatchTrailerClicked -> onNavigateToTrailer(action.id)
             DismissWebViewError -> {
@@ -116,7 +117,6 @@ class ShowDetailsPresenter @Inject constructor(
             it.copy(
                 showDetails = showDetails.toShowDetails(),
                 seasonsContent = ShowDetailsState.SeasonsContent(
-                    isLoading = false,
                     seasonsList = season.toSeasonsList(),
                     errorMessage = null,
                 ),
@@ -174,6 +174,7 @@ class ShowDetailsPresenter @Inject constructor(
         updateState(response) {
             copy(
                 seasonsContent = seasonsContent.copy(
+                    isLoading = false,
                     seasonsList = response.getOrNull().toSeasonsList(),
                 ),
             )
@@ -197,7 +198,15 @@ class ShowDetailsPresenter @Inject constructor(
         when (response) {
             is Either.Left -> it.copy(
                 seasonsContent = it.seasonsContent.copy(
-                    isLoading = true,
+                    isLoading = false,
+                    errorMessage = response.error.errorMessage,
+                ),
+                trailersContent = it.trailersContent.copy(
+                    isLoading = false,
+                    errorMessage = response.error.errorMessage,
+                ),
+                similarShowsContent = it.similarShowsContent.copy(
+                    isLoading = false,
                     errorMessage = response.error.errorMessage,
                 ),
             )

@@ -55,6 +55,7 @@ val seasonsShowDetailsLoaded = ShowDetailsState.SeasonsContent(
             seasonId = 84958,
             tvShowId = 114355,
             name = "Season 1",
+            seasonNumber = 0,
         ),
     ),
 )

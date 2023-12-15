@@ -41,6 +41,7 @@ fun List<ShowSeasons>?.toSeasonsList(): ImmutableList<Season> = this?.map {
         seasonId = it.season_id.id,
         tvShowId = it.show_id.id,
         name = it.season_title,
+        seasonNumber = it.season_number,
     )
 }?.toImmutableList() ?: persistentListOf()
 

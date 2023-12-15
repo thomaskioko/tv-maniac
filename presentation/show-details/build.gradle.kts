@@ -1,5 +1,6 @@
 plugins {
     id("plugin.tvmaniac.multiplatform")
+    alias(libs.plugins.serialization)
 }
 
 kotlin {
