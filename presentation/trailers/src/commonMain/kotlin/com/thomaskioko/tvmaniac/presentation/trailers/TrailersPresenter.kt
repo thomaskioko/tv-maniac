@@ -70,14 +70,14 @@ class TrailersPresenter @Inject constructor(
             .collectLatest { result ->
                 when (result) {
                     is Either.Left -> {
-                        _state.update { TrailerError(result.error.errorMessage) }
+                        _state.update { TrailerError(result.left.errorMessage) }
                     }
 
                     is Either.Right -> {
                         _state.update {
                             TrailersContent(
-                                selectedVideoKey = result.data.toTrailerList().firstOrNull()?.key,
-                                trailersList = result.data.toTrailerList(),
+                                selectedVideoKey = result.right.toTrailerList().firstOrNull()?.key,
+                                trailersList = result.right.toTrailerList(),
                             )
                         }
                     }

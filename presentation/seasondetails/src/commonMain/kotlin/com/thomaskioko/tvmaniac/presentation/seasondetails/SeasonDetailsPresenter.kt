@@ -65,35 +65,37 @@ class SeasonDetailsPresenter @Inject constructor(
         val seasonList = seasonDetailsRepository.fetchSeasonDetails(seasonDetailsParam)
 
         _state.value = SeasonDetailsLoaded(
-            selectedSeason = title,
-            showTitle = seasonList.getTitle(),
-            seasonDetailsList = seasonList.toSeasonWithEpisodes(),
+            selectedSeason = seasonList.name,
+            showTitle = seasonList.showTitle,
+            seasonDetailsModel = seasonList.toSeasonDetails(),
         )
     }
 
     private suspend fun observeSeasonDetails() {
-        combine(
-            seasonDetailsRepository.observeSeasonDetailsStream(seasonDetailsParam),
-            episodeImageRepository.updateEpisodeImage(traktId),
-        ) { seasonDetailsResult, _ ->
-            seasonDetailsResult.fold(
-                {
-                    _state.update { state ->
-                        (state as? SeasonDetailsLoaded)?.copy(
-                            errorMessage = it.errorMessage,
-                        ) ?: state
-                    }
-                },
-                {
-                    _state.update { state ->
-                        (state as? SeasonDetailsLoaded)?.copy(
-                            showTitle = it.getTitle(),
-                            seasonDetailsList = it.toSeasonWithEpisodes(),
-                        ) ?: state
-                    }
-                },
-            )
-        }
-            .collect()
+        seasonDetailsRepository.observeSeasonDetailsStream(seasonDetailsParam)
+            .collect { seasonDetailsResult ->
+                seasonDetailsResult.fold(
+                    {
+                        _state.update { state ->
+                            (state as? SeasonDetailsLoaded)?.copy(
+                                errorMessage = it.errorMessage,
+                                isLoading = false,
+                            ) ?: state
+                        }
+                    },
+                    { result ->
+                        _state.update { state ->
+                            val detailsState = (state as? SeasonDetailsLoaded)
+                            result?.let {
+                                detailsState?.copy(
+                                    showTitle = it.showTitle,
+                                    seasonDetailsModel = result.toSeasonDetails(),
+                                    isLoading = false,
+                                )
+                            } ?: state
+                        }
+                    },
+                )
+            }
     }
 }

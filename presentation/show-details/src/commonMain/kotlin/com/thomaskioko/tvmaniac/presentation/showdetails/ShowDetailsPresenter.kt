@@ -154,41 +154,53 @@ class ShowDetailsPresenter @Inject constructor(
     private fun updateShowDetails(
         response: Either<Failure, TvshowDetails>,
     ) = updateState(response) {
-        copy(showDetails = response.getOrNull()!!.toShowDetails())
+        when(response) {
+            is Either.Left -> copy(errorMessage = response.left.errorMessage)
+            is Either.Right -> copy(showDetails = response.right.toShowDetails())
+        }
     }
 
     private fun updateTrailerState(
         response: Either<Failure, List<Trailers>>,
         isWebViewInstalled: Boolean,
     ) = updateState(response) {
-        copy(
-            trailersContent = trailersContent.copy(
-                isLoading = false,
-                hasWebViewInstalled = isWebViewInstalled,
-                trailersList = response.getOrNull().toTrailerList(),
-            ),
-        )
+        when(response) {
+            is Either.Left -> copy(errorMessage = response.left.errorMessage)
+            is Either.Right ->  copy(
+                trailersContent = trailersContent.copy(
+                    isLoading = false,
+                    hasWebViewInstalled = isWebViewInstalled,
+                    trailersList = response.right.toTrailerList(),
+                ),
+            )
+        }
     }
 
     private fun updateShowSeasons(response: Either<Failure, List<ShowSeasons>>) =
         updateState(response) {
-            copy(
-                seasonsContent = seasonsContent.copy(
-                    isLoading = false,
-                    seasonsList = response.getOrNull().toSeasonsList(),
-                ),
-            )
+            when(response) {
+                is Either.Left -> copy(errorMessage = response.left.errorMessage)
+                is Either.Right -> copy(
+                    seasonsContent = seasonsContent.copy(
+                        isLoading = false,
+                        seasonsList = response.right.toSeasonsList(),
+                    ),
+                )
+            }
         }
 
     private fun updateSimilarShowsState(
         response: Either<Failure, List<SimilarShows>>,
     ) = updateState(response) {
-        copy(
-            similarShowsContent = similarShowsContent.copy(
-                isLoading = false,
-                similarSimilarShows = response.getOrNull().toSimilarShowList(),
-            ),
-        )
+        when(response) {
+            is Either.Left -> copy(errorMessage = response.left.errorMessage)
+            is Either.Right -> copy(
+                similarShowsContent = similarShowsContent.copy(
+                    isLoading = false,
+                    similarSimilarShows = response.right.toSimilarShowList(),
+                ),
+            )
+        }
     }
 
     private inline fun <T> updateState(
@@ -197,21 +209,12 @@ class ShowDetailsPresenter @Inject constructor(
     ) = _state.update {
         when (response) {
             is Either.Left -> it.copy(
-                seasonsContent = it.seasonsContent.copy(
-                    isLoading = false,
-                    errorMessage = response.error.errorMessage,
-                ),
-                trailersContent = it.trailersContent.copy(
-                    isLoading = false,
-                    errorMessage = response.error.errorMessage,
-                ),
-                similarShowsContent = it.similarShowsContent.copy(
-                    isLoading = false,
-                    errorMessage = response.error.errorMessage,
-                ),
+                seasonsContent = it.seasonsContent.copy(),
+                trailersContent = it.trailersContent.copy(),
+                similarShowsContent = it.similarShowsContent.copy(),
             )
 
-            is Either.Right -> it.updateBlock(response.data)
+            is Either.Right -> it.updateBlock(response.right)
         }
     }
 }
