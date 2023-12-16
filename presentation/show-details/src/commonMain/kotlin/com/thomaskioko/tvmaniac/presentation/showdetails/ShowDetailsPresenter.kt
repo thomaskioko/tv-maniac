@@ -154,7 +154,7 @@ class ShowDetailsPresenter @Inject constructor(
     private fun updateShowDetails(
         response: Either<Failure, TvshowDetails>,
     ) = updateState(response) {
-        when(response) {
+        when (response) {
             is Either.Left -> copy(errorMessage = response.left.errorMessage)
             is Either.Right -> copy(showDetails = response.right.toShowDetails())
         }
@@ -164,9 +164,9 @@ class ShowDetailsPresenter @Inject constructor(
         response: Either<Failure, List<Trailers>>,
         isWebViewInstalled: Boolean,
     ) = updateState(response) {
-        when(response) {
+        when (response) {
             is Either.Left -> copy(errorMessage = response.left.errorMessage)
-            is Either.Right ->  copy(
+            is Either.Right -> copy(
                 trailersContent = trailersContent.copy(
                     isLoading = false,
                     hasWebViewInstalled = isWebViewInstalled,
@@ -178,7 +178,7 @@ class ShowDetailsPresenter @Inject constructor(
 
     private fun updateShowSeasons(response: Either<Failure, List<ShowSeasons>>) =
         updateState(response) {
-            when(response) {
+            when (response) {
                 is Either.Left -> copy(errorMessage = response.left.errorMessage)
                 is Either.Right -> copy(
                     seasonsContent = seasonsContent.copy(
@@ -192,7 +192,7 @@ class ShowDetailsPresenter @Inject constructor(
     private fun updateSimilarShowsState(
         response: Either<Failure, List<SimilarShows>>,
     ) = updateState(response) {
-        when(response) {
+        when (response) {
             is Either.Left -> copy(errorMessage = response.left.errorMessage)
             is Either.Right -> copy(
                 similarShowsContent = similarShowsContent.copy(

@@ -17,6 +17,7 @@ sealed class Either<out L, out R> {
      * which by convention is a "Failure".
      */
     data class Left<out L>(val left: L) : Either<L, Nothing>()
+
     /**
      * Represents the right side of [Either] class
      * which by convention is a "Success".
