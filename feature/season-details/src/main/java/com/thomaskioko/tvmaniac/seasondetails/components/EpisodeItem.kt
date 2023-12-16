@@ -27,7 +27,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.seasondetails.UpdateEpisodeStatus
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.seasondetails.episode
+import com.thomaskioko.tvmaniac.seasondetails.episodeDetailsModel
 
 @Composable
 fun EpisodeItem(
@@ -101,7 +101,7 @@ fun EpisodeItem(
             )
 
             IconButton(
-                onClick = { onAction(UpdateEpisodeStatus(episode.id)) },
+                onClick = { onAction(UpdateEpisodeStatus(episodeDetailsModel.id)) },
                 modifier = Modifier
                     .constrainAs(watchedStatusIcon) {
                         centerVerticallyTo(parent)
@@ -126,9 +126,9 @@ fun WatchlistRowItemPreview() {
     TvManiacTheme {
         Surface {
             EpisodeItem(
-                title = episode.episodeNumberTitle,
-                episodeOverview = episode.overview,
-                imageUrl = episode.imageUrl,
+                title = episodeDetailsModel.episodeNumberTitle,
+                episodeOverview = episodeDetailsModel.overview,
+                imageUrl = episodeDetailsModel.imageUrl,
                 onAction = {},
             )
         }

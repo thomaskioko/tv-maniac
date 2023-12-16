@@ -39,8 +39,8 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
-import com.thomaskioko.tvmaniac.seasondetails.seasonDetails
+import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
+import com.thomaskioko.tvmaniac.seasondetails.seasonDetailsModel
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -48,7 +48,7 @@ fun CollapsableContent(
     headerTitle: String,
     episodesCount: Long,
     watchProgress: Float,
-    episodeList: ImmutableList<Episode>,
+    episodeDetailsModelList: ImmutableList<EpisodeDetailsModel>,
     collapsed: Boolean,
     onAction: (SeasonDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
@@ -71,7 +71,7 @@ fun CollapsableContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         if (!collapsed) {
-            episodeList.forEach { episode ->
+            episodeDetailsModelList.forEach { episode ->
                 Spacer(modifier = Modifier.height(8.dp))
 
                 EpisodeItem(
@@ -163,7 +163,6 @@ private fun SeasonTitleHeader(
             Text(
                 text = "$episodesCount",
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .constrainAs(count) {
@@ -232,10 +231,10 @@ fun CollapsableContentPreview() {
     TvManiacTheme {
         Surface {
             CollapsableContent(
-                episodesCount = seasonDetails.episodeCount,
-                watchProgress = seasonDetails.watchProgress,
-                episodeList = seasonDetails.episodes,
-                headerTitle = seasonDetails.seasonName,
+                episodesCount = seasonDetailsModel.episodeCount,
+                watchProgress = seasonDetailsModel.watchProgress,
+                episodeDetailsModelList = seasonDetailsModel.episodeDetailModels,
+                headerTitle = seasonDetailsModel.seasonName,
                 collapsed = false,
                 onAction = {},
             )

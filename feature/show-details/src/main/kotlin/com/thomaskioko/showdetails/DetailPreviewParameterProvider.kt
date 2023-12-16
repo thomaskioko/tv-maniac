@@ -53,6 +53,7 @@ private val showDetailsLoaded = ShowDetailsState(
                 seasonId = 114355,
                 tvShowId = 84958,
                 name = "Season 1",
+                seasonNumber = 1,
             ),
         ),
         errorMessage = null,

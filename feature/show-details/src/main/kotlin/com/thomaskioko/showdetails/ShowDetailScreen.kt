@@ -95,6 +95,7 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.WatchTrailerClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.WebViewError
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.SimilarShow
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
@@ -189,8 +190,16 @@ private fun ShowDetailsContent(
             SeasonsContent(
                 isLoading = seasonsContent.isLoading,
                 seasonsList = seasonsContent.seasonsList,
-                onSeasonClicked = { id, name ->
-                    onAction(SeasonClicked(id, name))
+                onSeasonClicked = { tvShowId, seasonId, seasonNumber ->
+                    onAction(
+                        SeasonClicked(
+                            ShowSeasonDetailsParam(
+                                tvShowId,
+                                seasonId,
+                                seasonNumber,
+                            ),
+                        ),
+                    )
                 },
             )
         }
@@ -537,47 +546,47 @@ fun ShowDetailButtons(
 private fun SeasonsContent(
     isLoading: Boolean,
     seasonsList: ImmutableList<Season>,
-    onSeasonClicked: (Long, String) -> Unit,
+    onSeasonClicked: (Long, Long, Long) -> Unit,
 ) {
-    if (seasonsList.isNotEmpty()) {
-        TextLoadingItem(
-            isLoading = isLoading,
-            text = stringResource(id = R.string.title_seasons),
-        )
-        val selectedIndex by remember { mutableIntStateOf(0) }
+    TextLoadingItem(
+        isLoading = isLoading,
+        text = stringResource(id = R.string.title_seasons),
+    )
+    val selectedIndex by remember { mutableIntStateOf(0) }
 
-        ScrollableTabRow(
-            selectedTabIndex = selectedIndex,
-            divider = {}, /* Disable the built-in divider */
-            indicator = {},
-            edgePadding = 0.dp,
-            containerColor = Color.Transparent,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp),
-        ) {
-            seasonsList.forEach { season ->
-                Tab(
-                    modifier = Modifier
-                        .padding(end = 4.dp),
-                    selected = true,
+    ScrollableTabRow(
+        selectedTabIndex = selectedIndex,
+        divider = {}, /* Disable the built-in divider */
+        indicator = {},
+        edgePadding = 0.dp,
+        containerColor = Color.Transparent,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp),
+    ) {
+        seasonsList.forEach { season ->
+            Tab(
+                modifier = Modifier
+                    .padding(end = 4.dp),
+                selected = true,
+                onClick = {
+                    onSeasonClicked(
+                        season.tvShowId,
+                        season.seasonId,
+                        season.seasonNumber,
+                    )
+                },
+            ) {
+                TvManiacChip(
+                    text = season.name,
                     onClick = {
                         onSeasonClicked(
                             season.tvShowId,
-                            season.name,
+                            season.seasonId,
+                            season.seasonNumber,
                         )
                     },
-                ) {
-                    TvManiacChip(
-                        text = season.name,
-                        onClick = {
-                            onSeasonClicked(
-                                season.tvShowId,
-                                season.name,
-                            )
-                        },
-                    )
-                }
+                )
             }
         }
     }
