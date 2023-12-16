@@ -3,10 +3,8 @@ package com.thomaskioko.tvmaniac.util.inject
 import com.thomaskioko.tvmaniac.util.AppUtils
 import com.thomaskioko.tvmaniac.util.BundleProvider
 import com.thomaskioko.tvmaniac.util.BundleResourceReader
-import com.thomaskioko.tvmaniac.util.DateFormatter
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.IosAppUtils
-import com.thomaskioko.tvmaniac.util.IosDateFormatter
 import com.thomaskioko.tvmaniac.util.IosExceptionHandler
 import com.thomaskioko.tvmaniac.util.IosFormatterUtil
 import com.thomaskioko.tvmaniac.util.NetworkExceptionHandler
@@ -24,10 +22,6 @@ import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSBundle
 
 actual interface UtilPlatformComponent {
-
-    @ApplicationScope
-    @Provides
-    fun provideDateFormatter(bind: IosDateFormatter): DateFormatter = bind
 
     @ApplicationScope
     @Provides

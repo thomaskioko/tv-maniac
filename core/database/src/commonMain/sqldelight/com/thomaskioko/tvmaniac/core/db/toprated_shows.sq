@@ -1,0 +1,40 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.PageId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+CREATE TABLE IF NOT EXISTS toprated_shows(
+    `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
+    `page` INTEGER AS Id<PageId> NOT NULL,
+     FOREIGN KEY(`id`) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_toprated_shows_show_id` ON `toprated_shows` (`id`);
+
+-- queries
+
+insert:
+INSERT OR IGNORE INTO toprated_shows(
+    `id`,
+    `page`
+) VALUES (
+    :id,
+    :page
+);
+
+topRatedShows:
+SELECT * FROM toprated_shows
+INNER JOIN tvshows ON tvshows.id = toprated_shows.id;
+
+pagedTopRatedShows:
+SELECT * FROM toprated_shows
+INNER JOIN tvshows ON tvshows.id = toprated_shows.id
+WHERE toprated_shows.page = :page;
+
+delete:
+DELETE FROM toprated_shows
+WHERE id = :id;
+
+deleteAll:
+DELETE FROM toprated_shows;

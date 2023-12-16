@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.seasons.testing
 
-import com.thomaskioko.tvmaniac.core.db.SeasonsByShowId
+import com.thomaskioko.tvmaniac.core.db.ShowSeasons
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
@@ -10,27 +10,20 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeSeasonsRepository : SeasonsRepository {
 
-    private var seasonsList: Channel<List<SeasonsByShowId>> = Channel(Channel.UNLIMITED)
-    private var seasonsResult: Channel<Either<Failure, List<SeasonsByShowId>>> = Channel(Channel.UNLIMITED)
+    private var seasonsList: Channel<List<ShowSeasons>> = Channel(Channel.UNLIMITED)
+    private var seasonsResult: Channel<Either<Failure, List<ShowSeasons>>> = Channel(Channel.UNLIMITED)
 
-    private var seasonEpisodesResult: Channel<Either<Failure, List<SeasonsByShowId>>> =
-        Channel(Channel.UNLIMITED)
-
-    suspend fun setSeasonWithEpisodes(result: Either<Failure, List<SeasonsByShowId>>) {
-        seasonEpisodesResult.send(result)
-    }
-
-    suspend fun setSeasons(result: List<SeasonsByShowId>) {
+    suspend fun setSeasons(result: List<ShowSeasons>) {
         seasonsList.send(result)
     }
 
-    suspend fun setSeasonsResult(result: Either<Failure, List<SeasonsByShowId>>) {
+    suspend fun setSeasonsResult(result: Either<Failure, List<ShowSeasons>>) {
         seasonsResult.send(result)
     }
 
-    override suspend fun fetchSeasonsByShowId(traktId: Long): List<SeasonsByShowId> = seasonsList.receive()
+    override suspend fun fetchSeasonsByShowId(id: Long): List<ShowSeasons> = seasonsList.receive()
 
     override fun observeSeasonsByShowId(
-        traktId: Long,
-    ): Flow<Either<Failure, List<SeasonsByShowId>>> = seasonsResult.receiveAsFlow()
+        id: Long,
+    ): Flow<Either<Failure, List<ShowSeasons>>> = seasonsResult.receiveAsFlow()
 }

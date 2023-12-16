@@ -1,45 +1,37 @@
 package com.thomaskioko.tvmaniac.presentation.seasondetails
 
-import com.thomaskioko.tvmaniac.core.db.SeasonEpisodeDetailsById
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetails
+import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
+import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsModel
+import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
+import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
 import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
-fun List<SeasonEpisodeDetailsById>?.toSeasonWithEpisodes(): PersistentList<SeasonDetails> {
-    return this
-        ?.groupBy { it.season_id }
-        ?.map { (_, groupMap) ->
-            val seasonRow = groupMap.first()
-            SeasonDetails(
-                seasonId = seasonRow.season_id.id,
-                seasonName = seasonRow.season_title,
-                episodes = groupMap.map { it.toEpisode() }.toImmutableList(),
-                episodeCount = seasonRow.episode_count,
-                watchProgress = 0f,
-            )
-        }?.toPersistentList() ?: persistentListOf()
-}
-
-fun SeasonEpisodeDetailsById.toEpisode(): Episode {
-    return Episode(
-        id = episode_id.id,
-        seasonId = season_id.id,
-        episodeTitle = episode_title,
-        episodeNumberTitle = "E$episode_number • $episode_title",
-        overview = overview,
-        imageUrl = episode_image_url,
-        runtime = runtime,
-        voteCount = votes,
-        episodeNumber = episode_number,
-        seasonEpisodeNumber = "S${
-            season_number
-                .toString()
-                .padStart(2, '0')
-        } | E$episode_number",
+fun SeasonDetailsWithEpisodes.toSeasonDetails(): SeasonDetailsModel {
+    return SeasonDetailsModel(
+        seasonId = seasonId,
+        seasonName = name,
+        episodeDetailModels = episodes.toEpisodes(),
+        episodeCount = episodeCount,
+        watchProgress = 0f,
     )
 }
 
-fun List<SeasonEpisodeDetailsById>?.getTitle(): String = this?.firstOrNull()?.show_title ?: ""
+fun List<EpisodeDetails>.toEpisodes(): PersistentList<EpisodeDetailsModel> = map {
+    EpisodeDetailsModel(
+        id = it.id,
+        seasonId = it.seasonId,
+        episodeTitle = it.name,
+        episodeNumberTitle = "E${it.episodeNumber} • ${it.name}",
+        overview = it.overview,
+        imageUrl = it.stillPath,
+        runtime = it.runtime,
+        voteCount = it.voteCount,
+        episodeNumber = it.episodeNumber.toString(),
+        seasonEpisodeNumber = "S${
+            it.seasonNumber
+                .toString()
+                .padStart(2, '0')
+        } | E${it.episodeNumber}",
+    )
+}.toPersistentList()

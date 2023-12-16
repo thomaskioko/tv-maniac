@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.similar.implementation
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
+import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
@@ -26,12 +27,13 @@ class SimilarShowsRepositoryImpl(
     private val dispatchers: AppCoroutineDispatchers,
 ) : SimilarShowsRepository {
 
-    override suspend fun fetchSimilarShows(traktId: Long): List<SimilarShows> = store.get(traktId)
+    override suspend fun fetchSimilarShows(traktId: Long): List<SimilarShows> =
+        store.get(SimilarParams(showId = traktId, page = DEFAULT_API_PAGE))
 
     override fun observeSimilarShows(traktId: Long): Flow<Either<Failure, List<SimilarShows>>> =
         store.stream(
             StoreReadRequest.cached(
-                key = traktId,
+                key = SimilarParams(showId = traktId, page = DEFAULT_API_PAGE),
                 refresh = requestManagerRepository.isRequestExpired(
                     entityId = traktId,
                     requestType = "SIMILAR_SHOWS",

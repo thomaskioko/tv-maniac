@@ -3,12 +3,6 @@ package com.thomaskioko.tvmaniac.presentation.settings
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.testing.authenticatedAuthState
-import com.thomaskioko.tvmaniac.trakt.profile.testing.FakeProfileRepository
-import com.thomaskioko.tvmaniac.trakt.profile.testing.user
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
-import com.thomaskioko.tvmaniac.util.model.Either
-import com.thomaskioko.tvmaniac.util.model.ServerError
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,8 +20,6 @@ import kotlin.test.Test
 class SettingsPresenterTest {
 
     private val datastoreRepository = FakeDatastoreRepository()
-    private val profileRepository = FakeProfileRepository()
-    private val traktAuthRepository = FakeTraktAuthRepository()
 
     private val testDispatcher = StandardTestDispatcher()
 
@@ -124,19 +116,11 @@ class SettingsPresenterTest {
         presenter.state shouldBe SettingsState.DEFAULT_STATE
             .copy(showTraktDialog = false)
 
-        traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
         datastoreRepository.setAuthState(authenticatedAuthState)
-        profileRepository.setUserData(Either.Right(user))
 
         presenter.state shouldBe SettingsState.DEFAULT_STATE
             .copy(
                 errorMessage = null,
-                userInfo = UserInfo(
-                    slug = user.slug,
-                    userName = user.user_name,
-                    fullName = user.full_name,
-                    userPicUrl = user.profile_picture,
-                ),
             )
     }
 
@@ -157,9 +141,7 @@ class SettingsPresenterTest {
         presenter.state shouldBe SettingsState.DEFAULT_STATE
             .copy(showTraktDialog = false)
 
-        traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
         datastoreRepository.setAuthState(authenticatedAuthState)
-        profileRepository.setUserData(Either.Left(ServerError(errorMessage)))
 
         presenter.state shouldBe SettingsState.DEFAULT_STATE
             .copy(errorMessage = errorMessage)
@@ -177,19 +159,14 @@ class SettingsPresenterTest {
 
         presenter.dispatch(TraktLoginClicked)
 
-        traktAuthRepository.setAuthState(TraktAuthState.LOGGED_IN)
         datastoreRepository.setAuthState(authenticatedAuthState)
-        profileRepository.setUserData(Either.Right(user))
 
         presenter.state shouldBe SettingsState.DEFAULT_STATE
             .copy(
                 errorMessage = null,
-                userInfo = null,
             )
 
         presenter.dispatch(TraktLogoutClicked)
-
-        traktAuthRepository.setAuthState(TraktAuthState.LOGGED_OUT)
 
         presenter.state shouldBe SettingsState.DEFAULT_STATE
     }

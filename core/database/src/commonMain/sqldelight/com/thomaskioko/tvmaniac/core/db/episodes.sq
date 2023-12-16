@@ -1,40 +1,51 @@
 import com.thomaskioko.tvmaniac.db.EpisodeId;
 import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.SeasonId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE episode (
     id INTEGER AS Id<EpisodeId> NOT NULL PRIMARY KEY,
     season_id INTEGER AS Id<SeasonId> NOT NULL,
-    tmdb_id INTEGER,
+    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    episode_number INTEGER NOT NULL,
     title TEXT NOT NULL,
     overview TEXT NOT NULL,
-    ratings REAL NOT NULL,
-    runtime INTEGER NOT NULL,
-    votes INTEGER NOT NULL,
-    episode_number TEXT NOT NULL,
-    FOREIGN KEY(season_id) REFERENCES season(id)
+    runtime INTEGER DEFAULT NULL,
+    vote_count INTEGER NOT NULL,
+    vote_average REAL NOT NULL,
+    image_url TEXT DEFAULT NULL,
+    FOREIGN KEY(season_id) REFERENCES season(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-insertOrReplace:
+upsert:
 INSERT OR REPLACE INTO episode(
     id,
     season_id,
-    tmdb_id,
+    show_id,
     title,
     overview,
-    ratings,
     runtime,
-    votes,
-    episode_number
+    vote_count,
+    vote_average,
+    episode_number,
+    image_url
 )
-VALUES(?,?,?,?,?,?,?,?,?);
+VALUES(?,?,?,?,?,?,?,?,?,?);
 
-episodesById:
-SELECT *
+episodeDetails:
+SELECT
+    episode.id AS id,
+    episode.season_id AS season_id,
+    episode.show_id AS show_id,
+    episode.title,
+    episode.overview,
+    episode.runtime,
+    episode.vote_count,
+    episode.vote_average,
+    episode.episode_number,
+    episode.image_url
 FROM
     episode
-LEFT OUTER JOIN
-    episode_image ON episode_image.id = episode.id
 WHERE
     episode.id = ?
 ORDER BY

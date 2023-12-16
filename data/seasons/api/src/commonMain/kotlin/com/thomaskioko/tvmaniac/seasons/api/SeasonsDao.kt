@@ -1,8 +1,7 @@
 package com.thomaskioko.tvmaniac.seasons.api
 
 import com.thomaskioko.tvmaniac.core.db.Season
-import com.thomaskioko.tvmaniac.core.db.SeasonEpisodeDetailsById
-import com.thomaskioko.tvmaniac.core.db.SeasonsByShowId
+import com.thomaskioko.tvmaniac.core.db.ShowSeasons
 import kotlinx.coroutines.flow.Flow
 
 interface SeasonsDao {
@@ -11,11 +10,9 @@ interface SeasonsDao {
 
     fun upsert(entityList: List<Season>)
 
-    fun fetchSeasonDetails(traktId: Long): List<SeasonEpisodeDetailsById>
+    fun fetchShowSeasons(id: Long): List<ShowSeasons>
 
-    fun observeSeasonsByShowId(traktId: Long): Flow<List<SeasonsByShowId>>
-
-    fun observeSeasonEpisodeDetailsById(showId: Long): Flow<List<SeasonEpisodeDetailsById>>
+    fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>>
 
     fun delete(id: Long)
 

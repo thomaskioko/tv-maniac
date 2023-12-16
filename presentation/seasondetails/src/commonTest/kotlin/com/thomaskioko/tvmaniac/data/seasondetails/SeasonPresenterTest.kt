@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.data.seasondetails
 
-import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeImageRepository
 import com.thomaskioko.tvmaniac.presentation.seasondetails.Loading
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
@@ -24,7 +23,6 @@ import kotlin.test.Test
 class SeasonPresenterTest {
 
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
-    private val episodeImageRepository = FakeEpisodeImageRepository()
 
     private val testDispatcher = StandardTestDispatcher()
 

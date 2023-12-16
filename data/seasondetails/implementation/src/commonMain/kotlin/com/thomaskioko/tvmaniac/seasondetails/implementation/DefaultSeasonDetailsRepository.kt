@@ -1,0 +1,44 @@
+package com.thomaskioko.tvmaniac.seasondetails.implementation
+
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
+import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
+import com.thomaskioko.tvmaniac.util.extensions.mapResult
+import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.util.model.Either
+import com.thomaskioko.tvmaniac.util.model.Failure
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import me.tatarka.inject.annotations.Inject
+import org.mobilenativefoundation.store.store5.StoreReadRequest
+import org.mobilenativefoundation.store.store5.impl.extensions.get
+import kotlin.time.Duration.Companion.days
+
+@Inject
+class DefaultSeasonDetailsRepository(
+    private val seasonDetailsStore: SeasonDetailsStore,
+    private val requestManagerRepository: RequestManagerRepository,
+    private val dispatcher: AppCoroutineDispatchers,
+) : SeasonDetailsRepository {
+
+    override suspend fun fetchSeasonDetails(
+        param: SeasonDetailsParam,
+    ): SeasonDetailsWithEpisodes = seasonDetailsStore.get(param)
+
+    override fun observeSeasonDetailsStream(
+        param: SeasonDetailsParam,
+    ): Flow<Either<Failure, SeasonDetailsWithEpisodes>> =
+        seasonDetailsStore.stream(
+            StoreReadRequest.cached(
+                key = param,
+                refresh = requestManagerRepository.isRequestExpired(
+                    entityId = param.seasonId,
+                    requestType = "SEASON_DETAILS",
+                    threshold = 3.days,
+                ),
+            ),
+        )
+            .mapResult()
+            .flowOn(dispatcher.io)
+}

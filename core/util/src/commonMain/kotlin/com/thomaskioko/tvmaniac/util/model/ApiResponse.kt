@@ -9,9 +9,9 @@ import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
 import kotlinx.serialization.SerializationException
 
-suspend inline fun <reified T, reified E> HttpClient.safeRequest(
+suspend inline fun <reified T> HttpClient.safeRequest(
     block: HttpRequestBuilder.() -> Unit,
-): ApiResponse<T, E> =
+): ApiResponse<T> =
     try {
         val response = request { block() }
         ApiResponse.Success(response.body())
@@ -39,13 +39,13 @@ suspend inline fun <reified T, reified E> HttpClient.safeRequest(
         )
     }
 
-sealed class ApiResponse<out T, out E> {
+sealed class ApiResponse<out T> {
     /**
      * Represents successful network responses (2xx).
      */
-    data class Success<T>(val body: T) : ApiResponse<T, Nothing>()
+    data class Success<T>(val body: T) : ApiResponse<T>()
 
-    sealed class Error<E> : ApiResponse<Nothing, E>() {
+    sealed class Error<E> : ApiResponse<E>() {
         /**
          * Represents server errors.
          * @param code HTTP Status code

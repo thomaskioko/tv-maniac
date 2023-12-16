@@ -4,8 +4,6 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.Compan
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.SimilarShowsContent.Companion.EMPTY_SIMILAR_SHOWS
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.TrailersContent.Companion.EMPTY_TRAILERS
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
-import com.thomaskioko.tvmaniac.shows.testing.FakeDiscoverRepository
-import com.thomaskioko.tvmaniac.shows.testing.selectedShow
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
@@ -30,7 +28,6 @@ internal class ShowDetailsPresenterTest {
 
     private val seasonsRepository = FakeSeasonsRepository()
     private val trailerRepository = FakeTrailerRepository()
-    private val discoverRepository = FakeDiscoverRepository()
     private val similarShowsRepository = FakeSimilarShowsRepository()
     private val fakeLibraryRepository = FakeLibraryRepository()
     private val testDispatcher = StandardTestDispatcher()
@@ -57,16 +54,13 @@ internal class ShowDetailsPresenterTest {
 
     @Test
     fun initial_state_emits_expected_result() = runTest {
-        discoverRepository.setShowById(selectedShow)
-
         presenter.state shouldBe EMPTY_DETAIL_STATE.copy(
-            show = show,
+            showDetails = similarShow,
         )
     }
 
     @Test
     fun loadingData_state_emits_expected_result() = runTest {
-        discoverRepository.setShowResult(Either.Right(selectedShow))
         seasonsRepository.setSeasonsResult(Either.Right(seasons))
         similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
         trailerRepository.setTrailerResult(Either.Right(trailers))
@@ -90,7 +84,6 @@ internal class ShowDetailsPresenterTest {
     @Test
     fun error_loading_similarShows_emits_expected_result() = runTest {
         val errorMessage = "Something went wrong"
-        discoverRepository.setShowResult(Either.Right(selectedShow))
         seasonsRepository.setSeasonsResult(Either.Right(seasons))
         trailerRepository.setTrailerResult(Either.Right(trailers))
         similarShowsRepository.setSimilarShowsResult(Either.Left(ServerError(errorMessage)))
@@ -116,7 +109,6 @@ internal class ShowDetailsPresenterTest {
     @Test
     fun error_loading_trailers_emits_expected_result() = runTest {
         val errorMessage = "Something went wrong"
-        discoverRepository.setShowResult(Either.Right(selectedShow))
         seasonsRepository.setSeasonsResult(Either.Right(seasons))
         similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
         trailerRepository.setTrailerResult(Either.Left(ServerError(errorMessage)))
@@ -144,10 +136,8 @@ internal class ShowDetailsPresenterTest {
     @Test
     fun error_loading_seasons_emits_expected_result() = runTest {
         val errorMessage = "Something went wrong"
-        discoverRepository.setShowResult(Either.Right(selectedShow))
         similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
         trailerRepository.setTrailerResult(Either.Right(trailers))
-        seasonsRepository.setSeasonWithEpisodes(Either.Left(ServerError(errorMessage)))
 
         presenter.state shouldBe EMPTY_DETAIL_STATE
         /*   presenter.state shouldBe showDetailsLoaded.copy(
@@ -173,7 +163,6 @@ internal class ShowDetailsPresenterTest {
     @Test
     fun error_state_emits_expected_result() = runTest {
         val errorMessage = "Something went wrong"
-        discoverRepository.setShowResult(Either.Left(ServerError(errorMessage)))
         similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
         trailerRepository.setTrailerResult(Either.Right(trailers))
         seasonsRepository.setSeasonsResult(Either.Right(seasons))

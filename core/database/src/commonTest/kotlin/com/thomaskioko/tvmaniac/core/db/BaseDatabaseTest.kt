@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.core.db
 import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.db.IdAdapter
 import com.thomaskioko.tvmaniac.db.InstantColumnAdapter
-import com.thomaskioko.tvmaniac.db.stringColumnAdapter
+import com.thomaskioko.tvmaniac.db.intColumnAdapter
 import kotlin.test.AfterTest
 
 expect fun inMemorySqlDriver(): SqlDriver
@@ -17,10 +17,6 @@ abstract class BaseDatabaseTest {
     private val sqlDriver: SqlDriver = inMemorySqlDriver()
     protected open val database: TvManiacDatabase = TvManiacDatabase(
         driver = sqlDriver,
-        showAdapter = Show.Adapter(
-            genresAdapter = stringColumnAdapter,
-            idAdapter = IdAdapter(),
-        ),
         last_requestsAdapter = Last_requests.Adapter(
             timestampAdapter = InstantColumnAdapter,
         ),
@@ -31,27 +27,53 @@ abstract class BaseDatabaseTest {
         episodeAdapter = Episode.Adapter(
             idAdapter = IdAdapter(),
             season_idAdapter = IdAdapter(),
+            show_idAdapter = IdAdapter(),
         ),
         seasonAdapter = Season.Adapter(
             idAdapter = IdAdapter(),
             show_idAdapter = IdAdapter(),
         ),
-        show_imageAdapter = Show_image.Adapter(
-            idAdapter = IdAdapter(),
-        ),
         similar_showsAdapter = Similar_shows.Adapter(
             idAdapter = IdAdapter(),
             similar_show_idAdapter = IdAdapter(),
         ),
-        watchlistAdapter = Watchlist.Adapter(
-            idAdapter = IdAdapter(),
-        ),
-        show_categoryAdapter = Show_category.Adapter(
-            idAdapter = IdAdapter(),
-            category_idAdapter = IdAdapter(),
-        ),
         trailersAdapter = Trailers.Adapter(
             show_idAdapter = IdAdapter(),
+        ),
+        libraryAdapter = Library.Adapter(
+            idAdapter = IdAdapter(),
+        ),
+        trending_showsAdapter = Trending_shows.Adapter(
+            idAdapter = IdAdapter(),
+            pageAdapter = IdAdapter(),
+        ),
+        tvshowsAdapter = Tvshows.Adapter(
+            idAdapter = IdAdapter(),
+            genre_idsAdapter = intColumnAdapter,
+        ),
+        networksAdapter = Networks.Adapter(
+            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+        ),
+        show_networksAdapter = Show_networks.Adapter(
+            show_idAdapter = IdAdapter(),
+            network_idAdapter = IdAdapter(),
+        ),
+        upcoming_showsAdapter = Upcoming_shows.Adapter(
+            idAdapter = IdAdapter(),
+            pageAdapter = IdAdapter(),
+        ),
+        toprated_showsAdapter = Toprated_shows.Adapter(
+            idAdapter = IdAdapter(),
+            pageAdapter = IdAdapter(),
+        ),
+        popular_showsAdapter = Popular_shows.Adapter(
+            idAdapter = IdAdapter(),
+            pageAdapter = IdAdapter(),
+        ),
+        genresAdapter = Genres.Adapter(
+            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
         ),
     )
 

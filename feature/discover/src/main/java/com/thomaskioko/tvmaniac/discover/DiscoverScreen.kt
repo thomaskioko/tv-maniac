@@ -53,7 +53,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
-import com.thomaskioko.tvmaniac.category.api.model.Category
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -71,12 +70,11 @@ import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowAction
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
-import com.thomaskioko.tvmaniac.presentation.discover.LoadCategoryShows
 import com.thomaskioko.tvmaniac.presentation.discover.Loading
 import com.thomaskioko.tvmaniac.presentation.discover.RetryLoading
 import com.thomaskioko.tvmaniac.presentation.discover.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.discover.SnackBarDismissed
-import com.thomaskioko.tvmaniac.presentation.discover.model.TvShow
+import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -91,7 +89,7 @@ fun DiscoverScreen(
 ) {
     val discoverState by discoverShowsPresenter.state.subscribeAsState()
     val pagerState = rememberPagerState(pageCount = {
-        (discoverState as? DataLoaded)?.recommendedShows?.size ?: 0
+        (discoverState as? DataLoaded)?.featuredShows?.size ?: 0
     })
     val snackBarHostState = remember { SnackbarHostState() }
 
@@ -123,10 +121,11 @@ internal fun DiscoverScreen(
             modifier = modifier,
             pagerState = pagerState,
             snackBarHostState = snackBarHostState,
-            trendingShows = state.trendingShows,
+            topRatedShows = state.topRatedShows,
             popularShows = state.popularShows,
-            anticipatedShows = state.anticipatedShows,
-            recommendedShows = state.recommendedShows,
+            upcomingShows = state.upcomingShows,
+            featuredShows = state.featuredShows,
+            trendingToday = state.trendingToday,
             errorMessage = state.errorMessage,
             onAction = onAction,
         )
@@ -143,10 +142,11 @@ internal fun DiscoverScreen(
 
 @Composable
 private fun DiscoverScrollContent(
-    trendingShows: ImmutableList<TvShow>?,
-    popularShows: ImmutableList<TvShow>?,
-    anticipatedShows: ImmutableList<TvShow>?,
-    recommendedShows: ImmutableList<TvShow>?,
+    topRatedShows: ImmutableList<DiscoverShow>,
+    popularShows: ImmutableList<DiscoverShow>,
+    upcomingShows: ImmutableList<DiscoverShow>,
+    featuredShows: ImmutableList<DiscoverShow>?,
+    trendingToday: ImmutableList<DiscoverShow>,
     errorMessage: String?,
     snackBarHostState: SnackbarHostState,
     pagerState: PagerState,
@@ -175,47 +175,58 @@ private fun DiscoverScrollContent(
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
         ) {
-            recommendedShows?.let {
+            featuredShows?.let {
                 item {
                     DiscoverHeaderContent(
                         pagerState = pagerState,
-                        showList = recommendedShows,
+                        showList = featuredShows,
                         onShowClicked = { onAction(ShowClicked(it)) },
                     )
                 }
             }
 
-            trendingShows?.let {
-                item {
-                    RowContent(
-                        category = Category.TRENDING,
-                        tvShows = trendingShows,
-                        onItemClicked = { onAction(ShowClicked(it)) },
-                        onLabelClicked = { onAction(LoadCategoryShows(it)) },
-                    )
-                }
+            item {
+                HorizontalRowContent(
+                    category = stringResource(id = R.string.title_category_upcoming),
+                    tvShows = upcomingShows,
+                    onItemClicked = { onAction(ShowClicked(it)) },
+                    onMoreClicked = {
+                        // Add Navigation
+                    },
+                )
             }
 
-            anticipatedShows?.let {
-                item {
-                    RowContent(
-                        category = Category.ANTICIPATED,
-                        tvShows = anticipatedShows,
-                        onItemClicked = { onAction(ShowClicked(it)) },
-                        onLabelClicked = { onAction(LoadCategoryShows(it)) },
-                    )
-                }
+            item {
+                HorizontalRowContent(
+                    category = stringResource(id = R.string.title_category_trending_today),
+                    tvShows = trendingToday,
+                    onItemClicked = { onAction(ShowClicked(it)) },
+                    onMoreClicked = {
+                        // Add Navigation
+                    },
+                )
             }
 
-            popularShows?.let {
-                item {
-                    RowContent(
-                        category = Category.POPULAR,
-                        tvShows = popularShows,
-                        onItemClicked = { onAction(ShowClicked(it)) },
-                        onLabelClicked = { onAction(LoadCategoryShows(it)) },
-                    )
-                }
+            item {
+                HorizontalRowContent(
+                    category = stringResource(id = R.string.title_category_popular),
+                    tvShows = popularShows,
+                    onItemClicked = { onAction(ShowClicked(it)) },
+                    onMoreClicked = {
+                        // Add Navigation
+                    },
+                )
+            }
+
+            item {
+                HorizontalRowContent(
+                    category = stringResource(id = R.string.title_category_top_rated),
+                    tvShows = topRatedShows,
+                    onItemClicked = { onAction(ShowClicked(it)) },
+                    onMoreClicked = {
+                        // Add Navigation
+                    },
+                )
             }
         }
 
@@ -225,7 +236,7 @@ private fun DiscoverScrollContent(
 
 @Composable
 fun DiscoverHeaderContent(
-    showList: ImmutableList<TvShow>,
+    showList: ImmutableList<DiscoverShow>,
     pagerState: PagerState,
     modifier: Modifier = Modifier,
     onShowClicked: (Long) -> Unit,
@@ -280,7 +291,7 @@ private fun DynamicColorContainer(
 
 @Composable
 fun HorizontalPagerItem(
-    list: ImmutableList<TvShow>,
+    list: ImmutableList<DiscoverShow>,
     pagerState: PagerState,
     backgroundColor: Color,
     modifier: Modifier = Modifier,
@@ -309,7 +320,7 @@ fun HorizontalPagerItem(
             TvPosterCard(
                 title = list[pageNumber].title,
                 posterImageUrl = list[pageNumber].posterImageUrl,
-                onClick = { onClick(list[pageNumber].traktId) },
+                onClick = { onClick(list[pageNumber].tmdbId) },
                 modifier = Modifier
                     .graphicsLayer {
                         val pageOffset = (
@@ -376,18 +387,18 @@ fun HorizontalPagerItem(
 
 @OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
-private fun RowContent(
-    category: Category,
-    tvShows: ImmutableList<TvShow>,
+private fun HorizontalRowContent(
+    category: String,
+    tvShows: ImmutableList<DiscoverShow>,
     onItemClicked: (Long) -> Unit,
-    onLabelClicked: (Long) -> Unit,
+    onMoreClicked: () -> Unit,
 ) {
     AnimatedVisibility(visible = tvShows.isNotEmpty()) {
         Column {
             BoxTextItems(
-                title = category.title,
+                title = category,
                 label = stringResource(id = R.string.str_more),
-                onMoreClicked = { onLabelClicked(category.id) },
+                onMoreClicked = onMoreClicked,
             )
 
             val lazyListState = rememberLazyListState()
@@ -405,7 +416,7 @@ private fun RowContent(
                     TvPosterCard(
                         posterImageUrl = tvShow.posterImageUrl,
                         title = tvShow.title,
-                        onClick = { onItemClicked(tvShow.traktId) },
+                        onClick = { onItemClicked(tvShow.tmdbId) },
                         modifier = Modifier
                             .animateItemPlacement(),
                     )

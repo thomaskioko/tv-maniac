@@ -1,13 +1,14 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Season
-import com.thomaskioko.tvmaniac.core.db.SeasonEpisodeDetailsById
+import com.thomaskioko.tvmaniac.core.db.Episode
 import com.thomaskioko.tvmaniac.db.DbTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
-import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
-import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
-import com.thomaskioko.tvmaniac.util.KermitLogger
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
+import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbSeasonDetailsNetworkDataSource
+import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Inject
@@ -18,56 +19,56 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 
 @Inject
 class SeasonDetailsStore(
-    private val remoteDataSource: TraktShowsRemoteDataSource,
-    private val seasonCache: SeasonsDao,
+    private val remoteDataSource: TmdbSeasonDetailsNetworkDataSource,
+    private val seasonDetailsDao: SeasonDetailsDao,
     private val episodesDao: EpisodesDao,
     private val scope: AppCoroutineScope,
     private val dbTransactionRunner: DbTransactionRunner,
-    private val logger: KermitLogger,
-) : Store<Long, List<SeasonEpisodeDetailsById>> by StoreBuilder
-    .from(
-        fetcher = Fetcher.of { id: Long ->
-            when (val response = remoteDataSource.getSeasonEpisodes(id)) {
-                is ApiResponse.Success -> response.body.toSeasonWithEpisodes()
-                is ApiResponse.Error.GenericError -> {
-                    logger.error("SeasonDetailsStore GenericError", "$response")
-                    throw Throwable("${response.errorMessage}")
+    private val formatterUtil: FormatterUtil,
+) : Store<SeasonDetailsParam, SeasonDetailsWithEpisodes> by StoreBuilder.from(
+    fetcher = Fetcher.of { params: SeasonDetailsParam ->
+        when (
+            val response = remoteDataSource.getSeasonDetails(params.showId, params.seasonNumber)
+        ) {
+            is ApiResponse.Success -> response.body
+            is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
+            is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
+            is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
+        }
+    },
+    sourceOfTruth = SourceOfTruth.of(
+        reader = { params: SeasonDetailsParam ->
+            seasonDetailsDao.observeSeasonEpisodeDetails(params.showId, params.seasonNumber)
+        },
+        writer = { params: SeasonDetailsParam, response ->
+            dbTransactionRunner {
+                response.episodes.forEach { episode ->
+                    episodesDao.insert(
+                        Episode(
+                            id = Id(episode.id.toLong()),
+                            show_id = Id(params.showId),
+                            episode_number = episode.episodeNumber.toLong(),
+                            title = episode.name,
+                            overview = episode.overview,
+                            image_url = episode.stillPath?.let {
+                                formatterUtil.formatTmdbPosterPath(it)
+                            },
+                            vote_average = episode.voteAverage,
+                            vote_count = episode.voteCount.toLong(),
+                            runtime = episode.runtime?.toLong(),
+                            season_id = Id(params.seasonId),
+                        ),
+                    )
                 }
 
-                is ApiResponse.Error.HttpError -> {
-                    logger.error("SeasonDetailsStore HttpError", "$response")
-                    throw Throwable("${response.code} - ${response.errorMessage}")
-                }
+                // Insert Season Videos
 
-                is ApiResponse.Error.SerializationError -> {
-                    logger.error("SeasonDetailsStore SerializationError", "$response")
-                    throw Throwable("${response.errorMessage}")
-                }
+                // Insert Season Images
             }
         },
-        sourceOfTruth = SourceOfTruth.of(
-            reader = seasonCache::observeSeasonEpisodeDetailsById,
-            writer = { id, list ->
-                dbTransactionRunner {
-                    list.forEach { season ->
-                        seasonCache.upsert(
-                            Season(
-                                id = Id(season.seasonId),
-                                show_id = Id(id),
-                                season_number = season.seasonNumber,
-                                title = season.title,
-                                episode_count = season.episodeCount,
-                                overview = season.overview,
-                            ),
-                        )
-
-                        episodesDao.insert(season.episodes)
-                    }
-                }
-            },
-            delete = seasonCache::delete,
-            deleteAll = seasonCache::deleteAll,
-        ),
-    )
+        delete = { params: SeasonDetailsParam -> seasonDetailsDao.delete(params.seasonId) },
+        deleteAll = seasonDetailsDao::deleteAll,
+    ),
+)
     .scope(scope.io)
     .build()

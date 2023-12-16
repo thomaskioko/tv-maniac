@@ -1,73 +1,73 @@
 import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.SeasonId;
-import com.thomaskioko.tvmaniac.db.ShowId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE season (
     id INTEGER AS Id<SeasonId>  NOT NULL PRIMARY KEY,
-    show_id INTEGER AS Id<ShowId> NOT NULL,
+    show_id INTEGER AS Id<TmdbId> NOT NULL,
     season_number INTEGER NOT NULL,
     title TEXT NOT NULL,
     episode_count INTEGER NOT NULL,
     overview TEXT,
-    FOREIGN KEY(show_id) REFERENCES show(id)
+    image_url TEXT DEFAULT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-insertOrReplace:
+upsert:
 INSERT OR REPLACE INTO season(
     id,
     show_id,
     season_number,
     episode_count,
     title,
-    overview
+    overview,
+    image_url
 )
-VALUES(?,?,?,?,?,?);
+VALUES(?,?,?,?,?,?, ?);
 
-seasonsByShowId:
+showSeasons:
 SELECT
-    show.id AS show_id,
+    tvshows.id AS show_id,
     season.id AS season_id,
     season.title AS season_title,
     season.season_number
 FROM
-    show
+    tvshows
 JOIN
-    season ON show.id = season.show_id
+    season ON tvshows.id = season.show_id
 WHERE
-    show.id = ?;
+    tvshows.id = ?
+ORDER BY
+    season.season_number ASC       ;
 
-seasonEpisodeDetailsById:
+seasonDetails:
 SELECT
-    show.id AS show_id,
-    show.title AS show_title,
+    tvshows.id AS show_id,
+    tvshows.name AS show_title,
     season.id AS season_id,
     season.title AS season_title,
     season.overview AS season_overview,
     season.season_number,
     season.episode_count,
+    season.image_url AS season_image_url,
     episode.id AS episode_id,
-    episode.season_id AS episode_season_id,
     episode.title AS episode_title,
     episode.episode_number,
     episode.overview,
     episode.runtime,
-    episode.ratings,
-    episode.votes,
-    episode_image.image_url AS episode_image_url
+    episode.vote_average,
+    episode.vote_count,
+    episode.image_url AS episode_image_url
 FROM
-    show
+    tvshows
 INNER JOIN
-    season ON season.show_id = show.id
-INNER JOIN
-    episode ON episode.season_id = season.id
+    season ON season.show_id = tvshows.id
 LEFT OUTER JOIN
-    episode_image ON episode_image.id = episode.id
+    episode ON episode.season_id = season.id
 WHERE
-    show.id = ?
-AND
-    season_number != 0
+    tvshows.id = :showId AND season.season_number = :seasonNumber
 ORDER BY
-    season.season_number, episode_number ASC;
+    episode_number ASC;
 
 delete:
 DELETE FROM season WHERE show_id = ?;

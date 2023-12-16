@@ -1,16 +1,16 @@
 package com.thomaskioko.tvmaniac.core.db
 
 import com.thomaskioko.tvmaniac.core.db.MockData.getShow
-import com.thomaskioko.tvmaniac.core.db.MockData.showCategory
 import com.thomaskioko.tvmaniac.core.db.MockData.showList
+import com.thomaskioko.tvmaniac.db.Id
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.test.Test
 
 internal class TvShowCacheTest : BaseDatabaseTest() {
 
-    private val tvShowQueries get() = database.showQueries
-    private val showCategoryQueries get() = database.show_categoryQueries
+    private val trendingShowsQueries get() = database.trending_showsQueries
+    private val tvShowQueries get() = database.tvshowsQueries
 
     @Test
     fun insertTvShow() {
@@ -19,65 +19,61 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         shows.insertTvShowsEntityList()
 
         for (show in shows) {
-            showCategory(show.id.id, 1).insertCategory()
+            Trending_shows(
+                id = show.id,
+                page = Id(1),
+            ).insert()
         }
 
-        val entities = tvShowQueries.shows().executeAsList()
+        val entities = trendingShowsQueries.trendingShows().executeAsList()
 
         entities.size shouldBe 2
     }
 
     @Test
     fun verify_selectByShowId_returnTvShowEntity_afterInsertHasBeenDone() {
-        getShow().insertTvShowQuery()
+        val show = getShow()
+        show.insertTvShowQuery()
 
-        val entity = tvShowQueries.showById(getShow().id)
+        val entity = tvShowQueries.tvshowDetails(show.id)
             .executeAsOne()
 
         entity shouldNotBe null
-        entity.title shouldBe getShow().title
+        entity.name shouldBe show.name
         entity.overview shouldBe getShow().overview
-        entity.votes shouldBe getShow().votes
-        entity.votes shouldBe getShow().votes
-        entity.genres shouldBe getShow().genres
+        entity.vote_average shouldBe show.vote_average
+        entity.backdrop_path shouldBe show.backdrop_path
+        entity.popularity shouldBe show.popularity
     }
 
-    @Test
-    fun verifyDelete_clearsTable() {
-        getShow().insertTvShowQuery()
-
-        tvShowQueries.deleteAll()
-
-        val entity = tvShowQueries.showById(getShow().id)
-            .executeAsOneOrNull()
-
-        entity shouldBe null
-    }
-
-    private fun List<Show>.insertTvShowsEntityList() {
+    private fun List<Tvshows>.insertTvShowsEntityList() {
         map { it.insertTvShowQuery() }
     }
 
-    private fun Show.insertTvShowQuery() {
-        tvShowQueries.insertOrReplace(
+    private fun Tvshows.insertTvShowQuery() {
+        tvShowQueries.upsert(
             id = id,
-            title = title,
+            name = name,
             overview = overview,
             language = language,
-            votes = votes,
-            runtime = runtime,
-            genres = genres,
-            year = year,
+            first_air_date = first_air_date,
+            vote_average = vote_average,
+            vote_count = vote_count,
+            popularity = popularity,
+            genre_ids = genre_ids,
             status = status,
-            tmdb_id = tmdb_id,
-            rating = rating,
+            episode_numbers = episode_numbers,
+            last_air_date = last_air_date,
+            season_numbers = season_numbers,
+            poster_path = poster_path,
+            backdrop_path = backdrop_path,
         )
     }
 
-    private fun Show_category.insertCategory() {
-        showCategoryQueries.insertOrReplace(
+    private fun Trending_shows.insert() {
+        trendingShowsQueries.insert(
             id = id,
-            category_id = category_id,
+            page = page,
         )
     }
 }

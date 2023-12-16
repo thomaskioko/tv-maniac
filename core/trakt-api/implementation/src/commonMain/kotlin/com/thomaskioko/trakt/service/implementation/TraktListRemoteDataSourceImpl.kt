@@ -2,7 +2,6 @@ package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.trakt.service.implementation.inject.TraktHttpClient
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.ErrorResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddRemoveShowFromListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowRequest
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddShowToListResponse
@@ -31,7 +30,7 @@ class TraktListRemoteDataSourceImpl(
     private val httpClient: TraktHttpClient,
 ) : TraktListRemoteDataSource {
 
-    override suspend fun getUser(userId: String): ApiResponse<TraktUserResponse, ErrorResponse> =
+    override suspend fun getUser(userId: String): ApiResponse<TraktUserResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get

@@ -1,12 +1,10 @@
 package com.thomaskioko.tvmaniac.util.inject
 
 import com.thomaskioko.tvmaniac.util.AndroidAppUtils
-import com.thomaskioko.tvmaniac.util.AndroidDateUtil
 import com.thomaskioko.tvmaniac.util.AndroidFormatterUtil
 import com.thomaskioko.tvmaniac.util.AndroidNetworkExceptionHandlerUtil
 import com.thomaskioko.tvmaniac.util.AppUtils
 import com.thomaskioko.tvmaniac.util.ClasspathResourceReader
-import com.thomaskioko.tvmaniac.util.DateFormatter
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.util.ResourceReader
@@ -39,10 +37,6 @@ actual interface UtilPlatformComponent {
         io = CoroutineScope(Job() + dispatchers.io),
         main = CoroutineScope(Job() + dispatchers.main),
     )
-
-    @ApplicationScope
-    @Provides
-    fun provideDateFormatter(bind: AndroidDateUtil): DateFormatter = bind
 
     @ApplicationScope
     @Provides

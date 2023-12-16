@@ -1,56 +1,31 @@
 package com.thomaskioko.tvmaniac.data.trailers.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.util.AppUtils
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.StoreReadRequest
-import org.mobilenativefoundation.store.store5.impl.extensions.get
-import kotlin.time.Duration.Companion.days
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class TrailerRepositoryImpl(
-    private val store: TrailerStore,
     private val appUtils: AppUtils,
-    private val requestManagerRepository: RequestManagerRepository,
+    private val trailerDao: TrailerDao,
     private val dispatchers: AppCoroutineDispatchers,
 ) : TrailerRepository {
 
     override fun isYoutubePlayerInstalled(): Flow<Boolean> = appUtils.isYoutubePlayerInstalled()
 
-    override suspend fun fetchTrailersByShowId(traktId: Long): List<Trailers> =
-        store.get(traktId)
+    override suspend fun fetchTrailersByShowId(id: Long): List<Trailers> =
+        trailerDao.getTrailersById(id)
 
-    override fun observeTrailersStoreResponse(traktId: Long): Flow<Either<Failure, List<Trailers>>> =
-        store.stream(
-            StoreReadRequest.cached(
-                key = traktId,
-                refresh = requestManagerRepository.isRequestExpired(
-                    entityId = traktId,
-                    requestType = "TRAILERS",
-                    threshold = 6.days,
-                ),
-            ),
-        )
+    override fun observeTrailersStoreResponse(id: Long): Flow<Either<Failure, List<Trailers>>> =
+        trailerDao.observeTrailersById(id)
             .distinctUntilChanged()
-            .flatMapLatest {
-                val data = it.dataOrNull()
-                if (data != null) {
-                    flowOf(Either.Right(data))
-                } else {
-                    emptyFlow()
-                }
-            }
+            .map { Either.Right(it) }
             .flowOn(dispatchers.io)
 }

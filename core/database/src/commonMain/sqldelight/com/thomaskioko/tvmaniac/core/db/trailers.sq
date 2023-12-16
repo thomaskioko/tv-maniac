@@ -1,15 +1,15 @@
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.ShowId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE trailers (
     id TEXT NOT NULL PRIMARY KEY,
-    show_id INTEGER AS Id<ShowId> NOT NULL,
+    show_id INTEGER AS Id<TmdbId> NOT NULL,
     key TEXT NOT NULL,
     name TEXT NOT NULL,
     site TEXT NOT NULL,
     size INTEGER NOT NULL,
     type TEXT NOT NULL,
-    FOREIGN KEY(show_id)REFERENCES show(id)
+    FOREIGN KEY(show_id)REFERENCES tvshows(id)
 );
 
 insertOrReplace:

@@ -119,9 +119,7 @@ internal fun BottomNavigationContent(
     val childStack by presenter.screenStack.subscribeAsState()
     val activeComponent = childStack.active.instance
 
-    val showBottomBar = activeComponent is Screen.Discover ||
-        activeComponent is Screen.Search || activeComponent is Screen.Library ||
-        activeComponent is Screen.Settings
+    val showBottomBar = presenter.shouldShowBottomNav(activeComponent)
 
     AnimatedVisibility(
         visible = showBottomBar,

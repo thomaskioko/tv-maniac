@@ -2,9 +2,10 @@ package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.category.api.model.Category
-import com.thomaskioko.tvmaniac.showimages.api.ShowImagesRepository
-import com.thomaskioko.tvmaniac.shows.api.DiscoverRepository
+import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
+import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
+import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
+import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
 import com.thomaskioko.tvmaniac.util.decompose.asValue
 import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,8 +28,10 @@ class DiscoverShowsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
     @Assisted private val onNavigateToMore: (Long) -> Unit,
-    private val discoverRepository: DiscoverRepository,
-    private val showImagesRepository: ShowImagesRepository,
+    private val trendingShowsRepository: TrendingShowsRepository,
+    private val upcomingShowsRepository: UpcomingShowsRepository,
+    private val topRatedShowsRepository: TopRatedShowsRepository,
+    private val popularShowsRepository: PopularShowsRepository,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -61,17 +64,19 @@ class DiscoverShowsPresenter(
     }
 
     private suspend fun fetchShowData() {
-        val trendingResponse = discoverRepository.fetchShows(Category.TRENDING)
-        val recommendedResponse = discoverRepository.fetchShows(Category.RECOMMENDED)
-        val popularResponse = discoverRepository.fetchShows(Category.POPULAR)
-        val anticipatedResponse = discoverRepository.fetchShows(Category.ANTICIPATED)
+        val topRatedResponse = topRatedShowsRepository.fetchTopRatedShows()
+        val popularResponse = popularShowsRepository.fetchPopularShows()
+        val upcomingResponse = upcomingShowsRepository.fetchUpcomingShows()
+        val featuredResponse = trendingShowsRepository.fetchFeaturedTrendingShows()
+        val trendingShows = trendingShowsRepository.fetchTrendingShows()
 
         _state.update {
             DataLoaded(
-                trendingShows = trendingResponse.toTvShowList(),
-                popularShows = popularResponse.toTvShowList(),
-                anticipatedShows = anticipatedResponse.toTvShowList(),
-                recommendedShows = recommendedResponse.take(5).toTvShowList(),
+                topRatedShows = topRatedResponse.toTopRatedList(),
+                popularShows = popularResponse.toPopularList(),
+                upcomingShows = upcomingResponse.toUpcomingShowList(),
+                featuredShows = featuredResponse.toDiscoverShowList(),
+                trendingToday = trendingShows.toDiscoverShowList(),
             )
         }
     }
@@ -82,18 +87,19 @@ class DiscoverShowsPresenter(
 
     private suspend fun observeShowData() {
         combine(
-            discoverRepository.observeShowCategory(Category.TRENDING),
-            discoverRepository.observeShowCategory(Category.POPULAR),
-            discoverRepository.observeShowCategory(Category.ANTICIPATED),
-            discoverRepository.observeShowCategory(Category.RECOMMENDED),
-            showImagesRepository.updateShowArtWork(),
-        ) { trending, popular, anticipated, recommended, _ ->
+            trendingShowsRepository.observeFeaturedTrendingShows(),
+            topRatedShowsRepository.observeTopRatedShows(),
+            popularShowsRepository.observePopularShows(),
+            upcomingShowsRepository.observeUpcomingShows(),
+            trendingShowsRepository.observeTrendingShows(),
+        ) { recommended, trending, popular, upcomingShows, trendingToday ->
             DataLoaded(
-                trendingShows = trending.getOrNull().toTvShowList(),
-                popularShows = popular.getOrNull().toTvShowList(),
-                anticipatedShows = anticipated.getOrNull().toTvShowList(),
-                recommendedShows = recommended.getOrNull()?.take(5).toTvShowList(),
-                errorMessage = getErrorMessage(trending, popular, anticipated, recommended),
+                featuredShows = recommended.getOrNull().toDiscoverShowList(),
+                topRatedShows = trending.getOrNull().toTopRatedList(),
+                popularShows = popular.getOrNull().toPopularList(),
+                upcomingShows = upcomingShows.getOrNull().toUpcomingShowList(),
+                trendingToday = trendingToday.getOrNull().toDiscoverShowList(),
+                errorMessage = getErrorMessage(trending, popular, upcomingShows, recommended),
             )
         }
             .catch { ErrorState(errorMessage = it.message) }
@@ -101,10 +107,11 @@ class DiscoverShowsPresenter(
                 _state.update { state ->
                     (state as? DataLoaded)?.copy(
                         errorMessage = it.errorMessage,
-                        trendingShows = it.trendingShows,
+                        topRatedShows = it.topRatedShows,
                         popularShows = it.popularShows,
-                        anticipatedShows = it.anticipatedShows,
-                        recommendedShows = it.recommendedShows,
+                        upcomingShows = it.upcomingShows,
+                        featuredShows = it.featuredShows,
+                        trendingToday = it.trendingToday,
                     ) ?: state
                 }
             }

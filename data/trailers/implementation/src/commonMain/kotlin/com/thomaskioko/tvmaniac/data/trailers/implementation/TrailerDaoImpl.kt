@@ -37,6 +37,10 @@ class TrailerDaoImpl(
             .mapToList(dispatchers.io)
     }
 
+    override fun getTrailersById(showId: Long): List<Trailers> =
+        database.trailersQueries.selectByShowId(Id(showId))
+            .executeAsList()
+
     override fun delete(id: Long) {
         database.transaction {
             database.trailersQueries.delete(Id(id))

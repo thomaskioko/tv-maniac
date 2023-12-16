@@ -22,10 +22,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -46,8 +45,8 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsState
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Episode
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetails
+import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
+import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.components.CollapsableContent
 import com.thomaskioko.tvmaniac.seasondetails.components.EpisodeItem
@@ -103,8 +102,7 @@ internal fun SeasonDetailsScreen(
 
                 is SeasonDetailsLoaded -> {
                     SeasonContent(
-                        seasonsEpList = state.seasonDetailsList,
-                        initialSeasonName = state.selectedSeason,
+                        seasonDetailsModel = state.seasonDetailsModel,
                         onEpisodeClicked = { onAction(EpisodeClicked(it)) },
                         listState = listState,
                         contentPadding = contentPadding,
@@ -132,64 +130,51 @@ private fun TopBar(
 
 @Composable
 private fun SeasonContent(
-    seasonsEpList: ImmutableList<SeasonDetails>?,
-    initialSeasonName: String?,
+    seasonDetailsModel: SeasonDetailsModel,
     listState: LazyListState,
     contentPadding: PaddingValues,
     onEpisodeClicked: (Long) -> Unit = {},
     onAction: (SeasonDetailsAction) -> Unit,
 ) {
-    seasonsEpList?.let {
-        LaunchedEffect(initialSeasonName) {
-            val initialIndex = seasonsEpList.indexOfFirst { it.seasonName == initialSeasonName }
+    val collapsedState = remember { mutableStateOf(true) }
 
-            if (initialIndex in 0 until seasonsEpList.count()) {
-                listState.animateScrollToItem(index = initialIndex)
-            }
+    LazyColumn(
+        state = listState,
+        contentPadding = contentPadding.copy(copyTop = false),
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxSize(),
+    ) {
+        item { Spacer(modifier = Modifier.height(64.dp)) }
+
+        item {
+            WatchNextContent(
+                episodeDetailsModelList = seasonDetailsModel.episodeDetailModels,
+                onAction = onAction,
+            )
         }
 
-        val collapsedState = remember(seasonsEpList) {
-            seasonsEpList.map {
-                it.seasonName != initialSeasonName
-            }.toMutableStateList()
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+
+        item {
+            LabelTitle(
+                label = stringResource(id = R.string.title_all_episodes),
+            )
         }
 
-        LazyColumn(
-            state = listState,
-            contentPadding = contentPadding.copy(copyTop = false),
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxSize(),
-        ) {
-            item { Spacer(modifier = Modifier.height(64.dp)) }
-
-            item {
-                WatchNextContent(
-                    episodeList = seasonsEpList.firstOrNull()?.episodes,
-                    onAction = onAction,
-                )
-            }
-
-            item { Spacer(modifier = Modifier.height(16.dp)) }
-
-            item {
-                LabelTitle(
-                    label = stringResource(id = R.string.title_all_episodes),
-                )
-            }
-
-            itemsIndexed(seasonsEpList) { index, season ->
-                CollapsableContent(
-                    episodesCount = season.episodeCount,
-                    headerTitle = season.seasonName,
-                    watchProgress = season.watchProgress,
-                    episodeList = season.episodes,
-                    collapsed = collapsedState[index],
-                    onEpisodeClicked = { onEpisodeClicked(it) },
-                    onSeasonHeaderClicked = { collapsedState[index] = !collapsedState[index] },
-                    onAction = onAction,
-                )
-            }
+        item {
+            CollapsableContent(
+                episodesCount = seasonDetailsModel.episodeCount,
+                headerTitle = seasonDetailsModel.seasonName,
+                watchProgress = seasonDetailsModel.watchProgress,
+                episodeDetailsModelList = seasonDetailsModel.episodeDetailModels,
+                collapsed = collapsedState.value,
+                onEpisodeClicked = { onEpisodeClicked(it) },
+                onSeasonHeaderClicked = {
+                    collapsedState.value = !collapsedState.value
+                },
+                onAction = onAction,
+            )
         }
     }
 }
@@ -197,12 +182,12 @@ private fun SeasonContent(
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
 fun WatchNextContent(
-    episodeList: ImmutableList<Episode>?,
+    episodeDetailsModelList: ImmutableList<EpisodeDetailsModel>?,
     onAction: (SeasonDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
     onEpisodeClicked: () -> Unit = {},
 ) {
-    episodeList?.let {
+    episodeDetailsModelList?.let {
         LabelTitle(
             modifier = modifier
                 .padding(top = 16.dp, bottom = 8.dp),
@@ -215,7 +200,7 @@ fun WatchNextContent(
             state = lazyListState,
             flingBehavior = rememberSnapperFlingBehavior(lazyListState),
         ) {
-            itemsIndexed(episodeList) { index, episode ->
+            itemsIndexed(episodeDetailsModelList) { index, episode ->
                 val value = if (index == 0) 0 else 8
                 Spacer(modifier = Modifier.width(value.dp))
 

@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenterFact
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenterPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenterFactory
@@ -61,6 +62,16 @@ class RootNavigationPresenter(
         navigation.bringToFront(config)
     }
 
+    fun shouldShowBottomNav(screen: Screen): Boolean {
+        return when (screen) {
+            is Screen.Discover -> true
+            is Screen.Search -> true
+            is Screen.Library -> true
+            is Screen.Settings -> true
+            else -> false
+        }
+    }
+
     private fun createScreen(config: Config, componentContext: ComponentContext): Screen =
         when (config) {
             is Config.Discover -> Screen.Discover(
@@ -78,8 +89,7 @@ class RootNavigationPresenter(
             is Config.SeasonDetails -> Screen.SeasonDetails(
                 presenter = seasonDetailsPresenterFactory(
                     componentContext,
-                    config.id,
-                    config.title,
+                    config.param,
                     navigation::pop,
                 ) { _ ->
                     // TODO:: Navigate to episode details
@@ -92,7 +102,17 @@ class RootNavigationPresenter(
                     config.id,
                     navigation::pop,
                     { id -> navigation.pushNew(Config.ShowDetails(id)) },
-                    { id, title -> navigation.pushNew(Config.SeasonDetails(id, title)) },
+                    { params ->
+                        navigation.pushNew(
+                            Config.SeasonDetails(
+                                SeasonDetailsUiParam(
+                                    showId = params.showId,
+                                    seasonNumber = params.seasonNumber,
+                                    seasonId = params.seasonId,
+                                ),
+                            ),
+                        )
+                    },
                     { id -> navigation.pushNew(Config.Trailers(id)) },
                 ),
             )
@@ -146,7 +166,7 @@ class RootNavigationPresenter(
         data object Search : Config
 
         @Serializable
-        data class SeasonDetails(val id: Long, val title: String?) : Config
+        data class SeasonDetails(val param: SeasonDetailsUiParam) : Config
 
         @Serializable
         data class ShowDetails(val id: Long) : Config

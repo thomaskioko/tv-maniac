@@ -15,16 +15,17 @@ class EpisodesDaoImpl(
 
     override fun insert(entity: EpisodeCache) {
         database.transaction {
-            episodeQueries.insertOrReplace(
+            episodeQueries.upsert(
                 id = entity.id,
                 season_id = entity.season_id,
-                tmdb_id = entity.tmdb_id,
                 title = entity.title,
                 overview = entity.overview,
-                ratings = entity.ratings,
                 runtime = entity.runtime,
-                votes = entity.votes,
                 episode_number = entity.episode_number,
+                image_url = entity.image_url,
+                show_id = entity.show_id,
+                vote_count = entity.vote_count,
+                vote_average = entity.vote_average,
             )
         }
     }

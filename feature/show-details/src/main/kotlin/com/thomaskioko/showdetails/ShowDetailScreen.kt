@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -93,7 +94,9 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
 import com.thomaskioko.tvmaniac.presentation.showdetails.WatchTrailerClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.WebViewError
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.SimilarShow
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
@@ -113,7 +116,7 @@ fun ShowDetailsScreen(
     ShowDetailsScreen(
         modifier = modifier,
         state = state,
-        title = state.show.title,
+        title = state.showDetails.title,
         snackbarHostState = snackbarHostState,
         listState = listState,
         onAction = presenter::dispatch,
@@ -143,7 +146,7 @@ internal fun ShowDetailsScreen(
         content = { contentPadding ->
 
             ShowDetailsContent(
-                show = state.show,
+                showDetails = state.showDetails,
                 trailerContent = state.trailersContent,
                 seasonsContent = state.seasonsContent,
                 similarShowsContent = state.similarShowsContent,
@@ -159,7 +162,7 @@ internal fun ShowDetailsScreen(
 
 @Composable
 private fun ShowDetailsContent(
-    show: Show,
+    showDetails: ShowDetails,
     trailerContent: ShowDetailsState.TrailersContent,
     seasonsContent: ShowDetailsState.SeasonsContent,
     similarShowsContent: ShowDetailsState.SimilarShowsContent,
@@ -177,7 +180,7 @@ private fun ShowDetailsContent(
         item {
             HeaderContent(
                 listState = listState,
-                show = show,
+                show = showDetails,
                 onUpdateFavoriteClicked = { onAction(FollowShowClicked(it)) },
                 onWatchTrailerClicked = { onAction(WatchTrailerClicked(it)) },
             )
@@ -187,8 +190,16 @@ private fun ShowDetailsContent(
             SeasonsContent(
                 isLoading = seasonsContent.isLoading,
                 seasonsList = seasonsContent.seasonsList,
-                onSeasonClicked = { id, name ->
-                    onAction(SeasonClicked(id, name))
+                onSeasonClicked = { tvShowId, seasonId, seasonNumber ->
+                    onAction(
+                        SeasonClicked(
+                            ShowSeasonDetailsParam(
+                                tvShowId,
+                                seasonId,
+                                seasonNumber,
+                            ),
+                        ),
+                    )
                 },
             )
         }
@@ -206,9 +217,13 @@ private fun ShowDetailsContent(
         item {
             SimilarShowsContent(
                 isLoading = similarShowsContent.isLoading,
-                similarShows = similarShowsContent.similarShows,
+                similarSimilarShows = similarShowsContent.similarSimilarShows,
                 onShowClicked = { onAction(DetailShowClicked(it)) },
             )
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(54.dp))
         }
     }
 }
@@ -249,7 +264,7 @@ private fun ShowTopBar(
 
 @Composable
 private fun HeaderContent(
-    show: Show?,
+    show: ShowDetails?,
     listState: LazyListState,
     onUpdateFavoriteClicked: (Boolean) -> Unit,
     onWatchTrailerClicked: (Long) -> Unit,
@@ -289,7 +304,7 @@ private fun HeaderContent(
 
 @Composable
 private fun Body(
-    show: Show,
+    show: ShowDetails,
     onUpdateFavoriteClicked: (Boolean) -> Unit,
     onWatchTrailerClicked: (Long) -> Unit,
 ) {
@@ -342,7 +357,7 @@ private fun Body(
             Spacer(modifier = Modifier.height(8.dp))
 
             ShowDetailButtons(
-                traktId = show.traktId,
+                id = show.tmdbId,
                 isFollowed = show.isFollowed,
                 onUpdateFavoriteClicked = onUpdateFavoriteClicked,
                 onWatchTrailerClicked = onWatchTrailerClicked,
@@ -470,7 +485,7 @@ private fun GenreText(
 @Composable
 fun ShowDetailButtons(
     isFollowed: Boolean,
-    traktId: Long,
+    id: Long,
     onUpdateFavoriteClicked: (Boolean) -> Unit,
     onWatchTrailerClicked: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -494,7 +509,7 @@ fun ShowDetailButtons(
             text = stringResource(id = R.string.btn_trailer),
             textPadding = 8.dp,
             borderColor = MaterialTheme.colorScheme.secondary,
-            onClick = { onWatchTrailerClicked(traktId) },
+            onClick = { onWatchTrailerClicked(id) },
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -531,47 +546,47 @@ fun ShowDetailButtons(
 private fun SeasonsContent(
     isLoading: Boolean,
     seasonsList: ImmutableList<Season>,
-    onSeasonClicked: (Long, String) -> Unit,
+    onSeasonClicked: (Long, Long, Long) -> Unit,
 ) {
-    if (seasonsList.isNotEmpty()) {
-        TextLoadingItem(
-            isLoading = isLoading,
-            text = stringResource(id = R.string.title_seasons),
-        )
-        val selectedIndex by remember { mutableIntStateOf(0) }
+    TextLoadingItem(
+        isLoading = isLoading,
+        text = stringResource(id = R.string.title_seasons),
+    )
+    val selectedIndex by remember { mutableIntStateOf(0) }
 
-        ScrollableTabRow(
-            selectedTabIndex = selectedIndex,
-            divider = {}, /* Disable the built-in divider */
-            indicator = {},
-            edgePadding = 0.dp,
-            containerColor = Color.Transparent,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp),
-        ) {
-            seasonsList.forEach { season ->
-                Tab(
-                    modifier = Modifier
-                        .padding(end = 4.dp),
-                    selected = true,
+    ScrollableTabRow(
+        selectedTabIndex = selectedIndex,
+        divider = {}, /* Disable the built-in divider */
+        indicator = {},
+        edgePadding = 0.dp,
+        containerColor = Color.Transparent,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp),
+    ) {
+        seasonsList.forEach { season ->
+            Tab(
+                modifier = Modifier
+                    .padding(end = 4.dp),
+                selected = true,
+                onClick = {
+                    onSeasonClicked(
+                        season.tvShowId,
+                        season.seasonId,
+                        season.seasonNumber,
+                    )
+                },
+            ) {
+                TvManiacChip(
+                    text = season.name,
                     onClick = {
                         onSeasonClicked(
                             season.tvShowId,
-                            season.name,
+                            season.seasonId,
+                            season.seasonNumber,
                         )
                     },
-                ) {
-                    TvManiacChip(
-                        text = season.name,
-                        onClick = {
-                            onSeasonClicked(
-                                season.tvShowId,
-                                season.name,
-                            )
-                        },
-                    )
-                }
+                )
             }
         }
     }
@@ -611,13 +626,13 @@ private fun TrailersContent(
 @Composable
 fun SimilarShowsContent(
     isLoading: Boolean,
-    similarShows: ImmutableList<Show>,
+    similarSimilarShows: ImmutableList<SimilarShow>,
     modifier: Modifier = Modifier,
     onShowClicked: (Long) -> Unit = {},
 ) {
     val lazyListState = rememberLazyListState()
 
-    if (similarShows.isNotEmpty()) {
+    if (similarSimilarShows.isNotEmpty()) {
         TextLoadingItem(
             isLoading = isLoading,
             text = stringResource(id = R.string.title_similar),
@@ -628,7 +643,7 @@ fun SimilarShowsContent(
             state = lazyListState,
             flingBehavior = rememberSnapperFlingBehavior(lazyListState),
         ) {
-            itemsIndexed(similarShows) { index, tvShow ->
+            itemsIndexed(similarSimilarShows) { index, tvShow ->
                 val value = if (index == 0) 16 else 4
 
                 Spacer(modifier = Modifier.width(value.dp))
@@ -638,7 +653,7 @@ fun SimilarShowsContent(
                         .animateItemPlacement(),
                     posterImageUrl = tvShow.posterImageUrl,
                     title = tvShow.title,
-                    onClick = { onShowClicked(tvShow.traktId) },
+                    onClick = { onShowClicked(tvShow.tmdbId) },
                     imageWidth = 84.dp,
                 )
             }
@@ -671,44 +686,58 @@ fun TrailersRowContent(
             val value = if (index == 0) 16 else 8
             Spacer(modifier = Modifier.width(value.dp))
 
-            Card(
-                modifier = Modifier
-                    .clickable { onTrailerClicked(trailer.showId) },
-                shape = RoundedCornerShape(4.dp),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 4.dp,
-                ),
-            ) {
-                Box {
-                    AsyncImageComposable(
-                        model = trailer.youtubeThumbnailUrl,
-                        contentDescription = trailer.name,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .height(140.dp)
-                            .aspectRatio(3 / 1.5f)
-                            .drawWithCache {
-                                val gradient = Brush.verticalGradient(
-                                    colors = listOf(Color.Transparent, Color.Black),
-                                    startY = size.height / 3,
-                                    endY = size.height,
-                                )
-                                onDrawWithContent {
-                                    drawContent()
-                                    drawRect(gradient, blendMode = BlendMode.Multiply)
-                                }
-                            },
-                    )
+            Column {
+                Card(
+                    modifier = Modifier
+                        .clickable { onTrailerClicked(trailer.showId) },
+                    shape = RoundedCornerShape(4.dp),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 4.dp,
+                    ),
+                ) {
+                    Box {
+                        AsyncImageComposable(
+                            model = trailer.youtubeThumbnailUrl,
+                            contentDescription = trailer.name,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .height(140.dp)
+                                .aspectRatio(3 / 1.5f)
+                                .drawWithCache {
+                                    val gradient = Brush.verticalGradient(
+                                        colors = listOf(Color.Transparent, Color.Black),
+                                        startY = size.height / 3,
+                                        endY = size.height,
+                                    )
+                                    onDrawWithContent {
+                                        drawContent()
+                                        drawRect(gradient, blendMode = BlendMode.Multiply)
+                                    }
+                                },
+                        )
 
-                    Icon(
-                        imageVector = Icons.Filled.PlayCircle,
-                        contentDescription = trailer.name,
-                        tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(48.dp),
-                    )
+                        Icon(
+                            imageVector = Icons.Filled.PlayCircle,
+                            contentDescription = trailer.name,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .size(48.dp),
+                        )
+                    }
                 }
+
+                Text(
+                    text = trailer.name,
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .widthIn(0.dp, 280.dp),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Normal,
+                    ),
+                )
             }
         }
     }

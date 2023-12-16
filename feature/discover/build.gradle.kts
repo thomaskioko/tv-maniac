@@ -11,7 +11,6 @@ dependencies {
 
     implementation(projects.androidCore.designsystem)
     implementation(projects.androidCore.resources)
-    implementation(projects.data.category.api) //TODO:: Remove this and just pass the title
 
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)

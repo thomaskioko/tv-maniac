@@ -1,0 +1,41 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+CREATE TABLE library(
+    id INTEGER AS Id<TmdbId> PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    FOREIGN KEY(id) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_libraries_library_id` ON `library` (`id`);
+
+-- queries
+
+upsert:
+INSERT OR REPLACE INTO library(
+    id,
+    created_at
+)
+VALUES( ?, ?);
+
+libraryShows:
+SELECT
+    tvshows.id,
+    tvshows.name,
+    tvshows.poster_path,
+    tvshows.backdrop_path,
+    library.created_at
+FROM
+    tvshows
+JOIN
+    library ON tvshows.id = library.id
+ORDER BY
+    library.created_at DESC;
+
+delete:
+DELETE FROM
+    library
+WHERE
+    id = ?;

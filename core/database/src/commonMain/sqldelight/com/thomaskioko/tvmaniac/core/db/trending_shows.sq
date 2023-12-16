@@ -1,0 +1,35 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.PageId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+CREATE TABLE IF NOT EXISTS trending_shows (
+    `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
+    `page` INTEGER AS Id<PageId> NOT NULL,
+     FOREIGN KEY(`id`) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_trending_shows_show_id` ON `trending_shows` (`id`);
+
+-- queries
+
+insert:
+INSERT OR IGNORE INTO trending_shows(
+    `id`,
+    `page`
+) VALUES (
+    :id,
+    :page
+);
+
+trendingShows:
+SELECT * FROM trending_shows
+INNER JOIN tvshows ON tvshows.id = trending_shows.id;
+
+delete:
+DELETE FROM trending_shows
+WHERE id = :id;
+
+deleteAll:
+DELETE FROM trending_shows;

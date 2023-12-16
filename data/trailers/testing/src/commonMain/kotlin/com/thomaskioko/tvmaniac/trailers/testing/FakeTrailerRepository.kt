@@ -24,8 +24,8 @@ class FakeTrailerRepository : TrailerRepository {
 
     override fun isYoutubePlayerInstalled(): Flow<Boolean> = flowOf()
 
-    override fun observeTrailersStoreResponse(traktId: Long): Flow<Either<Failure, List<Trailers>>> =
+    override fun observeTrailersStoreResponse(id: Long): Flow<Either<Failure, List<Trailers>>> =
         trailersStoreResponse.receiveAsFlow()
 
-    override suspend fun fetchTrailersByShowId(traktId: Long): List<Trailers> = trailerList.receive()
+    override suspend fun fetchTrailersByShowId(id: Long): List<Trailers> = trailerList.receive()
 }
