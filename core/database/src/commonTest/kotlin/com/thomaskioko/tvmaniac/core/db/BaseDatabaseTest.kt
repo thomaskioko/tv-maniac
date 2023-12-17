@@ -81,6 +81,10 @@ abstract class BaseDatabaseTest {
         season_videosAdapter = Season_videos.Adapter(
             season_idAdapter = IdAdapter(),
         ),
+        season_castAdapter = Season_cast.Adapter(
+            idAdapter = IdAdapter(),
+            season_idAdapter = IdAdapter(),
+        ),
     )
 
     @AfterTest

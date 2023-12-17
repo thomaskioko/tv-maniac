@@ -36,6 +36,8 @@ include(
     ":core:trakt-auth:implementation",
     ":core:trakt-auth:testing",
     ":core:util",
+    ":data:cast:api",
+    ":data:cast:implementation",
     ":data:episodes:api",
     ":data:episodes:implementation",
     ":data:episodes:testing",

@@ -69,6 +69,8 @@ kotlin {
                 api(projects.core.traktAuth.api)
                 api(projects.core.traktAuth.implementation)
 
+                api(projects.data.cast.api)
+                api(projects.data.cast.implementation)
                 api(projects.data.episodes.api)
                 api(projects.data.episodes.implementation)
                 api(projects.data.library.api)

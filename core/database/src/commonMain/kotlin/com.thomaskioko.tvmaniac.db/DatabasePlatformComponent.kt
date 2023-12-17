@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.core.db.Library
 import com.thomaskioko.tvmaniac.core.db.Networks
 import com.thomaskioko.tvmaniac.core.db.Popular_shows
 import com.thomaskioko.tvmaniac.core.db.Season
+import com.thomaskioko.tvmaniac.core.db.Season_cast
 import com.thomaskioko.tvmaniac.core.db.Season_images
 import com.thomaskioko.tvmaniac.core.db.Season_videos
 import com.thomaskioko.tvmaniac.core.db.Show_networks
@@ -93,6 +94,10 @@ interface DatabaseComponent : DatabasePlatformComponent {
             season_idAdapter = IdAdapter(),
         ),
         season_videosAdapter = Season_videos.Adapter(
+            season_idAdapter = IdAdapter(),
+        ),
+        season_castAdapter = Season_cast.Adapter(
+            idAdapter = IdAdapter(),
             season_idAdapter = IdAdapter(),
         ),
     )

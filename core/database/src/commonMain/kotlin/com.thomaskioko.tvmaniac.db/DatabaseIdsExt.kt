@@ -3,6 +3,9 @@ package com.thomaskioko.tvmaniac.db
 import kotlin.jvm.JvmInline
 
 @JvmInline
+value class CastId(val traktId: Long)
+
+@JvmInline
 value class EpisodeId(val traktId: Long)
 
 @JvmInline
