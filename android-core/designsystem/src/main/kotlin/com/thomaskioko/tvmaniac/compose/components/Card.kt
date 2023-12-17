@@ -26,6 +26,9 @@ fun TvPosterCard(
     posterImageUrl: String?,
     title: String,
     modifier: Modifier = Modifier,
+    posterModifier: Modifier = Modifier
+        .fillMaxSize()
+        .aspectRatio(2 / 3f),
     shape: Shape = MaterialTheme.shapes.small,
     imageWidth: Dp = 120.dp,
     onClick: () -> Unit = {},
@@ -55,9 +58,7 @@ fun TvPosterCard(
             AsyncImageComposable(
                 model = posterImageUrl,
                 contentDescription = stringResource(R.string.cd_show_poster, title),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .aspectRatio(2 / 3f),
+                modifier = posterModifier,
             )
         }
     }
