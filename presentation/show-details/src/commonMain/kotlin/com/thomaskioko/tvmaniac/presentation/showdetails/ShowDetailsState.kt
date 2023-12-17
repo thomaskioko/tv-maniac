@@ -32,6 +32,7 @@ data class ShowDetailsState(
         val isLoading: Boolean = true,
         val seasonsList: ImmutableList<Season>,
         val errorMessage: String? = null,
+        val selectedSeasonIndex: Int = 0,
     ) {
         companion object {
             val EMPTY_SEASONS = SeasonsContent(

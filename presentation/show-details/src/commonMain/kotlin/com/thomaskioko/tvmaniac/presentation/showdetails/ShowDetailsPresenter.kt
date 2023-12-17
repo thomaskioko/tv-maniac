@@ -63,7 +63,16 @@ class ShowDetailsPresenter @Inject constructor(
     fun dispatch(action: ShowDetailsAction) {
         when (action) {
             DetailBackClicked -> onBack()
-            is SeasonClicked -> onNavigateToSeason(action.params)
+            is SeasonClicked -> {
+                _state.update {
+                    it.copy(
+                        seasonsContent = it.seasonsContent.copy(
+                            selectedSeasonIndex = action.params.selectedSeasonIndex,
+                        ),
+                    )
+                }
+                onNavigateToSeason(action.params)
+            }
             is DetailShowClicked -> onNavigateToShow(action.id)
             is WatchTrailerClicked -> onNavigateToTrailer(action.id)
             DismissWebViewError -> {

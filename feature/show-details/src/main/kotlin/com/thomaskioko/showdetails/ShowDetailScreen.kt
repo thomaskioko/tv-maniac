@@ -190,18 +190,17 @@ private fun ShowDetailsContent(
             SeasonsContent(
                 isLoading = seasonsContent.isLoading,
                 seasonsList = seasonsContent.seasonsList,
-                onSeasonClicked = { tvShowId, seasonId, seasonNumber ->
-                    onAction(
-                        SeasonClicked(
-                            ShowSeasonDetailsParam(
-                                tvShowId,
-                                seasonId,
-                                seasonNumber,
-                            ),
-                        ),
-                    )
-                },
+                selectedSeasonIndex = seasonsContent.selectedSeasonIndex,
+                onAction = onAction,
             )
+        }
+
+        item {
+            // TODO:: Add WatchNext
+        }
+
+        item {
+            // TODO:: Add Cast Content
         }
 
         item {
@@ -212,6 +211,10 @@ private fun ShowDetailsContent(
                 onWatchTrailerClicked = { onAction(WatchTrailerClicked(it)) },
                 onAction = onAction,
             )
+        }
+
+        item {
+            // TODO:: Add Recommended Content
         }
 
         item {
@@ -546,13 +549,14 @@ fun ShowDetailButtons(
 private fun SeasonsContent(
     isLoading: Boolean,
     seasonsList: ImmutableList<Season>,
-    onSeasonClicked: (Long, Long, Long) -> Unit,
+    selectedSeasonIndex: Int,
+    onAction: (ShowDetailsAction) -> Unit,
 ) {
     TextLoadingItem(
         isLoading = isLoading,
         text = stringResource(id = R.string.title_seasons),
     )
-    val selectedIndex by remember { mutableIntStateOf(0) }
+    var selectedIndex by remember { mutableIntStateOf(selectedSeasonIndex) }
 
     ScrollableTabRow(
         selectedTabIndex = selectedIndex,
@@ -564,26 +568,25 @@ private fun SeasonsContent(
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp),
     ) {
-        seasonsList.forEach { season ->
+        seasonsList.forEachIndexed { index, season ->
             Tab(
                 modifier = Modifier
                     .padding(end = 4.dp),
-                selected = true,
-                onClick = {
-                    onSeasonClicked(
-                        season.tvShowId,
-                        season.seasonId,
-                        season.seasonNumber,
-                    )
-                },
+                selected = index == selectedIndex,
+                onClick = {},
             ) {
                 TvManiacChip(
                     text = season.name,
                     onClick = {
-                        onSeasonClicked(
-                            season.tvShowId,
-                            season.seasonId,
-                            season.seasonNumber,
+                        onAction(
+                            SeasonClicked(
+                                ShowSeasonDetailsParam(
+                                    season.tvShowId,
+                                    season.seasonId,
+                                    season.seasonNumber,
+                                    selectedSeasonIndex = index,
+                                ),
+                            ),
                         )
                     },
                 )
