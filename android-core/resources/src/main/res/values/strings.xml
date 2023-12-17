@@ -18,16 +18,24 @@
     <string name="details_episodes">Episodes</string>
     <string name="details_cast">Casts</string>
 
+    <string name="dialog_title_unwatched">Mark as unwatched</string>
+    <string name="dialog_title_watched">Mark as watched</string>
+    <string name="dialog_button_no">No</string>
+    <string name="dialog_button_yes">Yes</string>
+
+    <string name="dialog_message_unwatched">Are you sure you want to mark the entire season as unwatched?</string>
+    <string name="dialog_message_watched">Are you sure you want to mark the entire season as watched?</string>
+
     <string name="following">Follow show</string>
     <string name="unfollow">Unfollow</string>
     <string name="btn_trailer">Watch Trailer</string>
     <string name="title_similar">More like this</string>
     <string name="title_seasons">Browse Seasons</string>
+    <string name="title_season_overview">Overview</string>
     <string name="title_trailer">Trailers</string>
     <string name="title_release">Recent Release</string>
 
-    <string name="tab_episodes">Episodes</string>
-    <string name="tab_casts">Casts</string>
+    <string name="title_casts">Cast</string>
 
     <string name="error_empty_library">Looks like your library is empty</string>
     <string name="empty_list">Could\'nt load seasons.</string>
@@ -46,6 +54,7 @@
     <string name="title_category_popular">Popular</string>
     <string name="title_category_top_rated">Top Rated</string>
     <string name="title_all_episodes">All Episodes</string>
+    <string name="title_episodes">Episodes</string>
     <string name="title_watch_next">Watch Next</string>
     <string name="status_connected">Back Online!</string>
     <string name="status_no_connection">No Internet Connection!</string>

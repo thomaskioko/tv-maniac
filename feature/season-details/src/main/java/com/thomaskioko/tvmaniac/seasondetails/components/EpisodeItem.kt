@@ -1,14 +1,14 @@
 package com.thomaskioko.tvmaniac.seasondetails.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,8 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -44,11 +42,10 @@ fun EpisodeItem(
         modifier = modifier
             .clickable { onEpisodeClicked() },
     ) {
-        ConstraintLayout(
-            modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier
+                .fillMaxSize(),
         ) {
-            val (episodeTitle, image, overview, watchedStatusIcon) = createRefs()
-
             AsyncImageComposable(
                 model = imageUrl,
                 contentDescription = stringResource(
@@ -57,63 +54,32 @@ fun EpisodeItem(
                 ),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(94.dp)
-                    .constrainAs(image) {
-                        start.linkTo(parent.start)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-
-                        height = Dimension.fillToConstraints
-                    },
+                    .width(100.dp)
+                    .aspectRatio(0.8f),
             )
 
-            Text(
-                text = title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
+            Column(
                 modifier = Modifier
-                    .constrainAs(episodeTitle) {
-                        start.linkTo(image.end, 8.dp)
-                        end.linkTo(watchedStatusIcon.start)
-                        top.linkTo(parent.top, 8.dp)
-
-                        width = Dimension.fillToConstraints
-                    },
-            )
-
-            Text(
-                text = episodeOverview,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .constrainAs(overview) {
-                        start.linkTo(image.end, 8.dp)
-                        top.linkTo(episodeTitle.bottom, 5.dp)
-                        end.linkTo(watchedStatusIcon.start, 8.dp)
-                        bottom.linkTo(parent.bottom, 8.dp)
-
-                        width = Dimension.fillToConstraints
-                    },
-            )
-
-            IconButton(
-                onClick = { onAction(UpdateEpisodeStatus(episodeDetailsModel.id)) },
-                modifier = Modifier
-                    .constrainAs(watchedStatusIcon) {
-                        centerVerticallyTo(parent)
-                        end.linkTo(parent.end, 8.dp)
-                    },
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp, horizontal = 8.dp),
             ) {
-                Icon(
-                    imageVector = Icons.Filled.CheckCircle,
-                    contentDescription = stringResource(R.string.cd_navigate_back),
-                    tint = MaterialTheme.colorScheme.onSurface,
+                Text(
+                    text = title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
-                        .size(32.dp),
+                        .padding(vertical = 4.dp),
+                )
+
+                Text(
+                    text = episodeOverview,
+                    maxLines = 4,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier,
                 )
             }
         }

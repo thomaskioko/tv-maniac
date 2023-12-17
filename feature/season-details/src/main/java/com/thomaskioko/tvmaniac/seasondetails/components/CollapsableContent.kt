@@ -14,12 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,8 +28,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -37,23 +37,24 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.compose.theme.green
+import com.thomaskioko.tvmaniac.presentation.seasondetails.EpisodeClicked
+import com.thomaskioko.tvmaniac.presentation.seasondetails.OnEpisodeHeaderClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
+import com.thomaskioko.tvmaniac.presentation.seasondetails.ShowMarkSeasonDialog
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
-import com.thomaskioko.tvmaniac.seasondetails.seasonDetailsModel
+import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.seasondetails.mockSeasonDetailsContent
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun CollapsableContent(
-    headerTitle: String,
     episodesCount: Long,
     watchProgress: Float,
     episodeDetailsModelList: ImmutableList<EpisodeDetailsModel>,
     collapsed: Boolean,
+    isSeasonWatched: Boolean,
     onAction: (SeasonDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
-    onEpisodeClicked: (Long) -> Unit = {},
-    onSeasonHeaderClicked: () -> Unit = {},
 ) {
     Column(
         modifier = modifier,
@@ -61,11 +62,11 @@ fun CollapsableContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         SeasonTitleHeader(
-            title = headerTitle,
             episodesCount = episodesCount,
             watchProgress = watchProgress,
+            isSeasonWatched = isSeasonWatched,
             expanded = !collapsed,
-            onSeasonHeaderClicked = onSeasonHeaderClicked,
+            onAction = onAction,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -81,7 +82,7 @@ fun CollapsableContent(
                     imageUrl = episode.imageUrl,
                     title = episode.episodeNumberTitle,
                     episodeOverview = episode.overview,
-                    onEpisodeClicked = { onEpisodeClicked(episode.id) },
+                    onEpisodeClicked = { EpisodeClicked(episode.id) },
                     onAction = onAction,
                 )
 
@@ -94,12 +95,12 @@ fun CollapsableContent(
 @SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
 private fun SeasonTitleHeader(
-    title: String,
     episodesCount: Long,
     watchProgress: Float,
     expanded: Boolean,
+    isSeasonWatched: Boolean,
+    onAction: (SeasonDetailsAction) -> Unit,
     shape: Shape = MaterialTheme.shapes.small,
-    onSeasonHeaderClicked: () -> Unit = {},
 ) {
     val transitionState = remember {
         MutableTransitionState(expanded).apply {
@@ -119,7 +120,7 @@ private fun SeasonTitleHeader(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            .clickable { onSeasonHeaderClicked() },
+            .clickable { onAction(OnEpisodeHeaderClicked) },
     ) {
         ConstraintLayout(
             modifier = Modifier
@@ -143,7 +144,7 @@ private fun SeasonTitleHeader(
             )
 
             Text(
-                text = title,
+                text = stringResource(id = R.string.title_episodes),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleMedium,
@@ -175,7 +176,7 @@ private fun SeasonTitleHeader(
             )
 
             IconButton(
-                onClick = {},
+                onClick = { onAction(ShowMarkSeasonDialog) },
                 modifier = Modifier
                     .constrainAs(watchedStatusIcon) {
                         centerVerticallyTo(parent)
@@ -183,18 +184,16 @@ private fun SeasonTitleHeader(
                     },
             ) {
                 Icon(
-                    imageVector = Icons.Filled.CheckCircle,
-                    contentDescription = null,
-                    tint = if (watchProgress == 1f) green else MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .size(28.dp),
+                    imageVector = if (isSeasonWatched) Icons.Rounded.CheckCircle else Icons.Outlined.CheckCircle,
+                    contentDescription = stringResource(R.string.cd_navigate_back),
+                    tint = MaterialTheme.colorScheme.onBackground,
                 )
             }
 
-            LinearProgressIndicator(
+            ShowLinearProgressIndicator(
                 progress = watchProgress,
-                color = if (watchProgress == 1f) green else MaterialTheme.colorScheme.secondary,
-                trackColor = LightGray,
                 modifier = Modifier
                     .height(8.dp)
                     .constrainAs(watchlistProgress) {
@@ -216,10 +215,11 @@ fun SeasonTitleHeaderPreview() {
     TvManiacTheme {
         Surface {
             SeasonTitleHeader(
-                title = "Specials",
                 episodesCount = 8,
                 watchProgress = 0.5f,
                 expanded = true,
+                isSeasonWatched = true,
+                onAction = {},
             )
         }
     }
@@ -231,11 +231,11 @@ fun CollapsableContentPreview() {
     TvManiacTheme {
         Surface {
             CollapsableContent(
-                episodesCount = seasonDetailsModel.episodeCount,
-                watchProgress = seasonDetailsModel.watchProgress,
-                episodeDetailsModelList = seasonDetailsModel.episodeDetailModels,
-                headerTitle = seasonDetailsModel.seasonName,
+                episodesCount = mockSeasonDetailsContent.episodeCount,
+                watchProgress = mockSeasonDetailsContent.watchProgress,
+                episodeDetailsModelList = mockSeasonDetailsContent.episodeDetailsList,
                 collapsed = false,
+                isSeasonWatched = false,
                 onAction = {},
             )
         }
