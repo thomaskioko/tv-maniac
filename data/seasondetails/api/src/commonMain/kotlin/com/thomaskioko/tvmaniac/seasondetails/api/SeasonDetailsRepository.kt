@@ -8,14 +8,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface SeasonDetailsRepository {
 
-    suspend fun fetchSeasonDetails(
-        param: SeasonDetailsParam,
-    ): SeasonDetailsWithEpisodes
+    suspend fun fetchSeasonDetails(param: SeasonDetailsParam): SeasonDetailsWithEpisodes
 
-    fun observeSeasonDetailsStream(
+    fun observeSeasonDetails(
         param: SeasonDetailsParam,
     ): Flow<Either<Failure, SeasonDetailsWithEpisodes>>
 
     fun fetchSeasonImages(id: Long): List<Season_images>
+
     fun observeSeasonImages(id: Long): Flow<List<Season_images>>
 }

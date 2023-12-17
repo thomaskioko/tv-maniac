@@ -11,7 +11,8 @@ data class CreditsResponse(
 @Serializable
 data class CastResponse(
     @SerialName("id") var id: Int,
-    @SerialName("name") var name: String? = null,
+    @SerialName("name") var name: String,
     @SerialName("profile_path") var profilePath: String? = null,
     @SerialName("character") var character: String,
+    @SerialName("popularity") var popularity: Double,
 )
