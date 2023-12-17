@@ -8,8 +8,10 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                implementation(projects.core.util)
                 implementation(projects.data.episodes.api)
                 implementation(projects.data.seasondetails.api)
+                implementation(projects.data.cast.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)

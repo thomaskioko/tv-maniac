@@ -29,7 +29,7 @@ class DefaultSeasonDetailsRepository(
         param: SeasonDetailsParam,
     ): SeasonDetailsWithEpisodes = seasonDetailsStore.get(param)
 
-    override fun observeSeasonDetailsStream(
+    override fun observeSeasonDetails(
         param: SeasonDetailsParam,
     ): Flow<Either<Failure, SeasonDetailsWithEpisodes>> =
         seasonDetailsStore.stream(

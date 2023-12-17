@@ -2,12 +2,15 @@ package com.thomaskioko.tvmaniac.presentation.seasondetails
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.data.cast.api.CastRepository
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.util.decompose.asValue
 import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -26,11 +29,12 @@ class SeasonDetailsPresenter @Inject constructor(
     @Assisted private val onBack: () -> Unit,
     @Assisted private val onEpisodeClick: (id: Long) -> Unit,
     private val seasonDetailsRepository: SeasonDetailsRepository,
+    private val castRepository: CastRepository,
 ) : ComponentContext by componentContext {
 
     private var seasonDetailsParam: SeasonDetailsParam
     private val coroutineScope = coroutineScope()
-    private val _state = MutableStateFlow<SeasonDetailsState>(Loading)
+    private val _state = MutableStateFlow(SeasonDetailsState.DEFAULT_SEASON_STATE)
     val state: Value<SeasonDetailsState> = _state
         .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
@@ -55,47 +59,113 @@ class SeasonDetailsPresenter @Inject constructor(
                 is UpdateEpisodeStatus -> {
                     // TODO:: Add implementation
                 }
+
+                SeasonGalleryClicked -> coroutineScope.launch {
+                    _state.update { state ->
+                        state.copy(showGalleryBottomSheet = !state.showGalleryBottomSheet)
+                    }
+                }
+
+                ShowMarkSeasonDialog -> {
+                    coroutineScope.launch {
+                        _state.update { state ->
+                            state.copy(
+                                showSeasonWatchStateDialog = !state.showSeasonWatchStateDialog,
+                            )
+                        }
+                    }
+                }
+
+                DismissSeasonDialog -> coroutineScope.launch {
+                    _state.update { state ->
+                        state.copy(showSeasonWatchStateDialog = false)
+                    }
+                }
+
+                UpdateSeasonWatchedState -> {
+                    // TODO:: Invoice service to update season watched state
+                    coroutineScope.launch {
+                        _state.update { state ->
+                            state.copy(showSeasonWatchStateDialog = false)
+                        }
+                    }
+                }
+
+                OnEpisodeHeaderClicked -> {
+                    coroutineScope.launch {
+                        _state.update { state ->
+                            state.copy(expandEpisodeItems = !state.expandEpisodeItems)
+                        }
+                    }
+                }
+
+                DismissSeasonDetailSnackBar -> {
+                    coroutineScope.launch {
+                        _state.update { state ->
+                            state.copy(errorMessage = null)
+                        }
+                    }
+                }
             }
         }
     }
 
     private suspend fun fetchSeasonDetails() {
-        _state.value = Loading
+        val seasonDetails = seasonDetailsRepository.fetchSeasonDetails(seasonDetailsParam)
+        val imageList = seasonDetailsRepository.fetchSeasonImages(seasonDetailsParam.seasonId)
+        val castList = castRepository.fetchSeasonCast(seasonDetailsParam.seasonId)
 
-        val seasonList = seasonDetailsRepository.fetchSeasonDetails(seasonDetailsParam)
-
-        _state.value = SeasonDetailsLoaded(
-            selectedSeason = seasonList.name,
-            showTitle = seasonList.showTitle,
-            seasonDetailsModel = seasonList.toSeasonDetails(),
-        )
+        _state.update {
+            SeasonDetailsState(
+                seasonId = seasonDetails.seasonId,
+                seasonName = seasonDetails.name,
+                seasonOverview = seasonDetails.seasonOverview,
+                watchProgress = 0f,
+                isSeasonWatched = false,
+                episodeCount = seasonDetails.episodeCount,
+                imageUrl = seasonDetails.imageUrl,
+                episodeDetailsList = seasonDetails.episodes.toEpisodes(),
+                seasonImages = imageList.toImageList(),
+                seasonCast = castList.toCastList(),
+            )
+        }
     }
 
     private suspend fun observeSeasonDetails() {
-        seasonDetailsRepository.observeSeasonDetailsStream(seasonDetailsParam)
-            .collect { seasonDetailsResult ->
-                seasonDetailsResult.fold(
-                    {
-                        _state.update { state ->
-                            (state as? SeasonDetailsLoaded)?.copy(
-                                errorMessage = it.errorMessage,
-                                isLoading = false,
-                            ) ?: state
-                        }
-                    },
-                    { result ->
-                        _state.update { state ->
-                            val detailsState = (state as? SeasonDetailsLoaded)
-                            result?.let {
-                                detailsState?.copy(
-                                    showTitle = it.showTitle,
-                                    seasonDetailsModel = result.toSeasonDetails(),
-                                    isLoading = false,
-                                )
-                            } ?: state
-                        }
-                    },
-                )
-            }
+        combine(
+            seasonDetailsRepository.observeSeasonDetails(seasonDetailsParam),
+            castRepository.observeSeasonCast(seasonDetailsParam.seasonId),
+            seasonDetailsRepository.observeSeasonImages(seasonDetailsParam.seasonId),
+        ) { seasonDetails, cast, images ->
+            seasonDetails.fold(
+                {
+                    _state.update { state ->
+                        state.copy(
+                            errorMessage = it.errorMessage,
+                            isLoading = false,
+                        )
+                    }
+                },
+                { result ->
+                    _state.update { state ->
+                        result?.let {
+                            state.copy(
+                                seasonId = result.seasonId,
+                                seasonName = result.name,
+                                seasonOverview = result.seasonOverview,
+                                watchProgress = 0f,
+                                isSeasonWatched = false,
+                                episodeCount = result.episodeCount,
+                                imageUrl = result.imageUrl,
+                                episodeDetailsList = result.episodes.toEpisodes(),
+                                seasonImages = images.toImageList(),
+                                seasonCast = cast.toCastList(),
+                            )
+                        } ?: state
+                    }
+                },
+            )
+        }
+            .collect()
     }
 }

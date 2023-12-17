@@ -28,7 +28,7 @@ class FakeSeasonDetailsRepository : SeasonDetailsRepository {
         param: SeasonDetailsParam,
     ): SeasonDetailsWithEpisodes = cachedResult.receive()
 
-    override fun observeSeasonDetailsStream(
+    override fun observeSeasonDetails(
         param: SeasonDetailsParam,
     ): Flow<Either<Failure, SeasonDetailsWithEpisodes>> = seasonsResult.receiveAsFlow()
 

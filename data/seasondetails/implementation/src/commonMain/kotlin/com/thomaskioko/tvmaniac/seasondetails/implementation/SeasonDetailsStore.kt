@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Episode
+import com.thomaskioko.tvmaniac.core.db.Season_cast
+import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.db.DbTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
@@ -20,8 +22,9 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 @Inject
 class SeasonDetailsStore(
     private val remoteDataSource: TmdbSeasonDetailsNetworkDataSource,
-    private val seasonDetailsDao: SeasonDetailsDao,
+    private val castDao: CastDao,
     private val episodesDao: EpisodesDao,
+    private val seasonDetailsDao: SeasonDetailsDao,
     private val scope: AppCoroutineScope,
     private val dbTransactionRunner: DbTransactionRunner,
     private val formatterUtil: FormatterUtil,
@@ -68,6 +71,22 @@ class SeasonDetailsStore(
                     seasonDetailsDao.upsertSeasonImage(
                         seasonId = params.seasonId,
                         imageUrl = formatterUtil.formatTmdbPosterPath(image.filePath),
+                    )
+                }
+
+                // Insert Season Cast
+                response.credits.cast.forEach { cast ->
+                    castDao.upsert(
+                        Season_cast(
+                            id = Id(cast.id.toLong()),
+                            season_id = Id(params.seasonId),
+                            character_name = cast.character,
+                            name = cast.name,
+                            profile_path = cast.profilePath?.let {
+                                formatterUtil.formatTmdbPosterPath(it)
+                            },
+                            popularity = cast.popularity,
+                        ),
                     )
                 }
             }
