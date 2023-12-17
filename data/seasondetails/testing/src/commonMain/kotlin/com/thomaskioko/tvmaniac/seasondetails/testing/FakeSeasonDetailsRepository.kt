@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.seasondetails.testing
 
+import com.thomaskioko.tvmaniac.core.db.Season_images
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
@@ -7,6 +8,7 @@ import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeSeasonDetailsRepository : SeasonDetailsRepository {
@@ -29,4 +31,8 @@ class FakeSeasonDetailsRepository : SeasonDetailsRepository {
     override fun observeSeasonDetailsStream(
         param: SeasonDetailsParam,
     ): Flow<Either<Failure, SeasonDetailsWithEpisodes>> = seasonsResult.receiveAsFlow()
+
+    override fun fetchSeasonImages(id: Long): List<Season_images> = emptyList()
+
+    override fun observeSeasonImages(id: Long): Flow<List<Season_images>> = emptyFlow()
 }

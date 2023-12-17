@@ -1,0 +1,40 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.SeasonId;
+
+CREATE TABLE season_videos (
+    id TEXT NOT NULL PRIMARY KEY,
+    season_id INTEGER AS Id<SeasonId> NOT NULL,
+    key TEXT NOT NULL,
+    name TEXT NOT NULL,
+    site TEXT NOT NULL,
+    size INTEGER NOT NULL,
+    type TEXT NOT NULL,
+    FOREIGN KEY(season_id) REFERENCES season(id)  ON DELETE CASCADE
+);
+
+upsert:
+INSERT OR REPLACE INTO season_videos(
+    id,
+    season_id,
+    key,
+    name,
+    site,
+    size,
+    type
+)
+VALUES(?,?,?,?,?,?,?);
+
+seasonVideo:
+SELECT
+    *
+FROM
+    season_videos
+JOIN
+    season ON season_videos.season_id = season.id
+WHERE season.id = :seasonId;
+
+delete:
+DELETE FROM season_videos WHERE season_id = ?;
+
+deleteAll:
+DELETE FROM season_videos;

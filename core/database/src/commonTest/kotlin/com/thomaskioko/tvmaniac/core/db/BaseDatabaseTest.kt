@@ -75,6 +75,12 @@ abstract class BaseDatabaseTest {
             idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
         ),
+        season_imagesAdapter = Season_images.Adapter(
+            season_idAdapter = IdAdapter(),
+        ),
+        season_videosAdapter = Season_videos.Adapter(
+            season_idAdapter = IdAdapter(),
+        ),
     )
 
     @AfterTest

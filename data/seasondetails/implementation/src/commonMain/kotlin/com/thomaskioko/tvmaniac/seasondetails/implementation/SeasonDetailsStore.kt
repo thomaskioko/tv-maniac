@@ -64,6 +64,12 @@ class SeasonDetailsStore(
                 // Insert Season Videos
 
                 // Insert Season Images
+                response.images.posters.forEach { image ->
+                    seasonDetailsDao.upsertSeasonImage(
+                        seasonId = params.seasonId,
+                        imageUrl = formatterUtil.formatTmdbPosterPath(image.filePath),
+                    )
+                }
             }
         },
         delete = { params: SeasonDetailsParam -> seasonDetailsDao.delete(params.seasonId) },

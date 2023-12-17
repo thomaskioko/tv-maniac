@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
+import com.thomaskioko.tvmaniac.core.db.Season_images
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
@@ -18,6 +20,7 @@ import kotlin.time.Duration.Companion.days
 @Inject
 class DefaultSeasonDetailsRepository(
     private val seasonDetailsStore: SeasonDetailsStore,
+    private val seasonDetailsDao: SeasonDetailsDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonDetailsRepository {
@@ -41,4 +44,10 @@ class DefaultSeasonDetailsRepository(
         )
             .mapResult()
             .flowOn(dispatcher.io)
+
+    override fun fetchSeasonImages(id: Long): List<Season_images> =
+        seasonDetailsDao.fetchSeasonImages(id)
+
+    override fun observeSeasonImages(id: Long): Flow<List<Season_images>> =
+        seasonDetailsDao.observeSeasonImages(id)
 }

@@ -9,6 +9,8 @@ import com.thomaskioko.tvmaniac.core.db.Library
 import com.thomaskioko.tvmaniac.core.db.Networks
 import com.thomaskioko.tvmaniac.core.db.Popular_shows
 import com.thomaskioko.tvmaniac.core.db.Season
+import com.thomaskioko.tvmaniac.core.db.Season_images
+import com.thomaskioko.tvmaniac.core.db.Season_videos
 import com.thomaskioko.tvmaniac.core.db.Show_networks
 import com.thomaskioko.tvmaniac.core.db.Similar_shows
 import com.thomaskioko.tvmaniac.core.db.Toprated_shows
@@ -86,6 +88,12 @@ interface DatabaseComponent : DatabasePlatformComponent {
         genresAdapter = Genres.Adapter(
             idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
+        ),
+        season_imagesAdapter = Season_images.Adapter(
+            season_idAdapter = IdAdapter(),
+        ),
+        season_videosAdapter = Season_videos.Adapter(
+            season_idAdapter = IdAdapter(),
         ),
     )
 
