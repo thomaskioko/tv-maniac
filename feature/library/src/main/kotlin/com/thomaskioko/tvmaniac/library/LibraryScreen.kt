@@ -1,11 +1,15 @@
 package com.thomaskioko.tvmaniac.library
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -15,13 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
-import com.thomaskioko.tvmaniac.compose.components.LazyGridItems
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
+import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.watchlist.ErrorLoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryAction
@@ -103,21 +108,23 @@ private fun LibraryGridContent(
     paddingValues: PaddingValues,
     onItemClicked: (Long) -> Unit,
 ) {
-    val listState = rememberLazyListState()
-
-    LazyGridItems(
-        listState = listState,
-        items = list,
-        paddingValues = paddingValues,
-    ) { show ->
-
-        TvPosterCard(
-            modifier = Modifier
-                .animateItemPlacement(),
-            posterImageUrl = show.posterImageUrl,
-            title = show.title,
-            onClick = { onItemClicked(show.tmdbId) },
-        )
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier
+            .padding(horizontal = 4.dp)
+            .padding(paddingValues.copy(copyTop = false)),
+    ) {
+        items(list) { show ->
+            TvPosterCard(
+                modifier = Modifier
+                    .animateItemPlacement(),
+                posterImageUrl = show.posterImageUrl,
+                title = show.title,
+                onClick = { onItemClicked(show.tmdbId) },
+            )
+        }
     }
 }
 
