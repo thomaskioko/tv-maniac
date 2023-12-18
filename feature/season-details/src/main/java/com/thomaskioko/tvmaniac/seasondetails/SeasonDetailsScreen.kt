@@ -438,7 +438,7 @@ private fun CastContent(
                                     maxLines = 1,
                                     style = MaterialTheme.typography.bodyMedium.copy(
                                         fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                     ),
                                 )
 
@@ -450,7 +450,7 @@ private fun CastContent(
                                     maxLines = 1,
                                     style = MaterialTheme.typography.bodyMedium.copy(
                                         fontWeight = FontWeight.Normal,
-                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                     ),
                                 )
                             }
