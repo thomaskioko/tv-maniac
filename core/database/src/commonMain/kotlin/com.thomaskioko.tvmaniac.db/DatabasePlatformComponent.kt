@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.db
 
 import app.cash.sqldelight.db.SqlDriver
+import com.thomaskioko.tvmaniac.core.db.Casts
 import com.thomaskioko.tvmaniac.core.db.Episode
 import com.thomaskioko.tvmaniac.core.db.Episode_image
 import com.thomaskioko.tvmaniac.core.db.Genres
@@ -8,8 +9,8 @@ import com.thomaskioko.tvmaniac.core.db.Last_requests
 import com.thomaskioko.tvmaniac.core.db.Library
 import com.thomaskioko.tvmaniac.core.db.Networks
 import com.thomaskioko.tvmaniac.core.db.Popular_shows
+import com.thomaskioko.tvmaniac.core.db.Recommended_shows
 import com.thomaskioko.tvmaniac.core.db.Season
-import com.thomaskioko.tvmaniac.core.db.Season_cast
 import com.thomaskioko.tvmaniac.core.db.Season_images
 import com.thomaskioko.tvmaniac.core.db.Season_videos
 import com.thomaskioko.tvmaniac.core.db.Show_networks
@@ -96,9 +97,14 @@ interface DatabaseComponent : DatabasePlatformComponent {
         season_videosAdapter = Season_videos.Adapter(
             season_idAdapter = IdAdapter(),
         ),
-        season_castAdapter = Season_cast.Adapter(
+        recommended_showsAdapter = Recommended_shows.Adapter(
+            idAdapter = IdAdapter(),
+            recommended_show_idAdapter = IdAdapter(),
+        ),
+        castsAdapter = Casts.Adapter(
             idAdapter = IdAdapter(),
             season_idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
         ),
     )
 

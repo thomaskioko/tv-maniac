@@ -21,6 +21,9 @@ value class NetworkId(val id: Long)
 value class PageId(val id: Long)
 
 @JvmInline
+value class RecommendedShowId(val id: Long)
+
+@JvmInline
 value class SeasonId(val id: Long)
 
 @JvmInline

@@ -77,6 +77,8 @@ kotlin {
                 api(projects.data.library.implementation)
                 api(projects.data.popularshows.api)
                 api(projects.data.popularshows.implementation)
+                api(projects.data.recommendedshows.api)
+                api(projects.data.recommendedshows.implementation)
                 api(projects.data.requestManager.api)
                 api(projects.data.requestManager.api)
                 api(projects.data.requestManager.implementation)

@@ -48,6 +48,8 @@ include(
     ":data:popularshows:implementation",
     ":data:request-manager:api",
     ":data:request-manager:implementation",
+    ":data:recommendedshows:api",
+    ":data:recommendedshows:implementation",
     ":data:seasondetails:api",
     ":data:seasondetails:implementation",
     ":data:seasondetails:testing",
