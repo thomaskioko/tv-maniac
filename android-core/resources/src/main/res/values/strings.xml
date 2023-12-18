@@ -29,11 +29,14 @@
     <string name="following">Follow show</string>
     <string name="unfollow">Unfollow</string>
     <string name="btn_trailer">Watch Trailer</string>
-    <string name="title_similar">More like this</string>
+    <string name="title_recommended">Recommendations</string>
+    <string name="title_similar">Similar Shows</string>
     <string name="title_seasons">Browse Seasons</string>
     <string name="title_season_overview">Overview</string>
     <string name="title_trailer">Trailers</string>
     <string name="title_release">Recent Release</string>
+    <string name="title_providers">Where To Watch</string>
+    <string name="title_providers_label">Provided by JustWatch</string>
 
     <string name="title_casts">Cast</string>
 
