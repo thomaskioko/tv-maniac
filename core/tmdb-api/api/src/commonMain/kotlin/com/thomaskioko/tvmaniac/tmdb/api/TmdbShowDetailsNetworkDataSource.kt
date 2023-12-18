@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.tmdb.api
 
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowDetailsResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
+import com.thomaskioko.tvmaniac.tmdb.api.model.WatchProvidersResult
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 
 interface TmdbShowDetailsNetworkDataSource {
@@ -36,4 +37,13 @@ interface TmdbShowDetailsNetworkDataSource {
         id: Long,
         page: Long,
     ): ApiResponse<TmdbShowResult>
+
+    /**
+     * Returns a list of the watch provider (OTT/streaming) data we have available for TV series.
+     *
+     * @param id TV show id
+     */
+    suspend fun getShowWatchProviders(
+        id: Long,
+    ): ApiResponse<WatchProvidersResult>
 }
