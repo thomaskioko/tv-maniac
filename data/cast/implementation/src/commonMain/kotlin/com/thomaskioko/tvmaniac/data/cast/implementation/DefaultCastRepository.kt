@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.data.cast.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Season_cast
+import com.thomaskioko.tvmaniac.core.db.SeasonCast
+import com.thomaskioko.tvmaniac.core.db.ShowCast
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.data.cast.api.CastRepository
 import kotlinx.coroutines.flow.Flow
@@ -11,9 +12,15 @@ class DefaultCastRepository(
     private val dao: CastDao,
 ) : CastRepository {
 
-    override fun fetchSeasonCast(seasonId: Long): List<Season_cast> =
+    override fun fetchSeasonCast(seasonId: Long): List<SeasonCast> =
         dao.fetchSeasonCast(seasonId)
 
-    override fun observeSeasonCast(seasonId: Long): Flow<List<Season_cast>> =
+    override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =
         dao.observeSeasonCast(seasonId)
+
+    override fun fetchShowCast(showId: Long): List<ShowCast> =
+        dao.fetchShowCast(showId)
+
+    override fun observeShowCast(showId: Long): Flow<List<ShowCast>> =
+        dao.observeShowCast(showId)
 }

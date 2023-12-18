@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.seasondetails
 
-import com.thomaskioko.tvmaniac.core.db.Season_cast
+import com.thomaskioko.tvmaniac.core.db.SeasonCast
 import com.thomaskioko.tvmaniac.core.db.Season_images
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Cast
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
@@ -36,7 +36,7 @@ fun List<Season_images>.toImageList(): PersistentList<SeasonImagesModel> =
         )
     }.toPersistentList()
 
-fun List<Season_cast>.toCastList(): PersistentList<Cast> =
+fun List<SeasonCast>.toCastList(): PersistentList<Cast> =
     map {
         Cast(
             id = it.id.id,

@@ -1,10 +1,14 @@
 package com.thomaskioko.tvmaniac.data.cast.api
 
-import com.thomaskioko.tvmaniac.core.db.Season_cast
+import com.thomaskioko.tvmaniac.core.db.Casts
+import com.thomaskioko.tvmaniac.core.db.SeasonCast
+import com.thomaskioko.tvmaniac.core.db.ShowCast
 import kotlinx.coroutines.flow.Flow
 
 interface CastDao {
-    fun upsert(entity: Season_cast)
-    fun fetchSeasonCast(id: Long): List<Season_cast>
-    fun observeSeasonCast(id: Long): Flow<List<Season_cast>>
+    fun upsert(entity: Casts)
+    fun fetchShowCast(id: Long): List<ShowCast>
+    fun observeShowCast(id: Long): Flow<List<ShowCast>>
+    fun fetchSeasonCast(id: Long): List<SeasonCast>
+    fun observeSeasonCast(id: Long): Flow<List<SeasonCast>>
 }

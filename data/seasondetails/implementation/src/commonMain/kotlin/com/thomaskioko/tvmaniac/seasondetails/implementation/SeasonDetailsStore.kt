@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
+import com.thomaskioko.tvmaniac.core.db.Casts
 import com.thomaskioko.tvmaniac.core.db.Episode
-import com.thomaskioko.tvmaniac.core.db.Season_cast
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.db.DbTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
@@ -77,7 +77,7 @@ class SeasonDetailsStore(
                 // Insert Season Cast
                 response.credits.cast.forEach { cast ->
                     castDao.upsert(
-                        Season_cast(
+                        Casts(
                             id = Id(cast.id.toLong()),
                             season_id = Id(params.seasonId),
                             character_name = cast.character,
@@ -86,6 +86,7 @@ class SeasonDetailsStore(
                                 formatterUtil.formatTmdbPosterPath(it)
                             },
                             popularity = cast.popularity,
+                            tmdb_id = null,
                         ),
                     )
                 }
