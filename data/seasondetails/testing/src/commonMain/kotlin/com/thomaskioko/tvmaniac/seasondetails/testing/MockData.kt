@@ -10,6 +10,8 @@ val SeasonWithEpisodeList = SeasonDetailsWithEpisodes(
     showTitle = "Loki",
     seasonNumber = 0,
     episodeCount = 1,
+    imageUrl = "https://image.tmdb.org/t/p/w500/path/to/image.jpg",
+    seasonOverview = "The journey to reunite the Ingham family continues as they travel to the USA.",
     episodes = listOf(
         EpisodeDetails(
             runtime = 45,

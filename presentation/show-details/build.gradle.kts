@@ -14,6 +14,9 @@ kotlin {
                 implementation(projects.data.shows.api)
                 implementation(projects.data.similar.api)
                 implementation(projects.data.trailers.api)
+                implementation(projects.data.cast.api)
+                implementation(projects.data.recommendedshows.api)
+                implementation(projects.data.watchproviders.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)

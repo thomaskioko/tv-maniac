@@ -19,6 +19,8 @@ import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.get
 import kotlin.time.Duration.Companion.days
 
+private const val FEATURED_SHOWS_COUNT = 5
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @Inject
 class DefaultTrendingShowsRepository(
@@ -48,7 +50,8 @@ class DefaultTrendingShowsRepository(
                     emptyFlow()
                 }, { shows ->
                     shows?.let { trendingShows ->
-                        flowOf(Either.Right(trendingShows.sortedByDescending { it.popularity }.take(5)))
+                        val featuredShows = trendingShows.shuffled().take(FEATURED_SHOWS_COUNT)
+                        flowOf(Either.Right(featuredShows))
                     } ?: emptyFlow()
                 })
             }
@@ -59,6 +62,6 @@ class DefaultTrendingShowsRepository(
 
     override suspend fun fetchFeaturedTrendingShows(timeWindow: String): List<TrendingShows> =
         fetchTrendingShows(timeWindow)
-            .sortedBy { it.popularity }
-            .take(5)
+            .shuffled()
+            .take(FEATURED_SHOWS_COUNT)
 }

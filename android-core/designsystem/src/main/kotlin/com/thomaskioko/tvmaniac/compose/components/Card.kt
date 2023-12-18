@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.resources.R
@@ -26,6 +27,9 @@ fun TvPosterCard(
     posterImageUrl: String?,
     title: String,
     modifier: Modifier = Modifier,
+    posterModifier: Modifier = Modifier
+        .fillMaxSize()
+        .aspectRatio(2 / 3f),
     shape: Shape = MaterialTheme.shapes.small,
     imageWidth: Dp = 120.dp,
     onClick: () -> Unit = {},
@@ -46,6 +50,8 @@ fun TvPosterCard(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
                 modifier = Modifier
                     .padding(4.dp)
                     .fillMaxWidth()
@@ -55,9 +61,7 @@ fun TvPosterCard(
             AsyncImageComposable(
                 model = posterImageUrl,
                 contentDescription = stringResource(R.string.cd_show_poster, title),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .aspectRatio(2 / 3f),
+                modifier = posterModifier,
             )
         }
     }

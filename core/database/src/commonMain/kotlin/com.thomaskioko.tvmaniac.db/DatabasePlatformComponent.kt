@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.db
 
 import app.cash.sqldelight.db.SqlDriver
+import com.thomaskioko.tvmaniac.core.db.Casts
 import com.thomaskioko.tvmaniac.core.db.Episode
 import com.thomaskioko.tvmaniac.core.db.Episode_image
 import com.thomaskioko.tvmaniac.core.db.Genres
@@ -8,7 +9,10 @@ import com.thomaskioko.tvmaniac.core.db.Last_requests
 import com.thomaskioko.tvmaniac.core.db.Library
 import com.thomaskioko.tvmaniac.core.db.Networks
 import com.thomaskioko.tvmaniac.core.db.Popular_shows
+import com.thomaskioko.tvmaniac.core.db.Recommended_shows
 import com.thomaskioko.tvmaniac.core.db.Season
+import com.thomaskioko.tvmaniac.core.db.Season_images
+import com.thomaskioko.tvmaniac.core.db.Season_videos
 import com.thomaskioko.tvmaniac.core.db.Show_networks
 import com.thomaskioko.tvmaniac.core.db.Similar_shows
 import com.thomaskioko.tvmaniac.core.db.Toprated_shows
@@ -17,6 +21,7 @@ import com.thomaskioko.tvmaniac.core.db.Trending_shows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
+import com.thomaskioko.tvmaniac.core.db.Watch_providers
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
@@ -84,6 +89,25 @@ interface DatabaseComponent : DatabasePlatformComponent {
             pageAdapter = IdAdapter(),
         ),
         genresAdapter = Genres.Adapter(
+            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+        ),
+        season_imagesAdapter = Season_images.Adapter(
+            season_idAdapter = IdAdapter(),
+        ),
+        season_videosAdapter = Season_videos.Adapter(
+            season_idAdapter = IdAdapter(),
+        ),
+        recommended_showsAdapter = Recommended_shows.Adapter(
+            idAdapter = IdAdapter(),
+            recommended_show_idAdapter = IdAdapter(),
+        ),
+        castsAdapter = Casts.Adapter(
+            idAdapter = IdAdapter(),
+            season_idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+        ),
+        watch_providersAdapter = Watch_providers.Adapter(
             idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
         ),

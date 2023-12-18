@@ -1,8 +1,7 @@
 package com.thomaskioko.tvmaniac.data.seasondetails
 
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsModel
 import kotlinx.collections.immutable.persistentListOf
 
 val episodeDetailModels = persistentListOf(
@@ -20,13 +19,15 @@ val episodeDetailModels = persistentListOf(
     ),
 )
 
-val seasonDetailsLoaded = SeasonDetailsLoaded(
-    showTitle = "Loki",
-    seasonDetailsModel = SeasonDetailsModel(
-        seasonId = 12343,
-        seasonName = "Season 01",
-        episodeCount = 1,
-        watchProgress = 0.0f,
-        episodeDetailModels = episodeDetailModels,
-    ),
+val seasonDetailsState = SeasonDetailsState(
+    seasonId = 12343,
+    seasonName = "Season 01",
+    episodeCount = 1,
+    watchProgress = 0.0f,
+    episodeDetailsList = episodeDetailModels,
+    seasonImages = persistentListOf(),
+    seasonOverview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
+    isSeasonWatched = false,
+    imageUrl = "https://image.tmdb.org/t/p/w500/path/to/image.jpg",
+    seasonCast = persistentListOf(),
 )

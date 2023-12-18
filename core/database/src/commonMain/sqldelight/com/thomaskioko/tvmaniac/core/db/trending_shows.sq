@@ -24,8 +24,14 @@ INSERT OR IGNORE INTO trending_shows(
 );
 
 trendingShows:
-SELECT * FROM trending_shows
-INNER JOIN tvshows ON tvshows.id = trending_shows.id;
+SELECT
+    *
+FROM
+    trending_shows
+INNER JOIN
+    tvshows ON tvshows.id = trending_shows.id
+ORDER BY
+    tvshows.popularity DESC;
 
 delete:
 DELETE FROM trending_shows

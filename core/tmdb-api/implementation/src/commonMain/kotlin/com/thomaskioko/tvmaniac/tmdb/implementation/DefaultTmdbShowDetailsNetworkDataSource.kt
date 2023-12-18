@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.tmdb.implementation
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowDetailsResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
+import com.thomaskioko.tvmaniac.tmdb.api.model.WatchProvidersResult
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.safeRequest
 import io.ktor.client.request.parameter
@@ -39,6 +40,14 @@ class DefaultTmdbShowDetailsNetworkDataSource(
                 method = HttpMethod.Get
                 path("3/tv/$id/recommendations")
                 parameter("page", "$page")
+            }
+        }
+
+    override suspend fun getShowWatchProviders(id: Long): ApiResponse<WatchProvidersResult> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("3/tv/$id/watch/providers")
             }
         }
 }

@@ -1,11 +1,9 @@
 package com.thomaskioko.tvmaniac.seasondetails
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.presentation.seasondetails.LoadingError
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsModel
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
 val episodeDetailsModel = EpisodeDetailsModel(
@@ -21,25 +19,27 @@ val episodeDetailsModel = EpisodeDetailsModel(
     seasonEpisodeNumber = "S01 | E01",
 )
 
-val seasonDetailsModel = SeasonDetailsModel(
+val mockSeasonDetailsContent = SeasonDetailsState(
     seasonId = 1,
     seasonName = "Specials",
     episodeCount = 8,
     watchProgress = 0.4f,
-    episodeDetailModels = List(8) {
+    imageUrl = "https://image.tmdb.org/t/p/w500/path/to/image.jpg",
+    episodeDetailsList = List(8) {
         episodeDetailsModel
     }.toPersistentList(),
+    seasonImages = persistentListOf(),
+    seasonOverview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the " +
+        "Time Variance Authority.",
+    isSeasonWatched = false,
+    seasonCast = persistentListOf(),
 )
 
 class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsState> {
     override val values: Sequence<SeasonDetailsState>
         get() {
             return sequenceOf(
-                SeasonDetailsLoaded(
-                    showTitle = "Loki",
-                    seasonDetailsModel = seasonDetailsModel,
-                ),
-                LoadingError(message = "Something went Wrong "),
+                mockSeasonDetailsContent,
             )
         }
 }

@@ -75,6 +75,25 @@ abstract class BaseDatabaseTest {
             idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
         ),
+        season_imagesAdapter = Season_images.Adapter(
+            season_idAdapter = IdAdapter(),
+        ),
+        season_videosAdapter = Season_videos.Adapter(
+            season_idAdapter = IdAdapter(),
+        ),
+        recommended_showsAdapter = Recommended_shows.Adapter(
+            idAdapter = IdAdapter(),
+            recommended_show_idAdapter = IdAdapter(),
+        ),
+        castsAdapter = Casts.Adapter(
+            idAdapter = IdAdapter(),
+            season_idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+        ),
+        watch_providersAdapter = Watch_providers.Adapter(
+            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+        ),
     )
 
     @AfterTest

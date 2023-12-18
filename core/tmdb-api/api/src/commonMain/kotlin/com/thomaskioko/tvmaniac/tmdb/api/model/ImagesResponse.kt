@@ -12,7 +12,7 @@ data class ImagesResponse(
 data class Posters(
     @SerialName("aspect_ratio") var aspectRatio: Double,
     @SerialName("height") var height: Int,
-    @SerialName("file_path") var filePath: String? = null,
+    @SerialName("file_path") var filePath: String,
     @SerialName("vote_average") var voteAverage: Double,
     @SerialName("vote_count") var voteCount: Int,
     @SerialName("width") var width: Int,

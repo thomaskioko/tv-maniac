@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.data.seasondetails
 
-import com.thomaskioko.tvmaniac.presentation.seasondetails.Loading
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.SeasonWithEpisodeList
@@ -47,8 +46,7 @@ class SeasonPresenterTest {
     fun onLoadSeasonDetails_correct_state_is_emitted() = runTest {
         seasonDetailsRepository.setCachedResults(SeasonWithEpisodeList)
 
-        presenter.state shouldBe Loading
-        presenter.state shouldBe seasonDetailsLoaded
+        presenter.state shouldBe seasonDetailsState
     }
 
     @Test
@@ -57,9 +55,8 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setCachedResults(SeasonWithEpisodeList)
         seasonDetailsRepository.setSeasonsResult(Either.Left(DefaultError(errorMessage)))
 
-        presenter.state shouldBe Loading
-        presenter.state shouldBe seasonDetailsLoaded
-        presenter.state shouldBe seasonDetailsLoaded
+        presenter.state shouldBe seasonDetailsState
+        presenter.state shouldBe seasonDetailsState
             .copy(errorMessage = errorMessage)
     }
 }

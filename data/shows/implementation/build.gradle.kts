@@ -8,7 +8,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.database)
-                implementation(projects.core.traktApi.api)
                 implementation(projects.core.util)
                 implementation(projects.data.shows.api)
                 implementation(projects.data.requestManager.api)

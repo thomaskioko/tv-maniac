@@ -8,7 +8,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core.tmdbApi.api)
-                implementation(projects.core.traktApi.api)
                 implementation(projects.core.util)
                 implementation(projects.data.requestManager.api)
                 implementation(projects.data.similar.api)

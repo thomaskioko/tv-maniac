@@ -9,9 +9,7 @@ kotlin {
        commonMain {
            dependencies {
                implementation(projects.core.database)
-               implementation(projects.core.datastore.api)
                implementation(projects.core.tmdbApi.api)
-               implementation(projects.core.traktApi.api)
                implementation(projects.core.util)
                implementation(projects.data.episodes.api)
                implementation(projects.data.requestManager.api)

@@ -80,6 +80,6 @@ fun Modifier.iconButtonBackgroundScrim(
                 shape = shape,
             )
     } else {
-        this
+        this.padding(start = 8.dp, end = 16.dp)
     }
 }

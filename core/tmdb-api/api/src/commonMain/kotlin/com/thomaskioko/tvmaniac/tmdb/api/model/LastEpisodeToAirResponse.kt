@@ -13,7 +13,7 @@ data class LastEpisodeToAirResponse(
     @SerialName("air_date") var airDate: String,
     @SerialName("episode_number") var episodeNumber: Int,
     @SerialName("episode_type") var episodeType: String,
-    @SerialName("runtime") var runtime: Int,
+    @SerialName("runtime") var runtime: Int? = null,
     @SerialName("season_number") var seasonNumber: Int,
     @SerialName("show_id") var showId: Int,
     @SerialName("still_path") var stillPath: String? = null,

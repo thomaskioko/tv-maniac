@@ -6,13 +6,8 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
@@ -157,10 +152,6 @@ fun CollapsableAppBar(
             containerColor = backgroundColor,
         ),
         modifier = modifier
-            .windowInsetsPadding(
-                WindowInsets.systemBars
-                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
-            )
             .shadow(elevation = elevation),
     )
 }
