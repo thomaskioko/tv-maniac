@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.compose.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
@@ -62,24 +64,42 @@ fun BoxTextItems(
 
 @Composable
 fun TextLoadingItem(
-    isLoading: Boolean,
-    text: String,
+    title: String,
     modifier: Modifier = Modifier,
+    subTitle: String? = null,
+    isLoading: Boolean = false,
+    content: @Composable () -> Unit,
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(vertical = 8.dp, horizontal = 16.dp),
     ) {
-        Text(
-            text = text,
+        Column(
             modifier = Modifier
                 .align(Alignment.CenterStart),
-            style = MaterialTheme.typography.titleMedium.copy(
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = Bold,
-            ),
-        )
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = Bold,
+                ),
+            )
+
+            subTitle?.let {
+                Text(
+                    text = subTitle,
+                    modifier = Modifier
+                        .padding(vertical = 2.dp),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                )
+            }
+        }
 
         AnimatedVisibility(
             visible = isLoading,
@@ -93,6 +113,8 @@ fun TextLoadingItem(
             )
         }
     }
+
+    content()
 }
 
 @Composable
@@ -135,11 +157,11 @@ fun ExpandingTextPreview() {
         Surface {
             ExpandingText(
                 text = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
-                    "an alternate version of Loki is brought to the mysterious Time Variance " +
-                    "Authority, a bureaucratic organization that exists outside of time and " +
-                    "space and monitors the timeline. They give Loki a choice: face being " +
-                    "erased from existence due to being a “time variant”or help fix " +
-                    "the timeline and stop a greater threat.",
+                        "an alternate version of Loki is brought to the mysterious Time Variance " +
+                        "Authority, a bureaucratic organization that exists outside of time and " +
+                        "space and monitors the timeline. They give Loki a choice: face being " +
+                        "erased from existence due to being a “time variant”or help fix " +
+                        "the timeline and stop a greater threat.",
             )
         }
     }
@@ -164,8 +186,9 @@ fun TextLoadingItemPreview() {
     TvManiacTheme {
         Surface {
             TextLoadingItem(
-                text = "Seasons",
+                title = "Seasons",
                 isLoading = true,
+                content = {}
             )
         }
     }
