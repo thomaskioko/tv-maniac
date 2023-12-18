@@ -4,8 +4,8 @@ import com.thomaskioko.tvmaniac.core.db.ShowSeasons
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.SimilarShow
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import kotlinx.collections.immutable.persistentListOf
 
@@ -17,7 +17,7 @@ val similarShow = ShowDetails(
 )
 
 val similarSimilarShows = persistentListOf(
-    SimilarShow(
+    Show(
         tmdbId = 284958,
         title = "Loki",
         posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -32,52 +32,36 @@ val showDetailsLoaded = ShowDetailsState(
         posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     ),
-    seasonsContent = ShowDetailsState.SeasonsContent(
-        isLoading = true,
-        seasonsList = persistentListOf(),
-    ),
-    similarShowsContent = ShowDetailsState.SimilarShowsContent(
-        isLoading = true,
-        similarSimilarShows = persistentListOf(),
-    ),
-    trailersContent = ShowDetailsState.TrailersContent(
-        isLoading = true,
-        hasWebViewInstalled = false,
-        playerErrorMessage = null,
-        trailersList = persistentListOf(),
-    ),
+    seasonsList = persistentListOf(),
+    similarShows = persistentListOf(),
+    trailersList = persistentListOf(),
     errorMessage = null,
-)
-val seasonsShowDetailsLoaded = ShowDetailsState.SeasonsContent(
     isLoading = false,
-    seasonsList = persistentListOf(
-        Season(
-            seasonId = 84958,
-            tvShowId = 114355,
-            name = "Season 1",
-            seasonNumber = 0,
-        ),
-    ),
-)
-
-val trailerShowDetailsLoaded = ShowDetailsState.TrailersContent(
-    isLoading = false,
+    providers = persistentListOf(),
+    castList = persistentListOf(),
+    recommendedShowList = persistentListOf(),
     hasWebViewInstalled = false,
-    playerErrorMessage = null,
-    trailersList = persistentListOf(
-        Trailer(
-            showId = 84958,
-            key = "Fd43V",
-            name = "Some title",
-            youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
-        ),
+)
+
+val seasonPersistentList = persistentListOf(
+    Season(
+        seasonId = 84958,
+        tvShowId = 114355,
+        name = "Season 1",
+        seasonNumber = 0,
     ),
 )
 
-val similarShowLoaded = ShowDetailsState.SimilarShowsContent(
-    isLoading = false,
-    similarSimilarShows = similarSimilarShows,
+val trailerPersistentList = persistentListOf(
+    Trailer(
+        showId = 84958,
+        key = "Fd43V",
+        name = "Some title",
+        youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
+    ),
 )
+
+val similarShowList = similarSimilarShows
 
 val similarShowResult = listOf(
     SimilarShows(

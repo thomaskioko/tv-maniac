@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.Companion.EMPTY_DETAIL_STATE
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.SimilarShowsContent.Companion.EMPTY_SIMILAR_SHOWS
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.TrailersContent.Companion.EMPTY_TRAILERS
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
@@ -68,16 +66,16 @@ internal class ShowDetailsPresenterTest {
         presenter.state shouldBe EMPTY_DETAIL_STATE
         presenter.state shouldBe showDetailsLoaded
         presenter.state shouldBe showDetailsLoaded.copy(
-            seasonsContent = seasonsShowDetailsLoaded,
+            seasonsList = seasonPersistentList,
         )
         presenter.state shouldBe showDetailsLoaded.copy(
-            seasonsContent = seasonsShowDetailsLoaded,
-            trailersContent = trailerShowDetailsLoaded,
+            seasonsList = seasonPersistentList,
+            trailersList = trailerPersistentList,
         )
         presenter.state shouldBe showDetailsLoaded.copy(
-            seasonsContent = seasonsShowDetailsLoaded,
-            trailersContent = trailerShowDetailsLoaded,
-            similarShowsContent = similarShowLoaded,
+            seasonsList = seasonPersistentList,
+            trailersList = trailerPersistentList,
+            similarShows = similarShowList,
         )
     }
 
@@ -91,18 +89,16 @@ internal class ShowDetailsPresenterTest {
         presenter.state shouldBe EMPTY_DETAIL_STATE
         presenter.state shouldBe showDetailsLoaded
         presenter.state shouldBe showDetailsLoaded.copy(
-            seasonsContent = seasonsShowDetailsLoaded,
+            seasonsList = seasonPersistentList,
         )
         presenter.state shouldBe showDetailsLoaded.copy(
-            seasonsContent = seasonsShowDetailsLoaded,
-            trailersContent = trailerShowDetailsLoaded,
+            seasonsList = seasonPersistentList,
+            trailersList = trailerPersistentList,
         )
         presenter.state shouldBe showDetailsLoaded.copy(
-            seasonsContent = seasonsShowDetailsLoaded,
-            trailersContent = trailerShowDetailsLoaded,
-            similarShowsContent = EMPTY_SIMILAR_SHOWS.copy(
-                errorMessage = errorMessage,
-            ),
+            seasonsList = seasonPersistentList,
+            trailersList = trailerPersistentList,
+            errorMessage = errorMessage,
         )
     }
 
@@ -116,20 +112,16 @@ internal class ShowDetailsPresenterTest {
         presenter.state shouldBe EMPTY_DETAIL_STATE
         presenter.state shouldBe showDetailsLoaded
         presenter.state shouldBe showDetailsLoaded.copy(
-            seasonsContent = seasonsShowDetailsLoaded,
+            seasonsList = seasonPersistentList,
         )
         presenter.state shouldBe showDetailsLoaded.copy(
-            seasonsContent = seasonsShowDetailsLoaded,
-            trailersContent = EMPTY_TRAILERS.copy(
-                errorMessage = errorMessage,
-            ),
+            seasonsList = seasonPersistentList,
+            errorMessage = errorMessage,
         )
         presenter.state shouldBe showDetailsLoaded.copy(
-            seasonsContent = seasonsShowDetailsLoaded,
-            similarShowsContent = similarShowLoaded,
-            trailersContent = EMPTY_TRAILERS.copy(
-                errorMessage = errorMessage,
-            ),
+            seasonsList = seasonPersistentList,
+            similarShows = similarShowList,
+            errorMessage = errorMessage,
         )
     }
 
