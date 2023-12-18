@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.data.recommendedshows.implementation.Recommended
 import com.thomaskioko.tvmaniac.data.showdetails.implementation.ShowDetailsComponent
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerComponent
 import com.thomaskioko.tvmaniac.data.upcomingshows.implementation.UpcomingShowsComponent
+import com.thomaskioko.tvmaniac.data.watchproviders.implementation.WatchProviderComponent
 import com.thomaskioko.tvmaniac.datastore.implementation.DataStoreComponent
 import com.thomaskioko.tvmaniac.db.DatabaseComponent
 import com.thomaskioko.tvmaniac.discover.implementation.TrendingShowsComponent
@@ -45,4 +46,5 @@ abstract class SharedComponent :
     TraktComponent,
     TrendingShowsComponent,
     UtilPlatformComponent,
-    UpcomingShowsComponent
+    UpcomingShowsComponent,
+    WatchProviderComponent

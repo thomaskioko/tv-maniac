@@ -33,4 +33,7 @@ value class SimilarShowId(val id: Long)
 value class TmdbId(val id: Long)
 
 @JvmInline
+value class WatchProviderId(val id: Long)
+
+@JvmInline
 value class Id<out T>(val id: Long)

@@ -81,9 +81,18 @@ abstract class BaseDatabaseTest {
         season_videosAdapter = Season_videos.Adapter(
             season_idAdapter = IdAdapter(),
         ),
-        season_castAdapter = Season_cast.Adapter(
+        recommended_showsAdapter = Recommended_shows.Adapter(
+            idAdapter = IdAdapter(),
+            recommended_show_idAdapter = IdAdapter(),
+        ),
+        castsAdapter = Casts.Adapter(
             idAdapter = IdAdapter(),
             season_idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+        ),
+        watch_providersAdapter = Watch_providers.Adapter(
+            idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
         ),
     )
 

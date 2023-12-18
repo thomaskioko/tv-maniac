@@ -21,6 +21,7 @@ import com.thomaskioko.tvmaniac.core.db.Trending_shows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
+import com.thomaskioko.tvmaniac.core.db.Watch_providers
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
@@ -104,6 +105,10 @@ interface DatabaseComponent : DatabasePlatformComponent {
         castsAdapter = Casts.Adapter(
             idAdapter = IdAdapter(),
             season_idAdapter = IdAdapter(),
+            tmdb_idAdapter = IdAdapter(),
+        ),
+        watch_providersAdapter = Watch_providers.Adapter(
+            idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
         ),
     )
