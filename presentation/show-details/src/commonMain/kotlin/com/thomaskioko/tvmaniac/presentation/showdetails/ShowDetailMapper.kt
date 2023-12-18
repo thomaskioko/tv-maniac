@@ -1,23 +1,54 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
+import com.thomaskioko.tvmaniac.core.db.RecommendedShows
+import com.thomaskioko.tvmaniac.core.db.ShowCast
 import com.thomaskioko.tvmaniac.core.db.ShowSeasons
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.db.TvshowDetails
+import com.thomaskioko.tvmaniac.core.db.WatchProviders
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.Cast
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.Providers
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.SimilarShow
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
-fun List<SimilarShows>?.toSimilarShowList(): ImmutableList<SimilarShow> = this?.map {
-    SimilarShow(
+fun List<SimilarShows>?.toSimilarShowList(): ImmutableList<Show> = this?.map {
+    Show(
         tmdbId = it.id.id,
         title = it.name,
         posterImageUrl = it.poster_path,
         backdropImageUrl = it.backdrop_path,
+    )
+}?.toImmutableList() ?: persistentListOf()
+
+fun List<RecommendedShows>?.toRecommendedShowList(): ImmutableList<Show> = this?.map {
+    Show(
+        tmdbId = it.id.id,
+        title = it.name,
+        posterImageUrl = it.poster_path,
+        backdropImageUrl = it.backdrop_path,
+    )
+}?.toImmutableList() ?: persistentListOf()
+
+fun List<ShowCast>?.toCastList(): ImmutableList<Cast> = this?.map {
+    Cast(
+        id = it.id.id,
+        name = it.name,
+        profileUrl = it.profile_path,
+        characterName = it.character_name,
+    )
+}?.toImmutableList() ?: persistentListOf()
+
+fun List<WatchProviders>?.toWatchProviderList(): ImmutableList<Providers> = this?.map {
+    Providers(
+        id = it.id.id,
+        name = it.name ?: "",
+        logoUrl = it.logo_path,
     )
 }?.toImmutableList() ?: persistentListOf()
 

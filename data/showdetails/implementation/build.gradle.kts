@@ -11,6 +11,7 @@ kotlin {
                 implementation(projects.data.showdetails.api)
                 implementation(projects.core.tmdbApi.api)
                 implementation(projects.core.util)
+                implementation(projects.data.cast.api)
                 implementation(projects.data.seasons.api)
                 implementation(projects.data.trailers.api)
                 implementation(projects.data.requestManager.api)

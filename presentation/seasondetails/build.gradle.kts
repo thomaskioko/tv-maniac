@@ -10,6 +10,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.util)
                 implementation(projects.data.episodes.api)
+                implementation(projects.data.recommendedshows.api)
                 implementation(projects.data.seasondetails.api)
                 implementation(projects.data.cast.api)
 

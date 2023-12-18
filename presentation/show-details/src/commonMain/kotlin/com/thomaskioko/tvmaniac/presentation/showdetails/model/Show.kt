@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails.model
 
-data class SimilarShow(
+data class Show(
     val tmdbId: Long,
     val title: String,
     val posterImageUrl: String?,
