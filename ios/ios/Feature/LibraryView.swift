@@ -59,13 +59,13 @@ struct LibraryView: View {
         if !state.list.isEmpty {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVGrid(columns: DrawingConstants.posterColumns,spacing: 16){
-                    ForEach(state.list, id: \.traktId){ item in
+                    ForEach(state.list, id: \.tmdbId){ item in
                         ShowPosterImage(
                             posterSize: .medium,
                             imageUrl: item.posterImageUrl,
                             showTitle: item.title,
-                            showId: item.traktId,
-                            onClick: { presenter.dispatch(action: LibraryShowClicked(id: item.traktId))  }
+                            showId: item.tmdbId,
+                            onClick: { presenter.dispatch(action: LibraryShowClicked(id: item.tmdbId))  }
                         )
                     }
                 }.padding(.all, 10)
