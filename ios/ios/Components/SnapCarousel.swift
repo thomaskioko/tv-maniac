@@ -13,7 +13,7 @@ import TvManiac
 // Link in Description...
 
 // To for acepting List....
-struct SnapCarousel<Content: View, T: TvShow>: View {
+struct SnapCarousel<Content: View, T: DiscoverShow>: View {
     
     var content: (T) -> Content
     var list: [T]
@@ -46,9 +46,10 @@ struct SnapCarousel<Content: View, T: TvShow>: View {
             let adjustMentWidth = (trailingSpace / 2) - spacing
             
             HStack (spacing: spacing) {
-                ForEach(list, id: \.traktId) { item in
+                ForEach(list, id: \.tmdbId) { item in
                     content(item)
                         .frame(width: proxy.size.width - trailingSpace)
+                        .padding(.leading, currentIndex == 0 ? 64 : 0)
                 }
 
             }

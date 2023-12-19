@@ -14,13 +14,13 @@ struct FeaturedView: View {
     @Environment(\.colorScheme) var scheme
     @State var currentIndex: Int = 2
     
-    var tvShows: [TvShow]?
+    var tvShows: [DiscoverShow]?
     var onClick : (Int64) -> Void
     
     var body: some View {
         
         ZStack {
-            BackgroundView(tvShows: tvShows)
+            BackgroundView(tvShows)
        
             if let shows = tvShows {
                 if !shows.isEmpty {
@@ -34,8 +34,8 @@ struct FeaturedView: View {
                                 posterSize: .big,
                                 imageUrl: show.posterImageUrl,
                                 showTitle: show.title,
-                                showId: show.traktId,
-                                onClick: { onClick(show.traktId)  }
+                                showId: show.tmdbId,
+                                onClick: { onClick(show.tmdbId)  }
                             )
                             .frame(width: size.width, height: size.height)
                             .cornerRadius(12)
@@ -47,7 +47,7 @@ struct FeaturedView: View {
                    
                     
                     
-                    CustomIndicator(shows: shows)
+                    CustomIndicator(shows)
                         .padding()
                         .padding(.top, 10)
                 }
@@ -57,7 +57,7 @@ struct FeaturedView: View {
     }
     
     @ViewBuilder
-    func CustomIndicator(shows: [TvShow]) -> some View {
+    func CustomIndicator(_ shows: [DiscoverShow]) -> some View {
         HStack(spacing: 5) {
             ForEach(shows.indices, id: \.self) { index in
                 Circle()
@@ -70,8 +70,8 @@ struct FeaturedView: View {
     
     
     @ViewBuilder
-    func BackgroundView(tvShows: [TvShow]?) -> some View {
-        if let shows = tvShows {
+    func BackgroundView(_ shows: [DiscoverShow]?) -> some View {
+        if let shows = shows {
             if !shows.isEmpty {
                 GeometryReader { proxy in
                     let size = proxy.size
@@ -82,7 +82,7 @@ struct FeaturedView: View {
                                 posterSize: .big,
                                 imageUrl: shows[index].posterImageUrl,
                                 showTitle: shows[index].title,
-                                showId: shows[index].traktId,
+                                showId: shows[index].tmdbId,
                                 onClick: {  }
                             )
                             .aspectRatio(contentMode: .fill)

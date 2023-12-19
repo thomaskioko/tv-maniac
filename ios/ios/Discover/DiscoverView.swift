@@ -42,7 +42,7 @@ struct DiscoverView: View {
         ZStack {
             let contentState = uiState as! DataLoaded
             
-            BackgroundView(tvShows: contentState.recommendedShows)
+            BackgroundView(tvShows: contentState.featuredShows)
             
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack {
@@ -53,65 +53,60 @@ struct DiscoverView: View {
                         } else {
                             
                             //Featured Shows
-                            FeaturedContentView(tvShows: state.recommendedShows)
+                            FeaturedContentView(state.featuredShows)
                             
-                            //Anticipated shows
-                            ShowRow(
-                                categoryName: "Anticipated",
-                                shows: state.anticipatedShows,
-                                onClick: { id in
-                                    presenter.dispatch(action: ShowClicked(id: id))
-                                }
+                            HorizontalItemContentListView(
+                                items: state.upcomingShows,
+                                title: "Upcoming",
+                                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) }
                             )
                             
-                            //Trending shows
-                            ShowRow(
-                                categoryName: "Trending",
-                                shows: state.trendingShows,
-                                onClick: { id in
-                                    presenter.dispatch(action: ShowClicked(id: id))
-                                }
+                            //Trending Today
+                            HorizontalItemContentListView(
+                                items: state.trendingToday,
+                                title: "Trending Today",
+                                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) }
                             )
                             
                             //Popular Shows
-                            ShowRow(
-                                categoryName: "Popular",
-                                shows: state.popularShows,
-                                onClick: { id in
-                                    presenter.dispatch(action: ShowClicked(id: id))
-                                }
+                            HorizontalItemContentListView(
+                                items: state.popularShows,
+                                title: "Popular",
+                                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) }
                             )
                             
-                        
+                            //Top Rated Shows
+                            HorizontalItemContentListView(
+                                items: state.topRatedShows,
+                                title: "Top Rated",
+                                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) }
+                            )
                         }
                         
+                        Spacer()
                     }
                 }
          
         }
         .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
+        .padding(.bottom, 64)
         
     }
     
     
     @ViewBuilder
-    func FeaturedContentView(tvShows: [TvShow]?) -> some View {
-        if let shows = tvShows {
+    func FeaturedContentView(_ shows: [DiscoverShow]?) -> some View {
+        if let shows = shows {
             if !shows.isEmpty {
-                SnapCarousel(spacing: 10, trailingSpace: 120,index: $currentIndex, items: shows) { post  in
+                SnapCarousel(spacing: 10, trailingSpace: 120, index: $currentIndex, items: shows) { show  in
                     
                     GeometryReader{ proxy in
                         
-                        ShowPosterImage(
-                            posterSize: .big,
-                            imageUrl: post.posterImageUrl,
-                            showTitle: post.title,
-                            showId: post.traktId,
-                            onClick: { presenter.dispatch(action: ShowClicked(id: post.traktId))  }
+                        FeaturedContentPosterView(
+                            show: show,
+                            onClick: { id in presenter.dispatch(action: ShowClicked(id: show.tmdbId)) }
                         )
-                        .cornerRadius(12)
-                        .shadow(color: Color("shadow1"), radius: 4, x: 0, y: 4)
-                        .transition(AnyTransition.slide)
+                    
                     }
                 }
                 .edgesIgnoringSafeArea(.all)
@@ -119,35 +114,28 @@ struct DiscoverView: View {
                 .padding(.top, 70)
                 
                 
-                CustomIndicator(shows: shows)
+                CustomIndicator(shows)
                     .padding()
                     .padding(.top, 10)
             }
         }
     }
-    
-    
-    
+
     
     
     @ViewBuilder
-    func BackgroundView(tvShows: [TvShow]?) -> some View {
+    func BackgroundView(tvShows: [DiscoverShow]?) -> some View {
         if let shows = tvShows {
             if !shows.isEmpty {
                 GeometryReader { proxy in
-                    let size = proxy.size
                     
                     TabView(selection: $currentIndex) {
                         ForEach(shows.indices, id: \.self) { index in
-                            ShowPosterImage(
-                                posterSize: .big,
-                                imageUrl: shows[index].posterImageUrl,
-                                showTitle: shows[index].title,
-                                showId: shows[index].traktId,
-                                onClick: {  }
+                            FeaturedContentPosterView(
+                                show: shows[index],
+                                onClick: { id in },
+                                posterWidth: CGFloat(320)
                             )
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: size.width + 350, height: size.height + 200)
                             .tag(index)
                         }
                         
@@ -178,7 +166,7 @@ struct DiscoverView: View {
     }
     
     @ViewBuilder
-    func CustomIndicator(shows: [TvShow]) -> some View {
+    func CustomIndicator(_ shows: [DiscoverShow]) -> some View {
         HStack(spacing: 5) {
             ForEach(shows.indices, id: \.self) { index in
                 Circle()
