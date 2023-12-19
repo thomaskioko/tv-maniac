@@ -17,6 +17,7 @@ fun List<TrendingShows>?.toDiscoverShowList(): ImmutableList<DiscoverShow> =
             tmdbId = it.id.id,
             posterImageUrl = it.poster_path,
             backdropImageUrl = it.backdrop_path,
+            isInLibrary = it.in_library == 1L,
         )
     }?.toImmutableList() ?: persistentListOf()
 
@@ -26,6 +27,7 @@ fun List<UpcomingShows>?.toUpcomingShowList(): ImmutableList<DiscoverShow> =
             tmdbId = it.id.id,
             posterImageUrl = it.poster_path,
             backdropImageUrl = it.backdrop_path,
+            isInLibrary = it.in_library == 1L,
         )
     }?.toImmutableList() ?: persistentListOf()
 
@@ -35,6 +37,7 @@ fun List<PagedTopRatedShows>?.toTopRatedList(): ImmutableList<DiscoverShow> =
             tmdbId = it.id.id,
             posterImageUrl = it.poster_path,
             backdropImageUrl = it.backdrop_path,
+            isInLibrary = it.in_library == 1L,
         )
     }?.toImmutableList() ?: persistentListOf()
 
@@ -44,6 +47,7 @@ fun List<PagedPopularShows>?.toPopularList(): ImmutableList<DiscoverShow> =
             tmdbId = it.id.id,
             posterImageUrl = it.poster_path,
             backdropImageUrl = it.backdrop_path,
+            isInLibrary = it.in_library == 1L,
         )
     }?.toImmutableList() ?: persistentListOf()
 

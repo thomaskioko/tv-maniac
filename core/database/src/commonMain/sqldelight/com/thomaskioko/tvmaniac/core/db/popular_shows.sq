@@ -24,9 +24,17 @@ INSERT OR IGNORE INTO popular_shows(
 );
 
 pagedPopularShows:
-SELECT * FROM popular_shows
-INNER JOIN tvshows ON tvshows.id = popular_shows.id
-WHERE popular_shows.page = :page;
+SELECT
+    *,
+    CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    popular_shows
+INNER JOIN
+    tvshows ON tvshows.id = popular_shows.id
+LEFT OUTER JOIN
+    library ON tvshows.id = library.id
+WHERE
+    popular_shows.page = :page;
 
 delete:
 DELETE FROM popular_shows
