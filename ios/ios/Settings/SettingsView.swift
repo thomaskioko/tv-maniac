@@ -80,7 +80,7 @@ struct SettingsView: View {
                         message: Text("Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch."),
                         primaryButton: .default(Text("Login")) {
                             model.initiateAuthorization()
-                            presenter.dispatch(action: TraktLoginClicked_())
+                        
                         },
                         secondaryButton: .destructive(Text("Cancel"))
                     )

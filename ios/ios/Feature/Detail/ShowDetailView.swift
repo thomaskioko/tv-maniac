@@ -34,20 +34,23 @@ struct ShowDetailView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     
-                    ArtWork(show: uiState.show, presenter: presenter)
+                    ArtWork(
+                        show: uiState.showDetails,
+                        onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id)) }
+                    )
                     
                     ShowBodyView(
-                        seasonList: uiState.seasonsContent.seasonsList,
-                        trailerList: uiState.trailersContent.trailersList,
-                        similarShowsList: uiState.similarShowsContent.similarShows,
-                        onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id))}
+                        seasonList: uiState.seasonsList,
+                        trailerList: uiState.trailersList,
+                        similarShowsList: uiState.similarShows,
+                        onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id)) }
                     )
                 }
             }
             .coordinateSpace(name: "SCROLL")
         }
         .overlay(alignment: .top){
-            TopNavBarView(showTitle: uiState.show.title)
+            TopNavBarView(showTitle: uiState.showDetails.title)
         }
         .background(Color.background)
         .navigationBarHidden(true)
@@ -55,7 +58,7 @@ struct ShowDetailView: View {
     }
     
     @ViewBuilder
-    func ArtWork(show: Show, presenter: ShowDetailsPresenter) -> some View {
+    func ArtWork(show: ShowDetails, onClick : @escaping (Int64) -> Void) -> some View {
         let height = size.height * 0.45
         
         GeometryReader { proxy in
@@ -67,8 +70,8 @@ struct ShowDetailView: View {
                 posterSize: .max,
                 imageUrl: show.backdropImageUrl,
                 showTitle: show.title,
-                showId: show.traktId,
-                onClick: {  presenter.dispatch(action: DetailShowClicked(id: show.traktId))}
+                showId: show.tmdbId,
+                onClick: { onClick(show.tmdbId) }
             )
             .aspectRatio(contentMode: .fill)
             .frame(width: size.width, height: size.height + (minY > 0 ? minY : 0))
@@ -129,7 +132,7 @@ struct ShowDetailView: View {
     }
     
     @ViewBuilder
-    func HeaderContentView(show: Show, presenter: ShowDetailsPresenter) -> some View {
+    func HeaderContentView(show: ShowDetails, presenter: ShowDetailsPresenter) -> some View {
         
         VStack(spacing: 0){
             Text(show.title)
@@ -158,7 +161,7 @@ struct ShowDetailView: View {
                     color: .accent,
                     borderColor: .grey_200,
                     isOn: false,
-                    action: { presenter.dispatch(action: WatchTrailerClicked(id: show.traktId)) }
+                    action: { presenter.dispatch(action: WatchTrailerClicked(id: show.tmdbId)) }
                 )
                 
                 let followText = if (!show.isFollowed) { "Follow Show" } else { "Unfollow Show"}
