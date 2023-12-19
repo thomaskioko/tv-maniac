@@ -30,15 +30,25 @@ struct RootView: View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)){
             let screen = stack.active.instance
             
+            let showBottomBar = rootPresenter.shouldShowBottomNav(screen: screen)
+            
             ChildView(screen: screen)
                 .frame(maxHeight: .infinity)
             
-            //TODO:: Animate visibility based on the screen. Only show when it's a tab screen
             BottomNavigation(screen, rootPresenter)
                 .background(.ultraThinMaterial)
-            
+                .hidden(showBottomBar)
+                .transition(.asymmetric(insertion: .slide, removal: .scale))
         }
         .preferredColorScheme(uiState.appTheme == AppTheme.lightTheme ? .light : uiState.appTheme == AppTheme.darkTheme ? .dark : nil)
+    }
+}
+
+extension View {
+    func hidden(_ showBottomBar: Bool) -> some View {
+        withAnimation {
+            opacity(showBottomBar ? 1 : 0)
+        }
     }
 }
 
