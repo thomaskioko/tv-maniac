@@ -5,7 +5,7 @@ struct ShowRow: View {
     
     @Namespace var animation
     var categoryName: String
-    var shows: [TvShow]?
+    var shows: [DiscoverShow]?
     var onClick : (Int64) -> Void
     
     var body: some View {
@@ -40,8 +40,8 @@ struct ShowRow: View {
                                 posterSize: .medium,
                                 imageUrl: item.posterImageUrl,
                                 showTitle: item.title,
-                                showId: item.traktId,
-                                onClick: { onClick(item.traktId) }
+                                showId: item.tmdbId,
+                                onClick: { onClick(item.tmdbId) }
                             )
                         }
                     }
@@ -52,11 +52,5 @@ struct ShowRow: View {
                 }
             }
         }
-    }
-}
-
-struct ShowRow_Previews: PreviewProvider {
-    static var previews: some View {
-        ShowRow(categoryName: "Trending", shows: [mockTvShow,mockTvShow,mockTvShow], onClick: { _ in })
     }
 }

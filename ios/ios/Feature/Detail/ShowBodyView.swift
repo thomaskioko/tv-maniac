@@ -65,13 +65,13 @@ struct ShowBodyView: View {
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .top) {
-                        ForEach(similarShowsList, id: \.traktId) { item in
+                        ForEach(similarShowsList, id: \.tmdbId) { item in
                             ShowPosterImage(
                                 posterSize: .medium,
                                 imageUrl: item.posterImageUrl,
                                 showTitle: item.title,
-                                showId: item.traktId,
-                                onClick: { onClick(item.traktId)}
+                                showId: item.tmdbId,
+                                onClick: { onClick(item.tmdbId)}
                             )
                             
                         }
@@ -87,17 +87,5 @@ struct ShowBodyView: View {
         }
         .padding(.bottom, 220)
         .background(Color.background)
-    }
-    
-}
-
-struct ShowBodyView_Previews: PreviewProvider {
-    static var previews: some View {
-        ShowBodyView(
-            seasonList: detailState.seasonsContent.seasonsList,
-            trailerList: detailState.trailersContent.trailersList,
-            similarShowsList: detailState.similarShowsContent.similarShows,
-            onClick: { _ in }
-        )
     }
 }

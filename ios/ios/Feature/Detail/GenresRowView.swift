@@ -28,9 +28,3 @@ struct GenresRowView: View {
         }
     }
 }
-
-struct GenresRow_Previews: PreviewProvider {
-    static var previews: some View {
-        GenresRowView(genres: genreList)
-    }
-}

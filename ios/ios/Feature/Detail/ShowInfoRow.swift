@@ -11,7 +11,7 @@ import TvManiac
 
 struct ShowInfoRow: View {
     
-    var show: Show
+    var show: ShowDetails
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -62,14 +62,5 @@ struct ShowInfoRow: View {
             }
             .foregroundColor(Color.white)
         }
-    }
-}
-
-struct ShowInfoRow_Previews: PreviewProvider {
-    static var previews: some View {
-        ShowInfoRow(show: mockShow)
-        
-        ShowInfoRow(show: mockShow)
-            .preferredColorScheme(.dark)
     }
 }
