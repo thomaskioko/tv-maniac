@@ -17,8 +17,7 @@ struct ProvidersList: View {
         if !items.isEmpty {
             TitleView(
                 title: "Watch Providers",
-                subtitle: "Provided by JustWatch",
-                showChevron: false
+                subtitle: "Provided by JustWatch"
             )
             
             ScrollView(.horizontal, showsIndicators: false) {
@@ -30,6 +29,7 @@ struct ProvidersList: View {
                 .padding(.top, 8)
                 .padding(.trailing, 16)
                 .padding(.leading, 16)
+                .padding(.bottom, 4)
             }
         }
     }
@@ -50,9 +50,10 @@ struct ProvidersList: View {
                     }
                     .aspectRatio(contentMode: .fill)
                     .frame(width: DimensionConstants.imageWidth,
-                           height: DimensionConstants.imageHeight)
+                           height: DimensionConstants.imageHeight
+                    )
                     .clipShape(RoundedRectangle(cornerRadius: DimensionConstants.imageRadius, style: .continuous))
-                    .shadow(radius: 8)
+                    .shadow(radius: 2)
             }
         }
     }

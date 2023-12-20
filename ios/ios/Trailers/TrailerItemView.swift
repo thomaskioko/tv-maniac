@@ -65,7 +65,7 @@ struct TrailerItemView: View {
                 HStack {
                     Text(trailer.name)
                         .lineLimit(DimensionConstants.lineLimits)
-                        .padding([.trailing, .bottom])
+                        .padding([.trailing])
                         .bodyMediumFont(size: 16)
                         .foregroundColor(.text_color_bg)
                     Spacer()

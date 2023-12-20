@@ -16,7 +16,7 @@ struct TrailerListView: View {
     var body: some View {
         if !trailers.isEmpty {
             VStack {
-                TitleView(title: "Trailers", showChevron: false)
+                TitleView(title: "Trailers")
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack {

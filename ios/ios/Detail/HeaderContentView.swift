@@ -40,10 +40,10 @@ struct HeaderContentView: View {
                                 .clear,
                                 .clear,
                                 .clear,
-                                Color.background.opacity(0 - progress),
-                                Color.background.opacity(0.8 - progress),
-                                Color.background.opacity(0.9 - progress),
-                                Color.background.opacity(0.9 - progress),
+                                Color.background.opacity(0),
+                                Color.background.opacity(0.8),
+                                Color.background.opacity(0.97),
+                                Color.background.opacity(0.98),
                                 Color.background,
                             ], startPoint: .top, endPoint: .bottom)
                         )
@@ -53,11 +53,10 @@ struct HeaderContentView: View {
                         onWatchTrailerClick: onWatchTrailerClick
                     )
                     .opacity(1 + (progress > 0 ? -progress : progress))
-                    
-                    
                 }
             }
-        }.frame(height: maxHeight)
+        }
+        .frame(height: maxHeight)
     }
     
     @ViewBuilder

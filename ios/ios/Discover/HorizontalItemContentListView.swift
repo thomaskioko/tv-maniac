@@ -19,7 +19,11 @@ struct HorizontalItemContentListView: View {
         if let items {
             if !items.isEmpty {
                 VStack {
-                    TitleView(title: title, subtitle: subtitle)
+                    TitleView(
+                        title: title,
+                        subtitle: subtitle,
+                        showChevron: true
+                    )
                         .padding(.leading, 8)
                     
                     ScrollView(.horizontal, showsIndicators: false) {

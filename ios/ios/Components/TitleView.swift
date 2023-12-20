@@ -13,7 +13,7 @@ import SwiftUI
 struct TitleView: View {
     let title: String
     var subtitle: String?
-    var showChevron = true
+    var showChevron = false
     
     var body: some View {
         HStack {
