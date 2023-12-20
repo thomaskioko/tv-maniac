@@ -10,19 +10,24 @@ import SwiftUI
 import SDWebImageSwiftUI
 import TvManiac
 
-struct ItemContentPosterView: View {
-    let show: DiscoverShow
+struct PosterItemView: View {
+    let showId: Int64
+    let title: String
+    let posterUrl: String?
+    var isInLibrary: Bool = false
+    var posterWidth: CGFloat = 120
+    var posterHeight: CGFloat = 180
     
     var body: some View {
-        if let posterUrl = show.posterImageUrl {
+        if let posterUrl = posterUrl {
             WebImage(url: URL(string: posterUrl), options: .highPriority)
                 .resizable()
                 .placeholder {
-                    PosterPlaceholder(title: show.title)
+                    PosterPlaceholder(title: title)
                 }
                 .aspectRatio(contentMode: .fill)
                 .overlay {
-                    if show.isInLibrary {
+                    if isInLibrary{
                         VStack {
                             Spacer()
                             HStack {
@@ -49,24 +54,26 @@ struct ItemContentPosterView: View {
                                     }
                             }
                         }
-                        .frame(width: DimensionConstants.posterWidth)
+                        .frame(width: posterWidth)
                     }
                 }
                 .transition(.opacity)
-                .frame(width: DimensionConstants.posterWidth, height: DimensionConstants.posterHeight
+                .frame(width: posterWidth, height: posterHeight
                 )
-                .clipShape(RoundedRectangle(cornerRadius: DimensionConstants.posterRadius,
-                                            style: .continuous))
+                .clipShape(
+                    RoundedRectangle(
+                        cornerRadius: DimensionConstants.posterRadius,
+                        style: .continuous
+                    )
+                )
         } else {
-            PosterPlaceholder(title: show.title)
+            PosterPlaceholder(title: title)
         }
         
     }
 }
 
 private struct DimensionConstants {
-    static let posterWidth: CGFloat = 120
-    static let posterHeight: CGFloat = 180
     static let posterRadius: CGFloat = 4
     static let shadowRadius: CGFloat = 2
 }

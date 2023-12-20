@@ -27,10 +27,14 @@ struct HorizontalItemContentListView: View {
                         .padding(.leading, 8)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
-                        
                         LazyHStack {
                             ForEach(items, id: \.tmdbId) { item in
-                                ItemContentPosterView(show: item)
+                                PosterItemView(
+                                    showId: item.tmdbId,
+                                    title: item.title,
+                                    posterUrl: item.posterImageUrl,
+                                    isInLibrary: item.isInLibrary
+                                )
                                     .padding([.leading, .trailing], 2)
                                     .padding(.leading, item.tmdbId == items.first?.tmdbId ? 16 : 0)
                                     .padding(.trailing, item.tmdbId == items.last?.tmdbId ? 8 : 0)
