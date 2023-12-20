@@ -96,6 +96,7 @@ struct HeaderContentView: View {
             .padding(.top, 8)
             
             showDetailButtons
+                .padding(.top, 8)
         }
         .frame(height: 220)
         
