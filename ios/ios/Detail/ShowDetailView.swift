@@ -12,13 +12,12 @@ import ScalingHeaderScrollView
 
 struct ShowDetailView: View {
     
-    @StateValue private var uiState: ShowDetailsState
-    @State var progress: CGFloat = 0
-    
     private let maxHeight : CGFloat = 520
     private let minHeight = 110.0
     private let presenter: ShowDetailsPresenter
     
+    @StateValue private var uiState: ShowDetailsState
+    @State var progress: CGFloat = 0
     
     init(presenter: ShowDetailsPresenter){
         self.presenter = presenter
@@ -46,6 +45,8 @@ struct ShowDetailView: View {
                 seasonContent
                 
                 ProvidersList(items: uiState.providers)
+                
+                TrailerListView(trailers: uiState.trailersList, openInYouTube: uiState.openTrailersInYoutube)
             }
             .height(min: minHeight, max: maxHeight)
             .collapseProgress($progress)
@@ -64,7 +65,7 @@ struct ShowDetailView: View {
                 Button("", action: { presenter.dispatch(action: DetailBackClicked()) })
                     .buttonStyle(CircleButtonStyle(imageName: "arrow.backward"))
                     .padding(.leading, 17)
-                    .padding(.top, 50)
+                    .padding(.top, 60)
                 Spacer()
             }
             Spacer()
