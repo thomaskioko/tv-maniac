@@ -48,6 +48,18 @@ struct ShowDetailView: View {
                 
                 CastListView(casts: uiState.castsList)
                 
+                HorizontalShowsListView(
+                    title: "Recommendations",
+                    items: uiState.recommendedShowList,
+                    onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id)) }
+                )
+                
+                HorizontalShowsListView(
+                    title: "Similar Shows",
+                    items: uiState.similarShows,
+                    onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id)) }
+                )
+                
             }
             .height(min: minHeight, max: maxHeight)
             .collapseProgress($progress)
