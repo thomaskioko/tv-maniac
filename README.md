@@ -13,7 +13,7 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 
 | Android | iOS | 
 | -- | -- | 
-| <video src="https://github.com/c0de-wizard/tv-maniac/assets/841885/7ad4abd7-bba1-4afa-9e0a-61023269e868" width=350/> | <video src="https://github.com/thomaskioko/tv-maniac/assets/841885/a28f0cde-b5a6-42f0-ab56-80e4a2877a15" width=350/> |
+| <video src="https://github.com/c0de-wizard/tv-maniac/assets/841885/7ad4abd7-bba1-4afa-9e0a-61023269e868" width=350/> | <video src="https://github.com/thomaskioko/tv-maniac/assets/841885/da109f4b-bf2e-4bee-aec3-ddc62b46ed5f" width=350/> |
 
 ## 🖥 Project Setup & Environment
 
