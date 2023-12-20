@@ -44,6 +44,8 @@ struct ShowDetailView: View {
                 
             } content: {
                 seasonContent
+                
+                ProvidersList(items: uiState.providers)
             }
             .height(min: minHeight, max: maxHeight)
             .collapseProgress($progress)
