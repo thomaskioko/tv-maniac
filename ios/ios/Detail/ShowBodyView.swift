@@ -80,6 +80,75 @@ struct ShowBodyView: View {
                     .padding(.leading, 16)
                 }
                 
+                Text("More like this")
+                    .titleSemiBoldFont(size: 23)
+                    .padding(.top, 8)
+                    .foregroundColor(Color.text_color_bg)
+                    .padding(.trailing, 16)
+                    .padding(.leading, 16)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .top) {
+                        ForEach(similarShowsList, id: \.tmdbId) { item in
+                            ShowPosterImage(
+                                posterSize: .medium,
+                                imageUrl: item.posterImageUrl,
+                                showTitle: item.title,
+                                showId: item.tmdbId,
+                                onClick: { onClick(item.tmdbId)}
+                            )
+                            
+                        }
+                    }
+                    .padding(.trailing, 16)
+                    .padding(.leading, 16)
+                }
+                Text("More like this")
+                    .titleSemiBoldFont(size: 23)
+                    .padding(.top, 8)
+                    .foregroundColor(Color.text_color_bg)
+                    .padding(.trailing, 16)
+                    .padding(.leading, 16)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .top) {
+                        ForEach(similarShowsList, id: \.tmdbId) { item in
+                            ShowPosterImage(
+                                posterSize: .medium,
+                                imageUrl: item.posterImageUrl,
+                                showTitle: item.title,
+                                showId: item.tmdbId,
+                                onClick: { onClick(item.tmdbId)}
+                            )
+                            
+                        }
+                    }
+                    .padding(.trailing, 16)
+                    .padding(.leading, 16)
+                }
+                Text("More like this")
+                    .titleSemiBoldFont(size: 23)
+                    .padding(.top, 8)
+                    .foregroundColor(Color.text_color_bg)
+                    .padding(.trailing, 16)
+                    .padding(.leading, 16)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .top) {
+                        ForEach(similarShowsList, id: \.tmdbId) { item in
+                            ShowPosterImage(
+                                posterSize: .medium,
+                                imageUrl: item.posterImageUrl,
+                                showTitle: item.title,
+                                showId: item.tmdbId,
+                                onClick: { onClick(item.tmdbId)}
+                            )
+                            
+                        }
+                    }
+                    .padding(.trailing, 16)
+                    .padding(.leading, 16)
+                }
             }
             if !trailerList.isEmpty {
                 //TODO::#93 Add show content
