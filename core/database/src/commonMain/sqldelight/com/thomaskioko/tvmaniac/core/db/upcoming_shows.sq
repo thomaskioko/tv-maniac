@@ -24,13 +24,28 @@ INSERT OR IGNORE INTO upcoming_shows(
 );
 
 upcomingShows:
-SELECT * FROM upcoming_shows
-INNER JOIN tvshows ON tvshows.id = upcoming_shows.id;
+SELECT
+    *,
+    CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    upcoming_shows
+INNER JOIN
+    tvshows ON tvshows.id = upcoming_shows.id
+LEFT OUTER JOIN
+    library ON tvshows.id = library.id;
 
 pagedUpcomingShows:
-SELECT * FROM upcoming_shows
-INNER JOIN tvshows ON tvshows.id = upcoming_shows.id
-WHERE upcoming_shows.page = :page;
+SELECT
+    *,
+    CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    upcoming_shows
+INNER JOIN
+    tvshows ON tvshows.id = upcoming_shows.id
+LEFT OUTER JOIN
+    library ON tvshows.id = library.id
+WHERE
+    upcoming_shows.page = :page;
 
 delete:
 DELETE FROM upcoming_shows

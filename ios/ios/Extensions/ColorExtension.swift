@@ -21,6 +21,18 @@ extension Color {
 		startPoint: .bottom,
 		endPoint: .top
 	)
+    
+    public static var imageGradient = LinearGradient(
+        colors: [
+            Color.black.opacity(0),
+            Color.black.opacity(0.383),
+            Color.black.opacity(0.707),
+            Color.black.opacity(0.924),
+            Color.black
+        ],
+        startPoint: .top,
+        endPoint: .bottom
+    )
 	
 	public static var accent_color: Color {
 		Color("accent", bundle: nil)

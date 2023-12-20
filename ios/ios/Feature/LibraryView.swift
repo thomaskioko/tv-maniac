@@ -46,7 +46,6 @@ struct LibraryView: View {
                         filterButton
                         sortButton
                     }
-                    .padding(.vertical, 4)
                 }
             }
         }
@@ -58,15 +57,16 @@ struct LibraryView: View {
         let state = uiState as! LibraryContent
         if !state.list.isEmpty {
             ScrollView(.vertical, showsIndicators: false) {
-                LazyVGrid(columns: DrawingConstants.posterColumns,spacing: 16){
-                    ForEach(state.list, id: \.traktId){ item in
-                        ShowPosterImage(
-                            posterSize: .medium,
-                            imageUrl: item.posterImageUrl,
-                            showTitle: item.title,
-                            showId: item.traktId,
-                            onClick: { presenter.dispatch(action: LibraryShowClicked(id: item.traktId))  }
+                LazyVGrid(columns: DimensionConstants.posterColumns,spacing: DimensionConstants.spacing){
+                    ForEach(state.list, id: \.tmdbId){ item in
+                        PosterItemView(
+                            showId: item.tmdbId,
+                            title: item.title,
+                            posterUrl: item.posterImageUrl,
+                            posterWidth: 130,
+                            posterHeight: 200
                         )
+                        .onTapGesture { presenter.dispatch(action: LibraryShowClicked(id: item.tmdbId)) }
                     }
                 }.padding(.all, 10)
             }
@@ -103,19 +103,18 @@ struct LibraryView: View {
     
     @ViewBuilder
     private var empty: some View {
-        if #available(iOS 17, *), #available(watchOS 10, *), #available(tvOS 17, *), #available(macOS 14, *) {
-            ContentUnavailableView("Your list is empty.", systemImage: "rectangle.on.rectangle")
-                .padding()
-        } else {
-            Text("Your list is empty")
-                .multilineTextAlignment(.center)
-                .font(.callout)
-                .foregroundColor(.secondary)
-        }
+        ContentUnavailableView(
+            "Your stash is empty.",
+            systemImage: "rectangle.on.rectangle"
+        )
+            .padding()
+            .multilineTextAlignment(.center)
+            .font(.callout)
+            .foregroundColor(.secondary)
     }
 }
 
-private struct DrawingConstants {
-    static let posterColumns = [GridItem(.adaptive(minimum: 100))]
-    static let spacing: CGFloat = 20
+private struct DimensionConstants {
+    static let posterColumns = [GridItem(.adaptive(minimum: 100), spacing: 8)]
+    static let spacing: CGFloat = 8
 }

@@ -126,7 +126,7 @@ class ShowDetailsPresenter @Inject constructor(
             it.copy(
                 showDetails = showDetails.toShowDetails(),
                 providers = watchProviders.toWatchProviderList(),
-                castList = castList.toCastList(),
+                castsList = castList.toCastList(),
                 seasonsList = season.toSeasonsList(),
                 recommendedShowList = recommended.toRecommendedShowList(),
                 trailersList = trailers.toTrailerList(),
@@ -223,7 +223,7 @@ class ShowDetailsPresenter @Inject constructor(
     private fun updateCastState(list: List<ShowCast>) {
         _state.update {
             it.copy(
-                castList = list.toCastList(),
+                castsList = list.toCastList(),
             )
         }
     }

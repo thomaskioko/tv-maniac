@@ -64,18 +64,6 @@ class WatchProvidersStore(
                         ),
                     )
                 }
-                usProvider.ads.forEach {
-                    dao.upsert(
-                        Watch_providers(
-                            id = Id(it.providerId.toLong()),
-                            logo_path = it.logoPath?.let { path ->
-                                formatterUtil.formatTmdbPosterPath(path)
-                            },
-                            name = it.providerName,
-                            tmdb_id = Id(id),
-                        ),
-                    )
-                }
             }
 
             // Update Last Request

@@ -38,8 +38,8 @@ public struct BorderedButton : View {
 					.padding(.trailing, 16)
 				
 				Text(text)
-					.captionFont(size: 16)
-					.foregroundColor(Color.text_color_bg)
+                    .bodyMediumFont(size: 16)
+                    .foregroundColor(Color.accent)
 			}
 		})
 			.buttonStyle(BorderlessButtonStyle())

@@ -22,6 +22,7 @@ val similarSimilarShows = persistentListOf(
         title = "Loki",
         posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        isInLibrary = false,
     ),
 )
 
@@ -38,7 +39,7 @@ val showDetailsLoaded = ShowDetailsState(
     errorMessage = null,
     isLoading = false,
     providers = persistentListOf(),
-    castList = persistentListOf(),
+    castsList = persistentListOf(),
     recommendedShowList = persistentListOf(),
     hasWebViewInstalled = false,
 )
@@ -69,6 +70,7 @@ val similarShowResult = listOf(
         name = "Loki",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        in_library = 0,
     ),
 )
 

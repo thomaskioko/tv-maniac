@@ -5,4 +5,5 @@ data class Show(
     val title: String,
     val posterImageUrl: String?,
     val backdropImageUrl: String?,
+    val isInLibrary: Boolean,
 )

@@ -98,7 +98,7 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
 import com.thomaskioko.tvmaniac.presentation.showdetails.WatchTrailerClicked
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Cast
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.Casts
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Providers
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
@@ -174,7 +174,7 @@ internal fun ShowDetailsScreen(
                     recommendedShowsContent = state.recommendedShowList,
                     similarShowsList = state.similarShows,
                     selectedSeasonIndex = state.selectedSeasonIndex,
-                    castList = state.castList,
+                    castsList = state.castsList,
                     providersList = state.providers,
                     contentPadding = contentPadding,
                     listState = listState,
@@ -199,7 +199,7 @@ fun LazyColumnContent(
     similarShowsList: ImmutableList<Show>,
     selectedSeasonIndex: Int,
     recommendedShowsContent: ImmutableList<Show>,
-    castList: ImmutableList<Cast>,
+    castsList: ImmutableList<Casts>,
     providersList: ImmutableList<Providers>,
     listState: LazyListState,
     contentPadding: PaddingValues,
@@ -244,7 +244,7 @@ fun LazyColumnContent(
         }
 
         item {
-            CastContent(castList = castList)
+            CastContent(castsList = castsList)
         }
 
         item {
@@ -684,9 +684,9 @@ fun WatchProvider(
 
 @Composable
 private fun CastContent(
-    castList: ImmutableList<Cast>,
+    castsList: ImmutableList<Casts>,
 ) {
-    if (castList.isEmpty()) return
+    if (castsList.isEmpty()) return
 
     TextLoadingItem(
         title = stringResource(R.string.title_casts),
@@ -701,13 +701,13 @@ private fun CastContent(
                 state = lazyListState,
                 flingBehavior = rememberSnapperFlingBehavior(lazyListState),
             ) {
-                itemsIndexed(castList) { index, cast ->
+                itemsIndexed(castsList) { index, cast ->
 
                     Card(
                         modifier = Modifier
                             .padding(
                                 start = if (index == 0) 16.dp else 0.dp,
-                                end = if (index == castList.size - 1) 16.dp else 8.dp,
+                                end = if (index == castsList.size - 1) 16.dp else 8.dp,
                             ),
                         shape = MaterialTheme.shapes.small,
                         elevation = CardDefaults.cardElevation(
@@ -826,7 +826,7 @@ private fun TrailersContent(
                             Icon(
                                 imageVector = Icons.Filled.PlayCircle,
                                 contentDescription = trailer.name,
-                                tint = MaterialTheme.colorScheme.secondary,
+                                tint = MaterialTheme.colorScheme.onSecondary,
                                 modifier = Modifier
                                     .align(Alignment.Center)
                                     .size(48.dp),
