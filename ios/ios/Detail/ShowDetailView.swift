@@ -26,9 +26,7 @@ struct ShowDetailView: View {
     
     var body: some View {
         ZStack {
-            
             ScalingHeaderScrollView {
-                
                 HeaderContentView(
                     show: uiState.showDetails,
                     progress: progress,
@@ -47,12 +45,16 @@ struct ShowDetailView: View {
                 ProvidersList(items: uiState.providers)
                 
                 TrailerListView(trailers: uiState.trailersList, openInYouTube: uiState.openTrailersInYoutube)
+                
+                CastListView(casts: uiState.castsList)
+                
             }
             .height(min: minHeight, max: maxHeight)
             .collapseProgress($progress)
             .allowsHeaderGrowth()
             .hideScrollIndicators()
             .background(Color.background)
+            .shadow(radius: progress)
             
             topBar
         }
@@ -101,7 +103,7 @@ struct ShowDetailView: View {
 
     private var recommendedShows: some View {
         VStack {
-            TitleView(title: "Recommendations")
+            TitleView(title: "Recommendations", showChevron: true)
             
         }
     }
