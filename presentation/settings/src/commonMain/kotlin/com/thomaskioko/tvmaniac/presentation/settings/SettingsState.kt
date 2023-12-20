@@ -10,7 +10,7 @@ data class SettingsState(
     val errorMessage: String?,
     val showLogoutDialog: Boolean,
     val isLoading: Boolean,
-    val openTrailersInYoutube: Boolean = false, //TODO:: Add implementation
+    val openTrailersInYoutube: Boolean = false, // TODO:: Add implementation
 ) {
     companion object {
         val DEFAULT_STATE = SettingsState(
