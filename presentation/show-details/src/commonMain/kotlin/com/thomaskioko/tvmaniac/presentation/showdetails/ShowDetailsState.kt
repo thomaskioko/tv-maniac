@@ -21,6 +21,7 @@ data class ShowDetailsState(
     val trailersList: ImmutableList<Trailer>,
     val hasWebViewInstalled: Boolean,
     val showPlayerErrorMessage: Boolean = false,
+    val openTrailersInYoutube: Boolean = false, //TODO: Fetch from settings repository
     val selectedSeasonIndex: Int = 0,
 ) {
     companion object {
