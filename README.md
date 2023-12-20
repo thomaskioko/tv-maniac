@@ -127,9 +127,11 @@ tmdbApiKey: "PUT_API_KEY_HERE"
 
 
 ### iOS
-* [Kingfisher](https://github.com/onevcat/Kingfisher) - Image library.
+* [SDWebImage](https://github.com/SDWebImage/SDWebImage) - Async image downloader.
 * [OAuthSwift](https://github.com/OAuthSwift/OAuthSwift) Swift-based OAuth library for iOS and macOS.
 * [TvManiac](https://github.com/c0de-wizard/tvmaniac-swift-packages) - TvManiac SwiftPackage.
+* [ScalingHeaderScrollView](https://github.com/exyte/ScalingHeaderScrollView)
+* [Youtube PlayerKit](https://github.com/SvenTiigi/YouTubePlayerKit) - Swift Youtube Player
 
 
 
@@ -144,8 +146,8 @@ Android
 - [x] Add Seasons UI
 - [x] Implement trakt auth & sign in
 - [x] Migrate to Material3
-- [ ] Add Episode detail screen
 - [ ] Add Watchlist
+- [ ] Add Episode detail screen
 - [ ] Implement Search
 
 iOS
@@ -154,9 +156,10 @@ iOS
 - [x] Show Detail Screen
 - [x] Add Settings panel.
 - [x] Implement trakt auth & sign in
-- [ ] Add Seasons UI
-- [ ] Implement Search UI
+- [x] Update show detail UI
+- [ ] Add Seasons Detail UI
 - [ ] Implement Watchlist UI
+- [ ] Implement Search UI
 
 Shared
 - [x] Use SQLDelight extensions to consume queries as Flow
@@ -164,13 +167,13 @@ Shared
 - [x] Use koin for injection
 - [x] Modularize `shared` module
 - [x] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux)
-- [ ] Improve error handling.
 - [ ] Fix paging
+- [ ] Improve error handling.
 - [ ] Add test cases.
 
 
 
-### References
+### References & Inspiration
 - [Design Inspiration](https://dribbble.com/shots/7591814-HBO-Max-Companion-App-Animation)
 - [Code Snippets](https://github.com/android/compose-samples)
 - [Touchlab KaMPKit project](https://github.com/touchlab/KaMPKit)

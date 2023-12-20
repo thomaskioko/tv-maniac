@@ -55,6 +55,15 @@
       }
     },
     {
+      "identity" : "scalingheaderscrollview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/ScalingHeaderScrollView.git",
+      "state" : {
+        "revision" : "a3d0454aeebaf70362806599d8287db21724e349",
+        "version" : "1.1.0"
+      }
+    },
+    {
       "identity" : "sdwebimage",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SDWebImage/SDWebImage.git",
@@ -82,12 +91,30 @@
       }
     },
     {
+      "identity" : "swiftui-introspect",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/siteline/swiftui-introspect",
+      "state" : {
+        "revision" : "9e1cc02a65b22e09a8251261cccbccce02731fc5",
+        "version" : "1.1.1"
+      }
+    },
+    {
       "identity" : "tvmaniac-swift-packages",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/thomaskioko/tvmaniac-swift-packages",
       "state" : {
-        "branch" : "main",
-        "revision" : "0856fdc2a7df229635c61dca36781f2001e5e254"
+        "revision" : "47287df5df9565f131889285ca1d9564dda451cf",
+        "version" : "0.10.0"
+      }
+    },
+    {
+      "identity" : "youtubeplayerkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SvenTiigi/YouTubePlayerKit.git",
+      "state" : {
+        "revision" : "94b5739d32f0108f1820091e6955d544a0363fad",
+        "version" : "1.5.4"
       }
     }
   ],
