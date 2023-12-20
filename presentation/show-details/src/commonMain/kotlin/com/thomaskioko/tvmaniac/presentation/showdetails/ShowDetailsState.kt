@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Cast
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.Casts
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Providers
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
@@ -14,7 +14,7 @@ data class ShowDetailsState(
     val isLoading: Boolean = false,
     val errorMessage: String?,
     val providers: ImmutableList<Providers>,
-    val castList: ImmutableList<Cast>,
+    val castsList: ImmutableList<Casts>,
     val seasonsList: ImmutableList<Season>,
     val recommendedShowList: ImmutableList<Show>,
     val similarShows: ImmutableList<Show>,
@@ -29,7 +29,7 @@ data class ShowDetailsState(
             showDetails = ShowDetails.EMPTY_SHOW,
             errorMessage = null,
             providers = persistentListOf(),
-            castList = persistentListOf(),
+            castsList = persistentListOf(),
             seasonsList = persistentListOf(),
             trailersList = persistentListOf(),
             recommendedShowList = persistentListOf(),

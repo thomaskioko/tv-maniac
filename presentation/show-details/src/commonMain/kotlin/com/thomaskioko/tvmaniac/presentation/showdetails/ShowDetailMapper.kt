@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.db.TvshowDetails
 import com.thomaskioko.tvmaniac.core.db.WatchProviders
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Cast
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.Casts
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Providers
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
@@ -35,8 +35,8 @@ fun List<RecommendedShows>?.toRecommendedShowList(): ImmutableList<Show> = this?
     )
 }?.toImmutableList() ?: persistentListOf()
 
-fun List<ShowCast>?.toCastList(): ImmutableList<Cast> = this?.map {
-    Cast(
+fun List<ShowCast>?.toCastList(): ImmutableList<Casts> = this?.map {
+    Casts(
         id = it.id.id,
         name = it.name,
         profileUrl = it.profile_path,

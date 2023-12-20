@@ -51,7 +51,7 @@ private val showDetailsLoaded = ShowDetailsState(
     recommendedShowList = persistentListOf(),
     errorMessage = null,
     providers = persistentListOf(),
-    castList = persistentListOf(),
+    castsList = persistentListOf(),
     hasWebViewInstalled = false,
 )
 
