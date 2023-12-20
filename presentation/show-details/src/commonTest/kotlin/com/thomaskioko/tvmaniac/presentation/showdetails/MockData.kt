@@ -22,6 +22,7 @@ val similarSimilarShows = persistentListOf(
         title = "Loki",
         posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        isInLibrary = false
     ),
 )
 

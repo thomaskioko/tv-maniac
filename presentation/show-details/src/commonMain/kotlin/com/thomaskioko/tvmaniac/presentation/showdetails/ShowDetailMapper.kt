@@ -23,6 +23,7 @@ fun List<SimilarShows>?.toSimilarShowList(): ImmutableList<Show> = this?.map {
         title = it.name,
         posterImageUrl = it.poster_path,
         backdropImageUrl = it.backdrop_path,
+        isInLibrary = it.in_library == 1L,
     )
 }?.toImmutableList() ?: persistentListOf()
 
@@ -32,6 +33,7 @@ fun List<RecommendedShows>?.toRecommendedShowList(): ImmutableList<Show> = this?
         title = it.name,
         posterImageUrl = it.poster_path,
         backdropImageUrl = it.backdrop_path,
+        isInLibrary = it.in_library == 1L,
     )
 }?.toImmutableList() ?: persistentListOf()
 
