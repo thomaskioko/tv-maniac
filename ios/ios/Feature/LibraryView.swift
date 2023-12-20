@@ -58,7 +58,7 @@ struct LibraryView: View {
         let state = uiState as! LibraryContent
         if !state.list.isEmpty {
             ScrollView(.vertical, showsIndicators: false) {
-                LazyVGrid(columns: DrawingConstants.posterColumns,spacing: 16){
+                LazyVGrid(columns: DimensionConstants.posterColumns,spacing: 16){
                     ForEach(state.list, id: \.tmdbId){ item in
                         ShowPosterImage(
                             posterSize: .medium,
@@ -115,7 +115,7 @@ struct LibraryView: View {
     }
 }
 
-private struct DrawingConstants {
+private struct DimensionConstants {
     static let posterColumns = [GridItem(.adaptive(minimum: 100))]
     static let spacing: CGFloat = 20
 }

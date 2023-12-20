@@ -22,9 +22,9 @@ struct FeaturedContentPosterView: View {
                 .placeholder {
                     PosterPlaceholder(
                         title: show.title,
-                        posterRadius: DrawingConstants.posterRadius,
+                        posterRadius: DimensionConstants.posterRadius,
                         posterWidth: posterWidth,
-                        posterHeight: DrawingConstants.posterHeight
+                        posterHeight: DimensionConstants.posterHeight
                     )
                 }
                 .aspectRatio(contentMode: .fill)
@@ -59,9 +59,9 @@ struct FeaturedContentPosterView: View {
                     }
                 }
                 .transition(.opacity)
-                .frame(width: posterWidth, height: DrawingConstants.posterHeight)
+                .frame(width: posterWidth, height: DimensionConstants.posterHeight)
                 .clipShape(
-                    RoundedRectangle(cornerRadius: DrawingConstants.posterRadius, style: .continuous)
+                    RoundedRectangle(cornerRadius: DimensionConstants.posterRadius, style: .continuous)
                 )
                 .onTapGesture { onClick(show.tmdbId) }
         } else {
@@ -72,7 +72,7 @@ struct FeaturedContentPosterView: View {
     }
 }
 
-private struct DrawingConstants {
+private struct DimensionConstants {
     static let posterHeight: CGFloat = 460
     static let posterRadius: CGFloat = 12
     static let shadowRadius: CGFloat = 2

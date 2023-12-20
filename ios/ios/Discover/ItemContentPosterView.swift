@@ -49,13 +49,13 @@ struct ItemContentPosterView: View {
                                     }
                             }
                         }
-                        .frame(width: DrawingConstants.posterWidth)
+                        .frame(width: DimensionConstants.posterWidth)
                     }
                 }
                 .transition(.opacity)
-                .frame(width: DrawingConstants.posterWidth, height: DrawingConstants.posterHeight
+                .frame(width: DimensionConstants.posterWidth, height: DimensionConstants.posterHeight
                 )
-                .clipShape(RoundedRectangle(cornerRadius: DrawingConstants.posterRadius,
+                .clipShape(RoundedRectangle(cornerRadius: DimensionConstants.posterRadius,
                                             style: .continuous))
         } else {
             PosterPlaceholder(title: show.title)
@@ -64,7 +64,7 @@ struct ItemContentPosterView: View {
     }
 }
 
-private struct DrawingConstants {
+private struct DimensionConstants {
     static let posterWidth: CGFloat = 120
     static let posterHeight: CGFloat = 180
     static let posterRadius: CGFloat = 4

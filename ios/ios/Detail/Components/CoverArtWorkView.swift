@@ -23,7 +23,7 @@ struct CoverArtWorkView: View {
                 }
                 .aspectRatio(contentMode: .fill)
                 .transition(.opacity)
-                .frame(width: DrawingConstants.posterWidth, height: posterHeight)
+                .frame(width: DimensionConstants.posterWidth, height: posterHeight)
             
         } else {
             HeaderPlaceholder(posterHeight: posterHeight)
@@ -31,7 +31,7 @@ struct CoverArtWorkView: View {
     }
 }
 
-private struct DrawingConstants {
+private struct DimensionConstants {
     static let posterWidth: CGFloat = UIScreen.main.bounds.width
     static let shadowRadius: CGFloat = 2
 }

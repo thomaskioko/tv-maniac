@@ -826,7 +826,7 @@ private fun TrailersContent(
                             Icon(
                                 imageVector = Icons.Filled.PlayCircle,
                                 contentDescription = trailer.name,
-                                tint = MaterialTheme.colorScheme.secondary,
+                                tint = MaterialTheme.colorScheme.onSecondary,
                                 modifier = Modifier
                                     .align(Alignment.Center)
                                     .size(48.dp),

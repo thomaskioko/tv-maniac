@@ -43,24 +43,24 @@ struct ProvidersList: View {
                         VStack {
                             ProgressView()
                                 .frame(
-                                    width: DrawingConstants.imageWidth,
-                                    height: DrawingConstants.imageHeight
+                                    width: DimensionConstants.imageWidth,
+                                    height: DimensionConstants.imageHeight
                                 )
                         }
                     }
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: DrawingConstants.imageWidth,
-                           height: DrawingConstants.imageHeight)
-                    .clipShape(RoundedRectangle(cornerRadius: DrawingConstants.imageRadius, style: .continuous))
-                    .shadow(radius: 2)
+                    .frame(width: DimensionConstants.imageWidth,
+                           height: DimensionConstants.imageHeight)
+                    .clipShape(RoundedRectangle(cornerRadius: DimensionConstants.imageRadius, style: .continuous))
+                    .shadow(radius: 8)
             }
         }
     }
 }
 
-private struct DrawingConstants {
-    static let imageRadius: CGFloat = 8
+private struct DimensionConstants {
+    static let imageRadius: CGFloat = 4
     static let imageWidth: CGFloat = 80
-    static let imageHeight: CGFloat = 60
+    static let imageHeight: CGFloat = 70
     static let lineLimits: Int = 1
 }
