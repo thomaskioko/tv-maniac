@@ -68,24 +68,12 @@ struct ShowDetailView: View {
             .background(Color.background)
             .shadow(radius: progress)
             
-            topBar
+            TopBar(onBackClicked: { presenter.dispatch(action: DetailBackClicked()) })
+            
         }
         .ignoresSafeArea()
     }
-    
-    private var topBar: some View {
-        VStack {
-            HStack {
-                Button("", action: { presenter.dispatch(action: DetailBackClicked()) })
-                    .buttonStyle(CircleButtonStyle(imageName: "arrow.backward"))
-                    .padding(.leading, 17)
-                    .padding(.top, 60)
-                Spacer()
-            }
-            Spacer()
-        }
-        .ignoresSafeArea()
-    }
+
     
     private var seasonContent: some View {
         VStack {
@@ -98,9 +86,23 @@ struct ShowDetailView: View {
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack {
-                        ForEach(seasons, id: \.self) { season in
+                        ForEach(uiState.seasonsList.indices, id: \.self) { index in
+                            let season = seasons[index]
                             
-                            Button(action: {}){
+                            Button(
+                                action: {
+                                presenter.dispatch(
+                                    action: SeasonClicked(
+                                        params: ShowSeasonDetailsParam(
+                                            showId: season.tvShowId,
+                                            seasonId: season.seasonId,
+                                            seasonNumber: season.seasonNumber,
+                                            selectedSeasonIndex: Int32(index)
+                                        )
+                                    )
+                                )
+                            }
+                            ){
                                 ChipView(label: season.name)
                             }
                             
@@ -112,7 +114,7 @@ struct ShowDetailView: View {
             }
         }
     }
-
+    
     private var recommendedShows: some View {
         VStack {
             TitleView(title: "Recommendations", showChevron: true)
