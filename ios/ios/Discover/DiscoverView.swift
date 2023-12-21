@@ -131,11 +131,7 @@ struct DiscoverView: View {
                     
                     TabView(selection: $currentIndex) {
                         ForEach(shows.indices, id: \.self) { index in
-                            FeaturedContentPosterView(
-                                show: shows[index],
-                                onClick: { id in },
-                                posterWidth: CGFloat(320)
-                            )
+                            TransparentImageBackground(imageUrl: shows[index].posterImageUrl)
                             .tag(index)
                         }
                         
@@ -170,7 +166,7 @@ struct DiscoverView: View {
         HStack(spacing: 5) {
             ForEach(shows.indices, id: \.self) { index in
                 Circle()
-                    .fill(currentIndex == index ? Color.accent_color : .gray.opacity(0.5))
+                    .fill(currentIndex == index ? Color.accent: .gray.opacity(0.5))
                     .frame(width: currentIndex == index ? 10 : 6, height: currentIndex == index ? 10 : 6)
             }
         }
