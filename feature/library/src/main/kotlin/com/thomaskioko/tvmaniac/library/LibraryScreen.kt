@@ -114,7 +114,7 @@ private fun LibraryGridContent(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier
             .padding(horizontal = 4.dp)
-            .padding(paddingValues.copy(copyTop = false)),
+            .padding(paddingValues.copy(copyTop = false, copyBottom = false)),
     ) {
         items(list) { show ->
             TvPosterCard(
