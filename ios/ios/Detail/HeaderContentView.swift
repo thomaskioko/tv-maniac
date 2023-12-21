@@ -20,7 +20,7 @@ struct HeaderContentView: View {
     var body: some View {
         
         ZStack {
-            CoverArtWorkView(
+            HeaderCoverArtWorkView(
                 backdropImageUrl: show.backdropImageUrl,
                 posterHeight: maxHeight
             )

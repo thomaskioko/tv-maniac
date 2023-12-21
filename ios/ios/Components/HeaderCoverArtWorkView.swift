@@ -10,7 +10,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 import TvManiac
 
-struct CoverArtWorkView: View {
+struct HeaderCoverArtWorkView: View {
     var backdropImageUrl : String?
     var posterHeight: CGFloat
     
@@ -19,19 +19,37 @@ struct CoverArtWorkView: View {
             WebImage(url: URL(string: imageUrl), options: .highPriority)
                 .resizable()
                 .placeholder {
-                    HeaderPlaceholder(posterHeight: posterHeight)
+                    headerPosterPlaceholder
                 }
                 .aspectRatio(contentMode: .fill)
                 .transition(.opacity)
                 .frame(width: DimensionConstants.posterWidth, height: posterHeight)
             
         } else {
-            HeaderPlaceholder(posterHeight: posterHeight)
+            headerPosterPlaceholder
         }
+    }
+    
+    private var headerPosterPlaceholder : some View {
+        ZStack {
+            Rectangle().fill(.gray.gradient)
+            VStack {
+                Image(systemName: "popcorn.fill")
+                    .font(.title)
+                    .fontWidth(.expanded)
+                    .foregroundColor(.white.opacity(0.8))
+                    .frame(width: 120, height: 120)
+                    .padding()
+            }
+        }
+        .frame(width: DimensionConstants.posterWidth, height: posterHeight)
+        .clipShape(RoundedRectangle(cornerRadius: DimensionConstants.cornerRadius, style: .continuous))
+        .shadow(radius: DimensionConstants.shadowRadius)
     }
 }
 
 private struct DimensionConstants {
     static let posterWidth: CGFloat = UIScreen.main.bounds.width
     static let shadowRadius: CGFloat = 2
+    static let cornerRadius: CGFloat = 8
 }
