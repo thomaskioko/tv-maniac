@@ -29,7 +29,7 @@ struct HeaderContentView: View {
             .opacity(1 - progress)
             .clipped()
             
-            VStack{
+            VStack {
                 Spacer()
                 
                 ZStack(alignment: .bottom) {
