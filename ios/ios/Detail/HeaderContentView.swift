@@ -24,10 +24,9 @@ struct HeaderContentView: View {
                 backdropImageUrl: show.backdropImageUrl,
                 posterHeight: maxHeight
             )
-            .aspectRatio(contentMode: .fill)
             .foregroundStyle(.ultraThinMaterial)
+            .frame(height: maxHeight)
             .opacity(1 - progress)
-            .clipped()
             
             VStack {
                 Spacer()

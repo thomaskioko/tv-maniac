@@ -13,7 +13,7 @@ import ScalingHeaderScrollView
 struct ShowDetailView: View {
     
     private let maxHeight : CGFloat = 520
-    private let minHeight = 110.0
+    private let minHeight = 120.0
     private let presenter: ShowDetailsPresenter
     
     @StateValue private var uiState: ShowDetailsState
