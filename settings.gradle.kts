@@ -21,9 +21,9 @@ dependencyResolutionManagement {
 rootProject.name = "tv-maniac"
 
 include(
-    ":android-core:designsystem",
-    ":android-core:resources",
-    ":app",
+    ":android:app",
+    ":android:designsystem",
+    ":android:resources",
     ":core:database",
     ":core:datastore:api",
     ":core:datastore:implementation",

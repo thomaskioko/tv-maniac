@@ -79,7 +79,7 @@ struct BulletList: View {
                 HStack(alignment: .top) {
                     Text(bullet)
                         .titleSemiBoldFont(size: 20)
-                        .foregroundColor(.accent_color)
+                        .foregroundColor(.accent)
                     
                     Text(data)
                         .captionStyle()

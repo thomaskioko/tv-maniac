@@ -7,8 +7,8 @@ plugins {
 kotlin {
     sourceSets {
         androidMain.dependencies {
-            implementation(projects.androidCore.designsystem)
-            implementation(projects.androidCore.resources)
+            implementation(projects.android.designsystem)
+            implementation(projects.android.resources)
 
             implementation(projects.feature.discover)
             implementation(projects.feature.library)

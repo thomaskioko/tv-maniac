@@ -82,7 +82,6 @@ struct LibraryView: View {
             }
         } label: {
             Label("Sort List", systemImage: "line.3.horizontal.decrease")
-                .foregroundColor(.white)
                 .labelStyle(.iconOnly)
         }
         .buttonBorderShape(.roundedRectangle(radius: 16))
@@ -116,5 +115,5 @@ struct LibraryView: View {
 
 private struct DimensionConstants {
     static let posterColumns = [GridItem(.adaptive(minimum: 100), spacing: 8)]
-    static let spacing: CGFloat = 8
+    static let spacing: CGFloat = 4
 }

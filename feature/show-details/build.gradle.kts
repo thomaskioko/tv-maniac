@@ -9,8 +9,8 @@ android {
 dependencies {
     api(projects.presentation.showDetails)
 
-    implementation(projects.androidCore.designsystem)
-    implementation(projects.androidCore.resources)
+    implementation(projects.android.designsystem)
+    implementation(projects.android.resources)
 
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.compose.foundation)

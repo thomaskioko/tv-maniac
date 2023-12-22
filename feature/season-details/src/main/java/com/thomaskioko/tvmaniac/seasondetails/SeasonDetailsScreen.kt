@@ -67,6 +67,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
+import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.seasondetails.BackClicked
@@ -152,7 +153,7 @@ private fun SeasonDetailsContent(
 
     Column(
         modifier = Modifier
-            .padding(contentPadding)
+            .padding(contentPadding.copy(copyBottom = false))
             .fillMaxSize(),
     ) {
         BoxWithConstraints(modifier = Modifier.weight(1f)) {

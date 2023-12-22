@@ -34,14 +34,13 @@ extension Color {
         endPoint: .bottom
     )
 	
-	public static var accent_color: Color {
-		Color("accent", bundle: nil)
-	}
-	
-	
 	public static var gradient_background: Color {
 		Color("gradient_background", bundle: nil)
 	}
+    
+    public static var content_background: Color {
+        Color("content_background", bundle: nil)
+    }
 	
 	
 	public static var accent: Color {
