@@ -30,7 +30,7 @@ android {
 
 dependencies {
 
-    implementation(projects.androidCore.designsystem)
+    implementation(projects.android.designsystem)
     implementation(projects.shared)
     implementation(projects.core.traktAuth.api)
     implementation(projects.core.traktAuth.implementation)

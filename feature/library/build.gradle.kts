@@ -9,8 +9,8 @@ android {
 dependencies {
     api(projects.presentation.library)
 
-    implementation(projects.androidCore.designsystem)
-    implementation(projects.androidCore.resources)
+    implementation(projects.android.designsystem)
+    implementation(projects.android.resources)
     implementation(projects.data.shows.api) //TODO:: Remove this
 
     implementation(libs.androidx.compose.foundation)

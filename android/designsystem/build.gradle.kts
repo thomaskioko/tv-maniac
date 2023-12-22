@@ -15,7 +15,7 @@ dependencies {
     api(libs.androidx.compose.material3)
     api(libs.androidx.compose.ui.ui)
 
-    implementation(projects.androidCore.resources)
+    implementation(projects.android.resources)
 
     implementation(libs.androidx.core)
     implementation(libs.androidx.compose.foundation)
