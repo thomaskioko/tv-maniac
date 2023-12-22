@@ -13,7 +13,7 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 
 | Android | iOS | 
 | -- | -- | 
-| <video src="https://github.com/thomaskioko/tv-maniac/assets/841885/a9991256-27a8-4a99-87f3-0f071c7cbc68" width=350/> | <video src="https://github.com/thomaskioko/tv-maniac/assets/841885/da109f4b-bf2e-4bee-aec3-ddc62b46ed5f" width=350/> |
+| <video src="https://github.com/thomaskioko/tv-maniac/assets/841885/a9991256-27a8-4a99-87f3-0f071c7cbc68" width=350/> | <video src="https://github.com/thomaskioko/tv-maniac/assets/841885/45fa6cd7-6bca-4baa-ad71-93339986ef12" width=350/> |
 
 ## 🖥 Project Setup & Environment
 
@@ -146,8 +146,8 @@ Android
 - [x] Add Seasons UI
 - [x] Implement trakt auth & sign in
 - [x] Migrate to Material3
-- [ ] Add Watchlist
 - [ ] Add Episode detail screen
+- [ ] Add Watchlist
 - [ ] Implement Search
 
 iOS
@@ -157,9 +157,10 @@ iOS
 - [x] Add Settings panel.
 - [x] Implement trakt auth & sign in
 - [x] Update show detail UI
-- [ ] Add Seasons Detail UI
-- [ ] Implement Watchlist UI
-- [ ] Implement Search UI
+- [x] Add Seasons Detail UI
+- [ ] Add Episode detail screen
+- [ ] Add Watchlist
+- [ ] Implement Search
 
 Shared
 - [x] Use SQLDelight extensions to consume queries as Flow
