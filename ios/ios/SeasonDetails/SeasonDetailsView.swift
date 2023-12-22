@@ -14,6 +14,8 @@ struct SeasonDetailsView: View {
     
     private let presenter: SeasonDetailsPresenter
     
+    @Environment(\.presentationMode) var presentationMode
+    
     @StateValue private var uiState: SeasonDetailsState
     
     @State private var progress: CGFloat = 0
@@ -52,7 +54,7 @@ struct SeasonDetailsView: View {
         .ignoresSafeArea()
         .background(Color.background)
         .sheet(isPresented: $showModal) {
-            ImageGalleryContentView()
+            ImageGalleryContentView(items: uiState.seasonImages)
         }
     }
 
