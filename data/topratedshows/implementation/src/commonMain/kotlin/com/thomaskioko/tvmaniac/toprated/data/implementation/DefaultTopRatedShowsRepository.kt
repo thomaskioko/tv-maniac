@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.toprated.data.implementation
 
-import com.thomaskioko.tvmaniac.core.db.PagedTopRatedShows
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
 import com.thomaskioko.tvmaniac.util.extensions.mapResult
@@ -23,10 +23,10 @@ class DefaultTopRatedShowsRepository(
     private val dispatchers: AppCoroutineDispatchers,
 ) : TopRatedShowsRepository {
 
-    override suspend fun fetchTopRatedShows(): List<PagedTopRatedShows> =
+    override suspend fun fetchTopRatedShows(): List<ShowEntity> =
         store.get(key = DEFAULT_API_PAGE)
 
-    override fun observeTopRatedShows(): Flow<Either<Failure, List<PagedTopRatedShows>>> =
+    override fun observeTopRatedShows(): Flow<Either<Failure, List<ShowEntity>>> =
         store.stream(
             StoreReadRequest.cached(
                 key = DEFAULT_API_PAGE,

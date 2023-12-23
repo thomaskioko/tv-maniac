@@ -1,19 +1,20 @@
 package com.thomaskioko.tvmaniac.data.upcomingshows.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Tvshows
-import com.thomaskioko.tvmaniac.core.db.UpcomingShows
 import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
+import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -29,7 +30,7 @@ class UpcomingShowsStore(
     private val formatterUtil: FormatterUtil,
     private val dateFormatter: PlatformDateFormatter,
     private val scope: AppCoroutineScope,
-) : Store<UpcomingParams, List<UpcomingShows>> by StoreBuilder.from(
+) : Store<UpcomingParams, List<ShowEntity>> by StoreBuilder.from(
     fetcher = Fetcher.of { params: UpcomingParams ->
         when (
             val response = tmdbRemoteDataSource.getUpComingShows(
@@ -48,7 +49,19 @@ class UpcomingShowsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.Companion.of(
-        reader = { _ -> upcomingShowsDao.observeUpcomingShows() },
+        reader = { _ ->
+            upcomingShowsDao.observeUpcomingShows()
+                .map { shows ->
+                    shows.map { show ->
+                        ShowEntity(
+                            id = show.id.id,
+                            title = show.name,
+                            posterPath = show.poster_path,
+                            inLibrary = show.in_library == 1L,
+                        )
+                    }
+                }
+        },
         writer = { params: UpcomingParams, trendingShows ->
 
             trendingShows.forEach { show ->

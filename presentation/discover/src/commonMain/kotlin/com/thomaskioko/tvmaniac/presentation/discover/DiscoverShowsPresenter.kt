@@ -74,11 +74,11 @@ class DiscoverShowsPresenter(
 
         _state.update {
             DataLoaded(
-                topRatedShows = topRatedResponse.toTopRatedList(),
-                popularShows = popularResponse.toPopularList(),
-                upcomingShows = upcomingResponse.toUpcomingShowList(),
+                topRatedShows = topRatedResponse.toShowList(),
+                popularShows = popularResponse.toShowList(),
+                upcomingShows = upcomingResponse.toShowList(),
                 featuredShows = featuredResponse.toShowList(),
-                trendingToday = trendingShows.toDiscoverShowList(),
+                trendingToday = trendingShows.toShowList(),
             )
         }
     }
@@ -97,10 +97,10 @@ class DiscoverShowsPresenter(
         ) { featured, trending, popular, upcomingShows, trendingToday ->
             DataLoaded(
                 featuredShows = featured.getOrNull().toShowList(),
-                topRatedShows = trending.getOrNull().toTopRatedList(),
-                popularShows = popular.getOrNull().toPopularList(),
-                upcomingShows = upcomingShows.getOrNull().toUpcomingShowList(),
-                trendingToday = trendingToday.getOrNull().toDiscoverShowList(),
+                topRatedShows = trending.getOrNull().toShowList(),
+                popularShows = popular.getOrNull().toShowList(),
+                upcomingShows = upcomingShows.getOrNull().toShowList(),
+                trendingToday = trendingToday.getOrNull().toShowList(),
                 errorMessage = getErrorMessage(trending, popular, upcomingShows, featured),
             )
         }

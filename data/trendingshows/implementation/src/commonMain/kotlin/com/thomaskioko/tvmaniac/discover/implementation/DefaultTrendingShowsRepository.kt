@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
-import com.thomaskioko.tvmaniac.core.db.TrendingShows
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.util.extensions.mapResult
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.model.Either
@@ -22,7 +22,7 @@ class DefaultTrendingShowsRepository(
     private val dispatchers: AppCoroutineDispatchers,
 ) : TrendingShowsRepository {
 
-    override fun observeTrendingShows(timeWindow: String): Flow<Either<Failure, List<TrendingShows>>> =
+    override fun observeTrendingShows(timeWindow: String): Flow<Either<Failure, List<ShowEntity>>> =
         trendingShowsStore.stream(
             StoreReadRequest.cached(
                 key = timeWindow,
@@ -36,6 +36,6 @@ class DefaultTrendingShowsRepository(
             .mapResult()
             .flowOn(dispatchers.io)
 
-    override suspend fun fetchTrendingShows(timeWindow: String): List<TrendingShows> =
+    override suspend fun fetchTrendingShows(timeWindow: String): List<ShowEntity> =
         trendingShowsStore.get(key = timeWindow)
 }
