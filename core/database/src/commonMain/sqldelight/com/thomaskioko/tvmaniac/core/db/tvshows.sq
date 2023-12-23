@@ -55,18 +55,12 @@ SELECT
     tvshows.vote_count,
     tvshows.poster_path,
     tvshows.backdrop_path,
-    networks.name,
-    networks.logo_path,
     GROUP_CONCAT(genres.name, ', ') AS genre_list,
     CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshows
 LEFT OUTER JOIN
     library ON tvshows.id = library.id
-LEFT OUTER JOIN
-    show_networks ON tvshows.id = show_networks.show_id
-LEFT OUTER JOIN
-    networks ON show_networks.network_id = networks.id
 LEFT OUTER JOIN
     genres ON tvshows.id = genres.tmdb_id
 WHERE
