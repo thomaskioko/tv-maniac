@@ -4,6 +4,7 @@ import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.core.db.Casts
 import com.thomaskioko.tvmaniac.core.db.Episode
 import com.thomaskioko.tvmaniac.core.db.Episode_image
+import com.thomaskioko.tvmaniac.core.db.Featured_shows
 import com.thomaskioko.tvmaniac.core.db.Genres
 import com.thomaskioko.tvmaniac.core.db.Last_requests
 import com.thomaskioko.tvmaniac.core.db.Library
@@ -110,6 +111,9 @@ interface DatabaseComponent : DatabasePlatformComponent {
         watch_providersAdapter = Watch_providers.Adapter(
             idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
+        ),
+        featured_showsAdapter = Featured_shows.Adapter(
+            idAdapter = IdAdapter(),
         ),
     )
 

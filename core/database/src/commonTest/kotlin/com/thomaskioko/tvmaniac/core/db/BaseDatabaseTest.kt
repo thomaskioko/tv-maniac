@@ -94,6 +94,9 @@ abstract class BaseDatabaseTest {
             idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
         ),
+        featured_showsAdapter = Featured_shows.Adapter(
+            idAdapter = IdAdapter(),
+        ),
     )
 
     @AfterTest
