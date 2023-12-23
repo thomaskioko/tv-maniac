@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.discover.api
+package com.thomaskioko.tvmaniac.data.featuredshows.api
 
 import com.thomaskioko.tvmaniac.shows.api.DEFAULT_DAY_TIME_WINDOW
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
@@ -6,13 +6,13 @@ import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.flow.Flow
 
-interface TrendingShowsRepository {
+interface FeaturedShowsRepository {
 
-    suspend fun fetchTrendingShows(
+    suspend fun fetchFeaturedTrendingShows(
         timeWindow: String = DEFAULT_DAY_TIME_WINDOW,
     ): List<ShowEntity>
 
-    fun observeTrendingShows(
+    fun observeFeaturedShows(
         timeWindow: String = DEFAULT_DAY_TIME_WINDOW,
     ): Flow<Either<Failure, List<ShowEntity>>>
 }

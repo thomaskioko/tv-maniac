@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.data.popularshows.implementation
 
-import com.thomaskioko.tvmaniac.core.db.PagedPopularShows
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.util.extensions.mapResult
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
@@ -23,10 +23,10 @@ class DefaultPopularShowsRepository(
     private val dispatchers: AppCoroutineDispatchers,
 ) : PopularShowsRepository {
 
-    override suspend fun fetchPopularShows(): List<PagedPopularShows> =
+    override suspend fun fetchPopularShows(): List<ShowEntity> =
         store.get(key = DEFAULT_API_PAGE)
 
-    override fun observePopularShows(): Flow<Either<Failure, List<PagedPopularShows>>> =
+    override fun observePopularShows(): Flow<Either<Failure, List<ShowEntity>>> =
         store.stream(
             StoreReadRequest.cached(
                 key = DEFAULT_API_PAGE,

@@ -4,16 +4,15 @@ import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.core.db.Casts
 import com.thomaskioko.tvmaniac.core.db.Episode
 import com.thomaskioko.tvmaniac.core.db.Episode_image
+import com.thomaskioko.tvmaniac.core.db.Featured_shows
 import com.thomaskioko.tvmaniac.core.db.Genres
 import com.thomaskioko.tvmaniac.core.db.Last_requests
 import com.thomaskioko.tvmaniac.core.db.Library
-import com.thomaskioko.tvmaniac.core.db.Networks
 import com.thomaskioko.tvmaniac.core.db.Popular_shows
 import com.thomaskioko.tvmaniac.core.db.Recommended_shows
 import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.core.db.Season_images
 import com.thomaskioko.tvmaniac.core.db.Season_videos
-import com.thomaskioko.tvmaniac.core.db.Show_networks
 import com.thomaskioko.tvmaniac.core.db.Similar_shows
 import com.thomaskioko.tvmaniac.core.db.Toprated_shows
 import com.thomaskioko.tvmaniac.core.db.Trailers
@@ -68,14 +67,6 @@ interface DatabaseComponent : DatabasePlatformComponent {
             idAdapter = IdAdapter(),
             genre_idsAdapter = intColumnAdapter,
         ),
-        networksAdapter = Networks.Adapter(
-            idAdapter = IdAdapter(),
-            tmdb_idAdapter = IdAdapter(),
-        ),
-        show_networksAdapter = Show_networks.Adapter(
-            show_idAdapter = IdAdapter(),
-            network_idAdapter = IdAdapter(),
-        ),
         upcoming_showsAdapter = Upcoming_shows.Adapter(
             idAdapter = IdAdapter(),
             pageAdapter = IdAdapter(),
@@ -110,6 +101,9 @@ interface DatabaseComponent : DatabasePlatformComponent {
         watch_providersAdapter = Watch_providers.Adapter(
             idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
+        ),
+        featured_showsAdapter = Featured_shows.Adapter(
+            idAdapter = IdAdapter(),
         ),
     )
 

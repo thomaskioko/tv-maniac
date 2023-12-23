@@ -1,7 +1,5 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
-import com.thomaskioko.tvmaniac.discover.api.NetworkDao
-import com.thomaskioko.tvmaniac.discover.api.ShowNetworkDao
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsDao
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
@@ -14,18 +12,6 @@ interface TrendingShowsComponent {
     fun provideTrendingShowsDao(
         bind: DefaultTrendingShowsDao,
     ): TrendingShowsDao = bind
-
-    @ApplicationScope
-    @Provides
-    fun provideNetworkDao(
-        bind: DefaultNetworkDao,
-    ): NetworkDao = bind
-
-    @ApplicationScope
-    @Provides
-    fun provideShowNetworkDao(
-        bind: DefaultShowNetworkDao,
-    ): ShowNetworkDao = bind
 
     @ApplicationScope
     @Provides

@@ -51,14 +51,6 @@ abstract class BaseDatabaseTest {
             idAdapter = IdAdapter(),
             genre_idsAdapter = intColumnAdapter,
         ),
-        networksAdapter = Networks.Adapter(
-            idAdapter = IdAdapter(),
-            tmdb_idAdapter = IdAdapter(),
-        ),
-        show_networksAdapter = Show_networks.Adapter(
-            show_idAdapter = IdAdapter(),
-            network_idAdapter = IdAdapter(),
-        ),
         upcoming_showsAdapter = Upcoming_shows.Adapter(
             idAdapter = IdAdapter(),
             pageAdapter = IdAdapter(),
@@ -93,6 +85,9 @@ abstract class BaseDatabaseTest {
         watch_providersAdapter = Watch_providers.Adapter(
             idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
+        ),
+        featured_showsAdapter = Featured_shows.Adapter(
+            idAdapter = IdAdapter(),
         ),
     )
 

@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.data.upcomingshows.implementation
 
-import com.thomaskioko.tvmaniac.core.db.UpcomingShows
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_SORT_ORDER
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
@@ -34,7 +34,7 @@ class DefaultUpcomingShowsRepository(
         page = DEFAULT_API_PAGE,
     )
 
-    override fun observeUpcomingShows(): Flow<Either<Failure, List<UpcomingShows>>> =
+    override fun observeUpcomingShows(): Flow<Either<Failure, List<ShowEntity>>> =
         store.stream(
             StoreReadRequest.cached(
                 key = params,
@@ -48,7 +48,7 @@ class DefaultUpcomingShowsRepository(
             .mapResult()
             .flowOn(dispatchers.io)
 
-    override suspend fun fetchUpcomingShows(): List<UpcomingShows> =
+    override suspend fun fetchUpcomingShows(): List<ShowEntity> =
         store.get(key = params)
 }
 

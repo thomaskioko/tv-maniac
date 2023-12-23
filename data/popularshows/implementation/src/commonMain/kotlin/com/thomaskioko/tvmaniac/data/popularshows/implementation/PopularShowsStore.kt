@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.data.popularshows.implementation
 
-import com.thomaskioko.tvmaniac.core.db.PagedPopularShows
 import com.thomaskioko.tvmaniac.core.db.Popular_shows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsDao
@@ -8,12 +7,14 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
+import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -29,7 +30,7 @@ class PopularShowsStore(
     private val tvShowsDao: TvShowsDao,
     private val formatterUtil: FormatterUtil,
     private val scope: AppCoroutineScope,
-) : Store<Long, List<PagedPopularShows>> by StoreBuilder.from(
+) : Store<Long, List<ShowEntity>> by StoreBuilder.from(
     fetcher = Fetcher.of { page ->
         when (val response = tmdbRemoteDataSource.getPopularShows(page = page)) {
             is ApiResponse.Success -> response.body.results
@@ -42,7 +43,19 @@ class PopularShowsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.Companion.of(
-        reader = { page -> popularShowsDao.observePopularShows(page) },
+        reader = { page ->
+            popularShowsDao.observePopularShows(page)
+                .map { shows ->
+                    shows.map { show ->
+                        ShowEntity(
+                            id = show.id.id,
+                            title = show.name,
+                            posterPath = show.poster_path,
+                            inLibrary = show.in_library == 1L,
+                        )
+                    }
+                }
+        },
         writer = { page, trendingShows ->
 
             trendingShows.forEach { show ->

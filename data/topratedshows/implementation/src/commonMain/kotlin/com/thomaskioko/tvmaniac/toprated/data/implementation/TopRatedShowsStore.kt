@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.toprated.data.implementation
 
-import com.thomaskioko.tvmaniac.core.db.PagedTopRatedShows
 import com.thomaskioko.tvmaniac.core.db.Toprated_shows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsDao
@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
+import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -29,7 +30,7 @@ class TopRatedShowsStore(
     private val formatterUtil: FormatterUtil,
     private val dateFormatter: PlatformDateFormatter,
     private val scope: AppCoroutineScope,
-) : Store<Long, List<PagedTopRatedShows>> by StoreBuilder.from(
+) : Store<Long, List<ShowEntity>> by StoreBuilder.from(
     fetcher = Fetcher.of { page ->
         when (val response = tmdbRemoteDataSource.getTopRatedShows(page = page)) {
             is ApiResponse.Success -> response.body.results
@@ -42,7 +43,19 @@ class TopRatedShowsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.Companion.of(
-        reader = { page: Long -> topRatedShowsDao.observeTrendingShows(page) },
+        reader = { page: Long ->
+            topRatedShowsDao.observeTrendingShows(page)
+                .map { shows ->
+                    shows.map { show ->
+                        ShowEntity(
+                            id = show.id.id,
+                            title = show.name,
+                            posterPath = show.poster_path,
+                            inLibrary = show.in_library == 1L,
+                        )
+                    }
+                }
+        },
         writer = { page, trendingShows ->
 
             trendingShows.forEach { show ->

@@ -41,6 +41,8 @@ include(
     ":data:episodes:api",
     ":data:episodes:implementation",
     ":data:episodes:testing",
+    ":data:featuredshows:api",
+    ":data:featuredshows:implementation",
     ":data:library:api",
     ":data:library:implementation",
     ":data:library:testing",

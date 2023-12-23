@@ -73,6 +73,8 @@ kotlin {
                 api(projects.data.cast.implementation)
                 api(projects.data.episodes.api)
                 api(projects.data.episodes.implementation)
+                api(projects.data.featuredshows.api)
+                api(projects.data.featuredshows.implementation)
                 api(projects.data.library.api)
                 api(projects.data.library.implementation)
                 api(projects.data.popularshows.api)

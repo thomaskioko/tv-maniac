@@ -2,14 +2,11 @@ package com.thomaskioko.tvmaniac.data.showdetails.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Casts
 import com.thomaskioko.tvmaniac.core.db.Genres
-import com.thomaskioko.tvmaniac.core.db.Networks
 import com.thomaskioko.tvmaniac.core.db.Season
-import com.thomaskioko.tvmaniac.core.db.Show_networks
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.db.TvshowDetails
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
-import com.thomaskioko.tvmaniac.data.showdetails.api.NetworksDao
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsDao
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerDao
 import com.thomaskioko.tvmaniac.db.Id
@@ -36,7 +33,6 @@ class ShowDetailsStore(
     private val showDetailsDao: ShowDetailsDao,
     private val seasonDao: SeasonsDao,
     private val trailerDao: TrailerDao,
-    private val networkDao: NetworksDao,
     private val genreDao: DefaultGenreDao,
     private val formatterUtil: FormatterUtil,
     private val dateFormatter: PlatformDateFormatter,
@@ -140,24 +136,6 @@ class ShowDetailsStore(
                         site = video.site,
                         size = video.size.toLong(),
                         type = video.type,
-                    ),
-                )
-            }
-
-            // Insert Network
-            show.networks.forEach { network ->
-                networkDao.upsert(
-                    Networks(
-                        id = Id(network.id.toLong()),
-                        name = network.name,
-                        tmdb_id = Id(show.id.toLong()),
-                        logo_path = formatterUtil.formatTmdbPosterPath(network.logoPath),
-                    ),
-                )
-                networkDao.upsert(
-                    Show_networks(
-                        show_id = Id(show.id.toLong()),
-                        network_id = Id(network.id.toLong()),
                     ),
                 )
             }
