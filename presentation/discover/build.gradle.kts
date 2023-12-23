@@ -9,6 +9,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.util)
                 implementation(projects.data.shows.api)
+                implementation(projects.data.featuredshows.api)
                 implementation(projects.data.popularshows.api)
                 implementation(projects.data.topratedshows.api)
                 implementation(projects.data.trendingshows.api)

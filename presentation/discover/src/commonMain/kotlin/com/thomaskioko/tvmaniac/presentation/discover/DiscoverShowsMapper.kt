@@ -5,11 +5,21 @@ import com.thomaskioko.tvmaniac.core.db.PagedTopRatedShows
 import com.thomaskioko.tvmaniac.core.db.TrendingShows
 import com.thomaskioko.tvmaniac.core.db.UpcomingShows
 import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
+import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+
+fun List<ShowEntity>?.toShowList(): ImmutableList<DiscoverShow> =
+    this?.map {
+        DiscoverShow(
+            tmdbId = it.id,
+            posterImageUrl = it.posterPath,
+            isInLibrary = it.inLibrary,
+        )
+    }?.toImmutableList() ?: persistentListOf()
 
 fun List<TrendingShows>?.toDiscoverShowList(): ImmutableList<DiscoverShow> =
     this?.map {
@@ -55,6 +65,6 @@ fun getErrorMessage(
     topRated: Either<Failure, List<PagedTopRatedShows>>,
     popular: Either<Failure, List<PagedPopularShows>>,
     upcomingShows: Either<Failure, List<UpcomingShows>>,
-    featuredShows: Either<Failure, List<TrendingShows>>,
+    featuredShows: Either<Failure, List<ShowEntity>>,
 ) = topRated.getErrorOrNull()?.errorMessage ?: popular.getErrorOrNull()?.errorMessage
     ?: upcomingShows.getErrorOrNull()?.errorMessage ?: featuredShows.getErrorOrNull()?.errorMessage
