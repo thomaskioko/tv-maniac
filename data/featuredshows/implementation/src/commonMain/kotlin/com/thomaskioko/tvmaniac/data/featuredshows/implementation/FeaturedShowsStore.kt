@@ -45,14 +45,17 @@ class FeaturedShowsStore(
         reader = { _: String ->
             featuredShowsDao.observeFeaturedShows()
                 .map { shows ->
-                    shows.map { show ->
-                        ShowEntity(
-                            id = show.id.id,
-                            title = show.name,
-                            posterPath = show.poster_path,
-                            inLibrary = show.in_library == 1L,
-                        )
-                    }
+                    shows
+                        .shuffled()
+                        .take(FEATURED_SHOWS_COUNT)
+                        .map { show ->
+                            ShowEntity(
+                                id = show.id.id,
+                                title = show.name,
+                                posterPath = show.poster_path,
+                                inLibrary = show.in_library == 1L,
+                            )
+                        }
                 }
         },
         writer = { _, shows ->
