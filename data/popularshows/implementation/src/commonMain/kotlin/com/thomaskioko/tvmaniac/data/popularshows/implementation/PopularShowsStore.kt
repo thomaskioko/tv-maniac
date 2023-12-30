@@ -14,7 +14,6 @@ import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
-import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -42,22 +41,9 @@ class PopularShowsStore(
                 throw Throwable("${response.errorMessage}")
         }
     },
-    sourceOfTruth = SourceOfTruth.Companion.of(
-        reader = { page ->
-            popularShowsDao.observePopularShows(page)
-                .map { shows ->
-                    shows.map { show ->
-                        ShowEntity(
-                            id = show.id.id,
-                            title = show.name,
-                            posterPath = show.poster_path,
-                            inLibrary = show.in_library == 1L,
-                        )
-                    }
-                }
-        },
+    sourceOfTruth = SourceOfTruth.of(
+        reader = { page -> popularShowsDao.observePopularShows(page) },
         writer = { page, trendingShows ->
-
             trendingShows.forEach { show ->
                 tvShowsDao.upsert(
                     Tvshows(
@@ -93,7 +79,7 @@ class PopularShowsStore(
                 )
             }
 
-            requestManagerRepository.insert(
+            requestManagerRepository.upsert(
                 LastRequest(
                     id = Category.POPULAR.id,
                     entityId = page,

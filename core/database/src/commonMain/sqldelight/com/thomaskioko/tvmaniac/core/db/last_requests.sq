@@ -7,20 +7,13 @@ CREATE TABLE IF NOT EXISTS last_requests (
     `timestamp` INTEGER AS Instant NOT NULL
 );
 
-insert:
-INSERT INTO last_requests (
+upsert:
+INSERT OR REPLACE INTO last_requests (
     `id`,
     `entity_id`,
     `request_type`,
     `timestamp`
 ) VALUES (?, ?,?,?);
-
-update:
-UPDATE last_requests SET
-    `entity_id` = :entity_id,
-    `request_type` = :request_type,
-    `timestamp` = :timestamp
-WHERE entity_id = :entity_id;
 
 getLastRequestForId:
 SELECT * FROM last_requests

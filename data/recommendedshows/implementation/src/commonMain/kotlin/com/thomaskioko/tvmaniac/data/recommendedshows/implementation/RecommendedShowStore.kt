@@ -88,7 +88,7 @@ class RecommendedShowStore(
                 )
             }
 
-            requestManagerRepository.insert(
+            requestManagerRepository.upsert(
                 LastRequest(
                     id = param.showId,
                     entityId = param.page,

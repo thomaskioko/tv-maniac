@@ -14,7 +14,6 @@ import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
-import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -49,19 +48,7 @@ class UpcomingShowsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.Companion.of(
-        reader = { _ ->
-            upcomingShowsDao.observeUpcomingShows()
-                .map { shows ->
-                    shows.map { show ->
-                        ShowEntity(
-                            id = show.id.id,
-                            title = show.name,
-                            posterPath = show.poster_path,
-                            inLibrary = show.in_library == 1L,
-                        )
-                    }
-                }
-        },
+        reader = { _ -> upcomingShowsDao.observeUpcomingShows() },
         writer = { params: UpcomingParams, trendingShows ->
 
             trendingShows.forEach { show ->
@@ -99,7 +86,7 @@ class UpcomingShowsStore(
                 )
             }
 
-            requestManagerRepository.insert(
+            requestManagerRepository.upsert(
                 LastRequest(
                     id = Category.UPCOMING.id,
                     entityId = params.page,

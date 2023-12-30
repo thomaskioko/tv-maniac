@@ -87,7 +87,7 @@ class SimilarShowStore(
                 )
             }
 
-            requestManagerRepository.insert(
+            requestManagerRepository.upsert(
                 LastRequest(
                     id = param.showId,
                     entityId = param.page,

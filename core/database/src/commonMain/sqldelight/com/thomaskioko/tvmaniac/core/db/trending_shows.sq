@@ -15,7 +15,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_trending_shows_show_id` ON `trending_sh
 -- queries
 
 insert:
-INSERT OR IGNORE INTO trending_shows(
+INSERT OR REPLACE INTO trending_shows(
     `id`,
     `page`
 ) VALUES (
@@ -25,7 +25,10 @@ INSERT OR IGNORE INTO trending_shows(
 
 trendingShows:
 SELECT
-    *,
+    trending_shows.id,
+    trending_shows.page,
+    tvshows.name,
+    tvshows.poster_path,
     CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     trending_shows

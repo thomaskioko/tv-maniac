@@ -15,7 +15,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_toprated_shows_show_id` ON `toprated_sh
 -- queries
 
 insert:
-INSERT OR IGNORE INTO toprated_shows(
+INSERT OR REPLACE INTO toprated_shows(
     `id`,
     `page`
 ) VALUES (
@@ -25,7 +25,10 @@ INSERT OR IGNORE INTO toprated_shows(
 
 topRatedShows:
 SELECT
-    *,
+    toprated_shows.id,
+    toprated_shows.page,
+    tvshows.name,
+    tvshows.poster_path,
     CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     toprated_shows
@@ -38,7 +41,10 @@ ORDER BY
 
 pagedTopRatedShows:
 SELECT
-    *,
+    toprated_shows.id,
+    toprated_shows.page,
+    tvshows.name,
+    tvshows.poster_path,
     CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     toprated_shows
