@@ -43,6 +43,27 @@ LEFT OUTER JOIN
 WHERE
     popular_shows.page = :page;
 
+pagedPopularShows:
+SELECT
+    popular_shows.id,
+    popular_shows.page,
+    tvshows.name,
+    tvshows.poster_path,
+    CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    popular_shows
+INNER JOIN
+    tvshows ON tvshows.id = popular_shows.id
+LEFT OUTER JOIN
+    library ON tvshows.id = library.id
+ORDER BY
+    popular_shows.page ASC
+LIMIT
+    :limit OFFSET :offset;
+
+getLastPage:
+SELECT MAX(page) FROM popular_shows;
+
 delete:
 DELETE FROM popular_shows
 WHERE page = :id;
