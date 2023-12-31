@@ -23,6 +23,9 @@ INSERT OR REPLACE INTO trending_shows(
     :page
 );
 
+count:
+SELECT count(*) FROM trending_shows;
+
 trendingShows:
 SELECT
     trending_shows.id,
@@ -38,6 +41,27 @@ LEFT OUTER JOIN
     library ON tvshows.id = library.id
 ORDER BY
     tvshows.popularity DESC;
+
+pagedTrendingShows:
+SELECT
+    trending_shows.id,
+    trending_shows.page,
+    tvshows.name,
+    tvshows.poster_path,
+    CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    trending_shows
+INNER JOIN
+    tvshows ON tvshows.id = trending_shows.id
+LEFT OUTER JOIN
+    library ON tvshows.id = library.id
+ORDER BY
+    trending_shows.page ASC
+LIMIT
+    :limit OFFSET :offset;
+
+getLastPage:
+SELECT MAX(page) FROM popular_shows;
 
 delete:
 DELETE FROM trending_shows

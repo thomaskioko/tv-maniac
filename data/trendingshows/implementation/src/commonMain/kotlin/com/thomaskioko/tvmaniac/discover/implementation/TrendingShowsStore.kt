@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.db.Trending_shows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsDao
+import com.thomaskioko.tvmaniac.discover.api.TrendingShowsParams
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
@@ -30,9 +31,9 @@ class TrendingShowsStore(
     private val formatterUtil: FormatterUtil,
     private val dateFormatter: PlatformDateFormatter,
     private val scope: AppCoroutineScope,
-) : Store<String, List<ShowEntity>> by StoreBuilder.from(
-    fetcher = Fetcher.of { timeWindow ->
-        when (val response = tmdbRemoteDataSource.getTrendingShows(timeWindow)) {
+) : Store<TrendingShowsParams, List<ShowEntity>> by StoreBuilder.from(
+    fetcher = Fetcher.of { params: TrendingShowsParams ->
+        when (val response = tmdbRemoteDataSource.getTrendingShows(params.timeWindow)) {
             is ApiResponse.Success -> {
                 response.body.results
             }
@@ -51,7 +52,7 @@ class TrendingShowsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.Companion.of(
-        reader = { _: String -> trendingShowsDao.observeTvShow() },
+        reader = { _: TrendingShowsParams -> trendingShowsDao.observeTvShow() },
         writer = { _, trendingShows ->
             trendingShows.forEach { show ->
                 tvShowsDao.upsert(

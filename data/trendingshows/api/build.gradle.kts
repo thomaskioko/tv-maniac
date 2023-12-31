@@ -10,6 +10,7 @@ kotlin {
                 api(projects.core.util)
                 api(projects.data.shows.api)
 
+                api(libs.paging.common)
                 api(libs.coroutines.core)
             }
         }
