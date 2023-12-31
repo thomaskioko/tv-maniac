@@ -42,7 +42,7 @@ class TopRatedShowsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.Companion.of(
-        reader = { page: Long -> topRatedShowsDao.observeTrendingShows(page) },
+        reader = { page: Long -> topRatedShowsDao.observeTopRatedShows(page) },
         writer = { page, trendingShows ->
 
             trendingShows.forEach { show ->
