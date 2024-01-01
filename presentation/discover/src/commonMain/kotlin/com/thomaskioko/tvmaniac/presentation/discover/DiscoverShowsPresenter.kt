@@ -51,7 +51,7 @@ class DiscoverShowsPresenter(
 
     fun dispatch(action: DiscoverShowAction) {
         when (action) {
-            is LoadCategoryShows -> onNavigateToMore(action.id)
+            is LoadMoreClicked -> onNavigateToMore(action.id)
             is ShowClicked -> onNavigateToShowDetails(action.id)
             is ReloadCategory -> coroutineScope.launch { reloadCategory(action.categoryId) }
             RetryLoading -> coroutineScope.launch { fetchShowData() }

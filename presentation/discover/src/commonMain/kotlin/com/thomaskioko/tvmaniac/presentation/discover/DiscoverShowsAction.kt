@@ -7,4 +7,4 @@ data object SnackBarDismissed : DiscoverShowAction
 
 data class ReloadCategory(val categoryId: Long) : DiscoverShowAction
 data class ShowClicked(val id: Long) : DiscoverShowAction
-data class LoadCategoryShows(val id: Long) : DiscoverShowAction
+data class LoadMoreClicked(val id: Long) : DiscoverShowAction
