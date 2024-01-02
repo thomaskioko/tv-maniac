@@ -30,6 +30,7 @@ struct DiscoverView: View {
                     fatalError("Unhandled case: \(uiState)")
                 }
             }
+            .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
             .background(Color.background)
             .toolbar {}
             .navigationTitle("")
