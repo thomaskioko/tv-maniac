@@ -11,8 +11,8 @@ import kotlinx.coroutines.CancellationException
  *
  * @param getLastPage Get the last stored page.
  * @param deleteLocalEntity Drops the relevant local entities.
- * @param fetch Fetch fresh content.
- *  Expects back the number of returned entities.
+ * @param fetch Executes the remote fetch.
+ * @param EM Entity model.
  */
 @OptIn(ExperimentalPagingApi::class)
 class PaginatedRemoteMediator<EM : Any>(
@@ -41,6 +41,7 @@ class PaginatedRemoteMediator<EM : Any>(
                     }
                     0
                 }
+
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
                     val lastPage = getLastPage()
