@@ -13,7 +13,6 @@ kotlin {
                 implementation(projects.data.shows.api)
                 implementation(projects.data.trailers.api)
 
-                implementation(libs.kermit)
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.sqldelight.extensions)
                 implementation(libs.kotlinx.atomicfu)
