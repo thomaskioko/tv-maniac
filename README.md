@@ -129,7 +129,6 @@ tmdbApiKey: "PUT_API_KEY_HERE"
 ### iOS
 * [SDWebImage](https://github.com/SDWebImage/SDWebImage) - Async image downloader.
 * [OAuthSwift](https://github.com/OAuthSwift/OAuthSwift) Swift-based OAuth library for iOS and macOS.
-* [TvManiac](https://github.com/c0de-wizard/tvmaniac-swift-packages) - TvManiac SwiftPackage.
 * [ScalingHeaderScrollView](https://github.com/exyte/ScalingHeaderScrollView)
 * [Youtube PlayerKit](https://github.com/SvenTiigi/YouTubePlayerKit) - Swift Youtube Player
 
