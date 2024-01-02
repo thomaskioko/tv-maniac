@@ -22,7 +22,6 @@ essenty = "1.3.0"
 desugar = "2.0.4"
 kenburns = "1.0.7"
 kermit = "1.2.3"
-kmmbridge = "0.3.7"
 kotest = "5.8.0"
 kotlin = "1.9.21"
 kotlininject = "0.6.3"
@@ -118,7 +117,6 @@ kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ve
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependency-analysis" }
-kmmbridge = { id = "co.touchlab.faktory.kmmbridge", version.ref = "kmmbridge" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
