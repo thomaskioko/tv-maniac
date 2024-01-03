@@ -70,6 +70,7 @@ import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowAction
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
+import com.thomaskioko.tvmaniac.presentation.discover.LoadMoreClicked
 import com.thomaskioko.tvmaniac.presentation.discover.Loading
 import com.thomaskioko.tvmaniac.presentation.discover.RetryLoading
 import com.thomaskioko.tvmaniac.presentation.discover.ShowClicked
@@ -190,9 +191,7 @@ private fun DiscoverScrollContent(
                     category = stringResource(id = R.string.title_category_upcoming),
                     tvShows = upcomingShows,
                     onItemClicked = { onAction(ShowClicked(it)) },
-                    onMoreClicked = {
-                        // Add Navigation
-                    },
+                    onMoreClicked = { onAction(LoadMoreClicked(3)) },
                 )
             }
 
@@ -201,9 +200,7 @@ private fun DiscoverScrollContent(
                     category = stringResource(id = R.string.title_category_trending_today),
                     tvShows = trendingToday,
                     onItemClicked = { onAction(ShowClicked(it)) },
-                    onMoreClicked = {
-                        // Add Navigation
-                    },
+                    onMoreClicked = { onAction(LoadMoreClicked(4)) },
                 )
             }
 
@@ -212,9 +209,7 @@ private fun DiscoverScrollContent(
                     category = stringResource(id = R.string.title_category_popular),
                     tvShows = popularShows,
                     onItemClicked = { onAction(ShowClicked(it)) },
-                    onMoreClicked = {
-                        // Add Navigation
-                    },
+                    onMoreClicked = { onAction(LoadMoreClicked(2)) },
                 )
             }
 
@@ -223,9 +218,7 @@ private fun DiscoverScrollContent(
                     category = stringResource(id = R.string.title_category_top_rated),
                     tvShows = topRatedShows,
                     onItemClicked = { onAction(ShowClicked(it)) },
-                    onMoreClicked = {
-                        // Add Navigation
-                    },
+                    onMoreClicked = { onAction(LoadMoreClicked(1)) },
                 )
             }
         }
