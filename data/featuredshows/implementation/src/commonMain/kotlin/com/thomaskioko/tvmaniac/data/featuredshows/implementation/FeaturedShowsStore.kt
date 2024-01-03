@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.data.featuredshows.implementation
 import com.thomaskioko.tvmaniac.core.db.Featured_shows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsDao
+import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -30,6 +31,7 @@ class FeaturedShowsStore(
     private val tvShowsDao: TvShowsDao,
     private val formatterUtil: FormatterUtil,
     private val dateFormatter: PlatformDateFormatter,
+    private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val scope: AppCoroutineScope,
 ) : Store<String, List<ShowEntity>> by StoreBuilder.from(
     fetcher = Fetcher.of { timeWindow ->
@@ -42,50 +44,55 @@ class FeaturedShowsStore(
     },
     sourceOfTruth = SourceOfTruth.Companion.of(
         reader = { _: String -> featuredShowsDao.observeFeaturedShows() },
-        writer = { _, shows ->
-            shows
-                .shuffled()
-                .take(FEATURED_SHOWS_COUNT)
-                .forEach { show ->
-                    tvShowsDao.upsert(
-                        Tvshows(
-                            id = Id(show.id.toLong()),
-                            name = show.name,
-                            overview = show.overview,
-                            language = show.originalLanguage,
-                            status = null,
-                            first_air_date = show.firstAirDate?.let {
-                                dateFormatter.getYear(it)
-                            },
-                            popularity = show.popularity,
-                            episode_numbers = null,
-                            last_air_date = null,
-                            season_numbers = null,
-                            vote_average = show.voteAverage,
-                            vote_count = show.voteCount.toLong(),
-                            genre_ids = show.genreIds,
-                            poster_path = show.posterPath?.let {
-                                formatterUtil.formatTmdbPosterPath(it)
-                            },
-                            backdrop_path = show.backdropPath?.let {
-                                formatterUtil.formatTmdbPosterPath(it)
-                            },
-                        ),
-                    )
+        writer = { timeWindow, shows ->
+            databaseTransactionRunner {
+                tvShowsDao.deleteTvShows()
+                shows
+                    .shuffled()
+                    .take(FEATURED_SHOWS_COUNT)
+                    .forEach { show ->
+                        tvShowsDao.upsert(
+                            Tvshows(
+                                id = Id(show.id.toLong()),
+                                name = show.name,
+                                overview = show.overview,
+                                language = show.originalLanguage,
+                                status = null,
+                                first_air_date = show.firstAirDate?.let {
+                                    dateFormatter.getYear(it)
+                                },
+                                popularity = show.popularity,
+                                episode_numbers = null,
+                                last_air_date = null,
+                                season_numbers = null,
+                                vote_average = show.voteAverage,
+                                vote_count = show.voteCount.toLong(),
+                                genre_ids = show.genreIds,
+                                poster_path = show.posterPath?.let {
+                                    formatterUtil.formatTmdbPosterPath(it)
+                                },
+                                backdrop_path = show.backdropPath?.let {
+                                    formatterUtil.formatTmdbPosterPath(it)
+                                },
+                            ),
+                        )
 
-                    featuredShowsDao.upsert(
-                        Featured_shows(
-                            id = Id(show.id.toLong()),
-                        ),
-                    )
-                }
-            requestManagerRepository.upsert(
-                LastRequest(
-                    id = Category.FEATURED.id,
-                    entityId = Category.FEATURED.id,
-                    requestType = Category.FEATURED.name,
-                ),
-            )
+                        featuredShowsDao.upsert(
+                            Featured_shows(
+                                id = Id(show.id.toLong()),
+                            ),
+                        )
+                    }
+
+                requestManagerRepository.upsert(
+                    LastRequest(
+                        id = Category.FEATURED.id,
+                        entityId = Category.FEATURED.id,
+                        requestType = timeWindow,
+                    ),
+                )
+            }
+
         },
     ),
 ).scope(scope.io)

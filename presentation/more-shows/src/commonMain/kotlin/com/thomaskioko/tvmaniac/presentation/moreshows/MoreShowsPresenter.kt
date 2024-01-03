@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.moreshows
 
-import androidx.paging.PagingData
+import app.cash.paging.PagingData
 import app.cash.paging.cachedIn
 import app.cash.paging.map
 import com.arkivanov.decompose.ComponentContext
@@ -37,7 +37,7 @@ class MoreShowsPresenter(
     private val popularShowsRepository: PopularShowsRepository,
     private val upcomingShowsRepository: UpcomingShowsRepository,
     private val trendingShowsRepository: TrendingShowsRepository,
-    private val topRatedShowsRepository: TopRatedShowsRepository
+    private val topRatedShowsRepository: TopRatedShowsRepository,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
