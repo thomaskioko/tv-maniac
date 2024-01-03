@@ -103,6 +103,7 @@ private struct ChildView: View {
         case let screen as ScreenSettings : SettingsView(presenter: screen.presenter)
         case let screen as ScreenShowDetails: ShowDetailView(presenter: screen.presenter)
         case let screen as ScreenSeasonDetails: SeasonDetailsView(presenter: screen.presenter)
+        case let screen as ScreenMoreShows: MoreShowsView(presenter: screen.presenter)
         default: EmptyView()
         }
     }

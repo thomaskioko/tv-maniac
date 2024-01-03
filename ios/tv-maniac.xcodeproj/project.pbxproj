@@ -24,6 +24,8 @@
 		D62F1BC82B344941004650E3 /* TransparentImageBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BC72B344941004650E3 /* TransparentImageBackground.swift */; };
 		D62F1BCB2B346336004650E3 /* RoundedProgressIndicatorStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BCA2B346336004650E3 /* RoundedProgressIndicatorStyle.swift */; };
 		D62F1BCD2B34697F004650E3 /* TopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BCC2B34697F004650E3 /* TopBar.swift */; };
+		D636CE4A2B447C9C003F7876 /* TitleMoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE492B447C9C003F7876 /* TitleMoreView.swift */; };
+		D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */; };
 		D64279562A6080A900E65755 /* ToastStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64279552A6080A900E65755 /* ToastStyle.swift */; };
 		D64279582A6080D400E65755 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64279572A6080D400E65755 /* Toast.swift */; };
 		D642795A2A6080F400E65755 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64279592A6080F400E65755 /* ToastView.swift */; };
@@ -117,6 +119,8 @@
 		D62F1BC72B344941004650E3 /* TransparentImageBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransparentImageBackground.swift; sourceTree = "<group>"; };
 		D62F1BCA2B346336004650E3 /* RoundedProgressIndicatorStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedProgressIndicatorStyle.swift; sourceTree = "<group>"; };
 		D62F1BCC2B34697F004650E3 /* TopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopBar.swift; sourceTree = "<group>"; };
+		D636CE492B447C9C003F7876 /* TitleMoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleMoreView.swift; sourceTree = "<group>"; };
+		D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreShowsView.swift; sourceTree = "<group>"; };
 		D64279552A6080A900E65755 /* ToastStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastStyle.swift; sourceTree = "<group>"; };
 		D64279572A6080D400E65755 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		D64279592A6080F400E65755 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
@@ -254,6 +258,14 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		D636CE4B2B44878F003F7876 /* MoreShows */ = {
+			isa = PBXGroup;
+			children = (
+				D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */,
+			);
+			path = MoreShows;
+			sourceTree = "<group>";
+		};
 		D64279522A607F7600E65755 /* Toast */ = {
 			isa = PBXGroup;
 			children = (
@@ -353,14 +365,15 @@
 			children = (
 				D6C263342B32421900179CDF /* Casts */,
 				E9B686942787377A001698B7 /* Components */,
-				E983819927936D8E0039CB08 /* ShowDetails */,
 				E9B6869027873707001698B7 /* Discover */,
 				E9B6869227873747001698B7 /* Library */,
+				D636CE4B2B44878F003F7876 /* MoreShows */,
 				D6C263302B323CD300179CDF /* Providers */,
 				D667A42E2B23DC0E009C951E /* Root */,
 				E9B6869127873738001698B7 /* Search */,
 				D62F1BC42B344313004650E3 /* SeasonDetails */,
 				D68FFDDF2B211690001EB447 /* Settings */,
+				E983819927936D8E0039CB08 /* ShowDetails */,
 				D6C263332B32413600179CDF /* Trailers */,
 			);
 			name = View;
@@ -379,6 +392,7 @@
 			children = (
 				D65569E22B31C78D005F9F37 /* FeaturedContentPosterView.swift */,
 				E98381E027943F940039CB08 /* SnapCarousel.swift */,
+				D636CE492B447C9C003F7876 /* TitleMoreView.swift */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -636,6 +650,7 @@
 				D653925329DABCEA000EE673 /* ConfigLoader.swift in Sources */,
 				D61A65632B330CC100112590 /* CastListView.swift in Sources */,
 				D6CF9E332B32021300A1AD00 /* CircleButtonStyle.swift in Sources */,
+				D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */,
 				D6DC9DA42B34B27300768065 /* ImageGalleryContentView.swift in Sources */,
 				E989E1162940E78E00C01A39 /* SettingsView.swift in Sources */,
 				D61A655B2B32F0A500112590 /* TrailerItemView.swift in Sources */,
@@ -654,6 +669,7 @@
 				D67761982B1D458B00537DD5 /* StackView.swift in Sources */,
 				E983819227936BB10039CB08 /* BorderedButton.swift in Sources */,
 				E90392C129197BDF00B9CAF0 /* FullScreenView.swift in Sources */,
+				D636CE4A2B447C9C003F7876 /* TitleMoreView.swift in Sources */,
 				E989E1182940EAB300C01A39 /* ThemeUtilities.swift in Sources */,
 				D64279582A6080D400E65755 /* Toast.swift in Sources */,
 				D67761902B1CF28A00537DD5 /* ObservableValue.swift in Sources */,
