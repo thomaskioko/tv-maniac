@@ -13,16 +13,20 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import app.cash.paging.LoadStateError
@@ -64,6 +68,7 @@ internal fun MoreShowsScreen(
     onAction: (MoreShowsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val pagedList = state.list.collectAsLazyPagingItems()
     val snackBarHostState = remember { SnackbarHostState() }
 
@@ -74,6 +79,10 @@ internal fun MoreShowsScreen(
             TvManiacTopBar(
                 showNavigationIcon = true,
                 title = state.categoryTitle,
+                scrollBehavior = scrollBehavior,
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                ),
                 onBackClick = { onAction(MoreBackClicked) },
             )
         },
@@ -85,16 +94,19 @@ internal fun MoreShowsScreen(
         GridContent(
             contentPadding = contentPadding,
             lazyPagingItems = pagedList,
+            scrollBehavior = scrollBehavior,
             snackBarHostState = snackBarHostState,
             onItemClicked = { onAction(ShowClicked(it)) },
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalFoundationApi
 @Composable
 fun GridContent(
     lazyPagingItems: LazyPagingItems<TvShow>,
+    scrollBehavior: TopAppBarScrollBehavior,
     snackBarHostState: SnackbarHostState,
     contentPadding: PaddingValues,
     onItemClicked: (Long) -> Unit,
@@ -130,8 +142,9 @@ fun GridContent(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             state = listState,
             modifier = modifier
-                .padding(horizontal = 4.dp)
-                .padding(contentPadding),
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .padding(contentPadding)
+                .padding(horizontal = 4.dp),
         ) {
             items(
                 count = lazyPagingItems.itemCount,

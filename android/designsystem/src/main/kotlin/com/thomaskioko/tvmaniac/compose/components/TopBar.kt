@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -41,6 +42,7 @@ fun TvManiacTopBar(
     elevation: Dp = 0.dp,
     colors: TopAppBarColors = TopAppBarDefaults.centerAlignedTopAppBarColors(),
     title: String? = null,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
     showNavigationIcon: Boolean = false,
     actionImageVector: ImageVector? = null,
     onActionClicked: () -> Unit = {},
@@ -49,6 +51,7 @@ fun TvManiacTopBar(
     TopAppBar(
         modifier = modifier
             .shadow(elevation = elevation),
+        scrollBehavior = scrollBehavior,
         title = {
             if (title != null) {
                 Text(
