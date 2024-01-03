@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.presentation.seasondetails
 
 sealed interface SeasonDetailsAction
 
-data object BackClicked : SeasonDetailsAction
+data object SeasonDetailsBackClicked : SeasonDetailsAction
 data object OnEpisodeHeaderClicked : SeasonDetailsAction
 data object DismissSeasonDetailSnackBar : SeasonDetailsAction
 data object DismissSeasonDialog : SeasonDetailsAction

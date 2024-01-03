@@ -49,7 +49,7 @@ struct SeasonDetailsView: View {
             .shadow(radius: progress)
             .onAppear { showModal = uiState.showSeasonWatchStateDialog }
             
-            TopBar(onBackClicked: { presenter.dispatch(action: BackClicked()) })
+            TopBar(onBackClicked: { presenter.dispatch(action: SeasonDetailsBackClicked()) })
         }
         .ignoresSafeArea()
         .background(Color.background)

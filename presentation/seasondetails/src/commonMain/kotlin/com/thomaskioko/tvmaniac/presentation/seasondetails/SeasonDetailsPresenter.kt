@@ -53,7 +53,7 @@ class SeasonDetailsPresenter @Inject constructor(
     fun dispatch(action: SeasonDetailsAction) {
         coroutineScope.launch {
             when (action) {
-                BackClicked -> onBack()
+                SeasonDetailsBackClicked -> onBack()
                 is EpisodeClicked -> onEpisodeClick(action.id)
                 is ReloadSeasonDetails -> fetchSeasonDetails()
                 is UpdateEpisodeStatus -> {
