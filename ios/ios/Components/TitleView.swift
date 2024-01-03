@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct TitleView: View {
     let title: String
     var subtitle: String?
