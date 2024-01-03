@@ -103,7 +103,7 @@ class MoreShowsPresenter(
 
     private fun updateState(
         title: String,
-        pagingList: Flow<PagingData<TvShow>>
+        pagingList: Flow<PagingData<TvShow>>,
     ) {
         _state.update {
             it.copy(

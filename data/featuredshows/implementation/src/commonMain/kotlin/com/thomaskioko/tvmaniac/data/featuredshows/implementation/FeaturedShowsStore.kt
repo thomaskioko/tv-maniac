@@ -92,7 +92,6 @@ class FeaturedShowsStore(
                     ),
                 )
             }
-
         },
     ),
 ).scope(scope.io)
