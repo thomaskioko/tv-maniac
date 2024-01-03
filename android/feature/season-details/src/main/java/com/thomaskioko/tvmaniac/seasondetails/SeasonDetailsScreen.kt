@@ -70,10 +70,10 @@ import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsBackClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonDetailSnackBar
 import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonDialog
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsBackClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonGalleryClicked
