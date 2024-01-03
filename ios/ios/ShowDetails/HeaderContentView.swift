@@ -16,7 +16,7 @@ struct HeaderContentView: View {
     var maxHeight : CGFloat
     var onAddToLibraryClick : (Bool) -> Void
     var onWatchTrailerClick : (Int64) -> Void
-    
+
     var body: some View {
         
         ZStack {
@@ -97,7 +97,6 @@ struct HeaderContentView: View {
             showDetailButtons
                 .padding(.top, 8)
         }
-        .frame(height: 220)
         
     }
     

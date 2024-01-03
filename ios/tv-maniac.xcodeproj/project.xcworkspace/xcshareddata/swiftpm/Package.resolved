@@ -100,15 +100,6 @@
       }
     },
     {
-      "identity" : "tvmaniac-swift-packages",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/thomaskioko/tvmaniac-swift-packages",
-      "state" : {
-        "revision" : "47287df5df9565f131889285ca1d9564dda451cf",
-        "version" : "0.10.0"
-      }
-    },
-    {
       "identity" : "youtubeplayerkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SvenTiigi/YouTubePlayerKit.git",

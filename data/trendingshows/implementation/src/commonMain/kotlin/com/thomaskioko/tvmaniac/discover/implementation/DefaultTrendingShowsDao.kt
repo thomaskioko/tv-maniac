@@ -1,12 +1,14 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
+import app.cash.paging.PagingSource
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.thomaskioko.tvmaniac.core.db.TrendingShows
+import app.cash.sqldelight.paging3.QueryPagingSource
 import com.thomaskioko.tvmaniac.core.db.Trending_shows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsDao
+import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -28,14 +30,42 @@ class DefaultTrendingShowsDao(
         }
     }
 
-    override fun upsert(list: List<Trending_shows>) {
-        list.forEach { upsert(it) }
-    }
-
-    override fun observeTvShow(): Flow<List<TrendingShows>> =
-        trendingShowsQueries.trendingShows()
+    override fun observeTvShow(): Flow<List<ShowEntity>> =
+        trendingShowsQueries.trendingShows() { id, page, title, imageUrl, inLib ->
+            ShowEntity(
+                id = id.id,
+                page = page.id,
+                title = title,
+                posterPath = imageUrl,
+                inLibrary = inLib == 1L,
+            )
+        }
             .asFlow()
             .mapToList(dispatchers.io)
+
+    override fun getPagedTrendingShows(): PagingSource<Int, ShowEntity> =
+        QueryPagingSource(
+            countQuery = trendingShowsQueries.count(),
+            transacter = trendingShowsQueries,
+            context = dispatchers.io,
+            queryProvider = { limit, offset ->
+                trendingShowsQueries.pagedTrendingShows(
+                    limit = limit,
+                    offset = offset,
+                ) { id, page, title, imageUrl, inLib ->
+                    ShowEntity(
+                        id = id.id,
+                        page = page.id,
+                        title = title,
+                        posterPath = imageUrl,
+                        inLibrary = inLib == 1L,
+                    )
+                }
+            },
+        )
+
+    override fun getLastPage(): Long? =
+        trendingShowsQueries.getLastPage().executeAsOneOrNull()?.MAX?.id
 
     override fun deleteTrendingShow(id: Long) {
         trendingShowsQueries.delete(Id(id))

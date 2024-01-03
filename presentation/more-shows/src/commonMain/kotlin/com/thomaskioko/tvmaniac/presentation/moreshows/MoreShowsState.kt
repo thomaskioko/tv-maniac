@@ -1,11 +1,12 @@
 package com.thomaskioko.tvmaniac.presentation.moreshows
 
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
+import app.cash.paging.PagingData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 data class MoreShowsState(
     val isLoading: Boolean = false,
     val categoryTitle: String? = null,
-    val list: ImmutableList<TvShow> = persistentListOf(),
+    val list: Flow<PagingData<TvShow>> = emptyFlow(),
     val errorMessage: String? = null,
 )

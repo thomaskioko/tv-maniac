@@ -1,49 +1,40 @@
 import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     id("plugin.tvmaniac.kotlin.android")
-    id("org.jetbrains.kotlin.multiplatform")
-    id("com.chromaticnoise.multiplatform-swiftpackage") version "2.0.3"
-    id("co.touchlab.skie") version "0.5.6"
+    id("plugin.tvmaniac.multiplatform")
     alias(libs.plugins.ksp)
 }
 
 version = libs.versions.shared.module.version.get()
 
 kotlin {
-
-    androidTarget()
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64(),
-    ).forEach {
-        it.binaries.framework {
-            baseName = "TvManiac"
-            isStatic = true
-            linkerOpts.add("-lsqlite3")
-            freeCompilerArgs += "-Xadd-light-debug=enable"
-
-            export(projects.navigation)
-            export(projects.core.datastore.api)
-            export(projects.presentation.discover)
-            export(projects.presentation.library)
-            export(projects.presentation.moreShows)
-            export(projects.presentation.search)
-            export(projects.presentation.seasondetails)
-            export(projects.presentation.settings)
-            export(projects.presentation.showDetails)
-            export(projects.presentation.trailers)
-
-            export(libs.decompose.decompose)
-            export(libs.essenty.lifecycle)
-        }
-    }
-
-    applyDefaultHierarchyTemplate()
-
     sourceSets {
+        targets.withType<KotlinNativeTarget>().configureEach {
+            binaries.withType<Framework> {
+                baseName = "TvManiac"
+
+                isStatic = true
+                linkerOpts.add("-lsqlite3")
+                freeCompilerArgs += "-Xadd-light-debug=enable"
+
+                export(projects.navigation)
+                export(projects.core.datastore.api)
+                export(projects.presentation.discover)
+                export(projects.presentation.library)
+                export(projects.presentation.moreShows)
+                export(projects.presentation.search)
+                export(projects.presentation.seasondetails)
+                export(projects.presentation.settings)
+                export(projects.presentation.showDetails)
+                export(projects.presentation.trailers)
+
+                export(libs.decompose.decompose)
+                export(libs.essenty.lifecycle)
+            }
+        }
         commonMain {
             dependencies {
 
@@ -121,14 +112,3 @@ ksp {
 }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
-
-multiplatformSwiftPackage {
-    packageName("TvManiac")
-    swiftToolsVersion("5.3")
-    targetPlatforms {
-        iOS { v("13") }
-    }
-
-    distributionMode { local() }
-    outputDirectory(File("$projectDir/../../", "tvmaniac-swift-packages"))
-}

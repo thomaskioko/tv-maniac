@@ -15,7 +15,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_toprated_shows_show_id` ON `toprated_sh
 -- queries
 
 insert:
-INSERT OR IGNORE INTO toprated_shows(
+INSERT OR REPLACE INTO toprated_shows(
     `id`,
     `page`
 ) VALUES (
@@ -23,9 +23,15 @@ INSERT OR IGNORE INTO toprated_shows(
     :page
 );
 
+count:
+SELECT count(*) FROM toprated_shows;
+
 topRatedShows:
 SELECT
-    *,
+    toprated_shows.id,
+    toprated_shows.page,
+    tvshows.name,
+    tvshows.poster_path,
     CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     toprated_shows
@@ -36,9 +42,12 @@ LEFT OUTER JOIN
 ORDER BY
     tvshows.popularity DESC;
 
-pagedTopRatedShows:
+topRatedShowByPage:
 SELECT
-    *,
+    toprated_shows.id,
+    toprated_shows.page,
+    tvshows.name,
+    tvshows.poster_path,
     CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     toprated_shows
@@ -48,6 +57,27 @@ LEFT OUTER JOIN
     library ON tvshows.id = library.id
 WHERE
     toprated_shows.page = :page;
+
+pagedTopRatedShows:
+SELECT
+    toprated_shows.id,
+    toprated_shows.page,
+    tvshows.name,
+    tvshows.poster_path,
+    CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    toprated_shows
+INNER JOIN
+    tvshows ON tvshows.id = toprated_shows.id
+LEFT OUTER JOIN
+    library ON tvshows.id = library.id
+ORDER BY
+    toprated_shows.page ASC
+LIMIT
+    :limit OFFSET :offset;
+
+getLastPage:
+SELECT MAX(page) FROM popular_shows;
 
 delete:
 DELETE FROM toprated_shows

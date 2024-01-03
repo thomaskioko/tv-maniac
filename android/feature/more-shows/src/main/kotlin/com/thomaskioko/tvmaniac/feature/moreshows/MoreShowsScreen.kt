@@ -1,47 +1,51 @@
 package com.thomaskioko.tvmaniac.feature.moreshows
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import app.cash.paging.LoadStateError
+import app.cash.paging.LoadStateLoading
+import app.cash.paging.compose.LazyPagingItems
+import app.cash.paging.compose.collectAsLazyPagingItems
+import app.cash.paging.compose.itemKey
 import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
-import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
-import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.presentation.moreshows.BackClicked
+import com.thomaskioko.tvmaniac.presentation.moreshows.MoreBackClicked
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsActions
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsState
 import com.thomaskioko.tvmaniac.presentation.moreshows.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.moreshows.TvShow
-import com.thomaskioko.tvmaniac.resources.R
-import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun MoreShowsScreen(
@@ -64,82 +68,110 @@ internal fun MoreShowsScreen(
     onAction: (MoreShowsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val pagedList = state.list.collectAsLazyPagingItems()
+    val snackBarHostState = remember { SnackbarHostState() }
+
     Scaffold(
+        modifier = modifier
+            .statusBarsPadding(),
         topBar = {
             TvManiacTopBar(
+                showNavigationIcon = true,
                 title = state.categoryTitle,
-                onBackClick = { onAction(BackClicked) },
+                scrollBehavior = scrollBehavior,
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                ),
+                onBackClick = { onAction(MoreBackClicked) },
             )
         },
-        modifier = Modifier,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
     ) { contentPadding ->
 
         GridContent(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(contentPadding),
             contentPadding = contentPadding,
-            list = state.list,
+            lazyPagingItems = pagedList,
+            scrollBehavior = scrollBehavior,
+            snackBarHostState = snackBarHostState,
             onItemClicked = { onAction(ShowClicked(it)) },
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalFoundationApi
 @Composable
 fun GridContent(
-    list: ImmutableList<TvShow>,
+    lazyPagingItems: LazyPagingItems<TvShow>,
+    scrollBehavior: TopAppBarScrollBehavior,
+    snackBarHostState: SnackbarHostState,
     contentPadding: PaddingValues,
     onItemClicked: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyGridState()
 
-    LazyVerticalGrid(
-        modifier = modifier,
-        state = listState,
-        columns = GridCells.Fixed(3),
-        contentPadding = contentPadding.copy(copyTop = false),
-    ) {
-        items(list) { show ->
+    LaunchedEffect(Unit) {
+        if (lazyPagingItems.loadState.append is LoadStateError) {
+            val errorMessage = (lazyPagingItems.loadState.append as LoadStateError).error.message
 
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
+            val displayMessage = "Failed to fetch data: $errorMessage"
+            snackBarHostState.showSnackbar(displayMessage)
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter,
+    ) {
+        if (lazyPagingItems.loadState.refresh == LoadStateLoading) {
+            LoadingIndicator(
                 modifier = Modifier
-                    .padding(horizontal = 2.dp),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1F)
-                        .align(Alignment.Top)
-                        .padding(2.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Column(
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center),
+            )
+        }
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            state = listState,
+            modifier = modifier
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .padding(contentPadding)
+                .padding(horizontal = 4.dp),
+        ) {
+            items(
+                count = lazyPagingItems.itemCount,
+                key = lazyPagingItems.itemKey { it.tmdbId },
+                contentType = { lazyPagingItems[it] },
+            ) { index ->
+
+                val show = lazyPagingItems[index]
+                show?.let {
+                    TvPosterCard(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .animateContentSize(),
-                    ) {
-                        Card(
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 4.dp,
-                            ),
-                            modifier = Modifier.clickable { onItemClicked(show.traktId) },
-                        ) {
-                            AsyncImageComposable(
-                                model = show.posterImageUrl,
-                                contentDescription = stringResource(
-                                    R.string.cd_show_poster,
-                                    show.title,
-                                ),
-                                modifier = Modifier
-                                    .weight(1F)
-                                    .aspectRatio(2 / 3f),
-                            )
-                        }
-                    }
+                            .animateItemPlacement(),
+                        posterImageUrl = show.posterImageUrl,
+                        title = show.title,
+                        onClick = { onItemClicked(show.tmdbId) },
+                    )
                 }
             }
+        }
+
+        if (lazyPagingItems.loadState.append == LoadStateLoading) {
+            LoadingIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.Center)
+                    .padding(24.dp),
+            )
         }
     }
 }

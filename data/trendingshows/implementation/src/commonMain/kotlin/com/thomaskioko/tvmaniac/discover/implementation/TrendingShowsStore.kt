@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.db.Trending_shows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsDao
+import com.thomaskioko.tvmaniac.discover.api.TrendingShowsParams
 import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
@@ -15,7 +16,6 @@ import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
-import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -31,9 +31,9 @@ class TrendingShowsStore(
     private val formatterUtil: FormatterUtil,
     private val dateFormatter: PlatformDateFormatter,
     private val scope: AppCoroutineScope,
-) : Store<String, List<ShowEntity>> by StoreBuilder.from(
-    fetcher = Fetcher.of { timeWindow ->
-        when (val response = tmdbRemoteDataSource.getTrendingShows(timeWindow)) {
+) : Store<TrendingShowsParams, List<ShowEntity>> by StoreBuilder.from(
+    fetcher = Fetcher.of { params: TrendingShowsParams ->
+        when (val response = tmdbRemoteDataSource.getTrendingShows(params.timeWindow)) {
             is ApiResponse.Success -> {
                 response.body.results
             }
@@ -52,19 +52,7 @@ class TrendingShowsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.Companion.of(
-        reader = { _: String ->
-            trendingShowsDao.observeTvShow()
-                .map { shows ->
-                    shows.map { show ->
-                        ShowEntity(
-                            id = show.id.id,
-                            title = show.name,
-                            posterPath = show.poster_path,
-                            inLibrary = show.in_library == 1L,
-                        )
-                    }
-                }
-        },
+        reader = { _: TrendingShowsParams -> trendingShowsDao.observeTvShow() },
         writer = { _, trendingShows ->
             trendingShows.forEach { show ->
                 tvShowsDao.upsert(
@@ -100,7 +88,7 @@ class TrendingShowsStore(
                     ),
                 )
             }
-            requestManagerRepository.insert(
+            requestManagerRepository.upsert(
                 LastRequest(
                     id = Category.TRENDING_TODAY.id,
                     entityId = Category.TRENDING_TODAY.id,

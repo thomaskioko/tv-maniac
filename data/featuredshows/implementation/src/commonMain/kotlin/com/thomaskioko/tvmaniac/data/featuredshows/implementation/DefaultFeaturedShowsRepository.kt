@@ -33,7 +33,7 @@ class DefaultFeaturedShowsRepository(
                 key = timeWindow,
                 refresh = requestManagerRepository.isRequestExpired(
                     entityId = Category.FEATURED.id,
-                    requestType = Category.FEATURED.name,
+                    requestType = timeWindow,
                     threshold = 1.days,
                 ),
             ),

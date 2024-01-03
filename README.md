@@ -122,6 +122,7 @@ tmdbApiKey: "PUT_API_KEY_HERE"
 * [Kotlinx Serialization](https://ktor.io/docs/kotlin-serialization.html) - De/Serializing JSON
 * [Ktor](https://ktor.io/) - Networking
 * [Kotest Assertions](https://kotest.io/docs/assertions/assertions.html) - Testing
+* [Multiplatform Paging](https://github.com/cashapp/multiplatform-paging) A library that adds additional Kotlin/Multiplatform targets to AndroidX Paging, and provides UI components to use Paging on iOS.
 * [SQLDelight](https://github.com/cashapp/sqldelight/) - Local storage
     - [Coroutines Extensions](https://cashapp.github.io/sqldelight/js_sqlite/coroutines/) Consume queries as Flow
 
@@ -129,7 +130,6 @@ tmdbApiKey: "PUT_API_KEY_HERE"
 ### iOS
 * [SDWebImage](https://github.com/SDWebImage/SDWebImage) - Async image downloader.
 * [OAuthSwift](https://github.com/OAuthSwift/OAuthSwift) Swift-based OAuth library for iOS and macOS.
-* [TvManiac](https://github.com/c0de-wizard/tvmaniac-swift-packages) - TvManiac SwiftPackage.
 * [ScalingHeaderScrollView](https://github.com/exyte/ScalingHeaderScrollView)
 * [Youtube PlayerKit](https://github.com/SvenTiigi/YouTubePlayerKit) - Swift Youtube Player
 
@@ -146,6 +146,7 @@ Android
 - [x] Add Seasons UI
 - [x] Implement trakt auth & sign in
 - [x] Migrate to Material3
+- [x] Implement Paging
 - [ ] Add Episode detail screen
 - [ ] Add Watchlist
 - [ ] Implement Search
@@ -168,7 +169,7 @@ Shared
 - [x] Use koin for injection
 - [x] Modularize `shared` module
 - [x] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux)
-- [ ] Fix paging
+- [x] Fix paging
 - [ ] Improve error handling.
 - [ ] Add test cases.
 

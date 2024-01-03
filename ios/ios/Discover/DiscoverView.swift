@@ -19,21 +19,20 @@ struct DiscoverView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                switch uiState {
-                case is Loading:
-                    LoadingIndicatorView()
-                        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
-                case is DataLoaded: DiscoverContent(presenter: presenter)
-                default:
-                    fatalError("Unhandled case: \(uiState)")
-                }
+        VStack {
+            switch uiState {
+            case is Loading:
+                LoadingIndicatorView()
+                    .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
+            case is DataLoaded: DiscoverContent(presenter: presenter)
+            default:
+                fatalError("Unhandled case: \(uiState)")
             }
-            .background(Color.background)
-            .toolbar {}
-            .navigationTitle("")
         }
+        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
+        .background(Color.background)
+        .toolbar {}
+        .navigationTitle("")
     }
     
     
@@ -44,49 +43,53 @@ struct DiscoverView: View {
             
             BackgroundView(tvShows: contentState.featuredShows)
             
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack {
-                        let state = contentState
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack {
+                    let state = contentState
+                    
+                    if(state.errorMessage != nil) {
+                        FullScreenView(systemName: "exclamationmark.triangle", message: state.errorMessage!)
+                    } else {
                         
-                        if(state.errorMessage != nil) {
-                            FullScreenView(systemName: "exclamationmark.triangle", message: state.errorMessage!)
-                        } else {
-                            
-                            //Featured Shows
-                            FeaturedContentView(state.featuredShows)
-                            
-                            HorizontalItemContentListView(
-                                items: state.upcomingShows,
-                                title: "Upcoming",
-                                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) }
-                            )
-                            
-                            //Trending Today
-                            HorizontalItemContentListView(
-                                items: state.trendingToday,
-                                title: "Trending Today",
-                                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) }
-                            )
-                            
-                            //Popular Shows
-                            HorizontalItemContentListView(
-                                items: state.popularShows,
-                                title: "Popular",
-                                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) }
-                            )
-                            
-                            //Top Rated Shows
-                            HorizontalItemContentListView(
-                                items: state.topRatedShows,
-                                title: "Top Rated",
-                                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) }
-                            )
-                        }
+                        //Featured Shows
+                        FeaturedContentView(state.featuredShows)
                         
-                        Spacer()
+                        HorizontalItemContentListView(
+                            items: state.upcomingShows,
+                            title: "Upcoming",
+                            onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                            onMoreClicked: { presenter.dispatch(action: LoadMoreClicked(id: 3)) }
+                        )
+                        
+                        //Trending Today
+                        HorizontalItemContentListView(
+                            items: state.trendingToday,
+                            title: "Trending Today",
+                            onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                            onMoreClicked: { presenter.dispatch(action: LoadMoreClicked(id: 4)) }
+                        )
+                        
+                        //Popular Shows
+                        HorizontalItemContentListView(
+                            items: state.popularShows,
+                            title: "Popular",
+                            onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                            onMoreClicked: { presenter.dispatch(action: LoadMoreClicked(id: 2)) }
+                        )
+                        
+                        //Top Rated Shows
+                        HorizontalItemContentListView(
+                            items: state.topRatedShows,
+                            title: "Top Rated",
+                            onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                            onMoreClicked: { presenter.dispatch(action: LoadMoreClicked(id: 1)) }
+                        )
                     }
+                    
+                    Spacer()
                 }
-         
+            }
+            
         }
         .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
         .padding(.bottom, 64)
@@ -106,7 +109,6 @@ struct DiscoverView: View {
                             show: show,
                             onClick: { id in presenter.dispatch(action: ShowClicked(id: show.tmdbId)) }
                         )
-                    
                     }
                 }
                 .edgesIgnoringSafeArea(.all)
@@ -122,7 +124,6 @@ struct DiscoverView: View {
     }
 
     
-    
     @ViewBuilder
     func BackgroundView(tvShows: [DiscoverShow]?) -> some View {
         if let shows = tvShows {
@@ -132,7 +133,7 @@ struct DiscoverView: View {
                     TabView(selection: $currentIndex) {
                         ForEach(shows.indices, id: \.self) { index in
                             TransparentImageBackground(imageUrl: shows[index].posterImageUrl)
-                            .tag(index)
+                                .tag(index)
                         }
                         
                     }

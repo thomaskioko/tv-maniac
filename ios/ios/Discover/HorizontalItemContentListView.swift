@@ -14,18 +14,16 @@ struct HorizontalItemContentListView: View {
     let title: String
     var subtitle = String()
     var onClick : (Int64) -> Void
+    var onMoreClicked : () -> Void
     
     var body: some View {
         if let items {
             if !items.isEmpty {
                 VStack {
-                    TitleView(
+                    TitleMoreView(
                         title: title,
-                        subtitle: subtitle,
-                        showChevron: true
+                        onMoreClicked: { onMoreClicked() }
                     )
-                        .padding(.leading, 8)
-                    
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack {
                             ForEach(items, id: \.tmdbId) { item in
@@ -36,14 +34,14 @@ struct HorizontalItemContentListView: View {
                                     isInLibrary: item.isInLibrary
                                 )
                                     .padding([.leading, .trailing], 2)
-                                    .padding(.leading, item.tmdbId == items.first?.tmdbId ? 16 : 0)
+                                    .padding(.leading, item.tmdbId == items.first?.tmdbId ? 10 : 0)
                                     .padding(.trailing, item.tmdbId == items.last?.tmdbId ? 8 : 0)
-                                    .padding(.vertical)
                                     .onTapGesture { onClick(item.tmdbId) }
                             }
                         }
                     }
                 }
+                .padding(.bottom)
             }
         }
     }

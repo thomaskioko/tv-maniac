@@ -15,7 +15,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_upcoming_shows_show_id` ON `upcoming_sh
 -- queries
 
 insert:
-INSERT OR IGNORE INTO upcoming_shows(
+INSERT OR REPLACE INTO upcoming_shows(
     `id`,
     `page`
 ) VALUES (
@@ -25,7 +25,10 @@ INSERT OR IGNORE INTO upcoming_shows(
 
 upcomingShows:
 SELECT
-    *,
+    upcoming_shows.id,
+    upcoming_shows.page,
+    tvshows.name,
+    tvshows.poster_path,
     CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     upcoming_shows
@@ -36,7 +39,10 @@ LEFT OUTER JOIN
 
 pagedUpcomingShows:
 SELECT
-    *,
+    upcoming_shows.id,
+    upcoming_shows.page,
+    tvshows.name,
+    tvshows.poster_path,
     CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     upcoming_shows
@@ -44,8 +50,16 @@ INNER JOIN
     tvshows ON tvshows.id = upcoming_shows.id
 LEFT OUTER JOIN
     library ON tvshows.id = library.id
-WHERE
-    upcoming_shows.page = :page;
+ORDER BY
+    upcoming_shows.page ASC
+LIMIT
+    :limit OFFSET :offset;
+
+getLastPage:
+SELECT MAX(page) FROM upcoming_shows;
+
+count:
+SELECT count(*) FROM upcoming_shows;
 
 delete:
 DELETE FROM upcoming_shows

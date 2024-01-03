@@ -1,13 +1,14 @@
 package com.thomaskioko.tvmaniac.data.upcomingshows.implementation
 
+import app.cash.paging.PagingSource
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import com.thomaskioko.tvmaniac.core.db.PagedUpcomingShows
+import app.cash.sqldelight.paging3.QueryPagingSource
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.core.db.UpcomingShows
 import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -28,19 +29,42 @@ class DefaultUpcomingShowsDao(
         }
     }
 
-    override fun upsert(list: List<Upcoming_shows>) {
-        list.forEach { upsert(it) }
-    }
-
-    override fun observeUpcomingShows(): Flow<List<UpcomingShows>> =
-        upcomingShowsQueries.upcomingShows()
+    override fun observeUpcomingShows(): Flow<List<ShowEntity>> =
+        upcomingShowsQueries.upcomingShows() { id, page, title, imageUrl, inLib ->
+            ShowEntity(
+                id = id.id,
+                page = page.id,
+                title = title,
+                posterPath = imageUrl,
+                inLibrary = inLib == 1L,
+            )
+        }
             .asFlow()
             .mapToList(dispatchers.io)
 
-    override fun observeUpcomingShows(page: Long): Flow<List<PagedUpcomingShows>> =
-        upcomingShowsQueries.pagedUpcomingShows(Id(page))
-            .asFlow()
-            .mapToList(dispatchers.io)
+    override fun getPagedUpcomingShows(): PagingSource<Int, ShowEntity> =
+        QueryPagingSource(
+            countQuery = upcomingShowsQueries.count(),
+            transacter = upcomingShowsQueries,
+            context = dispatchers.io,
+            queryProvider = { limit, offset ->
+                upcomingShowsQueries.pagedUpcomingShows(
+                    limit = limit,
+                    offset = offset,
+                ) { id, page, title, imageUrl, inLib ->
+                    ShowEntity(
+                        id = id.id,
+                        page = page.id,
+                        title = title,
+                        posterPath = imageUrl,
+                        inLibrary = inLib == 1L,
+                    )
+                }
+            },
+        )
+
+    override fun getLastPage(): Long? =
+        upcomingShowsQueries.getLastPage().executeAsOneOrNull()?.MAX?.id
 
     override fun deleteUpcomingShow(id: Long) {
         upcomingShowsQueries.delete(Id(id))

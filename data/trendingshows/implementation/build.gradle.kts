@@ -17,14 +17,10 @@ kotlin {
 
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.sqldelight.extensions)
+                implementation(libs.sqldelight.paging)
                 implementation(libs.kotlinx.atomicfu)
                 implementation(libs.store5)
             }
         }
     }
-}
-
-dependencies {
-    add("kspIosX64", libs.kotlinInject.compiler)
-    add("kspIosArm64", libs.kotlinInject.compiler)
 }

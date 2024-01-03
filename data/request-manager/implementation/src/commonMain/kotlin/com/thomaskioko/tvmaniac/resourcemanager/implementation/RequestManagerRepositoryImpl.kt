@@ -10,33 +10,18 @@ import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration
 
 @Inject
-class RequestManagerRepositoryImpl constructor(
+class RequestManagerRepositoryImpl(
     private val database: TvManiacDatabase,
 ) : RequestManagerRepository {
 
-    override fun insert(lastRequests: LastRequest): Long {
-        database.last_requestsQueries.insert(
+    override fun upsert(lastRequests: LastRequest): Long {
+        database.last_requestsQueries.upsert(
             id = lastRequests.id,
             entity_id = lastRequests.entityId,
             timestamp = lastRequests.timestamp,
             request_type = lastRequests.requestType,
         )
         return database.last_requestsQueries.lastInsertRowId().executeAsOne()
-    }
-
-    override fun update(entity: LastRequest) {
-        val request = getLastRequest(entity.requestType, entity.entityId)
-
-        when {
-            request != null ->
-                database.last_requestsQueries.update(
-                    entity_id = entity.entityId,
-                    request_type = entity.requestType,
-                    timestamp = entity.timestamp,
-                )
-
-            else -> insert(entity)
-        }
     }
 
     override fun delete(id: Long) {

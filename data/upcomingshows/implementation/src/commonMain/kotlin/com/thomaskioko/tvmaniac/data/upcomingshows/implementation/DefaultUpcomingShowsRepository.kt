@@ -1,5 +1,9 @@
 package com.thomaskioko.tvmaniac.data.upcomingshows.implementation
 
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.PagingData
+import app.cash.paging.Pager
+import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
@@ -11,18 +15,23 @@ import com.thomaskioko.tvmaniac.util.extensions.mapResult
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
+import com.thomaskioko.tvmaniac.util.paging.CommonPagingConfig.pagingConfig
+import com.thomaskioko.tvmaniac.util.paging.PaginatedRemoteMediator
 import com.thomaskioko.tvmaniac.util.startOfDay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
+import org.mobilenativefoundation.store.store5.ExperimentalStoreApi
 import org.mobilenativefoundation.store.store5.StoreReadRequest
+import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
 import kotlin.time.Duration.Companion.days
 
 @Inject
 class DefaultUpcomingShowsRepository(
-    dateFormatter: PlatformDateFormatter,
+    private val dateFormatter: PlatformDateFormatter,
     private val store: UpcomingShowsStore,
+    private val dao: UpcomingShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : UpcomingShowsRepository {
@@ -47,6 +56,29 @@ class DefaultUpcomingShowsRepository(
         )
             .mapResult()
             .flowOn(dispatchers.io)
+
+    @OptIn(ExperimentalPagingApi::class, ExperimentalStoreApi::class)
+    override fun getPagedUpcomingShows(): Flow<PagingData<ShowEntity>> {
+        return Pager(
+            config = pagingConfig,
+            remoteMediator = PaginatedRemoteMediator(
+                getLastPage = dao::getLastPage,
+                deleteLocalEntity = store::clear,
+                fetch = { page ->
+                    store.fresh(
+                        key = UpcomingParams(
+                            startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
+                            endDate = dateFormatter.formatDate(
+                                startOfDay.plus(122.days).toEpochMilliseconds(),
+                            ),
+                            page = page,
+                        ),
+                    )
+                },
+            ),
+            pagingSourceFactory = dao::getPagedUpcomingShows,
+        ).flow
+    }
 
     override suspend fun fetchUpcomingShows(): List<ShowEntity> =
         store.get(key = params)

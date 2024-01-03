@@ -24,6 +24,8 @@
 		D62F1BC82B344941004650E3 /* TransparentImageBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BC72B344941004650E3 /* TransparentImageBackground.swift */; };
 		D62F1BCB2B346336004650E3 /* RoundedProgressIndicatorStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BCA2B346336004650E3 /* RoundedProgressIndicatorStyle.swift */; };
 		D62F1BCD2B34697F004650E3 /* TopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BCC2B34697F004650E3 /* TopBar.swift */; };
+		D636CE4A2B447C9C003F7876 /* TitleMoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE492B447C9C003F7876 /* TitleMoreView.swift */; };
+		D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */; };
 		D64279562A6080A900E65755 /* ToastStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64279552A6080A900E65755 /* ToastStyle.swift */; };
 		D64279582A6080D400E65755 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64279572A6080D400E65755 /* Toast.swift */; };
 		D642795A2A6080F400E65755 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64279592A6080F400E65755 /* ToastView.swift */; };
@@ -54,7 +56,6 @@
 		D67761982B1D458B00537DD5 /* StackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67761972B1D458B00537DD5 /* StackView.swift */; };
 		D677619A2B1D4BA200537DD5 /* EmptyUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67761992B1D4BA200537DD5 /* EmptyUIView.swift */; };
 		D696FD2E2B33522D00CA1B98 /* HorizontalShowsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D696FD2D2B33522D00CA1B98 /* HorizontalShowsListView.swift */; };
-		D696FD312B33685100CA1B98 /* TvManiac in Frameworks */ = {isa = PBXBuildFile; productRef = D696FD302B33685100CA1B98 /* TvManiac */; };
 		D6C263322B323CEC00179CDF /* ProvidersList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C263312B323CEC00179CDF /* ProvidersList.swift */; };
 		D6CF9E312B31FFBF00A1AD00 /* ScalingHeaderScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = D6CF9E302B31FFBF00A1AD00 /* ScalingHeaderScrollView */; };
 		D6CF9E332B32021300A1AD00 /* CircleButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CF9E322B32021300A1AD00 /* CircleButtonStyle.swift */; };
@@ -86,6 +87,19 @@
 		E9CD0B2527AC7D140021516B /* PrintExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CD0B2427AC7D140021516B /* PrintExtension.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		7555FFB4242A642300829871 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,6 +119,8 @@
 		D62F1BC72B344941004650E3 /* TransparentImageBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransparentImageBackground.swift; sourceTree = "<group>"; };
 		D62F1BCA2B346336004650E3 /* RoundedProgressIndicatorStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedProgressIndicatorStyle.swift; sourceTree = "<group>"; };
 		D62F1BCC2B34697F004650E3 /* TopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopBar.swift; sourceTree = "<group>"; };
+		D636CE492B447C9C003F7876 /* TitleMoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleMoreView.swift; sourceTree = "<group>"; };
+		D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreShowsView.swift; sourceTree = "<group>"; };
 		D64279552A6080A900E65755 /* ToastStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastStyle.swift; sourceTree = "<group>"; };
 		D64279572A6080D400E65755 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		D64279592A6080F400E65755 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
@@ -118,7 +134,6 @@
 		D653925C29DAC89D000EE673 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		D653925F29DAC949000EE673 /* AuthenticatedProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatedProfileView.swift; sourceTree = "<group>"; };
 		D653926A29DAD8FA000EE673 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
-		D65569D52B31A481005F9F37 /* TvManiac.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = TvManiac.xcframework; path = "../../tvmaniac-swift-packages/TvManiac.xcframework"; sourceTree = "<group>"; };
 		D65569D82B31B453005F9F37 /* HorizontalItemContentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalItemContentListView.swift; sourceTree = "<group>"; };
 		D65569DA2B31B481005F9F37 /* PosterItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterItemView.swift; sourceTree = "<group>"; };
 		D65569DE2B31B6C1005F9F37 /* PosterPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterPlaceholder.swift; sourceTree = "<group>"; };
@@ -169,7 +184,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D696FD312B33685100CA1B98 /* TvManiac in Frameworks */,
 				D65569DD2B31B54A005F9F37 /* SDWebImageSwiftUI in Frameworks */,
 				D61A65592B32EE5000112590 /* YouTubePlayerKit in Frameworks */,
 				D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */,
@@ -242,6 +256,14 @@
 				D61467612B3493B60071647C /* EpisodeItemView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		D636CE4B2B44878F003F7876 /* MoreShows */ = {
+			isa = PBXGroup;
+			children = (
+				D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */,
+			);
+			path = MoreShows;
 			sourceTree = "<group>";
 		};
 		D64279522A607F7600E65755 /* Toast */ = {
@@ -343,14 +365,15 @@
 			children = (
 				D6C263342B32421900179CDF /* Casts */,
 				E9B686942787377A001698B7 /* Components */,
-				E983819927936D8E0039CB08 /* ShowDetails */,
 				E9B6869027873707001698B7 /* Discover */,
 				E9B6869227873747001698B7 /* Library */,
+				D636CE4B2B44878F003F7876 /* MoreShows */,
 				D6C263302B323CD300179CDF /* Providers */,
 				D667A42E2B23DC0E009C951E /* Root */,
 				E9B6869127873738001698B7 /* Search */,
 				D62F1BC42B344313004650E3 /* SeasonDetails */,
 				D68FFDDF2B211690001EB447 /* Settings */,
+				E983819927936D8E0039CB08 /* ShowDetails */,
 				D6C263332B32413600179CDF /* Trailers */,
 			);
 			name = View;
@@ -369,6 +392,7 @@
 			children = (
 				D65569E22B31C78D005F9F37 /* FeaturedContentPosterView.swift */,
 				E98381E027943F940039CB08 /* SnapCarousel.swift */,
+				D636CE492B447C9C003F7876 /* TitleMoreView.swift */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -442,7 +466,6 @@
 		E9B6866E27871C99001698B7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D65569D52B31A481005F9F37 /* TvManiac.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -509,9 +532,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7555FFA5242A565B00829871 /* Build configuration list for PBXNativeTarget "tv-maniac" */;
 			buildPhases = (
+				D636CE472B4423CE003F7876 /* ShellScript */,
 				7555FF77242A565900829871 /* Sources */,
-				7555FF79242A565900829871 /* Resources */,
 				9E9525AE31530CCB1C932286 /* Frameworks */,
+				7555FF79242A565900829871 /* Resources */,
+				7555FFB4242A642300829871 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -523,7 +548,6 @@
 				D65569DC2B31B54A005F9F37 /* SDWebImageSwiftUI */,
 				D6CF9E302B31FFBF00A1AD00 /* ScalingHeaderScrollView */,
 				D61A65582B32EE5000112590 /* YouTubePlayerKit */,
-				D696FD302B33685100CA1B98 /* TvManiac */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -559,7 +583,6 @@
 				D68666B12B1E7F2E00D6D334 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				D6CF9E2F2B31FFBF00A1AD00 /* XCRemoteSwiftPackageReference "ScalingHeaderScrollView" */,
 				D61A65572B32EE5000112590 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
-				D696FD2F2B33685100CA1B98 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -594,6 +617,26 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		D636CE472B4423CE003F7876 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		7555FF77242A565900829871 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -607,6 +650,7 @@
 				D653925329DABCEA000EE673 /* ConfigLoader.swift in Sources */,
 				D61A65632B330CC100112590 /* CastListView.swift in Sources */,
 				D6CF9E332B32021300A1AD00 /* CircleButtonStyle.swift in Sources */,
+				D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */,
 				D6DC9DA42B34B27300768065 /* ImageGalleryContentView.swift in Sources */,
 				E989E1162940E78E00C01A39 /* SettingsView.swift in Sources */,
 				D61A655B2B32F0A500112590 /* TrailerItemView.swift in Sources */,
@@ -625,6 +669,7 @@
 				D67761982B1D458B00537DD5 /* StackView.swift in Sources */,
 				E983819227936BB10039CB08 /* BorderedButton.swift in Sources */,
 				E90392C129197BDF00B9CAF0 /* FullScreenView.swift in Sources */,
+				D636CE4A2B447C9C003F7876 /* TitleMoreView.swift in Sources */,
 				E989E1182940EAB300C01A39 /* ThemeUtilities.swift in Sources */,
 				D64279582A6080D400E65755 /* Toast.swift in Sources */,
 				D67761902B1CF28A00537DD5 /* ObservableValue.swift in Sources */,
@@ -701,6 +746,8 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -719,6 +766,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -763,6 +811,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -774,6 +823,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -784,6 +834,7 @@
 		7555FFA6242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(EMBEDDED_CONTENT_CONTAINS_SWIFT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -792,7 +843,10 @@
 				DEVELOPMENT_TEAM = 2M53227BD2;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
 				INFOPLIST_FILE = ios/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TvManiac;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -801,6 +855,8 @@
 					"$(inherited)",
 					"-ObjC",
 					"-l\"c++\"",
+					"-framework",
+					TvManiac,
 					"-lsqlite3",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.thomaskioko.tvmaniac;
@@ -817,6 +873,7 @@
 		7555FFA7242A565B00829871 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(EMBEDDED_CONTENT_CONTAINS_SWIFT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -825,7 +882,11 @@
 				DEVELOPMENT_TEAM = 2M53227BD2;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
+				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "";
 				INFOPLIST_FILE = ios/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TvManiac;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -834,6 +895,8 @@
 					"$(inherited)",
 					"-ObjC",
 					"-l\"c++\"",
+					"-framework",
+					TvManiac,
 					"-lsqlite3",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.thomaskioko.tvmaniac;
@@ -895,14 +958,6 @@
 				minimumVersion = 2.2.5;
 			};
 		};
-		D696FD2F2B33685100CA1B98 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/thomaskioko/tvmaniac-swift-packages";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.10.0;
-			};
-		};
 		D6CF9E2F2B31FFBF00A1AD00 /* XCRemoteSwiftPackageReference "ScalingHeaderScrollView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/exyte/ScalingHeaderScrollView.git";
@@ -936,11 +991,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D68666B12B1E7F2E00D6D334 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
-		};
-		D696FD302B33685100CA1B98 /* TvManiac */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D696FD2F2B33685100CA1B98 /* XCRemoteSwiftPackageReference "tvmaniac-swift-packages" */;
-			productName = TvManiac;
 		};
 		D6CF9E302B31FFBF00A1AD00 /* ScalingHeaderScrollView */ = {
 			isa = XCSwiftPackageProductDependency;

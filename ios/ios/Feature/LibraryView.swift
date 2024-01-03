@@ -102,14 +102,21 @@ struct LibraryView: View {
     
     @ViewBuilder
     private var empty: some View {
-        ContentUnavailableView(
-            "Your stash is empty.",
-            systemImage: "rectangle.on.rectangle"
-        )
+        if #available(iOS 17.0, *) {
+            ContentUnavailableView(
+                "Your stash is empty.",
+                systemImage: "rectangle.on.rectangle"
+            )
             .padding()
             .multilineTextAlignment(.center)
             .font(.callout)
             .foregroundColor(.secondary)
+        } else {
+            FullScreenView(
+                systemName: "rectangle.on.rectangle",
+                message: "Your stash is empty."
+            )
+        }
     }
 }
 
