@@ -29,10 +29,7 @@ struct DiscoverView: View {
                 fatalError("Unhandled case: \(uiState)")
             }
         }
-        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
-        .background(Color.background)
-        .toolbar {}
-        .navigationTitle("")
+    
     }
     
     
@@ -41,58 +38,52 @@ struct DiscoverView: View {
         ZStack {
             let contentState = uiState as! DataLoaded
             
-            BackgroundView(tvShows: contentState.featuredShows)
+            BackgroundView(contentState.featuredShows)
             
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack {
-                    let state = contentState
+            ScrollView(showsIndicators: false) {
+                
+                let state = contentState
+                
+                if(state.errorMessage != nil) {
+                    FullScreenView(systemName: "exclamationmark.triangle", message: state.errorMessage!)
+                } else {
                     
-                    if(state.errorMessage != nil) {
-                        FullScreenView(systemName: "exclamationmark.triangle", message: state.errorMessage!)
-                    } else {
-                        
-                        //Featured Shows
-                        FeaturedContentView(state.featuredShows)
-                        
-                        HorizontalItemContentListView(
-                            items: state.upcomingShows,
-                            title: "Upcoming",
-                            onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                            onMoreClicked: { presenter.dispatch(action: LoadMoreClicked(id: 3)) }
-                        )
-                        
-                        //Trending Today
-                        HorizontalItemContentListView(
-                            items: state.trendingToday,
-                            title: "Trending Today",
-                            onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                            onMoreClicked: { presenter.dispatch(action: LoadMoreClicked(id: 4)) }
-                        )
-                        
-                        //Popular Shows
-                        HorizontalItemContentListView(
-                            items: state.popularShows,
-                            title: "Popular",
-                            onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                            onMoreClicked: { presenter.dispatch(action: LoadMoreClicked(id: 2)) }
-                        )
-                        
-                        //Top Rated Shows
-                        HorizontalItemContentListView(
-                            items: state.topRatedShows,
-                            title: "Top Rated",
-                            onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                            onMoreClicked: { presenter.dispatch(action: LoadMoreClicked(id: 1)) }
-                        )
-                    }
+                    FeaturedContentView(state.featuredShows)
                     
-                    Spacer()
+                    HorizontalItemContentListView(
+                        items: state.upcomingShows,
+                        title: "Upcoming",
+                        onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                        onMoreClicked: { presenter.dispatch(action: UpComingClicked()) }
+                    )
+                    
+                    HorizontalItemContentListView(
+                        items: state.trendingToday,
+                        title: "Trending Today",
+                        onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                        onMoreClicked: { presenter.dispatch(action: TrendingClicked()) }
+                    )
+                    
+                    HorizontalItemContentListView(
+                        items: state.popularShows,
+                        title: "Popular",
+                        onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                        onMoreClicked: { presenter.dispatch(action: PopularClicked()) }
+                    )
+                    
+                    HorizontalItemContentListView(
+                        items: state.topRatedShows,
+                        title: "Top Rated",
+                        onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                        onMoreClicked: { presenter.dispatch(action: TopRatedClicked()) }
+                    )
                 }
             }
-            
         }
-        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
-        .padding(.bottom, 64)
+        
+        
+        
+        
         
     }
     
@@ -122,10 +113,9 @@ struct DiscoverView: View {
             }
         }
     }
-
-    
+        
     @ViewBuilder
-    func BackgroundView(tvShows: [DiscoverShow]?) -> some View {
+    func BackgroundView(_ tvShows: [DiscoverShow]?) -> some View {
         if let shows = tvShows {
             if !shows.isEmpty {
                 GeometryReader { proxy in

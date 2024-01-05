@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsRepository
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
+import com.thomaskioko.tvmaniac.shows.api.Category
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
 import com.thomaskioko.tvmaniac.util.decompose.asValue
 import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
@@ -51,9 +52,7 @@ class DiscoverShowsPresenter(
 
     fun dispatch(action: DiscoverShowAction) {
         when (action) {
-            is LoadMoreClicked -> onNavigateToMore(action.id)
             is ShowClicked -> onNavigateToShowDetails(action.id)
-            is ReloadCategory -> coroutineScope.launch { reloadCategory(action.categoryId) }
             RetryLoading -> coroutineScope.launch { fetchShowData() }
             SnackBarDismissed -> coroutineScope.launch {
                 _state.update { state ->
@@ -62,6 +61,10 @@ class DiscoverShowsPresenter(
                     ) ?: state
                 }
             }
+            PopularClicked -> onNavigateToMore(Category.POPULAR.id)
+            TopRatedClicked -> onNavigateToMore(Category.TOP_RATED.id)
+            TrendingClicked -> onNavigateToMore(Category.TRENDING_TODAY.id)
+            UpComingClicked -> onNavigateToMore(Category.UPCOMING.id)
         }
     }
 
@@ -81,10 +84,6 @@ class DiscoverShowsPresenter(
                 trendingToday = trendingShows.toShowList(),
             )
         }
-    }
-
-    private fun reloadCategory(categoryId: Long) {
-        // TODO:: Implementation
     }
 
     private suspend fun observeShowData() {

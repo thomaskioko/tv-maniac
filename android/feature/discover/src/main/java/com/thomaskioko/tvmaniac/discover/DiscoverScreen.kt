@@ -70,11 +70,14 @@ import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowAction
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
-import com.thomaskioko.tvmaniac.presentation.discover.LoadMoreClicked
 import com.thomaskioko.tvmaniac.presentation.discover.Loading
+import com.thomaskioko.tvmaniac.presentation.discover.PopularClicked
 import com.thomaskioko.tvmaniac.presentation.discover.RetryLoading
 import com.thomaskioko.tvmaniac.presentation.discover.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.discover.SnackBarDismissed
+import com.thomaskioko.tvmaniac.presentation.discover.TopRatedClicked
+import com.thomaskioko.tvmaniac.presentation.discover.TrendingClicked
+import com.thomaskioko.tvmaniac.presentation.discover.UpComingClicked
 import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
@@ -89,9 +92,10 @@ fun DiscoverScreen(
     modifier: Modifier = Modifier,
 ) {
     val discoverState by discoverShowsPresenter.state.subscribeAsState()
-    val pagerState = rememberPagerState(pageCount = {
-        (discoverState as? DataLoaded)?.featuredShows?.size ?: 0
-    })
+    val pagerState = rememberPagerState(
+        initialPage = 2,
+        pageCount = { (discoverState as? DataLoaded)?.featuredShows?.size ?: 0 }
+    )
     val snackBarHostState = remember { SnackbarHostState() }
 
     DiscoverScreen(
@@ -191,7 +195,7 @@ private fun DiscoverScrollContent(
                     category = stringResource(id = R.string.title_category_upcoming),
                     tvShows = upcomingShows,
                     onItemClicked = { onAction(ShowClicked(it)) },
-                    onMoreClicked = { onAction(LoadMoreClicked(3)) },
+                    onMoreClicked = { onAction(UpComingClicked) },
                 )
             }
 
@@ -200,7 +204,7 @@ private fun DiscoverScrollContent(
                     category = stringResource(id = R.string.title_category_trending_today),
                     tvShows = trendingToday,
                     onItemClicked = { onAction(ShowClicked(it)) },
-                    onMoreClicked = { onAction(LoadMoreClicked(4)) },
+                    onMoreClicked = { onAction(TrendingClicked) },
                 )
             }
 
@@ -209,7 +213,7 @@ private fun DiscoverScrollContent(
                     category = stringResource(id = R.string.title_category_popular),
                     tvShows = popularShows,
                     onItemClicked = { onAction(ShowClicked(it)) },
-                    onMoreClicked = { onAction(LoadMoreClicked(2)) },
+                    onMoreClicked = { onAction(PopularClicked) },
                 )
             }
 
@@ -218,7 +222,7 @@ private fun DiscoverScrollContent(
                     category = stringResource(id = R.string.title_category_top_rated),
                     tvShows = topRatedShows,
                     onItemClicked = { onAction(ShowClicked(it)) },
-                    onMoreClicked = { onAction(LoadMoreClicked(1)) },
+                    onMoreClicked = { onAction(TopRatedClicked) },
                 )
             }
         }
@@ -317,9 +321,9 @@ fun HorizontalPagerItem(
                 modifier = Modifier
                     .graphicsLayer {
                         val pageOffset = (
-                            (pagerState.currentPage - pageNumber) + pagerState
-                                .currentPageOffsetFraction
-                            ).absoluteValue
+                                (pagerState.currentPage - pageNumber) + pagerState
+                                    .currentPageOffsetFraction
+                                ).absoluteValue
 
                         // We animate the scaleX + scaleY, between 85% and 100%
                         lerp(
