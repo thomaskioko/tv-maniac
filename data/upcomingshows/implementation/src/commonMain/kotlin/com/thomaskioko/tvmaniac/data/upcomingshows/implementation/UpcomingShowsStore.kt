@@ -4,9 +4,8 @@ import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
@@ -86,12 +85,9 @@ class UpcomingShowsStore(
                 )
             }
 
-            requestManagerRepository.upsert(
-                LastRequest(
-                    id = Category.UPCOMING.id,
-                    entityId = params.page,
-                    requestType = Category.UPCOMING.name,
-                ),
+            requestManagerRepository.insert(
+                entityId = params.page,
+                requestType = UPCOMING_SHOWS.name,
             )
         },
     ),

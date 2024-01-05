@@ -5,8 +5,8 @@ import com.thomaskioko.tvmaniac.core.db.Episode
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
-import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SEASON_DETAILS
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
@@ -92,12 +92,9 @@ class SeasonDetailsStore(
             }
 
             // Update Last Request
-            requestManagerRepository.upsert(
-                LastRequest(
-                    id = params.showId,
-                    entityId = params.seasonId,
-                    requestType = "SEASON_DETAILS",
-                ),
+            requestManagerRepository.insert(
+                entityId = params.seasonId,
+                requestType = SEASON_DETAILS.name,
             )
         },
         delete = { params: SeasonDetailsParam -> seasonDetailsDao.delete(params.seasonId) },

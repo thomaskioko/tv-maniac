@@ -4,7 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import app.cash.paging.Pager
 import app.cash.paging.PagingData
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TOP_RATED_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsDao
@@ -22,7 +22,6 @@ import org.mobilenativefoundation.store.store5.ExperimentalStoreApi
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
-import kotlin.time.Duration.Companion.days
 
 @Inject
 class DefaultTopRatedShowsRepository(
@@ -41,8 +40,8 @@ class DefaultTopRatedShowsRepository(
                 key = DEFAULT_API_PAGE,
                 refresh = requestManagerRepository.isRequestExpired(
                     entityId = DEFAULT_API_PAGE,
-                    requestType = Category.TOP_RATED.name,
-                    threshold = 3.days,
+                    requestType = TOP_RATED_SHOWS.name,
+                    threshold = TOP_RATED_SHOWS.duration,
                 ),
             ),
         )

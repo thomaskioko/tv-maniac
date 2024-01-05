@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.similar.implementation
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SIMILAR_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
@@ -87,12 +87,9 @@ class SimilarShowStore(
                 )
             }
 
-            requestManagerRepository.upsert(
-                LastRequest(
-                    id = param.showId,
-                    entityId = param.page,
-                    requestType = "SIMILAR_SHOWS",
-                ),
+            requestManagerRepository.insert(
+                entityId = param.showId,
+                requestType = SIMILAR_SHOWS.name,
             )
         },
         delete = { param -> similarShowsDao.delete(param.showId) },

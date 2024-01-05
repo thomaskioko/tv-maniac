@@ -6,7 +6,7 @@ import app.cash.paging.PagingData
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsDao
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.POPULAR_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.util.extensions.mapResult
@@ -22,7 +22,6 @@ import org.mobilenativefoundation.store.store5.ExperimentalStoreApi
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
-import kotlin.time.Duration.Companion.days
 
 @Inject
 class DefaultPopularShowsRepository(
@@ -41,8 +40,8 @@ class DefaultPopularShowsRepository(
                 key = DEFAULT_API_PAGE,
                 refresh = requestManagerRepository.isRequestExpired(
                     entityId = DEFAULT_API_PAGE,
-                    requestType = Category.POPULAR.name,
-                    threshold = 3.days,
+                    requestType = POPULAR_SHOWS.name,
+                    threshold = POPULAR_SHOWS.duration,
                 ),
             ),
         )

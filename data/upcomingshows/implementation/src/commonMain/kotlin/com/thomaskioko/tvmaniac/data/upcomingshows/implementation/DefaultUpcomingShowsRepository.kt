@@ -6,7 +6,7 @@ import app.cash.paging.Pager
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_SORT_ORDER
@@ -43,14 +43,17 @@ class DefaultUpcomingShowsRepository(
         page = DEFAULT_API_PAGE,
     )
 
+    override suspend fun fetchUpcomingShows(): List<ShowEntity> =
+        store.get(key = params)
+
     override fun observeUpcomingShows(): Flow<Either<Failure, List<ShowEntity>>> =
         store.stream(
             StoreReadRequest.cached(
                 key = params,
                 refresh = requestManagerRepository.isRequestExpired(
                     entityId = params.page,
-                    requestType = Category.UPCOMING.name,
-                    threshold = 3.days,
+                    requestType = UPCOMING_SHOWS.name,
+                    threshold = UPCOMING_SHOWS.duration,
                 ),
             ),
         )
@@ -79,9 +82,6 @@ class DefaultUpcomingShowsRepository(
             pagingSourceFactory = dao::getPagedUpcomingShows,
         ).flow
     }
-
-    override suspend fun fetchUpcomingShows(): List<ShowEntity> =
-        store.get(key = params)
 }
 
 data class UpcomingParams(

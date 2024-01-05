@@ -5,8 +5,8 @@ import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsDao
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsParams
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.RECOMMENDED_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.util.FormatterUtil
@@ -42,7 +42,10 @@ class RecommendedShowStore(
             }
 
             is ApiResponse.Error.HttpError -> {
-                logger.error("SimilarShowStore HttpError", "${apiResult.code} - ${apiResult.errorBody}")
+                logger.error(
+                    "SimilarShowStore HttpError",
+                    "${apiResult.code} - ${apiResult.errorBody}",
+                )
                 throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
             }
 
@@ -53,7 +56,11 @@ class RecommendedShowStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of(
-        reader = { param: RecommendedShowsParams -> recommendedShowsDao.observeRecommendedShows(param.showId) },
+        reader = { param: RecommendedShowsParams ->
+            recommendedShowsDao.observeRecommendedShows(
+                param.showId,
+            )
+        },
         writer = { param: RecommendedShowsParams, response ->
             response.results.forEach { show ->
                 tvShowsDao.upsert(
@@ -88,12 +95,9 @@ class RecommendedShowStore(
                 )
             }
 
-            requestManagerRepository.upsert(
-                LastRequest(
-                    id = param.showId,
-                    entityId = param.page,
-                    requestType = "RECOMMENDED_SHOWS",
-                ),
+            requestManagerRepository.insert(
+                entityId = param.showId,
+                requestType = RECOMMENDED_SHOWS.name,
             )
         },
         delete = { param -> recommendedShowsDao.delete(param.showId) },

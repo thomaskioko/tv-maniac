@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.data.watchproviders.implementation
 import com.thomaskioko.tvmaniac.core.db.WatchProviders
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCH_PROVIDERS
 import com.thomaskioko.tvmaniac.util.extensions.mapResult
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.model.Either
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.get
-import kotlin.time.Duration.Companion.days
 
 @Inject
 class DefaultWatchProviderRepository(
@@ -29,8 +29,8 @@ class DefaultWatchProviderRepository(
                 key = id,
                 refresh = requestManagerRepository.isRequestExpired(
                     entityId = id,
-                    requestType = "WATCH_PROVIDERS",
-                    threshold = 3.days,
+                    requestType = WATCH_PROVIDERS.name,
+                    threshold = WATCH_PROVIDERS.duration,
                 ),
             ),
         )

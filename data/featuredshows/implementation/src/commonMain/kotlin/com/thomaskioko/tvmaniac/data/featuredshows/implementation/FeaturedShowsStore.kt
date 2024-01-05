@@ -5,9 +5,8 @@ import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.FEATURED_SHOWS_TODAY
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
@@ -44,7 +43,7 @@ class FeaturedShowsStore(
     },
     sourceOfTruth = SourceOfTruth.Companion.of(
         reader = { _: String -> featuredShowsDao.observeFeaturedShows() },
-        writer = { timeWindow, shows ->
+        writer = { _, shows ->
             databaseTransactionRunner {
                 tvShowsDao.deleteTvShows()
                 shows
@@ -84,12 +83,9 @@ class FeaturedShowsStore(
                         )
                     }
 
-                requestManagerRepository.upsert(
-                    LastRequest(
-                        id = Category.FEATURED.id,
-                        entityId = Category.FEATURED.id,
-                        requestType = timeWindow,
-                    ),
+                requestManagerRepository.insert(
+                    entityId = FEATURED_SHOWS_TODAY.requestId,
+                    requestType = FEATURED_SHOWS_TODAY.name,
                 )
             }
         },

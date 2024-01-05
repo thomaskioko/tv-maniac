@@ -9,6 +9,6 @@ interface RequestManagerComponent {
     @ApplicationScope
     @Provides
     fun provideRequestManagerRepository(
-        bind: RequestManagerRepositoryImpl,
+        bind: DefaultRequestManagerRepository,
     ): RequestManagerRepository = bind
 }

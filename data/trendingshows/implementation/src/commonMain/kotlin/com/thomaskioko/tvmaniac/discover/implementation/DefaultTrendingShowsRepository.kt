@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.discover.api.TrendingShowsDao
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsParams
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.shows.api.Category
 import com.thomaskioko.tvmaniac.shows.api.DEFAULT_DAY_TIME_WINDOW
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
@@ -50,8 +49,8 @@ class DefaultTrendingShowsRepository(
                     page = DEFAULT_API_PAGE,
                 ),
                 refresh = requestManagerRepository.isRequestExpired(
-                    entityId = Category.TRENDING_TODAY.id,
-                    requestType = Category.TRENDING_TODAY.name,
+                    entityId = DEFAULT_API_PAGE,
+                    requestType = DEFAULT_DAY_TIME_WINDOW,
                     threshold = 1.days,
                 ),
             ),
