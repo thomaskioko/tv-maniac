@@ -65,7 +65,6 @@ struct ShowDetailView: View {
             .collapseProgress($progress)
             .allowsHeaderGrowth()
             .hideScrollIndicators()
-            .background(Color.background)
             .shadow(radius: progress)
             
             TopBar(onBackClicked: { presenter.dispatch(action: DetailBackClicked()) })

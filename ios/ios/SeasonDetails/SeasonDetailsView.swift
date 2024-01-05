@@ -52,7 +52,6 @@ struct SeasonDetailsView: View {
             TopBar(onBackClicked: { presenter.dispatch(action: SeasonDetailsBackClicked()) })
         }
         .ignoresSafeArea()
-        .background(Color.background)
         .sheet(isPresented: $showModal) {
             ImageGalleryContentView(items: uiState.seasonImages)
         }
