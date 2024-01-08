@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import org.mobilenativefoundation.store.store5.StoreReadResponse
@@ -19,3 +20,7 @@ fun <T> Flow<StoreReadResponse<T>>.mapResult(): Flow<Either<Failure, T>> =
                 else -> flowOf(Either.Right(data))
             }
         }
+
+fun <T> Flow<StoreReadResponse<T>>.filterForResult(): Flow<StoreReadResponse<T>> = filterNot {
+    it is StoreReadResponse.Loading || it is StoreReadResponse.NoNewData
+}
