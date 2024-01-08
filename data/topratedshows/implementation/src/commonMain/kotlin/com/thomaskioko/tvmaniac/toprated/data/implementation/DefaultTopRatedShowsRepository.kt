@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsDao
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
+import com.thomaskioko.tvmaniac.util.extensions.filterForResult
 import com.thomaskioko.tvmaniac.util.extensions.mapResult
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.model.Either
@@ -16,10 +17,12 @@ import com.thomaskioko.tvmaniac.util.model.Failure
 import com.thomaskioko.tvmaniac.util.paging.CommonPagingConfig.pagingConfig
 import com.thomaskioko.tvmaniac.util.paging.PaginatedRemoteMediator
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.ExperimentalStoreApi
 import org.mobilenativefoundation.store.store5.StoreReadRequest
+import org.mobilenativefoundation.store.store5.StoreReadRequest.Companion.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
 
@@ -31,8 +34,18 @@ class DefaultTopRatedShowsRepository(
     private val dispatchers: AppCoroutineDispatchers,
 ) : TopRatedShowsRepository {
 
-    override suspend fun fetchTopRatedShows(): List<ShowEntity> =
-        store.get(key = DEFAULT_API_PAGE)
+    override suspend fun fetchTopRatedShows(
+        forceRefresh: Boolean,
+    ): List<ShowEntity> {
+        return if (forceRefresh) {
+            store.stream(fresh(key = DEFAULT_API_PAGE))
+                .filterForResult()
+                .first()
+                .dataOrNull() ?: getShows()
+        } else {
+            getShows()
+        }
+    }
 
     override fun observeTopRatedShows(): Flow<Either<Failure, List<ShowEntity>>> =
         store.stream(
@@ -60,4 +73,6 @@ class DefaultTopRatedShowsRepository(
             pagingSourceFactory = dao::getPagedTopRatedShows,
         ).flow
     }
+
+    private suspend fun getShows(): List<ShowEntity> = store.get(key = DEFAULT_API_PAGE)
 }

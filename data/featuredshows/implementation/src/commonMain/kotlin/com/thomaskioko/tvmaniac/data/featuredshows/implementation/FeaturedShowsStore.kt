@@ -45,7 +45,7 @@ class FeaturedShowsStore(
         reader = { _: String -> featuredShowsDao.observeFeaturedShows() },
         writer = { _, shows ->
             databaseTransactionRunner {
-                tvShowsDao.deleteTvShows()
+                featuredShowsDao.deleteFeaturedShows()
                 shows
                     .shuffled()
                     .take(FEATURED_SHOWS_COUNT)

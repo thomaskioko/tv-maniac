@@ -14,6 +14,6 @@ interface SimilarShowsComponent {
     @ApplicationScope
     @Provides
     fun provideSimilarShowsRepository(
-        bind: DefaultSimilarShowsRepository
+        bind: DefaultSimilarShowsRepository,
     ): SimilarShowsRepository = bind
 }

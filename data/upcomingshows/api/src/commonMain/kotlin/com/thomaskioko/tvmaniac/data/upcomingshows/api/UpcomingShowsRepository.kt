@@ -7,7 +7,9 @@ import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface UpcomingShowsRepository {
-    suspend fun fetchUpcomingShows(): List<ShowEntity>
+    suspend fun fetchUpcomingShows(
+        forceRefresh: Boolean = false,
+    ): List<ShowEntity>
     fun observeUpcomingShows(): Flow<Either<Failure, List<ShowEntity>>>
     fun getPagedUpcomingShows(): Flow<PagingData<ShowEntity>>
 }

@@ -7,7 +7,9 @@ import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface TopRatedShowsRepository {
-    suspend fun fetchTopRatedShows(): List<ShowEntity>
+    suspend fun fetchTopRatedShows(
+        forceRefresh: Boolean = false,
+    ): List<ShowEntity>
     fun observeTopRatedShows(): Flow<Either<Failure, List<ShowEntity>>>
     fun getPagedTopRatedShows(): Flow<PagingData<ShowEntity>>
 }
