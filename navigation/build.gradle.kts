@@ -19,7 +19,6 @@ kotlin {
             implementation(projects.android.feature.showDetails)
             implementation(projects.android.feature.trailers)
 
-            implementation(libs.androidx.compose.material.icons)
             implementation(libs.androidx.compose.material3)
             implementation(libs.decompose.extensions.compose)
         }
