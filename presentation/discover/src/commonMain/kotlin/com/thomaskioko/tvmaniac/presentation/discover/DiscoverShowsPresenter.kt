@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
 import com.thomaskioko.tvmaniac.util.decompose.asValue
 import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
@@ -44,16 +45,26 @@ class DiscoverShowsPresenter(
         .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     init {
-        coroutineScope.launch {
-            fetchShowData()
-            observeShowData()
-        }
+        fetchContent()
     }
 
     fun dispatch(action: DiscoverShowAction) {
         when (action) {
             is ShowClicked -> onNavigateToShowDetails(action.id)
-            RetryLoading -> coroutineScope.launch { fetchShowData() }
+            PopularClicked -> onNavigateToMore(Category.POPULAR.id)
+            TopRatedClicked -> onNavigateToMore(Category.TOP_RATED.id)
+            TrendingClicked -> onNavigateToMore(Category.TRENDING_TODAY.id)
+            UpComingClicked -> onNavigateToMore(Category.UPCOMING.id)
+            RefreshData -> coroutineScope.launch {
+                _state.update {
+                    (it as? DataLoaded)?.copy(isRefreshing = true) ?: it
+                }
+                fetchShowData(true)
+            }
+            ReloadData -> coroutineScope.launch {
+                _state.update { Loading }
+                fetchShowData(true)
+            }
             SnackBarDismissed -> coroutineScope.launch {
                 _state.update { state ->
                     (state as? DataLoaded)?.copy(
@@ -61,19 +72,26 @@ class DiscoverShowsPresenter(
                     ) ?: state
                 }
             }
-            PopularClicked -> onNavigateToMore(Category.POPULAR.id)
-            TopRatedClicked -> onNavigateToMore(Category.TOP_RATED.id)
-            TrendingClicked -> onNavigateToMore(Category.TRENDING_TODAY.id)
-            UpComingClicked -> onNavigateToMore(Category.UPCOMING.id)
         }
     }
 
-    private suspend fun fetchShowData() {
-        val topRatedResponse = topRatedShowsRepository.fetchTopRatedShows()
-        val popularResponse = popularShowsRepository.fetchPopularShows()
-        val upcomingResponse = upcomingShowsRepository.fetchUpcomingShows()
-        val featuredResponse = featuredShowsRepository.fetchFeaturedTrendingShows()
-        val trendingShows = trendingShowsRepository.fetchTrendingShows()
+    private fun fetchContent() {
+        coroutineScope.launch {
+            fetchShowData()
+            observeShowData()
+        }
+    }
+
+    private suspend fun fetchShowData(refresh: Boolean = false) {
+        val featuredResponse = featuredShowsRepository.fetchFeaturedShows(forceRefresh = refresh)
+        val topRatedResponse = topRatedShowsRepository.fetchTopRatedShows(forceRefresh = refresh)
+        val popularResponse = popularShowsRepository.fetchPopularShows(forceRefresh = refresh)
+        val upcomingResponse = upcomingShowsRepository.fetchUpcomingShows(forceRefresh = refresh)
+        val trendingShows = trendingShowsRepository.fetchTrendingShows(forceRefresh = refresh)
+
+        if (isEmpty(featuredResponse, topRatedResponse, popularResponse, upcomingResponse, trendingShows)) {
+            _state.update { EmptyState }
+        }
 
         _state.update {
             DataLoaded(
@@ -82,8 +100,13 @@ class DiscoverShowsPresenter(
                 upcomingShows = upcomingResponse.toShowList(),
                 featuredShows = featuredResponse.toShowList(),
                 trendingToday = trendingShows.toShowList(),
+                isRefreshing = false,
             )
         }
+    }
+
+    private fun isEmpty(vararg responses: List<ShowEntity>): Boolean {
+        return responses.all { it.isEmpty() }
     }
 
     private suspend fun observeShowData() {

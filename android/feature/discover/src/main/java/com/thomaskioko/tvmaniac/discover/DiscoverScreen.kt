@@ -32,12 +32,20 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,6 +57,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -58,6 +67,7 @@ import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
+import com.thomaskioko.tvmaniac.compose.components.TvManiacOutlinedButton
 import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.verticalGradientScrim
 import com.thomaskioko.tvmaniac.compose.theme.MinContrastOfPrimaryVsSurface
@@ -69,10 +79,12 @@ import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowAction
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
+import com.thomaskioko.tvmaniac.presentation.discover.EmptyState
 import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
 import com.thomaskioko.tvmaniac.presentation.discover.Loading
 import com.thomaskioko.tvmaniac.presentation.discover.PopularClicked
-import com.thomaskioko.tvmaniac.presentation.discover.RetryLoading
+import com.thomaskioko.tvmaniac.presentation.discover.RefreshData
+import com.thomaskioko.tvmaniac.presentation.discover.ReloadData
 import com.thomaskioko.tvmaniac.presentation.discover.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.discover.SnackBarDismissed
 import com.thomaskioko.tvmaniac.presentation.discover.TopRatedClicked
@@ -94,7 +106,7 @@ fun DiscoverScreen(
     val discoverState by discoverShowsPresenter.state.subscribeAsState()
     val pagerState = rememberPagerState(
         initialPage = 2,
-        pageCount = { (discoverState as? DataLoaded)?.featuredShows?.size ?: 0 }
+        pageCount = { (discoverState as? DataLoaded)?.featuredShows?.size ?: 0 },
     )
     val snackBarHostState = remember { SnackbarHostState() }
 
@@ -122,22 +134,22 @@ internal fun DiscoverScreen(
                 .wrapContentSize(Alignment.Center),
         )
 
-        is DataLoaded -> DiscoverScrollContent(
+        EmptyState -> EmptyContent(
+            modifier = modifier,
+            onAction = onAction,
+        )
+
+        is DataLoaded -> DiscoverContent(
             modifier = modifier,
             pagerState = pagerState,
             snackBarHostState = snackBarHostState,
-            topRatedShows = state.topRatedShows,
-            popularShows = state.popularShows,
-            upcomingShows = state.upcomingShows,
-            featuredShows = state.featuredShows,
-            trendingToday = state.trendingToday,
-            errorMessage = state.errorMessage,
+            state = state,
             onAction = onAction,
         )
 
         is ErrorState -> ErrorUi(
             errorMessage = state.errorMessage,
-            onRetry = { onAction(RetryLoading) },
+            onRetry = { onAction(ReloadData) },
             modifier = Modifier
                 .fillMaxSize()
                 .wrapContentSize(Alignment.Center),
@@ -146,22 +158,59 @@ internal fun DiscoverScreen(
 }
 
 @Composable
-private fun DiscoverScrollContent(
-    topRatedShows: ImmutableList<DiscoverShow>,
-    popularShows: ImmutableList<DiscoverShow>,
-    upcomingShows: ImmutableList<DiscoverShow>,
-    featuredShows: ImmutableList<DiscoverShow>?,
-    trendingToday: ImmutableList<DiscoverShow>,
-    errorMessage: String?,
+private fun EmptyContent(
+    modifier: Modifier = Modifier,
+    onAction: (DiscoverShowAction) -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Icon(
+            modifier = Modifier
+                .size(180.dp),
+            imageVector = Icons.Filled.Movie,
+            tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F),
+            contentDescription = null,
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 16.dp),
+            text = stringResource(R.string.generic_empty_content),
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 4.dp),
+            text = stringResource(R.string.missing_api_key),
+            style = MaterialTheme.typography.labelMedium,
+            textAlign = TextAlign.Center,
+        )
+
+        TvManiacOutlinedButton(
+            modifier = Modifier.padding(top = 16.dp),
+            text = stringResource(id = R.string.generic_retry),
+            onClick = { onAction(ReloadData) },
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@Composable
+private fun DiscoverContent(
+    state: DataLoaded,
     snackBarHostState: SnackbarHostState,
     pagerState: PagerState,
     onAction: (DiscoverShowAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LaunchedEffect(key1 = errorMessage) {
-        errorMessage?.let {
+    LaunchedEffect(key1 = state.errorMessage) {
+        state.errorMessage?.let {
             val snackBarResult = snackBarHostState.showSnackbar(
-                message = errorMessage,
+                message = it,
                 duration = SnackbarDuration.Short,
             )
             when (snackBarResult) {
@@ -171,8 +220,14 @@ private fun DiscoverScrollContent(
         }
     }
 
+    val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = {
+        onAction(RefreshData)
+    })
+
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(pullRefreshState),
         contentAlignment = Alignment.BottomCenter,
     ) {
         LazyColumn(
@@ -180,20 +235,18 @@ private fun DiscoverScrollContent(
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
         ) {
-            featuredShows?.let {
-                item {
-                    DiscoverHeaderContent(
-                        pagerState = pagerState,
-                        showList = featuredShows,
-                        onShowClicked = { onAction(ShowClicked(it)) },
-                    )
-                }
+            item {
+                DiscoverHeaderContent(
+                    pagerState = pagerState,
+                    showList = state.featuredShows,
+                    onShowClicked = { onAction(ShowClicked(it)) },
+                )
             }
 
             item {
                 HorizontalRowContent(
                     category = stringResource(id = R.string.title_category_upcoming),
-                    tvShows = upcomingShows,
+                    tvShows = state.upcomingShows,
                     onItemClicked = { onAction(ShowClicked(it)) },
                     onMoreClicked = { onAction(UpComingClicked) },
                 )
@@ -202,7 +255,7 @@ private fun DiscoverScrollContent(
             item {
                 HorizontalRowContent(
                     category = stringResource(id = R.string.title_category_trending_today),
-                    tvShows = trendingToday,
+                    tvShows = state.trendingToday,
                     onItemClicked = { onAction(ShowClicked(it)) },
                     onMoreClicked = { onAction(TrendingClicked) },
                 )
@@ -211,7 +264,7 @@ private fun DiscoverScrollContent(
             item {
                 HorizontalRowContent(
                     category = stringResource(id = R.string.title_category_popular),
-                    tvShows = popularShows,
+                    tvShows = state.popularShows,
                     onItemClicked = { onAction(ShowClicked(it)) },
                     onMoreClicked = { onAction(PopularClicked) },
                 )
@@ -220,12 +273,19 @@ private fun DiscoverScrollContent(
             item {
                 HorizontalRowContent(
                     category = stringResource(id = R.string.title_category_top_rated),
-                    tvShows = topRatedShows,
+                    tvShows = state.topRatedShows,
                     onItemClicked = { onAction(ShowClicked(it)) },
                     onMoreClicked = { onAction(TopRatedClicked) },
                 )
             }
         }
+
+        PullRefreshIndicator(
+            refreshing = state.isRefreshing,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter),
+            scale = true,
+        )
 
         SnackbarHost(hostState = snackBarHostState)
     }
@@ -321,9 +381,9 @@ fun HorizontalPagerItem(
                 modifier = Modifier
                     .graphicsLayer {
                         val pageOffset = (
-                                (pagerState.currentPage - pageNumber) + pagerState
-                                    .currentPageOffsetFraction
-                                ).absoluteValue
+                            (pagerState.currentPage - pageNumber) + pagerState
+                                .currentPageOffsetFraction
+                            ).absoluteValue
 
                         // We animate the scaleX + scaleY, between 85% and 100%
                         lerp(

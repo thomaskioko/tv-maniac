@@ -45,8 +45,10 @@
     <string name="empty_list">Could\'nt load seasons.</string>
     <string name="msg_empty_category">Could not load show category data!</string>
     <string name="msg_search_show_hint">Search TV Shows</string>
-    <string name="generic_error_message">"Oops! Something went wrong!"</string>
-    <string name="generic_empty_content">"Looks like your stash is empty"</string>
+    <string name="generic_error_message">Oops! Something went wrong!</string>
+    <string name="generic_empty_content">Looks like your stash is empty</string>
+    <string name="missing_api_key">Could be that you forgot to add your TMDB API Key. Once you set that up, you can get lost in the vast world of Tmdb\'s collection.</string>
+    <string name="generic_retry">Retry</string>
 
     <string name="str_more">More</string>
     <string name="str_more_trailers">More Trailers</string>
