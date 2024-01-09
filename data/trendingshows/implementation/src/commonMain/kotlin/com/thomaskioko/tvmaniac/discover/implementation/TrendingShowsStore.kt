@@ -91,7 +91,7 @@ class TrendingShowsStore(
                     )
                 }
                 requestManagerRepository.insert(
-                    entityId = params.page,
+                    entityId = TRENDING_SHOWS_TODAY.requestId + params.page,
                     requestType = TRENDING_SHOWS_TODAY.name,
                 )
             }

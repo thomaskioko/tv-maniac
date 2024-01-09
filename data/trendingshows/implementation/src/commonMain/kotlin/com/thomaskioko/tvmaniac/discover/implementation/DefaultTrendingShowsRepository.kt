@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.discover.api.TrendingShowsDao
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsParams
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRENDING_SHOWS_TODAY
 import com.thomaskioko.tvmaniac.shows.api.DEFAULT_DAY_TIME_WINDOW
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
@@ -26,7 +27,6 @@ import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.StoreReadRequest.Companion.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
-import kotlin.time.Duration.Companion.days
 
 @Inject
 class DefaultTrendingShowsRepository(
@@ -72,9 +72,9 @@ class DefaultTrendingShowsRepository(
                     page = DEFAULT_API_PAGE,
                 ),
                 refresh = requestManagerRepository.isRequestExpired(
-                    entityId = DEFAULT_API_PAGE,
-                    requestType = DEFAULT_DAY_TIME_WINDOW,
-                    threshold = 1.days,
+                    entityId = TRENDING_SHOWS_TODAY.requestId + DEFAULT_API_PAGE,
+                    requestType = TRENDING_SHOWS_TODAY.name,
+                    threshold = TRENDING_SHOWS_TODAY.duration,
                 ),
             ),
         )
