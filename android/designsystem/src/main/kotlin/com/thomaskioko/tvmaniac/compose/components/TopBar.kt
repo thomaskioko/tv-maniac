@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -26,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -41,56 +41,19 @@ fun TvManiacTopBar(
     modifier: Modifier = Modifier,
     elevation: Dp = 0.dp,
     colors: TopAppBarColors = TopAppBarDefaults.centerAlignedTopAppBarColors(),
-    title: String? = null,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    showNavigationIcon: Boolean = false,
-    actionImageVector: ImageVector? = null,
-    onActionClicked: () -> Unit = {},
-    onBackClick: () -> Unit = {},
+    title: @Composable () -> Unit = {},
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
         modifier = modifier
             .shadow(elevation = elevation),
         scrollBehavior = scrollBehavior,
-        title = {
-            if (title != null) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        color = MaterialTheme.colorScheme.onSurface,
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        },
-        navigationIcon = {
-            if (showNavigationIcon) {
-                Image(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
-                    modifier = Modifier
-                        .clickable(onClick = onBackClick)
-                        .padding(16.dp),
-                )
-            }
-        },
+        title = title,
+        navigationIcon = navigationIcon,
         colors = colors,
-        actions = {
-            if (actionImageVector != null) {
-                IconButton(
-                    onClick = onActionClicked,
-                ) {
-                    Icon(
-                        imageVector = actionImageVector,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
-        },
+        actions = actions,
     )
 }
 
@@ -164,8 +127,17 @@ fun CollapsableAppBar(
 private fun TopBarPreview() {
     TvManiacTheme {
         TvManiacTopBar(
-            title = "Tv Maniac",
-            showNavigationIcon = true,
+            title = {
+                Text(
+                    text = "Tv Maniac",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            },
         )
     }
 }
@@ -176,9 +148,28 @@ private fun TopBarPreview() {
 private fun TopBarActionPreview() {
     TvManiacTheme {
         TvManiacTopBar(
-            title = "Tv Maniac",
-            showNavigationIcon = true,
-            actionImageVector = Icons.Filled.Settings,
+            title = {
+                Text(
+                    text = "Tv Maniac",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            },
+            actions = {
+                IconButton(
+                    onClick = {},
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Settings,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            },
         )
     }
 }
@@ -189,8 +180,27 @@ private fun TopBarActionPreview() {
 private fun TopBarScrimPreview() {
     TvManiacTheme {
         TvManiacTopBar(
-            title = "Tv Maniac",
-            showNavigationIcon = true,
+            title = {
+                Text(
+                    text = "Tv Maniac",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            },
+            navigationIcon = {
+                Image(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
+                    modifier = Modifier
+                        .clickable(onClick = { })
+                        .padding(16.dp),
+                )
+            },
             modifier = Modifier
                 .iconButtonBackgroundScrim(),
         )
