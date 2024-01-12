@@ -6,8 +6,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
-import com.thomaskioko.tvmaniac.datastore.implementation.DatastoreRepositoryImpl
-import com.thomaskioko.tvmaniac.datastore.implementation.DatastoreRepositoryImpl.Companion.KEY_THEME
+import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_THEME
 import com.thomaskioko.tvmaniac.datastore.implementation.IgnoreIos
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import io.kotest.matchers.shouldBe
@@ -39,7 +39,7 @@ class DatastoreRepositoryImplTest {
         main = preferencesScope,
     )
 
-    private val repository = DatastoreRepositoryImpl(
+    private val repository = DefaultDatastoreRepository(
         coroutineScope = coroutineScope,
         dataStore = dataStore,
     )
