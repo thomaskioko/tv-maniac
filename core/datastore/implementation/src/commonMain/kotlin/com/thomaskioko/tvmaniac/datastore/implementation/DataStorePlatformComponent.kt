@@ -10,5 +10,7 @@ interface DataStoreComponent : DataStorePlatformComponent {
 
     @ApplicationScope
     @Provides
-    fun provideDatastoreRepository(bind: DatastoreRepositoryImpl): DatastoreRepository = bind
+    fun provideDatastoreRepository(
+        bind: DefaultDatastoreRepository,
+    ): DatastoreRepository = bind
 }
