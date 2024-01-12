@@ -4,16 +4,31 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.internal.SynchronizedObject
+import kotlinx.coroutines.internal.synchronized
 import okio.Path.Companion.toPath
 
-fun createDataStore(
+@OptIn(InternalCoroutinesApi::class)
+private val lock = SynchronizedObject()
+private lateinit var dataStore: DataStore<Preferences>
+
+@OptIn(InternalCoroutinesApi::class)
+internal fun createDataStore(
+    produceFile: () -> String,
     coroutineScope: CoroutineScope,
-    producePath: () -> String,
-): DataStore<Preferences> = PreferenceDataStoreFactory.createWithPath(
-    corruptionHandler = null,
-    migrations = emptyList(),
-    scope = coroutineScope,
-    produceFile = { producePath().toPath() },
-)
+) = synchronized(lock) {
+    if (::dataStore.isInitialized) {
+        dataStore
+    } else {
+        PreferenceDataStoreFactory.createWithPath(
+            corruptionHandler = null,
+            migrations = emptyList(),
+            scope = coroutineScope,
+            produceFile = { produceFile().toPath() },
+        )
+            .also { dataStore = it }
+    }
+}
 
 const val dataStoreFileName = "tvmainac.preferences_pb"
