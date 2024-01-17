@@ -6,9 +6,9 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(projects.data.similar.api)
                 implementation(projects.core.database)
                 implementation(projects.core.util)
-                implementation(projects.data.similar.api)
                 implementation(libs.coroutines.core)
             }
         }
