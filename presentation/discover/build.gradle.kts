@@ -26,6 +26,11 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
+                implementation(projects.data.featuredshows.testing)
+                implementation(projects.data.popularshows.testing)
+                implementation(projects.data.topratedshows.testing)
+                implementation(projects.data.trendingshows.testing)
+                implementation(projects.data.upcomingshows.testing)
 
                 implementation(libs.bundles.unittest)
             }
