@@ -6,6 +6,8 @@ import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
 import com.thomaskioko.tvmaniac.util.decompose.asValue
 import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -27,7 +29,10 @@ class LibraryPresenter(
     private val coroutineScope = coroutineScope()
 
     private val _state = MutableStateFlow<LibraryState>(LoadingShows)
-    val state: Value<LibraryState> = _state
+    val state : StateFlow<LibraryState> = _state.asStateFlow()
+
+    //TODO:: Create SwiftUI flow wrapper and get rid of this.
+    val stateValue: Value<LibraryState> = _state
         .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     init {
