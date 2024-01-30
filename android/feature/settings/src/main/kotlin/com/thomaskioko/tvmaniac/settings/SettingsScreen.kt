@@ -74,7 +74,7 @@ fun SettingsScreen(
     presenter: SettingsPresenter,
     modifier: Modifier = Modifier,
 ) {
-    val state by presenter.state.subscribeAsState()
+    val state by presenter.value.subscribeAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     SettingsScreen(

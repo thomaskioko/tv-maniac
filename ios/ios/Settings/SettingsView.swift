@@ -25,7 +25,7 @@ struct SettingsView: View {
     
     init(presenter: SettingsPresenter){
         self.presenter = presenter
-        _uiState = StateValue(presenter.state)
+        _uiState = StateValue(presenter.value)
         theme = toAppTheme(theme: uiState.appTheme)
     }
     

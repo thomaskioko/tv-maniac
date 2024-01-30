@@ -21,7 +21,7 @@ struct ShowDetailView: View {
     
     init(presenter: ShowDetailsPresenter){
         self.presenter = presenter
-        _uiState = StateValue(presenter.state)
+        _uiState = StateValue(presenter.value)
     }
     
     var body: some View {

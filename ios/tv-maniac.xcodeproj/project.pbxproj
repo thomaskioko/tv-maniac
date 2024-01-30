@@ -24,6 +24,10 @@
 		D62F1BC82B344941004650E3 /* TransparentImageBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BC72B344941004650E3 /* TransparentImageBackground.swift */; };
 		D62F1BCB2B346336004650E3 /* RoundedProgressIndicatorStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BCA2B346336004650E3 /* RoundedProgressIndicatorStyle.swift */; };
 		D62F1BCD2B34697F004650E3 /* TopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BCC2B34697F004650E3 /* TopBar.swift */; };
+		D62FD7892B583AE2004E2F3D /* ObservableFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62FD7882B583AE2004E2F3D /* ObservableFlow.swift */; };
+		D62FD78C2B583BF8004E2F3D /* KMPNativeCoroutinesAsync in Frameworks */ = {isa = PBXBuildFile; productRef = D62FD78B2B583BF8004E2F3D /* KMPNativeCoroutinesAsync */; };
+		D62FD78E2B583BF8004E2F3D /* KMPNativeCoroutinesCombine in Frameworks */ = {isa = PBXBuildFile; productRef = D62FD78D2B583BF8004E2F3D /* KMPNativeCoroutinesCombine */; };
+		D62FD7902B5840C9004E2F3D /* StateFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62FD78F2B5840C9004E2F3D /* StateFlow.swift */; };
 		D636CE4A2B447C9C003F7876 /* TitleMoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE492B447C9C003F7876 /* TitleMoreView.swift */; };
 		D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */; };
 		D64279562A6080A900E65755 /* ToastStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64279552A6080A900E65755 /* ToastStyle.swift */; };
@@ -120,6 +124,8 @@
 		D62F1BC72B344941004650E3 /* TransparentImageBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransparentImageBackground.swift; sourceTree = "<group>"; };
 		D62F1BCA2B346336004650E3 /* RoundedProgressIndicatorStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedProgressIndicatorStyle.swift; sourceTree = "<group>"; };
 		D62F1BCC2B34697F004650E3 /* TopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopBar.swift; sourceTree = "<group>"; };
+		D62FD7882B583AE2004E2F3D /* ObservableFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableFlow.swift; sourceTree = "<group>"; };
+		D62FD78F2B5840C9004E2F3D /* StateFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateFlow.swift; sourceTree = "<group>"; };
 		D636CE492B447C9C003F7876 /* TitleMoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleMoreView.swift; sourceTree = "<group>"; };
 		D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreShowsView.swift; sourceTree = "<group>"; };
 		D64279552A6080A900E65755 /* ToastStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastStyle.swift; sourceTree = "<group>"; };
@@ -189,6 +195,8 @@
 				D65569DD2B31B54A005F9F37 /* SDWebImageSwiftUI in Frameworks */,
 				D61A65592B32EE5000112590 /* YouTubePlayerKit in Frameworks */,
 				D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */,
+				D62FD78E2B583BF8004E2F3D /* KMPNativeCoroutinesCombine in Frameworks */,
+				D62FD78C2B583BF8004E2F3D /* KMPNativeCoroutinesAsync in Frameworks */,
 				D6CF9E312B31FFBF00A1AD00 /* ScalingHeaderScrollView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -349,6 +357,8 @@
 				D67761972B1D458B00537DD5 /* StackView.swift */,
 				D677618D2B1CF25A00537DD5 /* StateValue.swift */,
 				D677618F2B1CF28A00537DD5 /* ObservableValue.swift */,
+				D62FD7882B583AE2004E2F3D /* ObservableFlow.swift */,
+				D62FD78F2B5840C9004E2F3D /* StateFlow.swift */,
 			);
 			name = DecomposeHelpers;
 			sourceTree = "<group>";
@@ -551,6 +561,8 @@
 				D65569DC2B31B54A005F9F37 /* SDWebImageSwiftUI */,
 				D6CF9E302B31FFBF00A1AD00 /* ScalingHeaderScrollView */,
 				D61A65582B32EE5000112590 /* YouTubePlayerKit */,
+				D62FD78B2B583BF8004E2F3D /* KMPNativeCoroutinesAsync */,
+				D62FD78D2B583BF8004E2F3D /* KMPNativeCoroutinesCombine */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -586,6 +598,7 @@
 				D68666B12B1E7F2E00D6D334 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				D6CF9E2F2B31FFBF00A1AD00 /* XCRemoteSwiftPackageReference "ScalingHeaderScrollView" */,
 				D61A65572B32EE5000112590 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
+				D62FD78A2B583BF8004E2F3D /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -681,6 +694,7 @@
 				D65569DB2B31B481005F9F37 /* PosterItemView.swift in Sources */,
 				D67761872B1CE6F600537DD5 /* RootHolder.swift in Sources */,
 				D67761892B1CED9E00537DD5 /* RootView.swift in Sources */,
+				D62FD7892B583AE2004E2F3D /* ObservableFlow.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				D65569E62B31DF3D005F9F37 /* HeaderCoverArtWorkView.swift in Sources */,
 				D61467622B3493B60071647C /* EpisodeItemView.swift in Sources */,
@@ -691,6 +705,7 @@
 				D65569DF2B31B6C1005F9F37 /* PosterPlaceholder.swift in Sources */,
 				E9AC835126CEEA1500829A0D /* DiscoverView.swift in Sources */,
 				E983819327936BB10039CB08 /* Font.swift in Sources */,
+				D62FD7902B5840C9004E2F3D /* StateFlow.swift in Sources */,
 				D61A655D2B32F71600112590 /* TrailerListView.swift in Sources */,
 				D6C263322B323CEC00179CDF /* ProvidersList.swift in Sources */,
 				E98381E127943F940039CB08 /* SnapCarousel.swift in Sources */,
@@ -946,6 +961,14 @@
 				minimumVersion = 1.5.4;
 			};
 		};
+		D62FD78A2B583BF8004E2F3D /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rickclephas/KMP-NativeCoroutines";
+			requirement = {
+				kind = exactVersion;
+				version = "1.0.0-ALPHA-24";
+			};
+		};
 		D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/OAuthSwift/OAuthSwift";
@@ -985,6 +1008,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D61A65572B32EE5000112590 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */;
 			productName = YouTubePlayerKit;
+		};
+		D62FD78B2B583BF8004E2F3D /* KMPNativeCoroutinesAsync */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D62FD78A2B583BF8004E2F3D /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */;
+			productName = KMPNativeCoroutinesAsync;
+		};
+		D62FD78D2B583BF8004E2F3D /* KMPNativeCoroutinesCombine */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D62FD78A2B583BF8004E2F3D /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */;
+			productName = KMPNativeCoroutinesCombine;
 		};
 		D653924729D8B6A6000EE673 /* OAuthSwift */ = {
 			isa = XCSwiftPackageProductDependency;

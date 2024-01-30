@@ -55,7 +55,7 @@ fun LibraryScreen(
     presenter: LibraryPresenter,
     modifier: Modifier = Modifier,
 ) {
-    val libraryState by presenter.state.subscribeAsState()
+    val libraryState by presenter.value.subscribeAsState()
 
     LibraryScreen(
         modifier = modifier,

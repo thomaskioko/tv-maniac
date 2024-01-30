@@ -18,7 +18,7 @@ struct LibraryView: View {
     
     init(presenter: LibraryPresenter){
         self.presenter = presenter
-        _uiState = StateValue(presenter.state)
+        _uiState = StateValue(presenter.value)
     }
     
     var body: some View {

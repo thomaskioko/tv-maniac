@@ -12,7 +12,6 @@ val discoverShow = DiscoverShow(
     tmdbId = 84958,
     title = "Loki",
     posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-    backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
 )
 
 val discoverContentSuccess = DataLoaded(

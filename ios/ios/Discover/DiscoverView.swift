@@ -11,10 +11,10 @@ struct DiscoverView: View {
     
     @StateValue
     private var uiState: DiscoverState
-    
+
     init(presenter: DiscoverShowsPresenter){
         self.presenter = presenter
-        _uiState = StateValue(presenter.state)
+        _uiState = StateValue(presenter.value)
     }
     
     var body: some View {

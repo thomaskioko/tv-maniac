@@ -103,7 +103,7 @@ fun DiscoverScreen(
     discoverShowsPresenter: DiscoverShowsPresenter,
     modifier: Modifier = Modifier,
 ) {
-    val discoverState by discoverShowsPresenter.state.subscribeAsState()
+    val discoverState by discoverShowsPresenter.value.subscribeAsState()
     val pagerState = rememberPagerState(
         initialPage = 2,
         pageCount = { (discoverState as? DataLoaded)?.featuredShows?.size ?: 0 },
