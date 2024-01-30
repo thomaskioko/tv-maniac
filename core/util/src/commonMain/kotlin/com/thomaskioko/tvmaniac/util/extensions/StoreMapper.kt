@@ -14,6 +14,7 @@ import org.mobilenativefoundation.store.store5.StoreReadResponse
 @OptIn(ExperimentalCoroutinesApi::class)
 fun <T> Flow<StoreReadResponse<T>>.mapResult(): Flow<Either<Failure, T>> =
     distinctUntilChanged()
+        .filterForResult()
         .flatMapLatest { result ->
             when (val data = result.dataOrNull()) {
                 null -> flowOf(Either.Left(DefaultError(result.errorMessageOrNull())))
