@@ -12,8 +12,9 @@ fun List<ShowEntity>?.toShowList(): ImmutableList<DiscoverShow> =
     this?.map {
         DiscoverShow(
             tmdbId = it.id,
+            title = it.title,
             posterImageUrl = it.posterPath,
-            isInLibrary = it.inLibrary,
+            inLibrary = it.inLibrary
         )
     }?.toImmutableList() ?: persistentListOf()
 

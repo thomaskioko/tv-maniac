@@ -32,7 +32,7 @@ class LibraryPresenter(
     val state : StateFlow<LibraryState> = _state.asStateFlow()
 
     //TODO:: Create SwiftUI flow wrapper and get rid of this.
-    val stateValue: Value<LibraryState> = _state
+    val value: Value<LibraryState> = _state
         .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     init {

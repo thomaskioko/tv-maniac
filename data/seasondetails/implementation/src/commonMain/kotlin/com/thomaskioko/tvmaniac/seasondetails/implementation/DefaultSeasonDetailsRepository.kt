@@ -29,6 +29,9 @@ class DefaultSeasonDetailsRepository(
         param: SeasonDetailsParam,
     ): SeasonDetailsWithEpisodes = seasonDetailsStore.get(param)
 
+    override suspend  fun fetchSeasonImages(id: Long): List<Season_images> =
+        seasonDetailsDao.fetchSeasonImages(id)
+
     override fun observeSeasonDetails(
         param: SeasonDetailsParam,
     ): Flow<Either<Failure, SeasonDetailsWithEpisodes>> =
@@ -44,9 +47,6 @@ class DefaultSeasonDetailsRepository(
         )
             .mapResult()
             .flowOn(dispatcher.io)
-
-    override fun fetchSeasonImages(id: Long): List<Season_images> =
-        seasonDetailsDao.fetchSeasonImages(id)
 
     override fun observeSeasonImages(id: Long): Flow<List<Season_images>> =
         seasonDetailsDao.observeSeasonImages(id)

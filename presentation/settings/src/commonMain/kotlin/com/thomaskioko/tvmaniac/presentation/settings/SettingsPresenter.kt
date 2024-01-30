@@ -8,6 +8,8 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.decompose.asValue
 import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,7 +33,10 @@ class SettingsPresenter(
 
     private val _state: MutableStateFlow<SettingsState> =
         MutableStateFlow(SettingsState.DEFAULT_STATE)
-    val state: Value<SettingsState> = _state
+    val state: StateFlow<SettingsState> = _state.asStateFlow()
+
+    //TODO:: Create SwiftUI flow wrapper and get rid of this.
+    val value: Value<SettingsState> = _state
         .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     init {

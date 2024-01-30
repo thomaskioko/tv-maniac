@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakePopularShowsRepository : PopularShowsRepository {
 
@@ -33,7 +34,7 @@ class FakePopularShowsRepository : PopularShowsRepository {
     }
 
     override fun observePopularShows(): Flow<Either<Failure, List<ShowEntity>>> {
-        return flowOf(Either.Right(emptyList()))
+        return entityListResult.receiveAsFlow()
     }
 
     override fun getPagedPopularShows(): Flow<PagingData<ShowEntity>> {

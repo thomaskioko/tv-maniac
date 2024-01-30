@@ -12,9 +12,14 @@ import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
 import com.thomaskioko.tvmaniac.util.decompose.asValue
 import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -41,7 +46,10 @@ class DiscoverShowsPresenter(
     private val coroutineScope = coroutineScope()
 
     private val _state = MutableStateFlow<DiscoverState>(Loading)
-    val state: Value<DiscoverState> = _state
+    val state: StateFlow<DiscoverState> = _state.asStateFlow()
+
+    //TODO:: Create SwiftUI flow wrapper and get rid of this.
+    val value: Value<DiscoverState> = _state
         .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     init {
@@ -61,10 +69,12 @@ class DiscoverShowsPresenter(
                 }
                 fetchShowData(true)
             }
+
             ReloadData -> coroutineScope.launch {
                 _state.update { Loading }
                 fetchShowData(true)
             }
+
             SnackBarDismissed -> coroutineScope.launch {
                 _state.update { state ->
                     (state as? DataLoaded)?.copy(
@@ -90,9 +100,8 @@ class DiscoverShowsPresenter(
         val trendingShows = trendingShowsRepository.fetchTrendingShows(forceRefresh = refresh)
 
         if (isEmpty(featuredResponse, topRatedResponse, popularResponse, upcomingResponse, trendingShows)) {
-            _state.update { EmptyState }
+            return _state.update { EmptyState }
         }
-
         _state.update {
             DataLoaded(
                 topRatedShows = topRatedResponse.toShowList(),
@@ -116,28 +125,20 @@ class DiscoverShowsPresenter(
             popularShowsRepository.observePopularShows(),
             upcomingShowsRepository.observeUpcomingShows(),
             trendingShowsRepository.observeTrendingShows(),
-        ) { featured, trending, popular, upcomingShows, trendingToday ->
-            DataLoaded(
-                featuredShows = featured.getOrNull().toShowList(),
-                topRatedShows = trending.getOrNull().toShowList(),
-                popularShows = popular.getOrNull().toShowList(),
-                upcomingShows = upcomingShows.getOrNull().toShowList(),
-                trendingToday = trendingToday.getOrNull().toShowList(),
-                errorMessage = getErrorMessage(trending, popular, upcomingShows, featured),
-            )
-        }
-            .catch { ErrorState(errorMessage = it.message) }
-            .collectLatest {
-                _state.update { state ->
-                    (state as? DataLoaded)?.copy(
-                        errorMessage = it.errorMessage,
-                        topRatedShows = it.topRatedShows,
-                        popularShows = it.popularShows,
-                        upcomingShows = it.upcomingShows,
-                        featuredShows = it.featuredShows,
-                        trendingToday = it.trendingToday,
-                    ) ?: state
-                }
+        ) { featured, topRated, popular, upcomingShows, trendingToday ->
+            _state.update {
+                DataLoaded(
+                    featuredShows = featured.getOrNull().toShowList(),
+                    topRatedShows = topRated.getOrNull().toShowList(),
+                    popularShows = popular.getOrNull().toShowList(),
+                    upcomingShows = upcomingShows.getOrNull().toShowList(),
+                    trendingToday = trendingToday.getOrNull().toShowList(),
+                    errorMessage = getErrorMessage(topRated, popular, upcomingShows, featured),
+                )
             }
+        }
+            .onStart { Loading }
+            .catch { ErrorState(errorMessage = it.message) }
+            .collect()
     }
 }

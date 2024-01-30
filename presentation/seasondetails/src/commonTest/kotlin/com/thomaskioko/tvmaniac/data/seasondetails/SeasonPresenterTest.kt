@@ -1,10 +1,14 @@
 package com.thomaskioko.tvmaniac.data.seasondetails
 
+import app.cash.turbine.test
+import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsContent
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
+import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.SeasonWithEpisodeList
-import com.thomaskioko.tvmaniac.util.model.DefaultError
-import com.thomaskioko.tvmaniac.util.model.Either
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -14,27 +18,33 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 
-@Ignore
 @OptIn(ExperimentalCoroutinesApi::class)
 class SeasonPresenterTest {
 
-    private val seasonDetailsRepository = FakeSeasonDetailsRepository()
-
+    private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
+    private val seasonDetailsRepository = FakeSeasonDetailsRepository()
+    private val castRepository = FakeCastRepository()
 
     private lateinit var presenter: SeasonDetailsPresenter
 
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        /*   presenter = SeasonDetailsPresenter(
-               traktId = 1231,
-               episodeImageRepository = episodeImageRepository,
-               seasonDetailsRepository = seasonDetailsRepository,
-           )*/
+        presenter = SeasonDetailsPresenter(
+            componentContext = DefaultComponentContext(lifecycle = lifecycle),
+            param = SeasonDetailsUiParam(
+                showId = 1,
+                seasonId = 1,
+                seasonNumber = 1,
+            ),
+            onBack = {},
+            onEpisodeClick = {},
+            seasonDetailsRepository = seasonDetailsRepository,
+            castRepository = castRepository
+        )
     }
 
     @AfterTest
@@ -45,18 +55,11 @@ class SeasonPresenterTest {
     @Test
     fun onLoadSeasonDetails_correct_state_is_emitted() = runTest {
         seasonDetailsRepository.setCachedResults(SeasonWithEpisodeList)
+        castRepository.setSeasonCast(emptyList())
 
-        presenter.state shouldBe seasonDetailsState
-    }
-
-    @Test
-    fun onLoadSeasonDetails_andErrorOccurs_correctStateIsEmitted() = runTest {
-        val errorMessage = "Something went wrong"
-        seasonDetailsRepository.setCachedResults(SeasonWithEpisodeList)
-        seasonDetailsRepository.setSeasonsResult(Either.Left(DefaultError(errorMessage)))
-
-        presenter.state shouldBe seasonDetailsState
-        presenter.state shouldBe seasonDetailsState
-            .copy(errorMessage = errorMessage)
+        presenter.state.test {
+            awaitItem() shouldBe SeasonDetailsContent.DEFAULT_SEASON_STATE
+            awaitItem() shouldBe seasonDetailsContent
+        }
     }
 }

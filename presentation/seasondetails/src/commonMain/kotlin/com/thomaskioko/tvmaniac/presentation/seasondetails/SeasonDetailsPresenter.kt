@@ -3,12 +3,16 @@ package com.thomaskioko.tvmaniac.presentation.seasondetails
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.data.cast.api.CastRepository
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsContent.Companion.DEFAULT_SEASON_STATE
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.util.decompose.asValue
 import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
@@ -32,18 +36,20 @@ class SeasonDetailsPresenter @Inject constructor(
     private val castRepository: CastRepository,
 ) : ComponentContext by componentContext {
 
-    private var seasonDetailsParam: SeasonDetailsParam
+    private var seasonDetailsParam: SeasonDetailsParam = SeasonDetailsParam(
+        showId = param.showId,
+        seasonId = param.seasonId,
+        seasonNumber = param.seasonNumber,
+    )
     private val coroutineScope = coroutineScope()
-    private val _state = MutableStateFlow(SeasonDetailsState.DEFAULT_SEASON_STATE)
-    val state: Value<SeasonDetailsState> = _state
+    private val _state = MutableStateFlow(DEFAULT_SEASON_STATE)
+    val state: StateFlow<SeasonDetailsContent> = _state.asStateFlow()
+
+    //TODO:: Create SwiftUI flow wrapper and get rid of this.
+    val value: Value<SeasonDetailsContent> = _state
         .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     init {
-        seasonDetailsParam = SeasonDetailsParam(
-            showId = param.showId,
-            seasonId = param.seasonId,
-            seasonNumber = param.seasonNumber,
-        )
         coroutineScope.launch {
             fetchSeasonDetails()
             observeSeasonDetails()
@@ -62,7 +68,9 @@ class SeasonDetailsPresenter @Inject constructor(
 
                 SeasonGalleryClicked -> coroutineScope.launch {
                     _state.update { state ->
-                        state.copy(showGalleryBottomSheet = !state.showGalleryBottomSheet)
+                        (state as? SeasonDetailsContent)?.copy(
+                            showGalleryBottomSheet = !state.showGalleryBottomSheet
+                        ) ?: state
                     }
                 }
 
@@ -116,7 +124,7 @@ class SeasonDetailsPresenter @Inject constructor(
         val castList = castRepository.fetchSeasonCast(seasonDetailsParam.seasonId)
 
         _state.update {
-            SeasonDetailsState(
+            SeasonDetailsContent(
                 seasonId = seasonDetails.seasonId,
                 seasonName = seasonDetails.name,
                 seasonOverview = seasonDetails.seasonOverview,

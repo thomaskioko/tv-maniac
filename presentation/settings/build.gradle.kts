@@ -21,6 +21,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(projects.core.datastore.testing)
+                implementation(projects.core.traktAuth.testing)
 
                 implementation(libs.bundles.unittest)
             }
