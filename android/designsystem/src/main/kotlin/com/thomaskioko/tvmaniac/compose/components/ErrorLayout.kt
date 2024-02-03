@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Collections
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.SignalWifi4Bar
 import androidx.compose.material.icons.outlined.SignalWifiOff
@@ -149,9 +148,10 @@ fun RowError(
 }
 
 @Composable
-fun EmptyUi(
+fun EmptyScreen(
+    icon: @Composable () -> Unit,
+    text: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    message: String = stringResource(R.string.generic_empty_content),
 ) {
     Box(modifier = modifier) {
         Column(
@@ -160,20 +160,11 @@ fun EmptyUi(
                 .wrapContentSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Image(
-                modifier = Modifier.size(120.dp),
-                imageVector = Icons.Outlined.Collections,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
-                contentDescription = null,
-            )
+            icon()
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-            )
+            text()
 
             Spacer(modifier = Modifier.height(8.dp))
         }

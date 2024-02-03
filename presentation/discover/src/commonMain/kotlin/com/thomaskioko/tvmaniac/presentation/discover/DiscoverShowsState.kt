@@ -7,6 +7,7 @@ import kotlinx.collections.immutable.persistentListOf
 sealed interface DiscoverState
 
 data object Loading : DiscoverState
+data object EmptyState : DiscoverState
 data class ErrorState(val errorMessage: String?) : DiscoverState
 
 data class DataLoaded(
@@ -16,4 +17,5 @@ data class DataLoaded(
     val upcomingShows: ImmutableList<DiscoverShow> = persistentListOf(),
     val trendingToday: ImmutableList<DiscoverShow> = persistentListOf(),
     val errorMessage: String? = null,
+    val isRefreshing: Boolean = false,
 ) : DiscoverState

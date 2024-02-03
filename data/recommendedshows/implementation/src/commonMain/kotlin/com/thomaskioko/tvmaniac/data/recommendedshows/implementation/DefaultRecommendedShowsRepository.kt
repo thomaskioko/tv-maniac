@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.db.RecommendedShows
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsParams
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.RECOMMENDED_SHOWS
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.util.extensions.mapResult
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
@@ -14,7 +15,6 @@ import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.get
-import kotlin.time.Duration.Companion.days
 
 @Inject
 class DefaultRecommendedShowsRepository(
@@ -34,8 +34,8 @@ class DefaultRecommendedShowsRepository(
                 key = RecommendedShowsParams(showId = id, page = DEFAULT_API_PAGE),
                 refresh = requestManagerRepository.isRequestExpired(
                     entityId = id,
-                    requestType = "RECOMMENDED_SHOWS",
-                    threshold = 6.days,
+                    requestType = RECOMMENDED_SHOWS.name,
+                    threshold = RECOMMENDED_SHOWS.duration,
                 ),
             ),
         )

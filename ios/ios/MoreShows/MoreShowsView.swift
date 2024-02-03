@@ -40,7 +40,6 @@ struct MoreShowsView: View {
                     .padding(.top)
                 }
             }
-            .background(Color.background)
         }
     }
 

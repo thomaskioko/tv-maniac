@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ShowDetailsRepository {
 
-    suspend fun getShowDetails(traktId: Long): TvshowDetails
-
-    fun observeShowDetails(traktId: Long): Flow<Either<Failure, TvshowDetails>>
+    suspend fun getShowDetails(id: Long): TvshowDetails
+    fun observeShowDetails(id: Long): Flow<Either<Failure, TvshowDetails>>
 }

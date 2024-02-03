@@ -11,9 +11,9 @@ import com.thomaskioko.tvmaniac.util.scope.ActivityScope
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
-@Component
 @ActivityScope
-abstract class MainActivityComponent(
+@Component
+abstract class ActivityComponent(
     @get:Provides val activity: ComponentActivity,
     @get:Provides val componentContext: ComponentContext = activity.defaultComponentContext(),
     @Component val applicationComponent: ApplicationComponent = ApplicationComponent.create(activity.application),

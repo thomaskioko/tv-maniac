@@ -5,17 +5,16 @@ import os.log
 struct DiscoverView: View {
     
     @Environment(\.colorScheme) var scheme
-    
-    @State var currentIndex: Int = 2
+    @State private var currentIndex: Int = 2
     
     private let presenter: DiscoverShowsPresenter
     
     @StateValue
     private var uiState: DiscoverState
-    
+
     init(presenter: DiscoverShowsPresenter){
         self.presenter = presenter
-        _uiState = StateValue(presenter.state)
+        _uiState = StateValue(presenter.value)
     }
     
     var body: some View {
@@ -24,76 +23,110 @@ struct DiscoverView: View {
             case is Loading:
                 LoadingIndicatorView()
                     .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
-            case is DataLoaded: DiscoverContent(presenter: presenter)
+            case is DataLoaded: loadedContent
+            case is EmptyState: emptyView
+            case is ErrorState: if let contentState = uiState as? ErrorState {
+                FullScreenView(
+                    systemName: "exclamationmark.arrow.triangle.2.circlepath",
+                    message: contentState.errorMessage ?? "Something went wrong!!"
+                )
+            }
+                
             default:
                 fatalError("Unhandled case: \(uiState)")
             }
         }
-        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
-        .background(Color.background)
-        .toolbar {}
-        .navigationTitle("")
     }
     
+    @ViewBuilder
+    private var emptyView : some View {
+        VStack {
+            Image(systemName: "list.bullet.below.rectangle")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .foregroundColor(Color.accent)
+                .font(Font.title.weight(.thin))
+                .frame(width: 160, height: 180)
+            
+            Text("Looks like your stash is empty")
+                .titleSemiBoldFont(size: 18)
+                .padding(.top, 8)
+            
+            Text("Could be that you forgot to add your TMDB API Key. Once you set that up, you can get lost in the vast world of Tmdb's collection.")
+                .captionFont(size: 16)
+                .padding(.top, 1)
+                .padding(.bottom, 16)
+            
+            Button(action: {
+                presenter.dispatch(action: ReloadData())
+            }, label: {
+                Text("Retry")
+                    .bodyMediumFont(size: 16)
+                    .foregroundColor(Color.accent)
+            })
+            .buttonStyle(BorderlessButtonStyle())
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(Color.accent, lineWidth: 2)
+                    .background(.clear)
+                    .cornerRadius(2))
+            
+        }
+        .frame(maxWidth: .infinity,maxHeight: .infinity)
+        .padding([.trailing, .leading], 16)
+    }
     
     @ViewBuilder
-    func DiscoverContent(presenter: DiscoverShowsPresenter) -> some View {
+    private var loadedContent: some View {
         ZStack {
             let contentState = uiState as! DataLoaded
             
-            BackgroundView(tvShows: contentState.featuredShows)
+            BackgroundView(contentState.featuredShows)
             
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack {
-                    let state = contentState
+            ScrollView(showsIndicators: false) {
+                
+                let state = contentState
+                
+                if(state.errorMessage != nil) {
+                    FullScreenView(systemName: "exclamationmark.triangle", message: state.errorMessage!)
+                } else {
                     
-                    if(state.errorMessage != nil) {
-                        FullScreenView(systemName: "exclamationmark.triangle", message: state.errorMessage!)
-                    } else {
-                        
-                        //Featured Shows
-                        FeaturedContentView(state.featuredShows)
-                        
-                        HorizontalItemContentListView(
-                            items: state.upcomingShows,
-                            title: "Upcoming",
-                            onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                            onMoreClicked: { presenter.dispatch(action: LoadMoreClicked(id: 3)) }
-                        )
-                        
-                        //Trending Today
-                        HorizontalItemContentListView(
-                            items: state.trendingToday,
-                            title: "Trending Today",
-                            onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                            onMoreClicked: { presenter.dispatch(action: LoadMoreClicked(id: 4)) }
-                        )
-                        
-                        //Popular Shows
-                        HorizontalItemContentListView(
-                            items: state.popularShows,
-                            title: "Popular",
-                            onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                            onMoreClicked: { presenter.dispatch(action: LoadMoreClicked(id: 2)) }
-                        )
-                        
-                        //Top Rated Shows
-                        HorizontalItemContentListView(
-                            items: state.topRatedShows,
-                            title: "Top Rated",
-                            onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                            onMoreClicked: { presenter.dispatch(action: LoadMoreClicked(id: 1)) }
-                        )
-                    }
+                    FeaturedContentView(state.featuredShows)
                     
-                    Spacer()
+                    HorizontalItemContentListView(
+                        items: state.upcomingShows,
+                        title: "Upcoming",
+                        onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                        onMoreClicked: { presenter.dispatch(action: UpComingClicked()) }
+                    )
+                    
+                    HorizontalItemContentListView(
+                        items: state.trendingToday,
+                        title: "Trending Today",
+                        onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                        onMoreClicked: { presenter.dispatch(action: TrendingClicked()) }
+                    )
+                    
+                    HorizontalItemContentListView(
+                        items: state.popularShows,
+                        title: "Popular",
+                        onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                        onMoreClicked: { presenter.dispatch(action: PopularClicked()) }
+                    )
+                    
+                    HorizontalItemContentListView(
+                        items: state.topRatedShows,
+                        title: "Top Rated",
+                        onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                        onMoreClicked: { presenter.dispatch(action: TopRatedClicked()) }
+                    )
                 }
             }
-            
+            .refreshable {
+                presenter.dispatch(action: RefreshData())
+            }
         }
-        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
-        .padding(.bottom, 64)
-        
     }
     
     
@@ -122,10 +155,9 @@ struct DiscoverView: View {
             }
         }
     }
-
     
     @ViewBuilder
-    func BackgroundView(tvShows: [DiscoverShow]?) -> some View {
+    func BackgroundView(_ tvShows: [DiscoverShow]?) -> some View {
         if let shows = tvShows {
             if !shows.isEmpty {
                 GeometryReader { proxy in

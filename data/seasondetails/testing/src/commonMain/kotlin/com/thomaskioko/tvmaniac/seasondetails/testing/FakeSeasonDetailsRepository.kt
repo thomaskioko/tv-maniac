@@ -32,7 +32,7 @@ class FakeSeasonDetailsRepository : SeasonDetailsRepository {
         param: SeasonDetailsParam,
     ): Flow<Either<Failure, SeasonDetailsWithEpisodes>> = seasonsResult.receiveAsFlow()
 
-    override fun fetchSeasonImages(id: Long): List<Season_images> = emptyList()
+    override suspend fun fetchSeasonImages(id: Long): List<Season_images> = emptyList()
 
     override fun observeSeasonImages(id: Long): Flow<List<Season_images>> = emptyFlow()
 }

@@ -31,7 +31,7 @@ struct HorizontalItemContentListView: View {
                                     showId: item.tmdbId,
                                     title: item.title,
                                     posterUrl: item.posterImageUrl,
-                                    isInLibrary: item.isInLibrary
+                                    isInLibrary: item.inLibrary
                                 )
                                     .padding([.leading, .trailing], 2)
                                     .padding(.leading, item.tmdbId == items.first?.tmdbId ? 10 : 0)

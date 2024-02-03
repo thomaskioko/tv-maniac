@@ -34,6 +34,8 @@ struct RootView: View {
             
             ChildView(screen: screen)
                 .frame(maxHeight: .infinity)
+                .padding(.bottom, showBottomBar ? 64 : 0)
+                .background(Color.background)
             
             BottomNavigation(screen, rootPresenter)
                 .background(.ultraThinMaterial)
@@ -41,14 +43,6 @@ struct RootView: View {
                 .transition(.asymmetric(insertion: .slide, removal: .scale))
         }
         .preferredColorScheme(uiState.appTheme == AppTheme.lightTheme ? .light : uiState.appTheme == AppTheme.darkTheme ? .dark : nil)
-    }
-}
-
-extension View {
-    func hidden(_ showBottomBar: Bool) -> some View {
-        withAnimation {
-            opacity(showBottomBar ? 1 : 0)
-        }
     }
 }
 
@@ -108,9 +102,6 @@ private struct ChildView: View {
         }
     }
 }
-
-
-
 
 private struct BottomTabView: View {
     let title: String

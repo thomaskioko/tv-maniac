@@ -16,6 +16,6 @@ actual interface DataStorePlatformComponent {
         scope: AppCoroutineScope,
     ): DataStore<Preferences> = createDataStore(
         coroutineScope = scope.io,
-        producePath = { context.filesDir.resolve(dataStoreFileName).absolutePath },
+        produceFile = { context.filesDir.resolve(dataStoreFileName).absolutePath },
     )
 }

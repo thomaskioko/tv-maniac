@@ -5,6 +5,7 @@ androidx-browser = "1.7.0"
 androidx-core = "1.12.0"
 androidx-core-splashscreen = "1.0.1"
 androidx-datastore = "1.1.0-alpha07"
+androidx-material = "1.5.4"
 androidx-material3 = "1.1.2"
 androidx-palette = "1.0.0"
 appauth = "0.11.1"
@@ -50,6 +51,7 @@ androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "
 androidx-browser = { module = "androidx.browser:browser", version.ref = "androidx-browser" }
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "compose-constraintlayout" }
+androidx-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "androidx-material" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidx-material3" }
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose-runtime" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }

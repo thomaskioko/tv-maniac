@@ -6,9 +6,9 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonImagesMod
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-data class SeasonDetailsState(
+data class SeasonDetailsContent(
     val errorMessage: String? = null,
-    val isLoading: Boolean = true,
+    val isLoading: Boolean = false,
     val showSeasonWatchStateDialog: Boolean = false,
     val expandEpisodeItems: Boolean = false,
     val showGalleryBottomSheet: Boolean = false,
@@ -24,7 +24,7 @@ data class SeasonDetailsState(
     val seasonCast: ImmutableList<Cast>,
 ) {
     companion object {
-        val DEFAULT_SEASON_STATE = SeasonDetailsState(
+        val DEFAULT_SEASON_STATE = SeasonDetailsContent(
             seasonId = 0,
             seasonName = "",
             seasonOverview = "",

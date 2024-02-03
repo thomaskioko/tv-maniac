@@ -6,6 +6,7 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.navigate
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
@@ -101,7 +102,15 @@ class RootNavigationPresenter(
                     componentContext,
                     config.id,
                     navigation::pop,
-                    { id -> navigation.pushNew(Config.ShowDetails(id)) },
+                    { id ->
+                        /**
+                         * Fix crash when user navigates to the same screen with different arguments.
+                         * This will push the screen to the on top instead of having deep nested stacks.
+                         */
+                        navigation.navigate {
+                            (it + Config.ShowDetails(id)).asReversed().distinct().asReversed()
+                        }
+                    },
                     { params ->
                         navigation.pushNew(
                             Config.SeasonDetails(

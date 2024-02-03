@@ -18,7 +18,7 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 ## 🖥 Project Setup & Environment
 
 #### Requirements
-- [Zulu Java 18](https://www.azul.com/downloads/?package=jdk#zulu)
+- [Zulu Java 17](https://www.azul.com/downloads/?package=jdk#zulu)
 - You require the latest [Android Studio](https://developer.android.com/studio/preview) release to be able to build the app.
 - Install KMP Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/multiplatform-mobile-setup.html).
 

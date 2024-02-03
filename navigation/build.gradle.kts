@@ -19,7 +19,6 @@ kotlin {
             implementation(projects.android.feature.showDetails)
             implementation(projects.android.feature.trailers)
 
-            implementation(libs.androidx.compose.material.icons)
             implementation(libs.androidx.compose.material3)
             implementation(libs.decompose.extensions.compose)
         }
@@ -42,6 +41,28 @@ kotlin {
             api(libs.decompose.decompose)
             api(libs.essenty.lifecycle)
         }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(projects.core.datastore.testing)
+            implementation(projects.core.traktAuth.testing)
+            implementation(projects.data.cast.testing)
+            implementation(projects.data.featuredshows.testing)
+            implementation(projects.data.library.testing)
+            implementation(projects.data.popularshows.testing)
+            implementation(projects.data.recommendedshows.testing)
+            implementation(projects.data.seasons.testing)
+            implementation(projects.data.seasondetails.testing)
+            implementation(projects.data.showdetails.testing)
+            implementation(projects.data.similar.testing)
+            implementation(projects.data.topratedshows.testing)
+            implementation(projects.data.trailers.testing)
+            implementation(projects.data.trendingshows.testing)
+            implementation(projects.data.upcomingshows.testing)
+            implementation(projects.data.watchproviders.testing)
+
+            implementation(libs.bundles.unittest)
+        }
     }
 }
 
@@ -53,8 +74,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_18
-        targetCompatibility = JavaVersion.VERSION_18
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     composeOptions {
