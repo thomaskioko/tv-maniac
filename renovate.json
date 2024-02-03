@@ -15,7 +15,9 @@
   "prBodyTemplate": "{{{header}}}{{{table}}}{{{notes}}}{{{changelogs}}}{{{controls}}}{{{footer}}}",
   "packageRules": [
     {
-      "matchDatasources": ["maven"],
+      "matchDatasources": [
+        "maven"
+      ],
       "registryUrls": [
         "https://repo.maven.apache.org/maven2",
         "https://dl.google.com/android/maven2",
@@ -55,7 +57,7 @@
         "org.jetbrains.compose.foundation",
         "org.jetbrains.compose.animation",
         "org.jetbrains.compose.material",
-        "org.jetbrains.compose.material3",
+        "org.jetbrains.compose.material3"
       ],
       "groupName": "Compose"
     },
