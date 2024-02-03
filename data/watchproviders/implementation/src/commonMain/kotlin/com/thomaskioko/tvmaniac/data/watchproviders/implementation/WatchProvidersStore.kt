@@ -4,8 +4,8 @@ import com.thomaskioko.tvmaniac.core.db.WatchProviders
 import com.thomaskioko.tvmaniac.core.db.Watch_providers
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderDao
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCH_PROVIDERS
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.model.ApiResponse
@@ -67,12 +67,9 @@ class WatchProvidersStore(
             }
 
             // Update Last Request
-            requestManagerRepository.upsert(
-                LastRequest(
-                    id = id,
-                    entityId = id,
-                    requestType = "TMDB_SHOW_DETAILS",
-                ),
+            requestManagerRepository.insert(
+                entityId = id,
+                requestType = WATCH_PROVIDERS.name,
             )
         },
         delete = dao::delete,

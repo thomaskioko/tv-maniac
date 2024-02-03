@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.data.showdetails.implementation
 import com.thomaskioko.tvmaniac.core.db.TvshowDetails
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SHOW_DETAILS
 import com.thomaskioko.tvmaniac.util.extensions.mapResult
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.model.Either
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.get
-import kotlin.time.Duration.Companion.days
 
 @Inject
 class DefaultShowDetailsRepository(
@@ -21,16 +21,16 @@ class DefaultShowDetailsRepository(
     private val dispatchers: AppCoroutineDispatchers,
 ) : ShowDetailsRepository {
 
-    override suspend fun getShowDetails(traktId: Long): TvshowDetails = showStore.get(key = traktId)
+    override suspend fun getShowDetails(id: Long): TvshowDetails = showStore.get(key = id)
 
-    override fun observeShowDetails(traktId: Long): Flow<Either<Failure, TvshowDetails>> =
+    override fun observeShowDetails(id: Long): Flow<Either<Failure, TvshowDetails>> =
         showStore.stream(
             StoreReadRequest.cached(
-                key = traktId,
+                key = id,
                 refresh = requestManagerRepository.isRequestExpired(
-                    entityId = traktId,
-                    requestType = "TMDB_SHOW_DETAILS",
-                    threshold = 6.days,
+                    entityId = id,
+                    requestType = SHOW_DETAILS.name,
+                    threshold = SHOW_DETAILS.duration,
                 ),
             ),
         )

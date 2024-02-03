@@ -20,7 +20,7 @@ actual interface DataStorePlatformComponent {
         dispatchers: AppCoroutineScope,
     ): DataStore<Preferences> = createDataStore(
         coroutineScope = dispatchers.io,
-        producePath = {
+        produceFile = {
             val documentDirectory: NSURL? = NSFileManager.defaultManager.URLForDirectory(
                 directory = NSDocumentDirectory,
                 inDomain = NSUserDomainMask,

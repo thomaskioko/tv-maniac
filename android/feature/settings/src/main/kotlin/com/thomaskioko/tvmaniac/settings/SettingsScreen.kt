@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -73,7 +74,7 @@ fun SettingsScreen(
     presenter: SettingsPresenter,
     modifier: Modifier = Modifier,
 ) {
-    val state by presenter.state.subscribeAsState()
+    val state by presenter.value.subscribeAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     SettingsScreen(
@@ -95,8 +96,19 @@ internal fun SettingsScreen(
     Scaffold(
         topBar = {
             TvManiacTopBar(
-                title = stringResource(R.string.title_settings),
-                showNavigationIcon = false,
+                title = {
+                    Text(
+                        text = stringResource(R.string.title_settings),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = MaterialTheme.colorScheme.onSurface,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp),
+                    )
+                },
                 modifier = Modifier,
             )
         },

@@ -16,7 +16,7 @@ struct SeasonDetailsView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
-    @StateValue private var uiState: SeasonDetailsState
+    @StateValue private var uiState: SeasonDetailsContent
     
     @State private var progress: CGFloat = 0
     @State private var isTruncated = false
@@ -27,7 +27,7 @@ struct SeasonDetailsView: View {
     
     init(presenter: SeasonDetailsPresenter) {
         self.presenter = presenter
-        _uiState = StateValue(presenter.state)
+        _uiState = StateValue(presenter.value)
     }
     
     var body: some View {
@@ -52,7 +52,6 @@ struct SeasonDetailsView: View {
             TopBar(onBackClicked: { presenter.dispatch(action: SeasonDetailsBackClicked()) })
         }
         .ignoresSafeArea()
-        .background(Color.background)
         .sheet(isPresented: $showModal) {
             ImageGalleryContentView(items: uiState.seasonImages)
         }

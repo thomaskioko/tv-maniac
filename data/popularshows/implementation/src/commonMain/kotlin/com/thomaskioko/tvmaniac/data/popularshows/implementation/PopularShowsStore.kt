@@ -4,9 +4,8 @@ import com.thomaskioko.tvmaniac.core.db.Popular_shows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsDao
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.POPULAR_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
@@ -79,12 +78,9 @@ class PopularShowsStore(
                 )
             }
 
-            requestManagerRepository.upsert(
-                LastRequest(
-                    id = Category.POPULAR.id,
-                    entityId = page,
-                    requestType = Category.POPULAR.name,
-                ),
+            requestManagerRepository.insert(
+                entityId = page,
+                requestType = POPULAR_SHOWS.name,
             )
         },
         delete = popularShowsDao::deletePopularShow,

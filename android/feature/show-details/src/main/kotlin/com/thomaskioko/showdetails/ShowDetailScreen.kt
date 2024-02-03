@@ -117,7 +117,7 @@ fun ShowDetailsScreen(
     presenter: ShowDetailsPresenter,
     modifier: Modifier = Modifier,
 ) {
-    val state by presenter.state.subscribeAsState()
+    val state by presenter.value.subscribeAsState()
 
     val snackBarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()

@@ -74,8 +74,8 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonDetailSn
 import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonDialog
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsBackClicked
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsContent
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonGalleryClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.UpdateSeasonWatchedState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Cast
@@ -92,7 +92,7 @@ fun SeasonDetailsScreen(
     presenter: SeasonDetailsPresenter,
     modifier: Modifier = Modifier,
 ) {
-    val state by presenter.state.subscribeAsState()
+    val state by presenter.value.subscribeAsState()
 
     SeasonDetailsScreen(
         modifier = modifier,
@@ -104,7 +104,7 @@ fun SeasonDetailsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SeasonDetailsScreen(
-    state: SeasonDetailsState,
+    state: SeasonDetailsContent,
     onAction: (SeasonDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -131,7 +131,7 @@ internal fun SeasonDetailsScreen(
 private fun SeasonDetailsContent(
     isLoading: Boolean,
     showSeasonWatchStateDialog: Boolean,
-    seasonDetailsModel: SeasonDetailsState,
+    seasonDetailsModel: SeasonDetailsContent,
     contentPadding: PaddingValues,
     onAction: (SeasonDetailsAction) -> Unit,
 ) {
@@ -321,7 +321,7 @@ private fun HeaderContent(
 
 @Composable
 private fun BodyContent(
-    seasonDetailsModel: SeasonDetailsState,
+    seasonDetailsModel: SeasonDetailsContent,
     onAction: (SeasonDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -494,7 +494,7 @@ private fun SeasonsWatchDialog(
 @ThemePreviews
 @Composable
 private fun SeasonDetailScreenPreview(
-    @PreviewParameter(SeasonPreviewParameterProvider::class) state: SeasonDetailsState,
+    @PreviewParameter(SeasonPreviewParameterProvider::class) state: SeasonDetailsContent,
 ) {
     TvManiacTheme {
         Surface {

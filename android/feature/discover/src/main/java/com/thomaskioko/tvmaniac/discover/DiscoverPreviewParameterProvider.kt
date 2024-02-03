@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.discover
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
+import com.thomaskioko.tvmaniac.presentation.discover.EmptyState
 import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
 import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import kotlinx.collections.immutable.toImmutableList
@@ -11,7 +12,6 @@ val discoverShow = DiscoverShow(
     tmdbId = 84958,
     title = "Loki",
     posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-    backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
 )
 
 val discoverContentSuccess = DataLoaded(
@@ -27,6 +27,7 @@ class DiscoverPreviewParameterProvider : PreviewParameterProvider<DiscoverState>
     override val values: Sequence<DiscoverState>
         get() {
             return sequenceOf(
+                EmptyState,
                 discoverContentSuccess,
                 ErrorState(errorMessage = "Opps! Something went wrong"),
             )

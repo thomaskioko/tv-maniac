@@ -18,6 +18,10 @@ class FakeLibraryRepository : LibraryRepository {
         watchlist.send(result)
     }
 
+    suspend fun setObserveResult(result: Either<Failure, List<LibraryShows>>) {
+        watchlistResult.send(result)
+    }
+
     override fun observeLibrary(): Flow<Either<Failure, List<LibraryShows>>> =
         watchlistResult.receiveAsFlow()
 

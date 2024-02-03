@@ -24,12 +24,13 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TvManiacBottomSheetScaffold(
-    showBottomSheet: Boolean,
     sheetContent: @Composable ColumnScope.() -> Unit,
     content: @Composable (PaddingValues) -> Unit,
     onDismissBottomSheet: () -> Unit,
     modifier: Modifier = Modifier,
     topBar: @Composable (() -> Unit)? = null,
+    sheetPeekHeight: Dp = 0.dp,
+    showBottomSheet: Boolean = false,
     skipHiddenState: Boolean = false,
     sheetShadowElevation: Dp = 0.dp,
     initialSheetState: SheetValue = SheetValue.Hidden,
@@ -61,6 +62,7 @@ fun TvManiacBottomSheetScaffold(
                 })
             },
         topBar = topBar,
+        sheetPeekHeight = sheetPeekHeight,
         scaffoldState = bottomSheetScaffoldState,
         sheetShape = sheetShape,
         sheetShadowElevation = sheetShadowElevation,

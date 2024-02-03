@@ -24,6 +24,8 @@ import com.thomaskioko.tvmaniac.util.extensions.combine
 import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -58,7 +60,10 @@ class ShowDetailsPresenter @Inject constructor(
 
     private val coroutineScope = coroutineScope()
     private val _state = MutableStateFlow(ShowDetailsState.EMPTY_DETAIL_STATE)
-    val state: Value<ShowDetailsState> = _state
+    val state: StateFlow<ShowDetailsState> = _state.asStateFlow()
+
+    // TODO:: Create SwiftUI flow wrapper and get rid of this.
+    val value: Value<ShowDetailsState> = _state
         .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
     init {

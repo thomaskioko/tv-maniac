@@ -26,6 +26,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(projects.data.seasondetails.testing)
+                implementation(projects.data.cast.testing)
 
                 implementation(libs.bundles.unittest)
             }

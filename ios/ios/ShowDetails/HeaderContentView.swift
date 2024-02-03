@@ -47,6 +47,16 @@ struct HeaderContentView: View {
                             ], startPoint: .top, endPoint: .bottom)
                         )
                     
+                    Text(show.title)
+                        .bodyFont(size: 24)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                        .padding(.leading, 75.0)
+                        .opacity(progress)
+                        .opacity(max(0, min(1, (progress - 0.75) * 4.0)))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.bottom, 30)
+                    
                     ShowInfoView(
                         onAddToLibraryClick: onAddToLibraryClick,
                         onWatchTrailerClick: onWatchTrailerClick

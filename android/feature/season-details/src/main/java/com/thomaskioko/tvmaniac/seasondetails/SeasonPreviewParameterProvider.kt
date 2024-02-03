@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.seasondetails
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsState
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsContent
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -19,7 +19,7 @@ val episodeDetailsModel = EpisodeDetailsModel(
     seasonEpisodeNumber = "S01 | E01",
 )
 
-val mockSeasonDetailsContent = SeasonDetailsState(
+val mockSeasonDetailsContent = SeasonDetailsContent(
     seasonId = 1,
     seasonName = "Specials",
     episodeCount = 8,
@@ -35,8 +35,8 @@ val mockSeasonDetailsContent = SeasonDetailsState(
     seasonCast = persistentListOf(),
 )
 
-class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsState> {
-    override val values: Sequence<SeasonDetailsState>
+class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsContent> {
+    override val values: Sequence<SeasonDetailsContent>
         get() {
             return sequenceOf(
                 mockSeasonDetailsContent,

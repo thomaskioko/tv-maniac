@@ -30,6 +30,7 @@ struct HeaderCoverArtWorkView: View {
         }
     }
     
+    @ViewBuilder
     private var headerPosterPlaceholder : some View {
         ZStack {
             Rectangle().fill(.gray.gradient)

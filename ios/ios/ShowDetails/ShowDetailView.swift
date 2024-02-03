@@ -21,7 +21,7 @@ struct ShowDetailView: View {
     
     init(presenter: ShowDetailsPresenter){
         self.presenter = presenter
-        _uiState = StateValue(presenter.state)
+        _uiState = StateValue(presenter.value)
     }
     
     var body: some View {
@@ -65,7 +65,6 @@ struct ShowDetailView: View {
             .collapseProgress($progress)
             .allowsHeaderGrowth()
             .hideScrollIndicators()
-            .background(Color.background)
             .shadow(radius: progress)
             
             TopBar(onBackClicked: { presenter.dispatch(action: DetailBackClicked()) })

@@ -27,9 +27,9 @@ struct SearchView: View {
             VStack {
                
             }
-            .background(Color.background)
             .navigationTitle("Search")
             .navigationBarTitleDisplayMode(.large)
+            .background(Color.background)
             .searchable(text: $query)
             .task(id: query) {
                 if query.isEmpty { return }

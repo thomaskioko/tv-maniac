@@ -9,7 +9,7 @@ kotlin {
             dependencies {
                 implementation(projects.core.database)
                 implementation(projects.core.util)
-                implementation(projects.data.seasons.api)
+                api(projects.data.seasons.api)
 
                 implementation(libs.coroutines.core)
             }

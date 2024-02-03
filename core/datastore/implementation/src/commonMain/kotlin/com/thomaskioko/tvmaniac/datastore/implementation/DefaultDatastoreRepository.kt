@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class DatastoreRepositoryImpl(
+class DefaultDatastoreRepository(
     private val coroutineScope: AppCoroutineScope,
     private val dataStore: DataStore<Preferences>,
 ) : DatastoreRepository {

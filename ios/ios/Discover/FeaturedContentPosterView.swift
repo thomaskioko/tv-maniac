@@ -29,7 +29,7 @@ struct FeaturedContentPosterView: View {
                 }
                 .aspectRatio(contentMode: .fill)
                 .overlay {
-                    if show.isInLibrary {
+                    if show.inLibrary {
                         VStack {
                             Spacer()
                             HStack {
