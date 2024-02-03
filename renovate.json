@@ -1,39 +1,70 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",
-    "group:all",
-    ":dependencyDashboard",
-    "schedule:daily"
+    "config:base"
   ],
+  "automerge": true,
+  "automergeType": "pr",
+  "platformAutomerge": true,
+  "platformCommit": true,
+  "assignAutomerge": true,
+  "reviewers": [
+    "_thomaskioko"
+  ],
+  "rebaseWhen": "conflicted",
+  "prBodyTemplate": "{{{header}}}{{{table}}}{{{notes}}}{{{changelogs}}}{{{controls}}}{{{footer}}}",
   "packageRules": [
     {
-      "groupName": "Kotlin, Compose, KSP",
-      "groupSlug": "kotlin",
-      "matchPackagePrefixes": [
-        "androidx.compose.compiler:compiler",
-        "org.jetbrains.kotlin:",
-        "org.jetbrains.kotlin.",
-        "com.google.devtools.ksp"
+      "matchDatasources": ["maven"],
+      "registryUrls": [
+        "https://repo.maven.apache.org/maven2",
+        "https://dl.google.com/android/maven2",
+        "https://plugins.gradle.org/m2"
       ]
     },
     {
-      "matchDatasources": [
-        "maven"
+      "matchPackageNames": [
+        "gradle"
       ],
-      "registryUrls": [
-        "https://jitpack.io/"
+      "prBodyNotes": "[Changelog](https://docs.gradle.org/{{{newVersion}}}/release-notes.html)"
+    },
+    {
+      "matchPackagePatterns": [
+        "org.jetbrains.kotlin",
+        "com.google.devtools.ksp",
+        "dev.zacsweers.kctfork",
+        "androidx.compose.compiler",
+        "org.jetbrains.compose.compiler"
       ],
+      "excludePackagePatterns": [
+        "org.jetbrains.kotlinx"
+      ],
+      "groupName": "Kotlin, KSP and Compose Compiler"
+    },
+    {
+      "matchPackagePatterns": [
+        "androidx.compose.runtime",
+        "androidx.compose.ui",
+        "androidx.compose.foundation",
+        "androidx.compose.animation",
+        "androidx.compose.material",
+        "androidx.compose.material3",
+        "org.jetbrains.compose$",
+        "org.jetbrains.compose.runtime",
+        "org.jetbrains.compose.ui",
+        "org.jetbrains.compose.foundation",
+        "org.jetbrains.compose.animation",
+        "org.jetbrains.compose.material",
+        "org.jetbrains.compose.material3",
+      ],
+      "groupName": "Compose"
     },
     {
       "description": "Automerge updates (Minor/Patch)",
       "matchUpdateTypes": [
         "minor",
         "patch"
-      ],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
+      ]
     }
-  ],
+  ]
 }
