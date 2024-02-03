@@ -66,6 +66,9 @@ struct LibraryView: View {
                             posterWidth: 130,
                             posterHeight: 200
                         )
+                        .aspectRatio(contentMode: .fill)
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .clipped()
                         .onTapGesture { presenter.dispatch(action: LibraryShowClicked(id: item.tmdbId)) }
                     }
                 }.padding(.all, 10)
@@ -121,6 +124,6 @@ struct LibraryView: View {
 }
 
 private struct DimensionConstants {
-    static let posterColumns = [GridItem(.adaptive(minimum: 100), spacing: 8)]
+    static let posterColumns = [GridItem(.adaptive(minimum: 100), spacing: 4)]
     static let spacing: CGFloat = 4
 }
