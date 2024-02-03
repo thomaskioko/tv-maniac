@@ -29,9 +29,9 @@ class LibraryPresenter(
     private val coroutineScope = coroutineScope()
 
     private val _state = MutableStateFlow<LibraryState>(LoadingShows)
-    val state : StateFlow<LibraryState> = _state.asStateFlow()
+    val state: StateFlow<LibraryState> = _state.asStateFlow()
 
-    //TODO:: Create SwiftUI flow wrapper and get rid of this.
+    // TODO:: Create SwiftUI flow wrapper and get rid of this.
     val value: Value<LibraryState> = _state
         .asValue(initialValue = _state.value, lifecycle = lifecycle)
 

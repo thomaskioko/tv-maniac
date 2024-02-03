@@ -24,10 +24,10 @@ class FakeFeaturedShowsRepository : FeaturedShowsRepository {
 
     override suspend fun fetchFeaturedShows(
         timeWindow: String,
-        forceRefresh: Boolean
+        forceRefresh: Boolean,
     ): List<ShowEntity> = showEntityList.receive()
 
     override fun observeFeaturedShows(
-        timeWindow: String
+        timeWindow: String,
     ): Flow<Either<Failure, List<ShowEntity>>> = entityListResult.receiveAsFlow()
 }

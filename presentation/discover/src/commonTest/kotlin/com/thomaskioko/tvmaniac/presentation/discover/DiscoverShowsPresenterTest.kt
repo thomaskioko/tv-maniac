@@ -13,7 +13,6 @@ import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.util.model.Either
 import io.kotest.matchers.shouldBe
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -206,13 +205,12 @@ class DiscoverShowsPresenterTest {
                 upcomingShows = expectedUpdatedList,
                 trendingToday = expectedUpdatedList,
                 isRefreshing = false,
-                errorMessage = null
+                errorMessage = null,
             )
 
             awaitItem() shouldBe expectedUpdatedResult
         }
     }
-
 
     private suspend fun setList(list: List<ShowEntity>) {
         featuredShowsRepository.setFeaturedShows(list)
@@ -235,7 +233,7 @@ class DiscoverShowsPresenterTest {
             id = 84958,
             title = "Loki",
             posterPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            inLibrary = false
+            inLibrary = false,
         )
     }.toImmutableList()
 
@@ -244,7 +242,7 @@ class DiscoverShowsPresenterTest {
             tmdbId = it.id,
             title = it.title,
             posterImageUrl = it.posterPath,
-            inLibrary = it.inLibrary
+            inLibrary = it.inLibrary,
         )
     }.toImmutableList()
 

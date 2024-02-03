@@ -14,7 +14,7 @@ fun List<ShowEntity>?.toShowList(): ImmutableList<DiscoverShow> =
             tmdbId = it.id,
             title = it.title,
             posterImageUrl = it.posterPath,
-            inLibrary = it.inLibrary
+            inLibrary = it.inLibrary,
         )
     }?.toImmutableList() ?: persistentListOf()
 

@@ -12,7 +12,6 @@ import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
@@ -45,7 +44,7 @@ class SeasonDetailsPresenter @Inject constructor(
     private val _state = MutableStateFlow(DEFAULT_SEASON_STATE)
     val state: StateFlow<SeasonDetailsContent> = _state.asStateFlow()
 
-    //TODO:: Create SwiftUI flow wrapper and get rid of this.
+    // TODO:: Create SwiftUI flow wrapper and get rid of this.
     val value: Value<SeasonDetailsContent> = _state
         .asValue(initialValue = _state.value, lifecycle = lifecycle)
 
@@ -69,7 +68,7 @@ class SeasonDetailsPresenter @Inject constructor(
                 SeasonGalleryClicked -> coroutineScope.launch {
                     _state.update { state ->
                         (state as? SeasonDetailsContent)?.copy(
-                            showGalleryBottomSheet = !state.showGalleryBottomSheet
+                            showGalleryBottomSheet = !state.showGalleryBottomSheet,
                         ) ?: state
                     }
                 }

@@ -27,7 +27,6 @@ class SettingsPresenterTest {
     private val datastoreRepository = FakeDatastoreRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
 
-
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -37,7 +36,7 @@ class SettingsPresenterTest {
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             datastoreRepository = datastoreRepository,
             traktAuthRepository = traktAuthRepository,
-            launchWebView = {}
+            launchWebView = {},
         )
     }
 
@@ -94,7 +93,6 @@ class SettingsPresenterTest {
                 showthemePopup = false,
             )
         }
-
     }
 
     @Test
@@ -132,9 +130,7 @@ class SettingsPresenterTest {
 
             awaitItem() shouldBe SettingsState.DEFAULT_STATE
                 .copy(showTraktDialog = false)
-            
         }
-
     }
 
     @Ignore // "Fix once TraktAuthManager is implemented"
@@ -160,7 +156,6 @@ class SettingsPresenterTest {
             awaitItem() shouldBe SettingsState.DEFAULT_STATE
                 .copy(errorMessage = errorMessage)
         }
-
     }
 
     @Test
@@ -181,6 +176,5 @@ class SettingsPresenterTest {
 
             awaitItem() shouldBe SettingsState.DEFAULT_STATE
         }
-
     }
 }

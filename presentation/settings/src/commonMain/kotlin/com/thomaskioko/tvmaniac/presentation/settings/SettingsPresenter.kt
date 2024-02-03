@@ -35,7 +35,7 @@ class SettingsPresenter(
         MutableStateFlow(SettingsState.DEFAULT_STATE)
     val state: StateFlow<SettingsState> = _state.asStateFlow()
 
-    //TODO:: Create SwiftUI flow wrapper and get rid of this.
+    // TODO:: Create SwiftUI flow wrapper and get rid of this.
     val value: Value<SettingsState> = _state
         .asValue(initialValue = _state.value, lifecycle = lifecycle)
 

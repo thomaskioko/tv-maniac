@@ -30,7 +30,7 @@ class FakeTopRatedShowsRepository : TopRatedShowsRepository {
     }
 
     override suspend fun fetchTopRatedShows(
-        forceRefresh: Boolean
+        forceRefresh: Boolean,
     ): List<ShowEntity> {
         return showEntityList.receive()
     }
@@ -40,6 +40,6 @@ class FakeTopRatedShowsRepository : TopRatedShowsRepository {
     }
 
     override fun getPagedTopRatedShows(): Flow<PagingData<ShowEntity>> {
-      return pagedList.receiveAsFlow()
+        return pagedList.receiveAsFlow()
     }
 }

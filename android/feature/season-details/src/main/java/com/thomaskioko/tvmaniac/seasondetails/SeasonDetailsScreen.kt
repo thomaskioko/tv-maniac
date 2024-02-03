@@ -74,8 +74,8 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonDetailSn
 import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonDialog
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsBackClicked
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsContent
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonGalleryClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.UpdateSeasonWatchedState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Cast

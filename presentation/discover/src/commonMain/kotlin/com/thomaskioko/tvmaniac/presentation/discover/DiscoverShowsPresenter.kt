@@ -16,9 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -48,7 +46,7 @@ class DiscoverShowsPresenter(
     private val _state = MutableStateFlow<DiscoverState>(Loading)
     val state: StateFlow<DiscoverState> = _state.asStateFlow()
 
-    //TODO:: Create SwiftUI flow wrapper and get rid of this.
+    // TODO:: Create SwiftUI flow wrapper and get rid of this.
     val value: Value<DiscoverState> = _state
         .asValue(initialValue = _state.value, lifecycle = lifecycle)
 

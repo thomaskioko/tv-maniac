@@ -29,7 +29,7 @@ class DefaultSeasonDetailsRepository(
         param: SeasonDetailsParam,
     ): SeasonDetailsWithEpisodes = seasonDetailsStore.get(param)
 
-    override suspend  fun fetchSeasonImages(id: Long): List<Season_images> =
+    override suspend fun fetchSeasonImages(id: Long): List<Season_images> =
         seasonDetailsDao.fetchSeasonImages(id)
 
     override fun observeSeasonDetails(

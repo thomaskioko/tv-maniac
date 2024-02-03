@@ -62,7 +62,7 @@ class ShowDetailsPresenter @Inject constructor(
     private val _state = MutableStateFlow(ShowDetailsState.EMPTY_DETAIL_STATE)
     val state: StateFlow<ShowDetailsState> = _state.asStateFlow()
 
-    //TODO:: Create SwiftUI flow wrapper and get rid of this.
+    // TODO:: Create SwiftUI flow wrapper and get rid of this.
     val value: Value<ShowDetailsState> = _state
         .asValue(initialValue = _state.value, lifecycle = lifecycle)
 

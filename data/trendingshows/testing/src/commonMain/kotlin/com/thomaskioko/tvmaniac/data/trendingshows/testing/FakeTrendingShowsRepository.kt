@@ -30,7 +30,7 @@ class FakeTrendingShowsRepository : TrendingShowsRepository {
     }
 
     override suspend fun fetchTrendingShows(
-        forceRefresh: Boolean
+        forceRefresh: Boolean,
     ): List<ShowEntity> = showEntityList.receive()
 
     override fun observeTrendingShows(): Flow<Either<Failure, List<ShowEntity>>> {

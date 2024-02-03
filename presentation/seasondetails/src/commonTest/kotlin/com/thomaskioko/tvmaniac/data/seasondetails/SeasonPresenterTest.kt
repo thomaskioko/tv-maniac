@@ -43,7 +43,7 @@ class SeasonPresenterTest {
             onBack = {},
             onEpisodeClick = {},
             seasonDetailsRepository = seasonDetailsRepository,
-            castRepository = castRepository
+            castRepository = castRepository,
         )
     }
 

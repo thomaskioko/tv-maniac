@@ -154,7 +154,7 @@ class RootNavigationPresenterTest {
         advanceUntilIdle()
         presenter.state.value shouldBe ThemeState(
             isFetching = false,
-            appTheme = AppTheme.DARK_THEME
+            appTheme = AppTheme.DARK_THEME,
         )
     }
 
@@ -199,7 +199,6 @@ class RootNavigationPresenterTest {
                 trendingShowsRepository = FakeTrendingShowsRepository(),
                 topRatedShowsRepository = FakeTopRatedShowsRepository(),
             )
-
         }
 
     private fun buildSearchPresenterFactory(
@@ -220,7 +219,7 @@ class RootNavigationPresenterTest {
                 componentContext = componentContext,
                 launchWebView = {},
                 datastoreRepository = datastoreRepository,
-                traktAuthRepository = FakeTraktAuthRepository()
+                traktAuthRepository = FakeTraktAuthRepository(),
             )
         }
 

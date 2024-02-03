@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.util.model.Either
 import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.flow.Flow
 
-class FakeShowDetailsRepository: ShowDetailsRepository {
+class FakeShowDetailsRepository : ShowDetailsRepository {
     override suspend fun getShowDetails(id: Long): TvshowDetails {
         TODO("Not yet implemented")
     }
