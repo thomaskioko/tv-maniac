@@ -37,7 +37,7 @@ snapper = "0.3.0"
 sqldelight = "2.0.1"
 store5 = "5.0.0"
 turbine = "1.0.0"
-yamlkt = "0.12.0"
+yamlkt = "0.13.0"
 youtubePlayer = "12.1.0"
 
 [libraries]
