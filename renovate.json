@@ -1,18 +1,18 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:base",
+    ":disableRateLimiting",
+    ":semanticCommitsDisabled"
   ],
   "automerge": true,
-  "automergeType": "pr",
   "platformAutomerge": true,
   "platformCommit": true,
   "assignAutomerge": true,
-  "reviewers": [
-    "_thomaskioko"
-  ],
+  "reviewers": ["_thomaskioko"],
   "rebaseWhen": "conflicted",
   "prBodyTemplate": "{{{header}}}{{{table}}}{{{notes}}}{{{changelogs}}}{{{controls}}}{{{footer}}}",
+  "prBodyColumns": ["Package", "Change", "Age"],
   "packageRules": [
     {
       "matchDatasources": [
@@ -60,13 +60,6 @@
         "org.jetbrains.compose.material3"
       ],
       "groupName": "Compose"
-    },
-    {
-      "description": "Automerge updates (Minor/Patch)",
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ]
     }
   ]
 }
