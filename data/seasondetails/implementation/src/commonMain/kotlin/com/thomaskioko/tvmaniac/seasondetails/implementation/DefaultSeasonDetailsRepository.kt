@@ -19,35 +19,36 @@ import org.mobilenativefoundation.store.store5.impl.extensions.get
 
 @Inject
 class DefaultSeasonDetailsRepository(
-    private val seasonDetailsStore: SeasonDetailsStore,
-    private val seasonDetailsDao: SeasonDetailsDao,
-    private val requestManagerRepository: RequestManagerRepository,
-    private val dispatcher: AppCoroutineDispatchers,
+  private val seasonDetailsStore: SeasonDetailsStore,
+  private val seasonDetailsDao: SeasonDetailsDao,
+  private val requestManagerRepository: RequestManagerRepository,
+  private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonDetailsRepository {
 
-    override suspend fun fetchSeasonDetails(
-        param: SeasonDetailsParam,
-    ): SeasonDetailsWithEpisodes = seasonDetailsStore.get(param)
+  override suspend fun fetchSeasonDetails(param: SeasonDetailsParam): SeasonDetailsWithEpisodes =
+    seasonDetailsStore.get(param)
 
-    override suspend fun fetchSeasonImages(id: Long): List<Season_images> =
-        seasonDetailsDao.fetchSeasonImages(id)
+  override suspend fun fetchSeasonImages(id: Long): List<Season_images> =
+    seasonDetailsDao.fetchSeasonImages(id)
 
-    override fun observeSeasonDetails(
-        param: SeasonDetailsParam,
-    ): Flow<Either<Failure, SeasonDetailsWithEpisodes>> =
-        seasonDetailsStore.stream(
-            StoreReadRequest.cached(
-                key = param,
-                refresh = requestManagerRepository.isRequestExpired(
-                    entityId = param.seasonId,
-                    requestType = SEASON_DETAILS.name,
-                    threshold = SEASON_DETAILS.duration,
-                ),
+  override fun observeSeasonDetails(
+    param: SeasonDetailsParam,
+  ): Flow<Either<Failure, SeasonDetailsWithEpisodes>> =
+    seasonDetailsStore
+      .stream(
+        StoreReadRequest.cached(
+          key = param,
+          refresh =
+            requestManagerRepository.isRequestExpired(
+              entityId = param.seasonId,
+              requestType = SEASON_DETAILS.name,
+              threshold = SEASON_DETAILS.duration,
             ),
-        )
-            .mapResult()
-            .flowOn(dispatcher.io)
+        ),
+      )
+      .mapResult()
+      .flowOn(dispatcher.io)
 
-    override fun observeSeasonImages(id: Long): Flow<List<Season_images>> =
-        seasonDetailsDao.observeSeasonImages(id)
+  override fun observeSeasonImages(id: Long): Flow<List<Season_images>> =
+    seasonDetailsDao.observeSeasonImages(id)
 }

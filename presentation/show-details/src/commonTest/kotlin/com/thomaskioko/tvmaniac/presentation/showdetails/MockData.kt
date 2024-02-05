@@ -9,30 +9,34 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import kotlinx.collections.immutable.persistentListOf
 
-val similarShow = ShowDetails(
+val similarShow =
+  ShowDetails(
     tmdbId = 849583,
     title = "Loki",
     posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-)
+  )
 
-val similarSimilarShows = persistentListOf(
+val similarSimilarShows =
+  persistentListOf(
     Show(
-        tmdbId = 284958,
-        title = "Loki",
-        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        isInLibrary = false,
+      tmdbId = 284958,
+      title = "Loki",
+      posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      isInLibrary = false,
     ),
-)
+  )
 
-val showDetailsLoaded = ShowDetailsState(
-    showDetails = ShowDetails(
+val showDetailsLoaded =
+  ShowDetailsState(
+    showDetails =
+      ShowDetails(
         tmdbId = 849583,
         title = "Loki",
         posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-    ),
+      ),
     seasonsList = persistentListOf(),
     similarShows = persistentListOf(),
     trailersList = persistentListOf(),
@@ -42,43 +46,47 @@ val showDetailsLoaded = ShowDetailsState(
     castsList = persistentListOf(),
     recommendedShowList = persistentListOf(),
     hasWebViewInstalled = false,
-)
+  )
 
-val seasonPersistentList = persistentListOf(
+val seasonPersistentList =
+  persistentListOf(
     Season(
-        seasonId = 84958,
-        tvShowId = 114355,
-        name = "Season 1",
-        seasonNumber = 0,
+      seasonId = 84958,
+      tvShowId = 114355,
+      name = "Season 1",
+      seasonNumber = 0,
     ),
-)
+  )
 
-val trailerPersistentList = persistentListOf(
+val trailerPersistentList =
+  persistentListOf(
     Trailer(
-        showId = 84958,
-        key = "Fd43V",
-        name = "Some title",
-        youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
+      showId = 84958,
+      key = "Fd43V",
+      name = "Some title",
+      youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
     ),
-)
+  )
 
 val similarShowList = similarSimilarShows
 
-val similarShowResult = listOf(
+val similarShowResult =
+  listOf(
     SimilarShows(
-        id = Id(184958),
-        name = "Loki",
-        poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        in_library = 0,
+      id = Id(184958),
+      name = "Loki",
+      poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      in_library = 0,
     ),
-)
+  )
 
-val seasons = listOf(
+val seasons =
+  listOf(
     ShowSeasons(
-        season_id = Id(84958),
-        show_id = Id(114355),
-        season_title = "Season 1",
-        season_number = 1,
+      season_id = Id(84958),
+      show_id = Id(114355),
+      season_title = "Season 1",
+      season_number = 1,
     ),
-)
+  )

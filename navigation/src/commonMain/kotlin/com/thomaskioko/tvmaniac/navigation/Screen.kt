@@ -10,12 +10,19 @@ import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
 
 sealed interface Screen {
-    class Discover(val presenter: DiscoverShowsPresenter) : Screen
-    class Library(val presenter: LibraryPresenter) : Screen
-    class MoreShows(val presenter: MoreShowsPresenter) : Screen
-    class Search(val presenter: SearchPresenter) : Screen
-    class SeasonDetails(val presenter: SeasonDetailsPresenter) : Screen
-    class Settings(val presenter: SettingsPresenter) : Screen
-    class ShowDetails(val presenter: ShowDetailsPresenter) : Screen
-    class Trailers(val presenter: TrailersPresenter) : Screen
+  class Discover(val presenter: DiscoverShowsPresenter) : Screen
+
+  class Library(val presenter: LibraryPresenter) : Screen
+
+  class MoreShows(val presenter: MoreShowsPresenter) : Screen
+
+  class Search(val presenter: SearchPresenter) : Screen
+
+  class SeasonDetails(val presenter: SeasonDetailsPresenter) : Screen
+
+  class Settings(val presenter: SettingsPresenter) : Screen
+
+  class ShowDetails(val presenter: ShowDetailsPresenter) : Screen
+
+  class Trailers(val presenter: TrailersPresenter) : Screen
 }

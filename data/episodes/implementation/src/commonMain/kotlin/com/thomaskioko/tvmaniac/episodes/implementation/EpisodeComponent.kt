@@ -7,11 +7,9 @@ import me.tatarka.inject.annotations.Provides
 
 interface EpisodeComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideEpisodesDao(bind: EpisodesDaoImpl): EpisodesDao = bind
+  @ApplicationScope @Provides fun provideEpisodesDao(bind: EpisodesDaoImpl): EpisodesDao = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideEpisodeRepository(bind: EpisodeRepositoryImpl): EpisodeRepository = bind
+  @ApplicationScope
+  @Provides
+  fun provideEpisodeRepository(bind: EpisodeRepositoryImpl): EpisodeRepository = bind
 }

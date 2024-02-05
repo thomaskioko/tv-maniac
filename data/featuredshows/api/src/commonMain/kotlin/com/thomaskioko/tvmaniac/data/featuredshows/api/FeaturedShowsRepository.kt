@@ -8,12 +8,12 @@ import kotlinx.coroutines.flow.Flow
 
 interface FeaturedShowsRepository {
 
-    suspend fun fetchFeaturedShows(
-        timeWindow: String = DEFAULT_DAY_TIME_WINDOW,
-        forceRefresh: Boolean = false,
-    ): List<ShowEntity>
+  suspend fun fetchFeaturedShows(
+    timeWindow: String = DEFAULT_DAY_TIME_WINDOW,
+    forceRefresh: Boolean = false,
+  ): List<ShowEntity>
 
-    fun observeFeaturedShows(
-        timeWindow: String = DEFAULT_DAY_TIME_WINDOW,
-    ): Flow<Either<Failure, List<ShowEntity>>>
+  fun observeFeaturedShows(
+    timeWindow: String = DEFAULT_DAY_TIME_WINDOW,
+  ): Flow<Either<Failure, List<ShowEntity>>>
 }

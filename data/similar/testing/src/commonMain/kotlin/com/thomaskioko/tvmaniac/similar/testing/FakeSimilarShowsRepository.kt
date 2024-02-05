@@ -10,14 +10,14 @@ import kotlinx.coroutines.flow.flowOf
 
 class FakeSimilarShowsRepository : SimilarShowsRepository {
 
-    private var similarShowsResult: Flow<Either<Failure, List<SimilarShows>>> = flowOf()
+  private var similarShowsResult: Flow<Either<Failure, List<SimilarShows>>> = flowOf()
 
-    suspend fun setSimilarShowsResult(result: Either<Failure, List<SimilarShows>>) {
-        similarShowsResult = flow { emit(result) }
-    }
+  suspend fun setSimilarShowsResult(result: Either<Failure, List<SimilarShows>>) {
+    similarShowsResult = flow { emit(result) }
+  }
 
-    override suspend fun fetchSimilarShows(id: Long): List<SimilarShows> = emptyList()
+  override suspend fun fetchSimilarShows(id: Long): List<SimilarShows> = emptyList()
 
-    override fun observeSimilarShows(id: Long): Flow<Either<Failure, List<SimilarShows>>> =
-        similarShowsResult
+  override fun observeSimilarShows(id: Long): Flow<Either<Failure, List<SimilarShows>>> =
+    similarShowsResult
 }

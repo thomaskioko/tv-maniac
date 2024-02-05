@@ -8,14 +8,15 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class AndroidAppUtils(
-    private val context: Application,
+  private val context: Application,
 ) : AppUtils {
 
-    override fun isYoutubePlayerInstalled(): Flow<Boolean> = flow {
-        val playerAppInstalled = context.packageManager
-            .getInstalledApplications(PackageManager.GET_META_DATA)
-            .firstOrNull { it.packageName == "com.google.android.webview" } != null
+  override fun isYoutubePlayerInstalled(): Flow<Boolean> = flow {
+    val playerAppInstalled =
+      context.packageManager.getInstalledApplications(PackageManager.GET_META_DATA).firstOrNull {
+        it.packageName == "com.google.android.webview"
+      } != null
 
-        emit(playerAppInstalled)
-    }
+    emit(playerAppInstalled)
+  }
 }

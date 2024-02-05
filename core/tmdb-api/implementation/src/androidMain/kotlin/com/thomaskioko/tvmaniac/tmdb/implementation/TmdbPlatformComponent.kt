@@ -6,7 +6,7 @@ import me.tatarka.inject.annotations.Provides
 
 actual interface TmdbPlatformComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideTmdbHttpClientEngine(): TmdbHttpClientEngine = OkHttp.create()
+  @ApplicationScope
+  @Provides
+  fun provideTmdbHttpClientEngine(): TmdbHttpClientEngine = OkHttp.create()
 }

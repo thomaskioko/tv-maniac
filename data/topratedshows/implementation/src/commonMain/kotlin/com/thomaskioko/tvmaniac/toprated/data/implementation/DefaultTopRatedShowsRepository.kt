@@ -28,51 +28,51 @@ import org.mobilenativefoundation.store.store5.impl.extensions.get
 
 @Inject
 class DefaultTopRatedShowsRepository(
-    private val store: TopRatedShowsStore,
-    private val requestManagerRepository: RequestManagerRepository,
-    private val dao: TopRatedShowsDao,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val store: TopRatedShowsStore,
+  private val requestManagerRepository: RequestManagerRepository,
+  private val dao: TopRatedShowsDao,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : TopRatedShowsRepository {
 
-    override suspend fun fetchTopRatedShows(
-        forceRefresh: Boolean,
-    ): List<ShowEntity> {
-        return if (forceRefresh) {
-            store.stream(fresh(key = DEFAULT_API_PAGE))
-                .filterForResult()
-                .first()
-                .dataOrNull() ?: getShows()
-        } else {
-            getShows()
-        }
+  override suspend fun fetchTopRatedShows(forceRefresh: Boolean): List<ShowEntity> {
+    return if (forceRefresh) {
+      store.stream(fresh(key = DEFAULT_API_PAGE)).filterForResult().first().dataOrNull()
+        ?: getShows()
+    } else {
+      getShows()
     }
+  }
 
-    override fun observeTopRatedShows(): Flow<Either<Failure, List<ShowEntity>>> =
-        store.stream(
-            StoreReadRequest.cached(
-                key = DEFAULT_API_PAGE,
-                refresh = requestManagerRepository.isRequestExpired(
-                    entityId = DEFAULT_API_PAGE,
-                    requestType = TOP_RATED_SHOWS.name,
-                    threshold = TOP_RATED_SHOWS.duration,
-                ),
+  override fun observeTopRatedShows(): Flow<Either<Failure, List<ShowEntity>>> =
+    store
+      .stream(
+        StoreReadRequest.cached(
+          key = DEFAULT_API_PAGE,
+          refresh =
+            requestManagerRepository.isRequestExpired(
+              entityId = DEFAULT_API_PAGE,
+              requestType = TOP_RATED_SHOWS.name,
+              threshold = TOP_RATED_SHOWS.duration,
             ),
-        )
-            .mapResult()
-            .flowOn(dispatchers.io)
+        ),
+      )
+      .mapResult()
+      .flowOn(dispatchers.io)
 
-    @OptIn(ExperimentalPagingApi::class, ExperimentalStoreApi::class)
-    override fun getPagedTopRatedShows(): Flow<PagingData<ShowEntity>> {
-        return Pager(
-            config = pagingConfig,
-            remoteMediator = PaginatedRemoteMediator(
-                getLastPage = dao::getLastPage,
-                deleteLocalEntity = store::clear,
-                fetch = store::fresh,
-            ),
-            pagingSourceFactory = dao::getPagedTopRatedShows,
-        ).flow
-    }
+  @OptIn(ExperimentalPagingApi::class, ExperimentalStoreApi::class)
+  override fun getPagedTopRatedShows(): Flow<PagingData<ShowEntity>> {
+    return Pager(
+        config = pagingConfig,
+        remoteMediator =
+          PaginatedRemoteMediator(
+            getLastPage = dao::getLastPage,
+            deleteLocalEntity = store::clear,
+            fetch = store::fresh,
+          ),
+        pagingSourceFactory = dao::getPagedTopRatedShows,
+      )
+      .flow
+  }
 
-    private suspend fun getShows(): List<ShowEntity> = store.get(key = DEFAULT_API_PAGE)
+  private suspend fun getShows(): List<ShowEntity> = store.get(key = DEFAULT_API_PAGE)
 }

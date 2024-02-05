@@ -9,18 +9,16 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DefaultCastRepository(
-    private val dao: CastDao,
+  private val dao: CastDao,
 ) : CastRepository {
 
-    override suspend fun fetchSeasonCast(seasonId: Long): List<SeasonCast> =
-        dao.fetchSeasonCast(seasonId)
+  override suspend fun fetchSeasonCast(seasonId: Long): List<SeasonCast> =
+    dao.fetchSeasonCast(seasonId)
 
-    override suspend fun fetchShowCast(showId: Long): List<ShowCast> =
-        dao.fetchShowCast(showId)
+  override suspend fun fetchShowCast(showId: Long): List<ShowCast> = dao.fetchShowCast(showId)
 
-    override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =
-        dao.observeSeasonCast(seasonId)
+  override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =
+    dao.observeSeasonCast(seasonId)
 
-    override fun observeShowCast(showId: Long): Flow<List<ShowCast>> =
-        dao.observeShowCast(showId)
+  override fun observeShowCast(showId: Long): Flow<List<ShowCast>> = dao.observeShowCast(showId)
 }

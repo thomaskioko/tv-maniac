@@ -13,39 +13,38 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DefaultFeaturedShowsDao(
-    database: TvManiacDatabase,
-    private val dispatchers: AppCoroutineDispatchers,
+  database: TvManiacDatabase,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : FeaturedShowsDao {
 
-    private val featuredShowsQueries = database.featured_showsQueries
+  private val featuredShowsQueries = database.featured_showsQueries
 
-    override fun upsert(show: Featured_shows) {
-        featuredShowsQueries.transaction {
-            featuredShowsQueries.insert(
-                id = show.id,
-            )
-        }
+  override fun upsert(show: Featured_shows) {
+    featuredShowsQueries.transaction {
+      featuredShowsQueries.insert(
+        id = show.id,
+      )
     }
+  }
 
-    override fun observeFeaturedShows(): Flow<List<ShowEntity>> =
-        featuredShowsQueries.featuredShows { id, title, posterPath, inLibrary ->
-            ShowEntity(
-                id = id.id,
-                title = title,
-                posterPath = posterPath,
-                inLibrary = inLibrary == 1L,
-            )
-        }
-            .asFlow()
-            .mapToList(dispatchers.io)
+  override fun observeFeaturedShows(): Flow<List<ShowEntity>> =
+    featuredShowsQueries
+      .featuredShows { id, title, posterPath, inLibrary ->
+        ShowEntity(
+          id = id.id,
+          title = title,
+          posterPath = posterPath,
+          inLibrary = inLibrary == 1L,
+        )
+      }
+      .asFlow()
+      .mapToList(dispatchers.io)
 
-    override fun deleteFeaturedShows(id: Long) {
-        featuredShowsQueries.delete(Id(id))
-    }
+  override fun deleteFeaturedShows(id: Long) {
+    featuredShowsQueries.delete(Id(id))
+  }
 
-    override fun deleteFeaturedShows() {
-        featuredShowsQueries.transaction {
-            featuredShowsQueries.deleteAll()
-        }
-    }
+  override fun deleteFeaturedShows() {
+    featuredShowsQueries.transaction { featuredShowsQueries.deleteAll() }
+  }
 }

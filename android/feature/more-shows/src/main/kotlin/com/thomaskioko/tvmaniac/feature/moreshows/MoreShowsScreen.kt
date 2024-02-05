@@ -56,165 +56,151 @@ import com.thomaskioko.tvmaniac.presentation.moreshows.TvShow
 
 @Composable
 fun MoreShowsScreen(
-    presenter: MoreShowsPresenter,
-    modifier: Modifier = Modifier,
+  presenter: MoreShowsPresenter,
+  modifier: Modifier = Modifier,
 ) {
-    val state by presenter.state.subscribeAsState()
+  val state by presenter.state.subscribeAsState()
 
-    MoreShowsScreen(
-        modifier = modifier,
-        state = state,
-        onAction = presenter::dispatch,
-    )
+  MoreShowsScreen(
+    modifier = modifier,
+    state = state,
+    onAction = presenter::dispatch,
+  )
 }
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 internal fun MoreShowsScreen(
-    state: MoreShowsState,
-    onAction: (MoreShowsActions) -> Unit,
-    modifier: Modifier = Modifier,
+  state: MoreShowsState,
+  onAction: (MoreShowsActions) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val pagedList = state.list.collectAsLazyPagingItems()
-    val snackBarHostState = remember { SnackbarHostState() }
+  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+  val pagedList = state.list.collectAsLazyPagingItems()
+  val snackBarHostState = remember { SnackbarHostState() }
 
-    Scaffold(
-        modifier = modifier
-            .statusBarsPadding(),
-        topBar = {
-            TvManiacTopBar(
-                title = {
-                    Text(
-                        text = state.categoryTitle ?: "",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            color = MaterialTheme.colorScheme.onSurface,
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp),
-                    )
-                },
-                navigationIcon = {
-                    Image(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
-                        modifier = Modifier
-                            .clickable(onClick = { onAction(MoreBackClicked) })
-                            .padding(16.dp),
-                    )
-                },
-                scrollBehavior = scrollBehavior,
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                ),
-            )
+  Scaffold(
+    modifier = modifier.statusBarsPadding(),
+    topBar = {
+      TvManiacTopBar(
+        title = {
+          Text(
+            text = state.categoryTitle ?: "",
+            style =
+              MaterialTheme.typography.titleMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+              ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+          )
         },
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState)
+        navigationIcon = {
+          Image(
+            imageVector = Icons.Filled.ArrowBack,
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
+            modifier = Modifier.clickable(onClick = { onAction(MoreBackClicked) }).padding(16.dp),
+          )
         },
-    ) { contentPadding ->
-
-        GridContent(
-            contentPadding = contentPadding,
-            lazyPagingItems = pagedList,
-            scrollBehavior = scrollBehavior,
-            snackBarHostState = snackBarHostState,
-            onItemClicked = { onAction(ShowClicked(it)) },
-        )
-    }
+        scrollBehavior = scrollBehavior,
+        colors =
+          TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+          ),
+      )
+    },
+    snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+  ) { contentPadding ->
+    GridContent(
+      contentPadding = contentPadding,
+      lazyPagingItems = pagedList,
+      scrollBehavior = scrollBehavior,
+      snackBarHostState = snackBarHostState,
+      onItemClicked = { onAction(ShowClicked(it)) },
+    )
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalFoundationApi
 @Composable
 fun GridContent(
-    lazyPagingItems: LazyPagingItems<TvShow>,
-    scrollBehavior: TopAppBarScrollBehavior,
-    snackBarHostState: SnackbarHostState,
-    contentPadding: PaddingValues,
-    onItemClicked: (Long) -> Unit,
-    modifier: Modifier = Modifier,
+  lazyPagingItems: LazyPagingItems<TvShow>,
+  scrollBehavior: TopAppBarScrollBehavior,
+  snackBarHostState: SnackbarHostState,
+  contentPadding: PaddingValues,
+  onItemClicked: (Long) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val listState = rememberLazyGridState()
+  val listState = rememberLazyGridState()
 
-    LaunchedEffect(Unit) {
-        if (lazyPagingItems.loadState.append is LoadStateError) {
-            val errorMessage = (lazyPagingItems.loadState.append as LoadStateError).error.message
+  LaunchedEffect(Unit) {
+    if (lazyPagingItems.loadState.append is LoadStateError) {
+      val errorMessage = (lazyPagingItems.loadState.append as LoadStateError).error.message
 
-            val displayMessage = "Failed to fetch data: $errorMessage"
-            snackBarHostState.showSnackbar(displayMessage)
-        }
+      val displayMessage = "Failed to fetch data: $errorMessage"
+      snackBarHostState.showSnackbar(displayMessage)
+    }
+  }
+
+  Box(
+    modifier = Modifier.fillMaxSize(),
+    contentAlignment = Alignment.BottomCenter,
+  ) {
+    if (lazyPagingItems.loadState.refresh == LoadStateLoading) {
+      LoadingIndicator(
+        modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
+      )
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter,
+    LazyVerticalGrid(
+      columns = GridCells.Fixed(3),
+      verticalArrangement = Arrangement.spacedBy(4.dp),
+      horizontalArrangement = Arrangement.spacedBy(4.dp),
+      state = listState,
+      modifier =
+        modifier
+          .nestedScroll(scrollBehavior.nestedScrollConnection)
+          .padding(contentPadding)
+          .padding(horizontal = 4.dp),
     ) {
-        if (lazyPagingItems.loadState.refresh == LoadStateLoading) {
-            LoadingIndicator(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center),
-            )
+      items(
+        count = lazyPagingItems.itemCount,
+        key = lazyPagingItems.itemKey { it.tmdbId },
+        contentType = { lazyPagingItems[it] },
+      ) { index ->
+        val show = lazyPagingItems[index]
+        show?.let {
+          TvPosterCard(
+            modifier = Modifier.animateItemPlacement(),
+            posterImageUrl = show.posterImageUrl,
+            title = show.title,
+            onClick = { onItemClicked(show.tmdbId) },
+          )
         }
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            state = listState,
-            modifier = modifier
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .padding(contentPadding)
-                .padding(horizontal = 4.dp),
-        ) {
-            items(
-                count = lazyPagingItems.itemCount,
-                key = lazyPagingItems.itemKey { it.tmdbId },
-                contentType = { lazyPagingItems[it] },
-            ) { index ->
-
-                val show = lazyPagingItems[index]
-                show?.let {
-                    TvPosterCard(
-                        modifier = Modifier
-                            .animateItemPlacement(),
-                        posterImageUrl = show.posterImageUrl,
-                        title = show.title,
-                        onClick = { onItemClicked(show.tmdbId) },
-                    )
-                }
-            }
-        }
-
-        if (lazyPagingItems.loadState.append == LoadStateLoading) {
-            LoadingIndicator(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize(Alignment.Center)
-                    .padding(24.dp),
-            )
-        }
+      }
     }
+
+    if (lazyPagingItems.loadState.append == LoadStateLoading) {
+      LoadingIndicator(
+        modifier = Modifier.fillMaxWidth().wrapContentSize(Alignment.Center).padding(24.dp),
+      )
+    }
+  }
 }
 
 @ThemePreviews
 @Composable
 private fun ShowsGridContentPreview(
-    @PreviewParameter(MoreShowsPreviewParameterProvider::class)
-    state: MoreShowsState,
+  @PreviewParameter(MoreShowsPreviewParameterProvider::class) state: MoreShowsState,
 ) {
-    TvManiacTheme {
-        Surface {
-            MoreShowsScreen(
-                state = state,
-                onAction = {},
-            )
-        }
+  TvManiacTheme {
+    Surface {
+      MoreShowsScreen(
+        state = state,
+        onAction = {},
+      )
     }
+  }
 }

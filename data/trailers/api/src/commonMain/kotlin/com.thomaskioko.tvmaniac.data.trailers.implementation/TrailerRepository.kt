@@ -6,7 +6,9 @@ import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface TrailerRepository {
-    fun isYoutubePlayerInstalled(): Flow<Boolean>
-    fun observeTrailersStoreResponse(id: Long): Flow<Either<Failure, List<Trailers>>>
-    suspend fun fetchTrailersByShowId(id: Long): List<Trailers>
+  fun isYoutubePlayerInstalled(): Flow<Boolean>
+
+  fun observeTrailersStoreResponse(id: Long): Flow<Either<Failure, List<Trailers>>>
+
+  suspend fun fetchTrailersByShowId(id: Long): List<Trailers>
 }

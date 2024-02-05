@@ -12,32 +12,31 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SimilarShowsDaoImpl(
-    private val database: TvManiacDatabase,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val database: TvManiacDatabase,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : SimilarShowsDao {
 
-    override fun upsert(showId: Long, similarShowId: Long) {
-        database.similar_showsQueries.transaction {
-            database.similar_showsQueries.insertOrReplace(
-                id = Id(similarShowId),
-                similar_show_id = Id(showId),
-            )
-        }
+  override fun upsert(showId: Long, similarShowId: Long) {
+    database.similar_showsQueries.transaction {
+      database.similar_showsQueries.insertOrReplace(
+        id = Id(similarShowId),
+        similar_show_id = Id(showId),
+      )
     }
+  }
 
-    override fun observeSimilarShows(traktId: Long): Flow<List<SimilarShows>> {
-        return database.similar_showsQueries.similarShows(Id(traktId))
-            .asFlow()
-            .mapToList(dispatchers.io)
-    }
+  override fun observeSimilarShows(traktId: Long): Flow<List<SimilarShows>> {
+    return database.similar_showsQueries
+      .similarShows(Id(traktId))
+      .asFlow()
+      .mapToList(dispatchers.io)
+  }
 
-    override fun delete(id: Long) {
-        database.similar_showsQueries.delete(Id(id))
-    }
+  override fun delete(id: Long) {
+    database.similar_showsQueries.delete(Id(id))
+  }
 
-    override fun deleteAll() {
-        database.transaction {
-            database.similar_showsQueries.deleteAll()
-        }
-    }
+  override fun deleteAll() {
+    database.transaction { database.similar_showsQueries.deleteAll() }
+  }
 }

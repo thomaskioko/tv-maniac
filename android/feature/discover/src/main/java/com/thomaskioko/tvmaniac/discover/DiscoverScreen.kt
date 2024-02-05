@@ -94,413 +94,399 @@ import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import kotlinx.collections.immutable.ImmutableList
 import kotlin.math.absoluteValue
+import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DiscoverScreen(
-    discoverShowsPresenter: DiscoverShowsPresenter,
-    modifier: Modifier = Modifier,
+  discoverShowsPresenter: DiscoverShowsPresenter,
+  modifier: Modifier = Modifier,
 ) {
-    val discoverState by discoverShowsPresenter.value.subscribeAsState()
-    val pagerState = rememberPagerState(
-        initialPage = 2,
-        pageCount = { (discoverState as? DataLoaded)?.featuredShows?.size ?: 0 },
+  val discoverState by discoverShowsPresenter.value.subscribeAsState()
+  val pagerState =
+    rememberPagerState(
+      initialPage = 2,
+      pageCount = { (discoverState as? DataLoaded)?.featuredShows?.size ?: 0 },
     )
-    val snackBarHostState = remember { SnackbarHostState() }
+  val snackBarHostState = remember { SnackbarHostState() }
 
-    DiscoverScreen(
-        modifier = modifier,
-        state = discoverState,
-        snackBarHostState = snackBarHostState,
-        pagerState = pagerState,
-        onAction = discoverShowsPresenter::dispatch,
-    )
+  DiscoverScreen(
+    modifier = modifier,
+    state = discoverState,
+    snackBarHostState = snackBarHostState,
+    pagerState = pagerState,
+    onAction = discoverShowsPresenter::dispatch,
+  )
 }
 
 @Composable
 internal fun DiscoverScreen(
-    state: DiscoverState,
-    snackBarHostState: SnackbarHostState,
-    pagerState: PagerState,
-    onAction: (DiscoverShowAction) -> Unit,
-    modifier: Modifier = Modifier,
+  state: DiscoverState,
+  snackBarHostState: SnackbarHostState,
+  pagerState: PagerState,
+  onAction: (DiscoverShowAction) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    when (state) {
-        Loading -> LoadingIndicator(
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize(Alignment.Center),
-        )
-
-        EmptyState -> EmptyContent(
-            modifier = modifier,
-            onAction = onAction,
-        )
-
-        is DataLoaded -> DiscoverContent(
-            modifier = modifier,
-            pagerState = pagerState,
-            snackBarHostState = snackBarHostState,
-            state = state,
-            onAction = onAction,
-        )
-
-        is ErrorState -> ErrorUi(
-            errorMessage = state.errorMessage,
-            onRetry = { onAction(ReloadData) },
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize(Alignment.Center),
-        )
-    }
+  when (state) {
+    Loading ->
+      LoadingIndicator(
+        modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
+      )
+    EmptyState ->
+      EmptyContent(
+        modifier = modifier,
+        onAction = onAction,
+      )
+    is DataLoaded ->
+      DiscoverContent(
+        modifier = modifier,
+        pagerState = pagerState,
+        snackBarHostState = snackBarHostState,
+        state = state,
+        onAction = onAction,
+      )
+    is ErrorState ->
+      ErrorUi(
+        errorMessage = state.errorMessage,
+        onRetry = { onAction(ReloadData) },
+        modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
+      )
+  }
 }
 
 @Composable
 private fun EmptyContent(
-    modifier: Modifier = Modifier,
-    onAction: (DiscoverShowAction) -> Unit,
+  modifier: Modifier = Modifier,
+  onAction: (DiscoverShowAction) -> Unit,
 ) {
-    Column(
-        modifier = modifier
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Icon(
-            modifier = Modifier
-                .size(180.dp),
-            imageVector = Icons.Filled.Movie,
-            tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F),
-            contentDescription = null,
-        )
+  Column(
+    modifier = modifier.padding(16.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center,
+  ) {
+    Icon(
+      modifier = Modifier.size(180.dp),
+      imageVector = Icons.Filled.Movie,
+      tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F),
+      contentDescription = null,
+    )
 
-        Text(
-            modifier = Modifier.padding(top = 16.dp),
-            text = stringResource(R.string.generic_empty_content),
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
-        )
+    Text(
+      modifier = Modifier.padding(top = 16.dp),
+      text = stringResource(R.string.generic_empty_content),
+      style = MaterialTheme.typography.titleLarge,
+      textAlign = TextAlign.Center,
+    )
 
-        Text(
-            modifier = Modifier.padding(top = 4.dp),
-            text = stringResource(R.string.missing_api_key),
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center,
-        )
+    Text(
+      modifier = Modifier.padding(top = 4.dp),
+      text = stringResource(R.string.missing_api_key),
+      style = MaterialTheme.typography.labelMedium,
+      textAlign = TextAlign.Center,
+    )
 
-        TvManiacOutlinedButton(
-            modifier = Modifier.padding(top = 16.dp),
-            text = stringResource(id = R.string.generic_retry),
-            onClick = { onAction(ReloadData) },
-        )
-    }
+    TvManiacOutlinedButton(
+      modifier = Modifier.padding(top = 16.dp),
+      text = stringResource(id = R.string.generic_retry),
+      onClick = { onAction(ReloadData) },
+    )
+  }
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun DiscoverContent(
-    state: DataLoaded,
-    snackBarHostState: SnackbarHostState,
-    pagerState: PagerState,
-    onAction: (DiscoverShowAction) -> Unit,
-    modifier: Modifier = Modifier,
+  state: DataLoaded,
+  snackBarHostState: SnackbarHostState,
+  pagerState: PagerState,
+  onAction: (DiscoverShowAction) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    LaunchedEffect(key1 = state.errorMessage) {
-        state.errorMessage?.let {
-            val snackBarResult = snackBarHostState.showSnackbar(
-                message = it,
-                duration = SnackbarDuration.Short,
-            )
-            when (snackBarResult) {
-                SnackbarResult.ActionPerformed, SnackbarResult.Dismissed ->
-                    onAction(SnackBarDismissed)
-            }
-        }
-    }
-
-    val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = {
-        onAction(RefreshData)
-    })
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .pullRefresh(pullRefreshState),
-        contentAlignment = Alignment.BottomCenter,
-    ) {
-        LazyColumn(
-            modifier = modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
-        ) {
-            item {
-                DiscoverHeaderContent(
-                    pagerState = pagerState,
-                    showList = state.featuredShows,
-                    onShowClicked = { onAction(ShowClicked(it)) },
-                )
-            }
-
-            item {
-                HorizontalRowContent(
-                    category = stringResource(id = R.string.title_category_upcoming),
-                    tvShows = state.upcomingShows,
-                    onItemClicked = { onAction(ShowClicked(it)) },
-                    onMoreClicked = { onAction(UpComingClicked) },
-                )
-            }
-
-            item {
-                HorizontalRowContent(
-                    category = stringResource(id = R.string.title_category_trending_today),
-                    tvShows = state.trendingToday,
-                    onItemClicked = { onAction(ShowClicked(it)) },
-                    onMoreClicked = { onAction(TrendingClicked) },
-                )
-            }
-
-            item {
-                HorizontalRowContent(
-                    category = stringResource(id = R.string.title_category_popular),
-                    tvShows = state.popularShows,
-                    onItemClicked = { onAction(ShowClicked(it)) },
-                    onMoreClicked = { onAction(PopularClicked) },
-                )
-            }
-
-            item {
-                HorizontalRowContent(
-                    category = stringResource(id = R.string.title_category_top_rated),
-                    tvShows = state.topRatedShows,
-                    onItemClicked = { onAction(ShowClicked(it)) },
-                    onMoreClicked = { onAction(TopRatedClicked) },
-                )
-            }
-        }
-
-        PullRefreshIndicator(
-            refreshing = state.isRefreshing,
-            state = pullRefreshState,
-            modifier = Modifier.align(Alignment.TopCenter),
-            scale = true,
+  LaunchedEffect(key1 = state.errorMessage) {
+    state.errorMessage?.let {
+      val snackBarResult =
+        snackBarHostState.showSnackbar(
+          message = it,
+          duration = SnackbarDuration.Short,
         )
-
-        SnackbarHost(hostState = snackBarHostState)
+      when (snackBarResult) {
+        SnackbarResult.ActionPerformed,
+        SnackbarResult.Dismissed, -> onAction(SnackBarDismissed)
+      }
     }
+  }
+
+  val pullRefreshState =
+    rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
+
+  Box(
+    modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState),
+    contentAlignment = Alignment.BottomCenter,
+  ) {
+    LazyColumn(
+      modifier =
+        modifier
+          .fillMaxSize()
+          .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
+    ) {
+      item {
+        DiscoverHeaderContent(
+          pagerState = pagerState,
+          showList = state.featuredShows,
+          onShowClicked = { onAction(ShowClicked(it)) },
+        )
+      }
+
+      item {
+        HorizontalRowContent(
+          category = stringResource(id = R.string.title_category_upcoming),
+          tvShows = state.upcomingShows,
+          onItemClicked = { onAction(ShowClicked(it)) },
+          onMoreClicked = { onAction(UpComingClicked) },
+        )
+      }
+
+      item {
+        HorizontalRowContent(
+          category = stringResource(id = R.string.title_category_trending_today),
+          tvShows = state.trendingToday,
+          onItemClicked = { onAction(ShowClicked(it)) },
+          onMoreClicked = { onAction(TrendingClicked) },
+        )
+      }
+
+      item {
+        HorizontalRowContent(
+          category = stringResource(id = R.string.title_category_popular),
+          tvShows = state.popularShows,
+          onItemClicked = { onAction(ShowClicked(it)) },
+          onMoreClicked = { onAction(PopularClicked) },
+        )
+      }
+
+      item {
+        HorizontalRowContent(
+          category = stringResource(id = R.string.title_category_top_rated),
+          tvShows = state.topRatedShows,
+          onItemClicked = { onAction(ShowClicked(it)) },
+          onMoreClicked = { onAction(TopRatedClicked) },
+        )
+      }
+    }
+
+    PullRefreshIndicator(
+      refreshing = state.isRefreshing,
+      state = pullRefreshState,
+      modifier = Modifier.align(Alignment.TopCenter),
+      scale = true,
+    )
+
+    SnackbarHost(hostState = snackBarHostState)
+  }
 }
 
 @Composable
 fun DiscoverHeaderContent(
-    showList: ImmutableList<DiscoverShow>,
-    pagerState: PagerState,
-    modifier: Modifier = Modifier,
-    onShowClicked: (Long) -> Unit,
+  showList: ImmutableList<DiscoverShow>,
+  pagerState: PagerState,
+  modifier: Modifier = Modifier,
+  onShowClicked: (Long) -> Unit,
 ) {
-    val selectedImageUrl = showList.getOrNull(pagerState.currentPage)?.posterImageUrl
+  val selectedImageUrl = showList.getOrNull(pagerState.currentPage)?.posterImageUrl
 
-    DynamicColorContainer(selectedImageUrl) {
-        Column(
-            modifier = modifier
-                .windowInsetsPadding(
-                    WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
-                ),
-        ) {
-            val backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+  DynamicColorContainer(selectedImageUrl) {
+    Column(
+      modifier =
+        modifier.windowInsetsPadding(
+          WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
+        ),
+    ) {
+      val backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
 
-            HorizontalPagerItem(
-                list = showList,
-                pagerState = pagerState,
-                backgroundColor = backgroundColor,
-                onClick = onShowClicked,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
+      HorizontalPagerItem(
+        list = showList,
+        pagerState = pagerState,
+        backgroundColor = backgroundColor,
+        onClick = onShowClicked,
+      )
     }
+
+    Spacer(modifier = Modifier.height(16.dp))
+  }
 }
 
 @Composable
 private fun DynamicColorContainer(
-    selectedImageUrl: String?,
-    content: @Composable () -> Unit,
+  selectedImageUrl: String?,
+  content: @Composable () -> Unit,
 ) {
-    val surfaceColor = MaterialTheme.colorScheme.surface
-    val dominantColorState = rememberDominantColorState { color ->
-        // We want a color which has sufficient contrast against the surface color
-        color.contrastAgainst(surfaceColor) >= MinContrastOfPrimaryVsSurface
+  val surfaceColor = MaterialTheme.colorScheme.surface
+  val dominantColorState = rememberDominantColorState { color ->
+    // We want a color which has sufficient contrast against the surface color
+    color.contrastAgainst(surfaceColor) >= MinContrastOfPrimaryVsSurface
+  }
+
+  DynamicThemePrimaryColorsFromImage(dominantColorState) {
+    // When the selected image url changes, call updateColorsFromImageUrl() or reset()
+    LaunchedEffect(selectedImageUrl) {
+      if (selectedImageUrl != null) {
+        dominantColorState.updateColorsFromImageUrl(selectedImageUrl)
+      } else {
+        dominantColorState.reset()
+      }
     }
 
-    DynamicThemePrimaryColorsFromImage(dominantColorState) {
-        // When the selected image url changes, call updateColorsFromImageUrl() or reset()
-        LaunchedEffect(selectedImageUrl) {
-            if (selectedImageUrl != null) {
-                dominantColorState.updateColorsFromImageUrl(selectedImageUrl)
-            } else {
-                dominantColorState.reset()
-            }
-        }
-
-        content()
-    }
+    content()
+  }
 }
 
 @Composable
 fun HorizontalPagerItem(
-    list: ImmutableList<DiscoverShow>,
-    pagerState: PagerState,
-    backgroundColor: Color,
-    modifier: Modifier = Modifier,
-    onClick: (Long) -> Unit,
+  list: ImmutableList<DiscoverShow>,
+  pagerState: PagerState,
+  backgroundColor: Color,
+  modifier: Modifier = Modifier,
+  onClick: (Long) -> Unit,
 ) {
-    Column(
-        modifier = modifier
-            .windowInsetsPadding(
-                WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
-            )
-            .fillMaxWidth()
-            .verticalGradientScrim(
-                color = backgroundColor,
-                startYPercentage = 1f,
-                endYPercentage = 0.5f,
-            )
-            .padding(top = 84.dp),
-    ) {
-        HorizontalPager(
-            state = pagerState,
-            beyondBoundsPageCount = 2,
-            contentPadding = PaddingValues(horizontal = 45.dp),
-            modifier = Modifier.fillMaxSize(),
-        ) { pageNumber ->
+  Column(
+    modifier =
+      modifier
+        .windowInsetsPadding(
+          WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
+        )
+        .fillMaxWidth()
+        .verticalGradientScrim(
+          color = backgroundColor,
+          startYPercentage = 1f,
+          endYPercentage = 0.5f,
+        )
+        .padding(top = 84.dp),
+  ) {
+    HorizontalPager(
+      state = pagerState,
+      beyondBoundsPageCount = 2,
+      contentPadding = PaddingValues(horizontal = 45.dp),
+      modifier = Modifier.fillMaxSize(),
+    ) { pageNumber ->
+      TvPosterCard(
+        title = list[pageNumber].title,
+        posterImageUrl = list[pageNumber].posterImageUrl,
+        onClick = { onClick(list[pageNumber].tmdbId) },
+        modifier =
+          Modifier.graphicsLayer {
+              val pageOffset =
+                ((pagerState.currentPage - pageNumber) + pagerState.currentPageOffsetFraction)
+                  .absoluteValue
 
-            TvPosterCard(
-                title = list[pageNumber].title,
-                posterImageUrl = list[pageNumber].posterImageUrl,
-                onClick = { onClick(list[pageNumber].tmdbId) },
-                modifier = Modifier
-                    .graphicsLayer {
-                        val pageOffset = (
-                            (pagerState.currentPage - pageNumber) + pagerState
-                                .currentPageOffsetFraction
-                            ).absoluteValue
-
-                        // We animate the scaleX + scaleY, between 85% and 100%
-                        lerp(
-                            start = 0.85f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f),
-                        ).also { scale ->
-                            scaleX = scale
-                            scaleY = scale
-                        }
-
-                        // We animate the alpha, between 50% and 100%
-                        alpha = lerp(
-                            start = 0.5f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f),
-                        )
-                    }
-                    .fillMaxWidth(),
-            )
-        }
-
-        if (list.isNotEmpty()) {
-            LaunchedEffect(pagerState) {
-                snapshotFlow { pagerState.currentPage }.collect { page ->
-                    pagerState.scrollToPage(page)
+              // We animate the scaleX + scaleY, between 85% and 100%
+              lerp(
+                  start = 0.85f,
+                  stop = 1f,
+                  fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                )
+                .also { scale ->
+                  scaleX = scale
+                  scaleY = scale
                 }
-            }
 
-            Row(
-                Modifier
-                    .height(50.dp)
-                    .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                repeat(list.size) { iteration ->
-                    val color = if (pagerState.currentPage == iteration) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .clip(CircleShape)
-                            .background(color)
-                            .size(8.dp),
-                    )
-                }
+              // We animate the alpha, between 50% and 100%
+              alpha =
+                lerp(
+                  start = 0.5f,
+                  stop = 1f,
+                  fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                )
             }
-        }
+            .fillMaxWidth(),
+      )
     }
+
+    if (list.isNotEmpty()) {
+      LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page -> pagerState.scrollToPage(page) }
+      }
+
+      Row(
+        Modifier.height(50.dp)
+          .fillMaxWidth()
+          .align(Alignment.CenterHorizontally)
+          .padding(top = 16.dp),
+        horizontalArrangement = Arrangement.Center,
+      ) {
+        repeat(list.size) { iteration ->
+          val color =
+            if (pagerState.currentPage == iteration) {
+              MaterialTheme.colorScheme.primary
+            } else {
+              MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+            }
+
+          Box(
+            modifier = Modifier.padding(2.dp).clip(CircleShape).background(color).size(8.dp),
+          )
+        }
+      }
+    }
+  }
 }
 
 @OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun HorizontalRowContent(
-    category: String,
-    tvShows: ImmutableList<DiscoverShow>,
-    onItemClicked: (Long) -> Unit,
-    onMoreClicked: () -> Unit,
+  category: String,
+  tvShows: ImmutableList<DiscoverShow>,
+  onItemClicked: (Long) -> Unit,
+  onMoreClicked: () -> Unit,
 ) {
-    AnimatedVisibility(visible = tvShows.isNotEmpty()) {
-        Column {
-            BoxTextItems(
-                title = category,
-                label = stringResource(id = R.string.str_more),
-                onMoreClicked = onMoreClicked,
-            )
+  AnimatedVisibility(visible = tvShows.isNotEmpty()) {
+    Column {
+      BoxTextItems(
+        title = category,
+        label = stringResource(id = R.string.str_more),
+        onMoreClicked = onMoreClicked,
+      )
 
-            val lazyListState = rememberLazyListState()
+      val lazyListState = rememberLazyListState()
 
-            LazyRow(
-                state = lazyListState,
-                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-            ) {
-                itemsIndexed(tvShows) { index, tvShow ->
+      LazyRow(
+        state = lazyListState,
+        flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+      ) {
+        itemsIndexed(tvShows) { index, tvShow ->
+          val value = if (index == 0) 16 else 8
 
-                    val value = if (index == 0) 16 else 8
+          Spacer(modifier = Modifier.width(value.dp))
 
-                    Spacer(modifier = Modifier.width(value.dp))
-
-                    TvPosterCard(
-                        posterImageUrl = tvShow.posterImageUrl,
-                        title = tvShow.title,
-                        onClick = { onItemClicked(tvShow.tmdbId) },
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .animateItemPlacement(),
-                    )
-                }
-            }
+          TvPosterCard(
+            posterImageUrl = tvShow.posterImageUrl,
+            title = tvShow.title,
+            onClick = { onItemClicked(tvShow.tmdbId) },
+            modifier = Modifier.wrapContentHeight().animateItemPlacement(),
+          )
         }
+      }
     }
+  }
 }
 
 @ThemePreviews
 @Composable
 private fun DiscoverScreenPreview(
-    @PreviewParameter(DiscoverPreviewParameterProvider::class)
-    state: DiscoverState,
+  @PreviewParameter(DiscoverPreviewParameterProvider::class) state: DiscoverState,
 ) {
-    TvManiacTheme {
-        TvManiacBackground {
-            Surface(Modifier.fillMaxWidth()) {
-                val pagerState = rememberPagerState(pageCount = { 5 })
-                val snackBarHostState = remember { SnackbarHostState() }
-                DiscoverScreen(
-                    state = state,
-                    pagerState = pagerState,
-                    snackBarHostState = snackBarHostState,
-                    onAction = {},
-                )
-            }
-        }
+  TvManiacTheme {
+    TvManiacBackground {
+      Surface(Modifier.fillMaxWidth()) {
+        val pagerState = rememberPagerState(pageCount = { 5 })
+        val snackBarHostState = remember { SnackbarHostState() }
+        DiscoverScreen(
+          state = state,
+          pagerState = pagerState,
+          snackBarHostState = snackBarHostState,
+          onAction = {},
+        )
+      }
     }
+  }
 }

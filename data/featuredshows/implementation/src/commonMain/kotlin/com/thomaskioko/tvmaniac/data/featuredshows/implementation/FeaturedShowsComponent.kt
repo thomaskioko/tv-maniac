@@ -7,15 +7,13 @@ import me.tatarka.inject.annotations.Provides
 
 interface FeaturedShowsComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideFeaturedShowsDao(
-        bind: DefaultFeaturedShowsDao,
-    ): FeaturedShowsDao = bind
+  @ApplicationScope
+  @Provides
+  fun provideFeaturedShowsDao(bind: DefaultFeaturedShowsDao): FeaturedShowsDao = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideFeaturedShowsRepository(
-        bind: DefaultFeaturedShowsRepository,
-    ): FeaturedShowsRepository = bind
+  @ApplicationScope
+  @Provides
+  fun provideFeaturedShowsRepository(
+    bind: DefaultFeaturedShowsRepository,
+  ): FeaturedShowsRepository = bind
 }

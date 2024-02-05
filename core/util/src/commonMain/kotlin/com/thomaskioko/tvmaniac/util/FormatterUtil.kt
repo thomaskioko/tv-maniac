@@ -1,18 +1,12 @@
 package com.thomaskioko.tvmaniac.util
 
 interface FormatterUtil {
-    /**
-     * Formats TMDB image url.
-     */
-    fun formatTmdbPosterPath(imageUrl: String): String
+  /** Formats TMDB image url. */
+  fun formatTmdbPosterPath(imageUrl: String): String
 
-    /**
-     * Rounds of a double number to the set decimal point.
-     */
-    fun formatDouble(number: Double?, scale: Int): Double
+  /** Rounds of a double number to the set decimal point. */
+  fun formatDouble(number: Double?, scale: Int): Double
 
-    /**
-     * Formats a given number and adds a prefix. e.g 1000 -> 1k
-     */
-    fun formatDuration(number: Int): String
+  /** Formats a given number and adds a prefix. e.g 1000 -> 1k */
+  fun formatDuration(number: Int): String
 }

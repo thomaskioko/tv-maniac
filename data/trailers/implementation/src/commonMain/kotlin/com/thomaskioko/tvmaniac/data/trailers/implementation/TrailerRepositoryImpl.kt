@@ -13,19 +13,20 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TrailerRepositoryImpl(
-    private val appUtils: AppUtils,
-    private val trailerDao: TrailerDao,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val appUtils: AppUtils,
+  private val trailerDao: TrailerDao,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : TrailerRepository {
 
-    override fun isYoutubePlayerInstalled(): Flow<Boolean> = appUtils.isYoutubePlayerInstalled()
+  override fun isYoutubePlayerInstalled(): Flow<Boolean> = appUtils.isYoutubePlayerInstalled()
 
-    override suspend fun fetchTrailersByShowId(id: Long): List<Trailers> =
-        trailerDao.getTrailersById(id)
+  override suspend fun fetchTrailersByShowId(id: Long): List<Trailers> =
+    trailerDao.getTrailersById(id)
 
-    override fun observeTrailersStoreResponse(id: Long): Flow<Either<Failure, List<Trailers>>> =
-        trailerDao.observeTrailersById(id)
-            .distinctUntilChanged()
-            .map { Either.Right(it) }
-            .flowOn(dispatchers.io)
+  override fun observeTrailersStoreResponse(id: Long): Flow<Either<Failure, List<Trailers>>> =
+    trailerDao
+      .observeTrailersById(id)
+      .distinctUntilChanged()
+      .map { Either.Right(it) }
+      .flowOn(dispatchers.io)
 }

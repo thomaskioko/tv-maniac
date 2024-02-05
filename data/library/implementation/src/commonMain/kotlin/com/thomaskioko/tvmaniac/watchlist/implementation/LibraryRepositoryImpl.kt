@@ -18,29 +18,30 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class LibraryRepositoryImpl(
-    private val libraryDao: LibraryDao,
-    private val dateFormatter: PlatformDateFormatter,
-    private val exceptionHandler: NetworkExceptionHandler,
+  private val libraryDao: LibraryDao,
+  private val dateFormatter: PlatformDateFormatter,
+  private val exceptionHandler: NetworkExceptionHandler,
 ) : LibraryRepository {
 
-    override suspend fun updateLibrary(traktId: Long, addToLibrary: Boolean) {
-        when {
-            addToLibrary -> libraryDao.upsert(
-                Library(
-                    id = Id(traktId),
-                    created_at = dateFormatter.getTimestampMilliseconds(),
-                ),
-            )
-
-            else -> libraryDao.delete(traktId)
-        }
+  override suspend fun updateLibrary(traktId: Long, addToLibrary: Boolean) {
+    when {
+      addToLibrary ->
+        libraryDao.upsert(
+          Library(
+            id = Id(traktId),
+            created_at = dateFormatter.getTimestampMilliseconds(),
+          ),
+        )
+      else -> libraryDao.delete(traktId)
     }
+  }
 
-    override fun observeLibrary(): Flow<Either<Failure, List<LibraryShows>>> =
-        libraryDao.observeShowsInLibrary()
-            .distinctUntilChanged()
-            .map { Either.Right(it) }
-            .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
+  override fun observeLibrary(): Flow<Either<Failure, List<LibraryShows>>> =
+    libraryDao
+      .observeShowsInLibrary()
+      .distinctUntilChanged()
+      .map { Either.Right(it) }
+      .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
 
-    override suspend fun getLibraryShows(): List<LibraryShows> = libraryDao.getShowsInLibrary()
+  override suspend fun getLibraryShows(): List<LibraryShows> = libraryDao.getShowsInLibrary()
 }

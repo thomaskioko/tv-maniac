@@ -9,13 +9,12 @@ import me.tatarka.inject.annotations.Provides
 
 actual interface DatabasePlatformComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideSqlDriver(
-        application: Application,
-    ): SqlDriver = AndroidSqliteDriver(
-        schema = TvManiacDatabase.Schema,
-        context = application,
-        name = "tvShows.db",
+  @ApplicationScope
+  @Provides
+  fun provideSqlDriver(application: Application): SqlDriver =
+    AndroidSqliteDriver(
+      schema = TvManiacDatabase.Schema,
+      context = application,
+      name = "tvShows.db",
     )
 }

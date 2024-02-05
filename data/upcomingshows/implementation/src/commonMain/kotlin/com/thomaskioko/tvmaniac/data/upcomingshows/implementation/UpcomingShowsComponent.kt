@@ -7,15 +7,13 @@ import me.tatarka.inject.annotations.Provides
 
 interface UpcomingShowsComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideUpcomingShowsDao(
-        bind: DefaultUpcomingShowsDao,
-    ): UpcomingShowsDao = bind
+  @ApplicationScope
+  @Provides
+  fun provideUpcomingShowsDao(bind: DefaultUpcomingShowsDao): UpcomingShowsDao = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideUpcomingShowsRepository(
-        bind: DefaultUpcomingShowsRepository,
-    ): UpcomingShowsRepository = bind
+  @ApplicationScope
+  @Provides
+  fun provideUpcomingShowsRepository(
+    bind: DefaultUpcomingShowsRepository,
+  ): UpcomingShowsRepository = bind
 }

@@ -23,120 +23,129 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias DiscoverShowsPresenterFactory = (
+typealias DiscoverShowsPresenterFactory =
+  (
     ComponentContext,
     onNavigateToShowDetails: (id: Long) -> Unit,
     onNavigateToMore: (categoryId: Long) -> Unit,
-) -> DiscoverShowsPresenter
+  ) -> DiscoverShowsPresenter
 
 @Inject
 class DiscoverShowsPresenter(
-    @Assisted componentContext: ComponentContext,
-    @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
-    @Assisted private val onNavigateToMore: (Long) -> Unit,
-    private val featuredShowsRepository: FeaturedShowsRepository,
-    private val trendingShowsRepository: TrendingShowsRepository,
-    private val upcomingShowsRepository: UpcomingShowsRepository,
-    private val topRatedShowsRepository: TopRatedShowsRepository,
-    private val popularShowsRepository: PopularShowsRepository,
+  @Assisted componentContext: ComponentContext,
+  @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
+  @Assisted private val onNavigateToMore: (Long) -> Unit,
+  private val featuredShowsRepository: FeaturedShowsRepository,
+  private val trendingShowsRepository: TrendingShowsRepository,
+  private val upcomingShowsRepository: UpcomingShowsRepository,
+  private val topRatedShowsRepository: TopRatedShowsRepository,
+  private val popularShowsRepository: PopularShowsRepository,
 ) : ComponentContext by componentContext {
 
-    private val coroutineScope = coroutineScope()
+  private val coroutineScope = coroutineScope()
 
-    private val _state = MutableStateFlow<DiscoverState>(Loading)
-    val state: StateFlow<DiscoverState> = _state.asStateFlow()
+  private val _state = MutableStateFlow<DiscoverState>(Loading)
+  val state: StateFlow<DiscoverState> = _state.asStateFlow()
 
-    // TODO:: Create SwiftUI flow wrapper and get rid of this.
-    val value: Value<DiscoverState> = _state
-        .asValue(initialValue = _state.value, lifecycle = lifecycle)
+  // TODO:: Create SwiftUI flow wrapper and get rid of this.
+  val value: Value<DiscoverState> =
+    _state.asValue(initialValue = _state.value, lifecycle = lifecycle)
 
-    init {
-        fetchContent()
-    }
+  init {
+    fetchContent()
+  }
 
-    fun dispatch(action: DiscoverShowAction) {
-        when (action) {
-            is ShowClicked -> onNavigateToShowDetails(action.id)
-            PopularClicked -> onNavigateToMore(Category.POPULAR.id)
-            TopRatedClicked -> onNavigateToMore(Category.TOP_RATED.id)
-            TrendingClicked -> onNavigateToMore(Category.TRENDING_TODAY.id)
-            UpComingClicked -> onNavigateToMore(Category.UPCOMING.id)
-            RefreshData -> coroutineScope.launch {
-                _state.update {
-                    (it as? DataLoaded)?.copy(isRefreshing = true) ?: it
-                }
-                fetchShowData(true)
-            }
-
-            ReloadData -> coroutineScope.launch {
-                _state.update { Loading }
-                fetchShowData(true)
-            }
-
-            SnackBarDismissed -> coroutineScope.launch {
-                _state.update { state ->
-                    (state as? DataLoaded)?.copy(
-                        errorMessage = null,
-                    ) ?: state
-                }
-            }
-        }
-    }
-
-    private fun fetchContent() {
+  fun dispatch(action: DiscoverShowAction) {
+    when (action) {
+      is ShowClicked -> onNavigateToShowDetails(action.id)
+      PopularClicked -> onNavigateToMore(Category.POPULAR.id)
+      TopRatedClicked -> onNavigateToMore(Category.TOP_RATED.id)
+      TrendingClicked -> onNavigateToMore(Category.TRENDING_TODAY.id)
+      UpComingClicked -> onNavigateToMore(Category.UPCOMING.id)
+      RefreshData ->
         coroutineScope.launch {
-            fetchShowData()
-            observeShowData()
+          _state.update { (it as? DataLoaded)?.copy(isRefreshing = true) ?: it }
+          fetchShowData(true)
         }
-    }
-
-    private suspend fun fetchShowData(refresh: Boolean = false) {
-        val featuredResponse = featuredShowsRepository.fetchFeaturedShows(forceRefresh = refresh)
-        val topRatedResponse = topRatedShowsRepository.fetchTopRatedShows(forceRefresh = refresh)
-        val popularResponse = popularShowsRepository.fetchPopularShows(forceRefresh = refresh)
-        val upcomingResponse = upcomingShowsRepository.fetchUpcomingShows(forceRefresh = refresh)
-        val trendingShows = trendingShowsRepository.fetchTrendingShows(forceRefresh = refresh)
-
-        if (isEmpty(featuredResponse, topRatedResponse, popularResponse, upcomingResponse, trendingShows)) {
-            return _state.update { EmptyState }
+      ReloadData ->
+        coroutineScope.launch {
+          _state.update { Loading }
+          fetchShowData(true)
         }
-        _state.update {
-            DataLoaded(
-                topRatedShows = topRatedResponse.toShowList(),
-                popularShows = popularResponse.toShowList(),
-                upcomingShows = upcomingResponse.toShowList(),
-                featuredShows = featuredResponse.toShowList(),
-                trendingToday = trendingShows.toShowList(),
-                isRefreshing = false,
+      SnackBarDismissed ->
+        coroutineScope.launch {
+          _state.update { state ->
+            (state as? DataLoaded)?.copy(
+              errorMessage = null,
             )
+              ?: state
+          }
         }
     }
+  }
 
-    private fun isEmpty(vararg responses: List<ShowEntity>): Boolean {
-        return responses.all { it.isEmpty() }
+  private fun fetchContent() {
+    coroutineScope.launch {
+      fetchShowData()
+      observeShowData()
     }
+  }
 
-    private suspend fun observeShowData() {
-        combine(
-            featuredShowsRepository.observeFeaturedShows(),
-            topRatedShowsRepository.observeTopRatedShows(),
-            popularShowsRepository.observePopularShows(),
-            upcomingShowsRepository.observeUpcomingShows(),
-            trendingShowsRepository.observeTrendingShows(),
-        ) { featured, topRated, popular, upcomingShows, trendingToday ->
-            _state.update {
-                DataLoaded(
-                    featuredShows = featured.getOrNull().toShowList(),
-                    topRatedShows = topRated.getOrNull().toShowList(),
-                    popularShows = popular.getOrNull().toShowList(),
-                    upcomingShows = upcomingShows.getOrNull().toShowList(),
-                    trendingToday = trendingToday.getOrNull().toShowList(),
-                    errorMessage = getErrorMessage(topRated, popular, upcomingShows, featured),
-                )
-            }
+  private suspend fun fetchShowData(refresh: Boolean = false) {
+    val featuredResponse = featuredShowsRepository.fetchFeaturedShows(forceRefresh = refresh)
+    val topRatedResponse = topRatedShowsRepository.fetchTopRatedShows(forceRefresh = refresh)
+    val popularResponse = popularShowsRepository.fetchPopularShows(forceRefresh = refresh)
+    val upcomingResponse = upcomingShowsRepository.fetchUpcomingShows(forceRefresh = refresh)
+    val trendingShows = trendingShowsRepository.fetchTrendingShows(forceRefresh = refresh)
+
+    if (
+      isEmpty(
+        featuredResponse,
+        topRatedResponse,
+        popularResponse,
+        upcomingResponse,
+        trendingShows,
+      )
+    ) {
+      return _state.update { EmptyState }
+    }
+    _state.update {
+      DataLoaded(
+        topRatedShows = topRatedResponse.toShowList(),
+        popularShows = popularResponse.toShowList(),
+        upcomingShows = upcomingResponse.toShowList(),
+        featuredShows = featuredResponse.toShowList(),
+        trendingToday = trendingShows.toShowList(),
+        isRefreshing = false,
+      )
+    }
+  }
+
+  private fun isEmpty(vararg responses: List<ShowEntity>): Boolean {
+    return responses.all { it.isEmpty() }
+  }
+
+  private suspend fun observeShowData() {
+    combine(
+        featuredShowsRepository.observeFeaturedShows(),
+        topRatedShowsRepository.observeTopRatedShows(),
+        popularShowsRepository.observePopularShows(),
+        upcomingShowsRepository.observeUpcomingShows(),
+        trendingShowsRepository.observeTrendingShows(),
+      ) { featured, topRated, popular, upcomingShows, trendingToday ->
+        _state.update {
+          DataLoaded(
+            featuredShows = featured.getOrNull().toShowList(),
+            topRatedShows = topRated.getOrNull().toShowList(),
+            popularShows = popular.getOrNull().toShowList(),
+            upcomingShows = upcomingShows.getOrNull().toShowList(),
+            trendingToday = trendingToday.getOrNull().toShowList(),
+            errorMessage = getErrorMessage(topRated, popular, upcomingShows, featured),
+          )
         }
-            .onStart { Loading }
-            .catch { ErrorState(errorMessage = it.message) }
-            .collect()
-    }
+      }
+      .onStart { Loading }
+      .catch { ErrorState(errorMessage = it.message) }
+      .collect()
+  }
 }

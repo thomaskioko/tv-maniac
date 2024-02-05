@@ -7,15 +7,13 @@ import me.tatarka.inject.annotations.Provides
 
 interface WatchProviderComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideWatchProviderDao(
-        bind: DefaultWatchProviderDao,
-    ): WatchProviderDao = bind
+  @ApplicationScope
+  @Provides
+  fun provideWatchProviderDao(bind: DefaultWatchProviderDao): WatchProviderDao = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideWatchProviderRepository(
-        bind: DefaultWatchProviderRepository,
-    ): WatchProviderRepository = bind
+  @ApplicationScope
+  @Provides
+  fun provideWatchProviderRepository(
+    bind: DefaultWatchProviderRepository,
+  ): WatchProviderRepository = bind
 }

@@ -24,51 +24,51 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TvManiacBottomSheetScaffold(
-    sheetContent: @Composable ColumnScope.() -> Unit,
-    content: @Composable (PaddingValues) -> Unit,
-    onDismissBottomSheet: () -> Unit,
-    modifier: Modifier = Modifier,
-    topBar: @Composable (() -> Unit)? = null,
-    sheetPeekHeight: Dp = 0.dp,
-    showBottomSheet: Boolean = false,
-    skipHiddenState: Boolean = false,
-    sheetShadowElevation: Dp = 0.dp,
-    initialSheetState: SheetValue = SheetValue.Hidden,
-    sheetShape: Shape = RoundedCornerShape(5.dp),
-    containerColor: Color = MaterialTheme.colorScheme.background,
-    snackbarHost: @Composable (SnackbarHostState) -> Unit = { SnackbarHost(it) },
+  sheetContent: @Composable ColumnScope.() -> Unit,
+  content: @Composable (PaddingValues) -> Unit,
+  onDismissBottomSheet: () -> Unit,
+  modifier: Modifier = Modifier,
+  topBar: @Composable (() -> Unit)? = null,
+  sheetPeekHeight: Dp = 0.dp,
+  showBottomSheet: Boolean = false,
+  skipHiddenState: Boolean = false,
+  sheetShadowElevation: Dp = 0.dp,
+  initialSheetState: SheetValue = SheetValue.Hidden,
+  sheetShape: Shape = RoundedCornerShape(5.dp),
+  containerColor: Color = MaterialTheme.colorScheme.background,
+  snackbarHost: @Composable (SnackbarHostState) -> Unit = { SnackbarHost(it) },
 ) {
-    val bottomSheetState = rememberStandardBottomSheetState(
-        initialValue = initialSheetState,
-        skipHiddenState = skipHiddenState,
+  val bottomSheetState =
+    rememberStandardBottomSheetState(
+      initialValue = initialSheetState,
+      skipHiddenState = skipHiddenState,
     )
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = bottomSheetState,
+  val bottomSheetScaffoldState =
+    rememberBottomSheetScaffoldState(
+      bottomSheetState = bottomSheetState,
     )
 
-    LaunchedEffect(key1 = showBottomSheet) {
-        if (showBottomSheet) {
-            bottomSheetState.expand()
-        } else {
-            bottomSheetState.hide()
-        }
+  LaunchedEffect(key1 = showBottomSheet) {
+    if (showBottomSheet) {
+      bottomSheetState.expand()
+    } else {
+      bottomSheetState.hide()
     }
+  }
 
-    BottomSheetScaffold(
-        modifier = modifier
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    if (bottomSheetState.isVisible) onDismissBottomSheet()
-                })
-            },
-        topBar = topBar,
-        sheetPeekHeight = sheetPeekHeight,
-        scaffoldState = bottomSheetScaffoldState,
-        sheetShape = sheetShape,
-        sheetShadowElevation = sheetShadowElevation,
-        sheetContent = sheetContent,
-        snackbarHost = snackbarHost,
-        containerColor = containerColor,
-        content = content,
-    )
+  BottomSheetScaffold(
+    modifier =
+      modifier.pointerInput(Unit) {
+        detectTapGestures(onTap = { if (bottomSheetState.isVisible) onDismissBottomSheet() })
+      },
+    topBar = topBar,
+    sheetPeekHeight = sheetPeekHeight,
+    scaffoldState = bottomSheetScaffoldState,
+    sheetShape = sheetShape,
+    sheetShadowElevation = sheetShadowElevation,
+    sheetContent = sheetContent,
+    snackbarHost = snackbarHost,
+    containerColor = containerColor,
+    content = content,
+  )
 }

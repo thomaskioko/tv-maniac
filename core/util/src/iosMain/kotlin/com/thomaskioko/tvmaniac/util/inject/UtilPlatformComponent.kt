@@ -23,47 +23,44 @@ import platform.Foundation.NSBundle
 
 actual interface UtilPlatformComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideIosFormatterUtil(bind: IosFormatterUtil): FormatterUtil = bind
+  @ApplicationScope
+  @Provides
+  fun provideIosFormatterUtil(bind: IosFormatterUtil): FormatterUtil = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideAppUtils(bind: IosAppUtils): AppUtils = bind
+  @ApplicationScope @Provides fun provideAppUtils(bind: IosAppUtils): AppUtils = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideCoroutineDispatchers(): AppCoroutineDispatchers = AppCoroutineDispatchers(
-        io = Dispatchers.Default,
-        computation = Dispatchers.Default,
-        main = Dispatchers.Main,
+  @ApplicationScope
+  @Provides
+  fun provideCoroutineDispatchers(): AppCoroutineDispatchers =
+    AppCoroutineDispatchers(
+      io = Dispatchers.Default,
+      computation = Dispatchers.Default,
+      main = Dispatchers.Main,
     )
 
-    @ApplicationScope
-    @Provides
-    fun provideAppCoroutineScope(
-        dispatchers: AppCoroutineDispatchers,
-    ): AppCoroutineScope = AppCoroutineScope(
-        default = CoroutineScope(Job() + dispatchers.computation),
-        io = CoroutineScope(Job() + dispatchers.io),
-        main = NsQueueCoroutineScope(),
+  @ApplicationScope
+  @Provides
+  fun provideAppCoroutineScope(dispatchers: AppCoroutineDispatchers): AppCoroutineScope =
+    AppCoroutineScope(
+      default = CoroutineScope(Job() + dispatchers.computation),
+      io = CoroutineScope(Job() + dispatchers.io),
+      main = NsQueueCoroutineScope(),
     )
 
-    @ApplicationScope
-    @Provides
-    fun provideBundleProvider(): BundleProvider = BundleProvider(NSBundle.mainBundle)
+  @ApplicationScope
+  @Provides
+  fun provideBundleProvider(): BundleProvider = BundleProvider(NSBundle.mainBundle)
 
-    @ApplicationScope
-    @Provides
-    fun provideConfigs(
-        resourceReader: YamlResourceReader,
-    ): Configs = resourceReader.readAndDecodeResource("config.yaml", Configs.serializer())
+  @ApplicationScope
+  @Provides
+  fun provideConfigs(resourceReader: YamlResourceReader): Configs =
+    resourceReader.readAndDecodeResource("config.yaml", Configs.serializer())
 
-    @ApplicationScope
-    @Provides
-    fun provideResourceReader(bind: BundleResourceReader): ResourceReader = bind
+  @ApplicationScope
+  @Provides
+  fun provideResourceReader(bind: BundleResourceReader): ResourceReader = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideExceptionHandler(bind: IosExceptionHandler): NetworkExceptionHandler = bind
+  @ApplicationScope
+  @Provides
+  fun provideExceptionHandler(bind: IosExceptionHandler): NetworkExceptionHandler = bind
 }

@@ -11,18 +11,18 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DefaultTmdbSeasonDetailsNetworkDataSource(
-    private val httpClient: TmdbHttpClient,
+  private val httpClient: TmdbHttpClient,
 ) : TmdbSeasonDetailsNetworkDataSource {
 
-    override suspend fun getSeasonDetails(
-        id: Long,
-        seasonNumber: Long,
-    ): ApiResponse<TmdbSeasonDetailsResponse> =
-        httpClient.safeRequest {
-            url {
-                method = HttpMethod.Get
-                path("3/tv/$id/season/$seasonNumber")
-                parameter("append_to_response", "credits,videos,images")
-            }
-        }
+  override suspend fun getSeasonDetails(
+    id: Long,
+    seasonNumber: Long,
+  ): ApiResponse<TmdbSeasonDetailsResponse> =
+    httpClient.safeRequest {
+      url {
+        method = HttpMethod.Get
+        path("3/tv/$id/season/$seasonNumber")
+        parameter("append_to_response", "credits,videos,images")
+      }
+    }
 }

@@ -10,23 +10,22 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeLibraryRepository : LibraryRepository {
 
-    private var watchlist: Channel<List<LibraryShows>> = Channel(Channel.UNLIMITED)
-    private var watchlistResult: Channel<Either<Failure, List<LibraryShows>>> =
-        Channel(Channel.UNLIMITED)
+  private var watchlist: Channel<List<LibraryShows>> = Channel(Channel.UNLIMITED)
+  private var watchlistResult: Channel<Either<Failure, List<LibraryShows>>> =
+    Channel(Channel.UNLIMITED)
 
-    suspend fun setFollowedResult(result: List<LibraryShows>) {
-        watchlist.send(result)
-    }
+  suspend fun setFollowedResult(result: List<LibraryShows>) {
+    watchlist.send(result)
+  }
 
-    suspend fun setObserveResult(result: Either<Failure, List<LibraryShows>>) {
-        watchlistResult.send(result)
-    }
+  suspend fun setObserveResult(result: Either<Failure, List<LibraryShows>>) {
+    watchlistResult.send(result)
+  }
 
-    override fun observeLibrary(): Flow<Either<Failure, List<LibraryShows>>> =
-        watchlistResult.receiveAsFlow()
+  override fun observeLibrary(): Flow<Either<Failure, List<LibraryShows>>> =
+    watchlistResult.receiveAsFlow()
 
-    override suspend fun getLibraryShows(): List<LibraryShows> = watchlist.receive()
+  override suspend fun getLibraryShows(): List<LibraryShows> = watchlist.receive()
 
-    override suspend fun updateLibrary(traktId: Long, addToLibrary: Boolean) {
-    }
+  override suspend fun updateLibrary(traktId: Long, addToLibrary: Boolean) {}
 }

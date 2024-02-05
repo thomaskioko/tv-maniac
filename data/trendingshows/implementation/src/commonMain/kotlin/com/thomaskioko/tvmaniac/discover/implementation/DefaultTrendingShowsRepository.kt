@@ -30,74 +30,81 @@ import org.mobilenativefoundation.store.store5.impl.extensions.get
 
 @Inject
 class DefaultTrendingShowsRepository(
-    private val store: TrendingShowsStore,
-    private val requestManagerRepository: RequestManagerRepository,
-    private val dao: TrendingShowsDao,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val store: TrendingShowsStore,
+  private val requestManagerRepository: RequestManagerRepository,
+  private val dao: TrendingShowsDao,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : TrendingShowsRepository {
 
-    override suspend fun fetchTrendingShows(
-        forceRefresh: Boolean,
-    ): List<ShowEntity> {
-        return when {
-            forceRefresh -> store.stream(
-                fresh(
-                    key = TrendingShowsParams(
-                        timeWindow = DEFAULT_DAY_TIME_WINDOW,
-                        page = DEFAULT_API_PAGE,
-                    ),
+  override suspend fun fetchTrendingShows(forceRefresh: Boolean): List<ShowEntity> {
+    return when {
+      forceRefresh ->
+        store
+          .stream(
+            fresh(
+              key =
+                TrendingShowsParams(
+                  timeWindow = DEFAULT_DAY_TIME_WINDOW,
+                  page = DEFAULT_API_PAGE,
                 ),
-            )
-                .filterForResult()
-                .first()
-                .dataOrNull() ?: getShows()
-
-            else -> getShows()
-        }
+            ),
+          )
+          .filterForResult()
+          .first()
+          .dataOrNull()
+          ?: getShows()
+      else -> getShows()
     }
+  }
 
-    private suspend fun getShows(): List<ShowEntity> =
-        store.get(
-            key = TrendingShowsParams(
-                timeWindow = DEFAULT_DAY_TIME_WINDOW,
-                page = DEFAULT_API_PAGE,
+  private suspend fun getShows(): List<ShowEntity> =
+    store.get(
+      key =
+        TrendingShowsParams(
+          timeWindow = DEFAULT_DAY_TIME_WINDOW,
+          page = DEFAULT_API_PAGE,
+        ),
+    )
+
+  override fun observeTrendingShows(): Flow<Either<Failure, List<ShowEntity>>> =
+    store
+      .stream(
+        StoreReadRequest.cached(
+          key =
+            TrendingShowsParams(
+              timeWindow = DEFAULT_DAY_TIME_WINDOW,
+              page = DEFAULT_API_PAGE,
             ),
-        )
+          refresh =
+            requestManagerRepository.isRequestExpired(
+              entityId = TRENDING_SHOWS_TODAY.requestId + DEFAULT_API_PAGE,
+              requestType = TRENDING_SHOWS_TODAY.name,
+              threshold = TRENDING_SHOWS_TODAY.duration,
+            ),
+        ),
+      )
+      .mapResult()
+      .flowOn(dispatchers.io)
 
-    override fun observeTrendingShows(): Flow<Either<Failure, List<ShowEntity>>> =
-        store.stream(
-            StoreReadRequest.cached(
-                key = TrendingShowsParams(
-                    timeWindow = DEFAULT_DAY_TIME_WINDOW,
-                    page = DEFAULT_API_PAGE,
+  @OptIn(ExperimentalPagingApi::class, ExperimentalStoreApi::class)
+  override fun getPagedTrendingShows(): Flow<PagingData<ShowEntity>> {
+    return Pager(
+        config = CommonPagingConfig.pagingConfig,
+        remoteMediator =
+          PaginatedRemoteMediator(
+            getLastPage = dao::getLastPage,
+            deleteLocalEntity = store::clear,
+            fetch = {
+              store.fresh(
+                TrendingShowsParams(
+                  timeWindow = DEFAULT_DAY_TIME_WINDOW,
+                  page = it,
                 ),
-                refresh = requestManagerRepository.isRequestExpired(
-                    entityId = TRENDING_SHOWS_TODAY.requestId + DEFAULT_API_PAGE,
-                    requestType = TRENDING_SHOWS_TODAY.name,
-                    threshold = TRENDING_SHOWS_TODAY.duration,
-                ),
-            ),
-        )
-            .mapResult()
-            .flowOn(dispatchers.io)
-
-    @OptIn(ExperimentalPagingApi::class, ExperimentalStoreApi::class)
-    override fun getPagedTrendingShows(): Flow<PagingData<ShowEntity>> {
-        return Pager(
-            config = CommonPagingConfig.pagingConfig,
-            remoteMediator = PaginatedRemoteMediator(
-                getLastPage = dao::getLastPage,
-                deleteLocalEntity = store::clear,
-                fetch = {
-                    store.fresh(
-                        TrendingShowsParams(
-                            timeWindow = DEFAULT_DAY_TIME_WINDOW,
-                            page = it,
-                        ),
-                    )
-                },
-            ),
-            pagingSourceFactory = dao::getPagedTrendingShows,
-        ).flow
-    }
+              )
+            },
+          ),
+        pagingSourceFactory = dao::getPagedTrendingShows,
+      )
+      .flow
+  }
 }

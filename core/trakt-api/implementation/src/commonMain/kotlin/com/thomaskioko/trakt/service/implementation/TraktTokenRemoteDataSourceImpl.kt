@@ -14,46 +14,48 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktTokenRemoteDataSourceImpl(
-    private val configs: Configs,
-    private val httpClient: TraktHttpClient,
+  private val configs: Configs,
+  private val httpClient: TraktHttpClient,
 ) : TraktTokenRemoteDataSource {
 
-    override suspend fun getAccessToken(
-        authCode: String,
-    ): TraktAccessTokenResponse = httpClient.post("oauth/token") {
+  override suspend fun getAccessToken(authCode: String): TraktAccessTokenResponse =
+    httpClient
+      .post("oauth/token") {
         setBody(
-            AccessTokenBody(
-                code = authCode,
-                clientId = configs.traktClientId,
-                clientSecret = configs.traktClientSecret,
-                redirectUri = configs.traktRedirectUri,
-                grantType = "authorization_code",
-            ),
+          AccessTokenBody(
+            code = authCode,
+            clientId = configs.traktClientId,
+            clientSecret = configs.traktClientSecret,
+            redirectUri = configs.traktRedirectUri,
+            grantType = "authorization_code",
+          ),
         )
-    }.body()
+      }
+      .body()
 
-    override suspend fun getAccessRefreshToken(
-        refreshToken: String,
-    ): TraktAccessRefreshTokenResponse = httpClient.post("oauth/token") {
+  override suspend fun getAccessRefreshToken(
+    refreshToken: String,
+  ): TraktAccessRefreshTokenResponse =
+    httpClient
+      .post("oauth/token") {
         setBody(
-            RefreshAccessTokenBody(
-                refreshToken = refreshToken,
-            ),
+          RefreshAccessTokenBody(
+            refreshToken = refreshToken,
+          ),
         )
-    }.body()
+      }
+      .body()
 
-    override suspend fun revokeAccessToken(
-        authCode: String,
-    ) {
-        httpClient.post("oauth/revoke") {
-            setBody(
-                AccessTokenBody(
-                    code = authCode,
-                    clientId = configs.traktClientId,
-                    clientSecret = configs.traktClientSecret,
-                    redirectUri = configs.traktRedirectUri,
-                ),
-            )
-        }
+  override suspend fun revokeAccessToken(authCode: String) {
+    httpClient.post("oauth/revoke") {
+      setBody(
+        AccessTokenBody(
+          code = authCode,
+          clientId = configs.traktClientId,
+          clientSecret = configs.traktClientSecret,
+          redirectUri = configs.traktRedirectUri,
+        ),
+      )
     }
+  }
 }

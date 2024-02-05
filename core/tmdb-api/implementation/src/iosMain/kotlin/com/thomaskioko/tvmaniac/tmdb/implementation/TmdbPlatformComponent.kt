@@ -6,7 +6,7 @@ import me.tatarka.inject.annotations.Provides
 
 actual interface TmdbPlatformComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideTmdbHttpClientEngine(): TmdbHttpClientEngine = Darwin.create()
+  @ApplicationScope
+  @Provides
+  fun provideTmdbHttpClientEngine(): TmdbHttpClientEngine = Darwin.create()
 }

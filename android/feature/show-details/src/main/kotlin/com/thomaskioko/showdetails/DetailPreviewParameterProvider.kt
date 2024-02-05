@@ -7,10 +7,13 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import kotlinx.collections.immutable.persistentListOf
 
-private val showDetailsLoaded = ShowDetailsState(
-    showDetails = ShowDetails(
+private val showDetailsLoaded =
+  ShowDetailsState(
+    showDetails =
+      ShowDetails(
         title = "Loki",
-        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
+        overview =
+          "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
             "an alternate version of Loki is brought to the mysterious Time Variance " +
             "Authority, a bureaucratic organization that exists outside of time and " +
             "space and monitors the timeline. They give Loki a choice: face being " +
@@ -24,42 +27,44 @@ private val showDetailsLoaded = ShowDetailsState(
         genres = persistentListOf("Horror", "Action"),
         status = "Returning Series",
         year = "2024",
-    ),
-    seasonsList = persistentListOf(
+      ),
+    seasonsList =
+      persistentListOf(
         Season(
-            seasonId = 114355,
-            tvShowId = 84958,
-            name = "Season 1",
-            seasonNumber = 1,
+          seasonId = 114355,
+          tvShowId = 84958,
+          name = "Season 1",
+          seasonNumber = 1,
         ),
-    ),
-    trailersList = persistentListOf(
+      ),
+    trailersList =
+      persistentListOf(
         Trailer(
-            showId = 1232,
-            key = "",
-            name = "",
-            youtubeThumbnailUrl = "",
+          showId = 1232,
+          key = "",
+          name = "",
+          youtubeThumbnailUrl = "",
         ),
         Trailer(
-            showId = 1232,
-            key = "",
-            name = "",
-            youtubeThumbnailUrl = "",
+          showId = 1232,
+          key = "",
+          name = "",
+          youtubeThumbnailUrl = "",
         ),
-    ),
+      ),
     similarShows = persistentListOf(),
     recommendedShowList = persistentListOf(),
     errorMessage = null,
     providers = persistentListOf(),
     castsList = persistentListOf(),
     hasWebViewInstalled = false,
-)
+  )
 
 class DetailPreviewParameterProvider : PreviewParameterProvider<ShowDetailsState> {
-    override val values: Sequence<ShowDetailsState>
-        get() {
-            return sequenceOf(
-                showDetailsLoaded,
-            )
-        }
+  override val values: Sequence<ShowDetailsState>
+    get() {
+      return sequenceOf(
+        showDetailsLoaded,
+      )
+    }
 }

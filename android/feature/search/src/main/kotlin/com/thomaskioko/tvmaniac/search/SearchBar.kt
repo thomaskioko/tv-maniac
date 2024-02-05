@@ -39,27 +39,25 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
 fun SearchBar(
-    hint: String,
-    modifier: Modifier = Modifier,
-    onValueChange: (String) -> Unit,
+  hint: String,
+  modifier: Modifier = Modifier,
+  onValueChange: (String) -> Unit,
 ) {
-    val textState = remember { mutableStateOf(TextFieldValue()) }
-    var textFieldFocusState by remember { mutableStateOf(false) }
+  val textState = remember { mutableStateOf(TextFieldValue()) }
+  var textFieldFocusState by remember { mutableStateOf(false) }
 
-    SearchInputText(
-        modifier = modifier,
-        textFieldValue = textState.value,
-        onTextChanged = {
-            textState.value = it
-            onValueChange.invoke(it.text)
-        },
-        keyboardShown = textFieldFocusState,
-        onTextFieldFocused = { focused ->
-            textFieldFocusState = focused
-        },
-        hint = hint,
-        focusState = textFieldFocusState,
-    )
+  SearchInputText(
+    modifier = modifier,
+    textFieldValue = textState.value,
+    onTextChanged = {
+      textState.value = it
+      onValueChange.invoke(it.text)
+    },
+    keyboardShown = textFieldFocusState,
+    onTextFieldFocused = { focused -> textFieldFocusState = focused },
+    hint = hint,
+    focusState = textFieldFocusState,
+  )
 }
 
 val KeyboardShownKey = SemanticsPropertyKey<Boolean>("KeyboardShownKey")
@@ -68,89 +66,83 @@ var SemanticsPropertyReceiver.keyboardShownProperty by KeyboardShownKey
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SearchInputText(
-    onTextChanged: (TextFieldValue) -> Unit,
-    textFieldValue: TextFieldValue,
-    keyboardShown: Boolean,
-    onTextFieldFocused: (Boolean) -> Unit,
-    focusState: Boolean,
-    modifier: Modifier = Modifier,
-    hint: String = "",
-    keyboardType: KeyboardType = KeyboardType.Text,
+  onTextChanged: (TextFieldValue) -> Unit,
+  textFieldValue: TextFieldValue,
+  keyboardShown: Boolean,
+  onTextFieldFocused: (Boolean) -> Unit,
+  focusState: Boolean,
+  modifier: Modifier = Modifier,
+  hint: String = "",
+  keyboardType: KeyboardType = KeyboardType.Text,
 ) {
-    var keyboardController by remember { mutableStateOf<SoftwareKeyboardController?>(null) }
+  var keyboardController by remember { mutableStateOf<SoftwareKeyboardController?>(null) }
 
-    LaunchedEffect(keyboardController, keyboardShown) {
-        keyboardController?.let {
-            if (keyboardShown) it.show() else it.hide()
-        }
-    }
+  LaunchedEffect(keyboardController, keyboardShown) {
+    keyboardController?.let { if (keyboardShown) it.show() else it.hide() }
+  }
 
-    Card(
-        shape = RectangleShape,
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp,
-        ),
+  Card(
+    shape = RectangleShape,
+    elevation =
+      CardDefaults.cardElevation(
+        defaultElevation = 8.dp,
+      ),
+  ) {
+    Row(
+      modifier =
+        modifier.fillMaxWidth().height(48.dp).semantics { keyboardShownProperty = keyboardShown },
+      horizontalArrangement = Arrangement.End,
     ) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .semantics { keyboardShownProperty = keyboardShown },
-            horizontalArrangement = Arrangement.End,
-        ) {
-            Box(
-                modifier = Modifier
-                    .height(45.dp)
-                    .weight(1f)
-                    .align(Alignment.Bottom),
-            ) {
-                var lastFocusState by remember { mutableStateOf(Recomposer.State.Inactive) }
+      Box(
+        modifier = Modifier.height(45.dp).weight(1f).align(Alignment.Bottom),
+      ) {
+        var lastFocusState by remember { mutableStateOf(Recomposer.State.Inactive) }
 
-                BasicTextField(
-                    value = textFieldValue,
-                    onValueChange = { onTextChanged(it) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp)
-                        .align(Alignment.CenterStart)
-                        .onFocusEvent { state ->
-                            // TODO:: Handle focus state
-                        },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Search,
-                        keyboardType = keyboardType,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            // TODO:: Invoke Search Action
-                        },
-                    ),
-                    textStyle = MaterialTheme.typography.bodyMedium,
-                )
+        BasicTextField(
+          value = textFieldValue,
+          onValueChange = { onTextChanged(it) },
+          modifier =
+            Modifier.fillMaxWidth()
+              .padding(start = 16.dp)
+              .align(Alignment.CenterStart)
+              .onFocusEvent { state ->
+                // TODO:: Handle focus state
+              },
+          keyboardOptions =
+            KeyboardOptions.Default.copy(
+              imeAction = ImeAction.Search,
+              keyboardType = keyboardType,
+            ),
+          keyboardActions =
+            KeyboardActions(
+              onDone = {
+                // TODO:: Invoke Search Action
+              },
+            ),
+          textStyle = MaterialTheme.typography.bodyMedium,
+        )
 
-                if (textFieldValue.text.isEmpty() && !focusState) {
-                    Text(
-                        modifier = Modifier
-                            .align(Alignment.CenterStart)
-                            .padding(start = 16.dp),
-                        text = hint,
-                        style = MaterialTheme.typography.bodyMedium.copy(MaterialTheme.colorScheme.onSurface),
-                    )
-                }
-            }
+        if (textFieldValue.text.isEmpty() && !focusState) {
+          Text(
+            modifier = Modifier.align(Alignment.CenterStart).padding(start = 16.dp),
+            text = hint,
+            style = MaterialTheme.typography.bodyMedium.copy(MaterialTheme.colorScheme.onSurface),
+          )
         }
+      }
     }
+  }
 }
 
 @ThemePreviews
 @Composable
-fun SearchBarPreview() {
-    TvManiacTheme {
-        Surface {
-            SearchBar(
-                hint = "Enter Show Title",
-                onValueChange = {},
-            )
-        }
+private fun SearchBarPreview() {
+  TvManiacTheme {
+    Surface {
+      SearchBar(
+        hint = "Enter Show Title",
+        onValueChange = {},
+      )
     }
+  }
 }

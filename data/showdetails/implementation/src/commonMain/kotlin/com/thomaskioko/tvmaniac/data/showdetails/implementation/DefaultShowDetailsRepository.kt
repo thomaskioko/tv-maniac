@@ -16,24 +16,26 @@ import org.mobilenativefoundation.store.store5.impl.extensions.get
 
 @Inject
 class DefaultShowDetailsRepository(
-    private val showStore: ShowDetailsStore,
-    private val requestManagerRepository: RequestManagerRepository,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val showStore: ShowDetailsStore,
+  private val requestManagerRepository: RequestManagerRepository,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : ShowDetailsRepository {
 
-    override suspend fun getShowDetails(id: Long): TvshowDetails = showStore.get(key = id)
+  override suspend fun getShowDetails(id: Long): TvshowDetails = showStore.get(key = id)
 
-    override fun observeShowDetails(id: Long): Flow<Either<Failure, TvshowDetails>> =
-        showStore.stream(
-            StoreReadRequest.cached(
-                key = id,
-                refresh = requestManagerRepository.isRequestExpired(
-                    entityId = id,
-                    requestType = SHOW_DETAILS.name,
-                    threshold = SHOW_DETAILS.duration,
-                ),
+  override fun observeShowDetails(id: Long): Flow<Either<Failure, TvshowDetails>> =
+    showStore
+      .stream(
+        StoreReadRequest.cached(
+          key = id,
+          refresh =
+            requestManagerRepository.isRequestExpired(
+              entityId = id,
+              requestType = SHOW_DETAILS.name,
+              threshold = SHOW_DETAILS.duration,
             ),
-        )
-            .mapResult()
-            .flowOn(dispatchers.io)
+        ),
+      )
+      .mapResult()
+      .flowOn(dispatchers.io)
 }

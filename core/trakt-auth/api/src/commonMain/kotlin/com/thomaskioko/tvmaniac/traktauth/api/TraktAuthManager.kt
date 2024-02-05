@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.traktauth.api
 
 interface TraktAuthManager {
-    fun launchWebView()
-    fun registerResult()
+  fun launchWebView()
+
+  fun registerResult()
 }

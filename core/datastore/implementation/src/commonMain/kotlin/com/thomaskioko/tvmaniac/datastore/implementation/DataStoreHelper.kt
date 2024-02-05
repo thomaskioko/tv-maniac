@@ -9,26 +9,23 @@ import kotlinx.coroutines.internal.SynchronizedObject
 import kotlinx.coroutines.internal.synchronized
 import okio.Path.Companion.toPath
 
-@OptIn(InternalCoroutinesApi::class)
-private val lock = SynchronizedObject()
+@OptIn(InternalCoroutinesApi::class) private val lock = SynchronizedObject()
 private lateinit var dataStore: DataStore<Preferences>
 
 @OptIn(InternalCoroutinesApi::class)
-internal fun createDataStore(
-    produceFile: () -> String,
-    coroutineScope: CoroutineScope,
-) = synchronized(lock) {
+internal fun createDataStore(produceFile: () -> String, coroutineScope: CoroutineScope) =
+  synchronized(lock) {
     if (::dataStore.isInitialized) {
-        dataStore
+      dataStore
     } else {
-        PreferenceDataStoreFactory.createWithPath(
-            corruptionHandler = null,
-            migrations = emptyList(),
-            scope = coroutineScope,
-            produceFile = { produceFile().toPath() },
+      PreferenceDataStoreFactory.createWithPath(
+          corruptionHandler = null,
+          migrations = emptyList(),
+          scope = coroutineScope,
+          produceFile = { produceFile().toPath() },
         )
-            .also { dataStore = it }
+        .also { dataStore = it }
     }
-}
+  }
 
 const val dataStoreFileName = "tvmainac.preferences_pb"

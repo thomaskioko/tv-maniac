@@ -7,15 +7,9 @@ import me.tatarka.inject.annotations.Provides
 
 interface CastComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideCastDao(
-        bind: DefaultCastDao,
-    ): CastDao = bind
+  @ApplicationScope @Provides fun provideCastDao(bind: DefaultCastDao): CastDao = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideCastRepository(
-        bind: DefaultCastRepository,
-    ): CastRepository = bind
+  @ApplicationScope
+  @Provides
+  fun provideCastRepository(bind: DefaultCastRepository): CastRepository = bind
 }

@@ -4,8 +4,11 @@ import com.thomaskioko.tvmaniac.core.db.RecommendedShows
 import kotlinx.coroutines.flow.Flow
 
 interface RecommendedShowsDao {
-    fun upsert(showId: Long, recommendedShowId: Long)
-    fun observeRecommendedShows(traktId: Long): Flow<List<RecommendedShows>>
-    fun delete(id: Long)
-    fun deleteAll()
+  fun upsert(showId: Long, recommendedShowId: Long)
+
+  fun observeRecommendedShows(traktId: Long): Flow<List<RecommendedShows>>
+
+  fun delete(id: Long)
+
+  fun deleteAll()
 }

@@ -8,9 +8,7 @@ expect interface DataStorePlatformComponent
 
 interface DataStoreComponent : DataStorePlatformComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideDatastoreRepository(
-        bind: DefaultDatastoreRepository,
-    ): DatastoreRepository = bind
+  @ApplicationScope
+  @Provides
+  fun provideDatastoreRepository(bind: DefaultDatastoreRepository): DatastoreRepository = bind
 }

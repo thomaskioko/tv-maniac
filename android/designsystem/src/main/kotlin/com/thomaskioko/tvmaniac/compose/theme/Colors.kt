@@ -36,27 +36,27 @@ val md_theme_dark_outline = Color(0xFF1F2123)
 
 @Composable
 fun backgroundGradient(): List<Color> {
-    return listOf(
-        MaterialTheme.colorScheme.background,
-        MaterialTheme.colorScheme.background.copy(alpha = 0.9F),
-        MaterialTheme.colorScheme.background.copy(alpha = 0.8F),
-        MaterialTheme.colorScheme.background.copy(alpha = 0.7F),
-        Color.Transparent,
-    )
+  return listOf(
+    MaterialTheme.colorScheme.background,
+    MaterialTheme.colorScheme.background.copy(alpha = 0.9F),
+    MaterialTheme.colorScheme.background.copy(alpha = 0.8F),
+    MaterialTheme.colorScheme.background.copy(alpha = 0.7F),
+    Color.Transparent,
+  )
 }
 
 fun Color.contrastAgainst(background: Color): Float {
-    val fg = if (alpha < 1f) compositeOver(background) else this
+  val fg = if (alpha < 1f) compositeOver(background) else this
 
-    val fgLuminance = fg.luminance() + 0.05f
-    val bgLuminance = background.luminance() + 0.05f
+  val fgLuminance = fg.luminance() + 0.05f
+  val bgLuminance = background.luminance() + 0.05f
 
-    return max(fgLuminance, bgLuminance) / min(fgLuminance, bgLuminance)
+  return max(fgLuminance, bgLuminance) / min(fgLuminance, bgLuminance)
 }
 
 /**
- * This is the minimum amount of calculated contrast for a color to be used on top of the
- * surface color. These values are defined within the WCAG AA guidelines, and we use a value of
- * 3:1 which is the minimum for user-interface components.
+ * This is the minimum amount of calculated contrast for a color to be used on top of the surface
+ * color. These values are defined within the WCAG AA guidelines, and we use a value of 3:1 which is
+ * the minimum for user-interface components.
  */
 const val MinContrastOfPrimaryVsSurface = 3f

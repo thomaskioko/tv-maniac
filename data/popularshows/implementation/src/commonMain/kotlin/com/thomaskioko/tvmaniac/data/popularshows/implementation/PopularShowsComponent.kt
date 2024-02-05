@@ -7,15 +7,12 @@ import me.tatarka.inject.annotations.Provides
 
 interface PopularShowsComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideTopRatedShowsDao(
-        bind: DefaultPopularShowsDao,
-    ): PopularShowsDao = bind
+  @ApplicationScope
+  @Provides
+  fun provideTopRatedShowsDao(bind: DefaultPopularShowsDao): PopularShowsDao = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideTopRatedShowsRepository(
-        bind: DefaultPopularShowsRepository,
-    ): PopularShowsRepository = bind
+  @ApplicationScope
+  @Provides
+  fun provideTopRatedShowsRepository(bind: DefaultPopularShowsRepository): PopularShowsRepository =
+    bind
 }

@@ -6,5 +6,5 @@ import me.tatarka.inject.annotations.Component
 @Component
 @ApplicationScope
 abstract class ApplicationComponent : SharedComponent() {
-    companion object
+  companion object
 }

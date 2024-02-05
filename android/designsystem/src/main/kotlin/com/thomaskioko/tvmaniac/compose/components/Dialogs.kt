@@ -17,70 +17,71 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
 fun BasicDialog(
-    dialogTitle: String,
-    dialogMessage: String,
-    confirmButtonText: String,
-    enableConfirmButton: Boolean = true,
-    enableDismissButton: Boolean = true,
-    dismissButtonText: String? = null,
-    shape: Shape = MaterialTheme.shapes.small,
-    onDismissDialog: () -> Unit = {},
-    confirmButtonClicked: () -> Unit = {},
-    dismissButtonClicked: () -> Unit = {},
+  dialogTitle: String,
+  dialogMessage: String,
+  confirmButtonText: String,
+  enableConfirmButton: Boolean = true,
+  enableDismissButton: Boolean = true,
+  dismissButtonText: String? = null,
+  shape: Shape = MaterialTheme.shapes.small,
+  onDismissDialog: () -> Unit = {},
+  confirmButtonClicked: () -> Unit = {},
+  dismissButtonClicked: () -> Unit = {},
 ) {
-    val configuration = LocalConfiguration.current
+  val configuration = LocalConfiguration.current
 
-    AlertDialog(
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-        modifier = Modifier.widthIn(max = configuration.screenWidthDp.dp - 80.dp),
-        shape = shape,
-        onDismissRequest = { onDismissDialog() },
-        title = {
-            Text(
-                text = dialogTitle,
-                style = MaterialTheme.typography.titleLarge,
-            )
-        },
-        text = {
-            Divider()
+  AlertDialog(
+    properties = DialogProperties(usePlatformDefaultWidth = false),
+    modifier = Modifier.widthIn(max = configuration.screenWidthDp.dp - 80.dp),
+    shape = shape,
+    onDismissRequest = { onDismissDialog() },
+    title = {
+      Text(
+        text = dialogTitle,
+        style = MaterialTheme.typography.titleLarge,
+      )
+    },
+    text = {
+      Divider()
 
-            Text(
-                text = dialogMessage,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 16.dp),
-            )
-        },
-        confirmButton = {
-            TvManiacOutlinedButton(
-                enabled = enableConfirmButton,
-                text = confirmButtonText,
-                onClick = confirmButtonClicked,
-            )
-        },
-        dismissButton = {
-            dismissButtonText?.let {
-                TvManiacOutlinedButton(
-                    enabled = enableDismissButton,
-                    text = dismissButtonText,
-                    onClick = dismissButtonClicked,
-                )
-            }
-        },
-    )
+      Text(
+        text = dialogMessage,
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier.padding(top = 16.dp),
+      )
+    },
+    confirmButton = {
+      TvManiacOutlinedButton(
+        enabled = enableConfirmButton,
+        text = confirmButtonText,
+        onClick = confirmButtonClicked,
+      )
+    },
+    dismissButton = {
+      dismissButtonText?.let {
+        TvManiacOutlinedButton(
+          enabled = enableDismissButton,
+          text = dismissButtonText,
+          onClick = dismissButtonClicked,
+        )
+      }
+    },
+  )
 }
 
 @ThemePreviews
 @Composable
-fun BasicDialogPreview() {
-    TvManiacTheme {
-        Surface {
-            BasicDialog(
-                dialogTitle = "Dialog Title",
-                dialogMessage = "Trakt is a platform that does many things, but primarily keeps " +
-                    "track of TV shows and movies you watch.",
-                confirmButtonText = "Confirm",
-                dismissButtonText = "Cancel",
-            )
-        }
+private fun BasicDialogPreview() {
+  TvManiacTheme {
+    Surface {
+      BasicDialog(
+        dialogTitle = "Dialog Title",
+        dialogMessage =
+          "Trakt is a platform that does many things, but primarily keeps " +
+            "track of TV shows and movies you watch.",
+        confirmButtonText = "Confirm",
+        dismissButtonText = "Cancel",
+      )
     }
+  }
 }

@@ -10,29 +10,30 @@ import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun SnackBarErrorRetry(
-    snackBarHostState: SnackbarHostState,
-    errorMessage: String?,
-    actionLabel: String?,
-    showError: Boolean = !errorMessage.isNullOrBlank(),
-    onErrorAction: () -> Unit = { },
+  snackBarHostState: SnackbarHostState,
+  errorMessage: String?,
+  actionLabel: String?,
+  showError: Boolean = !errorMessage.isNullOrBlank(),
+  onErrorAction: () -> Unit = {},
 ) {
-    AnimatedVisibility(
-        visible = showError,
-        enter = slideInVertically(initialOffsetY = { it }),
-        exit = slideOutVertically(targetOffsetY = { it }),
-    ) {
-        errorMessage?.let {
-            LaunchedEffect(errorMessage) {
-                val actionResult = snackBarHostState.showSnackbar(
-                    message = errorMessage,
-                    actionLabel = actionLabel,
-                )
+  AnimatedVisibility(
+    visible = showError,
+    enter = slideInVertically(initialOffsetY = { it }),
+    exit = slideOutVertically(targetOffsetY = { it }),
+  ) {
+    errorMessage?.let {
+      LaunchedEffect(errorMessage) {
+        val actionResult =
+          snackBarHostState.showSnackbar(
+            message = errorMessage,
+            actionLabel = actionLabel,
+          )
 
-                when (actionResult) {
-                    SnackbarResult.ActionPerformed -> onErrorAction()
-                    SnackbarResult.Dismissed -> onErrorAction()
-                }
-            }
+        when (actionResult) {
+          SnackbarResult.ActionPerformed -> onErrorAction()
+          SnackbarResult.Dismissed -> onErrorAction()
         }
+      }
     }
+  }
 }

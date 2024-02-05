@@ -1,15 +1,13 @@
-plugins {
-    id("plugin.tvmaniac.multiplatform")
-}
+plugins { id("plugin.tvmaniac.multiplatform") }
 
 kotlin {
-    sourceSets {
-        commonMain {
-            dependencies {
-                api(projects.core.database)
+  sourceSets {
+    commonMain {
+      dependencies {
+        api(projects.core.database)
 
-                api(libs.coroutines.core)
-            }
-        }
+        api(libs.coroutines.core)
+      }
     }
+  }
 }

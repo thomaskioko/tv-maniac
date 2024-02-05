@@ -27,44 +27,42 @@ import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun EmptyContent(
-    imageVector: ImageVector,
-    message: String,
-    modifier: Modifier = Modifier,
+  imageVector: ImageVector,
+  message: String,
+  modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Image(
-            imageVector = imageVector,
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
-            modifier = Modifier.size(120.dp),
-            contentDescription = null,
-        )
+  Column(
+    modifier = modifier.fillMaxSize(),
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    Image(
+      imageVector = imageVector,
+      colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+      modifier = Modifier.size(120.dp),
+      contentDescription = null,
+    )
 
-        Spacer(modifier = Modifier.height(12.dp))
+    Spacer(modifier = Modifier.height(12.dp))
 
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 48.dp),
-        )
-    }
+    Text(
+      text = message,
+      style = MaterialTheme.typography.bodyLarge,
+      textAlign = TextAlign.Center,
+      modifier = Modifier.fillMaxWidth().padding(horizontal = 48.dp),
+    )
+  }
 }
 
 @ThemePreviews
 @Composable
-fun EmptyContentViewPreview() {
-    TvManiacTheme {
-        Surface {
-            EmptyContent(
-                imageVector = Icons.Outlined.Inbox,
-                message = stringResource(id = R.string.generic_empty_content),
-            )
-        }
+private fun EmptyContentViewPreview() {
+  TvManiacTheme {
+    Surface {
+      EmptyContent(
+        imageVector = Icons.Outlined.Inbox,
+        message = stringResource(id = R.string.generic_empty_content),
+      )
     }
+  }
 }

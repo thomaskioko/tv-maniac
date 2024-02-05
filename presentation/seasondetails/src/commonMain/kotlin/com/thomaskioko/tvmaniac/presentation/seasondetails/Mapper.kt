@@ -9,8 +9,9 @@ import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 
-fun List<EpisodeDetails>.toEpisodes(): PersistentList<EpisodeDetailsModel> = map {
-    EpisodeDetailsModel(
+fun List<EpisodeDetails>.toEpisodes(): PersistentList<EpisodeDetailsModel> =
+  map {
+      EpisodeDetailsModel(
         id = it.id,
         seasonId = it.seasonId,
         episodeTitle = it.name,
@@ -20,28 +21,32 @@ fun List<EpisodeDetails>.toEpisodes(): PersistentList<EpisodeDetailsModel> = map
         runtime = it.runtime,
         voteCount = it.voteCount,
         episodeNumber = it.episodeNumber.toString(),
-        seasonEpisodeNumber = "S${
+        seasonEpisodeNumber =
+          "S${
             it.seasonNumber
                 .toString()
                 .padStart(2, '0')
         } | E${it.episodeNumber}",
-    )
-}.toPersistentList()
+      )
+    }
+    .toPersistentList()
 
 fun List<Season_images>.toImageList(): PersistentList<SeasonImagesModel> =
-    map {
-        SeasonImagesModel(
-            id = it.id,
-            imageUrl = it.image_url,
-        )
-    }.toPersistentList()
+  map {
+      SeasonImagesModel(
+        id = it.id,
+        imageUrl = it.image_url,
+      )
+    }
+    .toPersistentList()
 
 fun List<SeasonCast>.toCastList(): PersistentList<Cast> =
-    map {
-        Cast(
-            id = it.id.id,
-            name = it.name,
-            profileUrl = it.profile_path,
-            characterName = it.character_name,
-        )
-    }.toPersistentList()
+  map {
+      Cast(
+        id = it.id.id,
+        name = it.name,
+        profileUrl = it.profile_path,
+        characterName = it.character_name,
+      )
+    }
+    .toPersistentList()

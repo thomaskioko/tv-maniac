@@ -5,13 +5,13 @@ import me.tatarka.inject.annotations.Inject
 
 // TODO:: Replace with actual typealias. See https://youtrack.jetbrains.com/issue/KT-61573
 @Inject
-actual class TraktAuthManagerImpl : TraktAuthManager {
+actual class DefaultTraktAuthManager : TraktAuthManager {
 
-    override fun launchWebView() {
-        // NO OP
-    }
+  override fun launchWebView() {
+    // NO OP
+  }
 
-    override fun registerResult() {
-        // NO OP
-    }
+  override fun registerResult() {
+    // NO OP
+  }
 }

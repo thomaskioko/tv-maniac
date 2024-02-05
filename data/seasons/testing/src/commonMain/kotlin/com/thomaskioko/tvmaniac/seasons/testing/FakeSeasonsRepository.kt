@@ -10,20 +10,20 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeSeasonsRepository : SeasonsRepository {
 
-    private var seasonsList: Channel<List<ShowSeasons>> = Channel(Channel.UNLIMITED)
-    private var seasonsResult: Channel<Either<Failure, List<ShowSeasons>>> = Channel(Channel.UNLIMITED)
+  private var seasonsList: Channel<List<ShowSeasons>> = Channel(Channel.UNLIMITED)
+  private var seasonsResult: Channel<Either<Failure, List<ShowSeasons>>> =
+    Channel(Channel.UNLIMITED)
 
-    suspend fun setSeasons(result: List<ShowSeasons>) {
-        seasonsList.send(result)
-    }
+  suspend fun setSeasons(result: List<ShowSeasons>) {
+    seasonsList.send(result)
+  }
 
-    suspend fun setSeasonsResult(result: Either<Failure, List<ShowSeasons>>) {
-        seasonsResult.send(result)
-    }
+  suspend fun setSeasonsResult(result: Either<Failure, List<ShowSeasons>>) {
+    seasonsResult.send(result)
+  }
 
-    override suspend fun fetchSeasonsByShowId(id: Long): List<ShowSeasons> = seasonsList.receive()
+  override suspend fun fetchSeasonsByShowId(id: Long): List<ShowSeasons> = seasonsList.receive()
 
-    override fun observeSeasonsByShowId(
-        id: Long,
-    ): Flow<Either<Failure, List<ShowSeasons>>> = seasonsResult.receiveAsFlow()
+  override fun observeSeasonsByShowId(id: Long): Flow<Either<Failure, List<ShowSeasons>>> =
+    seasonsResult.receiveAsFlow()
 }

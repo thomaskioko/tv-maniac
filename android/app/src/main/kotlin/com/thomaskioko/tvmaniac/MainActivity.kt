@@ -20,60 +20,61 @@ import com.thomaskioko.tvmaniac.inject.create
 import com.thomaskioko.tvmaniac.navigation.ThemeState
 
 class MainActivity : ComponentActivity() {
-    private lateinit var component: ActivityComponent
+  private lateinit var component: ActivityComponent
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
-        super.onCreate(savedInstanceState)
-        component = ActivityComponent.create(this)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    val splashScreen = installSplashScreen()
+    super.onCreate(savedInstanceState)
+    component = ActivityComponent.create(this)
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+    WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        component.traktAuthManager.registerResult()
+    component.traktAuthManager.registerResult()
 
-        enableEdgeToEdge()
+    enableEdgeToEdge()
 
-        setContent {
-            val themeState by component.presenter.state.subscribeAsState()
-            val darkTheme = shouldUseDarkTheme(themeState)
+    setContent {
+      val themeState by component.presenter.state.subscribeAsState()
+      val darkTheme = shouldUseDarkTheme(themeState)
 
-            splashScreen.setKeepOnScreenCondition {
-                themeState.isFetching
-            }
+      splashScreen.setKeepOnScreenCondition { themeState.isFetching }
 
-            DisposableEffect(darkTheme) {
-                enableEdgeToEdge(
-                    statusBarStyle = SystemBarStyle.auto(
-                        Color.TRANSPARENT,
-                        Color.TRANSPARENT,
-                    ) { darkTheme },
-                    navigationBarStyle = SystemBarStyle.auto(
-                        lightScrim,
-                        darkScrim,
-                    ) { darkTheme },
-                )
-                onDispose {}
-            }
+      DisposableEffect(darkTheme) {
+        enableEdgeToEdge(
+          statusBarStyle =
+            SystemBarStyle.auto(
+              Color.TRANSPARENT,
+              Color.TRANSPARENT,
+            ) {
+              darkTheme
+            },
+          navigationBarStyle =
+            SystemBarStyle.auto(
+              lightScrim,
+              darkScrim,
+            ) {
+              darkTheme
+            },
+        )
+        onDispose {}
+      }
 
-            TvManiacTheme(darkTheme = darkTheme) {
-                component.rootScreen()
-            }
-        }
+      TvManiacTheme(darkTheme = darkTheme) { component.rootScreen() }
     }
+  }
 }
 
 /**
- * Returns `true` if dark theme should be used, as a function of the [uiState] and the
- * current system context.
+ * Returns `true` if dark theme should be used, as a function of the [uiState] and the current
+ * system context.
  */
 @Composable
-private fun shouldUseDarkTheme(
-    uiState: ThemeState,
-): Boolean = when (uiState.appTheme) {
+private fun shouldUseDarkTheme(uiState: ThemeState): Boolean =
+  when (uiState.appTheme) {
     AppTheme.LIGHT_THEME -> false
     AppTheme.DARK_THEME -> true
     AppTheme.SYSTEM_THEME -> isSystemInDarkTheme()
-}
+  }
 
 /**
  * The default light scrim, as defined by androidx and the platform:

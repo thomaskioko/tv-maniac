@@ -24,74 +24,73 @@ import io.ktor.serialization.kotlinx.json.json
 const val TIMEOUT_DURATION: Long = 60_000
 
 fun traktHttpClient(
-    isDebug: Boolean = false,
-    traktClientId: String,
-    json: TraktJson,
-    httpClientEngine: TraktHttpClientEngine,
-    kermitLogger: KermitLogger,
-) = HttpClient(httpClientEngine) {
+  isDebug: Boolean = false,
+  traktClientId: String,
+  json: TraktJson,
+  httpClientEngine: TraktHttpClientEngine,
+  kermitLogger: KermitLogger,
+) =
+  HttpClient(httpClientEngine) {
     expectSuccess = true
 
-    install(ContentNegotiation) {
-        json(json = json)
-    }
+    install(ContentNegotiation) { json(json = json) }
 
     install(DefaultRequest) {
-        apply {
-            url {
-                protocol = URLProtocol.HTTPS
-                host = "api.trakt.tv"
-            }
-
-            headers {
-                append(HttpHeaders.ContentType, "application/json")
-                append("trakt-api-version", "2")
-                append("trakt-api-key", traktClientId)
-            }
+      apply {
+        url {
+          protocol = URLProtocol.HTTPS
+          host = "api.trakt.tv"
         }
+
+        headers {
+          append(HttpHeaders.ContentType, "application/json")
+          append("trakt-api-version", "2")
+          append("trakt-api-key", traktClientId)
+        }
+      }
     }
 
     HttpResponseValidator {
-        validateResponse { response ->
-
-            if (!response.status.isSuccess()) {
-                val failureReason = when (response.status) {
-                    HttpStatusCode.Unauthorized -> "Unauthorized request"
-                    HttpStatusCode.Forbidden -> "${response.status.value} Missing API key."
-                    HttpStatusCode.NotFound -> "Invalid Request"
-                    HttpStatusCode.UpgradeRequired -> "Upgrade to VIP"
-                    HttpStatusCode.RequestTimeout -> "Network Timeout"
-                    in HttpStatusCode.InternalServerError..HttpStatusCode.GatewayTimeout ->
-                        "${response.status.value} Server Error"
-
-                    else -> "Network error!"
-                }
-
-                throw HttpExceptions(
-                    response = response,
-                    failureReason = failureReason,
-                    cachedResponseText = response.bodyAsText(),
-                )
+      validateResponse { response ->
+        if (!response.status.isSuccess()) {
+          val failureReason =
+            when (response.status) {
+              HttpStatusCode.Unauthorized -> "Unauthorized request"
+              HttpStatusCode.Forbidden -> "${response.status.value} Missing API key."
+              HttpStatusCode.NotFound -> "Invalid Request"
+              HttpStatusCode.UpgradeRequired -> "Upgrade to VIP"
+              HttpStatusCode.RequestTimeout -> "Network Timeout"
+              in HttpStatusCode.InternalServerError..HttpStatusCode.GatewayTimeout ->
+                "${response.status.value} Server Error"
+              else -> "Network error!"
             }
+
+          throw HttpExceptions(
+            response = response,
+            failureReason = failureReason,
+            cachedResponseText = response.bodyAsText(),
+          )
         }
+      }
     }
 
     install(HttpTimeout) {
-        requestTimeoutMillis = TIMEOUT_DURATION
-        connectTimeoutMillis = TIMEOUT_DURATION
-        socketTimeoutMillis = TIMEOUT_DURATION
+      requestTimeoutMillis = TIMEOUT_DURATION
+      connectTimeoutMillis = TIMEOUT_DURATION
+      socketTimeoutMillis = TIMEOUT_DURATION
     }
 
     install(Logging) {
-        level = LogLevel.INFO
-        logger = if (isDebug) {
-            object : Logger {
-                override fun log(message: String) {
-                    kermitLogger.info("TraktHttp", message)
-                }
+      level = LogLevel.INFO
+      logger =
+        if (isDebug) {
+          object : Logger {
+            override fun log(message: String) {
+              kermitLogger.info("TraktHttp", message)
             }
+          }
         } else {
-            Logger.EMPTY
+          Logger.EMPTY
         }
     }
-}
+  }

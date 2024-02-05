@@ -5,14 +5,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TraktCreateListResponse(
-    @SerialName("name") val name: String,
-    @SerialName("description") val description: String,
-    @SerialName("privacy") val privacy: String,
-    @SerialName("ids") val ids: ListIds,
+  @SerialName("name") val name: String,
+  @SerialName("description") val description: String,
+  @SerialName("privacy") val privacy: String,
+  @SerialName("ids") val ids: ListIds,
 )
 
 @Serializable
 data class ListIds(
-    @SerialName("trakt") val trakt: Int,
-    @SerialName("slug") val slug: String,
+  @SerialName("trakt") val trakt: Int,
+  @SerialName("slug") val slug: String,
 )

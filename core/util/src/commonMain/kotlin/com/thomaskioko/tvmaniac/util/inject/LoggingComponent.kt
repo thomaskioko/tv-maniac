@@ -8,8 +8,8 @@ import me.tatarka.inject.annotations.Provides
 
 interface LoggingComponent {
 
-    @IntoSet
-    @Provides
-    @ApplicationScope
-    fun providesLoggingInitializer(bind: LoggingInitializer): AppInitializer = bind
+  @IntoSet
+  @Provides
+  @ApplicationScope
+  fun providesLoggingInitializer(bind: LoggingInitializer): AppInitializer = bind
 }

@@ -13,33 +13,30 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class LibraryDaoImpl(
-    private val database: TvManiacDatabase,
-    private val dispatchers: AppCoroutineDispatchers,
+  private val database: TvManiacDatabase,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : LibraryDao {
 
-    override fun upsert(watchlist: Library) {
-        database.transaction {
-            database.libraryQueries.upsert(
-                id = watchlist.id,
-                created_at = watchlist.created_at,
-            )
-        }
+  override fun upsert(watchlist: Library) {
+    database.transaction {
+      database.libraryQueries.upsert(
+        id = watchlist.id,
+        created_at = watchlist.created_at,
+      )
     }
+  }
 
-    override fun upsert(watchedShowList: List<Library>) {
-        watchedShowList.forEach { upsert(it) }
-    }
+  override fun upsert(watchedShowList: List<Library>) {
+    watchedShowList.forEach { upsert(it) }
+  }
 
-    override fun getShowsInLibrary(): List<LibraryShows> =
-        database.libraryQueries.libraryShows()
-            .executeAsList()
+  override fun getShowsInLibrary(): List<LibraryShows> =
+    database.libraryQueries.libraryShows().executeAsList()
 
-    override fun observeShowsInLibrary(): Flow<List<LibraryShows>> =
-        database.libraryQueries.libraryShows()
-            .asFlow()
-            .mapToList(dispatchers.io)
+  override fun observeShowsInLibrary(): Flow<List<LibraryShows>> =
+    database.libraryQueries.libraryShows().asFlow().mapToList(dispatchers.io)
 
-    override fun delete(traktId: Long) {
-        database.libraryQueries.delete(Id(traktId))
-    }
+  override fun delete(traktId: Long) {
+    database.libraryQueries.delete(Id(traktId))
+  }
 }

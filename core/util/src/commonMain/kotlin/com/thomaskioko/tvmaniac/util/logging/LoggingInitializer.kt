@@ -8,7 +8,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class LoggingInitializer : AppInitializer {
 
-    override fun init() {
-        Napier.base(DebugAntilog())
-    }
+  override fun init() {
+    Napier.base(DebugAntilog())
+  }
 }

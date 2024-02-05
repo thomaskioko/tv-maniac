@@ -6,7 +6,7 @@ import me.tatarka.inject.annotations.Provides
 
 actual interface TraktPlatformComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideTraktHttpClientEngine(): TraktHttpClientEngine = Darwin.create()
+  @ApplicationScope
+  @Provides
+  fun provideTraktHttpClientEngine(): TraktHttpClientEngine = Darwin.create()
 }
