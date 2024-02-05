@@ -11,35 +11,32 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeTopRatedShowsRepository : TopRatedShowsRepository {
 
-    private var showEntityList: Channel<List<ShowEntity>> = Channel(Channel.UNLIMITED)
-    private var entityListResult: Channel<Either<Failure, List<ShowEntity>>> =
-        Channel(Channel.UNLIMITED)
-    private var pagedList: Channel<PagingData<ShowEntity>> =
-        Channel(Channel.UNLIMITED)
+  private var showEntityList: Channel<List<ShowEntity>> = Channel(Channel.UNLIMITED)
+  private var entityListResult: Channel<Either<Failure, List<ShowEntity>>> =
+    Channel(Channel.UNLIMITED)
+  private var pagedList: Channel<PagingData<ShowEntity>> = Channel(Channel.UNLIMITED)
 
-    suspend fun setTopRatedShows(result: List<ShowEntity>) {
-        showEntityList.send(result)
-    }
+  suspend fun setTopRatedShows(result: List<ShowEntity>) {
+    showEntityList.send(result)
+  }
 
-    suspend fun setObserveTopRatedShows(result: Either<Failure, List<ShowEntity>>) {
-        entityListResult.send(result)
-    }
+  suspend fun setObserveTopRatedShows(result: Either<Failure, List<ShowEntity>>) {
+    entityListResult.send(result)
+  }
 
-    suspend fun setPagedData(result: PagingData<ShowEntity>) {
-        pagedList.send(result)
-    }
+  suspend fun setPagedData(result: PagingData<ShowEntity>) {
+    pagedList.send(result)
+  }
 
-    override suspend fun fetchTopRatedShows(
-        forceRefresh: Boolean,
-    ): List<ShowEntity> {
-        return showEntityList.receive()
-    }
+  override suspend fun fetchTopRatedShows(forceRefresh: Boolean): List<ShowEntity> {
+    return showEntityList.receive()
+  }
 
-    override fun observeTopRatedShows(): Flow<Either<Failure, List<ShowEntity>>> {
-        return entityListResult.receiveAsFlow()
-    }
+  override fun observeTopRatedShows(): Flow<Either<Failure, List<ShowEntity>>> {
+    return entityListResult.receiveAsFlow()
+  }
 
-    override fun getPagedTopRatedShows(): Flow<PagingData<ShowEntity>> {
-        return pagedList.receiveAsFlow()
-    }
+  override fun getPagedTopRatedShows(): Flow<PagingData<ShowEntity>> {
+    return pagedList.receiveAsFlow()
+  }
 }

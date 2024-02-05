@@ -24,78 +24,74 @@ import org.mobilenativefoundation.store.store5.StoreBuilder
 
 @Inject
 class TrendingShowsStore(
-    private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
-    private val requestManagerRepository: RequestManagerRepository,
-    private val trendingShowsDao: TrendingShowsDao,
-    private val tvShowsDao: TvShowsDao,
-    private val formatterUtil: FormatterUtil,
-    private val dateFormatter: PlatformDateFormatter,
-    private val databaseTransactionRunner: DatabaseTransactionRunner,
-    private val scope: AppCoroutineScope,
-) : Store<TrendingShowsParams, List<ShowEntity>> by StoreBuilder.from(
-    fetcher = Fetcher.of { params: TrendingShowsParams ->
-        when (val response = tmdbRemoteDataSource.getTrendingShows(params.timeWindow)) {
+  private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
+  private val requestManagerRepository: RequestManagerRepository,
+  private val trendingShowsDao: TrendingShowsDao,
+  private val tvShowsDao: TvShowsDao,
+  private val formatterUtil: FormatterUtil,
+  private val dateFormatter: PlatformDateFormatter,
+  private val databaseTransactionRunner: DatabaseTransactionRunner,
+  private val scope: AppCoroutineScope,
+) :
+  Store<TrendingShowsParams, List<ShowEntity>> by StoreBuilder.from(
+      fetcher =
+        Fetcher.of { params: TrendingShowsParams ->
+          when (val response = tmdbRemoteDataSource.getTrendingShows(params.timeWindow)) {
             is ApiResponse.Success -> {
-                response.body.results
+              response.body.results
             }
-
             is ApiResponse.Error.GenericError -> {
-                throw Throwable("${response.errorMessage}")
+              throw Throwable("${response.errorMessage}")
             }
-
             is ApiResponse.Error.HttpError -> {
-                throw Throwable("${response.code} - ${response.errorMessage}")
+              throw Throwable("${response.code} - ${response.errorMessage}")
             }
-
             is ApiResponse.Error.SerializationError -> {
-                throw Throwable("${response.errorMessage}")
+              throw Throwable("${response.errorMessage}")
             }
-        }
-    },
-    sourceOfTruth = SourceOfTruth.Companion.of(
-        reader = { _: TrendingShowsParams -> trendingShowsDao.observeTvShow() },
-        writer = { params: TrendingShowsParams, trendingShows ->
-            databaseTransactionRunner {
-                trendingShows.forEach { show ->
-                    tvShowsDao.upsert(
-                        Tvshows(
-                            id = Id(show.id.toLong()),
-                            name = show.name,
-                            overview = show.overview,
-                            language = show.originalLanguage,
-                            status = null,
-                            first_air_date = show.firstAirDate?.let {
-                                dateFormatter.getYear(it)
-                            },
-                            popularity = show.popularity,
-                            episode_numbers = null,
-                            last_air_date = null,
-                            season_numbers = null,
-                            vote_average = show.voteAverage,
-                            vote_count = show.voteCount.toLong(),
-                            genre_ids = show.genreIds,
-                            poster_path = show.posterPath?.let {
-                                formatterUtil.formatTmdbPosterPath(it)
-                            },
-                            backdrop_path = show.backdropPath?.let {
-                                formatterUtil.formatTmdbPosterPath(it)
-                            },
-                        ),
-                    )
-
-                    trendingShowsDao.upsert(
-                        Trending_shows(
-                            id = Id(show.id.toLong()),
-                            page = Id(DEFAULT_API_PAGE),
-                        ),
-                    )
-                }
-                requestManagerRepository.insert(
-                    entityId = TRENDING_SHOWS_TODAY.requestId + params.page,
-                    requestType = TRENDING_SHOWS_TODAY.name,
-                )
-            }
+          }
         },
-    ),
-).scope(scope.io)
+      sourceOfTruth =
+        SourceOfTruth.Companion.of(
+          reader = { _: TrendingShowsParams -> trendingShowsDao.observeTvShow() },
+          writer = { params: TrendingShowsParams, trendingShows ->
+            databaseTransactionRunner {
+              trendingShows.forEach { show ->
+                tvShowsDao.upsert(
+                  Tvshows(
+                    id = Id(show.id.toLong()),
+                    name = show.name,
+                    overview = show.overview,
+                    language = show.originalLanguage,
+                    status = null,
+                    first_air_date = show.firstAirDate?.let { dateFormatter.getYear(it) },
+                    popularity = show.popularity,
+                    episode_numbers = null,
+                    last_air_date = null,
+                    season_numbers = null,
+                    vote_average = show.voteAverage,
+                    vote_count = show.voteCount.toLong(),
+                    genre_ids = show.genreIds,
+                    poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                    backdrop_path =
+                      show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                  ),
+                )
+
+                trendingShowsDao.upsert(
+                  Trending_shows(
+                    id = Id(show.id.toLong()),
+                    page = Id(DEFAULT_API_PAGE),
+                  ),
+                )
+              }
+              requestManagerRepository.insert(
+                entityId = TRENDING_SHOWS_TODAY.requestId + params.page,
+                requestType = TRENDING_SHOWS_TODAY.name,
+              )
+            }
+          },
+        ),
+    )
+    .scope(scope.io)
     .build()

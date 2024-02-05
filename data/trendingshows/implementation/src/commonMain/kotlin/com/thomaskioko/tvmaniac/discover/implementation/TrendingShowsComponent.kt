@@ -7,15 +7,13 @@ import me.tatarka.inject.annotations.Provides
 
 interface TrendingShowsComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideTrendingShowsDao(
-        bind: DefaultTrendingShowsDao,
-    ): TrendingShowsDao = bind
+  @ApplicationScope
+  @Provides
+  fun provideTrendingShowsDao(bind: DefaultTrendingShowsDao): TrendingShowsDao = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideTrendingShowsRepository(
-        bind: DefaultTrendingShowsRepository,
-    ): TrendingShowsRepository = bind
+  @ApplicationScope
+  @Provides
+  fun provideTrendingShowsRepository(
+    bind: DefaultTrendingShowsRepository,
+  ): TrendingShowsRepository = bind
 }

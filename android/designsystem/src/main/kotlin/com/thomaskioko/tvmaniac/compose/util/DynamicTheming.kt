@@ -29,135 +29,141 @@ private const val MAC_COLOR_COUNT = 8
 
 @Composable
 fun rememberDominantColorState(
-    context: Context = LocalContext.current,
-    defaultColor: Color = MaterialTheme.colorScheme.primary,
-    defaultOnColor: Color = MaterialTheme.colorScheme.onPrimary,
-    cacheSize: Int = 12,
-    isColorValid: (Color) -> Boolean = { true },
+  context: Context = LocalContext.current,
+  defaultColor: Color = MaterialTheme.colorScheme.primary,
+  defaultOnColor: Color = MaterialTheme.colorScheme.onPrimary,
+  cacheSize: Int = 12,
+  isColorValid: (Color) -> Boolean = { true },
 ): DominantColorState = remember {
-    DominantColorState(context, defaultColor, defaultOnColor, cacheSize, isColorValid)
+  DominantColorState(context, defaultColor, defaultOnColor, cacheSize, isColorValid)
 }
 
 /**
- * A composable which allows dynamic theming of the [androidx.compose.material.Colors.primary]
- * color from an image.
+ * A composable which allows dynamic theming of the [androidx.compose.material.Colors.primary] color
+ * from an image.
  */
 @Composable
 fun DynamicThemePrimaryColorsFromImage(
-    dominantColorState: DominantColorState = rememberDominantColorState(),
-    content: @Composable () -> Unit,
+  dominantColorState: DominantColorState = rememberDominantColorState(),
+  content: @Composable () -> Unit,
 ) {
-    val colors = MaterialTheme.colorScheme.copy(
-        primary = animateColorAsState(
+  val colors =
+    MaterialTheme.colorScheme.copy(
+      primary =
+        animateColorAsState(
             dominantColorState.color,
             spring(stiffness = Spring.StiffnessLow),
             label = "primaryColorAnimation",
-        ).value,
-        onPrimary = animateColorAsState(
+          )
+          .value,
+      onPrimary =
+        animateColorAsState(
             dominantColorState.onColor,
             spring(stiffness = Spring.StiffnessLow),
             label = "onPrimaryColorAnimation",
-        ).value,
+          )
+          .value,
     )
 
-    MaterialTheme(colorScheme = colors, content = content)
+  MaterialTheme(colorScheme = colors, content = content)
 }
 
 /**
- * A class which stores and caches the result of any calculated dominant colors
- * from images.
+ * A class which stores and caches the result of any calculated dominant colors from images.
  *
  * @param context Android context
  * @param defaultColor The default color, which will be used if [calculateDominantColor] fails to
- * calculate a dominant color
+ *   calculate a dominant color
  * @param defaultOnColor The default foreground 'on color' for [defaultColor].
- * @param cacheSize The size of the [LruCache] used to store recent results. Pass `0` to
- * disable the cache.
+ * @param cacheSize The size of the [LruCache] used to store recent results. Pass `0` to disable the
+ *   cache.
  * @param isColorValid A lambda which allows filtering of the calculated image colors.
  */
 @Stable
 class DominantColorState(
-    private val context: Context,
-    private val defaultColor: Color,
-    private val defaultOnColor: Color,
-    cacheSize: Int = 12,
-    private val isColorValid: (Color) -> Boolean = { true },
+  private val context: Context,
+  private val defaultColor: Color,
+  private val defaultOnColor: Color,
+  cacheSize: Int = 12,
+  private val isColorValid: (Color) -> Boolean = { true },
 ) {
-    var color by mutableStateOf(defaultColor)
-        private set
-    var onColor by mutableStateOf(defaultOnColor)
-        private set
+  var color by mutableStateOf(defaultColor)
+    private set
 
-    private val cache = when {
-        cacheSize > 0 -> LruCache<String, DominantColors>(cacheSize)
-        else -> null
+  var onColor by mutableStateOf(defaultOnColor)
+    private set
+
+  private val cache =
+    when {
+      cacheSize > 0 -> LruCache<String, DominantColors>(cacheSize)
+      else -> null
     }
 
-    suspend fun updateColorsFromImageUrl(url: String) {
-        val result = calculateDominantColor(url)
-        color = result?.color ?: defaultColor
-        onColor = result?.onColor ?: defaultOnColor
+  suspend fun updateColorsFromImageUrl(url: String) {
+    val result = calculateDominantColor(url)
+    color = result?.color ?: defaultColor
+    onColor = result?.onColor ?: defaultOnColor
+  }
+
+  private suspend fun calculateDominantColor(url: String): DominantColors? {
+    val cached = cache?.get(url)
+    if (cached != null) {
+      return cached
     }
 
-    private suspend fun calculateDominantColor(url: String): DominantColors? {
-        val cached = cache?.get(url)
-        if (cached != null) {
-            return cached
-        }
+    // Otherwise we calculate the swatches in the image, and return the first valid color
+    return calculateSwatchesInImage(context, url)
+      .sortedByDescending { swatch -> swatch.population }
+      .firstOrNull { swatch -> isColorValid(Color(swatch.rgb)) }
+      ?.let { swatch ->
+        DominantColors(
+          color = Color(swatch.rgb),
+          onColor = Color(swatch.bodyTextColor).copy(alpha = 1f),
+        )
+      }
+      ?.also { result -> cache?.put(url, result) }
+  }
 
-        // Otherwise we calculate the swatches in the image, and return the first valid color
-        return calculateSwatchesInImage(context, url)
-            .sortedByDescending { swatch -> swatch.population }
-            .firstOrNull { swatch -> isColorValid(Color(swatch.rgb)) }
-            ?.let { swatch ->
-                DominantColors(
-                    color = Color(swatch.rgb),
-                    onColor = Color(swatch.bodyTextColor).copy(alpha = 1f),
-                )
-            }
-            ?.also { result -> cache?.put(url, result) }
-    }
-
-    /**
-     * Reset the color values to [defaultColor].
-     */
-    fun reset() {
-        color = defaultColor
-        onColor = defaultColor
-    }
+  /** Reset the color values to [defaultColor]. */
+  fun reset() {
+    color = defaultColor
+    onColor = defaultColor
+  }
 }
 
-@Immutable
-private data class DominantColors(val color: Color, val onColor: Color)
+@Immutable private data class DominantColors(val color: Color, val onColor: Color)
 
-/**
- * Fetches the given [imageUrl] with Coil, then uses [Palette] to calculate the dominant color.
- */
+/** Fetches the given [imageUrl] with Coil, then uses [Palette] to calculate the dominant color. */
 private suspend fun calculateSwatchesInImage(
-    context: Context,
-    imageUrl: String,
+  context: Context,
+  imageUrl: String,
 ): List<Palette.Swatch> {
-    val request = ImageRequest.Builder(context)
-        .data(imageUrl)
-        .size(COVER_IMAGE_SIZE).scale(Scale.FILL)
-        .allowHardware(false)
-        .memoryCacheKey("$imageUrl.palette")
-        .build()
+  val request =
+    ImageRequest.Builder(context)
+      .data(imageUrl)
+      .size(COVER_IMAGE_SIZE)
+      .scale(Scale.FILL)
+      .allowHardware(false)
+      .memoryCacheKey("$imageUrl.palette")
+      .build()
 
-    val bitmap = when (val result = context.imageLoader.execute(request)) {
-        is SuccessResult -> result.drawable.toBitmap()
-        else -> null
+  val bitmap =
+    when (val result = context.imageLoader.execute(request)) {
+      is SuccessResult -> result.drawable.toBitmap()
+      else -> null
     }
 
-    return bitmap?.let {
-        withContext(Dispatchers.Default) {
-            val palette = Palette.Builder(bitmap)
-                .resizeBitmapArea(0)
-                .clearFilters()
-                .maximumColorCount(MAC_COLOR_COUNT)
-                .generate()
+  return bitmap?.let {
+    withContext(Dispatchers.Default) {
+      val palette =
+        Palette.Builder(bitmap)
+          .resizeBitmapArea(0)
+          .clearFilters()
+          .maximumColorCount(MAC_COLOR_COUNT)
+          .generate()
 
-            palette.swatches
-        }
-    } ?: emptyList()
+      palette.swatches
+    }
+  }
+    ?: emptyList()
 }

@@ -14,16 +14,17 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SeasonsRepositoryImpl(
-    private val seasonsDao: SeasonsDao,
-    private val dispatcher: AppCoroutineDispatchers,
+  private val seasonsDao: SeasonsDao,
+  private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonsRepository {
 
-    override suspend fun fetchSeasonsByShowId(id: Long): List<ShowSeasons> =
-        seasonsDao.fetchShowSeasons(id)
+  override suspend fun fetchSeasonsByShowId(id: Long): List<ShowSeasons> =
+    seasonsDao.fetchShowSeasons(id)
 
-    override fun observeSeasonsByShowId(id: Long): Flow<Either<Failure, List<ShowSeasons>>> =
-        seasonsDao.observeSeasonsByShowId(id)
-            .map { seasons -> Either.Right(seasons) }
-            .distinctUntilChanged()
-            .flowOn(dispatcher.io)
+  override fun observeSeasonsByShowId(id: Long): Flow<Either<Failure, List<ShowSeasons>>> =
+    seasonsDao
+      .observeSeasonsByShowId(id)
+      .map { seasons -> Either.Right(seasons) }
+      .distinctUntilChanged()
+      .flowOn(dispatcher.io)
 }

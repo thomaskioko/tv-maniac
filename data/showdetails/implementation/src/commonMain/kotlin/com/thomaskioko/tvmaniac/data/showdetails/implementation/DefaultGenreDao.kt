@@ -6,13 +6,13 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DefaultGenreDao(database: TvManiacDatabase) {
-    private val networksQueries = database.genresQueries
+  private val networksQueries = database.genresQueries
 
-    fun upsert(entity: Genres) {
-        networksQueries.upsert(
-            id = entity.id,
-            tmdb_id = entity.tmdb_id,
-            name = entity.name,
-        )
-    }
+  fun upsert(entity: Genres) {
+    networksQueries.upsert(
+      id = entity.id,
+      tmdb_id = entity.tmdb_id,
+      name = entity.name,
+    )
+  }
 }

@@ -7,5 +7,5 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class IosAppUtils : AppUtils {
 
-    override fun isYoutubePlayerInstalled(): Flow<Boolean> = flowOf(false)
+  override fun isYoutubePlayerInstalled(): Flow<Boolean> = flowOf(false)
 }

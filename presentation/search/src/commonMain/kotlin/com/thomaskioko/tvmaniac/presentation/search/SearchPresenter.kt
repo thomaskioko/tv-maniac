@@ -8,20 +8,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias SearchPresenterFactory = (
+typealias SearchPresenterFactory =
+  (
     ComponentContext,
     goBack: () -> Unit,
-) -> SearchPresenter
+  ) -> SearchPresenter
 
 @Inject
 class SearchPresenter(
-    @Assisted componentContext: ComponentContext,
-    @Assisted goBack: () -> Unit,
+  @Assisted componentContext: ComponentContext,
+  @Assisted goBack: () -> Unit,
 ) : ComponentContext by componentContext {
 
-    private val coroutineScope = coroutineScope()
-    private val _state: MutableStateFlow<SearchState> = MutableStateFlow(SearchLoading)
+  private val coroutineScope = coroutineScope()
+  private val _state: MutableStateFlow<SearchState> = MutableStateFlow(SearchLoading)
 
-    val state: Value<SearchState> = _state
-        .asValue(initialValue = _state.value, lifecycle = lifecycle)
+  val state: Value<SearchState> = _state.asValue(initialValue = _state.value, lifecycle = lifecycle)
 }

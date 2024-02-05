@@ -8,7 +8,7 @@ import me.tatarka.inject.annotations.Provides
 
 actual interface DatabasePlatformComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideSqlDriver(): SqlDriver = NativeSqliteDriver(TvManiacDatabase.Schema, "tvShows.db")
+  @ApplicationScope
+  @Provides
+  fun provideSqlDriver(): SqlDriver = NativeSqliteDriver(TvManiacDatabase.Schema, "tvShows.db")
 }

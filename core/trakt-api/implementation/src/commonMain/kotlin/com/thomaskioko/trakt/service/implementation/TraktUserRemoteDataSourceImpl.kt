@@ -15,20 +15,18 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktUserRemoteDataSourceImpl(
-    private val httpClient: TraktHttpClient,
+  private val httpClient: TraktHttpClient,
 ) : TraktUserRemoteDataSource {
 
-    override suspend fun getUser(
-        userId: String,
-    ): ApiResponse<TraktUserResponse> =
-        httpClient.safeRequest {
-            url {
-                method = HttpMethod.Get
-                path("users/$userId")
-                parameter("extended", "full")
-            }
-        }
+  override suspend fun getUser(userId: String): ApiResponse<TraktUserResponse> =
+    httpClient.safeRequest {
+      url {
+        method = HttpMethod.Get
+        path("users/$userId")
+        parameter("extended", "full")
+      }
+    }
 
-    override suspend fun getUserList(userId: String): List<TraktPersonalListsResponse> =
-        httpClient.get("users/$userId/lists").body()
+  override suspend fun getUserList(userId: String): List<TraktPersonalListsResponse> =
+    httpClient.get("users/$userId/lists").body()
 }

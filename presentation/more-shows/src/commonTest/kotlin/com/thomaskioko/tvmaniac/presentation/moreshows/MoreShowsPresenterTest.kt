@@ -8,8 +8,8 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 @OptIn(ExperimentalCoroutinesApi::class)
 class MoreShowsPresenterTest {
 
-    private val lifecycle = LifecycleRegistry()
-    private val testDispatcher = StandardTestDispatcher()
+  private val lifecycle = LifecycleRegistry()
+  private val testDispatcher = StandardTestDispatcher()
 
-    private lateinit var presenter: MoreShowsPresenter
+  private lateinit var presenter: MoreShowsPresenter
 }

@@ -7,9 +7,9 @@ import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface TrendingShowsRepository {
-    suspend fun fetchTrendingShows(
-        forceRefresh: Boolean = false,
-    ): List<ShowEntity>
-    fun observeTrendingShows(): Flow<Either<Failure, List<ShowEntity>>>
-    fun getPagedTrendingShows(): Flow<PagingData<ShowEntity>>
+  suspend fun fetchTrendingShows(forceRefresh: Boolean = false): List<ShowEntity>
+
+  fun observeTrendingShows(): Flow<Either<Failure, List<ShowEntity>>>
+
+  fun getPagedTrendingShows(): Flow<PagingData<ShowEntity>>
 }

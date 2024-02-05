@@ -29,74 +29,68 @@ import com.thomaskioko.tvmaniac.seasondetails.episodeDetailsModel
 
 @Composable
 fun EpisodeItem(
-    imageUrl: String?,
-    title: String,
-    episodeOverview: String,
-    onAction: (UpdateEpisodeStatus) -> Unit,
-    modifier: Modifier = Modifier,
-    shape: Shape = MaterialTheme.shapes.small,
-    onEpisodeClicked: () -> Unit = {},
+  imageUrl: String?,
+  title: String,
+  episodeOverview: String,
+  onAction: (UpdateEpisodeStatus) -> Unit,
+  modifier: Modifier = Modifier,
+  shape: Shape = MaterialTheme.shapes.small,
+  onEpisodeClicked: () -> Unit = {},
 ) {
-    Card(
-        shape = shape,
-        modifier = modifier
-            .clickable { onEpisodeClicked() },
+  Card(
+    shape = shape,
+    modifier = modifier.clickable { onEpisodeClicked() },
+  ) {
+    Row(
+      modifier = Modifier.fillMaxSize(),
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize(),
-        ) {
-            AsyncImageComposable(
-                model = imageUrl,
-                contentDescription = stringResource(
-                    R.string.cd_show_poster,
-                    title,
-                ),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .width(100.dp)
-                    .aspectRatio(0.8f),
-            )
+      AsyncImageComposable(
+        model = imageUrl,
+        contentDescription =
+          stringResource(
+            R.string.cd_show_poster,
+            title,
+          ),
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.width(100.dp).aspectRatio(0.8f),
+      )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp, horizontal = 8.dp),
-            ) {
-                Text(
-                    text = title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .padding(vertical = 4.dp),
-                )
+      Column(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 8.dp),
+      ) {
+        Text(
+          text = title,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+          style = MaterialTheme.typography.titleMedium,
+          fontWeight = FontWeight.Medium,
+          color = MaterialTheme.colorScheme.onSurface,
+          modifier = Modifier.padding(vertical = 4.dp),
+        )
 
-                Text(
-                    text = episodeOverview,
-                    maxLines = 4,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier,
-                )
-            }
-        }
+        Text(
+          text = episodeOverview,
+          maxLines = 4,
+          overflow = TextOverflow.Ellipsis,
+          style = MaterialTheme.typography.bodyMedium,
+          modifier = Modifier,
+        )
+      }
     }
+  }
 }
 
 @ThemePreviews
 @Composable
-fun WatchlistRowItemPreview() {
-    TvManiacTheme {
-        Surface {
-            EpisodeItem(
-                title = episodeDetailsModel.episodeNumberTitle,
-                episodeOverview = episodeDetailsModel.overview,
-                imageUrl = episodeDetailsModel.imageUrl,
-                onAction = {},
-            )
-        }
+private fun WatchlistRowItemPreview() {
+  TvManiacTheme {
+    Surface {
+      EpisodeItem(
+        title = episodeDetailsModel.episodeNumberTitle,
+        episodeOverview = episodeDetailsModel.overview,
+        imageUrl = episodeDetailsModel.imageUrl,
+        onAction = {},
+      )
     }
+  }
 }

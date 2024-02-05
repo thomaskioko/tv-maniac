@@ -22,9 +22,10 @@ class AndroidLibraryPlugin : Plugin<Project> {
                     targetCompatibility = JavaVersion.VERSION_17
                 }
 
+                defaultConfig.targetSdk = Versions.TARGET_SDK
+
                 configureAndroid()
                 configureFlavors(this)
-                defaultConfig.targetSdk = Versions.TARGET_SDK
             }
         }
     }

@@ -13,50 +13,53 @@ import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Provides
 
 typealias TmdbHttpClient = HttpClient
+
 typealias TmdbHttpClientEngine = HttpClientEngine
+
 typealias TmdbJson = Json
 
 expect interface TmdbPlatformComponent
 
 interface TmdbComponent : TmdbPlatformComponent {
 
-    @OptIn(ExperimentalSerializationApi::class)
-    @ApplicationScope
-    @Provides
-    fun provideTmdbJson(): TmdbJson = Json {
-        isLenient = true
-        ignoreUnknownKeys = true
-        useAlternativeNames = false
-        explicitNulls = false
-    }
+  @OptIn(ExperimentalSerializationApi::class)
+  @ApplicationScope
+  @Provides
+  fun provideTmdbJson(): TmdbJson = Json {
+    isLenient = true
+    ignoreUnknownKeys = true
+    useAlternativeNames = false
+    explicitNulls = false
+  }
 
-    @ApplicationScope
-    @Provides
-    fun provideTmdbHttpClient(
-        configs: Configs,
-        json: TmdbJson,
-        httpClientEngine: TmdbHttpClientEngine,
-        logger: KermitLogger,
-    ): TmdbHttpClient = tmdbHttpClient(
-        tmdbApiKey = configs.tmdbApiKey,
-        json = json,
-        httpClientEngine = httpClientEngine,
-        kermitLogger = logger,
-        isDebug = configs.isDebug,
+  @ApplicationScope
+  @Provides
+  fun provideTmdbHttpClient(
+    configs: Configs,
+    json: TmdbJson,
+    httpClientEngine: TmdbHttpClientEngine,
+    logger: KermitLogger,
+  ): TmdbHttpClient =
+    tmdbHttpClient(
+      tmdbApiKey = configs.tmdbApiKey,
+      json = json,
+      httpClientEngine = httpClientEngine,
+      kermitLogger = logger,
+      isDebug = configs.isDebug,
     )
 
-    @Provides
-    fun provideTmdbShowsNetworkDataSource(
-        bind: DefaultTmdbShowsNetworkDataSource,
-    ): TmdbShowsNetworkDataSource = bind
+  @Provides
+  fun provideTmdbShowsNetworkDataSource(
+    bind: DefaultTmdbShowsNetworkDataSource,
+  ): TmdbShowsNetworkDataSource = bind
 
-    @Provides
-    fun provideTmdbShowDetailsNetworkDataSource(
-        bind: DefaultTmdbShowDetailsNetworkDataSource,
-    ): TmdbShowDetailsNetworkDataSource = bind
+  @Provides
+  fun provideTmdbShowDetailsNetworkDataSource(
+    bind: DefaultTmdbShowDetailsNetworkDataSource,
+  ): TmdbShowDetailsNetworkDataSource = bind
 
-    @Provides
-    fun provideTmdbSeasonDetailsNetworkDataSource(
-        bind: DefaultTmdbSeasonDetailsNetworkDataSource,
-    ): TmdbSeasonDetailsNetworkDataSource = bind
+  @Provides
+  fun provideTmdbSeasonDetailsNetworkDataSource(
+    bind: DefaultTmdbSeasonDetailsNetworkDataSource,
+  ): TmdbSeasonDetailsNetworkDataSource = bind
 }

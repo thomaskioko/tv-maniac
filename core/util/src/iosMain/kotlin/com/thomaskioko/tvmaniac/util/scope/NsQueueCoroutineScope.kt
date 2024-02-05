@@ -1,15 +1,15 @@
 package com.thomaskioko.tvmaniac.util.scope
 
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlin.coroutines.CoroutineContext
 
 class NsQueueCoroutineScope : CoroutineScope {
 
-    private val coroutineDispatcher: CoroutineDispatcher = applicationNsQueueDispatcher
-    private val job = Job()
+  private val coroutineDispatcher: CoroutineDispatcher = applicationNsQueueDispatcher
+  private val job = Job()
 
-    override val coroutineContext: CoroutineContext
-        get() = job + coroutineDispatcher
+  override val coroutineContext: CoroutineContext
+    get() = job + coroutineDispatcher
 }

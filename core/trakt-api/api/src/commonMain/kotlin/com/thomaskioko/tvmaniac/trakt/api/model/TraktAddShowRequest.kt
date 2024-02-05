@@ -5,15 +5,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TraktAddShowRequest(
-    @SerialName("shows") val shows: List<TraktShow>,
+  @SerialName("shows") val shows: List<TraktShow>,
 )
 
 @Serializable
 data class TraktShow(
-    @SerialName("ids") val ids: TraktShowIds,
+  @SerialName("ids") val ids: TraktShowIds,
 )
 
 @Serializable
 data class TraktShowIds(
-    @SerialName("trakt") val traktId: Int,
+  @SerialName("trakt") val traktId: Int,
 )

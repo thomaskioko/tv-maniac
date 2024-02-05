@@ -13,26 +13,26 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeSeasonDetailsRepository : SeasonDetailsRepository {
 
-    private val seasonsResult: Channel<Either<Failure, SeasonDetailsWithEpisodes>> = Channel(Channel.UNLIMITED)
-    private val cachedResult: Channel<SeasonDetailsWithEpisodes> = Channel(Channel.UNLIMITED)
+  private val seasonsResult: Channel<Either<Failure, SeasonDetailsWithEpisodes>> =
+    Channel(Channel.UNLIMITED)
+  private val cachedResult: Channel<SeasonDetailsWithEpisodes> = Channel(Channel.UNLIMITED)
 
-    suspend fun setSeasonsResult(result: Either<Failure, SeasonDetailsWithEpisodes>) {
-        seasonsResult.send(result)
-    }
+  suspend fun setSeasonsResult(result: Either<Failure, SeasonDetailsWithEpisodes>) {
+    seasonsResult.send(result)
+  }
 
-    suspend fun setCachedResults(result: SeasonDetailsWithEpisodes) {
-        cachedResult.send(result)
-    }
+  suspend fun setCachedResults(result: SeasonDetailsWithEpisodes) {
+    cachedResult.send(result)
+  }
 
-    override suspend fun fetchSeasonDetails(
-        param: SeasonDetailsParam,
-    ): SeasonDetailsWithEpisodes = cachedResult.receive()
+  override suspend fun fetchSeasonDetails(param: SeasonDetailsParam): SeasonDetailsWithEpisodes =
+    cachedResult.receive()
 
-    override fun observeSeasonDetails(
-        param: SeasonDetailsParam,
-    ): Flow<Either<Failure, SeasonDetailsWithEpisodes>> = seasonsResult.receiveAsFlow()
+  override fun observeSeasonDetails(
+    param: SeasonDetailsParam,
+  ): Flow<Either<Failure, SeasonDetailsWithEpisodes>> = seasonsResult.receiveAsFlow()
 
-    override suspend fun fetchSeasonImages(id: Long): List<Season_images> = emptyList()
+  override suspend fun fetchSeasonImages(id: Long): List<Season_images> = emptyList()
 
-    override fun observeSeasonImages(id: Long): Flow<List<Season_images>> = emptyFlow()
+  override fun observeSeasonImages(id: Long): Flow<List<Season_images>> = emptyFlow()
 }

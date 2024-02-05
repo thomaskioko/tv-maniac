@@ -6,9 +6,7 @@ import me.tatarka.inject.annotations.Provides
 
 interface TraktAuthManagerComponent {
 
-    @ActivityScope
-    @Provides
-    fun provideTraktAuthManager(
-        bind: TraktAuthManagerImpl,
-    ): TraktAuthManager = bind
+  @ActivityScope
+  @Provides
+  fun provideTraktAuthManager(bind: DefaultTraktAuthManager): TraktAuthManager = bind
 }

@@ -15,37 +15,36 @@ import net.openid.appauth.ResponseTypeValues
 
 interface TraktAuthComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideAuthConfig(): AuthorizationServiceConfiguration {
-        return AuthorizationServiceConfiguration(
-            Uri.parse("https://trakt.tv/oauth/authorize"),
-            Uri.parse("https://trakt.tv/oauth/token"),
-        )
-    }
+  @ApplicationScope
+  @Provides
+  fun provideAuthConfig(): AuthorizationServiceConfiguration {
+    return AuthorizationServiceConfiguration(
+      Uri.parse("https://trakt.tv/oauth/authorize"),
+      Uri.parse("https://trakt.tv/oauth/token"),
+    )
+  }
 
-    @Provides
-    fun provideAuthRequest(
-        configuration: AuthorizationServiceConfiguration,
-        configs: Configs,
-    ): AuthorizationRequest = AuthorizationRequest.Builder(
+  @Provides
+  fun provideAuthRequest(
+    configuration: AuthorizationServiceConfiguration,
+    configs: Configs,
+  ): AuthorizationRequest =
+    AuthorizationRequest.Builder(
         configuration,
         configs.traktClientId,
         ResponseTypeValues.CODE,
         configs.traktRedirectUri.toUri(),
-    ).apply {
-        setCodeVerifier(null)
-    }.build()
+      )
+      .apply { setCodeVerifier(null) }
+      .build()
 
-    @ApplicationScope
-    @Provides
-    fun provideClientAuth(
-        configs: Configs,
-    ): ClientAuthentication = ClientSecretBasic(configs.traktClientSecret)
+  @ApplicationScope
+  @Provides
+  fun provideClientAuth(configs: Configs): ClientAuthentication =
+    ClientSecretBasic(configs.traktClientSecret)
 
-    @ApplicationScope
-    @Provides
-    fun provideAuthorizationService(
-        application: Application,
-    ): AuthorizationService = AuthorizationService(application)
+  @ApplicationScope
+  @Provides
+  fun provideAuthorizationService(application: Application): AuthorizationService =
+    AuthorizationService(application)
 }

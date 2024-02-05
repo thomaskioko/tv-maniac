@@ -5,37 +5,42 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.presentation.watchlist.model.LibraryItem
 import kotlinx.collections.immutable.toPersistentList
 
-val cachedResult = mutableListOf(
+val cachedResult =
+  mutableListOf(
     LibraryShows(
-        id = Id(84958),
-        name = "Loki",
-        poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        created_at = 12345645,
+      id = Id(84958),
+      name = "Loki",
+      poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      created_at = 12345645,
     ),
-)
+  )
 
-val uiResult = cachedResult.map {
-    LibraryItem(
+val uiResult =
+  cachedResult
+    .map {
+      LibraryItem(
         tmdbId = it.id.id,
         title = it.name,
         posterImageUrl = it.poster_path,
-    )
-}.toPersistentList()
+      )
+    }
+    .toPersistentList()
 
-val updatedData = listOf(
+val updatedData =
+  listOf(
     LibraryShows(
-        id = Id(84958),
-        name = "Loki",
-        poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        created_at = 12345645,
+      id = Id(84958),
+      name = "Loki",
+      poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      created_at = 12345645,
     ),
     LibraryShows(
-        id = Id(1232),
-        name = "The Lazarus Project",
-        poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        created_at = 12345645,
+      id = Id(1232),
+      name = "The Lazarus Project",
+      poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      created_at = 12345645,
     ),
-)
+  )

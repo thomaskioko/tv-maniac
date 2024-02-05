@@ -31,162 +31,165 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 @ActivityScope
 class RootNavigationPresenter(
-    componentContext: ComponentContext,
-    private val discoverPresenterFactory: DiscoverShowsPresenterFactory,
-    private val libraryPresenterFactory: LibraryPresenterFactory,
-    private val moreShowsPresenterFactory: MoreShowsPresenterFactory,
-    private val searchPresenterFactory: SearchPresenterFactory,
-    private val settingsPresenterFactory: SettingsPresenterFactory,
-    private val showDetailsPresenterFactory: ShowDetailsPresenterPresenterFactory,
-    private val seasonDetailsPresenterFactory: SeasonDetailsPresenterFactory,
-    private val trailersPresenterFactory: TrailersPresenterFactory,
-    private val traktAuthManager: TraktAuthManager,
-    datastoreRepository: DatastoreRepository,
+  componentContext: ComponentContext,
+  private val discoverPresenterFactory: DiscoverShowsPresenterFactory,
+  private val libraryPresenterFactory: LibraryPresenterFactory,
+  private val moreShowsPresenterFactory: MoreShowsPresenterFactory,
+  private val searchPresenterFactory: SearchPresenterFactory,
+  private val settingsPresenterFactory: SettingsPresenterFactory,
+  private val showDetailsPresenterFactory: ShowDetailsPresenterPresenterFactory,
+  private val seasonDetailsPresenterFactory: SeasonDetailsPresenterFactory,
+  private val trailersPresenterFactory: TrailersPresenterFactory,
+  private val traktAuthManager: TraktAuthManager,
+  datastoreRepository: DatastoreRepository,
 ) : ComponentContext by componentContext {
 
-    private val navigation = StackNavigation<Config>()
+  private val navigation = StackNavigation<Config>()
 
-    val screenStack: Value<ChildStack<*, Screen>> =
-        childStack(
-            source = navigation,
-            initialConfiguration = Config.Discover,
-            serializer = Config.serializer(),
-            handleBackButton = true,
-            childFactory = ::createScreen,
+  val screenStack: Value<ChildStack<*, Screen>> =
+    childStack(
+      source = navigation,
+      initialConfiguration = Config.Discover,
+      serializer = Config.serializer(),
+      handleBackButton = true,
+      childFactory = ::createScreen,
+    )
+
+  val state: Value<ThemeState> =
+    datastoreRepository
+      .observeTheme()
+      .map { theme -> ThemeState(isFetching = false, appTheme = theme) }
+      .asValue(initialValue = ThemeState(), lifecycle = lifecycle)
+
+  fun bringToFront(config: Config) {
+    navigation.bringToFront(config)
+  }
+
+  fun shouldShowBottomNav(screen: Screen): Boolean {
+    return when (screen) {
+      is Screen.Discover -> true
+      is Screen.Search -> true
+      is Screen.Library -> true
+      is Screen.Settings -> true
+      else -> false
+    }
+  }
+
+  private fun createScreen(config: Config, componentContext: ComponentContext): Screen =
+    when (config) {
+      is Config.Discover ->
+        Screen.Discover(
+          presenter =
+            discoverPresenterFactory(
+              componentContext,
+              { id -> navigation.pushNew(Config.ShowDetails(id)) },
+              { id -> navigation.pushNew(Config.MoreShows(id)) },
+            ),
         )
-
-    val state: Value<ThemeState> = datastoreRepository.observeTheme()
-        .map { theme -> ThemeState(isFetching = false, appTheme = theme) }
-        .asValue(initialValue = ThemeState(), lifecycle = lifecycle)
-
-    fun bringToFront(config: Config) {
-        navigation.bringToFront(config)
+      is Config.SeasonDetails ->
+        Screen.SeasonDetails(
+          presenter =
+            seasonDetailsPresenterFactory(
+              componentContext,
+              config.param,
+              navigation::pop,
+            ) { _ ->
+              // TODO:: Navigate to episode details
+            },
+        )
+      is Config.ShowDetails ->
+        Screen.ShowDetails(
+          presenter =
+            showDetailsPresenterFactory(
+              componentContext,
+              config.id,
+              navigation::pop,
+              { id ->
+                /**
+                 * Fix crash when user navigates to the same screen with different arguments. This
+                 * will push the screen to the on top instead of having deep nested stacks.
+                 */
+                navigation.navigate {
+                  (it + Config.ShowDetails(id)).asReversed().distinct().asReversed()
+                }
+              },
+              { params ->
+                navigation.pushNew(
+                  Config.SeasonDetails(
+                    SeasonDetailsUiParam(
+                      showId = params.showId,
+                      seasonNumber = params.seasonNumber,
+                      seasonId = params.seasonId,
+                    ),
+                  ),
+                )
+              },
+              { id -> navigation.pushNew(Config.Trailers(id)) },
+            ),
+        )
+      is Config.Trailers ->
+        Screen.Trailers(
+          presenter =
+            trailersPresenterFactory(
+              componentContext,
+              config.id,
+            ),
+        )
+      is Config.MoreShows ->
+        Screen.MoreShows(
+          presenter =
+            moreShowsPresenterFactory(
+              componentContext,
+              config.id,
+              navigation::pop,
+            ) { id ->
+              navigation.pushNew(Config.ShowDetails(id))
+            },
+        )
+      Config.Library ->
+        Screen.Library(
+          presenter =
+            libraryPresenterFactory(
+              componentContext,
+            ) { id ->
+              navigation.pushNew(Config.ShowDetails(id))
+            },
+        )
+      Config.Search ->
+        Screen.Search(
+          presenter =
+            searchPresenterFactory(
+              componentContext,
+              navigation::pop,
+            ),
+        )
+      Config.Settings ->
+        Screen.Settings(
+          presenter =
+            settingsPresenterFactory(
+              componentContext,
+            ) {
+              traktAuthManager.launchWebView()
+            },
+        )
     }
 
-    fun shouldShowBottomNav(screen: Screen): Boolean {
-        return when (screen) {
-            is Screen.Discover -> true
-            is Screen.Search -> true
-            is Screen.Library -> true
-            is Screen.Settings -> true
-            else -> false
-        }
-    }
+  @Serializable
+  sealed interface Config {
+    @Serializable data object Discover : Config
 
-    private fun createScreen(config: Config, componentContext: ComponentContext): Screen =
-        when (config) {
-            is Config.Discover -> Screen.Discover(
-                presenter = discoverPresenterFactory(
-                    componentContext,
-                    { id ->
-                        navigation.pushNew(Config.ShowDetails(id))
-                    },
-                    { id ->
-                        navigation.pushNew(Config.MoreShows(id))
-                    },
-                ),
-            )
+    @Serializable data object Library : Config
 
-            is Config.SeasonDetails -> Screen.SeasonDetails(
-                presenter = seasonDetailsPresenterFactory(
-                    componentContext,
-                    config.param,
-                    navigation::pop,
-                ) { _ ->
-                    // TODO:: Navigate to episode details
-                },
-            )
+    @Serializable data object Search : Config
 
-            is Config.ShowDetails -> Screen.ShowDetails(
-                presenter = showDetailsPresenterFactory(
-                    componentContext,
-                    config.id,
-                    navigation::pop,
-                    { id ->
-                        /**
-                         * Fix crash when user navigates to the same screen with different arguments.
-                         * This will push the screen to the on top instead of having deep nested stacks.
-                         */
-                        navigation.navigate {
-                            (it + Config.ShowDetails(id)).asReversed().distinct().asReversed()
-                        }
-                    },
-                    { params ->
-                        navigation.pushNew(
-                            Config.SeasonDetails(
-                                SeasonDetailsUiParam(
-                                    showId = params.showId,
-                                    seasonNumber = params.seasonNumber,
-                                    seasonId = params.seasonId,
-                                ),
-                            ),
-                        )
-                    },
-                    { id -> navigation.pushNew(Config.Trailers(id)) },
-                ),
-            )
+    @Serializable data class SeasonDetails(val param: SeasonDetailsUiParam) : Config
 
-            is Config.Trailers -> Screen.Trailers(
-                presenter = trailersPresenterFactory(
-                    componentContext,
-                    config.id,
-                ),
-            )
+    @Serializable data class ShowDetails(val id: Long) : Config
 
-            is Config.MoreShows -> Screen.MoreShows(
-                presenter = moreShowsPresenterFactory(
-                    componentContext,
-                    config.id,
-                    navigation::pop,
-                ) { id -> navigation.pushNew(Config.ShowDetails(id)) },
-            )
+    @Serializable data class MoreShows(val id: Long) : Config
 
-            Config.Library -> Screen.Library(
-                presenter = libraryPresenterFactory(
-                    componentContext,
-                ) { id ->
-                    navigation.pushNew(Config.ShowDetails(id))
-                },
-            )
+    @Serializable data object Settings : Config
 
-            Config.Search -> Screen.Search(
-                presenter = searchPresenterFactory(
-                    componentContext,
-                    navigation::pop,
-                ),
-            )
-
-            Config.Settings -> Screen.Settings(
-                presenter = settingsPresenterFactory(
-                    componentContext,
-                ) { traktAuthManager.launchWebView() },
-            )
-        }
-
-    @Serializable
-    sealed interface Config {
-        @Serializable
-        data object Discover : Config
-
-        @Serializable
-        data object Library : Config
-
-        @Serializable
-        data object Search : Config
-
-        @Serializable
-        data class SeasonDetails(val param: SeasonDetailsUiParam) : Config
-
-        @Serializable
-        data class ShowDetails(val id: Long) : Config
-
-        @Serializable
-        data class MoreShows(val id: Long) : Config
-
-        @Serializable
-        data object Settings : Config
-
-        @Serializable
-        data class Trailers(val id: Long) : Config
-    }
+    @Serializable data class Trailers(val id: Long) : Config
+  }
 }

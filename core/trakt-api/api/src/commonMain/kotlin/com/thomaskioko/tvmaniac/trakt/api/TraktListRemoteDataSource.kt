@@ -10,23 +10,23 @@ import com.thomaskioko.tvmaniac.util.model.ApiResponse
 
 interface TraktListRemoteDataSource {
 
-    suspend fun getUser(userId: String): ApiResponse<TraktUserResponse>
+  suspend fun getUser(userId: String): ApiResponse<TraktUserResponse>
 
-    suspend fun getUserList(userId: String): List<TraktPersonalListsResponse>
+  suspend fun getUserList(userId: String): List<TraktPersonalListsResponse>
 
-    suspend fun createFollowingList(userSlug: String): TraktCreateListResponse
+  suspend fun createFollowingList(userSlug: String): TraktCreateListResponse
 
-    suspend fun getFollowedList(listId: Long, userSlug: String): List<TraktFollowedShowResponse>
+  suspend fun getFollowedList(listId: Long, userSlug: String): List<TraktFollowedShowResponse>
 
-    suspend fun getWatchList(): List<TraktFollowedShowResponse>
+  suspend fun getWatchList(): List<TraktFollowedShowResponse>
 
-    suspend fun addShowToWatchList(showId: Long): TraktAddShowToListResponse
+  suspend fun addShowToWatchList(showId: Long): TraktAddShowToListResponse
 
-    suspend fun removeShowFromWatchList(showId: Long): TraktAddRemoveShowFromListResponse
+  suspend fun removeShowFromWatchList(showId: Long): TraktAddRemoveShowFromListResponse
 
-    suspend fun addShowToList(
-        userSlug: String,
-        listId: Long,
-        traktShowId: Long,
-    ): TraktAddShowToListResponse
+  suspend fun addShowToList(
+    userSlug: String,
+    listId: Long,
+    traktShowId: Long,
+  ): TraktAddShowToListResponse
 }

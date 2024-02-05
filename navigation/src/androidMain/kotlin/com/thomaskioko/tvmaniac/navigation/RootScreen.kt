@@ -44,118 +44,116 @@ typealias RootScreen = @Composable () -> Unit
 
 @Inject
 @Composable
-fun RootScreen(
-    presenter: RootNavigationPresenter,
-    modifier: Modifier = Modifier,
-) {
-    Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
-        ) {
-            ChildrenContent(presenter = presenter, modifier = Modifier.weight(1F))
-            BottomNavigationContent(presenter = presenter, modifier = Modifier.fillMaxWidth())
-        }
+fun RootScreen(presenter: RootNavigationPresenter, modifier: Modifier = Modifier) {
+  Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
+    Column(
+      modifier =
+        Modifier.fillMaxSize()
+          .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
+    ) {
+      ChildrenContent(presenter = presenter, modifier = Modifier.weight(1F))
+      BottomNavigationContent(presenter = presenter, modifier = Modifier.fillMaxWidth())
     }
+  }
 }
 
 @Composable
 private fun ChildrenContent(presenter: RootNavigationPresenter, modifier: Modifier = Modifier) {
-    Children(
-        modifier = modifier,
-        stack = presenter.screenStack,
-    ) { child ->
-        val fillMaxSizeModifier = Modifier.fillMaxSize()
-        when (val screen = child.instance) {
-            is Screen.Discover -> DiscoverScreen(
-                discoverShowsPresenter = screen.presenter,
-                modifier = fillMaxSizeModifier,
-            )
-
-            is Screen.Library -> LibraryScreen(
-                presenter = screen.presenter,
-                modifier = fillMaxSizeModifier,
-            )
-
-            is Screen.Search -> SearchScreen(
-                presenter = screen.presenter,
-                modifier = fillMaxSizeModifier,
-            )
-
-            is Screen.Settings -> SettingsScreen(
-                presenter = screen.presenter,
-                modifier = fillMaxSizeModifier,
-            )
-
-            is Screen.ShowDetails -> ShowDetailsScreen(
-                presenter = screen.presenter,
-                modifier = fillMaxSizeModifier,
-            )
-
-            is Screen.SeasonDetails -> SeasonDetailsScreen(
-                presenter = screen.presenter,
-                modifier = fillMaxSizeModifier,
-            )
-
-            is Screen.Trailers -> TrailersScreen(
-                presenter = screen.presenter,
-                modifier = fillMaxSizeModifier,
-            )
-
-            is Screen.MoreShows -> MoreShowsScreen(
-                presenter = screen.presenter,
-                modifier = fillMaxSizeModifier,
-            )
-        }
+  Children(
+    modifier = modifier,
+    stack = presenter.screenStack,
+  ) { child ->
+    val fillMaxSizeModifier = Modifier.fillMaxSize()
+    when (val screen = child.instance) {
+      is Screen.Discover ->
+        DiscoverScreen(
+          discoverShowsPresenter = screen.presenter,
+          modifier = fillMaxSizeModifier,
+        )
+      is Screen.Library ->
+        LibraryScreen(
+          presenter = screen.presenter,
+          modifier = fillMaxSizeModifier,
+        )
+      is Screen.Search ->
+        SearchScreen(
+          presenter = screen.presenter,
+          modifier = fillMaxSizeModifier,
+        )
+      is Screen.Settings ->
+        SettingsScreen(
+          presenter = screen.presenter,
+          modifier = fillMaxSizeModifier,
+        )
+      is Screen.ShowDetails ->
+        ShowDetailsScreen(
+          presenter = screen.presenter,
+          modifier = fillMaxSizeModifier,
+        )
+      is Screen.SeasonDetails ->
+        SeasonDetailsScreen(
+          presenter = screen.presenter,
+          modifier = fillMaxSizeModifier,
+        )
+      is Screen.Trailers ->
+        TrailersScreen(
+          presenter = screen.presenter,
+          modifier = fillMaxSizeModifier,
+        )
+      is Screen.MoreShows ->
+        MoreShowsScreen(
+          presenter = screen.presenter,
+          modifier = fillMaxSizeModifier,
+        )
     }
+  }
 }
 
 @Composable
 internal fun BottomNavigationContent(
-    presenter: RootNavigationPresenter,
-    modifier: Modifier = Modifier,
+  presenter: RootNavigationPresenter,
+  modifier: Modifier = Modifier,
 ) {
-    val childStack by presenter.screenStack.subscribeAsState()
-    val activeComponent = childStack.active.instance
+  val childStack by presenter.screenStack.subscribeAsState()
+  val activeComponent = childStack.active.instance
 
-    val showBottomBar = presenter.shouldShowBottomNav(activeComponent)
+  val showBottomBar = presenter.shouldShowBottomNav(activeComponent)
 
-    AnimatedVisibility(
-        visible = showBottomBar,
-        enter = fadeIn(),
-        exit = slideOutVertically() + shrinkVertically() + fadeOut(),
+  AnimatedVisibility(
+    visible = showBottomBar,
+    enter = fadeIn(),
+    exit = slideOutVertically() + shrinkVertically() + fadeOut(),
+  ) {
+    TvManiacNavigationBar(
+      modifier = modifier,
     ) {
-        TvManiacNavigationBar(
-            modifier = modifier,
-        ) {
-            TvManiacBottomNavigationItem(
-                imageVector = Icons.Outlined.Movie,
-                title = stringResource(id = R.string.menu_item_discover),
-                selected = activeComponent is Screen.Discover,
-                onClick = { presenter.bringToFront(Config.Discover) },
-            )
+      TvManiacBottomNavigationItem(
+        imageVector = Icons.Outlined.Movie,
+        title = stringResource(id = R.string.menu_item_discover),
+        selected = activeComponent is Screen.Discover,
+        onClick = { presenter.bringToFront(Config.Discover) },
+      )
 
-            TvManiacBottomNavigationItem(
-                imageVector = Icons.Outlined.Search,
-                title = stringResource(id = R.string.menu_item_search),
-                selected = activeComponent is Screen.Search,
-                onClick = { presenter.bringToFront(Config.Search) },
-            )
+      TvManiacBottomNavigationItem(
+        imageVector = Icons.Outlined.Search,
+        title = stringResource(id = R.string.menu_item_search),
+        selected = activeComponent is Screen.Search,
+        onClick = { presenter.bringToFront(Config.Search) },
+      )
 
-            TvManiacBottomNavigationItem(
-                imageVector = Icons.Outlined.VideoLibrary,
-                title = stringResource(id = R.string.menu_item_library),
-                selected = activeComponent is Screen.Library,
-                onClick = { presenter.bringToFront(Config.Library) },
-            )
+      TvManiacBottomNavigationItem(
+        imageVector = Icons.Outlined.VideoLibrary,
+        title = stringResource(id = R.string.menu_item_library),
+        selected = activeComponent is Screen.Library,
+        onClick = { presenter.bringToFront(Config.Library) },
+      )
 
-            TvManiacBottomNavigationItem(
-                imageVector = Icons.Outlined.Settings,
-                title = stringResource(id = R.string.menu_item_settings),
-                selected = activeComponent is Screen.Settings,
-                onClick = { presenter.bringToFront(Config.Settings) },
-            )
-        }
+      TvManiacBottomNavigationItem(
+        imageVector = Icons.Outlined.Settings,
+        title = stringResource(id = R.string.menu_item_settings),
+        selected = activeComponent is Screen.Settings,
+        onClick = { presenter.bringToFront(Config.Settings) },
+      )
     }
+  }
 }

@@ -10,24 +10,23 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeFeaturedShowsRepository : FeaturedShowsRepository {
 
-    private var showEntityList: Channel<List<ShowEntity>> = Channel(Channel.UNLIMITED)
-    private var entityListResult: Channel<Either<Failure, List<ShowEntity>>> =
-        Channel(Channel.UNLIMITED)
+  private var showEntityList: Channel<List<ShowEntity>> = Channel(Channel.UNLIMITED)
+  private var entityListResult: Channel<Either<Failure, List<ShowEntity>>> =
+    Channel(Channel.UNLIMITED)
 
-    suspend fun setFeaturedShows(result: List<ShowEntity>) {
-        showEntityList.send(result)
-    }
+  suspend fun setFeaturedShows(result: List<ShowEntity>) {
+    showEntityList.send(result)
+  }
 
-    suspend fun setObserveFeaturedShows(result: Either<Failure, List<ShowEntity>>) {
-        entityListResult.send(result)
-    }
+  suspend fun setObserveFeaturedShows(result: Either<Failure, List<ShowEntity>>) {
+    entityListResult.send(result)
+  }
 
-    override suspend fun fetchFeaturedShows(
-        timeWindow: String,
-        forceRefresh: Boolean,
-    ): List<ShowEntity> = showEntityList.receive()
+  override suspend fun fetchFeaturedShows(
+    timeWindow: String,
+    forceRefresh: Boolean,
+  ): List<ShowEntity> = showEntityList.receive()
 
-    override fun observeFeaturedShows(
-        timeWindow: String,
-    ): Flow<Either<Failure, List<ShowEntity>>> = entityListResult.receiveAsFlow()
+  override fun observeFeaturedShows(timeWindow: String): Flow<Either<Failure, List<ShowEntity>>> =
+    entityListResult.receiveAsFlow()
 }

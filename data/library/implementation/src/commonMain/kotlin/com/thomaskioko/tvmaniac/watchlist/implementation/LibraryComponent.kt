@@ -7,11 +7,9 @@ import me.tatarka.inject.annotations.Provides
 
 interface LibraryComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideWatchlistDao(bind: LibraryDaoImpl): LibraryDao = bind
+  @ApplicationScope @Provides fun provideWatchlistDao(bind: LibraryDaoImpl): LibraryDao = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideWatchlist(bind: LibraryRepositoryImpl): LibraryRepository = bind
+  @ApplicationScope
+  @Provides
+  fun provideWatchlist(bind: LibraryRepositoryImpl): LibraryRepository = bind
 }

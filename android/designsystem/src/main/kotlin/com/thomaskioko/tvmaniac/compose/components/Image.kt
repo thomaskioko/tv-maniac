@@ -19,46 +19,49 @@ import com.flaviofaria.kenburnsview.KenBurnsView
 
 @Composable
 fun AsyncImageComposable(
-    model: Any?,
-    contentDescription: String?,
-    modifier: Modifier = Modifier,
-    transform: (AsyncImagePainter.State) -> AsyncImagePainter.State = AsyncImagePainter.DefaultTransform,
-    onState: ((AsyncImagePainter.State) -> Unit)? = null,
-    requestBuilder: (ImageRequest.Builder.() -> ImageRequest.Builder)? = null,
-    alignment: Alignment = Alignment.Center,
-    contentScale: ContentScale = ContentScale.Fit,
-    alpha: Float = DefaultAlpha,
-    colorFilter: ColorFilter? = null,
-    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+  model: Any?,
+  contentDescription: String?,
+  modifier: Modifier = Modifier,
+  transform: (AsyncImagePainter.State) -> AsyncImagePainter.State =
+    AsyncImagePainter.DefaultTransform,
+  onState: ((AsyncImagePainter.State) -> Unit)? = null,
+  requestBuilder: (ImageRequest.Builder.() -> ImageRequest.Builder)? = null,
+  alignment: Alignment = Alignment.Center,
+  contentScale: ContentScale = ContentScale.Fit,
+  alpha: Float = DefaultAlpha,
+  colorFilter: ColorFilter? = null,
+  filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
 ) {
-    AsyncImage(
-        model = requestBuilder?.let { builder ->
-            when (model) {
-                is ImageRequest -> model.newBuilder()
-                else -> ImageRequest.Builder(LocalContext.current).data(model)
-            }.apply { this.builder() }.build()
-        } ?: model,
-        contentDescription = contentDescription,
-        modifier = modifier,
-        transform = transform,
-        onState = onState,
-        alignment = alignment,
-        contentScale = contentScale,
-        alpha = alpha,
-        colorFilter = colorFilter,
-        filterQuality = filterQuality,
-    )
+  AsyncImage(
+    model =
+      requestBuilder?.let { builder ->
+        when (model) {
+            is ImageRequest -> model.newBuilder()
+            else -> ImageRequest.Builder(LocalContext.current).data(model)
+          }
+          .apply { this.builder() }
+          .build()
+      }
+        ?: model,
+    contentDescription = contentDescription,
+    modifier = modifier,
+    transform = transform,
+    onState = onState,
+    alignment = alignment,
+    contentScale = contentScale,
+    alpha = alpha,
+    colorFilter = colorFilter,
+    filterQuality = filterQuality,
+  )
 }
 
 @Composable
 fun KenBurnsViewImage(
-    imageUrl: String?,
-    modifier: Modifier = Modifier,
+  imageUrl: String?,
+  modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    val kenBuns = remember { KenBurnsView(context) }
+  val context = LocalContext.current
+  val kenBuns = remember { KenBurnsView(context) }
 
-    AndroidView({ kenBuns }, modifier = modifier) {
-        it.load(imageUrl)
-    }
+  AndroidView({ kenBuns }, modifier = modifier) { it.load(imageUrl) }
 }

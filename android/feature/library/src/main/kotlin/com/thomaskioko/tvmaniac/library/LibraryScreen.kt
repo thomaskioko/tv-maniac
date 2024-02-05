@@ -52,130 +52,122 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun LibraryScreen(
-    presenter: LibraryPresenter,
-    modifier: Modifier = Modifier,
+  presenter: LibraryPresenter,
+  modifier: Modifier = Modifier,
 ) {
-    val libraryState by presenter.value.subscribeAsState()
+  val libraryState by presenter.value.subscribeAsState()
 
-    LibraryScreen(
-        modifier = modifier,
-        state = libraryState,
-        onAction = presenter::dispatch,
-    )
+  LibraryScreen(
+    modifier = modifier,
+    state = libraryState,
+    onAction = presenter::dispatch,
+  )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun LibraryScreen(
-    state: LibraryState,
-    modifier: Modifier = Modifier,
-    onAction: (LibraryAction) -> Unit,
+  state: LibraryState,
+  modifier: Modifier = Modifier,
+  onAction: (LibraryAction) -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    Scaffold(
-        modifier = modifier
-            .statusBarsPadding(),
-        topBar = {
-            TvManiacTopBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.menu_item_library),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            color = MaterialTheme.colorScheme.onSurface,
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp),
-                    )
-                },
+  Scaffold(
+    modifier = modifier.statusBarsPadding(),
+    topBar = {
+      TvManiacTopBar(
+        title = {
+          Text(
+            text = stringResource(id = R.string.menu_item_library),
+            style =
+              MaterialTheme.typography.titleLarge.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+              ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+          )
+        },
+        scrollBehavior = scrollBehavior,
+        colors =
+          TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+          ),
+      )
+    },
+    content = { contentPadding ->
+      when (state) {
+        is LoadingShows ->
+          LoadingIndicator(
+            modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
+          )
+        is ErrorLoadingShows ->
+          ErrorUi(
+            onRetry = { onAction(ReloadLibrary) },
+            errorMessage = state.message,
+            modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
+          )
+        is LibraryContent -> {
+          when {
+            state.list.isEmpty() ->
+              EmptyContent(
+                imageVector = Icons.Outlined.Inbox,
+                message = stringResource(id = R.string.error_empty_library),
+              )
+            else ->
+              LibraryGridContent(
+                list = state.list,
                 scrollBehavior = scrollBehavior,
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                ),
-            )
-        },
-        content = { contentPadding ->
-            when (state) {
-                is LoadingShows ->
-                    LoadingIndicator(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .wrapContentSize(Alignment.Center),
-                    )
-
-                is ErrorLoadingShows ->
-                    ErrorUi(
-                        onRetry = { onAction(ReloadLibrary) },
-                        errorMessage = state.message,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .wrapContentSize(Alignment.Center),
-                    )
-
-                is LibraryContent -> {
-                    when {
-                        state.list.isEmpty() -> EmptyContent(
-                            imageVector = Icons.Outlined.Inbox,
-                            message = stringResource(id = R.string.error_empty_library),
-                        )
-
-                        else -> LibraryGridContent(
-                            list = state.list,
-                            scrollBehavior = scrollBehavior,
-                            paddingValues = contentPadding,
-                            onItemClicked = { onAction(LibraryShowClicked(it)) },
-                        )
-                    }
-                }
-            }
-        },
-    )
+                paddingValues = contentPadding,
+                onItemClicked = { onAction(LibraryShowClicked(it)) },
+              )
+          }
+        }
+      }
+    },
+  )
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun LibraryGridContent(
-    list: ImmutableList<LibraryItem>,
-    scrollBehavior: TopAppBarScrollBehavior,
-    paddingValues: PaddingValues,
-    onItemClicked: (Long) -> Unit,
+  list: ImmutableList<LibraryItem>,
+  scrollBehavior: TopAppBarScrollBehavior,
+  paddingValues: PaddingValues,
+  onItemClicked: (Long) -> Unit,
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .padding(horizontal = 4.dp)
-            .padding(paddingValues.copy(copyBottom = false)),
-    ) {
-        items(list) { show ->
-            TvPosterCard(
-                modifier = Modifier
-                    .animateItemPlacement(),
-                posterImageUrl = show.posterImageUrl,
-                title = show.title,
-                onClick = { onItemClicked(show.tmdbId) },
-            )
-        }
+  LazyVerticalGrid(
+    columns = GridCells.Fixed(3),
+    verticalArrangement = Arrangement.spacedBy(4.dp),
+    horizontalArrangement = Arrangement.spacedBy(4.dp),
+    modifier =
+      Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+        .padding(horizontal = 4.dp)
+        .padding(paddingValues.copy(copyBottom = false)),
+  ) {
+    items(list) { show ->
+      TvPosterCard(
+        modifier = Modifier.animateItemPlacement(),
+        posterImageUrl = show.posterImageUrl,
+        title = show.title,
+        onClick = { onItemClicked(show.tmdbId) },
+      )
     }
+  }
 }
 
 @ThemePreviews
 @Composable
 private fun LibraryScreenPreview(
-    @PreviewParameter(LibraryPreviewParameterProvider::class)
-    state: LibraryState,
+  @PreviewParameter(LibraryPreviewParameterProvider::class) state: LibraryState,
 ) {
-    TvManiacTheme {
-        Surface {
-            LibraryScreen(
-                state = state,
-                onAction = {},
-            )
-        }
+  TvManiacTheme {
+    Surface {
+      LibraryScreen(
+        state = state,
+        onAction = {},
+      )
     }
+  }
 }

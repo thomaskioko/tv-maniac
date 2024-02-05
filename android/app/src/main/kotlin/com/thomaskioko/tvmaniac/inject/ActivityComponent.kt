@@ -14,13 +14,15 @@ import me.tatarka.inject.annotations.Provides
 @ActivityScope
 @Component
 abstract class ActivityComponent(
-    @get:Provides val activity: ComponentActivity,
-    @get:Provides val componentContext: ComponentContext = activity.defaultComponentContext(),
-    @Component val applicationComponent: ApplicationComponent = ApplicationComponent.create(activity.application),
+  @get:Provides val activity: ComponentActivity,
+  @get:Provides val componentContext: ComponentContext = activity.defaultComponentContext(),
+  @Component
+  val applicationComponent: ApplicationComponent =
+    ApplicationComponent.create(activity.application),
 ) : TraktAuthManagerComponent {
-    abstract val traktAuthManager: TraktAuthManager
-    abstract val presenter: RootNavigationPresenter
-    abstract val rootScreen: RootScreen
+  abstract val traktAuthManager: TraktAuthManager
+  abstract val presenter: RootNavigationPresenter
+  abstract val rootScreen: RootScreen
 
-    companion object
+  companion object
 }

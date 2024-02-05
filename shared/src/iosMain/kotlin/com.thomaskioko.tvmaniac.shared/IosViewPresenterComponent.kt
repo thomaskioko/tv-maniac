@@ -10,10 +10,10 @@ import me.tatarka.inject.annotations.Provides
 @Component
 @ActivityScope
 abstract class IosViewPresenterComponent(
-    @get:Provides val componentContext: ComponentContext,
-    @Component val applicationComponent: ApplicationComponent,
+  @get:Provides val componentContext: ComponentContext,
+  @Component val applicationComponent: ApplicationComponent,
 ) : TraktAuthManagerComponent {
-    abstract val presenter: RootNavigationPresenter
+  abstract val presenter: RootNavigationPresenter
 
-    companion object
+  companion object
 }

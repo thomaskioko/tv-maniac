@@ -6,13 +6,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface LibraryDao {
 
-    fun upsert(watchlist: Library)
+  fun upsert(watchlist: Library)
 
-    fun upsert(watchedShowList: List<Library>)
+  fun upsert(watchedShowList: List<Library>)
 
-    fun getShowsInLibrary(): List<LibraryShows>
+  fun getShowsInLibrary(): List<LibraryShows>
 
-    fun observeShowsInLibrary(): Flow<List<LibraryShows>>
+  fun observeShowsInLibrary(): Flow<List<LibraryShows>>
 
-    fun delete(traktId: Long)
+  fun delete(traktId: Long)
 }

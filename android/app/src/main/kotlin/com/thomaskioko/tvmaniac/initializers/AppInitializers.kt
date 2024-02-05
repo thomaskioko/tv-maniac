@@ -5,11 +5,11 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class AppInitializers(
-    private val initializers: Set<AppInitializer>,
+  private val initializers: Set<AppInitializer>,
 ) {
-    fun init() {
-        for (initializer in initializers) {
-            initializer.init()
-        }
+  fun init() {
+    for (initializer in initializers) {
+      initializer.init()
     }
+  }
 }

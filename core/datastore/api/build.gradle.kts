@@ -1,24 +1,17 @@
-plugins {
-    id("plugin.tvmaniac.multiplatform")
-}
-
+plugins { id("plugin.tvmaniac.multiplatform") }
 
 kotlin {
-    sourceSets {
-        commonMain {
-            dependencies {
-                api(libs.coroutines.core)
-            }
-        }
+  sourceSets {
+    commonMain { dependencies { api(libs.coroutines.core) } }
 
-        commonMain {
-            dependencies {
-                implementation(kotlin("test"))
+    commonMain {
+      dependencies {
+        implementation(kotlin("test"))
 
-                implementation(libs.coroutines.test)
-                implementation(libs.kotest.assertions)
-                implementation(libs.turbine)
-            }
-        }
+        implementation(libs.coroutines.test)
+        implementation(libs.kotest.assertions)
+        implementation(libs.turbine)
+      }
     }
+  }
 }

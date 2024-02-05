@@ -27,86 +27,94 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TraktListRemoteDataSourceImpl(
-    private val httpClient: TraktHttpClient,
+  private val httpClient: TraktHttpClient,
 ) : TraktListRemoteDataSource {
 
-    override suspend fun getUser(userId: String): ApiResponse<TraktUserResponse> =
-        httpClient.safeRequest {
-            url {
-                method = HttpMethod.Get
-                path("users/$userId")
-                parameter("extended", "full")
-            }
-        }
+  override suspend fun getUser(userId: String): ApiResponse<TraktUserResponse> =
+    httpClient.safeRequest {
+      url {
+        method = HttpMethod.Get
+        path("users/$userId")
+        parameter("extended", "full")
+      }
+    }
 
-    override suspend fun getUserList(userId: String): List<TraktPersonalListsResponse> =
-        httpClient.get("users/$userId/lists").body()
+  override suspend fun getUserList(userId: String): List<TraktPersonalListsResponse> =
+    httpClient.get("users/$userId/lists").body()
 
-    override suspend fun createFollowingList(userSlug: String): TraktCreateListResponse =
-        httpClient.post("users/$userSlug/lists") {
-            setBody(TraktCreateListRequest())
-        }.body()
+  override suspend fun createFollowingList(userSlug: String): TraktCreateListResponse =
+    httpClient.post("users/$userSlug/lists") { setBody(TraktCreateListRequest()) }.body()
 
-    override suspend fun getFollowedList(
-        listId: Long,
-        userSlug: String,
-    ): List<TraktFollowedShowResponse> =
-        httpClient.get("users/$userSlug/lists/$listId/items/shows") {
-            parameter("sort_by", "added")
-        }.body()
+  override suspend fun getFollowedList(
+    listId: Long,
+    userSlug: String,
+  ): List<TraktFollowedShowResponse> =
+    httpClient
+      .get("users/$userSlug/lists/$listId/items/shows") { parameter("sort_by", "added") }
+      .body()
 
-    override suspend fun getWatchList(): List<TraktFollowedShowResponse> =
-        httpClient.get("sync/watchlist/shows") {
-            parameter("sort_by", "added")
-        }.body()
+  override suspend fun getWatchList(): List<TraktFollowedShowResponse> =
+    httpClient.get("sync/watchlist/shows") { parameter("sort_by", "added") }.body()
 
-    override suspend fun addShowToWatchList(showId: Long): TraktAddShowToListResponse =
-        httpClient.post("sync/watchlist") {
-            setBody(
-                TraktAddShowRequest(
-                    shows = listOf(
-                        TraktShow(
-                            ids = TraktShowIds(
-                                traktId = showId.toInt(),
-                            ),
-                        ),
+  override suspend fun addShowToWatchList(showId: Long): TraktAddShowToListResponse =
+    httpClient
+      .post("sync/watchlist") {
+        setBody(
+          TraktAddShowRequest(
+            shows =
+              listOf(
+                TraktShow(
+                  ids =
+                    TraktShowIds(
+                      traktId = showId.toInt(),
                     ),
                 ),
-            )
-        }.body()
+              ),
+          ),
+        )
+      }
+      .body()
 
-    override suspend fun removeShowFromWatchList(showId: Long): TraktAddRemoveShowFromListResponse =
-        httpClient.post("sync/watchlist/remove") {
-            contentType(ContentType.Application.Json)
-            setBody(
-                TraktAddShowRequest(
-                    shows = listOf(
-                        TraktShow(
-                            ids = TraktShowIds(
-                                traktId = showId.toInt(),
-                            ),
-                        ),
+  override suspend fun removeShowFromWatchList(showId: Long): TraktAddRemoveShowFromListResponse =
+    httpClient
+      .post("sync/watchlist/remove") {
+        contentType(ContentType.Application.Json)
+        setBody(
+          TraktAddShowRequest(
+            shows =
+              listOf(
+                TraktShow(
+                  ids =
+                    TraktShowIds(
+                      traktId = showId.toInt(),
                     ),
                 ),
-            )
-        }.body()
+              ),
+          ),
+        )
+      }
+      .body()
 
-    override suspend fun addShowToList(
-        userSlug: String,
-        listId: Long,
-        traktShowId: Long,
-    ): TraktAddShowToListResponse =
-        httpClient.post("users/$userSlug/lists/$listId/items") {
-            setBody(
-                TraktAddShowRequest(
-                    shows = listOf(
-                        TraktShow(
-                            ids = TraktShowIds(
-                                traktId = traktShowId.toInt(),
-                            ),
-                        ),
+  override suspend fun addShowToList(
+    userSlug: String,
+    listId: Long,
+    traktShowId: Long,
+  ): TraktAddShowToListResponse =
+    httpClient
+      .post("users/$userSlug/lists/$listId/items") {
+        setBody(
+          TraktAddShowRequest(
+            shows =
+              listOf(
+                TraktShow(
+                  ids =
+                    TraktShowIds(
+                      traktId = traktShowId.toInt(),
                     ),
                 ),
-            )
-        }.body()
+              ),
+          ),
+        )
+      }
+      .body()
 }

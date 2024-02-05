@@ -7,12 +7,9 @@ import me.tatarka.inject.annotations.Provides
 
 interface SeasonsComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideSeasonsRepository(bind: SeasonsRepositoryImpl): SeasonsRepository =
-        bind
+  @ApplicationScope
+  @Provides
+  fun provideSeasonsRepository(bind: SeasonsRepositoryImpl): SeasonsRepository = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideSeasonsDao(bind: SeasonsDaoImpl): SeasonsDao = bind
+  @ApplicationScope @Provides fun provideSeasonsDao(bind: SeasonsDaoImpl): SeasonsDao = bind
 }

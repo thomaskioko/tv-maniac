@@ -7,13 +7,12 @@ import me.tatarka.inject.annotations.Provides
 
 interface SimilarShowsComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideSimilarShowsDao(bind: SimilarShowsDaoImpl): SimilarShowsDao = bind
+  @ApplicationScope
+  @Provides
+  fun provideSimilarShowsDao(bind: SimilarShowsDaoImpl): SimilarShowsDao = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideSimilarShowsRepository(
-        bind: DefaultSimilarShowsRepository,
-    ): SimilarShowsRepository = bind
+  @ApplicationScope
+  @Provides
+  fun provideSimilarShowsRepository(bind: DefaultSimilarShowsRepository): SimilarShowsRepository =
+    bind
 }

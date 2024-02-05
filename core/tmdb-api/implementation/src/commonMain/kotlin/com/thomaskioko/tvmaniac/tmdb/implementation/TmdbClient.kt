@@ -19,48 +19,48 @@ import kotlinx.serialization.json.Json
 const val TIMEOUT_DURATION: Long = 60_000
 
 fun tmdbHttpClient(
-    isDebug: Boolean = false,
-    tmdbApiKey: String,
-    json: Json,
-    httpClientEngine: HttpClientEngine,
-    kermitLogger: KermitLogger,
-) = HttpClient(httpClientEngine) {
-    install(ContentNegotiation) {
-        json(json = json)
-    }
+  isDebug: Boolean = false,
+  tmdbApiKey: String,
+  json: Json,
+  httpClientEngine: HttpClientEngine,
+  kermitLogger: KermitLogger,
+) =
+  HttpClient(httpClientEngine) {
+    install(ContentNegotiation) { json(json = json) }
 
     install(DefaultRequest) {
-        apply {
-            url {
-                protocol = URLProtocol.HTTPS
-                host = "api.themoviedb.org"
+      apply {
+        url {
+          protocol = URLProtocol.HTTPS
+          host = "api.themoviedb.org"
 
-                parameters.append("api_key", tmdbApiKey)
+          parameters.append("api_key", tmdbApiKey)
 
-                headers {
-                    append(HttpHeaders.Accept, "application/vnd.api+json")
-                    append(HttpHeaders.ContentType, "application/vnd.api+json")
-                }
-            }
+          headers {
+            append(HttpHeaders.Accept, "application/vnd.api+json")
+            append(HttpHeaders.ContentType, "application/vnd.api+json")
+          }
         }
+      }
     }
 
     install(HttpTimeout) {
-        requestTimeoutMillis = TIMEOUT_DURATION
-        connectTimeoutMillis = TIMEOUT_DURATION
-        socketTimeoutMillis = TIMEOUT_DURATION
+      requestTimeoutMillis = TIMEOUT_DURATION
+      connectTimeoutMillis = TIMEOUT_DURATION
+      socketTimeoutMillis = TIMEOUT_DURATION
     }
 
     install(Logging) {
-        level = LogLevel.INFO
-        logger = if (isDebug) {
-            object : Logger {
-                override fun log(message: String) {
-                    kermitLogger.info("TmbdHttp", message)
-                }
+      level = LogLevel.INFO
+      logger =
+        if (isDebug) {
+          object : Logger {
+            override fun log(message: String) {
+              kermitLogger.info("TmbdHttp", message)
             }
+          }
         } else {
-            Logger.EMPTY
+          Logger.EMPTY
         }
     }
-}
+  }

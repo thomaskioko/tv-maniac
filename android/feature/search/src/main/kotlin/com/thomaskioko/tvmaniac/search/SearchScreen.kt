@@ -24,47 +24,41 @@ import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun SearchScreen(
-    presenter: SearchPresenter,
-    modifier: Modifier = Modifier,
+  presenter: SearchPresenter,
+  modifier: Modifier = Modifier,
 ) {
-    SearchScreen(modifier = modifier)
+  SearchScreen(modifier = modifier)
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun SearchScreen(
-    modifier: Modifier = Modifier,
+  modifier: Modifier = Modifier,
 ) {
-    Scaffold(
-        modifier = modifier
-            .statusBarsPadding(),
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .consumeWindowInsets(padding)
-                .windowInsetsPadding(
-                    WindowInsets.safeDrawing.only(
-                        WindowInsetsSides.Horizontal,
-                    ),
-                ),
-        ) {
-            SearchBar(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                hint = stringResource(id = R.string.msg_search_show_hint),
-                onValueChange = {},
-            )
-        }
+  Scaffold(
+    modifier = modifier.statusBarsPadding(),
+  ) { padding ->
+    Column(
+      modifier =
+        Modifier.padding(16.dp)
+          .consumeWindowInsets(padding)
+          .windowInsetsPadding(
+            WindowInsets.safeDrawing.only(
+              WindowInsetsSides.Horizontal,
+            ),
+          ),
+    ) {
+      SearchBar(
+        modifier = Modifier.fillMaxWidth(),
+        hint = stringResource(id = R.string.msg_search_show_hint),
+        onValueChange = {},
+      )
     }
+  }
 }
 
 @ThemePreviews
 @Composable
-fun SearchContentPreview() {
-    TvManiacTheme {
-        Surface {
-            SearchScreen()
-        }
-    }
+private fun SearchContentPreview() {
+  TvManiacTheme { Surface { SearchScreen() } }
 }

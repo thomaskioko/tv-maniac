@@ -7,11 +7,17 @@ import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
 interface TopRatedShowsDao {
-    fun upsert(show: Toprated_shows)
-    fun observeTopRatedShows(): Flow<List<TopRatedShows>>
-    fun getPagedTopRatedShows(): PagingSource<Int, ShowEntity>
-    fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>>
-    fun getLastPage(): Long?
-    fun deleteTrendingShows(id: Long)
-    fun deleteTrendingShows()
+  fun upsert(show: Toprated_shows)
+
+  fun observeTopRatedShows(): Flow<List<TopRatedShows>>
+
+  fun getPagedTopRatedShows(): PagingSource<Int, ShowEntity>
+
+  fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>>
+
+  fun getLastPage(): Long?
+
+  fun deleteTrendingShows(id: Long)
+
+  fun deleteTrendingShows()
 }

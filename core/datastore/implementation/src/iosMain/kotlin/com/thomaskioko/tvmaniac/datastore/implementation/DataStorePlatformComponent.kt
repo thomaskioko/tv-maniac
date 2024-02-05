@@ -13,22 +13,22 @@ import platform.Foundation.NSUserDomainMask
 
 actual interface DataStorePlatformComponent {
 
-    @OptIn(ExperimentalForeignApi::class)
-    @ApplicationScope
-    @Provides
-    fun provideDataStore(
-        dispatchers: AppCoroutineScope,
-    ): DataStore<Preferences> = createDataStore(
-        coroutineScope = dispatchers.io,
-        produceFile = {
-            val documentDirectory: NSURL? = NSFileManager.defaultManager.URLForDirectory(
-                directory = NSDocumentDirectory,
-                inDomain = NSUserDomainMask,
-                appropriateForURL = null,
-                create = false,
-                error = null,
-            )
-            requireNotNull(documentDirectory).path + "/$dataStoreFileName"
-        },
+  @OptIn(ExperimentalForeignApi::class)
+  @ApplicationScope
+  @Provides
+  fun provideDataStore(dispatchers: AppCoroutineScope): DataStore<Preferences> =
+    createDataStore(
+      coroutineScope = dispatchers.io,
+      produceFile = {
+        val documentDirectory: NSURL? =
+          NSFileManager.defaultManager.URLForDirectory(
+            directory = NSDocumentDirectory,
+            inDomain = NSUserDomainMask,
+            appropriateForURL = null,
+            create = false,
+            error = null,
+          )
+        requireNotNull(documentDirectory).path + "/$dataStoreFileName"
+      },
     )
 }

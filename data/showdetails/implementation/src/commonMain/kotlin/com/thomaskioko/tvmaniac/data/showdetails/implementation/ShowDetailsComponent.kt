@@ -7,15 +7,11 @@ import me.tatarka.inject.annotations.Provides
 
 interface ShowDetailsComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideShowDetailsDao(
-        bind: DefaultShowDetailsDao,
-    ): ShowDetailsDao = bind
+  @ApplicationScope
+  @Provides
+  fun provideShowDetailsDao(bind: DefaultShowDetailsDao): ShowDetailsDao = bind
 
-    @ApplicationScope
-    @Provides
-    fun provideShowDetailsRepository(
-        bind: DefaultShowDetailsRepository,
-    ): ShowDetailsRepository = bind
+  @ApplicationScope
+  @Provides
+  fun provideShowDetailsRepository(bind: DefaultShowDetailsRepository): ShowDetailsRepository = bind
 }

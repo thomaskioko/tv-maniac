@@ -11,10 +11,9 @@ import me.tatarka.inject.annotations.Provides
 @Component
 @ApplicationScope
 abstract class ApplicationComponent(
-    @get:Provides val application: Application,
+  @get:Provides val application: Application,
 ) : SharedComponent(), TraktAuthComponent {
+  abstract val initializers: AppInitializers
 
-    abstract val initializers: AppInitializers
-
-    companion object
+  companion object
 }

@@ -16,93 +16,89 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DefaultSeasonDetailsDao(
-    private val database: TvManiacDatabase,
-    private val dispatcher: AppCoroutineDispatchers,
+  private val database: TvManiacDatabase,
+  private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonDetailsDao {
 
-    private val seasonQueries get() = database.seasonQueries
+  private val seasonQueries
+    get() = database.seasonQueries
 
-    override fun fetchSeasonDetails(
-        showId: Long,
-        seasonNumber: Long,
-    ): SeasonDetailsWithEpisodes {
-        val queryResult = database.seasonQueries.seasonDetails(
-            showId = Id(showId),
-            seasonNumber = seasonNumber,
-        ).executeAsList()
-        return mapSeasonDetails(queryResult)
-    }
-
-    override fun observeSeasonEpisodeDetails(
-        showId: Long,
-        seasonNumber: Long,
-    ): Flow<SeasonDetailsWithEpisodes> =
-        seasonQueries.seasonDetails(showId = Id(showId), seasonNumber = seasonNumber)
-            .asFlow()
-            .map { mapSeasonDetails(it.executeAsList()) }
-
-    override fun delete(id: Long) {
-        seasonQueries.delete(Id(id))
-    }
-
-    override fun deleteAll() {
-        database.transaction {
-            seasonQueries.deleteAll()
-        }
-    }
-
-    override fun upsertSeasonImage(seasonId: Long, imageUrl: String) {
-        database.transaction {
-            database.season_imagesQueries.upsert(
-                season_id = Id(seasonId),
-                image_url = imageUrl,
-            )
-        }
-    }
-
-    override fun fetchSeasonImages(id: Long): List<Season_images> =
-        database.season_imagesQueries.seasonImages(Id(id))
-            .executeAsList()
-
-    override fun observeSeasonImages(id: Long): Flow<List<Season_images>> =
-        database.season_imagesQueries.seasonImages(Id(id))
-            .asFlow()
-            .mapToList(dispatcher.io)
-
-    private fun mapSeasonDetails(resultItem: List<SeasonDetails>): SeasonDetailsWithEpisodes {
-        val seasonDetails = resultItem.first()
-        val episodeList = mapEpisode(resultItem)
-
-        return SeasonDetailsWithEpisodes(
-            seasonId = seasonDetails.season_id.id,
-            name = seasonDetails.season_title,
-            seasonNumber = seasonDetails.season_number,
-            seasonOverview = seasonDetails.overview ?: "",
-            tvShowId = seasonDetails.show_id.id,
-            showTitle = seasonDetails.show_title,
-            imageUrl = seasonDetails.season_image_url,
-            episodes = episodeList,
-            episodeCount = episodeList.size.toLong(),
+  override fun fetchSeasonDetails(showId: Long, seasonNumber: Long): SeasonDetailsWithEpisodes {
+    val queryResult =
+      database.seasonQueries
+        .seasonDetails(
+          showId = Id(showId),
+          seasonNumber = seasonNumber,
         )
+        .executeAsList()
+    return mapSeasonDetails(queryResult)
+  }
+
+  override fun observeSeasonEpisodeDetails(
+    showId: Long,
+    seasonNumber: Long,
+  ): Flow<SeasonDetailsWithEpisodes> =
+    seasonQueries.seasonDetails(showId = Id(showId), seasonNumber = seasonNumber).asFlow().map {
+      mapSeasonDetails(it.executeAsList())
     }
 
-    private fun mapEpisode(resultItem: List<SeasonDetails>): List<EpisodeDetails> {
-        return resultItem.mapNotNull { seasonDetails ->
-            seasonDetails.episode_id?.let { episodeId ->
-                EpisodeDetails(
-                    id = episodeId.id,
-                    seasonId = seasonDetails.season_id.id,
-                    name = seasonDetails.episode_title ?: "",
-                    seasonNumber = seasonDetails.season_number,
-                    episodeNumber = seasonDetails.episode_number ?: 0,
-                    overview = seasonDetails.overview ?: "",
-                    voteAverage = seasonDetails.vote_average ?: 0.0,
-                    voteCount = seasonDetails.vote_count ?: 0,
-                    stillPath = seasonDetails.episode_image_url,
-                    runtime = seasonDetails.runtime ?: 0,
-                    isWatched = false,
-                )
-            }
-        }
+  override fun delete(id: Long) {
+    seasonQueries.delete(Id(id))
+  }
+
+  override fun deleteAll() {
+    database.transaction { seasonQueries.deleteAll() }
+  }
+
+  override fun upsertSeasonImage(seasonId: Long, imageUrl: String) {
+    database.transaction {
+      database.season_imagesQueries.upsert(
+        season_id = Id(seasonId),
+        image_url = imageUrl,
+      )
     }
+  }
+
+  override fun fetchSeasonImages(id: Long): List<Season_images> =
+    database.season_imagesQueries.seasonImages(Id(id)).executeAsList()
+
+  override fun observeSeasonImages(id: Long): Flow<List<Season_images>> =
+    database.season_imagesQueries.seasonImages(Id(id)).asFlow().mapToList(dispatcher.io)
+
+  private fun mapSeasonDetails(resultItem: List<SeasonDetails>): SeasonDetailsWithEpisodes {
+    val seasonDetails = resultItem.first()
+    val episodeList = mapEpisode(resultItem)
+
+    return SeasonDetailsWithEpisodes(
+      seasonId = seasonDetails.season_id.id,
+      name = seasonDetails.season_title,
+      seasonNumber = seasonDetails.season_number,
+      seasonOverview = seasonDetails.overview ?: "",
+      tvShowId = seasonDetails.show_id.id,
+      showTitle = seasonDetails.show_title,
+      imageUrl = seasonDetails.season_image_url,
+      episodes = episodeList,
+      episodeCount = episodeList.size.toLong(),
+    )
+  }
+
+  private fun mapEpisode(resultItem: List<SeasonDetails>): List<EpisodeDetails> {
+    return resultItem.mapNotNull { seasonDetails ->
+      seasonDetails.episode_id?.let { episodeId ->
+        EpisodeDetails(
+          id = episodeId.id,
+          seasonId = seasonDetails.season_id.id,
+          name = seasonDetails.episode_title ?: "",
+          seasonNumber = seasonDetails.season_number,
+          episodeNumber = seasonDetails.episode_number ?: 0,
+          overview = seasonDetails.overview ?: "",
+          voteAverage = seasonDetails.vote_average ?: 0.0,
+          voteCount = seasonDetails.vote_count ?: 0,
+          stillPath = seasonDetails.episode_image_url,
+          runtime = seasonDetails.runtime ?: 0,
+          isWatched = false,
+        )
+      }
+    }
+  }
 }

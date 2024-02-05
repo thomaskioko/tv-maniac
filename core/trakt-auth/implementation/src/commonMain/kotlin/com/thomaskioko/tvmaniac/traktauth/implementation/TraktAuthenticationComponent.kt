@@ -6,7 +6,7 @@ import me.tatarka.inject.annotations.Provides
 
 interface TraktAuthenticationComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideTraktAuthRepository(bind: TraktAuthRepositoryImpl): TraktAuthRepository = bind
+  @ApplicationScope
+  @Provides
+  fun provideTraktAuthRepository(bind: TraktAuthRepositoryImpl): TraktAuthRepository = bind
 }

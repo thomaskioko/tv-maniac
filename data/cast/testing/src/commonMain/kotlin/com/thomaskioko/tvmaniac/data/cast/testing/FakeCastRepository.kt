@@ -9,26 +9,25 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeCastRepository : CastRepository {
 
-    private var seasonCastEntityList: Channel<List<SeasonCast>> = Channel(Channel.UNLIMITED)
-    private var showCastEntityList: Channel<List<ShowCast>> = Channel(Channel.UNLIMITED)
+  private var seasonCastEntityList: Channel<List<SeasonCast>> = Channel(Channel.UNLIMITED)
+  private var showCastEntityList: Channel<List<ShowCast>> = Channel(Channel.UNLIMITED)
 
-    suspend fun setSeasonCast(result: List<SeasonCast>) {
-        seasonCastEntityList.send(result)
-    }
+  suspend fun setSeasonCast(result: List<SeasonCast>) {
+    seasonCastEntityList.send(result)
+  }
 
-    suspend fun setShowCast(result: List<ShowCast>) {
-        showCastEntityList.send(result)
-    }
+  suspend fun setShowCast(result: List<ShowCast>) {
+    showCastEntityList.send(result)
+  }
 
-    override suspend fun fetchShowCast(showId: Long): List<ShowCast> =
-        showCastEntityList.receive()
+  override suspend fun fetchShowCast(showId: Long): List<ShowCast> = showCastEntityList.receive()
 
-    override suspend fun fetchSeasonCast(seasonId: Long): List<SeasonCast> =
-        seasonCastEntityList.receive()
+  override suspend fun fetchSeasonCast(seasonId: Long): List<SeasonCast> =
+    seasonCastEntityList.receive()
 
-    override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =
-        seasonCastEntityList.receiveAsFlow()
+  override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =
+    seasonCastEntityList.receiveAsFlow()
 
-    override fun observeShowCast(showId: Long): Flow<List<ShowCast>> =
-        showCastEntityList.receiveAsFlow()
+  override fun observeShowCast(showId: Long): Flow<List<ShowCast>> =
+    showCastEntityList.receiveAsFlow()
 }

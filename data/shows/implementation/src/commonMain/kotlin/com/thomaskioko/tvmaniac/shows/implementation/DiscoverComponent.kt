@@ -6,9 +6,5 @@ import me.tatarka.inject.annotations.Provides
 
 interface DiscoverComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideTvShowsDao(
-        bind: DefaultTvShowsDao,
-    ): TvShowsDao = bind
+  @ApplicationScope @Provides fun provideTvShowsDao(bind: DefaultTvShowsDao): TvShowsDao = bind
 }

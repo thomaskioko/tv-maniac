@@ -9,7 +9,7 @@ sealed interface LibraryState
 data object LoadingShows : LibraryState
 
 data class LibraryContent(
-    val list: ImmutableList<LibraryItem> = persistentListOf(),
+  val list: ImmutableList<LibraryItem> = persistentListOf(),
 ) : LibraryState
 
 data class ErrorLoadingShows(val message: String? = null) : LibraryState

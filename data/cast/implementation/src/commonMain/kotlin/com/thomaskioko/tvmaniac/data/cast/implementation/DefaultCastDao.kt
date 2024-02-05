@@ -14,36 +14,30 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DefaultCastDao(
-    private val database: TvManiacDatabase,
-    private val dispatcher: AppCoroutineDispatchers,
+  private val database: TvManiacDatabase,
+  private val dispatcher: AppCoroutineDispatchers,
 ) : CastDao {
-    override fun upsert(entity: Casts) {
-        database.castQueries.upsert(
-            id = entity.id,
-            season_id = entity.season_id,
-            tmdb_id = entity.tmdb_id,
-            name = entity.name,
-            character_name = entity.character_name,
-            profile_path = entity.profile_path,
-            popularity = entity.popularity,
-        )
-    }
+  override fun upsert(entity: Casts) {
+    database.castQueries.upsert(
+      id = entity.id,
+      season_id = entity.season_id,
+      tmdb_id = entity.tmdb_id,
+      name = entity.name,
+      character_name = entity.character_name,
+      profile_path = entity.profile_path,
+      popularity = entity.popularity,
+    )
+  }
 
-    override fun fetchShowCast(id: Long): List<ShowCast> =
-        database.castQueries.showCast(Id(id))
-            .executeAsList()
+  override fun fetchShowCast(id: Long): List<ShowCast> =
+    database.castQueries.showCast(Id(id)).executeAsList()
 
-    override fun observeShowCast(id: Long): Flow<List<ShowCast>> =
-        database.castQueries.showCast(Id(id))
-            .asFlow()
-            .mapToList(dispatcher.io)
+  override fun observeShowCast(id: Long): Flow<List<ShowCast>> =
+    database.castQueries.showCast(Id(id)).asFlow().mapToList(dispatcher.io)
 
-    override fun fetchSeasonCast(id: Long): List<SeasonCast> =
-        database.castQueries.seasonCast(Id(id))
-            .executeAsList()
+  override fun fetchSeasonCast(id: Long): List<SeasonCast> =
+    database.castQueries.seasonCast(Id(id)).executeAsList()
 
-    override fun observeSeasonCast(id: Long): Flow<List<SeasonCast>> =
-        database.castQueries.seasonCast(Id(id))
-            .asFlow()
-            .mapToList(dispatcher.io)
+  override fun observeSeasonCast(id: Long): Flow<List<SeasonCast>> =
+    database.castQueries.seasonCast(Id(id)).asFlow().mapToList(dispatcher.io)
 }

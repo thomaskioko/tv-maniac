@@ -11,33 +11,32 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeUpcomingShowsRepository : UpcomingShowsRepository {
 
-    private var showEntityList: Channel<List<ShowEntity>> = Channel(Channel.UNLIMITED)
-    private var entityListResult: Channel<Either<Failure, List<ShowEntity>>> =
-        Channel(Channel.UNLIMITED)
-    private var pagedList: Channel<PagingData<ShowEntity>> =
-        Channel(Channel.UNLIMITED)
+  private var showEntityList: Channel<List<ShowEntity>> = Channel(Channel.UNLIMITED)
+  private var entityListResult: Channel<Either<Failure, List<ShowEntity>>> =
+    Channel(Channel.UNLIMITED)
+  private var pagedList: Channel<PagingData<ShowEntity>> = Channel(Channel.UNLIMITED)
 
-    suspend fun setUpcomingShows(result: List<ShowEntity>) {
-        showEntityList.send(result)
-    }
+  suspend fun setUpcomingShows(result: List<ShowEntity>) {
+    showEntityList.send(result)
+  }
 
-    suspend fun setObserveUpcomingShows(result: Either<Failure, List<ShowEntity>>) {
-        entityListResult.send(result)
-    }
+  suspend fun setObserveUpcomingShows(result: Either<Failure, List<ShowEntity>>) {
+    entityListResult.send(result)
+  }
 
-    suspend fun setPagedData(result: PagingData<ShowEntity>) {
-        pagedList.send(result)
-    }
+  suspend fun setPagedData(result: PagingData<ShowEntity>) {
+    pagedList.send(result)
+  }
 
-    override suspend fun fetchUpcomingShows(forceRefresh: Boolean): List<ShowEntity> {
-        return showEntityList.receive()
-    }
+  override suspend fun fetchUpcomingShows(forceRefresh: Boolean): List<ShowEntity> {
+    return showEntityList.receive()
+  }
 
-    override fun observeUpcomingShows(): Flow<Either<Failure, List<ShowEntity>>> {
-        return entityListResult.receiveAsFlow()
-    }
+  override fun observeUpcomingShows(): Flow<Either<Failure, List<ShowEntity>>> {
+    return entityListResult.receiveAsFlow()
+  }
 
-    override fun getPagedUpcomingShows(): Flow<PagingData<ShowEntity>> {
-        return pagedList.receiveAsFlow()
-    }
+  override fun getPagedUpcomingShows(): Flow<PagingData<ShowEntity>> {
+    return pagedList.receiveAsFlow()
+  }
 }

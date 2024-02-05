@@ -63,211 +63,206 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun TrailersScreen(
-    presenter: TrailersPresenter,
-    modifier: Modifier = Modifier,
+  presenter: TrailersPresenter,
+  modifier: Modifier = Modifier,
 ) {
-    val state by presenter.state.subscribeAsState()
+  val state by presenter.state.subscribeAsState()
 
-    TrailersScreen(
-        modifier = modifier,
-        state = state,
-        onAction = presenter::dispatch,
-    )
+  TrailersScreen(
+    modifier = modifier,
+    state = state,
+    onAction = presenter::dispatch,
+  )
 }
 
 @Composable
 internal fun TrailersScreen(
-    state: TrailersState,
-    onAction: (TrailersAction) -> Unit,
-    modifier: Modifier = Modifier,
+  state: TrailersState,
+  onAction: (TrailersAction) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val listState = rememberLazyListState()
+  val listState = rememberLazyListState()
 
-    Scaffold(
-        modifier = modifier
-            .background(color = MaterialTheme.colorScheme.background),
-        content = { contentPadding ->
-
-            when (state) {
-                is LoadingTrailers -> LoadingIndicator(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(Alignment.Center),
-                )
-
-                is TrailersContent -> {
-                    VideoPlayerContent(
-                        listState = listState,
-                        trailersList = state.trailersList,
-                        videoKey = state.selectedVideoKey,
-                        onYoutubeError = { onAction(VideoPlayerError(it)) },
-                        onTrailerClicked = { onAction(TrailerSelected(it)) },
-                        contentPadding = contentPadding,
-                    )
-                }
-
-                is TrailerError -> ErrorUi(
-                    errorMessage = state.errorMessage,
-                    onRetry = { onAction(ReloadTrailers) },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(Alignment.Center),
-                )
-            }
-        },
-    )
+  Scaffold(
+    modifier = modifier.background(color = MaterialTheme.colorScheme.background),
+    content = { contentPadding ->
+      when (state) {
+        is LoadingTrailers ->
+          LoadingIndicator(
+            modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
+          )
+        is TrailersContent -> {
+          VideoPlayerContent(
+            listState = listState,
+            trailersList = state.trailersList,
+            videoKey = state.selectedVideoKey,
+            onYoutubeError = { onAction(VideoPlayerError(it)) },
+            onTrailerClicked = { onAction(TrailerSelected(it)) },
+            contentPadding = contentPadding,
+          )
+        }
+        is TrailerError ->
+          ErrorUi(
+            errorMessage = state.errorMessage,
+            onRetry = { onAction(ReloadTrailers) },
+            modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
+          )
+      }
+    },
+  )
 }
 
 @Composable
 private fun VideoPlayerContent(
-    listState: LazyListState,
-    trailersList: ImmutableList<Trailer>,
-    videoKey: String?,
-    onYoutubeError: (String) -> Unit,
-    contentPadding: PaddingValues,
-    modifier: Modifier = Modifier,
-    onTrailerClicked: (String) -> Unit,
+  listState: LazyListState,
+  trailersList: ImmutableList<Trailer>,
+  videoKey: String?,
+  onYoutubeError: (String) -> Unit,
+  contentPadding: PaddingValues,
+  modifier: Modifier = Modifier,
+  onTrailerClicked: (String) -> Unit,
 ) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start,
-    ) {
-        AnimatedVisibility(visible = videoKey != null) {
-            AndroidView(
-                modifier = Modifier.fillMaxWidth(),
-                factory = { context ->
-                    YouTubePlayerView(context).apply {
-                        addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-                            override fun onReady(youTubePlayer: YouTubePlayer) {
-                                youTubePlayer.loadVideo(
-                                    videoId = videoKey!!,
-                                    startSeconds = 0f,
-                                )
-                            }
+  Column(
+    modifier = modifier.fillMaxSize(),
+    verticalArrangement = Arrangement.Top,
+    horizontalAlignment = Alignment.Start,
+  ) {
+    AnimatedVisibility(visible = videoKey != null) {
+      AndroidView(
+        modifier = Modifier.fillMaxWidth(),
+        factory = { context ->
+          YouTubePlayerView(context).apply {
+            addYouTubePlayerListener(
+              object : AbstractYouTubePlayerListener() {
+                override fun onReady(youTubePlayer: YouTubePlayer) {
+                  youTubePlayer.loadVideo(
+                    videoId = videoKey!!,
+                    startSeconds = 0f,
+                  )
+                }
 
-                            override fun onError(
-                                youTubePlayer: YouTubePlayer,
-                                error: PlayerConstants.PlayerError,
-                            ) {
-                                super.onError(youTubePlayer, error)
-                                onYoutubeError(error.name)
-                            }
-                        })
-                    }
-                },
+                override fun onError(
+                  youTubePlayer: YouTubePlayer,
+                  error: PlayerConstants.PlayerError,
+                ) {
+                  super.onError(youTubePlayer, error)
+                  onYoutubeError(error.name)
+                }
+              },
             )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        Text(
-            text = stringResource(id = R.string.str_more_trailers),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(horizontal = 16.dp),
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TrailerList(
-            listState = listState,
-            trailerList = trailersList,
-            onTrailerClicked = onTrailerClicked,
-            contentPadding = contentPadding,
-        )
+          }
+        },
+      )
+      Spacer(modifier = Modifier.height(16.dp))
     }
+
+    Text(
+      text = stringResource(id = R.string.str_more_trailers),
+      style = MaterialTheme.typography.titleMedium,
+      modifier = Modifier.padding(horizontal = 16.dp),
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    TrailerList(
+      listState = listState,
+      trailerList = trailersList,
+      onTrailerClicked = onTrailerClicked,
+      contentPadding = contentPadding,
+    )
+  }
 }
 
 @Composable
 private fun TrailerList(
-    listState: LazyListState,
-    trailerList: ImmutableList<Trailer>,
-    contentPadding: PaddingValues,
-    modifier: Modifier = Modifier,
-    onTrailerClicked: (String) -> Unit = {},
+  listState: LazyListState,
+  trailerList: ImmutableList<Trailer>,
+  contentPadding: PaddingValues,
+  modifier: Modifier = Modifier,
+  onTrailerClicked: (String) -> Unit = {},
 ) {
-    LazyColumn(
-        state = listState,
-        contentPadding = contentPadding.copy(copyTop = false),
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        item { Spacer(modifier = Modifier.height(8.dp)) }
+  LazyColumn(
+    state = listState,
+    contentPadding = contentPadding.copy(copyTop = false),
+    modifier = modifier.fillMaxWidth(),
+  ) {
+    item { Spacer(modifier = Modifier.height(8.dp)) }
 
-        items(trailerList) { trailer ->
+    items(trailerList) { trailer ->
+      ConstraintLayout(
+        modifier =
+          Modifier.fillMaxWidth()
+            .height(80.dp)
+            .clickable { onTrailerClicked(trailer.key) }
+            .padding(horizontal = 8.dp),
+      ) {
+        val (episodeTitle, image) = createRefs()
 
-            ConstraintLayout(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .clickable { onTrailerClicked(trailer.key) }
-                    .padding(horizontal = 8.dp),
-            ) {
-                val (episodeTitle, image) = createRefs()
+        AsyncImageComposable(
+          model = trailer.youtubeThumbnailUrl,
+          contentDescription = trailer.name,
+          contentScale = ContentScale.Crop,
+          modifier =
+            Modifier.width(140.dp)
+              .drawWithCache {
+                onDrawWithContent {
+                  drawContent()
+                  drawRect(
+                    blendMode = BlendMode.Multiply,
+                    brush =
+                      Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color.Black),
+                        startY = size.height / 3,
+                        endY = size.height,
+                      ),
+                  )
+                }
+              }
+              .constrainAs(image) {
+                start.linkTo(parent.start)
+                bottom.linkTo(parent.bottom)
+                top.linkTo(parent.top)
 
-                AsyncImageComposable(
-                    model = trailer.youtubeThumbnailUrl,
-                    contentDescription = trailer.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .width(140.dp)
-                        .drawWithCache {
-                            onDrawWithContent {
-                                drawContent()
-                                drawRect(
-                                    blendMode = BlendMode.Multiply,
-                                    brush = Brush.verticalGradient(
-                                        colors = listOf(Color.Transparent, Color.Black),
-                                        startY = size.height / 3,
-                                        endY = size.height,
-                                    ),
-                                )
-                            }
-                        }
-                        .constrainAs(image) {
-                            start.linkTo(parent.start)
-                            bottom.linkTo(parent.bottom)
-                            top.linkTo(parent.top)
+                height = Dimension.fillToConstraints
+              },
+        )
 
-                            height = Dimension.fillToConstraints
-                        },
-                )
+        Text(
+          text = trailer.name,
+          maxLines = 2,
+          overflow = TextOverflow.Ellipsis,
+          style = MaterialTheme.typography.labelLarge,
+          modifier =
+            Modifier.constrainAs(episodeTitle) {
+              linkTo(
+                start = image.end,
+                end = parent.end,
+                startMargin = 8.dp,
+                bias = 0f,
+              )
+              top.linkTo(parent.top)
 
-                Text(
-                    text = trailer.name,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier
-                        .constrainAs(episodeTitle) {
-                            linkTo(
-                                start = image.end,
-                                end = parent.end,
-                                startMargin = 8.dp,
-                                bias = 0f,
-                            )
-                            top.linkTo(parent.top)
+              width = Dimension.preferredWrapContent
+            },
+        )
+      }
 
-                            width = Dimension.preferredWrapContent
-                        },
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-        }
+      Spacer(modifier = Modifier.height(8.dp))
     }
+  }
 }
 
 @ThemePreviews
 @Composable
 private fun TrailerListContentPreview(
-    @PreviewParameter(TrailerPreviewParameterProvider::class)
-    state: TrailersState,
+  @PreviewParameter(TrailerPreviewParameterProvider::class) state: TrailersState,
 ) {
-    TvManiacTheme {
-        Surface {
-            TrailersScreen(
-                state = state,
-                onAction = {},
-            )
-        }
+  TvManiacTheme {
+    Surface {
+      TrailersScreen(
+        state = state,
+        onAction = {},
+      )
     }
+  }
 }

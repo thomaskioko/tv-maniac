@@ -9,13 +9,11 @@ import me.tatarka.inject.annotations.Provides
 
 actual interface DataStorePlatformComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideDataStore(
-        context: Application,
-        scope: AppCoroutineScope,
-    ): DataStore<Preferences> = createDataStore(
-        coroutineScope = scope.io,
-        produceFile = { context.filesDir.resolve(dataStoreFileName).absolutePath },
+  @ApplicationScope
+  @Provides
+  fun provideDataStore(context: Application, scope: AppCoroutineScope): DataStore<Preferences> =
+    createDataStore(
+      coroutineScope = scope.io,
+      produceFile = { context.filesDir.resolve(dataStoreFileName).absolutePath },
     )
 }

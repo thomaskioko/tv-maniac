@@ -16,24 +16,25 @@ import org.mobilenativefoundation.store.store5.impl.extensions.get
 
 @Inject
 class DefaultWatchProviderRepository(
-    private val store: WatchProvidersStore,
-    private val requestManagerRepository: RequestManagerRepository,
-    private val dispatcher: AppCoroutineDispatchers,
+  private val store: WatchProvidersStore,
+  private val requestManagerRepository: RequestManagerRepository,
+  private val dispatcher: AppCoroutineDispatchers,
 ) : WatchProviderRepository {
-    override suspend fun fetchWatchProviders(id: Long): List<WatchProviders> =
-        store.get(id)
+  override suspend fun fetchWatchProviders(id: Long): List<WatchProviders> = store.get(id)
 
-    override fun observeWatchProviders(id: Long): Flow<Either<Failure, List<WatchProviders>>> =
-        store.stream(
-            StoreReadRequest.cached(
-                key = id,
-                refresh = requestManagerRepository.isRequestExpired(
-                    entityId = id,
-                    requestType = WATCH_PROVIDERS.name,
-                    threshold = WATCH_PROVIDERS.duration,
-                ),
+  override fun observeWatchProviders(id: Long): Flow<Either<Failure, List<WatchProviders>>> =
+    store
+      .stream(
+        StoreReadRequest.cached(
+          key = id,
+          refresh =
+            requestManagerRepository.isRequestExpired(
+              entityId = id,
+              requestType = WATCH_PROVIDERS.name,
+              threshold = WATCH_PROVIDERS.duration,
             ),
-        )
-            .mapResult()
-            .flowOn(dispatcher.io)
+        ),
+      )
+      .mapResult()
+      .flowOn(dispatcher.io)
 }

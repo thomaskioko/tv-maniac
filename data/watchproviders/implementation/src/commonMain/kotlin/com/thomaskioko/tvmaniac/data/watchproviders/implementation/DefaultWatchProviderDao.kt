@@ -13,35 +13,30 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DefaultWatchProviderDao(
-    private val database: TvManiacDatabase,
-    private val dispatcher: AppCoroutineDispatchers,
+  private val database: TvManiacDatabase,
+  private val dispatcher: AppCoroutineDispatchers,
 ) : WatchProviderDao {
 
-    override fun upsert(entity: Watch_providers) {
-        database.watch_providersQueries.upsert(
-            id = entity.id,
-            name = entity.name,
-            logo_path = entity.logo_path,
-            tmdb_id = entity.tmdb_id,
-        )
-    }
+  override fun upsert(entity: Watch_providers) {
+    database.watch_providersQueries.upsert(
+      id = entity.id,
+      name = entity.name,
+      logo_path = entity.logo_path,
+      tmdb_id = entity.tmdb_id,
+    )
+  }
 
-    override fun fetchWatchProviders(id: Long): List<WatchProviders> =
-        database.watch_providersQueries.watchProviders(Id(id))
-            .executeAsList()
+  override fun fetchWatchProviders(id: Long): List<WatchProviders> =
+    database.watch_providersQueries.watchProviders(Id(id)).executeAsList()
 
-    override fun observeWatchProviders(id: Long): Flow<List<WatchProviders>> =
-        database.watch_providersQueries.watchProviders(Id(id))
-            .asFlow()
-            .mapToList(dispatcher.io)
+  override fun observeWatchProviders(id: Long): Flow<List<WatchProviders>> =
+    database.watch_providersQueries.watchProviders(Id(id)).asFlow().mapToList(dispatcher.io)
 
-    override fun delete(id: Long) {
-        database.watch_providersQueries.delete(Id(id))
-    }
+  override fun delete(id: Long) {
+    database.watch_providersQueries.delete(Id(id))
+  }
 
-    override fun deleteAll() {
-        database.transaction {
-            database.watch_providersQueries.deleteAll()
-        }
-    }
+  override fun deleteAll() {
+    database.transaction { database.watch_providersQueries.deleteAll() }
+  }
 }

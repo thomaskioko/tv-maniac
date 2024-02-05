@@ -6,9 +6,9 @@ import me.tatarka.inject.annotations.Provides
 
 interface RequestManagerComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideRequestManagerRepository(
-        bind: DefaultRequestManagerRepository,
-    ): RequestManagerRepository = bind
+  @ApplicationScope
+  @Provides
+  fun provideRequestManagerRepository(
+    bind: DefaultRequestManagerRepository,
+  ): RequestManagerRepository = bind
 }

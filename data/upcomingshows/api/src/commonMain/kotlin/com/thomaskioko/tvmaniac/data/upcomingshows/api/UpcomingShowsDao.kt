@@ -6,10 +6,15 @@ import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
 interface UpcomingShowsDao {
-    fun upsert(show: Upcoming_shows)
-    fun observeUpcomingShows(): Flow<List<ShowEntity>>
-    fun getPagedUpcomingShows(): PagingSource<Int, ShowEntity>
-    fun getLastPage(): Long?
-    fun deleteUpcomingShow(id: Long)
-    fun deleteUpcomingShows()
+  fun upsert(show: Upcoming_shows)
+
+  fun observeUpcomingShows(): Flow<List<ShowEntity>>
+
+  fun getPagedUpcomingShows(): PagingSource<Int, ShowEntity>
+
+  fun getLastPage(): Long?
+
+  fun deleteUpcomingShow(id: Long)
+
+  fun deleteUpcomingShows()
 }

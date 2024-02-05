@@ -7,11 +7,8 @@ import me.tatarka.inject.annotations.Provides
 
 actual interface TraktPlatformComponent {
 
-    @ApplicationScope
-    @Provides
-    fun provideTraktHttpClientEngine(
-        interceptor: TraktAuthInterceptor,
-    ): TraktHttpClientEngine = OkHttp.create {
-        addInterceptor(interceptor)
-    }
+  @ApplicationScope
+  @Provides
+  fun provideTraktHttpClientEngine(interceptor: TraktAuthInterceptor): TraktHttpClientEngine =
+    OkHttp.create { addInterceptor(interceptor) }
 }

@@ -15,65 +15,64 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DefaultTrendingShowsDao(
-    database: TvManiacDatabase,
-    private val dispatchers: AppCoroutineDispatchers,
+  database: TvManiacDatabase,
+  private val dispatchers: AppCoroutineDispatchers,
 ) : TrendingShowsDao {
 
-    private val trendingShowsQueries = database.trending_showsQueries
+  private val trendingShowsQueries = database.trending_showsQueries
 
-    override fun upsert(show: Trending_shows) {
-        trendingShowsQueries.transaction {
-            trendingShowsQueries.insert(
-                id = show.id,
-                page = show.page,
-            )
-        }
+  override fun upsert(show: Trending_shows) {
+    trendingShowsQueries.transaction {
+      trendingShowsQueries.insert(
+        id = show.id,
+        page = show.page,
+      )
     }
+  }
 
-    override fun observeTvShow(): Flow<List<ShowEntity>> =
-        trendingShowsQueries.trendingShows() { id, page, title, imageUrl, inLib ->
-            ShowEntity(
-                id = id.id,
-                page = page.id,
-                title = title,
-                posterPath = imageUrl,
-                inLibrary = inLib == 1L,
-            )
-        }
-            .asFlow()
-            .mapToList(dispatchers.io)
-
-    override fun getPagedTrendingShows(): PagingSource<Int, ShowEntity> =
-        QueryPagingSource(
-            countQuery = trendingShowsQueries.count(),
-            transacter = trendingShowsQueries,
-            context = dispatchers.io,
-            queryProvider = { limit, offset ->
-                trendingShowsQueries.pagedTrendingShows(
-                    limit = limit,
-                    offset = offset,
-                ) { id, page, title, imageUrl, inLib ->
-                    ShowEntity(
-                        id = id.id,
-                        page = page.id,
-                        title = title,
-                        posterPath = imageUrl,
-                        inLibrary = inLib == 1L,
-                    )
-                }
-            },
+  override fun observeTvShow(): Flow<List<ShowEntity>> =
+    trendingShowsQueries
+      .trendingShows { id, page, title, imageUrl, inLib ->
+        ShowEntity(
+          id = id.id,
+          page = page.id,
+          title = title,
+          posterPath = imageUrl,
+          inLibrary = inLib == 1L,
         )
+      }
+      .asFlow()
+      .mapToList(dispatchers.io)
 
-    override fun getLastPage(): Long? =
-        trendingShowsQueries.getLastPage().executeAsOneOrNull()?.MAX?.id
-
-    override fun deleteTrendingShow(id: Long) {
-        trendingShowsQueries.delete(Id(id))
-    }
-
-    override fun deleteTrendingShows() {
-        trendingShowsQueries.transaction {
-            trendingShowsQueries.deleteAll()
+  override fun getPagedTrendingShows(): PagingSource<Int, ShowEntity> =
+    QueryPagingSource(
+      countQuery = trendingShowsQueries.count(),
+      transacter = trendingShowsQueries,
+      context = dispatchers.io,
+      queryProvider = { limit, offset ->
+        trendingShowsQueries.pagedTrendingShows(
+          limit = limit,
+          offset = offset,
+        ) { id, page, title, imageUrl, inLib ->
+          ShowEntity(
+            id = id.id,
+            page = page.id,
+            title = title,
+            posterPath = imageUrl,
+            inLibrary = inLib == 1L,
+          )
         }
-    }
+      },
+    )
+
+  override fun getLastPage(): Long? =
+    trendingShowsQueries.getLastPage().executeAsOneOrNull()?.MAX?.id
+
+  override fun deleteTrendingShow(id: Long) {
+    trendingShowsQueries.delete(Id(id))
+  }
+
+  override fun deleteTrendingShows() {
+    trendingShowsQueries.transaction { trendingShowsQueries.deleteAll() }
+  }
 }
