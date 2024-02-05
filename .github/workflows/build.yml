@@ -62,7 +62,7 @@ jobs:
       - name: lintDebug
         run: ./gradlew lint
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: android-lint-report
           path: ~/**/build/reports/lint-results*.html
@@ -82,7 +82,7 @@ jobs:
       - name: spotless
         run: ./gradlew spotlessCheck
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: detekt-report
           path: ./**/build/reports/detekt/detekt.*
@@ -105,7 +105,7 @@ jobs:
       - name: Jvm Test
         run: ./gradlew jvmTest
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: unit-test-report
           path: ./**/build/reports/tests/
@@ -139,7 +139,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload build outputs (APKs)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-outputs
           path: android/app/build/outputs
