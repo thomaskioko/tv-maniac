@@ -5,14 +5,9 @@
     ":disableRateLimiting",
     ":semanticCommitsDisabled"
   ],
-  "automerge": true,
-  "platformAutomerge": true,
   "platformCommit": true,
-  "assignAutomerge": true,
-  "reviewers": ["_thomaskioko"],
   "rebaseWhen": "conflicted",
-  "prBodyTemplate": "{{{header}}}{{{table}}}{{{notes}}}{{{changelogs}}}{{{controls}}}{{{footer}}}",
-  "prBodyColumns": ["Package", "Change", "Age"],
+  "gitAuthor": "Renovate Bot <renovate-bot@github.com>",
   "packageRules": [
     {
       "matchDatasources": [
@@ -25,18 +20,10 @@
       ]
     },
     {
-      "matchPackageNames": [
-        "gradle"
-      ],
-      "prBodyNotes": "[Changelog](https://docs.gradle.org/{{{newVersion}}}/release-notes.html)"
-    },
-    {
       "matchPackagePatterns": [
         "org.jetbrains.kotlin",
         "com.google.devtools.ksp",
-        "dev.zacsweers.kctfork",
         "androidx.compose.compiler",
-        "org.jetbrains.compose.compiler"
       ],
       "excludePackagePatterns": [
         "org.jetbrains.kotlinx"
