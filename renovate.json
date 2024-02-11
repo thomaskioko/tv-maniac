@@ -23,7 +23,7 @@
       "matchPackagePatterns": [
         "org.jetbrains.kotlin",
         "com.google.devtools.ksp",
-        "androidx.compose.compiler",
+        "androidx.compose.compiler"
       ],
       "excludePackagePatterns": [
         "org.jetbrains.kotlinx"
