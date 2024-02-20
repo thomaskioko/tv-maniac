@@ -9,6 +9,7 @@ kotlin {
       dependencies {
         api(libs.coroutines.core)
 
+        implementation(projects.core.base)
         implementation(projects.core.database)
         implementation(projects.core.traktApi.api)
         implementation(projects.core.util)

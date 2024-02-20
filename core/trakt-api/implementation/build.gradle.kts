@@ -16,6 +16,7 @@ kotlin {
 
     commonMain {
       dependencies {
+        implementation(projects.core.base)
         implementation(projects.core.util)
         implementation(projects.core.traktApi.api)
         implementation(projects.core.datastore.api)

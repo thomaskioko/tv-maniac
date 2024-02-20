@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.util.inject
 
+import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import com.thomaskioko.tvmaniac.util.AndroidAppUtils
 import com.thomaskioko.tvmaniac.util.AndroidFormatterUtil
 import com.thomaskioko.tvmaniac.util.AndroidNetworkExceptionHandlerUtil
@@ -12,7 +13,6 @@ import com.thomaskioko.tvmaniac.util.YamlResourceReader
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.util.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.util.model.Configs
-import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

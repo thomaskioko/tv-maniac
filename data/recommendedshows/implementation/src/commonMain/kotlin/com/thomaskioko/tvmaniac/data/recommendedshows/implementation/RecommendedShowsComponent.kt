@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.data.recommendedshows.implementation
 
+import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsDao
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsRepository
-import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface RecommendedShowsComponent {

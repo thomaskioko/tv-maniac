@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.toprated.data.implementation
 
+import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsDao
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
-import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface TopRatedShowsComponent {

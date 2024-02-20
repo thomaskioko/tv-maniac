@@ -11,6 +11,7 @@ kotlin {
 
     commonMain {
       dependencies {
+        implementation(projects.core.base)
         implementation(projects.core.util)
         implementation(projects.core.tmdbApi.api)
 

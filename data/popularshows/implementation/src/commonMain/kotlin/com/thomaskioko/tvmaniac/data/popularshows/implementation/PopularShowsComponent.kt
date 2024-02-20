@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.data.popularshows.implementation
 
+import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsDao
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
-import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface PopularShowsComponent {

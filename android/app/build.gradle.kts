@@ -27,8 +27,10 @@ android {
 dependencies {
   implementation(projects.android.designsystem)
   implementation(projects.shared)
+  implementation(projects.core.base)
   implementation(projects.core.traktAuth.api)
   implementation(projects.core.traktAuth.implementation)
+  implementation(projects.core.util)
   implementation(projects.navigation)
 
   implementation(libs.androidx.compose.activity)

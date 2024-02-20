@@ -49,6 +49,7 @@ kotlin {
         api(projects.presentation.showDetails)
         api(projects.presentation.trailers)
 
+        api(projects.core.logger)
         api(projects.core.database)
         api(projects.core.datastore.api)
         api(projects.core.datastore.implementation)

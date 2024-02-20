@@ -10,6 +10,7 @@ kotlin {
     commonMain.dependencies {
       api(libs.ktor.serialization)
 
+      implementation(projects.core.base)
       implementation(libs.coroutines.core)
       implementation(libs.decompose.decompose)
       implementation(libs.kermit)
