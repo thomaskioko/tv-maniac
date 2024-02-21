@@ -37,6 +37,7 @@ include(
   ":core:datastore:implementation",
   ":core:datastore:testing",
   ":core:base",
+  ":core:logger",
   ":core:tmdb-api:api",
   ":core:tmdb-api:implementation",
   ":core:trakt-api:api",
