@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.util.decompose
+package com.thomaskioko.tvmaniac.core.base.extensions
 
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value

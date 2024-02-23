@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.util.scope
+package com.thomaskioko.tvmaniac.core.base.scope
 
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CancellableContinuation

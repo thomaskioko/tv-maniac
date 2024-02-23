@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.util.model
+package com.thomaskioko.tvmaniac.core.base.model
 
 import kotlinx.serialization.Serializable
 

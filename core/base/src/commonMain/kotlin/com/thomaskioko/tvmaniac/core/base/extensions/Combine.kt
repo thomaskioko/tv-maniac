@@ -1,6 +1,6 @@
 @file:Suppress("UNCHECKED_CAST")
 
-package com.thomaskioko.tvmaniac.util.extensions
+package com.thomaskioko.tvmaniac.core.base.extensions
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
