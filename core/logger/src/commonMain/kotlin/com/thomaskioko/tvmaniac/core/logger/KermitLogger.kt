@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.core.logger
 
 import co.touchlab.kermit.Logger
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class KermitLogger(
   private val isDebug: Boolean,
 ) {
