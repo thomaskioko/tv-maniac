@@ -37,6 +37,8 @@ kotlin {
     }
     commonMain {
       dependencies {
+        api(projects.core.base)
+        api(projects.core.networkUtil)
         api(projects.core.util)
         api(projects.navigation)
 

@@ -11,15 +11,12 @@ kotlin {
       api(libs.ktor.serialization)
 
       implementation(projects.core.base)
+      implementation(projects.core.logger)
       implementation(libs.coroutines.core)
-      implementation(libs.decompose.decompose)
       implementation(libs.kermit)
-      implementation(libs.napier)
       implementation(libs.kotlinx.datetime)
       implementation(libs.kotlinInject.runtime)
       implementation(libs.ktor.core)
-      implementation(libs.paging.common)
-      implementation(libs.store5)
       implementation(libs.yamlkt)
     }
 

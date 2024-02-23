@@ -8,6 +8,7 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
+        implementation(projects.core.logger)
         implementation(projects.core.tmdbApi.api)
         implementation(projects.core.util)
         implementation(projects.data.requestManager.api)

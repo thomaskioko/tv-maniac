@@ -7,7 +7,7 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        implementation(projects.core.util)
+        implementation(projects.core.base)
         implementation(projects.data.shows.api)
         implementation(projects.data.featuredshows.api)
         implementation(projects.data.popularshows.api)

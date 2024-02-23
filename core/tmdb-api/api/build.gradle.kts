@@ -8,6 +8,7 @@ kotlin {
     commonMain {
       dependencies {
         api(projects.core.database)
+        api(projects.core.networkUtil)
         api(projects.core.util)
 
         implementation(libs.ktor.serialization)

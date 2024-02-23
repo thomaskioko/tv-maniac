@@ -4,6 +4,8 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
+        implementation(projects.core.base)
+        implementation(projects.core.networkUtil)
         implementation(projects.data.trailers.api)
 
         api(libs.decompose.decompose)
