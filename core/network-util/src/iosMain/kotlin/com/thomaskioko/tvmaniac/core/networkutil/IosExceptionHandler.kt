@@ -1,22 +1,20 @@
-package com.thomaskioko.tvmaniac.util
+package com.thomaskioko.tvmaniac.core.networkutil
 
-import com.thomaskioko.tvmaniac.util.model.Configs
+import com.thomaskioko.tvmaniac.core.base.model.Configs
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.serialization.JsonConvertException
-import java.net.UnknownHostException
 import kotlinx.serialization.SerializationException
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class AndroidNetworkExceptionHandlerUtil(
+class IosExceptionHandler(
   private val configs: Configs,
 ) : NetworkExceptionHandler {
   val errorMessage = "Something went wrong"
 
   override fun resolveError(throwable: Throwable) =
     when (throwable) {
-      is UnknownHostException -> "No Internet Connection!"
       is ClientRequestException -> {
         if (configs.isDebug) {
           "Status Code ${throwable.response.status.value}: Missing Api Key"
@@ -26,7 +24,7 @@ class AndroidNetworkExceptionHandlerUtil(
       }
       is JsonConvertException,
       is SerializationException,
-      is NoTransformationFoundException -> if (configs.isDebug) throwable.message else errorMessage
+      is NoTransformationFoundException, -> if (configs.isDebug) throwable.message else errorMessage
       else -> errorMessage
     }
 }

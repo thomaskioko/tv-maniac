@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.util.model
+package com.thomaskioko.tvmaniac.core.networkutil.model
 
 /**
  * Represents a value of one of two possible types (a disjoint union). Instances of [Either] are

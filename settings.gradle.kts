@@ -45,6 +45,7 @@ include(
   ":core:trakt-auth:api",
   ":core:trakt-auth:implementation",
   ":core:trakt-auth:testing",
+  ":core:network-util",
   ":core:util",
   ":data:cast:api",
   ":data:cast:implementation",

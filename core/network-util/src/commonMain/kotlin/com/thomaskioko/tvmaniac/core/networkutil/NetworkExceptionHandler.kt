@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.util
+package com.thomaskioko.tvmaniac.core.networkutil
 
 interface NetworkExceptionHandler {
 

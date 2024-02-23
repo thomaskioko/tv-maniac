@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.util.paging
+package com.thomaskioko.tvmaniac.core.networkutil.paging
 
 import app.cash.paging.ExperimentalPagingApi
 import app.cash.paging.LoadType

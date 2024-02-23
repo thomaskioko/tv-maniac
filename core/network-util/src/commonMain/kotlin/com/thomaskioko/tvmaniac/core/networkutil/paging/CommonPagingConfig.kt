@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.util.paging
+package com.thomaskioko.tvmaniac.core.networkutil.paging
 
 import androidx.paging.PagingConfig
 
