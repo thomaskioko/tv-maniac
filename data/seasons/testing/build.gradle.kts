@@ -5,7 +5,6 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.database)
-        implementation(projects.core.util)
         api(projects.data.seasons.api)
 
         implementation(libs.coroutines.core)

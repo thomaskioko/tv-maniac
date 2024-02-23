@@ -26,7 +26,6 @@ kotlin {
     commonMain.dependencies {
       implementation(projects.core.base)
       implementation(projects.core.traktAuth.api)
-      implementation(projects.core.util)
 
       implementation(projects.presentation.discover)
       implementation(projects.presentation.library)

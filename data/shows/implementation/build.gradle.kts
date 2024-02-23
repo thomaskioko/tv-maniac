@@ -9,7 +9,6 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.database)
-        implementation(projects.core.util)
         implementation(projects.data.shows.api)
         implementation(projects.data.requestManager.api)
 

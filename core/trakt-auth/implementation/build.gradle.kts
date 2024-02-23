@@ -9,9 +9,7 @@ kotlin {
     androidMain {
       dependencies {
         implementation(projects.core.traktAuth.api)
-        implementation(projects.core.util)
 
-        implementation(projects.core.util)
         implementation(libs.androidx.activity)
         implementation(libs.androidx.browser)
         implementation(libs.androidx.core)
@@ -23,7 +21,6 @@ kotlin {
         implementation(projects.core.base)
         implementation(projects.core.logger)
         implementation(projects.core.traktAuth.api)
-        implementation(projects.core.util)
         implementation(libs.kotlinInject.runtime)
       }
     }
