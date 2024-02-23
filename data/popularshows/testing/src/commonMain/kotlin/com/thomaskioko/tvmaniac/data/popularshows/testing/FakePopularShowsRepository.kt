@@ -12,16 +12,11 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakePopularShowsRepository : PopularShowsRepository {
 
-  private var showEntityList: Channel<List<ShowEntity>> = Channel(Channel.UNLIMITED)
   private var entityListResult: Channel<Either<Failure, List<ShowEntity>>> =
     Channel(Channel.UNLIMITED)
   private var pagedList: Channel<PagingData<ShowEntity>> = Channel(Channel.UNLIMITED)
 
-  suspend fun setPopularShows(result: List<ShowEntity>) {
-    showEntityList.send(result)
-  }
-
-  suspend fun setObservePopularShows(result: Either<Failure, List<ShowEntity>>) {
+  suspend fun setPopularShows(result: Either<Failure, List<ShowEntity>>) {
     entityListResult.send(result)
   }
 
@@ -29,11 +24,9 @@ class FakePopularShowsRepository : PopularShowsRepository {
     pagedList.send(result)
   }
 
-  override suspend fun fetchPopularShows(forceRefresh: Boolean): List<ShowEntity> {
-    return showEntityList.receive()
-  }
-
-  override fun observePopularShows(): Flow<Either<Failure, List<ShowEntity>>> {
+  override suspend fun observePopularShows(
+    forceRefresh: Boolean
+  ): Flow<Either<Failure, List<ShowEntity>>> {
     return entityListResult.receiveAsFlow()
   }
 

@@ -7,9 +7,9 @@ import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
 interface UpcomingShowsRepository {
-  suspend fun fetchUpcomingShows(forceRefresh: Boolean = false): List<ShowEntity>
-
-  fun observeUpcomingShows(): Flow<Either<Failure, List<ShowEntity>>>
+  suspend fun observeUpcomingShows(
+    forceRefresh: Boolean = false
+  ): Flow<Either<Failure, List<ShowEntity>>>
 
   fun getPagedUpcomingShows(): Flow<PagingData<ShowEntity>>
 }

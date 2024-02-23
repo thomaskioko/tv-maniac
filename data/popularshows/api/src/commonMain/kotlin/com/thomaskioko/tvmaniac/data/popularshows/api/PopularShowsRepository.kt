@@ -7,9 +7,9 @@ import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
 interface PopularShowsRepository {
-  suspend fun fetchPopularShows(forceRefresh: Boolean = false): List<ShowEntity>
-
-  fun observePopularShows(): Flow<Either<Failure, List<ShowEntity>>>
+  suspend fun observePopularShows(
+    forceRefresh: Boolean = false
+  ): Flow<Either<Failure, List<ShowEntity>>>
 
   fun getPagedPopularShows(): Flow<PagingData<ShowEntity>>
 }
