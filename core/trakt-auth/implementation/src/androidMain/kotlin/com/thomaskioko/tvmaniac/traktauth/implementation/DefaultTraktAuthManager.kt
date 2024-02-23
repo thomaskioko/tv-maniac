@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
+import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.util.KermitLogger
 import me.tatarka.inject.annotations.Inject
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationService

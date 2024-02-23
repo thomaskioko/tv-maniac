@@ -4,7 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.core.net.toUri
 import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
-import com.thomaskioko.tvmaniac.util.model.Configs
+import com.thomaskioko.tvmaniac.core.base.model.Configs
 import me.tatarka.inject.annotations.Provides
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService

@@ -11,6 +11,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenterFactory
@@ -22,7 +23,6 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenterPre
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenterFactory
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
-import com.thomaskioko.tvmaniac.util.decompose.asValue
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 import me.tatarka.inject.annotations.Inject

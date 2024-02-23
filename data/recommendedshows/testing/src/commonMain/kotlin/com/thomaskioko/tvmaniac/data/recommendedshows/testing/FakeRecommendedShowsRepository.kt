@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.data.recommendedshows.testing
 
 import com.thomaskioko.tvmaniac.core.db.RecommendedShows
+import com.thomaskioko.tvmaniac.core.networkutil.model.Either
+import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsRepository
-import com.thomaskioko.tvmaniac.util.model.Either
-import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow

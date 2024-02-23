@@ -3,6 +3,13 @@ package com.thomaskioko.tvmaniac.discover.implementation
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import app.cash.paging.Pager
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.filterForResult
+import com.thomaskioko.tvmaniac.core.networkutil.mapResult
+import com.thomaskioko.tvmaniac.core.networkutil.model.Either
+import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.paging.CommonPagingConfig
+import com.thomaskioko.tvmaniac.core.networkutil.paging.PaginatedRemoteMediator
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsDao
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsParams
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
@@ -11,13 +18,6 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRENDING_S
 import com.thomaskioko.tvmaniac.shows.api.DEFAULT_DAY_TIME_WINDOW
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
-import com.thomaskioko.tvmaniac.util.extensions.filterForResult
-import com.thomaskioko.tvmaniac.util.extensions.mapResult
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.util.model.Either
-import com.thomaskioko.tvmaniac.util.model.Failure
-import com.thomaskioko.tvmaniac.util.paging.CommonPagingConfig
-import com.thomaskioko.tvmaniac.util.paging.PaginatedRemoteMediator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
