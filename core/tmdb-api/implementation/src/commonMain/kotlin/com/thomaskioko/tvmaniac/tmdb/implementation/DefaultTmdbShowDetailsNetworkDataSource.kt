@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
+import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.model.safeRequest
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowDetailsResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import com.thomaskioko.tvmaniac.tmdb.api.model.WatchProvidersResult
-import com.thomaskioko.tvmaniac.util.model.ApiResponse
-import com.thomaskioko.tvmaniac.util.model.safeRequest
 import io.ktor.client.request.parameter
 import io.ktor.http.HttpMethod
 import io.ktor.http.path

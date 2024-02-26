@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsRepository
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
@@ -9,8 +11,6 @@ import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
-import com.thomaskioko.tvmaniac.util.decompose.asValue
-import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,7 +52,7 @@ class DiscoverShowsPresenter(
     _state.asValue(initialValue = _state.value, lifecycle = lifecycle)
 
   init {
-    fetchContent()
+    coroutineScope.launch { observeShowData() }
   }
 
   fun dispatch(action: DiscoverShowAction) {
@@ -65,12 +65,12 @@ class DiscoverShowsPresenter(
       RefreshData ->
         coroutineScope.launch {
           _state.update { (it as? DataLoaded)?.copy(isRefreshing = true) ?: it }
-          fetchShowData(true)
+          observeShowData(true)
         }
       ReloadData ->
         coroutineScope.launch {
           _state.update { Loading }
-          fetchShowData(true)
+          observeShowData(true)
         }
       SnackBarDismissed ->
         coroutineScope.launch {
@@ -84,64 +84,39 @@ class DiscoverShowsPresenter(
     }
   }
 
-  private fun fetchContent() {
-    coroutineScope.launch {
-      fetchShowData()
-      observeShowData()
-    }
+  private fun isEmpty(vararg responses: List<ShowEntity>?): Boolean {
+    return responses.all { it.isNullOrEmpty() }
   }
 
-  private suspend fun fetchShowData(refresh: Boolean = false) {
-    val featuredResponse = featuredShowsRepository.fetchFeaturedShows(forceRefresh = refresh)
-    val topRatedResponse = topRatedShowsRepository.fetchTopRatedShows(forceRefresh = refresh)
-    val popularResponse = popularShowsRepository.fetchPopularShows(forceRefresh = refresh)
-    val upcomingResponse = upcomingShowsRepository.fetchUpcomingShows(forceRefresh = refresh)
-    val trendingShows = trendingShowsRepository.fetchTrendingShows(forceRefresh = refresh)
-
-    if (
-      isEmpty(
-        featuredResponse,
-        topRatedResponse,
-        popularResponse,
-        upcomingResponse,
-        trendingShows,
-      )
-    ) {
-      return _state.update { EmptyState }
-    }
-    _state.update {
-      DataLoaded(
-        topRatedShows = topRatedResponse.toShowList(),
-        popularShows = popularResponse.toShowList(),
-        upcomingShows = upcomingResponse.toShowList(),
-        featuredShows = featuredResponse.toShowList(),
-        trendingToday = trendingShows.toShowList(),
-        isRefreshing = false,
-      )
-    }
-  }
-
-  private fun isEmpty(vararg responses: List<ShowEntity>): Boolean {
-    return responses.all { it.isEmpty() }
-  }
-
-  private suspend fun observeShowData() {
+  private suspend fun observeShowData(refresh: Boolean = false) {
     combine(
-        featuredShowsRepository.observeFeaturedShows(),
-        topRatedShowsRepository.observeTopRatedShows(),
-        popularShowsRepository.observePopularShows(),
-        upcomingShowsRepository.observeUpcomingShows(),
-        trendingShowsRepository.observeTrendingShows(),
+        featuredShowsRepository.observeFeaturedShows(forceRefresh = refresh),
+        topRatedShowsRepository.observeTopRatedShows(forceRefresh = refresh),
+        popularShowsRepository.observePopularShows(forceRefresh = refresh),
+        upcomingShowsRepository.observeUpcomingShows(forceRefresh = refresh),
+        trendingShowsRepository.observeTrendingShows(forceRefresh = refresh),
       ) { featured, topRated, popular, upcomingShows, trendingToday ->
-        _state.update {
-          DataLoaded(
-            featuredShows = featured.getOrNull().toShowList(),
-            topRatedShows = topRated.getOrNull().toShowList(),
-            popularShows = popular.getOrNull().toShowList(),
-            upcomingShows = upcomingShows.getOrNull().toShowList(),
-            trendingToday = trendingToday.getOrNull().toShowList(),
-            errorMessage = getErrorMessage(topRated, popular, upcomingShows, featured),
+        if (
+          isEmpty(
+            featured.getOrNull(),
+            featured.getOrNull(),
+            featured.getOrNull(),
+            featured.getOrNull(),
+            featured.getOrNull(),
           )
+        ) {
+          _state.update { EmptyState }
+        } else {
+          _state.update {
+            DataLoaded(
+              featuredShows = featured.getOrNull().toShowList(),
+              topRatedShows = topRated.getOrNull().toShowList(),
+              popularShows = popular.getOrNull().toShowList(),
+              upcomingShows = upcomingShows.getOrNull().toShowList(),
+              trendingToday = trendingToday.getOrNull().toShowList(),
+              errorMessage = getErrorMessage(topRated, popular, upcomingShows, featured),
+            )
+          }
         }
       }
       .onStart { Loading }

@@ -5,7 +5,7 @@ kotlin {
     commonMain {
       dependencies {
         api(projects.core.database)
-        api(projects.core.util)
+        api(projects.core.networkUtil)
 
         api(libs.coroutines.core)
       }

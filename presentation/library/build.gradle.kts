@@ -4,6 +4,7 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
+        implementation(projects.core.base)
         implementation(projects.data.library.api)
 
         api(libs.decompose.decompose)

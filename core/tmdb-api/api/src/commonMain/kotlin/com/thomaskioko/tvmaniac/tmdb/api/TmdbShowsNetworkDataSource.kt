@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.tmdb.api
 
+import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
-import com.thomaskioko.tvmaniac.util.model.ApiResponse
 
 const val DEFAULT_API_PAGE: Long = 1
 const val DEFAULT_SORT_ORDER: String = "popularity.desc"

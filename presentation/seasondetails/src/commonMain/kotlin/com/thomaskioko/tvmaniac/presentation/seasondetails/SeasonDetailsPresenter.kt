@@ -2,13 +2,13 @@ package com.thomaskioko.tvmaniac.presentation.seasondetails
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.data.cast.api.CastRepository
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsContent.Companion.DEFAULT_SEASON_STATE
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
-import com.thomaskioko.tvmaniac.util.decompose.asValue
-import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.seasons.implementation
 
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.ShowSeasons
+import com.thomaskioko.tvmaniac.core.networkutil.model.Either
+import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.util.model.Either
-import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn

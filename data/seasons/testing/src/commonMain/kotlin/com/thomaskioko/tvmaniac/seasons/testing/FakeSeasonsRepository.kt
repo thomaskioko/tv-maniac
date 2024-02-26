@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.seasons.testing
 
 import com.thomaskioko.tvmaniac.core.db.ShowSeasons
+import com.thomaskioko.tvmaniac.core.networkutil.model.Either
+import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
-import com.thomaskioko.tvmaniac.util.model.Either
-import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow

@@ -4,7 +4,7 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        implementation(projects.core.util)
+        implementation(projects.core.base)
         implementation(projects.data.popularshows.api)
         implementation(projects.data.topratedshows.api)
         implementation(projects.data.trendingshows.api)

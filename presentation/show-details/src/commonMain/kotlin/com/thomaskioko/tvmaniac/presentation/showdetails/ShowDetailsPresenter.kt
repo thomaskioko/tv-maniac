@@ -2,6 +2,9 @@ package com.thomaskioko.tvmaniac.presentation.showdetails
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
+import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.db.RecommendedShows
 import com.thomaskioko.tvmaniac.core.db.ShowCast
 import com.thomaskioko.tvmaniac.core.db.ShowSeasons
@@ -9,6 +12,8 @@ import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.db.TvshowDetails
 import com.thomaskioko.tvmaniac.core.db.WatchProviders
+import com.thomaskioko.tvmaniac.core.networkutil.model.Either
+import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.data.cast.api.CastRepository
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
@@ -18,11 +23,6 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetails
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
-import com.thomaskioko.tvmaniac.util.decompose.asValue
-import com.thomaskioko.tvmaniac.util.decompose.coroutineScope
-import com.thomaskioko.tvmaniac.util.extensions.combine
-import com.thomaskioko.tvmaniac.util.model.Either
-import com.thomaskioko.tvmaniac.util.model.Failure
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

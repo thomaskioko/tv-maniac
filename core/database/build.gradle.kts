@@ -11,7 +11,7 @@ kotlin {
 
     commonMain {
       dependencies {
-        implementation(projects.core.util)
+        implementation(projects.core.base)
         implementation(libs.sqldelight.primitive.adapters)
         implementation(libs.kotlinInject.runtime)
         implementation(libs.kotlinx.datetime)

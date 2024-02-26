@@ -4,12 +4,12 @@ import com.thomaskioko.trakt.service.implementation.TraktListRemoteDataSourceImp
 import com.thomaskioko.trakt.service.implementation.TraktTokenRemoteDataSourceImpl
 import com.thomaskioko.trakt.service.implementation.TraktUserRemoteDataSourceImpl
 import com.thomaskioko.trakt.service.implementation.traktHttpClient
+import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
+import com.thomaskioko.tvmaniac.core.base.model.Configs
+import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktTokenRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
-import com.thomaskioko.tvmaniac.util.KermitLogger
-import com.thomaskioko.tvmaniac.util.model.Configs
-import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import io.ktor.client.HttpClient
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Provides

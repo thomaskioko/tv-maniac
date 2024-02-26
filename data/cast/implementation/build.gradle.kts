@@ -7,8 +7,8 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
+        implementation(projects.core.base)
         implementation(projects.core.database)
-        implementation(projects.core.util)
         implementation(projects.data.cast.api)
 
         implementation(libs.kotlinInject.runtime)

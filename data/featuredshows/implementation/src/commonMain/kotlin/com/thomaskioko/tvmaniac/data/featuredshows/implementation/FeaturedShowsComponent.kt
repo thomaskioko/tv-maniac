@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.data.featuredshows.implementation
 
+import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsDao
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsRepository
-import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface FeaturedShowsComponent {

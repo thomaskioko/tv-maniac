@@ -11,7 +11,8 @@ kotlin {
 
     commonMain {
       dependencies {
-        implementation(projects.core.util)
+        implementation(projects.core.base)
+        implementation(projects.core.logger)
         implementation(projects.core.tmdbApi.api)
 
         implementation(libs.kotlinInject.runtime)

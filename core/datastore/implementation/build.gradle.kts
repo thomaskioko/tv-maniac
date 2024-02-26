@@ -8,8 +8,8 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
+        implementation(projects.core.base)
         implementation(projects.core.datastore.api)
-        implementation(projects.core.util)
 
         api(libs.androidx.datastore.preference)
 

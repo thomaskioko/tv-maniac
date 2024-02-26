@@ -6,7 +6,6 @@ kotlin {
       dependencies {
         api(projects.data.topratedshows.api)
         implementation(projects.core.database)
-        implementation(projects.core.util)
 
         implementation(libs.coroutines.core)
       }

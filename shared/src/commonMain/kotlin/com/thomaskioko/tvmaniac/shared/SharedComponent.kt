@@ -1,6 +1,9 @@
 package com.thomaskioko.tvmaniac.shared
 
 import com.thomaskioko.trakt.service.implementation.inject.TraktComponent
+import com.thomaskioko.tvmaniac.core.base.di.BaseComponent
+import com.thomaskioko.tvmaniac.core.logger.inject.LoggingComponent
+import com.thomaskioko.tvmaniac.core.networkutil.di.NetworkUtilPlatformComponent
 import com.thomaskioko.tvmaniac.data.cast.implementation.CastComponent
 import com.thomaskioko.tvmaniac.data.featuredshows.implementation.FeaturedShowsComponent
 import com.thomaskioko.tvmaniac.data.popularshows.implementation.PopularShowsComponent
@@ -21,11 +24,11 @@ import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbComponent
 import com.thomaskioko.tvmaniac.toprated.data.implementation.TopRatedShowsComponent
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthenticationComponent
-import com.thomaskioko.tvmaniac.util.inject.LoggingComponent
 import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
 import com.thomaskioko.tvmaniac.watchlist.implementation.LibraryComponent
 
 abstract class SharedComponent :
+  BaseComponent,
   CastComponent,
   DataStoreComponent,
   DatabaseComponent,
@@ -34,6 +37,7 @@ abstract class SharedComponent :
   FeaturedShowsComponent,
   LibraryComponent,
   LoggingComponent,
+  NetworkUtilPlatformComponent,
   PopularShowsComponent,
   RequestManagerComponent,
   RecommendedShowsComponent,

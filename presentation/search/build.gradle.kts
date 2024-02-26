@@ -4,10 +4,11 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        implementation(projects.core.util)
+        implementation(projects.core.base)
 
         api(libs.decompose.decompose)
         api(libs.essenty.lifecycle)
+        implementation(libs.coroutines.core)
         implementation(libs.kotlinInject.runtime)
       }
     }

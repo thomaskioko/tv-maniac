@@ -3,6 +3,12 @@ package com.thomaskioko.tvmaniac.data.upcomingshows.implementation
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import app.cash.paging.Pager
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.mapResult
+import com.thomaskioko.tvmaniac.core.networkutil.model.Either
+import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
+import com.thomaskioko.tvmaniac.core.networkutil.paging.CommonPagingConfig.pagingConfig
+import com.thomaskioko.tvmaniac.core.networkutil.paging.PaginatedRemoteMediator
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -11,17 +17,9 @@ import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_SORT_ORDER
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
-import com.thomaskioko.tvmaniac.util.extensions.filterForResult
-import com.thomaskioko.tvmaniac.util.extensions.mapResult
-import com.thomaskioko.tvmaniac.util.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.util.model.Either
-import com.thomaskioko.tvmaniac.util.model.Failure
-import com.thomaskioko.tvmaniac.util.paging.CommonPagingConfig.pagingConfig
-import com.thomaskioko.tvmaniac.util.paging.PaginatedRemoteMediator
 import com.thomaskioko.tvmaniac.util.startOfDay
 import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.ExperimentalStoreApi
@@ -47,29 +45,26 @@ class DefaultUpcomingShowsRepository(
       page = DEFAULT_API_PAGE,
     )
 
-  override suspend fun fetchUpcomingShows(forceRefresh: Boolean): List<ShowEntity> {
-    return if (forceRefresh) {
-      store.stream(fresh(key = params)).filterForResult().first().dataOrNull() ?: getShows(params)
-    } else {
-      getShows(params)
-    }
-  }
-
-  override fun observeUpcomingShows(): Flow<Either<Failure, List<ShowEntity>>> =
-    store
+  override suspend fun observeUpcomingShows(
+    forceRefresh: Boolean
+  ): Flow<Either<Failure, List<ShowEntity>>> {
+    val refresh =
+      forceRefresh ||
+        requestManagerRepository.isRequestExpired(
+          entityId = params.page,
+          requestType = UPCOMING_SHOWS.name,
+          threshold = UPCOMING_SHOWS.duration,
+        )
+    return store
       .stream(
         StoreReadRequest.cached(
           key = params,
-          refresh =
-            requestManagerRepository.isRequestExpired(
-              entityId = params.page,
-              requestType = UPCOMING_SHOWS.name,
-              threshold = UPCOMING_SHOWS.duration,
-            ),
+          refresh = refresh,
         ),
       )
-      .mapResult()
+      .mapResult(getShows(params))
       .flowOn(dispatchers.io)
+  }
 
   @OptIn(ExperimentalPagingApi::class, ExperimentalStoreApi::class)
   override fun getPagedUpcomingShows(): Flow<PagingData<ShowEntity>> {
