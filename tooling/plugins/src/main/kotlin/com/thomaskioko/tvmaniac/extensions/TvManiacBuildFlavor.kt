@@ -17,7 +17,7 @@ enum class TvManiacFlavor(val dimension: FlavorDimension, val applicationIdSuffi
 }
 
 fun Project.configureFlavors(
-    commonExtension: CommonExtension<*, *, *, *, *>,
+    commonExtension: CommonExtension<*, *, *, *, *, *>,
     flavorConfigurationBlock: ProductFlavor.(flavor: TvManiacFlavor) -> Unit = {}
 ) {
     commonExtension.apply {

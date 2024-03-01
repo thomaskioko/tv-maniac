@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
 
 internal fun Project.configureAndroidCompose(
-    commonExtension: CommonExtension<*, *, *, *, *>,
+    commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
     commonExtension.apply {
 
@@ -43,6 +43,6 @@ internal fun Project.configureAndroidCompose(
     }
 }
 
-fun CommonExtension<*, *, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
+fun CommonExtension<*, *, *, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
     (this as ExtensionAware).extensions.configure("kotlinOptions", block)
 }
