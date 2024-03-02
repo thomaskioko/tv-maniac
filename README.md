@@ -30,6 +30,12 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 ### Opening iOS Project
 - Navigate to the ios directory & open `.xcodeproj`
 
+## Architecture Overview
+- [ ] TODO: Add detail architecture
+
+![TvManiac Architecture](https://github.com/thomaskioko/tv-maniac/assets/841885/a5a9bfc9-6caf-4b4a-a8be-c8b0d7331543)
+
+
 ### Android Screenshots
 
 <table>
@@ -91,8 +97,6 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
   </td>
 </tr>
 </table>
-
-
 
 ## Libraries Used
 ### Android
