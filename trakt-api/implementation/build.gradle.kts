@@ -18,8 +18,8 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.logger)
-        implementation(projects.core.traktApi.api)
-        implementation(projects.core.datastore.api)
+        implementation(projects.datastore.api)
+        implementation(projects.traktApi.api)
 
         implementation(libs.ktor.core)
         implementation(libs.ktor.logging)
@@ -32,7 +32,7 @@ kotlin {
 
     iosMain {
       dependencies {
-        implementation(projects.core.traktApi.api)
+        implementation(projects.traktApi.api)
 
         implementation(libs.ktor.darwin)
       }
