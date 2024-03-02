@@ -11,29 +11,30 @@ TvManiac
 ## 🚧 Under Heavy Development 🚧
 This is my playground for learning Kotlin Multiplatform. With that said, I'm sure it's filled with bugs crawling everywhere, and I'm probably doing a couple of things wrong. So a lot is changing, but that shouldn't stop you from checking it out.
 
-| Android | iOS | 
-| -- | -- | 
+| Android | iOS |
+| -- | -- |
 | <video src="https://github.com/thomaskioko/tv-maniac/assets/841885/a9991256-27a8-4a99-87f3-0f071c7cbc68" width=350/> | <video src="https://github.com/thomaskioko/tv-maniac/assets/841885/45fa6cd7-6bca-4baa-ad71-93339986ef12" width=350/> |
+
+
+> [!IMPORTANT]
+>  To fetch data, you will need to [create a TMDB API app](https://www.themoviedb.org/settings/api) and generate an API key if you don't have one.  Once you have your keys, add them to `config.yaml`. If the file is unavailable, navigate to the root dir and create a symlink.
+> `$ ln -s core/util/src/commonMain/resources/config.yaml config.yaml`, then add the API keys.
 
 ## 🖥 Project Setup & Environment
 
 #### Requirements
 - [Zulu Java 17](https://www.azul.com/downloads/?package=jdk#zulu)
 - You require the latest [Android Studio](https://developer.android.com/studio/preview) release to be able to build the app.
-- Install KMP Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/multiplatform-mobile-setup.html).
-
-### API Keys
-To use the TMDB API, you'll need to [create a new API app](https://www.themoviedb.org/settings/api) and generate an API key if you don't have one.
-Once you have your keys, add them to `config.yaml`. If the file is unavailable, navigate to the root dir and create a symlink.
-
-`ln -s core/util/src/commonMain/resources/config.yaml config.yaml`
-
-```
-tmdbApiKey: "PUT_API_KEY_HERE"
-```
+- Install KMM Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/multiplatform-mobile-setup.html).
 
 ### Opening iOS Project
 - Navigate to the ios directory & open `.xcodeproj`
+
+## Architecture Overview
+- [ ] TODO: Add detail architecture
+
+![TvManiac Architecture](https://github.com/thomaskioko/tv-maniac/assets/841885/a5a9bfc9-6caf-4b4a-a8be-c8b0d7331543)
+
 
 ### Android Screenshots
 
@@ -97,8 +98,6 @@ tmdbApiKey: "PUT_API_KEY_HERE"
 </tr>
 </table>
 
-
-
 ## Libraries Used
 ### Android
 * [Accompanist](https://github.com/google/accompanist)
@@ -108,7 +107,7 @@ tmdbApiKey: "PUT_API_KEY_HERE"
 * [AppAuth](https://openid.github.io/AppAuth-Android/) - AppAuth for Android is a client SDK for communicating with OAuth 2.0 and OpenID Connect providers.
 * [Compose Lints](https://slackhq.github.io/compose-lints/) - Custom lint checks for Jetpack Compose.
 * [Jetpack Compose](https://developer.android.com/jetpack/compose)
-    * [Coil](https://coil-kt.github.io/coil/compose/) - Image loading
+  * [Coil](https://coil-kt.github.io/coil/compose/) - Image loading
 * [KenBurnsView](https://github.com/flavioarfaria/KenBurnsView) - Immersive image.
 * [Leakcanary](https://github.com/square/leakcanary) - Memory leak detection.
 
@@ -124,7 +123,7 @@ tmdbApiKey: "PUT_API_KEY_HERE"
 * [Kotest Assertions](https://kotest.io/docs/assertions/assertions.html) - Testing
 * [Multiplatform Paging](https://github.com/cashapp/multiplatform-paging) A library that adds additional Kotlin/Multiplatform targets to AndroidX Paging, and provides UI components to use Paging on iOS.
 * [SQLDelight](https://github.com/cashapp/sqldelight/) - Local storage
-    - [Coroutines Extensions](https://cashapp.github.io/sqldelight/js_sqlite/coroutines/) Consume queries as Flow
+  - [Coroutines Extensions](https://cashapp.github.io/sqldelight/js_sqlite/coroutines/) Consume queries as Flow
 
 
 ### iOS
@@ -159,6 +158,7 @@ iOS
 - [x] Implement trakt auth & sign in
 - [x] Update show detail UI
 - [x] Add Seasons Detail UI
+- [ ] Implement Paging
 - [ ] Add Episode detail screen
 - [ ] Add Watchlist
 - [ ] Implement Search

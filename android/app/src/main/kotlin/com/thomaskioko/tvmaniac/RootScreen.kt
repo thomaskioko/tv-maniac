@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.navigation
+package com.thomaskioko.tvmaniac
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -32,17 +32,15 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.discover.DiscoverScreen
 import com.thomaskioko.tvmaniac.feature.moreshows.MoreShowsScreen
 import com.thomaskioko.tvmaniac.library.LibraryScreen
+import com.thomaskioko.tvmaniac.navigation.RootNavigationPresenter
 import com.thomaskioko.tvmaniac.navigation.RootNavigationPresenter.Config
+import com.thomaskioko.tvmaniac.navigation.Screen
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.search.SearchScreen
 import com.thomaskioko.tvmaniac.seasondetails.SeasonDetailsScreen
 import com.thomaskioko.tvmaniac.settings.SettingsScreen
 import com.thomaskioko.tvmaniac.videoplayer.TrailersScreen
-import me.tatarka.inject.annotations.Inject
 
-typealias RootScreen = @Composable () -> Unit
-
-@Inject
 @Composable
 fun RootScreen(presenter: RootNavigationPresenter, modifier: Modifier = Modifier) {
   Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {

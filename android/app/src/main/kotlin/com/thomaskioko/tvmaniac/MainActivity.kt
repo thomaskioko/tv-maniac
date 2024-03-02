@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
         onDispose {}
       }
 
-      TvManiacTheme(darkTheme = darkTheme) { component.rootScreen() }
+      TvManiacTheme(darkTheme = darkTheme) { RootScreen(presenter = component.presenter) }
     }
   }
 }

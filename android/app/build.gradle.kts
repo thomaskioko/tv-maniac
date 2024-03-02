@@ -26,6 +26,14 @@ android {
 
 dependencies {
   implementation(projects.android.designsystem)
+  implementation(projects.android.feature.discover)
+  implementation(projects.android.feature.library)
+  implementation(projects.android.feature.moreShows)
+  implementation(projects.android.feature.search)
+  implementation(projects.android.feature.seasonDetails)
+  implementation(projects.android.feature.settings)
+  implementation(projects.android.feature.showDetails)
+  implementation(projects.android.feature.trailers)
   implementation(projects.shared)
   implementation(projects.core.base)
   implementation(projects.core.traktAuth.api)
