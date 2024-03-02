@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.inject
 
-import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
+import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import io.ktor.client.engine.darwin.Darwin
 import me.tatarka.inject.annotations.Provides
 
