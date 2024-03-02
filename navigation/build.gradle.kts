@@ -7,7 +7,7 @@ kotlin {
   sourceSets {
     commonMain.dependencies {
       implementation(projects.core.base)
-      implementation(projects.core.traktAuth.api)
+      implementation(projects.traktAuth.api)
 
       implementation(projects.presentation.discover)
       implementation(projects.presentation.library)
@@ -26,8 +26,8 @@ kotlin {
 
     commonTest.dependencies {
       implementation(kotlin("test"))
-      implementation(projects.core.datastore.testing)
-      implementation(projects.core.traktAuth.testing)
+      implementation(projects.datastore.testing)
+      implementation(projects.traktAuth.testing)
       implementation(projects.data.cast.testing)
       implementation(projects.data.featuredshows.testing)
       implementation(projects.data.library.testing)

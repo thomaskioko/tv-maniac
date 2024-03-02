@@ -8,8 +8,8 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.core.database)
-        implementation(projects.core.tmdbApi.api)
+        implementation(projects.database)
+        implementation(projects.tmdbApi.api)
         implementation(projects.core.util)
         implementation(projects.data.watchproviders.api)
         implementation(projects.data.requestManager.api)

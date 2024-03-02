@@ -36,9 +36,9 @@ dependencies {
   implementation(projects.android.feature.trailers)
   implementation(projects.shared)
   implementation(projects.core.base)
-  implementation(projects.core.traktAuth.api)
-  implementation(projects.core.traktAuth.implementation)
   implementation(projects.core.util)
+  implementation(projects.traktAuth.api)
+  implementation(projects.traktAuth.implementation)
   implementation(projects.navigation)
 
   implementation(libs.androidx.compose.activity)

@@ -8,11 +8,11 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.core.tmdbApi.api)
         implementation(projects.core.util)
         implementation(projects.data.requestManager.api)
         implementation(projects.data.shows.api)
         implementation(projects.data.trailers.api)
+        implementation(projects.tmdbApi.api)
 
         implementation(libs.kotlinInject.runtime)
         implementation(libs.sqldelight.extensions)

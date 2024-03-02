@@ -9,11 +9,11 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.logger)
-        implementation(projects.core.tmdbApi.api)
         implementation(projects.core.util)
-        implementation(projects.data.requestManager.api)
         implementation(projects.data.recommendedshows.api)
+        implementation(projects.data.requestManager.api)
         implementation(projects.data.shows.api)
+        implementation(projects.tmdbApi.api)
 
         implementation(libs.kotlinInject.runtime)
         implementation(libs.sqldelight.extensions)

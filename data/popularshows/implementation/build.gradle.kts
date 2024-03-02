@@ -9,11 +9,11 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.networkUtil)
-        implementation(projects.core.database)
-        implementation(projects.data.popularshows.api)
-        implementation(projects.core.tmdbApi.api)
         implementation(projects.core.util)
+        implementation(projects.data.popularshows.api)
         implementation(projects.data.requestManager.api)
+        implementation(projects.database)
+        implementation(projects.tmdbApi.api)
 
         api(libs.coroutines.core)
 

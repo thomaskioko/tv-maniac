@@ -11,8 +11,8 @@ kotlin {
 
         implementation(projects.core.base)
         implementation(projects.core.networkUtil)
-        implementation(projects.core.database)
-        implementation(projects.core.traktApi.api)
+        implementation(projects.database)
+        implementation(projects.traktApi.api)
         implementation(projects.core.util)
         implementation(projects.data.library.api)
 

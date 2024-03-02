@@ -5,7 +5,7 @@ kotlin {
     commonMain {
       dependencies {
         api(projects.data.trendingshows.api)
-        implementation(projects.core.database)
+        implementation(projects.database)
 
         implementation(libs.coroutines.core)
       }
