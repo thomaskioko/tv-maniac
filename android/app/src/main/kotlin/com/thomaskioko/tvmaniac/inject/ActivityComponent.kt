@@ -5,7 +5,6 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.defaultComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.RootNavigationPresenter
-import com.thomaskioko.tvmaniac.navigation.RootScreen
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthManagerComponent
 import me.tatarka.inject.annotations.Component
@@ -22,7 +21,6 @@ abstract class ActivityComponent(
 ) : TraktAuthManagerComponent {
   abstract val traktAuthManager: TraktAuthManager
   abstract val presenter: RootNavigationPresenter
-  abstract val rootScreen: RootScreen
 
   companion object
 }
