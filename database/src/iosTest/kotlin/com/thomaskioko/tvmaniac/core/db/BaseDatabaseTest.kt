@@ -13,7 +13,9 @@ actual fun inMemorySqlDriver(): SqlDriver =
       inMemory = true,
       create = { connection -> wrapConnection(connection) { TvManiacDatabase.Schema.create(it) } },
       upgrade = { connection, oldVersion, newVersion ->
-        wrapConnection(connection) { TvManiacDatabase.Schema.migrate(it, oldVersion, newVersion) }
+        wrapConnection(connection) {
+          TvManiacDatabase.Schema.migrate(it, oldVersion.toLong(), newVersion.toLong())
+        }
       },
     ),
   )
