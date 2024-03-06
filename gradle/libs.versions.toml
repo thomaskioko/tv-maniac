@@ -1,7 +1,7 @@
 [versions]
 agp = "8.3.0"
 androidx-activity = "1.8.2"
-androidx-browser = "1.7.0"
+androidx-browser = "1.8.0"
 androidx-core = "1.12.0"
 androidx-core-splashscreen = "1.0.1"
 androidx-datastore = "1.1.0-beta01"
