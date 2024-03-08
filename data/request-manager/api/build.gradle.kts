@@ -4,7 +4,7 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        api(projects.core.database)
+        api(projects.database)
         api(libs.kotlinx.datetime)
       }
     }

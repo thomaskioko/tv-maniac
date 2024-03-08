@@ -4,7 +4,7 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        implementation(projects.core.database)
+        implementation(projects.database)
         implementation(projects.data.episodes.api)
 
         implementation(libs.coroutines.core)

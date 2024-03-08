@@ -137,7 +137,7 @@ internal class ShowDetailsPresenterTest {
 
   @Test
   fun error_loading_seasons_emits_expected_result() = runTest {
-    val errorMessage = "Something went wrong"
+    //    val errorMessage = "Something went wrong"
     similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
     trailerRepository.setTrailerResult(Either.Right(trailers))
 

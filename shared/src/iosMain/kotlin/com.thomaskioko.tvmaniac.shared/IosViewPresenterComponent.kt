@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.shared
 
 import com.arkivanov.decompose.ComponentContext
+import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.RootNavigationPresenter
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthManagerComponent
-import com.thomaskioko.tvmaniac.util.scope.ActivityScope
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 

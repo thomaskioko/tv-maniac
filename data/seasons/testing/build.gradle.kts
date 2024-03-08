@@ -4,8 +4,9 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        implementation(projects.core.database)
         api(projects.data.seasons.api)
+
+        implementation(projects.database)
 
         implementation(libs.coroutines.core)
       }

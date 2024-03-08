@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.shared
 
-import com.thomaskioko.tvmaniac.util.scope.ApplicationScope
+import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import me.tatarka.inject.annotations.Component
 
 @Component

@@ -5,8 +5,7 @@ android { namespace = "com.thomaskioko.tvmaniac.settings" }
 dependencies {
   api(projects.presentation.settings)
 
-  // TODO:: Get rid of core and data dependencies.
-  implementation(projects.core.datastore.api)
+  implementation(projects.datastore.api)
   implementation(projects.data.shows.api)
 
   implementation(projects.android.designsystem)
