@@ -280,6 +280,8 @@ private fun DiscoverContent(
       state = pullRefreshState,
       modifier = Modifier.align(Alignment.TopCenter),
       scale = true,
+      backgroundColor = MaterialTheme.colorScheme.background,
+      contentColor = MaterialTheme.colorScheme.secondary
     )
 
     SnackbarHost(hostState = snackBarHostState)
