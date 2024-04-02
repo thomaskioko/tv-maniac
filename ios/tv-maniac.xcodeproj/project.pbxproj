@@ -226,7 +226,6 @@
 				E9AC834B26CEE00D00829A0D /* Assets.xcassets */,
 				D653925129DABCBA000EE673 /* Configuration */,
 				E9838168279369680039CB08 /* Extensions */,
-				E9B6868F278736FA001698B7 /* Feature */,
 				D628B5BE2A0C165400015E45 /* Resources */,
 				D68FFDD92B1FC89C001EB447 /* Utils */,
 				D68FFDDE2B21162A001EB447 /* View */,
@@ -291,7 +290,8 @@
 				D653925929DAC627000EE673 /* Unauthenticated */,
 				D653925C29DAC89D000EE673 /* ProfileView.swift */,
 			);
-			path = Profile;
+			name = Profile;
+			path = Feature/Profile;
 			sourceTree = "<group>";
 		};
 		D653925129DABCBA000EE673 /* Configuration */ = {
@@ -375,6 +375,7 @@
 				E9B6869227873747001698B7 /* Library */,
 				D636CE4B2B44878F003F7876 /* MoreShows */,
 				D6C263302B323CD300179CDF /* Providers */,
+				D653924929D8B6B8000EE673 /* Profile */,
 				D667A42E2B23DC0E009C951E /* Root */,
 				E9B6869127873738001698B7 /* Search */,
 				D62F1BC42B344313004650E3 /* SeasonDetails */,
@@ -475,14 +476,6 @@
 			children = (
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		E9B6868F278736FA001698B7 /* Feature */ = {
-			isa = PBXGroup;
-			children = (
-				D653924929D8B6B8000EE673 /* Profile */,
-			);
-			path = Feature;
 			sourceTree = "<group>";
 		};
 		E9B6869027873707001698B7 /* Discover */ = {
