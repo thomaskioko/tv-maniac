@@ -24,17 +24,13 @@ struct LibraryView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                switch uiState {
-                case is LoadingShows:
+                switch onEnum(of: uiState) {
+                    case .loadingShows:
                     //TODO:: Show indicator on the toolbar
                     LoadingIndicatorView()
                         .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
-                case is LibraryContent: GridViewContent()
-                case is ErrorLoadingShows:
-                    //TODO:: Show Error
-                    EmptyView()
-                default:
-                    fatalError("Unhandled case: \(uiState)")
+                    case .libraryContent: GridViewContent()
+                    case .errorLoadingShows: EmptyView()  //TODO:: Show Error
                 }
             }
             .navigationTitle("Library")

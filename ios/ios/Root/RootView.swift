@@ -90,15 +90,15 @@ private struct ChildView: View {
     let screen: Screen
     
     var body: some View {
-        switch screen {
-        case let screen as ScreenDiscover : DiscoverView(presenter: screen.presenter)
-        case let screen as ScreenSearch : SearchView(presenter: screen.presenter)
-        case let screen as ScreenLibrary : LibraryView(presenter: screen.presenter)
-        case let screen as ScreenSettings : SettingsView(presenter: screen.presenter)
-        case let screen as ScreenShowDetails: ShowDetailView(presenter: screen.presenter)
-        case let screen as ScreenSeasonDetails: SeasonDetailsView(presenter: screen.presenter)
-        case let screen as ScreenMoreShows: MoreShowsView(presenter: screen.presenter)
-        default: EmptyView()
+        switch onEnum(of: screen) {
+            case .discover(let screen) : DiscoverView(presenter: screen.presenter)
+            case .search(let screen) : SearchView(presenter: screen.presenter)
+            case .library(let screen) : LibraryView(presenter: screen.presenter)
+            case .settings(let screen) : SettingsView(presenter: screen.presenter)
+            case .showDetails(let screen): ShowDetailView(presenter: screen.presenter)
+            case .seasonDetails(let screen): SeasonDetailsView(presenter: screen.presenter)
+            case .moreShows(let screen): MoreShowsView(presenter: screen.presenter)
+        default:  fatalError("Unhandled Screen: \(screen)")
         }
     }
 }

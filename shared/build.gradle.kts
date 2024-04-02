@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 plugins {
   id("plugin.tvmaniac.kotlin.android")
   id("plugin.tvmaniac.multiplatform")
+  id("co.touchlab.skie")
   alias(libs.plugins.ksp)
 }
 

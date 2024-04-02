@@ -19,21 +19,16 @@ struct DiscoverView: View {
     
     var body: some View {
         VStack {
-            switch uiState {
-            case is Loading:
+            switch onEnum(of: uiState) {
+                case .loading:
                 LoadingIndicatorView()
                     .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
-            case is DataLoaded: loadedContent
-            case is EmptyState: emptyView
-            case is ErrorState: if let contentState = uiState as? ErrorState {
-                FullScreenView(
+                case .dataLoaded: loadedContent
+                case .emptyState: emptyView
+                case .errorState(let error):  FullScreenView(
                     systemName: "exclamationmark.arrow.triangle.2.circlepath",
-                    message: contentState.errorMessage ?? "Something went wrong!!"
+                    message: error.errorMessage ?? "Something went wrong!!"
                 )
-            }
-                
-            default:
-                fatalError("Unhandled case: \(uiState)")
             }
         }
     }
