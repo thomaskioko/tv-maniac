@@ -26,20 +26,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.arkivanov.decompose.extensions.compose.jetpack.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
-import com.thomaskioko.showdetails.ShowDetailsScreen
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
-import com.thomaskioko.tvmaniac.discover.DiscoverScreen
-import com.thomaskioko.tvmaniac.feature.moreshows.MoreShowsScreen
-import com.thomaskioko.tvmaniac.library.LibraryScreen
 import com.thomaskioko.tvmaniac.navigation.RootNavigationPresenter
 import com.thomaskioko.tvmaniac.navigation.RootNavigationPresenter.Config
 import com.thomaskioko.tvmaniac.navigation.Screen
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.search.SearchScreen
-import com.thomaskioko.tvmaniac.seasondetails.SeasonDetailsScreen
-import com.thomaskioko.tvmaniac.settings.SettingsScreen
-import com.thomaskioko.tvmaniac.videoplayer.TrailersScreen
+import com.thomaskioko.tvmaniac.search.ui.SearchScreen
+import com.thomaskioko.tvmaniac.seasondetails.ui.SeasonDetailsScreen
+import com.thomaskioko.tvmaniac.ui.discover.DiscoverScreen
+import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
+import com.thomaskioko.tvmaniac.ui.moreshows.MoreShowsScreen
+import com.thomaskioko.tvmaniac.ui.settings.SettingsScreen
+import com.thomaskioko.tvmaniac.ui.showdetails.ShowDetailsScreen
+import com.thomaskioko.tvmaniac.ui.trailers.videoplayer.TrailersScreen
 
 @Composable
 fun RootScreen(presenter: RootNavigationPresenter, modifier: Modifier = Modifier) {
