@@ -48,6 +48,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -72,7 +73,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -115,7 +115,7 @@ fun ShowDetailsScreen(
   presenter: ShowDetailsPresenter,
   modifier: Modifier = Modifier,
 ) {
-  val state by presenter.value.subscribeAsState()
+  val state by presenter.state.collectAsState()
 
   val snackBarHostState = remember { SnackbarHostState() }
   val listState = rememberLazyListState()

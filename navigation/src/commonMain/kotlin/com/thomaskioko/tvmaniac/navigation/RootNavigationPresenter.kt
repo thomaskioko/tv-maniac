@@ -11,7 +11,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
-import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenterFactory
@@ -23,7 +23,13 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenterPre
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenterFactory
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import me.tatarka.inject.annotations.Inject
 
@@ -45,8 +51,9 @@ class RootNavigationPresenter(
 ) : ComponentContext by componentContext {
 
   private val navigation = StackNavigation<Config>()
+  private val coroutineScope = coroutineScope()
 
-  val screenStack: Value<ChildStack<*, Screen>> =
+  private val screenStack: Value<ChildStack<*, Screen>> =
     childStack(
       source = navigation,
       initialConfiguration = Config.Discover,
@@ -55,11 +62,22 @@ class RootNavigationPresenter(
       childFactory = ::createScreen,
     )
 
-  val state: Value<ThemeState> =
+  private val _state: MutableStateFlow<ChildStack<*, Screen>> = MutableStateFlow(screenStack.value)
+  val screenStackFlow: StateFlow<ChildStack<*, Screen>> = _state.asStateFlow()
+
+  init {
+    screenStack.observe { coroutineScope.launch { _state.emit(it) } }
+  }
+
+  val themeState: StateFlow<ThemeState> =
     datastoreRepository
       .observeTheme()
       .map { theme -> ThemeState(isFetching = false, appTheme = theme) }
-      .asValue(initialValue = ThemeState(), lifecycle = lifecycle)
+      .stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ThemeState(),
+      )
 
   fun bringToFront(config: Config) {
     navigation.bringToFront(config)

@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.navigation
 
+import app.cash.turbine.test
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.router.stack.active
@@ -55,12 +56,10 @@ import kotlin.test.Test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
-@Suppress("TestFunctionName")
 @OptIn(ExperimentalCoroutinesApi::class)
 class RootNavigationPresenterTest {
   private val lifecycle = LifecycleRegistry()
@@ -99,65 +98,82 @@ class RootNavigationPresenterTest {
   }
 
   @Test
-  fun WHEN_create_THEN_DiscoverChild_active() {
-    val discoverScreen = presenter.screenStack.active.instance
-    discoverScreen.shouldBeInstanceOf<Discover>()
+  fun when_create_THEN_DiscoverChild_active() = runTest {
+    presenter.screenStackFlow.test {
+      val discoverScreen = awaitItem().active.instance
 
-    presenter.shouldShowBottomNav(discoverScreen) shouldBe true
+      discoverScreen.shouldBeInstanceOf<Discover>()
+
+      presenter.shouldShowBottomNav(discoverScreen) shouldBe true
+    }
   }
 
   @Test
-  fun WHEN_bringToFrontSearch_THEN_DiscoverChild_active() {
-    presenter.bringToFront(Config.Search)
-    val searchScreen = presenter.screenStack.active.instance
+  fun when_bringToFrontSearch_THEN_DiscoverChild_active() = runTest {
+    presenter.screenStackFlow.test {
+      presenter.bringToFront(Config.Search)
 
-    searchScreen.shouldBeInstanceOf<Search>()
-    presenter.shouldShowBottomNav(searchScreen) shouldBe true
+      val searchScreen = awaitItem().active.instance
+
+      awaitItem().active.instance.shouldBeInstanceOf<Search>()
+      presenter.shouldShowBottomNav(searchScreen) shouldBe true
+    }
   }
 
   @Test
-  fun WHEN_bringToFrontLibrary_THEN_LibraryChild_active() {
-    presenter.bringToFront(Config.Library)
-    val library = presenter.screenStack.active.instance
+  fun when_bringToFrontLibrary_THEN_LibraryChild_active() = runTest {
+    presenter.screenStackFlow.test {
+      presenter.bringToFront(Config.Library)
+      val library = awaitItem().active.instance
 
-    library.shouldBeInstanceOf<Library>()
-    presenter.shouldShowBottomNav(library) shouldBe true
+      awaitItem().active.instance.shouldBeInstanceOf<Library>()
+      presenter.shouldShowBottomNav(library) shouldBe true
+    }
   }
 
   @Test
-  fun WHEN_bringToFrontSettings_THEN_SettingsChild_active() {
-    val settings = presenter.screenStack.active.instance
-    presenter.bringToFront(Config.Settings)
+  fun when_bringToFrontSettings_THEN_SettingsChild_active() = runTest {
+    presenter.screenStackFlow.test {
+      val settings = awaitItem().active.instance
+      presenter.bringToFront(Config.Settings)
 
-    presenter.screenStack.active.instance.shouldBeInstanceOf<Settings>()
-    presenter.shouldShowBottomNav(settings) shouldBe true
+      awaitItem().active.instance.shouldBeInstanceOf<Settings>()
+      presenter.shouldShowBottomNav(settings) shouldBe true
+    }
   }
 
   @Test
-  fun WHEN_bringToFrontMoreShows_THEN_MoreShowsChild_active() {
-    presenter.bringToFront(Config.MoreShows(1))
-    val moreScreen = presenter.screenStack.active.instance
+  fun when_bringToFrontMoreShows_THEN_MoreShowsChild_active() = runTest {
+    presenter.screenStackFlow.test {
+      awaitItem().active.instance.shouldBeInstanceOf<Discover>()
 
-    presenter.screenStack.active.instance.shouldBeInstanceOf<MoreShows>()
-    presenter.shouldShowBottomNav(moreScreen) shouldBe false
+      presenter.bringToFront(Config.MoreShows(1))
+
+      val moreScreen = awaitItem().active.instance
+
+      moreScreen.shouldBeInstanceOf<MoreShows>()
+      presenter.shouldShowBottomNav(moreScreen) shouldBe false
+    }
   }
 
   @Test
-  fun WHEN_create_THEN_DefaultTheme_is_Returned() = runTest {
-    presenter.state.value shouldBe ThemeState()
+  fun when_create_THEN_DefaultTheme_is_Returned() = runTest {
+    presenter.themeState.value shouldBe ThemeState()
   }
 
   @Test
-  fun WHEN_themeIsUpdated_THEN_correctState_is_Returned() = runTest {
-    presenter.state.value shouldBe ThemeState()
-    datastoreRepository.setTheme(AppTheme.DARK_THEME)
+  fun when_themeIsUpdated_THEN_correctState_is_Returned() = runTest {
+    presenter.themeState.test {
+      awaitItem() shouldBe ThemeState()
 
-    advanceUntilIdle()
-    presenter.state.value shouldBe
-      ThemeState(
-        isFetching = false,
-        appTheme = AppTheme.DARK_THEME,
-      )
+      datastoreRepository.setTheme(AppTheme.DARK_THEME)
+
+      awaitItem() shouldBe
+        ThemeState(
+          isFetching = false,
+          appTheme = AppTheme.DARK_THEME,
+        )
+    }
   }
 
   private fun buildDiscoverPresenterFactory(

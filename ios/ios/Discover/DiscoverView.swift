@@ -6,20 +6,21 @@ struct DiscoverView: View {
     
     @Environment(\.colorScheme) var scheme
     @State private var currentIndex: Int = 2
-    
+
+    @ObservedObject
+    private var uiState: StateFlow<DiscoverState>
+
     private let presenter: DiscoverShowsPresenter
-    
-    @StateValue
-    private var uiState: DiscoverState
+
 
     init(presenter: DiscoverShowsPresenter){
         self.presenter = presenter
-        _uiState = StateValue(presenter.value)
+        self.uiState = StateFlow<DiscoverState>(presenter.state)
     }
-    
+
     var body: some View {
         VStack {
-            switch onEnum(of: uiState) {
+            switch onEnum(of: uiState.value) {
                 case .loading:
                 LoadingIndicatorView()
                     .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
@@ -29,6 +30,7 @@ struct DiscoverView: View {
                     systemName: "exclamationmark.arrow.triangle.2.circlepath",
                     message: error.errorMessage ?? "Something went wrong!!"
                 )
+                case .none: emptyView
             }
         }
     }
@@ -75,8 +77,8 @@ struct DiscoverView: View {
     @ViewBuilder
     private var loadedContent: some View {
         ZStack {
-            let contentState = uiState as! DataLoaded
-            
+            let contentState = uiState.value as! DataLoaded
+
             BackgroundView(contentState.featuredShows)
             
             ScrollView(showsIndicators: false) {

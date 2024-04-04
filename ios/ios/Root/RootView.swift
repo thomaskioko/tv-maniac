@@ -10,26 +10,26 @@ import SwiftUI
 import TvManiac
 
 struct RootView: View {
-    
-    @StateValue
-    private var stack: ChildStack<AnyObject, Screen>
-    
-    @StateValue
-    var uiState: ThemeState
+
+    @ObservedObject
+    private var stack: StateFlow<ChildStack<AnyObject, Screen>>
+
+    @ObservedObject
+    private var uiState: StateFlow<ThemeState>
     let rootPresenter: RootNavigationPresenter
     
     init(rootPresenter: RootNavigationPresenter) {
         self.rootPresenter = rootPresenter
-        _stack = StateValue(rootPresenter.screenStack)
-        _uiState = StateValue(rootPresenter.state)
+        self.stack = StateFlow<ChildStack<AnyObject, Screen>>(rootPresenter.screenStackFlow)
+        self.uiState = StateFlow<ThemeState>(rootPresenter.themeState)
     }
     
     
     
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)){
-            let screen = stack.active.instance
-            
+            let screen = stack.value!.active.instance
+
             let showBottomBar = rootPresenter.shouldShowBottomNav(screen: screen)
             
             ChildView(screen: screen)
@@ -42,7 +42,7 @@ struct RootView: View {
                 .hidden(showBottomBar)
                 .transition(.asymmetric(insertion: .slide, removal: .scale))
         }
-        .preferredColorScheme(uiState.appTheme == AppTheme.lightTheme ? .light : uiState.appTheme == AppTheme.darkTheme ? .dark : nil)
+        .preferredColorScheme(uiState.value?.appTheme == AppTheme.lightTheme ? .light : uiState.value?.appTheme == AppTheme.darkTheme ? .dark : nil)
     }
 }
 

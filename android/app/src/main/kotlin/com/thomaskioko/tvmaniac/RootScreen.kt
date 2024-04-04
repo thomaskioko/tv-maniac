@@ -21,11 +21,11 @@ import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.arkivanov.decompose.extensions.compose.jetpack.stack.Children
-import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.navigation.RootNavigationPresenter
@@ -57,9 +57,11 @@ fun RootScreen(presenter: RootNavigationPresenter, modifier: Modifier = Modifier
 
 @Composable
 private fun ChildrenContent(presenter: RootNavigationPresenter, modifier: Modifier = Modifier) {
+  val childStack by presenter.screenStackFlow.collectAsState()
+
   Children(
     modifier = modifier,
-    stack = presenter.screenStack,
+    stack = childStack,
   ) { child ->
     val fillMaxSizeModifier = Modifier.fillMaxSize()
     when (val screen = child.instance) {
@@ -112,7 +114,7 @@ internal fun BottomNavigationContent(
   presenter: RootNavigationPresenter,
   modifier: Modifier = Modifier,
 ) {
-  val childStack by presenter.screenStack.subscribeAsState()
+  val childStack by presenter.screenStackFlow.collectAsState()
   val activeComponent = childStack.active.instance
 
   val showBottomBar = presenter.shouldShowBottomNav(activeComponent)

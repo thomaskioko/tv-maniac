@@ -12,25 +12,26 @@ import TvManiac
 struct LibraryView: View {
     
     private let presenter: LibraryPresenter
-    
-    @StateValue
-    private var uiState: LibraryState
-    
+
+    @ObservedObject
+    private var uiState: StateFlow<LibraryState>
+
     init(presenter: LibraryPresenter){
         self.presenter = presenter
-        _uiState = StateValue(presenter.value)
+        self.uiState = StateFlow<LibraryState>(presenter.state)
     }
     
     var body: some View {
         NavigationStack {
             VStack {
-                switch onEnum(of: uiState) {
+                switch onEnum(of: uiState.value) {
                     case .loadingShows:
                     //TODO:: Show indicator on the toolbar
                     LoadingIndicatorView()
                         .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
-                    case .libraryContent: GridViewContent()
+                    case .libraryContent(let content): GridViewContent(content)
                     case .errorLoadingShows: EmptyView()  //TODO:: Show Error
+                    case .none: EmptyView()
                 }
             }
             .navigationTitle("Library")
@@ -49,12 +50,11 @@ struct LibraryView: View {
     }
     
     @ViewBuilder
-    private func GridViewContent() -> some View {
-        let state = uiState as! LibraryContent
-        if !state.list.isEmpty {
+    private func GridViewContent(_ content: LibraryContent) -> some View {
+        if !content.list.isEmpty {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVGrid(columns: DimensionConstants.posterColumns,spacing: DimensionConstants.spacing){
-                    ForEach(state.list, id: \.tmdbId){ item in
+                    ForEach(content.list, id: \.tmdbId){ item in
                         PosterItemView(
                             showId: item.tmdbId,
                             title: item.title,
