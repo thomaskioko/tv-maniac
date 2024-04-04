@@ -1,7 +1,14 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
+import app.cash.turbine.test
+import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.ServerError
+import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
+import com.thomaskioko.tvmaniac.data.recommendedshows.testing.FakeRecommendedShowsRepository
+import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
+import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState.Companion.EMPTY_DETAIL_STATE
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
@@ -24,10 +31,15 @@ import kotlinx.coroutines.test.setMain
 @Ignore
 internal class ShowDetailsPresenterTest {
 
+  private val lifecycle = LifecycleRegistry()
   private val seasonsRepository = FakeSeasonsRepository()
   private val trailerRepository = FakeTrailerRepository()
   private val similarShowsRepository = FakeSimilarShowsRepository()
   private val fakeLibraryRepository = FakeLibraryRepository()
+  private val watchProviders = FakeWatchProviderRepository()
+  private val castRepository = FakeCastRepository()
+  private val recommendedShowsRepository = FakeRecommendedShowsRepository()
+  private val showDetailsRepository = FakeShowDetailsRepository()
   private val testDispatcher = StandardTestDispatcher()
 
   private lateinit var presenter: ShowDetailsPresenter
@@ -35,14 +47,23 @@ internal class ShowDetailsPresenterTest {
   @BeforeTest
   fun setUp() {
     Dispatchers.setMain(testDispatcher)
-    /*     presenter = ShowDetailsPresenter(
-        traktShowId = 84958,
-        discoverRepository = discoverRepository,
+    presenter =
+      ShowDetailsPresenter(
+        showId = 84958,
+        componentContext = DefaultComponentContext(lifecycle = lifecycle),
+        onBack = {},
+        onNavigateToSeason = {},
+        onNavigateToShow = {},
+        onNavigateToTrailer = {},
         trailerRepository = trailerRepository,
         seasonsRepository = seasonsRepository,
         similarShowsRepository = similarShowsRepository,
         libraryRepository = fakeLibraryRepository,
-    )*/
+        watchProviders = watchProviders,
+        recommendedShowsRepository = recommendedShowsRepository,
+        castRepository = castRepository,
+        showDetailsRepository = showDetailsRepository,
+      )
   }
 
   @AfterTest
@@ -52,7 +73,7 @@ internal class ShowDetailsPresenterTest {
 
   @Test
   fun initial_state_emits_expected_result() = runTest {
-    presenter.value shouldBe
+    presenter.state shouldBe
       EMPTY_DETAIL_STATE.copy(
         showDetails = similarShow,
       )
@@ -64,18 +85,18 @@ internal class ShowDetailsPresenterTest {
     similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
     trailerRepository.setTrailerResult(Either.Right(trailers))
 
-    presenter.value shouldBe EMPTY_DETAIL_STATE
-    presenter.value shouldBe showDetailsLoaded
-    presenter.value shouldBe
+    presenter.state shouldBe EMPTY_DETAIL_STATE
+    presenter.state shouldBe showDetailsLoaded
+    presenter.state shouldBe
       showDetailsLoaded.copy(
         seasonsList = seasonPersistentList,
       )
-    presenter.value shouldBe
+    presenter.state shouldBe
       showDetailsLoaded.copy(
         seasonsList = seasonPersistentList,
         trailersList = trailerPersistentList,
       )
-    presenter.value shouldBe
+    presenter.state shouldBe
       showDetailsLoaded.copy(
         seasonsList = seasonPersistentList,
         trailersList = trailerPersistentList,
@@ -90,18 +111,18 @@ internal class ShowDetailsPresenterTest {
     trailerRepository.setTrailerResult(Either.Right(trailers))
     similarShowsRepository.setSimilarShowsResult(Either.Left(ServerError(errorMessage)))
 
-    presenter.value shouldBe EMPTY_DETAIL_STATE
-    presenter.value shouldBe showDetailsLoaded
-    presenter.value shouldBe
+    presenter.state shouldBe EMPTY_DETAIL_STATE
+    presenter.state shouldBe showDetailsLoaded
+    presenter.state shouldBe
       showDetailsLoaded.copy(
         seasonsList = seasonPersistentList,
       )
-    presenter.value shouldBe
+    presenter.state shouldBe
       showDetailsLoaded.copy(
         seasonsList = seasonPersistentList,
         trailersList = trailerPersistentList,
       )
-    presenter.value shouldBe
+    presenter.state shouldBe
       showDetailsLoaded.copy(
         seasonsList = seasonPersistentList,
         trailersList = trailerPersistentList,
@@ -116,18 +137,18 @@ internal class ShowDetailsPresenterTest {
     similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
     trailerRepository.setTrailerResult(Either.Left(ServerError(errorMessage)))
 
-    presenter.value shouldBe EMPTY_DETAIL_STATE
-    presenter.value shouldBe showDetailsLoaded
-    presenter.value shouldBe
+    presenter.state shouldBe EMPTY_DETAIL_STATE
+    presenter.state shouldBe showDetailsLoaded
+    presenter.state shouldBe
       showDetailsLoaded.copy(
         seasonsList = seasonPersistentList,
       )
-    presenter.value shouldBe
+    presenter.state shouldBe
       showDetailsLoaded.copy(
         seasonsList = seasonPersistentList,
         errorMessage = errorMessage,
       )
-    presenter.value shouldBe
+    presenter.state shouldBe
       showDetailsLoaded.copy(
         seasonsList = seasonPersistentList,
         similarShows = similarShowList,
@@ -141,7 +162,7 @@ internal class ShowDetailsPresenterTest {
     similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowResult))
     trailerRepository.setTrailerResult(Either.Right(trailers))
 
-    presenter.value shouldBe EMPTY_DETAIL_STATE
+    presenter.state.test { awaitItem() shouldBe EMPTY_DETAIL_STATE }
     /*   presenter.state shouldBe showDetailsLoaded.copy(
         seasonsContent = EMPTY_SEASONS.copy(
             errorMessage = errorMessage,
@@ -169,8 +190,8 @@ internal class ShowDetailsPresenterTest {
     trailerRepository.setTrailerResult(Either.Right(trailers))
     seasonsRepository.setSeasonsResult(Either.Right(seasons))
 
-    presenter.value shouldBe EMPTY_DETAIL_STATE
-    presenter.value shouldBe
+    presenter.state shouldBe EMPTY_DETAIL_STATE
+    presenter.state shouldBe
       EMPTY_DETAIL_STATE.copy(
         errorMessage = errorMessage,
       )
