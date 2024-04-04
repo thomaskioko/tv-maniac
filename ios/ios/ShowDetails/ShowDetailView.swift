@@ -43,7 +43,12 @@ struct ShowDetailView: View {
                     )
 
                 } content: {
-                   seasonContent
+                    SeasonsRowView(
+                        seasonsList: state.seasonsList,
+                        onClick: { params in
+                            presenter.dispatch(action: SeasonClicked(params: params))
+                        }
+                    )
 
                     ProvidersList(items: state.providers)
 
@@ -75,47 +80,6 @@ struct ShowDetailView: View {
             }
         }
         .ignoresSafeArea()
-    }
-
-
-    private var seasonContent: some View {
-        VStack {
-            if !uiState.seasonsList.isEmpty {
-                let seasons = uiState.seasonsList
-                TitleView(
-                    title: "Browse Seasons",
-                    showChevron: false
-                )
-
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack {
-                        ForEach(uiState.seasonsList.indices, id: \.self) { index in
-                            let season = seasons[index]
-
-                            Button(
-                                action: {
-                                presenter.dispatch(
-                                    action: SeasonClicked(
-                                        params: ShowSeasonDetailsParam(
-                                            showId: season.tvShowId,
-                                            seasonId: season.seasonId,
-                                            seasonNumber: season.seasonNumber,
-                                            selectedSeasonIndex: Int32(index)
-                                        )
-                                    )
-                                )
-                            }
-                            ){
-                                ChipView(label: season.name)
-                            }
-
-                        }
-                    }
-                    .padding(.trailing, 16)
-                    .padding(.leading, 16)
-                }
-            }
-        }
     }
 
     private var recommendedShows: some View {
