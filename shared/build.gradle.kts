@@ -1,3 +1,4 @@
+import co.touchlab.skie.configuration.FlowInterop
 import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -112,3 +113,7 @@ android { namespace = "com.thomaskioko.tvmaniac.shared" }
 ksp { arg("me.tatarka.inject.generateCompanionExtensions", "true") }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+
+kotlin.sourceSets.all { languageSettings.optIn("kotlin.experimental.ExperimentalObjCName") }
+
+skie { features { group { FlowInterop.Enabled(false) } } }
