@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.ui.discover
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,7 +29,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -90,12 +88,10 @@ import com.thomaskioko.tvmaniac.presentation.discover.TrendingClicked
 import com.thomaskioko.tvmaniac.presentation.discover.UpComingClicked
 import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.resources.R
-import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlin.math.absoluteValue
 import kotlinx.collections.immutable.ImmutableList
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DiscoverScreen(
   discoverShowsPresenter: DiscoverShowsPresenter,
@@ -118,7 +114,6 @@ fun DiscoverScreen(
   )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun DiscoverScreen(
   state: DiscoverState,
@@ -193,7 +188,6 @@ private fun EmptyContent(
   }
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun DiscoverContent(
   state: DataLoaded,
@@ -287,7 +281,6 @@ private fun DiscoverContent(
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DiscoverHeaderContent(
   showList: ImmutableList<DiscoverShow>,
@@ -343,7 +336,6 @@ private fun DynamicColorContainer(
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HorizontalPagerItem(
   list: ImmutableList<DiscoverShow>,
@@ -437,7 +429,6 @@ fun HorizontalPagerItem(
   }
 }
 
-@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun HorizontalRowContent(
   category: String,
@@ -476,7 +467,6 @@ private fun HorizontalRowContent(
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @ThemePreviews
 @Composable
 private fun DiscoverScreenPreview(

@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.search.ui
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -30,7 +29,6 @@ fun SearchScreen(
   SearchScreen(modifier = modifier)
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun SearchScreen(
   modifier: Modifier = Modifier,

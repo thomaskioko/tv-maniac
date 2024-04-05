@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +34,6 @@ import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.resources.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TvManiacTopBar(
   modifier: Modifier = Modifier,
@@ -56,7 +54,6 @@ fun TvManiacTopBar(
   )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollapsableAppBar(
   title: String?,
@@ -125,7 +122,6 @@ fun CollapsableAppBar(
   )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @ThemePreviews
 @Composable
 private fun TopBarPreview() {
@@ -147,7 +143,6 @@ private fun TopBarPreview() {
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @ThemePreviews
 @Composable
 private fun TopBarActionPreview() {
@@ -180,7 +175,6 @@ private fun TopBarActionPreview() {
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @ThemePreviews
 @Composable
 private fun TopBarScrimPreview() {

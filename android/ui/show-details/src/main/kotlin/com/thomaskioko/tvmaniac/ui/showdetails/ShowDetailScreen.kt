@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.ui.showdetails
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,7 +35,6 @@ import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
@@ -106,7 +104,6 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetails
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.ui.showdetails.DetailConstants.HEADER_HEIGHT
-import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
@@ -130,7 +127,6 @@ fun ShowDetailsScreen(
   )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ShowDetailsScreen(
   state: ShowDetailsState,
@@ -620,7 +616,6 @@ private fun SeasonsContent(
   }
 }
 
-@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun WatchProvider(
   list: ImmutableList<Providers>,
@@ -670,7 +665,6 @@ fun WatchProvider(
   }
 }
 
-@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun CastContent(
   castsList: ImmutableList<Casts>,
@@ -752,7 +746,6 @@ private fun CastContent(
   }
 }
 
-@OptIn(ExperimentalSnapperApi::class)
 @Composable
 private fun TrailersContent(
   trailersList: ImmutableList<Trailer>,
@@ -829,7 +822,6 @@ private fun TrailersContent(
   }
 }
 
-@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun RecommendedShowsContent(
   recommendedShows: ImmutableList<Show>,
@@ -866,7 +858,6 @@ fun RecommendedShowsContent(
   }
 }
 
-@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun SimilarShowsContent(
   similarShows: ImmutableList<Show>,

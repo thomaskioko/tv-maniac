@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.seasondetails.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,7 +33,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -59,7 +57,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -84,7 +81,6 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonImagesMod
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.ui.components.CollapsableContent
 import com.thomaskioko.tvmaniac.seasondetails.ui.components.ShowLinearProgressIndicator
-import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
@@ -102,7 +98,6 @@ fun SeasonDetailsScreen(
   )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SeasonDetailsScreen(
   state: SeasonDetailsContent,
@@ -185,7 +180,6 @@ private fun SeasonDetailsContent(
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalSnapperApi::class)
 @Composable
 fun ImageGalleryContent(
   imageList: ImmutableList<SeasonImagesModel>,
@@ -342,7 +336,6 @@ private fun BodyContent(
 }
 
 @Composable
-@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 private fun CastContent(
   castList: ImmutableList<Cast>,
 ) {

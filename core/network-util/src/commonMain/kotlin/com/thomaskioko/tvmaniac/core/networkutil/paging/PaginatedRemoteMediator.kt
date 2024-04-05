@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.core.networkutil.paging
 
-import app.cash.paging.ExperimentalPagingApi
 import app.cash.paging.LoadType
 import app.cash.paging.PagingState
 import app.cash.paging.RemoteMediator
@@ -15,7 +14,6 @@ import kotlinx.coroutines.CancellationException
  * @param fetch Executes the remote fetch.
  * @param EM Entity model.
  */
-@OptIn(ExperimentalPagingApi::class)
 class PaginatedRemoteMediator<EM : Any>(
   private val getLastPage: suspend () -> Long?,
   private val deleteLocalEntity: suspend () -> Unit,

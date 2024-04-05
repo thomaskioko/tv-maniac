@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
@@ -33,7 +32,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import me.tatarka.inject.annotations.Inject
 
-@OptIn(ExperimentalDecomposeApi::class)
 @Inject
 @ActivityScope
 class RootNavigationPresenter(
