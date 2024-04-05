@@ -9,40 +9,29 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
 
 internal fun Project.configureAndroidCompose(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
+  commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
-    commonExtension.apply {
+  commonExtension.apply {
 
-        defaultConfig {
-            minSdk = Versions.MIN_SDK
-        }
-
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
-        }
-
-        buildFeatures {
-            compose = true
-        }
-
-        composeOptions {
-            kotlinCompilerExtensionVersion = libs.findVersion("composecompiler").get().toString()
-        }
-
-        kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs
-        }
-
-        dependencies {
-            val bom = libs.findLibrary("androidx-compose-bom").get()
-
-            add("implementation", platform(bom))
-            add("lintChecks", libs.findLibrary("lint-compose").get())
-        }
+    defaultConfig {
+      minSdk = Versions.MIN_SDK
     }
-}
 
-fun CommonExtension<*, *, *, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
-    (this as ExtensionAware).extensions.configure("kotlinOptions", block)
+    buildFeatures {
+      compose = true
+    }
+
+    composeOptions {
+      kotlinCompilerExtensionVersion = libs.findVersion("composecompiler").get().toString()
+    }
+
+    configureKotlinJvm()
+
+    dependencies {
+      val bom = libs.findLibrary("androidx-compose-bom").get()
+
+      add("implementation", platform(bom))
+      add("lintChecks", libs.findLibrary("lint-compose").get())
+    }
+  }
 }
