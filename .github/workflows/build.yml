@@ -98,7 +98,7 @@ jobs:
           java-version: 17
           distribution: 'zulu'
 
-      - name: unitTest
+      - name: Unit Tests
         run: ./gradlew testDemoDebug
 
       - name: Jvm Test
@@ -122,7 +122,12 @@ jobs:
           distribution: 'zulu'
 
       - name: Run Common iOS Unit Tests
-        run: if [[ $(uname -m) == 'arm64' ]]; then ./gradlew iosSimulatorArm64Test; else ./gradlew iosX64Test; fi
+        run: |
+          if [[ $(uname -m) == 'arm64' ]]; then
+            ./gradlew clean iosSimulatorArm64Test
+          else
+            ./gradlew clean iosX64Test
+          fi
 
       - uses: actions/upload-artifact@v4
         with:
