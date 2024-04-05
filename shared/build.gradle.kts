@@ -22,7 +22,7 @@ kotlin {
         linkerOpts.add("-lsqlite3")
         freeCompilerArgs += "-Xadd-light-debug=enable"
 
-        export(projects.navigation)
+        export(projects.navigation.api)
         export(projects.datastore.api)
         export(projects.presentation.discover)
         export(projects.presentation.library)
@@ -90,7 +90,8 @@ kotlin {
         api(projects.traktAuth.api)
         api(projects.traktAuth.implementation)
 
-        api(projects.navigation)
+        api(projects.navigation.api)
+        api(projects.navigation.implementation)
 
         api(projects.presentation.discover)
         api(projects.presentation.library)

@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -46,7 +45,7 @@ class RootNavigationPresenter(
   private val trailersPresenterFactory: TrailersPresenterFactory,
   private val traktAuthManager: TraktAuthManager,
   datastoreRepository: DatastoreRepository,
-) : ComponentContext by componentContext {
+) : Navigator, ComponentContext by componentContext {
 
   private val navigation = StackNavigation<Config>()
   private val coroutineScope = coroutineScope()
@@ -61,13 +60,14 @@ class RootNavigationPresenter(
     )
 
   private val _state: MutableStateFlow<ChildStack<*, Screen>> = MutableStateFlow(screenStack.value)
-  val screenStackFlow: StateFlow<ChildStack<*, Screen>> = _state.asStateFlow()
 
   init {
     screenStack.observe { coroutineScope.launch { _state.emit(it) } }
   }
 
-  val themeState: StateFlow<ThemeState> =
+  override val screenStackFlow: StateFlow<ChildStack<*, Screen>> = _state.asStateFlow()
+
+  override val themeState: StateFlow<ThemeState> =
     datastoreRepository
       .observeTheme()
       .map { theme -> ThemeState(isFetching = false, appTheme = theme) }
@@ -77,11 +77,11 @@ class RootNavigationPresenter(
         initialValue = ThemeState(),
       )
 
-  fun bringToFront(config: Config) {
+  override fun bringToFront(config: Config) {
     navigation.bringToFront(config)
   }
 
-  fun shouldShowBottomNav(screen: Screen): Boolean {
+  override fun shouldShowBottomNav(screen: Screen): Boolean {
     return when (screen) {
       is Screen.Discover -> true
       is Screen.Search -> true
@@ -189,23 +189,4 @@ class RootNavigationPresenter(
             },
         )
     }
-
-  @Serializable
-  sealed interface Config {
-    @Serializable data object Discover : Config
-
-    @Serializable data object Library : Config
-
-    @Serializable data object Search : Config
-
-    @Serializable data class SeasonDetails(val param: SeasonDetailsUiParam) : Config
-
-    @Serializable data class ShowDetails(val id: Long) : Config
-
-    @Serializable data class MoreShows(val id: Long) : Config
-
-    @Serializable data object Settings : Config
-
-    @Serializable data class Trailers(val id: Long) : Config
-  }
 }

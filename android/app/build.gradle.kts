@@ -39,7 +39,8 @@ dependencies {
   implementation(projects.core.util)
   implementation(projects.traktAuth.api)
   implementation(projects.traktAuth.implementation)
-  implementation(projects.navigation)
+  implementation(projects.navigation.api)
+  implementation(projects.navigation.implementation)
 
   implementation(libs.androidx.compose.activity)
   implementation(libs.androidx.core.splashscreen)

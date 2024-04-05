@@ -16,7 +16,6 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepo
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.navigation.RootNavigationPresenter.Config
 import com.thomaskioko.tvmaniac.navigation.Screen.Discover
 import com.thomaskioko.tvmaniac.navigation.Screen.Library
 import com.thomaskioko.tvmaniac.navigation.Screen.MoreShows
