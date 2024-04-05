@@ -151,15 +151,15 @@ jobs:
 
   create-release:
     runs-on: ubuntu-latest
+    if: ${{ !cancelled() && needs.android.result == 'success' && needs.common_test.result == 'success' && needs.unit_test.result == 'success' && needs.ios.result == 'success' }}
     needs: [
       android,
-      ios,
       android_lint,
+      common_test,
+      ios,
       spotless,
       unit_test,
-      common_test
     ]
-    if: ${{ always() && !cancelled() && needs.android.result == 'success' needs.ios.result == 'success' }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
