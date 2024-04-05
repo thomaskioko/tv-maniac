@@ -16,12 +16,12 @@ struct RootView: View {
 
     @ObservedObject
     private var uiState: StateFlow<ThemeState>
-    let rootPresenter: RootNavigationPresenter
-    
-    init(rootPresenter: RootNavigationPresenter) {
-        self.rootPresenter = rootPresenter
-        self.stack = StateFlow<ChildStack<AnyObject, Screen>>(rootPresenter.screenStackFlow)
-        self.uiState = StateFlow<ThemeState>(rootPresenter.themeState)
+    let navigator: Navigator
+
+    init(navigator: Navigator) {
+        self.navigator = navigator
+        self.stack = StateFlow<ChildStack<AnyObject, Screen>>(navigator.screenStackFlow)
+        self.uiState = StateFlow<ThemeState>(navigator.themeState)
     }
     
     
@@ -30,14 +30,14 @@ struct RootView: View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)){
             let screen = stack.value!.active.instance
 
-            let showBottomBar = rootPresenter.shouldShowBottomNav(screen: screen)
-            
+            let showBottomBar = navigator.shouldShowBottomNav(screen: screen)
+
             ChildView(screen: screen)
                 .frame(maxHeight: .infinity)
                 .padding(.bottom, showBottomBar ? 64 : 0)
                 .background(Color.background)
             
-            BottomNavigation(screen, rootPresenter)
+            BottomNavigation(screen, navigator)
                 .background(.ultraThinMaterial)
                 .hidden(showBottomBar)
                 .transition(.asymmetric(insertion: .slide, removal: .scale))
@@ -46,7 +46,7 @@ struct RootView: View {
     }
 }
 
-fileprivate func BottomNavigation(_ screen: Screen,_ rootPresenter: RootNavigationPresenter) -> some View {
+fileprivate func BottomNavigation(_ screen: Screen,_ rootPresenter: Navigator) -> some View {
     return HStack(alignment: .bottom, spacing: 16) {
         Spacer()
         
@@ -54,7 +54,7 @@ fileprivate func BottomNavigation(_ screen: Screen,_ rootPresenter: RootNavigati
             title: "Discover",
             systemImage: "film",
             isActive: screen is ScreenDiscover,
-            action: { rootPresenter.bringToFront(config: RootNavigationPresenterConfigDiscover()) }
+            action: { rootPresenter.bringToFront(config: ConfigDiscover()) }
         )
         
         Spacer()
@@ -63,7 +63,7 @@ fileprivate func BottomNavigation(_ screen: Screen,_ rootPresenter: RootNavigati
             title: "Search",
             systemImage: "magnifyingglass",
             isActive: screen is ScreenSearch,
-            action: { rootPresenter.bringToFront(config: RootNavigationPresenterConfigSearch()) }
+            action: { rootPresenter.bringToFront(config: ConfigSearch()) }
         )
         
         Spacer()
@@ -71,7 +71,7 @@ fileprivate func BottomNavigation(_ screen: Screen,_ rootPresenter: RootNavigati
             title: "Library",
             systemImage: "list.bullet.below.rectangle",
             isActive: screen is ScreenLibrary,
-            action: { rootPresenter.bringToFront(config: RootNavigationPresenterConfigLibrary()) }
+            action: { rootPresenter.bringToFront(config: ConfigLibrary()) }
         )
         Spacer()
         
@@ -79,7 +79,7 @@ fileprivate func BottomNavigation(_ screen: Screen,_ rootPresenter: RootNavigati
             title: "Settings",
             systemImage: "gearshape",
             isActive: screen is ScreenSettings,
-            action: { rootPresenter.bringToFront(config: RootNavigationPresenterConfigSettings()) }
+            action: { rootPresenter.bringToFront(config: ConfigSettings()) }
         )
         Spacer()
         

@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
 
     setContent {
-      val themeState by component.presenter.themeState.collectAsState()
+      val themeState by component.navigator.themeState.collectAsState()
       val darkTheme = shouldUseDarkTheme(themeState)
 
       splashScreen.setKeepOnScreenCondition { themeState.isFetching }
@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
         onDispose {}
       }
 
-      TvManiacTheme(darkTheme = darkTheme) { RootScreen(presenter = component.presenter) }
+      TvManiacTheme(darkTheme = darkTheme) { RootScreen(navigator = component.navigator) }
     }
   }
 }

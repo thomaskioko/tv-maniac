@@ -4,7 +4,8 @@ import androidx.activity.ComponentActivity
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.defaultComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
-import com.thomaskioko.tvmaniac.navigation.RootNavigationPresenter
+import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.di.NavigatorComponent
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthManagerComponent
 import me.tatarka.inject.annotations.Component
@@ -18,9 +19,9 @@ abstract class ActivityComponent(
   @Component
   val applicationComponent: ApplicationComponent =
     ApplicationComponent.create(activity.application),
-) : TraktAuthManagerComponent {
+) : NavigatorComponent, TraktAuthManagerComponent {
   abstract val traktAuthManager: TraktAuthManager
-  abstract val presenter: RootNavigationPresenter
+  abstract val navigator: Navigator
 
   companion object
 }
