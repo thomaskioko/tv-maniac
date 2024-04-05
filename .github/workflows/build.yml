@@ -46,7 +46,7 @@ jobs:
       - name: Build with gradle
         run: ./gradlew assemble
 
-  android-lint:
+  android_lint:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -86,7 +86,7 @@ jobs:
           name: detekt-report
           path: ./**/build/reports/detekt/detekt.*
 
-  unit-test:
+  unit_test:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -109,7 +109,7 @@ jobs:
           name: unit-test-report
           path: ./**/build/reports/tests/
 
-  common-test:
+  common_test:
     runs-on: macos-latest
     steps:
       - name: checkout
@@ -154,10 +154,10 @@ jobs:
     needs: [
       android,
       ios,
-      android-lint,
+      android_lint,
       spotless,
-      unit-test,
-      common-test
+      unit_test,
+      common_test
     ]
     if: ${{ always() && !cancelled() && needs.android.result == 'success' needs.ios.result == 'success' }}
     steps:
