@@ -122,7 +122,7 @@ jobs:
           distribution: 'zulu'
 
       - name: Run Common iOS Unit Tests
-        run: if [[ $(uname -m) == 'arm64' ]]; then ./gradlew iosSimulatorArm64Test /; else ./gradlew iosX64Test /; fi
+        run: if [[ $(uname -m) == 'arm64' ]]; then ./gradlew iosSimulatorArm64Test; else ./gradlew iosX64Test; fi
 
       - uses: actions/upload-artifact@v4
         with:
