@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.db.RecommendedShows
@@ -64,10 +62,6 @@ constructor(
   private val coroutineScope = coroutineScope()
   private val _state = MutableStateFlow(ShowDetailsState.EMPTY_DETAIL_STATE)
   val state: StateFlow<ShowDetailsState> = _state.asStateFlow()
-
-  // TODO:: Create SwiftUI flow wrapper and get rid of this.
-  val value: Value<ShowDetailsState> =
-    _state.asValue(initialValue = _state.value, lifecycle = lifecycle)
 
   init {
     coroutineScope.launch {

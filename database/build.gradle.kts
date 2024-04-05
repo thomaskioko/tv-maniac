@@ -37,9 +37,9 @@ kotlin {
         implementation(libs.sqldelight.driver.native)
 
         // See https://github.com/cashapp/sqldelight/issues/4357
-        implementation("co.touchlab:stately-common:2.0.7")
-        implementation("co.touchlab:stately-isolate:2.0.7")
-        implementation("co.touchlab:stately-iso-collections:2.0.7")
+        implementation(libs.stately.common)
+        implementation(libs.stately.isolate)
+        implementation(libs.stately.iso.collections)
       }
     }
 

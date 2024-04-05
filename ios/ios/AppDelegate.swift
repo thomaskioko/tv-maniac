@@ -16,13 +16,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     let applicationComponent: InjectApplicationComponent
     let rootHolder: RootHolder
-    let iosViewPresenter :InjectIosViewPresenterComponent
-    
+    let presenterComponent :InjectIosViewPresenterComponent
+
     override init() {
         rootHolder = RootHolder()
         applicationComponent = InjectApplicationComponent()
         
-        iosViewPresenter = InjectIosViewPresenterComponent(
+        presenterComponent = InjectIosViewPresenterComponent(
             componentContext: DefaultComponentContext(
                 lifecycle: rootHolder.lifecycle,
                 stateKeeper: nil,

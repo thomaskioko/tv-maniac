@@ -21,45 +21,47 @@ import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.arkivanov.decompose.extensions.compose.jetpack.stack.Children
-import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
-import com.thomaskioko.showdetails.ShowDetailsScreen
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
-import com.thomaskioko.tvmaniac.discover.DiscoverScreen
-import com.thomaskioko.tvmaniac.feature.moreshows.MoreShowsScreen
-import com.thomaskioko.tvmaniac.library.LibraryScreen
-import com.thomaskioko.tvmaniac.navigation.RootNavigationPresenter
-import com.thomaskioko.tvmaniac.navigation.RootNavigationPresenter.Config
+import com.thomaskioko.tvmaniac.navigation.Config
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.Screen
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.search.SearchScreen
-import com.thomaskioko.tvmaniac.seasondetails.SeasonDetailsScreen
-import com.thomaskioko.tvmaniac.settings.SettingsScreen
-import com.thomaskioko.tvmaniac.videoplayer.TrailersScreen
+import com.thomaskioko.tvmaniac.search.ui.SearchScreen
+import com.thomaskioko.tvmaniac.seasondetails.ui.SeasonDetailsScreen
+import com.thomaskioko.tvmaniac.ui.discover.DiscoverScreen
+import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
+import com.thomaskioko.tvmaniac.ui.moreshows.MoreShowsScreen
+import com.thomaskioko.tvmaniac.ui.settings.SettingsScreen
+import com.thomaskioko.tvmaniac.ui.showdetails.ShowDetailsScreen
+import com.thomaskioko.tvmaniac.ui.trailers.videoplayer.TrailersScreen
 
 @Composable
-fun RootScreen(presenter: RootNavigationPresenter, modifier: Modifier = Modifier) {
+fun RootScreen(navigator: Navigator, modifier: Modifier = Modifier) {
   Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
     Column(
       modifier =
         Modifier.fillMaxSize()
           .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
     ) {
-      ChildrenContent(presenter = presenter, modifier = Modifier.weight(1F))
-      BottomNavigationContent(presenter = presenter, modifier = Modifier.fillMaxWidth())
+      ChildrenContent(navigator = navigator, modifier = Modifier.weight(1F))
+      BottomNavigationContent(navigator = navigator, modifier = Modifier.fillMaxWidth())
     }
   }
 }
 
 @Composable
-private fun ChildrenContent(presenter: RootNavigationPresenter, modifier: Modifier = Modifier) {
+private fun ChildrenContent(navigator: Navigator, modifier: Modifier = Modifier) {
+  val childStack by navigator.screenStackFlow.collectAsState()
+
   Children(
     modifier = modifier,
-    stack = presenter.screenStack,
+    stack = childStack,
   ) { child ->
     val fillMaxSizeModifier = Modifier.fillMaxSize()
     when (val screen = child.instance) {
@@ -109,13 +111,13 @@ private fun ChildrenContent(presenter: RootNavigationPresenter, modifier: Modifi
 
 @Composable
 internal fun BottomNavigationContent(
-  presenter: RootNavigationPresenter,
+  navigator: Navigator,
   modifier: Modifier = Modifier,
 ) {
-  val childStack by presenter.screenStack.subscribeAsState()
+  val childStack by navigator.screenStackFlow.collectAsState()
   val activeComponent = childStack.active.instance
 
-  val showBottomBar = presenter.shouldShowBottomNav(activeComponent)
+  val showBottomBar = navigator.shouldShowBottomNav(activeComponent)
 
   AnimatedVisibility(
     visible = showBottomBar,
@@ -129,28 +131,28 @@ internal fun BottomNavigationContent(
         imageVector = Icons.Outlined.Movie,
         title = stringResource(id = R.string.menu_item_discover),
         selected = activeComponent is Screen.Discover,
-        onClick = { presenter.bringToFront(Config.Discover) },
+        onClick = { navigator.bringToFront(Config.Discover) },
       )
 
       TvManiacBottomNavigationItem(
         imageVector = Icons.Outlined.Search,
         title = stringResource(id = R.string.menu_item_search),
         selected = activeComponent is Screen.Search,
-        onClick = { presenter.bringToFront(Config.Search) },
+        onClick = { navigator.bringToFront(Config.Search) },
       )
 
       TvManiacBottomNavigationItem(
         imageVector = Icons.Outlined.VideoLibrary,
         title = stringResource(id = R.string.menu_item_library),
         selected = activeComponent is Screen.Library,
-        onClick = { presenter.bringToFront(Config.Library) },
+        onClick = { navigator.bringToFront(Config.Library) },
       )
 
       TvManiacBottomNavigationItem(
         imageVector = Icons.Outlined.Settings,
         title = stringResource(id = R.string.menu_item_settings),
         selected = activeComponent is Screen.Settings,
-        onClick = { presenter.bringToFront(Config.Settings) },
+        onClick = { navigator.bringToFront(Config.Settings) },
       )
     }
   }

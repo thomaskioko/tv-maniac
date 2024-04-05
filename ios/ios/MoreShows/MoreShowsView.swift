@@ -12,14 +12,16 @@ import TvManiac
 struct MoreShowsView: View {
     
     private let presenter: MoreShowsPresenter
-    
-    @StateValue
-    private var uiState: MoreShowsState
-    @State private var query = String()
-    
+
+    @ObservedObject
+    private var uiState: StateFlow<MoreShowsState>
+
+    @State
+    private var query = String()
+
     init(presenter: MoreShowsPresenter) {
         self.presenter = presenter
-        _uiState = StateValue(presenter.state)
+        self.uiState = StateFlow<MoreShowsState>(presenter.state)
     }
     
     var body: some View {
@@ -34,7 +36,7 @@ struct MoreShowsView: View {
                     { 
                         presenter.dispatch(action: MoreBackClicked())
                     } label: {
-                        Text(uiState.categoryTitle ?? "")
+                        Text(uiState.value?.categoryTitle ?? "")
                     }
                     .buttonStyle(CircleButtonStyle(imageName: "arrow.backward"))
                     .padding(.top)

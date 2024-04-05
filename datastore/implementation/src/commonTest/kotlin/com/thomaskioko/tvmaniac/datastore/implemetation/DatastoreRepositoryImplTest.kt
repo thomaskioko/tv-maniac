@@ -14,14 +14,12 @@ import io.kotest.matchers.shouldBe
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import okio.Path.Companion.toPath
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class DatastoreRepositoryImplTest {
 
   private val testDispatcher = UnconfinedTestDispatcher()

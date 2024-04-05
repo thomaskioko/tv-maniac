@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
@@ -15,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun TvManiacChip(
   text: String,
   onClick: () -> Unit,
