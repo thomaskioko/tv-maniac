@@ -99,6 +99,7 @@ napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 paging-common = { module = "app.cash.paging:paging-common", version.ref = "paging-multiplatform" }
 paging-compose = { module = "app.cash.paging:paging-compose-common", version.ref = "paging-multiplatform" }
+paging-ios = { module = "app.cash.paging:paging-runtime-uikit", version.ref = "paging-multiplatform" }
 
 snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 

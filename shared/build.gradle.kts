@@ -1,4 +1,3 @@
-import co.touchlab.skie.configuration.FlowInterop
 import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -22,8 +21,9 @@ kotlin {
         linkerOpts.add("-lsqlite3")
         freeCompilerArgs += "-Xadd-light-debug=enable"
 
-        export(projects.navigation.api)
+        export(projects.core.paging)
         export(projects.datastore.api)
+        export(projects.navigation.api)
         export(projects.presentation.discover)
         export(projects.presentation.library)
         export(projects.presentation.moreShows)
@@ -41,6 +41,7 @@ kotlin {
       dependencies {
         api(projects.core.base)
         api(projects.core.networkUtil)
+        api(projects.core.paging)
         api(projects.core.util)
         api(projects.core.logger)
 
@@ -116,5 +117,3 @@ ksp { arg("me.tatarka.inject.generateCompanionExtensions", "true") }
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
 
 kotlin.sourceSets.all { languageSettings.optIn("kotlin.experimental.ExperimentalObjCName") }
-
-skie { features { group { FlowInterop.Enabled(false) } } }
