@@ -1,3 +1,4 @@
+import co.touchlab.skie.configuration.FlowInterop
 import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -5,6 +6,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 plugins {
   id("plugin.tvmaniac.kotlin.android")
   id("plugin.tvmaniac.multiplatform")
+  id("co.touchlab.skie")
   alias(libs.plugins.ksp)
 }
 
@@ -20,7 +22,7 @@ kotlin {
         linkerOpts.add("-lsqlite3")
         freeCompilerArgs += "-Xadd-light-debug=enable"
 
-        export(projects.navigation)
+        export(projects.navigation.api)
         export(projects.datastore.api)
         export(projects.presentation.discover)
         export(projects.presentation.library)
@@ -88,7 +90,8 @@ kotlin {
         api(projects.traktAuth.api)
         api(projects.traktAuth.implementation)
 
-        api(projects.navigation)
+        api(projects.navigation.api)
+        api(projects.navigation.implementation)
 
         api(projects.presentation.discover)
         api(projects.presentation.library)
@@ -111,3 +114,7 @@ android { namespace = "com.thomaskioko.tvmaniac.shared" }
 ksp { arg("me.tatarka.inject.generateCompanionExtensions", "true") }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+
+kotlin.sourceSets.all { languageSettings.optIn("kotlin.experimental.ExperimentalObjCName") }
+
+skie { features { group { FlowInterop.Enabled(false) } } }

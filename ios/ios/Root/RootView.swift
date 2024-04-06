@@ -10,43 +10,43 @@ import SwiftUI
 import TvManiac
 
 struct RootView: View {
-    
-    @StateValue
-    private var stack: ChildStack<AnyObject, Screen>
-    
-    @StateValue
-    var uiState: ThemeState
-    let rootPresenter: RootNavigationPresenter
-    
-    init(rootPresenter: RootNavigationPresenter) {
-        self.rootPresenter = rootPresenter
-        _stack = StateValue(rootPresenter.screenStack)
-        _uiState = StateValue(rootPresenter.state)
+
+    @ObservedObject
+    private var stack: StateFlow<ChildStack<AnyObject, Screen>>
+
+    @ObservedObject
+    private var uiState: StateFlow<ThemeState>
+    let navigator: Navigator
+
+    init(navigator: Navigator) {
+        self.navigator = navigator
+        self.stack = StateFlow<ChildStack<AnyObject, Screen>>(navigator.screenStackFlow)
+        self.uiState = StateFlow<ThemeState>(navigator.themeState)
     }
     
     
     
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)){
-            let screen = stack.active.instance
-            
-            let showBottomBar = rootPresenter.shouldShowBottomNav(screen: screen)
-            
+            let screen = stack.value!.active.instance
+
+            let showBottomBar = navigator.shouldShowBottomNav(screen: screen)
+
             ChildView(screen: screen)
                 .frame(maxHeight: .infinity)
                 .padding(.bottom, showBottomBar ? 64 : 0)
                 .background(Color.background)
             
-            BottomNavigation(screen, rootPresenter)
+            BottomNavigation(screen, navigator)
                 .background(.ultraThinMaterial)
                 .hidden(showBottomBar)
                 .transition(.asymmetric(insertion: .slide, removal: .scale))
         }
-        .preferredColorScheme(uiState.appTheme == AppTheme.lightTheme ? .light : uiState.appTheme == AppTheme.darkTheme ? .dark : nil)
+        .preferredColorScheme(uiState.value?.appTheme == AppTheme.lightTheme ? .light : uiState.value?.appTheme == AppTheme.darkTheme ? .dark : nil)
     }
 }
 
-fileprivate func BottomNavigation(_ screen: Screen,_ rootPresenter: RootNavigationPresenter) -> some View {
+fileprivate func BottomNavigation(_ screen: Screen,_ rootPresenter: Navigator) -> some View {
     return HStack(alignment: .bottom, spacing: 16) {
         Spacer()
         
@@ -54,7 +54,7 @@ fileprivate func BottomNavigation(_ screen: Screen,_ rootPresenter: RootNavigati
             title: "Discover",
             systemImage: "film",
             isActive: screen is ScreenDiscover,
-            action: { rootPresenter.bringToFront(config: RootNavigationPresenterConfigDiscover()) }
+            action: { rootPresenter.bringToFront(config: ConfigDiscover()) }
         )
         
         Spacer()
@@ -63,7 +63,7 @@ fileprivate func BottomNavigation(_ screen: Screen,_ rootPresenter: RootNavigati
             title: "Search",
             systemImage: "magnifyingglass",
             isActive: screen is ScreenSearch,
-            action: { rootPresenter.bringToFront(config: RootNavigationPresenterConfigSearch()) }
+            action: { rootPresenter.bringToFront(config: ConfigSearch()) }
         )
         
         Spacer()
@@ -71,7 +71,7 @@ fileprivate func BottomNavigation(_ screen: Screen,_ rootPresenter: RootNavigati
             title: "Library",
             systemImage: "list.bullet.below.rectangle",
             isActive: screen is ScreenLibrary,
-            action: { rootPresenter.bringToFront(config: RootNavigationPresenterConfigLibrary()) }
+            action: { rootPresenter.bringToFront(config: ConfigLibrary()) }
         )
         Spacer()
         
@@ -79,7 +79,7 @@ fileprivate func BottomNavigation(_ screen: Screen,_ rootPresenter: RootNavigati
             title: "Settings",
             systemImage: "gearshape",
             isActive: screen is ScreenSettings,
-            action: { rootPresenter.bringToFront(config: RootNavigationPresenterConfigSettings()) }
+            action: { rootPresenter.bringToFront(config: ConfigSettings()) }
         )
         Spacer()
         
@@ -90,15 +90,15 @@ private struct ChildView: View {
     let screen: Screen
     
     var body: some View {
-        switch screen {
-        case let screen as ScreenDiscover : DiscoverView(presenter: screen.presenter)
-        case let screen as ScreenSearch : SearchView(presenter: screen.presenter)
-        case let screen as ScreenLibrary : LibraryView(presenter: screen.presenter)
-        case let screen as ScreenSettings : SettingsView(presenter: screen.presenter)
-        case let screen as ScreenShowDetails: ShowDetailView(presenter: screen.presenter)
-        case let screen as ScreenSeasonDetails: SeasonDetailsView(presenter: screen.presenter)
-        case let screen as ScreenMoreShows: MoreShowsView(presenter: screen.presenter)
-        default: EmptyView()
+        switch onEnum(of: screen) {
+            case .discover(let screen) : DiscoverView(presenter: screen.presenter)
+            case .search(let screen) : SearchView(presenter: screen.presenter)
+            case .library(let screen) : LibraryView(presenter: screen.presenter)
+            case .settings(let screen) : SettingsView(presenter: screen.presenter)
+            case .showDetails(let screen): ShowDetailView(presenter: screen.presenter)
+            case .seasonDetails(let screen): SeasonDetailsView(presenter: screen.presenter)
+            case .moreShows(let screen): MoreShowsView(presenter: screen.presenter)
+        default:  fatalError("Unhandled Screen: \(screen)")
         }
     }
 }

@@ -33,7 +33,7 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 ## Architecture Overview
 - [ ] TODO: Add detail architecture
 
-![TvManiac Architecture](https://github.com/thomaskioko/tv-maniac/assets/841885/a5a9bfc9-6caf-4b4a-a8be-c8b0d7331543)
+![TvManiac Architecture](https://github.com/thomaskioko/tv-maniac/assets/841885/84e314fc-71a5-40e5-b034-213e6b546f9a)
 
 
 ### Android Screenshots

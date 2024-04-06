@@ -13,10 +13,12 @@ import TvManiac
 struct SettingsView: View {
     
     private let presenter: SettingsPresenter
-    @StateValue private var uiState: SettingsState
     @Environment(\.openURL) var openURL
     @Environment(\.presentationMode) var presentationMode
     
+    @ObservedObject
+    private var uiState: StateFlow<SettingsState>
+
     @State private var theme: DeveiceAppTheme = DeveiceAppTheme.System
     @State private var showingAlert: Bool = false
     @State private var openInYouTube: Bool = false
@@ -25,8 +27,8 @@ struct SettingsView: View {
     
     init(presenter: SettingsPresenter){
         self.presenter = presenter
-        _uiState = StateValue(presenter.value)
-        theme = toAppTheme(theme: uiState.appTheme)
+        self.uiState = StateFlow<SettingsState>(presenter.state)
+        self.theme = toAppTheme(theme: uiState.value?.appTheme ?? AppTheme.darkTheme)
     }
     
     var body: some View {
@@ -67,7 +69,7 @@ struct SettingsView: View {
                         title: "Connect to Trakt",
                         description: "Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch."
                     ) {
-                        showingAlert = !uiState.showTraktDialog
+                        showingAlert = !(uiState.value?.showTraktDialog ?? false)
                     }
                     .alert(isPresented: $showingAlert) {
                         Alert(
@@ -96,7 +98,7 @@ struct SettingsView: View {
                 .navigationTitle("Settings")
                 .navigationBarTitleDisplayMode(.large)
                 .onAppear {
-                    theme = toAppTheme(theme: uiState.appTheme)
+                    self.theme = toAppTheme(theme: uiState.value?.appTheme ?? AppTheme.darkTheme)
                 }
         }
     }

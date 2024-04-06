@@ -18,13 +18,11 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class DiscoverShowsPresenterTest {
 
   private val lifecycle = LifecycleRegistry()

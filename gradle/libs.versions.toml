@@ -5,20 +5,20 @@ androidx-browser = "1.8.0"
 androidx-core = "1.12.0"
 androidx-core-splashscreen = "1.0.1"
 androidx-datastore = "1.1.0-rc01"
-androidx-material = "1.6.4"
+androidx-material = "1.6.5"
 androidx-material3 = "1.2.1"
 androidx-palette = "1.0.0"
 appauth = "0.11.1"
 atomicfu = "0.23.2"
 coil = "2.6.0"
-compose-bom = "2024.03.00"
+compose-bom = "2024.04.00"
 compose-constraintlayout = "1.0.1"
 composecompiler = "1.5.8"
-compose-runtime = "1.6.4"
+compose-runtime = "1.6.5"
 coroutines = "1.8.0"
 datetime = "0.5.0"
 decompose = "2.2.2"
-dependency-analysis = "1.30.0"
+dependency-analysis = "1.31.0"
 essenty = "1.3.0"
 desugar = "2.0.4"
 kenburns = "1.0.7"
@@ -34,9 +34,11 @@ lint = "1.3.1"
 napier = "2.7.1"
 paging-multiplatform = "3.3.0-alpha02-0.5.1"
 shared-module-version = "0.9.1"
+skie = "0.6.2"
 snapper = "0.3.0"
 sqldelight = "2.0.1"
 spotless = "6.25.0"
+stately = "2.0.7"
 store5 = "5.0.0"
 turbine = "1.1.0"
 yamlkt = "0.13.0"
@@ -106,6 +108,9 @@ sqldelight-driver-native = { module = "app.cash.sqldelight:native-driver", versi
 sqldelight-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
 sqldelight-paging = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
+stately-common = { module = "co.touchlab:stately-common", version.ref = "stately" }
+stately-iso-collections = { module = "co.touchlab:stately-iso-collections", version.ref = "stately" }
+stately-isolate = { module = "co.touchlab:stately-isolate", version.ref = "stately" }
 store5 = { module = "org.mobilenativefoundation.store:store5", version.ref = "store5" }
 
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
@@ -126,6 +131,7 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+skie = { id = "co.touchlab.skie", version.ref = "skie"}
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 

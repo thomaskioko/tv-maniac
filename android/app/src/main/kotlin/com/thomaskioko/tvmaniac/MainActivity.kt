@@ -9,10 +9,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.inject.ActivityComponent
@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
 
     setContent {
-      val themeState by component.presenter.state.subscribeAsState()
+      val themeState by component.navigator.themeState.collectAsState()
       val darkTheme = shouldUseDarkTheme(themeState)
 
       splashScreen.setKeepOnScreenCondition { themeState.isFetching }
@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
         onDispose {}
       }
 
-      TvManiacTheme(darkTheme = darkTheme) { RootScreen(presenter = component.presenter) }
+      TvManiacTheme(darkTheme = darkTheme) { RootScreen(navigator = component.navigator) }
     }
   }
 }

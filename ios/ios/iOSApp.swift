@@ -14,7 +14,7 @@ struct iOSApp: App {
     var body: some Scene {
         
         WindowGroup {
-            RootView(rootPresenter: appDelegate.iosViewPresenter.presenter)
+            RootView(navigator: appDelegate.presenterComponent.navigator)
                 .onChange(of: scenePhase) { newPhase in
                     switch newPhase {
                     case .background: LifecycleRegistryExtKt.stop(rootHolder.lifecycle)
