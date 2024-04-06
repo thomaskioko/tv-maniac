@@ -10,6 +10,7 @@ kotlin {
         implementation(projects.core.base)
         implementation(projects.database)
         implementation(projects.tmdbApi.api)
+        implementation(projects.core.paging)
         implementation(projects.core.util)
         implementation(projects.data.upcomingshows.api)
         implementation(projects.data.requestManager.api)

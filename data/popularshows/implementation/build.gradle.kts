@@ -9,6 +9,7 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.networkUtil)
+        implementation(projects.core.paging)
         implementation(projects.core.util)
         implementation(projects.data.popularshows.api)
         implementation(projects.data.requestManager.api)

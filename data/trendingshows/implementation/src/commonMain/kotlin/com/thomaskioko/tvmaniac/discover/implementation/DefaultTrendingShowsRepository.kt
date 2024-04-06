@@ -6,8 +6,8 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.mapResult
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
-import com.thomaskioko.tvmaniac.core.networkutil.paging.CommonPagingConfig
-import com.thomaskioko.tvmaniac.core.networkutil.paging.PaginatedRemoteMediator
+import com.thomaskioko.tvmaniac.core.paging.CommonPagingConfig.pagingConfig
+import com.thomaskioko.tvmaniac.core.paging.PaginatedRemoteMediator
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsDao
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsParams
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadRequest
-import org.mobilenativefoundation.store.store5.StoreReadRequest.Companion.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
 
@@ -68,7 +67,7 @@ class DefaultTrendingShowsRepository(
 
   override fun getPagedTrendingShows(): Flow<PagingData<ShowEntity>> {
     return Pager(
-        config = CommonPagingConfig.pagingConfig,
+        config = pagingConfig,
         remoteMediator =
           PaginatedRemoteMediator(
             getLastPage = dao::getLastPage,

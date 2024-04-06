@@ -13,7 +13,6 @@ kotlin {
       implementation(libs.coroutines.core)
       implementation(libs.kotlinInject.runtime)
       implementation(libs.ktor.core)
-      implementation(libs.paging.common)
       implementation(libs.store5)
     }
   }

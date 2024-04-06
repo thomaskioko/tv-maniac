@@ -11,6 +11,7 @@ kotlin {
         implementation(projects.database)
         implementation(projects.data.trendingshows.api)
         implementation(projects.tmdbApi.api)
+        implementation(projects.core.paging)
         implementation(projects.core.util)
         implementation(projects.data.requestManager.api)
 
