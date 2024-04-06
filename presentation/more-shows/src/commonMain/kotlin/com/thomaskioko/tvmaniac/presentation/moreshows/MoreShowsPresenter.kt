@@ -57,7 +57,7 @@ class MoreShowsPresenter(
   fun dispatch(action: MoreShowsActions) {
     when (action) {
       MoreBackClicked -> onBack()
-      is ShowClicked -> onNavigateToShowDetails(action.showId)
+      is MoreShowClicked -> onNavigateToShowDetails(action.showId)
     }
   }
 
@@ -100,7 +100,7 @@ class MoreShowsPresenter(
   private fun updateState(title: String, pagingList: Flow<PagingData<TvShow>>) {
     _state.update {
       it.copy(
-        list = pagingList,
+        pagingDataFlow = pagingList,
         categoryTitle = title,
       )
     }

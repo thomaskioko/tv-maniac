@@ -47,10 +47,10 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreBackClicked
+import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowClicked
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsActions
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsState
-import com.thomaskioko.tvmaniac.presentation.moreshows.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.moreshows.TvShow
 
 @Composable
@@ -74,7 +74,7 @@ internal fun MoreShowsScreen(
   modifier: Modifier = Modifier,
 ) {
   val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-  val pagedList = state.list.collectAsLazyPagingItems()
+  val pagedList = state.pagingDataFlow.collectAsLazyPagingItems()
   val snackBarHostState = remember { SnackbarHostState() }
 
   Scaffold(
@@ -115,7 +115,7 @@ internal fun MoreShowsScreen(
       lazyPagingItems = pagedList,
       scrollBehavior = scrollBehavior,
       snackBarHostState = snackBarHostState,
-      onItemClicked = { onAction(ShowClicked(it)) },
+      onItemClicked = { onAction(MoreShowClicked(it)) },
     )
   }
 }
