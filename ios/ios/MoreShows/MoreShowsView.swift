@@ -10,20 +10,16 @@ import SwiftUI
 import TvManiac
 
 struct MoreShowsView: View {
-    
+
     private let presenter: MoreShowsPresenter
-
-    @ObservedObject
-    private var uiState: StateFlow<MoreShowsState>
-
-    @State
-    private var query = String()
+    @ObservedObject @StateFlow private var uiState: MoreShowsState
+    @State private private var query = String()
 
     init(presenter: MoreShowsPresenter) {
         self.presenter = presenter
-        self.uiState = StateFlow<MoreShowsState>(presenter.state)
+        self._uiState = .init(presenter.state)
     }
-    
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -33,10 +29,10 @@ struct MoreShowsView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button
-                    { 
+                    {
                         presenter.dispatch(action: MoreBackClicked())
                     } label: {
-                        Text(uiState.value?.categoryTitle ?? "")
+                        Text(uiState.categoryTitle ?? "")
                     }
                     .buttonStyle(CircleButtonStyle(imageName: "arrow.backward"))
                     .padding(.top)

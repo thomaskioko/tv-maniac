@@ -13,13 +13,8 @@ import TvManiac
 struct SeasonDetailsView: View {
 
     private let presenter: SeasonDetailsPresenter
-
-    @Environment(\.presentationMode)
-    var presentationMode
-
-    @ObservedObject
-    private var uiState: StateFlow<SeasonDetailsContent>
-
+    @Environment(\.presentationMode) var presentationMode
+    @ObservedObject @StateFlow private var uiState: SeasonDetailsContent
     @State private var progress: CGFloat = 0
     @State private var isTruncated = false
     @State private var showFullText = false
@@ -29,20 +24,18 @@ struct SeasonDetailsView: View {
 
     init(presenter: SeasonDetailsPresenter) {
         self.presenter = presenter
-        self.uiState = StateFlow<SeasonDetailsContent>(presenter.state)
+        self._uiState = .init(presenter.state)
     }
 
     var body: some View {
-        if let state = uiState.value {
             ZStack {
-
                 ScalingHeaderScrollView {
-                    HeaderContent(state)
+                    HeaderContent(uiState)
                 } content: {
                     VStack(alignment: .leading, spacing: 0) {
-                        SeasonOverview(state)
-                        EpisodeView(state)
-                        CastListView(casts: toCastsList(state.seasonCast))
+                        SeasonOverview(uiState)
+                        EpisodeView(uiState)
+                        CastListView(casts: toCastsList(uiState.seasonCast))
                     }
                 }
                 .height(min: DimensionConstants.minHeight, max: DimensionConstants.imageHeight)
@@ -50,17 +43,14 @@ struct SeasonDetailsView: View {
                 .allowsHeaderGrowth()
                 .hideScrollIndicators()
                 .shadow(radius: progress)
-                .onAppear { showModal = state.showSeasonWatchStateDialog }
+                .onAppear { showModal = uiState.showSeasonWatchStateDialog }
 
                 TopBar(onBackClicked: { presenter.dispatch(action: SeasonDetailsBackClicked()) })
             }
             .ignoresSafeArea()
             .sheet(isPresented: $showModal) {
-                ImageGalleryContentView(items: state.seasonImages)
+                ImageGalleryContentView(items: uiState.seasonImages)
             }
-
-        }
-
     }
 
     @ViewBuilder

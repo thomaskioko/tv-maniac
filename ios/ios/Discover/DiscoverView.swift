@@ -6,31 +6,27 @@ struct DiscoverView: View {
     
     @Environment(\.colorScheme) var scheme
     @State private var currentIndex: Int = 2
-
-    @ObservedObject
-    private var uiState: StateFlow<DiscoverState>
+    @ObservedObject @StateFlow private var uiState: DiscoverState
 
     private let presenter: DiscoverShowsPresenter
 
-
     init(presenter: DiscoverShowsPresenter){
         self.presenter = presenter
-        self.uiState = StateFlow<DiscoverState>(presenter.state)
+        self._uiState = .init(presenter.state)
     }
 
     var body: some View {
         VStack {
-            switch onEnum(of: uiState.value) {
+            switch onEnum(of: uiState) {
                 case .loading:
                 LoadingIndicatorView()
                     .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
-                case .dataLoaded: loadedContent
+                case .dataLoaded(let data): LoadedContent(data)
                 case .emptyState: emptyView
                 case .errorState(let error):  FullScreenView(
                     systemName: "exclamationmark.arrow.triangle.2.circlepath",
                     message: error.errorMessage ?? "Something went wrong!!"
                 )
-                case .none: emptyView
             }
         }
     }
@@ -75,10 +71,8 @@ struct DiscoverView: View {
     }
     
     @ViewBuilder
-    private var loadedContent: some View {
+    private func LoadedContent(_ contentState: DataLoaded) -> some View {
         ZStack {
-            let contentState = uiState.value as! DataLoaded
-
             BackgroundView(contentState.featuredShows)
             
             ScrollView(showsIndicators: false) {

@@ -16,22 +16,19 @@ struct ShowDetailView: View {
     private let minHeight = 120.0
     private let presenter: ShowDetailsPresenter
 
-    @ObservedObject
-    private var uiState: StateFlow<ShowDetailsState>
-    @State
-    var progress: CGFloat = 0
+    @ObservedObject @StateFlow private var uiState: ShowDetailsState
+    @State private var progress: CGFloat = 0
 
     init(presenter: ShowDetailsPresenter){
         self.presenter = presenter
-        self.uiState = StateFlow<ShowDetailsState>(presenter.state)
+        self._uiState = .init(presenter.state)
     }
 
     var body: some View {
         ZStack {
-            if let state = uiState.value {
                 ScalingHeaderScrollView {
                     HeaderContentView(
-                        show: state.showDetails,
+                        show: uiState.showDetails,
                         progress: progress,
                         maxHeight: maxHeight,
                         onAddToLibraryClick: { add in
@@ -44,27 +41,27 @@ struct ShowDetailView: View {
 
                 } content: {
                     SeasonsRowView(
-                        seasonsList: state.seasonsList,
+                        seasonsList: uiState.seasonsList,
                         onClick: { params in
                             presenter.dispatch(action: SeasonClicked(params: params))
                         }
                     )
 
-                    ProvidersList(items: state.providers)
+                    ProvidersList(items: uiState.providers)
 
-                    TrailerListView(trailers: state.trailersList, openInYouTube: state.openTrailersInYoutube)
+                    TrailerListView(trailers: uiState.trailersList, openInYouTube: uiState.openTrailersInYoutube)
 
-                    CastListView(casts: state.castsList)
+                    CastListView(casts: uiState.castsList)
 
                     HorizontalShowsListView(
                         title: "Recommendations",
-                        items: state.recommendedShowList,
+                        items: uiState.recommendedShowList,
                         onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id)) }
                     )
 
                     HorizontalShowsListView(
                         title: "Similar Shows",
-                        items: state.similarShows,
+                        items: uiState.similarShows,
                         onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id)) }
                     )
 
@@ -77,7 +74,6 @@ struct ShowDetailView: View {
 
                 TopBar(onBackClicked: { presenter.dispatch(action: DetailBackClicked()) })
 
-            }
         }
         .ignoresSafeArea()
     }
