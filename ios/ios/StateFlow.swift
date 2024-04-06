@@ -6,25 +6,38 @@
 //  Copyright © 2024 orgName. All rights reserved.
 //
 
-import Foundation
-import KMPNativeCoroutinesAsync
+import SwiftUI
 import TvManiac
 
+@propertyWrapper
 class StateFlow<T: AnyObject>: ObservableObject {
-    @Published
-    var value: T?
 
-    private var cancelable: Cancelable? = nil
+    private let stateFlow: SkieSwiftStateFlow<T>
 
-    init(_ state: Kotlinx_coroutines_coreStateFlow) {
-        self.value = state.value as? T
+    @Published var wrappedValue: T
 
-        cancelable = FlowWrapper<T>(flow: state).collect(consumer: { value in
-            self.value = value
-        })
+    private var publisher: Task<(), Never>?
+
+    init(_ value: SkieSwiftStateFlow<T>) {
+        self.stateFlow = value
+        self.wrappedValue = value.value
+
+        self.publisher = Task { @MainActor in
+            for await item in stateFlow {
+                self.wrappedValue = item
+            }
+        }
     }
 
     deinit {
-        self.cancelable?.cancel()
+        if let publisher {
+            publisher.cancel()
+        }
+    }
+}
+
+extension ObservedObject {
+    init<F>(_ stateFlow: SkieSwiftStateFlow<F>) where ObjectType == StateFlow<F> {
+        self.init(wrappedValue: StateFlow(stateFlow))
     }
 }
