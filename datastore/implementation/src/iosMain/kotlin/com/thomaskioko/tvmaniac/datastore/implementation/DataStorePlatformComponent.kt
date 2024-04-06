@@ -4,7 +4,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
-import kotlinx.cinterop.ExperimentalForeignApi
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
@@ -13,7 +12,6 @@ import platform.Foundation.NSUserDomainMask
 
 actual interface DataStorePlatformComponent {
 
-  @OptIn(ExperimentalForeignApi::class)
   @ApplicationScope
   @Provides
   fun provideDataStore(dispatchers: AppCoroutineScope): DataStore<Preferences> =

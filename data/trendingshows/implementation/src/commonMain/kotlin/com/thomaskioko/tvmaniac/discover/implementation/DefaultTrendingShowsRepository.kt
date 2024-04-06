@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import app.cash.paging.Pager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -20,7 +19,6 @@ import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.ExperimentalStoreApi
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.StoreReadRequest.Companion.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
@@ -68,7 +66,6 @@ class DefaultTrendingShowsRepository(
         ),
     )
 
-  @OptIn(ExperimentalPagingApi::class, ExperimentalStoreApi::class)
   override fun getPagedTrendingShows(): Flow<PagingData<ShowEntity>> {
     return Pager(
         config = CommonPagingConfig.pagingConfig,

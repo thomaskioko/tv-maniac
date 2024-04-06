@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.presentation.trailers
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -29,8 +29,7 @@ constructor(
 
   private val coroutineScope = coroutineScope()
   private val _state = MutableStateFlow<TrailersState>(LoadingTrailers)
-  val state: Value<TrailersState> =
-    _state.asValue(initialValue = _state.value, lifecycle = lifecycle)
+  val state: StateFlow<TrailersState> = _state.asStateFlow()
 
   init {
     coroutineScope.launch {

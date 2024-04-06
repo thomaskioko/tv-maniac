@@ -19,14 +19,11 @@ import kotlin.test.Test
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
-@Suppress("TestFunctionName")
-@OptIn(ExperimentalCoroutinesApi::class)
 class LibraryPresenterTest {
 
   private val lifecycle = LifecycleRegistry()
@@ -54,7 +51,7 @@ class LibraryPresenterTest {
   }
 
   @Test
-  fun GIVEN_no_data_is_cached_VERIFY_correct_state_is_emitted() = runTest {
+  fun given_no_data_is_cached_VERIFY_correct_state_is_emitted() = runTest {
     repository.setFollowedResult(emptyList())
     presenter.state.test {
       awaitItem() shouldBe LoadingShows
@@ -63,7 +60,7 @@ class LibraryPresenterTest {
   }
 
   @Test
-  fun GIVEN_data_is_cached_VERIFY_correct_state_is_emitted() = runTest {
+  fun given_data_is_cached_VERIFY_correct_state_is_emitted() = runTest {
     repository.setFollowedResult(cachedResult)
 
     presenter.state.test {
@@ -73,7 +70,7 @@ class LibraryPresenterTest {
   }
 
   @Test
-  fun GIVEN_data_is_cached_and_updated_VERIFY_correct_state_is_emitted() = runTest {
+  fun given_data_is_cached_and_updated_VERIFY_correct_state_is_emitted() = runTest {
     repository.setFollowedResult(cachedResult)
 
     presenter.state.test {

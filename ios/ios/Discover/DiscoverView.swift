@@ -6,34 +6,31 @@ struct DiscoverView: View {
     
     @Environment(\.colorScheme) var scheme
     @State private var currentIndex: Int = 2
-    
+
+    @ObservedObject
+    private var uiState: StateFlow<DiscoverState>
+
     private let presenter: DiscoverShowsPresenter
-    
-    @StateValue
-    private var uiState: DiscoverState
+
 
     init(presenter: DiscoverShowsPresenter){
         self.presenter = presenter
-        _uiState = StateValue(presenter.value)
+        self.uiState = StateFlow<DiscoverState>(presenter.state)
     }
-    
+
     var body: some View {
         VStack {
-            switch uiState {
-            case is Loading:
+            switch onEnum(of: uiState.value) {
+                case .loading:
                 LoadingIndicatorView()
                     .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
-            case is DataLoaded: loadedContent
-            case is EmptyState: emptyView
-            case is ErrorState: if let contentState = uiState as? ErrorState {
-                FullScreenView(
+                case .dataLoaded: loadedContent
+                case .emptyState: emptyView
+                case .errorState(let error):  FullScreenView(
                     systemName: "exclamationmark.arrow.triangle.2.circlepath",
-                    message: contentState.errorMessage ?? "Something went wrong!!"
+                    message: error.errorMessage ?? "Something went wrong!!"
                 )
-            }
-                
-            default:
-                fatalError("Unhandled case: \(uiState)")
+                case .none: emptyView
             }
         }
     }
@@ -80,8 +77,8 @@ struct DiscoverView: View {
     @ViewBuilder
     private var loadedContent: some View {
         ZStack {
-            let contentState = uiState as! DataLoaded
-            
+            let contentState = uiState.value as! DataLoaded
+
             BackgroundView(contentState.featuredShows)
             
             ScrollView(showsIndicators: false) {

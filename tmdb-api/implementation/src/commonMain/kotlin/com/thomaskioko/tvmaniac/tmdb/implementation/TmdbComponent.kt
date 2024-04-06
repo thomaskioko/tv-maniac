@@ -8,7 +8,6 @@ import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Provides
 
@@ -22,7 +21,6 @@ expect interface TmdbPlatformComponent
 
 interface TmdbComponent : TmdbPlatformComponent {
 
-  @OptIn(ExperimentalSerializationApi::class)
   @ApplicationScope
   @Provides
   fun provideTmdbJson(): TmdbJson = Json {

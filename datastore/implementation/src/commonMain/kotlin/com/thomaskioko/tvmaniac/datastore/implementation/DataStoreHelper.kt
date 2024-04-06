@@ -4,15 +4,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.SynchronizedObject
 import kotlinx.coroutines.internal.synchronized
 import okio.Path.Companion.toPath
 
-@OptIn(InternalCoroutinesApi::class) private val lock = SynchronizedObject()
+private val lock = SynchronizedObject()
 private lateinit var dataStore: DataStore<Preferences>
 
-@OptIn(InternalCoroutinesApi::class)
 internal fun createDataStore(produceFile: () -> String, coroutineScope: CoroutineScope) =
   synchronized(lock) {
     if (::dataStore.isInitialized) {
