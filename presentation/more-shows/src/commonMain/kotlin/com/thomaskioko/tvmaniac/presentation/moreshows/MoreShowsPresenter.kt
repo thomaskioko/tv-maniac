@@ -13,9 +13,12 @@ import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -64,7 +67,11 @@ class MoreShowsPresenter(
   private fun getPopularPagedList() {
     coroutineScope.launch {
       val pagingList: Flow<PagingData<TvShow>> =
-        popularShowsRepository.getPagedPopularShows().mapToTvShow().cachedIn(coroutineScope)
+        popularShowsRepository
+          .fetchPagedPopularShows()
+          .distinctUntilChanged()
+          .mapToTvShow()
+          .cachedIn(coroutineScope)
 
       updateState(pagingList = pagingList, title = Category.POPULAR.title)
     }
@@ -91,7 +98,11 @@ class MoreShowsPresenter(
   private fun getTopRatedPagedList() {
     coroutineScope.launch {
       val pagingList: Flow<PagingData<TvShow>> =
-        topRatedShowsRepository.getPagedTopRatedShows().mapToTvShow().cachedIn(coroutineScope)
+        topRatedShowsRepository
+          .getPagedTopRatedShows()
+          .mapToTvShow()
+          .cachedIn(coroutineScope)
+          .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5000), PagingData.empty())
 
       updateState(pagingList = pagingList, title = Category.TOP_RATED.title)
     }

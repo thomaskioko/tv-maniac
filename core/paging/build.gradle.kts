@@ -1,6 +1,4 @@
-plugins {
-  id("plugin.tvmaniac.multiplatform")
-}
+plugins { id("plugin.tvmaniac.multiplatform") }
 
 kotlin {
   sourceSets {
@@ -8,5 +6,7 @@ kotlin {
       implementation(libs.coroutines.core)
       implementation(libs.paging.common)
     }
+
+    iosMain.dependencies { implementation(libs.paging.ios) }
   }
 }

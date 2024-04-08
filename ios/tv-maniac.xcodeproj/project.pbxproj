@@ -24,8 +24,6 @@
 		D62F1BC82B344941004650E3 /* TransparentImageBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BC72B344941004650E3 /* TransparentImageBackground.swift */; };
 		D62F1BCB2B346336004650E3 /* RoundedProgressIndicatorStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BCA2B346336004650E3 /* RoundedProgressIndicatorStyle.swift */; };
 		D62F1BCD2B34697F004650E3 /* TopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BCC2B34697F004650E3 /* TopBar.swift */; };
-		D62FD78C2B583BF8004E2F3D /* KMPNativeCoroutinesAsync in Frameworks */ = {isa = PBXBuildFile; productRef = D62FD78B2B583BF8004E2F3D /* KMPNativeCoroutinesAsync */; };
-		D62FD78E2B583BF8004E2F3D /* KMPNativeCoroutinesCombine in Frameworks */ = {isa = PBXBuildFile; productRef = D62FD78D2B583BF8004E2F3D /* KMPNativeCoroutinesCombine */; };
 		D636CE4A2B447C9C003F7876 /* TitleMoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE492B447C9C003F7876 /* TitleMoreView.swift */; };
 		D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */; };
 		D64279562A6080A900E65755 /* ToastStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64279552A6080A900E65755 /* ToastStyle.swift */; };
@@ -57,6 +55,9 @@
 		D696FD2E2B33522D00CA1B98 /* HorizontalShowsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D696FD2D2B33522D00CA1B98 /* HorizontalShowsListView.swift */; };
 		D6BA80EE2BBC55F5007CDA3A /* StateFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BA80ED2BBC55F5007CDA3A /* StateFlow.swift */; };
 		D6BA80F12BBEFA0F007CDA3A /* SeasonsRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BA80F02BBEFA0F007CDA3A /* SeasonsRowView.swift */; };
+		D6BA80F82BC1B9BB007CDA3A /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = D6BA80F72BC1B9BB007CDA3A /* Shimmer */; };
+		D6BA80FE2BC1C51B007CDA3A /* MoreShowsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BA80FD2BC1C51B007CDA3A /* MoreShowsViewModel.swift */; };
+		D6BA81002BC1DFFA007CDA3A /* AsyncSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BA80FF2BC1DFFA007CDA3A /* AsyncSequence.swift */; };
 		D6C263322B323CEC00179CDF /* ProvidersList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C263312B323CEC00179CDF /* ProvidersList.swift */; };
 		D6CB358A2B46D96A002FBEF8 /* View+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CB35892B46D96A002FBEF8 /* View+Extensions.swift */; };
 		D6CF9E312B31FFBF00A1AD00 /* ScalingHeaderScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = D6CF9E302B31FFBF00A1AD00 /* ScalingHeaderScrollView */; };
@@ -150,6 +151,8 @@
 		D696FD2D2B33522D00CA1B98 /* HorizontalShowsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalShowsListView.swift; sourceTree = "<group>"; };
 		D6BA80ED2BBC55F5007CDA3A /* StateFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateFlow.swift; sourceTree = "<group>"; };
 		D6BA80F02BBEFA0F007CDA3A /* SeasonsRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonsRowView.swift; sourceTree = "<group>"; };
+		D6BA80FD2BC1C51B007CDA3A /* MoreShowsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreShowsViewModel.swift; sourceTree = "<group>"; };
+		D6BA80FF2BC1DFFA007CDA3A /* AsyncSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncSequence.swift; sourceTree = "<group>"; };
 		D6C263312B323CEC00179CDF /* ProvidersList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvidersList.swift; sourceTree = "<group>"; };
 		D6CB35892B46D96A002FBEF8 /* View+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extensions.swift"; sourceTree = "<group>"; };
 		D6CF9E322B32021300A1AD00 /* CircleButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleButtonStyle.swift; sourceTree = "<group>"; };
@@ -187,10 +190,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D65569DD2B31B54A005F9F37 /* SDWebImageSwiftUI in Frameworks */,
+				D6BA80F82BC1B9BB007CDA3A /* Shimmer in Frameworks */,
 				D61A65592B32EE5000112590 /* YouTubePlayerKit in Frameworks */,
 				D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */,
-				D62FD78E2B583BF8004E2F3D /* KMPNativeCoroutinesCombine in Frameworks */,
-				D62FD78C2B583BF8004E2F3D /* KMPNativeCoroutinesAsync in Frameworks */,
 				D6CF9E312B31FFBF00A1AD00 /* ScalingHeaderScrollView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -265,6 +267,7 @@
 			isa = PBXGroup;
 			children = (
 				D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */,
+				D6BA80FD2BC1C51B007CDA3A /* MoreShowsViewModel.swift */,
 			);
 			path = MoreShows;
 			sourceTree = "<group>";
@@ -349,7 +352,6 @@
 			children = (
 				D67761862B1CE6F600537DD5 /* RootHolder.swift */,
 				D67761842B1CE6AE00537DD5 /* AppDelegate.swift */,
-				D6BA80ED2BBC55F5007CDA3A /* StateFlow.swift */,
 			);
 			name = DecomposeHelpers;
 			sourceTree = "<group>";
@@ -358,6 +360,7 @@
 			isa = PBXGroup;
 			children = (
 				D677618C2B1CF22500537DD5 /* DecomposeHelpers */,
+				D6BA80ED2BBC55F5007CDA3A /* StateFlow.swift */,
 				E989E1172940EAB300C01A39 /* ThemeUtilities.swift */,
 			);
 			name = Utils;
@@ -437,6 +440,7 @@
 				D6CF9E342B32024000A1AD00 /* Color+hex.swift */,
 				D614675D2B3475F90071647C /* HorizontalAlignment.swift */,
 				D6CB35892B46D96A002FBEF8 /* View+Extensions.swift */,
+				D6BA80FF2BC1DFFA007CDA3A /* AsyncSequence.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -545,8 +549,7 @@
 				D65569DC2B31B54A005F9F37 /* SDWebImageSwiftUI */,
 				D6CF9E302B31FFBF00A1AD00 /* ScalingHeaderScrollView */,
 				D61A65582B32EE5000112590 /* YouTubePlayerKit */,
-				D62FD78B2B583BF8004E2F3D /* KMPNativeCoroutinesAsync */,
-				D62FD78D2B583BF8004E2F3D /* KMPNativeCoroutinesCombine */,
+				D6BA80F72BC1B9BB007CDA3A /* Shimmer */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -577,12 +580,11 @@
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
-				E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */,
 				D68666B12B1E7F2E00D6D334 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				D6CF9E2F2B31FFBF00A1AD00 /* XCRemoteSwiftPackageReference "ScalingHeaderScrollView" */,
 				D61A65572B32EE5000112590 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
-				D62FD78A2B583BF8004E2F3D /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */,
+				D6BA80F62BC1B9BB007CDA3A /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -677,6 +679,8 @@
 				D65569DB2B31B481005F9F37 /* PosterItemView.swift in Sources */,
 				D67761872B1CE6F600537DD5 /* RootHolder.swift in Sources */,
 				D67761892B1CED9E00537DD5 /* RootView.swift in Sources */,
+				D6BA81002BC1DFFA007CDA3A /* AsyncSequence.swift in Sources */,
+				D6BA80FE2BC1C51B007CDA3A /* MoreShowsViewModel.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				D65569E62B31DF3D005F9F37 /* HeaderCoverArtWorkView.swift in Sources */,
 				D61467622B3493B60071647C /* EpisodeItemView.swift in Sources */,
@@ -944,14 +948,6 @@
 				minimumVersion = 1.5.4;
 			};
 		};
-		D62FD78A2B583BF8004E2F3D /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/rickclephas/KMP-NativeCoroutines";
-			requirement = {
-				kind = exactVersion;
-				version = "1.0.0-ALPHA-24";
-			};
-		};
 		D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/OAuthSwift/OAuthSwift";
@@ -968,20 +964,20 @@
 				minimumVersion = 2.2.5;
 			};
 		};
+		D6BA80F62BC1B9BB007CDA3A /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/markiv/SwiftUI-Shimmer";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.2;
+			};
+		};
 		D6CF9E2F2B31FFBF00A1AD00 /* XCRemoteSwiftPackageReference "ScalingHeaderScrollView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/exyte/ScalingHeaderScrollView.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.1.0;
-			};
-		};
-		E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 7.8.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -992,16 +988,6 @@
 			package = D61A65572B32EE5000112590 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */;
 			productName = YouTubePlayerKit;
 		};
-		D62FD78B2B583BF8004E2F3D /* KMPNativeCoroutinesAsync */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D62FD78A2B583BF8004E2F3D /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */;
-			productName = KMPNativeCoroutinesAsync;
-		};
-		D62FD78D2B583BF8004E2F3D /* KMPNativeCoroutinesCombine */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D62FD78A2B583BF8004E2F3D /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */;
-			productName = KMPNativeCoroutinesCombine;
-		};
 		D653924729D8B6A6000EE673 /* OAuthSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */;
@@ -1011,6 +997,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D68666B12B1E7F2E00D6D334 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
+		};
+		D6BA80F72BC1B9BB007CDA3A /* Shimmer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D6BA80F62BC1B9BB007CDA3A /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */;
+			productName = Shimmer;
 		};
 		D6CF9E302B31FFBF00A1AD00 /* ScalingHeaderScrollView */ = {
 			isa = XCSwiftPackageProductDependency;
