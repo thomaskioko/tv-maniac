@@ -158,7 +158,7 @@ iOS
 - [x] Implement trakt auth & sign in
 - [x] Update show detail UI
 - [x] Add Seasons Detail UI
-- [ ] Implement Paging
+- [x] Implement Paging
 - [ ] Add Episode detail screen
 - [ ] Add Watchlist
 - [ ] Implement Search
