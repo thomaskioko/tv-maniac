@@ -232,19 +232,19 @@ private fun DiscoverContent(
 
       item {
         HorizontalRowContent(
-          category = stringResource(id = R.string.title_category_upcoming),
-          tvShows = state.upcomingShows,
+          category = stringResource(id = R.string.title_category_trending_today),
+          tvShows = state.trendingToday,
           onItemClicked = { onAction(ShowClicked(it)) },
-          onMoreClicked = { onAction(UpComingClicked) },
+          onMoreClicked = { onAction(TrendingClicked) },
         )
       }
 
       item {
         HorizontalRowContent(
-          category = stringResource(id = R.string.title_category_trending_today),
-          tvShows = state.trendingToday,
+          category = stringResource(id = R.string.title_category_upcoming),
+          tvShows = state.upcomingShows,
           onItemClicked = { onAction(ShowClicked(it)) },
-          onMoreClicked = { onAction(TrendingClicked) },
+          onMoreClicked = { onAction(UpComingClicked) },
         )
       }
 

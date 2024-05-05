@@ -84,19 +84,19 @@ struct DiscoverView: View {
                 } else {
                     
                     FeaturedContentView(state.featuredShows)
-                    
-                    HorizontalItemContentListView(
-                        items: state.upcomingShows,
-                        title: "Upcoming",
-                        onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                        onMoreClicked: { presenter.dispatch(action: UpComingClicked()) }
-                    )
-                    
+
                     HorizontalItemContentListView(
                         items: state.trendingToday,
                         title: "Trending Today",
                         onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
                         onMoreClicked: { presenter.dispatch(action: TrendingClicked()) }
+                    )
+
+                    HorizontalItemContentListView(
+                        items: state.upcomingShows,
+                        title: "Upcoming",
+                        onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                        onMoreClicked: { presenter.dispatch(action: UpComingClicked()) }
                     )
                     
                     HorizontalItemContentListView(
@@ -125,8 +125,8 @@ struct DiscoverView: View {
     func FeaturedContentView(_ shows: [DiscoverShow]?) -> some View {
         if let shows = shows {
             if !shows.isEmpty {
-                SnapCarousel(spacing: 10, trailingSpace: 120, index: $currentIndex, items: shows) { show  in
-                    
+                SnapCarousel(spacing: 10, trailingSpace: 140, index: $currentIndex, items: shows) { show  in
+
                     GeometryReader{ proxy in
                         
                         FeaturedContentPosterView(
