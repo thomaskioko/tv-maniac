@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.toprated.data.implementation
 
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.db.Toprated_shows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
@@ -82,8 +81,6 @@ class TopRatedShowsStore(
         ),
     )
     .cachePolicy(
-      MemoryPolicy.builder<Long, List<ShowEntity>>()
-        .setExpireAfterWrite(CACHE_EXPIRE_TIME)
-        .build()
+      MemoryPolicy.builder<Long, List<ShowEntity>>().setExpireAfterWrite(CACHE_EXPIRE_TIME).build()
     )
     .build()

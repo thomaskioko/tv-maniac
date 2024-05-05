@@ -117,11 +117,10 @@ class DiscoverShowsPresenterTest {
       awaitItem() shouldBe Loading
       awaitItem() shouldBe EmptyState
 
-      presenter.dispatch(ReloadData)
+      presenter.dispatch(RefreshData)
 
       setList(createDiscoverShowList())
 
-      awaitItem() shouldBe Loading
       awaitItem() shouldBe
         DataLoaded(
           featuredShows = uiModelList(),
@@ -129,7 +128,6 @@ class DiscoverShowsPresenterTest {
           popularShows = uiModelList(),
           upcomingShows = uiModelList(),
           trendingToday = uiModelList(),
-          isRefreshing = false,
         )
     }
   }

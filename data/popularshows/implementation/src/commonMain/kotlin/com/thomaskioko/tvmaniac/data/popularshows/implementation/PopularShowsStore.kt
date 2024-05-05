@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.data.popularshows.implementation
 
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.db.Popular_shows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
@@ -84,8 +83,6 @@ class PopularShowsStore(
         ),
     )
     .cachePolicy(
-      MemoryPolicy.builder<Long, List<ShowEntity>>()
-        .setExpireAfterWrite(CACHE_EXPIRE_TIME)
-        .build()
+      MemoryPolicy.builder<Long, List<ShowEntity>>().setExpireAfterWrite(CACHE_EXPIRE_TIME).build()
     )
     .build()
