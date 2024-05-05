@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.data.featuredshows.implementation
 
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.db.Featured_shows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.paging.CACHE_EXPIRE_TIME
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
+import org.mobilenativefoundation.store.store5.MemoryPolicy
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
@@ -31,7 +32,6 @@ class FeaturedShowsStore(
   private val formatterUtil: FormatterUtil,
   private val dateFormatter: PlatformDateFormatter,
   private val databaseTransactionRunner: DatabaseTransactionRunner,
-  private val scope: AppCoroutineScope,
 ) :
   Store<String, List<ShowEntity>> by StoreBuilder.from(
       fetcher =
@@ -87,5 +87,9 @@ class FeaturedShowsStore(
           },
         ),
     )
-    .scope(scope.io)
+    .cachePolicy(
+      MemoryPolicy.builder<String, List<ShowEntity>>()
+        .setExpireAfterWrite(CACHE_EXPIRE_TIME)
+        .build()
+    )
     .build()
