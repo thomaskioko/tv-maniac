@@ -91,7 +91,7 @@ class RecommendedShowStore(
               )
             }
 
-            requestManagerRepository.insert(
+            requestManagerRepository.upsert(
               entityId = param.showId,
               requestType = RECOMMENDED_SHOWS.name,
             )

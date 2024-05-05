@@ -73,7 +73,7 @@ class TopRatedShowsStore(
               )
             }
 
-            requestManagerRepository.insert(
+            requestManagerRepository.upsert(
               entityId = page,
               requestType = TOP_RATED_SHOWS.name,
             )

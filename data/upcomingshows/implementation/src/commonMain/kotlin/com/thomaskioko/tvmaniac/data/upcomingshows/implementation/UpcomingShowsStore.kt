@@ -80,7 +80,7 @@ class UpcomingShowsStore(
               )
             }
 
-            requestManagerRepository.insert(
+            requestManagerRepository.upsert(
               entityId = params.page,
               requestType = UPCOMING_SHOWS.name,
             )

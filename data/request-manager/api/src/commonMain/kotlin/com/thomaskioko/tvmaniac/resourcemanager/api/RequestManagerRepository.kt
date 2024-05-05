@@ -4,9 +4,7 @@ import kotlin.time.Duration
 
 interface RequestManagerRepository {
 
-  fun insert(entityId: Long, requestType: String)
-
-  fun upsert(lastRequests: LastRequest): Long
+  fun upsert(entityId: Long, requestType: String)
 
   fun isRequestExpired(entityId: Long, requestType: String, threshold: Duration): Boolean
 

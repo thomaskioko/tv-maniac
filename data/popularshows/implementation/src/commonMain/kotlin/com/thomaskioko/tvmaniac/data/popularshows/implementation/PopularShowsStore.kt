@@ -73,7 +73,7 @@ class PopularShowsStore(
               )
             }
 
-            requestManagerRepository.insert(
+            requestManagerRepository.upsert(
               entityId = page,
               requestType = POPULAR_SHOWS.name,
             )

@@ -79,7 +79,7 @@ class FeaturedShowsStore(
                 )
               }
 
-              requestManagerRepository.insert(
+              requestManagerRepository.upsert(
                 entityId = FEATURED_SHOWS_TODAY.requestId,
                 requestType = FEATURED_SHOWS_TODAY.name,
               )

@@ -86,7 +86,7 @@ class SimilarShowStore(
               )
             }
 
-            requestManagerRepository.insert(
+            requestManagerRepository.upsert(
               entityId = param.showId,
               requestType = SIMILAR_SHOWS.name,
             )

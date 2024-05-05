@@ -67,7 +67,7 @@ class WatchProvidersStore(
             }
 
             // Update Last Request
-            requestManagerRepository.insert(
+            requestManagerRepository.upsert(
               entityId = id,
               requestType = WATCH_PROVIDERS.name,
             )

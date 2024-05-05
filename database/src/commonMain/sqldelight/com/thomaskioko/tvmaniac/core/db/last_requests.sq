@@ -7,20 +7,12 @@ CREATE TABLE IF NOT EXISTS last_requests (
     `timestamp` INTEGER AS Instant NOT NULL
 );
 
-insert:
-INSERT INTO last_requests (
+upsert:
+INSERT OR REPLACE INTO last_requests (
     `entity_id`,
     `request_type`,
     `timestamp`
 ) VALUES (?,?,?);
-
-upsert:
-INSERT OR REPLACE INTO last_requests (
-    `id`,
-    `entity_id`,
-    `request_type`,
-    `timestamp`
-) VALUES (?, ?,?,?);
 
 getLastRequestForId:
 SELECT * FROM last_requests
