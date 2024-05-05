@@ -2,8 +2,6 @@ package com.thomaskioko.tvmaniac.presentation.discover
 
 sealed interface DiscoverShowAction
 
-data object ReloadData : DiscoverShowAction
-
 data object SnackBarDismissed : DiscoverShowAction
 
 data object UpComingClicked : DiscoverShowAction

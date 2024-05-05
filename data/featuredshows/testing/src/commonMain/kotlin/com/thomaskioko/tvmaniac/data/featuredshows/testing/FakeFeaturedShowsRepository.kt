@@ -17,7 +17,7 @@ class FakeFeaturedShowsRepository : FeaturedShowsRepository {
     entityListResult.send(result)
   }
 
-  override suspend fun observeFeaturedShows(
+  override suspend fun updateFeaturedShows(
     timeWindow: String,
     forceRefresh: Boolean
   ): Flow<Either<Failure, List<ShowEntity>>> = entityListResult.receiveAsFlow()

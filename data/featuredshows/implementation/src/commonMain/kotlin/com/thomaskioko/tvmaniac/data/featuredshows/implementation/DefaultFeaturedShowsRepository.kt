@@ -21,7 +21,7 @@ class DefaultFeaturedShowsRepository(
   private val dispatchers: AppCoroutineDispatchers,
 ) : FeaturedShowsRepository {
 
-  override suspend fun observeFeaturedShows(
+  override suspend fun updateFeaturedShows(
     timeWindow: String,
     forceRefresh: Boolean,
   ): Flow<Either<Failure, List<ShowEntity>>> {

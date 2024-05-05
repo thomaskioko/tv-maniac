@@ -61,11 +61,6 @@ class DiscoverShowsPresenter(
           _state.update { (it as? DataLoaded)?.copy(isRefreshing = true) ?: it }
           observeShowData(true)
         }
-      ReloadData ->
-        coroutineScope.launch {
-          _state.update { Loading }
-          observeShowData(true)
-        }
       SnackBarDismissed ->
         coroutineScope.launch {
           _state.update { state ->
@@ -84,7 +79,7 @@ class DiscoverShowsPresenter(
 
   private suspend fun observeShowData(refresh: Boolean = false) {
     combine(
-        featuredShowsRepository.observeFeaturedShows(forceRefresh = refresh),
+        featuredShowsRepository.updateFeaturedShows(forceRefresh = refresh),
         topRatedShowsRepository.observeTopRatedShows(forceRefresh = refresh),
         popularShowsRepository.observePopularShows(forceRefresh = refresh),
         upcomingShowsRepository.observeUpcomingShows(forceRefresh = refresh),
@@ -93,10 +88,10 @@ class DiscoverShowsPresenter(
         if (
           isEmpty(
             featured.getOrNull(),
-            featured.getOrNull(),
-            featured.getOrNull(),
-            featured.getOrNull(),
-            featured.getOrNull(),
+            topRated.getOrNull(),
+            popular.getOrNull(),
+            upcomingShows.getOrNull(),
+            trendingToday.getOrNull(),
           )
         ) {
           _state.update { EmptyState }

@@ -51,7 +51,7 @@ struct DiscoverView: View {
                 .padding(.bottom, 16)
             
             Button(action: {
-                presenter.dispatch(action: ReloadData())
+                presenter.dispatch(action: RefreshData())
             }, label: {
                 Text("Retry")
                     .bodyMediumFont(size: 16)

@@ -68,7 +68,7 @@ class MoreShowsPresenter(
     coroutineScope.launch {
       val pagingList: Flow<PagingData<TvShow>> =
         popularShowsRepository
-          .fetchPagedPopularShows()
+          .getPagedPopularShows()
           .distinctUntilChanged()
           .mapToTvShow()
           .cachedIn(coroutineScope)

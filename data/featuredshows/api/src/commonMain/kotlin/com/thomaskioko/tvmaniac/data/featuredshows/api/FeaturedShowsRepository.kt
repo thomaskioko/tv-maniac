@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
 interface FeaturedShowsRepository {
-  suspend fun observeFeaturedShows(
+  suspend fun updateFeaturedShows(
     timeWindow: String = DEFAULT_DAY_TIME_WINDOW,
     forceRefresh: Boolean = false,
   ): Flow<Either<Failure, List<ShowEntity>>>

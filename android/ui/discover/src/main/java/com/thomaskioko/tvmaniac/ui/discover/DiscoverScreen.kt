@@ -80,7 +80,6 @@ import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
 import com.thomaskioko.tvmaniac.presentation.discover.Loading
 import com.thomaskioko.tvmaniac.presentation.discover.PopularClicked
 import com.thomaskioko.tvmaniac.presentation.discover.RefreshData
-import com.thomaskioko.tvmaniac.presentation.discover.ReloadData
 import com.thomaskioko.tvmaniac.presentation.discover.ShowClicked
 import com.thomaskioko.tvmaniac.presentation.discover.SnackBarDismissed
 import com.thomaskioko.tvmaniac.presentation.discover.TopRatedClicked
@@ -143,7 +142,7 @@ internal fun DiscoverScreen(
     is ErrorState ->
       ErrorUi(
         errorMessage = state.errorMessage,
-        onRetry = { onAction(ReloadData) },
+        onRetry = { onAction(RefreshData) },
         modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
       )
   }
@@ -183,7 +182,7 @@ private fun EmptyContent(
     TvManiacOutlinedButton(
       modifier = Modifier.padding(top = 16.dp),
       text = stringResource(id = R.string.generic_retry),
-      onClick = { onAction(ReloadData) },
+      onClick = { onAction(RefreshData) },
     )
   }
 }
