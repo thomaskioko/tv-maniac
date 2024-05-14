@@ -73,7 +73,7 @@ coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm",
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 decompose-decompose = { group = "com.arkivanov.decompose", name = "decompose", version.ref = "decompose" }
-decompose-extensions-compose = { group = "com.arkivanov.decompose", name = "extensions-compose-jetpack", version.ref = "decompose" }
+decompose-extensions-compose = { group = "com.arkivanov.decompose", name = "extensions-compose", version.ref = "decompose" }
 essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
 
 kenburns = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburns" }
