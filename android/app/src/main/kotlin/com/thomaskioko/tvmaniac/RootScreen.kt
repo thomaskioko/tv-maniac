@@ -25,7 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.arkivanov.decompose.extensions.compose.jetpack.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.navigation.Config
