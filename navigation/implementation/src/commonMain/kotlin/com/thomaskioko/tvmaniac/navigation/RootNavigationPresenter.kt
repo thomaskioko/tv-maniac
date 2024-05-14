@@ -62,7 +62,7 @@ class RootNavigationPresenter(
   private val _state: MutableStateFlow<ChildStack<*, Screen>> = MutableStateFlow(screenStack.value)
 
   init {
-    screenStack.observe { coroutineScope.launch { _state.emit(it) } }
+    screenStack.subscribe { coroutineScope.launch { _state.emit(it) } }
   }
 
   override val screenStackFlow: StateFlow<ChildStack<*, Screen>> = _state.asStateFlow()
