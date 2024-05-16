@@ -182,8 +182,6 @@ private fun TvManiacAlphaTextButtonPreview() {
             contentColor = MaterialTheme.colorScheme.onSecondary,
             containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
           ),
-        modifier =
-          Modifier.background(color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f)),
       ) {
         Text(
           text = "Horror",
