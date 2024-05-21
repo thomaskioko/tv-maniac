@@ -34,6 +34,7 @@ class ComposeLibraryPlugin : Plugin<Project> {
                   "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
                   "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
                   "-opt-in=dev.chrisbanes.snapper.ExperimentalSnapperApi",
+                  "-opt-in=com.github.takahirom.roborazzi.ExperimentalRoborazziApi",
                   "-opt-in=kotlin.RequiresOptIn",
                 )
             }
