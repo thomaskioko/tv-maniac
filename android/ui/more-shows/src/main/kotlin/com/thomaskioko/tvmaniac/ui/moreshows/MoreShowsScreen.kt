@@ -143,12 +143,10 @@ fun GridContent(
 
   Box(
     modifier = Modifier.fillMaxSize(),
-    contentAlignment = Alignment.BottomCenter,
+    contentAlignment = Alignment.Center,
   ) {
     if (lazyPagingItems.loadState.refresh == LoadStateLoading) {
-      LoadingIndicator(
-        modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
-      )
+      LoadingIndicator()
     }
 
     LazyVerticalGrid(

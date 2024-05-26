@@ -43,7 +43,7 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.ShowMarkSeasonDialog
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.seasondetails.ui.mockSeasonDetailsContent
+import com.thomaskioko.tvmaniac.seasondetails.ui.seasonDetailsContent
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -222,9 +222,9 @@ private fun CollapsableContentPreview() {
   TvManiacTheme {
     Surface {
       CollapsableContent(
-        episodesCount = mockSeasonDetailsContent.episodeCount,
-        watchProgress = mockSeasonDetailsContent.watchProgress,
-        episodeDetailsModelList = mockSeasonDetailsContent.episodeDetailsList,
+        episodesCount = seasonDetailsContent.episodeCount,
+        watchProgress = seasonDetailsContent.watchProgress,
+        episodeDetailsModelList = seasonDetailsContent.episodeDetailsList,
         collapsed = false,
         isSeasonWatched = false,
         onAction = {},

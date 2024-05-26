@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import kotlinx.collections.immutable.persistentListOf
 
-private val showDetailsLoaded =
+val showDetailsLoaded =
   ShowDetailsState(
     showDetails =
       ShowDetails(
