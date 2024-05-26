@@ -64,15 +64,18 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
 
       targets.withType<KotlinNativeTarget>().configureEach {
         compilations.configureEach {
-          compilerOptions.configure {
-            freeCompilerArgs.add("-Xallocator=custom")
-            freeCompilerArgs.add("-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion")
-            freeCompilerArgs.add("-Xadd-light-debug=enable")
+          compileTaskProvider.configure {
+            compilerOptions {
+              freeCompilerArgs.add("-Xallocator=custom")
+              freeCompilerArgs.add("-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion")
+              freeCompilerArgs.add("-Xadd-light-debug=enable")
+              freeCompilerArgs.add("-Xexpect-actual-classes")
 
-            freeCompilerArgs.addAll(
-              "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-              "-opt-in=kotlinx.cinterop.BetaInteropApi",
-            )
+              freeCompilerArgs.addAll(
+                "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                "-opt-in=kotlinx.cinterop.BetaInteropApi",
+              )
+            }
           }
         }
       }

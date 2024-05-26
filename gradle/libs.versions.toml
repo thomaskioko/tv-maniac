@@ -14,7 +14,6 @@ atomicfu = "0.24.0"
 coil = "2.6.0"
 compose-bom = "2024.05.00"
 compose-constraintlayout = "1.0.1"
-composecompiler = "1.5.14"
 compose-runtime = "1.6.7"
 coroutines = "1.8.1"
 datetime = "0.6.0"
@@ -129,11 +128,13 @@ youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core
 # Build logic dependencies
 android-desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+compose-compiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependency-analysis" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
