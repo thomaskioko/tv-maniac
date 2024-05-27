@@ -1,4 +1,4 @@
-plugins { id("plugin.tvmaniac.multiplatform") }
+plugins { alias(libs.plugins.tvmaniac.multiplatform) }
 
 kotlin {
   sourceSets {

@@ -25,7 +25,7 @@ gradlePlugin {
             implementationClass = "com.thomaskioko.tvmaniac.plugins.KotlinMultiplatformConventionPlugin"
         }
         register("androidApplication") {
-            id = "tvmaniac.application"
+            id = "plugin.tvmaniac.application"
             implementationClass = "com.thomaskioko.tvmaniac.plugins.ApplicationPlugin"
         }
         register("androidLibrary") {

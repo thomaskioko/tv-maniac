@@ -1,11 +1,8 @@
 package com.thomaskioko.tvmaniac.extensions
 
 import com.android.build.api.dsl.CommonExtension
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.dependencies
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
 
 internal fun Project.configureAndroidCompose(
@@ -25,6 +22,17 @@ internal fun Project.configureAndroidCompose(
       kotlinCompilerExtensionVersion = libs.findVersion("composecompiler").get().toString()
     }
 
+    compileOptions {
+      isCoreLibraryDesugaringEnabled = true
+    }
+
+    testOptions {
+      unitTests {
+        // For Robolectric
+        isIncludeAndroidResources = true
+      }
+    }
+
     configureKotlinJvm()
 
     dependencies {
@@ -32,6 +40,7 @@ internal fun Project.configureAndroidCompose(
 
       add("implementation", platform(bom))
       add("lintChecks", libs.findLibrary("lint-compose").get())
+      add("coreLibraryDesugaring", libs.findLibrary("android-desugarJdkLibs").get())
     }
   }
 }

@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.seasondetails.ui
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsContent
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
+import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonImagesModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
@@ -21,7 +22,7 @@ val episodeDetailsModel =
     seasonEpisodeNumber = "S01 | E01",
   )
 
-val mockSeasonDetailsContent =
+val seasonDetailsContent =
   SeasonDetailsContent(
     seasonId = 1,
     seasonName = "Specials",
@@ -29,7 +30,17 @@ val mockSeasonDetailsContent =
     watchProgress = 0.4f,
     imageUrl = "https://image.tmdb.org/t/p/w500/path/to/image.jpg",
     episodeDetailsList = List(8) { episodeDetailsModel }.toPersistentList(),
-    seasonImages = persistentListOf(),
+    seasonImages =
+      persistentListOf(
+        SeasonImagesModel(
+          id = 1L,
+          imageUrl = null,
+        ),
+        SeasonImagesModel(
+          id = 1L,
+          imageUrl = null,
+        ),
+      ),
     seasonOverview =
       "After stealing the Tesseract in Avengers: Endgame, Loki lands before the " +
         "Time Variance Authority.",
@@ -41,7 +52,7 @@ class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsCon
   override val values: Sequence<SeasonDetailsContent>
     get() {
       return sequenceOf(
-        mockSeasonDetailsContent,
+        seasonDetailsContent,
       )
     }
 }

@@ -127,6 +127,57 @@ jobs:
           name: common-test-report
           path: ./**/build/reports/tests/
 
+  android_screenshot_test:
+    runs-on: macos-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.DISTRIBUTION }}
+          java-version: ${{ env.JDK_VERSION }}
+
+      - name: Roborazzi screenshot tests
+        id: screenshotsverify
+        continue-on-error: true
+        run: ./gradlew verifyRoborazziDemoDebug -Proborazzi.test.record=true
+
+      - name: Prevent pushing new screenshots if this is a fork
+        id: checkfork_screenshots
+        continue-on-error: false
+        if: steps.screenshotsverify.outcome == 'failure' && github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo "::error::Screenshot tests failed, please create a PR in your fork first." && exit 1
+
+      # Runs if previous job failed
+      - name: Generate new screenshots if verification failed and it's a PR
+        id: screenshotsrecord
+        if: steps.screenshotsverify.outcome == 'failure' && github.event_name == 'pull_request'
+        run: |
+          ./gradlew recordRoborazziDemoDebug -Proborazzi.test.record=true
+
+      - name: Push new screenshots if available
+        uses: stefanzweifel/git-auto-commit-action@v5
+        if: steps.screenshotsrecord.outcome == 'success'
+        with:
+          file_pattern: '*/*.png'
+          disable_globbing: true
+          commit_message: "🤖 Beep Beep: Update screenshots 🤖"
+
+      - name: Upload screenshot results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-test-results
+          path: '**/build/outputs/roborazzi/*_compare.png'
+
   iOS:
     runs-on: macos-latest
     steps:
@@ -153,7 +204,7 @@ jobs:
           path: ./**/build/reports/tests/
 
   create-release:
-    needs: [android, android_lint, common_test, iOS, spotless, jvm_test, ]
+    needs: [android, android_lint, android_screenshot_test, common_test, iOS, spotless, jvm_test, ]
     if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
     runs-on: ubuntu-latest
     steps:

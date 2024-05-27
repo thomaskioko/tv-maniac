@@ -26,6 +26,7 @@ include(
   ":android:ui:discover",
   ":android:ui:library",
   ":android:ui:more-shows",
+  ":android:screenshot-tests",
   ":android:ui:search",
   ":android:ui:season-details",
   ":android:ui:settings",

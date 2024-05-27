@@ -517,27 +517,7 @@ fun ShowDetailButtons(
     horizontalArrangement = Arrangement.Center,
   ) {
     TvManiacOutlinedButton(
-      leadingIcon = {
-        Image(
-          imageVector = Icons.Filled.Movie,
-          contentDescription = null,
-          colorFilter =
-            ColorFilter.tint(
-              MaterialTheme.colorScheme.secondary.copy(
-                alpha = 0.8F,
-              ),
-            ),
-        )
-      },
-      text = stringResource(id = R.string.btn_trailer),
-      textPadding = 8.dp,
-      borderColor = MaterialTheme.colorScheme.secondary,
-      onClick = { onWatchTrailerClicked(id) },
-    )
-
-    Spacer(modifier = Modifier.width(8.dp))
-
-    TvManiacOutlinedButton(
+      modifier = Modifier.fillMaxWidth().weight(1f),
       leadingIcon = {
         Image(
           imageVector =
@@ -564,6 +544,27 @@ fun ShowDetailButtons(
       textPadding = 8.dp,
       onClick = { onUpdateFavoriteClicked(isFollowed) },
       borderColor = MaterialTheme.colorScheme.secondary,
+    )
+
+    Spacer(modifier = Modifier.width(8.dp))
+
+    TvManiacOutlinedButton(
+      leadingIcon = {
+        Image(
+          imageVector = Icons.Filled.Movie,
+          contentDescription = null,
+          colorFilter =
+            ColorFilter.tint(
+              MaterialTheme.colorScheme.secondary.copy(
+                alpha = 0.8F,
+              ),
+            ),
+        )
+      },
+      text = stringResource(id = R.string.btn_trailer),
+      textPadding = 8.dp,
+      borderColor = MaterialTheme.colorScheme.secondary,
+      onClick = { onWatchTrailerClicked(id) },
     )
   }
 }

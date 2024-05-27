@@ -27,7 +27,7 @@ fun Project.configureAndroid() {
   }
 
   dependencies {
-    "coreLibraryDesugaring"(libs.findLibrary("android.desugarJdkLibs").get())
+    add("coreLibraryDesugaring", libs.findLibrary("android-desugarJdkLibs").get())
   }
 }
 

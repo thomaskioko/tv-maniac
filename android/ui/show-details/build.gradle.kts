@@ -1,4 +1,7 @@
-plugins { id("plugin.tvmaniac.compose.library") }
+plugins {
+  alias(libs.plugins.tvmaniac.compose.library)
+  alias(libs.plugins.roborazzi)
+}
 
 android { namespace = "com.thomaskioko.tvmaniac.ui.showdetails" }
 
@@ -15,4 +18,9 @@ dependencies {
   implementation(libs.androidx.compose.runtime)
   implementation(libs.decompose.extensions.compose)
   implementation(libs.snapper)
+
+  testImplementation(projects.android.screenshotTests)
+  testImplementation(libs.androidx.compose.ui.test)
+  testImplementation(libs.robolectric)
+  testDemoImplementation(libs.roborazzi)
 }
