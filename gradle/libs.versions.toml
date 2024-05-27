@@ -144,6 +144,13 @@ skie = { id = "co.touchlab.skie", version.ref = "skie"}
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
+# Project Plugins
+tvmaniac-android-library = { id = "plugin.tvmaniac.android.library", version = "unspecified" }
+tvmaniac-application = { id = "plugin.tvmaniac.application", version = "unspecified" }
+tvmaniac-compose-library = { id = "plugin.tvmaniac.compose.library", version = "unspecified" }
+tvmaniac-kotlin-android = { id = "plugin.tvmaniac.kotlin.android", version = "unspecified" }
+tvmaniac-multiplatform = { id = "plugin.tvmaniac.multiplatform", version = "unspecified" }
+
 [bundles]
 unittest = [
     "coroutines-test",

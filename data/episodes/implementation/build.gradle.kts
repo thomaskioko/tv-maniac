@@ -1,5 +1,5 @@
 plugins {
-  id("plugin.tvmaniac.multiplatform")
+  alias(libs.plugins.tvmaniac.multiplatform)
   alias(libs.plugins.ksp)
 }
 

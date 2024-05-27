@@ -1,6 +1,6 @@
 plugins {
-  id("plugin.tvmaniac.kotlin.android")
-  id("plugin.tvmaniac.multiplatform")
+  alias(libs.plugins.tvmaniac.kotlin.android)
+  alias(libs.plugins.tvmaniac.multiplatform)
   alias(libs.plugins.ksp)
 }
 

@@ -1,7 +1,7 @@
 import com.thomaskioko.tvmaniac.extensions.TvManiacBuildType
 
 plugins {
-  id("tvmaniac.application")
+  alias(libs.plugins.tvmaniac.application)
   alias(libs.plugins.ksp)
 }
 

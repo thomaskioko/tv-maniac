@@ -1,4 +1,4 @@
-plugins { id("plugin.tvmaniac.compose.library") }
+plugins { alias(libs.plugins.tvmaniac.compose.library) }
 
 android { namespace = "com.thomaskioko.tvmaniac.ui.search" }
 

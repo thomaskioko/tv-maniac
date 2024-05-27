@@ -1,5 +1,5 @@
 plugins {
-  id("plugin.tvmaniac.compose.library")
+  alias(libs.plugins.tvmaniac.compose.library)
   alias(libs.plugins.roborazzi)
 }
 
