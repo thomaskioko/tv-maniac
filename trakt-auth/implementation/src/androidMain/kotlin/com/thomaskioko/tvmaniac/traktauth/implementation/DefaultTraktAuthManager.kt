@@ -22,7 +22,7 @@ actual class DefaultTraktAuthManager(
 
   private lateinit var launcher: ActivityResultLauncher<Unit>
 
-  override fun registerResult() {
+  actual override fun registerResult() {
     launcher =
       activity.registerForActivityResult(traktActivityResultContract) { result ->
         if (result != null) {
@@ -31,7 +31,7 @@ actual class DefaultTraktAuthManager(
       }
   }
 
-  override fun launchWebView() = launcher.launch(Unit)
+  actual override fun launchWebView() = launcher.launch(Unit)
 
   private fun onLoginResult(result: TraktActivityResultContract.Result) {
     val (response, error) = result

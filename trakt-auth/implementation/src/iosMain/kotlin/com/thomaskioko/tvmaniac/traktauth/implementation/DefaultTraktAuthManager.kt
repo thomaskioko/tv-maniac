@@ -7,11 +7,11 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 actual class DefaultTraktAuthManager : TraktAuthManager {
 
-  override fun launchWebView() {
+  actual override fun launchWebView() {
     // NO OP
   }
 
-  override fun registerResult() {
+  actual override fun registerResult() {
     // NO OP
   }
 }
