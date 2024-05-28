@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.traktauth.implementation
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import com.thomaskioko.tvmaniac.core.logger.KermitLogger
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import me.tatarka.inject.annotations.Inject
 import net.openid.appauth.AuthState
@@ -17,11 +18,11 @@ actual class DefaultTraktAuthManager(
   private val clientAuth: Lazy<ClientAuthentication>,
   private val authService: Lazy<AuthorizationService>,
   private val logger: KermitLogger,
-) {
+) : TraktAuthManager {
 
   private lateinit var launcher: ActivityResultLauncher<Unit>
 
-  actual fun registerResult() {
+  override fun registerResult() {
     launcher =
       activity.registerForActivityResult(traktActivityResultContract) { result ->
         if (result != null) {
@@ -30,7 +31,7 @@ actual class DefaultTraktAuthManager(
       }
   }
 
-  actual fun launchWebView() = launcher.launch(Unit)
+  override fun launchWebView() = launcher.launch(Unit)
 
   private fun onLoginResult(result: TraktActivityResultContract.Result) {
     val (response, error) = result

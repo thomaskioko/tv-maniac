@@ -1,14 +1,15 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-actual class DefaultTraktAuthManager {
-  actual fun launchWebView() {
+actual class DefaultTraktAuthManager : TraktAuthManager {
+  override fun launchWebView() {
     // NO OP
   }
 
-  actual fun registerResult() {
+  override fun registerResult() {
     // NO OP
   }
 }
