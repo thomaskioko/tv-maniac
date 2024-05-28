@@ -8,6 +8,7 @@ import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -40,25 +41,23 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
         }
       }
 
-      targets.all {
-        sourceSets.all {
-          languageSettings {
-            listOf(
-              "androidx.paging.ExperimentalPagingApi",
-              "com.arkivanov.decompose.ExperimentalDecomposeApi",
-              "kotlin.RequiresOptIn",
-              "kotlin.experimental.ExperimentalObjCName",
-              "kotlin.time.ExperimentalTime",
-              "kotlinx.cinterop.BetaInteropApi",
-              "kotlinx.cinterop.ExperimentalForeignApi",
-              "kotlinx.coroutines.DelicateCoroutinesApi",
-              "kotlinx.coroutines.ExperimentalCoroutinesApi",
-              "kotlinx.coroutines.FlowPreview",
-              "kotlinx.coroutines.InternalCoroutinesApi",
-              "kotlinx.serialization.ExperimentalSerializationApi",
-              "org.mobilenativefoundation.store.store5.ExperimentalStoreApi",
-            ).forEach { optIn(it) }
-          }
+      sourceSets.all {
+        languageSettings {
+          listOf(
+            "androidx.paging.ExperimentalPagingApi",
+            "com.arkivanov.decompose.ExperimentalDecomposeApi",
+            "kotlin.RequiresOptIn",
+            "kotlin.experimental.ExperimentalObjCName",
+            "kotlin.time.ExperimentalTime",
+            "kotlinx.cinterop.BetaInteropApi",
+            "kotlinx.cinterop.ExperimentalForeignApi",
+            "kotlinx.coroutines.DelicateCoroutinesApi",
+            "kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "kotlinx.coroutines.FlowPreview",
+            "kotlinx.coroutines.InternalCoroutinesApi",
+            "kotlinx.serialization.ExperimentalSerializationApi",
+            "org.mobilenativefoundation.store.store5.ExperimentalStoreApi",
+          ).forEach { optIn(it) }
         }
       }
 
@@ -75,6 +74,16 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                 "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
                 "-opt-in=kotlinx.cinterop.BetaInteropApi",
               )
+            }
+          }
+        }
+      }
+
+      targets.configureEach {
+        compilations.configureEach {
+          compileTaskProvider.configure {
+            compilerOptions {
+              freeCompilerArgs.add("-Xexpect-actual-classes")
             }
           }
         }
