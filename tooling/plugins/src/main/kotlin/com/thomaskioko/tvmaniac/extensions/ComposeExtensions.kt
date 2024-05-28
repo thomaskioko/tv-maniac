@@ -19,9 +19,18 @@ internal fun Project.configureAndroidCompose(
 
     defaultConfig {
       minSdk = Versions.MIN_SDK
+      manifestPlaceholders["appAuthRedirectScheme"] = "empty"
     }
 
     buildFeatures.compose = true
+
+    compileOptions.isCoreLibraryDesugaringEnabled = true
+
+    testOptions {
+      unitTests {
+        isIncludeAndroidResources = true
+      }
+    }
 
     configureComposeCompiler()
     configureKotlinJvm()
