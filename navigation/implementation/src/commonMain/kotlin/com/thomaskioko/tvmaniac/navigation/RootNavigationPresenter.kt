@@ -21,7 +21,7 @@ import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenterPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenterFactory
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
+import com.thomaskioko.tvmaniac.traktauth.implementation.DefaultTraktAuthManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -43,7 +43,7 @@ class RootNavigationPresenter(
   private val showDetailsPresenterFactory: ShowDetailsPresenterPresenterFactory,
   private val seasonDetailsPresenterFactory: SeasonDetailsPresenterFactory,
   private val trailersPresenterFactory: TrailersPresenterFactory,
-  private val traktAuthManager: TraktAuthManager,
+  private val traktAuthManager: DefaultTraktAuthManager,
   datastoreRepository: DatastoreRepository,
 ) : Navigator, ComponentContext by componentContext {
 

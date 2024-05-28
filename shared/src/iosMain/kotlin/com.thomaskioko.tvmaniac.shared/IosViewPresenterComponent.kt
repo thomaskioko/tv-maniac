@@ -4,7 +4,6 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.di.NavigatorComponent
-import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthManagerComponent
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -13,7 +12,7 @@ import me.tatarka.inject.annotations.Provides
 abstract class IosViewPresenterComponent(
   @get:Provides val componentContext: ComponentContext,
   @Component val applicationComponent: ApplicationComponent,
-) : NavigatorComponent, TraktAuthManagerComponent {
+) : NavigatorComponent {
   abstract val navigator: Navigator
 
   companion object

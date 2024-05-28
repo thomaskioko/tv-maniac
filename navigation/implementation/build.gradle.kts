@@ -7,8 +7,9 @@ kotlin {
   sourceSets {
     commonMain.dependencies {
       implementation(projects.core.base)
-      implementation(projects.traktAuth.api)
+      implementation(projects.datastore.api)
       implementation(projects.navigation.api)
+      implementation(projects.traktAuth.implementation)
 
       implementation(projects.presentation.discover)
       implementation(projects.presentation.library)
@@ -19,6 +20,7 @@ kotlin {
       implementation(projects.presentation.showDetails)
       implementation(projects.presentation.trailers)
 
+      implementation(libs.coroutines.core)
       implementation(libs.kotlinInject.runtime)
     }
 
