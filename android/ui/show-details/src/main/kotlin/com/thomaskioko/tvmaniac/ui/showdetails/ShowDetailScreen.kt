@@ -176,7 +176,7 @@ internal fun ShowDetailsScreen(
         CollapsableTopAppBar(
           listState = listState,
           title = title,
-          isLoading = state.isUpdating,
+          isUpdating = state.isUpdating,
           onNavIconPressed = { onAction(DetailBackClicked) },
         )
       }

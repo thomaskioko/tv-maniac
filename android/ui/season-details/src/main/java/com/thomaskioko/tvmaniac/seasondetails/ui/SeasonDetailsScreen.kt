@@ -108,7 +108,7 @@ internal fun SeasonDetailsScreen(
       Box(Modifier.fillMaxSize()) {
         LazyColumnContent(
           seasonDetailsModel = state,
-          isLoading = state.isLoading,
+          isLoading = state.isUpdating,
           showSeasonWatchStateDialog = state.showSeasonWatchStateDialog,
           contentPadding = contentPadding,
           onAction = onAction,
@@ -118,7 +118,7 @@ internal fun SeasonDetailsScreen(
         CollapsableTopAppBar(
           listState = listState,
           title = state.seasonName,
-          isLoading = state.isLoading,
+          isUpdating = state.isUpdating,
           onNavIconPressed = { onAction(SeasonDetailsBackClicked) }
         )
       }

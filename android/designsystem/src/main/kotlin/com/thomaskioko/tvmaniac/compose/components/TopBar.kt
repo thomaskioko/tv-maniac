@@ -73,7 +73,7 @@ fun TvManiacTopBar(
 fun CollapsableTopAppBar(
   listState: LazyListState,
   title: String,
-  isLoading: Boolean,
+  isUpdating: Boolean,
   onNavIconPressed: () -> Unit,
   modifier: Modifier = Modifier,
   scrollBehavior: TopAppBarScrollBehavior? = null,
@@ -99,7 +99,7 @@ fun CollapsableTopAppBar(
   CollapsableTopAppBar(
     modifier = modifier.fillMaxWidth().onSizeChanged { appBarHeight = it.height },
     title = title,
-    isRefreshing = isLoading,
+    isRefreshing = isUpdating,
     showAppBarBackground = showAppBarBackground,
     scrollBehavior = scrollBehavior,
     onRefresh = {},

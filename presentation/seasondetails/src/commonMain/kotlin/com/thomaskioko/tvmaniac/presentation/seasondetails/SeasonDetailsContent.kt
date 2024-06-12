@@ -8,7 +8,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 data class SeasonDetailsContent(
   val errorMessage: String? = null,
-  val isLoading: Boolean = false,
+  val isUpdating: Boolean = true,
   val showSeasonWatchStateDialog: Boolean = false,
   val expandEpisodeItems: Boolean = false,
   val showGalleryBottomSheet: Boolean = false,
