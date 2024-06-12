@@ -14,8 +14,8 @@ class DefaultRequestManagerRepository(
   private val database: TvManiacDatabase,
 ) : RequestManagerRepository {
 
-  override fun insert(entityId: Long, requestType: String) {
-    database.last_requestsQueries.insert(
+  override fun upsert(entityId: Long, requestType: String) {
+    database.last_requestsQueries.upsert(
       entity_id = entityId,
       request_type = requestType,
       timestamp = Clock.System.now(),
@@ -24,7 +24,6 @@ class DefaultRequestManagerRepository(
 
   override fun upsert(lastRequests: LastRequest): Long {
     database.last_requestsQueries.upsert(
-      id = lastRequests.id,
       entity_id = lastRequests.entityId,
       timestamp = lastRequests.timestamp,
       request_type = lastRequests.requestType,
