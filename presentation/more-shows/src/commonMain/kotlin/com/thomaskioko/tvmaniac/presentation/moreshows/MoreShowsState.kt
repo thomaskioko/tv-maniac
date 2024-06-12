@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.moreshows
 
-import app.cash.paging.PagingData
+import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 

@@ -10,10 +10,10 @@ kotlin {
       api(libs.ktor.serialization)
 
       implementation(projects.core.base)
+      implementation(libs.androidx.paging.common)
       implementation(libs.coroutines.core)
       implementation(libs.kotlinInject.runtime)
       implementation(libs.ktor.core)
-      implementation(libs.paging.common)
       implementation(libs.store5)
     }
   }

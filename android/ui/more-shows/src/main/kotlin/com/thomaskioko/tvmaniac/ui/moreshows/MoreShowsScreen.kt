@@ -36,11 +36,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import app.cash.paging.LoadStateError
-import app.cash.paging.LoadStateLoading
-import app.cash.paging.compose.LazyPagingItems
-import app.cash.paging.compose.collectAsLazyPagingItems
-import app.cash.paging.compose.itemKey
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
@@ -133,8 +132,8 @@ fun GridContent(
   val listState = rememberLazyGridState()
 
   LaunchedEffect(Unit) {
-    if (lazyPagingItems.loadState.append is LoadStateError) {
-      val errorMessage = (lazyPagingItems.loadState.append as LoadStateError).error.message
+    if (lazyPagingItems.loadState.append is LoadState.Error) {
+      val errorMessage = (lazyPagingItems.loadState.append as LoadState.Error).error.message
 
       val displayMessage = "Failed to fetch data: $errorMessage"
       snackBarHostState.showSnackbar(displayMessage)
@@ -145,7 +144,7 @@ fun GridContent(
     modifier = Modifier.fillMaxSize(),
     contentAlignment = Alignment.Center,
   ) {
-    if (lazyPagingItems.loadState.refresh == LoadStateLoading) {
+    if (lazyPagingItems.loadState.refresh == LoadState.Loading) {
       LoadingIndicator()
     }
 
@@ -177,7 +176,7 @@ fun GridContent(
       }
     }
 
-    if (lazyPagingItems.loadState.append == LoadStateLoading) {
+    if (lazyPagingItems.loadState.append == LoadState.Loading) {
       LoadingIndicator(
         modifier = Modifier.fillMaxWidth().wrapContentSize(Alignment.Center).padding(24.dp),
       )

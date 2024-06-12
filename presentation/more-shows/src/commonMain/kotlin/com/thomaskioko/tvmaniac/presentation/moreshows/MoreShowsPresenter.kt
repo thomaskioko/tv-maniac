@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.presentation.moreshows
 
-import app.cash.paging.PagingData
-import app.cash.paging.cachedIn
-import app.cash.paging.map
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository

@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.core.networkutil.paging
 
-import app.cash.paging.LoadType
-import app.cash.paging.PagingState
-import app.cash.paging.RemoteMediator
+import androidx.paging.LoadType
+import androidx.paging.PagingState
+import androidx.paging.RemoteMediator
 import kotlinx.coroutines.CancellationException
 
 /**
