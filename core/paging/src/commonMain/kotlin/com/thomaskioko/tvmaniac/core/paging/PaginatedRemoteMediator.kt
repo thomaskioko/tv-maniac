@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.networkutil.paging
+package com.thomaskioko.tvmaniac.core.paging
 
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -29,28 +29,24 @@ class PaginatedRemoteMediator<EM : Any>(
   }
 
   override suspend fun load(loadType: LoadType, state: PagingState<Int, EM>): MediatorResult {
-    return try {
-      val nextPage: Long =
-        when (loadType) {
-          LoadType.REFRESH -> {
-            if (getLastPage() != null) {
-              deleteLocalEntity()
-            }
-            0
-          }
-          LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
-          LoadType.APPEND -> {
-            val lastPage = getLastPage()
-            val lastItem = state.lastItemOrNull()
+    val nextPage: Long =
+      when (loadType) {
+        LoadType.REFRESH -> 0
+        LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
+        LoadType.APPEND -> {
+          val lastPage = getLastPage()
+          val lastItem = state.lastItemOrNull()
 
-            if (lastPage == lastItem) {
-              return MediatorResult.Success(endOfPaginationReached = true)
-            }
-
-            if (lastPage != null) lastPage + 1 else 0
+          if (lastPage == lastItem) {
+            return MediatorResult.Success(endOfPaginationReached = true)
           }
+
+          if (lastPage != null) lastPage + 1 else 0
         }
+        else -> error("Unknown LoadType: $loadType")
+      }
 
+    return try {
       fetch(nextPage)
       MediatorResult.Success(endOfPaginationReached = false)
     } catch (cancellationException: CancellationException) {

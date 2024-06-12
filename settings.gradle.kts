@@ -35,6 +35,7 @@ include(
   ":core:base",
   ":core:logger",
   ":core:network-util",
+  ":core:paging",
   ":core:util",
   ":database",
   ":datastore:api",
