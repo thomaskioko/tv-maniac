@@ -133,7 +133,7 @@ class ShowDetailsStore(
               }
 
               // Update Last Request
-              requestManagerRepository.insert(
+              requestManagerRepository.upsert(
                 entityId = id,
                 requestType = SHOW_DETAILS.name,
               )
