@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -119,6 +121,7 @@ constructor(
         episodeDetailsList = seasonDetails.episodes.toEpisodes(),
         seasonImages = imageList.toImageList(),
         seasonCast = castList.toCastList(),
+        isUpdating = false
       )
     }
   }
@@ -134,7 +137,7 @@ constructor(
             _state.update { state ->
               state.copy(
                 errorMessage = it.errorMessage,
-                isLoading = false,
+                isUpdating = false,
               )
             }
           },
@@ -152,6 +155,7 @@ constructor(
                   episodeDetailsList = result.episodes.toEpisodes(),
                   seasonImages = images.toImageList(),
                   seasonCast = cast.toCastList(),
+                  isUpdating = false
                 )
               }
                 ?: state
@@ -159,6 +163,8 @@ constructor(
           },
         )
       }
+      .onStart { _state.update { it.copy(isUpdating = true) } }
+      .onCompletion { _state.update { it.copy(isUpdating = false) } }
       .collect()
   }
 }
