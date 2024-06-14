@@ -21,10 +21,10 @@ class MoreShowsPreviewParameterProvider : PreviewParameterProvider<MoreShowsStat
   override val values: Sequence<MoreShowsState>
     get() {
       return sequenceOf(
-        MoreShowsState(list = flowOf(PagingData.from(showList))),
+        MoreShowsState(pagingDataFlow = flowOf(PagingData.from(showList))),
         MoreShowsState(
           isLoading = true,
-          list = emptyFlow(),
+          pagingDataFlow = emptyFlow(),
           errorMessage = "Opps! Something went wrong",
         ),
       )

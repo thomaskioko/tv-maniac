@@ -4,4 +4,6 @@ sealed interface MoreShowsActions
 
 data object MoreBackClicked : MoreShowsActions
 
-data class ShowClicked(val showId: Long) : MoreShowsActions
+data object RefreshMoreShows : MoreShowsActions
+
+data class MoreShowClicked(val showId: Long) : MoreShowsActions
