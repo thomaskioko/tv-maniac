@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.data.recommendedshows.implementation
 
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.db.RecommendedShows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.paging.CommonPagingConfig.CACHE_EXPIRE_TIME
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsDao
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsParams
 import com.thomaskioko.tvmaniac.db.Id
@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
+import org.mobilenativefoundation.store.store5.MemoryPolicy
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
@@ -28,7 +29,6 @@ class RecommendedShowStore(
   private val requestManagerRepository: RequestManagerRepository,
   private val formatterUtil: FormatterUtil,
   private val dateFormatter: PlatformDateFormatter,
-  private val scope: AppCoroutineScope,
   private val logger: KermitLogger,
 ) :
   Store<RecommendedShowsParams, List<RecommendedShows>> by StoreBuilder.from(
@@ -100,5 +100,9 @@ class RecommendedShowStore(
           deleteAll = recommendedShowsDao::deleteAll,
         ),
     )
-    .scope(scope.io)
+    .cachePolicy(
+      MemoryPolicy.builder<RecommendedShowsParams, List<RecommendedShows>>()
+        .setExpireAfterWrite(CACHE_EXPIRE_TIME)
+        .build()
+    )
     .build()

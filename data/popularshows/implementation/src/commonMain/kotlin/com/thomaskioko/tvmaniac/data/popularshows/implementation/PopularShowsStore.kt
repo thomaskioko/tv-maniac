@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.data.popularshows.implementation
 
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.db.Popular_shows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.paging.CommonPagingConfig.CACHE_EXPIRE_TIME
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsDao
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
+import org.mobilenativefoundation.store.store5.MemoryPolicy
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
@@ -27,7 +28,6 @@ class PopularShowsStore(
   private val popularShowsDao: PopularShowsDao,
   private val tvShowsDao: TvShowsDao,
   private val formatterUtil: FormatterUtil,
-  private val scope: AppCoroutineScope,
 ) :
   Store<Long, List<ShowEntity>> by StoreBuilder.from(
       fetcher =
@@ -82,5 +82,7 @@ class PopularShowsStore(
           deleteAll = popularShowsDao::deletePopularShows,
         ),
     )
-    .scope(scope.io)
+    .cachePolicy(
+      MemoryPolicy.builder<Long, List<ShowEntity>>().setExpireAfterWrite(CACHE_EXPIRE_TIME).build()
+    )
     .build()
