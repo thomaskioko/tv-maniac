@@ -1,13 +1,13 @@
 package com.thomaskioko.tvmaniac.data.popularshows.implementation
 
-import app.cash.paging.Pager
-import app.cash.paging.PagingData
+import androidx.paging.Pager
+import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.mapResult
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
-import com.thomaskioko.tvmaniac.core.networkutil.paging.CommonPagingConfig.pagingConfig
-import com.thomaskioko.tvmaniac.core.networkutil.paging.PaginatedRemoteMediator
+import com.thomaskioko.tvmaniac.core.paging.CommonPagingConfig.pagingConfig
+import com.thomaskioko.tvmaniac.core.paging.PaginatedRemoteMediator
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsDao
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
