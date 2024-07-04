@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import KMPNativeCoroutinesAsync
 import TvManiac
 
 class StateFlow<T: AnyObject>: ObservableObject {
