@@ -10,10 +10,10 @@ import SwiftUI
 
 struct PosterPlaceholder: View {
     var title: String
+    var posterWidth: CGFloat
+    var posterHeight: CGFloat
+    var posterRadius: CGFloat = 4
     var shadowRadius: CGFloat = 2
-    var posterRadius: CGFloat = 8
-    var posterWidth: CGFloat = 160
-    var posterHeight: CGFloat = 240
 
     var body: some View {
         ZStack {
@@ -24,14 +24,14 @@ struct PosterPlaceholder: View {
                     .fontWidth(.expanded)
                     .foregroundColor(.white.opacity(0.8))
                     .padding()
-                
+
                 Text(title)
                     .font(.callout)
                     .foregroundColor(.white.opacity(0.8))
                     .lineLimit(2)
                     .padding(.bottom)
                     .padding(.horizontal, 4)
-                
+
             }
         }
         .frame(width: posterWidth,height: posterHeight)

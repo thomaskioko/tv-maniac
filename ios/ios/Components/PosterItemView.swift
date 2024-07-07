@@ -23,7 +23,11 @@ struct PosterItemView: View {
             WebImage(url: URL(string: posterUrl), options: .highPriority)
                 .resizable()
                 .placeholder {
-                    PosterPlaceholder(title: title)
+                    PosterPlaceholder(
+                        title: title,
+                        posterWidth: posterWidth,
+                        posterHeight: posterHeight
+                    )
                 }
                 .aspectRatio(contentMode: .fill)
                 .overlay {
@@ -58,8 +62,7 @@ struct PosterItemView: View {
                     }
                 }
                 .transition(.opacity)
-                .frame(width: posterWidth, height: posterHeight
-                )
+                .frame(width: posterWidth, height: posterHeight)
                 .clipShape(
                     RoundedRectangle(
                         cornerRadius: DimensionConstants.posterRadius,
@@ -67,7 +70,11 @@ struct PosterItemView: View {
                     )
                 )
         } else {
-            PosterPlaceholder(title: title)
+            PosterPlaceholder(
+                title: title,
+                posterWidth: posterWidth,
+                posterHeight: posterHeight
+            )
         }
         
     }
