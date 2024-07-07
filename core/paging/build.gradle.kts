@@ -5,6 +5,7 @@ kotlin {
     commonMain.dependencies {
       implementation(libs.coroutines.core)
       implementation(libs.androidx.paging.common)
+      implementation(libs.sqldelight.primitive.adapters)
     }
   }
 }
