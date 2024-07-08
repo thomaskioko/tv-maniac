@@ -20,7 +20,6 @@ kotlin {
         implementation(libs.kotlinInject.runtime)
         implementation(libs.kotlinx.atomicfu)
         implementation(libs.sqldelight.extensions)
-        implementation(libs.sqldelight.paging)
         implementation(libs.store5)
       }
     }
