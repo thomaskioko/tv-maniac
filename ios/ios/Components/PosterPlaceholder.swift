@@ -29,6 +29,7 @@ struct PosterPlaceholder: View {
                     .font(.callout)
                     .foregroundColor(.white.opacity(0.8))
                     .lineLimit(2)
+                    .multilineTextAlignment(.center)
                     .padding(.bottom)
                     .padding(.horizontal, 4)
 
