@@ -40,8 +40,7 @@ INNER JOIN
     tvshows ON tvshows.id = popular_shows.id
 LEFT OUTER JOIN
     library ON tvshows.id = library.id
-WHERE
-    popular_shows.page = :page;
+ORDER BY page ASC;
 
 pagedPopularShows:
 SELECT

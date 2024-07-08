@@ -12,7 +12,6 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRENDING_SHOWS_TODAY
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
-import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
@@ -37,9 +36,7 @@ class TrendingShowsStore(
       fetcher =
         Fetcher.of { params: TrendingShowsParams ->
           when (val response = tmdbRemoteDataSource.getTrendingShows(params.timeWindow)) {
-            is ApiResponse.Success -> {
-              response.body.results
-            }
+            is ApiResponse.Success -> response.body
             is ApiResponse.Error.GenericError -> {
               throw Throwable("${response.errorMessage}")
             }
@@ -54,9 +51,9 @@ class TrendingShowsStore(
       sourceOfTruth =
         SourceOfTruth.Companion.of(
           reader = { _: TrendingShowsParams -> trendingShowsDao.observeTvShow() },
-          writer = { params: TrendingShowsParams, trendingShows ->
+          writer = { _: TrendingShowsParams, trendingShows ->
             databaseTransactionRunner {
-              trendingShows.forEach { show ->
+              trendingShows.results.forEach { show ->
                 tvShowsDao.upsert(
                   Tvshows(
                     id = Id(show.id.toLong()),
@@ -81,12 +78,12 @@ class TrendingShowsStore(
                 trendingShowsDao.upsert(
                   Trending_shows(
                     id = Id(show.id.toLong()),
-                    page = Id(DEFAULT_API_PAGE),
+                    page = Id(trendingShows.page.toLong()),
                   ),
                 )
               }
               requestManagerRepository.upsert(
-                entityId = TRENDING_SHOWS_TODAY.requestId + params.page,
+                entityId = TRENDING_SHOWS_TODAY.requestId + trendingShows.page,
                 requestType = TRENDING_SHOWS_TODAY.name,
               )
             }

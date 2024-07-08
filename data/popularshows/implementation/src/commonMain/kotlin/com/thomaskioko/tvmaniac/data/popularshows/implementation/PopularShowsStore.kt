@@ -33,7 +33,7 @@ class PopularShowsStore(
       fetcher =
         Fetcher.of { page ->
           when (val response = tmdbRemoteDataSource.getPopularShows(page = page)) {
-            is ApiResponse.Success -> response.body.results
+            is ApiResponse.Success -> response.body
             is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
             is ApiResponse.Error.HttpError ->
               throw Throwable("${response.code} - ${response.errorMessage}")
@@ -43,8 +43,8 @@ class PopularShowsStore(
       sourceOfTruth =
         SourceOfTruth.of(
           reader = { page -> popularShowsDao.observePopularShows(page) },
-          writer = { page, trendingShows ->
-            trendingShows.forEach { show ->
+          writer = { _, trendingShows ->
+            trendingShows.results.forEach { show ->
               tvShowsDao.upsert(
                 Tvshows(
                   id = Id(show.id.toLong()),
@@ -68,13 +68,13 @@ class PopularShowsStore(
               popularShowsDao.upsert(
                 Popular_shows(
                   id = Id(show.id.toLong()),
-                  page = Id(page),
+                  page = Id(trendingShows.page.toLong()),
                 ),
               )
             }
 
             requestManagerRepository.upsert(
-              entityId = page,
+              entityId = trendingShows.page.toLong(),
               requestType = POPULAR_SHOWS.name,
             )
           },
