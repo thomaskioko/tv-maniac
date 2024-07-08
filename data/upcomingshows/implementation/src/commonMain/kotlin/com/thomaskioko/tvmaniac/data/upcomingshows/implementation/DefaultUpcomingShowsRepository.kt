@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.data.upcomingshows.implementation
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.core.networkutil.mapResult
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
@@ -18,6 +19,7 @@ import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_SORT_ORDER
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.startOfDay
 import kotlin.time.Duration.Companion.days
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
@@ -31,6 +33,7 @@ class DefaultUpcomingShowsRepository(
   private val store: UpcomingShowsStore,
   private val dao: UpcomingShowsDao,
   private val requestManagerRepository: RequestManagerRepository,
+  private val kermitLogger: KermitLogger,
   private val dispatchers: AppCoroutineDispatchers,
 ) : UpcomingShowsRepository {
 
@@ -43,7 +46,7 @@ class DefaultUpcomingShowsRepository(
     )
 
   override suspend fun observeUpcomingShows(
-    forceRefresh: Boolean
+    forceRefresh: Boolean,
   ): Flow<Either<Failure, List<ShowEntity>>> {
     val refresh =
       forceRefresh ||
@@ -67,10 +70,8 @@ class DefaultUpcomingShowsRepository(
     return Pager(
         config = pagingConfig,
         remoteMediator =
-          PaginatedRemoteMediator(
-            getLastPage = dao::getLastPage,
-            deleteLocalEntity = store::clear,
-            fetch = { page ->
+          PaginatedRemoteMediator { page ->
+            try {
               store.fresh(
                 key =
                   UpcomingParams(
@@ -82,8 +83,16 @@ class DefaultUpcomingShowsRepository(
                     page = page,
                   ),
               )
-            },
-          ),
+            } catch (cancellationException: CancellationException) {
+              throw cancellationException
+            } catch (throwable: Throwable) {
+              kermitLogger.error(
+                "Error while fetching from UpcomingShows RemoteMediator",
+                throwable
+              )
+              throw throwable
+            }
+          },
         pagingSourceFactory = dao::getPagedUpcomingShows,
       )
       .flow

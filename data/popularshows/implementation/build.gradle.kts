@@ -8,6 +8,7 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
+        implementation(projects.core.logger)
         implementation(projects.core.paging)
         implementation(projects.core.networkUtil)
         implementation(projects.core.util)

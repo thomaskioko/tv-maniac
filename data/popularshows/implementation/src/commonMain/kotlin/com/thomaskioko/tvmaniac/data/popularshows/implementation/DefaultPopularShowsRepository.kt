@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.data.popularshows.implementation
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.core.networkutil.mapResult
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
@@ -14,6 +15,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.POPULAR_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
@@ -26,6 +28,7 @@ class DefaultPopularShowsRepository(
   private val store: PopularShowsStore,
   private val popularShowsDao: PopularShowsDao,
   private val requestManagerRepository: RequestManagerRepository,
+  private val kermitLogger: KermitLogger,
   private val dispatchers: AppCoroutineDispatchers,
 ) : PopularShowsRepository {
 
@@ -54,11 +57,16 @@ class DefaultPopularShowsRepository(
     return Pager(
         config = pagingConfig,
         remoteMediator =
-          PaginatedRemoteMediator(
-            getLastPage = popularShowsDao::getLastPage,
-            deleteLocalEntity = store::clear,
-            fetch = store::fresh,
-          ),
+          PaginatedRemoteMediator { page ->
+            try {
+              store.fresh(page)
+            } catch (cancellationException: CancellationException) {
+              throw cancellationException
+            } catch (throwable: Throwable) {
+              kermitLogger.error("Error while fetching from PopularShows RemoteMediator", throwable)
+              throw throwable
+            }
+          },
         pagingSourceFactory = popularShowsDao::getPagedPopularShows,
       )
       .flow
