@@ -20,6 +20,7 @@ dependencies {
   implementation(libs.snapper)
 
   testImplementation(projects.android.screenshotTests)
+  testImplementation(libs.androidx.compose.ui.test)
   testImplementation(libs.robolectric)
   testDemoImplementation(libs.roborazzi)
 }

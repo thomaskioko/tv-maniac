@@ -7,5 +7,6 @@ dependencies {
 
   api(libs.roborazzi)
   implementation(libs.androidx.compose.activity)
+  implementation(libs.androidx.compose.ui.test)
   implementation(libs.robolectric)
 }

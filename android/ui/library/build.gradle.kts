@@ -18,6 +18,7 @@ dependencies {
   implementation(libs.kotlinx.collections)
 
   testImplementation(projects.android.screenshotTests)
+  testImplementation(libs.androidx.compose.ui.test)
   testImplementation(libs.robolectric)
   testDemoImplementation(libs.roborazzi)
 }
