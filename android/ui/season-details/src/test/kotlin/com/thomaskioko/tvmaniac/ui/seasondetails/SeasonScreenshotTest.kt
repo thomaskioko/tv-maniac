@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.ui.seasondetails
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
@@ -29,6 +30,7 @@ class SeasonScreenshotTest {
         SeasonDetailsScreen(
           state = seasonDetailsContent,
           onAction = {},
+          listState = LazyListState(),
         )
       }
     }
