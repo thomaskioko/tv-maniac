@@ -61,6 +61,7 @@
 		D6CF9E332B32021300A1AD00 /* CircleButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CF9E322B32021300A1AD00 /* CircleButtonStyle.swift */; };
 		D6CF9E352B32024000A1AD00 /* Color+hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CF9E342B32024000A1AD00 /* Color+hex.swift */; };
 		D6D722062C3ADB08008454F2 /* NavigationTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D722052C3ADB08008454F2 /* NavigationTopBar.swift */; };
+		D6D722082C3D6289008454F2 /* EpisodeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D722072C3D6289008454F2 /* EpisodeListView.swift */; };
 		D6DC9DA42B34B27300768065 /* ImageGalleryContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DC9DA32B34B27300768065 /* ImageGalleryContentView.swift */; };
 		E90392C129197BDF00B9CAF0 /* FullScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90392C029197BDF00B9CAF0 /* FullScreenView.swift */; };
 		E983816D2793697B0039CB08 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98381692793697B0039CB08 /* ColorExtension.swift */; };
@@ -510,13 +511,13 @@
 				E90392C029197BDF00B9CAF0 /* FullScreenView.swift */,
 				D65569E52B31DF3C005F9F37 /* HeaderCoverArtWorkView.swift */,
 				E983818327936BAF0039CB08 /* LoadingIndicatorView.swift */,
+				D6D722052C3ADB08008454F2 /* NavigationTopBar.swift */,
 				D65569DA2B31B481005F9F37 /* PosterItemView.swift */,
 				D65569DE2B31B6C1005F9F37 /* PosterPlaceholder.swift */,
 				D65569E02B31C228005F9F37 /* TitleView.swift */,
 				D62F1BCC2B34697F004650E3 /* TopBar.swift */,
 				D62F1BC72B344941004650E3 /* TransparentImageBackground.swift */,
 				D64279522A607F7600E65755 /* Toast */,
-				D6D722052C3ADB08008454F2 /* NavigationTopBar.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";

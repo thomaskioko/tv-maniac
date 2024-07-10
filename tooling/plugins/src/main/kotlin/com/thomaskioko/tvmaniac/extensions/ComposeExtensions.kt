@@ -50,6 +50,7 @@ internal fun Project.configureAndroidCompose(
             "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
             "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=com.github.takahirom.roborazzi.ExperimentalRoborazziApi",
             "-opt-in=dev.chrisbanes.snapper.ExperimentalSnapperApi",
             "-opt-in=kotlin.RequiresOptIn",
           )

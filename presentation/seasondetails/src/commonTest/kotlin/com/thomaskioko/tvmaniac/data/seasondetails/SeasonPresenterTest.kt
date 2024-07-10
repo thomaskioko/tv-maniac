@@ -59,7 +59,8 @@ class SeasonPresenterTest {
 
     presenter.state.test {
       awaitItem() shouldBe SeasonDetailsContent.DEFAULT_SEASON_STATE
-      awaitItem() shouldBe seasonDetailsContent
+      awaitItem() shouldBe seasonDetailsContent.copy(isUpdating = false)
+      awaitItem() shouldBe seasonDetailsContent.copy(isUpdating = true)
     }
   }
 }

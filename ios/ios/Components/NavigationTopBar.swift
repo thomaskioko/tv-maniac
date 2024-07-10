@@ -67,57 +67,6 @@ struct NavigationTopBar: View {
     }
 }
 
-struct CustomNavigationBar: View {
-    @Environment(\.colorScheme) var colorScheme // Detect the current color scheme
-
-    var body: some View {
-        ZStack {
-            Color.white
-                .shadow(color: .gray, radius: 10, x: 0, y: 5)
-
-            VStack {
-                Spacer() // Push content to the bottom
-
-                HStack {
-                    Button(action: {
-                        // Action for the button
-                        print("Back button tapped")
-                    }) {
-                        ZStack {
-                            Circle()
-                                .fill(colorScheme == .dark ? Color.gray : Color.white)
-                                .frame(width: 40, height: 40)
-
-                            Image(systemName: "arrow.left")
-                                .foregroundColor(.blue)
-                                .font(.system(size: 20, weight: .bold))
-                        }
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .padding(.leading, 20)
-
-                    Spacer()
-
-                    Text("Home")
-                        .font(.largeTitle)
-                        .bold()
-
-                    Spacer()
-
-                    // Placeholder for a possible trailing button
-                    Spacer()
-                        .frame(width: 40)
-                }
-                .padding(.bottom, 10) // Adjust the bottom padding to align content properly
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.top, 50) // Adjust the top padding for status bar spacing
-        }
-        .frame(height: 100) // Adjust the height of the custom navigation bar
-    }
-}
-
-
 struct NavigationTopBar_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
