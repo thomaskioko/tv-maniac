@@ -46,7 +46,6 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
@@ -168,7 +167,7 @@ fun GridContent(
     ) {
       items(
         count = lazyPagingItems.itemCount,
-        key = lazyPagingItems.itemKey { it.tmdbId },
+        key = { index -> index },
         contentType = { lazyPagingItems[it] },
       ) { index ->
         val show = lazyPagingItems[index]
