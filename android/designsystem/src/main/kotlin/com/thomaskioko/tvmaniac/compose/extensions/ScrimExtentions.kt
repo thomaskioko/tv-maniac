@@ -73,9 +73,9 @@ fun Modifier.verticalGradientScrim(
 
 @SuppressLint("ComposeModifierComposed")
 fun Modifier.iconButtonBackgroundScrim(
-  enabled: Boolean = true,
+  enabled: Boolean,
   shape: Shape = CircleShape,
-  @FloatRange(from = 0.0, to = 1.0) alpha: Float = 0.4f,
+  @FloatRange(from = 0.0, to = 1.0) alpha: Float,
 ): Modifier = composed {
   if (enabled) {
     Modifier.padding(start = 8.dp, end = 16.dp)

@@ -47,11 +47,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -61,7 +59,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -72,7 +69,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
-import com.thomaskioko.tvmaniac.compose.components.CollapsableAppBar
+import com.thomaskioko.tvmaniac.compose.components.CollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
@@ -176,10 +173,11 @@ internal fun ShowDetailsScreen(
           onAction = onAction,
         )
 
-        ShowTopBar(
+        CollapsableTopAppBar(
           listState = listState,
           title = title,
-          onNavUpClick = { onAction(DetailBackClicked) },
+          isUpdating = state.isUpdating,
+          onNavIconPressed = { onAction(DetailBackClicked) },
         )
       }
     },
@@ -254,38 +252,6 @@ fun LazyColumnContent(
 
     item { Spacer(modifier = Modifier.height(54.dp)) }
   }
-}
-
-@Composable
-private fun ShowTopBar(
-  listState: LazyListState,
-  title: String,
-  onNavUpClick: () -> Unit,
-) {
-  var appBarHeight by remember { mutableIntStateOf(0) }
-  val showAppBarBackground by remember {
-    derivedStateOf {
-      val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
-      when {
-        visibleItemsInfo.isEmpty() -> false
-        appBarHeight <= 0 -> false
-        else -> {
-          val firstVisibleItem = visibleItemsInfo[0]
-          when {
-            firstVisibleItem.index > 0 -> true
-            else -> firstVisibleItem.size + firstVisibleItem.offset - 5 <= appBarHeight
-          }
-        }
-      }
-    }
-  }
-
-  CollapsableAppBar(
-    title = title,
-    showAppBarBackground = showAppBarBackground,
-    onNavIconPressed = onNavUpClick,
-    modifier = Modifier.fillMaxWidth().onSizeChanged { appBarHeight = it.height },
-  )
 }
 
 @Composable
@@ -549,6 +515,7 @@ fun ShowDetailButtons(
     Spacer(modifier = Modifier.width(8.dp))
 
     TvManiacOutlinedButton(
+      modifier = Modifier.fillMaxWidth().weight(1f),
       leadingIcon = {
         Image(
           imageVector = Icons.Filled.Movie,

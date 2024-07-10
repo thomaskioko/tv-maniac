@@ -11,7 +11,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 data class ShowDetailsState(
   val showDetails: ShowDetails,
-  val isLoading: Boolean = false,
+  val isUpdating: Boolean = true,
   val errorMessage: String?,
   val providers: ImmutableList<Providers>,
   val castsList: ImmutableList<Casts>,

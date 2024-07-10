@@ -1,8 +1,10 @@
 package com.thomaskioko.tvmaniac.presentation.moreshows
 
-import app.cash.paging.PagingData
-import app.cash.paging.cachedIn
-import app.cash.paging.map
+import androidx.paging.PagingData
+import androidx.paging.PagingDataEvent
+import androidx.paging.PagingDataPresenter
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -45,6 +48,13 @@ class MoreShowsPresenter(
   private val _state = MutableStateFlow(MoreShowsState())
   val state: StateFlow<MoreShowsState> = _state.asStateFlow()
 
+  private val showsPagingDataPresenter =
+    object : PagingDataPresenter<TvShow>() {
+      override suspend fun presentPagingDataEvent(event: PagingDataEvent<TvShow>) {
+        updateCharactersSnapshotList()
+      }
+    }
+
   init {
     when (categoryId) {
       Category.UPCOMING.id -> getUpcomingPagedList()
@@ -56,8 +66,11 @@ class MoreShowsPresenter(
 
   fun dispatch(action: MoreShowsActions) {
     when (action) {
+      is MoreShowClicked -> onNavigateToShowDetails(action.showId)
       MoreBackClicked -> onBack()
-      is ShowClicked -> onNavigateToShowDetails(action.showId)
+      RefreshMoreShows -> {
+        // TODO:: Add implementation
+      }
     }
   }
 
@@ -97,14 +110,27 @@ class MoreShowsPresenter(
     }
   }
 
-  private fun updateState(title: String, pagingList: Flow<PagingData<TvShow>>) {
+  private suspend fun updateState(title: String, pagingList: Flow<PagingData<TvShow>>) {
     _state.update {
       it.copy(
-        list = pagingList,
+        pagingDataFlow = pagingList,
         categoryTitle = title,
       )
     }
+
+    pagingList.collectLatest { showsPagingDataPresenter.collectFrom(it) }
   }
+
+  private fun updateCharactersSnapshotList() {
+    _state.update {
+      it.copy(
+        snapshotList = showsPagingDataPresenter.snapshot(),
+      )
+    }
+  }
+
+  /** Helper method used to get a show object in iOS */
+  @Suppress("unused") fun getElement(index: Int): TvShow? = showsPagingDataPresenter[index]
 
   private fun Flow<PagingData<ShowEntity>>.mapToTvShow(): Flow<PagingData<TvShow>> = map {
     it.map { show ->

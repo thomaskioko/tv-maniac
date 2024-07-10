@@ -95,7 +95,7 @@ class SeasonDetailsStore(
             }
 
             // Update Last Request
-            requestManagerRepository.insert(
+            requestManagerRepository.upsert(
               entityId = params.seasonId,
               requestType = SEASON_DETAILS.name,
             )

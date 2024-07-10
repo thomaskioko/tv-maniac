@@ -10,7 +10,7 @@ import SwiftUI
 import TvManiac
 
 struct MoreShowsView: View {
-    
+
     private let presenter: MoreShowsPresenter
 
     @ObservedObject
@@ -23,49 +23,53 @@ struct MoreShowsView: View {
         self.presenter = presenter
         self.uiState = StateFlow<MoreShowsState>(presenter.state)
     }
-    
+
     var body: some View {
-        NavigationStack {
-            VStack {
-                empty
+        NavigationView {
+            VStack(spacing: 0) {
+
+                NavigationTopBar(
+                    topBarTitle: uiState.value?.categoryTitle ?? "",
+                    imageName: "arrow.backward",
+                    onBackClicked: { presenter.dispatch(action: MoreBackClicked()) }
+                )
+
+                Spacer().frame(height: 10)
+
+                ShowsContent(uiState.value!)
             }
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button
-                    { 
-                        presenter.dispatch(action: MoreBackClicked())
-                    } label: {
-                        Text(uiState.value?.categoryTitle ?? "")
-                    }
-                    .buttonStyle(CircleButtonStyle(imageName: "arrow.backward"))
-                    .padding(.top)
-                }
-            }
+            .edgesIgnoringSafeArea(.top)
         }
     }
 
     @ViewBuilder
-    private var empty: some View {
-        if #available(iOS 17.0, *) {
-            ContentUnavailableView(
-                "Under Construction",
-                systemImage: "figure.walk.motion.trianglebadge.exclamationmark"
-            )
-            .padding()
-            .multilineTextAlignment(.center)
-            .font(.callout)
-            .foregroundColor(Color.accent)
-        } else {
-            FullScreenView(
-                systemName: "figure.walk.motion.trianglebadge.exclamationmark",
-                message: "Under Construction"
-            )
+    private func ShowsContent(_ state: MoreShowsState) -> some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            LazyVGrid(columns: DimensionConstants.posterColumns,spacing: DimensionConstants.spacing) {
+                ForEach(state.snapshotList.indices, id: \.self){ index in
+                    if let show = presenter.getElement(index: Int32(index)){
+                        PosterItemView(
+                            showId: show.tmdbId,
+                            title: show.title,
+                            posterUrl: show.posterImageUrl,
+                            posterWidth: 130,
+                            posterHeight: 200
+                        )
+                        .aspectRatio(contentMode: .fill)
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .clipped()
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                        .onTapGesture { presenter.dispatch(action: MoreShowClicked(showId: show.tmdbId)) }
+                    }
+                }
+            }
+            .padding(2)
         }
     }
 }
 
 private struct DimensionConstants {
-    static let posterColumns = [GridItem(.adaptive(minimum: 100), spacing: 8)]
+    static let posterColumns = [GridItem(.adaptive(minimum: 100), spacing: 4)]
     static let spacing: CGFloat = 4
 }

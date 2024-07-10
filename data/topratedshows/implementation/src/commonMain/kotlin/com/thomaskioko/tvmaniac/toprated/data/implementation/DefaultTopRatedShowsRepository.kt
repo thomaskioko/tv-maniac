@@ -1,19 +1,21 @@
 package com.thomaskioko.tvmaniac.toprated.data.implementation
 
-import app.cash.paging.Pager
-import app.cash.paging.PagingData
+import androidx.paging.Pager
+import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.core.networkutil.mapResult
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
-import com.thomaskioko.tvmaniac.core.networkutil.paging.CommonPagingConfig.pagingConfig
-import com.thomaskioko.tvmaniac.core.networkutil.paging.PaginatedRemoteMediator
+import com.thomaskioko.tvmaniac.core.paging.CommonPagingConfig.pagingConfig
+import com.thomaskioko.tvmaniac.core.paging.PaginatedRemoteMediator
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TOP_RATED_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsDao
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
@@ -26,6 +28,7 @@ class DefaultTopRatedShowsRepository(
   private val store: TopRatedShowsStore,
   private val requestManagerRepository: RequestManagerRepository,
   private val dao: TopRatedShowsDao,
+  private val kermitLogger: KermitLogger,
   private val dispatchers: AppCoroutineDispatchers,
 ) : TopRatedShowsRepository {
 
@@ -54,11 +57,19 @@ class DefaultTopRatedShowsRepository(
     return Pager(
         config = pagingConfig,
         remoteMediator =
-          PaginatedRemoteMediator(
-            getLastPage = dao::getLastPage,
-            deleteLocalEntity = store::clear,
-            fetch = store::fresh,
-          ),
+          PaginatedRemoteMediator { page ->
+            try {
+              store.fresh(page)
+            } catch (cancellationException: CancellationException) {
+              throw cancellationException
+            } catch (throwable: Throwable) {
+              kermitLogger.error(
+                "Error while fetching from TopRatedShows RemoteMediator",
+                throwable
+              )
+              throw throwable
+            }
+          },
         pagingSourceFactory = dao::getPagedTopRatedShows,
       )
       .flow

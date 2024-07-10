@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -149,6 +151,8 @@ constructor(
         updateCastState(cast)
         updateWatchProviders(watchProviders)
       }
+      .onStart { _state.update { it.copy(isUpdating = true) } }
+      .onCompletion { _state.update { it.copy(isUpdating = false) } }
       .collect()
   }
 
@@ -230,14 +234,15 @@ constructor(
   private inline fun <T> updateState(
     response: Either<Failure, T>,
     updateBlock: ShowDetailsState.(T) -> ShowDetailsState,
-  ) =
+  ) {
     _state.update {
       when (response) {
         is Either.Left ->
           it.copy(
             errorMessage = response.left.errorMessage,
           )
-        is Either.Right -> it.updateBlock(response.right)
+        is Either.Right -> it.updateBlock(response.right).copy(isUpdating = false)
       }
     }
+  }
 }

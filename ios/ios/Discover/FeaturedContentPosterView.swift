@@ -22,9 +22,9 @@ struct FeaturedContentPosterView: View {
                 .placeholder {
                     PosterPlaceholder(
                         title: show.title,
-                        posterRadius: DimensionConstants.posterRadius,
                         posterWidth: posterWidth,
-                        posterHeight: DimensionConstants.posterHeight
+                        posterHeight: DimensionConstants.posterHeight,
+                        posterRadius: DimensionConstants.posterRadius
                     )
                 }
                 .aspectRatio(contentMode: .fill)
@@ -65,7 +65,12 @@ struct FeaturedContentPosterView: View {
                 )
                 .onTapGesture { onClick(show.tmdbId) }
         } else {
-            PosterPlaceholder(title: show.title)
+            PosterPlaceholder(
+                title: show.title,
+                posterWidth: posterWidth,
+                posterHeight: DimensionConstants.posterHeight,
+                posterRadius: DimensionConstants.posterRadius
+            )
                 .onTapGesture { onClick(show.tmdbId) }
         }
         
@@ -75,5 +80,4 @@ struct FeaturedContentPosterView: View {
 private struct DimensionConstants {
     static let posterHeight: CGFloat = 460
     static let posterRadius: CGFloat = 12
-    static let shadowRadius: CGFloat = 2
 }

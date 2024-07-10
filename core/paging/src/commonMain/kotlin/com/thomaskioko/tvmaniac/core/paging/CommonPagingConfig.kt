@@ -1,9 +1,11 @@
-package com.thomaskioko.tvmaniac.core.networkutil.paging
+package com.thomaskioko.tvmaniac.core.paging
 
 import androidx.paging.PagingConfig
+import kotlin.time.Duration.Companion.hours
 
 object CommonPagingConfig {
 
+  val CACHE_EXPIRE_TIME = 6.hours
   private const val PREFETCH_DISTANCE = 1
   private const val PAGE_SIZE = 20
 
