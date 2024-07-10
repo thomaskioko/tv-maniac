@@ -14,18 +14,13 @@ struct SeasonDetailsView: View {
 
     private let presenter: SeasonDetailsPresenter
 
-    @Environment(\.presentationMode)
-    var presentationMode
-
-    @ObservedObject
-    private var uiState: StateFlow<SeasonDetailsContent>
+    @Environment(\.presentationMode) var presentationMode
+    @ObservedObject private var uiState: StateFlow<SeasonDetailState>
 
     @State private var progress: CGFloat = 0
     @State private var isTruncated = false
     @State private var showFullText = false
-    @State private var showingAlert: Bool = false
     @State private var showModal =  false
-
 
     init(presenter: SeasonDetailsPresenter) {
         self.presenter = presenter
@@ -41,7 +36,13 @@ struct SeasonDetailsView: View {
                 } content: {
                     VStack(alignment: .leading, spacing: 0) {
                         SeasonOverview(state)
-                        EpisodeView(state)
+                        EpisodeListView(
+                            state: state,
+                            onEpisodeHeaderClicked: { presenter.dispatch(action: OnEpisodeHeaderClicked()) },
+                            onWatchedStateClicked: {
+                                presenter.dispatch(action: UpdateSeasonWatchedState())
+                            }
+                        )
                         CastListView(casts: toCastsList(state.seasonCast))
                     }
                 }
@@ -58,9 +59,7 @@ struct SeasonDetailsView: View {
             .sheet(isPresented: $showModal) {
                 ImageGalleryContentView(items: state.seasonImages)
             }
-
         }
-
     }
 
     @ViewBuilder
@@ -73,7 +72,6 @@ struct SeasonDetailsView: View {
             .frame(height: DimensionConstants.imageHeight)
 
             ZStack(alignment: .bottom) {
-
                 Rectangle()
                     .fill(
                         .linearGradient(colors: [
@@ -183,40 +181,6 @@ struct SeasonDetailsView: View {
         }
         .padding(16)
     }
-
-    @ViewBuilder
-    private func EpisodeView(_ content: SeasonDetailsContent) -> some View {
-        Collapsible(
-            episodeCount: content.episodeCount,
-            watchProgress: CGFloat(content.watchProgress),
-            isCollapsed: content.expandEpisodeItems,
-            onCollapseClicked: { presenter.dispatch(action: OnEpisodeHeaderClicked()) },
-            onWatchedStateClicked: {
-                presenter.dispatch(action: UpdateSeasonWatchedState())
-                showingAlert = !content.showSeasonWatchStateDialog
-            }
-        ) {
-            VStack {
-                VerticalEpisodeListView(items: content.episodeDetailsList)
-            }
-        }
-        .alert(isPresented: $showingAlert, content: {
-            let title = content.isSeasonWatched ? "Mark as unwatched" : "Mark as watched"
-            let messageBody = content.isSeasonWatched ?
-            "Are you sure you want to mark the entire season as unwatched?" : "Are you sure you want to mark the entire season as watched?"
-            return Alert(
-                title: Text(title),
-                message: Text(messageBody),
-                primaryButton: .default(Text("No")) {
-
-
-                },
-                secondaryButton: .default(Text("Yes"))
-            )
-        })
-
-    }
-
 
     private func toCastsList(_ list: [Cast]) -> [Casts] {
         return list.map{ (cast) -> Casts in
