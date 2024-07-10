@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeCastRepository : CastRepository {
 
-  private var seasonCastEntityList: Channel<List<SeasonCast>> = Channel(Channel.UNLIMITED)
-  private var showCastEntityList: Channel<List<ShowCast>> = Channel(Channel.UNLIMITED)
+  private val seasonCastEntityList: Channel<List<SeasonCast>> = Channel(Channel.UNLIMITED)
+  private val showCastEntityList: Channel<List<ShowCast>> = Channel(Channel.UNLIMITED)
 
   suspend fun setSeasonCast(result: List<SeasonCast>) {
     seasonCastEntityList.send(result)
