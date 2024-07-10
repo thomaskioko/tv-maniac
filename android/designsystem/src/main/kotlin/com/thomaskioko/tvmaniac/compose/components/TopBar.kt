@@ -76,7 +76,9 @@ fun CollapsableTopAppBar(
   isUpdating: Boolean,
   onNavIconPressed: () -> Unit,
   modifier: Modifier = Modifier,
+  onActionIconPressed: () -> Unit = {},
   scrollBehavior: TopAppBarScrollBehavior? = null,
+  showActionIcon: Boolean = true
 ) {
   var appBarHeight by remember { mutableIntStateOf(0) }
   val showAppBarBackground by remember {
@@ -102,8 +104,9 @@ fun CollapsableTopAppBar(
     isRefreshing = isUpdating,
     showAppBarBackground = showAppBarBackground,
     scrollBehavior = scrollBehavior,
-    onRefresh = {},
+    onRefresh = onActionIconPressed,
     onNavIconPressed = onNavIconPressed,
+    showActionIcon = showActionIcon
   )
 }
 
@@ -115,6 +118,7 @@ internal fun CollapsableTopAppBar(
   onRefresh: () -> Unit,
   onNavIconPressed: () -> Unit,
   modifier: Modifier = Modifier,
+  showActionIcon: Boolean = true,
   scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
   val backgroundColor by
@@ -175,21 +179,23 @@ internal fun CollapsableTopAppBar(
         containerColor = backgroundColor,
       ),
     actions = {
-      ScrimButton(
-        show = showAppBarBackground,
-        onClick = onRefresh,
-      ) {
-        Crossfade(isRefreshing) { targetRefreshing ->
-          if (targetRefreshing) {
-            AutoSizedCircularProgressIndicator(
-              modifier = Modifier.size(20.dp).padding(2.dp),
-            )
-          } else {
-            Icon(
-              imageVector = Icons.Default.Refresh,
-              contentDescription = null,
-              tint = MaterialTheme.colorScheme.onBackground,
-            )
+      if (showActionIcon) {
+        ScrimButton(
+          show = showAppBarBackground,
+          onClick = onRefresh,
+        ) {
+          Crossfade(isRefreshing, label = "ActionButtonCrossfade") { targetRefreshing ->
+            if (targetRefreshing) {
+              AutoSizedCircularProgressIndicator(
+                modifier = Modifier.size(20.dp).padding(2.dp),
+              )
+            } else {
+              Icon(
+                imageVector = Icons.Default.Refresh,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onBackground,
+              )
+            }
           }
         }
       }
