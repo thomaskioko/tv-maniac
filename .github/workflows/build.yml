@@ -178,6 +178,33 @@ jobs:
           name: screenshot-test-results
           path: '**/build/outputs/roborazzi/*_compare.png'
 
+      - name: Post comment on PR
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+              const { execSync } = require('child_process');
+              const fs = require('fs');
+              const path = '**/build/outputs/roborazzi';
+              const files = fs.readdirSync(path);
+
+              if (files.length === 0) {
+                return;
+              }
+
+              let body = '### Screenshot Test Failures\n\n';
+
+              files.forEach(file => {
+                const diffImage = `${path}/${file}`;
+                body += `![${file}](${diffImage})\n\n`;
+              });
+
+              github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+
   iOS:
     runs-on: macos-latest
     steps:
