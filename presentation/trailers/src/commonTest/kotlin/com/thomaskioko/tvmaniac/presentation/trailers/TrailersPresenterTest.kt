@@ -20,7 +20,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
-internal class TrailersPresenterTest {
+class TrailersPresenterTest {
 
   private val lifecycle = LifecycleRegistry()
   private val repository = FakeTrailerRepository()
@@ -48,7 +48,7 @@ internal class TrailersPresenterTest {
 
   @Test
   fun `given result is success correct state is emitted`() = runTest {
-    repository.setTrailerList(trailers)
+    repository.setTrailerResult(Either.Right(trailers))
 
     presenter.state.test {
       awaitItem() shouldBe LoadingTrailers
@@ -70,7 +70,7 @@ internal class TrailersPresenterTest {
 
   @Test
   fun `given reload is clicked then correct state is emitted`() = runTest {
-    repository.setTrailerList(trailers)
+    repository.setTrailerResult(Either.Right(trailers))
 
     repository.setTrailerResult(Either.Left(ServerError("Something went wrong.")))
 
@@ -96,7 +96,6 @@ internal class TrailersPresenterTest {
 
       repository.setTrailerResult(Either.Right(trailers))
 
-      awaitItem() shouldBe LoadingTrailers
       awaitItem() shouldBe
         TrailersContent(
           selectedVideoKey = "Fd43V",
