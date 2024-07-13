@@ -23,22 +23,24 @@ class DefaultRecommendedShowsRepository(
   private val dispatchers: AppCoroutineDispatchers,
 ) : RecommendedShowsRepository {
 
-  override suspend fun fetchRecommendedShows(id: Long): List<RecommendedShows> =
-    store.get(RecommendedShowsParams(showId = id, page = DEFAULT_API_PAGE))
-
-  override fun observeRecommendedShows(id: Long): Flow<Either<Failure, List<RecommendedShows>>> =
-    store
+  override fun observeRecommendedShows(
+    id: Long,
+    forceReload: Boolean
+  ): Flow<Either<Failure, List<RecommendedShows>>> {
+    return store
       .stream(
         StoreReadRequest.cached(
           key = RecommendedShowsParams(showId = id, page = DEFAULT_API_PAGE),
           refresh =
-            requestManagerRepository.isRequestExpired(
-              entityId = id,
-              requestType = RECOMMENDED_SHOWS.name,
-              threshold = RECOMMENDED_SHOWS.duration,
-            ),
+            forceReload ||
+              requestManagerRepository.isRequestExpired(
+                entityId = id,
+                requestType = RECOMMENDED_SHOWS.name,
+                threshold = RECOMMENDED_SHOWS.duration,
+              ),
         ),
       )
       .mapResult()
       .flowOn(dispatchers.io)
+  }
 }

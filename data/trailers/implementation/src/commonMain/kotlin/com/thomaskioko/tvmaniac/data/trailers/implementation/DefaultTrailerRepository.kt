@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TrailerRepositoryImpl(
+class DefaultTrailerRepository(
   private val appUtils: AppUtils,
   private val trailerDao: TrailerDao,
   private val dispatchers: AppCoroutineDispatchers,
@@ -20,10 +20,7 @@ class TrailerRepositoryImpl(
 
   override fun isYoutubePlayerInstalled(): Flow<Boolean> = appUtils.isYoutubePlayerInstalled()
 
-  override suspend fun fetchTrailersByShowId(id: Long): List<Trailers> =
-    trailerDao.getTrailersById(id)
-
-  override fun observeTrailersStoreResponse(id: Long): Flow<Either<Failure, List<Trailers>>> =
+  override fun observeTrailers(id: Long): Flow<Either<Failure, List<Trailers>>> =
     trailerDao
       .observeTrailersById(id)
       .distinctUntilChanged()

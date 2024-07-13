@@ -6,7 +6,8 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface WatchProviderRepository {
-  suspend fun fetchWatchProviders(id: Long): List<WatchProviders>
-
-  fun observeWatchProviders(id: Long): Flow<Either<Failure, List<WatchProviders>>>
+  fun observeWatchProviders(
+    id: Long,
+    forceReload: Boolean = false
+  ): Flow<Either<Failure, List<WatchProviders>>>
 }

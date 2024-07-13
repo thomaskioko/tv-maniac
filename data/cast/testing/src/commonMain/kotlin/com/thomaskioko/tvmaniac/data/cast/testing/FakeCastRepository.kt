@@ -20,11 +20,6 @@ class FakeCastRepository : CastRepository {
     showCastEntityList.send(result)
   }
 
-  override suspend fun fetchShowCast(showId: Long): List<ShowCast> = showCastEntityList.receive()
-
-  override suspend fun fetchSeasonCast(seasonId: Long): List<SeasonCast> =
-    seasonCastEntityList.receive()
-
   override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =
     seasonCastEntityList.receiveAsFlow()
 

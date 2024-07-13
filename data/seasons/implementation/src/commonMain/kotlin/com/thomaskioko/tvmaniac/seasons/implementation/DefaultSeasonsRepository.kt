@@ -13,13 +13,10 @@ import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class SeasonsRepositoryImpl(
+class DefaultSeasonsRepository(
   private val seasonsDao: SeasonsDao,
   private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonsRepository {
-
-  override suspend fun fetchSeasonsByShowId(id: Long): List<ShowSeasons> =
-    seasonsDao.fetchShowSeasons(id)
 
   override fun observeSeasonsByShowId(id: Long): Flow<Either<Failure, List<ShowSeasons>>> =
     seasonsDao
