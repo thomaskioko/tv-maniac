@@ -18,8 +18,4 @@ data class ShowDetails(
   val rating: Double = 0.0,
   val genres: ImmutableList<String> = persistentListOf(),
   val isFollowed: Boolean = false,
-) {
-  companion object {
-    val EMPTY_SHOW = ShowDetails()
-  }
-}
+)

@@ -1,31 +1,26 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
 import com.arkivanov.decompose.ComponentContext
-import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.core.db.RecommendedShows
-import com.thomaskioko.tvmaniac.core.db.ShowCast
-import com.thomaskioko.tvmaniac.core.db.ShowSeasons
-import com.thomaskioko.tvmaniac.core.db.SimilarShows
-import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.core.db.TvshowDetails
-import com.thomaskioko.tvmaniac.core.db.WatchProviders
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.data.cast.api.CastRepository
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.AdditionalContent
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowMetadata
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -62,28 +57,29 @@ constructor(
 ) : ComponentContext by componentContext {
 
   private val coroutineScope = coroutineScope()
-  private val _state = MutableStateFlow(ShowDetailsState.EMPTY_DETAIL_STATE)
-  val state: StateFlow<ShowDetailsState> = _state.asStateFlow()
+  private val _state = MutableStateFlow(ShowDetailsContent(showDetails = null))
+  val state: StateFlow<ShowDetailsContent> = _state.asStateFlow()
 
   init {
-    coroutineScope.launch {
-      fetchShowDetails()
-      observeShowDetails()
-    }
+    coroutineScope.launch { observeShowDetails() }
   }
 
   fun dispatch(action: ShowDetailsAction) {
     when (action) {
-      DetailBackClicked -> onBack()
       is SeasonClicked -> {
-        _state.update { it.copy(selectedSeasonIndex = action.params.selectedSeasonIndex) }
+        _state.update {
+          it.copy(
+            showInfo =
+              it.showInfo?.copy(
+                selectedSeasonIndex = action.params.selectedSeasonIndex,
+              )
+                ?: it.showInfo,
+          )
+        }
         onNavigateToSeason(action.params)
       }
       is DetailShowClicked -> onNavigateToShow(action.id)
       is WatchTrailerClicked -> onNavigateToTrailer(action.id)
-      DismissWebViewError -> {
-        coroutineScope.launch { _state.update { it.copy(showPlayerErrorMessage = false) } }
-      }
       is FollowShowClicked -> {
         coroutineScope.launch {
           libraryRepository.updateLibrary(
@@ -92,157 +88,110 @@ constructor(
           )
         }
       }
-      is ReloadShowDetails -> {
-        coroutineScope.launch { fetchShowDetails() }
-      }
-      WebViewError -> {
-        coroutineScope.launch { _state.update { it.copy(showPlayerErrorMessage = true) } }
-      }
+      ReloadShowDetails -> coroutineScope.launch { observeShowDetails(forceReload = true) }
+      DetailBackClicked -> onBack()
+      DismissErrorSnackbar ->
+        coroutineScope.launch { _state.update { it.copy(errorMessage = null) } }
     }
   }
 
-  private suspend fun fetchShowDetails() {
-    val showDetails = showDetailsRepository.getShowDetails(showId)
-    val season = seasonsRepository.fetchSeasonsByShowId(showId)
-    val trailers = trailerRepository.fetchTrailersByShowId(showId)
-    val similar = similarShowsRepository.fetchSimilarShows(showId)
-    val recommended = recommendedShowsRepository.fetchRecommendedShows(showId)
-    val watchProviders = watchProviders.fetchWatchProviders(showId)
-    val castList = castRepository.fetchShowCast(showId)
-
-    _state.update {
-      it.copy(
-        showDetails = showDetails.toShowDetails(),
-        providers = watchProviders.toWatchProviderList(),
-        castsList = castList.toCastList(),
-        seasonsList = season.toSeasonsList(),
-        recommendedShowList = recommended.toRecommendedShowList(),
-        trailersList = trailers.toTrailerList(),
-        similarShows = similar.toSimilarShowList(),
-      )
-    }
-  }
-
-  private suspend fun observeShowDetails() {
-    combine(
-        showDetailsRepository.observeShowDetails(showId),
-        seasonsRepository.observeSeasonsByShowId(showId),
-        similarShowsRepository.observeSimilarShows(showId),
-        recommendedShowsRepository.observeRecommendedShows(showId),
-        castRepository.observeShowCast(showId),
-        watchProviders.observeWatchProviders(showId),
-        trailerRepository.observeTrailersStoreResponse(showId),
+  private suspend fun observeShowDetails(forceReload: Boolean = false) {
+    return combine(
+        showDetailsRepository.observeShowDetails(showId, forceReload),
         trailerRepository.isYoutubePlayerInstalled(),
-      ) {
-        show,
-        seasons,
-        similarShows,
-        recommendedShows,
-        cast,
-        watchProviders,
-        trailers,
-        isWebViewInstalled,
-        ->
-        updateShowDetails(show)
-        updateShowSeasons(seasons)
-        updateTrailerState(trailers, isWebViewInstalled)
-        updateSimilarShowsState(similarShows)
-        updateRecommendedShowsState(recommendedShows)
-        updateCastState(cast)
-        updateWatchProviders(watchProviders)
+        observeShowMetadata(forceReload),
+        observeAdditionalContent(forceReload),
+      ) { showDetailsResult, isWebViewInstalled, showMetadata, additionalContent ->
+        showDetailsResult.fold(
+          { error ->
+            _state.update {
+              it.copy(
+                isUpdating = false,
+                errorMessage = error.errorMessage ?: "An unknown error occurred",
+              )
+            }
+          },
+          { result ->
+            updateState(
+              result?.toShowDetails(),
+              isWebViewInstalled,
+              showMetadata,
+              additionalContent,
+            )
+          },
+        )
       }
       .onStart { _state.update { it.copy(isUpdating = true) } }
-      .onCompletion { _state.update { it.copy(isUpdating = false) } }
       .collect()
   }
 
-  private fun updateShowDetails(response: Either<Failure, TvshowDetails>) =
-    updateState(response) {
-      when (response) {
-        is Either.Left -> copy(errorMessage = response.left.errorMessage)
-        is Either.Right -> copy(showDetails = response.right.toShowDetails())
-      }
+  private fun observeShowMetadata(forceReload: Boolean) =
+    combine(
+      seasonsRepository.observeSeasonsByShowId(showId).map { it.toSeasonsListOrEmpty() },
+      castRepository.observeShowCast(showId).map { it.toCastList() },
+      watchProviders.observeWatchProviders(showId, forceReload).map {
+        it.toWatchProviderListOrEmpty()
+      },
+    ) { seasons, cast, providers ->
+      ShowMetadata(seasons, cast, providers)
     }
 
-  private fun updateTrailerState(
-    response: Either<Failure, List<Trailers>>,
+  private fun observeAdditionalContent(forceReload: Boolean) =
+    combine(
+      similarShowsRepository.observeSimilarShows(showId, forceReload).map {
+        it.toSimilarShowListOrEmpty()
+      },
+      recommendedShowsRepository.observeRecommendedShows(showId, forceReload).map {
+        it.toRecommendedShowListOrEmpty()
+      },
+      trailerRepository.observeTrailers(showId).map { it.toTrailerListOrEmpty() },
+    ) { similarShows, recommendedShows, trailers ->
+      AdditionalContent(similarShows, recommendedShows, trailers)
+    }
+
+  private fun updateState(
+    showDetails: ShowDetails?,
     isWebViewInstalled: Boolean,
-  ) =
-    updateState(response) {
-      when (response) {
-        is Either.Left -> copy(errorMessage = response.left.errorMessage)
-        is Either.Right ->
-          copy(
-            hasWebViewInstalled = isWebViewInstalled,
-            trailersList = response.right.toTrailerList(),
-          )
-      }
-    }
+    showMetadata: ShowMetadata,
+    additionalContent: AdditionalContent,
+  ) {
+    _state.update { currentState ->
+      val newShowInfoState =
+        when {
+          !isContentEmpty(showMetadata, additionalContent) -> {
+            ShowDetailsContent.ShowInfoContent(
+              hasWebViewInstalled = isWebViewInstalled,
+              providers = showMetadata.providers.toImmutableList(),
+              castsList = showMetadata.cast.toImmutableList(),
+              seasonsList = showMetadata.seasons.toImmutableList(),
+              similarShows = additionalContent.similarShows.toImmutableList(),
+              recommendedShowList = additionalContent.recommendedShows.toImmutableList(),
+              trailersList = additionalContent.trailers.toImmutableList(),
+              openTrailersInYoutube = currentState.showInfo?.openTrailersInYoutube ?: false,
+              selectedSeasonIndex = currentState.showInfo?.selectedSeasonIndex ?: 0,
+            )
+          }
+          else -> null
+        }
 
-  private fun updateShowSeasons(response: Either<Failure, List<ShowSeasons>>) =
-    updateState(response) {
-      when (response) {
-        is Either.Left -> copy(errorMessage = response.left.errorMessage)
-        is Either.Right ->
-          copy(
-            seasonsList = response.right.toSeasonsList(),
-          )
-      }
-    }
-
-  private fun updateSimilarShowsState(response: Either<Failure, List<SimilarShows>>) =
-    updateState(response) {
-      when (response) {
-        is Either.Left -> copy(errorMessage = response.left.errorMessage)
-        is Either.Right ->
-          copy(
-            similarShows = response.right.toSimilarShowList(),
-          )
-      }
-    }
-
-  private fun updateRecommendedShowsState(response: Either<Failure, List<RecommendedShows>>) =
-    updateState(response) {
-      when (response) {
-        is Either.Left -> copy(errorMessage = response.left.errorMessage)
-        is Either.Right ->
-          copy(
-            recommendedShowList = response.right.toRecommendedShowList(),
-          )
-      }
-    }
-
-  private fun updateWatchProviders(response: Either<Failure, List<WatchProviders>>) =
-    updateState(response) {
-      when (response) {
-        is Either.Left -> copy(errorMessage = response.left.errorMessage)
-        is Either.Right ->
-          copy(
-            providers = response.right.toWatchProviderList(),
-          )
-      }
-    }
-
-  private fun updateCastState(list: List<ShowCast>) {
-    _state.update {
-      it.copy(
-        castsList = list.toCastList(),
+      currentState.copy(
+        showDetails = showDetails ?: currentState.showDetails,
+        showInfo = newShowInfoState,
+        isUpdating = false,
+        errorMessage = null,
       )
     }
   }
 
-  private inline fun <T> updateState(
-    response: Either<Failure, T>,
-    updateBlock: ShowDetailsState.(T) -> ShowDetailsState,
-  ) {
-    _state.update {
-      when (response) {
-        is Either.Left ->
-          it.copy(
-            errorMessage = response.left.errorMessage,
-          )
-        is Either.Right -> it.updateBlock(response.right).copy(isUpdating = false)
-      }
-    }
+  private fun isContentEmpty(
+    showMetadata: ShowMetadata,
+    additionalContent: AdditionalContent,
+  ): Boolean {
+    return showMetadata.seasons.isEmpty() &&
+      showMetadata.cast.isEmpty() &&
+      showMetadata.providers.isEmpty() &&
+      additionalContent.similarShows.isEmpty() &&
+      additionalContent.recommendedShows.isEmpty() &&
+      additionalContent.trailers.isEmpty()
   }
 }

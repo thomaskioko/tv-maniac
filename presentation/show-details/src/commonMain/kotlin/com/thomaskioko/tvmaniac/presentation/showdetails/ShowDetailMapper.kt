@@ -7,6 +7,8 @@ import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.db.TvshowDetails
 import com.thomaskioko.tvmaniac.core.db.WatchProviders
+import com.thomaskioko.tvmaniac.core.networkutil.model.Either
+import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Casts
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Providers
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
@@ -17,33 +19,22 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
-fun List<SimilarShows>?.toSimilarShowList(): ImmutableList<Show> =
-  this?.map {
-      Show(
-        tmdbId = it.id.id,
-        title = it.name,
-        posterImageUrl = it.poster_path,
-        backdropImageUrl = it.backdrop_path,
-        isInLibrary = it.in_library == 1L,
-      )
-    }
-    ?.toImmutableList()
-    ?: persistentListOf()
+internal fun Either<Failure, List<ShowSeasons>>.toSeasonsListOrEmpty(): List<Season> =
+  (this as? Either.Right)?.right?.toSeasonsList() ?: emptyList()
 
-fun List<RecommendedShows>?.toRecommendedShowList(): ImmutableList<Show> =
-  this?.map {
-      Show(
-        tmdbId = it.id.id,
-        title = it.name,
-        posterImageUrl = it.poster_path,
-        backdropImageUrl = it.backdrop_path,
-        isInLibrary = it.in_library == 1L,
-      )
-    }
-    ?.toImmutableList()
-    ?: persistentListOf()
+internal fun Either<Failure, List<WatchProviders>>.toWatchProviderListOrEmpty(): List<Providers> =
+  (this as? Either.Right)?.right?.toWatchProviderList() ?: emptyList()
 
-fun List<ShowCast>?.toCastList(): ImmutableList<Casts> =
+internal fun Either<Failure, List<SimilarShows>>.toSimilarShowListOrEmpty(): List<Show> =
+  (this as? Either.Right)?.right?.toSimilarShowList() ?: emptyList()
+
+internal fun Either<Failure, List<RecommendedShows>>.toRecommendedShowListOrEmpty(): List<Show> =
+  (this as? Either.Right)?.right?.toRecommendedShowList() ?: emptyList()
+
+internal fun Either<Failure, List<Trailers>>.toTrailerListOrEmpty(): List<Trailer> =
+  (this as? Either.Right)?.right?.toTrailerList() ?: emptyList()
+
+internal fun List<ShowCast>?.toCastList(): ImmutableList<Casts> =
   this?.map {
       Casts(
         id = it.id.id,
@@ -55,7 +46,33 @@ fun List<ShowCast>?.toCastList(): ImmutableList<Casts> =
     ?.toImmutableList()
     ?: persistentListOf()
 
-fun List<WatchProviders>?.toWatchProviderList(): ImmutableList<Providers> =
+private fun List<SimilarShows>?.toSimilarShowList(): ImmutableList<Show> =
+  this?.map {
+      Show(
+        tmdbId = it.id.id,
+        title = it.name,
+        posterImageUrl = it.poster_path,
+        backdropImageUrl = it.backdrop_path,
+        isInLibrary = it.in_library == 1L,
+      )
+    }
+    ?.toImmutableList()
+    ?: persistentListOf()
+
+private fun List<RecommendedShows>?.toRecommendedShowList(): ImmutableList<Show> =
+  this?.map {
+      Show(
+        tmdbId = it.id.id,
+        title = it.name,
+        posterImageUrl = it.poster_path,
+        backdropImageUrl = it.backdrop_path,
+        isInLibrary = it.in_library == 1L,
+      )
+    }
+    ?.toImmutableList()
+    ?: persistentListOf()
+
+private fun List<WatchProviders>?.toWatchProviderList(): ImmutableList<Providers> =
   this?.map {
       Providers(
         id = it.id.id,
@@ -66,7 +83,7 @@ fun List<WatchProviders>?.toWatchProviderList(): ImmutableList<Providers> =
     ?.toImmutableList()
     ?: persistentListOf()
 
-fun TvshowDetails.toShowDetails(): ShowDetails =
+internal fun TvshowDetails.toShowDetails(): ShowDetails =
   ShowDetails(
     tmdbId = id.id,
     title = name,
@@ -82,7 +99,7 @@ fun TvshowDetails.toShowDetails(): ShowDetails =
     isFollowed = in_library == 1L,
   )
 
-fun List<ShowSeasons>?.toSeasonsList(): ImmutableList<Season> =
+private fun List<ShowSeasons>?.toSeasonsList(): ImmutableList<Season> =
   this?.map {
       Season(
         seasonId = it.season_id.id,
@@ -94,7 +111,7 @@ fun List<ShowSeasons>?.toSeasonsList(): ImmutableList<Season> =
     ?.toImmutableList()
     ?: persistentListOf()
 
-fun List<Trailers>?.toTrailerList(): ImmutableList<Trailer> =
+private fun List<Trailers>?.toTrailerList(): ImmutableList<Trailer> =
   this?.map {
       Trailer(
         showId = it.show_id.id,
