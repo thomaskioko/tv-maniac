@@ -13,7 +13,7 @@ import TvManiac
 struct EpisodeListView : View {
 
     @State private var showingAlert: Bool = false
-    let state: SeasonDetailsContent
+    let state: SeasonDetailsLoaded
     let onEpisodeHeaderClicked: () -> Void
     let onWatchedStateClicked: () -> Void
 
