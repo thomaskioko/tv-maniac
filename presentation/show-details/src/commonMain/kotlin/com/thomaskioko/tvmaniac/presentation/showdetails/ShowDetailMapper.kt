@@ -19,20 +19,22 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
-internal fun Either<Failure, List<ShowSeasons>>.toSeasonsListOrEmpty(): List<Season> =
-  (this as? Either.Right)?.right?.toSeasonsList() ?: emptyList()
+internal fun Either<Failure, List<ShowSeasons>>.toSeasonsListOrEmpty(): ImmutableList<Season> =
+  (this as? Either.Right)?.right?.toSeasonsList() ?: persistentListOf()
 
-internal fun Either<Failure, List<WatchProviders>>.toWatchProviderListOrEmpty(): List<Providers> =
-  (this as? Either.Right)?.right?.toWatchProviderList() ?: emptyList()
+internal fun Either<Failure, List<WatchProviders>>.toWatchProviderListOrEmpty():
+  ImmutableList<Providers> =
+  (this as? Either.Right)?.right?.toWatchProviderList() ?: persistentListOf()
 
-internal fun Either<Failure, List<SimilarShows>>.toSimilarShowListOrEmpty(): List<Show> =
-  (this as? Either.Right)?.right?.toSimilarShowList() ?: emptyList()
+internal fun Either<Failure, List<SimilarShows>>.toSimilarShowListOrEmpty(): ImmutableList<Show> =
+  (this as? Either.Right)?.right?.toSimilarShowList() ?: persistentListOf()
 
-internal fun Either<Failure, List<RecommendedShows>>.toRecommendedShowListOrEmpty(): List<Show> =
-  (this as? Either.Right)?.right?.toRecommendedShowList() ?: emptyList()
+internal fun Either<Failure, List<RecommendedShows>>.toRecommendedShowListOrEmpty():
+  ImmutableList<Show> =
+  (this as? Either.Right)?.right?.toRecommendedShowList() ?: persistentListOf()
 
-internal fun Either<Failure, List<Trailers>>.toTrailerListOrEmpty(): List<Trailer> =
-  (this as? Either.Right)?.right?.toTrailerList() ?: emptyList()
+internal fun Either<Failure, List<Trailers>>.toTrailerListOrEmpty(): ImmutableList<Trailer> =
+  (this as? Either.Right)?.right?.toTrailerList() ?: persistentListOf()
 
 internal fun List<ShowCast>?.toCastList(): ImmutableList<Casts> =
   this?.map {

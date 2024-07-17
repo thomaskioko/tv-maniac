@@ -24,7 +24,6 @@ import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeLibraryRepository
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -84,7 +83,7 @@ class ShowDetailsPresenterTest {
       emission.isUpdating shouldBe false
       emission.errorMessage shouldBe null
 
-      emission.showInfo.shouldBeInstanceOf<ShowDetailsContent.ShowInfoContent>()
+      emission.showInfo.shouldBeInstanceOf<ShowInfoState.Loaded>()
     }
   }
 
@@ -101,12 +100,17 @@ class ShowDetailsPresenterTest {
         )
 
       awaitItem() shouldBe
-        ShowDetailsContent(showDetails = null, isUpdating = false, errorMessage = errorMessage)
+        ShowDetailsContent(
+          showDetails = null,
+          isUpdating = false,
+          errorMessage = errorMessage,
+          showInfo = ShowInfoState.Error
+        )
     }
   }
 
   @Test
-  fun `should update state when ReloadShowDetails and new data is available`() = runTest {
+  fun `should update state to Loaded when ReloadShowDetails and new data is available`() = runTest {
     buildMockData()
 
     presenter.state.test {
@@ -120,7 +124,7 @@ class ShowDetailsPresenterTest {
       emission.showDetails shouldBe showDetailsContent.showDetails
       emission.isUpdating shouldBe false
       emission.errorMessage shouldBe null
-      emission.showInfo shouldBe null
+      emission.showInfo shouldBe ShowInfoState.Empty
 
       seasonsRepository.setSeasonsResult(Either.Right(seasons))
       watchProviders.setWatchProvidersResult(Either.Right(watchProviderList))
@@ -130,18 +134,52 @@ class ShowDetailsPresenterTest {
 
       presenter.dispatch(ReloadShowDetails)
 
-      // Verify that state is updated
-      val updatingState = awaitItem()
-      updatingState.isUpdating shouldBe true
+      awaitItem().showInfo.shouldBeInstanceOf<ShowInfoState.Loading>()
 
-      val updatedState = awaitItem()
-      updatedState.isUpdating shouldBe false
-      updatedState.showInfo shouldNotBe null
-      updatedState.showInfo?.seasonsList?.size shouldBe 1
-      updatedState.showInfo?.similarShows?.size shouldBe 1
-      updatedState.showInfo?.providers?.size shouldBe 1
+      val updatedState = awaitItem().showInfo
+      updatedState.shouldBeInstanceOf<ShowInfoState.Loaded>()
+      updatedState.seasonsList.size shouldBe 1
+      updatedState.similarShows.size shouldBe 1
+      updatedState.providers.size shouldBe 1
     }
   }
+
+  @Test
+  fun `should update infoState to Loaded with correct data when ReloadShowDetails and fetching season fails`() =
+    runTest {
+      val errorMessage = "Failed to fetch show details"
+      buildMockData()
+
+      presenter.state.test {
+        awaitItem() shouldBe
+          ShowDetailsContent(
+            showDetails = null,
+            isUpdating = true,
+          )
+
+        val emission = awaitItem()
+        emission.showDetails shouldBe showDetailsContent.showDetails
+        emission.isUpdating shouldBe false
+        emission.errorMessage shouldBe null
+        emission.showInfo shouldBe ShowInfoState.Empty
+
+        seasonsRepository.setSeasonsResult(Either.Left(ServerError(errorMessage)))
+        watchProviders.setWatchProvidersResult(Either.Right(watchProviderList))
+        similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowList))
+        recommendedShowsRepository.setObserveRecommendedShows(Either.Right(recommendedShowList))
+        trailerRepository.setTrailerResult(Either.Right(trailers))
+
+        presenter.dispatch(ReloadShowDetails)
+
+        awaitItem().showInfo.shouldBeInstanceOf<ShowInfoState.Loading>()
+
+        val updatedState = awaitItem().showInfo
+        updatedState.shouldBeInstanceOf<ShowInfoState.Loaded>()
+        updatedState.seasonsList.size shouldBe 0
+        updatedState.similarShows.size shouldBe 1
+        updatedState.providers.size shouldBe 1
+      }
+    }
 
   @Test
   fun `should clear error message when DismissErrorSnackbar`() = runTest {
@@ -162,7 +200,8 @@ class ShowDetailsPresenterTest {
         ShowDetailsContent(
           showDetails = null,
           isUpdating = false,
-          errorMessage = "Failed to fetch show details"
+          errorMessage = "Failed to fetch show details",
+          showInfo = ShowInfoState.Error
         )
 
       presenter.dispatch(DismissErrorSnackbar)

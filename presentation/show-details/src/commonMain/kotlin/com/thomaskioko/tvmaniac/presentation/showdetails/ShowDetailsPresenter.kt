@@ -14,7 +14,6 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetails
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -70,7 +69,7 @@ constructor(
         _state.update {
           it.copy(
             showInfo =
-              it.showInfo?.copy(
+              (it.showInfo as? ShowInfoState.Loaded)?.copy(
                 selectedSeasonIndex = action.params.selectedSeasonIndex,
               )
                 ?: it.showInfo,
@@ -101,13 +100,14 @@ constructor(
         trailerRepository.isYoutubePlayerInstalled(),
         observeShowMetadata(forceReload),
         observeAdditionalContent(forceReload),
-      ) { showDetailsResult, isWebViewInstalled, showMetadata, additionalContent ->
+      ) { showDetailsResult, isWebViewInstalled, showMetadataResult, additionalContentResult ->
         showDetailsResult.fold(
           { error ->
             _state.update {
               it.copy(
                 isUpdating = false,
                 errorMessage = error.errorMessage ?: "An unknown error occurred",
+                showInfo = ShowInfoState.Error
               )
             }
           },
@@ -115,13 +115,13 @@ constructor(
             updateState(
               result?.toShowDetails(),
               isWebViewInstalled,
-              showMetadata,
-              additionalContent,
+              showMetadataResult,
+              additionalContentResult
             )
-          },
+          }
         )
       }
-      .onStart { _state.update { it.copy(isUpdating = true) } }
+      .onStart { _state.update { it.copy(isUpdating = true, showInfo = ShowInfoState.Loading) } }
       .collect()
   }
 
@@ -158,20 +158,21 @@ constructor(
     _state.update { currentState ->
       val newShowInfoState =
         when {
-          !isContentEmpty(showMetadata, additionalContent) -> {
-            ShowDetailsContent.ShowInfoContent(
+          isContentEmpty(showMetadata, additionalContent) -> ShowInfoState.Empty
+          else ->
+            ShowInfoState.Loaded(
               hasWebViewInstalled = isWebViewInstalled,
-              providers = showMetadata.providers.toImmutableList(),
-              castsList = showMetadata.cast.toImmutableList(),
-              seasonsList = showMetadata.seasons.toImmutableList(),
-              similarShows = additionalContent.similarShows.toImmutableList(),
-              recommendedShowList = additionalContent.recommendedShows.toImmutableList(),
-              trailersList = additionalContent.trailers.toImmutableList(),
-              openTrailersInYoutube = currentState.showInfo?.openTrailersInYoutube ?: false,
-              selectedSeasonIndex = currentState.showInfo?.selectedSeasonIndex ?: 0,
+              providers = showMetadata.providers,
+              castsList = showMetadata.cast,
+              seasonsList = showMetadata.seasons,
+              similarShows = additionalContent.similarShows,
+              recommendedShowList = additionalContent.recommendedShows,
+              trailersList = additionalContent.trailers,
+              openTrailersInYoutube =
+                (currentState.showInfo as? ShowInfoState.Loaded)?.openTrailersInYoutube ?: false,
+              selectedSeasonIndex =
+                (currentState.showInfo as? ShowInfoState.Loaded)?.selectedSeasonIndex ?: 0
             )
-          }
-          else -> null
         }
 
       currentState.copy(

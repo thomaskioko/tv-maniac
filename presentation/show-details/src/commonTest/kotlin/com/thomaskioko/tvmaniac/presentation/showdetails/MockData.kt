@@ -26,16 +26,7 @@ val showDetailsContent =
         rating = 8.0,
         genres = persistentListOf("1234"),
       ),
-    showInfo =
-      ShowDetailsContent.ShowInfoContent(
-        seasonsList = persistentListOf(),
-        similarShows = persistentListOf(),
-        trailersList = persistentListOf(),
-        providers = persistentListOf(),
-        castsList = persistentListOf(),
-        recommendedShowList = persistentListOf(),
-        hasWebViewInstalled = false,
-      ),
+    showInfo = ShowInfoState.Empty,
     errorMessage = null,
     isUpdating = false,
   )
