@@ -16,7 +16,7 @@ struct HeaderContentView: View {
     var maxHeight : CGFloat
     var onAddToLibraryClick : (Bool) -> Void
     var onWatchTrailerClick : (Int64) -> Void
-
+    
     var body: some View {
         
         ZStack {
@@ -47,16 +47,6 @@ struct HeaderContentView: View {
                             ], startPoint: .top, endPoint: .bottom)
                         )
                     
-                    Text(show.title)
-                        .bodyFont(size: 24)
-                        .fontWeight(.semibold)
-                        .lineLimit(1)
-                        .padding(.leading, 75.0)
-                        .opacity(progress)
-                        .opacity(max(0, min(1, (progress - 0.75) * 4.0)))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.bottom, 30)
-                    
                     ShowInfoView(
                         onAddToLibraryClick: onAddToLibraryClick,
                         onWatchTrailerClick: onWatchTrailerClick
@@ -79,9 +69,8 @@ struct HeaderContentView: View {
                 .titleFont(size: 30)
                 .foregroundColor(.text_color_bg)
                 .lineLimit(1)
-                .padding(.top, 8)
-                .padding(.trailing, 16)
-                .padding(.leading, 16)
+                .padding(.top, 12)
+                .padding([.leading, .trailing], 16)
             
             Text(show.overview)
                 .bodyFont(size: 18)
@@ -170,8 +159,6 @@ struct HeaderContentView: View {
             BorderedButton(
                 text: "Watch Trailer",
                 systemImageName: "film.fill",
-                color: .accent,
-                borderColor: .accent,
                 isOn: false,
                 action: { onWatchTrailerClick(show.tmdbId) }
             )
@@ -182,8 +169,6 @@ struct HeaderContentView: View {
             BorderedButton(
                 text: followText,
                 systemImageName: buttonSystemImage,
-                color: .accent,
-                borderColor: .accent,
                 isOn: false,
                 action: { onAddToLibraryClick(show.isFollowed) }
             )
