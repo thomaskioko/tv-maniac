@@ -14,6 +14,14 @@ internal fun reducer(
     DismissSeasonDialog -> dismissSeasonDialog(currentState)
     UpdateSeasonWatchedState -> dismissSeasonDialog(currentState)
     OnEpisodeHeaderClicked -> toggleExpandEpisodeItems(currentState)
+    DismissSeasonGallery -> dismissGalleryBottomSheet(currentState)
+  }
+}
+
+private fun dismissGalleryBottomSheet(state: SeasonDetailState): SeasonDetailState {
+  return when (state) {
+    is SeasonDetailsLoaded -> state.copy(showGalleryBottomSheet = false)
+    else -> state
   }
 }
 

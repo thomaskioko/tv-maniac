@@ -14,6 +14,8 @@ data object ShowMarkSeasonDialog : SeasonDetailsAction
 
 data object SeasonGalleryClicked : SeasonDetailsAction
 
+data object DismissSeasonGallery : SeasonDetailsAction
+
 data object ReloadSeasonDetails : SeasonDetailsAction
 
 data class UpdateEpisodeStatus(
