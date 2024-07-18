@@ -61,6 +61,7 @@ import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
+import com.thomaskioko.tvmaniac.compose.components.SheetDragHandle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
@@ -68,6 +69,7 @@ import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonDialog
+import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonGallery
 import com.thomaskioko.tvmaniac.presentation.seasondetails.InitialSeasonsState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.ReloadSeasonDetails
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailState
@@ -113,7 +115,18 @@ internal fun SeasonDetailsScreen(
     modifier = modifier,
     showBottomSheet = state.showGalleryBottomSheet,
     sheetContent = { ImageGalleryContent(imageList = state.seasonImages) },
-    onDismissBottomSheet = { onAction(SeasonGalleryClicked) },
+    onDismissBottomSheet = { onAction(DismissSeasonGallery) },
+    sheetDragHandle = {
+      val title =
+        stringResource(
+          id = R.string.cd_show_images,
+          (state as? SeasonDetailsLoaded)?.seasonName ?: ""
+        )
+      SheetDragHandle(
+        title = title,
+        onClick = { onAction(DismissSeasonGallery) },
+      )
+    },
     content = { contentPadding ->
       Box(Modifier.fillMaxSize()) {
         when (state) {

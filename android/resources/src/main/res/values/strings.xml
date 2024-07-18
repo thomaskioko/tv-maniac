@@ -15,6 +15,7 @@
     <string name="cd_clear">Clear search</string>
     <string name="cd_profile_pic">Profile picture for %s</string>
     <string name="cd_user_profile">User profile</string>
+    <string name="cd_show_images">%s Images</string>
 
     <string name="details_episodes">Episodes</string>
     <string name="details_cast">Casts</string>
@@ -47,6 +48,7 @@
     <string name="msg_search_show_hint">Search TV Shows</string>
     <string name="generic_error_message">Oops! Something went wrong!</string>
     <string name="generic_empty_content">Looks like your stash is empty</string>
+    <string name="generic_fetching_data">Please wait while we get your content</string>
     <string name="missing_api_key">Could be that you forgot to add your TMDB API Key. Once you set that up, you can get lost in the vast world of Tmdb\'s collection.</string>
     <string name="generic_retry">Retry</string>
 
