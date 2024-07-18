@@ -27,7 +27,22 @@ class ShowDetailsScreenScreenshotTest {
     composeTestRule.captureMultiDevice("ShowDetailsLoadedState") {
       TvManiacBackground {
         ShowDetailsScreen(
-          state = showDetailsLoaded,
+          state = showDetailsContent,
+          title = "",
+          snackBarHostState = SnackbarHostState(),
+          listState = LazyListState(),
+          onAction = {},
+        )
+      }
+    }
+  }
+
+  @Test
+  fun showDetailsLoadedWithErrorInfoState() {
+    composeTestRule.captureMultiDevice("ShowDetailsLoadedWithErrorInfoState") {
+      TvManiacBackground {
+        ShowDetailsScreen(
+          state = showDetailsContentWithError,
           title = "",
           snackBarHostState = SnackbarHostState(),
           listState = LazyListState(),
