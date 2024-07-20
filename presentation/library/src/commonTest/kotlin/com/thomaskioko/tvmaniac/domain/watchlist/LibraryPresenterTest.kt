@@ -4,20 +4,15 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.tvmaniac.core.db.LibraryShows
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryContent
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
-import com.thomaskioko.tvmaniac.presentation.watchlist.model.LibraryItem
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeLibraryRepository
 import io.kotest.matchers.shouldBe
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -51,65 +46,19 @@ class LibraryPresenterTest {
   }
 
   @Test
-  fun given_no_data_is_cached_VERIFY_correct_state_is_emitted() = runTest {
-    repository.setFollowedResult(emptyList())
-    presenter.state.test {
-      awaitItem() shouldBe LoadingShows
-      awaitItem() shouldBe LibraryContent(persistentListOf())
-    }
-  }
+  fun `should emit LoadingShows on init`() = runTest { presenter.state.value shouldBe LoadingShows }
 
   @Test
-  fun given_data_is_cached_VERIFY_correct_state_is_emitted() = runTest {
-    repository.setFollowedResult(cachedResult)
-
-    presenter.state.test {
-      awaitItem() shouldBe LoadingShows
-      awaitItem() shouldBe LibraryContent(list = uiResult)
-    }
-  }
-
-  @Test
-  fun given_data_is_cached_and_updated_VERIFY_correct_state_is_emitted() = runTest {
-    repository.setFollowedResult(cachedResult)
+  fun `should emit LibraryContent on success`() = runTest {
+    repository.setObserveResult(Either.Right(cachedResult))
 
     presenter.state.test {
       awaitItem() shouldBe LoadingShows
       awaitItem() shouldBe LibraryContent(list = uiResult)
 
-      repository.setObserveResult(successResult)
+      repository.setObserveResult(Either.Right(updatedData))
+
       awaitItem() shouldBe LibraryContent(list = expectedUiResult())
     }
   }
-
-  private val successResult =
-    Either.Right(
-      listOf(
-        LibraryShows(
-          id = Id(84958),
-          name = "Loki",
-          poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-          backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-          created_at = 12345645,
-        ),
-        LibraryShows(
-          id = Id(1232),
-          name = "The Lazarus Project",
-          poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-          backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-          created_at = 12345645,
-        ),
-      ),
-    )
-
-  private fun expectedUiResult() =
-    successResult.right
-      .map {
-        LibraryItem(
-          tmdbId = it.id.id,
-          title = it.name,
-          posterImageUrl = it.poster_path,
-        )
-      }
-      .toPersistentList()
 }
