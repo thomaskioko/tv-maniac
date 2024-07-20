@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -32,12 +33,14 @@ import androidx.compose.material.icons.filled.LibraryAdd
 import androidx.compose.material.icons.filled.LibraryAddCheck
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -70,8 +73,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.CollapsableTopAppBar
+import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
@@ -85,12 +90,14 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.presentation.showdetails.DetailBackClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.DetailShowClicked
-import com.thomaskioko.tvmaniac.presentation.showdetails.DismissWebViewError
+import com.thomaskioko.tvmaniac.presentation.showdetails.DismissErrorSnackbar
 import com.thomaskioko.tvmaniac.presentation.showdetails.FollowShowClicked
+import com.thomaskioko.tvmaniac.presentation.showdetails.ReloadShowDetails
 import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsAction
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsContent
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowInfoState
 import com.thomaskioko.tvmaniac.presentation.showdetails.WatchTrailerClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Casts
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Providers
@@ -117,7 +124,7 @@ fun ShowDetailsScreen(
   ShowDetailsScreen(
     modifier = modifier,
     state = state,
-    title = state.showDetails.title,
+    title = (state as? ShowDetailsContent)?.showDetails?.title ?: "",
     snackBarHostState = snackBarHostState,
     listState = listState,
     onAction = presenter::dispatch,
@@ -126,7 +133,7 @@ fun ShowDetailsScreen(
 
 @Composable
 internal fun ShowDetailsScreen(
-  state: ShowDetailsState,
+  state: ShowDetailsContent,
   title: String,
   snackBarHostState: SnackbarHostState,
   listState: LazyListState,
@@ -142,42 +149,56 @@ internal fun ShowDetailsScreen(
     },
     snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
     content = { contentPadding ->
-      LaunchedEffect(key1 = state.showPlayerErrorMessage) {
-        if (state.showPlayerErrorMessage) {
+      LaunchedEffect(key1 = state.errorMessage) {
+        if (state.errorMessage != null) {
           val actionResult =
             snackBarHostState.showSnackbar(
-              message = "Please make sure you have Android WebView installed or enabled.",
+              message = state.errorMessage!!,
               actionLabel = "Dismiss",
+              withDismissAction = false,
+              duration = SnackbarDuration.Short,
             )
           when (actionResult) {
             SnackbarResult.ActionPerformed,
             SnackbarResult.Dismissed, -> {
-              onAction(DismissWebViewError)
+              onAction(DismissErrorSnackbar)
             }
           }
         }
       }
 
       Box(Modifier.fillMaxSize()) {
-        LazyColumnContent(
-          showDetails = state.showDetails,
-          trailerList = state.trailersList,
-          seasonsList = state.seasonsList,
-          recommendedShowsContent = state.recommendedShowList,
-          similarShowsList = state.similarShows,
-          selectedSeasonIndex = state.selectedSeasonIndex,
-          castsList = state.castsList,
-          providersList = state.providers,
-          contentPadding = contentPadding,
-          listState = listState,
-          onAction = onAction,
-        )
+        if (state.showDetails != null) {
+          LazyColumnContent(
+            detailsContent = state,
+            contentPadding = contentPadding,
+            listState = listState,
+            onAction = onAction,
+          )
+        } else if (!state.isUpdating && state.errorMessage != null) {
+          ErrorUi(
+            modifier = Modifier.fillMaxSize().padding(top = 16.dp),
+            errorMessage = stringResource(R.string.generic_error_message),
+            onRetry = { onAction(ReloadShowDetails) },
+            errorIcon = {
+              Image(
+                modifier = Modifier.size(120.dp),
+                imageVector = Icons.Outlined.ErrorOutline,
+                colorFilter =
+                  ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+                contentDescription = null,
+              )
+            },
+          )
+        }
 
         CollapsableTopAppBar(
           listState = listState,
           title = title,
-          isUpdating = state.isUpdating,
+          isUpdating = state.isUpdating || state.showInfo is ShowInfoState.Loading,
+          showActionIcon = state.showInfo != ShowInfoState.Empty,
           onNavIconPressed = { onAction(DetailBackClicked) },
+          onActionIconPressed = { onAction(ReloadShowDetails) },
         )
       }
     },
@@ -186,14 +207,7 @@ internal fun ShowDetailsScreen(
 
 @Composable
 fun LazyColumnContent(
-  showDetails: ShowDetails,
-  trailerList: ImmutableList<Trailer>,
-  seasonsList: ImmutableList<Season>,
-  similarShowsList: ImmutableList<Show>,
-  selectedSeasonIndex: Int,
-  recommendedShowsContent: ImmutableList<Show>,
-  castsList: ImmutableList<Casts>,
-  providersList: ImmutableList<Providers>,
+  detailsContent: ShowDetailsContent,
   listState: LazyListState,
   contentPadding: PaddingValues,
   onAction: (ShowDetailsAction) -> Unit,
@@ -207,50 +221,84 @@ fun LazyColumnContent(
     item {
       HeaderContent(
         listState = listState,
-        show = showDetails,
+        show = detailsContent.showDetails,
         onUpdateFavoriteClicked = { onAction(FollowShowClicked(it)) },
         onWatchTrailerClicked = { onAction(WatchTrailerClicked(it)) },
       )
     }
 
     item {
-      SeasonsContent(
-        seasonsList = seasonsList,
-        selectedSeasonIndex = selectedSeasonIndex,
+      ShowInfoContent(
+        showInfoState = detailsContent.showInfo,
         onAction = onAction,
       )
     }
+  }
+}
 
-    item { WatchProvider(list = providersList) }
+@Composable
+private fun EmptyInfoContent(
+  onAction: (ShowDetailsAction) -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  Column {
+    ErrorUi(
+      modifier = modifier.fillMaxWidth().padding(top = 16.dp),
+      errorMessage = stringResource(R.string.generic_error_message),
+      onRetry = { onAction(ReloadShowDetails) },
+    )
 
-    item {
-      // TODO:: Add WatchNext
-    }
+    Spacer(modifier = Modifier.height(16.dp))
+  }
+}
 
-    item {
-      TrailersContent(
-        trailersList = trailerList,
-        onAction = onAction,
+@Composable
+private fun ShowInfoContent(
+  showInfoState: ShowInfoState,
+  onAction: (ShowDetailsAction) -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  when (showInfoState) {
+    ShowInfoState.Empty,
+    ShowInfoState.Loading ->
+      LoadingIndicator(
+        modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
       )
-    }
-
-    item { CastContent(castsList = castsList) }
-
-    item {
-      RecommendedShowsContent(
-        recommendedShows = recommendedShowsContent,
-        onShowClicked = { onAction(DetailShowClicked(it)) },
+    is ShowInfoState.Error ->
+      EmptyInfoContent(
+        modifier = Modifier.fillMaxSize(),
+        onAction = { onAction(ReloadShowDetails) }
       )
-    }
+    is ShowInfoState.Loaded -> {
+      Column(modifier = modifier.fillMaxWidth()) {
+        SeasonsContent(
+          seasonsList = showInfoState.seasonsList,
+          selectedSeasonIndex = showInfoState.selectedSeasonIndex,
+          onAction = onAction,
+        )
 
-    item {
-      SimilarShowsContent(
-        similarShows = similarShowsList,
-        onShowClicked = { onAction(DetailShowClicked(it)) },
-      )
-    }
+        WatchProvider(list = showInfoState.providers)
 
-    item { Spacer(modifier = Modifier.height(54.dp)) }
+        TrailersContent(
+          trailersList = showInfoState.trailersList,
+          onAction = onAction,
+        )
+
+        CastContent(castsList = showInfoState.castsList)
+
+        RecommendedShowsContent(
+          recommendedShows = showInfoState.recommendedShowList,
+          onShowClicked = { onAction(DetailShowClicked(it)) },
+        )
+
+        SimilarShowsContent(
+          similarShows = showInfoState.similarShows,
+          onShowClicked = { onAction(DetailShowClicked(it)) },
+        )
+
+        Spacer(modifier = Modifier.height(54.dp))
+      }
+    }
   }
 }
 
@@ -542,7 +590,10 @@ private fun SeasonsContent(
   selectedSeasonIndex: Int,
   onAction: (ShowDetailsAction) -> Unit,
 ) {
+  if (seasonsList.isEmpty()) return
+
   Spacer(modifier = Modifier.height(16.dp))
+
   TextLoadingItem(
     title = stringResource(id = R.string.title_seasons),
   ) {
@@ -870,7 +921,7 @@ private object DetailConstants {
 @ThemePreviews
 @Composable
 private fun ShowDetailScreenPreview(
-  @PreviewParameter(DetailPreviewParameterProvider::class) state: ShowDetailsState,
+  @PreviewParameter(DetailPreviewParameterProvider::class) state: ShowDetailsContent,
 ) {
   TvManiacTheme {
     Surface {

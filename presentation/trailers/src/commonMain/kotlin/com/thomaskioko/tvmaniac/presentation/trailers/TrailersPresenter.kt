@@ -32,39 +32,22 @@ constructor(
   val state: StateFlow<TrailersState> = _state.asStateFlow()
 
   init {
-    coroutineScope.launch {
-      loadTrailerInfo()
-      observeTrailerInfo()
-    }
+    coroutineScope.launch { observeTrailerInfo() }
   }
 
   fun dispatch(action: TrailersAction) {
-    when (action) {
-      is VideoPlayerError -> {
-        _state.value = TrailerError(action.errorMessage)
+    coroutineScope.launch {
+      when (action) {
+        is VideoPlayerError -> _state.update { TrailerError(action.errorMessage) }
+        is TrailerSelected ->
+          _state.update { TrailersContent(selectedVideoKey = action.trailerKey) }
+        ReloadTrailers -> observeTrailerInfo()
       }
-      is TrailerSelected -> {
-        _state.value = TrailersContent(selectedVideoKey = action.trailerKey)
-      }
-      ReloadTrailers -> {
-        coroutineScope.launch { loadTrailerInfo() }
-      }
-    }
-  }
-
-  private suspend fun loadTrailerInfo() {
-    _state.value = LoadingTrailers
-    val result = repository.fetchTrailersByShowId(traktShowId)
-    _state.update {
-      TrailersContent(
-        selectedVideoKey = result.toTrailerList().firstOrNull()?.key,
-        trailersList = result.toTrailerList(),
-      )
     }
   }
 
   private suspend fun observeTrailerInfo() {
-    repository.observeTrailersStoreResponse(traktShowId).collectLatest { result ->
+    repository.observeTrailers(traktShowId).collectLatest { result ->
       when (result) {
         is Either.Left -> {
           _state.update { TrailerError(result.left.errorMessage) }

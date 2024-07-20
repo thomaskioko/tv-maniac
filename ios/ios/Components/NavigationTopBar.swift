@@ -12,11 +12,12 @@ struct NavigationTopBar: View {
 
     @Environment(\.colorScheme) var colorScheme
 
-    var topBarTitle: String
-    var imageName: String
+    var topBarTitle: String? = nil
+    var imageName: String = "arrow.backward"
     var onBackClicked: () -> Void
     var width: CGFloat = 40
     var height: CGFloat = 40
+    @State private var isButtonPressed = false
 
     var body: some View {
         ZStack{
@@ -25,7 +26,13 @@ struct NavigationTopBar: View {
 
             VStack {
                 HStack {
-                    Button(action: onBackClicked) {
+                    Button(action:  {
+                        isButtonPressed = true
+                        onBackClicked()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            isButtonPressed = false
+                        }
+                    }) {
                         ZStack {
                             Circle()
                                 .fill(colorScheme == .dark ? Color.white : .gray.opacity(0.8))
@@ -38,6 +45,7 @@ struct NavigationTopBar: View {
                                         .padding(12)
                                 )
                                 .frame(width: width, height: height)
+                                .buttonElevationEffect(isPressed: $isButtonPressed)
                         }
                     }
                     .buttonStyle(PlainButtonStyle())
@@ -45,22 +53,23 @@ struct NavigationTopBar: View {
 
                     Spacer()
 
-                    Text(topBarTitle)
-                        .font(.title)
-                        .bold()
+                    if let title = topBarTitle {
+                        Text(title)
+                            .font(.title)
+                            .bold()
 
-                    Spacer()
+                        Spacer()
+                    }
 
+                    
                     // Placeholder for a possible trailing button
                     Spacer()
                         .frame(width: 40)
                 }
                 .padding(.bottom, 10) // Adjust the bottom padding for desired height
-//
-//                .shadow(color: Color.background, radius: 10, x: 0, y: 5)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.top, 50) // Adjust the top padding for status bar spacing
+            .padding(.top, 60) // Adjust the top padding for status bar spacing
         }
         .frame(height: 100)
 
@@ -69,12 +78,16 @@ struct NavigationTopBar: View {
 
 struct NavigationTopBar_Previews: PreviewProvider {
     static var previews: some View {
-        VStack {
-            NavigationTopBar(topBarTitle: "Upcoming", imageName: "arrow.backward", onBackClicked: {})
+        ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
+            VStack {
+                NavigationTopBar(topBarTitle: "Upcoming", imageName: "arrow.backward", onBackClicked: {})
 
-            Spacer()
+                Spacer()
+            }
+            .edgesIgnoringSafeArea(.top)
+            .background(Color.background)
+            .preferredColorScheme(colorScheme)
+            .previewDisplayName("\(colorScheme == .light ? "Light Mode" : "Dark Mode")")
         }
-        .edgesIgnoringSafeArea(.top)
-        .background(Color.background)
     }
 }

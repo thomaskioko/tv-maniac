@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.seasondetails.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +30,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.outlined.Autorenew
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -41,6 +44,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -53,8 +57,11 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.CollapsableTopAppBar
+import com.thomaskioko.tvmaniac.compose.components.EmptyContent
+import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
+import com.thomaskioko.tvmaniac.compose.components.SheetDragHandle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
@@ -62,9 +69,14 @@ import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonDialog
+import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonGallery
+import com.thomaskioko.tvmaniac.presentation.seasondetails.InitialSeasonsState
+import com.thomaskioko.tvmaniac.presentation.seasondetails.ReloadSeasonDetails
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsBackClicked
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsContent
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsErrorState
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonGalleryClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.UpdateSeasonWatchedState
@@ -82,44 +94,80 @@ fun SeasonDetailsScreen(
   modifier: Modifier = Modifier,
 ) {
   val state by presenter.state.collectAsState()
-  val listState = rememberLazyListState()
 
   SeasonDetailsScreen(
     modifier = modifier,
     state = state,
-    listState = listState,
     onAction = presenter::dispatch,
   )
 }
 
 @Composable
 internal fun SeasonDetailsScreen(
-  state: SeasonDetailsContent,
-  listState: LazyListState,
-  onAction: (SeasonDetailsAction) -> Unit,
+  state: SeasonDetailState,
   modifier: Modifier = Modifier,
+  onAction: (SeasonDetailsAction) -> Unit,
 ) {
+
+  val listState = rememberLazyListState()
+
   TvManiacBottomSheetScaffold(
     modifier = modifier,
     showBottomSheet = state.showGalleryBottomSheet,
-    onDismissBottomSheet = { onAction(SeasonGalleryClicked) },
     sheetContent = { ImageGalleryContent(imageList = state.seasonImages) },
+    onDismissBottomSheet = { onAction(DismissSeasonGallery) },
+    sheetDragHandle = {
+      val title =
+        stringResource(
+          id = R.string.cd_show_images,
+          (state as? SeasonDetailsLoaded)?.seasonName ?: ""
+        )
+      SheetDragHandle(
+        title = title,
+        onClick = { onAction(DismissSeasonGallery) },
+      )
+    },
     content = { contentPadding ->
       Box(Modifier.fillMaxSize()) {
-        LazyColumnContent(
-          seasonDetailsModel = state,
-          isLoading = state.isUpdating,
-          showSeasonWatchStateDialog = state.showSeasonWatchStateDialog,
-          contentPadding = contentPadding,
-          onAction = onAction,
-          listState = listState,
-        )
+        when (state) {
+          InitialSeasonsState ->
+            EmptyContent(
+              imageVector = Icons.Outlined.Autorenew,
+              message = stringResource(id = R.string.generic_fetching_data),
+            )
+          is SeasonDetailsLoaded ->
+            LazyColumnContent(
+              seasonDetailsModel = state,
+              isLoading = state.isUpdating,
+              showSeasonWatchStateDialog = state.showSeasonWatchStateDialog,
+              contentPadding = contentPadding,
+              onAction = onAction,
+              listState = listState,
+            )
+          is SeasonDetailsErrorState ->
+            ErrorUi(
+              errorIcon = {
+                Image(
+                  modifier = Modifier.size(120.dp),
+                  imageVector = Icons.Outlined.ErrorOutline,
+                  colorFilter =
+                    ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+                  contentDescription = null,
+                )
+              },
+              modifier = Modifier.fillMaxSize(),
+              errorMessage = state.errorMessage,
+              onRetry = { onAction(ReloadSeasonDetails) },
+            )
+        }
 
         CollapsableTopAppBar(
           listState = listState,
-          title = state.seasonName,
+          title = (state as? SeasonDetailsLoaded)?.seasonName ?: "",
           isUpdating = state.isUpdating,
-          onNavIconPressed = { onAction(SeasonDetailsBackClicked) }
+          onNavIconPressed = { onAction(SeasonDetailsBackClicked) },
+          onActionIconPressed = { onAction(ReloadSeasonDetails) },
+          showActionIcon = state is SeasonDetailsLoaded,
         )
       }
     },
@@ -131,7 +179,7 @@ fun LazyColumnContent(
   listState: LazyListState,
   isLoading: Boolean,
   showSeasonWatchStateDialog: Boolean,
-  seasonDetailsModel: SeasonDetailsContent,
+  seasonDetailsModel: SeasonDetailsLoaded,
   contentPadding: PaddingValues,
   onAction: (SeasonDetailsAction) -> Unit,
   modifier: Modifier = Modifier,
@@ -181,7 +229,6 @@ fun ImageGalleryContent(
   modifier: Modifier = Modifier,
 ) {
   val listState = rememberLazyListState()
-
   LazyVerticalStaggeredGrid(
     columns = StaggeredGridCells.Fixed(2),
     verticalItemSpacing = 4.dp,
@@ -288,7 +335,7 @@ private fun HeaderContent(
 
 @Composable
 private fun BodyContent(
-  seasonDetailsModel: SeasonDetailsContent,
+  seasonDetailsModel: SeasonDetailsLoaded,
   onAction: (SeasonDetailsAction) -> Unit,
   modifier: Modifier = Modifier,
 ) {
@@ -448,14 +495,13 @@ private fun SeasonsWatchDialog(
 @ThemePreviews
 @Composable
 private fun SeasonDetailScreenPreview(
-  @PreviewParameter(SeasonPreviewParameterProvider::class) state: SeasonDetailsContent,
+  @PreviewParameter(SeasonPreviewParameterProvider::class) state: SeasonDetailState,
 ) {
   TvManiacTheme {
     Surface {
       SeasonDetailsScreen(
         state = state,
         onAction = {},
-        listState = LazyListState(),
       )
     }
   }

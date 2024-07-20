@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class LibraryRepositoryImpl(
+class DefaultLibraryRepository(
   private val libraryDao: LibraryDao,
   private val dateFormatter: PlatformDateFormatter,
   private val exceptionHandler: NetworkExceptionHandler,
@@ -42,6 +42,4 @@ class LibraryRepositoryImpl(
       .distinctUntilChanged()
       .map { Either.Right(it) }
       .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
-
-  override suspend fun getLibraryShows(): List<LibraryShows> = libraryDao.getShowsInLibrary()
 }

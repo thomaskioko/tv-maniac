@@ -22,22 +22,24 @@ class DefaultSimilarShowsRepository(
   private val dispatchers: AppCoroutineDispatchers,
 ) : SimilarShowsRepository {
 
-  override suspend fun fetchSimilarShows(id: Long): List<SimilarShows> =
-    store.get(SimilarParams(showId = id, page = DEFAULT_API_PAGE))
-
-  override fun observeSimilarShows(id: Long): Flow<Either<Failure, List<SimilarShows>>> =
-    store
+  override fun observeSimilarShows(
+    id: Long,
+    forceReload: Boolean
+  ): Flow<Either<Failure, List<SimilarShows>>> {
+    return store
       .stream(
         StoreReadRequest.cached(
           key = SimilarParams(showId = id, page = DEFAULT_API_PAGE),
           refresh =
-            requestManagerRepository.isRequestExpired(
-              entityId = id,
-              requestType = RequestTypeConfig.SIMILAR_SHOWS.name,
-              threshold = RequestTypeConfig.SIMILAR_SHOWS.duration,
-            ),
+            forceReload ||
+              requestManagerRepository.isRequestExpired(
+                entityId = id,
+                requestType = RequestTypeConfig.SIMILAR_SHOWS.name,
+                threshold = RequestTypeConfig.SIMILAR_SHOWS.duration,
+              ),
         ),
       )
       .mapResult()
       .flowOn(dispatchers.io)
+  }
 }

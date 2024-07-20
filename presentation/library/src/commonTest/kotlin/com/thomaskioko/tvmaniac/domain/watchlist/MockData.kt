@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.watchlist
 
 import com.thomaskioko.tvmaniac.core.db.LibraryShows
+import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.presentation.watchlist.model.LibraryItem
 import kotlinx.collections.immutable.toPersistentList
@@ -44,3 +45,16 @@ val updatedData =
       created_at = 12345645,
     ),
   )
+
+internal fun expectedUiResult(
+  result: Either.Right<List<LibraryShows>> = Either.Right(updatedData)
+) =
+  result.right
+    .map {
+      LibraryItem(
+        tmdbId = it.id.id,
+        title = it.name,
+        posterImageUrl = it.poster_path,
+      )
+    }
+    .toPersistentList()

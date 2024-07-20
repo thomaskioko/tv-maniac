@@ -9,7 +9,7 @@ interface SeasonsComponent {
 
   @ApplicationScope
   @Provides
-  fun provideSeasonsRepository(bind: SeasonsRepositoryImpl): SeasonsRepository = bind
+  fun provideSeasonsRepository(bind: DefaultSeasonsRepository): SeasonsRepository = bind
 
   @ApplicationScope @Provides fun provideSeasonsDao(bind: SeasonsDaoImpl): SeasonsDao = bind
 }

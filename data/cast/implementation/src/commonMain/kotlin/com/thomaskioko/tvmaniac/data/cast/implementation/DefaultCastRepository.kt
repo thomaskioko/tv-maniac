@@ -12,11 +12,6 @@ class DefaultCastRepository(
   private val dao: CastDao,
 ) : CastRepository {
 
-  override suspend fun fetchSeasonCast(seasonId: Long): List<SeasonCast> =
-    dao.fetchSeasonCast(seasonId)
-
-  override suspend fun fetchShowCast(showId: Long): List<ShowCast> = dao.fetchShowCast(showId)
-
   override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =
     dao.observeSeasonCast(seasonId)
 

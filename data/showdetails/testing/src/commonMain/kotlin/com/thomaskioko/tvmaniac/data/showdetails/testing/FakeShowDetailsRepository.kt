@@ -5,13 +5,20 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 
 class FakeShowDetailsRepository : ShowDetailsRepository {
-  override suspend fun getShowDetails(id: Long): TvshowDetails {
-    TODO("Not yet implemented")
+  private val showDetails = MutableStateFlow<Either<Failure, TvshowDetails>?>(null)
+
+  fun setShowDetailsResult(result: Either<Failure, TvshowDetails>) {
+    showDetails.value = result
   }
 
-  override fun observeShowDetails(id: Long): Flow<Either<Failure, TvshowDetails>> {
-    TODO("Not yet implemented")
+  override fun observeShowDetails(
+    id: Long,
+    forceReload: Boolean
+  ): Flow<Either<Failure, TvshowDetails>> {
+    return showDetails.filterNotNull()
   }
 }

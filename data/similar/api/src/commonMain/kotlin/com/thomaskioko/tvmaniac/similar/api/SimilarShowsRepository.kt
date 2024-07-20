@@ -6,8 +6,8 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface SimilarShowsRepository {
-
-  suspend fun fetchSimilarShows(id: Long): List<SimilarShows>
-
-  fun observeSimilarShows(id: Long): Flow<Either<Failure, List<SimilarShows>>>
+  fun observeSimilarShows(
+    id: Long,
+    forceReload: Boolean = false
+  ): Flow<Either<Failure, List<SimilarShows>>>
 }

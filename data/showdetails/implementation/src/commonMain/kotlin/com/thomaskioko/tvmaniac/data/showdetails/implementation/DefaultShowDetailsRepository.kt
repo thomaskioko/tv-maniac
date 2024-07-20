@@ -21,21 +21,24 @@ class DefaultShowDetailsRepository(
   private val dispatchers: AppCoroutineDispatchers,
 ) : ShowDetailsRepository {
 
-  override suspend fun getShowDetails(id: Long): TvshowDetails = showStore.get(key = id)
-
-  override fun observeShowDetails(id: Long): Flow<Either<Failure, TvshowDetails>> =
-    showStore
+  override fun observeShowDetails(
+    id: Long,
+    forceReload: Boolean
+  ): Flow<Either<Failure, TvshowDetails>> {
+    return showStore
       .stream(
         StoreReadRequest.cached(
           key = id,
           refresh =
-            requestManagerRepository.isRequestExpired(
-              entityId = id,
-              requestType = SHOW_DETAILS.name,
-              threshold = SHOW_DETAILS.duration,
-            ),
+            forceReload ||
+              requestManagerRepository.isRequestExpired(
+                entityId = id,
+                requestType = SHOW_DETAILS.name,
+                threshold = SHOW_DETAILS.duration,
+              ),
         ),
       )
       .mapResult()
       .flowOn(dispatchers.io)
+  }
 }

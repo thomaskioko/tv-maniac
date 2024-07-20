@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.Season_images
 import com.thomaskioko.tvmaniac.core.networkutil.mapResult
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
@@ -12,7 +11,6 @@ import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.get
@@ -22,14 +20,7 @@ class DefaultSeasonDetailsRepository(
   private val seasonDetailsStore: SeasonDetailsStore,
   private val seasonDetailsDao: SeasonDetailsDao,
   private val requestManagerRepository: RequestManagerRepository,
-  private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonDetailsRepository {
-
-  override suspend fun fetchSeasonDetails(param: SeasonDetailsParam): SeasonDetailsWithEpisodes =
-    seasonDetailsStore.get(param)
-
-  override suspend fun fetchSeasonImages(id: Long): List<Season_images> =
-    seasonDetailsDao.fetchSeasonImages(id)
 
   override fun observeSeasonDetails(
     param: SeasonDetailsParam,
@@ -47,7 +38,6 @@ class DefaultSeasonDetailsRepository(
         ),
       )
       .mapResult()
-      .flowOn(dispatcher.io)
 
   override fun observeSeasonImages(id: Long): Flow<List<Season_images>> =
     seasonDetailsDao.observeSeasonImages(id)
