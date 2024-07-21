@@ -20,6 +20,7 @@
 		D61A65612B330CA500112590 /* CastCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61A65602B330CA500112590 /* CastCardView.swift */; };
 		D61A65632B330CC100112590 /* CastListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61A65622B330CC100112590 /* CastListView.swift */; };
 		D62799122C4C0F8E0032A8C1 /* DecomposeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62799112C4C0F8E0032A8C1 /* DecomposeView.swift */; };
+		D62799142C4C55C60032A8C1 /* SwipeBackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62799132C4C55C60032A8C1 /* SwipeBackViewController.swift */; };
 		D628B5C02A0C167E00015E45 /* config.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5BF2A0C167E00015E45 /* config.yaml */; };
 		D628B5C42A0C171300015E45 /* dev.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5C32A0C171300015E45 /* dev.yaml */; };
 		D62F1BC62B34442D004650E3 /* SeasonDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BC52B34442D004650E3 /* SeasonDetailsView.swift */; };
@@ -120,6 +121,7 @@
 		D61A65602B330CA500112590 /* CastCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastCardView.swift; sourceTree = "<group>"; };
 		D61A65622B330CC100112590 /* CastListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastListView.swift; sourceTree = "<group>"; };
 		D62799112C4C0F8E0032A8C1 /* DecomposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecomposeView.swift; sourceTree = "<group>"; };
+		D62799132C4C55C60032A8C1 /* SwipeBackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeBackViewController.swift; sourceTree = "<group>"; };
 		D628B5BF2A0C167E00015E45 /* config.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; name = config.yaml; path = ../../../core/util/src/commonMain/resources/config.yaml; sourceTree = "<group>"; };
 		D628B5C32A0C171300015E45 /* dev.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = dev.yaml; sourceTree = "<group>"; };
 		D62F1BC52B34442D004650E3 /* SeasonDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonDetailsView.swift; sourceTree = "<group>"; };
@@ -520,10 +522,10 @@
 		E9B686942787377A001698B7 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				D61A20742C3FFAA70045523B /* Effects */,
 				E983818727936BB00039CB08 /* BorderedButton.swift */,
 				D61A65552B32E8B900112590 /* ChipView.swift */,
 				D6CF9E322B32021300A1AD00 /* CircleButtonStyle.swift */,
+				D61A20772C4340250045523B /* CircularButton.swift */,
 				D67761992B1D4BA200537DD5 /* EmptyUIView.swift */,
 				D6D722092C3EB8AC008454F2 /* ErrorUiView.swift */,
 				E90392C029197BDF00B9CAF0 /* FullScreenView.swift */,
@@ -532,11 +534,12 @@
 				D6D722052C3ADB08008454F2 /* NavigationTopBar.swift */,
 				D65569DA2B31B481005F9F37 /* PosterItemView.swift */,
 				D65569DE2B31B6C1005F9F37 /* PosterPlaceholder.swift */,
+				D62799132C4C55C60032A8C1 /* SwipeBackViewController.swift */,
 				D65569E02B31C228005F9F37 /* TitleView.swift */,
 				D62F1BCC2B34697F004650E3 /* TopBar.swift */,
 				D62F1BC72B344941004650E3 /* TransparentImageBackground.swift */,
+				D61A20742C3FFAA70045523B /* Effects */,
 				D64279522A607F7600E65755 /* Toast */,
-				D61A20772C4340250045523B /* CircularButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -709,6 +712,7 @@
 				E9AC835126CEEA1500829A0D /* DiscoverView.swift in Sources */,
 				E983819327936BB10039CB08 /* Font.swift in Sources */,
 				D61A655D2B32F71600112590 /* TrailerListView.swift in Sources */,
+				D62799142C4C55C60032A8C1 /* SwipeBackViewController.swift in Sources */,
 				D6C263322B323CEC00179CDF /* ProvidersList.swift in Sources */,
 				E98381E127943F940039CB08 /* SnapCarousel.swift in Sources */,
 				D62F1BCD2B34697F004650E3 /* TopBar.swift in Sources */,
