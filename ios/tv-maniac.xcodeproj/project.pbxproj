@@ -525,6 +525,7 @@
 			isa = PBXGroup;
 			children = (
 				E983818727936BB00039CB08 /* BorderedButton.swift */,
+				D62799152C4D35380032A8C1 /* BottomTabView.swift */,
 				D61A65552B32E8B900112590 /* ChipView.swift */,
 				D6CF9E322B32021300A1AD00 /* CircleButtonStyle.swift */,
 				D61A20772C4340250045523B /* CircularButton.swift */,
@@ -542,7 +543,6 @@
 				D62F1BC72B344941004650E3 /* TransparentImageBackground.swift */,
 				D61A20742C3FFAA70045523B /* Effects */,
 				D64279522A607F7600E65755 /* Toast */,
-				D62799152C4D35380032A8C1 /* BottomTabView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
