@@ -27,8 +27,7 @@ struct RootView: View {
             ChildView(screen: screen)
                 .frame(maxHeight: .infinity)
                 .background(Color.background)
-                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
-            
+
             if let screen = screen, navigator.shouldShowBottomNav(screen: screen) {
                 BottomNavigation(screen: screen, navigator: navigator)
                     .background(.ultraThinMaterial)
