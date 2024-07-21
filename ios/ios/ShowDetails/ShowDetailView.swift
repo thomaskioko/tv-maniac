@@ -85,6 +85,7 @@ struct ShowDetailView: View {
             }
         }
         .ignoresSafeArea()
+        .background(Color.background)
     }
     
     @ViewBuilder
