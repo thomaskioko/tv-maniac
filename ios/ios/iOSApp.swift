@@ -14,7 +14,8 @@ struct iOSApp: App {
     var body: some Scene {
         
         WindowGroup {
-            RootView(navigator: appDelegate.presenterComponent.navigator)
+            DecomposeView(component: appDelegate.presenterComponent)
+                .ignoresSafeArea()
                 .onChange(of: scenePhase) { newPhase in
                     switch newPhase {
                     case .background: LifecycleRegistryExtKt.stop(rootHolder.lifecycle)

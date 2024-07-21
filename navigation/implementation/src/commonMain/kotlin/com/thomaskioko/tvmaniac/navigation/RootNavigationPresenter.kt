@@ -91,6 +91,10 @@ class RootNavigationPresenter(
     }
   }
 
+  override fun onBackClicked() {
+    navigation.pop()
+  }
+
   private fun createScreen(config: Config, componentContext: ComponentContext): Screen =
     when (config) {
       is Config.Discover ->

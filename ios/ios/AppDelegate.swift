@@ -14,15 +14,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     @State var themeAppTheme: AppTheme = AppTheme.systemTheme
     
-    let applicationComponent: InjectApplicationComponent
+    let applicationComponent: ApplicationComponent
     let rootHolder: RootHolder
-    let presenterComponent :InjectIosViewPresenterComponent
+    let presenterComponent: IosViewPresenterComponent
 
     override init() {
         rootHolder = RootHolder()
-        applicationComponent = InjectApplicationComponent()
+        applicationComponent = ApplicationComponent.companion.create()
         
-        presenterComponent = InjectIosViewPresenterComponent(
+        presenterComponent = IosViewPresenterComponent.companion.create(
             componentContext: DefaultComponentContext(
                 lifecycle: rootHolder.lifecycle,
                 stateKeeper: nil,

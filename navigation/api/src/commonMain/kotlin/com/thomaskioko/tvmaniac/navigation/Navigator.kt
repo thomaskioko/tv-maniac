@@ -10,4 +10,6 @@ interface Navigator {
   fun bringToFront(config: Config)
 
   fun shouldShowBottomNav(screen: Screen): Boolean
+
+  fun onBackClicked()
 }
