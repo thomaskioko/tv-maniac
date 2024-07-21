@@ -21,6 +21,7 @@
 		D61A65632B330CC100112590 /* CastListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61A65622B330CC100112590 /* CastListView.swift */; };
 		D62799122C4C0F8E0032A8C1 /* DecomposeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62799112C4C0F8E0032A8C1 /* DecomposeView.swift */; };
 		D62799142C4C55C60032A8C1 /* SwipeBackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62799132C4C55C60032A8C1 /* SwipeBackViewController.swift */; };
+		D62799162C4D35380032A8C1 /* BottomTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62799152C4D35380032A8C1 /* BottomTabView.swift */; };
 		D628B5C02A0C167E00015E45 /* config.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5BF2A0C167E00015E45 /* config.yaml */; };
 		D628B5C42A0C171300015E45 /* dev.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5C32A0C171300015E45 /* dev.yaml */; };
 		D62F1BC62B34442D004650E3 /* SeasonDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BC52B34442D004650E3 /* SeasonDetailsView.swift */; };
@@ -122,6 +123,7 @@
 		D61A65622B330CC100112590 /* CastListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastListView.swift; sourceTree = "<group>"; };
 		D62799112C4C0F8E0032A8C1 /* DecomposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecomposeView.swift; sourceTree = "<group>"; };
 		D62799132C4C55C60032A8C1 /* SwipeBackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeBackViewController.swift; sourceTree = "<group>"; };
+		D62799152C4D35380032A8C1 /* BottomTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomTabView.swift; sourceTree = "<group>"; };
 		D628B5BF2A0C167E00015E45 /* config.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; name = config.yaml; path = ../../../core/util/src/commonMain/resources/config.yaml; sourceTree = "<group>"; };
 		D628B5C32A0C171300015E45 /* dev.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = dev.yaml; sourceTree = "<group>"; };
 		D62F1BC52B34442D004650E3 /* SeasonDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonDetailsView.swift; sourceTree = "<group>"; };
@@ -540,6 +542,7 @@
 				D62F1BC72B344941004650E3 /* TransparentImageBackground.swift */,
 				D61A20742C3FFAA70045523B /* Effects */,
 				D64279522A607F7600E65755 /* Toast */,
+				D62799152C4D35380032A8C1 /* BottomTabView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -663,6 +666,7 @@
 			files = (
 				E9AC835526CEEAB800829A0D /* LibraryView.swift in Sources */,
 				D614675E2B3475F90071647C /* HorizontalAlignment.swift in Sources */,
+				D62799162C4D35380032A8C1 /* BottomTabView.swift in Sources */,
 				D642795A2A6080F400E65755 /* ToastView.swift in Sources */,
 				D61A65612B330CA500112590 /* CastCardView.swift in Sources */,
 				D61A65562B32E8B900112590 /* ChipView.swift in Sources */,
