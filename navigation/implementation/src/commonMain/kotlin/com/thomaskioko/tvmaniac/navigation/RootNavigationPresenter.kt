@@ -95,6 +95,11 @@ class RootNavigationPresenter(
     navigation.pop()
   }
 
+  override fun getPreviousScreen(): Screen? {
+    val items = screenStack.value.items
+    return if (items.size > 1) items[items.size - 2].instance else null
+  }
+
   private fun createScreen(config: Config, componentContext: ComponentContext): Screen =
     when (config) {
       is Config.Discover ->

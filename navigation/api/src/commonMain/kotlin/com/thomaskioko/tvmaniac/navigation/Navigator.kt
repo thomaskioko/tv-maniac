@@ -12,4 +12,6 @@ interface Navigator {
   fun shouldShowBottomNav(screen: Screen): Boolean
 
   fun onBackClicked()
+
+  fun getPreviousScreen(): Screen?
 }
