@@ -10,36 +10,41 @@ import SwiftUI
 import TvManiac
 
 struct RootView: View {
-    @ObservedObject private var stack: StateFlow<ChildStack<AnyObject, Screen>>
-    @ObservedObject private var uiState: StateFlow<ThemeState>
     private let navigator: Navigator
-    
+    @StateFlow private var stack: ChildStack<AnyObject, Screen>?
+    @StateFlow private var uiState: ThemeState?
+
     init(navigator: Navigator) {
         self.navigator = navigator
-        self.stack = StateFlow(navigator.screenStackFlow)
-        self.uiState = StateFlow(navigator.themeState)
+        _stack = StateFlow(navigator.screenStackFlow)
+        _uiState = StateFlow(navigator.themeState)
     }
-    
+
     var body: some View {
         ZStack(alignment: .bottom) {
-            let screen = stack.value?.active.instance
-            
+            let screen = stack?.active.instance
+
             ChildView(screen: screen)
                 .frame(maxHeight: .infinity)
                 .background(Color.background)
 
-            if let screen = screen, navigator.shouldShowBottomNav(screen: screen) {
-                BottomNavigation(screen: screen, navigator: navigator)
+            if let newScreen = screen {
+
+                let showBottomBar = navigator.shouldShowBottomNav(screen: newScreen)
+                BottomNavigation(screen: newScreen, navigator: navigator)
                     .background(.ultraThinMaterial)
+                    .hidden(showBottomBar)
                     .transition(.asymmetric(insertion: .slide, removal: .scale))
+
             }
+
         }
-        .animation(.easeInOut, value: stack.value)
+        .animation(.easeInOut, value: stack)
         .environment(\.colorScheme, colorScheme ?? .dark)
     }
-    
+
     private var colorScheme: ColorScheme? {
-        switch uiState.value?.appTheme {
+        switch uiState?.appTheme {
             case .lightTheme: return .light
             case .darkTheme: return .dark
             default: return nil
@@ -50,7 +55,7 @@ struct RootView: View {
 struct BottomNavigation: View {
     let screen: Screen
     let navigator: Navigator
-    
+
     var body: some View {
         HStack(spacing: 16) {
             Spacer()
@@ -77,7 +82,7 @@ struct BottomNavigation: View {
 
 struct ChildView: View {
     let screen: Screen?
-    
+
     var body: some View {
         Group {
             switch onEnum(of: screen) {

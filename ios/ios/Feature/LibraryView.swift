@@ -10,21 +10,20 @@ import SwiftUI
 import TvManiac
 
 struct LibraryView: View {
-    
+
     private let presenter: LibraryPresenter
 
-    @ObservedObject
-    private var uiState: StateFlow<LibraryState>
+    @StateFlow private var uiState: LibraryState?
 
     init(presenter: LibraryPresenter){
         self.presenter = presenter
-        self.uiState = StateFlow<LibraryState>(presenter.state)
+        _uiState = StateFlow(presenter.state)
     }
-    
+
     var body: some View {
         NavigationStack {
             VStack {
-                switch onEnum(of: uiState.value) {
+                switch onEnum(of: uiState) {
                     case .loadingShows:
                     //TODO:: Show indicator on the toolbar
                     LoadingIndicatorView()
@@ -46,9 +45,9 @@ struct LibraryView: View {
                 }
             }
         }
-     
+
     }
-    
+
     @ViewBuilder
     private func GridViewContent(_ content: LibraryContent) -> some View {
         if !content.list.isEmpty {
@@ -73,7 +72,7 @@ struct LibraryView: View {
             empty
         }
     }
-    
+
     private var filterButton: some View {
         Button {
             withAnimation {
@@ -86,7 +85,7 @@ struct LibraryView: View {
         .buttonBorderShape(.roundedRectangle(radius: 16))
         .buttonStyle(.bordered)
     }
-    
+
     private var sortButton: some View {
         Button {
            //TODO:: Add filer option
@@ -98,7 +97,7 @@ struct LibraryView: View {
         .buttonBorderShape(.roundedRectangle(radius: 16))
         .buttonStyle(.bordered)
     }
-    
+
     @ViewBuilder
     private var empty: some View {
         if #available(iOS 17.0, *) {

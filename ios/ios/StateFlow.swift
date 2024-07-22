@@ -7,9 +7,28 @@
 //
 
 import Foundation
+import SwiftUI
 import TvManiac
 
-class StateFlow<T: AnyObject>: ObservableObject {
+@propertyWrapper
+struct StateFlow<T: AnyObject>: DynamicProperty {
+    @StateObject
+    private var state: StateFlowObject<T>
+
+    var wrappedValue: T? {
+        state.value
+    }
+
+    var projectedValue: StateFlowObject<T> {
+        state
+    }
+
+    init(_ stateFlow: Kotlinx_coroutines_coreStateFlow) {
+        _state = StateObject(wrappedValue: StateFlowObject(stateFlow))
+    }
+}
+
+class StateFlowObject<T: AnyObject>: ObservableObject {
     @Published
     var value: T?
 
@@ -18,12 +37,12 @@ class StateFlow<T: AnyObject>: ObservableObject {
     init(_ state: Kotlinx_coroutines_coreStateFlow) {
         self.value = state.value as? T
 
-        cancelable = FlowWrapper<T>(flow: state).collect(consumer: { value in
-            self.value = value
+        cancelable = FlowWrapper<T>(flow: state).collect(consumer: { [weak self] value in
+            self?.value = value
         })
     }
 
     deinit {
-        self.cancelable?.cancel()
+        cancelable?.cancel()
     }
 }

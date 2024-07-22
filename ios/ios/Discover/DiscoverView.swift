@@ -6,21 +6,19 @@ struct DiscoverView: View {
 
     @Environment(\.colorScheme) var scheme
     @State private var currentIndex: Int = 2
-
-    @ObservedObject
-    private var uiState: StateFlow<DiscoverState>
+    @StateFlow private var uiState: DiscoverState?
 
     private let presenter: DiscoverShowsPresenter
 
 
     init(presenter: DiscoverShowsPresenter){
         self.presenter = presenter
-        self.uiState = StateFlow<DiscoverState>(presenter.state)
+        _uiState = StateFlow(presenter.state)
     }
 
     var body: some View {
         VStack {
-            switch onEnum(of: uiState.value) {
+            switch onEnum(of: uiState) {
                 case .loading:
                     LoadingIndicatorView()
                         .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)

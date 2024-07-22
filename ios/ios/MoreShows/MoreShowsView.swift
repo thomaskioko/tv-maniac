@@ -10,37 +10,38 @@ import SwiftUI
 import TvManiac
 
 struct MoreShowsView: View {
-    
+
     private let presenter: MoreShowsPresenter
-    
-    @ObservedObject
-    private var uiState: StateFlow<MoreShowsState>
-    
-    @State
-    private var query = String()
-    
+
+    @StateFlow private var uiState: MoreShowsState?
+    @State private var query = String()
+
     init(presenter: MoreShowsPresenter) {
         self.presenter = presenter
-        self.uiState = StateFlow<MoreShowsState>(presenter.state)
+        _uiState = StateFlow(presenter.state)
     }
-    
+
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                
+
                 NavigationTopBar(
-                    topBarTitle: uiState.value?.categoryTitle,
+                    topBarTitle: uiState?.categoryTitle,
                     onBackClicked: { presenter.dispatch(action: MoreBackClicked()) }
                 )
-                
+
                 Spacer().frame(height: 10)
-                
-                ShowsContent(uiState.value!)
+
+                if let state = uiState{
+                    ShowsContent(state)
+                } else {
+                    EmptyView()
+                }
             }
             .edgesIgnoringSafeArea(.top)
         }
     }
-    
+
     @ViewBuilder
     private func ShowsContent(_ state: MoreShowsState) -> some View {
         ScrollView(.vertical, showsIndicators: false) {
