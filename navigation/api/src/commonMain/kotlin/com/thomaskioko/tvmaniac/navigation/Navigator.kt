@@ -13,5 +13,5 @@ interface Navigator {
 
   fun onBackClicked()
 
-  fun getPreviousScreen(): Screen?
+  fun onBackClicked(toIndex: Int)
 }

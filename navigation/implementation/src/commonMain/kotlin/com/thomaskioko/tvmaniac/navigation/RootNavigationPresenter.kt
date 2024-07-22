@@ -7,6 +7,7 @@ import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.navigate
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
@@ -95,9 +96,8 @@ class RootNavigationPresenter(
     navigation.pop()
   }
 
-  override fun getPreviousScreen(): Screen? {
-    val items = screenStack.value.items
-    return if (items.size > 1) items[items.size - 2].instance else null
+  override fun onBackClicked(toIndex: Int) {
+    navigation.popTo(index = toIndex)
   }
 
   private fun createScreen(config: Config, componentContext: ComponentContext): Screen =
