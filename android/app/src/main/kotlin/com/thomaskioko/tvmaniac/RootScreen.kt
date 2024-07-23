@@ -29,7 +29,7 @@ import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.navigation.Config
-import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.RootComponent
 import com.thomaskioko.tvmaniac.navigation.Screen
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.search.ui.SearchScreen
@@ -42,22 +42,22 @@ import com.thomaskioko.tvmaniac.ui.showdetails.ShowDetailsScreen
 import com.thomaskioko.tvmaniac.ui.trailers.videoplayer.TrailersScreen
 
 @Composable
-fun RootScreen(navigator: Navigator, modifier: Modifier = Modifier) {
+fun RootScreen(rootComponent: RootComponent, modifier: Modifier = Modifier) {
   Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
     Column(
       modifier =
         Modifier.fillMaxSize()
           .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
     ) {
-      ChildrenContent(navigator = navigator, modifier = Modifier.weight(1F))
-      BottomNavigationContent(navigator = navigator, modifier = Modifier.fillMaxWidth())
+      ChildrenContent(rootComponent = rootComponent, modifier = Modifier.weight(1F))
+      BottomNavigationContent(rootComponent = rootComponent, modifier = Modifier.fillMaxWidth())
     }
   }
 }
 
 @Composable
-private fun ChildrenContent(navigator: Navigator, modifier: Modifier = Modifier) {
-  val childStack by navigator.screenStackFlow.collectAsState()
+private fun ChildrenContent(rootComponent: RootComponent, modifier: Modifier = Modifier) {
+  val childStack by rootComponent.screenStackFlow.collectAsState()
 
   Children(
     modifier = modifier,
@@ -111,13 +111,13 @@ private fun ChildrenContent(navigator: Navigator, modifier: Modifier = Modifier)
 
 @Composable
 internal fun BottomNavigationContent(
-  navigator: Navigator,
+  rootComponent: RootComponent,
   modifier: Modifier = Modifier,
 ) {
-  val childStack by navigator.screenStackFlow.collectAsState()
+  val childStack by rootComponent.screenStackFlow.collectAsState()
   val activeComponent = childStack.active.instance
 
-  val showBottomBar = navigator.shouldShowBottomNav(activeComponent)
+  val showBottomBar = rootComponent.shouldShowBottomNav(activeComponent)
 
   AnimatedVisibility(
     visible = showBottomBar,
@@ -131,28 +131,28 @@ internal fun BottomNavigationContent(
         imageVector = Icons.Outlined.Movie,
         title = stringResource(id = R.string.menu_item_discover),
         selected = activeComponent is Screen.Discover,
-        onClick = { navigator.bringToFront(Config.Discover) },
+        onClick = { rootComponent.bringToFront(Config.Discover) },
       )
 
       TvManiacBottomNavigationItem(
         imageVector = Icons.Outlined.Search,
         title = stringResource(id = R.string.menu_item_search),
         selected = activeComponent is Screen.Search,
-        onClick = { navigator.bringToFront(Config.Search) },
+        onClick = { rootComponent.bringToFront(Config.Search) },
       )
 
       TvManiacBottomNavigationItem(
         imageVector = Icons.Outlined.VideoLibrary,
         title = stringResource(id = R.string.menu_item_library),
         selected = activeComponent is Screen.Library,
-        onClick = { navigator.bringToFront(Config.Library) },
+        onClick = { rootComponent.bringToFront(Config.Library) },
       )
 
       TvManiacBottomNavigationItem(
         imageVector = Icons.Outlined.Settings,
         title = stringResource(id = R.string.menu_item_settings),
         selected = activeComponent is Screen.Settings,
-        onClick = { navigator.bringToFront(Config.Settings) },
+        onClick = { rootComponent.bringToFront(Config.Settings) },
       )
     }
   }

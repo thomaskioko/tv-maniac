@@ -64,7 +64,7 @@ class RootNavigationPresenterTest {
   private val datastoreRepository = FakeDatastoreRepository()
   private val featuredShowsRepository = FakeFeaturedShowsRepository()
 
-  private lateinit var presenter: RootNavigationPresenter
+  private lateinit var rootComponent: DefaultRootComponent
 
   @BeforeTest
   fun before() {
@@ -72,8 +72,8 @@ class RootNavigationPresenterTest {
     lifecycle.resume()
 
     val componentContext = DefaultComponentContext(lifecycle = lifecycle)
-    presenter =
-      RootNavigationPresenter(
+    rootComponent =
+      DefaultRootComponent(
         componentContext = componentContext,
         discoverPresenterFactory = buildDiscoverPresenterFactory(componentContext),
         libraryPresenterFactory = buildLibraryPresenterFactory(componentContext),
@@ -95,71 +95,71 @@ class RootNavigationPresenterTest {
 
   @Test
   fun when_create_THEN_DiscoverChild_active() = runTest {
-    presenter.screenStackFlow.test {
+    rootComponent.screenStackFlow.test {
       val discoverScreen = awaitItem().active.instance
 
       discoverScreen.shouldBeInstanceOf<Discover>()
 
-      presenter.shouldShowBottomNav(discoverScreen) shouldBe true
+      rootComponent.shouldShowBottomNav(discoverScreen) shouldBe true
     }
   }
 
   @Test
   fun when_bringToFrontSearch_THEN_DiscoverChild_active() = runTest {
-    presenter.screenStackFlow.test {
-      presenter.bringToFront(Config.Search)
+    rootComponent.screenStackFlow.test {
+      rootComponent.bringToFront(Config.Search)
 
       val searchScreen = awaitItem().active.instance
 
       awaitItem().active.instance.shouldBeInstanceOf<Search>()
-      presenter.shouldShowBottomNav(searchScreen) shouldBe true
+      rootComponent.shouldShowBottomNav(searchScreen) shouldBe true
     }
   }
 
   @Test
   fun when_bringToFrontLibrary_THEN_LibraryChild_active() = runTest {
-    presenter.screenStackFlow.test {
-      presenter.bringToFront(Config.Library)
+    rootComponent.screenStackFlow.test {
+      rootComponent.bringToFront(Config.Library)
       val library = awaitItem().active.instance
 
       awaitItem().active.instance.shouldBeInstanceOf<Library>()
-      presenter.shouldShowBottomNav(library) shouldBe true
+      rootComponent.shouldShowBottomNav(library) shouldBe true
     }
   }
 
   @Test
   fun when_bringToFrontSettings_THEN_SettingsChild_active() = runTest {
-    presenter.screenStackFlow.test {
+    rootComponent.screenStackFlow.test {
       val settings = awaitItem().active.instance
-      presenter.bringToFront(Config.Settings)
+      rootComponent.bringToFront(Config.Settings)
 
       awaitItem().active.instance.shouldBeInstanceOf<Settings>()
-      presenter.shouldShowBottomNav(settings) shouldBe true
+      rootComponent.shouldShowBottomNav(settings) shouldBe true
     }
   }
 
   @Test
   fun when_bringToFrontMoreShows_THEN_MoreShowsChild_active() = runTest {
-    presenter.screenStackFlow.test {
+    rootComponent.screenStackFlow.test {
       awaitItem().active.instance.shouldBeInstanceOf<Discover>()
 
-      presenter.bringToFront(Config.MoreShows(1))
+      rootComponent.bringToFront(Config.MoreShows(1))
 
       val moreScreen = awaitItem().active.instance
 
       moreScreen.shouldBeInstanceOf<MoreShows>()
-      presenter.shouldShowBottomNav(moreScreen) shouldBe false
+      rootComponent.shouldShowBottomNav(moreScreen) shouldBe false
     }
   }
 
   @Test
   fun when_create_THEN_DefaultTheme_is_Returned() = runTest {
-    presenter.themeState.value shouldBe ThemeState()
+    rootComponent.themeState.value shouldBe ThemeState()
   }
 
   @Test
   fun when_themeIsUpdated_THEN_correctState_is_Returned() = runTest {
-    presenter.themeState.test {
+    rootComponent.themeState.test {
       awaitItem() shouldBe ThemeState()
 
       datastoreRepository.setTheme(AppTheme.DARK_THEME)

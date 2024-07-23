@@ -34,7 +34,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 @ActivityScope
-class RootNavigationPresenter(
+class DefaultRootComponent(
   componentContext: ComponentContext,
   private val discoverPresenterFactory: DiscoverShowsPresenterFactory,
   private val libraryPresenterFactory: LibraryPresenterFactory,
@@ -46,7 +46,7 @@ class RootNavigationPresenter(
   private val trailersPresenterFactory: TrailersPresenterFactory,
   private val traktAuthManager: TraktAuthManager,
   datastoreRepository: DatastoreRepository,
-) : Navigator, ComponentContext by componentContext {
+) : RootComponent, ComponentContext by componentContext {
 
   private val navigation = StackNavigation<Config>()
   private val coroutineScope = coroutineScope()
