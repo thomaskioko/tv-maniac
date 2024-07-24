@@ -11,6 +11,7 @@ kotlin {
       implementation(projects.navigation.api)
 
       implementation(projects.presentation.discover)
+      implementation(projects.presentation.home)
       implementation(projects.presentation.library)
       implementation(projects.presentation.moreShows)
       implementation(projects.presentation.search)

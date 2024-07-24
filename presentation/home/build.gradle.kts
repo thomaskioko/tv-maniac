@@ -25,7 +25,10 @@ kotlin {
     commonTest {
       dependencies {
         implementation(kotlin("test"))
+        implementation(projects.datastore.testing)
+        implementation(projects.traktAuth.testing)
         implementation(projects.data.featuredshows.testing)
+        implementation(projects.data.library.testing)
         implementation(projects.data.popularshows.testing)
         implementation(projects.data.topratedshows.testing)
         implementation(projects.data.trendingshows.testing)

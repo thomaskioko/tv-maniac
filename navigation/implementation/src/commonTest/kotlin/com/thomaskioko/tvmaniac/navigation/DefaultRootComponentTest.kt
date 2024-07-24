@@ -16,13 +16,13 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepo
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.navigation.Screen.Discover
-import com.thomaskioko.tvmaniac.navigation.Screen.Library
-import com.thomaskioko.tvmaniac.navigation.Screen.MoreShows
-import com.thomaskioko.tvmaniac.navigation.Screen.Search
-import com.thomaskioko.tvmaniac.navigation.Screen.Settings
+import com.thomaskioko.tvmaniac.navigation.RootComponent.Child.Home
+import com.thomaskioko.tvmaniac.navigation.RootComponent.Child.MoreShows
+import com.thomaskioko.tvmaniac.navigation.RootComponent.Child.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.home.HomeComponent
+import com.thomaskioko.tvmaniac.presentation.home.HomeComponentFactory
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.SearchPresenter
@@ -57,14 +57,14 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
-class RootNavigationPresenterTest {
+class DefaultRootComponentTest {
   private val lifecycle = LifecycleRegistry()
   private val testDispatcher = StandardTestDispatcher()
   private val traktAuthManager = FakeTraktAuthManager()
   private val datastoreRepository = FakeDatastoreRepository()
   private val featuredShowsRepository = FakeFeaturedShowsRepository()
 
-  private lateinit var rootComponent: DefaultRootComponent
+  private lateinit var component: DefaultRootComponent
 
   @BeforeTest
   fun before() {
@@ -72,19 +72,15 @@ class RootNavigationPresenterTest {
     lifecycle.resume()
 
     val componentContext = DefaultComponentContext(lifecycle = lifecycle)
-    rootComponent =
+    component =
       DefaultRootComponent(
         componentContext = componentContext,
-        discoverPresenterFactory = buildDiscoverPresenterFactory(componentContext),
-        libraryPresenterFactory = buildLibraryPresenterFactory(componentContext),
         moreShowsPresenterFactory = buildMoreShowsPresenterFactory(componentContext),
-        searchPresenterFactory = buildSearchPresenterFactory(componentContext),
-        settingsPresenterFactory = buildSettingsPresenterFactory(componentContext),
         showDetailsPresenterFactory = buildShowDetailsPresenterPresenterFactory(componentContext),
         seasonDetailsPresenterFactory = buildSeasonDetailsPresenterFactory(componentContext),
         trailersPresenterFactory = buildTrailersPresenterFactory(componentContext),
-        traktAuthManager = traktAuthManager,
         datastoreRepository = datastoreRepository,
+        homeComponentFactory = buildHomePresenterFactory()
       )
   }
 
@@ -94,72 +90,61 @@ class RootNavigationPresenterTest {
   }
 
   @Test
-  fun when_create_THEN_DiscoverChild_active() = runTest {
-    rootComponent.screenStackFlow.test {
-      val discoverScreen = awaitItem().active.instance
+  fun `initial state should be Home`() = runTest {
+    component.stack.test { awaitItem().active.instance.shouldBeInstanceOf<Home>() }
+  }
 
-      discoverScreen.shouldBeInstanceOf<Discover>()
+  @Test
+  fun `should return Home as active instance`() = runTest {
+    component.stack.test {
+      awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-      rootComponent.shouldShowBottomNav(discoverScreen) shouldBe true
+      component.bringToFront(Config.ShowDetails(1))
+
+      val moreScreen = awaitItem().active.instance
+
+      moreScreen.shouldBeInstanceOf<ShowDetails>()
+
+      component.onBackClicked()
+
+      awaitItem().active.instance.shouldBeInstanceOf<Home>()
     }
   }
 
   @Test
-  fun when_bringToFrontSearch_THEN_DiscoverChild_active() = runTest {
-    rootComponent.screenStackFlow.test {
-      rootComponent.bringToFront(Config.Search)
+  fun `should return ShowDetails as active instance`() = runTest {
+    component.stack.test {
+      awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-      val searchScreen = awaitItem().active.instance
+      component.bringToFront(Config.ShowDetails(1))
 
-      awaitItem().active.instance.shouldBeInstanceOf<Search>()
-      rootComponent.shouldShowBottomNav(searchScreen) shouldBe true
+      val moreScreen = awaitItem().active.instance
+
+      moreScreen.shouldBeInstanceOf<ShowDetails>()
     }
   }
 
   @Test
-  fun when_bringToFrontLibrary_THEN_LibraryChild_active() = runTest {
-    rootComponent.screenStackFlow.test {
-      rootComponent.bringToFront(Config.Library)
-      val library = awaitItem().active.instance
+  fun `should return MoreShows as active instance`() = runTest {
+    component.stack.test {
+      awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-      awaitItem().active.instance.shouldBeInstanceOf<Library>()
-      rootComponent.shouldShowBottomNav(library) shouldBe true
-    }
-  }
-
-  @Test
-  fun when_bringToFrontSettings_THEN_SettingsChild_active() = runTest {
-    rootComponent.screenStackFlow.test {
-      val settings = awaitItem().active.instance
-      rootComponent.bringToFront(Config.Settings)
-
-      awaitItem().active.instance.shouldBeInstanceOf<Settings>()
-      rootComponent.shouldShowBottomNav(settings) shouldBe true
-    }
-  }
-
-  @Test
-  fun when_bringToFrontMoreShows_THEN_MoreShowsChild_active() = runTest {
-    rootComponent.screenStackFlow.test {
-      awaitItem().active.instance.shouldBeInstanceOf<Discover>()
-
-      rootComponent.bringToFront(Config.MoreShows(1))
+      component.bringToFront(Config.MoreShows(1))
 
       val moreScreen = awaitItem().active.instance
 
       moreScreen.shouldBeInstanceOf<MoreShows>()
-      rootComponent.shouldShowBottomNav(moreScreen) shouldBe false
     }
   }
 
   @Test
-  fun when_create_THEN_DefaultTheme_is_Returned() = runTest {
-    rootComponent.themeState.value shouldBe ThemeState()
+  fun `should return initial theme state`() = runTest {
+    component.themeState.value shouldBe ThemeState()
   }
 
   @Test
-  fun when_themeIsUpdated_THEN_correctState_is_Returned() = runTest {
-    rootComponent.themeState.test {
+  fun `should update theme to Dark when DarkTheme is set`() = runTest {
+    component.themeState.test {
       awaitItem() shouldBe ThemeState()
 
       datastoreRepository.setTheme(AppTheme.DARK_THEME)
@@ -260,6 +245,20 @@ class RootNavigationPresenterTest {
         similarShowsRepository = FakeSimilarShowsRepository(),
         trailerRepository = FakeTrailerRepository(),
         watchProviders = FakeWatchProviderRepository(),
+      )
+    }
+
+  private fun buildHomePresenterFactory(): HomeComponentFactory =
+    { componentContext: ComponentContext, _: (id: Long) -> Unit, _: (id: Long) -> Unit ->
+      HomeComponent(
+        componentContext = componentContext,
+        onShowClicked = {},
+        onMoreShowClicked = {},
+        traktAuthManager = traktAuthManager,
+        searchPresenterFactory = buildSearchPresenterFactory(componentContext),
+        settingsPresenterFactory = buildSettingsPresenterFactory(componentContext),
+        discoverPresenterFactory = buildDiscoverPresenterFactory(componentContext),
+        libraryPresenterFactory = buildLibraryPresenterFactory(componentContext),
       )
     }
 
