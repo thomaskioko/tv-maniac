@@ -12,8 +12,8 @@ import TvManiac
 
 struct SeasonDetailsView: View {
     
-    private let presenter: SeasonDetailsPresenter
-    
+    private let component: SeasonDetailsComponent
+
     @Environment(\.presentationMode) var presentationMode
     
     @StateFlow private var uiState: SeasonDetailState
@@ -22,9 +22,9 @@ struct SeasonDetailsView: View {
     @State private var showFullText = false
     @State private var showModal =  false
     
-    init(presenter: SeasonDetailsPresenter) {
-        self.presenter = presenter
-        _uiState = StateFlow(presenter.state)
+    init(component: SeasonDetailsComponent) {
+        self.component = component
+        _uiState = StateFlow(component.state)
     }
     
     var body: some View {
@@ -35,7 +35,7 @@ struct SeasonDetailsView: View {
                 case .seasonDetailsLoaded(let state): SeasonDetailsContent(state)
                 case .seasonDetailsErrorState: ErrorUiView(
                     systemImage: "exclamationmark.triangle.fill",
-                    action: { presenter.dispatch(action: ReloadSeasonDetails()) }
+                    action: { component.dispatch(action: ReloadSeasonDetails()) }
                 )
             }
         }
@@ -57,9 +57,9 @@ struct SeasonDetailsView: View {
             
             EpisodeListView(
                 state: state,
-                onEpisodeHeaderClicked: { presenter.dispatch(action: OnEpisodeHeaderClicked()) },
+                onEpisodeHeaderClicked: { component.dispatch(action: OnEpisodeHeaderClicked()) },
                 onWatchedStateClicked: {
-                    presenter.dispatch(action: UpdateSeasonWatchedState())
+                    component.dispatch(action: UpdateSeasonWatchedState())
                 }
             )
             
@@ -77,7 +77,7 @@ struct SeasonDetailsView: View {
             progress: progress,
             title: state.seasonName,
             isRefreshing: state.isUpdating,
-            onBackClicked: { presenter.dispatch(action: SeasonDetailsBackClicked()) }, onRefreshClicked: {})
+            onBackClicked: { component.dispatch(action: SeasonDetailsBackClicked()) }, onRefreshClicked: {})
         
     }
     
@@ -127,7 +127,7 @@ struct SeasonDetailsView: View {
                     .opacity(1 + (progress > 0 ? -progress : progress))
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        presenter.dispatch(action: SeasonGalleryClicked())
+                        component.dispatch(action: SeasonGalleryClicked())
                         showModal.toggle()
                     }
                     

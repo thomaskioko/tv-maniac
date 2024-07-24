@@ -19,26 +19,26 @@ import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.navigation.RootComponent.Child.Home
 import com.thomaskioko.tvmaniac.navigation.RootComponent.Child.MoreShows
 import com.thomaskioko.tvmaniac.navigation.RootComponent.Child.ShowDetails
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponent
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponentFactory
 import com.thomaskioko.tvmaniac.presentation.home.HomeComponent
 import com.thomaskioko.tvmaniac.presentation.home.HomeComponentFactory
-import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenter
-import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.search.SearchPresenter
-import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsComponent
+import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsComponentFactory
+import com.thomaskioko.tvmaniac.presentation.search.SearchComponent
+import com.thomaskioko.tvmaniac.presentation.search.SearchComponentFactory
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsComponent
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsComponentFactory
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
-import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenter
-import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenterPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponent
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponentFactory
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsComponent
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsComponentFactory
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
-import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
-import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailersComponent
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailersComponentFactory
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponent
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponentFactory
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
@@ -75,10 +75,10 @@ class DefaultRootComponentTest {
     component =
       DefaultRootComponent(
         componentContext = componentContext,
-        moreShowsPresenterFactory = buildMoreShowsPresenterFactory(componentContext),
-        showDetailsPresenterFactory = buildShowDetailsPresenterPresenterFactory(componentContext),
-        seasonDetailsPresenterFactory = buildSeasonDetailsPresenterFactory(componentContext),
-        trailersPresenterFactory = buildTrailersPresenterFactory(componentContext),
+        moreShowsComponentFactory = buildMoreShowsPresenterFactory(componentContext),
+        showDetailsComponentFactory = buildShowDetailsPresenterPresenterFactory(componentContext),
+        seasonDetailsComponentFactory = buildSeasonDetailsPresenterFactory(componentContext),
+        trailersComponentFactory = buildTrailersPresenterFactory(componentContext),
         datastoreRepository = datastoreRepository,
         homeComponentFactory = buildHomePresenterFactory()
       )
@@ -159,9 +159,9 @@ class DefaultRootComponentTest {
 
   private fun buildDiscoverPresenterFactory(
     componentContext: ComponentContext,
-  ): DiscoverShowsPresenterFactory =
+  ): DiscoverShowsComponentFactory =
     { _: ComponentContext, _: (id: Long) -> Unit, _: (categoryId: Long) -> Unit ->
-      DiscoverShowsPresenter(
+      DiscoverShowsComponent(
         componentContext = componentContext,
         onNavigateToShowDetails = {},
         onNavigateToMore = {},
@@ -175,8 +175,8 @@ class DefaultRootComponentTest {
 
   private fun buildLibraryPresenterFactory(
     componentContext: ComponentContext,
-  ): LibraryPresenterFactory = { _: ComponentContext, _: (showDetails: Long) -> Unit ->
-    LibraryPresenter(
+  ): LibraryComponentFactory = { _: ComponentContext, _: (showDetails: Long) -> Unit ->
+    LibraryComponent(
       componentContext = componentContext,
       navigateToShowDetails = {},
       repository = FakeLibraryRepository(),
@@ -185,9 +185,9 @@ class DefaultRootComponentTest {
 
   private fun buildMoreShowsPresenterFactory(
     componentContext: ComponentContext,
-  ): MoreShowsPresenterFactory =
+  ): MoreShowsComponentFactory =
     { _: ComponentContext, _: Long, _: () -> Unit, _: (id: Long) -> Unit ->
-      MoreShowsPresenter(
+      MoreShowsComponent(
         componentContext = componentContext,
         categoryId = 0,
         onBack = {},
@@ -201,8 +201,8 @@ class DefaultRootComponentTest {
 
   private fun buildSearchPresenterFactory(
     componentContext: ComponentContext,
-  ): SearchPresenterFactory = { _: ComponentContext, _: () -> Unit ->
-    SearchPresenter(
+  ): SearchComponentFactory = { _: ComponentContext, _: () -> Unit ->
+    SearchComponent(
       componentContext = componentContext,
       goBack = {},
     )
@@ -210,8 +210,8 @@ class DefaultRootComponentTest {
 
   private fun buildSettingsPresenterFactory(
     componentContext: ComponentContext,
-  ): SettingsPresenterFactory = { _: ComponentContext, _: () -> Unit ->
-    SettingsPresenter(
+  ): SettingsComponentFactory = { _: ComponentContext, _: () -> Unit ->
+    SettingsComponent(
       componentContext = componentContext,
       launchWebView = {},
       datastoreRepository = datastoreRepository,
@@ -221,7 +221,7 @@ class DefaultRootComponentTest {
 
   private fun buildShowDetailsPresenterPresenterFactory(
     componentContext: ComponentContext,
-  ): ShowDetailsPresenterPresenterFactory =
+  ): ShowDetailsComponentFactory =
     {
       _: ComponentContext,
       showId: Long,
@@ -230,7 +230,7 @@ class DefaultRootComponentTest {
       _: (param: ShowSeasonDetailsParam) -> Unit,
       _: (id: Long) -> Unit,
       ->
-      ShowDetailsPresenter(
+      ShowDetailsComponent(
         showId = showId,
         onBack = {},
         onNavigateToShow = {},
@@ -255,18 +255,18 @@ class DefaultRootComponentTest {
         onShowClicked = {},
         onMoreShowClicked = {},
         traktAuthManager = traktAuthManager,
-        searchPresenterFactory = buildSearchPresenterFactory(componentContext),
-        settingsPresenterFactory = buildSettingsPresenterFactory(componentContext),
-        discoverPresenterFactory = buildDiscoverPresenterFactory(componentContext),
-        libraryPresenterFactory = buildLibraryPresenterFactory(componentContext),
+        searchComponentFactory = buildSearchPresenterFactory(componentContext),
+        settingsComponentFactory = buildSettingsPresenterFactory(componentContext),
+        discoverComponentFactory = buildDiscoverPresenterFactory(componentContext),
+        libraryComponentFactory = buildLibraryPresenterFactory(componentContext),
       )
     }
 
   private fun buildSeasonDetailsPresenterFactory(
     componentContext: ComponentContext,
-  ): SeasonDetailsPresenterFactory =
+  ): SeasonDetailsComponentFactory =
     { _: ComponentContext, param: SeasonDetailsUiParam, _: () -> Unit, _: (id: Long) -> Unit ->
-      SeasonDetailsPresenter(
+      SeasonDetailsComponent(
         componentContext = componentContext,
         param = param,
         onBack = {},
@@ -278,8 +278,8 @@ class DefaultRootComponentTest {
 
   private fun buildTrailersPresenterFactory(
     componentContext: ComponentContext,
-  ): TrailersPresenterFactory = { _: ComponentContext, id: Long ->
-    TrailersPresenter(
+  ): TrailersComponentFactory = { _: ComponentContext, id: Long ->
+    TrailersComponent(
       componentContext = componentContext,
       traktShowId = id,
       repository = FakeTrailerRepository(),

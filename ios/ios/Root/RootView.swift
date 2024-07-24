@@ -27,11 +27,11 @@ struct RootView: View {
                 case .home(let child): 
                     HomeTabView(component: child.component)
                 case .showDetails(let child): 
-                    ShowDetailView(presenter: child.presenter)
+                    ShowDetailView(component: child.component)
                 case .seasonDetails(let child):
-                    SeasonDetailsView(presenter: child.presenter)
+                    SeasonDetailsView(component: child.component)
                 case .moreShows(let child):
-                    MoreShowsView(presenter: child.presenter)
+                    MoreShowsView(component: child.component)
                 case .trailers(_):
                     EmptyView() //TODO:: Add implementation
             }

@@ -21,15 +21,15 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias DiscoverShowsPresenterFactory =
+typealias DiscoverShowsComponentFactory =
   (
     ComponentContext,
     onNavigateToShowDetails: (id: Long) -> Unit,
     onNavigateToMore: (categoryId: Long) -> Unit,
-  ) -> DiscoverShowsPresenter
+  ) -> DiscoverShowsComponent
 
 @Inject
-class DiscoverShowsPresenter(
+class DiscoverShowsComponent(
   @Assisted componentContext: ComponentContext,
   @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
   @Assisted private val onNavigateToMore: (Long) -> Unit,

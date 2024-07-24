@@ -34,7 +34,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
-class ShowDetailsPresenterTest {
+class ShowDetailsComponentTest {
 
   private val seasonsRepository = FakeSeasonsRepository()
   private val trailerRepository = FakeTrailerRepository()
@@ -46,12 +46,12 @@ class ShowDetailsPresenterTest {
   private val showDetailsRepository = FakeShowDetailsRepository()
   private val testDispatcher = StandardTestDispatcher()
 
-  private lateinit var presenter: ShowDetailsPresenter
+  private lateinit var component: ShowDetailsComponent
 
   @BeforeTest
   fun setUp() {
     Dispatchers.setMain(testDispatcher)
-    presenter = buildShowDetailsPresenter()
+    component = buildShowDetailsPresenter()
   }
 
   @AfterTest
@@ -71,7 +71,7 @@ class ShowDetailsPresenterTest {
       trailersResult = Either.Right(trailers),
     )
 
-    presenter.state.test {
+    component.state.test {
       awaitItem() shouldBe
         ShowDetailsContent(
           showDetails = null,
@@ -92,7 +92,7 @@ class ShowDetailsPresenterTest {
     val errorMessage = "Failed to fetch show details"
     buildMockData(showDetailResult = Either.Left(ServerError(errorMessage)))
 
-    presenter.state.test {
+    component.state.test {
       awaitItem() shouldBe
         ShowDetailsContent(
           showDetails = null,
@@ -113,7 +113,7 @@ class ShowDetailsPresenterTest {
   fun `should update state to Loaded when ReloadShowDetails and new data is available`() = runTest {
     buildMockData()
 
-    presenter.state.test {
+    component.state.test {
       awaitItem() shouldBe
         ShowDetailsContent(
           showDetails = null,
@@ -132,7 +132,7 @@ class ShowDetailsPresenterTest {
       recommendedShowsRepository.setObserveRecommendedShows(Either.Right(recommendedShowList))
       trailerRepository.setTrailerResult(Either.Right(trailers))
 
-      presenter.dispatch(ReloadShowDetails)
+      component.dispatch(ReloadShowDetails)
 
       awaitItem().showInfo.shouldBeInstanceOf<ShowInfoState.Loading>()
 
@@ -150,7 +150,7 @@ class ShowDetailsPresenterTest {
       val errorMessage = "Failed to fetch show details"
       buildMockData()
 
-      presenter.state.test {
+      component.state.test {
         awaitItem() shouldBe
           ShowDetailsContent(
             showDetails = null,
@@ -169,7 +169,7 @@ class ShowDetailsPresenterTest {
         recommendedShowsRepository.setObserveRecommendedShows(Either.Right(recommendedShowList))
         trailerRepository.setTrailerResult(Either.Right(trailers))
 
-        presenter.dispatch(ReloadShowDetails)
+        component.dispatch(ReloadShowDetails)
 
         awaitItem().showInfo.shouldBeInstanceOf<ShowInfoState.Loading>()
 
@@ -189,7 +189,7 @@ class ShowDetailsPresenterTest {
       showDetailResult = Either.Left(ServerError(errorMessage)),
     )
 
-    presenter.state.test {
+    component.state.test {
       awaitItem() shouldBe
         ShowDetailsContent(
           showDetails = null,
@@ -204,7 +204,7 @@ class ShowDetailsPresenterTest {
           showInfo = ShowInfoState.Error
         )
 
-      presenter.dispatch(DismissErrorSnackbar)
+      component.dispatch(DismissErrorSnackbar)
 
       val updatedState = awaitItem()
       updatedState.errorMessage shouldBe null
@@ -258,8 +258,8 @@ class ShowDetailsPresenterTest {
     onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit = {},
     onNavigateToTrailer: (id: Long) -> Unit = {},
     onNavigateToShow: (id: Long) -> Unit = {},
-  ): ShowDetailsPresenter {
-    return ShowDetailsPresenter(
+  ): ShowDetailsComponent {
+    return ShowDetailsComponent(
       showId = 84958,
       componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
       onBack = onBack,

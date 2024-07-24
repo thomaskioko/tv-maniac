@@ -2,10 +2,10 @@ package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.thomaskioko.tvmaniac.presentation.home.HomeComponent
-import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenter
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
-import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
+import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsComponent
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsComponent
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsComponent
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailersComponent
 import kotlinx.coroutines.flow.StateFlow
 
 interface RootComponent {
@@ -21,12 +21,12 @@ interface RootComponent {
   sealed interface Child {
     class Home(val component: HomeComponent) : Child
 
-    class ShowDetails(val presenter: ShowDetailsPresenter) : Child
+    class ShowDetails(val component: ShowDetailsComponent) : Child
 
-    class SeasonDetails(val presenter: SeasonDetailsPresenter) : Child
+    class SeasonDetails(val component: SeasonDetailsComponent) : Child
 
-    class MoreShows(val presenter: MoreShowsPresenter) : Child
+    class MoreShows(val component: MoreShowsComponent) : Child
 
-    class Trailers(val presenter: TrailersPresenter) : Child
+    class Trailers(val component: TrailersComponent) : Child
   }
 }

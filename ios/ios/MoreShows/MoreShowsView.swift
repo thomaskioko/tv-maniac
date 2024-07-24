@@ -11,14 +11,14 @@ import TvManiac
 
 struct MoreShowsView: View {
 
-    private let presenter: MoreShowsPresenter
+    private let component: MoreShowsComponent
 
     @StateFlow private var uiState: MoreShowsState
     @State private var query = String()
 
-    init(presenter: MoreShowsPresenter) {
-        self.presenter = presenter
-        _uiState = StateFlow(presenter.state)
+    init(component: MoreShowsComponent) {
+        self.component = component
+        _uiState = StateFlow(component.state)
     }
 
     var body: some View {
@@ -27,7 +27,7 @@ struct MoreShowsView: View {
 
                 NavigationTopBar(
                     topBarTitle: uiState.categoryTitle,
-                    onBackClicked: { presenter.dispatch(action: MoreBackClicked()) }
+                    onBackClicked: { component.dispatch(action: MoreBackClicked()) }
                 )
 
                 Spacer().frame(height: 10)
@@ -44,7 +44,7 @@ struct MoreShowsView: View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVGrid(columns: DimensionConstants.posterColumns,spacing: DimensionConstants.spacing) {
                 ForEach(state.snapshotList.indices, id: \.self){ index in
-                    if let show = presenter.getElement(index: Int32(index)){
+                    if let show = component.getElement(index: Int32(index)){
                         PosterItemView(
                             showId: show.tmdbId,
                             title: show.title,
@@ -57,7 +57,7 @@ struct MoreShowsView: View {
                         .clipped()
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
-                        .onTapGesture { presenter.dispatch(action: MoreShowClicked(showId: show.tmdbId)) }
+                        .onTapGesture { component.dispatch(action: MoreShowClicked(showId: show.tmdbId)) }
                     }
                 }
             }

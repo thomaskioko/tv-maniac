@@ -11,14 +11,14 @@ import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepo
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.search.SearchPresenter
-import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenter
-import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponent
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponentFactory
+import com.thomaskioko.tvmaniac.presentation.search.SearchComponent
+import com.thomaskioko.tvmaniac.presentation.search.SearchComponentFactory
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponent
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponentFactory
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponent
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponentFactory
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeLibraryRepository
@@ -86,8 +86,8 @@ class HomeComponentTest {
 
   private fun buildSearchPresenterFactory(
     componentContext: ComponentContext,
-  ): SearchPresenterFactory = { _: ComponentContext, _: () -> Unit ->
-    SearchPresenter(
+  ): SearchComponentFactory = { _: ComponentContext, _: () -> Unit ->
+    SearchComponent(
       componentContext = componentContext,
       goBack = {},
     )
@@ -101,16 +101,16 @@ class HomeComponentTest {
       onShowClicked = {},
       onMoreShowClicked = {},
       traktAuthManager = traktAuthManager,
-      searchPresenterFactory = buildSearchPresenterFactory(componentContext),
-      settingsPresenterFactory = buildSettingsPresenterFactory(componentContext),
-      discoverPresenterFactory = buildDiscoverPresenterFactory(componentContext),
-      libraryPresenterFactory = buildLibraryPresenterFactory(componentContext),
+      searchComponentFactory = buildSearchPresenterFactory(componentContext),
+      settingsComponentFactory = buildSettingsPresenterFactory(componentContext),
+      discoverComponentFactory = buildDiscoverPresenterFactory(componentContext),
+      libraryComponentFactory = buildLibraryPresenterFactory(componentContext),
     )
 
   private fun buildSettingsPresenterFactory(
     componentContext: ComponentContext,
-  ): SettingsPresenterFactory = { _: ComponentContext, _: () -> Unit ->
-    SettingsPresenter(
+  ): SettingsComponentFactory = { _: ComponentContext, _: () -> Unit ->
+    SettingsComponent(
       componentContext = componentContext,
       launchWebView = {},
       datastoreRepository = datastoreRepository,
@@ -120,9 +120,9 @@ class HomeComponentTest {
 
   private fun buildDiscoverPresenterFactory(
     componentContext: ComponentContext,
-  ): DiscoverShowsPresenterFactory =
+  ): DiscoverShowsComponentFactory =
     { _: ComponentContext, _: (id: Long) -> Unit, _: (categoryId: Long) -> Unit ->
-      DiscoverShowsPresenter(
+      DiscoverShowsComponent(
         componentContext = componentContext,
         onNavigateToShowDetails = {},
         onNavigateToMore = {},
@@ -136,8 +136,8 @@ class HomeComponentTest {
 
   private fun buildLibraryPresenterFactory(
     componentContext: ComponentContext,
-  ): LibraryPresenterFactory = { _: ComponentContext, _: (showDetails: Long) -> Unit ->
-    LibraryPresenter(
+  ): LibraryComponentFactory = { _: ComponentContext, _: (showDetails: Long) -> Unit ->
+    LibraryComponent(
       componentContext = componentContext,
       navigateToShowDetails = {},
       repository = FakeLibraryRepository(),

@@ -42,8 +42,8 @@ import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.watchlist.ErrorLoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryAction
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponent
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryContent
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryShowClicked
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryState
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
@@ -54,15 +54,15 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun LibraryScreen(
-  presenter: LibraryPresenter,
+  component: LibraryComponent,
   modifier: Modifier = Modifier,
 ) {
-  val libraryState by presenter.state.collectAsState()
+  val libraryState by component.state.collectAsState()
 
   LibraryScreen(
     modifier = modifier,
     state = libraryState,
-    onAction = presenter::dispatch,
+    onAction = component::dispatch,
   )
 }
 

@@ -13,14 +13,14 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias LibraryPresenterFactory =
+typealias LibraryComponentFactory =
   (
     ComponentContext,
     navigateToShowDetails: (showDetails: Long) -> Unit,
-  ) -> LibraryPresenter
+  ) -> LibraryComponent
 
 @Inject
-class LibraryPresenter(
+class LibraryComponent(
   @Assisted componentContext: ComponentContext,
   @Assisted private val navigateToShowDetails: (id: Long) -> Unit,
   private val repository: LibraryRepository,

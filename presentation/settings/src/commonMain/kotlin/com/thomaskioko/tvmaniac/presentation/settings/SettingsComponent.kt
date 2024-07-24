@@ -14,14 +14,14 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias SettingsPresenterFactory =
+typealias SettingsComponentFactory =
   (
     ComponentContext,
     launchWebView: () -> Unit,
-  ) -> SettingsPresenter
+  ) -> SettingsComponent
 
 @Inject
-class SettingsPresenter(
+class SettingsComponent(
   @Assisted componentContext: ComponentContext,
   @Assisted private val launchWebView: () -> Unit,
   private val datastoreRepository: DatastoreRepository,

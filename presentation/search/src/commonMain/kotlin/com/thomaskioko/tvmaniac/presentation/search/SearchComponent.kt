@@ -7,14 +7,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias SearchPresenterFactory =
+typealias SearchComponentFactory =
   (
     ComponentContext,
     goBack: () -> Unit,
-  ) -> SearchPresenter
+  ) -> SearchComponent
 
 @Inject
-class SearchPresenter(
+class SearchComponent(
   @Assisted componentContext: ComponentContext,
   @Assisted goBack: () -> Unit,
 ) : ComponentContext by componentContext {

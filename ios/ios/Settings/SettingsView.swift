@@ -12,7 +12,7 @@ import TvManiac
 
 struct SettingsView: View {
     
-    private let presenter: SettingsPresenter
+    private let component: SettingsComponent
     @Environment(\.openURL) var openURL
     @Environment(\.presentationMode) var presentationMode
     
@@ -23,9 +23,9 @@ struct SettingsView: View {
     @ObservedObject private var model = TraktAuthViewModel()
     
     
-    init(presenter: SettingsPresenter){
-        self.presenter = presenter
-        _uiState = StateFlow<SettingsState>(presenter.state)
+    init(component: SettingsComponent){
+        self.component = component
+        _uiState = StateFlow<SettingsState>(component.state)
         self.theme = toAppTheme(theme: uiState.appTheme)
     }
     
@@ -50,7 +50,7 @@ struct SettingsView: View {
                     .pickerStyle(.segmented)
                     .padding(.vertical, 6)
                     .onChange(of: theme) { theme in
-                        presenter.dispatch(action: ThemeSelected(appTheme: toTheme(appTheme: theme)))
+                        component.dispatch(action: ThemeSelected(appTheme: toTheme(appTheme: theme)))
                     }
                 }
                 

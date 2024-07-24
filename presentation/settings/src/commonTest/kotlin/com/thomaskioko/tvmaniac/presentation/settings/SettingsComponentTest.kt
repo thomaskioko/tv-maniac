@@ -18,20 +18,20 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
-class SettingsPresenterTest {
+class SettingsComponentTest {
 
   private val lifecycle = LifecycleRegistry()
   private val testDispatcher = StandardTestDispatcher()
   private val datastoreRepository = FakeDatastoreRepository()
   private val traktAuthRepository = FakeTraktAuthRepository()
 
-  private lateinit var presenter: SettingsPresenter
+  private lateinit var component: SettingsComponent
 
   @BeforeTest
   fun setUp() {
     Dispatchers.setMain(testDispatcher)
-    presenter =
-      SettingsPresenter(
+    component =
+      SettingsComponent(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         datastoreRepository = datastoreRepository,
         traktAuthRepository = traktAuthRepository,
@@ -46,22 +46,22 @@ class SettingsPresenterTest {
 
   @Test
   fun initial_state_emits_expected_result() = runTest {
-    presenter.state.test { awaitItem() shouldBe SettingsState.DEFAULT_STATE }
+    component.state.test { awaitItem() shouldBe SettingsState.DEFAULT_STATE }
   }
 
   @Test
   fun when_theme_is_updated_expected_result_is_emitted() = runTest {
-    presenter.state.test {
+    component.state.test {
       awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-      presenter.dispatch(ChangeThemeClicked)
+      component.dispatch(ChangeThemeClicked)
       awaitItem() shouldBe
         SettingsState.DEFAULT_STATE.copy(
           showthemePopup = true,
         )
 
       datastoreRepository.setTheme(AppTheme.DARK_THEME)
-      presenter.dispatch(ThemeSelected(AppTheme.DARK_THEME))
+      component.dispatch(ThemeSelected(AppTheme.DARK_THEME))
 
       awaitItem() shouldBe
         SettingsState.DEFAULT_STATE.copy(
@@ -78,17 +78,17 @@ class SettingsPresenterTest {
 
   @Test
   fun when_dialog_is_dismissed_expected_result_is_emitted() = runTest {
-    presenter.state.test {
+    component.state.test {
       awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-      presenter.dispatch(ChangeThemeClicked)
+      component.dispatch(ChangeThemeClicked)
 
       awaitItem() shouldBe
         SettingsState.DEFAULT_STATE.copy(
           showthemePopup = true,
         )
 
-      presenter.dispatch(DismissThemeClicked)
+      component.dispatch(DismissThemeClicked)
 
       awaitItem() shouldBe
         SettingsState.DEFAULT_STATE.copy(
@@ -99,17 +99,17 @@ class SettingsPresenterTest {
 
   @Test
   fun when_ShowTraktDialog_is_clicked_expected_result_is_emitted() = runTest {
-    presenter.state.test {
+    component.state.test {
       awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-      presenter.dispatch(ShowTraktDialog)
+      component.dispatch(ShowTraktDialog)
 
       awaitItem() shouldBe
         SettingsState.DEFAULT_STATE.copy(
           showTraktDialog = true,
         )
 
-      presenter.dispatch(DismissTraktDialog)
+      component.dispatch(DismissTraktDialog)
 
       awaitItem() shouldBe
         SettingsState.DEFAULT_STATE.copy(
@@ -120,14 +120,14 @@ class SettingsPresenterTest {
 
   @Test
   fun given_TraktLoginClicked_andUserIsAuthenticated_expectedResultIsEmitted() = runTest {
-    presenter.state.test {
+    component.state.test {
       awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-      presenter.dispatch(ShowTraktDialog)
+      component.dispatch(ShowTraktDialog)
 
       awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(showTraktDialog = true)
 
-      presenter.dispatch(TraktLoginClicked)
+      component.dispatch(TraktLoginClicked)
 
       datastoreRepository.setAuthState(authenticatedAuthState)
 
@@ -138,16 +138,16 @@ class SettingsPresenterTest {
   @Ignore // "Fix once TraktAuthManager is implemented"
   @Test
   fun given_TraktLoginClicked_andErrorOccurs_expectedResultIsEmitted() = runTest {
-    presenter.state.test {
+    component.state.test {
       val errorMessage = "Something happened"
 
       awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-      presenter.dispatch(ShowTraktDialog)
+      component.dispatch(ShowTraktDialog)
 
       awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(showTraktDialog = true)
 
-      presenter.dispatch(TraktLoginClicked)
+      component.dispatch(TraktLoginClicked)
 
       awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(showTraktDialog = false)
 
@@ -159,18 +159,18 @@ class SettingsPresenterTest {
 
   @Test
   fun given_TraktLogoutClicked_expectedResultIsEmitted() = runTest {
-    presenter.state.test {
+    component.state.test {
       awaitItem() shouldBe SettingsState.DEFAULT_STATE // Initial State
 
-      presenter.dispatch(ShowTraktDialog)
+      component.dispatch(ShowTraktDialog)
 
       awaitItem() shouldBe SettingsState.DEFAULT_STATE.copy(showTraktDialog = true)
 
-      presenter.dispatch(TraktLoginClicked)
+      component.dispatch(TraktLoginClicked)
 
       datastoreRepository.setAuthState(authenticatedAuthState)
 
-      presenter.dispatch(TraktLogoutClicked)
+      component.dispatch(TraktLogoutClicked)
 
       awaitItem() shouldBe SettingsState.DEFAULT_STATE
     }

@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias ShowDetailsPresenterPresenterFactory =
+typealias ShowDetailsComponentFactory =
   (
     ComponentContext,
     id: Long,
@@ -34,9 +34,9 @@ typealias ShowDetailsPresenterPresenterFactory =
     onNavigateToShow: (id: Long) -> Unit,
     onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
     onNavigateToTrailer: (id: Long) -> Unit,
-  ) -> ShowDetailsPresenter
+  ) -> ShowDetailsComponent
 
-class ShowDetailsPresenter
+class ShowDetailsComponent
 @Inject
 constructor(
   @Assisted componentContext: ComponentContext,

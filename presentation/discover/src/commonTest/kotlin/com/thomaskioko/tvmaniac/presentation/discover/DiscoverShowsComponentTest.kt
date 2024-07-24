@@ -23,7 +23,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
-class DiscoverShowsPresenterTest {
+class DiscoverShowsComponentTest {
 
   private val lifecycle = LifecycleRegistry()
   private val testDispatcher = StandardTestDispatcher()
@@ -34,15 +34,15 @@ class DiscoverShowsPresenterTest {
   private val topRatedShowsRepository = FakeTopRatedShowsRepository()
   private val popularShowsRepository = FakePopularShowsRepository()
 
-  private lateinit var presenter: DiscoverShowsPresenter
+  private lateinit var component: DiscoverShowsComponent
 
   @BeforeTest
   fun before() {
     Dispatchers.setMain(testDispatcher)
 
     lifecycle.resume()
-    presenter =
-      DiscoverShowsPresenter(
+    component =
+      DiscoverShowsComponent(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         onNavigateToShowDetails = {},
         onNavigateToMore = {},
@@ -61,7 +61,7 @@ class DiscoverShowsPresenterTest {
 
   @Test
   fun given_dataIsEmpty_THEN_EmptyState_isReturned() = runTest {
-    presenter.state.test {
+    component.state.test {
       setList(emptyList())
 
       awaitItem() shouldBe Loading
@@ -71,7 +71,7 @@ class DiscoverShowsPresenterTest {
 
   @Test
   fun given_dataIsEmpty_AND_dataIsFetched_THEN_DataLoaded_isReturned() = runTest {
-    presenter.state.test {
+    component.state.test {
       setList(emptyList())
 
       awaitItem() shouldBe Loading
@@ -93,7 +93,7 @@ class DiscoverShowsPresenterTest {
 
   @Test
   fun given_dataIsCached_THEN_DataLoaded_isReturned() = runTest {
-    presenter.state.test {
+    component.state.test {
       setList(createDiscoverShowList())
 
       awaitItem() shouldBe Loading
@@ -111,13 +111,13 @@ class DiscoverShowsPresenterTest {
 
   @Test
   fun given_dataIsEmpty_AND_retryIsClicked_THEN_DataLoaded_isReturned() = runTest {
-    presenter.state.test {
+    component.state.test {
       setList(emptyList())
 
       awaitItem() shouldBe Loading
       awaitItem() shouldBe EmptyState
 
-      presenter.dispatch(ReloadData)
+      component.dispatch(ReloadData)
 
       setList(createDiscoverShowList())
 
@@ -136,7 +136,7 @@ class DiscoverShowsPresenterTest {
 
   @Test
   fun given_dataIsRefreshed_THEN_stateIsUpdated() = runTest {
-    presenter.state.test {
+    component.state.test {
       setList(createDiscoverShowList())
       awaitItem() shouldBe Loading
 
@@ -153,7 +153,7 @@ class DiscoverShowsPresenterTest {
 
       awaitItem() shouldBe expectedResult
 
-      presenter.dispatch(RefreshData)
+      component.dispatch(RefreshData)
 
       awaitItem() shouldBe expectedResult.copy(isRefreshing = true)
 
@@ -179,7 +179,7 @@ class DiscoverShowsPresenterTest {
   fun given_refreshErrorOccurs_THEN_stateIsUpdated() = runTest {
     setList(createDiscoverShowList())
 
-    presenter.state.test {
+    component.state.test {
       awaitItem() shouldBe Loading
 
       val expectedList = uiModelList()
@@ -195,7 +195,7 @@ class DiscoverShowsPresenterTest {
 
       awaitItem() shouldBe expectedResult
 
-      presenter.dispatch(RefreshData)
+      component.dispatch(RefreshData)
 
       awaitItem() shouldBe expectedResult.copy(isRefreshing = true)
 

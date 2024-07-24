@@ -11,13 +11,13 @@ import TvManiac
 
 struct LibraryView: View {
     
-    private let presenter: LibraryPresenter
-    
+    private let component: LibraryComponent
+
     @StateFlow private var uiState: LibraryState
     
-    init(presenter: LibraryPresenter){
-        self.presenter = presenter
-        _uiState = StateFlow(presenter.state)
+    init(component: LibraryComponent){
+        self.component = component
+        _uiState = StateFlow(component.state)
     }
     
     var body: some View {
@@ -63,7 +63,7 @@ struct LibraryView: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                         .clipped()
-                        .onTapGesture { presenter.dispatch(action: LibraryShowClicked(id: item.tmdbId)) }
+                        .onTapGesture { component.dispatch(action: LibraryShowClicked(id: item.tmdbId)) }
                     }
                 }.padding(.all, 10)
             }

@@ -8,12 +8,12 @@ struct DiscoverView: View {
     @State private var currentIndex: Int = 2
     @StateFlow private var uiState: DiscoverState
 
-    private let presenter: DiscoverShowsPresenter
+    private let component: DiscoverShowsComponent
 
 
-    init(presenter: DiscoverShowsPresenter){
-        self.presenter = presenter
-        _uiState = StateFlow(presenter.state)
+    init(component: DiscoverShowsComponent){
+        self.component = component
+        _uiState = StateFlow(component.state)
     }
 
     var body: some View {
@@ -42,7 +42,7 @@ struct DiscoverView: View {
 
             ScrollableContent(state: state)
                 .refreshable {
-                    presenter.dispatch(action: RefreshData())
+                    component.dispatch(action: RefreshData())
                 }
         }
     }
@@ -60,29 +60,29 @@ struct DiscoverView: View {
                 HorizontalItemContentListView(
                     items: state.upcomingShows,
                     title: "Upcoming",
-                    onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                    onMoreClicked: { presenter.dispatch(action: UpComingClicked()) }
+                    onClick: { id in component.dispatch(action: ShowClicked(id: id)) },
+                    onMoreClicked: { component.dispatch(action: UpComingClicked()) }
                 )
 
                 HorizontalItemContentListView(
                     items: state.trendingToday,
                     title: "Trending Today",
-                    onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                    onMoreClicked: { presenter.dispatch(action: TrendingClicked()) }
+                    onClick: { id in component.dispatch(action: ShowClicked(id: id)) },
+                    onMoreClicked: { component.dispatch(action: TrendingClicked()) }
                 )
 
                 HorizontalItemContentListView(
                     items: state.popularShows,
                     title: "Popular",
-                    onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                    onMoreClicked: { presenter.dispatch(action: PopularClicked()) }
+                    onClick: { id in component.dispatch(action: ShowClicked(id: id)) },
+                    onMoreClicked: { component.dispatch(action: PopularClicked()) }
                 )
 
                 HorizontalItemContentListView(
                     items: state.topRatedShows,
                     title: "Top Rated",
-                    onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
-                    onMoreClicked: { presenter.dispatch(action: TopRatedClicked()) }
+                    onClick: { id in component.dispatch(action: ShowClicked(id: id)) },
+                    onMoreClicked: { component.dispatch(action: TopRatedClicked()) }
                 )
             }
         }
@@ -105,7 +105,7 @@ struct DiscoverView: View {
 
                         FeaturedContentPosterView(
                             show: show,
-                            onClick: { id in presenter.dispatch(action: ShowClicked(id: show.tmdbId)) }
+                            onClick: { id in component.dispatch(action: ShowClicked(id: show.tmdbId)) }
                         )
                     }
                 }
@@ -190,7 +190,7 @@ struct DiscoverView: View {
                 .padding(.bottom, 16)
 
             Button(action: {
-                presenter.dispatch(action: ReloadData())
+                component.dispatch(action: ReloadData())
             }, label: {
                 Text("Retry")
                     .bodyMediumFont(size: 16)

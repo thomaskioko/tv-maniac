@@ -15,11 +15,11 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.navigation.RootComponent.Child
 import com.thomaskioko.tvmaniac.presentation.home.HomeComponentFactory
-import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsComponentFactory
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsComponentFactory
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenterPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsComponentFactory
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailersComponentFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,10 +35,10 @@ import me.tatarka.inject.annotations.Inject
 class DefaultRootComponent(
   componentContext: ComponentContext,
   private val homeComponentFactory: HomeComponentFactory,
-  private val moreShowsPresenterFactory: MoreShowsPresenterFactory,
-  private val showDetailsPresenterFactory: ShowDetailsPresenterPresenterFactory,
-  private val seasonDetailsPresenterFactory: SeasonDetailsPresenterFactory,
-  private val trailersPresenterFactory: TrailersPresenterFactory,
+  private val moreShowsComponentFactory: MoreShowsComponentFactory,
+  private val showDetailsComponentFactory: ShowDetailsComponentFactory,
+  private val seasonDetailsComponentFactory: SeasonDetailsComponentFactory,
+  private val trailersComponentFactory: TrailersComponentFactory,
   private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
   datastoreRepository: DatastoreRepository,
 ) : RootComponent, ComponentContext by componentContext {
@@ -97,8 +97,8 @@ class DefaultRootComponent(
         )
       is Config.ShowDetails ->
         Child.ShowDetails(
-          presenter =
-            showDetailsPresenterFactory(
+          component =
+            showDetailsComponentFactory(
               componentContext,
               config.id,
               navigation::pop,
@@ -119,8 +119,8 @@ class DefaultRootComponent(
         )
       is Config.SeasonDetails ->
         Child.SeasonDetails(
-          presenter =
-            seasonDetailsPresenterFactory(
+          component =
+            seasonDetailsComponentFactory(
               componentContext,
               config.param,
               navigation::pop,
@@ -130,16 +130,16 @@ class DefaultRootComponent(
         )
       is Config.Trailers ->
         Child.Trailers(
-          presenter =
-            trailersPresenterFactory(
+          component =
+            trailersComponentFactory(
               componentContext,
               config.id,
             ),
         )
       is Config.MoreShows ->
         Child.MoreShows(
-          presenter =
-            moreShowsPresenterFactory(
+          component =
+            moreShowsComponentFactory(
               componentContext,
               config.id,
               navigation::pop,

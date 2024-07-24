@@ -18,12 +18,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.presentation.search.SearchPresenter
+import com.thomaskioko.tvmaniac.presentation.search.SearchComponent
 import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun SearchScreen(
-  presenter: SearchPresenter,
+  component: SearchComponent,
   modifier: Modifier = Modifier,
 ) {
   SearchScreen(modifier = modifier)

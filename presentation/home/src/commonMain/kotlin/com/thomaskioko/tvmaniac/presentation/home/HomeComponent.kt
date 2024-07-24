@@ -8,14 +8,14 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.search.SearchPresenter
-import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenter
-import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponent
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponentFactory
+import com.thomaskioko.tvmaniac.presentation.search.SearchComponent
+import com.thomaskioko.tvmaniac.presentation.search.SearchComponentFactory
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponent
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponentFactory
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponent
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponentFactory
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,10 +38,10 @@ class HomeComponent(
   @Assisted componentContext: ComponentContext,
   @Assisted private val onShowClicked: (id: Long) -> Unit,
   @Assisted private val onMoreShowClicked: (id: Long) -> Unit,
-  private val discoverPresenterFactory: DiscoverShowsPresenterFactory,
-  private val libraryPresenterFactory: LibraryPresenterFactory,
-  private val searchPresenterFactory: SearchPresenterFactory,
-  private val settingsPresenterFactory: SettingsPresenterFactory,
+  private val discoverComponentFactory: DiscoverShowsComponentFactory,
+  private val libraryComponentFactory: LibraryComponentFactory,
+  private val searchComponentFactory: SearchComponentFactory,
+  private val settingsComponentFactory: SettingsComponentFactory,
   private val traktAuthManager: TraktAuthManager,
   private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
 ) : ComponentContext by componentContext {
@@ -85,8 +85,8 @@ class HomeComponent(
     when (config) {
       is Config.Discover -> {
         Child.Discover(
-          presenter =
-            discoverPresenterFactory(
+          component =
+            discoverComponentFactory(
               componentContext,
               { id -> onShowClicked(id) },
               { id -> onMoreShowClicked(id) },
@@ -95,8 +95,8 @@ class HomeComponent(
       }
       Config.Library -> {
         Child.Library(
-          presenter =
-            libraryPresenterFactory(
+          component =
+            libraryComponentFactory(
               componentContext,
             ) { id ->
               onShowClicked(id)
@@ -105,8 +105,8 @@ class HomeComponent(
       }
       Config.Search -> {
         Child.Search(
-          presenter =
-            searchPresenterFactory(
+          component =
+            searchComponentFactory(
               componentContext,
               navigation::pop,
             ),
@@ -114,8 +114,8 @@ class HomeComponent(
       }
       Config.Settings -> {
         Child.Settings(
-          presenter =
-            settingsPresenterFactory(
+          component =
+            settingsComponentFactory(
               componentContext,
             ) {
               traktAuthManager.launchWebView()
@@ -125,13 +125,13 @@ class HomeComponent(
     }
 
   sealed interface Child {
-    class Discover(val presenter: DiscoverShowsPresenter) : Child
+    class Discover(val component: DiscoverShowsComponent) : Child
 
-    class Library(val presenter: LibraryPresenter) : Child
+    class Library(val component: LibraryComponent) : Child
 
-    class Search(val presenter: SearchPresenter) : Child
+    class Search(val component: SearchComponent) : Child
 
-    class Settings(val presenter: SettingsPresenter) : Child
+    class Settings(val component: SettingsComponent) : Child
   }
 
   @Serializable

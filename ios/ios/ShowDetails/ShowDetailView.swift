@@ -14,14 +14,14 @@ struct ShowDetailView: View {
 
     private let maxHeight : CGFloat = 520
     private let minHeight = 120.0
-    private let presenter: ShowDetailsPresenter
+    private let component: ShowDetailsComponent
 
     @StateFlow private var uiState: ShowDetailsContent
     @State var progress: CGFloat = 0
 
-    init(presenter: ShowDetailsPresenter){
-        self.presenter = presenter
-        _uiState = StateFlow(presenter.state)
+    init(component: ShowDetailsComponent){
+        self.component = component
+        _uiState = StateFlow(component.state)
     }
 
     var body: some View {
@@ -30,7 +30,7 @@ struct ShowDetailView: View {
                 if (!uiState.isUpdating && uiState.showDetails == nil){
                     ErrorUiView(
                         systemImage: "exclamationmark.triangle.fill",
-                        action: {  presenter.dispatch(action: ReloadShowDetails()) }
+                        action: {  component.dispatch(action: ReloadShowDetails()) }
                     )
                 }
                 else {
@@ -40,10 +40,10 @@ struct ShowDetailView: View {
                             progress: progress,
                             maxHeight: maxHeight,
                             onAddToLibraryClick: { add in
-                                presenter.dispatch(action: FollowShowClicked(addToLibrary: add))
+                                component.dispatch(action: FollowShowClicked(addToLibrary: add))
                             },
                             onWatchTrailerClick: { id in
-                                presenter.dispatch(action: WatchTrailerClicked(id: id))
+                                component.dispatch(action: WatchTrailerClicked(id: id))
                             }
                         )
                     }
@@ -54,11 +54,11 @@ struct ShowDetailView: View {
                     case .loading: LoadingIndicatorView(animate: true)
                     case .empty:  ErrorUiView(
                         systemImage: "exclamationmark.triangle.fill",
-                        action: {  presenter.dispatch(action: ReloadShowDetails()) }
+                        action: {  component.dispatch(action: ReloadShowDetails()) }
                     )
                     case .error :  ErrorUiView(
                         systemImage: "exclamationmark.triangle.fill",
-                        action: {  presenter.dispatch(action: ReloadShowDetails()) }
+                        action: {  component.dispatch(action: ReloadShowDetails()) }
                     )
                     case .loaded(let loadedState): ShowInfoView(loadedState)
                 }
@@ -74,10 +74,10 @@ struct ShowDetailView: View {
                 title: uiState.showDetails?.title ?? "",
                 isRefreshing: uiState.isUpdating || uiState.showInfo is ShowInfoStateLoading,
                 onBackClicked: {
-                    presenter.dispatch(action: DetailBackClicked())
+                    component.dispatch(action: DetailBackClicked())
                 },
                 onRefreshClicked: {
-                    presenter.dispatch(action: ReloadShowDetails())
+                    component.dispatch(action: ReloadShowDetails())
                 }
             )
         }
@@ -91,7 +91,7 @@ struct ShowDetailView: View {
         SeasonsRowView(
             seasonsList: showInfo.seasonsList,
             onClick: { params in
-                presenter.dispatch(action: SeasonClicked(params: params))
+                component.dispatch(action: SeasonClicked(params: params))
             }
         )
 
@@ -104,13 +104,13 @@ struct ShowDetailView: View {
         HorizontalShowsListView(
             title: "Recommendations",
             items: showInfo.recommendedShowList,
-            onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id)) }
+            onClick: { id in component.dispatch(action: DetailShowClicked(id: id)) }
         )
 
         HorizontalShowsListView(
             title: "Similar Shows",
             items: showInfo.similarShows,
-            onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id)) }
+            onClick: { id in component.dispatch(action: DetailShowClicked(id: id)) }
         )
     }
 }

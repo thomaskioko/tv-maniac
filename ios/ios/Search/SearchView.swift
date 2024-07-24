@@ -11,14 +11,14 @@ import TvManiac
 
 struct SearchView: View {
     
-    private let presenter: SearchPresenter
-    
+    private let component: SearchComponent
+
     @StateFlow private var uiState: SearchState
     @State private var query = String()
     
-    init(presenter: SearchPresenter){
-        self.presenter = presenter
-        _uiState = StateFlow(presenter.state)
+    init(component: SearchComponent){
+        self.component = component
+        _uiState = StateFlow(component.state)
     }
     
     var body: some View {

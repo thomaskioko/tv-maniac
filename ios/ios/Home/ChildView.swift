@@ -17,13 +17,13 @@ struct ChildView: View {
         VStack {
             switch onEnum(of: screen) {
                 case .discover(let screen):
-                    DiscoverView(presenter: screen.presenter)
+                    DiscoverView(component: screen.component)
                 case .search(let screen):
-                    SearchView(presenter: screen.presenter)
+                    SearchView(component: screen.component)
                 case .library(let screen):
-                    LibraryView(presenter: screen.presenter)
+                    LibraryView(component: screen.component)
                 case .settings(let screen):
-                    SettingsView(presenter: screen.presenter)
+                    SettingsView(component: screen.component)
                 default:
                     fatalError("Unhandled Screen: \(String(describing: screen))")
             }

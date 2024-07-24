@@ -48,24 +48,24 @@ private fun ChildrenContent(rootComponent: RootComponent, modifier: Modifier = M
         HomeContent(component = screen.component, modifier = fillMaxSizeModifier)
       is RootComponent.Child.ShowDetails -> {
         ShowDetailsScreen(
-          presenter = screen.presenter,
+          component = screen.component,
           modifier = fillMaxSizeModifier,
         )
       }
       is RootComponent.Child.SeasonDetails -> {
         SeasonDetailsScreen(
-          presenter = screen.presenter,
+          component = screen.component,
           modifier = fillMaxSizeModifier,
         )
       }
       is RootComponent.Child.Trailers ->
         TrailersScreen(
-          presenter = screen.presenter,
+          component = screen.component,
           modifier = fillMaxSizeModifier,
         )
       is RootComponent.Child.MoreShows ->
         MoreShowsScreen(
-          presenter = screen.presenter,
+          component = screen.component,
           modifier = fillMaxSizeModifier,
         )
     }
