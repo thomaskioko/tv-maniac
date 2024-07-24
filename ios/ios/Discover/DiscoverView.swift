@@ -6,7 +6,7 @@ struct DiscoverView: View {
 
     @Environment(\.colorScheme) var scheme
     @State private var currentIndex: Int = 2
-    @StateFlow private var uiState: DiscoverState?
+    @StateFlow private var uiState: DiscoverState
 
     private let presenter: DiscoverShowsPresenter
 
@@ -31,8 +31,6 @@ struct DiscoverView: View {
                         systemName: "exclamationmark.arrow.triangle.2.circlepath",
                         message: error.errorMessage ?? "Something went wrong!!"
                     )
-                case .none:
-                    emptyView
             }
         }
     }

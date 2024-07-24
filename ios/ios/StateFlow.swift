@@ -10,39 +10,31 @@ import Foundation
 import SwiftUI
 import TvManiac
 
-@propertyWrapper
-struct StateFlow<T: AnyObject>: DynamicProperty {
-    @StateObject
-    private var state: StateFlowObject<T>
-
-    var wrappedValue: T? {
-        state.value
-    }
-
-    var projectedValue: StateFlowObject<T> {
-        state
-    }
+@propertyWrapper struct StateFlow<T: AnyObject>: DynamicProperty {
+    @StateObject var observable: ObservableStateFlow<T>
 
     init(_ stateFlow: Kotlinx_coroutines_coreStateFlow) {
-        _state = StateObject(wrappedValue: StateFlowObject(stateFlow))
+        _observable = StateObject(wrappedValue: ObservableStateFlow(stateFlow: stateFlow))
     }
+
+    public var wrappedValue: T { observable.value }
+
+    public var projectedValue: ObservableStateFlow<T> { observable }
 }
 
-class StateFlowObject<T: AnyObject>: ObservableObject {
-    @Published
-    var value: T?
+class ObservableStateFlow<T: AnyObject>: ObservableObject {
+    @Published private(set) var value: T
+    private let observer: StateFlowObserver<T>
 
-    private var cancelable: Cancelable? = nil
-
-    init(_ state: Kotlinx_coroutines_coreStateFlow) {
-        self.value = state.value as? T
-
-        cancelable = FlowWrapper<T>(flow: state).collect(consumer: { [weak self] value in
-            self?.value = value
-        })
+    init(stateFlow: Kotlinx_coroutines_coreStateFlow) {
+        observer = StateFlowObserver(stateFlow: stateFlow)
+        value = stateFlow.value as! T
+        observer.observe { newValue in
+            self.value = newValue!
+        }
     }
 
     deinit {
-        cancelable?.cancel()
+        observer.unsubscribe()
     }
 }

@@ -10,27 +10,26 @@ import SwiftUI
 import TvManiac
 
 struct LibraryView: View {
-
+    
     private let presenter: LibraryPresenter
-
-    @StateFlow private var uiState: LibraryState?
-
+    
+    @StateFlow private var uiState: LibraryState
+    
     init(presenter: LibraryPresenter){
         self.presenter = presenter
         _uiState = StateFlow(presenter.state)
     }
-
+    
     var body: some View {
         NavigationStack {
             VStack {
                 switch onEnum(of: uiState) {
                     case .loadingShows:
-                    //TODO:: Show indicator on the toolbar
-                    LoadingIndicatorView()
-                        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
+                        //TODO:: Show indicator on the toolbar
+                        LoadingIndicatorView()
+                            .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
                     case .libraryContent(let content): GridViewContent(content)
                     case .errorLoadingShows: EmptyView()  //TODO:: Show Error
-                    case .none: EmptyView()
                 }
             }
             .navigationTitle("Library")
@@ -45,9 +44,9 @@ struct LibraryView: View {
                 }
             }
         }
-
+        
     }
-
+    
     @ViewBuilder
     private func GridViewContent(_ content: LibraryContent) -> some View {
         if !content.list.isEmpty {
@@ -72,7 +71,7 @@ struct LibraryView: View {
             empty
         }
     }
-
+    
     private var filterButton: some View {
         Button {
             withAnimation {
@@ -85,10 +84,10 @@ struct LibraryView: View {
         .buttonBorderShape(.roundedRectangle(radius: 16))
         .buttonStyle(.bordered)
     }
-
+    
     private var sortButton: some View {
         Button {
-           //TODO:: Add filer option
+            //TODO:: Add filer option
         } label: {
             Label("Sort Order", systemImage: "arrow.up.arrow.down.circle")
                 .labelStyle(.iconOnly)
@@ -97,7 +96,7 @@ struct LibraryView: View {
         .buttonBorderShape(.roundedRectangle(radius: 16))
         .buttonStyle(.bordered)
     }
-
+    
     @ViewBuilder
     private var empty: some View {
         if #available(iOS 17.0, *) {

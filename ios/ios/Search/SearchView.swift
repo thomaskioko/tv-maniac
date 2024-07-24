@@ -10,21 +10,21 @@ import SwiftUI
 import TvManiac
 
 struct SearchView: View {
-
+    
     private let presenter: SearchPresenter
-
-    @StateFlow private var uiState: SearchState?
+    
+    @StateFlow private var uiState: SearchState
     @State private var query = String()
-
+    
     init(presenter: SearchPresenter){
         self.presenter = presenter
         _uiState = StateFlow(presenter.state)
     }
-
+    
     var body: some View {
         NavigationStack {
             VStack {
-
+                
             }
             .navigationTitle("Search")
             .navigationBarTitleDisplayMode(.large)

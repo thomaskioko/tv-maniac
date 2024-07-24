@@ -16,7 +16,7 @@ struct ShowDetailView: View {
     private let minHeight = 120.0
     private let presenter: ShowDetailsPresenter
 
-    @StateFlow private var uiState: ShowDetailsContent?
+    @StateFlow private var uiState: ShowDetailsContent
     @State var progress: CGFloat = 0
 
     init(presenter: ShowDetailsPresenter){
@@ -26,63 +26,60 @@ struct ShowDetailView: View {
 
     var body: some View {
         ZStack {
-            if let state = uiState {
-                ScalingHeaderScrollView {
-                    if (!state.isUpdating && state.showDetails == nil){
-                        ErrorUiView(
-                            systemImage: "exclamationmark.triangle.fill",
-                            action: {  presenter.dispatch(action: ReloadShowDetails()) }
-                        )
-                    }
-                    else {
-                        if let showDetails = state.showDetails {
-                            HeaderContentView(
-                                show: showDetails,
-                                progress: progress,
-                                maxHeight: maxHeight,
-                                onAddToLibraryClick: { add in
-                                    presenter.dispatch(action: FollowShowClicked(addToLibrary: add))
-                                },
-                                onWatchTrailerClick: { id in
-                                    presenter.dispatch(action: WatchTrailerClicked(id: id))
-                                }
-                            )
-                        }
-
-                    }
-                } content: {
-                    switch onEnum(of: state.showInfo){
-                        case .loading: LoadingIndicatorView(animate: true)
-                        case .empty:  ErrorUiView(
-                            systemImage: "exclamationmark.triangle.fill",
-                            action: {  presenter.dispatch(action: ReloadShowDetails()) }
-                        )
-                        case .error :  ErrorUiView(
-                            systemImage: "exclamationmark.triangle.fill",
-                            action: {  presenter.dispatch(action: ReloadShowDetails()) }
-                        )
-                        case .loaded(let loadedState): ShowInfoView(loadedState)
-                    }
+            ScalingHeaderScrollView {
+                if (!uiState.isUpdating && uiState.showDetails == nil){
+                    ErrorUiView(
+                        systemImage: "exclamationmark.triangle.fill",
+                        action: {  presenter.dispatch(action: ReloadShowDetails()) }
+                    )
                 }
-                .height(min: minHeight, max: maxHeight)
-                .collapseProgress($progress)
-                .allowsHeaderGrowth()
-                .hideScrollIndicators()
-                .shadow(radius: progress)
-
-                TopBar(
-                    progress: progress,
-                    title: state.showDetails?.title ?? "",
-                    isRefreshing: state.isUpdating || state.showInfo is ShowInfoStateLoading,
-                    onBackClicked: {
-                        presenter.dispatch(action: DetailBackClicked())
-                    },
-                    onRefreshClicked: {
-                        presenter.dispatch(action: ReloadShowDetails())
+                else {
+                    if let showDetails = uiState.showDetails {
+                        HeaderContentView(
+                            show: showDetails,
+                            progress: progress,
+                            maxHeight: maxHeight,
+                            onAddToLibraryClick: { add in
+                                presenter.dispatch(action: FollowShowClicked(addToLibrary: add))
+                            },
+                            onWatchTrailerClick: { id in
+                                presenter.dispatch(action: WatchTrailerClicked(id: id))
+                            }
+                        )
                     }
-                )
 
+                }
+            } content: {
+                switch onEnum(of: uiState.showInfo){
+                    case .loading: LoadingIndicatorView(animate: true)
+                    case .empty:  ErrorUiView(
+                        systemImage: "exclamationmark.triangle.fill",
+                        action: {  presenter.dispatch(action: ReloadShowDetails()) }
+                    )
+                    case .error :  ErrorUiView(
+                        systemImage: "exclamationmark.triangle.fill",
+                        action: {  presenter.dispatch(action: ReloadShowDetails()) }
+                    )
+                    case .loaded(let loadedState): ShowInfoView(loadedState)
+                }
             }
+            .height(min: minHeight, max: maxHeight)
+            .collapseProgress($progress)
+            .allowsHeaderGrowth()
+            .hideScrollIndicators()
+            .shadow(radius: progress)
+
+            TopBar(
+                progress: progress,
+                title: uiState.showDetails?.title ?? "",
+                isRefreshing: uiState.isUpdating || uiState.showInfo is ShowInfoStateLoading,
+                onBackClicked: {
+                    presenter.dispatch(action: DetailBackClicked())
+                },
+                onRefreshClicked: {
+                    presenter.dispatch(action: ReloadShowDetails())
+                }
+            )
         }
         .ignoresSafeArea()
         .background(Color.background)

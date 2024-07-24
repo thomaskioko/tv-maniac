@@ -13,7 +13,7 @@ struct MoreShowsView: View {
 
     private let presenter: MoreShowsPresenter
 
-    @StateFlow private var uiState: MoreShowsState?
+    @StateFlow private var uiState: MoreShowsState
     @State private var query = String()
 
     init(presenter: MoreShowsPresenter) {
@@ -26,17 +26,14 @@ struct MoreShowsView: View {
             VStack(spacing: 0) {
 
                 NavigationTopBar(
-                    topBarTitle: uiState?.categoryTitle,
+                    topBarTitle: uiState.categoryTitle,
                     onBackClicked: { presenter.dispatch(action: MoreBackClicked()) }
                 )
 
                 Spacer().frame(height: 10)
 
-                if let state = uiState{
-                    ShowsContent(state)
-                } else {
-                    EmptyView()
-                }
+                ShowsContent(uiState)
+
             }
             .edgesIgnoringSafeArea(.top)
         }
