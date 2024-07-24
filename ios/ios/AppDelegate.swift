@@ -11,26 +11,13 @@ import UIKit
 import TvManiac
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    
-    @State var themeAppTheme: AppTheme = AppTheme.systemTheme
-    
-    let applicationComponent: ApplicationComponent
-    let rootHolder: RootHolder
-    let presenterComponent: IosViewPresenterComponent
-
-    override init() {
-        rootHolder = RootHolder()
-        applicationComponent = ApplicationComponent.companion.create()
-        
-        presenterComponent = IosViewPresenterComponent.companion.create(
-            componentContext: DefaultComponentContext(
-                lifecycle: rootHolder.lifecycle,
-                stateKeeper: nil,
-                instanceKeeper: nil,
-                backHandler: nil
-            ),
-            applicationComponent: applicationComponent
-        )
-    }
-    
+    lazy var presenterComponent: IosViewPresenterComponent = IosViewPresenterComponent.companion.create(
+        componentContext: DefaultComponentContext(
+            lifecycle: ApplicationLifecycle(),
+            stateKeeper: nil,
+            instanceKeeper: nil,
+            backHandler: nil
+        ),
+        applicationComponent: ApplicationComponent.companion.create()
+    )
 }
