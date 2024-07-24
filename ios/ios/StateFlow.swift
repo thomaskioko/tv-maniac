@@ -11,14 +11,13 @@ import SwiftUI
 import TvManiac
 
 @propertyWrapper struct StateFlow<T: AnyObject>: DynamicProperty {
-    @StateObject var observable: ObservableStateFlow<T>
+    @StateObject private var observable: ObservableStateFlow<T>
 
     init(_ stateFlow: Kotlinx_coroutines_coreStateFlow) {
         _observable = StateObject(wrappedValue: ObservableStateFlow(stateFlow: stateFlow))
     }
 
     public var wrappedValue: T { observable.value }
-
     public var projectedValue: ObservableStateFlow<T> { observable }
 }
 
@@ -29,8 +28,8 @@ class ObservableStateFlow<T: AnyObject>: ObservableObject {
     init(stateFlow: Kotlinx_coroutines_coreStateFlow) {
         observer = StateFlowObserver(stateFlow: stateFlow)
         value = stateFlow.value as! T
-        observer.observe { newValue in
-            self.value = newValue!
+        observer.observe { [weak self] newValue in
+            self?.value = newValue!
         }
     }
 
