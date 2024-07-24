@@ -12,7 +12,7 @@ import TvManiac
 struct SearchView: View {
     
     private let component: SearchComponent
-
+    
     @StateFlow private var uiState: SearchState
     @State private var query = String()
     
@@ -22,18 +22,16 @@ struct SearchView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                
-            }
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.large)
-            .background(Color.background)
-            .searchable(text: $query)
-            .task(id: query) {
-                if query.isEmpty { return }
-                if Task.isCancelled { return }
-            }
+        VStack {
+            
+        }
+        .navigationTitle("Search")
+        .navigationBarTitleDisplayMode(.large)
+        .background(Color.background)
+        .searchable(text: $query)
+        .task(id: query) {
+            if query.isEmpty { return }
+            if Task.isCancelled { return }
         }
     }
 }

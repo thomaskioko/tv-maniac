@@ -30,74 +30,72 @@ struct SettingsView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            Form {
+        Form {
+            
+            Section(header: Text("App Theme").bodyMediumFont(size: 16)) {
                 
-                Section(header: Text("App Theme").bodyMediumFont(size: 16)) {
-                    
-                    Picker(
-                        selection: $theme,
-                        label: Text("Change Theme")
-                            .bodyMediumFont(size: 16),
-                        content: {
-                            ForEach(DeveiceAppTheme.allCases, id: \.self) { theme in
-                                
-                                Text(theme.getName())
-                                    .tag(theme.rawValue)
-                                
-                            }
-                        })
-                    .pickerStyle(.segmented)
-                    .padding(.vertical, 6)
-                    .onChange(of: theme) { theme in
-                        component.dispatch(action: ThemeSelected(appTheme: toTheme(appTheme: theme)))
-                    }
-                }
-                
-                Section(header: Text("Trailer Settings").bodyMediumFont(size: 16)) {
-                    Toggle(isOn: $openInYouTube) {
-                        Text("Open Trailers in Youtube App")
-                    }
-                }
-                
-                Section(header: Text("Trakt Account").bodyMediumFont(size: 16)) {
-                    
-                    SettingsItem(
-                        image: "person.fill",
-                        title: "Connect to Trakt",
-                        description: "Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch."
-                    ) {
-                        showingAlert = !(uiState.showTraktDialog)
-                    }
-                    .alert(isPresented: $showingAlert) {
-                        Alert(
-                            title: Text("Trakt Coming Soon"),
-                            message: Text("Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch."),
-                            primaryButton: .default(Text("Login")) {
-                                model.initiateAuthorization()
-                                
-                            },
-                            secondaryButton: .destructive(Text("Cancel"))
-                        )
-                    }
-                }
-                
-                Section(header: Text("Info").bodyMediumFont(size: 16)) {
-                    
-                    SettingsItem(
-                        image: "info.circle.fill",
-                        title: "About TvManiac",
-                        description: "Tv-Maniac is a Multiplatform app (Android &amp; iOS) for viewing TV Shows from TMDB."
-                    ) {
-                        openURL(URL(string: "https://github.com/c0de-wizard/tv-maniac")!)
-                    }
+                Picker(
+                    selection: $theme,
+                    label: Text("Change Theme")
+                        .bodyMediumFont(size: 16),
+                    content: {
+                        ForEach(DeveiceAppTheme.allCases, id: \.self) { theme in
+                            
+                            Text(theme.getName())
+                                .tag(theme.rawValue)
+                            
+                        }
+                    })
+                .pickerStyle(.segmented)
+                .padding(.vertical, 6)
+                .onChange(of: theme) { theme in
+                    component.dispatch(action: ThemeSelected(appTheme: toTheme(appTheme: theme)))
                 }
             }
-            .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.large)
-            .onAppear {
-                self.theme = toAppTheme(theme: uiState.appTheme)
+            
+            Section(header: Text("Trailer Settings").bodyMediumFont(size: 16)) {
+                Toggle(isOn: $openInYouTube) {
+                    Text("Open Trailers in Youtube App")
+                }
             }
+            
+            Section(header: Text("Trakt Account").bodyMediumFont(size: 16)) {
+                
+                SettingsItem(
+                    image: "person.fill",
+                    title: "Connect to Trakt",
+                    description: "Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch."
+                ) {
+                    showingAlert = !(uiState.showTraktDialog)
+                }
+                .alert(isPresented: $showingAlert) {
+                    Alert(
+                        title: Text("Trakt Coming Soon"),
+                        message: Text("Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch."),
+                        primaryButton: .default(Text("Login")) {
+                            model.initiateAuthorization()
+                            
+                        },
+                        secondaryButton: .destructive(Text("Cancel"))
+                    )
+                }
+            }
+            
+            Section(header: Text("Info").bodyMediumFont(size: 16)) {
+                
+                SettingsItem(
+                    image: "info.circle.fill",
+                    title: "About TvManiac",
+                    description: "Tv-Maniac is a Multiplatform app (Android &amp; iOS) for viewing TV Shows from TMDB."
+                ) {
+                    openURL(URL(string: "https://github.com/c0de-wizard/tv-maniac")!)
+                }
+            }
+        }
+        .navigationTitle("Settings")
+        .navigationBarTitleDisplayMode(.large)
+        .onAppear {
+            self.theme = toAppTheme(theme: uiState.appTheme)
         }
     }
     

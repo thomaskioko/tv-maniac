@@ -21,7 +21,6 @@ struct LibraryView: View {
     }
     
     var body: some View {
-        NavigationStack {
             VStack {
                 switch onEnum(of: uiState) {
                     case .loadingShows:
@@ -43,8 +42,6 @@ struct LibraryView: View {
                     }
                 }
             }
-        }
-        
     }
     
     @ViewBuilder
