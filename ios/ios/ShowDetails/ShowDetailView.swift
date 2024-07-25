@@ -26,6 +26,8 @@ struct ShowDetailView: View {
 
     var body: some View {
         ZStack {
+            Color.background.edgesIgnoringSafeArea(.all)
+
             ScalingHeaderScrollView {
                 if (!uiState.isUpdating && uiState.showDetails == nil){
                     ErrorUiView(
@@ -82,7 +84,6 @@ struct ShowDetailView: View {
             )
         }
         .ignoresSafeArea()
-        .background(Color.background)
     }
 
     @ViewBuilder

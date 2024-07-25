@@ -30,8 +30,10 @@ struct SeasonDetailsView: View {
     var body: some View {
         
         ZStack {
+            Color.background.edgesIgnoringSafeArea(.all)
+
             switch onEnum(of: uiState) {
-                case .initialSeasonsState: empty
+                case .initialSeasonsState: LoadingIndicatorView(animate: true)
                 case .seasonDetailsLoaded(let state): SeasonDetailsContent(state)
                 case .seasonDetailsErrorState: ErrorUiView(
                     systemImage: "exclamationmark.triangle.fill",
