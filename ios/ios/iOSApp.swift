@@ -11,6 +11,7 @@ struct iOSApp: App {
 
         WindowGroup {
             RootView(rootComponent: appDelegate.presenterComponent.rootComponent)
+                .environmentObject(NavigationModel())
         }
     }
 

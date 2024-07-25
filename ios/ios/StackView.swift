@@ -11,129 +11,44 @@ import UIKit
 import TvManiac
 
 struct StackView<T: AnyObject, Content: View>: View {
-    @StateFlow 
-    var stackValue: ChildStack<AnyObject, T>
+    @StateFlow var stack: ChildStack<AnyObject, T>
+    let onBack: (Int32) -> Void
+    let content: (T) -> Content
 
-    var onBack: (_ toIndex: Int32) -> Void
-
-    @ViewBuilder
-    var childContent: (T) -> Content
-
-    private var stack: [Child<AnyObject, T>] { stackValue.items }
+    @State private var dragOffset: CGFloat = 0
+    private let edgeWidth: CGFloat = 20
+    private let dragThreshold: CGFloat = 0.3
 
     var body: some View {
-        // iOS 16.0 has an issue with swipe back see https://stackoverflow.com/questions/73978107/incomplete-swipe-back-gesture-causes-navigationpath-mismanagement
-        if #available(iOS 16.1, *) {
-            NavigationStack(
-                path: Binding(
-                    get: { stack.dropFirst() },
-                    set: { updatedPath in onBack(Int32(updatedPath.count)) }
-                )
-            ) {
-                childContent(stack.first!.instance!)
-                    .navigationDestination(for: Child<AnyObject, T>.self) {
-                        childContent($0.instance!)
-                    }
+        ZStack {
+            ForEach(Array(stack.items.enumerated().reversed()), id: \.offset) { index, item in
+                content(item.instance)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .modifier(NavigationViewModifier(
+                        index: index,
+                        currentIndex: stack.items.count - 1,
+                        dragOffset: dragOffset
+                    ))
             }
-        } else {
-            StackInteropView(
-                components: stack.map { $0.instance! },
-                onBack: onBack,
-                childContent: childContent
-            )
         }
-    }
-}
-
-private struct StackInteropView<T: AnyObject, Content: View>: UIViewControllerRepresentable {
-    var components: [T]
-    var onBack: (_ toIndex: Int32) -> Void
-    var childContent: (T) -> Content
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        .gesture(makeNavigationGesture())
     }
 
-    func makeUIViewController(context: Context) -> UINavigationController {
-        context.coordinator.syncChanges(self)
-        let navigationController = UINavigationController(
-            rootViewController: context.coordinator.viewControllers.first!)
-
-        return navigationController
-    }
-
-    func updateUIViewController(_ navigationController: UINavigationController, context: Context) {
-        context.coordinator.syncChanges(self)
-        navigationController.setViewControllers(context.coordinator.viewControllers, animated: true)
-    }
-
-    private func createViewController(_ component: T, _ coordinator: Coordinator) -> NavigationItemHostingController {
-        let controller = NavigationItemHostingController(rootView: childContent(component))
-        controller.coordinator = coordinator
-        controller.component = component
-        controller.onBack = onBack
-        controller.navigationItem.backBarButtonItem?.isHidden = true
-        return controller
-    }
-
-    class Coordinator: NSObject {
-        var parent: StackInteropView<T, Content>
-        var viewControllers = [NavigationItemHostingController]()
-        var preservedComponents = [T]()
-
-        init(_ parent: StackInteropView<T, Content>) {
-            self.parent = parent
-        }
-
-        func syncChanges(_ parent: StackInteropView<T, Content>) {
-            self.parent = parent
-            let count = max(preservedComponents.count, parent.components.count)
-
-            for i in 0..<count {
-                if (i >= parent.components.count) {
-                    viewControllers.removeLast()
-                } else if (i >= preservedComponents.count) {
-                    viewControllers.append(parent.createViewController(parent.components[i], self))
-                } else if (parent.components[i] !== preservedComponents[i]) {
-                    viewControllers[i] = parent.createViewController(parent.components[i], self)
+    private func makeNavigationGesture() -> some Gesture {
+        DragGesture(minimumDistance: 10, coordinateSpace: .global)
+            .onChanged { value in
+                guard value.startLocation.x <= edgeWidth, stack.items.count > 1 else { return }
+                dragOffset = min(max(0, value.translation.width), UIScreen.main.bounds.width)
+            }
+            .onEnded { value in
+                guard value.startLocation.x <= edgeWidth, stack.items.count > 1 else { return }
+                let shouldPop = value.translation.width > UIScreen.main.bounds.width * dragThreshold
+                withAnimation(.spring()) {
+                    if shouldPop {
+                        onBack(Int32(stack.items.count - 2))
+                    }
+                    dragOffset = 0
                 }
             }
-
-            preservedComponents = parent.components
-        }
-    }
-
-    class NavigationItemHostingController: UIHostingController<Content> {
-        fileprivate(set) weak var coordinator: Coordinator?
-        fileprivate(set) var component: T?
-        fileprivate(set) var onBack: ((_ toIndex: Int32) -> Void)?
-
-        override func viewDidAppear(_ animated: Bool) {
-            super.viewDidAppear(animated)
-
-            guard let components = coordinator?.preservedComponents else { return }
-            guard let index = components.firstIndex(where: { $0 === component }) else { return }
-
-            if (index < components.count - 1) {
-                onBack?(Int32(index))
-            }
-        }
     }
 }
-
-// stubs for XCode < 14:
-#if compiler(<5.7)
-private struct NavigationStack<Path, Root>: View {
-    var path: Path
-    @ViewBuilder var root: () -> Root
-    var body: some View {
-        EmptyView()
-    }
-}
-
-private extension View {
-    public func navigationDestination<D, C>(for data: D.Type, @ViewBuilder destination: @escaping (D) -> C) -> some View where D: Hashable, C: View {
-        EmptyView()
-    }
-}
-#endif
