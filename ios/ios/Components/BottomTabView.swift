@@ -20,12 +20,13 @@ struct BottomTabView: View {
                 Image(systemName: systemImage)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 26, height: 26)
+                    .frame(width: 24, height: 24)
+                
                 Text(title)
-                    .bodyMediumFont(size: 14)
+                    .font(.system(size: 10, weight: .medium))
             }
-            .foregroundColor(isActive ? .blue : .text_color_bg)
-            .opacity(isActive ? 1 : 0.5)
+            .foregroundColor(isActive ? Color.iosBlue : .text_color_bg)
+            .frame(maxWidth: .infinity)
         }
         .buttonStyle(PlainButtonStyle())
     }

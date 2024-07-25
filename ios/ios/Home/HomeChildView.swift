@@ -10,64 +10,53 @@ import SwiftUI
 import TvManiac
 
 struct HomeChildView: View {
-    let screen: HomeComponentChild?
+    let screen: HomeComponentChild
     let bottomTabActions: [BottomTabAction]
-
+    
     var body: some View {
-        VStack {
-            switch onEnum(of: screen) {
-                case .discover(let screen):
-                    DiscoverView(component: screen.component)
-                case .search(let screen):
-                    SearchView(component: screen.component)
-                case .library(let screen):
-                    LibraryView(component: screen.component)
-                case .settings(let screen):
-                    SettingsView(component: screen.component)
-                default:
-                    fatalError("Unhandled Screen: \(String(describing: screen))")
+        GeometryReader { geometry in
+            ZStack(alignment: .bottom) {
+                
+                VStack {
+                    switch onEnum(of: screen) {
+                        case .discover(let screen):
+                            DiscoverView(component: screen.component)
+                        case .search(let screen):
+                            SearchView(component: screen.component)
+                        case .library(let screen):
+                            LibraryView(component: screen.component)
+                        case .settings(let screen):
+                            SettingsView(component: screen.component)
+                    }
+                }
+                .bottomTabSafeArea()
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                
+                // Bottom Navigation
+                BottomNavigation(
+                    screen: screen,
+                    actions: bottomTabActions
+                )
             }
-
-            Spacer()
-
-            BottomNavigation(
-                screen: screen!,
-                actions: bottomTabActions
-            )
-            .background(.ultraThinMaterial)
-            .transition(.asymmetric(insertion: .slide, removal: .scale))
         }
         .background(Color.background)
-
+        .edgesIgnoringSafeArea(.bottom)
     }
 }
 
-struct BottomTabAction: Identifiable {
-    let id = UUID()
-    let title: String
-    let systemImage: String
-    let isActive: (HomeComponentChild) -> Bool
-    let action: () -> Void
+struct BottomTabSafeArea: ViewModifier {
+    let height: CGFloat
+    
+    func body(content: Content) -> some View {
+        content.safeAreaInset(edge: .bottom) {
+            Color.clear.frame(height: height)
+        }
+    }
 }
 
-struct BottomNavigation: View {
-    let screen: HomeComponentChild
-    let actions: [BottomTabAction]
-
-    var body: some View {
-        HStack(spacing: 16) {
-            Spacer()
-            ForEach(actions) { action in
-                BottomTabView(
-                    title: action.title,
-                    systemImage: action.systemImage,
-                    isActive: action.isActive(screen),
-                    action: action.action
-                )
-                Spacer()
-            }
-        }
-        .frame(height: 64)
+extension View {
+    func bottomTabSafeArea(height: CGFloat = 74) -> some View {
+        self.modifier(BottomTabSafeArea(height: height))
     }
 }
 

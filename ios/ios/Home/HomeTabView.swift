@@ -34,7 +34,7 @@ struct HomeTabView: View {
         return [
             BottomTabAction(
                 title: "Discover",
-                systemImage: "film",
+                systemImage: "tv",
                 isActive: { $0 is HomeComponentChildDiscover },
                 action: { component.onDiscoverClicked() }
             ),

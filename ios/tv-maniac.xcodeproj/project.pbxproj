@@ -70,6 +70,9 @@
 		D6F6351D2C4FEEF100D921A6 /* HomeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F6351C2C4FEEF100D921A6 /* HomeTabView.swift */; };
 		D6F635262C526B0600D921A6 /* NavigationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F635252C526B0600D921A6 /* NavigationViewModifier.swift */; };
 		D6F635282C52A5B800D921A6 /* NavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F635272C52A5B800D921A6 /* NavigationModel.swift */; };
+		D6F6352A2C52BA2400D921A6 /* TransparentBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F635292C52BA2400D921A6 /* TransparentBlurView.swift */; };
+		D6F6352C2C52C0FB00D921A6 /* BottomNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F6352B2C52C0FB00D921A6 /* BottomNavigation.swift */; };
+		D6F6352E2C52C24A00D921A6 /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F6352D2C52C24A00D921A6 /* SplashScreenView.swift */; };
 		E90392C129197BDF00B9CAF0 /* FullScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90392C029197BDF00B9CAF0 /* FullScreenView.swift */; };
 		E983816D2793697B0039CB08 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98381692793697B0039CB08 /* ColorExtension.swift */; };
 		E983818E27936BB10039CB08 /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983818327936BAF0039CB08 /* LoadingIndicatorView.swift */; };
@@ -171,6 +174,9 @@
 		D6F6351C2C4FEEF100D921A6 /* HomeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTabView.swift; sourceTree = "<group>"; };
 		D6F635252C526B0600D921A6 /* NavigationViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewModifier.swift; sourceTree = "<group>"; };
 		D6F635272C52A5B800D921A6 /* NavigationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationModel.swift; sourceTree = "<group>"; };
+		D6F635292C52BA2400D921A6 /* TransparentBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransparentBlurView.swift; sourceTree = "<group>"; };
+		D6F6352B2C52C0FB00D921A6 /* BottomNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomNavigation.swift; sourceTree = "<group>"; };
+		D6F6352D2C52C24A00D921A6 /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
 		E90392C029197BDF00B9CAF0 /* FullScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenView.swift; sourceTree = "<group>"; };
 		E98381692793697B0039CB08 /* ColorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		E983818327936BAF0039CB08 /* LoadingIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingIndicatorView.swift; sourceTree = "<group>"; };
@@ -362,6 +368,7 @@
 			isa = PBXGroup;
 			children = (
 				D67761882B1CED9E00537DD5 /* RootView.swift */,
+				D6F6352D2C52C24A00D921A6 /* SplashScreenView.swift */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -457,6 +464,7 @@
 			children = (
 				D6F6351C2C4FEEF100D921A6 /* HomeTabView.swift */,
 				D6F635192C4EA6FB00D921A6 /* HomeChildView.swift */,
+				D6F6352B2C52C0FB00D921A6 /* BottomNavigation.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -565,6 +573,7 @@
 				D62F1BC72B344941004650E3 /* TransparentImageBackground.swift */,
 				D61A20742C3FFAA70045523B /* Effects */,
 				D64279522A607F7600E65755 /* Toast */,
+				D6F635292C52BA2400D921A6 /* TransparentBlurView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -720,8 +729,10 @@
 				D614675C2B3474920071647C /* CollapsibleView.swift in Sources */,
 				D65569E32B31C78D005F9F37 /* FeaturedContentPosterView.swift in Sources */,
 				E983819227936BB10039CB08 /* BorderedButton.swift in Sources */,
+				D6F6352A2C52BA2400D921A6 /* TransparentBlurView.swift in Sources */,
 				E90392C129197BDF00B9CAF0 /* FullScreenView.swift in Sources */,
 				D61A20762C3FFAC90045523B /* ButtonElevationEffect.swift in Sources */,
+				D6F6352C2C52C0FB00D921A6 /* BottomNavigation.swift in Sources */,
 				D61A20782C4340250045523B /* CircularButton.swift in Sources */,
 				D636CE4A2B447C9C003F7876 /* TitleMoreView.swift in Sources */,
 				E989E1182940EAB300C01A39 /* ThemeUtilities.swift in Sources */,
@@ -731,6 +742,7 @@
 				D67761892B1CED9E00537DD5 /* RootView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				D65569E62B31DF3D005F9F37 /* HeaderCoverArtWorkView.swift in Sources */,
+				D6F6352E2C52C24A00D921A6 /* SplashScreenView.swift in Sources */,
 				D61467622B3493B60071647C /* EpisodeItemView.swift in Sources */,
 				D67761852B1CE6AE00537DD5 /* AppDelegate.swift in Sources */,
 				D64279562A6080A900E65755 /* ToastStyle.swift in Sources */,
