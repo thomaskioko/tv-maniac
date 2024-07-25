@@ -9,10 +9,10 @@
 import SwiftUI
 import TvManiac
 
-struct ChildView: View {
+struct HomeChildView: View {
     let screen: HomeComponentChild?
     let bottomTabActions: [BottomTabAction]
-    
+
     var body: some View {
         VStack {
             switch onEnum(of: screen) {
@@ -27,9 +27,9 @@ struct ChildView: View {
                 default:
                     fatalError("Unhandled Screen: \(String(describing: screen))")
             }
-            
+
             Spacer()
-            
+
             BottomNavigation(
                 screen: screen!,
                 actions: bottomTabActions
@@ -38,7 +38,7 @@ struct ChildView: View {
             .transition(.asymmetric(insertion: .slide, removal: .scale))
         }
         .background(Color.background)
-        
+
     }
 }
 
@@ -53,7 +53,7 @@ struct BottomTabAction: Identifiable {
 struct BottomNavigation: View {
     let screen: HomeComponentChild
     let actions: [BottomTabAction]
-    
+
     var body: some View {
         HStack(spacing: 16) {
             Spacer()

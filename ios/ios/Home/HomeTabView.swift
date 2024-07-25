@@ -22,7 +22,7 @@ struct HomeTabView: View {
     
     var body: some View {
         VStack{
-            ChildView(
+            HomeChildView(
                 screen: activeChild,
                 bottomTabActions: bottomTabActions()
             )
