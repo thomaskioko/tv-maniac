@@ -14,11 +14,11 @@ struct StackView<T: AnyObject, Content: View>: View {
     @StateFlow var stack: ChildStack<AnyObject, T>
     let onBack: (Int32) -> Void
     let content: (T) -> Content
-
+    
     @State private var dragOffset: CGFloat = 0
     private let edgeWidth: CGFloat = 20
     private let dragThreshold: CGFloat = 0.3
-
+    
     var body: some View {
         ZStack {
             ForEach(Array(stack.items.enumerated().reversed()), id: \.offset) { index, item in
@@ -33,7 +33,7 @@ struct StackView<T: AnyObject, Content: View>: View {
         }
         .gesture(makeNavigationGesture())
     }
-
+    
     private func makeNavigationGesture() -> some Gesture {
         DragGesture(minimumDistance: 10, coordinateSpace: .global)
             .onChanged { value in
@@ -43,12 +43,10 @@ struct StackView<T: AnyObject, Content: View>: View {
             .onEnded { value in
                 guard value.startLocation.x <= edgeWidth, stack.items.count > 1 else { return }
                 let shouldPop = value.translation.width > UIScreen.main.bounds.width * dragThreshold
-                withAnimation(.spring()) {
-                    if shouldPop {
-                        onBack(Int32(stack.items.count - 2))
-                    }
-                    dragOffset = 0
+                if shouldPop {
+                    onBack(Int32(stack.items.count - 2))
                 }
+                dragOffset = 0
             }
     }
 }
