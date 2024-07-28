@@ -11,10 +11,10 @@ import SwiftUI
 struct SplashScreenView: View {
     var body: some View {
         ZStack {
-            Color.background // You can change this to your app's primary color
+            Color.background
 
             VStack {
-                Image("TvManiacIcon") // Replace "AppIcon" with the name of your icon in assets
+                Image("TvManiacIcon")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 180, height: 180)
