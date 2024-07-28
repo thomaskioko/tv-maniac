@@ -11,9 +11,9 @@ import SDWebImageSwiftUI
 import TvManiac
 
 struct HeaderCoverArtWorkView: View {
-    var backdropImageUrl : String?
+    var backdropImageUrl: String?
     var posterHeight: CGFloat
-    
+
     var body: some View {
         if let imageUrl = backdropImageUrl {
             WebImage(url: URL(string: imageUrl), options: .highPriority)
@@ -24,14 +24,13 @@ struct HeaderCoverArtWorkView: View {
                 .aspectRatio(contentMode: .fill)
                 .transition(.opacity)
                 .frame(width: DimensionConstants.posterWidth, height: posterHeight)
-            
         } else {
             headerPosterPlaceholder
         }
     }
-    
+
     @ViewBuilder
-    private var headerPosterPlaceholder : some View {
+    private var headerPosterPlaceholder: some View {
         ZStack {
             Rectangle().fill(.gray.gradient)
             VStack {

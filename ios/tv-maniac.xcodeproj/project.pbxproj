@@ -32,6 +32,8 @@
 		D64279582A6080D400E65755 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64279572A6080D400E65755 /* Toast.swift */; };
 		D642795A2A6080F400E65755 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64279592A6080F400E65755 /* ToastView.swift */; };
 		D642795C2A60814000E65755 /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D642795B2A60814000E65755 /* ToastModifier.swift */; };
+		D64E039F2C556C5200A6A2E4 /* ParallaxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64E039E2C556C5200A6A2E4 /* ParallaxView.swift */; };
+		D64E03A12C5577AE00A6A2E4 /* Geometry_Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64E03A02C5577AE00A6A2E4 /* Geometry_Extensions.swift */; };
 		D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D653924729D8B6A6000EE673 /* OAuthSwift */; };
 		D653924D29D8B70E000EE673 /* TraktManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653924C29D8B70E000EE673 /* TraktManagerError.swift */; };
 		D653924F29D8BC7E000EE673 /* TraktAuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653924E29D8BC7E000EE673 /* TraktAuthViewModel.swift */; };
@@ -58,13 +60,13 @@
 		D6BA80F12BBEFA0F007CDA3A /* SeasonsRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BA80F02BBEFA0F007CDA3A /* SeasonsRowView.swift */; };
 		D6C263322B323CEC00179CDF /* ProvidersList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C263312B323CEC00179CDF /* ProvidersList.swift */; };
 		D6CB358A2B46D96A002FBEF8 /* View+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CB35892B46D96A002FBEF8 /* View+Extensions.swift */; };
-		D6CF9E312B31FFBF00A1AD00 /* ScalingHeaderScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = D6CF9E302B31FFBF00A1AD00 /* ScalingHeaderScrollView */; };
 		D6CF9E332B32021300A1AD00 /* CircleButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CF9E322B32021300A1AD00 /* CircleButtonStyle.swift */; };
 		D6CF9E352B32024000A1AD00 /* Color+hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CF9E342B32024000A1AD00 /* Color+hex.swift */; };
 		D6D722062C3ADB08008454F2 /* NavigationTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D722052C3ADB08008454F2 /* NavigationTopBar.swift */; };
 		D6D722082C3D6289008454F2 /* EpisodeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D722072C3D6289008454F2 /* EpisodeListView.swift */; };
 		D6D7220A2C3EB8AC008454F2 /* ErrorUiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D722092C3EB8AC008454F2 /* ErrorUiView.swift */; };
 		D6DC9DA42B34B27300768065 /* ImageGalleryContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DC9DA32B34B27300768065 /* ImageGalleryContentView.swift */; };
+		D6EE13F22C54743A00E80653 /* ShowInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6EE13F12C54743A00E80653 /* ShowInfoView.swift */; };
 		D6F635162C4E88F300D921A6 /* StackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F635152C4E88F300D921A6 /* StackView.swift */; };
 		D6F6351A2C4EA6FB00D921A6 /* HomeChildView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F635192C4EA6FB00D921A6 /* HomeChildView.swift */; };
 		D6F6351D2C4FEEF100D921A6 /* HomeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F6351C2C4FEEF100D921A6 /* HomeTabView.swift */; };
@@ -139,6 +141,8 @@
 		D64279572A6080D400E65755 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		D64279592A6080F400E65755 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		D642795B2A60814000E65755 /* ToastModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModifier.swift; sourceTree = "<group>"; };
+		D64E039E2C556C5200A6A2E4 /* ParallaxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParallaxView.swift; sourceTree = "<group>"; };
+		D64E03A02C5577AE00A6A2E4 /* Geometry_Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geometry_Extensions.swift; sourceTree = "<group>"; };
 		D653924C29D8B70E000EE673 /* TraktManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktManagerError.swift; sourceTree = "<group>"; };
 		D653924E29D8BC7E000EE673 /* TraktAuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktAuthViewModel.swift; sourceTree = "<group>"; };
 		D653925229DABCEA000EE673 /* ConfigLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigLoader.swift; sourceTree = "<group>"; };
@@ -169,6 +173,7 @@
 		D6D722072C3D6289008454F2 /* EpisodeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeListView.swift; sourceTree = "<group>"; };
 		D6D722092C3EB8AC008454F2 /* ErrorUiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorUiView.swift; sourceTree = "<group>"; };
 		D6DC9DA32B34B27300768065 /* ImageGalleryContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGalleryContentView.swift; sourceTree = "<group>"; };
+		D6EE13F12C54743A00E80653 /* ShowInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowInfoView.swift; sourceTree = "<group>"; };
 		D6F635152C4E88F300D921A6 /* StackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackView.swift; sourceTree = "<group>"; };
 		D6F635192C4EA6FB00D921A6 /* HomeChildView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeChildView.swift; sourceTree = "<group>"; };
 		D6F6351C2C4FEEF100D921A6 /* HomeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTabView.swift; sourceTree = "<group>"; };
@@ -211,7 +216,6 @@
 				D65569DD2B31B54A005F9F37 /* SDWebImageSwiftUI in Frameworks */,
 				D61A65592B32EE5000112590 /* YouTubePlayerKit in Frameworks */,
 				D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */,
-				D6CF9E312B31FFBF00A1AD00 /* ScalingHeaderScrollView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -487,6 +491,7 @@
 				D6CF9E342B32024000A1AD00 /* Color+hex.swift */,
 				D614675D2B3475F90071647C /* HorizontalAlignment.swift */,
 				D6CB35892B46D96A002FBEF8 /* View+Extensions.swift */,
+				D64E03A02C5577AE00A6A2E4 /* Geometry_Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -514,6 +519,7 @@
 				D65569E42B31DF14005F9F37 /* Components */,
 				E983819E27936DC90039CB08 /* ShowDetailView.swift */,
 				D65569E92B31EA32005F9F37 /* HeaderContentView.swift */,
+				D6EE13F12C54743A00E80653 /* ShowInfoView.swift */,
 			);
 			path = ShowDetails;
 			sourceTree = "<group>";
@@ -566,14 +572,15 @@
 				D65569E52B31DF3C005F9F37 /* HeaderCoverArtWorkView.swift */,
 				E983818327936BAF0039CB08 /* LoadingIndicatorView.swift */,
 				D6D722052C3ADB08008454F2 /* NavigationTopBar.swift */,
+				D64E039E2C556C5200A6A2E4 /* ParallaxView.swift */,
 				D65569DA2B31B481005F9F37 /* PosterItemView.swift */,
 				D65569DE2B31B6C1005F9F37 /* PosterPlaceholder.swift */,
 				D65569E02B31C228005F9F37 /* TitleView.swift */,
 				D62F1BCC2B34697F004650E3 /* TopBar.swift */,
+				D6F635292C52BA2400D921A6 /* TransparentBlurView.swift */,
 				D62F1BC72B344941004650E3 /* TransparentImageBackground.swift */,
 				D61A20742C3FFAA70045523B /* Effects */,
 				D64279522A607F7600E65755 /* Toast */,
-				D6F635292C52BA2400D921A6 /* TransparentBlurView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -599,7 +606,6 @@
 			packageProductDependencies = (
 				D653924729D8B6A6000EE673 /* OAuthSwift */,
 				D65569DC2B31B54A005F9F37 /* SDWebImageSwiftUI */,
-				D6CF9E302B31FFBF00A1AD00 /* ScalingHeaderScrollView */,
 				D61A65582B32EE5000112590 /* YouTubePlayerKit */,
 			);
 			productName = ios;
@@ -634,7 +640,6 @@
 				E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */,
 				D68666B12B1E7F2E00D6D334 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
-				D6CF9E2F2B31FFBF00A1AD00 /* XCRemoteSwiftPackageReference "ScalingHeaderScrollView" */,
 				D61A65572B32EE5000112590 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
@@ -731,15 +736,18 @@
 				E983819227936BB10039CB08 /* BorderedButton.swift in Sources */,
 				D6F6352A2C52BA2400D921A6 /* TransparentBlurView.swift in Sources */,
 				E90392C129197BDF00B9CAF0 /* FullScreenView.swift in Sources */,
+				D64E039F2C556C5200A6A2E4 /* ParallaxView.swift in Sources */,
 				D61A20762C3FFAC90045523B /* ButtonElevationEffect.swift in Sources */,
 				D6F6352C2C52C0FB00D921A6 /* BottomNavigation.swift in Sources */,
 				D61A20782C4340250045523B /* CircularButton.swift in Sources */,
 				D636CE4A2B447C9C003F7876 /* TitleMoreView.swift in Sources */,
 				E989E1182940EAB300C01A39 /* ThemeUtilities.swift in Sources */,
+				D6EE13F22C54743A00E80653 /* ShowInfoView.swift in Sources */,
 				D64279582A6080D400E65755 /* Toast.swift in Sources */,
 				D65569D92B31B453005F9F37 /* HorizontalItemContentListView.swift in Sources */,
 				D65569DB2B31B481005F9F37 /* PosterItemView.swift in Sources */,
 				D67761892B1CED9E00537DD5 /* RootView.swift in Sources */,
+				D64E03A12C5577AE00A6A2E4 /* Geometry_Extensions.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				D65569E62B31DF3D005F9F37 /* HeaderCoverArtWorkView.swift in Sources */,
 				D6F6352E2C52C24A00D921A6 /* SplashScreenView.swift in Sources */,
@@ -1025,14 +1033,6 @@
 				minimumVersion = 2.2.5;
 			};
 		};
-		D6CF9E2F2B31FFBF00A1AD00 /* XCRemoteSwiftPackageReference "ScalingHeaderScrollView" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/exyte/ScalingHeaderScrollView.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.0;
-			};
-		};
 		E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -1058,11 +1058,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D68666B12B1E7F2E00D6D334 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
-		};
-		D6CF9E302B31FFBF00A1AD00 /* ScalingHeaderScrollView */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D6CF9E2F2B31FFBF00A1AD00 /* XCRemoteSwiftPackageReference "ScalingHeaderScrollView" */;
-			productName = ScalingHeaderScrollView;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
