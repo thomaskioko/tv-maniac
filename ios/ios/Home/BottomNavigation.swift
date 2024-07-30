@@ -29,8 +29,8 @@ struct BottomNavigation: View {
                 }
             }
             .frame(height: 54)
-            .padding(.bottom, 24)
-            .padding(.top, 0)
+            .padding(.bottom, 28)
+            .padding(.top, 2)
         }
         .background(TransparentBlurView(style: .systemThinMaterial))
         .edgesIgnoringSafeArea(.bottom)
