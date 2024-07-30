@@ -52,12 +52,20 @@ struct ParallaxView<Header: View, Content: View>: View {
             Color.background
 
             ScrollView(showsIndicators: false) {
-                content($titleRect)
-                    .offset(y: imageHeight)
-                    .background(GeometryGetter(rect: $contentFrame.frame))
+                VStack(spacing: 0) {
+                    GeometryReader { proxy in
+                        self.header(proxy)
+                            .frame(width: proxy.size.width, height: proxy.getHeightForHeaderImage(proxy))
+                            .background(GeometryGetter(rect: self.$headerImageRect))
+                            .offset(y: self.getOffsetForHeaderImage(proxy))
+                    }
+                    .frame(height: imageHeight)
 
-                HeaderView()
+                    content($titleRect)
+                        .background(GeometryGetter(rect: $contentFrame.frame))
+                }
             }
+            .background(GeometryGetter(rect: $headerImageRect))
 
             TopBar(
                 progress: getTitleOpacity(),
@@ -76,8 +84,8 @@ struct ParallaxView<Header: View, Content: View>: View {
         GeometryReader { proxy in
             ZStack(alignment: .bottom) {
                 self.header(proxy)
-                    .frame(width: proxy.size.width, height: getHeightForHeaderImage(proxy))
-                    .blur(radius: getBlurRadiusForImage(proxy))
+                    .frame(width: proxy.size.width, height: proxy.getHeightForHeaderImage(proxy))
+                    .blur(radius: proxy.getBlurRadiusForImage(proxy))
                     .clipped()
                     .background(GeometryGetter(rect: $headerImageRect))
 
@@ -110,29 +118,6 @@ struct ParallaxView<Header: View, Content: View>: View {
     }
 
 
-    func getScrollOffset(_ geometry: GeometryProxy) -> CGFloat {
-        geometry.frame(in: .global).minY
-    }
-
-    func getHeightForHeaderImage(_ geometry: GeometryProxy) -> CGFloat {
-        let offset = getScrollOffset(geometry)
-        let imageHeight = geometry.size.height
-
-        if offset > 0 {
-            return imageHeight + offset
-        }
-
-        return imageHeight
-    }
-
-
-    func getBlurRadiusForImage(_ geometry: GeometryProxy) -> CGFloat {
-        let offset = geometry.frame(in: .global).maxY
-        let height = geometry.size.height
-        let blur = (height - max(offset, 0)) / height
-        return blur * 6
-    }
-
     private func getHeaderTitleOffset() -> CGFloat {
         let currentYPos = titleRect.midY
 
@@ -151,7 +136,7 @@ struct ParallaxView<Header: View, Content: View>: View {
     }
 
     func getOffsetForHeaderImage(_ geometry: GeometryProxy) -> CGFloat {
-        let offset = getScrollOffset(geometry)
+        let offset = geometry.getScrollOffset(geometry)
         let sizeOffScreen = imageHeight - collapsedImageHeight
 
         if offset < -sizeOffScreen {
@@ -193,9 +178,10 @@ struct GeometryGetter: View {
 
     var body: some View {
         GeometryReader { geometry in
-            AnyView(Color.clear)
+            Color.clear
                 .preference(key: RectanglePreferenceKey.self, value: geometry.frame(in: .global))
-        }.onPreferenceChange(RectanglePreferenceKey.self) { (value) in
+        }
+        .onPreferenceChange(RectanglePreferenceKey.self) { value in
             self.rect = value
         }
     }
@@ -206,5 +192,13 @@ struct RectanglePreferenceKey: PreferenceKey {
 
     static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
         value = nextValue()
+    }
+}
+
+struct ScrollOffsetKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value += nextValue()
     }
 }

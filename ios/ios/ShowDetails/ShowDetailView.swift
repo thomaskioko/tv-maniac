@@ -33,13 +33,14 @@ struct ShowDetailView: View {
                 imageHeight: DimensionConstants.imageHeight,
                 collapsedImageHeight: DimensionConstants.collapsedImageHeight,
                 header: { proxy in
-                    let progress = proxy.titleOpacity(scrollOffset: proxy.frame(in: .global).minY, imageHeight: DimensionConstants.imageHeight, collapsedImageHeight: DimensionConstants.collapsedImageHeight)
-                    let headerHeight = proxy.headerHeight(scrollOffset: proxy.frame(in: .global).minY)
-                    
                     HeaderContentView(
                         show: showDetails,
-                        progress: progress,
-                        headerHeight: headerHeight
+                        progress: proxy.getTitleOpacity(
+                            geometry: proxy,
+                            imageHeight: DimensionConstants.imageHeight,
+                            collapsedImageHeight: DimensionConstants.collapsedImageHeight
+                        ),
+                        headerHeight: proxy.getHeightForHeaderImage(proxy)
                     )
                 },
                 content: { titleRect in

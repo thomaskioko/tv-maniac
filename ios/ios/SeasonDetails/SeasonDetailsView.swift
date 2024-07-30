@@ -59,10 +59,15 @@ struct SeasonDetailsView: View {
             imageHeight: DimensionConstants.imageHeight,
             collapsedImageHeight: DimensionConstants.collapsedImageHeight,
             header: { proxy in
-                let progress = proxy.titleOpacity(scrollOffset: proxy.frame(in: .global).minY, imageHeight: DimensionConstants.imageHeight, collapsedImageHeight: DimensionConstants.collapsedImageHeight)
-                let headerHeight = proxy.headerHeight(scrollOffset: proxy.frame(in: .global).minY)
-                
-                HeaderContent(state, progress: progress, headerHeight: headerHeight)
+                HeaderContent(
+                    state: state,
+                    progress: proxy.getTitleOpacity(
+                        geometry: proxy,
+                        imageHeight: DimensionConstants.imageHeight,
+                        collapsedImageHeight: DimensionConstants.collapsedImageHeight
+                    ),
+                    headerHeight: proxy.getHeightForHeaderImage(proxy)
+                )
             },
             content: { titleRect in
                 SeasonOverview(state, titleRect: $titleRect)
@@ -87,12 +92,12 @@ struct SeasonDetailsView: View {
         .onAppear { showModal = state.showSeasonWatchStateDialog }
         
     }
-    
+
     @ViewBuilder
-    private func HeaderContent(_ content: SeasonDetailsLoaded, progress: CGFloat, headerHeight: CGFloat) -> some View {
+    private func HeaderContent(state: SeasonDetailsLoaded, progress: CGFloat, headerHeight: CGFloat) -> some View {
         ZStack(alignment: .bottom) {
             HeaderCoverArtWorkView(
-                backdropImageUrl: content.imageUrl,
+                backdropImageUrl: state.imageUrl,
                 posterHeight: headerHeight
             )
             .foregroundStyle(.ultraThinMaterial)
@@ -126,7 +131,7 @@ struct SeasonDetailsView: View {
                             .alignmentGuide(.view) { d in d[HorizontalAlignment.leading] }
                         
                         
-                        Text("^[\(content.seasonImages.count) Image](inflect: true)")
+                        Text("^[\(state.seasonImages.count) Image](inflect: true)")
                             .bodyMediumFont(size: 16)
                             .foregroundColor(.text_color_bg)
                             .lineLimit(1)
@@ -145,7 +150,7 @@ struct SeasonDetailsView: View {
                 .opacity(1 - progress)
             }
             
-            ProgressView(value: content.watchProgress, total: 1)
+            ProgressView(value: state.watchProgress, total: 1)
                 .progressViewStyle(RoundedRectProgressViewStyle())
             
         }
