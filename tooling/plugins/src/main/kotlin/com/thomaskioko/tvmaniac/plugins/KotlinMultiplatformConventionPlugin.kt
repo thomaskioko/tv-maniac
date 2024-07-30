@@ -108,7 +108,7 @@ private fun Project.addKspDependencyForAllTargets(
       }
       .forEach { target ->
         add(
-          "ksp${target.targetName.capitalized()}$configurationNameSuffix",
+          "ksp${target.name.replaceFirstChar(Char::uppercaseChar)}$configurationNameSuffix",
           dependencyNotation,
         )
       }

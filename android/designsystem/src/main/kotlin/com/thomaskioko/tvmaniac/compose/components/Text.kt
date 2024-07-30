@@ -1,13 +1,10 @@
 package com.thomaskioko.tvmaniac.compose.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -64,7 +61,6 @@ fun TextLoadingItem(
   title: String,
   modifier: Modifier = Modifier,
   subTitle: String? = null,
-  isLoading: Boolean = false,
   content: @Composable () -> Unit,
 ) {
   Box(
@@ -94,16 +90,6 @@ fun TextLoadingItem(
             ),
         )
       }
-    }
-
-    AnimatedVisibility(
-      visible = isLoading,
-      modifier = Modifier.align(Alignment.CenterEnd),
-    ) {
-      CircularProgressIndicator(
-        modifier = Modifier.size(32.dp),
-        color = MaterialTheme.colorScheme.secondary,
-      )
     }
   }
 
@@ -181,7 +167,6 @@ private fun TextLoadingItemPreview() {
     Surface {
       TextLoadingItem(
         title = "Seasons",
-        isLoading = true,
         content = {},
       )
     }

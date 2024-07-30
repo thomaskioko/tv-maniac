@@ -11,30 +11,27 @@ import TvManiac
 
 struct SearchView: View {
     
-    private let presenter: SearchPresenter
-
-    @ObservedObject
-    private var uiState: StateFlow<SearchState>
+    private let component: SearchComponent
+    
+    @StateFlow private var uiState: SearchState
     @State private var query = String()
     
-    init(presenter: SearchPresenter){
-        self.presenter = presenter
-        self.uiState = StateFlow<SearchState>(presenter.state)
+    init(component: SearchComponent){
+        self.component = component
+        _uiState = StateFlow(component.state)
     }
     
     var body: some View {
-        NavigationStack {
-            VStack {
-               
-            }
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.large)
-            .background(Color.background)
-            .searchable(text: $query)
-            .task(id: query) {
-                if query.isEmpty { return }
-                if Task.isCancelled { return }
-            }
+        VStack {
+            
+        }
+        .navigationTitle("Search")
+        .navigationBarTitleDisplayMode(.large)
+        .background(Color.background)
+        .searchable(text: $query)
+        .task(id: query) {
+            if query.isEmpty { return }
+            if Task.isCancelled { return }
         }
     }
 }

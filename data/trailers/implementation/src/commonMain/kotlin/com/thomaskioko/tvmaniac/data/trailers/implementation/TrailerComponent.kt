@@ -9,5 +9,5 @@ interface TrailerComponent {
 
   @ApplicationScope
   @Provides
-  fun provideTrailerRepository(bind: TrailerRepositoryImpl): TrailerRepository = bind
+  fun provideTrailerRepository(bind: DefaultTrailerRepository): TrailerRepository = bind
 }

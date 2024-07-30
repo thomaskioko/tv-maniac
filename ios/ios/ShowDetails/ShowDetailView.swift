@@ -8,85 +8,61 @@
 
 import SwiftUI
 import TvManiac
-import ScalingHeaderScrollView
 
 struct ShowDetailView: View {
-
-    private let maxHeight : CGFloat = 520
-    private let minHeight = 120.0
-    private let presenter: ShowDetailsPresenter
-
-    @ObservedObject
-    private var uiState: StateFlow<ShowDetailsState>
-    @State
-    var progress: CGFloat = 0
-
-    init(presenter: ShowDetailsPresenter){
-        self.presenter = presenter
-        self.uiState = StateFlow<ShowDetailsState>(presenter.state)
+    private let component: ShowDetailsComponent
+    
+    @StateFlow private var uiState: ShowDetailsContent
+    @State private var scrollOffset: CGFloat = 0
+    
+    init(component: ShowDetailsComponent) {
+        self.component = component
+        _uiState = StateFlow(component.state)
     }
-
+    
     var body: some View {
-        ZStack {
-            if let state = uiState.value {
-                ScalingHeaderScrollView {
+        if !uiState.isUpdating && uiState.showDetails == nil {
+            ErrorUiView(
+                systemImage: "exclamationmark.triangle.fill",
+                action: { component.dispatch(action: ReloadShowDetails()) }
+            )
+        } else if let showDetails = uiState.showDetails {
+            ParallaxView(
+                title: showDetails.title,
+                isRefreshing: uiState.isUpdating || uiState.showInfo is ShowInfoStateLoading,
+                imageHeight: DimensionConstants.imageHeight,
+                collapsedImageHeight: DimensionConstants.collapsedImageHeight,
+                header: { proxy in
                     HeaderContentView(
-                        show: state.showDetails,
-                        progress: progress,
-                        maxHeight: maxHeight,
-                        onAddToLibraryClick: { add in
-                            presenter.dispatch(action: FollowShowClicked(addToLibrary: add))
-                        },
-                        onWatchTrailerClick: { id in
-                            presenter.dispatch(action: WatchTrailerClicked(id: id))
-                        }
+                        show: showDetails,
+                        progress: proxy.getTitleOpacity(
+                            geometry: proxy,
+                            imageHeight: DimensionConstants.imageHeight,
+                            collapsedImageHeight: DimensionConstants.collapsedImageHeight
+                        ),
+                        headerHeight: proxy.getHeightForHeaderImage(proxy)
                     )
-
-                } content: {
-                    SeasonsRowView(
-                        seasonsList: state.seasonsList,
-                        onClick: { params in
-                            presenter.dispatch(action: SeasonClicked(params: params))
-                        }
+                },
+                content: { titleRect in
+                    ShowInfoView(
+                        loadedState: uiState.showInfo,
+                        show: showDetails,
+                        component: component,
+                        titleRect: titleRect
                     )
-
-                    ProvidersList(items: state.providers)
-
-                    TrailerListView(trailers: state.trailersList, openInYouTube: state.openTrailersInYoutube)
-
-                    CastListView(casts: state.castsList)
-
-                    HorizontalShowsListView(
-                        title: "Recommendations",
-                        items: state.recommendedShowList,
-                        onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id)) }
-                    )
-
-                    HorizontalShowsListView(
-                        title: "Similar Shows",
-                        items: state.similarShows,
-                        onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id)) }
-                    )
-
+                },
+                onBackClicked: {
+                    component.dispatch(action: DetailBackClicked())
+                },
+                onRefreshClicked: {
+                    component.dispatch(action: ReloadShowDetails())
                 }
-                .height(min: minHeight, max: maxHeight)
-                .collapseProgress($progress)
-                .allowsHeaderGrowth()
-                .hideScrollIndicators()
-                .shadow(radius: progress)
-
-                TopBar(onBackClicked: { presenter.dispatch(action: DetailBackClicked()) })
-
-            }
-        }
-        .ignoresSafeArea()
-    }
-
-    private var recommendedShows: some View {
-        VStack {
-            TitleView(title: "Recommendations", showChevron: true)
+            )
         }
     }
 }
 
-
+private struct DimensionConstants {
+    static let imageHeight: CGFloat = 400
+    static let collapsedImageHeight: CGFloat = 120.0
+}

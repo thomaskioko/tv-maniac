@@ -8,6 +8,8 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
+        implementation(projects.core.logger)
+        implementation(projects.core.paging)
         implementation(projects.database)
         implementation(projects.tmdbApi.api)
         implementation(projects.core.util)
@@ -19,7 +21,6 @@ kotlin {
         implementation(libs.kotlinInject.runtime)
         implementation(libs.kotlinx.atomicfu)
         implementation(libs.sqldelight.extensions)
-        implementation(libs.sqldelight.paging)
         implementation(libs.store5)
       }
     }

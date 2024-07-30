@@ -20,21 +20,25 @@ class DefaultWatchProviderRepository(
   private val requestManagerRepository: RequestManagerRepository,
   private val dispatcher: AppCoroutineDispatchers,
 ) : WatchProviderRepository {
-  override suspend fun fetchWatchProviders(id: Long): List<WatchProviders> = store.get(id)
 
-  override fun observeWatchProviders(id: Long): Flow<Either<Failure, List<WatchProviders>>> =
-    store
+  override fun observeWatchProviders(
+    id: Long,
+    forceReload: Boolean
+  ): Flow<Either<Failure, List<WatchProviders>>> {
+    return store
       .stream(
         StoreReadRequest.cached(
           key = id,
           refresh =
-            requestManagerRepository.isRequestExpired(
-              entityId = id,
-              requestType = WATCH_PROVIDERS.name,
-              threshold = WATCH_PROVIDERS.duration,
-            ),
+            forceReload ||
+              requestManagerRepository.isRequestExpired(
+                entityId = id,
+                requestType = WATCH_PROVIDERS.name,
+                threshold = WATCH_PROVIDERS.duration,
+              ),
         ),
       )
       .mapResult()
       .flowOn(dispatcher.io)
+  }
 }

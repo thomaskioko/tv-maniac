@@ -10,23 +10,17 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeRecommendedShowsRepository : RecommendedShowsRepository {
 
-  private var showEntityList: Channel<List<RecommendedShows>> = Channel(Channel.UNLIMITED)
   private var entityListResult: Channel<Either<Failure, List<RecommendedShows>>> =
     Channel(Channel.UNLIMITED)
-
-  suspend fun setRecommendedShows(result: List<RecommendedShows>) {
-    showEntityList.send(result)
-  }
 
   suspend fun setObserveRecommendedShows(result: Either<Failure, List<RecommendedShows>>) {
     entityListResult.send(result)
   }
 
-  override suspend fun fetchRecommendedShows(id: Long): List<RecommendedShows> {
-    return showEntityList.receive()
-  }
-
-  override fun observeRecommendedShows(id: Long): Flow<Either<Failure, List<RecommendedShows>>> {
+  override fun observeRecommendedShows(
+    id: Long,
+    forceReload: Boolean
+  ): Flow<Either<Failure, List<RecommendedShows>>> {
     return entityListResult.receiveAsFlow()
   }
 }

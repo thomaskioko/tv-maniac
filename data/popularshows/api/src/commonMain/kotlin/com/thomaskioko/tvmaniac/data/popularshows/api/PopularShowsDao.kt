@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.data.popularshows.api
 
-import app.cash.paging.PagingSource
+import androidx.paging.PagingSource
 import com.thomaskioko.tvmaniac.core.db.Popular_shows
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import kotlinx.coroutines.flow.Flow

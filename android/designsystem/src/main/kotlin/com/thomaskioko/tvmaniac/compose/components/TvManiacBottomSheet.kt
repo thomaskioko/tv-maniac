@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.compose.components
 
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
@@ -16,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -35,6 +34,7 @@ fun TvManiacBottomSheetScaffold(
   sheetShape: Shape = RoundedCornerShape(5.dp),
   containerColor: Color = MaterialTheme.colorScheme.background,
   snackbarHost: @Composable (SnackbarHostState) -> Unit = { SnackbarHost(it) },
+  sheetDragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
 ) {
   val bottomSheetState =
     rememberStandardBottomSheetState(
@@ -53,12 +53,13 @@ fun TvManiacBottomSheetScaffold(
       bottomSheetState.hide()
     }
   }
+  LaunchedEffect(bottomSheetScaffoldState.bottomSheetState.currentValue) {
+    if (bottomSheetScaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded)
+      onDismissBottomSheet()
+  }
 
   BottomSheetScaffold(
-    modifier =
-      modifier.pointerInput(Unit) {
-        detectTapGestures(onTap = { if (bottomSheetState.isVisible) onDismissBottomSheet() })
-      },
+    modifier = modifier,
     topBar = topBar,
     sheetPeekHeight = sheetPeekHeight,
     scaffoldState = bottomSheetScaffoldState,
@@ -67,6 +68,7 @@ fun TvManiacBottomSheetScaffold(
     sheetContent = sheetContent,
     snackbarHost = snackbarHost,
     containerColor = containerColor,
+    sheetDragHandle = sheetDragHandle,
     content = content,
   )
 }

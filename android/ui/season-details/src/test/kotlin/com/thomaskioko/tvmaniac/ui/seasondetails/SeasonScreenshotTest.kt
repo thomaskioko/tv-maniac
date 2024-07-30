@@ -3,9 +3,10 @@ package com.thomaskioko.tvmaniac.ui.seasondetails
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsErrorState
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.seasondetails.ui.SeasonDetailsScreen
-import com.thomaskioko.tvmaniac.seasondetails.ui.seasonDetailsContent
+import com.thomaskioko.tvmaniac.seasondetails.ui.seasonDetailsLoaded
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,7 +28,19 @@ class SeasonScreenshotTest {
     composeTestRule.captureMultiDevice("SeasonDetailsLoadedContent") {
       TvManiacBackground {
         SeasonDetailsScreen(
-          state = seasonDetailsContent,
+          state = seasonDetailsLoaded,
+          onAction = {},
+        )
+      }
+    }
+  }
+
+  @Test
+  fun seasonDetailsScreenErrorState() {
+    composeTestRule.captureMultiDevice("SeasonDetailsErrorState") {
+      TvManiacBackground {
+        SeasonDetailsScreen(
+          state = SeasonDetailsErrorState(errorMessage = "Something went wrong"),
           onAction = {},
         )
       }

@@ -11,5 +11,5 @@ interface LibraryComponent {
 
   @ApplicationScope
   @Provides
-  fun provideWatchlist(bind: LibraryRepositoryImpl): LibraryRepository = bind
+  fun provideWatchlist(bind: DefaultLibraryRepository): LibraryRepository = bind
 }

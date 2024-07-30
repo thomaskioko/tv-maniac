@@ -1,13 +1,14 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
+import androidx.paging.Pager
 import androidx.paging.PagingData
-import app.cash.paging.Pager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.core.networkutil.mapResult
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
-import com.thomaskioko.tvmaniac.core.networkutil.paging.CommonPagingConfig
-import com.thomaskioko.tvmaniac.core.networkutil.paging.PaginatedRemoteMediator
+import com.thomaskioko.tvmaniac.core.paging.CommonPagingConfig
+import com.thomaskioko.tvmaniac.core.paging.PaginatedRemoteMediator
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsDao
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsParams
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
@@ -16,11 +17,11 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRENDING_S
 import com.thomaskioko.tvmaniac.shows.api.DEFAULT_DAY_TIME_WINDOW
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadRequest
-import org.mobilenativefoundation.store.store5.StoreReadRequest.Companion.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
 
@@ -29,11 +30,12 @@ class DefaultTrendingShowsRepository(
   private val store: TrendingShowsStore,
   private val requestManagerRepository: RequestManagerRepository,
   private val dao: TrendingShowsDao,
+  private val kermitLogger: KermitLogger,
   private val dispatchers: AppCoroutineDispatchers,
 ) : TrendingShowsRepository {
 
   override suspend fun observeTrendingShows(
-    forceRefresh: Boolean
+    forceRefresh: Boolean,
   ): Flow<Either<Failure, List<ShowEntity>>> {
     val refresh =
       forceRefresh ||
@@ -70,18 +72,24 @@ class DefaultTrendingShowsRepository(
     return Pager(
         config = CommonPagingConfig.pagingConfig,
         remoteMediator =
-          PaginatedRemoteMediator(
-            getLastPage = dao::getLastPage,
-            deleteLocalEntity = store::clear,
-            fetch = {
+          PaginatedRemoteMediator { page ->
+            try {
               store.fresh(
                 TrendingShowsParams(
                   timeWindow = DEFAULT_DAY_TIME_WINDOW,
-                  page = it,
+                  page = page,
                 ),
               )
-            },
-          ),
+            } catch (cancellationException: CancellationException) {
+              throw cancellationException
+            } catch (throwable: Throwable) {
+              kermitLogger.error(
+                "Error while fetching from TrendingShows RemoteMediator",
+                throwable
+              )
+              throw throwable
+            }
+          },
         pagingSourceFactory = dao::getPagedTrendingShows,
       )
       .flow

@@ -83,6 +83,7 @@ fun ConnectionStatus(
 fun ErrorUi(
   errorMessage: String?,
   modifier: Modifier = Modifier,
+  errorIcon: @Composable () -> Unit = {},
   onRetry: () -> Unit = {},
   showRetryButton: Boolean = true,
 ) {
@@ -90,13 +91,9 @@ fun ErrorUi(
     Column(
       modifier = Modifier.align(Alignment.Center).wrapContentSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center,
     ) {
-      Image(
-        modifier = Modifier.size(120.dp),
-        imageVector = Icons.Outlined.ErrorOutline,
-        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
-        contentDescription = null,
-      )
+      errorIcon()
 
       Spacer(modifier = Modifier.height(8.dp))
 
@@ -172,6 +169,14 @@ private fun ErrorUiPreview() {
   TvManiacTheme {
     Surface {
       ErrorUi(
+        errorIcon = {
+          Image(
+            modifier = Modifier.size(120.dp),
+            imageVector = Icons.Outlined.ErrorOutline,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+            contentDescription = null,
+          )
+        },
         errorMessage = "Opps! Something went wrong",
         onRetry = {},
         modifier = Modifier.fillMaxSize(),

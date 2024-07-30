@@ -7,24 +7,33 @@
 //
 
 import Foundation
-import KMPNativeCoroutinesAsync
+import SwiftUI
 import TvManiac
 
-class StateFlow<T: AnyObject>: ObservableObject {
-    @Published
-    var value: T?
+@propertyWrapper struct StateFlow<T: AnyObject>: DynamicProperty {
+    @StateObject private var observable: ObservableStateFlow<T>
 
-    private var cancelable: Cancelable? = nil
+    init(_ stateFlow: Kotlinx_coroutines_coreStateFlow) {
+        _observable = StateObject(wrappedValue: ObservableStateFlow(stateFlow: stateFlow))
+    }
 
-    init(_ state: Kotlinx_coroutines_coreStateFlow) {
-        self.value = state.value as? T
+    public var wrappedValue: T { observable.value }
+    public var projectedValue: ObservableStateFlow<T> { observable }
+}
 
-        cancelable = FlowWrapper<T>(flow: state).collect(consumer: { value in
-            self.value = value
-        })
+class ObservableStateFlow<T: AnyObject>: ObservableObject {
+    @Published private(set) var value: T
+    private let observer: StateFlowObserver<T>
+
+    init(stateFlow: Kotlinx_coroutines_coreStateFlow) {
+        observer = StateFlowObserver(stateFlow: stateFlow)
+        value = stateFlow.value as! T
+        observer.observe { [weak self] newValue in
+            self?.value = newValue!
+        }
     }
 
     deinit {
-        self.cancelable?.cancel()
+        observer.unsubscribe()
     }
 }

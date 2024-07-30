@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.ui.discover
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -51,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -72,7 +75,7 @@ import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowAction
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponent
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.EmptyState
 import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
@@ -93,10 +96,10 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun DiscoverScreen(
-  discoverShowsPresenter: DiscoverShowsPresenter,
+  component: DiscoverShowsComponent,
   modifier: Modifier = Modifier,
 ) {
-  val discoverState by discoverShowsPresenter.state.collectAsState()
+  val discoverState by component.state.collectAsState()
   val pagerState =
     rememberPagerState(
       initialPage = 2,
@@ -109,7 +112,7 @@ fun DiscoverScreen(
     state = discoverState,
     snackBarHostState = snackBarHostState,
     pagerState = pagerState,
-    onAction = discoverShowsPresenter::dispatch,
+    onAction = component::dispatch,
   )
 }
 
@@ -141,6 +144,14 @@ internal fun DiscoverScreen(
       )
     is ErrorState ->
       ErrorUi(
+        errorIcon = {
+          Image(
+            modifier = Modifier.size(120.dp),
+            imageVector = Icons.Outlined.ErrorOutline,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+            contentDescription = null,
+          )
+        },
         errorMessage = state.errorMessage,
         onRetry = { onAction(ReloadData) },
         modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),

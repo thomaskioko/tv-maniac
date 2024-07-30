@@ -6,7 +6,8 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface RecommendedShowsRepository {
-  suspend fun fetchRecommendedShows(id: Long): List<RecommendedShows>
-
-  fun observeRecommendedShows(id: Long): Flow<Either<Failure, List<RecommendedShows>>>
+  fun observeRecommendedShows(
+    id: Long,
+    forceReload: Boolean = false
+  ): Flow<Either<Failure, List<RecommendedShows>>>
 }

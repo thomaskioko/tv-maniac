@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.seasondetails.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsContent
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailState
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsErrorState
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonImagesModel
 import kotlinx.collections.immutable.persistentListOf
@@ -22,8 +24,8 @@ val episodeDetailsModel =
     seasonEpisodeNumber = "S01 | E01",
   )
 
-val seasonDetailsContent =
-  SeasonDetailsContent(
+val seasonDetailsLoaded =
+  SeasonDetailsLoaded(
     seasonId = 1,
     seasonName = "Specials",
     episodeCount = 8,
@@ -48,11 +50,12 @@ val seasonDetailsContent =
     seasonCast = persistentListOf(),
   )
 
-class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsContent> {
-  override val values: Sequence<SeasonDetailsContent>
+class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailState> {
+  override val values: Sequence<SeasonDetailState>
     get() {
       return sequenceOf(
-        seasonDetailsContent,
+        seasonDetailsLoaded,
+        SeasonDetailsErrorState(errorMessage = "Oops. Something went wrong")
       )
     }
 }

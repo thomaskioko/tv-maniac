@@ -1,24 +1,25 @@
 [versions]
-agp = "8.4.2"
-androidx-activity = "1.9.0"
+agp = "8.5.1"
+androidx-activity = "1.9.1"
 androidx-browser = "1.8.0"
-androidx-compose-ui-test = "1.7.0-beta01"
+androidx-compose-ui-test = "1.7.0-beta06"
 androidx-core = "1.13.1"
 androidx-core-splashscreen = "1.0.1"
 androidx-datastore = "1.1.1"
-androidx-material = "1.6.7"
+androidx-material = "1.6.8"
 androidx-material3 = "1.2.1"
 androidx-palette = "1.0.0"
+androidx-paging = "3.3.1"
 appauth = "0.11.1"
-atomicfu = "0.24.0"
-coil = "2.6.0"
+atomicfu = "0.25.0"
+coil = "2.7.0"
 compose-bom = "2024.06.00"
 compose-constraintlayout = "1.0.1"
-compose-runtime = "1.6.7"
+compose-runtime = "1.6.8"
 coroutines = "1.8.1"
 datetime = "0.6.0"
-decompose = "3.0.0"
-dependency-analysis = "1.32.0"
+decompose = "3.1.0"
+dependency-analysis = "1.33.0"
 essenty = "2.1.0"
 desugar = "2.0.4"
 kenburns = "1.0.7"
@@ -27,16 +28,15 @@ kotest = "5.9.1"
 kotlin = "2.0.0"
 kotlininject = "0.7.1"
 kotlinx-collections = "0.3.7"
-ksp = "2.0.0-1.0.22"
+ksp = "2.0.0-1.0.23"
 ktfmt = "0.44"
 ktor = "2.3.12"
 lint = "1.3.1"
 napier = "2.7.1"
-paging-multiplatform = "3.3.0-alpha02-0.5.1"
-robolectric = "4.12.2"
-roborazzi = "1.20.0"
+robolectric = "4.13"
+roborazzi = "1.25.0"
 shared-module-version = "0.9.1"
-skie = "0.8.2"
+skie = "0.8.3"
 snapper = "0.3.0"
 sqldelight = "2.0.2"
 spotless = "6.25.0"
@@ -66,6 +66,8 @@ androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-cor
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidx-core-splashscreen" }
 androidx-datastore-preference = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
 androidx-palette = { module = "androidx.palette:palette-ktx", version.ref = "androidx-palette" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidx-paging" }
+androidx-paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "androidx-paging" }
 
 appauth = { module = "net.openid:appauth", version.ref = "appauth" }
 
@@ -101,9 +103,6 @@ ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", 
 lint-compose = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "lint" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
-paging-common = { module = "app.cash.paging:paging-common", version.ref = "paging-multiplatform" }
-paging-compose = { module = "app.cash.paging:paging-compose-common", version.ref = "paging-multiplatform" }
-
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
 
@@ -114,7 +113,6 @@ sqldelight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.
 sqldelight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
-sqldelight-paging = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
 stately-common = { module = "co.touchlab:stately-common", version.ref = "stately" }
 stately-iso-collections = { module = "co.touchlab:stately-iso-collections", version.ref = "stately" }
 stately-isolate = { module = "co.touchlab:stately-isolate", version.ref = "stately" }

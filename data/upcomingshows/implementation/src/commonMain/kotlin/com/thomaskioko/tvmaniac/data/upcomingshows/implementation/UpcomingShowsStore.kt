@@ -40,7 +40,7 @@ class UpcomingShowsStore(
                 lastAirDate = params.endDate,
               )
           ) {
-            is ApiResponse.Success -> response.body.results
+            is ApiResponse.Success -> response.body
             is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
             is ApiResponse.Error.HttpError ->
               throw Throwable("${response.code} - ${response.errorMessage}")
@@ -50,8 +50,8 @@ class UpcomingShowsStore(
       sourceOfTruth =
         SourceOfTruth.Companion.of(
           reader = { _ -> upcomingShowsDao.observeUpcomingShows() },
-          writer = { params: UpcomingParams, trendingShows ->
-            trendingShows.forEach { show ->
+          writer = { _: UpcomingParams, trendingShows ->
+            trendingShows.results.forEach { show ->
               tvShowsDao.upsert(
                 Tvshows(
                   id = Id(show.id.toLong()),
@@ -75,13 +75,13 @@ class UpcomingShowsStore(
               upcomingShowsDao.upsert(
                 Upcoming_shows(
                   id = Id(show.id.toLong()),
-                  page = Id(params.page),
+                  page = Id(trendingShows.page.toLong()),
                 ),
               )
             }
 
-            requestManagerRepository.insert(
-              entityId = params.page,
+            requestManagerRepository.upsert(
+              entityId = trendingShows.page.toLong(),
               requestType = UPCOMING_SHOWS.name,
             )
           },

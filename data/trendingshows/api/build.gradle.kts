@@ -8,7 +8,7 @@ kotlin {
         api(projects.core.networkUtil)
         api(projects.data.shows.api)
 
-        api(libs.paging.common)
+        api(libs.androidx.paging.common)
         api(libs.coroutines.core)
       }
     }

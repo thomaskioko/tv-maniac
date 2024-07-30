@@ -25,6 +25,7 @@ kotlin {
         export(projects.navigation.api)
         export(projects.datastore.api)
         export(projects.presentation.discover)
+        export(projects.presentation.home)
         export(projects.presentation.library)
         export(projects.presentation.moreShows)
         export(projects.presentation.search)
@@ -95,6 +96,7 @@ kotlin {
 
         api(projects.presentation.discover)
         api(projects.presentation.library)
+        api(projects.presentation.home)
         api(projects.presentation.moreShows)
         api(projects.presentation.search)
         api(projects.presentation.seasondetails)

@@ -1,14 +1,13 @@
 package com.thomaskioko.tvmaniac.ui.moreshows
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import app.cash.paging.PagingData
+import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsState
 import com.thomaskioko.tvmaniac.presentation.moreshows.TvShow
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 
-private val showList =
+public val showList =
   List(6) {
       TvShow(
         title = "Loki",
@@ -21,10 +20,12 @@ class MoreShowsPreviewParameterProvider : PreviewParameterProvider<MoreShowsStat
   override val values: Sequence<MoreShowsState>
     get() {
       return sequenceOf(
-        MoreShowsState(list = flowOf(PagingData.from(showList))),
         MoreShowsState(
-          isLoading = true,
-          list = emptyFlow(),
+          categoryTitle = "Upcoming",
+          pagingDataFlow = flowOf(PagingData.from(showList))
+        ),
+        MoreShowsState(
+          categoryTitle = "Upcoming",
           errorMessage = "Opps! Something went wrong",
         ),
       )

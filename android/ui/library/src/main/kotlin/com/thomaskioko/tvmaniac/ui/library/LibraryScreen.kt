@@ -1,16 +1,19 @@
 package com.thomaskioko.tvmaniac.ui.library
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -23,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,8 +42,8 @@ import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.watchlist.ErrorLoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryAction
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponent
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryContent
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryShowClicked
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryState
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
@@ -50,15 +54,15 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun LibraryScreen(
-  presenter: LibraryPresenter,
+  component: LibraryComponent,
   modifier: Modifier = Modifier,
 ) {
-  val libraryState by presenter.state.collectAsState()
+  val libraryState by component.state.collectAsState()
 
   LibraryScreen(
     modifier = modifier,
     state = libraryState,
-    onAction = presenter::dispatch,
+    onAction = component::dispatch,
   )
 }
 
@@ -101,6 +105,15 @@ internal fun LibraryScreen(
           )
         is ErrorLoadingShows ->
           ErrorUi(
+            errorIcon = {
+              Image(
+                modifier = Modifier.size(120.dp),
+                imageVector = Icons.Outlined.ErrorOutline,
+                colorFilter =
+                  ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+                contentDescription = null,
+              )
+            },
             onRetry = { onAction(ReloadLibrary) },
             errorMessage = state.message,
             modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
