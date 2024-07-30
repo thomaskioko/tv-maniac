@@ -10,61 +10,53 @@ import SwiftUI
 import TvManiac
 
 struct HeaderContentView: View {
-    
     let show: ShowDetails
     var progress: CGFloat
-    var maxHeight : CGFloat
-    var onAddToLibraryClick : (Bool) -> Void
-    var onWatchTrailerClick : (Int64) -> Void
+    var headerHeight: CGFloat
     
     var body: some View {
-        
-        ZStack {
+        ZStack(alignment: .bottom) {
             HeaderCoverArtWorkView(
                 backdropImageUrl: show.backdropImageUrl,
-                posterHeight: maxHeight
+                posterHeight: headerHeight
             )
             .foregroundStyle(.ultraThinMaterial)
-            .frame(height: maxHeight)
-            .opacity(1 - progress)
+            .overlay(
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        .clear,
+                        .clear,
+                        .clear,
+                        Color.background.opacity(0),
+                        Color.background.opacity(0.8),
+                        Color.background.opacity(0.97),
+                        Color.background,
+                        Color.background,
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .frame(height: headerHeight)
             
             VStack {
                 Spacer()
-                
-                ZStack(alignment: .bottom) {
-                    
-                    Rectangle()
-                        .fill(
-                            .linearGradient(colors: [
-                                .clear,
-                                .clear,
-                                .clear,
-                                Color.background.opacity(0),
-                                Color.background.opacity(0.8),
-                                Color.background.opacity(0.97),
-                                Color.background.opacity(0.98),
-                                Color.background,
-                            ], startPoint: .top, endPoint: .bottom)
-                        )
-                    
-                    ShowInfoView(
-                        onAddToLibraryClick: onAddToLibraryClick,
-                        onWatchTrailerClick: onWatchTrailerClick
-                    )
-                    .opacity(1 + (progress > 0 ? -progress : progress))
-                }
+                ShowHeaderInfoView(show: show)
+                    .opacity(1 - progress)
             }
+            .frame(height: headerHeight)
         }
-        .frame(height: maxHeight)
+        .frame(height: headerHeight)
+        .clipped()
     }
+}
+
+
+struct ShowHeaderInfoView: View {
+    let show: ShowDetails
     
-    @ViewBuilder
-    func ShowInfoView(
-        onAddToLibraryClick : @escaping (Bool) -> Void,
-        onWatchTrailerClick : @escaping (Int64) -> Void
-    ) -> some View {
-        
-        VStack(spacing: 0){
+    var body: some View {
+        VStack(spacing: 0) {
             Text(show.title)
                 .titleFont(size: 30)
                 .foregroundColor(.text_color_bg)
@@ -73,7 +65,7 @@ struct HeaderContentView: View {
                 .padding([.leading, .trailing], 16)
             
             Text(show.overview)
-                .bodyFont(size: 18)
+                .font(.avenirNext(size: 17))
                 .foregroundColor(.text_color_bg)
                 .lineLimit(3)
                 .padding(.top, 1)
@@ -82,40 +74,24 @@ struct HeaderContentView: View {
             
             showDetailMetadata
             
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .center) {
-                    ForEach(show.genres, id: \.self) { label in
-                        ChipView(label: label)
-                    }
-                }
-                .padding(.trailing, 16)
-                .padding(.leading, 16)
-            }
-            .padding(.top, 8)
-            
-            showDetailButtons
-                .padding(.top, 8)
         }
-        
+        .padding(.bottom, 16)
     }
     
     private var showDetailMetadata: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .center) {
-                
-                if let status = show.status {
-                    if status.isEmpty != true {
-                        Text(status)
-                            .bodyMediumFont(size: 14)
-                            .foregroundColor(Color.accent)
-                            .padding(3)
-                            .background(Color.accent.opacity(0.12))
-                            .cornerRadius(2)
-                        
-                        Text("•")
-                            .bodyFont(size: 16)
-                            .foregroundColor(.accent)
-                    }
+                if let status = show.status, !status.isEmpty {
+                    Text(status)
+                        .bodyMediumFont(size: 14)
+                        .foregroundColor(Color.accent)
+                        .padding(3)
+                        .background(Color.accent.opacity(0.12))
+                        .cornerRadius(2)
+                    
+                    Text("•")
+                        .bodyFont(size: 16)
+                        .foregroundColor(.accent)
                 }
                 
                 Text(show.year)
@@ -144,36 +120,8 @@ struct HeaderContentView: View {
                 Text("•")
                     .bodyFont(size: 16)
                     .foregroundColor(.accent)
-                    .foregroundColor(Color.text_color_bg)
-                
-                
             }
+            .padding(.horizontal)
         }
-        .padding(.top, 5)
-        .padding(.trailing, 16)
-        .padding(.leading, 16)
-    }
-    private var showDetailButtons: some View {
-        HStack(alignment: .center, spacing: 8) {
-            
-            BorderedButton(
-                text: "Watch Trailer",
-                systemImageName: "film.fill",
-                isOn: false,
-                action: { onWatchTrailerClick(show.tmdbId) }
-            )
-            
-            let followText = if (!show.isFollowed) { "Follow Show" } else { "Unfollow Show"}
-            let buttonSystemImage = if (!show.isFollowed) { "plus.square.fill.on.square.fill" } else { "checkmark.square.fill"}
-            
-            BorderedButton(
-                text: followText,
-                systemImageName: buttonSystemImage,
-                isOn: false,
-                action: { onAddToLibraryClick(show.isFollowed) }
-            )
-        }
-        .padding(.bottom, 16)
-        .padding(.top, 10)
     }
 }

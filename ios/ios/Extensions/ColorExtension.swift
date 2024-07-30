@@ -78,5 +78,9 @@ extension Color {
     public static var blue: Color {
         Color("blue", bundle: nil)
     }
-	
+
+    public static var iosBlue: Color {
+        Color(red: 0/255, green: 122/255, blue: 255/255)
+    }
+
 }

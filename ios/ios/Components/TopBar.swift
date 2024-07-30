@@ -11,7 +11,7 @@ import SwiftUI
 struct TopBar: View {
 
     var progress: CGFloat
-    var title: String
+    var title: String? = nil
     var isRefreshing: Bool
     var onBackClicked: () -> Void
     var onRefreshClicked: () -> Void
@@ -35,15 +35,19 @@ struct TopBar: View {
                 )
                 .padding(.leading, 16)
 
-                Text(title)
-                    .bodyFont(size: 24)
-                    .fontWeight(.semibold)
-                    .lineLimit(1)
-                    .padding(.leading, 4)
-                    .opacity(progress)
-                    .opacity(max(0, min(1, (progress - 0.75) * 4.0)))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom, 4)
+                if let title = title {
+                    Text(title)
+                        .bodyFont(size: 24)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                        .padding(.leading, 4)
+                        .opacity(progress)
+                        .opacity(max(0, min(1, (progress - 0.75) * 4.0)))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.bottom, 4)
+                } else {
+                    Spacer()
+                }
 
                 // Refresh Button
                 CircularButton(
@@ -73,7 +77,6 @@ struct TopBar: View {
                 }
             }
         }
-
     }
 }
 

@@ -7,104 +7,119 @@
 //
 
 import SwiftUI
-import ScalingHeaderScrollView
 import TvManiac
 
 struct SeasonDetailsView: View {
     
-    private let presenter: SeasonDetailsPresenter
+    private let component: SeasonDetailsComponent
     
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject private var uiState: StateFlow<SeasonDetailState>
     
-    @State private var progress: CGFloat = 0
+    @StateFlow private var uiState: SeasonDetailState
     @State private var isTruncated = false
     @State private var showFullText = false
     @State private var showModal =  false
+    @State private var scrollOffset: CGFloat = 0
+    @State private var titleRect: CGRect = .zero
     
-    init(presenter: SeasonDetailsPresenter) {
-        self.presenter = presenter
-        self.uiState = StateFlow<SeasonDetailState>(presenter.state)
+    init(component: SeasonDetailsComponent) {
+        self.component = component
+        _uiState = StateFlow(component.state)
     }
     
     var body: some View {
-        if let state = uiState.value {
-            ZStack {
-                switch onEnum(of: uiState.value) {
-                    case .initialSeasonsState: empty
-                    case .seasonDetailsLoaded(let state): SeasonDetailsContent(state)
-                    case .seasonDetailsErrorState: ErrorUiView(
-                        systemImage: "exclamationmark.triangle.fill",
-                        action: { presenter.dispatch(action: ReloadSeasonDetails()) }
-                    )
-                    case .none: EmptyView()
-                }
-            }
-            .ignoresSafeArea()
-            .sheet(isPresented: $showModal) {
-                if let uiState = state as? SeasonDetailsLoaded {
-                    ImageGalleryContentView(items: uiState.seasonImages)
-                }
+        
+        ZStack {
+            Color.background.edgesIgnoringSafeArea(.all)
+            
+            switch onEnum(of: uiState) {
+                case .initialSeasonsState: LoadingIndicatorView(animate: true)
+                case .seasonDetailsLoaded(let state): SeasonDetailsContent(state)
+                case .seasonDetailsErrorState: ErrorUiView(
+                    systemImage: "exclamationmark.triangle.fill",
+                    action: { component.dispatch(action: ReloadSeasonDetails()) }
+                )
             }
         }
+        .ignoresSafeArea()
+        .sheet(isPresented: $showModal) {
+            if let uiState = uiState as? SeasonDetailsLoaded {
+                ImageGalleryContentView(items: uiState.seasonImages)
+            }
+        }
+        
     }
     
     @ViewBuilder
     private func SeasonDetailsContent(_ state: SeasonDetailsLoaded) -> some View {
-        ScalingHeaderScrollView {
-            HeaderContent(state)
-        } content: {
-            SeasonOverview(state)
-            
-            EpisodeListView(
-                state: state,
-                onEpisodeHeaderClicked: { presenter.dispatch(action: OnEpisodeHeaderClicked()) },
-                onWatchedStateClicked: {
-                    presenter.dispatch(action: UpdateSeasonWatchedState())
-                }
-            )
-            
-            CastListView(casts: toCastsList(state.seasonCast))
-            
-        }
-        .height(min: DimensionConstants.minHeight, max: DimensionConstants.imageHeight)
-        .collapseProgress($progress)
-        .allowsHeaderGrowth()
-        .hideScrollIndicators()
-        .shadow(radius: progress)
-        .onAppear { showModal = state.showSeasonWatchStateDialog }
         
-        TopBar(
-            progress: progress,
+        ParallaxView(
             title: state.seasonName,
             isRefreshing: state.isUpdating,
-            onBackClicked: { presenter.dispatch(action: SeasonDetailsBackClicked()) }, onRefreshClicked: {})
+            imageHeight: DimensionConstants.imageHeight,
+            collapsedImageHeight: DimensionConstants.collapsedImageHeight,
+            header: { proxy in
+                HeaderContent(
+                    state: state,
+                    progress: proxy.getTitleOpacity(
+                        geometry: proxy,
+                        imageHeight: DimensionConstants.imageHeight,
+                        collapsedImageHeight: DimensionConstants.collapsedImageHeight
+                    ),
+                    headerHeight: proxy.getHeightForHeaderImage(proxy)
+                )
+            },
+            content: { titleRect in
+                SeasonOverview(state, titleRect: $titleRect)
+                
+                EpisodeListView(
+                    state: state,
+                    onEpisodeHeaderClicked: { component.dispatch(action: OnEpisodeHeaderClicked()) },
+                    onWatchedStateClicked: {
+                        component.dispatch(action: UpdateSeasonWatchedState())
+                    }
+                )
+                
+                CastListView(casts: toCastsList(state.seasonCast))
+            },
+            onBackClicked: {
+                component.dispatch(action: SeasonDetailsBackClicked())
+            },
+            onRefreshClicked: {
+                
+            }
+        )
+        .onAppear { showModal = state.showSeasonWatchStateDialog }
         
     }
-    
+
     @ViewBuilder
-    private func HeaderContent(_ content: SeasonDetailsLoaded) -> some View {
-        ZStack {
+    private func HeaderContent(state: SeasonDetailsLoaded, progress: CGFloat, headerHeight: CGFloat) -> some View {
+        ZStack(alignment: .bottom) {
             HeaderCoverArtWorkView(
-                backdropImageUrl: content.imageUrl,
-                posterHeight: DimensionConstants.imageHeight
+                backdropImageUrl: state.imageUrl,
+                posterHeight: headerHeight
             )
-            .frame(height: DimensionConstants.imageHeight)
+            .foregroundStyle(.ultraThinMaterial)
+            .overlay(
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        .clear,
+                        .clear,
+                        .clear,
+                        Color.background.opacity(0.6),
+                        Color.background.opacity(0.8),
+                        Color.background,
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .frame(height: headerHeight)
             
             ZStack(alignment: .bottom) {
-                Rectangle()
-                    .fill(
-                        .linearGradient(colors: [
-                            .clear,
-                            .clear,
-                            .clear,
-                            Color.background.opacity(0.6),
-                            Color.background.opacity(0.8),
-                            Color.background,
-                        ], startPoint: .top, endPoint: .bottom)
-                    )
-                
                 VStack {
+                    Spacer()
                     HStack(spacing: 16) {
                         Image(systemName: "photo.fill.on.rectangle.fill")
                             .resizable()
@@ -116,7 +131,7 @@ struct SeasonDetailsView: View {
                             .alignmentGuide(.view) { d in d[HorizontalAlignment.leading] }
                         
                         
-                        Text("^[\(content.seasonImages.count) Image](inflect: true)")
+                        Text("^[\(state.seasonImages.count) Image](inflect: true)")
                             .bodyMediumFont(size: 16)
                             .foregroundColor(.text_color_bg)
                             .lineLimit(1)
@@ -125,33 +140,42 @@ struct SeasonDetailsView: View {
                         Spacer()
                     }
                     .padding(16)
-                    .opacity(1 + (progress > 0 ? -progress : progress))
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        presenter.dispatch(action: SeasonGalleryClicked())
+                        component.dispatch(action: SeasonGalleryClicked())
                         showModal.toggle()
                     }
-                    
-                    ProgressView(value: content.watchProgress, total: 1)
-                        .progressViewStyle(RoundedRectProgressViewStyle())
                 }
+                .frame(height: headerHeight)
+                .opacity(1 - progress)
             }
+            
+            ProgressView(value: state.watchProgress, total: 1)
+                .progressViewStyle(RoundedRectProgressViewStyle())
+            
         }
+        .frame(height: headerHeight)
+        .clipped()
     }
     
     @ViewBuilder
-    private func SeasonOverview(_ content: SeasonDetailsLoaded) -> some View {
+    private func SeasonOverview(
+        _ content: SeasonDetailsLoaded,
+        titleRect:  Binding<CGRect>
+    ) -> some View {
         VStack(alignment: .leading) {
+            
+            Spacer(minLength: nil)
+                .background(GeometryGetter(rect: self.$titleRect))
+            
             Text("Overview")
                 .bodyFont(size: 26)
                 .fontWeight(.semibold)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 8)
-                .padding(.bottom, 0.5)
+                .padding([.bottom, .top], 8)
             
             Text(content.seasonOverview)
                 .font(.callout)
-                .padding([.top], 2)
                 .lineLimit(showFullText ? nil : 4)
                 .multilineTextAlignment(.leading)
                 .background(
@@ -189,7 +213,8 @@ struct SeasonDetailsView: View {
         .onTapGesture {
             withAnimation { showFullText.toggle() }
         }
-        .padding(16)
+        .padding(.horizontal)
+        
     }
     
     private func toCastsList(_ list: [Cast]) -> [Casts] {
@@ -221,5 +246,5 @@ struct SeasonDetailsView: View {
 
 private struct DimensionConstants {
     static let imageHeight: CGFloat = 320
-    static let minHeight: CGFloat = 120.0
+    static let collapsedImageHeight: CGFloat = 120.0
 }

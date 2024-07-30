@@ -59,7 +59,7 @@ import com.thomaskioko.tvmaniac.presentation.settings.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.presentation.settings.DismissThemeClicked
 import com.thomaskioko.tvmaniac.presentation.settings.DismissTraktDialog
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsActions
-import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenter
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponent
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsState
 import com.thomaskioko.tvmaniac.presentation.settings.ShowTraktDialog
 import com.thomaskioko.tvmaniac.presentation.settings.ThemeSelected
@@ -70,17 +70,17 @@ import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
 fun SettingsScreen(
-  presenter: SettingsPresenter,
+  component: SettingsComponent,
   modifier: Modifier = Modifier,
 ) {
-  val state by presenter.state.collectAsState()
+  val state by component.state.collectAsState()
   val snackbarHostState = remember { SnackbarHostState() }
 
   SettingsScreen(
     modifier = modifier,
     state = state,
     snackbarHostState = snackbarHostState,
-    onAction = presenter::dispatch,
+    onAction = component::dispatch,
   )
 }
 

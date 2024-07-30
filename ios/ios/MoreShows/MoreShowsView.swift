@@ -10,43 +10,41 @@ import SwiftUI
 import TvManiac
 
 struct MoreShowsView: View {
-    
-    private let presenter: MoreShowsPresenter
-    
-    @ObservedObject
-    private var uiState: StateFlow<MoreShowsState>
-    
-    @State
-    private var query = String()
-    
-    init(presenter: MoreShowsPresenter) {
-        self.presenter = presenter
-        self.uiState = StateFlow<MoreShowsState>(presenter.state)
+
+    private let component: MoreShowsComponent
+
+    @StateFlow private var uiState: MoreShowsState
+    @State private var query = String()
+
+    init(component: MoreShowsComponent) {
+        self.component = component
+        _uiState = StateFlow(component.state)
     }
-    
+
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                
+
                 NavigationTopBar(
-                    topBarTitle: uiState.value?.categoryTitle,
-                    onBackClicked: { presenter.dispatch(action: MoreBackClicked()) }
+                    topBarTitle: uiState.categoryTitle,
+                    onBackClicked: { component.dispatch(action: MoreBackClicked()) }
                 )
-                
+
                 Spacer().frame(height: 10)
-                
-                ShowsContent(uiState.value!)
+
+                ShowsContent(uiState)
+
             }
             .edgesIgnoringSafeArea(.top)
         }
     }
-    
+
     @ViewBuilder
     private func ShowsContent(_ state: MoreShowsState) -> some View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVGrid(columns: DimensionConstants.posterColumns,spacing: DimensionConstants.spacing) {
                 ForEach(state.snapshotList.indices, id: \.self){ index in
-                    if let show = presenter.getElement(index: Int32(index)){
+                    if let show = component.getElement(index: Int32(index)){
                         PosterItemView(
                             showId: show.tmdbId,
                             title: show.title,
@@ -59,7 +57,7 @@ struct MoreShowsView: View {
                         .clipped()
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
-                        .onTapGesture { presenter.dispatch(action: MoreShowClicked(showId: show.tmdbId)) }
+                        .onTapGesture { component.dispatch(action: MoreShowClicked(showId: show.tmdbId)) }
                     }
                 }
             }

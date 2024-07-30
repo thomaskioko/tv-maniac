@@ -93,6 +93,7 @@ include(
   ":navigation:api",
   ":navigation:implementation",
   ":presentation:discover",
+  ":presentation:home",
   ":presentation:library",
   ":presentation:more-shows",
   ":presentation:search",

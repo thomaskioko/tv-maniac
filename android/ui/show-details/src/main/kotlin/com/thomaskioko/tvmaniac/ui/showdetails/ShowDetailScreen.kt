@@ -95,8 +95,8 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.FollowShowClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.ReloadShowDetails
 import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsAction
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsComponent
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsContent
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowInfoState
 import com.thomaskioko.tvmaniac.presentation.showdetails.WatchTrailerClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Casts
@@ -113,10 +113,10 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun ShowDetailsScreen(
-  presenter: ShowDetailsPresenter,
+  component: ShowDetailsComponent,
   modifier: Modifier = Modifier,
 ) {
-  val state by presenter.state.collectAsState()
+  val state by component.state.collectAsState()
 
   val snackBarHostState = remember { SnackbarHostState() }
   val listState = rememberLazyListState()
@@ -127,7 +127,7 @@ fun ShowDetailsScreen(
     title = (state as? ShowDetailsContent)?.showDetails?.title ?: "",
     snackBarHostState = snackBarHostState,
     listState = listState,
-    onAction = presenter::dispatch,
+    onAction = component::dispatch,
   )
 }
 

@@ -8,113 +8,61 @@
 
 import SwiftUI
 import TvManiac
-import ScalingHeaderScrollView
 
 struct ShowDetailView: View {
+    private let component: ShowDetailsComponent
     
-    private let maxHeight : CGFloat = 520
-    private let minHeight = 120.0
-    private let presenter: ShowDetailsPresenter
+    @StateFlow private var uiState: ShowDetailsContent
+    @State private var scrollOffset: CGFloat = 0
     
-    @ObservedObject private var uiState: StateFlow<ShowDetailsContent>
-    @State var progress: CGFloat = 0
-    
-    init(presenter: ShowDetailsPresenter){
-        self.presenter = presenter
-        self.uiState = StateFlow<ShowDetailsContent>(presenter.state)
+    init(component: ShowDetailsComponent) {
+        self.component = component
+        _uiState = StateFlow(component.state)
     }
     
     var body: some View {
-        ZStack {
-            if let state = uiState.value {
-                ScalingHeaderScrollView {
-                    if (!state.isUpdating && state.showDetails == nil){
-                        ErrorUiView(
-                            systemImage: "exclamationmark.triangle.fill",
-                            action: {  presenter.dispatch(action: ReloadShowDetails()) }
-                        )
-                    }
-                    else {
-                        if let showDetails = state.showDetails {
-                            HeaderContentView(
-                                show: showDetails,
-                                progress: progress,
-                                maxHeight: maxHeight,
-                                onAddToLibraryClick: { add in
-                                    presenter.dispatch(action: FollowShowClicked(addToLibrary: add))
-                                },
-                                onWatchTrailerClick: { id in
-                                    presenter.dispatch(action: WatchTrailerClicked(id: id))
-                                }
-                            )
-                        }
-                        
-                    }
-                } content: {
-                    switch onEnum(of: state.showInfo){
-                        case .loading: LoadingIndicatorView(animate: true)
-                        case .empty:  ErrorUiView(
-                            systemImage: "exclamationmark.triangle.fill",
-                            action: {  presenter.dispatch(action: ReloadShowDetails()) }
-                        )
-                        case .error :  ErrorUiView(
-                            systemImage: "exclamationmark.triangle.fill",
-                            action: {  presenter.dispatch(action: ReloadShowDetails()) }
-                        )
-                        case .loaded(let loadedState): ShowInfoView(loadedState)
-                    }
+        if !uiState.isUpdating && uiState.showDetails == nil {
+            ErrorUiView(
+                systemImage: "exclamationmark.triangle.fill",
+                action: { component.dispatch(action: ReloadShowDetails()) }
+            )
+        } else if let showDetails = uiState.showDetails {
+            ParallaxView(
+                title: showDetails.title,
+                isRefreshing: uiState.isUpdating || uiState.showInfo is ShowInfoStateLoading,
+                imageHeight: DimensionConstants.imageHeight,
+                collapsedImageHeight: DimensionConstants.collapsedImageHeight,
+                header: { proxy in
+                    HeaderContentView(
+                        show: showDetails,
+                        progress: proxy.getTitleOpacity(
+                            geometry: proxy,
+                            imageHeight: DimensionConstants.imageHeight,
+                            collapsedImageHeight: DimensionConstants.collapsedImageHeight
+                        ),
+                        headerHeight: proxy.getHeightForHeaderImage(proxy)
+                    )
+                },
+                content: { titleRect in
+                    ShowInfoView(
+                        loadedState: uiState.showInfo,
+                        show: showDetails,
+                        component: component,
+                        titleRect: titleRect
+                    )
+                },
+                onBackClicked: {
+                    component.dispatch(action: DetailBackClicked())
+                },
+                onRefreshClicked: {
+                    component.dispatch(action: ReloadShowDetails())
                 }
-                .height(min: minHeight, max: maxHeight)
-                .collapseProgress($progress)
-                .allowsHeaderGrowth()
-                .hideScrollIndicators()
-                .shadow(radius: progress)
-                
-                TopBar(
-                    progress: progress,
-                    title: state.showDetails?.title ?? "",
-                    isRefreshing: state.isUpdating || state.showInfo is ShowInfoStateLoading,
-                    onBackClicked: {
-                        presenter.dispatch(action: DetailBackClicked())
-                    },
-                    onRefreshClicked: {
-                        presenter.dispatch(action: ReloadShowDetails())
-                    }
-                )
-                
-            }
+            )
         }
-        .ignoresSafeArea()
-    }
-    
-    @ViewBuilder
-    func ShowInfoView(_ showInfo: ShowInfoStateLoaded) -> some View {
-        
-        SeasonsRowView(
-            seasonsList: showInfo.seasonsList,
-            onClick: { params in
-                presenter.dispatch(action: SeasonClicked(params: params))
-            }
-        )
-        
-        ProvidersList(items: showInfo.providers)
-        
-        TrailerListView(trailers: showInfo.trailersList, openInYouTube: showInfo.openTrailersInYoutube)
-        
-        CastListView(casts: showInfo.castsList)
-        
-        HorizontalShowsListView(
-            title: "Recommendations",
-            items: showInfo.recommendedShowList,
-            onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id)) }
-        )
-        
-        HorizontalShowsListView(
-            title: "Similar Shows",
-            items: showInfo.similarShows,
-            onClick: { id in presenter.dispatch(action: DetailShowClicked(id: id)) }
-        )
     }
 }
 
-
+private struct DimensionConstants {
+    static let imageHeight: CGFloat = 400
+    static let collapsedImageHeight: CGFloat = 120.0
+}

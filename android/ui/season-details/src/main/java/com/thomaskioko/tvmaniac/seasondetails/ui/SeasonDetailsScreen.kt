@@ -75,9 +75,9 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.ReloadSeasonDetails
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsBackClicked
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsComponent
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsErrorState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonGalleryClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.UpdateSeasonWatchedState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Cast
@@ -90,15 +90,15 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun SeasonDetailsScreen(
-  presenter: SeasonDetailsPresenter,
+  component: SeasonDetailsComponent,
   modifier: Modifier = Modifier,
 ) {
-  val state by presenter.state.collectAsState()
+  val state by component.state.collectAsState()
 
   SeasonDetailsScreen(
     modifier = modifier,
     state = state,
-    onAction = presenter::dispatch,
+    onAction = component::dispatch,
   )
 }
 

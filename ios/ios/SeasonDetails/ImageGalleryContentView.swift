@@ -15,33 +15,31 @@ struct ImageGalleryContentView: View {
     var items: [SeasonImagesModel]
     
     @Environment(\.presentationMode) var presentationMode
-
+    
     var body: some View {
-        NavigationStack {
-            VStack {
-                ScrollView(.vertical, showsIndicators: false) {
-                    LazyVGrid(columns: DimensionConstants.posterColumns,spacing: DimensionConstants.spacing){
-                        ForEach(items, id: \.id){ item in
-                            PosterItemView(
-                                showId: item.id,
-                                title: "",
-                                posterUrl: item.imageUrl,
-                                posterWidth: DimensionConstants.posterWidth,
-                                posterHeight: DimensionConstants.posterHeight
-                            )
-                        }
-                    }.padding(.all, 10)
-                }
-            }
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    HStack {
-                        closeButton
+        VStack {
+            ScrollView(.vertical, showsIndicators: false) {
+                LazyVGrid(columns: DimensionConstants.posterColumns,spacing: DimensionConstants.spacing){
+                    ForEach(items, id: \.id){ item in
+                        PosterItemView(
+                            showId: item.id,
+                            title: "",
+                            posterUrl: item.imageUrl,
+                            posterWidth: DimensionConstants.posterWidth,
+                            posterHeight: DimensionConstants.posterHeight
+                        )
                     }
+                }.padding(.all, 10)
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                HStack {
+                    closeButton
                 }
             }
-            .background(Color.background)
         }
+        .background(Color.background)
     }
     
     private var closeButton: some View {

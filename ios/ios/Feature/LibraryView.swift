@@ -11,27 +11,24 @@ import TvManiac
 
 struct LibraryView: View {
     
-    private let presenter: LibraryPresenter
+    private let component: LibraryComponent
 
-    @ObservedObject
-    private var uiState: StateFlow<LibraryState>
-
-    init(presenter: LibraryPresenter){
-        self.presenter = presenter
-        self.uiState = StateFlow<LibraryState>(presenter.state)
+    @StateFlow private var uiState: LibraryState
+    
+    init(component: LibraryComponent){
+        self.component = component
+        _uiState = StateFlow(component.state)
     }
     
     var body: some View {
-        NavigationStack {
             VStack {
-                switch onEnum(of: uiState.value) {
+                switch onEnum(of: uiState) {
                     case .loadingShows:
-                    //TODO:: Show indicator on the toolbar
-                    LoadingIndicatorView()
-                        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
+                        //TODO:: Show indicator on the toolbar
+                        LoadingIndicatorView()
+                            .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
                     case .libraryContent(let content): GridViewContent(content)
                     case .errorLoadingShows: EmptyView()  //TODO:: Show Error
-                    case .none: EmptyView()
                 }
             }
             .navigationTitle("Library")
@@ -45,8 +42,6 @@ struct LibraryView: View {
                     }
                 }
             }
-        }
-     
     }
     
     @ViewBuilder
@@ -65,7 +60,7 @@ struct LibraryView: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                         .clipped()
-                        .onTapGesture { presenter.dispatch(action: LibraryShowClicked(id: item.tmdbId)) }
+                        .onTapGesture { component.dispatch(action: LibraryShowClicked(id: item.tmdbId)) }
                     }
                 }.padding(.all, 10)
             }
@@ -89,7 +84,7 @@ struct LibraryView: View {
     
     private var sortButton: some View {
         Button {
-           //TODO:: Add filer option
+            //TODO:: Add filer option
         } label: {
             Label("Sort Order", systemImage: "arrow.up.arrow.down.circle")
                 .labelStyle(.iconOnly)
