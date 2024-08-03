@@ -62,6 +62,11 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
       }
 
       targets.withType<KotlinNativeTarget>().configureEach {
+
+        binaries.all {
+          linkerOpts("-lsqlite3")
+        }
+
         compilations.configureEach {
           compileTaskProvider.configure {
             compilerOptions {
