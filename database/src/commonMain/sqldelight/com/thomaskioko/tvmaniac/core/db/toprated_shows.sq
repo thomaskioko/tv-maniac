@@ -76,8 +76,8 @@ ORDER BY
 LIMIT
     :limit OFFSET :offset;
 
-getLastPage:
-SELECT MAX(page) FROM popular_shows;
+pageExists:
+SELECT EXISTS(SELECT 1 FROM toprated_shows WHERE page = :page LIMIT 1);
 
 delete:
 DELETE FROM toprated_shows
