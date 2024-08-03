@@ -18,32 +18,16 @@ kotlin {
       }
     }
 
-    androidUnitTest {
-      dependencies {
-        implementation(kotlin("test"))
-        implementation(libs.sqldelight.driver.jvm)
-      }
-    }
-
     commonTest {
       dependencies {
-        implementation(kotlin("test"))
+        implementation(projects.database.test)
+
         implementation(libs.kotest.assertions)
+        implementation(libs.kotlin.test)
       }
     }
 
-    iosMain {
-      dependencies {
-        implementation(libs.sqldelight.driver.native)
-
-        // See https://github.com/cashapp/sqldelight/issues/4357
-        implementation(libs.stately.common)
-        implementation(libs.stately.isolate)
-        implementation(libs.stately.iso.collections)
-      }
-    }
-
-    jvmTest { dependencies { implementation(libs.sqldelight.driver.jvm) } }
+    iosMain { dependencies { implementation(libs.sqldelight.driver.native) } }
   }
 }
 

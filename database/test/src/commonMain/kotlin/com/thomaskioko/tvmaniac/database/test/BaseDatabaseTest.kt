@@ -1,17 +1,32 @@
-package com.thomaskioko.tvmaniac.core.db
+package com.thomaskioko.tvmaniac.database.test
 
 import app.cash.sqldelight.db.SqlDriver
+import com.thomaskioko.tvmaniac.core.db.Casts
+import com.thomaskioko.tvmaniac.core.db.Episode
+import com.thomaskioko.tvmaniac.core.db.Episode_image
+import com.thomaskioko.tvmaniac.core.db.Featured_shows
+import com.thomaskioko.tvmaniac.core.db.Genres
+import com.thomaskioko.tvmaniac.core.db.Last_requests
+import com.thomaskioko.tvmaniac.core.db.Library
+import com.thomaskioko.tvmaniac.core.db.Popular_shows
+import com.thomaskioko.tvmaniac.core.db.Recommended_shows
+import com.thomaskioko.tvmaniac.core.db.Season
+import com.thomaskioko.tvmaniac.core.db.Season_images
+import com.thomaskioko.tvmaniac.core.db.Season_videos
+import com.thomaskioko.tvmaniac.core.db.Similar_shows
+import com.thomaskioko.tvmaniac.core.db.Toprated_shows
+import com.thomaskioko.tvmaniac.core.db.Trailers
+import com.thomaskioko.tvmaniac.core.db.Trending_shows
+import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.core.db.Tvshows
+import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
+import com.thomaskioko.tvmaniac.core.db.Watch_providers
 import com.thomaskioko.tvmaniac.db.IdAdapter
 import com.thomaskioko.tvmaniac.db.InstantColumnAdapter
 import com.thomaskioko.tvmaniac.db.intColumnAdapter
-import kotlin.test.AfterTest
 
 expect fun inMemorySqlDriver(): SqlDriver
 
-/**
- * Creates an in-memory database and closes it before and after each test. This class exists because
- * JUnit rules aren't a thing (yet) in Kotlin tests.
- */
 abstract class BaseDatabaseTest {
   private val sqlDriver: SqlDriver = inMemorySqlDriver()
   protected open val database: TvManiacDatabase =
@@ -110,7 +125,6 @@ abstract class BaseDatabaseTest {
         ),
     )
 
-  @AfterTest
   fun closeDb() {
     sqlDriver.close()
   }
