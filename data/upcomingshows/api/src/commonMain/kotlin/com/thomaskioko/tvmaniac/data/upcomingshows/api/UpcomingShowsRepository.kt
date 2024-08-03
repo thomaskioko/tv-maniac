@@ -11,5 +11,5 @@ interface UpcomingShowsRepository {
     forceRefresh: Boolean = false
   ): Flow<Either<Failure, List<ShowEntity>>>
 
-  fun getPagedUpcomingShows(): Flow<PagingData<ShowEntity>>
+  fun getPagedUpcomingShows(forceRefresh: Boolean = false): Flow<PagingData<ShowEntity>>
 }
