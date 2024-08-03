@@ -15,6 +15,17 @@ kotlin {
         implementation(libs.sqldelight.extensions)
       }
     }
+
+    commonTest {
+      dependencies {
+        implementation(projects.database.test)
+
+        implementation(libs.kotlin.test)
+        implementation(libs.kotest.assertions)
+      }
+    }
+
+    iosTest { dependencies { implementation(libs.sqliter.driver) } }
   }
 }
 

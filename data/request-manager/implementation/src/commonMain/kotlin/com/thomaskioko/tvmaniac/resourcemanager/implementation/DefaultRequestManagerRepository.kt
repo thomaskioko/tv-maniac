@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.resourcemanager.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Last_requests
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.resourcemanager.api.LastRequest
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import kotlin.time.Duration
 import kotlinx.datetime.Clock
@@ -14,25 +13,17 @@ class DefaultRequestManagerRepository(
   private val database: TvManiacDatabase,
 ) : RequestManagerRepository {
 
-  override fun upsert(entityId: Long, requestType: String) {
+  override fun upsert(entityId: Long, requestType: String, timestamp: Instant): Long {
     database.last_requestsQueries.upsert(
       entity_id = entityId,
       request_type = requestType,
-      timestamp = Clock.System.now(),
-    )
-  }
-
-  override fun upsert(lastRequests: LastRequest): Long {
-    database.last_requestsQueries.upsert(
-      entity_id = lastRequests.entityId,
-      timestamp = lastRequests.timestamp,
-      request_type = lastRequests.requestType,
+      timestamp = timestamp
     )
     return database.last_requestsQueries.lastInsertRowId().executeAsOne()
   }
 
-  override fun delete(id: Long) {
-    database.last_requestsQueries.delete(id)
+  override fun delete(entityId: Long, requestType: String) {
+    database.last_requestsQueries.delete(entityId, requestType)
   }
 
   override fun deleteAll() {
@@ -49,7 +40,6 @@ class DefaultRequestManagerRepository(
   private fun getLastRequest(requestType: String, entityId: Long): Last_requests? {
     return database.last_requestsQueries
       .getLastRequestForId(requestType, entityId)
-      .executeAsList()
-      .firstOrNull()
+      .executeAsOneOrNull()
   }
 }
