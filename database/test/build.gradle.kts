@@ -1,7 +1,6 @@
 plugins {
   alias(libs.plugins.tvmaniac.kotlin.android)
   alias(libs.plugins.tvmaniac.multiplatform)
-  alias(libs.plugins.sqldelight)
 }
 
 kotlin {

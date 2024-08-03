@@ -24,8 +24,6 @@ kotlin {
         implementation(libs.kotest.assertions)
       }
     }
-
-    iosTest { dependencies { implementation(libs.sqliter.driver) } }
   }
 }
 
