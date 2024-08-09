@@ -20,10 +20,7 @@ kotlin {
       implementation(libs.yamlkt)
     }
 
-    commonTest.dependencies {
-      implementation(kotlin("test"))
-      implementation(libs.bundles.unittest)
-    }
+    commonTest.dependencies { implementation(libs.bundles.unittest) }
   }
 }
 

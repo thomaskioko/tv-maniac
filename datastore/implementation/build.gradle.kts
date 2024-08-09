@@ -17,15 +17,7 @@ kotlin {
       }
     }
 
-    commonTest {
-      dependencies {
-        implementation(kotlin("test"))
-
-        implementation(libs.coroutines.test)
-        implementation(libs.kotest.assertions)
-        implementation(libs.turbine)
-      }
-    }
+    commonTest { dependencies { implementation(libs.bundles.unittest) } }
   }
 }
 

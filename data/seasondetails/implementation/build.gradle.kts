@@ -24,14 +24,6 @@ kotlin {
         implementation(libs.store5)
       }
     }
-
-    commonMain {
-      dependencies {
-        implementation(kotlin("test"))
-        implementation(libs.turbine)
-        implementation(libs.kotest.assertions)
-      }
-    }
   }
 }
 
