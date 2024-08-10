@@ -1,10 +1,3 @@
-buildscript {
-  repositories {
-    google()
-    mavenCentral()
-  }
-}
-
 plugins {
   alias(libs.plugins.android.application) apply false
   alias(libs.plugins.android.library) apply false
@@ -17,6 +10,6 @@ plugins {
   alias(libs.plugins.skie) apply false
   alias(libs.plugins.spotless) apply false
   alias(libs.plugins.sqldelight) apply false
-  alias(libs.plugins.tvmaniac.spotless)
   alias(libs.plugins.tvmaniac.git.hooks)
+  alias(libs.plugins.tvmaniac.spotless)
 }
