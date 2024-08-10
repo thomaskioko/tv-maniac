@@ -47,5 +47,10 @@ gradlePlugin {
           id = "plugin.tvmaniac.spotless"
           implementationClass = "com.thomaskioko.tvmaniac.plugins.SpotlessPlugin"
         }
+
+      register("git-hooks") {
+          id = "plugin.tvmaniac.git-hooks"
+          implementationClass = "com.thomaskioko.tvmaniac.plugins.GitHooksPlugin"
+        }
     }
 }

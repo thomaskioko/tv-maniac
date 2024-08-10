@@ -1,0 +1,14 @@
+#!/bin/sh
+
+echo "Running spotlessApply..."
+./gradlew spotlessApply --daemon
+
+# Check if spotlessApply made any changes
+if [ -n "$(git diff)" ]; then
+  echo "👀 Spotless made changes. Staging the changes..."
+  git add .
+  echo "🧹 Changes have been staged. Proceeding with commit."
+fi
+
+# Return 0 to allow the commit to proceed
+exit 0
