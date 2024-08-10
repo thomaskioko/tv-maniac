@@ -18,6 +18,7 @@ dependencies {
   compileOnly(libs.kotlin.gradlePlugin)
   compileOnly(libs.compose.compiler.gradlePlugin)
   compileOnly(libs.spotless.plugin)
+  compileOnly(libs.dependency.analysis.gradlePlugin)
 }
 
 gradlePlugin {
@@ -47,6 +48,11 @@ gradlePlugin {
     register("git-hooks") {
       id = "plugin.tvmaniac.git-hooks"
       implementationClass = "com.thomaskioko.tvmaniac.plugins.GitHooksPlugin"
+    }
+
+    register("dependency-analysis") {
+      id = "plugin.tvmaniac.dependency-analysis"
+      implementationClass = "com.thomaskioko.tvmaniac.plugins.DependencyAnalysisPlugin"
     }
   }
 }

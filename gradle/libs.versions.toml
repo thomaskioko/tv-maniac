@@ -130,6 +130,7 @@ android-desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", versio
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 compose-compiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+dependency-analysis-gradlePlugin = { module = "com.autonomousapps:dependency-analysis-gradle-plugin", version.ref = "dependency-analysis" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -149,7 +150,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 tvmaniac-android-library = { id = "plugin.tvmaniac.android.library" }
 tvmaniac-application = { id = "plugin.tvmaniac.application" }
 tvmaniac-compose-library = { id = "plugin.tvmaniac.compose.library" }
-tvmaniac-kotlin-android = { id = "plugin.tvmaniac.kotlin.android" }
+tvmaniac-dependency-analysis = { id = "plugin.tvmaniac.dependency-analysis" }
 tvmaniac-multiplatform = { id = "plugin.tvmaniac.multiplatform" }
 tvmaniac-spotless = { id = "plugin.tvmaniac.spotless" }
 tvmaniac-git-hooks = { id = "plugin.tvmaniac.git-hooks" }
