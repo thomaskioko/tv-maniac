@@ -1,5 +1,7 @@
+import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
+
 plugins {
-  alias(libs.plugins.tvmaniac.kotlin.android)
+  alias(libs.plugins.tvmaniac.android.library)
   alias(libs.plugins.tvmaniac.multiplatform)
   alias(libs.plugins.ksp)
 }
@@ -21,10 +23,6 @@ kotlin {
   }
 }
 
-dependencies {
-  add("kspAndroid", libs.kotlinInject.compiler)
-  add("kspIosX64", libs.kotlinInject.compiler)
-  add("kspIosArm64", libs.kotlinInject.compiler)
-}
+addKspDependencyForAllTargets(libs.kotlinInject.compiler)
 
 android { namespace = "com.thomaskioko.tvmaniac.shared.domain.datastore.implementation" }

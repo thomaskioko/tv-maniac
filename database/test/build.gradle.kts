@@ -1,5 +1,5 @@
 plugins {
-  alias(libs.plugins.tvmaniac.kotlin.android)
+  alias(libs.plugins.tvmaniac.android.library)
   alias(libs.plugins.tvmaniac.multiplatform)
 }
 
