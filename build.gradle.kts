@@ -18,23 +18,3 @@ plugins {
   alias(libs.plugins.spotless) apply false
   alias(libs.plugins.sqldelight) apply false
 }
-
-allprojects {
-  afterEvaluate {
-    // Remove log pollution until Android support in KMP improves.
-    project.extensions
-      .findByType<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension>()
-      ?.let { kmpExt ->
-        kmpExt.sourceSets.removeAll {
-          setOf(
-              "androidAndroidTestRelease",
-              "androidTestFixtures",
-              "androidTestFixturesDebug",
-              "androidTestFixturesRelease",
-              "androidTestFixturesDemo"
-            )
-            .contains(it.name)
-        }
-      }
-  }
-}
