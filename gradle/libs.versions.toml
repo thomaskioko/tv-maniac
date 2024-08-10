@@ -108,6 +108,7 @@ robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
 
 snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
+spotless-plugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }

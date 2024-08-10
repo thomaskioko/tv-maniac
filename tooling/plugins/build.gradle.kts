@@ -17,6 +17,7 @@ dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.compose.compiler.gradlePlugin)
+    implementation(libs.spotless.plugin)
 }
 
 gradlePlugin {
@@ -40,6 +41,11 @@ gradlePlugin {
         register("androidComposeLibrary") {
             id = "plugin.tvmaniac.compose.library"
             implementationClass = "com.thomaskioko.tvmaniac.plugins.ComposeLibraryPlugin"
+        }
+
+        register("spotless") {
+          id = "plugin.tvmaniac.spotless"
+          implementationClass = "com.thomaskioko.tvmaniac.plugins.SpotlessPlugin"
         }
     }
 }
