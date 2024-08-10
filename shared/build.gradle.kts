@@ -18,7 +18,7 @@ kotlin {
       binaries.withType<Framework> {
         baseName = "TvManiac"
 
-        isStatic = true
+        isStatic = !debuggable
         linkerOpts.add("-lsqlite3")
         freeCompilerArgs += "-Xadd-light-debug=enable"
 
