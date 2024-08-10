@@ -140,7 +140,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-skie = { id = "co.touchlab.skie", version.ref = "skie"}
+skie = { id = "co.touchlab.skie", version.ref = "skie" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
@@ -153,7 +153,8 @@ tvmaniac-multiplatform = { id = "plugin.tvmaniac.multiplatform", version = "unsp
 
 [bundles]
 unittest = [
-    "coroutines-test",
-    "kotest-assertions",
-    "turbine",
+  "coroutines-test",
+  "kotest-assertions",
+  "kotlin-test",
+  "turbine",
 ]
