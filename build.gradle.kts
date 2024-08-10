@@ -1,5 +1,3 @@
-import com.diffplug.gradle.spotless.SpotlessExtension
-
 buildscript {
   repositories {
     google()
@@ -22,26 +20,6 @@ plugins {
 }
 
 allprojects {
-  apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)
-  configure<SpotlessExtension> {
-    kotlin {
-      ktfmt(libs.versions.ktfmt.get()).googleStyle()
-      target("src/**/*.kt")
-      targetExclude("${layout.buildDirectory}/**/*.kt")
-    }
-    kotlinGradle {
-      ktfmt(libs.versions.ktfmt.get()).googleStyle()
-      target("*.kts")
-      targetExclude("${layout.buildDirectory}/**/*.kts")
-    }
-    format("xml") {
-      target("src/**/*.xml")
-      targetExclude("**/build/", ".idea/")
-      trimTrailingWhitespace()
-      endWithNewline()
-    }
-  }
-
   afterEvaluate {
     // Remove log pollution until Android support in KMP improves.
     project.extensions
