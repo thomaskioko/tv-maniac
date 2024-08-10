@@ -84,6 +84,23 @@ jobs:
           name: spotless-report
           path: ./**/build/reports/spotless/spotless.*
 
+  dependency-health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.DISTRIBUTION }}
+          java-version: ${{ env.JDK_VERSION }}
+
+      - name: Dependency Health
+        run: ./gradlew buildHealth
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dependency-health-report
+          path: ./**/build/reports/tests/
+
   jvm_test:
     runs-on: ubuntu-latest
     steps:
