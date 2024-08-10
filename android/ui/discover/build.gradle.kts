@@ -1,3 +1,5 @@
+import com.thomaskioko.tvmaniac.extensions.addCompilerArgs
+
 plugins {
   alias(libs.plugins.tvmaniac.compose.library)
   alias(libs.plugins.roborazzi)
@@ -13,13 +15,21 @@ dependencies {
 
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material3)
+  implementation(libs.androidx.compose.material)
   implementation(libs.androidx.compose.ui.util)
   implementation(libs.androidx.compose.runtime)
-  implementation(libs.decompose.extensions.compose)
   implementation(libs.snapper)
 
   testImplementation(projects.android.screenshotTests)
   testImplementation(libs.androidx.compose.ui.test)
   testImplementation(libs.robolectric)
-  testDemoImplementation(libs.roborazzi)
+  testRuntimeOnly(libs.roborazzi)
 }
+
+addCompilerArgs(
+    listOf(
+        "androidx.compose.foundation.ExperimentalFoundationApi",
+        "androidx.compose.material.ExperimentalMaterialApi",
+        "dev.chrisbanes.snapper.ExperimentalSnapperApi",
+    ),
+)

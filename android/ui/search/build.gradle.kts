@@ -1,3 +1,5 @@
+import com.thomaskioko.tvmaniac.extensions.addCompilerArgs
+
 plugins { alias(libs.plugins.tvmaniac.compose.library) }
 
 android { namespace = "com.thomaskioko.tvmaniac.ui.search" }
@@ -11,5 +13,10 @@ dependencies {
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material3)
   implementation(libs.androidx.compose.runtime)
-  implementation(libs.decompose.extensions.compose)
 }
+
+addCompilerArgs(
+  listOf(
+    "androidx.compose.material3.ExperimentalMaterial3Api",
+  )
+)
