@@ -4,6 +4,7 @@ plugins {
   alias(libs.plugins.compose.compiler) apply false
   alias(libs.plugins.dependency.analysis)
   alias(libs.plugins.kotlin.android) apply false
+  alias(libs.plugins.kotlin.jvm) apply false
   alias(libs.plugins.ksp) apply false
   alias(libs.plugins.multiplatform) apply false
   alias(libs.plugins.serialization) apply false
