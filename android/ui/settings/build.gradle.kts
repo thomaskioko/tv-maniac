@@ -1,4 +1,4 @@
-import com.thomaskioko.tvmaniac.extensions.addCompilerArgs
+import com.thomaskioko.tvmaniac.extensions.addCompilerOptInArgs
 
 plugins { alias(libs.plugins.tvmaniac.compose.library) }
 
@@ -16,7 +16,7 @@ dependencies {
   implementation(libs.androidx.compose.runtime)
 }
 
-addCompilerArgs(
+addCompilerOptInArgs(
   listOf(
     "androidx.compose.material3.ExperimentalMaterial3Api",
   )
