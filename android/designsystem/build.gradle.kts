@@ -15,7 +15,7 @@ dependencies {
 
   implementation(libs.androidx.annotation)
   implementation(libs.androidx.collections)
-  implementation(libs.androidx.core)
+  implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.compose.foundation)
   implementation(libs.coil.coil)
   implementation(libs.coil.compose)

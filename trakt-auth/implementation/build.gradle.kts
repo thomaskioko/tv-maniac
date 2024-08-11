@@ -14,7 +14,7 @@ kotlin {
 
         implementation(libs.androidx.activity)
         implementation(libs.androidx.browser)
-        implementation(libs.androidx.core)
+        implementation(libs.androidx.core.ktx)
       }
     }
 

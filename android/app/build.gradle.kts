@@ -94,6 +94,7 @@ dependencies {
   implementation(projects.tmdbApi.implementation)
 
   implementation(libs.androidx.compose.activity)
+  implementation(libs.androidx.core.core)
   implementation(libs.androidx.core.splashscreen)
   implementation(libs.androidx.compose.material3)
   implementation(libs.androidx.compose.material.icons)

@@ -1,3 +1,5 @@
+import com.thomaskioko.tvmaniac.extensions.addCompilerOptInArgs
+
 plugins { alias(libs.plugins.tvmaniac.compose.library) }
 
 android { namespace = "com.thomaskioko.tvmaniac.screenshottesting" }
@@ -11,3 +13,7 @@ dependencies {
 
   runtimeOnly(libs.androidx.compose.ui.test.manifest)
 }
+
+addCompilerOptInArgs(
+  listOf("com.github.takahirom.roborazzi.ExperimentalRoborazziApi")
+)
