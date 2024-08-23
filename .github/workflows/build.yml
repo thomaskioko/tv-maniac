@@ -84,6 +84,23 @@ jobs:
           name: spotless-report
           path: ./**/build/reports/spotless/spotless.*
 
+  dependency-health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.DISTRIBUTION }}
+          java-version: ${{ env.JDK_VERSION }}
+
+      - name: Dependency Health
+        run: ./gradlew buildHealth
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dependency-health-report
+          path: ./**/build/reports/tests/
+
   jvm_test:
     runs-on: ubuntu-latest
     steps:
@@ -147,7 +164,12 @@ jobs:
       - name: Roborazzi screenshot tests
         id: screenshotsverify
         continue-on-error: true
-        run: ./gradlew verifyRoborazziDemoDebug -Proborazzi.test.record=true
+        run: ./gradlew clean verifyRoborazziDevDebug
+
+      - name: Generate Roborazzi screenshot Report
+        id: screenshots-report
+        continue-on-error: true
+        run: ./gradlew compareRoborazziDebug
 
       - name: Prevent pushing new screenshots if this is a fork
         id: checkfork_screenshots
@@ -161,7 +183,7 @@ jobs:
         id: screenshotsrecord
         if: steps.screenshotsverify.outcome == 'failure' && github.event_name == 'pull_request'
         run: |
-          ./gradlew recordRoborazziDemoDebug -Proborazzi.test.record=true
+          ./gradlew recordRoborazziDevDebug
 
       - name: Push new screenshots if available
         uses: stefanzweifel/git-auto-commit-action@v5
@@ -221,7 +243,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           draft: true
-          files: android/app/build/outputs/apk/demo/debug/app-demo-debug.apk
+          files: android/app/build/outputs/apk/dev/debug/app-dev-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

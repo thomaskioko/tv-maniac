@@ -28,7 +28,6 @@ kotlin {
 
     commonTest {
       dependencies {
-        implementation(kotlin("test"))
         implementation(projects.data.cast.testing)
         implementation(projects.data.library.testing)
         implementation(projects.data.recommendedshows.testing)

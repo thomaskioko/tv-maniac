@@ -11,5 +11,5 @@ interface TrendingShowsRepository {
     forceRefresh: Boolean = false
   ): Flow<Either<Failure, List<ShowEntity>>>
 
-  fun getPagedTrendingShows(): Flow<PagingData<ShowEntity>>
+  fun getPagedTrendingShows(forceRefresh: Boolean = false): Flow<PagingData<ShowEntity>>
 }

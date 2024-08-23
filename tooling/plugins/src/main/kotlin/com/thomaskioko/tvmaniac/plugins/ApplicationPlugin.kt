@@ -25,7 +25,7 @@ class ApplicationPlugin : Plugin<Project> {
           targetSdk = Versions.TARGET_SDK
           missingDimensionStrategy(
               FlavorDimension.contentType.name,
-              TvManiacFlavor.demo.name,
+              TvManiacFlavor.dev.name,
           )
         }
 

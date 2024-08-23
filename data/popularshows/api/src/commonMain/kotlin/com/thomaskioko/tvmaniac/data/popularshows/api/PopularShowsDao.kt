@@ -16,5 +16,5 @@ interface PopularShowsDao {
 
   fun deletePopularShows()
 
-  fun getLastPage(): Long?
+  fun pageExists(page: Long): Boolean
 }

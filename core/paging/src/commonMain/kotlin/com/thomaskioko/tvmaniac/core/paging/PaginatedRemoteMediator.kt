@@ -13,30 +13,48 @@ import kotlinx.coroutines.CancellationException
  * @param fetch Executes the remote fetch.
  * @param EM Entity model.
  */
-class PaginatedRemoteMediator<EM : Any>(
-  private val fetch: suspend (page: Long) -> Unit,
-) : RemoteMediator<Int, EM>() {
-  override suspend fun load(loadType: LoadType, state: PagingState<Int, EM>): MediatorResult {
-    val nextPage: Long =
-      when (loadType) {
-        LoadType.REFRESH -> 1
-        LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
-        LoadType.APPEND -> {
-          val lastItem =
-            state.lastItemOrNull() as? ShowEntity
-              ?: return MediatorResult.Success(endOfPaginationReached = true)
-          lastItem.page + 1
-        }
-        else -> error("Unknown LoadType: $loadType")
-      }
+class PaginatedRemoteMediator<EM : Any>(private val fetch: suspend (page: Long) -> FetchResult) :
+  RemoteMediator<Int, EM>() {
 
-    return try {
-      fetch(nextPage)
-      MediatorResult.Success(endOfPaginationReached = false)
-    } catch (cancellationException: CancellationException) {
-      throw cancellationException
-    } catch (throwable: Throwable) {
-      MediatorResult.Error(throwable)
+  override suspend fun load(loadType: LoadType, state: PagingState<Int, EM>): MediatorResult {
+    return when (val page = getNextPageNumber(loadType, state)) {
+      null -> MediatorResult.Success(endOfPaginationReached = true)
+      else -> fetchPage(page)
     }
   }
+
+  private fun getNextPageNumber(loadType: LoadType, state: PagingState<Int, EM>): Long? {
+    return when (loadType) {
+      LoadType.REFRESH -> 1
+      LoadType.PREPEND -> null
+      LoadType.APPEND -> {
+        val lastItem = state.lastItemOrNull() as? ShowEntity
+        lastItem?.page?.plus(1) ?: 1 // If lastItem is null, we start from page 1
+      }
+    }
+  }
+
+  private suspend fun fetchPage(page: Long): MediatorResult {
+    return try {
+      when (val result = fetch(page)) {
+        is FetchResult.Success ->
+          MediatorResult.Success(endOfPaginationReached = result.endOfPaginationReached)
+        is FetchResult.Error -> MediatorResult.Error(result.error)
+        is FetchResult.NoFetch ->
+          MediatorResult.Success(endOfPaginationReached = false) // Changed this to false
+      }
+    } catch (e: CancellationException) {
+      throw e
+    } catch (e: Exception) {
+      MediatorResult.Error(e)
+    }
+  }
+}
+
+sealed class FetchResult {
+  data class Success(val endOfPaginationReached: Boolean) : FetchResult()
+
+  data class Error(val error: Throwable) : FetchResult()
+
+  data object NoFetch : FetchResult()
 }

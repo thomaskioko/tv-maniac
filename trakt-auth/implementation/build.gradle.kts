@@ -1,5 +1,7 @@
+import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
+
 plugins {
-  alias(libs.plugins.tvmaniac.kotlin.android)
+  alias(libs.plugins.tvmaniac.android.library)
   alias(libs.plugins.tvmaniac.multiplatform)
   alias(libs.plugins.ksp)
 }
@@ -12,7 +14,7 @@ kotlin {
 
         implementation(libs.androidx.activity)
         implementation(libs.androidx.browser)
-        implementation(libs.androidx.core)
+        implementation(libs.androidx.core.ktx)
       }
     }
 
@@ -29,8 +31,4 @@ kotlin {
 
 android { namespace = "com.thomaskioko.tvmaniac.traktauth.implementation" }
 
-dependencies {
-  add("kspAndroid", libs.kotlinInject.compiler)
-  add("kspIosX64", libs.kotlinInject.compiler)
-  add("kspIosArm64", libs.kotlinInject.compiler)
-}
+addKspDependencyForAllTargets(libs.kotlinInject.compiler)

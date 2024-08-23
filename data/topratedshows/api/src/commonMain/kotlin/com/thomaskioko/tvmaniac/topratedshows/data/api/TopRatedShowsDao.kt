@@ -15,7 +15,7 @@ interface TopRatedShowsDao {
 
   fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>>
 
-  fun getLastPage(): Long?
+  fun pageExists(page: Long): Boolean
 
   fun deleteTrendingShows(id: Long)
 
