@@ -12,7 +12,7 @@ interface TrendingShowsDao {
 
   fun getPagedTrendingShows(): PagingSource<Int, ShowEntity>
 
-  fun getLastPage(): Long?
+  fun pageExists(page: Long): Boolean
 
   fun deleteTrendingShow(id: Long)
 

@@ -55,8 +55,8 @@ ORDER BY
 LIMIT
     :limit OFFSET :offset;
 
-getLastPage:
-SELECT MAX(page) FROM upcoming_shows;
+pageExists:
+SELECT EXISTS(SELECT 1 FROM upcoming_shows WHERE page = :page LIMIT 1);
 
 count:
 SELECT count(*) FROM upcoming_shows;

@@ -38,6 +38,7 @@ include(
   ":core:paging",
   ":core:util",
   ":database",
+  ":database:test",
   ":datastore:api",
   ":datastore:implementation",
   ":datastore:testing",

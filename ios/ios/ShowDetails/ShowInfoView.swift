@@ -51,7 +51,6 @@ struct ShowInfoView: View {
                             ChipView(label: label)
                         }
                     }
-                    .padding(.top, 16)
                     .padding(.horizontal)
                 }
             }

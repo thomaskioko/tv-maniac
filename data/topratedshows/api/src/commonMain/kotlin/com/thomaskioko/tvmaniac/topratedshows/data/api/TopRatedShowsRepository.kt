@@ -11,5 +11,5 @@ interface TopRatedShowsRepository {
     forceRefresh: Boolean = false,
   ): Flow<Either<Failure, List<ShowEntity>>>
 
-  fun getPagedTopRatedShows(): Flow<PagingData<ShowEntity>>
+  fun getPagedTopRatedShows(forceRefresh: Boolean = false): Flow<PagingData<ShowEntity>>
 }

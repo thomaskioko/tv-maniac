@@ -18,7 +18,6 @@ kotlin {
 
     commonTest {
       dependencies {
-        implementation(kotlin("test"))
         implementation(projects.data.trailers.testing)
 
         implementation(libs.bundles.unittest)

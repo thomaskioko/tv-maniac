@@ -30,7 +30,7 @@ class FakePopularShowsRepository : PopularShowsRepository {
     return entityListResult.receiveAsFlow()
   }
 
-  override fun getPagedPopularShows(): Flow<PagingData<ShowEntity>> {
+  override fun getPagedPopularShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
     return flowOf(PagingData.empty())
   }
 }

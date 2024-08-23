@@ -29,7 +29,7 @@ class FakeTrendingShowsRepository : TrendingShowsRepository {
     return entityListResult.receiveAsFlow()
   }
 
-  override fun getPagedTrendingShows(): Flow<PagingData<ShowEntity>> {
+  override fun getPagedTrendingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
     return pagedList.receiveAsFlow()
   }
 }

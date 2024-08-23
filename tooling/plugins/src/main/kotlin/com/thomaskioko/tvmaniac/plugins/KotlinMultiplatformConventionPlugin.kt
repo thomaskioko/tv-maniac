@@ -4,11 +4,10 @@ import com.thomaskioko.tvmaniac.extensions.configureKotlinJvm
 import com.thomaskioko.tvmaniac.extensions.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -62,6 +61,11 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
       }
 
       targets.withType<KotlinNativeTarget>().configureEach {
+
+        binaries.all {
+          linkerOpts("-lsqlite3")
+        }
+
         compilations.configureEach {
           compileTaskProvider.configure {
             compilerOptions {
@@ -78,18 +82,24 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
           }
         }
       }
+    }
 
-      targets.configureEach {
-        compilations.configureEach {
-          compileTaskProvider.configure {
-            compilerOptions {
-              freeCompilerArgs.add("-Xexpect-actual-classes")
-            }
-          }
+    configureKotlinJvm()
+
+    target.afterEvaluate {
+      // Remove log pollution until Android support in KMP improves.
+      extensions.findByType<KotlinMultiplatformExtension>()?.let { kmpExt ->
+        kmpExt.sourceSets.removeAll {
+          setOf(
+            "androidAndroidTestRelease",
+            "androidTestFixtures",
+            "androidTestFixturesDebug",
+            "androidTestFixturesRelease",
+            "androidTestFixturesDemo"
+          ).contains(it.name)
         }
       }
     }
-    configureKotlinJvm()
   }
 }
 
