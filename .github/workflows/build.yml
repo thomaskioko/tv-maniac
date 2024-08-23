@@ -166,6 +166,11 @@ jobs:
         continue-on-error: true
         run: ./gradlew clean verifyRoborazziDevDebug
 
+      - name: Generate Roborazzi screenshot Report
+        id: screenshots-report
+        continue-on-error: true
+        run: ./gradlew compareRoborazziDebug
+
       - name: Prevent pushing new screenshots if this is a fork
         id: checkfork_screenshots
         continue-on-error: false
