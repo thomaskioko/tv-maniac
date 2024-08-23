@@ -72,6 +72,7 @@ class DefaultPopularShowsDao(
     popularShowsQueries.transaction { popularShowsQueries.deleteAll() }
   }
 
-  override fun getLastPage(): Long? =
-    popularShowsQueries.getLastPage().executeAsOneOrNull()?.MAX?.id
+  override fun pageExists(page: Long): Boolean {
+    return popularShowsQueries.pageExists(Id(page)).executeAsOne()
+  }
 }

@@ -64,8 +64,9 @@ class DefaultUpcomingShowsDao(
       },
     )
 
-  override fun getLastPage(): Long? =
-    upcomingShowsQueries.getLastPage().executeAsOneOrNull()?.MAX?.id
+  override fun pageExists(page: Long): Boolean {
+    return upcomingShowsQueries.pageExists(Id(page)).executeAsOne()
+  }
 
   override fun deleteUpcomingShow(id: Long) {
     upcomingShowsQueries.delete(Id(id))

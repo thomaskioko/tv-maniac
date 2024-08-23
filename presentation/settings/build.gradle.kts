@@ -17,7 +17,6 @@ kotlin {
 
     commonTest {
       dependencies {
-        implementation(kotlin("test"))
         implementation(projects.datastore.testing)
         implementation(projects.traktAuth.testing)
 

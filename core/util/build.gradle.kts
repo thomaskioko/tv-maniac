@@ -1,3 +1,5 @@
+import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
+
 plugins {
   alias(libs.plugins.tvmaniac.android.library)
   alias(libs.plugins.tvmaniac.multiplatform)
@@ -20,10 +22,7 @@ kotlin {
       implementation(libs.yamlkt)
     }
 
-    commonTest.dependencies {
-      implementation(kotlin("test"))
-      implementation(libs.bundles.unittest)
-    }
+    commonTest.dependencies { implementation(libs.bundles.unittest) }
   }
 }
 
@@ -33,18 +32,6 @@ android {
   sourceSets["main"].apply {
     resources.srcDirs("src/commonMain/resources") // <-- add the commonMain Resources
   }
-
-  compileOptions {
-    // Flag to enable support for the new language APIs
-    isCoreLibraryDesugaringEnabled = true
-  }
-
-  defaultConfig { multiDexEnabled = true }
 }
 
-dependencies {
-  add("coreLibraryDesugaring", libs.android.desugarJdkLibs)
-  add("kspAndroid", libs.kotlinInject.compiler)
-  add("kspIosX64", libs.kotlinInject.compiler)
-  add("kspIosArm64", libs.kotlinInject.compiler)
-}
+addKspDependencyForAllTargets(libs.kotlinInject.compiler)

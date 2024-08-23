@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.presentation.discover
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.essenty.instancekeeper.InstanceKeeper
+import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsRepository
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
@@ -9,6 +11,8 @@ import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,83 +42,100 @@ class DiscoverShowsComponent(
   private val upcomingShowsRepository: UpcomingShowsRepository,
   private val topRatedShowsRepository: TopRatedShowsRepository,
   private val popularShowsRepository: PopularShowsRepository,
+  private val coroutineScope: CoroutineScope = componentContext.coroutineScope()
 ) : ComponentContext by componentContext {
 
-  private val coroutineScope = coroutineScope()
+  internal val presenterInstance = instanceKeeper.getOrCreate { PresenterInstance() }
 
-  private val _state = MutableStateFlow<DiscoverState>(Loading)
-  val state: StateFlow<DiscoverState> = _state.asStateFlow()
+  val state: StateFlow<DiscoverState> = presenterInstance.state
 
   init {
-    coroutineScope.launch { observeShowData() }
+    presenterInstance.init()
   }
 
   fun dispatch(action: DiscoverShowAction) {
-    when (action) {
-      is ShowClicked -> onNavigateToShowDetails(action.id)
-      PopularClicked -> onNavigateToMore(Category.POPULAR.id)
-      TopRatedClicked -> onNavigateToMore(Category.TOP_RATED.id)
-      TrendingClicked -> onNavigateToMore(Category.TRENDING_TODAY.id)
-      UpComingClicked -> onNavigateToMore(Category.UPCOMING.id)
-      RefreshData ->
-        coroutineScope.launch {
-          _state.update { (it as? DataLoaded)?.copy(isRefreshing = true) ?: it }
-          observeShowData(true)
-        }
-      ReloadData ->
-        coroutineScope.launch {
-          _state.update { Loading }
-          observeShowData(true)
-        }
-      SnackBarDismissed ->
-        coroutineScope.launch {
-          _state.update { state ->
-            (state as? DataLoaded)?.copy(
-              errorMessage = null,
-            )
-              ?: state
-          }
-        }
+    presenterInstance.dispatch(action)
+  }
+
+  internal inner class PresenterInstance : InstanceKeeper.Instance {
+    private val _state = MutableStateFlow<DiscoverState>(Loading)
+    val state: StateFlow<DiscoverState> = _state.asStateFlow()
+
+    fun init() {
+      coroutineScope.launch { observeShowData() }
     }
-  }
 
-  private fun isEmpty(vararg responses: List<ShowEntity>?): Boolean {
-    return responses.all { it.isNullOrEmpty() }
-  }
+    fun dispatch(action: DiscoverShowAction) {
+      when (action) {
+        is ShowClicked -> onNavigateToShowDetails(action.id)
+        PopularClicked -> onNavigateToMore(Category.POPULAR.id)
+        TopRatedClicked -> onNavigateToMore(Category.TOP_RATED.id)
+        TrendingClicked -> onNavigateToMore(Category.TRENDING_TODAY.id)
+        UpComingClicked -> onNavigateToMore(Category.UPCOMING.id)
+        RefreshData ->
+          coroutineScope.launch {
+            _state.update { (it as? DataLoaded)?.copy(isRefreshing = true) ?: it }
+            observeShowData(true)
+          }
+        ReloadData ->
+          coroutineScope.launch {
+            _state.update { Loading }
+            observeShowData(true)
+          }
+        SnackBarDismissed ->
+          coroutineScope.launch {
+            _state.update { state ->
+              (state as? DataLoaded)?.copy(
+                errorMessage = null,
+              )
+                ?: state
+            }
+          }
+      }
+    }
 
-  private suspend fun observeShowData(refresh: Boolean = false) {
-    combine(
-        featuredShowsRepository.observeFeaturedShows(forceRefresh = refresh),
-        topRatedShowsRepository.observeTopRatedShows(forceRefresh = refresh),
-        popularShowsRepository.observePopularShows(forceRefresh = refresh),
-        upcomingShowsRepository.observeUpcomingShows(forceRefresh = refresh),
-        trendingShowsRepository.observeTrendingShows(forceRefresh = refresh),
-      ) { featured, topRated, popular, upcomingShows, trendingToday ->
-        if (
-          isEmpty(
-            featured.getOrNull(),
-            featured.getOrNull(),
-            featured.getOrNull(),
-            featured.getOrNull(),
-            featured.getOrNull(),
-          )
-        ) {
-          _state.update { EmptyState }
-        } else {
-          _state.update {
-            DataLoaded(
-              featuredShows = featured.getOrNull().toShowList(),
-              topRatedShows = topRated.getOrNull().toShowList(),
-              popularShows = popular.getOrNull().toShowList(),
-              upcomingShows = upcomingShows.getOrNull().toShowList(),
-              trendingToday = trendingToday.getOrNull().toShowList(),
-              errorMessage = getErrorMessage(topRated, popular, upcomingShows, featured),
+    private fun isEmpty(vararg responses: List<ShowEntity>?): Boolean {
+      return responses.all { it.isNullOrEmpty() }
+    }
+
+    private suspend fun observeShowData(refresh: Boolean = false) {
+      combine(
+          featuredShowsRepository.observeFeaturedShows(forceRefresh = refresh),
+          topRatedShowsRepository.observeTopRatedShows(forceRefresh = refresh),
+          popularShowsRepository.observePopularShows(forceRefresh = refresh),
+          upcomingShowsRepository.observeUpcomingShows(forceRefresh = refresh),
+          trendingShowsRepository.observeTrendingShows(forceRefresh = refresh),
+        ) { featured, topRated, popular, upcomingShows, trendingToday ->
+          if (
+            isEmpty(
+              featured.getOrNull(),
+              featured.getOrNull(),
+              featured.getOrNull(),
+              featured.getOrNull(),
+              featured.getOrNull(),
             )
+          ) {
+            _state.update { EmptyState }
+          } else {
+            _state.update {
+              DataLoaded(
+                featuredShows = featured.getOrNull().toShowList(),
+                topRatedShows = topRated.getOrNull().toShowList(),
+                popularShows = popular.getOrNull().toShowList(),
+                upcomingShows = upcomingShows.getOrNull().toShowList(),
+                trendingToday = trendingToday.getOrNull().toShowList(),
+                errorMessage = getErrorMessage(topRated, popular, upcomingShows, featured),
+              )
+            }
           }
         }
-      }
-      .onStart { Loading }
-      .catch { ErrorState(errorMessage = it.message) }
-      .collect()
+        .onStart { Loading }
+        .catch { ErrorState(errorMessage = it.message) }
+        .collect()
+    }
+
+    override fun onDestroy() {
+      coroutineScope.cancel()
+    }
   }
 }

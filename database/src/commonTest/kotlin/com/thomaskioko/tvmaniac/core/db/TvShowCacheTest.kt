@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.core.db
 
 import com.thomaskioko.tvmaniac.core.db.MockData.getShow
 import com.thomaskioko.tvmaniac.core.db.MockData.showList
+import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe

@@ -29,7 +29,7 @@ class FakeUpcomingShowsRepository : UpcomingShowsRepository {
     return entityListResult.receiveAsFlow()
   }
 
-  override fun getPagedUpcomingShows(): Flow<PagingData<ShowEntity>> {
+  override fun getPagedUpcomingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
     return pagedList.receiveAsFlow()
   }
 }

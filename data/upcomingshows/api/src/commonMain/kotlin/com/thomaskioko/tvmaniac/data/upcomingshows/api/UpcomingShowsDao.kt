@@ -12,7 +12,7 @@ interface UpcomingShowsDao {
 
   fun getPagedUpcomingShows(): PagingSource<Int, ShowEntity>
 
-  fun getLastPage(): Long?
+  fun pageExists(page: Long): Boolean
 
   fun deleteUpcomingShow(id: Long)
 

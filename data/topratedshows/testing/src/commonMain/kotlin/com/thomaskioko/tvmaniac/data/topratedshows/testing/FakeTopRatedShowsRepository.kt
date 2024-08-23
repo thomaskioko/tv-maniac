@@ -29,7 +29,7 @@ class FakeTopRatedShowsRepository : TopRatedShowsRepository {
     return entityListResult.receiveAsFlow()
   }
 
-  override fun getPagedTopRatedShows(): Flow<PagingData<ShowEntity>> {
+  override fun getPagedTopRatedShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
     return pagedList.receiveAsFlow()
   }
 }

@@ -43,19 +43,14 @@ internal fun Project.configureAndroidCompose(
       add("coreLibraryDesugaring", libs.findLibrary("android-desugarJdkLibs").get())
     }
 
-    tasks.withType<KotlinCompile>().configureEach {
-      compilerOptions {
-        freeCompilerArgs.addAll(
-          listOf(
-            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-            "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-            "-opt-in=com.github.takahirom.roborazzi.ExperimentalRoborazziApi",
-            "-opt-in=dev.chrisbanes.snapper.ExperimentalSnapperApi",
-            "-opt-in=kotlin.RequiresOptIn",
-          )
-        )
-      }
+    addCompilerOptInArgs(listOf("kotlin.RequiresOptIn"))
+  }
+}
+
+fun Project.addCompilerOptInArgs(list: List<String>) {
+  tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions {
+      optIn.addAll(list)
     }
   }
 }

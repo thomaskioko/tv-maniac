@@ -65,8 +65,9 @@ class DefaultTrendingShowsDao(
       },
     )
 
-  override fun getLastPage(): Long? =
-    trendingShowsQueries.getLastPage().executeAsOneOrNull()?.MAX?.id
+  override fun pageExists(page: Long): Boolean {
+    return trendingShowsQueries.pageExists(Id(page)).executeAsOne()
+  }
 
   override fun deleteTrendingShow(id: Long) {
     trendingShowsQueries.delete(Id(id))
