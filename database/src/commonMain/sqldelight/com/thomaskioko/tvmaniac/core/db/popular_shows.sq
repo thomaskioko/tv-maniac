@@ -1,7 +1,6 @@
 import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.PageId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
-import kotlin.Int;
 
 CREATE TABLE IF NOT EXISTS popular_shows(
     `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
@@ -60,8 +59,8 @@ ORDER BY
 LIMIT
     :limit OFFSET :offset;
 
-getLastPage:
-SELECT MAX(page) FROM popular_shows;
+pageExists:
+SELECT EXISTS(SELECT 1 FROM popular_shows WHERE page = :page LIMIT 1);
 
 delete:
 DELETE FROM popular_shows

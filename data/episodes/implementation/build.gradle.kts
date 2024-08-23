@@ -1,3 +1,5 @@
+import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
+
 plugins {
   alias(libs.plugins.tvmaniac.multiplatform)
   alias(libs.plugins.ksp)
@@ -17,17 +19,8 @@ kotlin {
       }
     }
 
-    commonTest {
-      dependencies {
-        implementation(kotlin("test"))
-        implementation(libs.turbine)
-        implementation(libs.kotest.assertions)
-      }
-    }
+    commonTest { dependencies { implementation(libs.bundles.unittest) } }
   }
 }
 
-dependencies {
-  add("kspIosX64", libs.kotlinInject.compiler)
-  add("kspIosArm64", libs.kotlinInject.compiler)
-}
+addKspDependencyForAllTargets(libs.kotlinInject.compiler)

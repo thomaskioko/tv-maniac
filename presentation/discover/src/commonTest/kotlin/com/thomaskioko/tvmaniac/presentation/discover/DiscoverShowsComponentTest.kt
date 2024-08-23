@@ -12,7 +12,9 @@ import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepo
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -25,7 +27,6 @@ import kotlinx.coroutines.test.setMain
 
 class DiscoverShowsComponentTest {
 
-  private val lifecycle = LifecycleRegistry()
   private val testDispatcher = StandardTestDispatcher()
 
   private val featuredShowsRepository = FakeFeaturedShowsRepository()
@@ -40,18 +41,7 @@ class DiscoverShowsComponentTest {
   fun before() {
     Dispatchers.setMain(testDispatcher)
 
-    lifecycle.resume()
-    component =
-      DiscoverShowsComponent(
-        componentContext = DefaultComponentContext(lifecycle = lifecycle),
-        onNavigateToShowDetails = {},
-        onNavigateToMore = {},
-        featuredShowsRepository = featuredShowsRepository,
-        trendingShowsRepository = trendingShowsRepository,
-        upcomingShowsRepository = upcomingShowsRepository,
-        topRatedShowsRepository = topRatedShowsRepository,
-        popularShowsRepository = popularShowsRepository,
-      )
+    component = buildComponent()
   }
 
   @AfterTest
@@ -60,7 +50,27 @@ class DiscoverShowsComponentTest {
   }
 
   @Test
-  fun given_dataIsEmpty_THEN_EmptyState_isReturned() = runTest {
+  fun `instance is maintained across recreations`() = runTest {
+    // Create the first instance
+    val initialPresenter = buildComponent()
+
+    // Simulate some state change
+    initialPresenter.dispatch(RefreshData)
+
+    val recreatedPresenter = buildComponent()
+
+    // Assert that the states are the same
+    initialPresenter.state.value shouldBeEqual recreatedPresenter.state.value
+
+    recreatedPresenter.dispatch(PopularClicked)
+
+    // Assert that the internal PresenterInstance is the same
+    initialPresenter.presenterInstance shouldNotBeSameInstanceAs
+      recreatedPresenter.presenterInstance
+  }
+
+  @Test
+  fun `should return EmptyState when data is empty`() = runTest {
     component.state.test {
       setList(emptyList())
 
@@ -70,7 +80,7 @@ class DiscoverShowsComponentTest {
   }
 
   @Test
-  fun given_dataIsEmpty_AND_dataIsFetched_THEN_DataLoaded_isReturned() = runTest {
+  fun `should return DataLoaded when data is fetched`() = runTest {
     component.state.test {
       setList(emptyList())
 
@@ -92,7 +102,7 @@ class DiscoverShowsComponentTest {
   }
 
   @Test
-  fun given_dataIsCached_THEN_DataLoaded_isReturned() = runTest {
+  fun `should return DataLoaded when data is fetched from cache`() = runTest {
     component.state.test {
       setList(createDiscoverShowList())
 
@@ -110,7 +120,7 @@ class DiscoverShowsComponentTest {
   }
 
   @Test
-  fun given_dataIsEmpty_AND_retryIsClicked_THEN_DataLoaded_isReturned() = runTest {
+  fun `should return DataLoaded when data is empty and refresh is clicked`() = runTest {
     component.state.test {
       setList(emptyList())
 
@@ -135,7 +145,7 @@ class DiscoverShowsComponentTest {
   }
 
   @Test
-  fun given_dataIsRefreshed_THEN_stateIsUpdated() = runTest {
+  fun `should return DataLoaded with refreshed data when refresh is clicked`() = runTest {
     component.state.test {
       setList(createDiscoverShowList())
       awaitItem() shouldBe Loading
@@ -176,7 +186,7 @@ class DiscoverShowsComponentTest {
   }
 
   @Test
-  fun given_refreshErrorOccurs_THEN_stateIsUpdated() = runTest {
+  fun `should return DataLoaded when error occurs and refresh is clicked`() = runTest {
     setList(createDiscoverShowList())
 
     component.state.test {
@@ -260,4 +270,19 @@ class DiscoverShowsComponentTest {
   companion object {
     const val LIST_SIZE = 5
   }
+
+  private fun buildComponent(
+    lifecycle: LifecycleRegistry = LifecycleRegistry(),
+  ): DiscoverShowsComponent =
+    DiscoverShowsComponent(
+        componentContext = DefaultComponentContext(lifecycle = lifecycle),
+        onNavigateToShowDetails = {},
+        onNavigateToMore = {},
+        featuredShowsRepository = featuredShowsRepository,
+        trendingShowsRepository = trendingShowsRepository,
+        upcomingShowsRepository = upcomingShowsRepository,
+        topRatedShowsRepository = topRatedShowsRepository,
+        popularShowsRepository = popularShowsRepository,
+      )
+      .also { lifecycle.resume() }
 }

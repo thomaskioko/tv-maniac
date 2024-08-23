@@ -11,5 +11,5 @@ interface PopularShowsRepository {
     forceRefresh: Boolean = false
   ): Flow<Either<Failure, List<ShowEntity>>>
 
-  fun getPagedPopularShows(): Flow<PagingData<ShowEntity>>
+  fun getPagedPopularShows(forceRefresh: Boolean = false): Flow<PagingData<ShowEntity>>
 }

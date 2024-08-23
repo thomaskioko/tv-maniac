@@ -13,7 +13,7 @@ enum class FlavorDimension {
 
 @Suppress("EnumEntryName")
 enum class TvManiacFlavor(val dimension: FlavorDimension, val applicationIdSuffix: String? = null) {
-    demo(FlavorDimension.contentType),
+    dev(FlavorDimension.contentType),
 }
 
 fun Project.configureFlavors(

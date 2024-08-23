@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.mapResult
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.core.paging.CommonPagingConfig.pagingConfig
+import com.thomaskioko.tvmaniac.core.paging.FetchResult
 import com.thomaskioko.tvmaniac.core.paging.PaginatedRemoteMediator
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TOP_RATED_SHOWS
@@ -33,46 +34,57 @@ class DefaultTopRatedShowsRepository(
 ) : TopRatedShowsRepository {
 
   override suspend fun observeTopRatedShows(
-    forceRefresh: Boolean,
+    forceRefresh: Boolean
   ): Flow<Either<Failure, List<ShowEntity>>> {
-    val refresh =
-      forceRefresh ||
-        requestManagerRepository.isRequestExpired(
-          entityId = DEFAULT_API_PAGE,
-          requestType = TOP_RATED_SHOWS.name,
-          threshold = TOP_RATED_SHOWS.duration,
-        )
+    val refresh = forceRefresh || isRequestExpired(DEFAULT_API_PAGE)
     return store
-      .stream(
-        StoreReadRequest.cached(
-          key = DEFAULT_API_PAGE,
-          refresh = refresh,
-        ),
-      )
+      .stream(StoreReadRequest.cached(key = DEFAULT_API_PAGE, refresh = refresh))
       .mapResult(getShows())
       .flowOn(dispatchers.io)
   }
 
-  override fun getPagedTopRatedShows(): Flow<PagingData<ShowEntity>> {
+  override fun getPagedTopRatedShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
     return Pager(
         config = pagingConfig,
-        remoteMediator =
-          PaginatedRemoteMediator { page ->
-            try {
-              store.fresh(page)
-            } catch (cancellationException: CancellationException) {
-              throw cancellationException
-            } catch (throwable: Throwable) {
-              kermitLogger.error(
-                "Error while fetching from TopRatedShows RemoteMediator",
-                throwable
-              )
-              throw throwable
-            }
-          },
-        pagingSourceFactory = dao::getPagedTopRatedShows,
+        remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
+        pagingSourceFactory = dao::getPagedTopRatedShows
       )
       .flow
+  }
+
+  private suspend fun fetchPage(page: Long, forceRefresh: Boolean): FetchResult {
+    return if (shouldFetchPage(page, forceRefresh)) {
+      try {
+        val result = store.fresh(page)
+        updateRequestManager(page)
+        FetchResult.Success(endOfPaginationReached = result.isEmpty())
+      } catch (e: CancellationException) {
+        throw e
+      } catch (e: Exception) {
+        kermitLogger.error("Error while fetching from TopRatedShows RemoteMediator", e)
+        FetchResult.Error(e)
+      }
+    } else {
+      FetchResult.NoFetch
+    }
+  }
+
+  private fun shouldFetchPage(page: Long, forceRefresh: Boolean): Boolean {
+    if (forceRefresh) return true
+    val pageExists = dao.pageExists(page)
+    return !pageExists || isRequestExpired(page)
+  }
+
+  private fun isRequestExpired(page: Long): Boolean {
+    return requestManagerRepository.isRequestExpired(
+      entityId = page,
+      requestType = TOP_RATED_SHOWS.name,
+      threshold = TOP_RATED_SHOWS.duration
+    )
+  }
+
+  private fun updateRequestManager(page: Long) {
+    requestManagerRepository.upsert(entityId = page, requestType = TOP_RATED_SHOWS.name)
   }
 
   private suspend fun getShows(): List<ShowEntity> = store.get(key = DEFAULT_API_PAGE)
