@@ -1,7 +1,7 @@
 [versions]
 agp = "8.5.2"
 androidx-activity = "1.9.1"
-androidx-annotation = "1.7.1"
+androidx-annotation = "1.8.2"
 androidx-browser = "1.8.0"
 androidx-collections = "1.4.3"
 androidx-compose-ui-test = "1.7.0-beta06"
