@@ -1,6 +1,5 @@
 import SwiftUI
 import TvManiac
-import os.log
 
 struct DiscoverView: View {
 
