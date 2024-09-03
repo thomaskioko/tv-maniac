@@ -642,7 +642,6 @@
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
-				E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */,
 				D68666B12B1E7F2E00D6D334 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				D61A65572B32EE5000112590 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
@@ -1036,14 +1035,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.2.5;
-			};
-		};
-		E9C6114C27FF863600F8A23F /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 7.8.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
