@@ -55,6 +55,7 @@
 		D67761852B1CE6AE00537DD5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67761842B1CE6AE00537DD5 /* AppDelegate.swift */; };
 		D67761892B1CED9E00537DD5 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67761882B1CED9E00537DD5 /* RootView.swift */; };
 		D677619A2B1D4BA200537DD5 /* EmptyUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67761992B1D4BA200537DD5 /* EmptyUIView.swift */; };
+		D67A0A0D2C87104D0044567B /* SwiftUiViews in Frameworks */ = {isa = PBXBuildFile; productRef = D67A0A0C2C87104D0044567B /* SwiftUiViews */; };
 		D696FD2E2B33522D00CA1B98 /* HorizontalShowsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D696FD2D2B33522D00CA1B98 /* HorizontalShowsListView.swift */; };
 		D6BA80EE2BBC55F5007CDA3A /* StateFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BA80ED2BBC55F5007CDA3A /* StateFlow.swift */; };
 		D6BA80F12BBEFA0F007CDA3A /* SeasonsRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BA80F02BBEFA0F007CDA3A /* SeasonsRowView.swift */; };
@@ -162,6 +163,7 @@
 		D67761842B1CE6AE00537DD5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D67761882B1CED9E00537DD5 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		D67761992B1D4BA200537DD5 /* EmptyUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyUIView.swift; sourceTree = "<group>"; };
+		D67A0A0A2C7F52E00044567B /* SwiftUiViews */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SwiftUiViews; sourceTree = "<group>"; };
 		D696FD2D2B33522D00CA1B98 /* HorizontalShowsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalShowsListView.swift; sourceTree = "<group>"; };
 		D6BA80ED2BBC55F5007CDA3A /* StateFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateFlow.swift; sourceTree = "<group>"; };
 		D6BA80F02BBEFA0F007CDA3A /* SeasonsRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonsRowView.swift; sourceTree = "<group>"; };
@@ -214,6 +216,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D65569DD2B31B54A005F9F37 /* SDWebImageSwiftUI in Frameworks */,
+				D67A0A0D2C87104D0044567B /* SwiftUiViews in Frameworks */,
 				D61A65592B32EE5000112590 /* YouTubePlayerKit in Frameworks */,
 				D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */,
 			);
@@ -226,8 +229,8 @@
 			isa = PBXGroup;
 			children = (
 				7555FF7D242A565900829871 /* ios */,
+				D6B723A62C7F521700A8A3C9 /* Modules */,
 				7555FF7C242A565900829871 /* Products */,
-				E9B6866E27871C99001698B7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -427,6 +430,14 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		D6B723A62C7F521700A8A3C9 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				D67A0A0A2C7F52E00044567B /* SwiftUiViews */,
+			);
+			path = Modules;
+			sourceTree = "<group>";
+		};
 		D6BB5CF22B23784300D542D4 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -524,13 +535,6 @@
 			path = ShowDetails;
 			sourceTree = "<group>";
 		};
-		E9B6866E27871C99001698B7 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		E9B6869027873707001698B7 /* Discover */ = {
 			isa = PBXGroup;
 			children = (
@@ -607,6 +611,7 @@
 				D653924729D8B6A6000EE673 /* OAuthSwift */,
 				D65569DC2B31B54A005F9F37 /* SDWebImageSwiftUI */,
 				D61A65582B32EE5000112590 /* YouTubePlayerKit */,
+				D67A0A0C2C87104D0044567B /* SwiftUiViews */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -1058,6 +1063,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D68666B12B1E7F2E00D6D334 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
+		};
+		D67A0A0C2C87104D0044567B /* SwiftUiViews */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftUiViews;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
