@@ -95,6 +95,14 @@ struct BodyMediumFont: ViewModifier {
   }
 }
 
+struct BodyThinFont: ViewModifier {
+  let size: CGFloat
+
+  func body(content: Content) -> some View {
+    return content.font(.WorkSansThin(size: size))
+  }
+}
+
 struct CaptionFont: ViewModifier {
   let size: CGFloat
 
@@ -124,12 +132,17 @@ public extension View {
     ModifiedContent(content: self, modifier: BodyFont(size: size))
   }
 
+  func bodyThinFont(size: CGFloat) -> some View {
+    ModifiedContent(content: self, modifier: BodyFont(size: size))
+  }
+
+
   func bodyMediumFont(size: CGFloat) -> some View {
     ModifiedContent(content: self, modifier: BodyMediumFont(size: size))
   }
 
-  func captionStyle() -> some View {
-    ModifiedContent(content: self, modifier: CaptionFont(size: 16))
+  func captionStyle(size: CGFloat) -> some View {
+    ModifiedContent(content: self, modifier: CaptionFont(size: size))
   }
 
   func captionFont(size: CGFloat) -> some View {

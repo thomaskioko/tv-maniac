@@ -8,13 +8,13 @@ public extension UIColor {
     static let grey200: UIColor = #colorLiteral(red: 0.2549019608, green: 0.2549019608, blue: 0.2549019608, alpha: 1) // #414141
     static let greyLight: UIColor = #colorLiteral(red: 0.9058823529, green: 0.8784313725, blue: 0.9254901961, alpha: 1) // #49454F
     static let greyDark: UIColor = #colorLiteral(red: 0.2862745098, green: 0.2705882353, blue: 0.3098039216, alpha: 1) // #E7E0EC
-    static let textColorLight: UIColor = #colorLiteral(red: 0.09803921569, green: 0.09803921569, blue: 0.09803921569, alpha: 1) // #191919
-    static let textColorDark: UIColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
+    static let textColorDark: UIColor = #colorLiteral(red: 0.09803921569, green: 0.09803921569, blue: 0.09803921569, alpha: 1) // #191919
+    static let textColorLight: UIColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
 
     static let accent = UIColor(light: .accentBlue, dark: .accentYellow)
     static let background = UIColor(light: .backgroundLight, dark: .backgroundDark)
     static let contentBackground = UIColor(light: .greyLight, dark: .greyDark)
-    static let textColor = UIColor(light: .textColorLight, dark: .textColorDark)
+    static let textColor = UIColor(light: .textColorDark, dark: .textColorLight)
 
     /// Returns a color object that generates its color data dynamically based on the current user
     /// interface style.

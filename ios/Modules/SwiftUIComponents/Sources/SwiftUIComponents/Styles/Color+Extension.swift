@@ -8,6 +8,7 @@ public extension Color {
     static let content_background = Color(.contentBackground)
     static let textColor = Color(.textColor)
     static let grey200 = Color(.grey200)
+    static let textColorDark = Color(.textColorDark)
 
     static var linearGradient = LinearGradient(
         gradient: Gradient(stops: [

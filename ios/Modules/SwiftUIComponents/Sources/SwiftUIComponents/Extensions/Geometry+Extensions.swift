@@ -1,14 +1,6 @@
-//
-//  Geometry_Extensions.swift
-//  tv-maniac
-//
-//  Created by Thomas Kioko on 7/27/24.
-//  Copyright © 2024 orgName. All rights reserved.
-//
-
 import SwiftUI
 
-extension GeometryProxy {
+public extension GeometryProxy {
 
     func getTitleOpacity(geometry: GeometryProxy, imageHeight: CGFloat, collapsedImageHeight: CGFloat) -> Double {
         let progress = -geometry.frame(in: .global).minY / (imageHeight - collapsedImageHeight)

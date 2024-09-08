@@ -1,18 +1,10 @@
-//
-//  CustomParallaxView.swift
-//  tv-maniac
-//
-//  Created by Thomas Kioko on 7/27/24.
-//  Copyright © 2024 orgName. All rights reserved.
-//
-
 import SwiftUI
 
 /**
  * This implementation is heavily borrowed from this implementation.
  * @see https://medium.com/swlh/swiftui-create-a-stretchable-header-with-parallax-scrolling-4a98faeeb262
  */
-struct ParallaxView<Header: View, Content: View>: View {
+public struct ParallaxView<Header: View, Content: View>: View {
     let title: String
     let isRefreshing: Bool
     let imageHeight: CGFloat
@@ -25,9 +17,9 @@ struct ParallaxView<Header: View, Content: View>: View {
     @State private var scrollOffset: CGFloat = 0
     @State private var titleRect: CGRect = .zero
     @State private var headerImageRect: CGRect = .zero
-    @ObservedObject private var contentFrame: ViewFrame = ViewFrame()
+    @ObservedObject private var contentFrame: ViewFrame = .init()
 
-    init(
+    public init(
         title: String,
         isRefreshing: Bool,
         imageHeight: CGFloat,
@@ -47,7 +39,7 @@ struct ParallaxView<Header: View, Content: View>: View {
         self.onRefreshClicked = onRefreshClicked
     }
 
-    var body: some View {
+    public var body: some View {
         ZStack {
             Color.background
 
@@ -91,7 +83,7 @@ struct ParallaxView<Header: View, Content: View>: View {
 
                 Text(title)
                     .titleFont(size: 20)
-                    .foregroundColor(.text_color_bg)
+                    .foregroundColor(.textColor)
                     .lineLimit(1)
                     .padding(.horizontal, 24)
                     .padding(.bottom, 20)
@@ -110,13 +102,11 @@ struct ParallaxView<Header: View, Content: View>: View {
         return min(1, max(0, progress))
     }
 
-
     private func getProgress(_ geometry: GeometryProxy) -> CGFloat {
         let minY = geometry.frame(in: .global).minY
         let progress = -minY / (imageHeight - collapsedImageHeight)
         return min(1, max(0, progress))
     }
-
 
     private func getHeaderTitleOffset() -> CGFloat {
         let currentYPos = titleRect.midY
@@ -173,10 +163,14 @@ class ViewFrame: ObservableObject {
     }
 }
 
-struct GeometryGetter: View {
-    @Binding var rect: CGRect
+public struct GeometryGetter: View {
+    @Binding private var rect: CGRect
 
-    var body: some View {
+  public init(rect: Binding<CGRect>){
+    self._rect = rect
+  }
+
+  public var body: some View {
         GeometryReader { geometry in
             Color.clear
                 .preference(key: RectanglePreferenceKey.self, value: geometry.frame(in: .global))
