@@ -7,23 +7,24 @@
 //
 
 import SwiftUI
+import SwiftUIComponents
 import TvManiac
 
 struct ShowDetailView: View {
     private let component: ShowDetailsComponent
-    
+
     @StateFlow private var uiState: ShowDetailsContent
     @State private var scrollOffset: CGFloat = 0
-    
+
     init(component: ShowDetailsComponent) {
         self.component = component
         _uiState = StateFlow(component.state)
     }
-    
+
     var body: some View {
         if !uiState.isUpdating && uiState.showDetails == nil {
-            ErrorUiView(
-                systemImage: "exclamationmark.triangle.fill",
+            FullScreenView(
+                buttonText: "Retry",
                 action: { component.dispatch(action: ReloadShowDetails()) }
             )
         } else if let showDetails = uiState.showDetails {
@@ -34,7 +35,13 @@ struct ShowDetailView: View {
                 collapsedImageHeight: DimensionConstants.collapsedImageHeight,
                 header: { proxy in
                     HeaderContentView(
-                        show: showDetails,
+                        title: showDetails.title,
+                        overview: showDetails.overview,
+                        backdropImageUrl: showDetails.backdropImageUrl,
+                        status: showDetails.status,
+                        year: showDetails.year,
+                        language: showDetails.language,
+                        rating: showDetails.rating,
                         progress: proxy.getTitleOpacity(
                             geometry: proxy,
                             imageHeight: DimensionConstants.imageHeight,
@@ -62,7 +69,7 @@ struct ShowDetailView: View {
     }
 }
 
-private struct DimensionConstants {
-    static let imageHeight: CGFloat = 400
+private enum DimensionConstants {
+    static let imageHeight: CGFloat = 460
     static let collapsedImageHeight: CGFloat = 120.0
 }

@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import SwiftUIComponents
 import TvManiac
 
 struct MoreShowsView: View {
@@ -46,7 +47,6 @@ struct MoreShowsView: View {
                 ForEach(state.snapshotList.indices, id: \.self){ index in
                     if let show = component.getElement(index: Int32(index)){
                         PosterItemView(
-                            showId: show.tmdbId,
                             title: show.title,
                             posterUrl: show.posterImageUrl,
                             posterWidth: 130,

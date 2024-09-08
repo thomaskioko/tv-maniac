@@ -7,25 +7,32 @@
 //
 
 import SwiftUI
+import SwiftUIComponents
 import TvManiac
 
 struct SeasonsRowView: View {
-    var seasonsList: [Season]
-    var onClick: (ShowSeasonDetailsParam) -> Void
+    private let seasonsList: [Season]
+    private let onClick: (ShowSeasonDetailsParam) -> Void
+
+    init(
+        seasonsList: [Season],
+        onClick: @escaping (ShowSeasonDetailsParam) -> Void
+    ) {
+        self.seasonsList = seasonsList
+        self.onClick = onClick
+    }
 
     var body: some View {
         if !seasonsList.isEmpty {
-            TitleView(
-                title: "Browse Seasons",
-                showChevron: false
-            )
+            ChevronTitle(title: "Browse Seasons")
 
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
                     ForEach(seasonsList.indices, id: \.self) { index in
                         let season = seasonsList[index]
 
-                        Button(
+                        ChipView(
+                            label: season.name,
                             action: {
                                 onClick(
                                     ShowSeasonDetailsParam(
@@ -36,14 +43,10 @@ struct SeasonsRowView: View {
                                     )
                                 )
                             }
-                        ){
-                            ChipView(label: season.name)
-                        }
-
+                        )
                     }
                 }
-                .padding(.trailing, 16)
-                .padding(.leading, 16)
+                .padding([.trailing, .leading], 16)
             }
         }
     }

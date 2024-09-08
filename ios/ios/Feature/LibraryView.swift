@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import SwiftUIComponents
 import TvManiac
 
 struct LibraryView: View {
@@ -51,7 +52,6 @@ struct LibraryView: View {
                 LazyVGrid(columns: DimensionConstants.posterColumns,spacing: DimensionConstants.spacing){
                     ForEach(content.list, id: \.tmdbId){ item in
                         PosterItemView(
-                            showId: item.tmdbId,
                             title: item.title,
                             posterUrl: item.posterImageUrl,
                             posterWidth: 130,

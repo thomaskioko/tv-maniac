@@ -28,7 +28,7 @@ struct UnauthentivatedProfileView : View {
             Divider()
                 .frame(height: 2.0)
                 .overlay(Color.accent)
-            
+
             Text("Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch. By signing in, you will have access to the follwing:")
                 .bodyMediumFont(size: 16)
                 .multilineTextAlignment(.center)
@@ -79,10 +79,10 @@ struct BulletList: View {
                 HStack(alignment: .top) {
                     Text(bullet)
                         .titleSemiBoldFont(size: 20)
-                        .foregroundColor(.accent)
-                    
+                        .foregroundColor(.accentColor)
+
                     Text(data)
-                        .captionStyle()
+                        .captionStyle(size: 16)
                 }
             }
         }

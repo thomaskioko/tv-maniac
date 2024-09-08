@@ -7,10 +7,10 @@
 //
 
 import SwiftUI
+import SwiftUIComponents
 import TvManiac
 
 struct SeasonDetailsView: View {
-    
     private let component: SeasonDetailsComponent
     
     @Environment(\.presentationMode) var presentationMode
@@ -18,9 +18,8 @@ struct SeasonDetailsView: View {
     @StateFlow private var uiState: SeasonDetailState
     @State private var isTruncated = false
     @State private var showFullText = false
-    @State private var showModal =  false
+    @State private var showModal = false
     @State private var scrollOffset: CGFloat = 0
-    @State private var titleRect: CGRect = .zero
     
     init(component: SeasonDetailsComponent) {
         self.component = component
@@ -28,17 +27,19 @@ struct SeasonDetailsView: View {
     }
     
     var body: some View {
-        
         ZStack {
             Color.background.edgesIgnoringSafeArea(.all)
             
             switch onEnum(of: uiState) {
                 case .initialSeasonsState: LoadingIndicatorView(animate: true)
                 case .seasonDetailsLoaded(let state): SeasonDetailsContent(state)
-                case .seasonDetailsErrorState: ErrorUiView(
-                    systemImage: "exclamationmark.triangle.fill",
-                    action: { component.dispatch(action: ReloadSeasonDetails()) }
-                )
+                case .seasonDetailsErrorState:
+                    FullScreenView(
+                        systemName: "exclamationmark.triangle.fill",
+                        message: "Something went wrong",
+                        buttonText: "Retry",
+                        action: { component.dispatch(action: ReloadSeasonDetails()) }
+                    )
             }
         }
         .ignoresSafeArea()
@@ -47,12 +48,10 @@ struct SeasonDetailsView: View {
                 ImageGalleryContentView(items: uiState.seasonImages)
             }
         }
-        
     }
     
     @ViewBuilder
     private func SeasonDetailsContent(_ state: SeasonDetailsLoaded) -> some View {
-        
         ParallaxView(
             title: state.seasonName,
             isRefreshing: state.isUpdating,
@@ -70,14 +69,22 @@ struct SeasonDetailsView: View {
                 )
             },
             content: { titleRect in
-                SeasonOverview(state, titleRect: $titleRect)
-                
+
+                OverviewBoxView(
+                    overview: state.seasonOverview,
+                    titleRect: titleRect
+                )
+                    .padding()
+
                 EpisodeListView(
-                    state: state,
+                    episodeCount: state.episodeCount,
+                    watchProgress: state.watchProgress,
+                    expandEpisodeItems: state.expandEpisodeItems,
+                    showSeasonWatchStateDialog: state.showSeasonWatchStateDialog,
+                    isSeasonWatched: state.isSeasonWatched,
+                    items: state.episodeDetailsList,
                     onEpisodeHeaderClicked: { component.dispatch(action: OnEpisodeHeaderClicked()) },
-                    onWatchedStateClicked: {
-                        component.dispatch(action: UpdateSeasonWatchedState())
-                    }
+                    onWatchedStateClicked: { component.dispatch(action: UpdateSeasonWatchedState()) }
                 )
                 
                 CastListView(casts: toCastsList(state.seasonCast))
@@ -85,12 +92,9 @@ struct SeasonDetailsView: View {
             onBackClicked: {
                 component.dispatch(action: SeasonDetailsBackClicked())
             },
-            onRefreshClicked: {
-                
-            }
+            onRefreshClicked: {}
         )
         .onAppear { showModal = state.showSeasonWatchStateDialog }
-        
     }
 
     @ViewBuilder
@@ -130,10 +134,9 @@ struct SeasonDetailsView: View {
                             .foregroundColor(.secondary)
                             .alignmentGuide(.view) { d in d[HorizontalAlignment.leading] }
                         
-                        
                         Text("^[\(state.seasonImages.count) Image](inflect: true)")
                             .bodyMediumFont(size: 16)
-                            .foregroundColor(.text_color_bg)
+                            .foregroundColor(.textColor)
                             .lineLimit(1)
                             .alignmentGuide(.view) { d in d[HorizontalAlignment.center] }
                         
@@ -152,73 +155,13 @@ struct SeasonDetailsView: View {
             
             ProgressView(value: state.watchProgress, total: 1)
                 .progressViewStyle(RoundedRectProgressViewStyle())
-            
         }
         .frame(height: headerHeight)
         .clipped()
     }
     
-    @ViewBuilder
-    private func SeasonOverview(
-        _ content: SeasonDetailsLoaded,
-        titleRect:  Binding<CGRect>
-    ) -> some View {
-        VStack(alignment: .leading) {
-            
-            Spacer(minLength: nil)
-                .background(GeometryGetter(rect: self.$titleRect))
-            
-            Text("Overview")
-                .bodyFont(size: 26)
-                .fontWeight(.semibold)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding([.bottom, .top], 8)
-            
-            Text(content.seasonOverview)
-                .font(.callout)
-                .lineLimit(showFullText ? nil : 4)
-                .multilineTextAlignment(.leading)
-                .background(
-                    Text(content.seasonOverview)
-                        .lineLimit(4)
-                        .font(.callout)
-                        .padding([.top], 2)
-                        .background(GeometryReader { displayedGeometry in
-                            ZStack {
-                                Text(content.seasonOverview)
-                                    .font(.callout)
-                                    .padding([.top], 2)
-                                    .background(GeometryReader { fullGeometry in
-                                        // And compare the two
-                                        Color.clear.onAppear {
-                                            self.isTruncated = fullGeometry.size.height > displayedGeometry.size.height
-                                        }
-                                    })
-                            }
-                            .frame(height: .greatestFiniteMagnitude)
-                        })
-                        .hidden() // Hide the background
-                )
-            
-            if isTruncated {
-                Text(showFullText ? "Collapse" : "Show More")
-                    .fontDesign(.rounded)
-                    .textCase(.uppercase)
-                    .font(.caption)
-                    .foregroundStyle(Color.accent)
-                    .padding(.top, 4)
-                
-            }
-        }
-        .onTapGesture {
-            withAnimation { showFullText.toggle() }
-        }
-        .padding(.horizontal)
-        
-    }
-    
     private func toCastsList(_ list: [Cast]) -> [Casts] {
-        return list.map{ (cast) -> Casts in
+        return list.map { cast -> Casts in
             Casts(id: cast.id, name: cast.name, profileUrl: cast.profileUrl, characterName: cast.characterName)
         }
     }
@@ -243,8 +186,7 @@ struct SeasonDetailsView: View {
     }
 }
 
-
-private struct DimensionConstants {
+private enum DimensionConstants {
     static let imageHeight: CGFloat = 320
     static let collapsedImageHeight: CGFloat = 120.0
 }

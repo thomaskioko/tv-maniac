@@ -7,24 +7,29 @@
 //
 
 import SwiftUI
+import SwiftUIComponents
 import TvManiac
 
 struct CastListView: View {
     let casts: [Casts]
-    
+
     var body: some View {
         if !casts.isEmpty {
             VStack(alignment: .leading) {
-                TitleView(title: "Cast")
-                
+                ChevronTitle(title: "Cast")
+
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack {
                         ForEach(casts, id: \.id) { cast in
-                            CastCardView(cast: cast)
-                                .padding([.leading, .trailing], 4)
-                                .buttonStyle(.plain)
-                                .padding(.leading, cast.id == casts.first?.id ? 16 : 0)
-                                .buttonStyle(.plain)
+                            CastCardView(
+                                profileUrl: cast.profileUrl,
+                                name: cast.name,
+                                characterName: cast.characterName
+                            )
+                            .padding([.leading, .trailing], 4)
+                            .buttonStyle(.plain)
+                            .padding(.leading, cast.id == casts.first?.id ? 16 : 0)
+                            .buttonStyle(.plain)
                         }
                     }
                     .padding(.bottom)

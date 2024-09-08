@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import SDWebImageSwiftUI
+import SwiftUIComponents
 import TvManiac
 
 struct ImageGalleryContentView: View {
@@ -22,7 +22,6 @@ struct ImageGalleryContentView: View {
                 LazyVGrid(columns: DimensionConstants.posterColumns,spacing: DimensionConstants.spacing){
                     ForEach(items, id: \.id){ item in
                         PosterItemView(
-                            showId: item.id,
                             title: "",
                             posterUrl: item.imageUrl,
                             posterWidth: DimensionConstants.posterWidth,

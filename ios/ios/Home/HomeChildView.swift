@@ -1,12 +1,5 @@
-//
-//  ChildView.swift
-//  tv-maniac
-//
-//  Created by Thomas Kioko on 7/22/24.
-//  Copyright © 2024 orgName. All rights reserved.
-//
-
 import SwiftUI
+import SwiftUIComponents
 import TvManiac
 
 struct HomeChildView: View {
@@ -31,12 +24,8 @@ struct HomeChildView: View {
                 }
                 .bottomTabSafeArea()
                 .frame(width: geometry.size.width, height: geometry.size.height)
-                
-                // Bottom Navigation
-                BottomNavigation(
-                    screen: screen,
-                    actions: bottomTabActions
-                )
+
+                BottomNavigation(actions: bottomTabActions)
             }
         }
         .background(Color.background)

@@ -1,16 +1,15 @@
 import SwiftUI
+import SwiftUIComponents
 import TvManiac
 
 struct DiscoverView: View {
-
     @Environment(\.colorScheme) var scheme
     @State private var currentIndex: Int = 2
     @StateFlow private var uiState: DiscoverState
 
     private let component: DiscoverShowsComponent
 
-
-    init(component: DiscoverShowsComponent){
+    init(component: DiscoverShowsComponent) {
         self.component = component
         _uiState = StateFlow(component.state)
     }
@@ -20,7 +19,7 @@ struct DiscoverView: View {
             switch onEnum(of: uiState) {
                 case .loading:
                     LoadingIndicatorView()
-                        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
+                        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height, alignment: .center)
                 case .dataLoaded(let state):
                     LoadedContent(state: state)
                 case .emptyState:
@@ -49,11 +48,9 @@ struct DiscoverView: View {
     @ViewBuilder
     func ScrollableContent(state: DataLoaded) -> some View {
         ScrollView(showsIndicators: false) {
-
-            if(state.errorMessage != nil) {
+            if state.errorMessage != nil {
                 FullScreenView(systemName: "exclamationmark.triangle", message: state.errorMessage!)
             } else {
-
                 FeaturedContentView(state.featuredShows)
 
                 HorizontalItemContentListView(
@@ -87,23 +84,22 @@ struct DiscoverView: View {
         }
     }
 
-
     @ViewBuilder
     func FeaturedContentView(_ shows: [DiscoverShow]?) -> some View {
         if let shows = shows {
             if !shows.isEmpty {
-
                 SnapCarousel(
                     spacing: 10,
                     trailingSpace: 120,
                     index: $currentIndex,
                     items: shows
-                ) { show  in
-
-                    GeometryReader{ proxy in
-
+                ) { show in
+                    GeometryReader { _ in
                         FeaturedContentPosterView(
-                            show: show,
+                            showId: show.tmdbId,
+                            title: show.title,
+                            posterImageUrl: show.posterImageUrl,
+                            isInLibrary: show.inLibrary,
                             onClick: { id in component.dispatch(action: ShowClicked(id: show.tmdbId)) }
                         )
                     }
@@ -123,18 +119,16 @@ struct DiscoverView: View {
     func BackgroundView(_ tvShows: [DiscoverShow]?) -> some View {
         if let shows = tvShows {
             if !shows.isEmpty {
-                GeometryReader { proxy in
+                GeometryReader { _ in
 
                     TabView(selection: $currentIndex) {
                         ForEach(shows.indices, id: \.self) { index in
                             TransparentImageBackground(imageUrl: shows[index].posterImageUrl)
                                 .tag(index)
                         }
-
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
                     .animation(.easeInOut, value: currentIndex)
-
 
                     let color: Color = (scheme == .dark ? .black : .white)
                     // Custom Gradient
@@ -162,7 +156,7 @@ struct DiscoverView: View {
         HStack(spacing: 5) {
             ForEach(shows.indices, id: \.self) { index in
                 Circle()
-                    .fill(currentIndex == index ? Color.accent: .gray.opacity(0.5))
+                    .fill(currentIndex == index ? Color.accent : .gray.opacity(0.5))
                     .frame(width: currentIndex == index ? 10 : 6, height: currentIndex == index ? 10 : 6)
             }
         }
@@ -170,7 +164,7 @@ struct DiscoverView: View {
     }
 
     @ViewBuilder
-    private var emptyView : some View {
+    private var emptyView: some View {
         VStack {
             Image(systemName: "list.bullet.below.rectangle")
                 .resizable()
@@ -202,10 +196,8 @@ struct DiscoverView: View {
                     .stroke(Color.accent, lineWidth: 2)
                     .background(.clear)
                     .cornerRadius(2))
-
         }
-        .frame(maxWidth: .infinity,maxHeight: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding([.trailing, .leading], 16)
     }
-
 }

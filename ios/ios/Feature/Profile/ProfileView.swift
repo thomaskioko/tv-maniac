@@ -29,7 +29,7 @@ struct ProfileView: View {
                                     Image(systemName: "gearshape")
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .foregroundColor(.grey_200)
+                                        .foregroundColor(.grey200)
                                         .frame(width: 24, height: 24)
                                 }
                             )
