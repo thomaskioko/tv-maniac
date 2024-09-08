@@ -132,7 +132,7 @@ public struct TrailerItemView: View {
             alignment: .center
           )
           .symbolRenderingMode(.palette)
-          .foregroundStyle(.white, Color.grey200)
+          .foregroundStyle(.white, Color.grey200.opacity(0.6))
           .scaledToFit()
           .imageScale(.medium)
           .padding()

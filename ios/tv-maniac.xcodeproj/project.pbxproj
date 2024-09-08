@@ -24,7 +24,6 @@
 		D653925D29DAC89D000EE673 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925C29DAC89D000EE673 /* ProfileView.swift */; };
 		D653926029DAC949000EE673 /* AuthenticatedProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925F29DAC949000EE673 /* AuthenticatedProfileView.swift */; };
 		D653926B29DAD8FA000EE673 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = D653926A29DAD8FA000EE673 /* config.json */; };
-		D65569DD2B31B54A005F9F37 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = D65569DC2B31B54A005F9F37 /* SDWebImageSwiftUI */; };
 		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
 		D6619D392C8DC40400D273E7 /* HorizontalItemContentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6619D382C8DC40400D273E7 /* HorizontalItemContentListView.swift */; };
 		D67761852B1CE6AE00537DD5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67761842B1CE6AE00537DD5 /* AppDelegate.swift */; };
@@ -114,7 +113,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D65569DD2B31B54A005F9F37 /* SDWebImageSwiftUI in Frameworks */,
 				D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */,
 				D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */,
 			);
@@ -425,7 +423,6 @@
 			name = "tv-maniac";
 			packageProductDependencies = (
 				D653924729D8B6A6000EE673 /* OAuthSwift */,
-				D65569DC2B31B54A005F9F37 /* SDWebImageSwiftUI */,
 				D6619D362C89D37900D273E7 /* SwiftUIComponents */,
 			);
 			productName = ios;
@@ -458,7 +455,6 @@
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
 				D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */,
-				D68666B12B1E7F2E00D6D334 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -785,14 +781,6 @@
 				minimumVersion = 2.2.0;
 			};
 		};
-		D68666B12B1E7F2E00D6D334 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.1.2;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -800,11 +788,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */;
 			productName = OAuthSwift;
-		};
-		D65569DC2B31B54A005F9F37 /* SDWebImageSwiftUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D68666B12B1E7F2E00D6D334 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
-			productName = SDWebImageSwiftUI;
 		};
 		D6619D362C89D37900D273E7 /* SwiftUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;

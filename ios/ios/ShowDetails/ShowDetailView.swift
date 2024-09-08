@@ -34,7 +34,7 @@ struct ShowDetailView: View {
                 imageHeight: DimensionConstants.imageHeight,
                 collapsedImageHeight: DimensionConstants.collapsedImageHeight,
                 header: { proxy in
-                    HeaderContentView(
+                    HeaderView(
                         title: showDetails.title,
                         overview: showDetails.overview,
                         backdropImageUrl: showDetails.backdropImageUrl,
@@ -70,6 +70,6 @@ struct ShowDetailView: View {
 }
 
 private enum DimensionConstants {
-    static let imageHeight: CGFloat = 460
+    static let imageHeight: CGFloat = 480
     static let collapsedImageHeight: CGFloat = 120.0
 }
