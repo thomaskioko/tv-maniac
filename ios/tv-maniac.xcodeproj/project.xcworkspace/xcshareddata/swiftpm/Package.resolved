@@ -1,5 +1,5 @@
 {
-  "originHash" : "e714ed8bf934b785f1ea4b133380280f9b2b0905e46e0e9bb890bf268f956c60",
+  "originHash" : "905a96842b4e8d806919517eacc20c91c36f47ac24ee4c5aa6817e97a6146c54",
   "pins" : [
     {
       "identity" : "brightfutures",
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/tid-kijyun/Kanna.git",
       "state" : {
-        "revision" : "f9e4922223dd0d3dfbf02ca70812cf5531fc0593",
-        "version" : "5.2.7"
+        "revision" : "41c3d28ea0eac07e4551b28def9de1ede702e739",
+        "version" : "5.3.0"
       }
     },
     {
@@ -60,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SDWebImage/SDWebImageSwiftUI",
       "state" : {
-        "revision" : "aee64ef39b570c44ccf0f884c440fc6494a23c76",
-        "version" : "2.2.5"
+        "revision" : "5aa947356f4ea49a0c3b9968564267f6ea5abea7",
+        "version" : "3.1.2"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SvenTiigi/YouTubePlayerKit.git",
       "state" : {
-        "revision" : "94b5739d32f0108f1820091e6955d544a0363fad",
-        "version" : "1.5.4"
+        "revision" : "fe1c1ec340f6d79866131432ecaa190fd6bbc4cb",
+        "version" : "1.9.0"
       }
     }
   ],
