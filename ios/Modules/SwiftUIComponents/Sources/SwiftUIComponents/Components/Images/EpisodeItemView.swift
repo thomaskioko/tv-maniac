@@ -6,39 +6,46 @@
 //  Copyright © 2023 orgName. All rights reserved.
 //
 
-import SwiftUI
 import SDWebImageSwiftUI
-import TvManiac
+import SwiftUI
 
-struct EpisodeItemView: View {
-    
-    var imageUrl: String?
-    var episodeTitle: String
-    var episodeOverView: String
-    
-    var body: some View {
+public struct EpisodeItemView: View {
+    private let imageUrl: String?
+    private let episodeTitle: String
+    private let episodeOverView: String
+    private let episodeWidth: CGFloat
+    private let episodeHeight: CGFloat
+    private let shadowRadius: CGFloat
+    private let cornerRadius: CGFloat
+
+    public init(
+        imageUrl: String?,
+        episodeTitle: String,
+        episodeOverView: String,
+        episodeWidth: CGFloat = 120,
+        episodeHeight: CGFloat = 140,
+        shadowRadius: CGFloat = 2.5,
+        cornerRadius: CGFloat = 2
+    ) {
+        self.imageUrl = imageUrl
+        self.episodeTitle = episodeTitle
+        self.episodeOverView = episodeOverView
+        self.episodeWidth = episodeWidth
+        self.episodeHeight = episodeHeight
+        self.shadowRadius = shadowRadius
+        self.cornerRadius = cornerRadius
+    }
+
+    public var body: some View {
         HStack {
-            if let imageUrl = imageUrl {
-                WebImage(url: URL(string: imageUrl))
-                    .resizable()
-                    .placeholder { episodePlaceholder }
-                    .aspectRatio(contentMode: .fill)
-                    .frame(
-                        width: DimensionConstants.episodeWidth,
-                        height: DimensionConstants.episodeHeight
-                    )
-                    .clipShape(
-                        RoundedRectangle(
-                            cornerRadius: DimensionConstants.cornerRadius,
-                            style: .continuous
-                        )
-                    )
-            } else {
-                episodePlaceholder
-            }
-            
+            PosterItemView(
+                title: episodeTitle,
+                posterUrl: imageUrl,
+                posterWidth: episodeWidth,
+                posterHeight: episodeHeight
+            )
+
             VStack {
-                
                 Text(episodeTitle)
                     .font(.title3)
                     .fontWeight(.semibold)
@@ -46,29 +53,24 @@ struct EpisodeItemView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 0.5)
                     .padding(.top, 16)
-                
-                
+
                 Text(episodeOverView)
                     .font(.callout)
                     .padding([.top], 2)
                     .lineLimit(4)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 Spacer()
             }
             .padding(.horizontal, 8)
-            
-       
-            
         }
-        .frame(height: DimensionConstants.episodeHeight)
+        .frame(height: episodeHeight)
         .background(Color.content_background)
         .cornerRadius(4)
         .padding(.horizontal)
-        
     }
-    
+
     private var episodePlaceholder: some View {
         ZStack {
             ZStack {
@@ -78,33 +80,23 @@ struct EpisodeItemView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 50, height: 50, alignment: .center)
                     .foregroundColor(.white)
-                
             }
-            .frame(width: DimensionConstants.episodeWidth,
-                   height: DimensionConstants.episodeHeight)
+            .frame(width: episodeWidth,
+                   height: episodeHeight)
             .clipShape(
                 RoundedRectangle(
-                    cornerRadius: DimensionConstants.cornerRadius,
+                    cornerRadius: cornerRadius,
                     style: .continuous
                 )
             )
-            .shadow(radius: DimensionConstants.shadowRadius)
+            .shadow(radius: shadowRadius)
         }
     }
 }
 
-private struct DimensionConstants {
-    static let episodeWidth: CGFloat = 120
-    static let episodeHeight: CGFloat = 140
-    static let shadowRadius: CGFloat = 2.5
-    static let cornerRadius: CGFloat = 2
-    static let lineLimit: Int = 1
-}
-
-
 #Preview {
     EpisodeItemView(
-        imageUrl: "https://image.tmdb.org/t/p/w500/path/to/image.jpg",
+        imageUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
         episodeTitle: "E01 • Glorious Purpose",
         episodeOverView: "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority."
     )

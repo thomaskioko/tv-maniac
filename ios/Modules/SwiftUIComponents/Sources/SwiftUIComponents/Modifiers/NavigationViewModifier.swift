@@ -8,12 +8,18 @@
 
 import SwiftUI
 
-struct NavigationViewModifier: ViewModifier {
-    let index: Int
-    let currentIndex: Int
-    let dragOffset: CGFloat
+public struct NavigationViewModifier: ViewModifier {
+    private let index: Int
+    private let currentIndex: Int
+    private let dragOffset: CGFloat
 
-    func body(content: Content) -> some View {
+    public init(index: Int, currentIndex: Int, dragOffset: CGFloat) {
+        self.index = index
+        self.currentIndex = currentIndex
+        self.dragOffset = dragOffset
+    }
+
+    public func body(content: Content) -> some View {
         content
             .offset(x: offsetForIndex())
             .zIndex(Double(index))

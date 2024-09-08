@@ -8,9 +8,9 @@
 
 import SwiftUI
 
-extension HorizontalAlignment {
+public extension HorizontalAlignment {
     struct ViewAlignment: AlignmentID {
-        static func defaultValue(in d: ViewDimensions) -> CGFloat {
+        public static func defaultValue(in d: ViewDimensions) -> CGFloat {
             d[HorizontalAlignment.leading]
         }
     }
