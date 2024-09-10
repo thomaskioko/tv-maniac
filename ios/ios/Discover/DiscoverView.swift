@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftUIComponents
 import TvManiac
+import TvManiacUI
 
 struct DiscoverView: View {
     @Environment(\.colorScheme) var scheme
@@ -53,30 +54,34 @@ struct DiscoverView: View {
             } else {
                 FeaturedContentView(state.featuredShows)
 
-                HorizontalItemContentListView(
-                    items: state.upcomingShows,
+                HorizontalItemListView(
                     title: "Upcoming",
+                    chevronStyle: .chevronOnly,
+                    items: state.upcomingShows.map { $0.toSwift() },
                     onClick: { id in component.dispatch(action: ShowClicked(id: id)) },
                     onMoreClicked: { component.dispatch(action: UpComingClicked()) }
                 )
 
-                HorizontalItemContentListView(
-                    items: state.trendingToday,
+                HorizontalItemListView(
                     title: "Trending Today",
+                    chevronStyle: .chevronOnly,
+                    items: state.trendingToday.map { $0.toSwift() },
                     onClick: { id in component.dispatch(action: ShowClicked(id: id)) },
                     onMoreClicked: { component.dispatch(action: TrendingClicked()) }
                 )
 
-                HorizontalItemContentListView(
-                    items: state.popularShows,
+                HorizontalItemListView(
                     title: "Popular",
+                    chevronStyle: .chevronOnly,
+                    items: state.popularShows.map { $0.toSwift() },
                     onClick: { id in component.dispatch(action: ShowClicked(id: id)) },
                     onMoreClicked: { component.dispatch(action: PopularClicked()) }
                 )
 
-                HorizontalItemContentListView(
-                    items: state.topRatedShows,
+                HorizontalItemListView(
                     title: "Top Rated",
+                    chevronStyle: .chevronOnly,
+                    items: state.topRatedShows.map { $0.toSwift() },
                     onClick: { id in component.dispatch(action: ShowClicked(id: id)) },
                     onMoreClicked: { component.dispatch(action: TopRatedClicked()) }
                 )
@@ -92,13 +97,13 @@ struct DiscoverView: View {
                     spacing: 10,
                     trailingSpace: 120,
                     index: $currentIndex,
-                    items: shows
+                    items: shows.map { $0.toSwift() }
                 ) { show in
                     GeometryReader { _ in
                         FeaturedContentPosterView(
                             showId: show.tmdbId,
                             title: show.title,
-                            posterImageUrl: show.posterImageUrl,
+                            posterImageUrl: show.posterUrl,
                             isInLibrary: show.inLibrary,
                             onClick: { id in component.dispatch(action: ShowClicked(id: show.tmdbId)) }
                         )
@@ -199,5 +204,17 @@ struct DiscoverView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding([.trailing, .leading], 16)
+    }
+}
+
+extension DiscoverShow {
+    func toSwift() -> SwiftShow {
+        .init(
+            tmdbId: tmdbId,
+            title: title,
+            posterUrl: posterImageUrl,
+            backdropUrl: nil,
+            inLibrary: inLibrary
+        )
     }
 }

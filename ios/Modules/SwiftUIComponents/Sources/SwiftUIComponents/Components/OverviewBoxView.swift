@@ -61,7 +61,7 @@ public struct OverviewBoxView: View {
                             }) {
                                 Text(showFullText ? "Show Less" : "Show More")
                                     .textCase(.uppercase)
-                                    .font(.caption)
+                                    .font(.avenirNext(size: 12))
                                     .foregroundStyle(Color.accent)
                                     .padding(.trailing, 16)
                             }

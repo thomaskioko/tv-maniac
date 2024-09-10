@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftUIComponents
 
 public struct HeaderView: View {
     private let title: String

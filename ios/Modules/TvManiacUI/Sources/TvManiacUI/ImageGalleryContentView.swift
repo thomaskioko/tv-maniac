@@ -1,0 +1,112 @@
+//
+//  ImageGalleryContentView.swift
+//  tv-maniac
+//
+//  Created by Thomas Kioko on 21.12.23.
+//  Copyright © 2023 orgName. All rights reserved.
+//
+
+import SwiftUI
+import SwiftUIComponents
+
+public struct ImageGalleryContentView: View {
+    private let items: [SwiftShow]
+    @Environment(\.presentationMode) private var presentationMode
+
+    public init(items: [SwiftShow]) {
+        self.items = items
+    }
+
+    public var body: some View {
+        VStack {
+            GridView(items: items, onAction: { _ in })
+        }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                HStack {
+                    closeButton
+                }
+            }
+        }
+        .background(Color.background)
+    }
+
+    private var closeButton: some View {
+        Button {
+            presentationMode.wrappedValue.dismiss()
+        } label: {
+            Label("Close", systemImage: "xmark.circle.fill")
+                .labelStyle(.iconOnly)
+        }
+        .pickerStyle(.navigationLink)
+        .buttonBorderShape(.roundedRectangle(radius: 16))
+        .buttonStyle(.bordered)
+    }
+}
+
+#Preview {
+    ImageGalleryContentView(
+        items: [
+            .init(
+                tmdbId: 1234,
+                title: "Arcane",
+                posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
+                backdropUrl: nil,
+                inLibrary: false
+            ),
+            .init(
+                tmdbId: 123,
+                title: "The Lord of the Rings: The Rings of Power",
+                posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg",
+                backdropUrl: nil,
+                inLibrary: false
+            ),
+            .init(
+                tmdbId: 12346,
+                title: "Kaos",
+                posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
+                backdropUrl: nil,
+                inLibrary: false
+            ),
+            .init(
+                tmdbId: 124,
+                title: "Terminator",
+                posterUrl: "https://image.tmdb.org/t/p/w780/woH18JkZMYhMSWqtHkPA4F6Gd1z.jpg",
+                backdropUrl: nil,
+                inLibrary: false
+            ),
+            .init(
+                tmdbId: 123346,
+                title: "The Perfect Couple",
+                posterUrl: "https://image.tmdb.org/t/p/w780//3buRSGVnutw8x4Lww0t70k5dG6R.jpg",
+                backdropUrl: nil,
+                inLibrary: false
+            ),
+            .init(
+                tmdbId: 2346,
+                title: "One Piece",
+                posterUrl: "https://image.tmdb.org/t/p/w780/2rmK7mnchw9Xr3XdiTFSxTTLXqv.jpg",
+                backdropUrl: nil,
+                inLibrary: false
+            ),
+        ]
+    )
+}
+
+public struct SwiftSeasonImage: Identifiable {
+    public let id: UUID = .init()
+    public let imageId: Int64
+    public let imageUrl: String?
+
+    public init(imageId: Int64, imageUrl: String?) {
+        self.imageId = imageId
+        self.imageUrl = imageUrl
+    }
+}
+
+private enum DimensionConstants {
+    static let posterColumns = [GridItem(.adaptive(minimum: 100), spacing: 8)]
+    static let posterWidth: CGFloat = 130
+    static let posterHeight: CGFloat = 200
+    static let spacing: CGFloat = 4
+}

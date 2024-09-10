@@ -9,6 +9,7 @@
 import SwiftUI
 import SwiftUIComponents
 import TvManiac
+import TvManiacUI
 
 struct SeasonDetailsView: View {
     private let component: SeasonDetailsComponent
@@ -45,7 +46,7 @@ struct SeasonDetailsView: View {
         .ignoresSafeArea()
         .sheet(isPresented: $showModal) {
             if let uiState = uiState as? SeasonDetailsLoaded {
-                ImageGalleryContentView(items: uiState.seasonImages)
+                ImageGalleryContentView(items: uiState.seasonImages.map { $0.toSwift() })
             }
         }
     }
@@ -74,7 +75,7 @@ struct SeasonDetailsView: View {
                     overview: state.seasonOverview,
                     titleRect: titleRect
                 )
-                    .padding()
+                .padding()
 
                 EpisodeListView(
                     episodeCount: state.episodeCount,
@@ -82,7 +83,7 @@ struct SeasonDetailsView: View {
                     expandEpisodeItems: state.expandEpisodeItems,
                     showSeasonWatchStateDialog: state.showSeasonWatchStateDialog,
                     isSeasonWatched: state.isSeasonWatched,
-                    items: state.episodeDetailsList,
+                    items: state.episodeDetailsList.map { $0.toSwift() },
                     onEpisodeHeaderClicked: { component.dispatch(action: OnEpisodeHeaderClicked()) },
                     onWatchedStateClicked: { component.dispatch(action: UpdateSeasonWatchedState()) }
                 )
@@ -160,9 +161,9 @@ struct SeasonDetailsView: View {
         .clipped()
     }
     
-    private func toCastsList(_ list: [Cast]) -> [Casts] {
-        return list.map { cast -> Casts in
-            Casts(id: cast.id, name: cast.name, profileUrl: cast.profileUrl, characterName: cast.characterName)
+    private func toCastsList(_ list: [Cast]) -> [SwiftCast] {
+        return list.map { cast -> SwiftCast in
+            .init(castId: cast.id, name: cast.name, characterName: cast.characterName, profileUrl: cast.profileUrl)
         }
     }
     

@@ -9,61 +9,51 @@
 import SwiftUI
 import SwiftUIComponents
 import TvManiac
+import TvManiacUI
 
 struct LibraryView: View {
-    
     private let component: LibraryComponent
 
     @StateFlow private var uiState: LibraryState
     
-    init(component: LibraryComponent){
+    init(component: LibraryComponent) {
         self.component = component
         _uiState = StateFlow(component.state)
     }
     
     var body: some View {
-            VStack {
-                switch onEnum(of: uiState) {
-                    case .loadingShows:
-                        //TODO:: Show indicator on the toolbar
-                        LoadingIndicatorView()
-                            .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height,  alignment: .center)
-                    case .libraryContent(let content): GridViewContent(content)
-                    case .errorLoadingShows: EmptyView()  //TODO:: Show Error
+        VStack {
+            switch onEnum(of: uiState) {
+                case .loadingShows:
+                    // TODO: Show indicator on the toolbar
+                    LoadingIndicatorView()
+                        .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height, alignment: .center)
+                case .libraryContent(let content): GridViewContent(content)
+                case .errorLoadingShows: EmptyView() // TODO: Show Error
+            }
+        }
+        .navigationTitle("Library")
+        .navigationBarTitleDisplayMode(.large)
+        .background(Color.background)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                HStack {
+                    filterButton
+                    sortButton
                 }
             }
-            .navigationTitle("Library")
-            .navigationBarTitleDisplayMode(.large)
-            .background(Color.background)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    HStack {
-                        filterButton
-                        sortButton
-                    }
-                }
-            }
+        }
     }
     
     @ViewBuilder
     private func GridViewContent(_ content: LibraryContent) -> some View {
         if !content.list.isEmpty {
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVGrid(columns: DimensionConstants.posterColumns,spacing: DimensionConstants.spacing){
-                    ForEach(content.list, id: \.tmdbId){ item in
-                        PosterItemView(
-                            title: item.title,
-                            posterUrl: item.posterImageUrl,
-                            posterWidth: 130,
-                            posterHeight: 200
-                        )
-                        .aspectRatio(contentMode: .fill)
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                        .clipped()
-                        .onTapGesture { component.dispatch(action: LibraryShowClicked(id: item.tmdbId)) }
-                    }
-                }.padding(.all, 10)
-            }
+            GridView(
+                items: content.list.map { $0.toSwift() },
+                onAction: { id in
+                    component.dispatch(action: LibraryShowClicked(id: id))
+                }
+            )
         } else {
             empty
         }
@@ -72,7 +62,7 @@ struct LibraryView: View {
     private var filterButton: some View {
         Button {
             withAnimation {
-                //TODO:: Show Filter menu
+                // TODO: Show Filter menu
             }
         } label: {
             Label("Sort List", systemImage: "line.3.horizontal.decrease")
@@ -84,7 +74,7 @@ struct LibraryView: View {
     
     private var sortButton: some View {
         Button {
-            //TODO:: Add filer option
+            // TODO: Add filer option
         } label: {
             Label("Sort Order", systemImage: "arrow.up.arrow.down.circle")
                 .labelStyle(.iconOnly)
@@ -114,7 +104,13 @@ struct LibraryView: View {
     }
 }
 
-private struct DimensionConstants {
-    static let posterColumns = [GridItem(.adaptive(minimum: 100), spacing: 4)]
-    static let spacing: CGFloat = 4
+extension TvManiac.LibraryItem {
+    func toSwift() -> SwiftShow {
+        .init(
+            tmdbId: tmdbId,
+            title: title,
+            posterUrl: posterImageUrl,
+            inLibrary: true
+        )
+    }
 }

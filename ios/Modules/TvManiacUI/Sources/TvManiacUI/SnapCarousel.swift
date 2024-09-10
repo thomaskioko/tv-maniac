@@ -8,23 +8,25 @@
 
 import Foundation
 import SwiftUI
-import TvManiac
 
-// See my Custom Snap Carousel Video...
-// Link in Description...
-
-// To for acepting List....
-struct SnapCarousel<Content: View, T: DiscoverShow>: View {
-    var content: (T) -> Content
-    var list: [T]
+public struct SnapCarousel<Content: View>: View {
+    var content: (SwiftShow) -> Content
+    var list: [SwiftShow]
 
     // Properties
-    var spacing: CGFloat
-    var trailingSpace: CGFloat
-    @Binding var index: Int
-    var additionalGesture: AnyGesture<DragGesture.Value>?
+    private let spacing: CGFloat
+    private let trailingSpace: CGFloat
+    private let additionalGesture: AnyGesture<DragGesture.Value>?
+    @Binding private var index: Int
 
-    init(spacing: CGFloat = 15, trailingSpace: CGFloat = 100, index: Binding<Int>, items: [T], additionalGesture: AnyGesture<DragGesture.Value>? = nil, @ViewBuilder content: @escaping (T)->Content){
+    public init(
+        spacing: CGFloat = 15,
+        trailingSpace: CGFloat = 100,
+        index: Binding<Int>,
+        items: [SwiftShow],
+        additionalGesture: AnyGesture<DragGesture.Value>? = nil,
+        @ViewBuilder content: @escaping (SwiftShow) -> Content
+    ) {
         self.list = items
         self.spacing = spacing
         self.trailingSpace = trailingSpace
@@ -37,7 +39,7 @@ struct SnapCarousel<Content: View, T: DiscoverShow>: View {
     @GestureState var offset: CGFloat = 0
     @State var currentIndex: Int = 2
 
-    var body: some View {
+    public var body: some View {
         GeometryReader { proxy in
             let width = proxy.size.width - (trailingSpace - spacing)
             let adjustmentWidth = (trailingSpace / 2) - spacing
@@ -56,22 +58,57 @@ struct SnapCarousel<Content: View, T: DiscoverShow>: View {
                     .updating($offset, body: { value, out, _ in
                         out = value.translation.width
                     })
-                    .onEnded({ value in
+                    .onEnded { value in
                         let offsetX = value.translation.width
                         let progress = -offsetX / width
                         let roundIndex = progress.rounded()
                         currentIndex = max(min(currentIndex + Int(roundIndex), list.count - 1), 0)
                         index = currentIndex
-                    })
-                    .onChanged({ value in
+                    }
+                    .onChanged { value in
                         let offsetX = value.translation.width
                         let progress = -offsetX / width
                         let roundIndex = progress.rounded()
                         index = max(min(currentIndex + Int(roundIndex), list.count - 1), 0)
-                    })
+                    }
             )
             .simultaneousGesture(additionalGesture ?? AnyGesture(DragGesture().onEnded { _ in }))
         }
         .animation(.easeInOut, value: offset == 0)
+    }
+}
+
+#Preview {
+    VStack {
+        SnapCarousel(
+            spacing: 10,
+            trailingSpace: 120,
+            index: .constant(2),
+            items: [
+                .init(
+                    tmdbId: 1234,
+                    title: "Arcane",
+                    posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
+                    backdropUrl: nil,
+                    inLibrary: false
+                ),
+                .init(
+                    tmdbId: 123,
+                    title: "The Lord of the Rings: The Rings of Power",
+                    posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg",
+                    backdropUrl: nil,
+                    inLibrary: false
+                ),
+                .init(
+                    tmdbId: 12346,
+                    title: "Kaos",
+                    posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
+                    backdropUrl: nil,
+                    inLibrary: false
+                ),
+            ],
+            additionalGesture: nil,
+            content: { _ in }
+        )
     }
 }

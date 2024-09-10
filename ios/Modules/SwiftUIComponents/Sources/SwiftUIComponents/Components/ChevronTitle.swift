@@ -31,12 +31,12 @@ public struct ChevronTitle: View {
   private var titleSubtitleView: some View {
     VStack(alignment: .leading, spacing: 4) {
       Text(title)
-        .font(.title3)
+        .font(.avenirNext(size: 17))
         .fontWeight(.semibold)
 
       if let subtitle = subtitle {
         Text(subtitle)
-          .font(.callout)
+          .font(.avenirNext(size: 12))
           .foregroundColor(.secondary)
       }
     }

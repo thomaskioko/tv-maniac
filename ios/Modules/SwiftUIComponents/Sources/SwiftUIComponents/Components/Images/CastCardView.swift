@@ -16,7 +16,7 @@ public struct CastCardView: View {
     profileImage
       .overlay(nameOverlay)
       .clipShape(RoundedRectangle(cornerRadius: DimensionConstants.cornerRadius, style: .continuous))
-      .shadow(radius: DimensionConstants.shadowRadius)
+      .shadow(color: Color.grey200.opacity(0.3), radius: DimensionConstants.shadowRadius, x: 0, y: 2)
   }
 
   private var profileImage: some View {

@@ -38,7 +38,7 @@ public struct BorderTextView: View {
         VStack {
             Text(text)
                 .padding(4)
-                .font(.caption)
+                .font(.avenirNext(size: 12))
                 .fontWeight(weight)
                 .foregroundColor(color)
                 .background(
