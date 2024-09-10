@@ -7,10 +7,11 @@
 //
 
 import SwiftUI
+import SwiftUIComponents
 import TvManiac
+import TvManiacUI
 
 struct MoreShowsView: View {
-
     private let component: MoreShowsComponent
 
     @StateFlow private var uiState: MoreShowsState
@@ -24,7 +25,6 @@ struct MoreShowsView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-
                 NavigationTopBar(
                     topBarTitle: uiState.categoryTitle,
                     onBackClicked: { component.dispatch(action: MoreBackClicked()) }
@@ -33,7 +33,6 @@ struct MoreShowsView: View {
                 Spacer().frame(height: 10)
 
                 ShowsContent(uiState)
-
             }
             .edgesIgnoringSafeArea(.top)
         }
@@ -41,32 +40,20 @@ struct MoreShowsView: View {
 
     @ViewBuilder
     private func ShowsContent(_ state: MoreShowsState) -> some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            LazyVGrid(columns: DimensionConstants.posterColumns,spacing: DimensionConstants.spacing) {
-                ForEach(state.snapshotList.indices, id: \.self){ index in
-                    if let show = component.getElement(index: Int32(index)){
-                        PosterItemView(
-                            showId: show.tmdbId,
-                            title: show.title,
-                            posterUrl: show.posterImageUrl,
-                            posterWidth: 130,
-                            posterHeight: 200
-                        )
-                        .aspectRatio(contentMode: .fill)
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                        .clipped()
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
-                        .onTapGesture { component.dispatch(action: MoreShowClicked(showId: show.tmdbId)) }
-                    }
-                }
-            }
-            .padding(2)
+        let shows: [TvShow] = state.snapshotList.indices.compactMap { index in
+            component.getElement(index: Int32(index))
         }
+
+        GridView(
+            items: shows.map { $0.toSwift() },
+            onAction: { id in
+                component.dispatch(action: MoreShowClicked(showId: id))
+            }
+        )
     }
 }
 
-private struct DimensionConstants {
+private enum DimensionConstants {
     static let posterColumns = [GridItem(.adaptive(minimum: 100), spacing: 4)]
     static let spacing: CGFloat = 4
 }
