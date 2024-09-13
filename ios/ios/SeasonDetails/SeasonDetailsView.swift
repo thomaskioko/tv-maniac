@@ -102,7 +102,7 @@ struct SeasonDetailsView: View {
     private func HeaderContent(state: SeasonDetailsLoaded, progress: CGFloat, headerHeight: CGFloat) -> some View {
         ZStack(alignment: .bottom) {
             HeaderCoverArtWorkView(
-                backdropImageUrl: state.imageUrl,
+                imageUrl: state.imageUrl,
                 posterHeight: headerHeight
             )
             .foregroundStyle(.ultraThinMaterial)
