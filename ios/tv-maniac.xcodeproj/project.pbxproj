@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
+		D619310D2C934BCF0092455F /* SnapshotTestingLib in Frameworks */ = {isa = PBXBuildFile; productRef = D619310C2C934BCF0092455F /* SnapshotTestingLib */; };
 		D628B5C02A0C167E00015E45 /* config.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5BF2A0C167E00015E45 /* config.yaml */; };
 		D628B5C42A0C171300015E45 /* dev.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5C32A0C171300015E45 /* dev.yaml */; };
 		D62F1BC62B34442D004650E3 /* SeasonDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BC52B34442D004650E3 /* SeasonDetailsView.swift */; };
@@ -78,6 +79,7 @@
 		D68C974E2C8EFB7C00FAC88A /* TvManiacUI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TvManiacUI; sourceTree = "<group>"; };
 		D6A6FE9C2C9094070089AA3B /* Mapper+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Mapper+Extensions.swift"; sourceTree = "<group>"; };
 		D6BA80ED2BBC55F5007CDA3A /* StateFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateFlow.swift; sourceTree = "<group>"; };
+		D6BDF2BB2C933DBB0042C86D /* SnapshotTestingLib */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SnapshotTestingLib; sourceTree = "<group>"; };
 		D6F635152C4E88F300D921A6 /* StackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackView.swift; sourceTree = "<group>"; };
 		D6F635192C4EA6FB00D921A6 /* HomeChildView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeChildView.swift; sourceTree = "<group>"; };
 		D6F6351C2C4FEEF100D921A6 /* HomeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTabView.swift; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 				D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */,
 				D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */,
 				D68C97502C8EFBD800FAC88A /* TvManiacUI in Frameworks */,
+				D619310D2C934BCF0092455F /* SnapshotTestingLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,6 +287,7 @@
 		D6B723A62C7F521700A8A3C9 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				D6BDF2BB2C933DBB0042C86D /* SnapshotTestingLib */,
 				D6619D352C89D36F00D273E7 /* SwiftUIComponents */,
 				D68C974E2C8EFB7C00FAC88A /* TvManiacUI */,
 			);
@@ -354,6 +358,7 @@
 				D653924729D8B6A6000EE673 /* OAuthSwift */,
 				D6619D362C89D37900D273E7 /* SwiftUIComponents */,
 				D68C974F2C8EFBD800FAC88A /* TvManiacUI */,
+				D619310C2C934BCF0092455F /* SnapshotTestingLib */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -705,6 +710,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D619310C2C934BCF0092455F /* SnapshotTestingLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SnapshotTestingLib;
+		};
 		D653924729D8B6A6000EE673 /* OAuthSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */;
