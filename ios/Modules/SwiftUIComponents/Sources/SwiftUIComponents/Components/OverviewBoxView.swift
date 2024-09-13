@@ -24,7 +24,6 @@ public struct OverviewBoxView: View {
     public var body: some View {
         if let overview, !overview.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
-
                 Spacer(minLength: nil)
                     .background(GeometryGetter(rect: self.$titleRect))
                     .frame(height: 0)
@@ -87,9 +86,12 @@ struct CustomContainer<Content: View>: View {
 
 #Preview {
     VStack(spacing: 20) {
+        //Long Text
         OverviewBoxView(
             overview: "Set in the utopian region of Piltover and the oppressed underground of Zaun, the story follows the origins of two iconic League champions-and the power that will tear them apart."
         )
+
+        //Short Text
         OverviewBoxView(
             overview: "Set in the utopian region of Piltover and the oppressed underground of Zaun, the story follows the origins of two iconic League."
         )

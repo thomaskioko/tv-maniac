@@ -36,7 +36,7 @@ public struct EpisodeListView: View {
 
     public var body: some View {
         VStack {
-            Collapsible(
+            EpisodeCollapsible(
                 episodeCount: episodeCount,
                 watchProgress: CGFloat(watchProgress),
                 isCollapsed: expandEpisodeItems,

@@ -29,7 +29,7 @@ public struct ChevronTitle: View {
   }
 
   private var titleSubtitleView: some View {
-    VStack(alignment: .leading, spacing: 4) {
+    VStack(alignment: .leading, spacing: 0) {
       Text(title)
         .font(.avenirNext(size: 17))
         .fontWeight(.semibold)
