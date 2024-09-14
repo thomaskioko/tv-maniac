@@ -28,9 +28,8 @@ public struct ProviderItemView: View {
                 WebImage(url: URL(string: providerUrl)) { image in
                     image.resizable()
                         .padding(.horizontal, 4)
-                } placeholder: { profilePlaceholder }
+                } placeholder: { providerPlaceholder }
                     .aspectRatio(contentMode: .fill)
-
                     .frame(
                         width: imageWidth,
                         height: imageHeight
@@ -38,12 +37,14 @@ public struct ProviderItemView: View {
                     .clipped()
                     .cornerRadius(imageRadius)
                     .shadow(color: Color.grey200.opacity(0.3), radius: shadowRadius, x: 0, y: 2)
-
+            }
+            else {
+                providerPlaceholder
             }
         }
     }
 
-    private var profilePlaceholder: some View {
+    private var providerPlaceholder: some View {
         ZStack {
             RoundedRectangle(cornerRadius: imageRadius, style: .continuous)
                 .fill(.gray.gradient)
@@ -57,22 +58,15 @@ public struct ProviderItemView: View {
                 .frame(width: 24, height: 24)
                 .foregroundColor(.white)
         }
-
     }
 }
 
 #Preview {
     VStack {
         ProviderItemView(
-            logoUrl: "https://image.tmdb.org/t/p/w780/https://image.tmdb.org/t/p/w780/aYkLXz4dxHgOrFNH7Jv7Cpy56Ms.png",
-            imageWidth: 80,
-            imageHeight: 70
+            logoUrl: "https://image.tmdb.org/t/p/w780/https://image.tmdb.org/t/p/w780/aYkLXz4dxHgOrFNH7Jv7Cpy56Ms.png"
         )
 
-        ProviderItemView(
-            logoUrl: "https://image.tmdb.org/t/p/w780/https://image.tmdb.org/t/p/w780/ 4KAy34EHvRM25Ih8wb82AuGU7zJ.png",
-            imageWidth: 80,
-            imageHeight: 70
-        )
+        ProviderItemView(logoUrl: nil)
     }
 }

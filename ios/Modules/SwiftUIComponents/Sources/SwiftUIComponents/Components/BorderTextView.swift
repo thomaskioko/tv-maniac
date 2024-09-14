@@ -10,8 +10,8 @@ import SwiftUI
 public struct BorderTextView: View {
     private let text: String
     private let color: Color
-    private let backgroundColor: Color
-    private let borderColor: Color
+    private let colorOpacity: CGFloat
+    private let borderOpacity: CGFloat
     private let borderWidth: CGFloat
     private let cornerRadius: CGFloat
     private let weight: Font.Weight
@@ -19,19 +19,19 @@ public struct BorderTextView: View {
     public init(
         text: String,
         color: Color = Color.accent,
-        backgroundColor: Color = Color.clear,
-        borderColor: Color = Color.accent,
+        colorOpacity: CGFloat = 0,
+        borderOpacity: CGFloat = 1,
         borderWidth: CGFloat = 1,
         cornerRadius: CGFloat = 4,
         weight: Font.Weight = .light
     ) {
         self.text = text
         self.borderWidth = borderWidth
-        self.backgroundColor = backgroundColor
         self.color = color
         self.cornerRadius = cornerRadius
-        self.borderColor = borderColor
+        self.borderOpacity = borderOpacity
         self.weight = weight
+        self.colorOpacity = colorOpacity
     }
 
     public var body: some View {
@@ -43,11 +43,11 @@ public struct BorderTextView: View {
                 .foregroundColor(color)
                 .background(
                     RoundedRectangle(cornerRadius: cornerRadius)
-                        .fill(backgroundColor)
+                        .fill(color.opacity(colorOpacity))
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: cornerRadius)
-                        .stroke(borderColor, lineWidth: borderWidth)
+                        .stroke(color.opacity(borderOpacity), lineWidth: borderWidth)
                 )
         }
     }
@@ -57,8 +57,8 @@ public struct BorderTextView: View {
     HStack(spacing: 10) {
         BorderTextView(
             text: "Continuing",
-            backgroundColor: Color.accent.opacity(0.12),
-            borderColor: Color.accent.opacity(0.12),
+            colorOpacity: 0.12,
+            borderOpacity: 0.12,
             weight: .bold
         )
 

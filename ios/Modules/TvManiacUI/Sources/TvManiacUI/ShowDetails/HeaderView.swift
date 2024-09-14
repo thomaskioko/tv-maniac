@@ -37,7 +37,7 @@ public struct HeaderView: View {
     public var body: some View {
         ZStack(alignment: .bottom) {
             HeaderCoverArtWorkView(
-                backdropImageUrl: backdropImageUrl,
+                imageUrl: backdropImageUrl,
                 posterHeight: headerHeight
             )
             .foregroundStyle(.ultraThinMaterial)
@@ -108,8 +108,8 @@ struct ShowHeaderInfoView: View {
                 if let status = status, !status.isEmpty {
                     BorderTextView(
                         text: status,
-                        backgroundColor: Color.accent.opacity(0.12),
-                        borderColor: Color.accent.opacity(0.12),
+                        colorOpacity: 0.12,
+                        borderOpacity: 0.12,
                         weight: .bold
                     )
                 }
