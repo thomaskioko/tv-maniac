@@ -19,7 +19,7 @@ extension ToastStyle {
     switch self {
     case .error: Color.red
     case .warning: Color.yellow
-    case .info: Color.blue
+    case .info: Color.accentBlue
     case .success: Color.green
     }
   }

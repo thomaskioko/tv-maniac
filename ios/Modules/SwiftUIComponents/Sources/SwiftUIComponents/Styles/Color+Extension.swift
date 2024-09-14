@@ -3,7 +3,7 @@ import SwiftUI
 public extension Color {
     static let accent = Color(.accent)
     static let background = Color(.background)
-    static let blue = Color(.accentBlue)
+    static let accentBlue = Color(.accentBlue)
     static let yellow = Color(.accentYellow)
     static let gradient_background = Color(.background)
     static let content_background = Color(.contentBackground)
