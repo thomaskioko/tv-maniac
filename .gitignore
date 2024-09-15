@@ -83,3 +83,13 @@ DerivedData/
 !default.perspectivev3
 
 *.xcuserstate
+
+###### FastLane #######
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/test_output
+fastlane/builds
+
+
+derived_data/
+*.xcresult

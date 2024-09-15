@@ -1,0 +1,25 @@
+default_platform(:ios)
+
+XC_PROJECT = File.absolute_path('../tv-maniac.xcodeproj')
+TEST_DEVICE = "iPhone 15 Pro (17.5)"
+
+platform :ios do
+
+  desc "Run UI Tests"
+  lane :ui_tests do
+    schemes = ["SwiftUIComponents",]
+    schemes.each do |scheme|
+
+      run_tests(
+        project: XC_PROJECT,
+        scheme: scheme,
+        device: TEST_DEVICE,
+        derived_data_path: "derived_data",
+        result_bundle: true,
+        output_directory: "fastlane/test_output/#{scheme}",
+        output_types: "html,junit",
+      )
+    end
+  end
+
+end

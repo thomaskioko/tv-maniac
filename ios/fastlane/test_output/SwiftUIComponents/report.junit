@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites name='SwiftUIComponentsTests.xctest' tests='32' failures='0'>
+  <testsuite name='SwiftUIComponentsTests.BorderTextViewTest' tests='2' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.BorderTextViewTest' name='test_BorderTextView' time='0.109'/>
+    <testcase classname='SwiftUIComponentsTests.BorderTextViewTest' name='test_BorderTextView_Tinted' time='0.058'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.BottomNavigationTest' tests='1' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.BottomNavigationTest' name='test_bottomSheetNavigation' time='0.068'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.BottomTabItemTest' tests='2' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.BottomTabItemTest' name='test_bottomTabItem_selected' time='0.061'/>
+    <testcase classname='SwiftUIComponentsTests.BottomTabItemTest' name='test_bottomTabItem_unselected' time='0.056'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.CastCardViewTest' tests='1' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.CastCardViewTest' name='test_CastCardViewWithImage' time='0.134'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.ChevronTitleTest' tests='5' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.ChevronTitleTest' name='test_ChevronTitle' time='0.078'/>
+    <testcase classname='SwiftUIComponentsTests.ChevronTitleTest' name='test_ChevronTitleWithChevronOnly' time='0.078'/>
+    <testcase classname='SwiftUIComponentsTests.ChevronTitleTest' name='test_ChevronTitleWithChevronTitle' time='0.059'/>
+    <testcase classname='SwiftUIComponentsTests.ChevronTitleTest' name='test_ChevronTitleWithSubTitle' time='0.052'/>
+    <testcase classname='SwiftUIComponentsTests.ChevronTitleTest' name='test_ChevronTitleWithSubTitleAndChevronOnly' time='0.066'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.ChipViewTest' tests='1' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.ChipViewTest' name='test_ChipView' time='0.070'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.CircularButtonTest' tests='1' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.CircularButtonTest' name='test_CircularButton' time='0.062'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.EpisodeCollapsibleTest' tests='1' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.EpisodeCollapsibleTest' name='test_EpisodeCollapsibleTest' time='0.085'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.EpisodeItemViewTest' tests='1' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.EpisodeItemViewTest' name='test_EpisodeItemView' time='0.213'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.FilledImageButtonTest' tests='2' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.FilledImageButtonTest' name='test_FilledButton' time='0.055'/>
+    <testcase classname='SwiftUIComponentsTests.FilledImageButtonTest' name='test_FilledImageButton' time='0.052'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.FullScreenViewTest' tests='1' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.FullScreenViewTest' name='test_FullScreenView' time='0.055'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.NavigationTopBarTest' tests='1' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.NavigationTopBarTest' name='test_NavigationTopBarTest' time='0.123'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.OutlinedButtonTest' tests='2' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.OutlinedButtonTest' name='test_OutlinedButton' time='0.056'/>
+    <testcase classname='SwiftUIComponentsTests.OutlinedButtonTest' name='test_OutlinedImageButton' time='0.052'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.OverviewBoxViewTest' tests='2' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.OverviewBoxViewTest' name='test_overviewBoxView_collapsed' time='0.055'/>
+    <testcase classname='SwiftUIComponentsTests.OverviewBoxViewTest' name='test_overviewBoxView_expaned' time='0.058'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.PosterItemViewTest' tests='2' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.PosterItemViewTest' name='test_PosterItemView' time='0.070'/>
+    <testcase classname='SwiftUIComponentsTests.PosterItemViewTest' name='test_PosterItemView_inLibrary' time='0.080'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.ProviderItemViewTest' tests='1' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.ProviderItemViewTest' name='test_ProviderItemView' time='0.076'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.ToastViewTest' tests='4' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.ToastViewTest' name='test_ToastView_Error' time='0.091'/>
+    <testcase classname='SwiftUIComponentsTests.ToastViewTest' name='test_ToastView_Info' time='0.086'/>
+    <testcase classname='SwiftUIComponentsTests.ToastViewTest' name='test_ToastView_Success' time='0.087'/>
+    <testcase classname='SwiftUIComponentsTests.ToastViewTest' name='test_ToastView_Warning' time='0.115'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.TopBarTest' tests='1' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.TopBarTest' name='test_TopBar' time='0.052'/>
+  </testsuite>
+  <testsuite name='SwiftUIComponentsTests.TrailerItemViewTest' tests='1' failures='0'>
+    <testcase classname='SwiftUIComponentsTests.TrailerItemViewTest' name='test_TrailerItemView' time='0.470'/>
+  </testsuite>
+</testsuites>
