@@ -370,7 +370,7 @@ fun HorizontalPagerItem(
   ) {
     HorizontalPager(
       state = pagerState,
-      beyondBoundsPageCount = 2,
+      beyondViewportPageCount = 2,
       contentPadding = PaddingValues(horizontal = 45.dp),
       modifier = Modifier.fillMaxSize(),
     ) { pageNumber ->
