@@ -69,7 +69,7 @@ public struct TrailerItemView: View {
                 
         HStack {
           Text(name)
-            .font(.callout)
+            .font(.avenirNext(size: 14))
             .foregroundColor(.secondary)
             .lineLimit(DimensionConstants.lineLimits)
             .padding([.trailing])

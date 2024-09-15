@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.resources.R
 
 @Composable
@@ -56,6 +59,23 @@ fun TvPosterCard(
         model = posterImageUrl,
         contentDescription = stringResource(R.string.cd_show_poster, title),
         modifier = posterModifier,
+      )
+    }
+  }
+}
+
+
+@ThemePreviews
+@Composable
+private fun TvPosterCardPreview() {
+  TvManiacTheme {
+    Surface {
+      TvPosterCard(
+        posterImageUrl = null,
+        title = "Game of Thrones",
+        onClick = {},
+        posterModifier = Modifier.fillMaxWidth()
+          .height(240.dp),
       )
     }
   }

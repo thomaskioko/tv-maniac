@@ -7,7 +7,7 @@ struct Toast: Equatable {
   var duration: Double = 3.5
 }
 
-enum ToastStyle {
+public enum ToastStyle {
   case error
   case warning
   case success
@@ -18,8 +18,8 @@ extension ToastStyle {
   var themeColor: Color {
     switch self {
     case .error: Color.red
-    case .warning: Color.orange
-    case .info: Color.blue
+    case .warning: Color.yellow
+    case .info: Color.accentBlue
     case .success: Color.green
     }
   }

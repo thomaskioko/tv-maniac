@@ -17,6 +17,7 @@ public struct EpisodeItemView: View {
     private let episodeHeight: CGFloat
     private let shadowRadius: CGFloat
     private let cornerRadius: CGFloat
+    private let posterRadius: CGFloat
 
     public init(
         imageUrl: String?,
@@ -25,7 +26,8 @@ public struct EpisodeItemView: View {
         episodeWidth: CGFloat = 120,
         episodeHeight: CGFloat = 140,
         shadowRadius: CGFloat = 2.5,
-        cornerRadius: CGFloat = 2
+        cornerRadius: CGFloat = 2,
+        posterRadius: CGFloat = 0
     ) {
         self.imageUrl = imageUrl
         self.episodeTitle = episodeTitle
@@ -34,15 +36,17 @@ public struct EpisodeItemView: View {
         self.episodeHeight = episodeHeight
         self.shadowRadius = shadowRadius
         self.cornerRadius = cornerRadius
+        self.posterRadius = posterRadius
     }
 
     public var body: some View {
         HStack {
             PosterItemView(
-                title: episodeTitle,
+                title: nil,
                 posterUrl: imageUrl,
                 posterWidth: episodeWidth,
-                posterHeight: episodeHeight
+                posterHeight: episodeHeight,
+                posterRadius: posterRadius
             )
 
             VStack {
@@ -67,7 +71,7 @@ public struct EpisodeItemView: View {
         }
         .frame(height: episodeHeight)
         .background(Color.content_background)
-        .cornerRadius(4)
+        .cornerRadius(cornerRadius)
         .padding(.horizontal)
     }
 
@@ -81,8 +85,10 @@ public struct EpisodeItemView: View {
                     .frame(width: 50, height: 50, alignment: .center)
                     .foregroundColor(.white)
             }
-            .frame(width: episodeWidth,
-                   height: episodeHeight)
+            .frame(
+                width: episodeWidth,
+                height: episodeHeight
+            )
             .clipShape(
                 RoundedRectangle(
                     cornerRadius: cornerRadius,
@@ -95,9 +101,17 @@ public struct EpisodeItemView: View {
 }
 
 #Preview {
-    EpisodeItemView(
-        imageUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
-        episodeTitle: "E01 • Glorious Purpose",
-        episodeOverView: "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority."
-    )
+    VStack {
+        EpisodeItemView(
+            imageUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
+            episodeTitle: "E01 • Glorious Purpose",
+            episodeOverView: "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority."
+        )
+
+        EpisodeItemView(
+            imageUrl: nil,
+            episodeTitle: "E01 • Glorious Purpose",
+            episodeOverView: "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority."
+        )
+    }
 }

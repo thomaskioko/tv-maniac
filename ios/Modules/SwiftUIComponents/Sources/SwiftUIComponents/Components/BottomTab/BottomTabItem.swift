@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct BottomTabItem: View {
+public struct BottomTabItem: View {
   private let title: String
   private let systemImage: String
   private let isActive: Bool

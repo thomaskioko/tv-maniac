@@ -18,6 +18,7 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -114,6 +115,7 @@ private fun SeasonTitleHeader(
 
   Card(
     shape = shape,
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     modifier = Modifier.fillMaxWidth().height(64.dp).clickable { onAction(OnEpisodeHeaderClicked) },
   ) {
     ConstraintLayout(

@@ -10,7 +10,7 @@ public struct OutlinedButton: View {
 
   public init(
     text: String,
-    systemImageName: String?,
+    systemImageName: String? = nil,
     color: Color = .accent,
     textColor: Color = .white,
     borderColor: Color = .accent,

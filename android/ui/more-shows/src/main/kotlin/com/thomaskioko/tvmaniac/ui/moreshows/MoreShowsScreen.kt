@@ -173,7 +173,7 @@ fun GridContent(
         val show = lazyPagingItems[index]
         show?.let {
           TvPosterCard(
-            modifier = Modifier.animateItemPlacement().fillMaxWidth(),
+            modifier = Modifier.animateItem().fillMaxWidth(),
             posterImageUrl = show.posterImageUrl,
             title = show.title,
             onClick = { onAction(MoreShowClicked(show.tmdbId)) },

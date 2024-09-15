@@ -157,7 +157,7 @@ private fun LibraryGridContent(
   ) {
     items(list) { show ->
       TvPosterCard(
-        modifier = Modifier.animateItemPlacement(),
+        modifier = Modifier.animateItem(),
         posterImageUrl = show.posterImageUrl,
         title = show.title,
         onClick = { onItemClicked(show.tmdbId) },
