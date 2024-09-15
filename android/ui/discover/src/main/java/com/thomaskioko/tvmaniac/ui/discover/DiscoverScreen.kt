@@ -469,7 +469,7 @@ private fun HorizontalRowContent(
             posterImageUrl = tvShow.posterImageUrl,
             title = tvShow.title,
             onClick = { onItemClicked(tvShow.tmdbId) },
-            modifier = Modifier.wrapContentHeight().animateItemPlacement(),
+            modifier = Modifier.wrapContentHeight().animateItem(),
           )
         }
       }

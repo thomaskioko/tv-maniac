@@ -8,14 +8,17 @@ import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.VideoLibrary
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.home.HomeComponent
 import com.thomaskioko.tvmaniac.presentation.home.HomeComponent.Child.Discover
 import com.thomaskioko.tvmaniac.presentation.home.HomeComponent.Child.Library

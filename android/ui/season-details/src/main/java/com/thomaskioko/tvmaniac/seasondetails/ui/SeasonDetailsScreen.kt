@@ -238,7 +238,7 @@ fun ImageGalleryContent(
   ) {
     items(imageList) { item ->
       TvPosterCard(
-        modifier = Modifier.fillMaxWidth().animateItemPlacement(),
+        modifier = Modifier.fillMaxWidth().animateItem(),
         posterImageUrl = item.imageUrl,
         title = "",
         onClick = {},
@@ -421,7 +421,7 @@ private fun CastContent(
                 model = cast.profileUrl,
                 contentDescription = cast.name,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth().animateItemPlacement(),
+                modifier = Modifier.fillMaxWidth().animateItem(),
               )
 
               Box(
