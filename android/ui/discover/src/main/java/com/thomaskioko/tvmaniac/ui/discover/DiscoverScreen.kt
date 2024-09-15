@@ -370,7 +370,7 @@ fun HorizontalPagerItem(
   ) {
     HorizontalPager(
       state = pagerState,
-      beyondBoundsPageCount = 2,
+      beyondViewportPageCount = 2,
       contentPadding = PaddingValues(horizontal = 45.dp),
       modifier = Modifier.fillMaxSize(),
     ) { pageNumber ->
@@ -469,7 +469,7 @@ private fun HorizontalRowContent(
             posterImageUrl = tvShow.posterImageUrl,
             title = tvShow.title,
             onClick = { onItemClicked(tvShow.tmdbId) },
-            modifier = Modifier.wrapContentHeight().animateItemPlacement(),
+            modifier = Modifier.wrapContentHeight().animateItem(),
           )
         }
       }

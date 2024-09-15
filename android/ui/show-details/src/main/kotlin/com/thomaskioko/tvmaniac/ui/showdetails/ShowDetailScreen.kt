@@ -671,12 +671,13 @@ fun WatchProvider(
             CardDefaults.cardElevation(
               defaultElevation = 8.dp,
             ),
+          colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         ) {
           AsyncImageComposable(
             model = tvShow.logoUrl,
             contentDescription = tvShow.name,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxWidth().aspectRatio(1f).animateItemPlacement(),
+            modifier = Modifier.fillMaxWidth().aspectRatio(1f).animateItem(),
           )
         }
       }
@@ -724,7 +725,7 @@ private fun CastContent(
                 model = cast.profileUrl,
                 contentDescription = cast.name,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth().animateItemPlacement(),
+                modifier = Modifier.fillMaxWidth().animateItem(),
               )
 
               Box(
@@ -795,6 +796,7 @@ private fun TrailersContent(
               CardDefaults.cardElevation(
                 defaultElevation = 4.dp,
               ),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
           ) {
             Box {
               AsyncImageComposable(
@@ -866,7 +868,7 @@ fun RecommendedShowsContent(
         Spacer(modifier = Modifier.width(value.dp))
 
         TvPosterCard(
-          modifier = Modifier.animateItemPlacement(),
+          modifier = Modifier.animateItem(),
           posterImageUrl = tvShow.posterImageUrl,
           title = tvShow.title,
           onClick = { onShowClicked(tvShow.tmdbId) },
@@ -903,7 +905,7 @@ fun SimilarShowsContent(
         Spacer(modifier = Modifier.width(value.dp))
 
         TvPosterCard(
-          modifier = Modifier.animateItemPlacement(),
+          modifier = Modifier.animateItem(),
           posterImageUrl = tvShow.posterImageUrl,
           title = tvShow.title,
           onClick = { onShowClicked(tvShow.tmdbId) },
