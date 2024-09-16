@@ -5,6 +5,16 @@ TEST_DEVICE = "iPhone 15 Pro (17.5)"
 
 platform :ios do
 
+  desc "Build iOS App"
+  lane :build_tvmaniac do
+    build_app(
+      scheme: "tv-maniac",
+      project: XC_PROJECT,
+      skip_archive: true,
+      skip_codesigning: true
+      )
+  end   
+
   desc "Run UI Tests"
   lane :ui_tests do
     schemes = ["SwiftUIComponents", "TvManiacUITests"]
