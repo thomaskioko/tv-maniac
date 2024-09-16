@@ -3,8 +3,6 @@ import SwiftUI
 import TvManiacUI
 import XCTest
 
-import Foundation
-
 class SeasonChipViewListTest: XCTestCase {
     func test_SeasonChipViewList() {
         SeasonChipViewList(
