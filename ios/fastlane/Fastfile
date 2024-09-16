@@ -7,7 +7,7 @@ platform :ios do
 
   desc "Run UI Tests"
   lane :ui_tests do
-    schemes = ["SwiftUIComponents",]
+    schemes = ["SwiftUIComponents", "TvManiacUITests"]
     schemes.each do |scheme|
 
       run_tests(
@@ -20,6 +20,6 @@ platform :ios do
         output_types: "html,junit",
       )
     end
-  end
+  end         
 
 end
