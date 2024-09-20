@@ -201,8 +201,34 @@ jobs:
           name: common-test-report
           path: ./**/build/reports/tests/
 
+  ios-app:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: ./ios
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
+          bundler-cache: true
+
+      - name: Install Bundle
+        run: bundle install
+
+      - name: Build iOS App
+        run: bundle exec fastlane build_tvmaniac
+
+      - name: Run UI Tests
+        run: bundle exec fastlane ui_tests
+
   create-release:
-    needs: [android, android_lint, android_screenshot_test, common_test, iOS, spotless, jvm_test, ]
+    needs: [android, android_lint, android_screenshot_test, common_test, ios-app, spotless, jvm_test, ]
     if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
     runs-on: ubuntu-latest
     steps:
