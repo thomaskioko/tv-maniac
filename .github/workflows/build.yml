@@ -101,49 +101,6 @@ jobs:
           name: dependency-health-report
           path: ./**/build/reports/tests/
 
-  jvm_test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: ${{ env.DISTRIBUTION }}
-          java-version: ${{ env.JDK_VERSION }}
-
-      - name: Jvm Test
-        run: ./gradlew jvmTest
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: jvm-test-report
-          path: ./**/build/reports/tests/
-
-  common_test:
-    runs-on: macos-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: ${{ env.DISTRIBUTION }}
-          java-version: ${{ env.JDK_VERSION }}
-
-      - name: Run Common iOS Unit Tests
-        run: |
-          if [[ $(uname -m) == 'arm64' ]]; then
-            ./gradlew clean iosSimulatorArm64Test
-          else
-            ./gradlew clean iosX64Test
-          fi
-
-      - name: Upload Common Test Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: common-test-report
-          path: ./**/build/reports/tests/
-
   android_screenshot_test:
     runs-on: macos-latest
 
@@ -200,8 +157,26 @@ jobs:
           name: screenshot-test-results
           path: '**/build/outputs/roborazzi/*_compare.png'
 
-  iOS:
+  jvm_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.DISTRIBUTION }}
+          java-version: ${{ env.JDK_VERSION }}
+
+      - name: Jvm Test
+        run: ./gradlew jvmTest
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jvm-test-report
+          path: ./**/build/reports/tests/
+
+  common_test:
     runs-on: macos-latest
+    
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -209,20 +184,21 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 17
-          distribution: 'zulu'
+          distribution: ${{ env.DISTRIBUTION }}
+          java-version: ${{ env.JDK_VERSION }}
 
       - name: Run Common iOS Unit Tests
         run: |
           if [[ $(uname -m) == 'arm64' ]]; then
-            ./gradlew iosSimulatorArm64Test
+            ./gradlew clean iosSimulatorArm64Test
           else
-            ./gradlew iosX64Test
+            ./gradlew clean iosX64Test
           fi
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload Common Test Report
+        uses: actions/upload-artifact@v4
         with:
-          name: unit-test-report
+          name: common-test-report
           path: ./**/build/reports/tests/
 
   create-release:
