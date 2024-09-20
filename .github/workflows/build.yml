@@ -217,26 +217,15 @@ jobs:
         with:
           ruby-version: 3.3.0
           bundler-cache: true
-       
-      - name: List Available Schemes.
-        working-directory: ./ios
-        run: xcodebuild -list -project tv-maniac.xcodeproj
 
       - name: Install dependencies with Bundler
-        working-directory: ./ios
         run: bundle install
 
-      - name: Clear Derived Data
-        working-directory: ./ios
-        run: bundle exec fastlane ios clear_derived_data_lane
-
-      - name: Run UI Tests
-        working-directory: ./ios
-        run: bundle exec fastlane ui_tests
-
       - name: Build iOS App
-        working-directory: ./ios
         run: bundle exec fastlane build_tvmaniac
+        
+      - name: Run UI Tests
+        run: bundle exec fastlane ui_tests
 
 
   create-release:

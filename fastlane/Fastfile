@@ -1,0 +1,65 @@
+default_platform(:ios)
+
+XC_PROJECT = File.absolute_path('../ios/tv-maniac.xcodeproj')
+TEST_DEVICE = "iPhone 15 Pro (17.5)"
+
+platform :ios do
+  before_all do
+    if is_ci
+      setup_ci
+      # set Fastlane's xcodebuild -showBuildSettings timeout to a more reasonable value.
+      ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
+    end
+  end
+
+  desc "Build iOS App"
+  lane :build_tvmaniac do
+
+    gradle(task: "iosSimulatorArm64Binaries")
+
+    build_app(
+      scheme: "tv-maniac",
+      project: XC_PROJECT,
+      skip_archive: true,
+      skip_codesigning: true
+      )
+  end   
+
+  desc "Run UI Tests"
+  lane :ui_tests do
+
+    UI.message("Current directory: #{Dir.pwd}")
+    UI.message("XC_PROJECT path: #{XC_PROJECT}")
+    UI.message("Files in current directory: #{Dir.glob('*')}")
+
+    schemes = ["SwiftUIComponents", "TvManiacUITests"]
+    test_results = []
+  
+    schemes.each do |scheme|
+      begin
+        UI.message("Running #{scheme} tests at #{XC_PROJECT}")
+  
+        scan(
+          project: XC_PROJECT,
+          scheme: scheme,
+          device: TEST_DEVICE,
+          derived_data_path: "derived_data",
+          result_bundle: true,
+          output_directory: "fastlane/test_output/#{scheme}",
+          output_types: "html,junit",
+          clean: true
+        )
+      rescue => ex
+        UI.message("Running #{scheme} failed :: Exception #{ex}")
+        test_results << {scheme: scheme, status: "Failed", error: ex}  
+      end
+    end  
+  end
+
+  desc "Clear derived data"
+  lane :clear_derived_data_lane do
+    UI.message("Clearing derived data...")
+    clear_derived_data
+  end
+
+end
