@@ -31,6 +31,14 @@ Build iOS App
 
 Run UI Tests
 
+### ios clear_derived_data_lane
+
+```sh
+[bundle exec] fastlane ios clear_derived_data_lane
+```
+
+Clear derived data
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

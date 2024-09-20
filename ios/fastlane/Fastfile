@@ -4,6 +4,13 @@ XC_PROJECT = File.absolute_path('../tv-maniac.xcodeproj')
 TEST_DEVICE = "iPhone 15 Pro (17.5)"
 
 platform :ios do
+  before_all do
+    if is_ci
+      setup_ci
+      # set Fastlane's xcodebuild -showBuildSettings timeout to a more reasonable value.
+      ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
+    end
+  end
 
   desc "Build iOS App"
   lane :build_tvmaniac do
@@ -18,7 +25,12 @@ platform :ios do
   desc "Run UI Tests"
   lane :ui_tests do
     schemes = ["SwiftUIComponents", "TvManiacUITests"]
+
+    schemes.each { |scheme| puts "- #{scheme}" }
+
     schemes.each do |scheme|
+
+      UI.message("Running #{scheme} tests at #{XC_PROJECT}")
 
       run_tests(
         project: XC_PROJECT,
@@ -30,6 +42,12 @@ platform :ios do
         output_types: "html,junit",
       )
     end
-  end         
+  end
+
+  desc "Clear derived data"
+  lane :clear_derived_data_lane do
+    UI.message("Clearing derived data...")
+    clear_derived_data
+  end
 
 end
