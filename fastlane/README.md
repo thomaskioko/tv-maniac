@@ -29,7 +29,23 @@ Build iOS App
 [bundle exec] fastlane ios ui_tests
 ```
 
-Run UI Tests
+Run All UI Tests
+
+### ios swift_ui_components_tests
+
+```sh
+[bundle exec] fastlane ios swift_ui_components_tests
+```
+
+Run SwiftUIComponents Tests
+
+### ios tvmaniac_ui_components_tests
+
+```sh
+[bundle exec] fastlane ios tvmaniac_ui_components_tests
+```
+
+Run TvManiacUITests Tests
 
 ### ios clear_derived_data_lane
 

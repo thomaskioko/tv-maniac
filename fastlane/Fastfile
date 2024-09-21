@@ -23,36 +23,39 @@ platform :ios do
       )
   end   
 
-  desc "Run UI Tests"
+  desc "Run All UI Tests"
   lane :ui_tests do
-
-    UI.message("Current directory: #{Dir.pwd}")
-    UI.message("XC_PROJECT path: #{XC_PROJECT}")
-    UI.message("Files in current directory: #{Dir.glob('*')}")
-
-    schemes = ["SwiftUIComponents", "TvManiacUITests"]
-    test_results = []
-  
-    schemes.each do |scheme|
-      begin
-        UI.message("Running #{scheme} tests at #{XC_PROJECT}")
-  
-        scan(
-          project: XC_PROJECT,
-          scheme: scheme,
-          device: TEST_DEVICE,
-          derived_data_path: "derived_data",
-          result_bundle: true,
-          output_directory: "fastlane/test_output/#{scheme}",
-          output_types: "html,junit",
-          clean: true
-        )
-      rescue => ex
-        UI.message("Running #{scheme} failed :: Exception #{ex}")
-        test_results << {scheme: scheme, status: "Failed", error: ex}  
-      end
-    end  
+    swift_ui_components_tests()
+    tvmaniac_ui_components_tests()
   end
+
+  desc "Run SwiftUIComponents Tests"
+  lane :swift_ui_components_tests do
+      run_tests(
+        project: XC_PROJECT,
+        scheme: "SwiftUIComponents",
+        device: TEST_DEVICE,
+        derived_data_path: "derived_data",
+        result_bundle: true,
+        output_directory: "fastlane/test_output/SwiftUIComponents",
+        output_types: "html,junit",
+        clean: true
+      )
+  end 
+
+  desc "Run TvManiacUITests Tests"
+  lane :tvmaniac_ui_components_tests do
+      run_tests(
+        project: XC_PROJECT,
+        scheme: "TvManiacUITests",
+        device: TEST_DEVICE,
+        derived_data_path: "derived_data",
+        result_bundle: true,
+        output_directory: "fastlane/test_output/TvManiacUITests",
+        output_types: "html,junit",
+        clean: true
+      )
+  end 
 
   desc "Clear derived data"
   lane :clear_derived_data_lane do
