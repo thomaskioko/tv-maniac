@@ -1,5 +1,3 @@
-import com.thomaskioko.tvmaniac.extensions.TvManiacBuildType
-
 plugins {
   alias(libs.plugins.tvmaniac.application)
   alias(libs.plugins.ksp)
@@ -14,7 +12,24 @@ android {
     versionName = "1.0"
   }
 
-  buildTypes { debug { applicationIdSuffix = TvManiacBuildType.DEBUG.applicationIdSuffix } }
+  buildTypes {
+    debug {
+      signingConfig = signingConfigs["debug"]
+      versionNameSuffix = "-dev"
+      applicationIdSuffix = ".debug"
+    }
+
+    release {
+      signingConfig = signingConfigs.findByName("release") ?: signingConfigs["debug"]
+      isShrinkResources = true
+      isMinifyEnabled = true
+
+      proguardFiles(
+        getDefaultProguardFile("proguard-android-optimize.txt"),
+        "proguard-rules.pro",
+      )
+    }
+  }
 
   packaging {
     resources {
@@ -97,7 +112,6 @@ dependencies {
   implementation(libs.androidx.core.core)
   implementation(libs.androidx.core.splashscreen)
   implementation(libs.androidx.compose.material3)
-  implementation(libs.androidx.compose.material.icons)
   implementation(libs.appauth)
 
   implementation(libs.decompose.decompose)
