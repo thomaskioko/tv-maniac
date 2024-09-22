@@ -23,6 +23,7 @@ include(
   ":android:app",
   ":android:designsystem",
   ":android:ui:discover",
+  ":android:ui:home",
   ":android:ui:library",
   ":android:ui:more-shows",
   ":android:screenshot-tests",

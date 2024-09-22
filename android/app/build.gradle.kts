@@ -41,6 +41,7 @@ android {
 
 dependencies {
   implementation(projects.android.designsystem)
+  implementation(projects.android.ui.home)
   implementation(projects.android.ui.discover)
   implementation(projects.android.ui.library)
   implementation(projects.android.ui.moreShows)
