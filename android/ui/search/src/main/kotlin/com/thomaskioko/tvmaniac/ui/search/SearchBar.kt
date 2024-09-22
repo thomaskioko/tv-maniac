@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.search.ui
+package com.thomaskioko.tvmaniac.ui.search
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
