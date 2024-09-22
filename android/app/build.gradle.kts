@@ -5,38 +5,6 @@ plugins {
 
 android {
   namespace = "com.thomaskioko.tvmaniac"
-
-  defaultConfig {
-    applicationId = "com.thomaskioko.tvmaniac"
-    versionCode = 1
-    versionName = "1.0"
-  }
-
-  buildTypes {
-    debug {
-      signingConfig = signingConfigs["debug"]
-      versionNameSuffix = "-dev"
-      applicationIdSuffix = ".debug"
-    }
-
-    release {
-      signingConfig = signingConfigs.findByName("release") ?: signingConfigs["debug"]
-      isShrinkResources = true
-      isMinifyEnabled = true
-
-      proguardFiles(
-        getDefaultProguardFile("proguard-android-optimize.txt"),
-        "proguard-rules.pro",
-      )
-    }
-  }
-
-  packaging {
-    resources {
-      excludes.add("/META-INF/{AL2.0,LGPL2.1}")
-      excludes.add("/META-INF/versions/9/previous-compilation-data.bin")
-    }
-  }
 }
 
 dependencies {

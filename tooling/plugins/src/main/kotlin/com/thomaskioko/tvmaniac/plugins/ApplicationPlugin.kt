@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.extensions.configureAndroidCompose
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.get
 
 class ApplicationPlugin : Plugin<Project> {
 
@@ -19,6 +20,9 @@ class ApplicationPlugin : Plugin<Project> {
 
       extensions.configure<ApplicationExtension> {
         defaultConfig {
+          applicationId = "com.thomaskioko.tvmaniac"
+          versionCode = 1
+          versionName = "1.0"
           targetSdk = Versions.TARGET_SDK
         }
 
@@ -26,6 +30,21 @@ class ApplicationPlugin : Plugin<Project> {
 
         configureAndroid()
         configureAndroidCompose(this)
+
+        buildTypes {
+          debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+          }
+
+          release {
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs["debug"]
+            isShrinkResources = true
+            isMinifyEnabled = true
+
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+          }
+        }
       }
     }
   }
