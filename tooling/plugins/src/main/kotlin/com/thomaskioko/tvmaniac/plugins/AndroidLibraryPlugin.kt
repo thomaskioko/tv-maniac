@@ -13,6 +13,7 @@ class AndroidLibraryPlugin : Plugin<Project> {
     with(target) {
       with(pluginManager) {
         apply("com.android.library")
+        apply("com.autonomousapps.dependency-analysis")
       }
 
       extensions.configure<LibraryExtension> {

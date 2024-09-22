@@ -50,9 +50,9 @@ gradlePlugin {
       implementationClass = "com.thomaskioko.tvmaniac.plugins.GitHooksPlugin"
     }
 
-    register("dependency-analysis") {
-      id = "plugin.tvmaniac.dependency-analysis"
-      implementationClass = "com.thomaskioko.tvmaniac.plugins.DependencyAnalysisPlugin"
+    register("root") {
+      id = "plugin.tvmaniac.root"
+      implementationClass = "com.thomaskioko.tvmaniac.plugins.RootPlugin"
     }
   }
 }

@@ -17,6 +17,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
   override fun apply(target: Project) = with(target) {
     with(pluginManager) {
       apply("org.jetbrains.kotlin.multiplatform")
+      apply("com.autonomousapps.dependency-analysis")
     }
 
     version = libs.findVersion("shared-module-version")
