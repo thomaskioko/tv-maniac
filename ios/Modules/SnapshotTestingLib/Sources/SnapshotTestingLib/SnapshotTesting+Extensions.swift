@@ -46,7 +46,7 @@ public extension Snapshotting where Value == UIViewController, Format == UIImage
 public extension View {
     func assertSnapshot(
         record recording: Bool = false,
-        layout: SwiftUISnapshotLayout = .sizeThatFits,
+        layout: SwiftUISnapshotLayout = .defaultDevice,
         styles: SnapshotStyles = .all,
         file: StaticString = #file,
         testName: String
@@ -81,7 +81,6 @@ public extension View {
 
         let view = viewController.view!
         view.bounds = CGRect(origin: .zero, size: view.intrinsicContentSize)
-        view.frame = UIScreen.main.bounds
         view.backgroundColor = .clear
 
         return viewController

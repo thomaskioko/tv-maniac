@@ -11,21 +11,21 @@ class HorizontalItemListViewTest: XCTestCase {
                 .init(
                     tmdbId: 1234,
                     title: "Arcane",
-                    posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
+                    posterUrl: "",
                     backdropUrl: nil,
                     inLibrary: false
                 ),
                 .init(
                     tmdbId: 123,
                     title: "The Lord of the Rings: The Rings of Power",
-                    posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg",
+                    posterUrl: "",
                     backdropUrl: nil,
                     inLibrary: false
                 ),
                 .init(
                     tmdbId: 12346,
                     title: "Kaos",
-                    posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
+                    posterUrl: "",
                     backdropUrl: nil,
                     inLibrary: false
                 ),
