@@ -10,12 +10,8 @@ android {
 dependencies {
   implementation(projects.android.designsystem)
   implementation(projects.android.ui.home)
-  implementation(projects.android.ui.discover)
-  implementation(projects.android.ui.library)
   implementation(projects.android.ui.moreShows)
-  implementation(projects.android.ui.search)
   implementation(projects.android.ui.seasonDetails)
-  implementation(projects.android.ui.settings)
   implementation(projects.android.ui.showDetails)
   implementation(projects.android.ui.trailers)
   implementation(projects.shared)
