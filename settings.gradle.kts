@@ -1,7 +1,9 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+rootProject.name = "tv-maniac"
+
 pluginManagement {
-  includeBuild("tooling")
+  includeBuild("build-plugins")
 
   repositories {
     gradlePluginPortal()
@@ -16,8 +18,6 @@ dependencyResolutionManagement {
     mavenCentral()
   }
 }
-
-rootProject.name = "tv-maniac"
 
 include(
   ":android:app",

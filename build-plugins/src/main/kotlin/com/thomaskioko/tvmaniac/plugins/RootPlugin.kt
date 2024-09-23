@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.plugins
 
 import com.autonomousapps.DependencyAnalysisExtension
+import com.osacky.doctor.DoctorExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -13,6 +14,10 @@ class RootPlugin : Plugin<Project> {
 
     pluginManager.withPlugin("com.autonomousapps.dependency-analysis") {
       configureDependencyAnalysis()
+    }
+
+    pluginManager.withPlugin("com.osacky.doctor") {
+      configureGradleDoctor()
     }
   }
 }
@@ -62,6 +67,12 @@ fun Project.configureDependencyAnalysis() {
         includeDependency("io.coil-kt:coil-compose-base")
       }
     }
+  }
+}
+
+private fun Project.configureGradleDoctor() {
+  configure<DoctorExtension> {
+    warnWhenNotUsingParallelGC.set(false)
   }
 }
 

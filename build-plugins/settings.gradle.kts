@@ -12,5 +12,4 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "tooling"
-include(":plugins")
+rootProject.name = "build-plugins"
