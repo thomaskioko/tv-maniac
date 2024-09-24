@@ -9,7 +9,7 @@ class TrailerItemViewTest: XCTestCase {
             openInYouTube: false,
             key: "XZ8daibM3AE",
             name: "Series Trailer",
-            thumbnailUrl: "https://i.ytimg.com/vi/XZ8daibM3AE/hqdefault.jpg"
+            thumbnailUrl: ""
         )
         .padding()
         .background(Color.background)
