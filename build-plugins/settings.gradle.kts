@@ -1,8 +1,14 @@
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositories {
-        google()
-        mavenCentral()
+      google {
+        content {
+          includeGroupByRegex(".*google.*")
+          includeGroupByRegex(".*android.*")
+        }
+      }
+      mavenCentral()
+      gradlePluginPortal()
     }
 
     versionCatalogs {
