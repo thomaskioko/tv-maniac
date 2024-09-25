@@ -47,7 +47,7 @@ spotless = "6.25.0"
 store5 = "5.0.0"
 turbine = "1.1.0"
 yamlkt = "0.13.0"
-youtubePlayer = "12.1.0"
+youtubePlayer = "12.1.1"
 
 [libraries]
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
