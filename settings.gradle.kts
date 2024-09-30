@@ -1,4 +1,6 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+// https://docs.gradle.org/7.6/userguide/configuration_cache.html#config_cache:stable
+enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 
 rootProject.name = "tv-maniac"
 
@@ -26,6 +28,18 @@ dependencyResolutionManagement {
       }
     }
     mavenCentral()
+  }
+}
+
+plugins {
+  id("com.gradle.develocity") version ("3.18.1")
+  id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
+
+develocity {
+  buildScan {
+    termsOfUseUrl = "https://gradle.com/terms-of-service"
+    termsOfUseAgree = "yes"
   }
 }
 

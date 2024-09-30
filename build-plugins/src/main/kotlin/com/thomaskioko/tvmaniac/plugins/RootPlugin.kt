@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.plugins
 
 import com.autonomousapps.DependencyAnalysisExtension
 import com.osacky.doctor.DoctorExtension
+import com.thomaskioko.tvmaniac.extensions.libs
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -12,6 +14,8 @@ class RootPlugin : Plugin<Project> {
       "Root plugin should only be applied on the root project."
     }
 
+    checkRequiredJdkVersion(libs.findVersion("java-jdk").get().requiredVersion)
+
     pluginManager.withPlugin("com.autonomousapps.dependency-analysis") {
       configureDependencyAnalysis()
     }
@@ -19,6 +23,13 @@ class RootPlugin : Plugin<Project> {
     pluginManager.withPlugin("com.osacky.doctor") {
       configureGradleDoctor()
     }
+  }
+}
+
+private fun checkRequiredJdkVersion(jdkVersion: String) {
+  val currentJvmVersion = JavaVersion.current().majorVersion
+  check(jdkVersion == currentJvmVersion) {
+    "Current Java version ($currentJvmVersion) does not match the required version ($jdkVersion)."
   }
 }
 

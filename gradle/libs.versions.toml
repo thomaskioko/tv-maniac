@@ -25,6 +25,9 @@ decompose = "3.1.0"
 dependency-analysis = "2.0.2"
 essenty = "2.1.0"
 desugar = "2.1.2"
+gradle-doctor = "0.10.0"
+java-jdk = "17"
+java-target = "17"
 kenburns = "1.0.7"
 kermit = "2.0.4"
 kotest = "5.9.1"
@@ -138,6 +141,7 @@ android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref 
 compose-compiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 dependency-analysis-gradlePlugin = { module = "com.autonomousapps:dependency-analysis-gradle-plugin", version.ref = "dependency-analysis" }
+gradledoctor-plugin = { group = "com.osacky.doctor", name = "doctor-plugin", version.ref = "gradle-doctor" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

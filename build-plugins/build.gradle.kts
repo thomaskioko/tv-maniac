@@ -1,24 +1,39 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   `kotlin-dsl`
 }
 
 group = "com.thomaskioko.tvmaniac.plugins"
 
-java {
-  sourceCompatibility = JavaVersion.VERSION_17
-  targetCompatibility = JavaVersion.VERSION_17
+val javaTarget: String = libs.versions.java.target.get()
 
-  toolchain {
-    languageVersion.set(JavaLanguageVersion.of(17))
+tasks.withType<KotlinCompile>().configureEach {
+  compilerOptions {
+    jvmTarget = JvmTarget.fromTarget(javaTarget)
+  }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+  sourceCompatibility = javaTarget
+  targetCompatibility = javaTarget
+}
+
+tasks {
+  validatePlugins {
+    enableStricterValidation = true
+    failOnWarning = true
   }
 }
 
 dependencies {
   compileOnly(libs.android.gradlePlugin)
-  compileOnly(libs.kotlin.gradlePlugin)
   compileOnly(libs.compose.compiler.gradlePlugin)
-  compileOnly(libs.spotless.plugin)
   compileOnly(libs.dependency.analysis.gradlePlugin)
+  compileOnly(libs.gradledoctor.plugin)
+  compileOnly(libs.kotlin.gradlePlugin)
+  compileOnly(libs.spotless.plugin)
 }
 
 gradlePlugin {
