@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.1"
-androidx-activity = "1.9.2"
+androidx-activity = "1.9.3"
 androidx-annotation = "1.8.2"
 androidx-browser = "1.8.0"
 androidx-collections = "1.4.4"
