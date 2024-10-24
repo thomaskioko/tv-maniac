@@ -25,6 +25,9 @@ decompose = "3.1.0"
 dependency-analysis = "2.1.4"
 essenty = "2.1.0"
 desugar = "2.1.2"
+gradle-doctor = "0.10.0"
+java-jdk = "21"
+java-target = "21"
 kenburns = "1.0.7"
 kermit = "2.0.4"
 kotest = "5.9.1"
@@ -138,6 +141,7 @@ android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref 
 compose-compiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 dependency-analysis-gradlePlugin = { module = "com.autonomousapps:dependency-analysis-gradle-plugin", version.ref = "dependency-analysis" }
+gradledoctor-plugin = { group = "com.osacky.doctor", name = "doctor-plugin", version.ref = "gradle-doctor" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -158,10 +162,10 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 tvmaniac-android-library = { id = "plugin.tvmaniac.android.library" }
 tvmaniac-application = { id = "plugin.tvmaniac.application" }
 tvmaniac-compose-library = { id = "plugin.tvmaniac.compose.library" }
-tvmaniac-dependency-analysis = { id = "plugin.tvmaniac.dependency-analysis" }
 tvmaniac-multiplatform = { id = "plugin.tvmaniac.multiplatform" }
 tvmaniac-spotless = { id = "plugin.tvmaniac.spotless" }
 tvmaniac-git-hooks = { id = "plugin.tvmaniac.git-hooks" }
+tvmaniac-root = { id = "plugin.tvmaniac.root" }
 
 [bundles]
 unittest = [

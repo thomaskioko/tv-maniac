@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  JDK_VERSION: 17
+  JDK_VERSION: 21
   DISTRIBUTION: 'zulu'
   FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
 
@@ -141,7 +141,7 @@ jobs:
         id: screenshotsrecord
         if: steps.screenshotsverify.outcome == 'failure' && github.event_name == 'pull_request'
         run: |
-          ./gradlew recordRoborazziDevDebug
+          ./gradlew recordRoborazziDebug
 
       - name: Push new screenshots if available
         uses: stefanzweifel/git-auto-commit-action@v5
@@ -177,7 +177,7 @@ jobs:
 
   common_test:
     runs-on: macos-latest
-    
+
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -209,12 +209,12 @@ jobs:
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
-      
-      - name: Setup Xcode  
+
+      - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: 15.4
-          
+          xcode-version: 16.0
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -228,8 +228,8 @@ jobs:
         run: bundle exec fastlane build_tvmaniac
 
       - name: Clear Derived Data
-        run: bundle exec fastlane clear_derived_data_lane        
-        
+        run: bundle exec fastlane clear_derived_data_lane
+
       # - name: Run UI Tests
       #   run: bundle exec fastlane ui_tests
 
@@ -238,7 +238,7 @@ jobs:
         if: failure()
         with:
           name: test-results
-          path: fastlane/test_output        
+          path: fastlane/test_output
 
   create-release:
     needs: [build-android, android_lint, android_screenshot_test, common_test, build-ios, spotless, jvm_test, ]
@@ -250,7 +250,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: 21
           distribution: 'zulu'
 
       - name: Create release

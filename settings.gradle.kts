@@ -1,28 +1,53 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+// https://docs.gradle.org/7.6/userguide/configuration_cache.html#config_cache:stable
+enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+
+rootProject.name = "tv-maniac"
 
 pluginManagement {
-  includeBuild("tooling")
+  includeBuild("build-plugins")
 
   repositories {
     gradlePluginPortal()
-    google()
+    google {
+      content {
+        includeGroupByRegex(".*google.*")
+        includeGroupByRegex(".*android.*")
+      }
+    }
     mavenCentral()
   }
 }
 
 dependencyResolutionManagement {
   repositories {
-    google()
+    google {
+      content {
+        includeGroupByRegex(".*google.*")
+        includeGroupByRegex(".*android.*")
+      }
+    }
     mavenCentral()
   }
 }
 
-rootProject.name = "tv-maniac"
+plugins {
+  id("com.gradle.develocity") version ("3.18.1")
+  id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
+
+develocity {
+  buildScan {
+    termsOfUseUrl = "https://gradle.com/terms-of-service"
+    termsOfUseAgree = "yes"
+  }
+}
 
 include(
   ":android:app",
   ":android:designsystem",
   ":android:ui:discover",
+  ":android:ui:home",
   ":android:ui:library",
   ":android:ui:more-shows",
   ":android:screenshot-tests",

@@ -224,7 +224,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  fastlane (~> 2.225.0)
+  fastlane
   fastlane-plugin-test_center
 
 BUNDLED WITH
