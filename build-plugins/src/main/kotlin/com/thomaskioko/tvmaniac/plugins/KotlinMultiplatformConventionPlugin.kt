@@ -45,7 +45,6 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
         languageSettings {
           listOf(
             "androidx.paging.ExperimentalPagingApi",
-            "com.arkivanov.decompose.ExperimentalDecomposeApi",
             "kotlin.RequiresOptIn",
             "kotlin.experimental.ExperimentalObjCName",
             "kotlin.time.ExperimentalTime",
