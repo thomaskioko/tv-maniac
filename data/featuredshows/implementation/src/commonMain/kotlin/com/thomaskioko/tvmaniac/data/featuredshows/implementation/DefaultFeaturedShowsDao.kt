@@ -27,7 +27,7 @@ class DefaultFeaturedShowsDao(
     }
   }
 
-  override fun observeFeaturedShows(): Flow<List<ShowEntity>> =
+  override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> =
     featuredShowsQueries
       .featuredShows { id, title, posterPath, inLibrary ->
         ShowEntity(

@@ -29,6 +29,8 @@ class DefaultTmdbShowsNetworkDataSource(
         path("3/discover/tv")
         parameter("page", "$page")
         parameter("sort_by", sortBy)
+        parameter("include_adult", "false")
+        parameter("screened_theatrically", "true")
       }
     }
 

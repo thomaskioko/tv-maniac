@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface FeaturedShowsDao {
   fun upsert(show: Featured_shows)
 
-  fun observeFeaturedShows(): Flow<List<ShowEntity>>
+  fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>>
 
   fun deleteFeaturedShows(id: Long)
 
