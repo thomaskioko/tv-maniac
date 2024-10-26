@@ -1,39 +1,9 @@
-package com.thomaskioko.tvmaniac.core.db
+package com.thomaskioko.tvmaniac.shows.api
 
-import com.thomaskioko.tvmaniac.core.db.Episode as EpisodeCache
+import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.db.Id
 
 object MockData {
-
-  fun getEpisodeCacheList() =
-    listOf(
-      EpisodeCache(
-        id = Id(2534997),
-        season_id = Id(114355),
-        show_id = Id(123232),
-        title = "Glorious Purpose",
-        overview =
-          "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
-        vote_count = 42,
-        vote_average = 6.429,
-        runtime = 45,
-        episode_number = 1,
-        image_url = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
-      ),
-      EpisodeCache(
-        id = Id(2927202),
-        season_id = Id(114355),
-        show_id = Id(123232),
-        title = "The Variant",
-        overview =
-          "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
-        vote_count = 42,
-        vote_average = 6.429,
-        runtime = 45,
-        episode_number = 1,
-        image_url = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
-      ),
-    )
 
   fun getShow() =
     Tvshows(

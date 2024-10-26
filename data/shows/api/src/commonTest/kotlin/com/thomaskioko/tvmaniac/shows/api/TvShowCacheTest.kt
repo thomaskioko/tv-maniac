@@ -1,9 +1,11 @@
-package com.thomaskioko.tvmaniac.core.db
+package com.thomaskioko.tvmaniac.shows.api
 
-import com.thomaskioko.tvmaniac.core.db.MockData.getShow
-import com.thomaskioko.tvmaniac.core.db.MockData.showList
+import com.thomaskioko.tvmaniac.core.db.Trending_shows
+import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.shows.api.MockData.getShow
+import com.thomaskioko.tvmaniac.shows.api.MockData.showList
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.test.Test
@@ -17,10 +19,8 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     get() = database.tvshowsQueries
 
   @Test
-  fun insertTvShow() {
+  fun `should return shows when data is available`() {
     val shows = showList()
-
-    shows.insertTvShowsEntityList()
 
     for (show in shows) {
       Trending_shows(
@@ -36,7 +36,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
   }
 
   @Test
-  fun verify_selectByShowId_returnTvShowEntity_afterInsertHasBeenDone() {
+  fun `should return show when data is available`() {
     val show = getShow()
     show.insertTvShowQuery()
 
@@ -48,10 +48,6 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     entity.vote_average shouldBe show.vote_average
     entity.backdrop_path shouldBe show.backdrop_path
     entity.popularity shouldBe show.popularity
-  }
-
-  private fun List<Tvshows>.insertTvShowsEntityList() {
-    map { it.insertTvShowQuery() }
   }
 
   private fun Tvshows.insertTvShowQuery() {
