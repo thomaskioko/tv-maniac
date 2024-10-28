@@ -66,6 +66,36 @@ LEFT OUTER JOIN
 WHERE
     tvshows.id = ?;
 
+searchShows:
+SELECT
+    tvshows.id,
+    tvshows.name,
+    tvshows.poster_path,
+    tvshows.overview,
+    CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    tvshows
+LEFT OUTER JOIN
+    library ON tvshows.id = library.id
+WHERE
+    name LIKE '%' || ? || '%'
+    OR LOWER(name) LIKE '%' || LOWER(?) || '%'
+ORDER BY
+    CASE
+        WHEN name LIKE ? || '%' THEN 1  -- Exact start match
+        WHEN name LIKE '% ' || ? || '%' THEN 2  -- Word start match
+        ELSE 3  -- Contains match
+    END,
+    popularity DESC
+LIMIT 20;
+
+searchShowsCount:
+SELECT COUNT(*)
+FROM tvshows
+WHERE
+name LIKE '%' || ? || '%'
+OR LOWER(name) LIKE '%' || LOWER(?) || '%';
+
 delete:
 DELETE
 FROM tvshows
