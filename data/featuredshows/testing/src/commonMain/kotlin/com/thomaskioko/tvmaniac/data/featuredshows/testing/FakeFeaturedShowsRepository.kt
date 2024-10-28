@@ -18,7 +18,7 @@ class FakeFeaturedShowsRepository : FeaturedShowsRepository {
   }
 
   override suspend fun observeFeaturedShows(
-    timeWindow: String,
+    page: Long,
     forceRefresh: Boolean
   ): Flow<Either<Failure, List<ShowEntity>>> = entityListResult.receiveAsFlow()
 }
