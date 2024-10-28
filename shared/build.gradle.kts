@@ -62,6 +62,8 @@ kotlin {
         api(projects.data.requestManager.implementation)
         api(projects.data.seasondetails.api)
         api(projects.data.seasondetails.implementation)
+        api(projects.data.search.api)
+        api(projects.data.search.implementation)
         api(projects.data.seasons.api)
         api(projects.data.seasons.implementation)
         api(projects.data.showdetails.api)

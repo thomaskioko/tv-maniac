@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.db.DatabaseComponent
 import com.thomaskioko.tvmaniac.discover.implementation.TrendingShowsComponent
 import com.thomaskioko.tvmaniac.episodes.implementation.EpisodeComponent
 import com.thomaskioko.tvmaniac.resourcemanager.implementation.RequestManagerComponent
+import com.thomaskioko.tvmaniac.search.implementation.SearchComponent
 import com.thomaskioko.tvmaniac.seasondetails.implementation.SeasonDetailsComponent
 import com.thomaskioko.tvmaniac.seasons.implementation.SeasonsComponent
 import com.thomaskioko.tvmaniac.shows.implementation.DiscoverComponent
@@ -43,6 +44,7 @@ abstract class SharedComponent :
   RecommendedShowsComponent,
   SeasonDetailsComponent,
   SeasonsComponent,
+  SearchComponent,
   ShowDetailsComponent,
   SimilarShowsComponent,
   TmdbComponent,
