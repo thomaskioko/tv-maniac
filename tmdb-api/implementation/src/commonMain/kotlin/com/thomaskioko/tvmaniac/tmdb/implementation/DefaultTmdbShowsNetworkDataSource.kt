@@ -91,4 +91,13 @@ class DefaultTmdbShowsNetworkDataSource(
         parameter("sort_by", sortBy)
       }
     }
+
+  override suspend fun searchShows(query: String): ApiResponse<TmdbShowResult> =
+    httpClient.safeRequest {
+      url {
+        method = HttpMethod.Get
+        path("3/search/tv")
+        parameter("query", query)
+      }
+    }
 }
