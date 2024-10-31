@@ -72,6 +72,7 @@ SELECT
     tvshows.name,
     tvshows.poster_path,
     tvshows.overview,
+    tvshows.status,
     CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshows

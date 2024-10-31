@@ -5,6 +5,7 @@ data class ShowEntity(
   val inLibrary: Boolean,
   val posterPath: String?,
   val overview: String? = null,
+  val status: String? = null,
   val title: String,
   val page: Long = 0,
 )

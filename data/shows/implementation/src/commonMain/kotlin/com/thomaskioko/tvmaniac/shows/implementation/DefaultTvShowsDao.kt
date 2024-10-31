@@ -47,13 +47,14 @@ class DefaultTvShowsDao(
   override fun observeShowsByQuery(query: String): Flow<List<ShowEntity>> {
     return tvShowsQueries
       .searchShows(query, query, query, query)
-      { id, title, imageUrl, overview, inLibrary ->
+      { id, title, imageUrl, overview, status, inLibrary ->
         ShowEntity(
           id = id.id,
           title = title,
           posterPath = imageUrl,
           inLibrary = inLibrary == 1L,
-          overview = overview
+          overview = overview,
+          status = status,
         )
       }
       .asFlow()
