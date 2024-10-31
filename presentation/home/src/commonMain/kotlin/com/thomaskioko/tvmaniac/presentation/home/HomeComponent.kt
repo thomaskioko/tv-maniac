@@ -10,7 +10,7 @@ import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponent
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponentFactory
-import com.thomaskioko.tvmaniac.presentation.search.SearchComponent
+import com.thomaskioko.tvmaniac.presentation.search.SearchShowsComponent
 import com.thomaskioko.tvmaniac.presentation.search.SearchComponentFactory
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponent
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponentFactory
@@ -108,7 +108,7 @@ class HomeComponent(
           component =
             searchComponentFactory(
               componentContext,
-              navigation::pop,
+              { id -> onShowClicked(id) }
             ),
         )
       }
@@ -129,7 +129,7 @@ class HomeComponent(
 
     class Library(val component: LibraryComponent) : Child
 
-    class Search(val component: SearchComponent) : Child
+    class Search(val component: SearchShowsComponent) : Child
 
     class Settings(val component: SettingsComponent) : Child
   }

@@ -25,7 +25,7 @@ import com.thomaskioko.tvmaniac.presentation.home.HomeComponent
 import com.thomaskioko.tvmaniac.presentation.home.HomeComponentFactory
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsComponent
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsComponentFactory
-import com.thomaskioko.tvmaniac.presentation.search.SearchComponent
+import com.thomaskioko.tvmaniac.presentation.search.SearchShowsComponent
 import com.thomaskioko.tvmaniac.presentation.search.SearchComponentFactory
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsComponent
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsComponentFactory
@@ -39,6 +39,7 @@ import com.thomaskioko.tvmaniac.presentation.trailers.TrailersComponent
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersComponentFactory
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponent
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponentFactory
+import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
@@ -63,6 +64,11 @@ class DefaultRootComponentTest {
   private val traktAuthManager = FakeTraktAuthManager()
   private val datastoreRepository = FakeDatastoreRepository()
   private val featuredShowsRepository = FakeFeaturedShowsRepository()
+  private val trendingShowsRepository = FakeTrendingShowsRepository()
+  private val upcomingShowsRepository = FakeUpcomingShowsRepository()
+  private val topRatedShowsRepository = FakeTopRatedShowsRepository()
+  private val popularShowsRepository = FakePopularShowsRepository()
+  private val searchRepository = FakeSearchRepository()
 
   private lateinit var component: DefaultRootComponent
 
@@ -166,10 +172,10 @@ class DefaultRootComponentTest {
         onNavigateToShowDetails = {},
         onNavigateToMore = {},
         featuredShowsRepository = featuredShowsRepository,
-        trendingShowsRepository = FakeTrendingShowsRepository(),
-        upcomingShowsRepository = FakeUpcomingShowsRepository(),
-        topRatedShowsRepository = FakeTopRatedShowsRepository(),
-        popularShowsRepository = FakePopularShowsRepository(),
+        trendingShowsRepository = trendingShowsRepository,
+        upcomingShowsRepository = upcomingShowsRepository,
+        topRatedShowsRepository = topRatedShowsRepository,
+        popularShowsRepository = popularShowsRepository,
       )
     }
 
@@ -192,19 +198,23 @@ class DefaultRootComponentTest {
         categoryId = 0,
         onBack = {},
         onNavigateToShowDetails = {},
-        popularShowsRepository = FakePopularShowsRepository(),
-        upcomingShowsRepository = FakeUpcomingShowsRepository(),
-        trendingShowsRepository = FakeTrendingShowsRepository(),
-        topRatedShowsRepository = FakeTopRatedShowsRepository(),
+        popularShowsRepository = popularShowsRepository,
+        upcomingShowsRepository = upcomingShowsRepository,
+        trendingShowsRepository = trendingShowsRepository,
+        topRatedShowsRepository = topRatedShowsRepository,
       )
     }
 
   private fun buildSearchPresenterFactory(
     componentContext: ComponentContext,
-  ): SearchComponentFactory = { _: ComponentContext, _: () -> Unit ->
-    SearchComponent(
+  ): SearchComponentFactory = { _: ComponentContext, _: (id: Long) -> Unit ->
+    SearchShowsComponent(
       componentContext = componentContext,
-      goBack = {},
+      onNavigateToShowDetails = {},
+      searchRepository = searchRepository,
+      featuredShowsRepository = featuredShowsRepository,
+      trendingShowsRepository = trendingShowsRepository,
+      upcomingShowsRepository = upcomingShowsRepository,
     )
   }
 

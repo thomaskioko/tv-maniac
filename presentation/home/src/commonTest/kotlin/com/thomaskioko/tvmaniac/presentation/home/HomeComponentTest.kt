@@ -13,12 +13,13 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepo
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponent
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponentFactory
-import com.thomaskioko.tvmaniac.presentation.search.SearchComponent
+import com.thomaskioko.tvmaniac.presentation.search.SearchShowsComponent
 import com.thomaskioko.tvmaniac.presentation.search.SearchComponentFactory
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponent
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponentFactory
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponent
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponentFactory
+import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeLibraryRepository
@@ -36,6 +37,9 @@ class HomeComponentTest {
   private val traktAuthManager = FakeTraktAuthManager()
   private val datastoreRepository = FakeDatastoreRepository()
   private val featuredShowsRepository = FakeFeaturedShowsRepository()
+  private val trendingShowsRepository = FakeTrendingShowsRepository()
+  private val upcomingShowsRepository = FakeUpcomingShowsRepository()
+  private val searchRepository = FakeSearchRepository()
 
   private lateinit var component: HomeComponent
 
@@ -86,10 +90,14 @@ class HomeComponentTest {
 
   private fun buildSearchPresenterFactory(
     componentContext: ComponentContext,
-  ): SearchComponentFactory = { _: ComponentContext, _: () -> Unit ->
-    SearchComponent(
+  ): SearchComponentFactory = { _: ComponentContext, _: (id: Long) -> Unit ->
+    SearchShowsComponent(
       componentContext = componentContext,
-      goBack = {},
+      searchRepository = searchRepository,
+      onNavigateToShowDetails = {},
+      featuredShowsRepository = featuredShowsRepository,
+      trendingShowsRepository = trendingShowsRepository,
+      upcomingShowsRepository = upcomingShowsRepository,
     )
   }
 
@@ -127,8 +135,8 @@ class HomeComponentTest {
         onNavigateToShowDetails = {},
         onNavigateToMore = {},
         featuredShowsRepository = featuredShowsRepository,
-        trendingShowsRepository = FakeTrendingShowsRepository(),
-        upcomingShowsRepository = FakeUpcomingShowsRepository(),
+        trendingShowsRepository = trendingShowsRepository,
+        upcomingShowsRepository = upcomingShowsRepository,
         topRatedShowsRepository = FakeTopRatedShowsRepository(),
         popularShowsRepository = FakePopularShowsRepository(),
       )

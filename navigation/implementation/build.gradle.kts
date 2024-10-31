@@ -32,6 +32,7 @@ kotlin {
       implementation(projects.data.popularshows.testing)
       implementation(projects.data.recommendedshows.testing)
       implementation(projects.data.seasons.testing)
+      implementation(projects.data.search.testing)
       implementation(projects.data.seasondetails.testing)
       implementation(projects.data.showdetails.testing)
       implementation(projects.data.similar.testing)
