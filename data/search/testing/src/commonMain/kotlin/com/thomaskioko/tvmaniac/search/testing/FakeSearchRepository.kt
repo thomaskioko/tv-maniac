@@ -12,7 +12,7 @@ class FakeSearchRepository : SearchRepository {
   private var eitherChannel: Channel<Either<Failure, List<ShowEntity>>> =
     Channel(Channel.UNLIMITED)
 
-  suspend fun setFeaturedShows(result: Either<Failure, List<ShowEntity>>) {
+  suspend fun setSearchResult(result: Either<Failure, List<ShowEntity>>) {
     eitherChannel.send(result)
   }
 
