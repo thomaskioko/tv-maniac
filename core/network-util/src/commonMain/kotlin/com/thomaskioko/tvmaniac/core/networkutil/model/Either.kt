@@ -16,10 +16,10 @@ sealed class Either<out L, out R> {
   /** Represents the right side of [Either] class which by convention is a "Success". */
   data class Right<out R>(val right: R) : Either<Nothing, R>()
 
-  fun <T> fold(lfn: (L) -> T, rfn: (R?) -> T): T =
+  fun <T> fold(onFailure: (L) -> T, onSuccess: (R) -> T): T =
     when (this) {
-      is Left -> lfn(left)
-      is Right -> rfn(right)
+      is Left -> onFailure(left)
+      is Right -> onSuccess(right)
     }
 
   fun getOrNull(): R? = (this as? Right)?.right
