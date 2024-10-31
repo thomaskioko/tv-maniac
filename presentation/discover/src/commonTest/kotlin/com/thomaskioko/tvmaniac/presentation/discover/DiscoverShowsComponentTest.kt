@@ -87,7 +87,7 @@ class DiscoverShowsComponentTest {
       awaitItem() shouldBe Loading
       awaitItem() shouldBe EmptyState
 
-      setObserveList(createDiscoverShowList())
+      setList(createDiscoverShowList())
 
       awaitItem() shouldBe
         DataLoaded(
@@ -229,14 +229,6 @@ class DiscoverShowsComponentTest {
   }
 
   private suspend fun setList(list: List<ShowEntity>) {
-    featuredShowsRepository.setFeaturedShows(Either.Right(list))
-    topRatedShowsRepository.setTopRatedShows(Either.Right(list))
-    popularShowsRepository.setPopularShows(Either.Right(list))
-    upcomingShowsRepository.setUpcomingShows(Either.Right(list))
-    trendingShowsRepository.setTrendingShows(Either.Right(list))
-  }
-
-  private suspend fun setObserveList(list: List<ShowEntity>) {
     featuredShowsRepository.setFeaturedShows(Either.Right(list))
     topRatedShowsRepository.setTopRatedShows(Either.Right(list))
     popularShowsRepository.setPopularShows(Either.Right(list))
