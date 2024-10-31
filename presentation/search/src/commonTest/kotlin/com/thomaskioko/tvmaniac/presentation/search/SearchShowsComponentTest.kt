@@ -330,6 +330,55 @@ class SearchShowsComponentTest {
   }
 
   @Test
+  fun `should update state when on clear query and show content is available`() = runTest {
+    component.state.test {
+
+
+      awaitItem() shouldBe ShowContentAvailable()
+      setList(createDiscoverShowList())
+
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(
+        isUpdating = false,
+        featuredShows = uiModelList(),
+        trendingShows = uiModelList(),
+        upcomingShows = uiModelList(),
+      )
+
+      component.dispatch(QueryChanged("test"))
+
+      awaitItem() shouldBe SearchResultAvailable(
+        isUpdating = true,
+        result = persistentListOf(),
+      )
+
+      testScheduler.advanceTimeBy(300)
+
+      fakeSearchRepository.setSearchResult(Either.Right(createDiscoverShowList()))
+
+      awaitItem() shouldBe SearchResultAvailable(
+        isUpdating = false,
+        result = uiModelList(),
+      )
+
+      component.dispatch(ClearQuery)
+
+      setList(createDiscoverShowList())
+
+      awaitItem() shouldBe ShowContentAvailable(
+        isUpdating = true,
+      )
+
+      awaitItem() shouldBe ShowContentAvailable(
+        isUpdating = false,
+        featuredShows = uiModelList(),
+        trendingShows = uiModelList(),
+        upcomingShows = uiModelList(),
+      )
+    }
+  }
+
+  @Test
   fun `should handle error states correctly`() = runTest {
     component.state.test {
       awaitItem() shouldBe ShowContentAvailable()
@@ -378,7 +427,7 @@ class SearchShowsComponentTest {
         posterPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         inLibrary = false,
         overview = null,
-        status = null
+        status = null,
       )
     }
       .toImmutableList()

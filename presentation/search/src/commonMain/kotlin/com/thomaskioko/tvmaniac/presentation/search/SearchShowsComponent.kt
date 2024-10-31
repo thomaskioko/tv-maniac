@@ -163,9 +163,9 @@ class SearchShowsComponent(
       }
     }
 
-    private fun handleSearchResults(shows: List<ShowEntity>?) {
+    private fun handleSearchResults(shows: List<ShowEntity>) {
       val state = when {
-        shows.isNullOrEmpty() -> EmptyState
+        shows.isEmpty() -> EmptyState
         else -> SearchResultAvailable(
           isUpdating = false,
           result = shows.toShowList(),
