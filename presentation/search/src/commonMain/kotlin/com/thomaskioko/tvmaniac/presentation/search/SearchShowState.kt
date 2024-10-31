@@ -14,7 +14,7 @@ data class SearchResultAvailable(
   val result: ImmutableList<SearchResult> = persistentListOf(),
 ): SearchShowState
 
-data class InitialState(
+data class ShowContentAvailable(
   val isUpdating: Boolean = false,
   val errorMessage: String? = null,
   val featuredShows: ImmutableList<SearchResult> = persistentListOf(),

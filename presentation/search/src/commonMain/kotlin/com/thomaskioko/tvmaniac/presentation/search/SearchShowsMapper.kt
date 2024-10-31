@@ -20,14 +20,6 @@ fun List<ShowEntity>?.toShowList(): ImmutableList<SearchResult> =
     ?.toImmutableList()
     ?: persistentListOf()
 
-fun ShowEntity.toSearchResult(): SearchResult = SearchResult(
-  tmdbId = id,
-  title = title,
-  posterImageUrl = posterPath,
-  inLibrary = inLibrary,
-  overview = overview,
-  status = status,
-)
 
 fun getErrorMessage(
   featuredShows: Either<Failure, List<ShowEntity>>,
