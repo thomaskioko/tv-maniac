@@ -10,5 +10,7 @@ interface TvShowsDao {
 
   fun observeShowsByQuery(query: String): Flow<List<ShowEntity>>
 
+  fun observeQueryCount(query: String): Flow<Long>
+
   fun deleteTvShows()
 }

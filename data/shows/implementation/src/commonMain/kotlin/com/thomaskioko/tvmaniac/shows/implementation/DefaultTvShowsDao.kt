@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.shows.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.db.Tvshows
@@ -47,7 +48,7 @@ class DefaultTvShowsDao(
   override fun observeShowsByQuery(query: String): Flow<List<ShowEntity>> {
     return tvShowsQueries
       .searchShows(query, query, query, query)
-      { id, title, imageUrl, overview, status, inLibrary ->
+      { id, title, imageUrl, overview, status, voteAverage, year, inLibrary ->
         ShowEntity(
           id = id.id,
           title = title,
@@ -55,10 +56,18 @@ class DefaultTvShowsDao(
           inLibrary = inLibrary == 1L,
           overview = overview,
           status = status,
+          voteAverage = voteAverage,
+          year = year
         )
       }
       .asFlow()
       .mapToList(dispatchers.io)
+  }
+
+  override fun observeQueryCount(query: String): Flow<Long> {
+    return tvShowsQueries.searchShowsCount(query, query)
+      .asFlow()
+      .mapToOne(dispatchers.io)
   }
 
   override fun deleteTvShows() {

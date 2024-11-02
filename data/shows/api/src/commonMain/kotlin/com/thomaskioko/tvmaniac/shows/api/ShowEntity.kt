@@ -6,6 +6,8 @@ data class ShowEntity(
   val posterPath: String?,
   val overview: String? = null,
   val status: String? = null,
+  val year: String? = null,
+  val voteAverage: Double? = null,
   val title: String,
   val page: Long = 0,
 )

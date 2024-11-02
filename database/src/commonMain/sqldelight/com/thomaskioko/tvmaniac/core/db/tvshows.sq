@@ -73,6 +73,8 @@ SELECT
     tvshows.poster_path,
     tvshows.overview,
     tvshows.status,
+    tvshows.vote_average,
+    tvshows.first_air_date,
     CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshows
@@ -87,8 +89,8 @@ ORDER BY
         WHEN name LIKE '% ' || ? || '%' THEN 2  -- Word start match
         ELSE 3  -- Contains match
     END,
-    popularity DESC
-LIMIT 20;
+    first_air_date DESC,
+    vote_average DESC;
 
 searchShowsCount:
 SELECT COUNT(*)
