@@ -3,9 +3,9 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-class TrailerItemViewTest: XCTestCase {
+class YoutubeItemViewTest: XCTestCase {
     func test_TrailerItemView() {
-        TrailerItemView(
+      YoutubeItemView(
             openInYouTube: false,
             key: "XZ8daibM3AE",
             name: "Series Trailer",
@@ -13,6 +13,6 @@ class TrailerItemViewTest: XCTestCase {
         )
         .padding()
         .background(Color.background)
-        .assertSnapshot(testName: "TrailerItemView")
+        .assertSnapshot(testName: "YoutubeItemItemView")
     }
 }

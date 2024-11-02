@@ -6,8 +6,8 @@
 //  Copyright © 2023 orgName. All rights reserved.
 //
 
-import SDWebImageSwiftUI
 import SwiftUI
+import SwiftUIComponents
 
 public struct EpisodeItemView: View {
     private let imageUrl: String?

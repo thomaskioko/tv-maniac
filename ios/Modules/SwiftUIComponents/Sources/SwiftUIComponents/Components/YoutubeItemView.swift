@@ -2,7 +2,7 @@ import SDWebImageSwiftUI
 import SwiftUI
 import YouTubePlayerKit
 
-public struct TrailerItemView: View {
+public struct YoutubeItemView: View {
   private let openInYouTube: Bool
   private let key: String
   private let name: String
@@ -183,7 +183,7 @@ private enum DimensionConstants {
 }
 
 #Preview {
-  TrailerItemView(
+  YoutubeItemView(
     openInYouTube: false,
     key: "XZ8daibM3AE",
     name: "Series Trailer",

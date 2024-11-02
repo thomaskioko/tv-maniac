@@ -18,7 +18,7 @@ public struct TrailerListView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         ForEach(trailers, id: \.key) { trailer in
-                            TrailerItemView(
+                          YoutubeItemView(
                                 openInYouTube: openInYouTube,
                                 key: trailer.key,
                                 name: trailer.name,
