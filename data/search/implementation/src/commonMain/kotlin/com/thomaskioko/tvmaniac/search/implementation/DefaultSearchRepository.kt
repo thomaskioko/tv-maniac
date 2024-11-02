@@ -14,6 +14,8 @@ import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.get
 
+private const val MIN_SHOW_COUNT = 10
+
 @Inject
 class DefaultSearchRepository(
   private val tvShowsDao: TvShowsDao,
@@ -24,23 +26,18 @@ class DefaultSearchRepository(
     store.stream(
       StoreReadRequest.cached(
         key = query,
-        refresh = shouldRefresh(query),
+        refresh = hasNoLocalData(query),
       ),
     )
       .mapResult(store.get(key = query))
       .flowOn(dispatchers.io)
 
-  private suspend fun shouldRefresh(query: String): Boolean {
-    return when {
-      query.length < 2 -> false
-      hasNoLocalData(query) -> true
-      else -> false
-    }
-  }
-
-  private suspend fun hasNoLocalData(query: String): Boolean =
-    tvShowsDao.observeShowsByQuery(query)
+  private suspend fun hasNoLocalData(query: String): Boolean {
+    return tvShowsDao.observeQueryCount(query)
       .first()
-      .isEmpty()
+      .let { cachedShows ->
+        cachedShows < MIN_SHOW_COUNT
+      }
+  }
 
 }
