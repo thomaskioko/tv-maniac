@@ -10,9 +10,9 @@ import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepo
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.util.FormatterUtil
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -74,7 +74,7 @@ class SearchShowsComponentTest {
 
       setList(emptyList())
 
-      awaitItem() shouldBe EmptyState
+      awaitItem() shouldBe EmptySearchState
     }
   }
 
@@ -129,9 +129,9 @@ class SearchShowsComponentTest {
 
       testScheduler.advanceUntilIdle()
 
-      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, result = persistentListOf())
+      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
-      awaitItem() shouldBe EmptyState
+      awaitItem() shouldBe EmptySearchState
     }
   }
 
@@ -155,7 +155,7 @@ class SearchShowsComponentTest {
       component.dispatch(QueryChanged("test"))
 
 
-      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, result = persistentListOf())
+      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
       // Advance time to trigger debounce and receive the result
       testScheduler.advanceTimeBy(300)
@@ -165,14 +165,16 @@ class SearchShowsComponentTest {
       val firstResult = awaitItem()
       firstResult shouldBe SearchResultAvailable(
         isUpdating = false,
-        result = uiModelList(),
+        results = uiModelList(),
+        query = "test",
       )
 
       // Dispatch second query change to validate previous results shown as `isUpdating`
       component.dispatch(QueryChanged("new"))
       awaitItem() shouldBe SearchResultAvailable(
         isUpdating = true,
-        result = (firstResult as SearchResultAvailable).result,
+        query = "new",
+        results = (firstResult as SearchResultAvailable).results,
       )
     }
   }
@@ -185,20 +187,17 @@ class SearchShowsComponentTest {
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      awaitItem() shouldBe EmptyState
+      awaitItem() shouldBe EmptySearchState
 
       component.dispatch(QueryChanged("test"))
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = true,
-        result = persistentListOf(),
-      )
+      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
       component.dispatch(QueryChanged("te"))
       expectNoEvents()
 
       component.dispatch(QueryChanged(""))
 
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      expectNoEvents()
     }
   }
 
@@ -213,10 +212,7 @@ class SearchShowsComponentTest {
 
       // Valid query
       component.dispatch(QueryChanged("abc"))
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = true,
-        result = persistentListOf(),
-      )
+      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "abc")
 
       testScheduler.advanceTimeBy(300)
 
@@ -224,7 +220,8 @@ class SearchShowsComponentTest {
 
       awaitItem() shouldBe SearchResultAvailable(
         isUpdating = false,
-        result = uiModelList(),
+        query = "abc",
+        results = uiModelList(),
       )
     }
   }
@@ -246,19 +243,17 @@ class SearchShowsComponentTest {
       component.dispatch(QueryChanged("test"))
 
       fakeSearchRepository.setSearchResult(Either.Right(createDiscoverShowList()))
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = true,
-        result = persistentListOf(),
-      )
+      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
       awaitItem() shouldBe SearchResultAvailable(
         isUpdating = false,
-        result = uiModelList(),
+        query = "test",
+        results = uiModelList(),
       )
 
       // Back to empty
       component.dispatch(QueryChanged(""))
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      expectNoEvents()
     }
   }
 
@@ -270,16 +265,13 @@ class SearchShowsComponentTest {
 
       component.dispatch(QueryChanged("test"))
 
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = true,
-        result = persistentListOf(),
-      )
+      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
       testScheduler.advanceTimeBy(300)
 
       fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
 
-      awaitItem() shouldBe EmptyState
+      awaitItem() shouldBe EmptySearchState
     }
   }
 
@@ -290,21 +282,15 @@ class SearchShowsComponentTest {
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
       component.dispatch(QueryChanged("empty"))
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = true,
-        result = persistentListOf(),
-      )
+      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "empty")
 
       testScheduler.advanceTimeBy(300)
 
       fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
-      awaitItem() shouldBeSameInstanceAs EmptyState
+      awaitItem() shouldBeSameInstanceAs EmptySearchState
 
       component.dispatch(QueryChanged("test"))
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = true,
-        result = persistentListOf(),
-      )
+      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
       testScheduler.advanceTimeBy(300)
 
@@ -313,19 +299,21 @@ class SearchShowsComponentTest {
       val firstResult = awaitItem()
       firstResult shouldBe SearchResultAvailable(
         isUpdating = false,
-        result = uiModelList(),
+        query = "test",
+        results = uiModelList(),
       )
 
       component.dispatch(QueryChanged("none"))
       awaitItem() shouldBe SearchResultAvailable(
         isUpdating = true,
-        result = (firstResult as SearchResultAvailable).result,
+        query = "none",
+        results = (firstResult as SearchResultAvailable).results,
       )
 
       testScheduler.advanceTimeBy(300)
 
       fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
-      awaitItem() shouldBeSameInstanceAs EmptyState
+      awaitItem() shouldBeSameInstanceAs EmptySearchState
     }
   }
 
@@ -347,10 +335,7 @@ class SearchShowsComponentTest {
 
       component.dispatch(QueryChanged("test"))
 
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = true,
-        result = persistentListOf(),
-      )
+      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
       testScheduler.advanceTimeBy(300)
 
@@ -358,16 +343,15 @@ class SearchShowsComponentTest {
 
       awaitItem() shouldBe SearchResultAvailable(
         isUpdating = false,
-        result = uiModelList(),
+        query = "test",
+        results = uiModelList(),
       )
 
       component.dispatch(ClearQuery)
 
       setList(createDiscoverShowList())
 
-      awaitItem() shouldBe ShowContentAvailable(
-        isUpdating = true,
-      )
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
       awaitItem() shouldBe ShowContentAvailable(
         isUpdating = false,
@@ -385,17 +369,14 @@ class SearchShowsComponentTest {
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
       component.dispatch(QueryChanged("test"))
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = true,
-        result = persistentListOf(),
-      )
+      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
       testScheduler.advanceTimeBy(300)
 
       val error = ServerError("Test error")
       fakeSearchRepository.setSearchResult(Either.Left(error))
 
-      awaitItem() shouldBe ErrorState(error.errorMessage)
+      awaitItem() shouldBe ErrorSearchState(errorMessage = error.errorMessage)
     }
   }
 
@@ -408,6 +389,15 @@ class SearchShowsComponentTest {
     featuredShowsRepository = featuredShowsRepository,
     trendingShowsRepository = trendingShowsRepository,
     upcomingShowsRepository = upcomingShowsRepository,
+    mapper = ShowMapper(
+      object : FormatterUtil {
+        override fun formatTmdbPosterPath(imageUrl: String): String = ""
+
+        override fun formatDouble(number: Double?, scale: Int): Double = 0.0
+
+        override fun formatDuration(number: Int): String = ""
+      },
+    ),
   )
 
 
@@ -428,6 +418,7 @@ class SearchShowsComponentTest {
         inLibrary = false,
         overview = null,
         status = null,
+        voteAverage = null
       )
     }
       .toImmutableList()
@@ -435,13 +426,15 @@ class SearchShowsComponentTest {
   private fun uiModelList(size: Int = LIST_SIZE) =
     createDiscoverShowList(size)
       .map {
-        SearchResult(
+        ShowItem(
           tmdbId = it.id,
           title = it.title,
           posterImageUrl = it.posterPath,
           inLibrary = it.inLibrary,
           overview = it.overview,
           status = it.status,
+          voteAverage = it.voteAverage,
+          year = it.year,
         )
       }
       .toImmutableList()
