@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.data.recommendedshows.implementation
 
 import com.thomaskioko.tvmaniac.core.db.RecommendedShows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
-import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsDao
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsParams
@@ -27,31 +26,15 @@ class RecommendedShowStore(
   private val requestManagerRepository: RequestManagerRepository,
   private val formatterUtil: FormatterUtil,
   private val dateFormatter: PlatformDateFormatter,
-  private val logger: KermitLogger,
 ) :
   Store<RecommendedShowsParams, List<RecommendedShows>> by StoreBuilder.from(
       fetcher =
         Fetcher.of { param: RecommendedShowsParams ->
           when (val apiResult = networkDataSource.getRecommendedShows(param.showId, param.page)) {
             is ApiResponse.Success -> apiResult.body
-            is ApiResponse.Error.GenericError -> {
-              logger.error("SimilarShowStore GenericError", "${apiResult.errorMessage}")
-              throw Throwable("${apiResult.errorMessage}")
-            }
-            is ApiResponse.Error.HttpError -> {
-              logger.error(
-                "SimilarShowStore HttpError",
-                "${apiResult.code} - ${apiResult.errorBody}",
-              )
-              throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
-            }
-            is ApiResponse.Error.SerializationError -> {
-              logger.error(
-                "SimilarShowStore SerializationError",
-                "${apiResult.errorMessage}",
-              )
-              throw Throwable("${apiResult.errorMessage}")
-            }
+            is ApiResponse.Error.GenericError -> throw Throwable("${apiResult.errorMessage}")
+            is ApiResponse.Error.HttpError -> throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
+            is ApiResponse.Error.SerializationError -> throw Throwable("${apiResult.errorMessage}")
           }
         },
       sourceOfTruth =

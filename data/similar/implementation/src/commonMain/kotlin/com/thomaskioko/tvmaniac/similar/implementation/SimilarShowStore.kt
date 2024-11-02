@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.similar.implementation
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.db.Tvshows
-import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -28,7 +27,6 @@ class SimilarShowStore(
   private val formatterUtil: FormatterUtil,
   private val dateFormatter: PlatformDateFormatter,
   private val scope: AppCoroutineScope,
-  private val logger: KermitLogger,
 ) :
   Store<SimilarParams, List<SimilarShows>> by StoreBuilder.from(
       fetcher =
@@ -36,21 +34,12 @@ class SimilarShowStore(
           when (val apiResult = networkDataSource.getSimilarShows(param.showId, param.page)) {
             is ApiResponse.Success -> apiResult.body
             is ApiResponse.Error.GenericError -> {
-              logger.error("SimilarShowStore GenericError", "${apiResult.errorMessage}")
               throw Throwable("${apiResult.errorMessage}")
             }
             is ApiResponse.Error.HttpError -> {
-              logger.error(
-                "SimilarShowStore HttpError",
-                "${apiResult.code} - ${apiResult.errorBody}",
-              )
               throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
             }
             is ApiResponse.Error.SerializationError -> {
-              logger.error(
-                "SimilarShowStore SerializationError",
-                "${apiResult.errorMessage}",
-              )
               throw Throwable("${apiResult.errorMessage}")
             }
           }
