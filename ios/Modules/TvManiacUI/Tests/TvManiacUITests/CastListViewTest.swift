@@ -4,7 +4,7 @@ import TvManiacUI
 import XCTest
 
 class CastListViewTest: XCTestCase {
-    func test_HeaderView() {
+    func test_CastListView() {
         CastListView(
             casts: [
                 .init(
