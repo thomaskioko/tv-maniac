@@ -37,16 +37,15 @@ public struct FullScreenView: View {
         .padding(16)
 
       Text(message)
-        .titleBoldFont(size: 28)
-        .padding(.top, 8)
-        .padding([.leading, .trailing, .bottom], 16)
+        .font(.avenirNext(size: 17))
+        .padding([.leading, .trailing, .bottom], 8)
 
       if let buttonText = buttonText {
         FilledImageButton(
           text: buttonText,
+          verticalPadding: 8,
           action: action
         )
-        .padding([.leading, .trailing], 24)
         .background(Color.accent)
         .cornerRadius(5)
       }

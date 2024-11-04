@@ -1,6 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
-import SwiftUIComponents
+import TvManiacUI
 import XCTest
 
 class EpisodeItemViewTest: XCTestCase {

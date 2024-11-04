@@ -13,6 +13,6 @@ class YoutubeItemViewTest: XCTestCase {
         )
         .padding()
         .background(Color.background)
-        .assertSnapshot(testName: "YoutubeItemItemView")
+        .assertSnapshot(testName: "YoutubeItemView")
     }
 }
