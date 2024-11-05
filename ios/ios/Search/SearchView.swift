@@ -15,8 +15,7 @@ struct SearchView: View {
   private let component: SearchShowsComponent
   @StateFlow private var uiState: SearchShowState
   @FocusState private var isSearchFocused: Bool
-
-  // Remove @State query since we're using uiState.query directly
+  @StateObject private var keyboard = KeyboardHeightManager()
 
   init(component: SearchShowsComponent) {
     self.component = component
@@ -28,17 +27,18 @@ struct SearchView: View {
       searchBarView()
         .zIndex(1)
 
-      ScrollView {
+      ScrollView(.vertical, showsIndicators: false) {
         switch onEnum(of: uiState) {
         case .emptySearchState:
-          FullScreenView(
-            systemName: "exclamationmark.arrow.triangle.2.circlepath",
-            buttonText: "Retry",
-            action: {}
-          )
+          CenteredFullScreenView {
+            FullScreenView(
+              systemName: "exclamationmark.magnifyingglass",
+              message: "No results found. Try a different keyword!"
+            )
+          }
         case .errorSearchState(let state):
           FullScreenView(
-            systemName: "exclamationmark.magnifyingglass",
+            systemName: "exclamationmark.arrow.triangle.2.circlepath",
             message: state.errorMessage ?? "No results found. Try a different keyword!",
             buttonText: "Retry",
             action: { component.dispatch(action: ReloadShowContent()) }
@@ -49,7 +49,6 @@ struct SearchView: View {
           showContent(state: state)
         }
       }
-      // Add gesture recognizer at ScrollView level instead of child views
       .simultaneousGesture(
         DragGesture().onChanged { _ in
           dismissKeyboard()
@@ -59,6 +58,21 @@ struct SearchView: View {
     .navigationTitle("Search")
     .navigationBarTitleDisplayMode(.large)
     .background(Color.background)
+    .environment(\.keyboardHeight, keyboard.keyboardHeight)
+  }
+
+  // MARK: - Bindings
+
+  private var searchQueryBinding: Binding<String> {
+    Binding(
+      get: { uiState.query ?? "" },
+      set: { newValue in
+        let trimmedValue = newValue.trimmingCharacters(in: .whitespaces)
+        if !trimmedValue.isEmpty {
+          component.dispatch(action: QueryChanged(query: newValue))
+        }
+      }
+    )
   }
 
   @ViewBuilder
@@ -67,27 +81,15 @@ struct SearchView: View {
       Image(systemName: "magnifyingglass")
         .foregroundColor(.gray)
 
-      TextField("Enter Show Title", text: Binding(
-        get: { uiState.query ?? "" },
-        set: { newValue in
-          if !newValue.trimmingCharacters(in: .whitespaces).isEmpty {
-            component.dispatch(action: QueryChanged(query: newValue))
-          }
-        }
-      ))
-      .textInputAutocapitalization(.never)
-      .autocorrectionDisabled()
-      .focused($isSearchFocused)
-      .submitLabel(.search)
-      .lineLimit(1)
+      TextField("Enter Show Title", text: searchQueryBinding)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
+        .focused($isSearchFocused)
+        .submitLabel(.search)
+        .lineLimit(1)
 
       Button(
-        action: {
-          if let query = uiState.query, !query.trimmingCharacters(in: .whitespaces).isEmpty {
-            component.dispatch(action: ClearQuery())
-          }
-          dismissKeyboard()
-        },
+        action: { handleClearQuery() },
         label: {
           Image(systemName: "xmark.circle.fill")
             .foregroundColor(.gray)
@@ -108,15 +110,28 @@ struct SearchView: View {
 
   @ViewBuilder
   private func showContent(state: ShowContentAvailable) -> some View {
-    VStack(spacing: 16) {
-      ForEach([
-        ("Featured", state.featuredShows),
-        ("Trending Today", state.trendingShows),
-        ("Upcoming Today", state.upcomingShows)
-      ], id: \.0) { title, shows in
-        if let shows = shows, !shows.isEmpty {
-          showSection(title: title, shows: shows)
-            .padding(.top, title != "Featured" ? 8 : 0)
+    LazyVStack(spacing: 16) {
+      if state.isUpdating {
+        CenteredFullScreenView {
+          LoadingIndicatorView(animate: true)
+            .frame(
+              maxWidth: UIScreen.main.bounds.width,
+              maxHeight: UIScreen.main.bounds.height,
+              alignment: .center
+            )
+        }
+      } else {
+        ForEach(
+          [
+            ("Featured", state.featuredShows),
+            ("Trending Today", state.trendingShows),
+            ("Upcoming Today", state.upcomingShows)
+          ], id: \.0
+        ) { title, shows in
+          if let shows = shows, !shows.isEmpty {
+            showSection(title: title, shows: shows)
+              .padding(.top, title != "Featured" ? 8 : 0)
+          }
         }
       }
     }
@@ -136,6 +151,17 @@ struct SearchView: View {
 
   @ViewBuilder
   private func searchResultsContent(state: SearchResultAvailable) -> some View {
+    if state.isUpdating {
+      CenteredFullScreenView {
+        LoadingIndicatorView(animate: true)
+          .frame(
+            maxWidth: UIScreen.main.bounds.width,
+            maxHeight: UIScreen.main.bounds.height,
+            alignment: .center
+          )
+      }
+    }
+
     if let shows = state.results, !shows.isEmpty {
       SearchResultListView(
         items: shows.map { $0.toSwift() },
@@ -147,7 +173,13 @@ struct SearchView: View {
     }
   }
 
-  // Centralize keyboard dismissal
+  private func handleClearQuery() {
+    if let query = uiState.query, !query.trimmingCharacters(in: .whitespaces).isEmpty {
+      component.dispatch(action: ClearQuery())
+    }
+    dismissKeyboard()
+  }
+
   private func dismissKeyboard() {
     withAnimation {
       isSearchFocused = false

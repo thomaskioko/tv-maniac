@@ -41,7 +41,7 @@ public struct SearchItemView: View {
   }
 
   public var body: some View {
-    HStack(spacing: 8) {
+    HStack {
       PosterItemView(
         title: nil,
         posterUrl: imageUrl,
@@ -49,6 +49,7 @@ public struct SearchItemView: View {
         posterHeight: imageHeight,
         posterRadius: imageRadius
       )
+      .padding(.trailing, 4)
 
       VStack(alignment: .leading, spacing: 4) {
         Text(title)
@@ -95,7 +96,9 @@ public struct SearchItemView: View {
           .lineLimit(3)
           .padding(.trailing, 8)
       }
+      Spacer()
     }
+    .frame(maxWidth: .infinity)
     .frame(height: imageHeight)
     .background(Color.content_background)
     .cornerRadius(cornerRadius)
@@ -107,6 +110,15 @@ public struct SearchItemView: View {
     SearchItemView(
       title: "Arcane",
       overview: "In 1997, a haunted scientist brushes his family aside for an all-consuming project. In 2022, a renegade fighter battles a powerful robot for vital data.",
+      imageUrl: "https://image.tmdb.org/t/p/w780/https://image.tmdb.org/t/p/w780/8rjILRAlcvI9y7vJuH9yNjKYhta.jpg",
+      status: "Ended",
+      year: "2024",
+      voteAverage: 5.4
+    )
+
+    SearchItemView(
+      title: "Arcane",
+      overview: "",
       imageUrl: "https://image.tmdb.org/t/p/w780/https://image.tmdb.org/t/p/w780/8rjILRAlcvI9y7vJuH9yNjKYhta.jpg",
       status: "Ended",
       year: "2024",
