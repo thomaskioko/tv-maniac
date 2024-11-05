@@ -61,6 +61,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
+import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -132,7 +133,12 @@ internal fun DiscoverScreen(
     EmptyState ->
       EmptyContent(
         modifier = modifier,
-        onAction = onAction,
+        imageVector = Icons.Filled.Movie,
+        title =  stringResource(R.string.generic_empty_content),
+        message = stringResource(R.string.missing_api_key),
+        buttonText = stringResource(id = R.string.generic_retry),
+        onClick = { onAction(ReloadData)
+                  },
       )
     is DataLoaded ->
       DiscoverContent(
@@ -156,45 +162,6 @@ internal fun DiscoverScreen(
         onRetry = { onAction(ReloadData) },
         modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
       )
-  }
-}
-
-@Composable
-private fun EmptyContent(
-  modifier: Modifier = Modifier,
-  onAction: (DiscoverShowAction) -> Unit,
-) {
-  Column(
-    modifier = modifier.padding(16.dp),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center,
-  ) {
-    Icon(
-      modifier = Modifier.size(180.dp),
-      imageVector = Icons.Filled.Movie,
-      tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F),
-      contentDescription = null,
-    )
-
-    Text(
-      modifier = Modifier.padding(top = 16.dp),
-      text = stringResource(R.string.generic_empty_content),
-      style = MaterialTheme.typography.titleLarge,
-      textAlign = TextAlign.Center,
-    )
-
-    Text(
-      modifier = Modifier.padding(top = 4.dp),
-      text = stringResource(R.string.missing_api_key),
-      style = MaterialTheme.typography.labelMedium,
-      textAlign = TextAlign.Center,
-    )
-
-    TvManiacOutlinedButton(
-      modifier = Modifier.padding(top = 16.dp),
-      text = stringResource(id = R.string.generic_retry),
-      onClick = { onAction(ReloadData) },
-    )
   }
 }
 
@@ -449,6 +416,7 @@ private fun HorizontalRowContent(
   AnimatedVisibility(visible = tvShows.isNotEmpty()) {
     Column {
       BoxTextItems(
+        modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
         title = category,
         label = stringResource(id = R.string.str_more),
         onMoreClicked = onMoreClicked,
