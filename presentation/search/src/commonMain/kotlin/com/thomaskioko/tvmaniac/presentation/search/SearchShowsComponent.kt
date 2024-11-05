@@ -105,7 +105,7 @@ class SearchShowsComponent(
         val upcomingShows = upcoming.getOrNull()
 
         if (featuredShows.isNullOrEmpty() && trendingShows.isNullOrEmpty() && upcomingShows.isNullOrEmpty()) {
-          _state.update { EmptySearchState }
+          _state.update { EmptySearchState(queryFlow.replayCache.lastOrNull()) }
         } else {
           _state.update {
             ShowContentAvailable(
@@ -175,7 +175,9 @@ class SearchShowsComponent(
 
     private fun handleSearchResults(shows: List<ShowEntity>) {
       val state = when {
-        shows.isEmpty() -> EmptySearchState
+        shows.isEmpty() -> EmptySearchState(
+          query = queryFlow.replayCache.lastOrNull(),
+        )
         else -> SearchResultAvailable(
           isUpdating = false,
           results = mapper.toShowList(shows),

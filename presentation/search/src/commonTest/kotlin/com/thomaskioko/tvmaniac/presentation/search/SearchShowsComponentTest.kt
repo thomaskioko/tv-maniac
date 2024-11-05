@@ -74,7 +74,7 @@ class SearchShowsComponentTest {
 
       setList(emptyList())
 
-      awaitItem() shouldBe EmptySearchState
+      awaitItem() shouldBe EmptySearchState()
     }
   }
 
@@ -131,7 +131,7 @@ class SearchShowsComponentTest {
 
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
-      awaitItem() shouldBe EmptySearchState
+      awaitItem() shouldBe EmptySearchState("test")
     }
   }
 
@@ -187,7 +187,7 @@ class SearchShowsComponentTest {
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      awaitItem() shouldBe EmptySearchState
+      awaitItem() shouldBe EmptySearchState()
 
       component.dispatch(QueryChanged("test"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
@@ -271,7 +271,7 @@ class SearchShowsComponentTest {
 
       fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
 
-      awaitItem() shouldBe EmptySearchState
+      awaitItem() shouldBe EmptySearchState("test")
     }
   }
 
@@ -287,7 +287,7 @@ class SearchShowsComponentTest {
       testScheduler.advanceTimeBy(300)
 
       fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
-      awaitItem() shouldBeSameInstanceAs EmptySearchState
+      awaitItem() shouldBe EmptySearchState("empty")
 
       component.dispatch(QueryChanged("test"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
@@ -313,7 +313,7 @@ class SearchShowsComponentTest {
       testScheduler.advanceTimeBy(300)
 
       fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
-      awaitItem() shouldBeSameInstanceAs EmptySearchState
+      awaitItem() shouldBe EmptySearchState("none")
     }
   }
 

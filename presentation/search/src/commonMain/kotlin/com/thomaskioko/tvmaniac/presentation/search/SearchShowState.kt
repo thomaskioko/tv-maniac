@@ -6,9 +6,7 @@ sealed interface SearchShowState {
   val query: String?
 }
 
-data object EmptySearchState: SearchShowState {
-  override val query: String? = null
-}
+data class EmptySearchState(override val query: String? = null): SearchShowState
 
 data class ErrorSearchState(
   override val query: String? = null,
