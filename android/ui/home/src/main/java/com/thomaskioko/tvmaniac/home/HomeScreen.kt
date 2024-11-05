@@ -28,7 +28,7 @@ import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
 import com.thomaskioko.tvmaniac.ui.settings.SettingsScreen
 
 @Composable
-fun HomeContent(
+fun HomeScreen(
   component: HomeComponent,
   modifier: Modifier = Modifier,
 ) {
