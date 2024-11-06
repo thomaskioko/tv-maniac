@@ -105,7 +105,7 @@ class SearchShowsComponent(
         val upcomingShows = upcoming.getOrNull()
 
         if (featuredShows.isNullOrEmpty() && trendingShows.isNullOrEmpty() && upcomingShows.isNullOrEmpty()) {
-          _state.update { EmptySearchState(queryFlow.replayCache.lastOrNull()) }
+          _state.update { ErrorSearchState(query = queryFlow.replayCache.lastOrNull(), errorMessage = null) }
         } else {
           _state.update {
             ShowContentAvailable(

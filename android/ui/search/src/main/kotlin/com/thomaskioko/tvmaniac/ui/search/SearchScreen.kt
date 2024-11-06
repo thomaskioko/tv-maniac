@@ -146,9 +146,10 @@ private fun SearchScreenContent(
       )
       is ErrorSearchState -> EmptyContent(
         imageVector = Icons.Outlined.ErrorOutline,
-        onClick = { onAction(ReloadShowContent) },
-        title = state.errorMessage ?: stringResource(id = R.string.generic_error_message),
+        title =  stringResource(R.string.generic_empty_content),
+        message = stringResource(R.string.missing_api_key),
         buttonText = stringResource(id = R.string.generic_retry),
+        onClick = { onAction(ReloadShowContent) },
       )
       is SearchResultAvailable ->
         SearchResultsContent(

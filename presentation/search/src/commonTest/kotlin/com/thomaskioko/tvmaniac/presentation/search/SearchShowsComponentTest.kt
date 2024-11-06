@@ -74,7 +74,7 @@ class SearchShowsComponentTest {
 
       setList(emptyList())
 
-      awaitItem() shouldBe EmptySearchState()
+      awaitItem() shouldBe ErrorSearchState(errorMessage = null)
     }
   }
 
@@ -187,7 +187,7 @@ class SearchShowsComponentTest {
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      awaitItem() shouldBe EmptySearchState()
+      awaitItem() shouldBe ErrorSearchState(errorMessage = null)
 
       component.dispatch(QueryChanged("test"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
