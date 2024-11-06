@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -36,13 +35,11 @@ import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -56,7 +53,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -66,8 +62,7 @@ import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
-import com.thomaskioko.tvmaniac.compose.components.TvManiacOutlinedButton
-import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
+import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.verticalGradientScrim
 import com.thomaskioko.tvmaniac.compose.theme.MinContrastOfPrimaryVsSurface
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -368,9 +363,9 @@ fun HorizontalPagerItem(
               )
           }
       ) {
-        TvPosterCard(
+        PosterCard(
           title = list[pageNumber].title,
-          posterImageUrl = list[pageNumber].posterImageUrl,
+          imageUrl = list[pageNumber].posterImageUrl,
           onClick = { onClick(list[pageNumber].tmdbId) },
           modifier = Modifier.fillMaxWidth(),
         )
@@ -433,11 +428,10 @@ private fun HorizontalRowContent(
 
           Spacer(modifier = Modifier.width(value.dp))
 
-          TvPosterCard(
-            posterImageUrl = tvShow.posterImageUrl,
+          PosterCard(
+            imageUrl = tvShow.posterImageUrl,
             title = tvShow.title,
             onClick = { onItemClicked(tvShow.tmdbId) },
-            modifier = Modifier.wrapContentHeight().animateItem(),
           )
         }
       }

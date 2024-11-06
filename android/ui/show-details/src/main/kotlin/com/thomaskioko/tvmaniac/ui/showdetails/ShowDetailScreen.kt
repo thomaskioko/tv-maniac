@@ -83,7 +83,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvManiacChip
 import com.thomaskioko.tvmaniac.compose.components.TvManiacOutlinedButton
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTextButton
-import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
+import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -867,9 +867,8 @@ fun RecommendedShowsContent(
 
         Spacer(modifier = Modifier.width(value.dp))
 
-        TvPosterCard(
-          modifier = Modifier.animateItem(),
-          posterImageUrl = tvShow.posterImageUrl,
+        PosterCard(
+          imageUrl = tvShow.posterImageUrl,
           title = tvShow.title,
           onClick = { onShowClicked(tvShow.tmdbId) },
           imageWidth = 84.dp,
@@ -904,9 +903,8 @@ fun SimilarShowsContent(
 
         Spacer(modifier = Modifier.width(value.dp))
 
-        TvPosterCard(
-          modifier = Modifier.animateItem(),
-          posterImageUrl = tvShow.posterImageUrl,
+        PosterCard(
+          imageUrl = tvShow.posterImageUrl,
           title = tvShow.title,
           onClick = { onShowClicked(tvShow.tmdbId) },
           imageWidth = 84.dp,

@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -29,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
+import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.resources.R
@@ -57,14 +56,8 @@ fun SearchResultItem(
     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
   ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-      AsyncImageComposable(
-        model = imageUrl,
-        contentDescription =
-        stringResource(
-          R.string.cd_show_poster,
-          title,
-        ),
-        contentScale = ContentScale.Crop,
+      PosterCard(
+        imageUrl = imageUrl,
         modifier = Modifier
           .width(100.dp)
           .aspectRatio(0.8f),

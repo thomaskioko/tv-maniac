@@ -48,7 +48,7 @@ fun HorizontalShowContentRow(
 
         PosterBackdropCard(
           darkTheme = true,
-          posterImageUrl = tvShow.posterImageUrl,
+          imageUrl = tvShow.posterImageUrl,
           title = tvShow.title,
           modifier = Modifier
             .width(260.dp)

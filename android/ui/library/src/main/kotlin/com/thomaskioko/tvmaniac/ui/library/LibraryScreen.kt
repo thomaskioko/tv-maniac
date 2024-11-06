@@ -37,7 +37,7 @@ import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
-import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
+import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.watchlist.ErrorLoadingShows
@@ -156,9 +156,9 @@ private fun LibraryGridContent(
         .padding(paddingValues.copy(copyBottom = false)),
   ) {
     items(list) { show ->
-      TvPosterCard(
+      PosterCard(
         modifier = Modifier.animateItem(),
-        posterImageUrl = show.posterImageUrl,
+        imageUrl = show.posterImageUrl,
         title = show.title,
         onClick = { onItemClicked(show.tmdbId) },
       )

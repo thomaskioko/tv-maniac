@@ -47,9 +47,9 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
+import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
-import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreBackClicked
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowClicked
@@ -172,9 +172,9 @@ fun GridContent(
       ) { index ->
         val show = lazyPagingItems[index]
         show?.let {
-          TvPosterCard(
+          PosterCard(
             modifier = Modifier.animateItem().fillMaxWidth(),
-            posterImageUrl = show.posterImageUrl,
+            imageUrl = show.posterImageUrl,
             title = show.title,
             onClick = { onAction(MoreShowClicked(show.tmdbId)) },
           )
