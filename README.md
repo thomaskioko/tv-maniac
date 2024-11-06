@@ -25,7 +25,7 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 ## 🖥 Project Setup & Environment
 
 #### Requirements
-- [Zulu Java 17](https://www.azul.com/downloads/?package=jdk#zulu)
+- [Zulu Java 21](https://www.azul.com/downloads/?package=jdk#zulu)
 - You require the latest [Android Studio](https://developer.android.com/studio/preview) release to be able to build the app.
 - Install KMM Plugin. Checkout [this setup guide](https://kotlinlang.org/docs/multiplatform-mobile-setup.html).
 
@@ -147,9 +147,9 @@ Android
 - [x] Implement trakt auth & sign in
 - [x] Migrate to Material3
 - [x] Implement Paging
+- [x] Implement Search
 - [ ] Add Episode detail screen
 - [ ] Add Watchlist
-- [ ] Implement Search
 
 iOS
 - [x] Add HomeScreen: Tabs & Empty UI
@@ -160,9 +160,9 @@ iOS
 - [x] Update show detail UI
 - [x] Add Seasons Detail UI
 - [x] Implement Paging
+- [x] Implement Search
 - [ ] Add Episode detail screen
 - [ ] Add Watchlist
-- [ ] Implement Search
 
 Shared
 - [x] Use SQLDelight extensions to consume queries as Flow
@@ -171,8 +171,8 @@ Shared
 - [x] Modularize `shared` module
 - [x] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux)
 - [x] Fix paging
+- [x] Add test cases.
 - [ ] Improve error handling.
-- [ ] Add test cases.
 
 
 
