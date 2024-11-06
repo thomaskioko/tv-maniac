@@ -13,10 +13,12 @@ dependencies {
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material3)
   implementation(libs.androidx.compose.runtime)
+  implementation(libs.snapper)
 }
 
 addCompilerOptInArgs(
   listOf(
     "androidx.compose.material3.ExperimentalMaterial3Api",
+    "dev.chrisbanes.snapper.ExperimentalSnapperApi",
   )
 )
