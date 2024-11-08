@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.presentation.search
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.ServerError
 import com.thomaskioko.tvmaniac.data.featuredshows.testing.FakeFeaturedShowsRepository
@@ -390,13 +391,7 @@ class SearchShowsComponentTest {
     trendingShowsRepository = trendingShowsRepository,
     upcomingShowsRepository = upcomingShowsRepository,
     mapper = ShowMapper(
-      object : FormatterUtil {
-        override fun formatTmdbPosterPath(imageUrl: String): String = ""
-
-        override fun formatDouble(number: Double?, scale: Int): Double = 0.0
-
-        override fun formatDuration(number: Int): String = ""
-      },
+      formatterUtil = FakeFormatterUtil(),
     ),
   )
 

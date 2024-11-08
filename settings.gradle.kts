@@ -62,6 +62,7 @@ include(
   ":core:network-util",
   ":core:paging",
   ":core:util",
+  ":core:util:testing",
   ":database",
   ":database:test",
   ":datastore:api",

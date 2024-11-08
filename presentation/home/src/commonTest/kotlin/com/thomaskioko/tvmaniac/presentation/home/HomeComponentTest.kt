@@ -5,6 +5,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
+import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
 import com.thomaskioko.tvmaniac.data.featuredshows.testing.FakeFeaturedShowsRepository
 import com.thomaskioko.tvmaniac.data.popularshows.testing.FakePopularShowsRepository
 import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepository
@@ -15,6 +16,7 @@ import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponent
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponentFactory
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowsComponent
 import com.thomaskioko.tvmaniac.presentation.search.SearchComponentFactory
+import com.thomaskioko.tvmaniac.presentation.search.ShowMapper
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponent
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponentFactory
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponent
@@ -98,6 +100,9 @@ class HomeComponentTest {
       featuredShowsRepository = featuredShowsRepository,
       trendingShowsRepository = trendingShowsRepository,
       upcomingShowsRepository = upcomingShowsRepository,
+      mapper = ShowMapper(
+       formatterUtil = FakeFormatterUtil(),
+      ),
     )
   }
 

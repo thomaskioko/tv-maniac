@@ -22,6 +22,7 @@ kotlin {
 
     commonTest {
       dependencies {
+        implementation(projects.core.util.testing)
         implementation(projects.data.featuredshows.testing)
         implementation(projects.data.trendingshows.testing)
         implementation(projects.data.upcomingshows.testing)

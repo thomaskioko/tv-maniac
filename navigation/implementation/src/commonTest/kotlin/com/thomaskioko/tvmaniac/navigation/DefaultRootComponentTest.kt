@@ -5,6 +5,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
+import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.featuredshows.testing.FakeFeaturedShowsRepository
 import com.thomaskioko.tvmaniac.data.popularshows.testing.FakePopularShowsRepository
@@ -25,8 +26,9 @@ import com.thomaskioko.tvmaniac.presentation.home.HomeComponent
 import com.thomaskioko.tvmaniac.presentation.home.HomeComponentFactory
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsComponent
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsComponentFactory
-import com.thomaskioko.tvmaniac.presentation.search.SearchShowsComponent
 import com.thomaskioko.tvmaniac.presentation.search.SearchComponentFactory
+import com.thomaskioko.tvmaniac.presentation.search.SearchShowsComponent
+import com.thomaskioko.tvmaniac.presentation.search.ShowMapper
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsComponent
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsComponentFactory
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
@@ -49,14 +51,14 @@ import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeLibraryRepository
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.Test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class DefaultRootComponentTest {
   private val lifecycle = LifecycleRegistry()
@@ -215,6 +217,9 @@ class DefaultRootComponentTest {
       featuredShowsRepository = featuredShowsRepository,
       trendingShowsRepository = trendingShowsRepository,
       upcomingShowsRepository = upcomingShowsRepository,
+      mapper = ShowMapper(
+        formatterUtil = FakeFormatterUtil(),
+      )
     )
   }
 

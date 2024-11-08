@@ -24,6 +24,7 @@ kotlin {
     }
 
     commonTest.dependencies {
+      implementation(projects.core.util.testing)
       implementation(projects.datastore.testing)
       implementation(projects.traktAuth.testing)
       implementation(projects.data.cast.testing)
