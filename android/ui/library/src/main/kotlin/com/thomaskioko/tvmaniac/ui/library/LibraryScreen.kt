@@ -94,6 +94,7 @@ internal fun LibraryScreen(
         colors =
           TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = MaterialTheme.colorScheme.background,
           ),
       )
     },

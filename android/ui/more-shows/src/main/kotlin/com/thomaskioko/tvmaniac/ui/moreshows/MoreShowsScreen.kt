@@ -118,6 +118,7 @@ internal fun MoreShowsScreen(
         colors =
           TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = MaterialTheme.colorScheme.background,
           ),
       )
     },

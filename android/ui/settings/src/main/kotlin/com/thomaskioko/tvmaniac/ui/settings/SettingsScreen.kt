@@ -114,6 +114,7 @@ internal fun SettingsScreen(
         colors =
         TopAppBarDefaults.centerAlignedTopAppBarColors(
           containerColor = MaterialTheme.colorScheme.background,
+          scrolledContainerColor = MaterialTheme.colorScheme.background,
         ),
       )
     },
