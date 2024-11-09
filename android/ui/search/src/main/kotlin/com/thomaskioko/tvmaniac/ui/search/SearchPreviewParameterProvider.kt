@@ -27,7 +27,7 @@ class SearchPreviewParameterProvider : PreviewParameterProvider<SearchShowState>
     }
 }
 
-private fun createDiscoverShowList(size: Int = 5) = List(size) { discoverShow }.toImmutableList()
+internal fun createDiscoverShowList(size: Int = 5) = List(size) { discoverShow }.toImmutableList()
 
 val discoverShow = ShowItem(
   tmdbId = 84958,
