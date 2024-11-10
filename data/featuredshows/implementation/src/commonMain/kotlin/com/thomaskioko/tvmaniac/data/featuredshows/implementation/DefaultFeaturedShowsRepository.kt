@@ -22,7 +22,7 @@ class DefaultFeaturedShowsRepository(
 ) : FeaturedShowsRepository {
 
   override suspend fun observeFeaturedShows(
-    timeWindow: String,
+    page: Long,
     forceRefresh: Boolean,
   ): Flow<Either<Failure, List<ShowEntity>>> {
     val refresh =
@@ -35,13 +35,13 @@ class DefaultFeaturedShowsRepository(
     return store
       .stream(
         StoreReadRequest.cached(
-          key = timeWindow,
+          key = page,
           refresh = refresh,
         ),
       )
-      .mapResult(getShows(timeWindow))
+      .mapResult(getShows(page))
       .flowOn(dispatchers.io)
   }
 
-  private suspend fun getShows(timeWindow: String): List<ShowEntity> = store.get(key = timeWindow)
+  private suspend fun getShows(page: Long): List<ShowEntity> = store.get(key = page)
 }

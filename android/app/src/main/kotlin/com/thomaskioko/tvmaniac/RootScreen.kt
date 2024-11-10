@@ -14,7 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.stack.Children
-import com.thomaskioko.tvmaniac.home.HomeContent
+import com.thomaskioko.tvmaniac.home.HomeScreen
 import com.thomaskioko.tvmaniac.navigation.RootComponent
 import com.thomaskioko.tvmaniac.seasondetails.ui.SeasonDetailsScreen
 import com.thomaskioko.tvmaniac.ui.moreshows.MoreShowsScreen
@@ -45,7 +45,7 @@ private fun ChildrenContent(rootComponent: RootComponent, modifier: Modifier = M
     val fillMaxSizeModifier = Modifier.fillMaxSize()
     when (val screen = child.instance) {
       is RootComponent.Child.Home ->
-        HomeContent(component = screen.component, modifier = fillMaxSizeModifier)
+        HomeScreen(component = screen.component, modifier = fillMaxSizeModifier)
       is RootComponent.Child.ShowDetails -> {
         ShowDetailsScreen(
           component = screen.component,

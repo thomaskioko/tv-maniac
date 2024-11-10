@@ -9,5 +9,14 @@ kotlin {
         api(libs.coroutines.core)
       }
     }
+
+    commonTest {
+      dependencies {
+        implementation(projects.database.test)
+
+        implementation(libs.kotest.assertions)
+        implementation(libs.kotlin.test)
+      }
+    }
   }
 }

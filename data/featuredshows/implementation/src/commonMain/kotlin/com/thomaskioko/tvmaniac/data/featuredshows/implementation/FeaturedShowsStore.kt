@@ -34,10 +34,10 @@ class FeaturedShowsStore(
   private val databaseTransactionRunner: DatabaseTransactionRunner,
   private val dispatcher: AppCoroutineDispatchers
 ) :
-  Store<String, List<ShowEntity>> by StoreBuilder.from(
+  Store<Long, List<ShowEntity>> by StoreBuilder.from(
       fetcher =
-        Fetcher.of { timeWindow ->
-          when (val response = tmdbRemoteDataSource.getTrendingShows(timeWindow)) {
+        Fetcher.of { page ->
+          when (val response = tmdbRemoteDataSource.getDiscoverShows(page = page)) {
             is ApiResponse.Success -> response.body.results
             is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
             is ApiResponse.Error.HttpError ->
@@ -47,7 +47,7 @@ class FeaturedShowsStore(
         },
       sourceOfTruth =
         SourceOfTruth.Companion.of(
-          reader = { _: String -> featuredShowsDao.observeFeaturedShows() },
+          reader = { page: Long -> featuredShowsDao.observeFeaturedShows(page) },
           writer = { _, shows ->
             withContext(dispatcher.io) {
               databaseTransactionRunner {

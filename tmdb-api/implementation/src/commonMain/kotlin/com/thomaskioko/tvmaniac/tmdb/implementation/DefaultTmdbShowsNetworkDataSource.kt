@@ -29,6 +29,8 @@ class DefaultTmdbShowsNetworkDataSource(
         path("3/discover/tv")
         parameter("page", "$page")
         parameter("sort_by", sortBy)
+        parameter("include_adult", "false")
+        parameter("screened_theatrically", "true")
       }
     }
 
@@ -87,6 +89,15 @@ class DefaultTmdbShowsNetworkDataSource(
         parameter("first_air_date.gte", firstAirDate)
         parameter("first_air_date.lte", lastAirDate)
         parameter("sort_by", sortBy)
+      }
+    }
+
+  override suspend fun searchShows(query: String): ApiResponse<TmdbShowResult> =
+    httpClient.safeRequest {
+      url {
+        method = HttpMethod.Get
+        path("3/search/tv")
+        parameter("query", query)
       }
     }
 }

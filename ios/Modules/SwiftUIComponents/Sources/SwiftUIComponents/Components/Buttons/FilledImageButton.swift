@@ -7,6 +7,7 @@ public struct FilledImageButton: View {
   private let textColor: Color
   private let borderColor: Color
   private let cornerRadius: CGFloat
+  private let verticalPadding: CGFloat
   private let action: () -> Void
 
   public init(
@@ -16,6 +17,7 @@ public struct FilledImageButton: View {
     textColor: Color = .white,
     borderColor: Color = .accent,
     cornerRadius: CGFloat = 5,
+    verticalPadding: CGFloat = 16,
     action: @escaping () -> Void
   ) {
     self.text = text
@@ -24,6 +26,7 @@ public struct FilledImageButton: View {
     self.textColor = textColor
     self.borderColor = borderColor
     self.cornerRadius = cornerRadius
+    self.verticalPadding = verticalPadding
     self.action = action
   }
 
@@ -34,6 +37,7 @@ public struct FilledImageButton: View {
       textColor: .white,
       borderColor: borderColor,
       systemImageName: systemImageName,
+      verticalPadding: verticalPadding,
       action: action
     )
     .background(

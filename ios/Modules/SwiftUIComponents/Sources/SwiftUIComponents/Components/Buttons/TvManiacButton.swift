@@ -7,6 +7,7 @@ internal struct TvManiacButton: View {
   private let textColor: Color
   private let borderColor: Color
   private let systemImageName: String?
+  private let verticalPadding: CGFloat
   private let action: () -> Void
 
   public init(
@@ -15,6 +16,7 @@ internal struct TvManiacButton: View {
     textColor: Color,
     borderColor: Color = .textColor,
     systemImageName: String?,
+    verticalPadding: CGFloat = 16,
     action: @escaping () -> Void
   ) {
     self.text = text
@@ -22,6 +24,7 @@ internal struct TvManiacButton: View {
     self.color = color
     self.textColor = textColor
     self.borderColor = borderColor
+    self.verticalPadding = verticalPadding
     self.action = action
   }
 
@@ -40,7 +43,7 @@ internal struct TvManiacButton: View {
           .foregroundColor(textColor)
       }
       .foregroundColor(textColor)
-      .padding(.vertical, 16)
+      .padding(.vertical, verticalPadding)
       .padding(.horizontal, 20)
     }
   }

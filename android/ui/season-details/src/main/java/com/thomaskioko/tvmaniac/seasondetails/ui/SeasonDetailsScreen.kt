@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -45,7 +44,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -54,17 +52,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.CollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
+import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.SheetDragHandle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
-import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -237,12 +234,11 @@ fun ImageGalleryContent(
     modifier = modifier.fillMaxSize(),
   ) {
     items(imageList) { item ->
-      TvPosterCard(
+      PosterCard(
         modifier = Modifier.fillMaxWidth().animateItem(),
-        posterImageUrl = item.imageUrl,
+        imageUrl = item.imageUrl,
         title = "",
         onClick = {},
-        posterModifier = Modifier.fillMaxWidth().wrapContentHeight(),
       )
     }
   }
@@ -278,10 +274,9 @@ private fun HeaderContent(
       },
     contentAlignment = Alignment.BottomCenter,
   ) {
-    AsyncImageComposable(
-      model = imageUrl,
-      contentDescription = title,
-      contentScale = ContentScale.Crop,
+    PosterCard(
+      imageUrl = imageUrl,
+      title = title,
       modifier = Modifier.fillMaxWidth().padding(top = offsetDp),
     )
 
@@ -417,10 +412,9 @@ private fun CastContent(
               modifier = Modifier.fillMaxSize().size(width = 120.dp, height = 160.dp),
               contentAlignment = Alignment.BottomStart,
             ) {
-              AsyncImageComposable(
-                model = cast.profileUrl,
-                contentDescription = cast.name,
-                contentScale = ContentScale.Crop,
+              PosterCard(
+                imageUrl = cast.profileUrl,
+                title = cast.name,
                 modifier = Modifier.fillMaxWidth().animateItem(),
               )
 

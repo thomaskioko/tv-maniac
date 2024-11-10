@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -36,13 +35,11 @@ import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -56,17 +53,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
+import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
-import com.thomaskioko.tvmaniac.compose.components.TvManiacOutlinedButton
-import com.thomaskioko.tvmaniac.compose.components.TvPosterCard
+import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.verticalGradientScrim
 import com.thomaskioko.tvmaniac.compose.theme.MinContrastOfPrimaryVsSurface
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -132,7 +128,12 @@ internal fun DiscoverScreen(
     EmptyState ->
       EmptyContent(
         modifier = modifier,
-        onAction = onAction,
+        imageVector = Icons.Filled.Movie,
+        title =  stringResource(R.string.generic_empty_content),
+        message = stringResource(R.string.missing_api_key),
+        buttonText = stringResource(id = R.string.generic_retry),
+        onClick = { onAction(ReloadData)
+                  },
       )
     is DataLoaded ->
       DiscoverContent(
@@ -156,45 +157,6 @@ internal fun DiscoverScreen(
         onRetry = { onAction(ReloadData) },
         modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
       )
-  }
-}
-
-@Composable
-private fun EmptyContent(
-  modifier: Modifier = Modifier,
-  onAction: (DiscoverShowAction) -> Unit,
-) {
-  Column(
-    modifier = modifier.padding(16.dp),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center,
-  ) {
-    Icon(
-      modifier = Modifier.size(180.dp),
-      imageVector = Icons.Filled.Movie,
-      tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F),
-      contentDescription = null,
-    )
-
-    Text(
-      modifier = Modifier.padding(top = 16.dp),
-      text = stringResource(R.string.generic_empty_content),
-      style = MaterialTheme.typography.titleLarge,
-      textAlign = TextAlign.Center,
-    )
-
-    Text(
-      modifier = Modifier.padding(top = 4.dp),
-      text = stringResource(R.string.missing_api_key),
-      style = MaterialTheme.typography.labelMedium,
-      textAlign = TextAlign.Center,
-    )
-
-    TvManiacOutlinedButton(
-      modifier = Modifier.padding(top = 16.dp),
-      text = stringResource(id = R.string.generic_retry),
-      onClick = { onAction(ReloadData) },
-    )
   }
 }
 
@@ -401,9 +363,9 @@ fun HorizontalPagerItem(
               )
           }
       ) {
-        TvPosterCard(
+        PosterCard(
           title = list[pageNumber].title,
-          posterImageUrl = list[pageNumber].posterImageUrl,
+          imageUrl = list[pageNumber].posterImageUrl,
           onClick = { onClick(list[pageNumber].tmdbId) },
           modifier = Modifier.fillMaxWidth(),
         )
@@ -449,6 +411,7 @@ private fun HorizontalRowContent(
   AnimatedVisibility(visible = tvShows.isNotEmpty()) {
     Column {
       BoxTextItems(
+        modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
         title = category,
         label = stringResource(id = R.string.str_more),
         onMoreClicked = onMoreClicked,
@@ -465,11 +428,10 @@ private fun HorizontalRowContent(
 
           Spacer(modifier = Modifier.width(value.dp))
 
-          TvPosterCard(
-            posterImageUrl = tvShow.posterImageUrl,
+          PosterCard(
+            imageUrl = tvShow.posterImageUrl,
             title = tvShow.title,
             onClick = { onItemClicked(tvShow.tmdbId) },
-            modifier = Modifier.wrapContentHeight().animateItem(),
           )
         }
       }

@@ -31,7 +31,7 @@ fun BoxTextItems(
   onMoreClicked: () -> Unit = {},
 ) {
   Box(
-    modifier = modifier.fillMaxWidth().padding(start = 16.dp),
+    modifier = modifier,
   ) {
     Text(
       text = title,

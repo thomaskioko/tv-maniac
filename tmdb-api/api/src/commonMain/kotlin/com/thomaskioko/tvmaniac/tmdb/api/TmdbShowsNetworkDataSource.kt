@@ -73,4 +73,11 @@ interface TmdbShowsNetworkDataSource {
     lastAirDate: String,
     sortBy: String = DEFAULT_SORT_ORDER,
   ): ApiResponse<TmdbShowResult>
+
+  /**
+   * Search for TV shows by their original, translated and also known as names.
+   *
+   * @param query Search query
+   */
+  suspend fun searchShows(query: String): ApiResponse<TmdbShowResult>
 }

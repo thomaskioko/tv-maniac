@@ -19,13 +19,15 @@ public struct ChevronTitle: View {
   }
 
   public var body: some View {
-    HStack {
+    HStack(alignment: .firstTextBaseline) {
       titleSubtitleView
+
       Spacer()
+
       chevronView
     }
     .accessibilityElement(children: .combine)
-    .padding([.vertical], 8)
+    .padding([.leading, .trailing])
   }
 
   private var titleSubtitleView: some View {
@@ -40,7 +42,6 @@ public struct ChevronTitle: View {
           .foregroundColor(.secondary)
       }
     }
-    .padding(.leading)
   }
 
   private var chevronView: some View {
@@ -58,17 +59,17 @@ public struct ChevronTitle: View {
 
   private func chevronButton(title: String?) -> some View {
     Button(action: action) {
-      HStack(spacing: 4) {
+      HStack {
         if let title = title {
           Text(title)
             .font(.callout)
         }
+
         Image(systemName: "chevron.right")
           .font(.callout)
       }
     }
     .foregroundColor(Color.accent.opacity(0.8))
-    .padding(.trailing)
   }
 }
 
@@ -79,12 +80,11 @@ public enum ChevronStyle {
 }
 
 #Preview {
-  VStack(spacing: 20) {
+  VStack {
     ChevronTitle(title: "Coming Soon")
     ChevronTitle(title: "Coming Soon", chevronStyle: .chevronOnly)
     ChevronTitle(title: "Coming Soon", chevronStyle: .withTitle("More"))
     ChevronTitle(title: "Coming Soon", subtitle: "From Watchlist")
     ChevronTitle(title: "Coming Soon", subtitle: "From Watchlist", chevronStyle: .chevronOnly)
   }
-  .padding()
 }

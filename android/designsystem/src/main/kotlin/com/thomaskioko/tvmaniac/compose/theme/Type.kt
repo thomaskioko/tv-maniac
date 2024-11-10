@@ -134,7 +134,6 @@ val tvManiacTypography =
     bodySmall =
       TextStyle(
         fontFamily = workSansFontFamily,
-        fontWeight = FontWeight.Bold,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.4.sp,
@@ -158,7 +157,6 @@ val tvManiacTypography =
     labelSmall =
       TextStyle(
         fontFamily = workSansFontFamily,
-        fontWeight = FontWeight.SemiBold,
         fontSize = 11.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,

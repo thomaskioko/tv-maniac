@@ -109,10 +109,10 @@ class DiscoverShowsComponent(
           if (
             isEmpty(
               featured.getOrNull(),
-              featured.getOrNull(),
-              featured.getOrNull(),
-              featured.getOrNull(),
-              featured.getOrNull(),
+              topRated.getOrNull(),
+              popular.getOrNull(),
+              upcomingShows.getOrNull(),
+              trendingToday.getOrNull(),
             )
           ) {
             _state.update { EmptyState }

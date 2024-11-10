@@ -5,7 +5,7 @@ import XCTest
 
 
 class GridViewTest: XCTestCase {
-    func test_HeaderView() {
+    func test_GridViewTest() {
         GridView(
             items: [
                 .init(
