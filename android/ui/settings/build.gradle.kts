@@ -5,7 +5,7 @@ plugins { alias(libs.plugins.tvmaniac.compose.library) }
 android { namespace = "com.thomaskioko.tvmaniac.ui.settings" }
 
 dependencies {
-  api(projects.presentation.settings)
+  api(projects.presenter.settings)
   api(projects.datastore.api)
 
   implementation(projects.android.designsystem)

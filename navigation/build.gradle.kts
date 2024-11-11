@@ -9,14 +9,14 @@ kotlin {
       implementation(projects.core.base)
       implementation(projects.traktAuth.api)
 
-      implementation(projects.presentation.discover)
-      implementation(projects.presentation.library)
-      implementation(projects.presentation.moreShows)
-      implementation(projects.presentation.search)
-      implementation(projects.presentation.seasondetails)
-      implementation(projects.presentation.settings)
-      implementation(projects.presentation.showDetails)
-      implementation(projects.presentation.trailers)
+      implementation(projects.presenter.discover)
+      implementation(projects.presenter.library)
+      implementation(projects.presenter.moreShows)
+      implementation(projects.presenter.search)
+      implementation(projects.presenter.seasondetails)
+      implementation(projects.presenter.settings)
+      implementation(projects.presenter.showDetails)
+      implementation(projects.presenter.trailers)
 
       implementation(libs.kotlinInject.runtime)
 

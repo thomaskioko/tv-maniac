@@ -8,7 +8,7 @@ plugins {
 android { namespace = "com.thomaskioko.tvmaniac.ui.search" }
 
 dependencies {
-  api(projects.presentation.search)
+  api(projects.presenter.search)
 
   implementation(projects.android.designsystem)
   implementation(projects.android.resources)

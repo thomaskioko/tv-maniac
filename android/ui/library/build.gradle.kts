@@ -8,7 +8,7 @@ plugins {
 android { namespace = "com.thomaskioko.tvmaniac.ui.library" }
 
 dependencies {
-  api(projects.presentation.library)
+  api(projects.presenter.library)
 
   implementation(projects.android.designsystem)
   implementation(projects.android.resources)

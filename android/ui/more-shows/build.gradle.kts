@@ -8,7 +8,7 @@ plugins {
 android { namespace = "com.thomaskioko.tvmaniac.ui.moreshows" }
 
 dependencies {
-  api(projects.presentation.moreShows)
+  api(projects.presenter.moreShows)
 
   implementation(projects.android.designsystem)
 

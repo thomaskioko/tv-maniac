@@ -12,14 +12,14 @@ import TvManiac
 import TvManiacUI
 
 struct SearchView: View {
-  private let component: SearchShowsComponent
+  private let presenter: SearchShowsPresenter
   @StateFlow private var uiState: SearchShowState
   @FocusState private var isSearchFocused: Bool
   @StateObject private var keyboard = KeyboardHeightManager()
 
-  init(component: SearchShowsComponent) {
-    self.component = component
-    _uiState = StateFlow(component.state)
+  init(presenter: SearchShowsPresenter) {
+    self.presenter = presenter
+    _uiState = StateFlow(presenter.state)
   }
 
   var body: some View {
@@ -41,7 +41,7 @@ struct SearchView: View {
             systemName: "exclamationmark.arrow.triangle.2.circlepath",
             message: state.errorMessage ?? "No results found. Try a different keyword!",
             buttonText: "Retry",
-            action: { component.dispatch(action: ReloadShowContent()) }
+            action: { presenter.dispatch(action: ReloadShowContent()) }
           )
         case .searchResultAvailable(let state):
           searchResultsContent(state: state)
@@ -69,7 +69,7 @@ struct SearchView: View {
       set: { newValue in
         let trimmedValue = newValue.trimmingCharacters(in: .whitespaces)
         if !trimmedValue.isEmpty {
-          component.dispatch(action: QueryChanged(query: newValue))
+          presenter.dispatch(action: QueryChanged(query: newValue))
         }
       }
     )
@@ -143,7 +143,7 @@ struct SearchView: View {
       title: title,
       items: shows.map { $0.toSwift() },
       onClick: { id in
-        component.dispatch(action: SearchShowClicked(id: id))
+        presenter.dispatch(action: SearchShowClicked(id: id))
         dismissKeyboard()
       }
     )
@@ -166,7 +166,7 @@ struct SearchView: View {
       SearchResultListView(
         items: shows.map { $0.toSwift() },
         onClick: { id in
-          component.dispatch(action: SearchShowClicked(id: id))
+          presenter.dispatch(action: SearchShowClicked(id: id))
           dismissKeyboard()
         }
       )
@@ -175,7 +175,7 @@ struct SearchView: View {
 
   private func handleClearQuery() {
     if let query = uiState.query, !query.trimmingCharacters(in: .whitespaces).isEmpty {
-      component.dispatch(action: ClearQuery())
+      presenter.dispatch(action: ClearQuery())
     }
     dismissKeyboard()
   }

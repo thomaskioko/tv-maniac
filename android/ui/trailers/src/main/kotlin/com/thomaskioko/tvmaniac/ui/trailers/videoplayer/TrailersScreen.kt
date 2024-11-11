@@ -58,7 +58,7 @@ import com.thomaskioko.tvmaniac.presentation.trailers.ReloadTrailers
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailerError
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailerSelected
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersAction
-import com.thomaskioko.tvmaniac.presentation.trailers.TrailersComponent
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersContent
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersState
 import com.thomaskioko.tvmaniac.presentation.trailers.VideoPlayerError
@@ -68,15 +68,15 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun TrailersScreen(
-  component: TrailersComponent,
+  presenter: TrailersPresenter,
   modifier: Modifier = Modifier,
 ) {
-  val state by component.state.collectAsState()
+  val state by presenter.state.collectAsState()
 
   TrailersScreen(
     modifier = modifier,
     state = state,
-    onAction = component::dispatch,
+    onAction = presenter::dispatch,
   )
 }
 

@@ -12,6 +12,7 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class KotlinMultiplatformConventionPlugin : Plugin<Project> {
   override fun apply(target: Project) = with(target) {
@@ -44,18 +45,10 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
       sourceSets.all {
         languageSettings {
           listOf(
-            "androidx.paging.ExperimentalPagingApi",
             "kotlin.RequiresOptIn",
             "kotlin.experimental.ExperimentalObjCName",
             "kotlin.time.ExperimentalTime",
-            "kotlinx.cinterop.BetaInteropApi",
-            "kotlinx.cinterop.ExperimentalForeignApi",
-            "kotlinx.coroutines.DelicateCoroutinesApi",
             "kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "kotlinx.coroutines.FlowPreview",
-            "kotlinx.coroutines.InternalCoroutinesApi",
-            "kotlinx.serialization.ExperimentalSerializationApi",
-            "org.mobilenativefoundation.store.store5.ExperimentalStoreApi",
           ).forEach { optIn(it) }
         }
       }
@@ -98,6 +91,16 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
             "androidTestFixturesDemo"
           ).contains(it.name)
         }
+      }
+    }
+  }
+}
+
+fun Project.addLanguageArgs(vararg args: String){
+  extensions.configure<KotlinMultiplatformExtension> {
+    sourceSets.all {
+      languageSettings {
+        args.forEach { optIn(it) }
       }
     }
   }

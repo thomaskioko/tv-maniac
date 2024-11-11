@@ -1,3 +1,5 @@
+import com.thomaskioko.tvmaniac.plugins.addLanguageArgs
+
 plugins {
   alias(libs.plugins.tvmaniac.multiplatform)
   alias(libs.plugins.ksp)
@@ -26,3 +28,7 @@ kotlin {
     }
   }
 }
+
+addLanguageArgs(
+  "androidx.paging.ExperimentalPagingApi",
+)

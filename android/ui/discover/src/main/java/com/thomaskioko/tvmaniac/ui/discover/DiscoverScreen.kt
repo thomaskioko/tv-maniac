@@ -71,7 +71,7 @@ import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowAction
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponent
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
 import com.thomaskioko.tvmaniac.presentation.discover.EmptyState
 import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
@@ -92,10 +92,10 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun DiscoverScreen(
-  component: DiscoverShowsComponent,
+  presenter: DiscoverShowsPresenter,
   modifier: Modifier = Modifier,
 ) {
-  val discoverState by component.state.collectAsState()
+  val discoverState by presenter.state.collectAsState()
   val pagerState =
     rememberPagerState(
       initialPage = 2,
@@ -108,7 +108,7 @@ fun DiscoverScreen(
     state = discoverState,
     snackBarHostState = snackBarHostState,
     pagerState = pagerState,
-    onAction = component::dispatch,
+    onAction = presenter::dispatch,
   )
 }
 

@@ -8,7 +8,7 @@ plugins {
 android { namespace = "com.thomaskioko.tvmaniac.ui.discover" }
 
 dependencies {
-  api(projects.presentation.discover)
+  api(projects.presenter.discover)
 
   implementation(projects.android.designsystem)
   implementation(projects.android.resources)

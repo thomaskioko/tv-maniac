@@ -11,50 +11,50 @@ import SwiftUIComponents
 import TvManiac
 
 struct HomeTabView: View {
-    private let component: HomeComponent
-    @StateFlow private var stack: ChildStack<AnyObject, HomeComponentChild>
-    private var activeChild: HomeComponentChild { stack.active.instance }
+  private let presenter: HomePresenter
+  @StateFlow private var stack: ChildStack<AnyObject, HomePresenterChild>
+  private var activeChild: HomePresenterChild { stack.active.instance }
 
-    init(component: HomeComponent) {
-        self.component = component
-        _stack = StateFlow(component.stack)
-    }
+  init(presenter: HomePresenter) {
+    self.presenter = presenter
+    _stack = StateFlow(presenter.stack)
+  }
 
-    var body: some View {
-        VStack {
-            HomeChildView(
-                screen: activeChild,
-                bottomTabActions: bottomTabActions()
-            )
-        }
+  var body: some View {
+    VStack {
+      HomeChildView(
+        screen: activeChild,
+        bottomTabActions: bottomTabActions()
+      )
     }
+  }
 
-    private func bottomTabActions() -> [BottomTabAction] {
-        return [
-            BottomTabAction(
-                title: "Discover",
-                systemImage: "tv",
-                isActive: activeChild is HomeComponentChildDiscover,
-                action: { component.onDiscoverClicked() }
-            ),
-            BottomTabAction(
-                title: "Search",
-                systemImage: "magnifyingglass",
-                isActive: activeChild is HomeComponentChildSearch,
-                action: { component.onSearchClicked() }
-            ),
-            BottomTabAction(
-                title: "Library",
-                systemImage: "list.bullet.below.rectangle",
-                isActive: activeChild is HomeComponentChildLibrary,
-                action: { component.onLibraryClicked() }
-            ),
-            BottomTabAction(
-                title: "Settings",
-                systemImage: "gearshape",
-                isActive: activeChild is HomeComponentChildSettings,
-                action: { component.onSettingsClicked() }
-            )
-        ]
-    }
+  private func bottomTabActions() -> [BottomTabAction] {
+    return [
+      BottomTabAction(
+        title: "Discover",
+        systemImage: "tv",
+        isActive: activeChild is HomePresenterChildDiscover,
+        action: { presenter.onDiscoverClicked() }
+      ),
+      BottomTabAction(
+        title: "Search",
+        systemImage: "magnifyingglass",
+        isActive: activeChild is HomePresenterChildSearch,
+        action: { presenter.onSearchClicked() }
+      ),
+      BottomTabAction(
+        title: "Library",
+        systemImage: "list.bullet.below.rectangle",
+        isActive: activeChild is HomePresenterChildLibrary,
+        action: { presenter.onLibraryClicked() }
+      ),
+      BottomTabAction(
+        title: "Settings",
+        systemImage: "gearshape",
+        isActive: activeChild is HomePresenterChildSettings,
+        action: { presenter.onSettingsClicked() }
+      )
+    ]
+  }
 }

@@ -1,3 +1,5 @@
+import com.thomaskioko.tvmaniac.plugins.addLanguageArgs
+
 plugins { id("plugin.tvmaniac.multiplatform") }
 
 kotlin {
@@ -10,3 +12,7 @@ kotlin {
     }
   }
 }
+
+addLanguageArgs(
+  "androidx.paging.ExperimentalPagingApi",
+)
