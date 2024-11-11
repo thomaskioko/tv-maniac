@@ -8,7 +8,7 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
 import kotlinx.coroutines.flow.StateFlow
 
-interface RootComponent {
+interface RootPresenter {
   val stack: StateFlow<ChildStack<*, Child>>
   val themeState: StateFlow<ThemeState>
 

@@ -10,18 +10,17 @@ import SwiftUI
 import TvManiac
 
 class NavigationModel: ObservableObject {
-    @Published private(set) var viewStack: [RootComponentChild] = []
-    @Published private(set) var currentIndex: Int = 0
-    @Published var dragOffset: CGFloat = 0
+  @Published private(set) var viewStack: [RootPresenterChild] = []
+  @Published private(set) var currentIndex: Int = 0
+  @Published var dragOffset: CGFloat = 0
 
-    func setStack(_ stack: ChildStack<AnyObject, RootComponentChild>) {
-        viewStack = stack.items.compactMap { $0.instance }
-        currentIndex = viewStack.count - 1
-    }
+  func setStack(_ stack: ChildStack<AnyObject, RootPresenterChild>) {
+    viewStack = stack.items.compactMap { $0.instance }
+    currentIndex = viewStack.count - 1
+  }
 
-    func popView() {
-        guard currentIndex > 0 else { return }
-        currentIndex -= 1
-    }
+  func popView() {
+    guard currentIndex > 0 else { return }
+    currentIndex -= 1
+  }
 }
-

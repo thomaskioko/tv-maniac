@@ -10,7 +10,7 @@ struct iOSApp: App {
     var body: some Scene {
 
         WindowGroup {
-            RootView(rootComponent: appDelegate.presenterComponent.rootComponent)
+          RootView(rootPresenter: appDelegate.presenterComponent.rootPresenter)
                 .environmentObject(NavigationModel())
         }
     }

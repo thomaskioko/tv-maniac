@@ -10,52 +10,52 @@ import SwiftUI
 import TvManiac
 
 struct RootView: View {
-    private let rootComponent: RootComponent
-    @StateFlow private var uiState: ThemeState
-    @State private var isShowingSplash = true
+  private let rootPresenter: RootPresenter
+  @StateFlow private var uiState: ThemeState
+  @State private var isShowingSplash = true
 
-    init(rootComponent: RootComponent) {
-        self.rootComponent = rootComponent
-        _uiState = StateFlow(rootComponent.themeState)
-    }
+  init(rootPresenter: RootPresenter) {
+    self.rootPresenter = rootPresenter
+    _uiState = StateFlow(rootPresenter.themeState)
+  }
 
-    var body: some View {
-        ZStack {
-            if isShowingSplash {
-                SplashScreenView()
-            } else {
-                StackView(
-                    stack: StateFlow(rootComponent.stack),
-                    onBack: rootComponent.onBackClicked,
-                    content: { child in
-                        childView(for: child)
-                    }
-                )
-                .environment(\.colorScheme, uiState.appTheme == .lightTheme ? .light : .dark)
-            }
-        }
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // Adjust the delay as needed
-                withAnimation {
-                    isShowingSplash = false
-                }
-            }
-        }
+  var body: some View {
+    ZStack {
+      if isShowingSplash {
+        SplashScreenView()
+      } else {
+        StackView(
+          stack: StateFlow(rootPresenter.stack),
+          onBack: rootPresenter.onBackClicked,
+          content: { child in
+            childView(for: child)
+          }
+        )
+        .environment(\.colorScheme, uiState.appTheme == .lightTheme ? .light : .dark)
+      }
     }
+    .onAppear {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // Adjust the delay as needed
+        withAnimation {
+          isShowingSplash = false
+        }
+      }
+    }
+  }
 
-    @ViewBuilder
-    private func childView(for child: RootComponentChild) -> some View {
-        switch onEnum(of: child) {
-            case .home(let child):
-                HomeTabView(component: child.component)
-            case .showDetails(let child):
-                ShowDetailView(component: child.component)
-            case .seasonDetails(let child):
-                SeasonDetailsView(component: child.component)
-            case .moreShows(let child):
-                MoreShowsView(component: child.component)
-            case .trailers(_):
-                EmptyView() //TODO:: Add implementation
-        }
+  @ViewBuilder
+  private func childView(for child: RootPresenterChild) -> some View {
+    switch onEnum(of: child) {
+      case .home(let child):
+        HomeTabView(presenter: child.presenter)
+      case .showDetails(let child):
+        ShowDetailView(presenter: child.presenter)
+      case .seasonDetails(let child):
+        SeasonDetailsView(presenter: child.presenter)
+      case .moreShows(let child):
+        MoreShowsView(presenter: child.presenter)
+      case .trailers:
+        EmptyView() // TODO: Add implementation
     }
+  }
 }

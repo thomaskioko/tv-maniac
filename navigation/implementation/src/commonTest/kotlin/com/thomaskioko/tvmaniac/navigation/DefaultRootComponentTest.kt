@@ -17,9 +17,9 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepo
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.navigation.RootComponent.Child.Home
-import com.thomaskioko.tvmaniac.navigation.RootComponent.Child.MoreShows
-import com.thomaskioko.tvmaniac.navigation.RootComponent.Child.ShowDetails
+import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.Home
+import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.MoreShows
+import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter
@@ -72,7 +72,7 @@ class DefaultRootComponentTest {
   private val popularShowsRepository = FakePopularShowsRepository()
   private val searchRepository = FakeSearchRepository()
 
-  private lateinit var presenter: DefaultRootComponent
+  private lateinit var presenter: DefaultRootPresenter
 
   @BeforeTest
   fun before() {
@@ -81,7 +81,7 @@ class DefaultRootComponentTest {
 
     val componentContext = DefaultComponentContext(lifecycle = lifecycle)
     presenter =
-      DefaultRootComponent(
+      DefaultRootPresenter(
         componentContext = componentContext,
         moreShowsPresenterFactory = buildMoreShowsPresenterFactory(componentContext),
         showDetailsPresenterFactory = buildShowDetailsPresenterPresenterFactory(componentContext),

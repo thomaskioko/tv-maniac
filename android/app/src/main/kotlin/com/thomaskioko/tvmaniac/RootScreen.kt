@@ -15,28 +15,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.home.HomeScreen
-import com.thomaskioko.tvmaniac.navigation.RootComponent
+import com.thomaskioko.tvmaniac.navigation.RootPresenter
 import com.thomaskioko.tvmaniac.seasondetails.ui.SeasonDetailsScreen
 import com.thomaskioko.tvmaniac.ui.moreshows.MoreShowsScreen
 import com.thomaskioko.tvmaniac.ui.showdetails.ShowDetailsScreen
 import com.thomaskioko.tvmaniac.ui.trailers.videoplayer.TrailersScreen
 
 @Composable
-fun RootScreen(rootComponent: RootComponent, modifier: Modifier = Modifier) {
+fun RootScreen(rootPresenter: RootPresenter, modifier: Modifier = Modifier) {
   Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
     Column(
       modifier =
         Modifier.fillMaxSize()
           .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
     ) {
-      ChildrenContent(rootComponent = rootComponent, modifier = Modifier.weight(1F))
+      ChildrenContent(rootPresenter = rootPresenter, modifier = Modifier.weight(1F))
     }
   }
 }
 
 @Composable
-private fun ChildrenContent(rootComponent: RootComponent, modifier: Modifier = Modifier) {
-  val childStack by rootComponent.stack.collectAsState()
+private fun ChildrenContent(rootPresenter: RootPresenter, modifier: Modifier = Modifier) {
+  val childStack by rootPresenter.stack.collectAsState()
 
   Children(
     modifier = modifier,
@@ -44,26 +44,26 @@ private fun ChildrenContent(rootComponent: RootComponent, modifier: Modifier = M
   ) { child ->
     val fillMaxSizeModifier = Modifier.fillMaxSize()
     when (val screen = child.instance) {
-      is RootComponent.Child.Home ->
+      is RootPresenter.Child.Home ->
         HomeScreen(presenter = screen.presenter, modifier = fillMaxSizeModifier)
-      is RootComponent.Child.ShowDetails -> {
+      is RootPresenter.Child.ShowDetails -> {
         ShowDetailsScreen(
           presenter = screen.presenter,
           modifier = fillMaxSizeModifier,
         )
       }
-      is RootComponent.Child.SeasonDetails -> {
+      is RootPresenter.Child.SeasonDetails -> {
         SeasonDetailsScreen(
           presenter = screen.presenter,
           modifier = fillMaxSizeModifier,
         )
       }
-      is RootComponent.Child.Trailers ->
+      is RootPresenter.Child.Trailers ->
         TrailersScreen(
           presenter = screen.presenter,
           modifier = fillMaxSizeModifier,
         )
-      is RootComponent.Child.MoreShows ->
+      is RootPresenter.Child.MoreShows ->
         MoreShowsScreen(
           presenter = screen.presenter,
           modifier = fillMaxSizeModifier,

@@ -13,7 +13,7 @@ import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.navigation.RootComponent.Child
+import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenterFactory
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenterFactory
@@ -32,7 +32,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 @ActivityScope
-class DefaultRootComponent(
+class DefaultRootPresenter(
   componentContext: ComponentContext,
   private val homePresenterFactory: HomePresenterFactory,
   private val moreShowsPresenterFactory: MoreShowsPresenterFactory,
@@ -41,7 +41,7 @@ class DefaultRootComponent(
   private val trailersPresenterFactory: TrailersPresenterFactory,
   private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
   datastoreRepository: DatastoreRepository,
-) : RootComponent, ComponentContext by componentContext {
+) : RootPresenter, ComponentContext by componentContext {
 
   private val navigation = StackNavigation<Config>()
   private val childStack: Value<ChildStack<*, Child>> =
