@@ -5,7 +5,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponent
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryContent
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeLibraryRepository
@@ -19,21 +19,21 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
-class LibraryComponentTest {
+class LibraryPresenterTest {
 
   private val lifecycle = LifecycleRegistry()
   private val repository = FakeLibraryRepository()
   private val testDispatcher = StandardTestDispatcher()
 
-  private lateinit var component: LibraryComponent
+  private lateinit var presenter: LibraryPresenter
 
   @BeforeTest
   fun before() {
     Dispatchers.setMain(testDispatcher)
 
     lifecycle.resume()
-    component =
-      LibraryComponent(
+    presenter =
+      LibraryPresenter(
         navigateToShowDetails = {},
         repository = repository,
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
@@ -46,13 +46,13 @@ class LibraryComponentTest {
   }
 
   @Test
-  fun `should emit LoadingShows on init`() = runTest { component.state.value shouldBe LoadingShows }
+  fun `should emit LoadingShows on init`() = runTest { presenter.state.value shouldBe LoadingShows }
 
   @Test
   fun `should emit LibraryContent on success`() = runTest {
     repository.setObserveResult(Either.Right(cachedResult))
 
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe LoadingShows
       awaitItem() shouldBe LibraryContent(list = uiResult)
 

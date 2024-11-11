@@ -12,15 +12,15 @@ import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepo
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponent
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsComponentFactory
-import com.thomaskioko.tvmaniac.presentation.search.SearchShowsComponent
-import com.thomaskioko.tvmaniac.presentation.search.SearchComponentFactory
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.search.SearchShowsPresenter
+import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.ShowMapper
-import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponent
-import com.thomaskioko.tvmaniac.presentation.settings.SettingsComponentFactory
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponent
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryComponentFactory
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenter
+import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
+import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenterFactory
 import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
@@ -33,7 +33,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
-class HomeComponentTest {
+class HomePresenterTest {
   private val lifecycle = LifecycleRegistry()
   private val testDispatcher = StandardTestDispatcher()
   private val traktAuthManager = FakeTraktAuthManager()
@@ -43,57 +43,57 @@ class HomeComponentTest {
   private val upcomingShowsRepository = FakeUpcomingShowsRepository()
   private val searchRepository = FakeSearchRepository()
 
-  private lateinit var component: HomeComponent
+  private lateinit var presenter: HomePresenter
 
   @BeforeTest
   fun before() {
     Dispatchers.setMain(testDispatcher)
     lifecycle.resume()
 
-    component = buildHomePresenterFactory()
+    presenter = buildHomePresenterFactory()
   }
 
   @Test
   fun `initial state should be Discover`() = runTest {
-    component.stack.test {
-      awaitItem().active.instance.shouldBeInstanceOf<HomeComponent.Child.Discover>()
+    presenter.stack.test {
+      awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
     }
   }
 
   @Test
   fun `should return Search as active instance when onSearchClicked`() = runTest {
-    component.stack.test {
-      awaitItem().active.instance.shouldBeInstanceOf<HomeComponent.Child.Discover>()
-      component.onSearchClicked()
+    presenter.stack.test {
+      awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
+      presenter.onSearchClicked()
 
-      awaitItem().active.instance.shouldBeInstanceOf<HomeComponent.Child.Search>()
+      awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Search>()
     }
   }
 
   @Test
   fun `should return Library as active instance when onSettingsClicked`() = runTest {
-    component.stack.test {
-      awaitItem().active.instance.shouldBeInstanceOf<HomeComponent.Child.Discover>()
-      component.onLibraryClicked()
+    presenter.stack.test {
+      awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
+      presenter.onLibraryClicked()
 
-      awaitItem().active.instance.shouldBeInstanceOf<HomeComponent.Child.Library>()
+      awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Library>()
     }
   }
 
   @Test
   fun `should return Settings as active instance when onSettingsClicked`() = runTest {
-    component.stack.test {
-      awaitItem().active.instance.shouldBeInstanceOf<HomeComponent.Child.Discover>()
-      component.onSettingsClicked()
+    presenter.stack.test {
+      awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
+      presenter.onSettingsClicked()
 
-      awaitItem().active.instance.shouldBeInstanceOf<HomeComponent.Child.Settings>()
+      awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Settings>()
     }
   }
 
   private fun buildSearchPresenterFactory(
     componentContext: ComponentContext,
-  ): SearchComponentFactory = { _: ComponentContext, _: (id: Long) -> Unit ->
-    SearchShowsComponent(
+  ): SearchPresenterFactory = { _: ComponentContext, _: (id: Long) -> Unit ->
+    SearchShowsPresenter(
       componentContext = componentContext,
       searchRepository = searchRepository,
       onNavigateToShowDetails = {},
@@ -108,22 +108,22 @@ class HomeComponentTest {
 
   private fun buildHomePresenterFactory(
     componentContext: ComponentContext = DefaultComponentContext(lifecycle = lifecycle)
-  ): HomeComponent =
-    HomeComponent(
+  ): HomePresenter =
+    HomePresenter(
       componentContext = componentContext,
       onShowClicked = {},
       onMoreShowClicked = {},
       traktAuthManager = traktAuthManager,
-      searchComponentFactory = buildSearchPresenterFactory(componentContext),
-      settingsComponentFactory = buildSettingsPresenterFactory(componentContext),
+      searchPresenterFactory = buildSearchPresenterFactory(componentContext),
+      settingsPresenterFactory = buildSettingsPresenterFactory(componentContext),
       discoverComponentFactory = buildDiscoverPresenterFactory(componentContext),
-      libraryComponentFactory = buildLibraryPresenterFactory(componentContext),
+      libraryPresenterFactory = buildLibraryPresenterFactory(componentContext),
     )
 
   private fun buildSettingsPresenterFactory(
     componentContext: ComponentContext,
-  ): SettingsComponentFactory = { _: ComponentContext, _: () -> Unit ->
-    SettingsComponent(
+  ): SettingsPresenterFactory = { _: ComponentContext, _: () -> Unit ->
+    SettingsPresenter(
       componentContext = componentContext,
       launchWebView = {},
       datastoreRepository = datastoreRepository,
@@ -133,9 +133,9 @@ class HomeComponentTest {
 
   private fun buildDiscoverPresenterFactory(
     componentContext: ComponentContext,
-  ): DiscoverShowsComponentFactory =
+  ): DiscoverShowsPresenterFactory =
     { _: ComponentContext, _: (id: Long) -> Unit, _: (categoryId: Long) -> Unit ->
-      DiscoverShowsComponent(
+      DiscoverShowsPresenter(
         componentContext = componentContext,
         onNavigateToShowDetails = {},
         onNavigateToMore = {},
@@ -149,8 +149,8 @@ class HomeComponentTest {
 
   private fun buildLibraryPresenterFactory(
     componentContext: ComponentContext,
-  ): LibraryComponentFactory = { _: ComponentContext, _: (showDetails: Long) -> Unit ->
-    LibraryComponent(
+  ): LibraryPresenterFactory = { _: ComponentContext, _: (showDetails: Long) -> Unit ->
+    LibraryPresenter(
       componentContext = componentContext,
       navigateToShowDetails = {},
       repository = FakeLibraryRepository(),

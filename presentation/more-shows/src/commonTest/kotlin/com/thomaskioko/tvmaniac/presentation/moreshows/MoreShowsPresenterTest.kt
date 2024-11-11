@@ -3,10 +3,10 @@ package com.thomaskioko.tvmaniac.presentation.moreshows
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import kotlinx.coroutines.test.StandardTestDispatcher
 
-class MoreShowsComponentTest {
+class MoreShowsPresenterTest {
 
   private val lifecycle = LifecycleRegistry()
   private val testDispatcher = StandardTestDispatcher()
 
-  private lateinit var component: MoreShowsComponent
+  private lateinit var presenter: MoreShowsPresenter
 }

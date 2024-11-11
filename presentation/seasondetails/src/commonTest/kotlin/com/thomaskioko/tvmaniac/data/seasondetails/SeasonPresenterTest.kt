@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.EpisodeClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.InitialSeasonsState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.ReloadSeasonDetails
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsBackClicked
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsComponent
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsErrorState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonGalleryClicked
@@ -33,19 +33,19 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
-class SeasonComponentTest {
+class SeasonPresenterTest {
 
   private val lifecycle = LifecycleRegistry()
   private val testDispatcher = StandardTestDispatcher()
   private val seasonDetailsRepository = FakeSeasonDetailsRepository()
   private val castRepository = FakeCastRepository()
 
-  private lateinit var component: SeasonDetailsComponent
+  private lateinit var presenter: SeasonDetailsPresenter
 
   @BeforeTest
   fun setUp() {
     Dispatchers.setMain(testDispatcher)
-    component = buildSeasonDetailsPresenter()
+    presenter = buildSeasonDetailsPresenter()
   }
 
   @AfterTest
@@ -54,8 +54,8 @@ class SeasonComponentTest {
   }
 
   @Test
-  fun `should emitt InitialSeasonsState when no data is fetched`() = runTest {
-    component.state.test { awaitItem() shouldBe InitialSeasonsState }
+  fun `should emit InitialSeasonsState when no data is fetched`() = runTest {
+    presenter.state.test { awaitItem() shouldBe InitialSeasonsState }
   }
 
   @Test
@@ -105,7 +105,7 @@ class SeasonComponentTest {
           ),
       )
 
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe InitialSeasonsState
       awaitItem() shouldBe expectedResult
     }
@@ -149,7 +149,7 @@ class SeasonComponentTest {
       seasonDetailsRepository.setSeasonsResult(Either.Left(ServerError(errorMessage)))
       castRepository.setSeasonCast(emptyList())
 
-      component.state.test {
+      presenter.state.test {
         awaitItem() shouldBe InitialSeasonsState
 
         awaitItem() shouldBe SeasonDetailsErrorState(errorMessage = errorMessage)
@@ -159,7 +159,7 @@ class SeasonComponentTest {
         castRepository.setSeasonCast(updatedCast)
 
         // Dispatch the ReloadSeasonDetails action
-        component.dispatch(ReloadSeasonDetails)
+        presenter.dispatch(ReloadSeasonDetails)
 
         val updatedState = awaitItem()
         updatedState.shouldBeInstanceOf<SeasonDetailsLoaded>()
@@ -177,7 +177,7 @@ class SeasonComponentTest {
     seasonDetailsRepository.setSeasonsResult(Either.Left(ServerError(errorMessage)))
     castRepository.setSeasonCast(emptyList())
 
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe InitialSeasonsState
       awaitItem() shouldBe SeasonDetailsErrorState(errorMessage = errorMessage)
     }
@@ -186,9 +186,9 @@ class SeasonComponentTest {
   @Test
   fun `should invoke onBack when SeasonDetailsBackClicked action is dispatched`() = runTest {
     var backCalled = false
-    component = buildSeasonDetailsPresenter(onBack = { backCalled = true })
+    presenter = buildSeasonDetailsPresenter(onBack = { backCalled = true })
 
-    component.dispatch(SeasonDetailsBackClicked)
+    presenter.dispatch(SeasonDetailsBackClicked)
 
     advanceUntilIdle() // Allow time for the coroutine to execute
 
@@ -200,9 +200,9 @@ class SeasonComponentTest {
     var clickedEpisodeId: Long? = null
     val onEpisodeClick: (Long) -> Unit = { clickedEpisodeId = it }
 
-    component = buildSeasonDetailsPresenter(onEpisodeClick = onEpisodeClick)
+    presenter = buildSeasonDetailsPresenter(onEpisodeClick = onEpisodeClick)
 
-    component.dispatch(EpisodeClicked(42L))
+    presenter.dispatch(EpisodeClicked(42L))
 
     advanceUntilIdle() // Allow time for the coroutine to execute
 
@@ -216,14 +216,14 @@ class SeasonComponentTest {
       seasonDetailsRepository.setSeasonsResult(Either.Right(initialDetails))
       castRepository.setSeasonCast(emptyList())
 
-      component.state.test {
+      presenter.state.test {
         awaitItem() shouldBe InitialSeasonsState
 
         val loadedState = awaitItem()
         loadedState.shouldBeInstanceOf<SeasonDetailsLoaded>()
         loadedState.showGalleryBottomSheet shouldBe false
 
-        component.dispatch(SeasonGalleryClicked)
+        presenter.dispatch(SeasonGalleryClicked)
 
         // Check updated state
         val updatedState = awaitItem()
@@ -231,7 +231,7 @@ class SeasonComponentTest {
         updatedState.showGalleryBottomSheet shouldBe true
 
         // Dispatch action again
-        component.dispatch(SeasonGalleryClicked)
+        presenter.dispatch(SeasonGalleryClicked)
 
         // Check state toggled back
         val toggledState = awaitItem()
@@ -243,8 +243,8 @@ class SeasonComponentTest {
   private fun buildSeasonDetailsPresenter(
     onBack: () -> Unit = {},
     onEpisodeClick: (id: Long) -> Unit = {},
-  ): SeasonDetailsComponent {
-    return SeasonDetailsComponent(
+  ): SeasonDetailsPresenter {
+    return SeasonDetailsPresenter(
       componentContext = DefaultComponentContext(lifecycle = lifecycle),
       param =
         SeasonDetailsUiParam(

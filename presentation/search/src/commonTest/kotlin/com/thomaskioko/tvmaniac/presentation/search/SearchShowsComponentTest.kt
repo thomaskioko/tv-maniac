@@ -11,9 +11,7 @@ import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepo
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
-import com.thomaskioko.tvmaniac.util.FormatterUtil
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeSameInstanceAs
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -31,7 +29,7 @@ class SearchShowsComponentTest {
   private lateinit var featuredShowsRepository: FakeFeaturedShowsRepository
   private lateinit var trendingShowsRepository: FakeTrendingShowsRepository
   private lateinit var upcomingShowsRepository: FakeUpcomingShowsRepository
-  private lateinit var component: SearchShowsComponent
+  private lateinit var presenter: SearchShowsPresenter
 
   @BeforeTest
   fun before() {
@@ -40,7 +38,7 @@ class SearchShowsComponentTest {
     featuredShowsRepository = FakeFeaturedShowsRepository()
     trendingShowsRepository = FakeTrendingShowsRepository()
     upcomingShowsRepository = FakeUpcomingShowsRepository()
-    component = buildComponent()
+    presenter = buildPresenter()
   }
 
   @AfterTest
@@ -50,7 +48,7 @@ class SearchShowsComponentTest {
 
   @Test
   fun `should return loading state when initialized`() = runTest {
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
     }
@@ -58,18 +56,18 @@ class SearchShowsComponentTest {
 
   @Test
   fun `should return initial state when query is blank`() = runTest {
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      component.dispatch(QueryChanged(""))
+      presenter.dispatch(QueryChanged(""))
       expectNoEvents()
     }
   }
 
   @Test
   fun `should return empty state when show content is empty`() = runTest {
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
@@ -81,7 +79,7 @@ class SearchShowsComponentTest {
 
   @Test
   fun `should return show content when show content is not empty`() = runTest {
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
@@ -98,18 +96,18 @@ class SearchShowsComponentTest {
 
   @Test
   fun `should not perform search when query is less than 3 characters`() = runTest {
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      component.dispatch(QueryChanged("te"))
+      presenter.dispatch(QueryChanged("te"))
       expectNoEvents()
     }
   }
 
   @Test
   fun `should return empty state when query is valid and results are empty`() = runTest {
-    component.state.test {
+    presenter.state.test {
 
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
@@ -122,7 +120,7 @@ class SearchShowsComponentTest {
         upcomingShows = uiModelList(),
       )
 
-      component.dispatch(QueryChanged("test"))
+      presenter.dispatch(QueryChanged("test"))
 
       testScheduler.advanceTimeBy(300) // Wait for debounce
 
@@ -139,7 +137,7 @@ class SearchShowsComponentTest {
   @Test
   fun `should return loading state with previous results when query changes`() = runTest {
 
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
@@ -153,7 +151,7 @@ class SearchShowsComponentTest {
       )
 
       // Dispatch first query change
-      component.dispatch(QueryChanged("test"))
+      presenter.dispatch(QueryChanged("test"))
 
 
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
@@ -171,7 +169,7 @@ class SearchShowsComponentTest {
       )
 
       // Dispatch second query change to validate previous results shown as `isUpdating`
-      component.dispatch(QueryChanged("new"))
+      presenter.dispatch(QueryChanged("new"))
       awaitItem() shouldBe SearchResultAvailable(
         isUpdating = true,
         query = "new",
@@ -182,7 +180,7 @@ class SearchShowsComponentTest {
 
   @Test
   fun `should handle transition from valid to short query to empty query`() = runTest {
-    component.state.test {
+    presenter.state.test {
       setList(emptyList())
 
       awaitItem() shouldBe ShowContentAvailable()
@@ -190,13 +188,13 @@ class SearchShowsComponentTest {
 
       awaitItem() shouldBe ErrorSearchState(errorMessage = null)
 
-      component.dispatch(QueryChanged("test"))
+      presenter.dispatch(QueryChanged("test"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
-      component.dispatch(QueryChanged("te"))
+      presenter.dispatch(QueryChanged("te"))
       expectNoEvents()
 
-      component.dispatch(QueryChanged(""))
+      presenter.dispatch(QueryChanged(""))
 
       expectNoEvents()
     }
@@ -204,15 +202,15 @@ class SearchShowsComponentTest {
 
   @Test
   fun `should handle transition from short to valid query`() = runTest {
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      component.dispatch(QueryChanged("ab"))
+      presenter.dispatch(QueryChanged("ab"))
       expectNoEvents()
 
       // Valid query
-      component.dispatch(QueryChanged("abc"))
+      presenter.dispatch(QueryChanged("abc"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "abc")
 
       testScheduler.advanceTimeBy(300)
@@ -229,19 +227,19 @@ class SearchShowsComponentTest {
 
   @Test
   fun `should handle empty short and valid query transitions correctly`() = runTest {
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe ShowContentAvailable()
 
-      component.dispatch(QueryChanged(""))
+      presenter.dispatch(QueryChanged(""))
       expectNoEvents()
 
-      component.dispatch(QueryChanged("ab"))
+      presenter.dispatch(QueryChanged("ab"))
       expectNoEvents()
 
       testScheduler.advanceTimeBy(300)
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      component.dispatch(QueryChanged("test"))
+      presenter.dispatch(QueryChanged("test"))
 
       fakeSearchRepository.setSearchResult(Either.Right(createDiscoverShowList()))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
@@ -253,18 +251,18 @@ class SearchShowsComponentTest {
       )
 
       // Back to empty
-      component.dispatch(QueryChanged(""))
+      presenter.dispatch(QueryChanged(""))
       expectNoEvents()
     }
   }
 
   @Test
   fun `should return empty state when query is valid and search returns empty results`() = runTest {
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      component.dispatch(QueryChanged("test"))
+      presenter.dispatch(QueryChanged("test"))
 
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
@@ -278,11 +276,11 @@ class SearchShowsComponentTest {
 
   @Test
   fun `should handle sequence of empty and non-empty results`() = runTest {
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      component.dispatch(QueryChanged("empty"))
+      presenter.dispatch(QueryChanged("empty"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "empty")
 
       testScheduler.advanceTimeBy(300)
@@ -290,7 +288,7 @@ class SearchShowsComponentTest {
       fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
       awaitItem() shouldBe EmptySearchState("empty")
 
-      component.dispatch(QueryChanged("test"))
+      presenter.dispatch(QueryChanged("test"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
       testScheduler.advanceTimeBy(300)
@@ -304,7 +302,7 @@ class SearchShowsComponentTest {
         results = uiModelList(),
       )
 
-      component.dispatch(QueryChanged("none"))
+      presenter.dispatch(QueryChanged("none"))
       awaitItem() shouldBe SearchResultAvailable(
         isUpdating = true,
         query = "none",
@@ -320,7 +318,7 @@ class SearchShowsComponentTest {
 
   @Test
   fun `should update state when on clear query and show content is available`() = runTest {
-    component.state.test {
+    presenter.state.test {
 
 
       awaitItem() shouldBe ShowContentAvailable()
@@ -334,7 +332,7 @@ class SearchShowsComponentTest {
         upcomingShows = uiModelList(),
       )
 
-      component.dispatch(QueryChanged("test"))
+      presenter.dispatch(QueryChanged("test"))
 
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
@@ -348,7 +346,7 @@ class SearchShowsComponentTest {
         results = uiModelList(),
       )
 
-      component.dispatch(ClearQuery)
+      presenter.dispatch(ClearQuery)
 
       setList(createDiscoverShowList())
 
@@ -365,11 +363,11 @@ class SearchShowsComponentTest {
 
   @Test
   fun `should handle error states correctly`() = runTest {
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe ShowContentAvailable()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      component.dispatch(QueryChanged("test"))
+      presenter.dispatch(QueryChanged("test"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
       testScheduler.advanceTimeBy(300)
@@ -381,9 +379,9 @@ class SearchShowsComponentTest {
     }
   }
 
-  private fun buildComponent(
+  private fun buildPresenter(
     lifecycle: LifecycleRegistry = LifecycleRegistry(),
-  ): SearchShowsComponent = SearchShowsComponent(
+  ): SearchShowsPresenter = SearchShowsPresenter(
     componentContext = DefaultComponentContext(lifecycle = lifecycle),
     onNavigateToShowDetails = {},
     searchRepository = fakeSearchRepository,

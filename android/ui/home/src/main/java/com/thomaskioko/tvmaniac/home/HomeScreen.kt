@@ -16,11 +16,11 @@ import androidx.compose.ui.res.stringResource
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
-import com.thomaskioko.tvmaniac.presentation.home.HomeComponent
-import com.thomaskioko.tvmaniac.presentation.home.HomeComponent.Child.Discover
-import com.thomaskioko.tvmaniac.presentation.home.HomeComponent.Child.Library
-import com.thomaskioko.tvmaniac.presentation.home.HomeComponent.Child.Search
-import com.thomaskioko.tvmaniac.presentation.home.HomeComponent.Child.Settings
+import com.thomaskioko.tvmaniac.presentation.home.HomePresenter
+import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Discover
+import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Library
+import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Search
+import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Settings
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.ui.search.SearchScreen
 import com.thomaskioko.tvmaniac.ui.discover.DiscoverScreen
@@ -29,18 +29,18 @@ import com.thomaskioko.tvmaniac.ui.settings.SettingsScreen
 
 @Composable
 fun HomeScreen(
-  component: HomeComponent,
+  presenter: HomePresenter,
   modifier: Modifier = Modifier,
 ) {
   Column(modifier = modifier) {
-    ChildrenContent(homeComponent = component, modifier = Modifier.weight(1F))
-    BottomNavigationContent(component = component, modifier = Modifier.fillMaxWidth())
+    ChildrenContent(homePresenter = presenter, modifier = Modifier.weight(1F))
+    BottomNavigationContent(component = presenter, modifier = Modifier.fillMaxWidth())
   }
 }
 
 @Composable
-private fun ChildrenContent(homeComponent: HomeComponent, modifier: Modifier = Modifier) {
-  val childStack by homeComponent.stack.collectAsState()
+private fun ChildrenContent(homePresenter: HomePresenter, modifier: Modifier = Modifier) {
+  val childStack by homePresenter.stack.collectAsState()
 
   Children(
     modifier = modifier,
@@ -50,25 +50,25 @@ private fun ChildrenContent(homeComponent: HomeComponent, modifier: Modifier = M
     when (val screen = child.instance) {
       is Discover -> {
         DiscoverScreen(
-          component = screen.component,
+          presenter = screen.component,
           modifier = fillMaxSizeModifier,
         )
       }
       is Library -> {
         LibraryScreen(
-          component = screen.component,
+          presenter = screen.component,
           modifier = fillMaxSizeModifier,
         )
       }
       is Search -> {
         SearchScreen(
-          component = screen.component,
+          presenter = screen.component,
           modifier = fillMaxSizeModifier,
         )
       }
       is Settings -> {
         SettingsScreen(
-          component = screen.component,
+          presenter = screen.component,
           modifier = fillMaxSizeModifier,
         )
       }
@@ -78,7 +78,7 @@ private fun ChildrenContent(homeComponent: HomeComponent, modifier: Modifier = M
 
 @Composable
 internal fun BottomNavigationContent(
-  component: HomeComponent,
+  component: HomePresenter,
   modifier: Modifier = Modifier,
 ) {
   val childStack by component.stack.collectAsState()

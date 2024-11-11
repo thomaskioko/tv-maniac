@@ -25,7 +25,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
-class DiscoverShowsComponentTest {
+class DiscoverShowsPresenterTest {
 
   private val testDispatcher = StandardTestDispatcher()
 
@@ -35,13 +35,13 @@ class DiscoverShowsComponentTest {
   private val topRatedShowsRepository = FakeTopRatedShowsRepository()
   private val popularShowsRepository = FakePopularShowsRepository()
 
-  private lateinit var component: DiscoverShowsComponent
+  private lateinit var presenter: DiscoverShowsPresenter
 
   @BeforeTest
   fun before() {
     Dispatchers.setMain(testDispatcher)
 
-    component = buildComponent()
+    presenter = buildPresenter()
   }
 
   @AfterTest
@@ -52,12 +52,12 @@ class DiscoverShowsComponentTest {
   @Test
   fun `instance is maintained across recreations`() = runTest {
     // Create the first instance
-    val initialPresenter = buildComponent()
+    val initialPresenter = buildPresenter()
 
     // Simulate some state change
     initialPresenter.dispatch(RefreshData)
 
-    val recreatedPresenter = buildComponent()
+    val recreatedPresenter = buildPresenter()
 
     // Assert that the states are the same
     initialPresenter.state.value shouldBeEqual recreatedPresenter.state.value
@@ -71,7 +71,7 @@ class DiscoverShowsComponentTest {
 
   @Test
   fun `should return EmptyState when data is empty`() = runTest {
-    component.state.test {
+    presenter.state.test {
       setList(emptyList())
 
       awaitItem() shouldBe Loading
@@ -81,7 +81,7 @@ class DiscoverShowsComponentTest {
 
   @Test
   fun `should return DataLoaded when data is fetched`() = runTest {
-    component.state.test {
+    presenter.state.test {
       setList(emptyList())
 
       awaitItem() shouldBe Loading
@@ -103,7 +103,7 @@ class DiscoverShowsComponentTest {
 
   @Test
   fun `should return DataLoaded when data is fetched from cache`() = runTest {
-    component.state.test {
+    presenter.state.test {
       setList(createDiscoverShowList())
 
       awaitItem() shouldBe Loading
@@ -121,13 +121,13 @@ class DiscoverShowsComponentTest {
 
   @Test
   fun `should return DataLoaded when data is empty and refresh is clicked`() = runTest {
-    component.state.test {
+    presenter.state.test {
       setList(emptyList())
 
       awaitItem() shouldBe Loading
       awaitItem() shouldBe EmptyState
 
-      component.dispatch(ReloadData)
+      presenter.dispatch(ReloadData)
 
       setList(createDiscoverShowList())
 
@@ -146,7 +146,7 @@ class DiscoverShowsComponentTest {
 
   @Test
   fun `should return DataLoaded with refreshed data when refresh is clicked`() = runTest {
-    component.state.test {
+    presenter.state.test {
       setList(createDiscoverShowList())
       awaitItem() shouldBe Loading
 
@@ -163,7 +163,7 @@ class DiscoverShowsComponentTest {
 
       awaitItem() shouldBe expectedResult
 
-      component.dispatch(RefreshData)
+      presenter.dispatch(RefreshData)
 
       awaitItem() shouldBe expectedResult.copy(isRefreshing = true)
 
@@ -189,7 +189,7 @@ class DiscoverShowsComponentTest {
   fun `should return DataLoaded when error occurs and refresh is clicked`() = runTest {
     setList(createDiscoverShowList())
 
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe Loading
 
       val expectedList = uiModelList()
@@ -205,7 +205,7 @@ class DiscoverShowsComponentTest {
 
       awaitItem() shouldBe expectedResult
 
-      component.dispatch(RefreshData)
+      presenter.dispatch(RefreshData)
 
       awaitItem() shouldBe expectedResult.copy(isRefreshing = true)
 
@@ -263,10 +263,10 @@ class DiscoverShowsComponentTest {
     const val LIST_SIZE = 5
   }
 
-  private fun buildComponent(
+  private fun buildPresenter(
     lifecycle: LifecycleRegistry = LifecycleRegistry(),
-  ): DiscoverShowsComponent =
-    DiscoverShowsComponent(
+  ): DiscoverShowsPresenter =
+    DiscoverShowsPresenter(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         onNavigateToShowDetails = {},
         onNavigateToMore = {},

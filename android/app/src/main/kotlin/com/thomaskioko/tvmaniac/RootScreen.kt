@@ -45,27 +45,27 @@ private fun ChildrenContent(rootComponent: RootComponent, modifier: Modifier = M
     val fillMaxSizeModifier = Modifier.fillMaxSize()
     when (val screen = child.instance) {
       is RootComponent.Child.Home ->
-        HomeScreen(component = screen.component, modifier = fillMaxSizeModifier)
+        HomeScreen(presenter = screen.presenter, modifier = fillMaxSizeModifier)
       is RootComponent.Child.ShowDetails -> {
         ShowDetailsScreen(
-          component = screen.component,
+          presenter = screen.presenter,
           modifier = fillMaxSizeModifier,
         )
       }
       is RootComponent.Child.SeasonDetails -> {
         SeasonDetailsScreen(
-          component = screen.component,
+          presenter = screen.presenter,
           modifier = fillMaxSizeModifier,
         )
       }
       is RootComponent.Child.Trailers ->
         TrailersScreen(
-          component = screen.component,
+          presenter = screen.presenter,
           modifier = fillMaxSizeModifier,
         )
       is RootComponent.Child.MoreShows ->
         MoreShowsScreen(
-          component = screen.component,
+          presenter = screen.presenter,
           modifier = fillMaxSizeModifier,
         )
     }

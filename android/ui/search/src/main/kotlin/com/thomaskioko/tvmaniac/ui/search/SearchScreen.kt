@@ -49,7 +49,7 @@ import com.thomaskioko.tvmaniac.presentation.search.SearchResultAvailable
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowAction
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowClicked
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowState
-import com.thomaskioko.tvmaniac.presentation.search.SearchShowsComponent
+import com.thomaskioko.tvmaniac.presentation.search.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.search.ShowContentAvailable
 import com.thomaskioko.tvmaniac.presentation.search.ShowItem
 import com.thomaskioko.tvmaniac.resources.R
@@ -60,15 +60,15 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun SearchScreen(
-  component: SearchShowsComponent,
+  presenter: SearchShowsPresenter,
   modifier: Modifier = Modifier,
 ) {
-  val state by component.state.collectAsState()
+  val state by presenter.state.collectAsState()
 
   SearchScreen(
     modifier = modifier,
     state = state,
-    onAction = component::dispatch,
+    onAction = presenter::dispatch,
   )
 }
 

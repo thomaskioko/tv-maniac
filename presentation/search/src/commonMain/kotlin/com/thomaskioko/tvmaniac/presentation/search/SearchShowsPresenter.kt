@@ -29,14 +29,14 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias SearchComponentFactory =
+typealias SearchPresenterFactory =
     (
     ComponentContext,
     onNavigateToShowDetails: (id: Long) -> Unit,
-  ) -> SearchShowsComponent
+  ) -> SearchShowsPresenter
 
 @Inject
-class SearchShowsComponent(
+class SearchShowsPresenter(
   @Assisted componentContext: ComponentContext,
   @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
   private val mapper: ShowMapper,

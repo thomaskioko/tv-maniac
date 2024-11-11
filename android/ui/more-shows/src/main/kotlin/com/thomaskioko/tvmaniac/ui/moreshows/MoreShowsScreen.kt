@@ -54,22 +54,22 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreBackClicked
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowClicked
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsActions
-import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsComponent
+import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsState
 import com.thomaskioko.tvmaniac.presentation.moreshows.RefreshMoreShows
 import com.thomaskioko.tvmaniac.presentation.moreshows.TvShow
 
 @Composable
 fun MoreShowsScreen(
-  component: MoreShowsComponent,
+  presenter: MoreShowsPresenter,
   modifier: Modifier = Modifier,
 ) {
-  val state by component.state.collectAsState()
+  val state by presenter.state.collectAsState()
 
   MoreShowsScreen(
     modifier = modifier,
     state = state,
-    onAction = component::dispatch,
+    onAction = presenter::dispatch,
   )
 }
 

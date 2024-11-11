@@ -20,12 +20,12 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
-class TrailersComponentTest {
+class TrailersPresenterTest {
 
   private val lifecycle = LifecycleRegistry()
   private val repository = FakeTrailerRepository()
   private val testDispatcher = StandardTestDispatcher()
-  private lateinit var component: TrailersComponent
+  private lateinit var presenter: TrailersPresenter
 
   @BeforeTest
   fun setUp() {
@@ -33,8 +33,8 @@ class TrailersComponentTest {
 
     lifecycle.resume()
 
-    component =
-      TrailersComponent(
+    presenter =
+      TrailersPresenter(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         traktShowId = 84958,
         repository = repository,
@@ -50,7 +50,7 @@ class TrailersComponentTest {
   fun `given result is success correct state is emitted`() = runTest {
     repository.setTrailerResult(Either.Right(trailers))
 
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe LoadingTrailers
       awaitItem() shouldBe
         TrailersContent(
@@ -74,7 +74,7 @@ class TrailersComponentTest {
 
     repository.setTrailerResult(Either.Left(ServerError("Something went wrong.")))
 
-    component.state.test {
+    presenter.state.test {
       awaitItem() shouldBe LoadingTrailers
       awaitItem() shouldBe
         TrailersContent(
@@ -92,7 +92,7 @@ class TrailersComponentTest {
 
       awaitItem() shouldBe TrailerError("Something went wrong.")
 
-      component.dispatch(ReloadTrailers)
+      presenter.dispatch(ReloadTrailers)
 
       repository.setTrailerResult(Either.Right(trailers))
 
