@@ -9,10 +9,10 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.presentation.discover)
-        implementation(projects.presentation.library)
-        implementation(projects.presentation.search)
-        implementation(projects.presentation.settings)
+        implementation(projects.presenter.discover)
+        implementation(projects.presenter.library)
+        implementation(projects.presenter.search)
+        implementation(projects.presenter.settings)
         implementation(projects.traktAuth.api)
 
         implementation(libs.decompose.decompose)

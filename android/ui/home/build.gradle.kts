@@ -3,7 +3,7 @@ plugins { alias(libs.plugins.tvmaniac.compose.library) }
 android { namespace = "com.thomaskioko.tvmaniac.ui.home" }
 
 dependencies {
-  api(projects.presentation.home)
+  api(projects.presenter.home)
 
   implementation(projects.android.designsystem)
   implementation(projects.android.resources)
