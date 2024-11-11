@@ -1,3 +1,5 @@
+import com.thomaskioko.tvmaniac.plugins.addLanguageArgs
+
 plugins {
   alias(libs.plugins.tvmaniac.android.library)
   alias(libs.plugins.tvmaniac.multiplatform)
@@ -16,3 +18,7 @@ kotlin {
 }
 
 android { namespace = "com.thomaskioko.tvmaniac.core.base" }
+
+addLanguageArgs(
+  "kotlinx.coroutines.InternalCoroutinesApi",
+)

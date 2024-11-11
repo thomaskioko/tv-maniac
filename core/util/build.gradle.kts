@@ -1,4 +1,5 @@
 import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
+import com.thomaskioko.tvmaniac.plugins.addLanguageArgs
 
 plugins {
   alias(libs.plugins.tvmaniac.android.library)
@@ -35,3 +36,9 @@ android {
 }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+
+addLanguageArgs(
+  "kotlinx.coroutines.ExperimentalCoroutinesApi",
+  "kotlinx.cinterop.ExperimentalForeignApi",
+  "kotlinx.cinterop.BetaInteropApi",
+)
