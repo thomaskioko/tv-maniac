@@ -13,11 +13,13 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias TrailersPresenterFactory =
-  (
-    ComponentContext,
+@Inject
+class TrailersPresenterFactory(
+  val create: (
+    componentContext: ComponentContext,
     id: Long,
-  ) -> TrailersPresenter
+  ) -> TrailersPresenter,
+)
 
 class TrailersPresenter
 @Inject

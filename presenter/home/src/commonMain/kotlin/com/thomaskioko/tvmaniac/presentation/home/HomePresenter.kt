@@ -7,8 +7,8 @@ import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenter
@@ -25,19 +25,21 @@ import kotlinx.serialization.Serializable
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias HomePresenterFactory =
-  (
-    ComponentContext,
+@Inject
+class HomePresenterFactory(
+  val create: (
+    componentContext: ComponentContext,
     onShowClicked: (id: Long) -> Unit,
     onMoreShowClicked: (id: Long) -> Unit,
-  ) -> HomePresenter
+  ) -> HomePresenter,
+)
 
 @Inject
 class HomePresenter(
   @Assisted componentContext: ComponentContext,
   @Assisted private val onShowClicked: (id: Long) -> Unit,
   @Assisted private val onMoreShowClicked: (id: Long) -> Unit,
-  private val discoverComponentFactory: DiscoverShowsPresenterFactory,
+  private val discoverPresenterFactory: DiscoverPresenterFactory,
   private val libraryPresenterFactory: LibraryPresenterFactory,
   private val searchPresenterFactory: SearchPresenterFactory,
   private val settingsPresenterFactory: SettingsPresenterFactory,
@@ -84,8 +86,8 @@ class HomePresenter(
     when (config) {
       is Config.Discover -> {
         Child.Discover(
-          component =
-            discoverComponentFactory(
+          presenter =
+            discoverPresenterFactory.create(
               componentContext,
               { id -> onShowClicked(id) },
               { id -> onMoreShowClicked(id) },
@@ -94,8 +96,8 @@ class HomePresenter(
       }
       Config.Library -> {
         Child.Library(
-          component =
-            libraryPresenterFactory(
+          presenter =
+            libraryPresenterFactory.create(
               componentContext,
             ) { id ->
               onShowClicked(id)
@@ -104,8 +106,8 @@ class HomePresenter(
       }
       Config.Search -> {
         Child.Search(
-          component =
-            searchPresenterFactory(
+          presenter =
+            searchPresenterFactory.create(
               componentContext,
               { id -> onShowClicked(id) }
             ),
@@ -113,8 +115,8 @@ class HomePresenter(
       }
       Config.Settings -> {
         Child.Settings(
-          component =
-            settingsPresenterFactory(
+          presenter =
+            settingsPresenterFactory.create(
               componentContext,
             ) {
               traktAuthManager.launchWebView()
@@ -124,13 +126,13 @@ class HomePresenter(
     }
 
   sealed interface Child {
-    class Discover(val component: DiscoverShowsPresenter) : Child
+    class Discover(val presenter: DiscoverShowsPresenter) : Child
 
-    class Library(val component: LibraryPresenter) : Child
+    class Library(val presenter: LibraryPresenter) : Child
 
-    class Search(val component: SearchShowsPresenter) : Child
+    class Search(val presenter: SearchShowsPresenter) : Child
 
-    class Settings(val component: SettingsPresenter) : Child
+    class Settings(val presenter: SettingsPresenter) : Child
   }
 
   @Serializable
