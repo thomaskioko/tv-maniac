@@ -12,13 +12,13 @@ struct HomeChildView: View {
         VStack {
           switch onEnum(of: screen) {
             case .discover(let screen):
-              DiscoverView(presenter: screen.component)
+              DiscoverView(presenter: screen.presenter)
             case .search(let screen):
-              SearchView(presenter: screen.component)
+              SearchView(presenter: screen.presenter)
             case .library(let screen):
-              LibraryView(presenter: screen.component)
+              LibraryView(presenter: screen.presenter)
             case .settings(let screen):
-              SettingsView(presenter: screen.component)
+              SettingsView(presenter: screen.presenter)
           }
         }
         .bottomTabSafeArea()

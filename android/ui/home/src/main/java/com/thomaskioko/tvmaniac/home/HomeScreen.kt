@@ -50,25 +50,25 @@ private fun ChildrenContent(homePresenter: HomePresenter, modifier: Modifier = M
     when (val screen = child.instance) {
       is Discover -> {
         DiscoverScreen(
-          presenter = screen.component,
+          presenter = screen.presenter,
           modifier = fillMaxSizeModifier,
         )
       }
       is Library -> {
         LibraryScreen(
-          presenter = screen.component,
+          presenter = screen.presenter,
           modifier = fillMaxSizeModifier,
         )
       }
       is Search -> {
         SearchScreen(
-          presenter = screen.component,
+          presenter = screen.presenter,
           modifier = fillMaxSizeModifier,
         )
       }
       is Settings -> {
         SettingsScreen(
-          presenter = screen.component,
+          presenter = screen.presenter,
           modifier = fillMaxSizeModifier,
         )
       }

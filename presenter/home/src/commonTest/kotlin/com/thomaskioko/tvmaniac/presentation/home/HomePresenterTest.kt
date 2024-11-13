@@ -12,8 +12,8 @@ import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepo
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.ShowMapper
@@ -92,19 +92,21 @@ class HomePresenterTest {
 
   private fun buildSearchPresenterFactory(
     componentContext: ComponentContext,
-  ): SearchPresenterFactory = { _: ComponentContext, _: (id: Long) -> Unit ->
-    SearchShowsPresenter(
-      componentContext = componentContext,
-      searchRepository = searchRepository,
-      onNavigateToShowDetails = {},
-      featuredShowsRepository = featuredShowsRepository,
-      trendingShowsRepository = trendingShowsRepository,
-      upcomingShowsRepository = upcomingShowsRepository,
-      mapper = ShowMapper(
-       formatterUtil = FakeFormatterUtil(),
-      ),
-    )
-  }
+  ): SearchPresenterFactory = SearchPresenterFactory(
+    create = { _: ComponentContext, _: (id: Long) -> Unit ->
+      SearchShowsPresenter(
+        componentContext = componentContext,
+        searchRepository = searchRepository,
+        onNavigateToShowDetails = {},
+        featuredShowsRepository = featuredShowsRepository,
+        trendingShowsRepository = trendingShowsRepository,
+        upcomingShowsRepository = upcomingShowsRepository,
+        mapper = ShowMapper(
+          formatterUtil = FakeFormatterUtil(),
+        ),
+      )
+    }
+  )
 
   private fun buildHomePresenterFactory(
     componentContext: ComponentContext = DefaultComponentContext(lifecycle = lifecycle)
@@ -116,25 +118,26 @@ class HomePresenterTest {
       traktAuthManager = traktAuthManager,
       searchPresenterFactory = buildSearchPresenterFactory(componentContext),
       settingsPresenterFactory = buildSettingsPresenterFactory(componentContext),
-      discoverComponentFactory = buildDiscoverPresenterFactory(componentContext),
+      discoverPresenterFactory = buildDiscoverPresenterFactory(componentContext),
       libraryPresenterFactory = buildLibraryPresenterFactory(componentContext),
     )
 
   private fun buildSettingsPresenterFactory(
     componentContext: ComponentContext,
-  ): SettingsPresenterFactory = { _: ComponentContext, _: () -> Unit ->
+  ): SettingsPresenterFactory = SettingsPresenterFactory(create = { _: ComponentContext, _: () -> Unit ->
     SettingsPresenter(
       componentContext = componentContext,
       launchWebView = {},
       datastoreRepository = datastoreRepository,
       traktAuthRepository = FakeTraktAuthRepository(),
     )
-  }
+  })
 
   private fun buildDiscoverPresenterFactory(
     componentContext: ComponentContext,
-  ): DiscoverShowsPresenterFactory =
-    { _: ComponentContext, _: (id: Long) -> Unit, _: (categoryId: Long) -> Unit ->
+  ): DiscoverPresenterFactory =
+    DiscoverPresenterFactory(
+    create = { _: ComponentContext, _: (id: Long) -> Unit, _: (categoryId: Long) -> Unit ->
       DiscoverShowsPresenter(
         componentContext = componentContext,
         onNavigateToShowDetails = {},
@@ -146,14 +149,16 @@ class HomePresenterTest {
         popularShowsRepository = FakePopularShowsRepository(),
       )
     }
+    )
 
   private fun buildLibraryPresenterFactory(
     componentContext: ComponentContext,
-  ): LibraryPresenterFactory = { _: ComponentContext, _: (showDetails: Long) -> Unit ->
+  ): LibraryPresenterFactory =LibraryPresenterFactory(
+    create = { _: ComponentContext, _: (showDetails: Long) -> Unit ->
     LibraryPresenter(
       componentContext = componentContext,
       navigateToShowDetails = {},
       repository = FakeLibraryRepository(),
     )
-  }
+  })
 }

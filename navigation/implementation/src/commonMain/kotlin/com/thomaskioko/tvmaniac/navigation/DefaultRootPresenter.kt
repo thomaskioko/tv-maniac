@@ -89,7 +89,7 @@ class DefaultRootPresenter(
       is Config.Home ->
         Child.Home(
           presenter =
-            homePresenterFactory(
+            homePresenterFactory.create(
               componentContext,
               { id -> navigation.pushNew(Config.ShowDetails(id)) },
               { id -> navigation.pushNew(Config.MoreShows(id)) },
@@ -98,7 +98,7 @@ class DefaultRootPresenter(
       is Config.ShowDetails ->
         Child.ShowDetails(
           presenter =
-            showDetailsPresenterFactory(
+            showDetailsPresenterFactory.create(
               componentContext,
               config.id,
               navigation::pop,
@@ -120,7 +120,7 @@ class DefaultRootPresenter(
       is Config.SeasonDetails ->
         Child.SeasonDetails(
           presenter =
-            seasonDetailsPresenterFactory(
+            seasonDetailsPresenterFactory.create(
               componentContext,
               config.param,
               navigation::pop,
@@ -131,7 +131,7 @@ class DefaultRootPresenter(
       is Config.Trailers ->
         Child.Trailers(
           presenter =
-            trailersPresenterFactory(
+            trailersPresenterFactory.create(
               componentContext,
               config.id,
             ),
