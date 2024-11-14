@@ -2,17 +2,46 @@ import co.touchlab.skie.configuration.FlowInterop
 import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.skie)
   alias(libs.plugins.tvmaniac.android.library)
   alias(libs.plugins.tvmaniac.multiplatform)
-  alias(libs.plugins.skie)
-  alias(libs.plugins.ksp)
 }
 
 version = libs.versions.shared.module.version.get()
 
 kotlin {
+  val xcFramework = XCFramework("TvManiac")
+
+  targets.withType<KotlinNativeTarget>().configureEach {
+    binaries.withType<Framework> {
+      baseName = "TvManiac"
+
+      isStatic = !debuggable
+      linkerOpts.add("-lsqlite3")
+
+      export(projects.navigation.api)
+      export(projects.datastore.api)
+      export(projects.presenter.discover)
+      export(projects.presenter.home)
+      export(projects.presenter.library)
+      export(projects.presenter.moreShows)
+      export(projects.presenter.search)
+      export(projects.presenter.seasondetails)
+      export(projects.presenter.settings)
+      export(projects.presenter.showDetails)
+      export(projects.presenter.trailers)
+
+      export(libs.decompose.decompose)
+      export(libs.essenty.lifecycle)
+
+      xcFramework.add(this)
+    }
+  }
+
   sourceSets {
     targets.withType<KotlinNativeTarget>().configureEach {
       binaries.withType<Framework> {
@@ -57,7 +86,6 @@ kotlin {
         api(projects.data.popularshows.implementation)
         api(projects.data.recommendedshows.api)
         api(projects.data.recommendedshows.implementation)
-        api(projects.data.requestManager.api)
         api(projects.data.requestManager.api)
         api(projects.data.requestManager.implementation)
         api(projects.data.seasondetails.api)
