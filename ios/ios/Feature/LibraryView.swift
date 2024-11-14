@@ -10,6 +10,7 @@ import SwiftUI
 import SwiftUIComponents
 import TvManiac
 import TvManiacUI
+import TvManiacKit
 
 struct LibraryView: View {
   private let presenter: LibraryPresenter

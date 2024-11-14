@@ -1,5 +1,5 @@
 import SwiftUI
-import TvManiac
+import TvManiacKit
 
 @main
 struct iOSApp: App {

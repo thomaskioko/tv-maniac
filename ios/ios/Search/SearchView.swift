@@ -10,6 +10,7 @@ import SwiftUI
 import SwiftUIComponents
 import TvManiac
 import TvManiacUI
+import TvManiacKit
 
 struct SearchView: View {
   private let presenter: SearchShowsPresenter
