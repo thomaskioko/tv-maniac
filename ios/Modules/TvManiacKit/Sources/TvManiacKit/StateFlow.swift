@@ -1,9 +1,8 @@
 //
 //  StateFlow.swift
-//  tv-maniac
+//  TvManiacKit
 //
-//  Created by Thomas Kioko on 4/2/24.
-//  Copyright © 2024 orgName. All rights reserved.
+//  Created by Thomas Kioko on 11/13/24.
 //
 
 import Foundation
