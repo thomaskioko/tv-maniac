@@ -1,8 +1,13 @@
 import co.touchlab.skie.configuration.FlowInterop
+import co.touchlab.skie.configuration.EnumInterop
+import co.touchlab.skie.configuration.SealedInterop
+import co.touchlab.skie.configuration.SuppressSkieWarning
+import co.touchlab.skie.configuration.SuspendInterop
 import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import co.touchlab.skie.configuration.DefaultArgumentInterop
 
 plugins {
   alias(libs.plugins.ksp)
@@ -22,6 +27,7 @@ kotlin {
 
       isStatic = !debuggable
       linkerOpts.add("-lsqlite3")
+      freeCompilerArgs += "-Xadd-light-debug=enable"
 
       export(projects.navigation.api)
       export(projects.datastore.api)
@@ -149,4 +155,19 @@ addKspDependencyForAllTargets(libs.kotlinInject.compiler)
 
 kotlin.sourceSets.all { languageSettings.optIn("kotlin.experimental.ExperimentalObjCName") }
 
-skie { features { group { FlowInterop.Enabled(false) } } }
+skie {
+  analytics {
+    disableUpload.set(true)
+  }
+
+  features {
+    group {
+      DefaultArgumentInterop.Enabled(false)
+      SuspendInterop.Enabled(true)
+      FlowInterop.Enabled(true)
+      EnumInterop.Enabled(true)
+      SealedInterop.Enabled(true)
+      SuppressSkieWarning.NameCollision(true)
+    }
+  }
+}
