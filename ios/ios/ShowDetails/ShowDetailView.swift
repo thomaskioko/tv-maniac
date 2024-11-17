@@ -102,8 +102,8 @@ struct ShowDetailView: View {
 
             presenter.dispatch(action: SeasonClicked(params: params))
           },
-          onShowClicked: {
-            presenter.dispatch(action: FollowShowClicked(addToLibrary: show.isFollowed))
+          onShowClicked: { id in
+            presenter.dispatch(action: DetailShowClicked(id: id))
           },
           titleRect: titleRect
         )

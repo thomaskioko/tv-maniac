@@ -14,7 +14,7 @@ public struct ShowInfoView: View {
     private let onWatchTrailer: () -> Void
     private let onAddToLibrary: () -> Void
     private let onSeasonClicked: (Int, SwiftSeason) -> Void
-    private let onShowClicked: () -> Void
+    private let onShowClicked: (Int64) -> Void
     @Binding var titleRect: CGRect
 
     public init(
@@ -30,7 +30,7 @@ public struct ShowInfoView: View {
         onWatchTrailer: @escaping () -> Void,
         onAddToLibrary: @escaping () -> Void,
         onSeasonClicked: @escaping (Int, SwiftSeason) -> Void,
-        onShowClicked: @escaping () -> Void,
+        onShowClicked: @escaping (Int64) -> Void,
         titleRect: Binding<CGRect>
     ) {
         self.isFollowed = isFollowed
@@ -102,13 +102,13 @@ public struct ShowInfoView: View {
             HorizontalItemListView(
                 title: "Recommendations",
                 items: recommendedShowList,
-                onClick: { _ in onShowClicked() }
+                onClick: { id in onShowClicked(id) }
             )
 
             HorizontalItemListView(
                 title: "Similar Shows",
                 items: similarShows,
-                onClick: { _ in onShowClicked() }
+                onClick: { id in onShowClicked(id) }
             )
         }
     }
@@ -227,7 +227,7 @@ public struct ShowInfoView: View {
             onWatchTrailer: {},
             onAddToLibrary: {},
             onSeasonClicked: { _, _ in },
-            onShowClicked: {},
+            onShowClicked: { _ in },
             titleRect: .constant(CGRect())
         )
     }
