@@ -69,5 +69,9 @@ gradlePlugin {
       id = "plugin.tvmaniac.root"
       implementationClass = "com.thomaskioko.tvmaniac.plugins.RootPlugin"
     }
+    register("xcframework") {
+      id = "plugin.tvmaniac.xcframework"
+      implementationClass = "com.thomaskioko.tvmaniac.plugins.XCFrameworkPlugin"
+    }
   }
 }

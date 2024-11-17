@@ -14,6 +14,7 @@ plugins {
   alias(libs.plugins.skie)
   alias(libs.plugins.tvmaniac.android.library)
   alias(libs.plugins.tvmaniac.multiplatform)
+  alias(libs.plugins.tvmaniac.xcframework)
 }
 
 version = libs.versions.shared.module.version.get()

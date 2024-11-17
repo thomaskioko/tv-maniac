@@ -15,6 +15,10 @@ platform :ios do
   desc "Build iOS App"
   lane :build_tvmaniac do
 
+    gradle(
+      task: ":shared:copyXCFramework"
+    )
+
     build_app(
       scheme: "tv-maniac",
       project: XC_PROJECT,
