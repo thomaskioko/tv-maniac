@@ -9,21 +9,24 @@ import SwiftUI
 import TvManiac
 
 public class ObservableStateFlow<T: AnyObject>: ObservableObject {
-  private let stateFlow: SkieSwiftStateFlow<T>
-
   @Published var wrappedValue: T
-
+  @Published private(set) var error: Error?
+  private let stateFlow: SkieSwiftStateFlow<T>
   private var publisher: Task<Void, Never>?
 
   public init(_ stateFlow: SkieSwiftStateFlow<T>) {
     self.stateFlow = stateFlow
     self.wrappedValue = stateFlow.value
 
-    self.publisher = Task { @MainActor [weak self] in
-      if let stateFlow = self?.stateFlow {
-        for await item in stateFlow {
-          self?.wrappedValue = item
-        }
+    setupPublisher()
+  }
+
+  private func setupPublisher() {
+    publisher = Task { @MainActor [weak self] in
+      guard let stateFlow = self?.stateFlow else { return }
+      for await item in stateFlow {
+        self?.wrappedValue = item
+        self?.error = nil
       }
     }
   }
