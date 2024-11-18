@@ -14,6 +14,12 @@ env:
   JDK_VERSION: 21
   DISTRIBUTION: 'zulu'
   FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
+  GRADLE_CACHE_PATH: |
+    ~/.gradle/caches
+    ~/.gradle/wrapper
+  SPM_CACHE_PATH: |
+    ~/Library/Caches/org.swift.swiftpm
+    ~/Library/Developer/Xcode/DerivedData
 
 jobs:
   build-android:
@@ -36,16 +42,24 @@ jobs:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
 
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GRADLE_CACHE_PATH }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3.5.0
 
       - name: Add App Secrets
         run: |
           echo "TMDB_API_KEY=$TMDB_API_KEY" >> ./local.properties
-          echo "\TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
-          echo "\TRAKT_CLIENT_ID=$TRAKT_CLIENT_ID" >> ./local.properties
-          echo "\TRAKT_CLIENT_SECRET=$TRAKT_CLIENT_SECRET" >> ./local.properties
-          echo "\TRAKT_REDIRECT_URI=$TRAKT_REDIRECT_URI" >> ./local.properties
+          echo "TMDB_API_URL=$TMDB_API_URL" >> ./local.properties
+          echo "TRAKT_CLIENT_ID=$TRAKT_CLIENT_ID" >> ./local.properties
+          echo "TRAKT_CLIENT_SECRET=$TRAKT_CLIENT_SECRET" >> ./local.properties
+          echo "TRAKT_REDIRECT_URI=$TRAKT_REDIRECT_URI" >> ./local.properties
 
       - name: Build with Gradle
         run: ./gradlew assemble
@@ -59,11 +73,20 @@ jobs:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
 
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GRADLE_CACHE_PATH }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Lint Project
         run: ./gradlew lint
 
       - name: Upload Lint Report
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: android-lint-report
           path: app/build/reports/lint-results*.html
@@ -77,10 +100,20 @@ jobs:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
 
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GRADLE_CACHE_PATH }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Run Spotless
         run: ./gradlew spotlessCheck
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload Spotless Report
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: spotless-report
           path: ./**/build/reports/spotless/spotless.*
@@ -94,23 +127,33 @@ jobs:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
 
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GRADLE_CACHE_PATH }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Dependency Health
         run: ./gradlew buildHealth
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload Dependency Report
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: dependency-health-report
           path: ./**/build/reports/tests/
 
   android_screenshot_test:
-    runs-on: macos-latest
-
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
     permissions:
       contents: write
       pull-requests: write
 
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up JDK
@@ -118,6 +161,14 @@ jobs:
         with:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
+
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GRADLE_CACHE_PATH }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Roborazzi screenshot tests
         id: screenshotsverify
@@ -136,7 +187,6 @@ jobs:
         run: |
           echo "::error::Screenshot tests failed, please create a PR in your fork first." && exit 1
 
-      # Runs if previous job failed
       - name: Generate new screenshots if verification failed and it's a PR
         id: screenshotsrecord
         if: steps.screenshotsverify.outcome == 'failure' && github.event_name == 'pull_request'
@@ -167,10 +217,20 @@ jobs:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
 
-      - name: Jvm Test
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GRADLE_CACHE_PATH }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Run JVM Tests
         run: ./gradlew jvmTest
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: jvm-test-report
           path: ./**/build/reports/tests/
@@ -179,7 +239,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up JDK
@@ -187,6 +247,14 @@ jobs:
         with:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
+
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GRADLE_CACHE_PATH }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Run Common iOS Unit Tests
         run: |
@@ -198,14 +266,15 @@ jobs:
 
       - name: Upload Common Test Report
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: common-test-report
           path: ./**/build/reports/tests/
 
   build-ios:
+    needs: [common_test]
     runs-on: macos-latest
     timeout-minutes: 180
-
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
@@ -213,13 +282,29 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: '15.2'
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0
           bundler-cache: true
+
+      - name: Cache SPM dependencies
+        uses: actions/cache@v4
+        with:
+            path: ${{ env.SPM_CACHE_PATH }}
+            key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+            restore-keys: |
+              ${{ runner.os }}-spm-
+
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GRADLE_CACHE_PATH }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Install dependencies with Bundler
         run: bundle install
@@ -241,17 +326,18 @@ jobs:
           path: fastlane/test_output
 
   create-release:
-    needs: [build-android, android_lint, android_screenshot_test, common_test, build-ios, spotless, jvm_test, ]
+    needs: [build-android, android_lint, android_screenshot_test, common_test, build-ios, spotless, dependency-health, jvm_test]
     if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 21
-          distribution: 'zulu'
+          java-version: ${{ env.JDK_VERSION }}
+          distribution: ${{ env.DISTRIBUTION }}
 
       - name: Create release
         uses: softprops/action-gh-release@v2

@@ -34,7 +34,7 @@ platform :ios do
       clean: true,
       disable_package_automatic_updates: true,
       derived_data_path: "derived_data",
-      xcargs: "-skipPackagePluginValidation",
+      xcargs: "-skipPackagePluginValidation DEBUG_INFORMATION_FORMAT=dwarf",
       buildlog_path: "fastlane/logs"
     )
   end
