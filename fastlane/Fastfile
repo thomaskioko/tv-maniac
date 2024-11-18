@@ -14,14 +14,16 @@ platform :ios do
 
   desc "Build iOS App"
   lane :build_tvmaniac do
-
+    # Set a longer timeout for package resolution
+    ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '300'
+    
     gradle(
       task: ":shared:copyXCFramework",
-      project_dir: File.expand_path('../'),
-      print_command: true,
-      print_command_output: true,
-      flags: "--info --stacktrace"
+      project_dir: File.expand_path('../')
     )
+
+    # First resolve SPM dependencies separately
+    sh("cd ../ios && xcodebuild -resolvePackageDependencies -scheme tv-maniac -project tv-maniac.xcodeproj")
 
     build_app(
       scheme: "tv-maniac",
@@ -31,7 +33,9 @@ platform :ios do
       suppress_xcode_output: false,
       clean: true,
       disable_package_automatic_updates: true,
-      derived_data_path: "derived_data"
+      derived_data_path: "derived_data",
+      xcargs: "-skipPackagePluginValidation",
+      buildlog_path: "fastlane/logs"
     )
   end
 
