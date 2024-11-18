@@ -17,7 +17,7 @@ platform :ios do
   lane :build_tvmaniac do
 
     gradle(
-      tasks: [":shared:clean", ":shared:copyDebugDeviceXCFramework"],
+      task: "shared:copyDebugSimulatorXCFramework",
       project_dir: File.expand_path('../')
     )
 
