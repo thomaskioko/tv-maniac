@@ -16,16 +16,24 @@ platform :ios do
   lane :build_tvmaniac do
 
     gradle(
-      task: ":shared:copyXCFramework"
+      task: ":shared:copyXCFramework",
+      project_dir: File.expand_path('../'),
+      print_command: true,
+      print_command_output: true,
+      flags: "--info --stacktrace"
     )
 
     build_app(
       scheme: "tv-maniac",
       project: XC_PROJECT,
       skip_archive: true,
-      skip_codesigning: true
-      )
-  end   
+      skip_codesigning: true,
+      suppress_xcode_output: false,
+      clean: true,
+      disable_package_automatic_updates: true,
+      derived_data_path: "derived_data"
+    )
+  end
 
   desc "Run All UI Tests"
   lane :ui_tests do
@@ -45,7 +53,7 @@ platform :ios do
         output_types: "html,junit",
         clean: true
       )
-  end 
+  end
 
   desc "Run TvManiacUITests Tests"
   lane :tvmaniac_ui_components_tests do
@@ -59,7 +67,7 @@ platform :ios do
         output_types: "html,junit",
         clean: true
       )
-  end 
+  end
 
   desc "Clear derived data"
   lane :clear_derived_data_lane do
