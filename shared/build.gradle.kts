@@ -50,30 +50,6 @@ kotlin {
   }
 
   sourceSets {
-    targets.withType<KotlinNativeTarget>().configureEach {
-      binaries.withType<Framework> {
-        baseName = "TvManiac"
-
-        isStatic = !debuggable
-        linkerOpts.add("-lsqlite3")
-        freeCompilerArgs += "-Xadd-light-debug=enable"
-
-        export(projects.navigation.api)
-        export(projects.datastore.api)
-        export(projects.presenter.discover)
-        export(projects.presenter.home)
-        export(projects.presenter.library)
-        export(projects.presenter.moreShows)
-        export(projects.presenter.search)
-        export(projects.presenter.seasondetails)
-        export(projects.presenter.settings)
-        export(projects.presenter.showDetails)
-        export(projects.presenter.trailers)
-
-        export(libs.decompose.decompose)
-        export(libs.essenty.lifecycle)
-      }
-    }
     commonMain {
       dependencies {
         api(projects.core.base)

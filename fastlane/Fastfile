@@ -1,3 +1,5 @@
+fastlane_version "2.68.0"
+
 default_platform(:ios)
 
 XC_PROJECT = File.absolute_path('../ios/tv-maniac.xcodeproj')
@@ -7,36 +9,30 @@ platform :ios do
   before_all do
     if is_ci
       setup_ci
-      # set Fastlane's xcodebuild -showBuildSettings timeout to a more reasonable value.
       ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
     end
   end
 
   desc "Build iOS App"
   lane :build_tvmaniac do
-    # Set a longer timeout for package resolution
-    ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '300'
-    
     gradle(
       task: ":shared:copyXCFramework",
-      project_dir: File.expand_path('../')
+      project_dir: File.expand_path('../'),
+      properties: {
+        "org.gradle.scan.uploadInBackground" => "false",
+        "org.gradle.scan.publish" => "false"
+      }
     )
-
-    # First resolve SPM dependencies separately
-    sh("cd ../ios && xcodebuild -resolvePackageDependencies -scheme tv-maniac -project tv-maniac.xcodeproj")
 
     build_app(
       scheme: "tv-maniac",
       project: XC_PROJECT,
       skip_archive: true,
       skip_codesigning: true,
-      suppress_xcode_output: false,
       clean: true,
-      disable_package_automatic_updates: true,
-      derived_data_path: "derived_data",
-      xcargs: "-skipPackagePluginValidation DEBUG_INFORMATION_FORMAT=dwarf",
-      buildlog_path: "fastlane/logs"
-    )
+      xcargs: "-verbose",
+      buildlog_path: "fastlane/logs",
+      )
   end
 
   desc "Run All UI Tests"
