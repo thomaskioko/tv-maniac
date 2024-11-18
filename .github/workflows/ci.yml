@@ -14,12 +14,6 @@ env:
   JDK_VERSION: 21
   DISTRIBUTION: 'zulu'
   FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
-  GRADLE_CACHE_PATH: |
-    ~/.gradle/caches
-    ~/.gradle/wrapper
-  SPM_CACHE_PATH: |
-    ~/Library/Caches/org.swift.swiftpm
-    ~/Library/Developer/Xcode/DerivedData
 
 jobs:
   build-android:
@@ -41,14 +35,6 @@ jobs:
         with:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
-
-      - name: 📁 Setup Gradle Cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.GRADLE_CACHE_PATH }}
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
 
       - name: 🐘 Setup Gradle 8.8
         uses: gradle/actions/setup-gradle@v4
@@ -75,20 +61,11 @@ jobs:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
 
-      - name: Setup Gradle Cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.GRADLE_CACHE_PATH }}
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Lint Project
         run: ./gradlew lint
 
       - name: Upload Lint Report
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: android-lint-report
           path: app/build/reports/lint-results*.html
@@ -102,27 +79,15 @@ jobs:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
 
-      - name: Setup Gradle Cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.GRADLE_CACHE_PATH }}
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Run Spotless
         run: ./gradlew spotlessCheck
 
-      - name: Upload Spotless Report
-        uses: actions/upload-artifact@v4
-        if: always()
+      - uses: actions/upload-artifact@v4
         with:
           name: spotless-report
-          path: |
-            **/build/reports/spotless
-            app/build/reports/spotless
+          path: ./**/build/reports/spotless/spotless.*
 
-  dependency-health:
+  dependency_health:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -131,27 +96,17 @@ jobs:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
 
-      - name: Setup Gradle Cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.GRADLE_CACHE_PATH }}
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Dependency Health
         run: ./gradlew buildHealth
 
-      - name: Upload Dependency Report
-        uses: actions/upload-artifact@v4
-        if: always()
+      - uses: actions/upload-artifact@v4
         with:
           name: dependency-health-report
           path: ./**/build/reports/tests/
 
   android_screenshot_test:
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
+    runs-on: macos-latest
+
     permissions:
       contents: write
       pull-requests: write
@@ -165,14 +120,6 @@ jobs:
         with:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
-
-      - name: Setup Gradle Cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.GRADLE_CACHE_PATH }}
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
 
       - name: Roborazzi screenshot tests
         id: screenshotsverify
@@ -191,6 +138,7 @@ jobs:
         run: |
           echo "::error::Screenshot tests failed, please create a PR in your fork first." && exit 1
 
+      # Runs if previous job failed
       - name: Generate new screenshots if verification failed and it's a PR
         id: screenshotsrecord
         if: steps.screenshotsverify.outcome == 'failure' && github.event_name == 'pull_request'
@@ -221,20 +169,10 @@ jobs:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
 
-      - name: Setup Gradle Cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.GRADLE_CACHE_PATH }}
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Run JVM Tests
+      - name: Jvm Test
         run: ./gradlew jvmTest
 
-      - name: Upload Test Report
-        uses: actions/upload-artifact@v4
-        if: always()
+      - uses: actions/upload-artifact@v4
         with:
           name: jvm-test-report
           path: ./**/build/reports/tests/
@@ -252,14 +190,6 @@ jobs:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
 
-      - name: Setup Gradle Cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.GRADLE_CACHE_PATH }}
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Run Common iOS Unit Tests
         run: |
           if [[ $(uname -m) == 'arm64' ]]; then
@@ -270,15 +200,14 @@ jobs:
 
       - name: Upload Common Test Report
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: common-test-report
           path: ./**/build/reports/tests/
 
   build-ios:
-    needs: [common_test]
     runs-on: macos-latest
     timeout-minutes: 180
+
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
@@ -293,22 +222,6 @@ jobs:
         with:
           ruby-version: 3.3.0
           bundler-cache: true
-
-      - name: Cache SPM dependencies
-        uses: actions/cache@v4
-        with:
-            path: ${{ env.SPM_CACHE_PATH }}
-            key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-            restore-keys: |
-              ${{ runner.os }}-spm-
-
-      - name: Setup Gradle Cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.GRADLE_CACHE_PATH }}
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
 
       - name: Install dependencies with Bundler
         run: bundle install
@@ -330,10 +243,9 @@ jobs:
           path: fastlane/test_output
 
   create-release:
-    needs: [build-android, android_lint, android_screenshot_test, common_test, build-ios, spotless, dependency-health, jvm_test]
+    needs: [build-android, android_lint, android_screenshot_test, common_test, build-ios, spotless, dependency_health, jvm_test]
     if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
