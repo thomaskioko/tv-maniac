@@ -15,24 +15,29 @@ platform :ios do
 
   desc "Build iOS App"
   lane :build_tvmaniac do
+
     gradle(
-      task: ":shared:copyXCFramework",
-      project_dir: File.expand_path('../'),
-      properties: {
-        "org.gradle.scan.uploadInBackground" => "false",
-        "org.gradle.scan.publish" => "false"
-      }
+      task: ":shared:copyDebugDeviceXCFramework",
+      project_dir: File.expand_path('../')
     )
 
-    build_app(
+    xcargs = {
+      :BUILD_LIBRARY_FOR_DISTRIBUTION => "NO",
+      :SKIP_INSTALL => "NO",
+      :APPTENTIVE_DISTRIBUTION => "Framework"
+    }
+
+    gym(
       scheme: "tv-maniac",
       project: XC_PROJECT,
+      output_directory: 'build',
+      include_symbols: true,
+      include_bitcode: false,
       skip_archive: true,
       skip_codesigning: true,
-      clean: true,
-      xcargs: "-verbose",
+      xcargs: xcargs,
       buildlog_path: "fastlane/logs",
-      )
+    )
   end
 
   desc "Run All UI Tests"

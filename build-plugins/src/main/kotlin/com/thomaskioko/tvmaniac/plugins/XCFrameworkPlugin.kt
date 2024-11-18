@@ -64,7 +64,7 @@ abstract class XCFrameworkPlugin : Plugin<Project> {
       extension = extension,
     )
 
-    // Register tasks for each build type/target combination
+    // Register tasks for each build type/target combination (Debug/Release and Device/Simulator)
     nativeBuildTargetTypes.forEach { (buildType, targetType) ->
       registerCopyXCFrameworkTask(
         nativeBuildType = buildType,
@@ -85,6 +85,9 @@ abstract class XCFrameworkPlugin : Plugin<Project> {
     val multiplatformExtension = extensions.findByType<KotlinMultiplatformExtension>()
       ?: throw GradleException("KotlinMultiplatformExtension not found. Apply Kotlin Multiplatform plugin first.")
 
+    val projectName = name
+    val projectDir = rootProject.projectDir
+
     // Register assembly task
     val assembleXCFrameworkTask = tasks.register<XCFrameworkTask>("assemble${buildInfix}XCFramework") {
       group = GROUP_NAME
@@ -99,7 +102,7 @@ abstract class XCFrameworkPlugin : Plugin<Project> {
       group = GROUP_NAME
       description = "Copies the $buildInfix XCFramework to ${extension.outputPath.get()}"
 
-      val outputDir = project.rootProject.projectDir.resolve(
+      val outputDir = projectDir.resolve(
         "${extension.outputPath.get()}/${extension.frameworkName.get()}",
       )
 
@@ -108,7 +111,7 @@ abstract class XCFrameworkPlugin : Plugin<Project> {
       from(
         assembleXCFrameworkTask.map {
           it.outputDir.resolve(nativeBuildType.getName())
-            .resolve("${project.name}.xcframework")
+            .resolve("$projectName.xcframework")
         },
       )
 
@@ -119,7 +122,7 @@ abstract class XCFrameworkPlugin : Plugin<Project> {
         outputDir.deleteRecursively()
 
         if (extension.cleanIntermediate.get()) {
-          logger.lifecycle("Cleaning intermediates for ${project.name}")
+          logger.lifecycle("Cleaning intermediates for $projectName")
           intermediatesDir?.toPath()?.listDirectoryEntries("${extension.frameworkName.get()}*")?.forEach {
             it.deleteRecursively()
             logger.lifecycle("Cleaned intermediate files: ${it.fileName}")

@@ -42,7 +42,7 @@ jobs:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JDK_VERSION }}
 
-      - name: Setup Gradle Cache
+      - name: 📁 Setup Gradle Cache
         uses: actions/cache@v4
         with:
           path: ${{ env.GRADLE_CACHE_PATH }}
@@ -50,8 +50,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3.5.0
+      - name: 🐘 Setup Gradle 8.8
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.11
 
       - name: Add App Secrets
         run: |

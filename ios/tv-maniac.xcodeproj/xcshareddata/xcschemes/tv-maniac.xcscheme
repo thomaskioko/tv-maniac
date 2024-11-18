@@ -10,9 +10,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "cd &quot;$SRCROOT/..&quot;&#10;./gradlew :shared:copyXCFramework&#10;"
-               inputPaths = "$(SRCROOT)/../shared/src/"
-               outputPaths = "$(SRCROOT)/Modules/TvManiacKit/TvManiac.xcframework">
+               scriptText = "cd &quot;$SRCROOT/..&quot;&#10;./gradlew :shared:copyXCFramework&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
