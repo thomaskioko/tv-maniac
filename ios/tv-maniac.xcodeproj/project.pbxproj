@@ -497,6 +497,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_DEBUG_INFORMATION_VERSION = 5.0;
 			};
 			name = Debug;
 		};
