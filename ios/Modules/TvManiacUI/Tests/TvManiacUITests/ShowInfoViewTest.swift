@@ -114,7 +114,7 @@ class ShowInfoViewTest: XCTestCase {
       onWatchTrailer: {},
       onAddToLibrary: {},
       onSeasonClicked: { _, _ in },
-      onShowClicked: {},
+      onShowClicked: { _ in },
       titleRect: .constant(CGRect())
     )
     .background(Color.background)
