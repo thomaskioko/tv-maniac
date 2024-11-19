@@ -166,6 +166,7 @@ tvmaniac-multiplatform = { id = "plugin.tvmaniac.multiplatform" }
 tvmaniac-spotless = { id = "plugin.tvmaniac.spotless" }
 tvmaniac-git-hooks = { id = "plugin.tvmaniac.git-hooks" }
 tvmaniac-root = { id = "plugin.tvmaniac.root" }
+tvmaniac-xcframework = { id = "plugin.tvmaniac.xcframework" }
 
 [bundles]
 unittest = [

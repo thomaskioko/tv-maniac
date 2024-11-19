@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftUIComponents
 import TvManiac
 import TvManiacUI
+import TvManiacKit
 
 struct DiscoverView: View {
   @Environment(\.colorScheme) var scheme

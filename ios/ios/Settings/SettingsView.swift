@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 import TvManiac
+import TvManiacKit
 
 struct SettingsView: View {
   private let presenter: SettingsPresenter

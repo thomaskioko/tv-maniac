@@ -8,6 +8,7 @@
 
 import SwiftUI
 import TvManiac
+import TvManiacKit
 
 struct RootView: View {
   private let rootPresenter: RootPresenter
@@ -24,8 +25,8 @@ struct RootView: View {
       if isShowingSplash {
         SplashScreenView()
       } else {
-        StackView(
-          stack: StateFlow(rootPresenter.stack),
+        NavigationStack(
+          stack: rootPresenter.stack,
           onBack: rootPresenter.onBackClicked,
           content: { child in
             childView(for: child)

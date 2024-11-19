@@ -55,6 +55,14 @@ Run TvManiacUITests Tests
 
 Clear derived data
 
+### ios copy_debug_simulator_xcframework
+
+```sh
+[bundle exec] fastlane ios copy_debug_simulator_xcframework
+```
+
+Copy Debug Simulator XCFramework
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

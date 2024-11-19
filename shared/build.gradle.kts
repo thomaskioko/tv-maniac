@@ -1,43 +1,55 @@
 import co.touchlab.skie.configuration.FlowInterop
+import co.touchlab.skie.configuration.EnumInterop
+import co.touchlab.skie.configuration.SealedInterop
+import co.touchlab.skie.configuration.SuppressSkieWarning
+import co.touchlab.skie.configuration.SuspendInterop
 import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import co.touchlab.skie.configuration.DefaultArgumentInterop
 
 plugins {
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.skie)
   alias(libs.plugins.tvmaniac.android.library)
   alias(libs.plugins.tvmaniac.multiplatform)
-  alias(libs.plugins.skie)
-  alias(libs.plugins.ksp)
+  alias(libs.plugins.tvmaniac.xcframework)
 }
 
 version = libs.versions.shared.module.version.get()
 
 kotlin {
-  sourceSets {
-    targets.withType<KotlinNativeTarget>().configureEach {
-      binaries.withType<Framework> {
-        baseName = "TvManiac"
+  val xcFramework = XCFramework("TvManiac")
 
-        isStatic = !debuggable
-        linkerOpts.add("-lsqlite3")
-        freeCompilerArgs += "-Xadd-light-debug=enable"
+  targets.withType<KotlinNativeTarget>().configureEach {
+    binaries.withType<Framework> {
+      baseName = "TvManiac"
 
-        export(projects.navigation.api)
-        export(projects.datastore.api)
-        export(projects.presenter.discover)
-        export(projects.presenter.home)
-        export(projects.presenter.library)
-        export(projects.presenter.moreShows)
-        export(projects.presenter.search)
-        export(projects.presenter.seasondetails)
-        export(projects.presenter.settings)
-        export(projects.presenter.showDetails)
-        export(projects.presenter.trailers)
+      isStatic = !debuggable
+      linkerOpts.add("-lsqlite3")
+      freeCompilerArgs += "-Xadd-light-debug=enable"
 
-        export(libs.decompose.decompose)
-        export(libs.essenty.lifecycle)
-      }
+      export(projects.navigation.api)
+      export(projects.datastore.api)
+      export(projects.presenter.discover)
+      export(projects.presenter.home)
+      export(projects.presenter.library)
+      export(projects.presenter.moreShows)
+      export(projects.presenter.search)
+      export(projects.presenter.seasondetails)
+      export(projects.presenter.settings)
+      export(projects.presenter.showDetails)
+      export(projects.presenter.trailers)
+
+      export(libs.decompose.decompose)
+      export(libs.essenty.lifecycle)
+
+      xcFramework.add(this)
     }
+  }
+
+  sourceSets {
     commonMain {
       dependencies {
         api(projects.core.base)
@@ -57,7 +69,6 @@ kotlin {
         api(projects.data.popularshows.implementation)
         api(projects.data.recommendedshows.api)
         api(projects.data.recommendedshows.implementation)
-        api(projects.data.requestManager.api)
         api(projects.data.requestManager.api)
         api(projects.data.requestManager.implementation)
         api(projects.data.seasondetails.api)
@@ -121,4 +132,19 @@ addKspDependencyForAllTargets(libs.kotlinInject.compiler)
 
 kotlin.sourceSets.all { languageSettings.optIn("kotlin.experimental.ExperimentalObjCName") }
 
-skie { features { group { FlowInterop.Enabled(false) } } }
+skie {
+  analytics {
+    disableUpload.set(true)
+  }
+
+  features {
+    group {
+      DefaultArgumentInterop.Enabled(false)
+      SuspendInterop.Enabled(true)
+      FlowInterop.Enabled(true)
+      EnumInterop.Enabled(true)
+      SealedInterop.Enabled(true)
+      SuppressSkieWarning.NameCollision(true)
+    }
+  }
+}

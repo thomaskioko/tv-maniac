@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
+		D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60D952A2CDBE1160039884B /* TvManiacKit */; };
 		D628B5C02A0C167E00015E45 /* config.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5BF2A0C167E00015E45 /* config.yaml */; };
 		D628B5C42A0C171300015E45 /* dev.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5C32A0C171300015E45 /* dev.yaml */; };
 		D62F1BC62B34442D004650E3 /* SeasonDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BC52B34442D004650E3 /* SeasonDetailsView.swift */; };
@@ -27,11 +28,8 @@
 		D67761892B1CED9E00537DD5 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67761882B1CED9E00537DD5 /* RootView.swift */; };
 		D68C97502C8EFBD800FAC88A /* TvManiacUI in Frameworks */ = {isa = PBXBuildFile; productRef = D68C974F2C8EFBD800FAC88A /* TvManiacUI */; };
 		D6A6FE9D2C9094070089AA3B /* Mapper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A6FE9C2C9094070089AA3B /* Mapper+Extensions.swift */; };
-		D6BA80EE2BBC55F5007CDA3A /* StateFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BA80ED2BBC55F5007CDA3A /* StateFlow.swift */; };
-		D6F635162C4E88F300D921A6 /* StackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F635152C4E88F300D921A6 /* StackView.swift */; };
 		D6F6351A2C4EA6FB00D921A6 /* HomeChildView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F635192C4EA6FB00D921A6 /* HomeChildView.swift */; };
 		D6F6351D2C4FEEF100D921A6 /* HomeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F6351C2C4FEEF100D921A6 /* HomeTabView.swift */; };
-		D6F635282C52A5B800D921A6 /* NavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F635272C52A5B800D921A6 /* NavigationModel.swift */; };
 		D6F6352E2C52C24A00D921A6 /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F6352D2C52C24A00D921A6 /* SplashScreenView.swift */; };
 		E98381A127936DC90039CB08 /* ShowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983819E27936DC90039CB08 /* ShowDetailView.swift */; };
 		E989E1162940E78E00C01A39 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E989E1152940E78E00C01A39 /* SettingsView.swift */; };
@@ -59,6 +57,7 @@
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D60D95292CDBDFB30039884B /* TvManiacKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TvManiacKit; sourceTree = "<group>"; };
 		D628B5BF2A0C167E00015E45 /* config.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; name = config.yaml; path = ../../../core/util/src/commonMain/resources/config.yaml; sourceTree = "<group>"; };
 		D628B5C32A0C171300015E45 /* dev.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = dev.yaml; sourceTree = "<group>"; };
 		D62F1BC52B34442D004650E3 /* SeasonDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonDetailsView.swift; sourceTree = "<group>"; };
@@ -77,12 +76,9 @@
 		D67761882B1CED9E00537DD5 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		D68C974E2C8EFB7C00FAC88A /* TvManiacUI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TvManiacUI; sourceTree = "<group>"; };
 		D6A6FE9C2C9094070089AA3B /* Mapper+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Mapper+Extensions.swift"; sourceTree = "<group>"; };
-		D6BA80ED2BBC55F5007CDA3A /* StateFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateFlow.swift; sourceTree = "<group>"; };
 		D6BDF2BB2C933DBB0042C86D /* SnapshotTestingLib */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SnapshotTestingLib; sourceTree = "<group>"; };
-		D6F635152C4E88F300D921A6 /* StackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackView.swift; sourceTree = "<group>"; };
 		D6F635192C4EA6FB00D921A6 /* HomeChildView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeChildView.swift; sourceTree = "<group>"; };
 		D6F6351C2C4FEEF100D921A6 /* HomeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTabView.swift; sourceTree = "<group>"; };
-		D6F635272C52A5B800D921A6 /* NavigationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationModel.swift; sourceTree = "<group>"; };
 		D6F6352D2C52C24A00D921A6 /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
 		E983819E27936DC90039CB08 /* ShowDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDetailView.swift; sourceTree = "<group>"; };
 		E989E1152940E78E00C01A39 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -100,6 +96,7 @@
 			files = (
 				D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */,
 				D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */,
+				D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */,
 				D68C97502C8EFBD800FAC88A /* TvManiacUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -229,21 +226,10 @@
 			path = Root;
 			sourceTree = "<group>";
 		};
-		D677618C2B1CF22500537DD5 /* DecomposeHelpers */ = {
-			isa = PBXGroup;
-			children = (
-				D67761842B1CE6AE00537DD5 /* AppDelegate.swift */,
-				D6F635272C52A5B800D921A6 /* NavigationModel.swift */,
-				D6F635152C4E88F300D921A6 /* StackView.swift */,
-				D6BA80ED2BBC55F5007CDA3A /* StateFlow.swift */,
-			);
-			name = DecomposeHelpers;
-			sourceTree = "<group>";
-		};
 		D68FFDD92B1FC89C001EB447 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				D677618C2B1CF22500537DD5 /* DecomposeHelpers */,
+				D67761842B1CE6AE00537DD5 /* AppDelegate.swift */,
 				E989E1172940EAB300C01A39 /* ThemeUtilities.swift */,
 			);
 			name = Utils;
@@ -287,6 +273,7 @@
 			children = (
 				D6BDF2BB2C933DBB0042C86D /* SnapshotTestingLib */,
 				D6619D352C89D36F00D273E7 /* SwiftUIComponents */,
+				D60D95292CDBDFB30039884B /* TvManiacKit */,
 				D68C974E2C8EFB7C00FAC88A /* TvManiacUI */,
 			);
 			path = Modules;
@@ -341,7 +328,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7555FFA5242A565B00829871 /* Build configuration list for PBXNativeTarget "tv-maniac" */;
 			buildPhases = (
-				D636CE472B4423CE003F7876 /* ShellScript */,
 				7555FF77242A565900829871 /* Sources */,
 				9E9525AE31530CCB1C932286 /* Frameworks */,
 				7555FF79242A565900829871 /* Resources */,
@@ -356,6 +342,7 @@
 				D653924729D8B6A6000EE673 /* OAuthSwift */,
 				D6619D362C89D37900D273E7 /* SwiftUIComponents */,
 				D68C974F2C8EFBD800FAC88A /* TvManiacUI */,
+				D60D952A2CDBE1160039884B /* TvManiacKit */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -412,26 +399,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		D636CE472B4423CE003F7876 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		7555FF77242A565900829871 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -439,7 +406,6 @@
 			files = (
 				E9AC835526CEEAB800829A0D /* LibraryView.swift in Sources */,
 				D653925329DABCEA000EE673 /* ConfigLoader.swift in Sources */,
-				D6BA80EE2BBC55F5007CDA3A /* StateFlow.swift in Sources */,
 				D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */,
 				E989E1162940E78E00C01A39 /* SettingsView.swift in Sources */,
 				E98381A127936DC90039CB08 /* ShowDetailView.swift in Sources */,
@@ -447,7 +413,6 @@
 				E9AC835326CEEA9800829A0D /* SearchView.swift in Sources */,
 				D6F6351A2C4EA6FB00D921A6 /* HomeChildView.swift in Sources */,
 				D62F1BC62B34442D004650E3 /* SeasonDetailsView.swift in Sources */,
-				D6F635162C4E88F300D921A6 /* StackView.swift in Sources */,
 				D653924D29D8B70E000EE673 /* TraktManagerError.swift in Sources */,
 				E989E1182940EAB300C01A39 /* ThemeUtilities.swift in Sources */,
 				D67761892B1CED9E00537DD5 /* RootView.swift in Sources */,
@@ -456,7 +421,6 @@
 				D67761852B1CE6AE00537DD5 /* AppDelegate.swift in Sources */,
 				D6F6351D2C4FEEF100D921A6 /* HomeTabView.swift in Sources */,
 				E9AC835126CEEA1500829A0D /* DiscoverView.swift in Sources */,
-				D6F635282C52A5B800D921A6 /* NavigationModel.swift in Sources */,
 				D653924F29D8BC7E000EE673 /* TraktAuthViewModel.swift in Sources */,
 				D653925529DABD04000EE673 /* Config.swift in Sources */,
 				D653926029DAC949000EE673 /* AuthenticatedProfileView.swift in Sources */,
@@ -525,13 +489,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_DEBUG_INFORMATION_VERSION = 5.0;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -585,7 +550,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "";
@@ -649,7 +614,11 @@
 				DEVELOPMENT_TEAM = 2M53227BD2;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Modules/TvManiacKit",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "";
 				INFOPLIST_FILE = ios/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TvManiac;
@@ -713,6 +682,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D60D952A2CDBE1160039884B /* TvManiacKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TvManiacKit;
+		};
 		D653924729D8B6A6000EE673 /* OAuthSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D653924629D8B6A6000EE673 /* XCRemoteSwiftPackageReference "OAuthSwift" */;

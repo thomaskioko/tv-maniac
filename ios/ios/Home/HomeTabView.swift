@@ -9,6 +9,7 @@
 import SwiftUI
 import SwiftUIComponents
 import TvManiac
+import TvManiacKit
 
 struct HomeTabView: View {
   private let presenter: HomePresenter
