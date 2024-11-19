@@ -312,15 +312,14 @@ jobs:
       - name: Install dependencies with Bundler
         run: bundle install
 
-      # TODO: Uncomment this once we have a proper build lane
-      # - name: Build iOS App
-      #   run: bundle exec fastlane build_tvmaniac
-
-      # - name: Clear Derived Data
-      #   run: bundle exec fastlane clear_derived_data_lane
-
       - name: Run UI Tests
         run: bundle exec fastlane ui_tests
+
+      - name: Build iOS App
+        run: bundle exec fastlane build_tvmaniac
+
+      - name: Clear Derived Data
+        run: bundle exec fastlane clear_derived_data_lane  
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
