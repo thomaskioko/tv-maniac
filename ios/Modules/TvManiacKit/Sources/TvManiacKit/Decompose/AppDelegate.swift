@@ -1,16 +1,15 @@
 //
 //  AppDelegate.swift
-//  tv-maniac
+//  TvManiacKit
 //
-//  Created by Thomas Kioko on 03.12.23.
-//  Copyright © 2023 orgName. All rights reserved.
+//  Created by Thomas Kioko on 11/20/24.
 //
 
 import SwiftUI
 import UIKit
 import TvManiac
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+public class AppDelegate: NSObject, UIApplicationDelegate {
   private lazy var appComponent = IosApplicationComponent.companion.create()
 
   lazy var presenterComponent: IosViewPresenterComponent = appComponent.componentFactory.createComponent(
@@ -22,3 +21,4 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     )
   )
 }
+
