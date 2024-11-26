@@ -14,7 +14,6 @@ struct iOSApp: App {
   var body: some Scene {
     WindowGroup {
       RootView(rootPresenter: appDelegate.presenterComponent.rootPresenter)
-        .environmentObject(NavigationModel())
     }
   }
 }
