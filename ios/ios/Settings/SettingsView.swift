@@ -25,7 +25,7 @@ struct SettingsView: View {
   init(presenter: SettingsPresenter) {
     self.presenter = presenter
     _uiState = StateFlow<SettingsState>(presenter.state)
-    self.theme = toAppTheme(theme: uiState.appTheme)
+    self.theme = uiState.appTheme.toDeveiceAppTheme()
   }
     
   var body: some View {
@@ -90,7 +90,7 @@ struct SettingsView: View {
     .navigationTitle("Settings")
     .navigationBarTitleDisplayMode(.large)
     .onAppear {
-      self.theme = toAppTheme(theme: uiState.appTheme)
+      self.theme = uiState.appTheme.toDeveiceAppTheme()
     }
   }
 }
