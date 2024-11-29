@@ -1,8 +1,8 @@
 package com.thomaskioko.trakt.service.implementation.inject
 
-import com.thomaskioko.trakt.service.implementation.TraktListRemoteDataSourceImpl
-import com.thomaskioko.trakt.service.implementation.TraktTokenRemoteDataSourceImpl
-import com.thomaskioko.trakt.service.implementation.TraktUserRemoteDataSourceImpl
+import com.thomaskioko.trakt.service.implementation.DefaultTraktListRemoteDataSource
+import com.thomaskioko.trakt.service.implementation.DefaultTraktTokenRemoteDataSource
+import com.thomaskioko.trakt.service.implementation.DefaultTraktUserRemoteDataSource
 import com.thomaskioko.trakt.service.implementation.traktHttpClient
 import com.thomaskioko.tvmaniac.core.base.model.Configs
 import com.thomaskioko.tvmaniac.core.logger.KermitLogger
@@ -50,18 +50,18 @@ interface TraktComponent : TraktPlatformComponent {
   @SingleIn(AppScope::class)
   @Provides
   fun provideTraktListRemoteDataSource(
-    bind: TraktListRemoteDataSourceImpl,
+    bind: DefaultTraktListRemoteDataSource,
   ): TraktListRemoteDataSource = bind
 
   @SingleIn(AppScope::class)
   @Provides
   fun provideTraktTokenRemoteDataSource(
-    bind: TraktTokenRemoteDataSourceImpl,
+    bind: DefaultTraktTokenRemoteDataSource,
   ): TraktTokenRemoteDataSource = bind
 
   @SingleIn(AppScope::class)
   @Provides
   fun provideTraktUserRemoteDataSource(
-    bind: TraktUserRemoteDataSourceImpl,
+    bind: DefaultTraktUserRemoteDataSource,
   ): TraktUserRemoteDataSource = bind
 }

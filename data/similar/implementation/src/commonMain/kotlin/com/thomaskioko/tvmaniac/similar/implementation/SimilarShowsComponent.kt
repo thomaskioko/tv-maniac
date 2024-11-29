@@ -12,7 +12,7 @@ interface SimilarShowsComponent {
 
   @Provides
   @SingleIn(AppScope::class)
-  fun provideSimilarShowsDao(bind: SimilarShowsDaoImpl): SimilarShowsDao = bind
+  fun provideSimilarShowsDao(bind: DefaultSimilarShowsDao): SimilarShowsDao = bind
 
   @Provides
   @SingleIn(AppScope::class)

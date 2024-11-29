@@ -9,8 +9,11 @@ import me.tatarka.inject.annotations.Inject
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
+@ContributesBinding(AppScope::class)
 class DefaultTraktAuthManager(
   private val activity: ComponentActivity,
   private val traktActivityResultContract: TraktActivityResultContract,

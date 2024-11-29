@@ -6,8 +6,11 @@ import io.ktor.client.plugins.ClientRequestException
 import io.ktor.serialization.JsonConvertException
 import kotlinx.serialization.SerializationException
 import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
+@ContributesBinding(AppScope::class)
 class IosExceptionHandler(
   private val configs: Configs,
 ) : NetworkExceptionHandler {

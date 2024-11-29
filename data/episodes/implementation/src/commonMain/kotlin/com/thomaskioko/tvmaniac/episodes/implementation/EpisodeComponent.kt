@@ -11,9 +11,9 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 interface EpisodeComponent {
 
   @SingleIn(AppScope::class)
-  @Provides fun provideEpisodesDao(bind: EpisodesDaoImpl): EpisodesDao = bind
+  @Provides fun provideEpisodesDao(bind: DefaultEpisodesDao): EpisodesDao = bind
 
   @SingleIn(AppScope::class)
   @Provides
-  fun provideEpisodeRepository(bind: EpisodeRepositoryImpl): EpisodeRepository = bind
+  fun provideEpisodeRepository(bind: DefaultEpisodeRepository): EpisodeRepository = bind
 }

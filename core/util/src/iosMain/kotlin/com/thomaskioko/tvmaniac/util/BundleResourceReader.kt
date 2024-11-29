@@ -13,8 +13,11 @@ import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.stringWithContentsOfFile
 import platform.darwin.NSObject
 import platform.darwin.NSObjectMeta
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
+@ContributesBinding(AppScope::class)
 class BundleResourceReader(
   private val bundle: NSBundle = NSBundle.bundleForClass(BundleMarker),
 ) : ResourceReader {

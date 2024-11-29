@@ -1,14 +1,10 @@
-package com.thomaskioko.tvmaniac.util
+package com.thomaskioko.tvmaniac.episodes.implementation
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
 @ContributesBinding(AppScope::class)
-class IosAppUtils : AppUtils {
-
-  override fun isYoutubePlayerInstalled(): Flow<Boolean> = flowOf(false)
-}
+class DefaultEpisodeRepository : EpisodeRepository

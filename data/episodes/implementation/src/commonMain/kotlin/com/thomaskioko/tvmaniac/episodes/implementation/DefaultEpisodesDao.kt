@@ -5,9 +5,12 @@ import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
-class EpisodesDaoImpl(
+@ContributesBinding(AppScope::class)
+class DefaultEpisodesDao(
   private val database: TvManiacDatabase,
 ) : EpisodesDao {
 

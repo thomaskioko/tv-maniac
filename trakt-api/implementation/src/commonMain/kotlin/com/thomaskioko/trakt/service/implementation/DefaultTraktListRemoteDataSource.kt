@@ -24,9 +24,12 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.http.path
 import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
-class TraktListRemoteDataSourceImpl(
+@ContributesBinding(AppScope::class)
+class DefaultTraktListRemoteDataSource(
   private val httpClient: TraktHttpClient,
 ) : TraktListRemoteDataSource {
 

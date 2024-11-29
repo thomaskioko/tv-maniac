@@ -9,7 +9,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 interface TrailerComponent {
 
   @SingleIn(AppScope::class)
-  @Provides fun provideTrailerDao(bind: TrailerDaoImpl): TrailerDao = bind
+  @Provides fun provideTrailerDao(bind: DefaultTrailerDao): TrailerDao = bind
 
   @SingleIn(AppScope::class)
   @Provides

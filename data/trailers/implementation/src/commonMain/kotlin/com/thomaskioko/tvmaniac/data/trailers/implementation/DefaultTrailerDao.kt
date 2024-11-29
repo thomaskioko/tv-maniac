@@ -8,9 +8,12 @@ import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Id
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
-class TrailerDaoImpl(
+@ContributesBinding(AppScope::class)
+class DefaultTrailerDao(
   private val database: TvManiacDatabase,
   private val dispatchers: AppCoroutineDispatchers,
 ) : TrailerDao {

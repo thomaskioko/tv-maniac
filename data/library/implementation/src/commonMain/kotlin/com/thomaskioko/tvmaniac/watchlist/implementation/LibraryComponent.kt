@@ -11,7 +11,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 interface LibraryComponent {
 
   @SingleIn(AppScope::class)
-  @Provides fun provideWatchlistDao(bind: LibraryDaoImpl): LibraryDao = bind
+  @Provides fun provideWatchlistDao(bind: DefaultLibraryDao): LibraryDao = bind
 
   @SingleIn(AppScope::class)
   @Provides

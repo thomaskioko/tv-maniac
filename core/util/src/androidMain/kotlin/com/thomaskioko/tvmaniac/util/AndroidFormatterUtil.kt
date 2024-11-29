@@ -6,10 +6,13 @@ import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
 import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 const val POSTER_PATH = "https://image.tmdb.org/t/p/original%s"
 
 @Inject
+@ContributesBinding(AppScope::class)
 class AndroidFormatterUtil : FormatterUtil {
 
   override fun formatTmdbPosterPath(imageUrl: String): String = String.format(POSTER_PATH, imageUrl)

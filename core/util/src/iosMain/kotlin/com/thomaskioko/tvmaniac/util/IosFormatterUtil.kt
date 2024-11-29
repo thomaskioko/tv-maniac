@@ -5,10 +5,13 @@ import kotlin.math.sign
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSNumber
 import platform.Foundation.NSNumberFormatter
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 const val POSTER_PATH = "https://image.tmdb.org/t/p/original"
 
 @Inject
+@ContributesBinding(AppScope::class)
 class IosFormatterUtil : FormatterUtil {
 
   override fun formatTmdbPosterPath(imageUrl: String): String {

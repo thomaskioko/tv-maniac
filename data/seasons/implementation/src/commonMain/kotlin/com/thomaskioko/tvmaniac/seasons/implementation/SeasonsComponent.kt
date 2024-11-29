@@ -15,5 +15,5 @@ interface SeasonsComponent {
   fun provideSeasonsRepository(bind: DefaultSeasonsRepository): SeasonsRepository = bind
 
   @SingleIn(AppScope::class)
-  @Provides fun provideSeasonsDao(bind: SeasonsDaoImpl): SeasonsDao = bind
+  @Provides fun provideSeasonsDao(bind: DefaultSeasonsDao): SeasonsDao = bind
 }

@@ -13,10 +13,13 @@ import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.get
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 private const val MIN_SHOW_COUNT = 10
 
 @Inject
+@ContributesBinding(AppScope::class)
 class DefaultSearchRepository(
   private val tvShowsDao: TvShowsDao,
   private val store: SearchShowStore,

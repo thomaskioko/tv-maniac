@@ -10,9 +10,12 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
-class SeasonsDaoImpl(
+@ContributesBinding(AppScope::class)
+class DefaultSeasonsDao(
   private val database: TvManiacDatabase,
   private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonsDao {

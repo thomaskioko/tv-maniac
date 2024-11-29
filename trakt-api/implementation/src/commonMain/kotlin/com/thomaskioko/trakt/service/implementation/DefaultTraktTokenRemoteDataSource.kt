@@ -11,9 +11,12 @@ import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
-class TraktTokenRemoteDataSourceImpl(
+@ContributesBinding(AppScope::class)
+class DefaultTraktTokenRemoteDataSource(
   private val configs: Configs,
   private val httpClient: TraktHttpClient,
 ) : TraktTokenRemoteDataSource {
