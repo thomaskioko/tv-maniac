@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.util.inject
 
-import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import com.thomaskioko.tvmaniac.core.base.model.Configs
 import com.thomaskioko.tvmaniac.util.AndroidAppUtils
 import com.thomaskioko.tvmaniac.util.AndroidFormatterUtil
@@ -10,21 +9,26 @@ import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.ResourceReader
 import com.thomaskioko.tvmaniac.util.YamlResourceReader
 import me.tatarka.inject.annotations.Provides
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
+@ContributesTo(AppScope::class)
 actual interface UtilPlatformComponent {
 
-  @ApplicationScope
+  @SingleIn(AppScope::class)
   @Provides
   fun provideAndroidFormatterUtil(bind: AndroidFormatterUtil): FormatterUtil = bind
 
-  @ApplicationScope @Provides fun provideAppUtils(bind: AndroidAppUtils): AppUtils = bind
+  @SingleIn(AppScope::class)
+  @Provides fun provideAppUtils(bind: AndroidAppUtils): AppUtils = bind
 
-  @ApplicationScope
+  @SingleIn(AppScope::class)
   @Provides
   fun provideConfigs(resourceReader: YamlResourceReader): Configs =
     resourceReader.readAndDecodeResource("config.yaml", Configs.serializer())
 
-  @ApplicationScope
+  @SingleIn(AppScope::class)
   @Provides
   fun provideResourceReader(bind: ClasspathResourceReader): ResourceReader = bind
 }

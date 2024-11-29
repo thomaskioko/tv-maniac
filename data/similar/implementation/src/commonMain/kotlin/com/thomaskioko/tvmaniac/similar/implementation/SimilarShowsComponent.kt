@@ -1,18 +1,21 @@
 package com.thomaskioko.tvmaniac.similar.implementation
 
-import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsDao
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import me.tatarka.inject.annotations.Provides
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
+@ContributesTo(AppScope::class)
 interface SimilarShowsComponent {
 
-  @ApplicationScope
   @Provides
+  @SingleIn(AppScope::class)
   fun provideSimilarShowsDao(bind: SimilarShowsDaoImpl): SimilarShowsDao = bind
 
-  @ApplicationScope
   @Provides
+  @SingleIn(AppScope::class)
   fun provideSimilarShowsRepository(bind: DefaultSimilarShowsRepository): SimilarShowsRepository =
     bind
 }

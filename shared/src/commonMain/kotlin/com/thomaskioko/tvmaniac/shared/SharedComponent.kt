@@ -24,10 +24,15 @@ import com.thomaskioko.tvmaniac.shows.implementation.DiscoverComponent
 import com.thomaskioko.tvmaniac.similar.implementation.SimilarShowsComponent
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbComponent
 import com.thomaskioko.tvmaniac.toprated.data.implementation.TopRatedShowsComponent
-import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthenticationComponent
+import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthComponent
 import com.thomaskioko.tvmaniac.util.inject.UtilPlatformComponent
 import com.thomaskioko.tvmaniac.watchlist.implementation.LibraryComponent
+import me.tatarka.inject.annotations.Component
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
+@Component
+@SingleIn(AppScope::class)
 abstract class SharedComponent :
   BaseComponent,
   CastComponent,
@@ -50,9 +55,11 @@ abstract class SharedComponent :
   TmdbComponent,
   TopRatedShowsComponent,
   TrailerComponent,
-  TraktAuthenticationComponent,
+  TraktAuthComponent,
   TraktComponent,
   TrendingShowsComponent,
   UtilPlatformComponent,
   UpcomingShowsComponent,
-  WatchProviderComponent
+  WatchProviderComponent {
+    companion object
+  }

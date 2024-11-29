@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
-import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import com.thomaskioko.tvmaniac.core.base.model.Configs
 import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbSeasonDetailsNetworkDataSource
@@ -10,6 +9,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Provides
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 typealias TmdbHttpClient = HttpClient
 
@@ -19,9 +21,10 @@ typealias TmdbJson = Json
 
 expect interface TmdbPlatformComponent
 
+@ContributesTo(AppScope::class)
 interface TmdbComponent : TmdbPlatformComponent {
 
-  @ApplicationScope
+  @SingleIn(AppScope::class)
   @Provides
   fun provideTmdbJson(): TmdbJson = Json {
     isLenient = true
@@ -30,7 +33,7 @@ interface TmdbComponent : TmdbPlatformComponent {
     explicitNulls = false
   }
 
-  @ApplicationScope
+  @SingleIn(AppScope::class)
   @Provides
   fun provideTmdbHttpClient(
     configs: Configs,

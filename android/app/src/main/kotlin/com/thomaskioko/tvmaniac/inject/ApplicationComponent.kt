@@ -1,18 +1,18 @@
 package com.thomaskioko.tvmaniac.inject
 
 import android.app.Application
-import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import com.thomaskioko.tvmaniac.initializers.AppInitializers
 import com.thomaskioko.tvmaniac.shared.SharedComponent
-import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthComponent
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Component
-@ApplicationScope
+@SingleIn(AppScope::class)
 abstract class ApplicationComponent(
   @get:Provides val application: Application,
-) : SharedComponent(), TraktAuthComponent {
+) : SharedComponent() {
   abstract val initializers: AppInitializers
 
   companion object

@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.db
 
 import app.cash.sqldelight.db.SqlDriver
-import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import com.thomaskioko.tvmaniac.core.db.Casts
 import com.thomaskioko.tvmaniac.core.db.Episode
 import com.thomaskioko.tvmaniac.core.db.Episode_image
@@ -23,11 +22,16 @@ import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.core.db.Watch_providers
 import me.tatarka.inject.annotations.Provides
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 expect interface DatabasePlatformComponent
 
+@ContributesTo(AppScope::class)
 interface DatabaseComponent : DatabasePlatformComponent {
-  @ApplicationScope
+
+  @SingleIn(AppScope::class)
   @Provides
   fun provideTvManiacDatabase(sqlDriver: SqlDriver): TvManiacDatabase =
     TvManiacDatabase(
@@ -125,7 +129,7 @@ interface DatabaseComponent : DatabasePlatformComponent {
         ),
     )
 
-  @ApplicationScope
+  @SingleIn(AppScope::class)
   @Provides
   fun provideDbTransactionRunner(bind: DbTransactionRunner): DatabaseTransactionRunner = bind
 }

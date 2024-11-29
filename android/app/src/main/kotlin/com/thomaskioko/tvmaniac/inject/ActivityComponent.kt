@@ -7,11 +7,12 @@ import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
 import com.thomaskioko.tvmaniac.navigation.di.NavigatorComponent
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthManagerComponent
+import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthAndroidComponent
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-@ActivityScope
+@SingleIn(ActivityScope::class)
 @Component
 abstract class ActivityComponent(
   @get:Provides val activity: ComponentActivity,
@@ -19,7 +20,7 @@ abstract class ActivityComponent(
   @Component
   val applicationComponent: ApplicationComponent =
     ApplicationComponent.create(activity.application),
-) : NavigatorComponent, TraktAuthManagerComponent {
+) : NavigatorComponent, TraktAuthAndroidComponent {
   abstract val traktAuthManager: TraktAuthManager
   abstract val rootPresenter: RootPresenter
 

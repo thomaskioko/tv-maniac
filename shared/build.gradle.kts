@@ -119,6 +119,8 @@ kotlin {
 
         api(libs.decompose.decompose)
         api(libs.essenty.lifecycle)
+
+        implementation(libs.bundles.kotlinInject)
       }
     }
   }
@@ -129,6 +131,7 @@ android { namespace = "com.thomaskioko.tvmaniac.shared" }
 ksp { arg("me.tatarka.inject.generateCompanionExtensions", "true") }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
 
 kotlin.sourceSets.all { languageSettings.optIn("kotlin.experimental.ExperimentalObjCName") }
 
