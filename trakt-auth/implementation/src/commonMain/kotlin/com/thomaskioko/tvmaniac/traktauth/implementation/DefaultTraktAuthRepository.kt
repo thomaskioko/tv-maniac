@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class TraktAuthRepositoryImpl(
+class DefaultTraktAuthRepository(
   private val datastoreRepository: DatastoreRepository,
   private val dispatchers: AppCoroutineDispatchers,
 ) : TraktAuthRepository {

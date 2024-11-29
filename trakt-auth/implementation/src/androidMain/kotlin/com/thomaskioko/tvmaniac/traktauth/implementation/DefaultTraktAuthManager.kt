@@ -11,7 +11,7 @@ import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
 
 @Inject
-actual class DefaultTraktAuthManager(
+class DefaultTraktAuthManager(
   private val activity: ComponentActivity,
   private val traktActivityResultContract: TraktActivityResultContract,
   private val traktAuthRepository: TraktAuthRepository,
@@ -22,7 +22,7 @@ actual class DefaultTraktAuthManager(
 
   private lateinit var launcher: ActivityResultLauncher<Unit>
 
-  actual override fun registerResult() {
+  override fun registerResult() {
     launcher =
       activity.registerForActivityResult(traktActivityResultContract) { result ->
         if (result != null) {
@@ -31,7 +31,7 @@ actual class DefaultTraktAuthManager(
       }
   }
 
-  actual override fun launchWebView() = launcher.launch(Unit)
+  override fun launchWebView() = launcher.launch(Unit)
 
   private fun onLoginResult(result: TraktActivityResultContract.Result) {
     val (response, error) = result

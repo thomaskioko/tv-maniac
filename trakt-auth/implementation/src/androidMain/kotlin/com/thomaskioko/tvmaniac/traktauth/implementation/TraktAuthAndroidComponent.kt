@@ -3,8 +3,10 @@ package com.thomaskioko.tvmaniac.traktauth.implementation
 import android.app.Application
 import android.net.Uri
 import androidx.core.net.toUri
-import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
+import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.model.Configs
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import me.tatarka.inject.annotations.Provides
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService
@@ -12,10 +14,13 @@ import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientSecretBasic
 import net.openid.appauth.ResponseTypeValues
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-interface TraktAuthComponent {
+@ContributesTo(ActivityScope::class)
+interface TraktAuthAndroidComponent {
 
-  @ApplicationScope
+  @SingleIn(ActivityScope::class)
   @Provides
   fun provideAuthConfig(): AuthorizationServiceConfiguration {
     return AuthorizationServiceConfiguration(
@@ -25,26 +30,35 @@ interface TraktAuthComponent {
   }
 
   @Provides
+  @SingleIn(ActivityScope::class)
   fun provideAuthRequest(
     configuration: AuthorizationServiceConfiguration,
     configs: Configs,
   ): AuthorizationRequest =
     AuthorizationRequest.Builder(
-        configuration,
-        configs.traktClientId,
-        ResponseTypeValues.CODE,
-        configs.traktRedirectUri.toUri(),
-      )
+      configuration,
+      configs.traktClientId,
+      ResponseTypeValues.CODE,
+      configs.traktRedirectUri.toUri(),
+    )
       .apply { setCodeVerifier(null) }
       .build()
 
-  @ApplicationScope
   @Provides
   fun provideClientAuth(configs: Configs): ClientAuthentication =
     ClientSecretBasic(configs.traktClientSecret)
 
-  @ApplicationScope
   @Provides
+  @SingleIn(ActivityScope::class)
   fun provideAuthorizationService(application: Application): AuthorizationService =
     AuthorizationService(application)
+
+  @Provides
+  @SingleIn(ActivityScope::class)
+  fun provideTraktAuthManager(bind: DefaultTraktAuthManager): TraktAuthManager = bind
+
+  @Provides
+  @SingleIn(ActivityScope::class)
+  fun provideTraktAuthRepository(bind: DefaultTraktAuthRepository): TraktAuthRepository = bind
+
 }
