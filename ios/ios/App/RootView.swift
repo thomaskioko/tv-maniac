@@ -25,8 +25,8 @@ struct RootView: View {
       if isShowingSplash {
         SplashScreenView()
       } else {
-        NavigationStack(
-          stack: rootPresenter.stack,
+        DecomposeNavigationStack(
+          childStack: rootPresenter.stack,
           onBack: rootPresenter.onBackClicked,
           content: { child in
             childView(for: child)
