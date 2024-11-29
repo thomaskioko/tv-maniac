@@ -16,7 +16,7 @@ kotlin {
 
         api(libs.androidx.datastore.preference)
 
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
       }
     }
 
@@ -25,6 +25,7 @@ kotlin {
 }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
 
 android { namespace = "com.thomaskioko.tvmaniac.shared.domain.datastore.implementation" }
 

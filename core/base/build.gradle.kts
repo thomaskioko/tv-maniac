@@ -11,7 +11,7 @@ kotlin {
     commonMain.dependencies {
       implementation(libs.coroutines.core)
       implementation(libs.decompose.decompose)
-      implementation(libs.kotlinInject.runtime)
+      implementation(libs.bundles.kotlinInject)
       implementation(libs.ktor.serialization)
     }
   }

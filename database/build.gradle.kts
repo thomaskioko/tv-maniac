@@ -15,7 +15,7 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(libs.sqldelight.primitive.adapters)
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
         implementation(libs.kotlinx.datetime)
       }
     }
@@ -34,6 +34,7 @@ kotlin {
 }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
 
 android { namespace = "com.thomaskioko.tvmaniac.db" }
 

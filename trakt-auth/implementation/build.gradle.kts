@@ -23,7 +23,7 @@ kotlin {
         implementation(projects.core.base)
         implementation(projects.core.logger)
         implementation(projects.traktAuth.api)
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
       }
     }
   }
@@ -32,3 +32,4 @@ kotlin {
 android { namespace = "com.thomaskioko.tvmaniac.traktauth.implementation" }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)

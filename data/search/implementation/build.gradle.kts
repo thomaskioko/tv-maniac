@@ -18,7 +18,7 @@ kotlin {
         implementation(projects.data.search.api)
         implementation(projects.tmdbApi.api)
 
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
         implementation(libs.sqldelight.extensions)
         implementation(libs.store5)
       }
@@ -27,3 +27,4 @@ kotlin {
 }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)

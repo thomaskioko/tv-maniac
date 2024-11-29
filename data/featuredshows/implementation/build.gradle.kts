@@ -1,3 +1,5 @@
+import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
+
 plugins {
   alias(libs.plugins.tvmaniac.multiplatform)
   alias(libs.plugins.ksp)
@@ -18,7 +20,7 @@ kotlin {
 
         api(libs.coroutines.core)
 
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
         implementation(libs.kotlinx.atomicfu)
         implementation(libs.sqldelight.extensions)
         implementation(libs.store5)
@@ -27,7 +29,5 @@ kotlin {
   }
 }
 
-dependencies {
-  add("kspIosX64", libs.kotlinInject.compiler)
-  add("kspIosArm64", libs.kotlinInject.compiler)
-}
+addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)

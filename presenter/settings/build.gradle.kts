@@ -11,7 +11,7 @@ kotlin {
         api(libs.decompose.decompose)
         api(libs.essenty.lifecycle)
 
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
       }
     }
 

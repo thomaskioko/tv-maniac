@@ -9,7 +9,7 @@ kotlin {
       implementation(projects.core.base)
       implementation(libs.kermit)
       implementation(libs.napier)
-      implementation(libs.kotlinInject.runtime)
+      implementation(libs.bundles.kotlinInject)
     }
   }
 }

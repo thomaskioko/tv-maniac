@@ -13,7 +13,7 @@ kotlin {
         implementation(projects.database)
         implementation(projects.data.cast.api)
 
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
         implementation(libs.sqldelight.extensions)
         implementation(libs.kotlinx.atomicfu)
         implementation(libs.store5)
@@ -23,3 +23,4 @@ kotlin {
 }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)

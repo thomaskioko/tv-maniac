@@ -12,7 +12,7 @@ kotlin {
       implementation(projects.core.base)
       implementation(libs.androidx.paging.common)
       implementation(libs.coroutines.core)
-      implementation(libs.kotlinInject.runtime)
+      implementation(libs.bundles.kotlinInject)
       implementation(libs.ktor.core)
       implementation(libs.store5)
     }

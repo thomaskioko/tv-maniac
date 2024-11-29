@@ -81,8 +81,9 @@ dependencies {
 
   implementation(libs.decompose.decompose)
   implementation(libs.decompose.extensions.compose)
-  implementation(libs.kotlinInject.runtime)
+  implementation(libs.bundles.kotlinInject)
   ksp(libs.kotlinInject.compiler)
+  ksp(libs.kotlinInject.anvil.compiler)
 
   implementation(libs.androidx.datastore.core)
   implementation(libs.androidx.savedstate)

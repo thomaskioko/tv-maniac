@@ -18,7 +18,7 @@ kotlin {
         api(libs.kotlinx.collections)
 
         implementation(libs.coroutines.core)
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
       }
     }
 

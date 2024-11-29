@@ -1,5 +1,8 @@
+import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
+
 plugins {
   alias(libs.plugins.tvmaniac.multiplatform)
+  alias(libs.plugins.ksp)
   alias(libs.plugins.serialization)
 }
 
@@ -10,6 +13,7 @@ kotlin {
         api(libs.decompose.decompose)
         api(libs.essenty.lifecycle)
 
+        implementation(projects.core.base)
         implementation(projects.datastore.api)
         implementation(projects.presenter.discover)
         implementation(projects.presenter.home)
@@ -21,8 +25,12 @@ kotlin {
         implementation(projects.presenter.showDetails)
         implementation(projects.presenter.trailers)
 
+        implementation(libs.bundles.kotlinInject)
         implementation(libs.coroutines.core)
       }
     }
   }
 }
+
+addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)

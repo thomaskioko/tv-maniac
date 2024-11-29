@@ -1,3 +1,4 @@
+import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
 import com.thomaskioko.tvmaniac.plugins.addLanguageArgs
 
 plugins {
@@ -21,7 +22,7 @@ kotlin {
 
         api(libs.coroutines.core)
 
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
         implementation(libs.sqldelight.extensions)
         implementation(libs.kotlinx.atomicfu)
         implementation(libs.store5)
@@ -35,3 +36,6 @@ kotlin {
 addLanguageArgs(
   "androidx.paging.ExperimentalPagingApi",
 )
+
+addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)

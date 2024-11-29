@@ -18,7 +18,7 @@ kotlin {
       implementation(libs.coroutines.core)
       implementation(libs.kermit)
       implementation(libs.kotlinx.datetime)
-      implementation(libs.kotlinInject.runtime)
+      implementation(libs.bundles.kotlinInject)
       implementation(libs.ktor.core)
       implementation(libs.yamlkt)
     }
