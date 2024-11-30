@@ -128,8 +128,6 @@ kotlin {
 
 android { namespace = "com.thomaskioko.tvmaniac.shared" }
 
-ksp { arg("me.tatarka.inject.generateCompanionExtensions", "true") }
-
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
 addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
 

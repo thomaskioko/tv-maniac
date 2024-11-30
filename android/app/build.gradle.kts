@@ -95,5 +95,3 @@ dependencies {
   implementation(libs.coroutines.core)
   implementation(libs.ktor.core)
 }
-
-ksp { arg("me.tatarka.inject.generateCompanionExtensions", "true") }
