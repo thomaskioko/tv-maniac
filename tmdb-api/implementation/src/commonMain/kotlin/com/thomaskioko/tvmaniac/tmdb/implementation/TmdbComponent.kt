@@ -19,10 +19,8 @@ typealias TmdbHttpClientEngine = HttpClientEngine
 
 typealias TmdbJson = Json
 
-expect interface TmdbPlatformComponent
-
 @ContributesTo(AppScope::class)
-interface TmdbComponent : TmdbPlatformComponent {
+interface TmdbComponent  {
 
   @SingleIn(AppScope::class)
   @Provides
@@ -48,19 +46,4 @@ interface TmdbComponent : TmdbPlatformComponent {
       kermitLogger = logger,
       isDebug = configs.isDebug,
     )
-
-  @Provides
-  fun provideTmdbShowsNetworkDataSource(
-    bind: DefaultTmdbShowsNetworkDataSource,
-  ): TmdbShowsNetworkDataSource = bind
-
-  @Provides
-  fun provideTmdbShowDetailsNetworkDataSource(
-    bind: DefaultTmdbShowDetailsNetworkDataSource,
-  ): TmdbShowDetailsNetworkDataSource = bind
-
-  @Provides
-  fun provideTmdbSeasonDetailsNetworkDataSource(
-    bind: DefaultTmdbSeasonDetailsNetworkDataSource,
-  ): TmdbSeasonDetailsNetworkDataSource = bind
 }

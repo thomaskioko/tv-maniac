@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.datastore.implementation
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSDocumentDirectory
@@ -12,7 +13,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @ContributesTo(AppScope::class)
-actual interface DataStorePlatformComponent {
+interface DataStorePlatformComponent {
 
   @SingleIn(AppScope::class)
   @Provides

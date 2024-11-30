@@ -10,7 +10,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @ContributesTo(AppScope::class)
-actual interface DataStorePlatformComponent {
+interface DataStorePlatformComponent {
 
   @SingleIn(AppScope::class)
   @Provides

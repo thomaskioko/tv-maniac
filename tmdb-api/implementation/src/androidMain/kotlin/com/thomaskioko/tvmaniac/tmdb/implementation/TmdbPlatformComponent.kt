@@ -7,7 +7,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @ContributesTo(AppScope::class)
-actual interface TmdbPlatformComponent {
+interface TmdbPlatformComponent {
 
   @SingleIn(AppScope::class)
   @Provides

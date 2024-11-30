@@ -11,7 +11,6 @@ interface ResourceReader {
 }
 
 @Inject
-@ContributesBinding(AppScope::class)
 class YamlResourceReader(
   private val resourceReader: ResourceReader,
 ) {

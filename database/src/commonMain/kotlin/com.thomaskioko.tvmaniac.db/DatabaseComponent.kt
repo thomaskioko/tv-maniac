@@ -26,10 +26,9 @@ import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-expect interface DatabasePlatformComponent
 
 @ContributesTo(AppScope::class)
-interface DatabaseComponent : DatabasePlatformComponent {
+interface DatabaseComponent {
 
   @SingleIn(AppScope::class)
   @Provides
@@ -128,8 +127,4 @@ interface DatabaseComponent : DatabasePlatformComponent {
           idAdapter = IdAdapter(),
         ),
     )
-
-  @SingleIn(AppScope::class)
-  @Provides
-  fun provideDbTransactionRunner(bind: DbTransactionRunner): DatabaseTransactionRunner = bind
 }

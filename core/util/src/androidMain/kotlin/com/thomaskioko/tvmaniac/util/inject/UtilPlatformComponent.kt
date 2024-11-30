@@ -14,21 +14,10 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @ContributesTo(AppScope::class)
-actual interface UtilPlatformComponent {
-
-  @SingleIn(AppScope::class)
-  @Provides
-  fun provideAndroidFormatterUtil(bind: AndroidFormatterUtil): FormatterUtil = bind
-
-  @SingleIn(AppScope::class)
-  @Provides fun provideAppUtils(bind: AndroidAppUtils): AppUtils = bind
+interface UtilPlatformComponent {
 
   @SingleIn(AppScope::class)
   @Provides
   fun provideConfigs(resourceReader: YamlResourceReader): Configs =
     resourceReader.readAndDecodeResource("config.yaml", Configs.serializer())
-
-  @SingleIn(AppScope::class)
-  @Provides
-  fun provideResourceReader(bind: ClasspathResourceReader): ResourceReader = bind
 }
