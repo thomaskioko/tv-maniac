@@ -1,6 +1,6 @@
-package com.thomaskioko.trakt.service.implementation
+package com.thomaskioko.trakt.service.implementation.api
 
-import com.thomaskioko.trakt.service.implementation.inject.TraktHttpClient
+import com.thomaskioko.trakt.service.implementation.TraktHttpClient
 import com.thomaskioko.tvmaniac.core.base.model.Configs
 import com.thomaskioko.tvmaniac.trakt.api.TraktTokenRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.AccessTokenBody
