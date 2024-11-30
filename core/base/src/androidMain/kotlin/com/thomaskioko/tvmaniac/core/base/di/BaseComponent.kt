@@ -13,8 +13,8 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesTo(AppScope::class)
 interface BaseComponent {
 
-  @SingleIn(AppScope::class)
   @Provides
+  @SingleIn(AppScope::class)
   fun provideCoroutineDispatchers(): AppCoroutineDispatchers =
     AppCoroutineDispatchers(
       io = Dispatchers.IO,
@@ -22,8 +22,8 @@ interface BaseComponent {
       main = Dispatchers.Main,
     )
 
-  @SingleIn(AppScope::class)
   @Provides
+  @SingleIn(AppScope::class)
   fun provideCoroutineScope(dispatchers: AppCoroutineDispatchers): AppCoroutineScope =
     AppCoroutineScope(
       default = CoroutineScope(Job() + dispatchers.computation),

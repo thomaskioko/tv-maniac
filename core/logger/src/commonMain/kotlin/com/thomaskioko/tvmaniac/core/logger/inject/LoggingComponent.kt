@@ -10,8 +10,8 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesTo(AppScope::class)
 interface LoggingComponent {
 
-  @SingleIn(AppScope::class)
   @Provides
+  @SingleIn(AppScope::class)
   fun provideKermitLogger(
     configs: Configs,
   ): KermitLogger = KermitLogger(configs.isDebug)

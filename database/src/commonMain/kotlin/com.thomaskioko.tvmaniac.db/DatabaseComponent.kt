@@ -30,8 +30,8 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesTo(AppScope::class)
 interface DatabaseComponent {
 
-  @SingleIn(AppScope::class)
   @Provides
+  @SingleIn(AppScope::class)
   fun provideTvManiacDatabase(sqlDriver: SqlDriver): TvManiacDatabase =
     TvManiacDatabase(
       driver = sqlDriver,
