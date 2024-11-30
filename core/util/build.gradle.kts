@@ -36,6 +36,7 @@ android {
 }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
 
 addLanguageArgs(
   "kotlinx.coroutines.ExperimentalCoroutinesApi",
