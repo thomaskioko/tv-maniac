@@ -16,7 +16,6 @@ import androidx.core.view.WindowCompat
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.inject.ActivityComponent
-import com.thomaskioko.tvmaniac.inject.create
 import com.thomaskioko.tvmaniac.navigation.ThemeState
 
 class MainActivity : ComponentActivity() {

@@ -11,13 +11,14 @@ import UIKit
 import TvManiac
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    lazy var presenterComponent: IosViewPresenterComponent = IosViewPresenterComponent.companion.create(
-        componentContext: DefaultComponentContext(
-            lifecycle: ApplicationLifecycle(),
-            stateKeeper: nil,
-            instanceKeeper: nil,
-            backHandler: nil
-        ),
-        applicationComponent: ApplicationComponent.companion.create()
+  private lazy var appComponent = IosApplicationComponent.companion.create()
+
+  lazy var presenterComponent: IosViewPresenterComponent = appComponent.componentFactory.createComponent(
+    componentContext: DefaultComponentContext(
+      lifecycle: ApplicationLifecycle(),
+      stateKeeper: nil,
+      instanceKeeper: nil,
+      backHandler: nil
     )
+  )
 }
