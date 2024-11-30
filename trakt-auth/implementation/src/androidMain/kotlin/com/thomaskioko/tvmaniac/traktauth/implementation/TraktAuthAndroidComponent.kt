@@ -57,8 +57,4 @@ interface TraktAuthAndroidComponent {
   @SingleIn(ActivityScope::class)
   fun provideTraktAuthManager(bind: DefaultTraktAuthManager): TraktAuthManager = bind
 
-  @Provides
-  @SingleIn(ActivityScope::class)
-  fun provideTraktAuthRepository(bind: DefaultTraktAuthRepository): TraktAuthRepository = bind
-
 }
