@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.core.net.toUri
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.model.Configs
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import me.tatarka.inject.annotations.Provides
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService
@@ -51,9 +50,5 @@ interface TraktAuthAndroidComponent {
   @SingleIn(ActivityScope::class)
   fun provideAuthorizationService(application: Application): AuthorizationService =
     AuthorizationService(application)
-
-  @Provides
-  @SingleIn(ActivityScope::class)
-  fun provideTraktAuthManager(bind: DefaultTraktAuthManager): TraktAuthManager = bind
 
 }

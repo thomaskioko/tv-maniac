@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
+import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -9,11 +10,12 @@ import me.tatarka.inject.annotations.Inject
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
-@ContributesBinding(AppScope::class)
+@SingleIn(ActivityScope::class)
+@ContributesBinding(ActivityScope::class)
 class DefaultTraktAuthManager(
   private val activity: ComponentActivity,
   private val traktActivityResultContract: TraktActivityResultContract,

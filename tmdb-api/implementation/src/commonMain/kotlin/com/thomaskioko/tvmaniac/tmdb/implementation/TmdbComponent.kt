@@ -11,7 +11,6 @@ import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Provides
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 typealias TmdbHttpClient = HttpClient
 
@@ -22,7 +21,6 @@ typealias TmdbJson = Json
 @ContributesTo(AppScope::class)
 interface TmdbComponent  {
 
-  @SingleIn(AppScope::class)
   @Provides
   fun provideTmdbJson(): TmdbJson = Json {
     isLenient = true
@@ -31,7 +29,6 @@ interface TmdbComponent  {
     explicitNulls = false
   }
 
-  @SingleIn(AppScope::class)
   @Provides
   fun provideTmdbHttpClient(
     configs: Configs,

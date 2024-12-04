@@ -8,10 +8,12 @@ import kotlin.math.pow
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 const val POSTER_PATH = "https://image.tmdb.org/t/p/original%s"
 
 @Inject
+@SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class AndroidFormatterUtil : FormatterUtil {
 

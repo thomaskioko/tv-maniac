@@ -15,7 +15,6 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesTo(AppScope::class)
 interface DataStorePlatformComponent {
 
-  @SingleIn(AppScope::class)
   @Provides
   fun provideDataStore(dispatchers: AppCoroutineScope): DataStore<Preferences> =
     createDataStore(

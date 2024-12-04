@@ -15,8 +15,10 @@ import platform.darwin.NSObject
 import platform.darwin.NSObjectMeta
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
+@SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class BundleResourceReader(
   private val bundle: NSBundle = NSBundle.bundleForClass(BundleMarker),
