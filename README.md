@@ -1,7 +1,9 @@
 TvManiac
 -------------------------
-![Check](https://github.com/c0de-wizard/tv-maniac/actions/workflows/build.yml/badge.svg)
-![android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat) ![ios](http://img.shields.io/badge/platform-ios-CDCDCD.svg?style=flat)
+![Check](https://github.com/thomaskioko/tv-maniac/actions/workflows/ci.yml/badge.svg)
+![kmp](https://img.shields.io/badge/multiplatform-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
+![compose](https://img.shields.io/badge/jetpack_compose-2bab6b.svg?style=for-the-badge&logo=android&logoColor=white)
+![swiftui](https://img.shields.io/badge/swiftui-%23000000.svg?style=for-the-badge&logo=swift&logoColor=white)
 [![TvManiac Debug](https://img.shields.io/badge/Debug--Apk-download-green?style=for-the-badge&logo=android)](https://github.com/c0de-wizard/tv-maniac/releases/latest/download/app-debug.apk)
 
 **TvManiac** is a personalized entertainment tracking and recommendation Multiplatform app. By utilizing
@@ -119,7 +121,7 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 * [DateTime](https://github.com/Kotlin/kotlinx-datetime) - Date & Time
 * [Decompose](https://arkivanov.github.io/Decompose/) - Kotlin Multiplatform library for breaking down your code into lifecycle-aware business logic components (aka BLoC).
 * [Kermit](https://kermit.touchlab.co/) - Logging
-* [kotlin-inject](https://github.com/evant/kotlin-inject) - Injection library.
+* [kotlin-inject-anvil](https://github.com/amzn/kotlin-inject-anvil?tab=readme-ov-file) - Dependency Injection library.
 * [Kotlinx Serialization](https://ktor.io/docs/kotlin-serialization.html) - De/Serializing JSON
 * [Ktor](https://ktor.io/) - Networking
 * [Kotest Assertions](https://kotest.io/docs/assertions/assertions.html) - Testing
