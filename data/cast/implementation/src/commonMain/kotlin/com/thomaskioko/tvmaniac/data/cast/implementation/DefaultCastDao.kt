@@ -11,8 +11,13 @@ import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.db.Id
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
 class DefaultCastDao(
   private val database: TvManiacDatabase,
   private val dispatcher: AppCoroutineDispatchers,

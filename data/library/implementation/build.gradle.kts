@@ -18,7 +18,7 @@ kotlin {
         implementation(projects.core.util)
         implementation(projects.data.library.api)
 
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
         implementation(libs.sqldelight.extensions)
       }
     }
@@ -26,3 +26,4 @@ kotlin {
 }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)

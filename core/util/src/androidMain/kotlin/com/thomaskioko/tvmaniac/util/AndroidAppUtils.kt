@@ -5,8 +5,13 @@ import android.content.pm.PackageManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
 class AndroidAppUtils(
   private val context: Application,
 ) : AppUtils {

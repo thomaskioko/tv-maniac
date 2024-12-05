@@ -18,7 +18,7 @@ kotlin {
       implementation(libs.coroutines.core)
       implementation(libs.kermit)
       implementation(libs.kotlinx.datetime)
-      implementation(libs.kotlinInject.runtime)
+      implementation(libs.bundles.kotlinInject)
       implementation(libs.ktor.core)
       implementation(libs.yamlkt)
     }
@@ -36,6 +36,7 @@ android {
 }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
 
 addLanguageArgs(
   "kotlinx.coroutines.ExperimentalCoroutinesApi",

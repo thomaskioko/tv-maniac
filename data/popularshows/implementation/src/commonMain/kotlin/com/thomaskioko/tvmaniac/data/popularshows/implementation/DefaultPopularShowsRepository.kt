@@ -23,8 +23,13 @@ import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
 class DefaultPopularShowsRepository(
   private val store: PopularShowsStore,
   private val popularShowsDao: PopularShowsDao,

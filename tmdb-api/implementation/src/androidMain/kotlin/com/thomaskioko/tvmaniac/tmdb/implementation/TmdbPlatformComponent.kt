@@ -1,12 +1,13 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
-import com.thomaskioko.tvmaniac.core.base.annotations.ApplicationScope
 import io.ktor.client.engine.okhttp.OkHttp
 import me.tatarka.inject.annotations.Provides
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 
-actual interface TmdbPlatformComponent {
+@ContributesTo(AppScope::class)
+interface TmdbPlatformComponent {
 
-  @ApplicationScope
   @Provides
   fun provideTmdbHttpClientEngine(): TmdbHttpClientEngine = OkHttp.create()
 }

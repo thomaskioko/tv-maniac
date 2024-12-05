@@ -17,7 +17,7 @@ kotlin {
         implementation(projects.core.logger)
         implementation(projects.tmdbApi.api)
 
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
         implementation(libs.ktor.core)
         implementation(libs.ktor.logging)
         implementation(libs.ktor.negotiation)
@@ -41,3 +41,4 @@ kotlin {
 android { namespace = "com.thomaskioko.tvmaniac.tmdb.implementation" }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)

@@ -1,3 +1,5 @@
+import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
+
 plugins {
   alias(libs.plugins.tvmaniac.multiplatform)
   alias(libs.plugins.ksp)
@@ -16,7 +18,7 @@ kotlin {
         implementation(projects.data.shows.api)
         implementation(projects.tmdbApi.api)
 
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
         implementation(libs.sqldelight.extensions)
         implementation(libs.kotlinx.atomicfu)
         implementation(libs.store5)
@@ -26,3 +28,6 @@ kotlin {
     commonTest { dependencies { implementation(libs.bundles.unittest) } }
   }
 }
+
+addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)

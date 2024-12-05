@@ -8,8 +8,13 @@ import io.ktor.client.request.parameter
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
 import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
 class DefaultTmdbShowsNetworkDataSource(
   private val httpClient: TmdbHttpClient,
 ) : TmdbShowsNetworkDataSource {

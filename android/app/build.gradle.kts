@@ -14,7 +14,6 @@ dependencies {
   implementation(projects.android.ui.seasonDetails)
   implementation(projects.android.ui.showDetails)
   implementation(projects.android.ui.trailers)
-  implementation(projects.shared)
   implementation(projects.core.base)
   implementation(projects.core.util)
   implementation(projects.traktAuth.api)
@@ -38,6 +37,8 @@ dependencies {
   implementation(projects.data.requestManager.api)
   implementation(projects.data.requestManager.api)
   implementation(projects.data.requestManager.implementation)
+  implementation(projects.data.search.api)
+  implementation(projects.data.search.implementation)
   implementation(projects.data.seasondetails.api)
   implementation(projects.data.seasondetails.implementation)
   implementation(projects.data.seasons.api)
@@ -81,8 +82,9 @@ dependencies {
 
   implementation(libs.decompose.decompose)
   implementation(libs.decompose.extensions.compose)
-  implementation(libs.kotlinInject.runtime)
+  implementation(libs.bundles.kotlinInject)
   ksp(libs.kotlinInject.compiler)
+  ksp(libs.kotlinInject.anvil.compiler)
 
   implementation(libs.androidx.datastore.core)
   implementation(libs.androidx.savedstate)
@@ -94,5 +96,3 @@ dependencies {
   implementation(libs.coroutines.core)
   implementation(libs.ktor.core)
 }
-
-ksp { arg("me.tatarka.inject.generateCompanionExtensions", "true") }

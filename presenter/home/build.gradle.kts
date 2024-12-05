@@ -18,7 +18,7 @@ kotlin {
         implementation(libs.decompose.decompose)
         implementation(libs.essenty.lifecycle)
 
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
       }
     }
 

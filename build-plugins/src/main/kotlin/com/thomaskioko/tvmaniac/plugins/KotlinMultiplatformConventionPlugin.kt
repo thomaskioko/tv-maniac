@@ -10,9 +10,8 @@ import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.util.Locale
 
 class KotlinMultiplatformConventionPlugin : Plugin<Project> {
   override fun apply(target: Project) = with(target) {
@@ -88,7 +87,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
             "androidTestFixtures",
             "androidTestFixturesDebug",
             "androidTestFixturesRelease",
-            "androidTestFixturesDemo"
+            "androidTestFixturesDemo",
           ).contains(it.name)
         }
       }
@@ -96,7 +95,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
   }
 }
 
-fun Project.addLanguageArgs(vararg args: String){
+fun Project.addLanguageArgs(vararg args: String) {
   extensions.configure<KotlinMultiplatformExtension> {
     sourceSets.all {
       languageSettings {
@@ -112,18 +111,19 @@ private fun Project.addKspDependencyForAllTargets(
   dependencyNotation: Any,
 ) {
   val kmpExtension = extensions.getByType<KotlinMultiplatformExtension>()
+  val kspTargets = kmpExtension.targets.names.map { targetName ->
+    targetName.replaceFirstChar {
+      if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()
+    }
+  }
   dependencies {
-    kmpExtension.targets
+    kspTargets
       .asSequence()
-      .filter { target ->
-        // Don't add KSP for common target, only final platforms
-        target.platformType != KotlinPlatformType.common
+      .map { target ->
+        if (target == "Metadata") "CommonMainMetadata" else target
       }
-      .forEach { target ->
-        add(
-          "ksp${target.name.replaceFirstChar(Char::uppercaseChar)}$configurationNameSuffix",
-          dependencyNotation,
-        )
+      .forEach { targetConfigSuffix ->
+        add("ksp${targetConfigSuffix}$configurationNameSuffix", dependencyNotation)
       }
   }
 }

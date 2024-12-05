@@ -17,8 +17,11 @@ import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
+@SingleIn(AppScope::class)
 class RecommendedShowStore(
   private val networkDataSource: TmdbShowDetailsNetworkDataSource,
   private val tvShowsDao: TvShowsDao,

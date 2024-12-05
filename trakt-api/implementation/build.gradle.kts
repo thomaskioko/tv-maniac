@@ -27,7 +27,7 @@ kotlin {
         implementation(libs.ktor.logging)
         implementation(libs.ktor.negotiation)
         implementation(libs.ktor.serialization.json)
-        implementation(libs.kotlinInject.runtime)
+        implementation(libs.bundles.kotlinInject)
         implementation(libs.sqldelight.extensions)
       }
     }
@@ -43,5 +43,6 @@ kotlin {
 }
 
 addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
 
 android { namespace = "com.thomaskioko.trakt.api.implementation" }

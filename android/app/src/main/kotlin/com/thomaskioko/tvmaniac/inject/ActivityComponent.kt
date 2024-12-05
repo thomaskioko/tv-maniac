@@ -3,25 +3,38 @@ package com.thomaskioko.tvmaniac.inject
 import androidx.activity.ComponentActivity
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.defaultComponentContext
+import com.thomaskioko.tvmaniac.TvManicApplication
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
-import com.thomaskioko.tvmaniac.navigation.di.NavigatorComponent
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.implementation.TraktAuthManagerComponent
-import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesSubcomponent
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-@ActivityScope
-@Component
-abstract class ActivityComponent(
-  @get:Provides val activity: ComponentActivity,
-  @get:Provides val componentContext: ComponentContext = activity.defaultComponentContext(),
-  @Component
-  val applicationComponent: ApplicationComponent =
-    ApplicationComponent.create(activity.application),
-) : NavigatorComponent, TraktAuthManagerComponent {
-  abstract val traktAuthManager: TraktAuthManager
-  abstract val rootPresenter: RootPresenter
+@ContributesSubcomponent(ActivityScope::class)
+@SingleIn(ActivityScope::class)
+interface ActivityComponent {
+  @Provides
+  fun provideComponentContext(
+    activity: ComponentActivity
+  ): ComponentContext = activity.defaultComponentContext()
 
-  companion object
+  val traktAuthManager: TraktAuthManager
+  val rootPresenter: RootPresenter
+
+  @ContributesSubcomponent.Factory(AppScope::class)
+  interface Factory {
+    fun createComponent(
+      activity: ComponentActivity
+    ): ActivityComponent
+  }
+
+  companion object {
+    fun create(activity: ComponentActivity): ActivityComponent =
+      (activity.application as TvManicApplication)
+        .getApplicationComponent()
+        .activityComponentFactory
+        .createComponent(activity)
+  }
 }

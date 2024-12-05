@@ -1,7 +1,5 @@
 package com.thomaskioko.trakt.service.implementation
 
-import com.thomaskioko.trakt.service.implementation.inject.TraktHttpClientEngine
-import com.thomaskioko.trakt.service.implementation.inject.TraktJson
 import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.core.networkutil.model.HttpExceptions
 import io.ktor.client.HttpClient

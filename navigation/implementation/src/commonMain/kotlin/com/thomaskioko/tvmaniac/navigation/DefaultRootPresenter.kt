@@ -29,9 +29,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
-@ActivityScope
+@SingleIn(ActivityScope::class)
+@ContributesBinding(ActivityScope::class, RootPresenter::class)
 class DefaultRootPresenter(
   componentContext: ComponentContext,
   private val homePresenterFactory: HomePresenterFactory,

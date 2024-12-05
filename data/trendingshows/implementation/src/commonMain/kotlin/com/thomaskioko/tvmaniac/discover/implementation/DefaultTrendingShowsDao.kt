@@ -12,8 +12,13 @@ import com.thomaskioko.tvmaniac.discover.api.TrendingShowsDao
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
 class DefaultTrendingShowsDao(
   database: TvManiacDatabase,
   private val dispatchers: AppCoroutineDispatchers,

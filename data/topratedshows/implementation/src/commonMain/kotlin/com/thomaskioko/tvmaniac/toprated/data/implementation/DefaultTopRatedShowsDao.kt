@@ -13,8 +13,13 @@ import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsDao
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
 class DefaultTopRatedShowsDao(
   database: TvManiacDatabase,
   private val dispatchers: AppCoroutineDispatchers,
