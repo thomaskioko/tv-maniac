@@ -1,6 +1,5 @@
 plugins {
   alias(libs.plugins.tvmaniac.multiplatform)
-  alias(libs.plugins.ksp)
 }
 
 kotlin {

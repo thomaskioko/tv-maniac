@@ -1,7 +1,6 @@
 plugins {
   alias(libs.plugins.tvmaniac.multiplatform)
   alias(libs.plugins.serialization)
-  alias(libs.plugins.ksp)
 }
 
 kotlin {
