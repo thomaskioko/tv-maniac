@@ -87,6 +87,8 @@ struct SettingsView: View {
         }
       }
     }
+    .scrollContentBackground(.hidden)
+    .background(Color.background)
     .navigationTitle("Settings")
     .navigationBarTitleDisplayMode(.large)
     .onAppear {
