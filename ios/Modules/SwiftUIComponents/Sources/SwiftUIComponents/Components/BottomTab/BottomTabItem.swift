@@ -30,7 +30,7 @@ public struct BottomTabItem: View {
           .font(.system(size: 10, weight: .medium))
       }
       .foregroundColor(isActive ? Color.iosBlue : .textColor)
-      .frame(maxWidth: .infinity)
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     .buttonStyle(PlainButtonStyle())
   }
