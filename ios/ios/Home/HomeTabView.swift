@@ -18,7 +18,7 @@ struct HomeTabView: View {
 
   init(presenter: HomePresenter) {
     self.presenter = presenter
-    _stack = StateFlow(presenter.stack)
+    _stack = StateFlow(presenter.homeChildStack)
   }
 
   var body: some View {
