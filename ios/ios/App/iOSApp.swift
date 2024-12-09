@@ -1,12 +1,8 @@
 import SwiftUI
-import SwiftUIComponents
 import TvManiacKit
 
 @main
 struct iOSApp: App {
-  init() {
-    FontRegistration.register()
-  }
 
   @UIApplicationDelegateAdaptor(AppDelegate.self)
   var appDelegate: AppDelegate
@@ -16,17 +12,17 @@ struct iOSApp: App {
 
   var body: some Scene {
     WindowGroup {
-      RootView(rootPresenter: appDelegate.presenterComponent.rootPresenter)
+      RootNavigationView(rootPresenter: appDelegate.presenterComponent.rootPresenter)
         .onChange(of: scenePhase) { newPhase in
           switch newPhase {
-          case .background:
-            appDelegate.lifecycle.stop()
-          case .inactive:
-            appDelegate.lifecycle.pause()
-          case .active:
-            appDelegate.lifecycle.resume()
-          @unknown default:
-            break
+            case .background:
+              appDelegate.lifecycle.stop()
+            case .inactive:
+              appDelegate.lifecycle.pause()
+            case .active:
+              appDelegate.lifecycle.resume()
+            @unknown default:
+              break
           }
         }
     }

@@ -85,6 +85,8 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D65009DC2CF644BE00394D67 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
+		D6FE246E2D05E68000AB7700 /* RootUI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = RootUI; sourceTree = "<group>"; };
+		D6FE248E2D060E7200AB7700 /* UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UI; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +131,7 @@
 				D65009DC2CF644BE00394D67 /* App */,
 				D653925129DABCBA000EE673 /* Configuration */,
 				D628B5BE2A0C165400015E45 /* Resources */,
+				D6FE248E2D060E7200AB7700 /* UI */,
 				D68FFDDE2B21162A001EB447 /* View */,
 			);
 			path = ios;
@@ -238,12 +241,13 @@
 				E9B6869227873747001698B7 /* Library */,
 				D636CE4B2B44878F003F7876 /* MoreShows */,
 				D653924929D8B6B8000EE673 /* Profile */,
-				D667A42E2B23DC0E009C951E /* SplashScreen */,
+				D665F4BF2D047CCB00FB1383 /* Root */,
+				D6FE246E2D05E68000AB7700 /* RootUI */,
 				E9B6869127873738001698B7 /* Search */,
 				D62F1BC42B344313004650E3 /* SeasonDetails */,
 				D68FFDDF2B211690001EB447 /* Settings */,
 				E983819927936D8E0039CB08 /* ShowDetails */,
-				D665F4BF2D047CCB00FB1383 /* Root */,
+				D667A42E2B23DC0E009C951E /* SplashScreen */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -335,6 +339,8 @@
 			);
 			fileSystemSynchronizedGroups = (
 				D65009DC2CF644BE00394D67 /* App */,
+				D6FE246E2D05E68000AB7700 /* RootUI */,
+				D6FE248E2D060E7200AB7700 /* UI */,
 			);
 			name = "tv-maniac";
 			packageProductDependencies = (
