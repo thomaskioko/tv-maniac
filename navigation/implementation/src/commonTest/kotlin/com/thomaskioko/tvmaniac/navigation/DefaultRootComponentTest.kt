@@ -22,8 +22,8 @@ import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.MoreShows
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
+import com.thomaskioko.tvmaniac.presentation.home.DefaultHomePresenter
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter
-import com.thomaskioko.tvmaniac.presentation.home.HomePresenterFactory
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
@@ -87,7 +87,7 @@ class DefaultRootComponentTest {
         showDetailsPresenterFactory = buildShowDetailsPresenterPresenterFactory(componentContext),
         seasonDetailsPresenterFactory = buildSeasonDetailsPresenterFactory(componentContext),
         trailersPresenterFactory = buildTrailersPresenterFactory(componentContext),
-        homePresenterFactory = buildHomePresenterFactory(),
+        homePresenterFactory = buildHomePresenterFactory(componentContext),
         datastoreRepository = datastoreRepository,
       )
   }
@@ -197,8 +197,8 @@ class DefaultRootComponentTest {
 
   private fun buildMoreShowsPresenterFactory(
     componentContext: ComponentContext,
-  ): MoreShowsPresenterFactory =
-    { _: ComponentContext, _: Long, _: () -> Unit, _: (id: Long) -> Unit ->
+  ): MoreShowsPresenterFactory = MoreShowsPresenterFactory(
+    create = { _: ComponentContext, _: Long, _: () -> Unit, _: (id: Long) -> Unit ->
       MoreShowsPresenter(
         componentContext = componentContext,
         categoryId = 0,
@@ -210,6 +210,7 @@ class DefaultRootComponentTest {
         topRatedShowsRepository = topRatedShowsRepository,
       )
     }
+  )
 
   private fun buildSearchPresenterFactory(
     componentContext: ComponentContext,
@@ -273,20 +274,14 @@ class DefaultRootComponentTest {
    }
  )
 
-  private fun buildHomePresenterFactory(): HomePresenterFactory =
-    HomePresenterFactory(
-      create =   { componentContext: ComponentContext, _: (id: Long) -> Unit, _: (id: Long) -> Unit ->
-      HomePresenter(
-        componentContext = componentContext,
-        onShowClicked = {},
-        onMoreShowClicked = {},
-        traktAuthManager = traktAuthManager,
-        searchPresenterFactory = buildSearchPresenterFactory(componentContext),
-        settingsPresenterFactory = buildSettingsPresenterFactory(componentContext),
-        discoverPresenterFactory = buildDiscoverPresenterFactory(componentContext),
-        libraryPresenterFactory = buildLibraryPresenterFactory(componentContext),
-      )
-    })
+  private fun buildHomePresenterFactory(componentContext: ComponentContext): HomePresenter.Factory =
+    DefaultHomePresenter.Factory(
+      traktAuthManager = traktAuthManager,
+      searchPresenterFactory = buildSearchPresenterFactory(componentContext),
+      settingsPresenterFactory = buildSettingsPresenterFactory(componentContext),
+      discoverPresenterFactory = buildDiscoverPresenterFactory(componentContext),
+      libraryPresenterFactory = buildLibraryPresenterFactory(componentContext),
+    )
 
 
   private fun buildSeasonDetailsPresenterFactory(

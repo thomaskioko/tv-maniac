@@ -50,7 +50,11 @@ class HomePresenterTest {
     Dispatchers.setMain(testDispatcher)
     lifecycle.resume()
 
-    presenter = buildHomePresenterFactory()
+    presenter = buildHomePresenterFactory().create(
+      componentContext = DefaultComponentContext(lifecycle = lifecycle),
+      onShowClicked = {},
+      onMoreShowClicked = {},
+    )
   }
 
   @Test
@@ -108,18 +112,13 @@ class HomePresenterTest {
     }
   )
 
-  private fun buildHomePresenterFactory(
-    componentContext: ComponentContext = DefaultComponentContext(lifecycle = lifecycle)
-  ): HomePresenter =
-    HomePresenter(
-      componentContext = componentContext,
-      onShowClicked = {},
-      onMoreShowClicked = {},
+  private fun buildHomePresenterFactory(): HomePresenter.Factory =
+    DefaultHomePresenter.Factory(
+      discoverPresenterFactory = buildDiscoverPresenterFactory(DefaultComponentContext(lifecycle = lifecycle)),
+      libraryPresenterFactory = buildLibraryPresenterFactory(DefaultComponentContext(lifecycle = lifecycle)),
+      searchPresenterFactory = buildSearchPresenterFactory(DefaultComponentContext(lifecycle = lifecycle)),
+      settingsPresenterFactory = buildSettingsPresenterFactory(DefaultComponentContext(lifecycle = lifecycle)),
       traktAuthManager = traktAuthManager,
-      searchPresenterFactory = buildSearchPresenterFactory(componentContext),
-      settingsPresenterFactory = buildSettingsPresenterFactory(componentContext),
-      discoverPresenterFactory = buildDiscoverPresenterFactory(componentContext),
-      libraryPresenterFactory = buildLibraryPresenterFactory(componentContext),
     )
 
   private fun buildSettingsPresenterFactory(

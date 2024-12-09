@@ -1,6 +1,9 @@
+import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
+
 plugins {
   alias(libs.plugins.tvmaniac.multiplatform)
   alias(libs.plugins.serialization)
+  alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -39,3 +42,6 @@ kotlin {
     }
   }
 }
+
+addKspDependencyForAllTargets(libs.kotlinInject.compiler)
+addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)

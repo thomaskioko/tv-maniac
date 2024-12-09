@@ -15,7 +15,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child
-import com.thomaskioko.tvmaniac.presentation.home.HomePresenterFactory
+import com.thomaskioko.tvmaniac.presentation.home.HomePresenter
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
@@ -35,7 +35,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(ActivityScope::class, RootPresenter::class)
 class DefaultRootPresenter(
   componentContext: ComponentContext,
-  private val homePresenterFactory: HomePresenterFactory,
+  private val homePresenterFactory: HomePresenter.Factory,
   private val moreShowsPresenterFactory: MoreShowsPresenterFactory,
   private val showDetailsPresenterFactory: ShowDetailsPresenterFactory,
   private val seasonDetailsPresenterFactory: SeasonDetailsPresenterFactory,
@@ -132,7 +132,7 @@ class DefaultRootPresenter(
       is RootDestinationConfig.MoreShows ->
         Child.MoreShows(
           presenter =
-            moreShowsPresenterFactory(
+            moreShowsPresenterFactory.create(
               componentContext,
               config.id,
               navigation::pop,
