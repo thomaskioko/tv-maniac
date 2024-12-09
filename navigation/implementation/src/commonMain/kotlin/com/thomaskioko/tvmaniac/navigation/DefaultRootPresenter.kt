@@ -9,8 +9,9 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.pushToFront
-import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
+import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
+import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child
@@ -21,13 +22,10 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUi
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenterFactory
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -42,28 +40,20 @@ class DefaultRootPresenter(
   private val showDetailsPresenterFactory: ShowDetailsPresenterFactory,
   private val seasonDetailsPresenterFactory: SeasonDetailsPresenterFactory,
   private val trailersPresenterFactory: TrailersPresenterFactory,
-  private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
+  coroutineScope: CoroutineScope = componentContext.coroutineScope(),
   datastoreRepository: DatastoreRepository,
 ) : RootPresenter, ComponentContext by componentContext {
 
-  private val navigation = StackNavigation<Config>()
-  private val childStack: Value<ChildStack<*, Child>> =
-    childStack(
-      source = navigation,
-      key = "RootChildStackKey",
-      initialConfiguration = Config.Home,
-      serializer = Config.serializer(),
-      handleBackButton = true,
-      childFactory = ::createScreen,
-    )
+  private val navigation = StackNavigation<RootDestinationConfig>()
 
-  private val _state: MutableStateFlow<ChildStack<*, Child>> = MutableStateFlow(childStack.value)
-
-  init {
-    childStack.subscribe { coroutineScope.launch { _state.emit(it) } }
-  }
-
-  override val stack: StateFlow<ChildStack<*, Child>> = _state.asStateFlow()
+  override val childStack: StateFlow<ChildStack<*, Child>> = childStack(
+    source = navigation,
+    key = "RootChildStackKey",
+    initialConfiguration = RootDestinationConfig.Home,
+    serializer = RootDestinationConfig.serializer(),
+    handleBackButton = true,
+    childFactory = ::createScreen,
+  ).asStateFlow(componentContext.componentCoroutineScope())
 
   override val themeState: StateFlow<ThemeState> =
     datastoreRepository
@@ -75,7 +65,7 @@ class DefaultRootPresenter(
         initialValue = ThemeState(),
       )
 
-  override fun bringToFront(config: Config) {
+  override fun bringToFront(config: RootDestinationConfig) {
     navigation.bringToFront(config)
   }
 
@@ -87,28 +77,28 @@ class DefaultRootPresenter(
     navigation.popTo(index = toIndex)
   }
 
-  private fun createScreen(config: Config, componentContext: ComponentContext): Child =
+  private fun createScreen(config: RootDestinationConfig, componentContext: ComponentContext): Child =
     when (config) {
-      is Config.Home ->
+      is RootDestinationConfig.Home ->
         Child.Home(
           presenter =
             homePresenterFactory.create(
               componentContext,
-              { id -> navigation.pushNew(Config.ShowDetails(id)) },
-              { id -> navigation.pushNew(Config.MoreShows(id)) },
+              { id -> navigation.pushNew(RootDestinationConfig.ShowDetails(id)) },
+              { id -> navigation.pushNew(RootDestinationConfig.MoreShows(id)) },
             ),
         )
-      is Config.ShowDetails ->
+      is RootDestinationConfig.ShowDetails ->
         Child.ShowDetails(
           presenter =
             showDetailsPresenterFactory.create(
               componentContext,
               config.id,
               navigation::pop,
-              { id -> navigation.pushToFront(Config.ShowDetails(id)) },
+              { id -> navigation.pushToFront(RootDestinationConfig.ShowDetails(id)) },
               { params ->
                 navigation.pushNew(
-                  Config.SeasonDetails(
+                  RootDestinationConfig.SeasonDetails(
                     SeasonDetailsUiParam(
                       showId = params.showId,
                       seasonNumber = params.seasonNumber,
@@ -117,10 +107,10 @@ class DefaultRootPresenter(
                   ),
                 )
               },
-              { id -> navigation.pushNew(Config.Trailers(id)) },
+              { id -> navigation.pushNew(RootDestinationConfig.Trailers(id)) },
             ),
         )
-      is Config.SeasonDetails ->
+      is RootDestinationConfig.SeasonDetails ->
         Child.SeasonDetails(
           presenter =
             seasonDetailsPresenterFactory.create(
@@ -131,7 +121,7 @@ class DefaultRootPresenter(
               // TODO:: Navigate to episode details
             },
         )
-      is Config.Trailers ->
+      is RootDestinationConfig.Trailers ->
         Child.Trailers(
           presenter =
             trailersPresenterFactory.create(
@@ -139,7 +129,7 @@ class DefaultRootPresenter(
               config.id,
             ),
         )
-      is Config.MoreShows ->
+      is RootDestinationConfig.MoreShows ->
         Child.MoreShows(
           presenter =
             moreShowsPresenterFactory(
@@ -147,7 +137,7 @@ class DefaultRootPresenter(
               config.id,
               navigation::pop,
             ) { id ->
-              navigation.pushNew(Config.ShowDetails(id))
+              navigation.pushNew(RootDestinationConfig.ShowDetails(id))
             },
         )
     }

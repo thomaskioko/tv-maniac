@@ -99,15 +99,15 @@ class DefaultRootComponentTest {
 
   @Test
   fun `initial state should be Home`() = runTest {
-    presenter.stack.test { awaitItem().active.instance.shouldBeInstanceOf<Home>() }
+    presenter.childStack.test { awaitItem().active.instance.shouldBeInstanceOf<Home>() }
   }
 
   @Test
   fun `should return Home as active instance`() = runTest {
-    presenter.stack.test {
+    presenter.childStack.test {
       awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-      presenter.bringToFront(Config.ShowDetails(1))
+      presenter.bringToFront(RootDestinationConfig.ShowDetails(1))
 
       val moreScreen = awaitItem().active.instance
 
@@ -121,10 +121,10 @@ class DefaultRootComponentTest {
 
   @Test
   fun `should return ShowDetails as active instance`() = runTest {
-    presenter.stack.test {
+    presenter.childStack.test {
       awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-      presenter.bringToFront(Config.ShowDetails(1))
+      presenter.bringToFront(RootDestinationConfig.ShowDetails(1))
 
       val moreScreen = awaitItem().active.instance
 
@@ -134,10 +134,10 @@ class DefaultRootComponentTest {
 
   @Test
   fun `should return MoreShows as active instance`() = runTest {
-    presenter.stack.test {
+    presenter.childStack.test {
       awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-      presenter.bringToFront(Config.MoreShows(1))
+      presenter.bringToFront(RootDestinationConfig.MoreShows(1))
 
       val moreScreen = awaitItem().active.instance
 

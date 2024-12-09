@@ -40,7 +40,7 @@ fun HomeScreen(
 
 @Composable
 private fun ChildrenContent(homePresenter: HomePresenter, modifier: Modifier = Modifier) {
-  val childStack by homePresenter.stack.collectAsState()
+  val childStack by homePresenter.homeChildStack.collectAsState()
 
   Children(
     modifier = modifier,
@@ -81,7 +81,7 @@ internal fun BottomNavigationContent(
   component: HomePresenter,
   modifier: Modifier = Modifier,
 ) {
-  val childStack by component.stack.collectAsState()
+  val childStack by component.homeChildStack.collectAsState()
   val activeComponent = childStack.active.instance
 
   TvManiacNavigationBar(

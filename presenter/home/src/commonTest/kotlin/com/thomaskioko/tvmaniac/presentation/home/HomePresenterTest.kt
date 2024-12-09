@@ -55,14 +55,14 @@ class HomePresenterTest {
 
   @Test
   fun `initial state should be Discover`() = runTest {
-    presenter.stack.test {
+    presenter.homeChildStack.test {
       awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
     }
   }
 
   @Test
   fun `should return Search as active instance when onSearchClicked`() = runTest {
-    presenter.stack.test {
+    presenter.homeChildStack.test {
       awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
       presenter.onSearchClicked()
 
@@ -72,7 +72,7 @@ class HomePresenterTest {
 
   @Test
   fun `should return Library as active instance when onSettingsClicked`() = runTest {
-    presenter.stack.test {
+    presenter.homeChildStack.test {
       awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
       presenter.onLibraryClicked()
 
@@ -82,7 +82,7 @@ class HomePresenterTest {
 
   @Test
   fun `should return Settings as active instance when onSettingsClicked`() = runTest {
-    presenter.stack.test {
+    presenter.homeChildStack.test {
       awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
       presenter.onSettingsClicked()
 
