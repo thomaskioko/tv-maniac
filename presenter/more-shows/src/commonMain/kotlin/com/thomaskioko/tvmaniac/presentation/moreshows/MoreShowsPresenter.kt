@@ -27,13 +27,15 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias MoreShowsPresenterFactory =
-  (
-    ComponentContext,
+@Inject
+class MoreShowsPresenterFactory(
+  val create: (
+    componentContext: ComponentContext,
     id: Long,
     onBack: () -> Unit,
     onNavigateToShowDetails: (id: Long) -> Unit,
-  ) -> MoreShowsPresenter
+  ) -> MoreShowsPresenter,
+)
 
 @Inject
 class MoreShowsPresenter(
