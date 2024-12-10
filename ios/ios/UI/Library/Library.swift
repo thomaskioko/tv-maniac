@@ -9,6 +9,10 @@ struct Library: View {
   }
 
   var body: some View {
-    Text("Library")
+    VStack {
+      Text("Library")
+    }
+    .navigationTitle("Library")
+    .navigationBarTitleDisplayMode(.large)
   }
 }

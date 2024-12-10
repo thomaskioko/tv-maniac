@@ -9,6 +9,10 @@ struct Settings: View {
   }
   
   var body: some View {
+    VStack {
     Text("Settings")
+    }
+    .navigationTitle("Settings")
+    .navigationBarTitleDisplayMode(.large)
   }
 }
