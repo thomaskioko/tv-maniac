@@ -15,6 +15,7 @@ fun List<ShowEntity>?.toShowList(): ImmutableList<DiscoverShow> =
         title = it.title,
         posterImageUrl = it.posterPath,
         inLibrary = it.inLibrary,
+        overView = it.overview
       )
     }
     ?.toImmutableList()

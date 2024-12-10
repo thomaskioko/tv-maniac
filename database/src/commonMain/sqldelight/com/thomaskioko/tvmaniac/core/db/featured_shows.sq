@@ -24,6 +24,7 @@ SELECT
     featured_shows.id,
     tvshows.name,
     tvshows.poster_path,
+    tvshows.overview,
     CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     featured_shows

@@ -208,14 +208,15 @@ struct DiscoverView: View {
   }
 }
 
-extension DiscoverShow {
+public extension DiscoverShow {
   func toSwift() -> SwiftShow {
     .init(
       tmdbId: tmdbId,
       title: title,
       posterUrl: posterImageUrl,
       backdropUrl: nil,
-      inLibrary: inLibrary
+      inLibrary: inLibrary,
+      overview: overView
     )
   }
 }

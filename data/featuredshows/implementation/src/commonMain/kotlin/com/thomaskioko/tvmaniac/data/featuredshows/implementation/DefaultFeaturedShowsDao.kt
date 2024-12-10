@@ -34,12 +34,13 @@ class DefaultFeaturedShowsDao(
 
   override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> =
     featuredShowsQueries
-      .featuredShows { id, title, posterPath, inLibrary ->
+      .featuredShows { id, title, posterPath, overview, inLibrary ->
         ShowEntity(
           id = id.id,
           title = title,
           posterPath = posterPath,
           inLibrary = inLibrary == 1L,
+          overview = overview
         )
       }
       .asFlow()
