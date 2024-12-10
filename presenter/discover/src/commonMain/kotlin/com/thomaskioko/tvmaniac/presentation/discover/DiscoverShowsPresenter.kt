@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.Category
+import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
 import kotlinx.coroutines.CoroutineScope
@@ -44,6 +45,7 @@ class DiscoverShowsPresenter(
   private val upcomingShowsRepository: UpcomingShowsRepository,
   private val topRatedShowsRepository: TopRatedShowsRepository,
   private val popularShowsRepository: PopularShowsRepository,
+  private val libraryRepository: LibraryRepository,
   private val coroutineScope: CoroutineScope = componentContext.coroutineScope()
 ) : ComponentContext by componentContext {
 
@@ -93,6 +95,14 @@ class DiscoverShowsPresenter(
                 ?: state
             }
           }
+        is UpdateShowInLibrary -> {
+          coroutineScope.launch {
+            libraryRepository.updateLibrary(
+              traktId = action.id,
+              addToLibrary = !action.inLibrary,
+            )
+          }
+        }
       }
     }
 
