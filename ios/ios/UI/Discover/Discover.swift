@@ -40,26 +40,20 @@ struct Discover: View {
     ScrollView(showsIndicators: false) {
       ParallaxHeader(
         coordinateSpace: CoordinateSpaces.scrollView,
-        defaultHeight: 500,
+        defaultHeight: 550,
         onScroll: { offset in
           let opacity = -offset - 150
           let normalizedOpacity = opacity / 200
           showGlass = max(0, min(1, normalizedOpacity))
         }
       ) {
-        headerContent(
-          state: state,
-          currentIndex: $currentIndex
-        )
+        headerContent(shows: state.featuredShows)
       }
       
       showInfoOverlay(state.featuredShows.map { $0.toSwift() })
       
-      discoverListContent(
-        state: state,
-        presenter: presenter
-      )
-      .offset(y: -220)
+      discoverListContent(state: state)
+        .offset(y: -220)
     }
     .background(Color.background)
     .navigationBarTitleDisplayMode(.inline)
@@ -72,30 +66,65 @@ struct Discover: View {
     .coordinateSpace(name: CoordinateSpaces.scrollView)
     .edgesIgnoringSafeArea(.top)
   }
-
-    
+  
+  
   // MARK: - Header Content
   @ViewBuilder
-  private func headerContent(state: DataLoaded, currentIndex: Binding<Int>) -> some View {
+  private func headerContent(shows: [DiscoverShow]) -> some View {
+    let items = shows.map{ $0.toSwift() }
     ZStack(alignment: .top) {
       CarouselView(
-        items: state.featuredShows.map{ $0.toSwift() },
-        currentIndex: currentIndex,
+        items: items,
+        currentIndex: $currentIndex,
         onItemScrolled: { item in
           selectedShow = item
         },
         onItemTapped: { id in
           presenter.dispatch(action: ShowClicked(id: id))
         }
-      )
+      ){ index in
+        CarouselItemView(item: items[index])
+      }
       
-      headerNavigationBar()
+      headerNavigationBar(shows: items)
+    }
+  }
+  
+  /// A view that displays a single item in the carousel
+  @ViewBuilder
+  private func CarouselItemView(item: SwiftShow) -> some View {
+    GeometryReader { geometry in
+      let scrollViewHeight = geometry.size.height
+      
+      ZStack(alignment: .bottom) {
+        ScrollView(showsIndicators: false) {
+          GeometryReader { imageGeometry in
+            let minY = imageGeometry.frame(in: .global).minY
+            let scrollOffset = minY - geometry.frame(in: .global).minY
+            let stretchFactor = max(0, scrollOffset)
+            
+            PosterItemView(
+              title: item.title,
+              posterUrl: item.posterUrl,
+              posterWidth: geometry.size.width,
+              posterHeight: scrollViewHeight + stretchFactor
+            )
+            .offset(y: -stretchFactor)
+          }
+          .frame(height: scrollViewHeight)
+        }
+        .ignoresSafeArea()
+        .onTapGesture {
+          presenter.dispatch(action: ShowClicked(id: item.tmdbId))
+        }
+      }
     }
   }
   
   // MARK: - Navigation Bar
   @ViewBuilder
-  private func headerNavigationBar() -> some View {
+  private func headerNavigationBar(shows: [SwiftShow]) -> some View {
+    let show = getShow(currentIndex: currentIndex, shows: shows)
     HStack {
       Text(title)
         .font(.largeTitle)
@@ -106,14 +135,12 @@ struct Discover: View {
       HStack(spacing: 8) {
         Button(
           action: {
-            if let show = selectedShow {
-              presenter.dispatch(action: UpdateShowInLibrary(id: show.tmdbId, inLibrary: show.inLibrary))
-            }
+            presenter.dispatch(action: UpdateShowInLibrary(id: show.tmdbId, inLibrary: show.inLibrary))
           }
         ) {
           
-          Image(systemName: selectedShow?.inLibrary == true ? "checkmark" : "plus")
-            .font(.title3)
+          Image(systemName: show.inLibrary == true ? "checkmark" : "plus")
+            .font(.avenirNext(size: 17))
             .foregroundColor(.white)
             .frame(width: 28, height: 28)
             .padding(2)
@@ -126,7 +153,7 @@ struct Discover: View {
             //TODO:: Invoke account navigation action.
           }) {
             Image(systemName: "person")
-              .font(.title3)
+              .font(.avenirNext(size: 17))
               .foregroundColor(.white)
               .frame(width: 28, height: 28)
               .padding(2)
@@ -157,8 +184,8 @@ struct Discover: View {
           .multilineTextAlignment(.leading)
           .lineLimit(2)
       }
-
-      CustomIndicator(shows)
+      
+      customIndicator(shows)
         .padding(.top, 8)
         .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -187,7 +214,7 @@ struct Discover: View {
   }
   
   @ViewBuilder
-  func CustomIndicator(_ shows: [SwiftShow]) -> some View {
+  func customIndicator(_ shows: [SwiftShow]) -> some View {
     HStack(spacing: 5) {
       ForEach(shows.indices, id: \.self) { index in
         Circle()
@@ -241,7 +268,7 @@ struct Discover: View {
   
   // MARK: - Discover List Content
   @ViewBuilder
-  private func discoverListContent(state: DataLoaded, presenter: DiscoverShowsPresenter) -> some View {
+  private func discoverListContent(state: DataLoaded) -> some View {
     VStack {
       HorizontalItemListView(
         title: "Upcoming",
@@ -316,6 +343,11 @@ struct Discover: View {
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .padding([.trailing, .leading], 16)
+  }
+  
+  private func getShow(currentIndex: Int, shows: [SwiftShow]) -> SwiftShow {
+    let actualIndex = (currentIndex - 1) % shows.count
+    return shows[actualIndex >= 0 ? actualIndex : shows.count - 1]
   }
   
   private enum CoordinateSpaces {
