@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.db
+package com.thomaskioko.tvmaniac.db.adapters
 
 import app.cash.sqldelight.ColumnAdapter
 

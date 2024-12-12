@@ -1,6 +1,7 @@
-package com.thomaskioko.tvmaniac.db
+package com.thomaskioko.tvmaniac.db.adapters
 
 import app.cash.sqldelight.ColumnAdapter
+import com.thomaskioko.tvmaniac.db.Id
 
 class IdAdapter<T> : ColumnAdapter<Id<T>, Long> {
   override fun decode(databaseValue: Long): Id<T> = Id(id = databaseValue)
