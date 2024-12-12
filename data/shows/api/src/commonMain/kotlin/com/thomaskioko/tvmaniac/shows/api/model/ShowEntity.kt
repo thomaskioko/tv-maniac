@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shows.api
+package com.thomaskioko.tvmaniac.shows.api.model
 
 data class ShowEntity(
   val id: Long,

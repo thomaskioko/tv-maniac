@@ -4,7 +4,7 @@ import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow

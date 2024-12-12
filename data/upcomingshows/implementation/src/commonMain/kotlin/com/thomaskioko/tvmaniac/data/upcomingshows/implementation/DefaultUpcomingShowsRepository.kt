@@ -14,7 +14,7 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_SHOWS
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_SORT_ORDER
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter

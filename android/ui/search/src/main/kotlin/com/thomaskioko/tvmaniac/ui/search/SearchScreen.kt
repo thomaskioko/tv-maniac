@@ -51,7 +51,7 @@ import com.thomaskioko.tvmaniac.presentation.search.SearchShowClicked
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowState
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.search.ShowContentAvailable
-import com.thomaskioko.tvmaniac.presentation.search.ShowItem
+import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.ui.search.components.HorizontalShowContentRow
 import com.thomaskioko.tvmaniac.ui.search.components.SearchResultItem

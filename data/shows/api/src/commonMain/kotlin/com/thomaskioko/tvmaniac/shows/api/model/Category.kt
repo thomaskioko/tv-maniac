@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.shows.api
+package com.thomaskioko.tvmaniac.shows.api.model
 
 enum class Category(
   val id: Long,

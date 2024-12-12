@@ -15,8 +15,8 @@ import com.thomaskioko.tvmaniac.discover.api.TrendingShowsParams
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRENDING_SHOWS_TODAY
-import com.thomaskioko.tvmaniac.shows.api.DEFAULT_DAY_TIME_WINDOW
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.DEFAULT_DAY_TIME_WINDOW
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow

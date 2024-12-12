@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.core.paging.QueryPagingSource
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope

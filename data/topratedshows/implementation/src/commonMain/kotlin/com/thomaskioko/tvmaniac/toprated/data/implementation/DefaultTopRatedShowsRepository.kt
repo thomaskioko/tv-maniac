@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.core.paging.FetchResult
 import com.thomaskioko.tvmaniac.core.paging.PaginatedRemoteMediator
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TOP_RATED_SHOWS
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsDao
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository

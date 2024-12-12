@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.ui.search
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.presentation.search.EmptySearchState
 import com.thomaskioko.tvmaniac.presentation.search.ErrorSearchState
-import com.thomaskioko.tvmaniac.presentation.search.ShowItem
+import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
 import com.thomaskioko.tvmaniac.presentation.search.SearchResultAvailable
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowState
 import com.thomaskioko.tvmaniac.presentation.search.ShowContentAvailable

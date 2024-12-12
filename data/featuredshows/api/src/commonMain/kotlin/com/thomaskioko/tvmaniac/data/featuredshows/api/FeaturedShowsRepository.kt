@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.data.featuredshows.api
 
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
 const val DEFAULT_API_PAGE: Long = 1

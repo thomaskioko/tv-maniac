@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.search
 
+import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
 import kotlinx.collections.immutable.ImmutableList
 
 sealed interface SearchShowState {

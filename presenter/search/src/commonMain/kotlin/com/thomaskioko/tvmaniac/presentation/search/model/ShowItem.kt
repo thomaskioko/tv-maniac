@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.search
+package com.thomaskioko.tvmaniac.presentation.search.model
 
 data class ShowItem(
   val tmdbId: Long = 0,

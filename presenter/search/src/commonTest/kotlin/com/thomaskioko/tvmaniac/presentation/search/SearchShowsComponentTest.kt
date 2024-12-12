@@ -9,8 +9,9 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.ServerError
 import com.thomaskioko.tvmaniac.data.featuredshows.testing.FakeFeaturedShowsRepository
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
+import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
 import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import io.kotest.matchers.shouldBe
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -419,16 +420,16 @@ class SearchShowsComponentTest {
   private fun uiModelList(size: Int = LIST_SIZE) =
     createDiscoverShowList(size)
       .map {
-        ShowItem(
-          tmdbId = it.id,
-          title = it.title,
-          posterImageUrl = it.posterPath,
-          inLibrary = it.inLibrary,
-          overview = it.overview,
-          status = it.status,
-          voteAverage = it.voteAverage,
-          year = it.year,
-        )
+          ShowItem(
+              tmdbId = it.id,
+              title = it.title,
+              posterImageUrl = it.posterPath,
+              inLibrary = it.inLibrary,
+              overview = it.overview,
+              status = it.status,
+              voteAverage = it.voteAverage,
+              year = it.year,
+          )
       }
       .toImmutableList()
 

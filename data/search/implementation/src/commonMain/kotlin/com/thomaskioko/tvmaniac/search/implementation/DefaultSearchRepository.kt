@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.mapResult
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.search.api.SearchRepository
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

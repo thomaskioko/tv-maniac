@@ -21,9 +21,9 @@ import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.core.db.Watch_providers
-import com.thomaskioko.tvmaniac.db.IdAdapter
-import com.thomaskioko.tvmaniac.db.InstantColumnAdapter
-import com.thomaskioko.tvmaniac.db.intColumnAdapter
+import com.thomaskioko.tvmaniac.db.adapters.IdAdapter
+import com.thomaskioko.tvmaniac.db.adapters.InstantColumnAdapter
+import com.thomaskioko.tvmaniac.db.adapters.intColumnAdapter
 
 expect fun inMemorySqlDriver(): SqlDriver
 
