@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.tmdb.api
 
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbGenreResult
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 
 const val DEFAULT_API_PAGE: Long = 1
@@ -80,4 +81,9 @@ interface TmdbShowsNetworkDataSource {
    * @param query Search query
    */
   suspend fun searchShows(query: String): ApiResponse<TmdbShowResult>
+
+  /**
+   * Get the list of official genres for TV shows.
+   */
+  suspend fun getGenre(): ApiResponse<TmdbGenreResult>
 }

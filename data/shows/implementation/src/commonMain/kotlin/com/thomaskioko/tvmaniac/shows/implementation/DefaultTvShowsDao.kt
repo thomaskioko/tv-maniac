@@ -6,7 +6,8 @@ import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.db.Tvshows
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -23,6 +24,7 @@ class DefaultTvShowsDao(
 ) : TvShowsDao {
 
   private val tvShowsQueries = database.tvshowsQueries
+  private val genresQueries = database.show_genresQueries
 
   override fun upsert(show: Tvshows) {
     tvShowsQueries.transaction {
@@ -43,6 +45,13 @@ class DefaultTvShowsDao(
         poster_path = show.poster_path,
         backdrop_path = show.backdrop_path,
       )
+
+      show.genre_ids.forEach { 
+        genresQueries.upsert(
+          show_id = show.id,
+          genre_id = Id(it.toLong())
+        )
+      }
     }
   }
 

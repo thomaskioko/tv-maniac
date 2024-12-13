@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.core.db.Recommended_shows
 import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.core.db.Season_images
 import com.thomaskioko.tvmaniac.core.db.Season_videos
+import com.thomaskioko.tvmaniac.core.db.Show_genres
 import com.thomaskioko.tvmaniac.core.db.Similar_shows
 import com.thomaskioko.tvmaniac.core.db.Toprated_shows
 import com.thomaskioko.tvmaniac.core.db.Trailers
@@ -96,7 +97,6 @@ class DatabaseFactory(private val sqlDriver: SqlDriver) {
       genresAdapter =
         Genres.Adapter(
           idAdapter = IdAdapter(),
-          tmdb_idAdapter = IdAdapter(),
         ),
       season_imagesAdapter =
         Season_images.Adapter(
@@ -126,5 +126,10 @@ class DatabaseFactory(private val sqlDriver: SqlDriver) {
         Featured_shows.Adapter(
           idAdapter = IdAdapter(),
         ),
+      show_genresAdapter =
+        Show_genres.Adapter(
+          show_idAdapter = IdAdapter(),
+          genre_idAdapter = IdAdapter(),
+        )
     )
 }

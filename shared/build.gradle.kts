@@ -65,6 +65,8 @@ kotlin {
 
         implementation(projects.data.cast.api)
         implementation(projects.data.cast.implementation)
+        implementation(projects.data.genre.api)
+        implementation(projects.data.genre.implementation)
         implementation(projects.data.episodes.api)
         implementation(projects.data.episodes.implementation)
         implementation(projects.data.featuredshows.api)

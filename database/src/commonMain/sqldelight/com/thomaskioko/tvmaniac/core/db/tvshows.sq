@@ -62,9 +62,12 @@ FROM
 LEFT OUTER JOIN
     library ON tvshows.id = library.id
 LEFT OUTER JOIN
-    genres ON tvshows.id = genres.tmdb_id
+    show_genres ON tvshows.id = show_genres.show_id
+LEFT OUTER JOIN
+    genres ON show_genres.genre_id = genres.id
 WHERE
-    tvshows.id = ?;
+      tvshows.id = ?
+GROUP BY tvshows.id;
 
 searchShows:
 SELECT

@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.data.featuredshows.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.Featured_shows
+import com.thomaskioko.tvmaniac.core.db.Show_genres
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsDao
@@ -73,7 +74,6 @@ class FeaturedShowsStore(
                         show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                     ),
                   )
-
                   featuredShowsDao.upsert(
                     Featured_shows(
                       id = Id(show.id.toLong()),
