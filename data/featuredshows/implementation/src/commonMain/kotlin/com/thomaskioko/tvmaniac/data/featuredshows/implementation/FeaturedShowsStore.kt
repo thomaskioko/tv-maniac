@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.data.featuredshows.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.Featured_shows
-import com.thomaskioko.tvmaniac.core.db.Show_genres
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsDao
@@ -38,7 +37,7 @@ class FeaturedShowsStore(
   Store<Long, List<ShowEntity>> by StoreBuilder.from(
       fetcher =
         Fetcher.of { page ->
-          when (val response = tmdbRemoteDataSource.getDiscoverShows(page = page)) {
+          when (val response = tmdbRemoteDataSource.discoverShows(page = page)) {
             is ApiResponse.Success -> response.body.results
             is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
             is ApiResponse.Error.HttpError ->
