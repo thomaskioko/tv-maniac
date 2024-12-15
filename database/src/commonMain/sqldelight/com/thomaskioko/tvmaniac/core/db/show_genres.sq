@@ -17,59 +17,8 @@ upsert:
 INSERT OR REPLACE INTO show_genres (show_id, genre_id)
 VALUES (?, ?);
 
--- Query to get genres with top-rated show image and count
-showGenre:
-SELECT
-    g.id,
-    g.name,
-    COALESCE(
-        -- First try: Get a unique image not used by higher-priority genres
-        (
-            SELECT ts.poster_path
-            FROM tvshows ts
-            JOIN show_genres sg ON ts.id = sg.show_id
-            WHERE sg.genre_id = g.id
-                AND ts.poster_path IS NOT NULL
-                AND NOT EXISTS (
-                    SELECT 1
-                    FROM show_genres sg2
-                    JOIN genres g2 ON sg2.genre_id = g2.id
-                    JOIN tvshows ts2 ON sg2.show_id = ts2.id
-                    WHERE ts2.poster_path = ts.poster_path
-                    AND (
-                        (SELECT COUNT(*) FROM show_genres WHERE genre_id = g2.id) >
-                        (SELECT COUNT(*) FROM show_genres WHERE genre_id = g.id)
-                        OR
-                        ((SELECT COUNT(*) FROM show_genres WHERE genre_id = g2.id) =
-                         (SELECT COUNT(*) FROM show_genres WHERE genre_id = g.id)
-                         AND g2.id < g.id)
-                    )
-                )
-            ORDER BY ts.vote_average DESC
-            LIMIT 1
-        ),
-        -- Second try: Get the highest-rated show's image for this genre
-        (
-            SELECT ts.poster_path
-            FROM tvshows ts
-            JOIN show_genres sg ON ts.id = sg.show_id
-            WHERE sg.genre_id = g.id
-                AND ts.poster_path IS NOT NULL
-            ORDER BY ts.vote_average DESC
-            LIMIT 1
-        ),
-        -- Final fallback: Get any show image from the database
-        (
-            SELECT ts.poster_path
-            FROM tvshows ts
-            WHERE ts.poster_path IS NOT NULL
-            ORDER BY ts.vote_average DESC
-            LIMIT 1
-        )
-    ) AS top_show_image,
-    (
-        SELECT COUNT(*)
-        FROM show_genres sg
-        WHERE sg.genre_id = g.id
-    ) AS show_count
-FROM genres g;
+showsByGenreId:
+SELECT s.*
+FROM tvshows s
+INNER JOIN show_genres sg ON s.id = sg.show_id
+WHERE sg.genre_id = ?;

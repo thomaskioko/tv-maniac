@@ -22,10 +22,14 @@ interface TmdbShowsNetworkDataSource {
    *
    * @param page Page number
    * @param sortBy Default: popularity.desc.
+   * @param genres Comma separated list of genre ids.
    */
-  suspend fun getDiscoverShows(
-    page: Long,
+  suspend fun discoverShows(
+    page: Long = DEFAULT_API_PAGE,
     sortBy: String = DEFAULT_SORT_ORDER,
+    genres: String? = null,
+    watchProviders: String? = null,
+    screenedTheatrically: Boolean = true
   ): ApiResponse<TmdbShowResult>
 
   /**

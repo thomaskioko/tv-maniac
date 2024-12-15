@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepo
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowsPresenter
@@ -42,6 +43,7 @@ class HomePresenterTest {
   private val trendingShowsRepository = FakeTrendingShowsRepository()
   private val upcomingShowsRepository = FakeUpcomingShowsRepository()
   private val searchRepository = FakeSearchRepository()
+  private val genreRepository = FakeGenreRepository()
 
   private lateinit var presenter: HomePresenter
 
@@ -54,6 +56,7 @@ class HomePresenterTest {
       componentContext = DefaultComponentContext(lifecycle = lifecycle),
       onShowClicked = {},
       onMoreShowClicked = {},
+      onShowGenreClicked = {}
     )
   }
 
@@ -97,14 +100,13 @@ class HomePresenterTest {
   private fun buildSearchPresenterFactory(
     componentContext: ComponentContext,
   ): SearchPresenterFactory = SearchPresenterFactory(
-    create = { _: ComponentContext, _: (id: Long) -> Unit ->
+    create = { _: ComponentContext, _: (id: Long) -> Unit, _: (id: Long) -> Unit ->
       SearchShowsPresenter(
         componentContext = componentContext,
         searchRepository = searchRepository,
         onNavigateToShowDetails = {},
-        featuredShowsRepository = featuredShowsRepository,
-        trendingShowsRepository = trendingShowsRepository,
-        upcomingShowsRepository = upcomingShowsRepository,
+        onNavigateToGenre = {},
+        genreRepository = genreRepository,
         mapper = ShowMapper(
           formatterUtil = FakeFormatterUtil(),
         ),
@@ -146,6 +148,7 @@ class HomePresenterTest {
         upcomingShowsRepository = upcomingShowsRepository,
         topRatedShowsRepository = FakeTopRatedShowsRepository(),
         popularShowsRepository = FakePopularShowsRepository(),
+        libraryRepository = FakeLibraryRepository(),
       )
     }
     )

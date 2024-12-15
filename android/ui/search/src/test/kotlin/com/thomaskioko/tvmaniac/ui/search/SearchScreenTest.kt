@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.ui.search
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
-import com.thomaskioko.tvmaniac.presentation.search.EmptySearchState
+import com.thomaskioko.tvmaniac.presentation.search.EmptySearchResult
 import com.thomaskioko.tvmaniac.presentation.search.SearchResultAvailable
 import com.thomaskioko.tvmaniac.presentation.search.ShowContentAvailable
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
@@ -30,7 +30,7 @@ class SearchScreenTest {
     composeTestRule.captureMultiDevice("SearchEmptyState") {
       TvManiacBackground {
         SearchScreen(
-          state = EmptySearchState(),
+          state = EmptySearchResult(),
           onAction = {},
         )
       }
@@ -42,7 +42,7 @@ class SearchScreenTest {
     composeTestRule.captureMultiDevice("SearchErrorState") {
       TvManiacBackground {
         SearchScreen(
-          state = EmptySearchState(),
+          state = EmptySearchResult(),
           onAction = {},
         )
       }
@@ -55,9 +55,7 @@ class SearchScreenTest {
       TvManiacBackground {
         SearchScreen(
           state = ShowContentAvailable(
-            featuredShows = createDiscoverShowList(),
-            trendingShows = createDiscoverShowList(),
-            upcomingShows = createDiscoverShowList(),
+            genres = createGenreShowList(),
           ),
           onAction = {},
         )

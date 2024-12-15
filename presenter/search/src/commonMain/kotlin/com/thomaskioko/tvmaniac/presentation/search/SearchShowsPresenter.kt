@@ -5,11 +5,9 @@ import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
-import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsRepository
-import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
-import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
+import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.search.api.SearchRepository
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,7 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -31,21 +28,21 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SearchPresenterFactory(
-  val create :  (
+  val create: (
     componentContext: ComponentContext,
     onNavigateToShowDetails: (id: Long) -> Unit,
-  ) -> SearchShowsPresenter
+    onNavigateToGenre: (id: Long) -> Unit,
+  ) -> SearchShowsPresenter,
 )
 
 @Inject
 class SearchShowsPresenter(
   @Assisted componentContext: ComponentContext,
   @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
+  @Assisted private val onNavigateToGenre: (Long) -> Unit,
   private val mapper: ShowMapper,
   private val searchRepository: SearchRepository,
-  private val featuredShowsRepository: FeaturedShowsRepository,
-  private val trendingShowsRepository: TrendingShowsRepository,
-  private val upcomingShowsRepository: UpcomingShowsRepository,
+  private val genreRepository: GenreRepository,
   private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
 ) : ComponentContext by componentContext {
 
@@ -61,7 +58,7 @@ class SearchShowsPresenter(
   }
 
   internal inner class PresenterInstance : InstanceKeeper.Instance {
-    private val _state = MutableStateFlow<SearchShowState>(ShowContentAvailable())
+    private val _state = MutableStateFlow<SearchShowState>(InitialSearchState())
     val state: StateFlow<SearchShowState> = _state.asStateFlow()
 
     private val queryFlow = MutableSharedFlow<String>(
@@ -72,7 +69,7 @@ class SearchShowsPresenter(
 
     fun init() {
       coroutineScope.launch {
-        launch { observeDiscoverShows() }
+        launch { observeGenre() }
         launch { observeQueryFlow() }
       }
     }
@@ -84,42 +81,30 @@ class SearchShowsPresenter(
             (it as? ShowContentAvailable)?.copy(errorMessage = null) ?: it
           }
         }
-        ReloadShowContent -> coroutineScope.launch { observeDiscoverShows(refresh = true) }
-        LoadDiscoverShows -> coroutineScope.launch { observeDiscoverShows() }
-        ClearQuery -> coroutineScope.launch { observeDiscoverShows() }
+        ReloadShowContent -> coroutineScope.launch { observeGenre(refresh = true) }
+        LoadDiscoverShows, ClearQuery -> coroutineScope.launch { observeGenre() }
         is QueryChanged -> handleQueryChange(action.query)
         is SearchShowClicked -> onNavigateToShowDetails(action.id)
+        is GenreCategoryClicked -> onNavigateToGenre(action.id)
       }
     }
 
-    private suspend fun observeDiscoverShows(refresh: Boolean = false) {
-      combine(
-        featuredShowsRepository.observeFeaturedShows(forceRefresh = refresh),
-        trendingShowsRepository.observeTrendingShows(forceRefresh = refresh),
-        upcomingShowsRepository.observeUpcomingShows(forceRefresh = refresh),
-      ) { featured, trending, upcoming ->
-        Triple(featured, trending, upcoming)
-      }
+    private suspend fun observeGenre(refresh: Boolean = false) {
+      genreRepository.observeGenresWithShows(refresh)
         .onStart { updateShowState() }
-        .collect { (featured, trending, upcoming) ->
-        val featuredShows = featured.getOrNull()
-        val trendingShows = trending.getOrNull()
-        val upcomingShows = upcoming.getOrNull()
-
-        if (featuredShows.isNullOrEmpty() && trendingShows.isNullOrEmpty() && upcomingShows.isNullOrEmpty()) {
-          _state.update { ErrorSearchState(query = queryFlow.replayCache.lastOrNull(), errorMessage = null) }
-        } else {
-          _state.update {
-            ShowContentAvailable(
-              isUpdating = false,
-              featuredShows = mapper.toShowList(featuredShows),
-              trendingShows = mapper.toShowList(trendingShows),
-              upcomingShows = mapper.toShowList(upcomingShows),
-              errorMessage = mapper.getErrorMessage(featured, trending, upcoming),
-            )
-          }
+        .collect { result ->
+          result.fold(
+            onFailure = { handleErrorState(it) },
+            onSuccess = { list ->
+              _state.update {
+                ShowContentAvailable(
+                  isUpdating = false,
+                  genres = mapper.toGenreList(list),
+                )
+              }
+            },
+          )
         }
-      }
     }
 
     private fun updateShowState() {
@@ -139,7 +124,12 @@ class SearchShowsPresenter(
         .onEach { query -> updateSearchLoadingState(query) }
         .flatMapLatest { query -> searchRepository.search(query) }
         .catch { error ->
-          _state.update { ErrorSearchState(errorMessage = error.message ?: "An unknown error occurred") }
+          _state.update {
+            EmptySearchResult(
+              query = queryFlow.replayCache.lastOrNull(),
+              errorMessage = error.message ?: "An unknown error occurred",
+            )
+          }
         }
         .collect { result ->
           result.fold(
@@ -162,7 +152,7 @@ class SearchShowsPresenter(
     private fun handleQueryChange(query: String) {
       coroutineScope.launch {
         if (query.isEmpty()) {
-          observeDiscoverShows()
+          observeGenre()
         } else {
           queryFlow.emit(query)
         }
@@ -171,13 +161,13 @@ class SearchShowsPresenter(
 
     private fun handleErrorState(error: Failure) {
       _state.update {
-        ErrorSearchState(errorMessage = error.errorMessage ?: "An unknown error occurred")
+        EmptySearchResult(errorMessage = error.errorMessage ?: "An unknown error occurred")
       }
     }
 
     private fun handleSearchResults(shows: List<ShowEntity>) {
       val state = when {
-        shows.isEmpty() -> EmptySearchState(
+        shows.isEmpty() -> EmptySearchResult(
           query = queryFlow.replayCache.lastOrNull(),
         )
         else -> SearchResultAvailable(

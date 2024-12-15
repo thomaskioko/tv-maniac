@@ -18,7 +18,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(AppScope::class)
 class DefaultGenreRepository(
   private val store: GenreStore,
-  private val showDao: GenreDao,
+  private val genreDao: GenreDao,
   private val dispatchers: AppCoroutineDispatchers,
 ) : GenreRepository {
 
@@ -27,14 +27,10 @@ class DefaultGenreRepository(
       .stream(
         StoreReadRequest.cached(
           key = Unit,
-          refresh = forceRefresh || showDao.getGenres().isEmpty(),
+          refresh = forceRefresh || genreDao.getGenres().isEmpty(),
         ),
       )
-      .mapResult(getShows())
+      .mapResult(store.get(key = Unit))
       .flowOn(dispatchers.io)
   }
-
-
-  private suspend fun getShows(): List<ShowGenresEntity> = store.get(key = Unit)
-
 }

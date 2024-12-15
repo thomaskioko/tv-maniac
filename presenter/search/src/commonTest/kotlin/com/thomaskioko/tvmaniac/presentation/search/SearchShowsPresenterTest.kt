@@ -6,9 +6,9 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.ServerError
-import com.thomaskioko.tvmaniac.data.featuredshows.testing.FakeFeaturedShowsRepository
-import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
-import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
+import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
+import com.thomaskioko.tvmaniac.genre.ShowGenresEntity
+import com.thomaskioko.tvmaniac.presentation.search.model.ShowGenre
 import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
 import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
@@ -24,21 +24,15 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class SearchShowsComponentTest {
+class SearchShowsPresenterTest {
   private val testDispatcher = StandardTestDispatcher()
-  private lateinit var fakeSearchRepository: FakeSearchRepository
-  private lateinit var featuredShowsRepository: FakeFeaturedShowsRepository
-  private lateinit var trendingShowsRepository: FakeTrendingShowsRepository
-  private lateinit var upcomingShowsRepository: FakeUpcomingShowsRepository
+  private val fakeSearchRepository = FakeSearchRepository()
+  private val genreRepository = FakeGenreRepository()
   private lateinit var presenter: SearchShowsPresenter
 
   @BeforeTest
   fun before() {
     Dispatchers.setMain(testDispatcher)
-    fakeSearchRepository = FakeSearchRepository()
-    featuredShowsRepository = FakeFeaturedShowsRepository()
-    trendingShowsRepository = FakeTrendingShowsRepository()
-    upcomingShowsRepository = FakeUpcomingShowsRepository()
     presenter = buildPresenter()
   }
 
@@ -50,7 +44,7 @@ class SearchShowsComponentTest {
   @Test
   fun `should return loading state when initialized`() = runTest {
     presenter.state.test {
-      awaitItem() shouldBe ShowContentAvailable()
+      awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
     }
   }
@@ -58,7 +52,7 @@ class SearchShowsComponentTest {
   @Test
   fun `should return initial state when query is blank`() = runTest {
     presenter.state.test {
-      awaitItem() shouldBe ShowContentAvailable()
+      awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
       presenter.dispatch(QueryChanged(""))
@@ -69,28 +63,26 @@ class SearchShowsComponentTest {
   @Test
   fun `should return empty state when show content is empty`() = runTest {
     presenter.state.test {
-      awaitItem() shouldBe ShowContentAvailable()
+      awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
       setList(emptyList())
 
-      awaitItem() shouldBe ErrorSearchState(errorMessage = null)
+      awaitItem() shouldBe ShowContentAvailable(errorMessage = null)
     }
   }
 
   @Test
   fun `should return show content when show content is not empty`() = runTest {
     presenter.state.test {
-      awaitItem() shouldBe ShowContentAvailable()
+      awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      setList(createDiscoverShowList())
+      setList(createGenreShowList())
 
       awaitItem() shouldBe ShowContentAvailable(
         isUpdating = false,
-        featuredShows = uiModelList(),
-        trendingShows = uiModelList(),
-        upcomingShows = uiModelList(),
+        genres = genreList(),
       )
     }
   }
@@ -98,7 +90,7 @@ class SearchShowsComponentTest {
   @Test
   fun `should not perform search when query is less than 3 characters`() = runTest {
     presenter.state.test {
-      awaitItem() shouldBe ShowContentAvailable()
+      awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
       presenter.dispatch(QueryChanged("te"))
@@ -110,15 +102,13 @@ class SearchShowsComponentTest {
   fun `should return empty state when query is valid and results are empty`() = runTest {
     presenter.state.test {
 
-      awaitItem() shouldBe ShowContentAvailable()
+      awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      setList(createDiscoverShowList())
+      setList(createGenreShowList())
       awaitItem() shouldBe ShowContentAvailable(
-        isUpdating = false,
-        featuredShows = uiModelList(),
-        trendingShows = uiModelList(),
-        upcomingShows = uiModelList(),
+          isUpdating = false,
+          genres = genreList(),
       )
 
       presenter.dispatch(QueryChanged("test"))
@@ -131,7 +121,7 @@ class SearchShowsComponentTest {
 
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
-      awaitItem() shouldBe EmptySearchState("test")
+      awaitItem() shouldBe EmptySearchResult("test")
     }
   }
 
@@ -139,16 +129,14 @@ class SearchShowsComponentTest {
   fun `should return loading state with previous results when query changes`() = runTest {
 
     presenter.state.test {
-      awaitItem() shouldBe ShowContentAvailable()
+      awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      setList(createDiscoverShowList())
+      setList(createGenreShowList())
 
       awaitItem() shouldBe ShowContentAvailable(
-        isUpdating = false,
-        featuredShows = uiModelList(),
-        trendingShows = uiModelList(),
-        upcomingShows = uiModelList(),
+          isUpdating = false,
+          genres = genreList(),
       )
 
       // Dispatch first query change
@@ -184,10 +172,10 @@ class SearchShowsComponentTest {
     presenter.state.test {
       setList(emptyList())
 
-      awaitItem() shouldBe ShowContentAvailable()
+      awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      awaitItem() shouldBe ErrorSearchState(errorMessage = null)
+      awaitItem() shouldBe ShowContentAvailable(errorMessage = null)
 
       presenter.dispatch(QueryChanged("test"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
@@ -204,7 +192,7 @@ class SearchShowsComponentTest {
   @Test
   fun `should handle transition from short to valid query`() = runTest {
     presenter.state.test {
-      awaitItem() shouldBe ShowContentAvailable()
+      awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
       presenter.dispatch(QueryChanged("ab"))
@@ -229,7 +217,7 @@ class SearchShowsComponentTest {
   @Test
   fun `should handle empty short and valid query transitions correctly`() = runTest {
     presenter.state.test {
-      awaitItem() shouldBe ShowContentAvailable()
+      awaitItem() shouldBe InitialSearchState()
 
       presenter.dispatch(QueryChanged(""))
       expectNoEvents()
@@ -260,7 +248,7 @@ class SearchShowsComponentTest {
   @Test
   fun `should return empty state when query is valid and search returns empty results`() = runTest {
     presenter.state.test {
-      awaitItem() shouldBe ShowContentAvailable()
+      awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
       presenter.dispatch(QueryChanged("test"))
@@ -271,14 +259,14 @@ class SearchShowsComponentTest {
 
       fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
 
-      awaitItem() shouldBe EmptySearchState("test")
+      awaitItem() shouldBe EmptySearchResult("test")
     }
   }
 
   @Test
   fun `should handle sequence of empty and non-empty results`() = runTest {
     presenter.state.test {
-      awaitItem() shouldBe ShowContentAvailable()
+      awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
       presenter.dispatch(QueryChanged("empty"))
@@ -287,7 +275,7 @@ class SearchShowsComponentTest {
       testScheduler.advanceTimeBy(300)
 
       fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
-      awaitItem() shouldBe EmptySearchState("empty")
+      awaitItem() shouldBe EmptySearchResult("empty")
 
       presenter.dispatch(QueryChanged("test"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
@@ -313,24 +301,20 @@ class SearchShowsComponentTest {
       testScheduler.advanceTimeBy(300)
 
       fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
-      awaitItem() shouldBe EmptySearchState("none")
+      awaitItem() shouldBe EmptySearchResult("none")
     }
   }
 
   @Test
   fun `should update state when on clear query and show content is available`() = runTest {
     presenter.state.test {
-
-
-      awaitItem() shouldBe ShowContentAvailable()
-      setList(createDiscoverShowList())
+      awaitItem() shouldBe InitialSearchState()
+      setList(createGenreShowList())
 
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
       awaitItem() shouldBe ShowContentAvailable(
         isUpdating = false,
-        featuredShows = uiModelList(),
-        trendingShows = uiModelList(),
-        upcomingShows = uiModelList(),
+        genres = genreList(),
       )
 
       presenter.dispatch(QueryChanged("test"))
@@ -349,15 +333,13 @@ class SearchShowsComponentTest {
 
       presenter.dispatch(ClearQuery)
 
-      setList(createDiscoverShowList())
+      setList(createGenreShowList())
 
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
       awaitItem() shouldBe ShowContentAvailable(
         isUpdating = false,
-        featuredShows = uiModelList(),
-        trendingShows = uiModelList(),
-        upcomingShows = uiModelList(),
+        genres = genreList(),
       )
     }
   }
@@ -365,7 +347,7 @@ class SearchShowsComponentTest {
   @Test
   fun `should handle error states correctly`() = runTest {
     presenter.state.test {
-      awaitItem() shouldBe ShowContentAvailable()
+      awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
       presenter.dispatch(QueryChanged("test"))
@@ -376,7 +358,7 @@ class SearchShowsComponentTest {
       val error = ServerError("Test error")
       fakeSearchRepository.setSearchResult(Either.Left(error))
 
-      awaitItem() shouldBe ErrorSearchState(errorMessage = error.errorMessage)
+      awaitItem() shouldBe EmptySearchResult(errorMessage = error.errorMessage)
     }
   }
 
@@ -385,20 +367,17 @@ class SearchShowsComponentTest {
   ): SearchShowsPresenter = SearchShowsPresenter(
     componentContext = DefaultComponentContext(lifecycle = lifecycle),
     onNavigateToShowDetails = {},
+    onNavigateToGenre = {},
     searchRepository = fakeSearchRepository,
-    featuredShowsRepository = featuredShowsRepository,
-    trendingShowsRepository = trendingShowsRepository,
-    upcomingShowsRepository = upcomingShowsRepository,
+    genreRepository = genreRepository,
     mapper = ShowMapper(
       formatterUtil = FakeFormatterUtil(),
     ),
   )
 
 
-  private suspend fun TestScope.setList(list: List<ShowEntity>) {
-    featuredShowsRepository.setFeaturedShows(Either.Right(list))
-    upcomingShowsRepository.setUpcomingShows(Either.Right(list))
-    trendingShowsRepository.setTrendingShows(Either.Right(list))
+  private suspend fun TestScope.setList(list: List<ShowGenresEntity>) {
+    genreRepository.setUpcomingShows(Either.Right(list))
 
     testScheduler.advanceUntilIdle()
   }
@@ -412,7 +391,7 @@ class SearchShowsComponentTest {
         inLibrary = false,
         overview = null,
         status = null,
-        voteAverage = null
+        voteAverage = null,
       )
     }
       .toImmutableList()
@@ -420,18 +399,36 @@ class SearchShowsComponentTest {
   private fun uiModelList(size: Int = LIST_SIZE) =
     createDiscoverShowList(size)
       .map {
-          ShowItem(
-              tmdbId = it.id,
-              title = it.title,
-              posterImageUrl = it.posterPath,
-              inLibrary = it.inLibrary,
-              overview = it.overview,
-              status = it.status,
-              voteAverage = it.voteAverage,
-              year = it.year,
-          )
+        ShowItem(
+          tmdbId = it.id,
+          title = it.title,
+          posterImageUrl = it.posterPath,
+          inLibrary = it.inLibrary,
+          overview = it.overview,
+          status = it.status,
+          voteAverage = it.voteAverage,
+          year = it.year,
+        )
       }
       .toImmutableList()
+
+  private fun createGenreShowList(size: Int = LIST_SIZE) =
+    List(size) {
+      ShowGenresEntity(
+        id = 84958,
+        name = "Horror",
+        posterUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      )
+    }
+      .toImmutableList()
+
+  private fun genreList(size: Int = LIST_SIZE) = List(size) {
+    ShowGenre(
+      id = 84958,
+      name = "Horror",
+      posterUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+    )
+  }.toImmutableList()
 
   companion object {
     const val LIST_SIZE = 5

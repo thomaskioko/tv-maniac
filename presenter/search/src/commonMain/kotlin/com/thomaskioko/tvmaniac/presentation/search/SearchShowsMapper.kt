@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.search
 
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
+import com.thomaskioko.tvmaniac.genre.ShowGenresEntity
+import com.thomaskioko.tvmaniac.presentation.search.model.ShowGenre
 import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.util.FormatterUtil
@@ -30,14 +30,14 @@ class ShowMapper(
     }
       ?.toImmutableList()
 
-  fun getErrorMessage(
-    featuredShows: Either<Failure, List<ShowEntity>>,
-    trendingShows: Either<Failure, List<ShowEntity>>,
-    upcomingShows: Either<Failure, List<ShowEntity>>,
-  ) =
-    featuredShows.getErrorOrNull()?.errorMessage
-      ?: trendingShows.getErrorOrNull()?.errorMessage
-      ?: upcomingShows.getErrorOrNull()?.errorMessage
-      ?: featuredShows.getErrorOrNull()?.errorMessage
+  fun toGenreList(entities: List<ShowGenresEntity>): ImmutableList<ShowGenre> {
+    return entities.map {
+      ShowGenre(
+        id = it.id,
+        name = it.name,
+        posterUrl = it.posterUrl
+      )
+    }.toImmutableList()
+  }
 }
 

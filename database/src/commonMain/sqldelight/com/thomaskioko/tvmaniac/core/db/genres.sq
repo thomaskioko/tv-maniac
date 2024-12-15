@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 CREATE TABLE IF NOT EXISTS `genres` (
     `id` INTEGER AS Id<GenreId> NOT NULL,
     `name` TEXT NOT NULL,
+    `poster_url` TEXT,
      PRIMARY KEY (id, id),
      FOREIGN KEY(id) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -18,8 +19,9 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_genres_genre_id` ON `genres` (`id`);
 upsert:
 INSERT OR REPLACE INTO genres (
     id,
-    name
-) VALUES (?, ?);
+    name,
+    poster_url
+) VALUES (?, ?, ?);
 
 genres:
-SELECT * FROM genres;
+SELECT * FROM genres ORDER BY name ASC;

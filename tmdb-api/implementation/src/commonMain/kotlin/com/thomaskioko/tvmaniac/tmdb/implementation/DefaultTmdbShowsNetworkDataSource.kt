@@ -28,7 +28,13 @@ class DefaultTmdbShowsNetworkDataSource(
       }
     }
 
-  override suspend fun getDiscoverShows(page: Long, sortBy: String): ApiResponse<TmdbShowResult> =
+  override suspend fun discoverShows(
+    page: Long,
+    sortBy: String,
+    genres: String?,
+    watchProviders: String?,
+    screenedTheatrically: Boolean
+  ): ApiResponse<TmdbShowResult> =
     httpClient.safeRequest {
       url {
         method = HttpMethod.Get
@@ -36,7 +42,10 @@ class DefaultTmdbShowsNetworkDataSource(
         parameter("page", "$page")
         parameter("sort_by", sortBy)
         parameter("include_adult", "false")
-        parameter("screened_theatrically", "true")
+        parameter("screened_theatrically", screenedTheatrically)
+
+        genres?.let { parameter("with_genres", it) }
+        watchProviders?.let { parameter("with_watch_providers", it) }
       }
     }
 
