@@ -114,6 +114,7 @@ fun PosterBackdropCard(
   title: String,
   imageUrl: String?,
   modifier: Modifier = Modifier,
+  textAlign: TextAlign = TextAlign.Start,
   contentScale: ContentScale = ContentScale.Crop,
   imageWidth: Dp = 120.dp,
   darkTheme: Boolean = true,
@@ -156,10 +157,11 @@ fun PosterBackdropCard(
             text = title,
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center,
+            textAlign = textAlign,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(16.dp)
                 .align(Alignment.BottomStart),
           )
