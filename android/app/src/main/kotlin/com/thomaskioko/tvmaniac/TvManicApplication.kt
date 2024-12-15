@@ -10,7 +10,7 @@ class TvManicApplication : Application() {
 
   override fun onCreate() {
     super.onCreate()
-    component.initializers.init()
+    component.initializers.initialize()
   }
 
   fun getApplicationComponent() = component

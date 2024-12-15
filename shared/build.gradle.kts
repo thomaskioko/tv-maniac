@@ -63,6 +63,7 @@ kotlin {
         api(projects.presenter.showDetails)
         api(projects.presenter.trailers)
 
+        implementation(projects.core.base)
         implementation(projects.data.cast.api)
         implementation(projects.data.cast.implementation)
         implementation(projects.data.genre.api)
@@ -71,6 +72,8 @@ kotlin {
         implementation(projects.data.episodes.implementation)
         implementation(projects.data.featuredshows.api)
         implementation(projects.data.featuredshows.implementation)
+        implementation(projects.data.genre.api)
+        implementation(projects.data.genre.implementation)
         implementation(projects.data.library.api)
         implementation(projects.data.library.implementation)
         implementation(projects.data.popularshows.api)

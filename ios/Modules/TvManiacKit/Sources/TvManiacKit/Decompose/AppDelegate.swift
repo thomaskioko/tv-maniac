@@ -23,6 +23,8 @@ public class AppDelegate: NSObject, UIApplicationDelegate {
     super.init()
     LifecycleRegistryExtKt.create(lifecycle)
     configureSDWebImage()
+
+    appComponent.initializers.initialize()
   }
 
   deinit {
