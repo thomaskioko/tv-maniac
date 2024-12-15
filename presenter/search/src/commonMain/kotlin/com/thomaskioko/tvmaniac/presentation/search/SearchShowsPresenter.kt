@@ -140,12 +140,11 @@ class SearchShowsPresenter(
     }
 
     private fun updateSearchLoadingState(query: String) {
-      _state.update {
-        SearchResultAvailable(
-          isUpdating = true,
-          query = query,
-          results = (it as? SearchResultAvailable)?.results,
-        )
+      _state.update { state ->
+        when (state) {
+          is SearchResultAvailable -> state.copy(isUpdating = true, query = query)
+          else -> SearchResultAvailable(isUpdating = true, query = query)
+        }
       }
     }
 
@@ -160,23 +159,33 @@ class SearchShowsPresenter(
     }
 
     private fun handleErrorState(error: Failure) {
-      _state.update {
-        EmptySearchResult(errorMessage = error.errorMessage ?: "An unknown error occurred")
+      _state.update { state ->
+        EmptySearchResult(
+          query = state.query,
+          errorMessage = error.errorMessage ?: "An unknown error occurred"
+        )
       }
     }
 
     private fun handleSearchResults(shows: List<ShowEntity>) {
-      val state = when {
-        shows.isEmpty() -> EmptySearchResult(
-          query = queryFlow.replayCache.lastOrNull(),
-        )
-        else -> SearchResultAvailable(
-          isUpdating = false,
-          results = mapper.toShowList(shows),
-          query = queryFlow.replayCache.lastOrNull(),
-        )
+      _state.update { state ->
+        val currentQuery = queryFlow.replayCache.lastOrNull() ?: state.query
+        when {
+          !state.isUpdating && shows.isEmpty() -> EmptySearchResult(
+            query = currentQuery
+          )
+          state is SearchResultAvailable -> state.copy(
+            isUpdating = false,
+            results = mapper.toShowList(shows),
+            query = currentQuery
+          )
+          else -> SearchResultAvailable(
+            isUpdating = false,
+            results = mapper.toShowList(shows),
+            query = currentQuery
+          )
+        }
       }
-      _state.update { state }
     }
   }
 }

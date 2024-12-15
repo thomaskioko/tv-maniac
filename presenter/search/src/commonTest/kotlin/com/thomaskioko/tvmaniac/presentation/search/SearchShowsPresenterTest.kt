@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
 import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import io.kotest.matchers.shouldBe
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -121,7 +122,7 @@ class SearchShowsPresenterTest {
 
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
-      awaitItem() shouldBe EmptySearchResult("test")
+      awaitItem() shouldBe SearchResultAvailable("test", results = persistentListOf())
     }
   }
 
@@ -259,7 +260,7 @@ class SearchShowsPresenterTest {
 
       fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
 
-      awaitItem() shouldBe EmptySearchResult("test")
+      awaitItem() shouldBe SearchResultAvailable("test", results = persistentListOf())
     }
   }
 
@@ -275,10 +276,10 @@ class SearchShowsPresenterTest {
       testScheduler.advanceTimeBy(300)
 
       fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
-      awaitItem() shouldBe EmptySearchResult("empty")
+      awaitItem() shouldBe SearchResultAvailable("empty", results = persistentListOf())
 
       presenter.dispatch(QueryChanged("test"))
-      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
+      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test", results = persistentListOf())
 
       testScheduler.advanceTimeBy(300)
 
@@ -301,7 +302,7 @@ class SearchShowsPresenterTest {
       testScheduler.advanceTimeBy(300)
 
       fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
-      awaitItem() shouldBe EmptySearchResult("none")
+      awaitItem() shouldBe SearchResultAvailable("none", results = persistentListOf())
     }
   }
 
@@ -358,7 +359,7 @@ class SearchShowsPresenterTest {
       val error = ServerError("Test error")
       fakeSearchRepository.setSearchResult(Either.Left(error))
 
-      awaitItem() shouldBe EmptySearchResult(errorMessage = error.errorMessage)
+      awaitItem() shouldBe EmptySearchResult(query = "test", errorMessage = error.errorMessage)
     }
   }
 
