@@ -86,6 +86,7 @@ class DefaultRootPresenter(
               componentContext,
               { id -> navigation.pushNew(RootDestinationConfig.ShowDetails(id)) },
               { id -> navigation.pushNew(RootDestinationConfig.MoreShows(id)) },
+              { id -> navigation.pushNew(RootDestinationConfig.GenreShows(id)) },
             ),
         )
       is RootDestinationConfig.ShowDetails ->
@@ -140,5 +141,6 @@ class DefaultRootPresenter(
               navigation.pushNew(RootDestinationConfig.ShowDetails(id))
             },
         )
+      is RootDestinationConfig.GenreShows -> Child.GenreShows
     }
 }

@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepo
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.Home
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.MoreShows
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.ShowDetails
@@ -71,6 +72,7 @@ class DefaultRootComponentTest {
   private val topRatedShowsRepository = FakeTopRatedShowsRepository()
   private val popularShowsRepository = FakePopularShowsRepository()
   private val searchRepository = FakeSearchRepository()
+  private val genreRepository = FakeGenreRepository()
 
   private lateinit var presenter: DefaultRootPresenter
 
@@ -168,20 +170,21 @@ class DefaultRootComponentTest {
   private fun buildDiscoverPresenterFactory(
     componentContext: ComponentContext,
   ): DiscoverPresenterFactory =
-  DiscoverPresenterFactory(
-    create = { _: ComponentContext, _: (id: Long) -> Unit, _: (categoryId: Long) -> Unit ->
-      DiscoverShowsPresenter(
-        componentContext = componentContext,
-        onNavigateToShowDetails = {},
-        onNavigateToMore = {},
-        featuredShowsRepository = featuredShowsRepository,
-        trendingShowsRepository = trendingShowsRepository,
-        upcomingShowsRepository = upcomingShowsRepository,
-        topRatedShowsRepository = topRatedShowsRepository,
-        popularShowsRepository = popularShowsRepository,
-      )
-    }
-  )
+    DiscoverPresenterFactory(
+      create = { _: ComponentContext, _: (id: Long) -> Unit, _: (categoryId: Long) -> Unit ->
+        DiscoverShowsPresenter(
+          componentContext = componentContext,
+          onNavigateToShowDetails = {},
+          onNavigateToMore = {},
+          featuredShowsRepository = featuredShowsRepository,
+          trendingShowsRepository = trendingShowsRepository,
+          upcomingShowsRepository = upcomingShowsRepository,
+          topRatedShowsRepository = topRatedShowsRepository,
+          popularShowsRepository = popularShowsRepository,
+          libraryRepository = FakeLibraryRepository(),
+        )
+      },
+    )
 
   private fun buildLibraryPresenterFactory(
     componentContext: ComponentContext,
@@ -192,7 +195,7 @@ class DefaultRootComponentTest {
         navigateToShowDetails = {},
         repository = FakeLibraryRepository(),
       )
-    }
+    },
   )
 
   private fun buildMoreShowsPresenterFactory(
@@ -209,25 +212,24 @@ class DefaultRootComponentTest {
         trendingShowsRepository = trendingShowsRepository,
         topRatedShowsRepository = topRatedShowsRepository,
       )
-    }
+    },
   )
 
   private fun buildSearchPresenterFactory(
     componentContext: ComponentContext,
   ): SearchPresenterFactory = SearchPresenterFactory(
-    create = { _: ComponentContext, _: (id: Long) -> Unit ->
+    create = { _: ComponentContext, _: (id: Long) -> Unit, _: (id: Long) -> Unit ->
       SearchShowsPresenter(
         componentContext = componentContext,
         onNavigateToShowDetails = {},
+        onNavigateToGenre = {},
+        genreRepository = genreRepository,
         searchRepository = searchRepository,
-        featuredShowsRepository = featuredShowsRepository,
-        trendingShowsRepository = trendingShowsRepository,
-        upcomingShowsRepository = upcomingShowsRepository,
         mapper = ShowMapper(
           formatterUtil = FakeFormatterUtil(),
-        )
+        ),
       )
-    }
+    },
   )
 
   private fun buildSettingsPresenterFactory(
@@ -240,39 +242,39 @@ class DefaultRootComponentTest {
         datastoreRepository = datastoreRepository,
         traktAuthRepository = FakeTraktAuthRepository(),
       )
-    }
+    },
   )
 
   private fun buildShowDetailsPresenterPresenterFactory(
     componentContext: ComponentContext,
   ): ShowDetailsPresenterFactory =
- ShowDetailsPresenterFactory(
-   create =    {
-       _: ComponentContext,
-       showId: Long,
-       _: () -> Unit,
-       _: (id: Long) -> Unit,
-       _: (param: ShowSeasonDetailsParam) -> Unit,
-       _: (id: Long) -> Unit,
-     ->
-     ShowDetailsPresenter(
-       showId = showId,
-       onBack = {},
-       onNavigateToShow = {},
-       onNavigateToSeason = {},
-       onNavigateToTrailer = {},
-       componentContext = componentContext,
-       castRepository = FakeCastRepository(),
-       libraryRepository = FakeLibraryRepository(),
-       recommendedShowsRepository = FakeRecommendedShowsRepository(),
-       seasonsRepository = FakeSeasonsRepository(),
-       showDetailsRepository = FakeShowDetailsRepository(),
-       similarShowsRepository = FakeSimilarShowsRepository(),
-       trailerRepository = FakeTrailerRepository(),
-       watchProviders = FakeWatchProviderRepository(),
-     )
-   }
- )
+    ShowDetailsPresenterFactory(
+      create = {
+          _: ComponentContext,
+          showId: Long,
+          _: () -> Unit,
+          _: (id: Long) -> Unit,
+          _: (param: ShowSeasonDetailsParam) -> Unit,
+          _: (id: Long) -> Unit,
+        ->
+        ShowDetailsPresenter(
+          showId = showId,
+          onBack = {},
+          onNavigateToShow = {},
+          onNavigateToSeason = {},
+          onNavigateToTrailer = {},
+          componentContext = componentContext,
+          castRepository = FakeCastRepository(),
+          libraryRepository = FakeLibraryRepository(),
+          recommendedShowsRepository = FakeRecommendedShowsRepository(),
+          seasonsRepository = FakeSeasonsRepository(),
+          showDetailsRepository = FakeShowDetailsRepository(),
+          similarShowsRepository = FakeSimilarShowsRepository(),
+          trailerRepository = FakeTrailerRepository(),
+          watchProviders = FakeWatchProviderRepository(),
+        )
+      },
+    )
 
   private fun buildHomePresenterFactory(componentContext: ComponentContext): HomePresenter.Factory =
     DefaultHomePresenter.Factory(
@@ -287,16 +289,17 @@ class DefaultRootComponentTest {
   private fun buildSeasonDetailsPresenterFactory(
     componentContext: ComponentContext,
   ): SeasonDetailsPresenterFactory =
-    SeasonDetailsPresenterFactory(create = { _: ComponentContext, param: SeasonDetailsUiParam, _: () -> Unit, _: (id: Long) -> Unit ->
-      SeasonDetailsPresenter(
-        componentContext = componentContext,
-        param = param,
-        onBack = {},
-        onEpisodeClick = {},
-        seasonDetailsRepository = FakeSeasonDetailsRepository(),
-        castRepository = FakeCastRepository(),
-      )
-    }
+    SeasonDetailsPresenterFactory(
+      create = { _: ComponentContext, param: SeasonDetailsUiParam, _: () -> Unit, _: (id: Long) -> Unit ->
+        SeasonDetailsPresenter(
+          componentContext = componentContext,
+          param = param,
+          onBack = {},
+          onEpisodeClick = {},
+          seasonDetailsRepository = FakeSeasonDetailsRepository(),
+          castRepository = FakeCastRepository(),
+        )
+      },
     )
 
   private fun buildTrailersPresenterFactory(
@@ -308,6 +311,6 @@ class DefaultRootComponentTest {
         traktShowId = id,
         repository = FakeTrailerRepository(),
       )
-    }
+    },
   )
 }

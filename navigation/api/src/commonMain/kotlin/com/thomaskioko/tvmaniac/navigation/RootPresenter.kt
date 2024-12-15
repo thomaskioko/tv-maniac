@@ -28,5 +28,7 @@ interface RootPresenter {
     class MoreShows(val presenter: MoreShowsPresenter) : Child
 
     class Trailers(val presenter: TrailersPresenter) : Child
+
+    data object GenreShows : Child
   }
 }

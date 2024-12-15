@@ -27,6 +27,7 @@ class DefaultHomePresenter private constructor(
   @Assisted componentContext: ComponentContext,
   @Assisted private val onShowClicked: (id: Long) -> Unit,
   @Assisted private val onMoreShowClicked: (id: Long) -> Unit,
+  @Assisted private val onShowGenreClicked: (id: Long) -> Unit,
   private val discoverPresenterFactory: DiscoverPresenterFactory,
   private val libraryPresenterFactory: LibraryPresenterFactory,
   private val searchPresenterFactory: SearchPresenterFactory,
@@ -106,6 +107,7 @@ class DefaultHomePresenter private constructor(
             searchPresenterFactory.create(
               componentContext,
               { id -> onShowClicked(id) },
+              { id -> onShowGenreClicked(id) },
             ),
         )
       }
@@ -136,10 +138,12 @@ class DefaultHomePresenter private constructor(
       componentContext: ComponentContext,
       onShowClicked: (id: Long) -> Unit,
       onMoreShowClicked: (id: Long) -> Unit,
+      onShowGenreClicked: (id: Long) -> Unit,
     ): HomePresenter = DefaultHomePresenter(
       componentContext = componentContext,
       onShowClicked = onShowClicked,
       onMoreShowClicked = onMoreShowClicked,
+      onShowGenreClicked = onShowGenreClicked,
       discoverPresenterFactory = discoverPresenterFactory,
       libraryPresenterFactory = libraryPresenterFactory,
       searchPresenterFactory = searchPresenterFactory,

@@ -14,4 +14,6 @@ sealed interface RootDestinationConfig {
   @Serializable data class MoreShows(val id: Long) : RootDestinationConfig
 
   @Serializable data class Trailers(val id: Long) : RootDestinationConfig
+
+  @Serializable data class GenreShows(val id: Long) : RootDestinationConfig
 }

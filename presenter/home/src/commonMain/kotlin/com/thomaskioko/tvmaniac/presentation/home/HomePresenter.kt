@@ -15,6 +15,7 @@ interface HomePresenter {
       componentContext: ComponentContext,
       onShowClicked: (id: Long) -> Unit,
       onMoreShowClicked: (id: Long) -> Unit,
+      onShowGenreClicked: (id: Long) -> Unit,
     ): HomePresenter
   }
 

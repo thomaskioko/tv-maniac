@@ -30,6 +30,7 @@ kotlin {
         implementation(projects.core.util.testing)
         implementation(projects.traktAuth.testing)
         implementation(projects.data.featuredshows.testing)
+        implementation(projects.data.genre.testing)
         implementation(projects.data.library.testing)
         implementation(projects.data.popularshows.testing)
         implementation(projects.data.search.testing)

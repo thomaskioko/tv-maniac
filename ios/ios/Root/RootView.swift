@@ -14,12 +14,12 @@ struct RootView: View {
   private let rootPresenter: RootPresenter
   @StateFlow private var uiState: ThemeState
   @State private var isShowingSplash = true
-
+  
   init(rootPresenter: RootPresenter) {
     self.rootPresenter = rootPresenter
     _uiState = StateFlow(rootPresenter.themeState)
   }
-
+  
   var body: some View {
     ZStack {
       if isShowingSplash {
@@ -43,7 +43,7 @@ struct RootView: View {
       }
     }
   }
-
+  
   @ViewBuilder
   private func childView(for child: RootPresenterChild) -> some View {
     switch onEnum(of: child) {
@@ -57,6 +57,8 @@ struct RootView: View {
         MoreShowsView(presenter: child.presenter)
       case .trailers:
         EmptyView() // TODO: Add implementation
+      case .genreShows:
+        EmptyView()
     }
   }
 }

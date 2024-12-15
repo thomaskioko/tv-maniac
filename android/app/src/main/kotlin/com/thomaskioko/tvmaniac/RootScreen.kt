@@ -68,6 +68,9 @@ private fun ChildrenContent(rootPresenter: RootPresenter, modifier: Modifier = M
           presenter = screen.presenter,
           modifier = fillMaxSizeModifier,
         )
+      RootPresenter.Child.GenreShows -> {
+        // TODO:: Genre Shows Screen
+      }
     }
   }
 }
