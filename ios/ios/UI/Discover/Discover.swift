@@ -38,22 +38,21 @@ struct Discover: View {
   @ViewBuilder
   private func discoverLoadedContent(state: DataLoaded) -> some View {
     ScrollView(showsIndicators: false) {
-      ParallaxHeader(
-        coordinateSpace: CoordinateSpaces.scrollView,
-        defaultHeight: 550,
-        onScroll: { offset in
-          let opacity = -offset - 150
-          let normalizedOpacity = opacity / 200
-          showGlass = max(0, min(1, normalizedOpacity))
+      ZStack(alignment: .bottom) {
+        ParallaxHeader(
+          coordinateSpace: CoordinateSpaces.scrollView,
+          defaultHeight: 550,
+          onScroll: { offset in
+            let opacity = -offset - 150
+            let normalizedOpacity = opacity / 200
+            showGlass = max(0, min(1, normalizedOpacity))
+          }
+        ) {
+          headerContent(shows: state.featuredShows)
         }
-      ) {
-        headerContent(shows: state.featuredShows)
+        showInfoOverlay(state.featuredShows.map { $0.toSwift() })
       }
-      
-      showInfoOverlay(state.featuredShows.map { $0.toSwift() })
-      
       discoverListContent(state: state)
-        .offset(y: -220)
     }
     .background(Color.background)
     .navigationBarTitleDisplayMode(.inline)
@@ -71,22 +70,26 @@ struct Discover: View {
   // MARK: - Header Content
   @ViewBuilder
   private func headerContent(shows: [DiscoverShow]) -> some View {
-    let items = shows.map{ $0.toSwift() }
-    ZStack(alignment: .top) {
-      CarouselView(
-        items: items,
-        currentIndex: $currentIndex,
-        onItemScrolled: { item in
-          selectedShow = item
-        },
-        onItemTapped: { id in
-          presenter.dispatch(action: ShowClicked(id: id))
+    if shows.isEmpty {
+      LoadingIndicatorView()
+    } else {
+      let items = shows.map{ $0.toSwift() }
+      ZStack(alignment: .top) {
+        CarouselView(
+          items: items,
+          currentIndex: $currentIndex,
+          onItemScrolled: { item in
+            selectedShow = item
+          },
+          onItemTapped: { id in
+            presenter.dispatch(action: ShowClicked(id: id))
+          }
+        ){ index in
+          CarouselItemView(item: items[index])
         }
-      ){ index in
-        CarouselItemView(item: items[index])
+        
+        headerNavigationBar(shows: items)
       }
-      
-      headerNavigationBar(shows: items)
     }
   }
   
@@ -132,20 +135,22 @@ struct Discover: View {
       
       Spacer()
       
-      HStack(spacing: 8) {
-        Button(
-          action: {
-            presenter.dispatch(action: UpdateShowInLibrary(id: show.tmdbId, inLibrary: show.inLibrary))
+      if let show = show {
+        HStack(spacing: 8) {
+          Button(
+            action: {
+              presenter.dispatch(action: UpdateShowInLibrary(id: show.tmdbId, inLibrary: show.inLibrary))
+            }
+          ) {
+            
+            Image(systemName: show.inLibrary == true ? "checkmark" : "plus")
+              .font(.avenirNext(size: 17))
+              .foregroundColor(.white)
+              .frame(width: 28, height: 28)
+              .padding(2)
+              .background(Color.black.opacity(0.3))
+              .clipShape(Circle())
           }
-        ) {
-          
-          Image(systemName: show.inLibrary == true ? "checkmark" : "plus")
-            .font(.avenirNext(size: 17))
-            .foregroundColor(.white)
-            .frame(width: 28, height: 28)
-            .padding(2)
-            .background(Color.black.opacity(0.3))
-            .clipShape(Circle())
         }
         
         Button(
@@ -190,7 +195,7 @@ struct Discover: View {
         .frame(maxWidth: .infinity, alignment: .center)
     }
     .padding(.horizontal)
-    .padding(.bottom, 60)
+    .padding(.bottom, 20)
     .frame(maxWidth: .infinity, alignment: .leading)
     .background(
       LinearGradient(
@@ -206,11 +211,9 @@ struct Discover: View {
         startPoint: .bottom,
         endPoint: .top
       )
-      .frame(height: 300)
+      .frame(height: 550)
       .allowsHitTesting(false)
     )
-    .offset(y: -180)
-    
   }
   
   @ViewBuilder
@@ -304,6 +307,7 @@ struct Discover: View {
     }
     .padding(.top, 16)
     .background(Color.background)
+    .offset(y: -10)
   }
   
   // MARK: - Empty View
@@ -345,7 +349,10 @@ struct Discover: View {
     .padding([.trailing, .leading], 16)
   }
   
-  private func getShow(currentIndex: Int, shows: [SwiftShow]) -> SwiftShow {
+  private func getShow(currentIndex: Int, shows: [SwiftShow]) -> SwiftShow? {
+    if shows.isEmpty {
+      return nil
+    }
     let actualIndex = (currentIndex - 1) % shows.count
     return shows[actualIndex >= 0 ? actualIndex : shows.count - 1]
   }
