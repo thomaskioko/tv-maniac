@@ -81,3 +81,27 @@ extension SeasonImagesModel {
         .init(tmdbId: id, title: "", posterUrl: imageUrl, inLibrary: false)
     }
 }
+
+public extension ShowItem {
+  func toSwift() -> SwiftShow {
+    .init(
+      tmdbId: tmdbId,
+      title: title,
+      posterUrl: posterImageUrl,
+      backdropUrl: nil,
+      inLibrary: inLibrary
+    )
+  }
+
+  func toSwift() -> SwiftSearchShow {
+    .init(
+      tmdbId: tmdbId,
+      title: title,
+      overview: overview,
+      status: status,
+      imageUrl: posterImageUrl,
+      year: year,
+      voteAverage: voteAverage?.doubleValue
+    )
+  }
+}
