@@ -378,7 +378,7 @@ class SearchShowsPresenterTest {
 
 
   private suspend fun TestScope.setList(list: List<ShowGenresEntity>) {
-    genreRepository.setUpcomingShows(Either.Right(list))
+    genreRepository.setGenreResult(Either.Right(list))
 
     testScheduler.advanceUntilIdle()
   }
