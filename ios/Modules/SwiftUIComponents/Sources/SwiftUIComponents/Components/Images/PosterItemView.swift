@@ -38,8 +38,24 @@ public struct PosterItemView: View {
 
     public var body: some View {
         if let posterUrl = posterUrl {
-            WebImage(url: URL(string: posterUrl), options: .highPriority) { image in
-                image.resizable()
+            WebImage(
+                url: URL(string: posterUrl),
+                options: [
+                   .retryFailed,
+                    .highPriority,
+                   .scaleDownLargeImages
+                ],
+                context: [
+                    .imageThumbnailPixelSize: CGSize(
+                        width: posterWidth * 2,
+                        height: posterHeight * 2
+                    ),
+                    .imageForceDecodePolicy: SDImageForceDecodePolicy.never.rawValue
+                ]
+            ) { image in
+                image
+                .resizable()
+                .scaledToFill()
             } placeholder: {
                 PosterPlaceholder(
                     title: title,
@@ -47,12 +63,11 @@ public struct PosterItemView: View {
                     posterHeight: posterHeight
                 )
             }
-            .resizable()
             .indicator(.activity)
             .transition(.opacity)
             .scaledToFill()
-            .frame(width: posterWidth, height: posterHeight)
             .clipShape(RoundedRectangle(cornerRadius: posterRadius, style: .continuous))
+            .frame(width: posterWidth, height: posterHeight)
             .overlay {
               if isInLibrary {
                 LibraryOverlay(libraryImageOverlay: libraryImageOverlay)
