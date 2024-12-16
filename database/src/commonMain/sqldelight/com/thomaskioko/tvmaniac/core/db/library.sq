@@ -34,6 +34,28 @@ JOIN
 ORDER BY
     library.created_at DESC;
 
+searchShows:
+SELECT
+    tvshows.id,
+    tvshows.name,
+    tvshows.poster_path,
+    tvshows.backdrop_path,
+    library.created_at
+FROM
+    tvshows
+JOIN
+    library ON tvshows.id = library.id
+WHERE
+    name LIKE '%' || ? || '%'
+    OR LOWER(name) LIKE '%' || LOWER(?) || '%'
+ORDER BY
+    CASE
+        WHEN name LIKE ? || '%' THEN 1
+        WHEN name LIKE '% ' || ? || '%' THEN 2
+        ELSE 3
+    END,
+    library.created_at DESC;
+
 delete:
 DELETE FROM
     library

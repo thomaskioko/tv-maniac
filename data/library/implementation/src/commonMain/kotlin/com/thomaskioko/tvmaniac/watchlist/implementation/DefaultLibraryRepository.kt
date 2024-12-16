@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.watchlist.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Library
 import com.thomaskioko.tvmaniac.core.db.LibraryShows
+import com.thomaskioko.tvmaniac.core.db.library.SearchShows
 import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.model.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
@@ -47,4 +48,11 @@ class DefaultLibraryRepository(
       .distinctUntilChanged()
       .map { Either.Right(it) }
       .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
+
+  override fun searchWatchlistByQuery(query: String): Flow<Either<Failure, List<SearchShows>>> {
+    return libraryDao
+      .observeShowByQuery(query)
+      .map { Either.Right(it) }
+      .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
+  }
 }
