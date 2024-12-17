@@ -8,7 +8,7 @@ public struct PosterCardView: View {
   private let posterWidth: CGFloat
   private let posterHeight: CGFloat
   private let posterRadius: CGFloat
-  
+
   public init(
     title: String,
     posterUrl: String?,
@@ -24,7 +24,7 @@ public struct PosterCardView: View {
     self.posterHeight = posterHeight
     self.posterRadius = posterRadius
   }
-  
+
   public var body: some View {
     PosterItemView(
       title: nil,
@@ -47,7 +47,7 @@ public struct PosterCardView: View {
               .multilineTextAlignment(.center)
               .lineLimit(3)
               .frame(maxWidth: .infinity, alignment: .center)
-            
+
             Spacer()
           }
           .padding(.horizontal)
@@ -68,7 +68,7 @@ public struct PosterCardView: View {
       posterWidth: 160,
       posterHeight: 240
     )
-    
+
     PosterCardView(
       title: "Arcane",
       posterUrl: nil,

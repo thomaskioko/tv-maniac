@@ -2,7 +2,7 @@ import Foundation
 import TvManiac
 
 public struct ShowPosterImage: Identifiable {
-  public let id: UUID = UUID()
+  public let id: UUID = .init()
   public let tmdbId: Int64
   public let title: String
   public let posterUrl: String?
@@ -21,8 +21,7 @@ public struct ShowPosterImage: Identifiable {
   }
 }
 
-
-public extension TvManiac.LibraryItem {
+public extension TvManiac.WatchlistItem {
   func toSwift() -> ShowPosterImage {
     .init(
       tmdbId: tmdbId,
