@@ -15,7 +15,7 @@ struct HomeChildView: View {
               DiscoverView(presenter: screen.presenter)
             case .search(let screen):
               Search(presenter: screen.presenter)
-            case .library(let screen):
+            case .watchlist(let screen):
               LibraryView(presenter: screen.presenter)
             case .settings(let screen):
               SettingsView(presenter: screen.presenter)

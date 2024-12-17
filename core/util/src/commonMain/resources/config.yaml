@@ -1,5 +1,5 @@
 isDebug: true
-tmdbApiKey: "PUT_API_KEY_HERE"
-traktClientId: "PUT_CLIENT_ID_HERE"
-traktClientSecret: "PUT_CLIENT_SECRET_HERE"
+tmdbApiKey: "326d9af46d0894da98b9ae7def3427d7"
+traktClientId: "7d349636b37a1795ded3ceae3c1cbbdfce476db759083bac64d0e800253bf300"
+traktClientSecret: "8509e6188adb4bbaf5df7892d38e00cf33490c165fc9aa17815998421cedb054"
 traktRedirectUri: "PUT_CALLBACK_URI_HERE"

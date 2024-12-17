@@ -13,11 +13,11 @@ import TvManiacUI
 import TvManiacKit
 
 struct LibraryView: View {
-  private let presenter: LibraryPresenter
+  private let presenter: WatchlistPresenter
 
-  @StateFlow private var uiState: LibraryState
-    
-  init(presenter: LibraryPresenter) {
+  @StateFlow private var uiState: WatchlistState
+
+  init(presenter: WatchlistPresenter) {
     self.presenter = presenter
     _uiState = StateFlow(presenter.state)
   }
@@ -29,7 +29,7 @@ struct LibraryView: View {
           // TODO: Show indicator on the toolbar
           LoadingIndicatorView()
             .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height, alignment: .center)
-        case .libraryContent(let content): GridViewContent(content)
+        case .watchlistContent(let content): GridViewContent(content)
         case .emptyWatchlist: EmptyView() // TODO: Show Error
       }
     }
@@ -47,12 +47,12 @@ struct LibraryView: View {
   }
     
   @ViewBuilder
-  private func GridViewContent(_ content: LibraryContent) -> some View {
+  private func GridViewContent(_ content: WatchlistContent) -> some View {
     if !content.list.isEmpty {
       GridView(
         items: content.list.map { $0.toSwift() },
         onAction: { id in
-          presenter.dispatch(action: LibraryShowClicked(id: id))
+          presenter.dispatch(action: WatchlistShowClicked(id: id))
         }
       )
     } else {

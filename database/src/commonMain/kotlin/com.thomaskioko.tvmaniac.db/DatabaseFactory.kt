@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.core.db.Episode_image
 import com.thomaskioko.tvmaniac.core.db.Featured_shows
 import com.thomaskioko.tvmaniac.core.db.Genres
 import com.thomaskioko.tvmaniac.core.db.Last_requests
-import com.thomaskioko.tvmaniac.core.db.Library
 import com.thomaskioko.tvmaniac.core.db.Popular_shows
 import com.thomaskioko.tvmaniac.core.db.Recommended_shows
 import com.thomaskioko.tvmaniac.core.db.Season
@@ -22,6 +21,7 @@ import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.core.db.Watch_providers
+import com.thomaskioko.tvmaniac.core.db.Watchlist
 import com.thomaskioko.tvmaniac.db.adapters.IdAdapter
 import com.thomaskioko.tvmaniac.db.adapters.InstantColumnAdapter
 import com.thomaskioko.tvmaniac.db.adapters.intColumnAdapter
@@ -64,10 +64,6 @@ class DatabaseFactory(private val sqlDriver: SqlDriver) {
       trailersAdapter =
         Trailers.Adapter(
           show_idAdapter = IdAdapter(),
-        ),
-      libraryAdapter =
-        Library.Adapter(
-          idAdapter = IdAdapter(),
         ),
       trending_showsAdapter =
         Trending_shows.Adapter(
@@ -130,6 +126,10 @@ class DatabaseFactory(private val sqlDriver: SqlDriver) {
         Show_genres.Adapter(
           show_idAdapter = IdAdapter(),
           genre_idAdapter = IdAdapter(),
-        )
+        ),
+      watchlistAdapter =
+        Watchlist.Adapter(
+          idAdapter = IdAdapter(),
+        ),
     )
 }

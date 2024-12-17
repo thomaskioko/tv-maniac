@@ -20,12 +20,12 @@ import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.ShowMapper
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenter
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenter
+import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenterFactory
 import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
-import com.thomaskioko.tvmaniac.watchlist.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -83,7 +83,7 @@ class HomePresenterTest {
       awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
       presenter.onLibraryClicked()
 
-      awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Library>()
+      awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Watchlist>()
     }
   }
 
@@ -117,7 +117,7 @@ class HomePresenterTest {
   private fun buildHomePresenterFactory(): HomePresenter.Factory =
     DefaultHomePresenter.Factory(
       discoverPresenterFactory = buildDiscoverPresenterFactory(DefaultComponentContext(lifecycle = lifecycle)),
-      libraryPresenterFactory = buildLibraryPresenterFactory(DefaultComponentContext(lifecycle = lifecycle)),
+      watchlistPresenterFactory = buildLibraryPresenterFactory(DefaultComponentContext(lifecycle = lifecycle)),
       searchPresenterFactory = buildSearchPresenterFactory(DefaultComponentContext(lifecycle = lifecycle)),
       settingsPresenterFactory = buildSettingsPresenterFactory(DefaultComponentContext(lifecycle = lifecycle)),
       traktAuthManager = traktAuthManager,
@@ -148,19 +148,19 @@ class HomePresenterTest {
         upcomingShowsRepository = upcomingShowsRepository,
         topRatedShowsRepository = FakeTopRatedShowsRepository(),
         popularShowsRepository = FakePopularShowsRepository(),
-        libraryRepository = FakeLibraryRepository(),
+        watchlistRepository = FakeWatchlistRepository(),
       )
     }
     )
 
   private fun buildLibraryPresenterFactory(
     componentContext: ComponentContext,
-  ): LibraryPresenterFactory =LibraryPresenterFactory(
+  ): WatchlistPresenterFactory =WatchlistPresenterFactory(
     create = { _: ComponentContext, _: (showDetails: Long) -> Unit ->
-    LibraryPresenter(
+    WatchlistPresenter(
       componentContext = componentContext,
       navigateToShowDetails = {},
-      repository = FakeLibraryRepository(),
+      repository = FakeWatchlistRepository(),
     )
   })
 }

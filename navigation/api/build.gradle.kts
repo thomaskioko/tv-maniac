@@ -17,7 +17,7 @@ kotlin {
         implementation(projects.datastore.api)
         implementation(projects.presenter.discover)
         implementation(projects.presenter.home)
-        implementation(projects.presenter.library)
+        implementation(projects.presenter.watchlist)
         implementation(projects.presenter.moreShows)
         implementation(projects.presenter.search)
         implementation(projects.presenter.seasondetails)

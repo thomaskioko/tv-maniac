@@ -13,7 +13,7 @@ import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.HomeConfig
 import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenterFactory
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import kotlinx.coroutines.flow.StateFlow
 import me.tatarka.inject.annotations.Assisted
@@ -29,7 +29,7 @@ class DefaultHomePresenter private constructor(
   @Assisted private val onMoreShowClicked: (id: Long) -> Unit,
   @Assisted private val onShowGenreClicked: (id: Long) -> Unit,
   private val discoverPresenterFactory: DiscoverPresenterFactory,
-  private val libraryPresenterFactory: LibraryPresenterFactory,
+  private val watchlistPresenterFactory: WatchlistPresenterFactory,
   private val searchPresenterFactory: SearchPresenterFactory,
   private val settingsPresenterFactory: SettingsPresenterFactory,
   private val traktAuthManager: TraktAuthManager,
@@ -92,9 +92,9 @@ class DefaultHomePresenter private constructor(
         )
       }
       HomeConfig.Library -> {
-        Child.Library(
+        Child.Watchlist(
           presenter =
-            libraryPresenterFactory.create(
+            watchlistPresenterFactory.create(
               componentContext,
             ) { id ->
               onShowClicked(id)
@@ -129,7 +129,7 @@ class DefaultHomePresenter private constructor(
   @ContributesBinding(ActivityScope::class, HomePresenter.Factory::class)
   class Factory(
     private val discoverPresenterFactory: DiscoverPresenterFactory,
-    private val libraryPresenterFactory: LibraryPresenterFactory,
+    private val watchlistPresenterFactory: WatchlistPresenterFactory,
     private val searchPresenterFactory: SearchPresenterFactory,
     private val settingsPresenterFactory: SettingsPresenterFactory,
     private val traktAuthManager: TraktAuthManager,
@@ -145,7 +145,7 @@ class DefaultHomePresenter private constructor(
       onMoreShowClicked = onMoreShowClicked,
       onShowGenreClicked = onShowGenreClicked,
       discoverPresenterFactory = discoverPresenterFactory,
-      libraryPresenterFactory = libraryPresenterFactory,
+      watchlistPresenterFactory = watchlistPresenterFactory,
       searchPresenterFactory = searchPresenterFactory,
       settingsPresenterFactory = settingsPresenterFactory,
       traktAuthManager = traktAuthManager,

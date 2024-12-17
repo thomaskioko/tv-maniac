@@ -40,8 +40,8 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenterFac
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenter
+import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenterFactory
 import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
@@ -49,7 +49,7 @@ import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
-import com.thomaskioko.tvmaniac.watchlist.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
@@ -181,19 +181,19 @@ class DefaultRootComponentTest {
           upcomingShowsRepository = upcomingShowsRepository,
           topRatedShowsRepository = topRatedShowsRepository,
           popularShowsRepository = popularShowsRepository,
-          libraryRepository = FakeLibraryRepository(),
+          watchlistRepository = FakeWatchlistRepository(),
         )
       },
     )
 
   private fun buildLibraryPresenterFactory(
     componentContext: ComponentContext,
-  ): LibraryPresenterFactory = LibraryPresenterFactory(
+  ): WatchlistPresenterFactory = WatchlistPresenterFactory(
     create = { _: ComponentContext, _: (showDetails: Long) -> Unit ->
-      LibraryPresenter(
+      WatchlistPresenter(
         componentContext = componentContext,
         navigateToShowDetails = {},
-        repository = FakeLibraryRepository(),
+        repository = FakeWatchlistRepository(),
       )
     },
   )
@@ -265,7 +265,7 @@ class DefaultRootComponentTest {
           onNavigateToTrailer = {},
           componentContext = componentContext,
           castRepository = FakeCastRepository(),
-          libraryRepository = FakeLibraryRepository(),
+          watchlistRepository = FakeWatchlistRepository(),
           recommendedShowsRepository = FakeRecommendedShowsRepository(),
           seasonsRepository = FakeSeasonsRepository(),
           showDetailsRepository = FakeShowDetailsRepository(),
@@ -282,7 +282,7 @@ class DefaultRootComponentTest {
       searchPresenterFactory = buildSearchPresenterFactory(componentContext),
       settingsPresenterFactory = buildSettingsPresenterFactory(componentContext),
       discoverPresenterFactory = buildDiscoverPresenterFactory(componentContext),
-      libraryPresenterFactory = buildLibraryPresenterFactory(componentContext),
+      watchlistPresenterFactory = buildLibraryPresenterFactory(componentContext),
     )
 
 

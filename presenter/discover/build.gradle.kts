@@ -13,7 +13,7 @@ kotlin {
         implementation(projects.data.topratedshows.api)
         implementation(projects.data.trendingshows.api)
         implementation(projects.data.upcomingshows.api)
-        implementation(projects.data.library.api)
+        implementation(projects.data.watchlist.api)
 
         api(libs.decompose.decompose)
         api(libs.essenty.lifecycle)

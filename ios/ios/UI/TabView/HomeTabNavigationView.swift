@@ -6,14 +6,14 @@ import TvManiacKit
 public enum NavigationTab: String, CaseIterable {
   case discover
   case search
-  case library
+  case watchlist
   case settings
   
   var title: String {
     switch self {
       case .discover: return "Discover"
       case .search: return "Search"
-      case .library: return "Library"
+      case .watchlist: return "Watchlist"
       case .settings: return "Settings"
     }
   }
@@ -22,7 +22,7 @@ public enum NavigationTab: String, CaseIterable {
     switch self {
       case .discover: return "tv"
       case .search: return "magnifyingglass"
-      case .library: return "books.vertical"
+      case .watchlist: return "square.stack"
       case .settings: return "gearshape"
     }
   }
@@ -52,8 +52,8 @@ public struct HomeTabNavigationView: View {
               Discover(presenter: screen.presenter)
             case .search(let screen):
               Search(presenter: screen.presenter)
-            case .library(let screen):
-              Library(presenter: screen.presenter)
+            case .watchlist(let screen):
+              Watchlist(presenter: screen.presenter)
             case .settings(let screen):
               Settings(presenter: screen.presenter)
           }
@@ -64,7 +64,7 @@ public struct HomeTabNavigationView: View {
       switch newTab {
         case .discover: presenter.onDiscoverClicked()
         case .search: presenter.onSearchClicked()
-        case .library: presenter.onLibraryClicked()
+        case .watchlist: presenter.onLibraryClicked()
         case .settings: presenter.onSettingsClicked()
       }
     }
@@ -74,7 +74,7 @@ public struct HomeTabNavigationView: View {
     switch onEnum(of: child){
       case .discover: return .discover
       case .search: return .search
-      case .library: return .library
+      case .watchlist: return .watchlist
       case .settings: return .settings
     }
   }

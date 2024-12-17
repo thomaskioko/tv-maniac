@@ -47,7 +47,7 @@ struct HomeTabView: View {
       BottomTabAction(
         title: "Library",
         systemImage: "list.bullet.below.rectangle",
-        isActive: activeChild is HomePresenterChildLibrary,
+        isActive: activeChild is HomePresenterChildWatchlist,
         action: { presenter.onLibraryClicked() }
       ),
       BottomTabAction(

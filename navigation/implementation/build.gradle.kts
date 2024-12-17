@@ -15,13 +15,13 @@ kotlin {
 
       implementation(projects.presenter.discover)
       implementation(projects.presenter.home)
-      implementation(projects.presenter.library)
       implementation(projects.presenter.moreShows)
       implementation(projects.presenter.search)
       implementation(projects.presenter.seasondetails)
       implementation(projects.presenter.settings)
       implementation(projects.presenter.showDetails)
       implementation(projects.presenter.trailers)
+      implementation(projects.presenter.watchlist)
 
       implementation(libs.bundles.kotlinInject)
     }
@@ -33,7 +33,7 @@ kotlin {
       implementation(projects.data.cast.testing)
       implementation(projects.data.featuredshows.testing)
       implementation(projects.data.genre.testing)
-      implementation(projects.data.library.testing)
+      implementation(projects.data.watchlist.testing)
       implementation(projects.data.popularshows.testing)
       implementation(projects.data.recommendedshows.testing)
       implementation(projects.data.seasons.testing)
