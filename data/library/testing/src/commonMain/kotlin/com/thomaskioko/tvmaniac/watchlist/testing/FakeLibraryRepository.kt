@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.watchlist.testing
 
 import com.thomaskioko.tvmaniac.core.db.LibraryShows
-import com.thomaskioko.tvmaniac.core.db.library.SearchShows
+import com.thomaskioko.tvmaniac.core.db.SearchWatchlist
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
@@ -13,10 +13,10 @@ class FakeLibraryRepository : LibraryRepository {
 
   private var watchlistResult: Channel<Either<Failure, List<LibraryShows>>> =
     Channel(Channel.UNLIMITED)
-  private var searchlistResult: Channel<Either<Failure, List<SearchShows>>> =
+  private var searchlistResult: Channel<Either<Failure, List<SearchWatchlist>>> =
     Channel(Channel.UNLIMITED)
 
-  suspend fun setSearchResult(result: Either<Failure, List<SearchShows>>) {
+  suspend fun setSearchResult(result: Either<Failure, List<SearchWatchlist>>) {
     searchlistResult.send(result)
   }
 
@@ -27,7 +27,7 @@ class FakeLibraryRepository : LibraryRepository {
   override fun observeLibrary(): Flow<Either<Failure, List<LibraryShows>>> =
     watchlistResult.receiveAsFlow()
 
-  override fun searchWatchlistByQuery(query: String): Flow<Either<Failure, List<SearchShows>>> =
+  override fun searchWatchlistByQuery(query: String): Flow<Either<Failure, List<SearchWatchlist>>> =
     searchlistResult.receiveAsFlow()
 
   override suspend fun updateLibrary(traktId: Long, addToLibrary: Boolean) {}

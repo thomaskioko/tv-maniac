@@ -54,11 +54,11 @@ class LibraryPresenterTest {
 
     presenter.state.test {
       awaitItem() shouldBe LoadingShows
-      awaitItem() shouldBe LibraryContent(list = uiResult)
+      awaitItem() shouldBe LibraryContent(query = "", list = uiResult)
 
       repository.setObserveResult(Either.Right(updatedData))
 
-      awaitItem() shouldBe LibraryContent(list = expectedUiResult())
+      awaitItem() shouldBe LibraryContent(query = "", list = expectedUiResult())
     }
   }
 }

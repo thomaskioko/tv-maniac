@@ -30,7 +30,7 @@ struct LibraryView: View {
           LoadingIndicatorView()
             .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height, alignment: .center)
         case .libraryContent(let content): GridViewContent(content)
-        case .errorLoadingShows: EmptyView() // TODO: Show Error
+        case .emptyWatchlist: EmptyView() // TODO: Show Error
       }
     }
     .navigationTitle("Library")
@@ -102,16 +102,5 @@ struct LibraryView: View {
         message: "Your stash is empty."
       )
     }
-  }
-}
-
-extension TvManiac.LibraryItem {
-  func toSwift() -> SwiftShow {
-    .init(
-      tmdbId: tmdbId,
-      title: title,
-      posterUrl: posterImageUrl,
-      inLibrary: true
-    )
   }
 }

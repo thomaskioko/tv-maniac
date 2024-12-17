@@ -5,8 +5,8 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.db.Library
 import com.thomaskioko.tvmaniac.core.db.LibraryShows
+import com.thomaskioko.tvmaniac.core.db.SearchWatchlist
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.core.db.library.SearchShows
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.shows.api.LibraryDao
 import kotlinx.coroutines.flow.Flow
@@ -40,11 +40,13 @@ class DefaultLibraryDao(
     database.libraryQueries.libraryShows().executeAsList()
 
   override fun observeShowsInLibrary(): Flow<List<LibraryShows>> =
-    database.libraryQueries.libraryShows().asFlow().mapToList(dispatchers.io)
+    database.libraryQueries.libraryShows()
+      .asFlow()
+      .mapToList(dispatchers.io)
 
-  override fun observeShowByQuery(query: String): Flow<List<SearchShows>> {
+  override fun observeWatchlistByQuery(query: String): Flow<List<SearchWatchlist>> {
    return database.libraryQueries
-     .searchShows(query, query, query, query)
+     .searchWatchlist(query, query, query, query)
      .asFlow()
      .mapToList(dispatchers.io)
   }

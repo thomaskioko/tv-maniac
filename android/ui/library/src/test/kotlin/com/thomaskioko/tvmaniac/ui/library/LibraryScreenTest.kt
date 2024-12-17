@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.ui.library
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
-import com.thomaskioko.tvmaniac.presentation.watchlist.ErrorLoadingShows
+import com.thomaskioko.tvmaniac.presentation.watchlist.EmptyWatchlist
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryContent
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import org.junit.Rule
@@ -39,7 +39,7 @@ class LibraryScreenTest {
     composeTestRule.captureMultiDevice("ErrorLoadingShows") {
       TvManiacBackground {
         LibraryScreen(
-          state = ErrorLoadingShows(message = "Something went Wrong"),
+          state = EmptyWatchlist(message = "Something went Wrong"),
           onAction = {},
         )
       }

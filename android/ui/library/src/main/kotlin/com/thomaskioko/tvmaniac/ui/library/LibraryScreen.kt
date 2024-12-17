@@ -40,7 +40,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.presentation.watchlist.ErrorLoadingShows
+import com.thomaskioko.tvmaniac.presentation.watchlist.EmptyWatchlist
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryAction
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryContent
@@ -48,7 +48,7 @@ import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryShowClicked
 import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryState
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.ReloadLibrary
-import com.thomaskioko.tvmaniac.presentation.watchlist.model.LibraryItem
+import com.thomaskioko.tvmaniac.presentation.watchlist.model.WatchlistItem
 import com.thomaskioko.tvmaniac.resources.R
 import kotlinx.collections.immutable.ImmutableList
 
@@ -104,7 +104,7 @@ internal fun LibraryScreen(
           LoadingIndicator(
             modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
           )
-        is ErrorLoadingShows ->
+        is EmptyWatchlist ->
           ErrorUi(
             errorIcon = {
               Image(
@@ -142,7 +142,7 @@ internal fun LibraryScreen(
 
 @Composable
 private fun LibraryGridContent(
-  list: ImmutableList<LibraryItem>,
+  list: ImmutableList<WatchlistItem>,
   scrollBehavior: TopAppBarScrollBehavior,
   paddingValues: PaddingValues,
   onItemClicked: (Long) -> Unit,
