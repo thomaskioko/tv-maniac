@@ -84,7 +84,7 @@ constructor(
       is FollowShowClicked -> {
         coroutineScope.launch {
           watchlistRepository.updateLibrary(
-            traktId = showId,
+            id = showId,
             addToLibrary = !action.addToLibrary,
           )
         }

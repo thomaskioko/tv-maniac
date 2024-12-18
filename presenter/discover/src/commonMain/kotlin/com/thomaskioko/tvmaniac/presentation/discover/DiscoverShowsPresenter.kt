@@ -98,7 +98,7 @@ class DiscoverShowsPresenter(
         is UpdateShowInLibrary -> {
           coroutineScope.launch {
             watchlistRepository.updateLibrary(
-              traktId = action.id,
+              id = action.id,
               addToLibrary = !action.inLibrary,
             )
           }
