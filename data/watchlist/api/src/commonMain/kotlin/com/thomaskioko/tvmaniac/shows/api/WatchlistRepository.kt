@@ -12,5 +12,8 @@ interface WatchlistRepository {
 
   fun searchWatchlistByQuery(query: String): Flow<Either<Failure, List<SearchWatchlist>>>
 
-  suspend fun updateLibrary(traktId: Long, addToLibrary: Boolean)
+  fun observeUnSyncedItems(): Flow<Unit>
+
+  suspend fun updateLibrary(id: Long, addToLibrary: Boolean)
+
 }

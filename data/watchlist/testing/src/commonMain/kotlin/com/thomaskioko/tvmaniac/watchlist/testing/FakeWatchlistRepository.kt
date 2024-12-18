@@ -32,4 +32,6 @@ class FakeWatchlistRepository : WatchlistRepository {
     searchlistResult.receiveAsFlow()
 
   override suspend fun updateLibrary(id: Long, addToLibrary: Boolean) {}
+
+  override fun observeUnSyncedItems(): Flow<Unit> = flowOf(Unit)
 }

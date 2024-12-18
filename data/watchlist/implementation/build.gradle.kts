@@ -14,12 +14,13 @@ kotlin {
         implementation(projects.core.base)
         implementation(projects.core.networkUtil)
         implementation(projects.database)
-        implementation(projects.traktApi.api)
+        implementation(projects.tmdbApi.api)
         implementation(projects.core.util)
         implementation(projects.data.watchlist.api)
 
         implementation(libs.bundles.kotlinInject)
         implementation(libs.sqldelight.extensions)
+        implementation(libs.store5)
       }
     }
   }

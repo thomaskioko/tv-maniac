@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.core.db.Season_images
 import com.thomaskioko.tvmaniac.core.db.Season_videos
 import com.thomaskioko.tvmaniac.core.db.Show_genres
+import com.thomaskioko.tvmaniac.core.db.Show_metadata
 import com.thomaskioko.tvmaniac.core.db.Similar_shows
 import com.thomaskioko.tvmaniac.core.db.Toprated_shows
 import com.thomaskioko.tvmaniac.core.db.Trailers
@@ -131,5 +132,9 @@ class DatabaseFactory(private val sqlDriver: SqlDriver) {
         Watchlist.Adapter(
           idAdapter = IdAdapter(),
         ),
+      show_metadataAdapter =
+        Show_metadata.Adapter(
+          show_idAdapter = IdAdapter(),
+        )
     )
 }

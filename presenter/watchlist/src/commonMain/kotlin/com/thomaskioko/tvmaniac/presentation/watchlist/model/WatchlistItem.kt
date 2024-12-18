@@ -5,8 +5,8 @@ data class WatchlistItem(
   val title: String,
   val posterImageUrl: String? = null,
   val watchProgress: Float = 0F,
-  val seasonCount: Int = 0,
-  val episodeCount: Int = 0,
+  val seasonCount: Long = 0,
+  val episodeCount: Long = 0,
   val status: String? = null,
   val year:String? = null
 )

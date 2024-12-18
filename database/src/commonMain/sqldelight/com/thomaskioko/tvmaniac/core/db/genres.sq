@@ -1,6 +1,5 @@
 import com.thomaskioko.tvmaniac.db.GenreId;
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE IF NOT EXISTS `genres` (
     `id` INTEGER AS Id<GenreId> NOT NULL,
