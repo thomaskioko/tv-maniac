@@ -1,4 +1,5 @@
 import Foundation
+import TvManiac
 
 public struct SwiftShow: Identifiable {
     public let id: UUID = .init()
@@ -24,4 +25,17 @@ public struct SwiftShow: Identifiable {
         self.inLibrary = inLibrary
         self.overview = overview
     }
+}
+
+public extension DiscoverShow {
+  func toSwift() -> SwiftShow {
+    .init(
+      tmdbId: tmdbId,
+      title: title,
+      posterUrl: posterImageUrl,
+      backdropUrl: nil,
+      inLibrary: inLibrary,
+      overview: overView
+    )
+  }
 }
