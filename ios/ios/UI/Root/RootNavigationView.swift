@@ -27,7 +27,7 @@ struct RootNavigationView: View {
         content: { child in
           switch onEnum(of: child) {
           case let .home(child):
-            HomeTabNavigationView(presenter: child.presenter)
+            TabBarView(presenter: child.presenter)
           case let .showDetails(child):
             EmptyView()
           case let .seasonDetails(child):

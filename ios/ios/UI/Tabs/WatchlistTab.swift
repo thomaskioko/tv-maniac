@@ -4,14 +4,7 @@ import TvManiac
 import TvManiacKit
 import TvManiacUI
 
-public enum WatchlistConstants {
-    static let spacing: CGFloat = 4
-    static let columns: [GridItem] = [
-        GridItem(.adaptive(minimum: 100), spacing: spacing),
-    ]
-}
-
-struct Watchlist: View {
+struct WatchlistTab: View {
     private let presenter: WatchlistPresenter
     @StateObject @KotlinStateFlow private var uiState: WatchlistState
     @State private var showListSelection = false
@@ -226,4 +219,11 @@ struct Watchlist: View {
             }
         }
     }
+}
+
+public enum WatchlistConstants {
+    static let spacing: CGFloat = 4
+    static let columns: [GridItem] = [
+        GridItem(.adaptive(minimum: 100), spacing: spacing),
+    ]
 }

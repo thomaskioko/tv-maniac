@@ -1,10 +1,10 @@
 import SwiftUI
-import TvManiac
-import TvManiacUI
-import TvManiacKit
 import SwiftUIComponents
+import TvManiac
+import TvManiacKit
+import TvManiacUI
 
-struct Discover: View {
+struct DiscoverTab: View {
   private let presenter: DiscoverShowsPresenter
   @StateObject @KotlinStateFlow private var uiState: DiscoverState
   @State private var currentIndex = 0
@@ -12,29 +12,30 @@ struct Discover: View {
   @State private var selectedShow: SwiftShow?
   @State private var showGlass: Double = 0
   private let title = "Discover"
-  
+
   init(presenter: DiscoverShowsPresenter) {
     self.presenter = presenter
     _uiState = .init(presenter.state)
   }
-  
+
   var body: some View {
     switch onEnum(of: uiState) {
-      case .loading:
-        LoadingIndicatorView()
-      case .dataLoaded(let state):
-        discoverLoadedContent(state: state)
-      case .emptyState:
-        emptyView
-      case .errorState(let error):
-        FullScreenView(
-          systemName: "exclamationmark.arrow.triangle.2.circlepath",
-          message: error.errorMessage ?? "Something went wrong!!"
-        )
+    case .loading:
+      LoadingIndicatorView()
+    case let .dataLoaded(state):
+      discoverLoadedContent(state: state)
+    case .emptyState:
+      emptyView
+    case let .errorState(error):
+      FullScreenView(
+        systemName: "exclamationmark.arrow.triangle.2.circlepath",
+        message: error.errorMessage ?? "Something went wrong!!"
+      )
     }
   }
-  
+
   // MARK: - Discover Content
+
   @ViewBuilder
   private func discoverLoadedContent(state: DataLoaded) -> some View {
     ScrollView(showsIndicators: false) {
@@ -65,15 +66,15 @@ struct Discover: View {
     .coordinateSpace(name: CoordinateSpaces.scrollView)
     .edgesIgnoringSafeArea(.top)
   }
-  
-  
+
   // MARK: - Header Content
+
   @ViewBuilder
   private func headerContent(shows: [DiscoverShow]) -> some View {
     if shows.isEmpty {
       LoadingIndicatorView()
     } else {
-      let items = shows.map{ $0.toSwift() }
+      let items = shows.map { $0.toSwift() }
       ZStack(alignment: .top) {
         CarouselView(
           items: items,
@@ -84,28 +85,28 @@ struct Discover: View {
           onItemTapped: { id in
             presenter.dispatch(action: ShowClicked(id: id))
           }
-        ){ index in
+        ) { index in
           CarouselItemView(item: items[index])
         }
-        
+
         headerNavigationBar(shows: items)
       }
     }
   }
-  
+
   /// A view that displays a single item in the carousel
   @ViewBuilder
   private func CarouselItemView(item: SwiftShow) -> some View {
     GeometryReader { geometry in
       let scrollViewHeight = geometry.size.height
-      
+
       ZStack(alignment: .bottom) {
         ScrollView(showsIndicators: false) {
           GeometryReader { imageGeometry in
             let minY = imageGeometry.frame(in: .global).minY
             let scrollOffset = minY - geometry.frame(in: .global).minY
             let stretchFactor = max(0, scrollOffset)
-            
+
             PosterItemView(
               title: item.title,
               posterUrl: item.posterUrl,
@@ -123,8 +124,9 @@ struct Discover: View {
       }
     }
   }
-  
+
   // MARK: - Navigation Bar
+
   @ViewBuilder
   private func headerNavigationBar(shows: [SwiftShow]) -> some View {
     let show = getShow(currentIndex: currentIndex, shows: shows)
@@ -132,9 +134,9 @@ struct Discover: View {
       Text(title)
         .font(.largeTitle)
         .fontWeight(.bold)
-      
+
       Spacer()
-      
+
       if let show = show {
         HStack(spacing: 8) {
           Button(
@@ -142,7 +144,6 @@ struct Discover: View {
               presenter.dispatch(action: UpdateShowInLibrary(id: show.tmdbId, inLibrary: show.inLibrary))
             }
           ) {
-            
             Image(systemName: show.inLibrary == true ? "checkmark" : "plus")
               .font(.avenirNext(size: 17))
               .foregroundColor(.white)
@@ -152,10 +153,10 @@ struct Discover: View {
               .clipShape(Circle())
           }
         }
-        
+
         Button(
           action: {
-            //TODO:: Invoke account navigation action.
+            // TODO: Invoke account navigation action.
           }) {
             Image(systemName: "person")
               .font(.avenirNext(size: 17))
@@ -172,7 +173,7 @@ struct Discover: View {
     .padding(.bottom, 8)
     .foregroundColor(.white)
   }
-  
+
   @ViewBuilder
   private func showInfoOverlay(_ shows: [SwiftShow]) -> some View {
     VStack(alignment: .leading) {
@@ -181,7 +182,7 @@ struct Discover: View {
         .foregroundColor(.textColor)
         .lineLimit(1)
         .frame(maxWidth: .infinity, alignment: .center)
-      
+
       if let overview = selectedShow?.overview {
         Text(overview)
           .font(.avenirNext(size: 17))
@@ -189,7 +190,7 @@ struct Discover: View {
           .multilineTextAlignment(.leading)
           .lineLimit(2)
       }
-      
+
       customIndicator(shows)
         .padding(.top, 8)
         .frame(maxWidth: .infinity, alignment: .center)
@@ -205,7 +206,7 @@ struct Discover: View {
             .black.opacity(0.8),
             .black.opacity(0.6),
             .black.opacity(0.4),
-            .clear
+            .clear,
           ]
         ),
         startPoint: .bottom,
@@ -215,7 +216,7 @@ struct Discover: View {
       .allowsHitTesting(false)
     )
   }
-  
+
   @ViewBuilder
   func customIndicator(_ shows: [SwiftShow]) -> some View {
     HStack(spacing: 5) {
@@ -227,8 +228,9 @@ struct Discover: View {
     }
     .animation(.easeInOut, value: currentIndex)
   }
-  
+
   // MARK: - Discover Content
+
   @ViewBuilder
   private func discoverContent(dataLoaded: DataLoaded) -> some View {
     VStack {
@@ -239,7 +241,7 @@ struct Discover: View {
         onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
         onMoreClicked: { presenter.dispatch(action: UpComingClicked()) }
       )
-      
+
       HorizontalItemListView(
         title: "Trending Today",
         chevronStyle: .chevronOnly,
@@ -247,7 +249,7 @@ struct Discover: View {
         onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
         onMoreClicked: { presenter.dispatch(action: TrendingClicked()) }
       )
-      
+
       HorizontalItemListView(
         title: "Popular",
         chevronStyle: .chevronOnly,
@@ -255,7 +257,7 @@ struct Discover: View {
         onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
         onMoreClicked: { presenter.dispatch(action: PopularClicked()) }
       )
-      
+
       HorizontalItemListView(
         title: "Top Rated",
         chevronStyle: .chevronOnly,
@@ -268,8 +270,9 @@ struct Discover: View {
     .background(Color.background)
     .offset(y: -10)
   }
-  
+
   // MARK: - Discover List Content
+
   @ViewBuilder
   private func discoverListContent(state: DataLoaded) -> some View {
     VStack {
@@ -280,7 +283,7 @@ struct Discover: View {
         onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
         onMoreClicked: { presenter.dispatch(action: UpComingClicked()) }
       )
-      
+
       HorizontalItemListView(
         title: "Trending Today",
         chevronStyle: .chevronOnly,
@@ -288,7 +291,7 @@ struct Discover: View {
         onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
         onMoreClicked: { presenter.dispatch(action: TrendingClicked()) }
       )
-      
+
       HorizontalItemListView(
         title: "Popular",
         chevronStyle: .chevronOnly,
@@ -296,7 +299,7 @@ struct Discover: View {
         onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
         onMoreClicked: { presenter.dispatch(action: PopularClicked()) }
       )
-      
+
       HorizontalItemListView(
         title: "Top Rated",
         chevronStyle: .chevronOnly,
@@ -309,8 +312,9 @@ struct Discover: View {
     .background(Color.background)
     .offset(y: -10)
   }
-  
+
   // MARK: - Empty View
+
   @ViewBuilder
   private var emptyView: some View {
     VStack {
@@ -320,16 +324,16 @@ struct Discover: View {
         .foregroundColor(Color.accent)
         .font(Font.title.weight(.thin))
         .frame(width: 160, height: 180)
-      
+
       Text("Looks like your stash is empty")
         .titleSemiBoldFont(size: 18)
         .padding(.top, 8)
-      
+
       Text("Could be that you forgot to add your TMDB API Key. Once you set that up, you can get lost in the vast world of Tmdb's collection.")
         .captionFont(size: 16)
         .padding(.top, 1)
         .padding(.bottom, 16)
-      
+
       Button(action: {
         presenter.dispatch(action: ReloadData())
       }, label: {
@@ -348,7 +352,7 @@ struct Discover: View {
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .padding([.trailing, .leading], 16)
   }
-  
+
   private func getShow(currentIndex: Int, shows: [SwiftShow]) -> SwiftShow? {
     if shows.isEmpty {
       return nil
@@ -356,7 +360,7 @@ struct Discover: View {
     let actualIndex = (currentIndex - 1) % shows.count
     return shows[actualIndex >= 0 ? actualIndex : shows.count - 1]
   }
-  
+
   private enum CoordinateSpaces {
     case scrollView
   }

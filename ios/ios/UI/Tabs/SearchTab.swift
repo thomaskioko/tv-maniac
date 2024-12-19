@@ -4,18 +4,19 @@ import TvManiac
 import TvManiacKit
 import TvManiacUI
 
-struct Search: View {
+struct SearchTab: View {
   private let presenter: SearchShowsPresenter
   @StateObject @KotlinStateFlow private var uiState: SearchShowState
   @FocusState private var isSearchFocused: Bool
   @State private var showGlass: Double = 0
-  
+
   init(presenter: SearchShowsPresenter) {
     self.presenter = presenter
     _uiState = .init(presenter.state)
   }
-  
+
   // MARK: - Bindings
+
   private var searchQueryBinding: Binding<String> {
     Binding(
       get: { uiState.query ?? "" },
@@ -29,12 +30,12 @@ struct Search: View {
       }
     )
   }
-  
+
   var body: some View {
     ZStack {
       Color.background
         .ignoresSafeArea()
-      
+
       ScrollView(showsIndicators: false) {
         contentView
           .padding(.top, 16)
@@ -52,36 +53,35 @@ struct Search: View {
     .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
     .toolbarBackground(.visible, for: .navigationBar)
   }
-  
+
   @ViewBuilder
   private var contentView: some View {
     switch onEnum(of: uiState) {
-      case .initialSearchState:
-        loadingView
+    case .initialSearchState:
+      loadingView
+        .transition(.opacity)
+    case let .searchResultAvailable(state):
+      searchResultsView(state: state)
+        .transition(.opacity)
+    case let .showContentAvailable(state):
+      genreSection(state: state)
+    case let .emptySearchResult(state):
+      if state.errorMessage != nil {
+        errorView(state: state)
           .transition(.opacity)
-      case .searchResultAvailable(let state):
-        searchResultsView(state: state)
+      } else if !state.isUpdating {
+        emptyStateView
           .transition(.opacity)
-      case .showContentAvailable(let state):
-        genreSection(state: state)
-        
-      case .emptySearchResult(let state):
-        if state.errorMessage != nil {
-          errorView(state: state)
-            .transition(.opacity)
-        } else if !state.isUpdating {
-          emptyStateView
-            .transition(.opacity)
-        }   
+      }
     }
   }
-  
+
   @ViewBuilder
   private func genreSection(state: ShowContentAvailable) -> some View {
     Section {
       let items = state.genres.map { $0.toSwift() }
       let columns = [GridItem(.adaptive(minimum: 160), spacing: 8)]
-      
+
       ZStack {
         LazyVGrid(columns: columns, spacing: 8) {
           ForEach(items, id: \.id) { item in
@@ -92,14 +92,14 @@ struct Search: View {
               posterHeight: 220
             )
             .clipped()
-            .onTapGesture { 
+            .onTapGesture {
               withAnimation(.none) {
                 presenter.dispatch(action: GenreCategoryClicked(id: item.tmdbId))
               }
             }
           }
         }
-        
+
         if state.isUpdating {
           ProgressView()
             .progressViewStyle(CircularProgressViewStyle())
@@ -119,7 +119,7 @@ struct Search: View {
     }
     .padding(.horizontal)
   }
-  
+
   @ViewBuilder
   private func searchResultsView(state: SearchResultAvailable) -> some View {
     VStack {
@@ -131,7 +131,7 @@ struct Search: View {
           .padding(.horizontal)
           .padding(.bottom, 8)
       }
-      
+
       if let shows = state.results, !shows.isEmpty {
         SearchResultListView(
           items: shows.map { $0.toSwift() },
@@ -143,20 +143,20 @@ struct Search: View {
       }
     }
   }
-  
+
   private var loadingView: some View {
     CenteredFullScreenView {
       LoadingIndicatorView(animate: true)
     }
   }
-  
+
   private var emptyStateView: some View {
     FullScreenView(
       systemName: "exclamationmark.magnifyingglass",
       message: "No results found. Try a different keyword!"
     )
   }
-  
+
   private func errorView(state: EmptySearchResult) -> some View {
     FullScreenView(
       systemName: "exclamationmark.arrow.triangle.2.circlepath",

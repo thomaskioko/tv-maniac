@@ -3,7 +3,7 @@ import SwiftUIComponents
 import TvManiac
 import TvManiacKit
 
-struct Settings: View {
+struct SettingsTab: View {
   private let presenter: SettingsPresenter
   @StateObject @KotlinStateFlow private var uiState: SettingsState
   @State private var theme: DeveiceAppTheme = .system
