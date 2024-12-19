@@ -13,35 +13,35 @@ import TvManiacKit
 struct RootNavigationView: View {
   private let rootPresenter: RootPresenter
   @StateObject @KotlinStateFlow private var themeState: ThemeState
-  
+
   init(rootPresenter: RootPresenter) {
     self.rootPresenter = rootPresenter
     _themeState = .init(rootPresenter.themeState)
   }
-  
+
   var body: some View {
     SplashView {
       DecomposeNavigationView(
         stack: rootPresenter.childStack,
         onBack: rootPresenter.onBackClicked,
-        content:  { child in
+        content: { child in
           switch onEnum(of: child) {
-            case .home(let child) :
-              HomeTabNavigationView(presenter: child.presenter)
-            case .showDetails(let child):
-              EmptyView()
-            case .seasonDetails(let child):
-              EmptyView()
-            case .moreShows(let child):
-              EmptyView()
-            case .trailers(let child):
-              EmptyView()
-            case .genreShows(let child):
-              EmptyView()
+          case let .home(child):
+            HomeTabNavigationView(presenter: child.presenter)
+          case let .showDetails(child):
+            EmptyView()
+          case let .seasonDetails(child):
+            EmptyView()
+          case let .moreShows(child):
+            EmptyView()
+          case let .trailers(child):
+            EmptyView()
+          case let .genreShows(child):
+            EmptyView()
           }
         }
       )
     }
-    .environment(\.colorScheme, themeState.appTheme == .lightTheme ? .light : .dark)
+    .appTheme(themeState.appTheme.toDeveiceAppTheme())
   }
 }

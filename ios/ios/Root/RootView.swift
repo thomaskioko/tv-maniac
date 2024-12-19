@@ -32,7 +32,7 @@ struct RootView: View {
             childView(for: child)
           }
         )
-        .environment(\.colorScheme, uiState.appTheme == .lightTheme ? .light : .dark)
+        .appTheme(uiState.appTheme.toDeveiceAppTheme())
       }
     }
     .onAppear {
