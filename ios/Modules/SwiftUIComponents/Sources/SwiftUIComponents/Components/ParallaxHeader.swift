@@ -1,13 +1,12 @@
 import SwiftUI
 
+public struct ParallaxHeader<Content: View, Space: Hashable>: View {
+  private let content: () -> Content
+  private let coordinateSpace: Space
+  private let defaultHeight: CGFloat
+  private let onScroll: (CGFloat) -> Void
 
-struct ParallaxHeader<Content: View, Space: Hashable>: View {
-  let content: () -> Content
-  let coordinateSpace: Space
-  let defaultHeight: CGFloat
-  let onScroll: (CGFloat) -> Void
-  
-  init(
+  public init(
     coordinateSpace: Space,
     defaultHeight: CGFloat,
     onScroll: @escaping (CGFloat) -> Void = { _ in },
@@ -18,8 +17,8 @@ struct ParallaxHeader<Content: View, Space: Hashable>: View {
     self.defaultHeight = defaultHeight
     self.onScroll = onScroll
   }
-  
-  var body: some View {
+
+  public var body: some View {
     GeometryReader { proxy in
       let frame = proxy.frame(in: .named(coordinateSpace))
       let offset = offset(for: proxy)
@@ -39,11 +38,10 @@ struct ParallaxHeader<Content: View, Space: Hashable>: View {
         .onChange(of: frame.minY) { newOffset in
           onScroll(newOffset)
         }
-      
     }
     .frame(height: defaultHeight)
   }
-  
+
   private func offset(for proxy: GeometryProxy) -> CGFloat {
     let frame = proxy.frame(in: .named(coordinateSpace))
     if frame.minY < 0 {
@@ -51,10 +49,9 @@ struct ParallaxHeader<Content: View, Space: Hashable>: View {
     }
     return -frame.minY
   }
-  
+
   private func heightModifier(for proxy: GeometryProxy) -> CGFloat {
     let frame = proxy.frame(in: .named(coordinateSpace))
     return max(0, frame.minY)
   }
-  
 }

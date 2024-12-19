@@ -1,6 +1,5 @@
 import SwiftUI
 
-
 public struct GlassToolbar: View {
   private let title: String
   private let opacity: Double
@@ -32,11 +31,11 @@ public struct GlassToolbar: View {
 struct VisualEffectView: UIViewRepresentable {
   let effect: UIVisualEffect
 
-  func makeUIView(context: UIViewRepresentableContext<Self>) -> UIVisualEffectView {
+  func makeUIView(context _: UIViewRepresentableContext<Self>) -> UIVisualEffectView {
     UIVisualEffectView(effect: effect)
   }
 
-  func updateUIView(_ uiView: UIVisualEffectView, context: UIViewRepresentableContext<Self>) {
+  func updateUIView(_ uiView: UIVisualEffectView, context _: UIViewRepresentableContext<Self>) {
     uiView.effect = effect
   }
 }
@@ -62,8 +61,8 @@ public struct NavigationBarModifier: ViewModifier {
 }
 
 // Add this extension to make navigation bar transparent
-extension View {
+public extension View {
   func navigationBarColor(backgroundColor: UIColor) -> some View {
-    self.modifier(NavigationBarModifier(backgroundColor: backgroundColor))
+    modifier(NavigationBarModifier(backgroundColor: backgroundColor))
   }
 }

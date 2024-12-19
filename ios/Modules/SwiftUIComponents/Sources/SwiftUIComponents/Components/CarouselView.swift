@@ -1,25 +1,23 @@
 import SwiftUI
-import SwiftUIComponents
-import TvManiacUI
 
 /// A view that displays a horizontally scrolling carousel of show posters
 /// with auto-scrolling and interactive gesture support.
-struct CarouselView<T, Content: View>: View {
+public struct CarouselView<T, Content: View>: View {
   private let items: [T]
   @Binding private var currentIndex: Int
   private let onItemScrolled: (T) -> Void
   private let onItemTapped: (Int64) -> Void
   private let content: (Int) -> Content
-  
+
   @GestureState private var dragOffset: CGFloat = 0
   @State private var offset: CGFloat = 0
   @State private var dragging = false
-  
+
   /// The time interval between auto-scrolls in seconds
   private let autoScrollInterval: TimeInterval = 6.0
   @State private var autoScrollTimer: Timer?
-  
-  init(
+
+  public init(
     items: [T],
     currentIndex: Binding<Int>,
     onItemScrolled: @escaping (T) -> Void,
@@ -27,23 +25,23 @@ struct CarouselView<T, Content: View>: View {
     content: @escaping (Int) -> Content
   ) {
     self.items = items
-    self._currentIndex = currentIndex
+    _currentIndex = currentIndex
     self.onItemScrolled = onItemScrolled
     self.onItemTapped = onItemTapped
     self.content = content
   }
-  
+
   /// The items to display, including wraparound items for infinite scrolling
   private var displayItems: [T] {
     guard let first = items.first, let last = items.last else { return [] }
     return [last] + items + [first]
   }
-  
-  var body: some View {
+
+  public var body: some View {
     ZStack(alignment: .bottom) {
       GeometryReader { geometry in
         let screenWidth = geometry.size.width
-        
+
         HStack(spacing: 0) {
           ForEach(displayItems.indices, id: \.self) { index in
             let actualIndex = (index - 1) % items.count
@@ -73,7 +71,7 @@ struct CarouselView<T, Content: View>: View {
                 dragging = true
                 autoScrollTimer?.invalidate()
               }
-              
+
               handleDragUpdate(
                 translation: value.translation.width,
                 screenWidth: screenWidth
@@ -83,7 +81,7 @@ struct CarouselView<T, Content: View>: View {
               dragging = false
               let velocity = value.predictedEndTranslation.width - value.translation.width
               let translation = value.translation.width
-              
+
               handleDragEnd(
                 velocity: velocity,
                 translation: translation,
@@ -95,7 +93,7 @@ struct CarouselView<T, Content: View>: View {
       }
     }
   }
-  
+
   /// Starts the auto-scroll timer if not already running
   private func startAutoScroll() {
     autoScrollTimer?.invalidate()
@@ -108,7 +106,7 @@ struct CarouselView<T, Content: View>: View {
       }
     }
   }
-  
+
   /// Resets the offset when reaching the end to enable infinite scrolling
   /// - Parameter geometry: The geometry proxy providing the container's dimensions
   private func resetOffsetIfNeeded(geometry: GeometryProxy) {
@@ -126,20 +124,20 @@ struct CarouselView<T, Content: View>: View {
       }
     }
   }
-  
+
   /// Notifies observers about the currently active item
   private func notifyActiveItem() {
     let actualIndex = (currentIndex - 1) % items.count
     onItemScrolled(items[actualIndex])
   }
-  
+
   /// Handles the drag gesture state update
   private func handleDragUpdate(
     translation: CGFloat,
     screenWidth: CGFloat
   ) {
     let halfScreenWidth = screenWidth / 2
-    
+
     if abs(translation) > halfScreenWidth {
       let direction = translation > 0 ? -1 : 1
       let nextIndex = (currentIndex + direction - 1) % items.count
@@ -151,7 +149,7 @@ struct CarouselView<T, Content: View>: View {
       onItemScrolled(items[actualIndex])
     }
   }
-  
+
   /// Handles the end of a drag gesture
   private func handleDragEnd(
     velocity: CGFloat,
@@ -166,7 +164,7 @@ struct CarouselView<T, Content: View>: View {
     } else {
       offset = -CGFloat(currentIndex) * screenWidth
     }
-    
+
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
       startAutoScroll()
     }
