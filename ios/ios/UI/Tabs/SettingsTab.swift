@@ -6,7 +6,7 @@ import TvManiacKit
 struct SettingsTab: View {
   private let presenter: SettingsPresenter
   @StateObject @KotlinStateFlow private var uiState: SettingsState
-  @State private var theme: DeveiceAppTheme = .system
+  @StateObject private var store = SettingsAppStorage.shared
   @State private var showingAlert: Bool = false
   @State private var openInYouTube: Bool = false
   @State private var showPolicy = false
@@ -18,28 +18,27 @@ struct SettingsTab: View {
   init(presenter: SettingsPresenter) {
     self.presenter = presenter
     _uiState = .init(presenter.state)
-    theme = uiState.appTheme.toDeveiceAppTheme()
   }
 
   var body: some View {
     Form {
       Section("App Theme") {
         Picker(
-          selection: $theme,
+          selection: $store.appTheme,
           label: Text("Change Theme")
             .bodyMediumFont(size: 16),
           content: {
             ForEach(DeveiceAppTheme.allCases, id: \.self) { theme in
 
               Text(theme.localizableName)
-                .tag(theme.rawValue)
+                .tag(theme)
             }
           }
         )
         .pickerStyle(.segmented)
         .padding(.vertical, 6)
-        .onChange(of: theme) { theme in
-          presenter.dispatch(action: ThemeSelected(appTheme: toTheme(appTheme: theme)))
+        .onChange(of: uiState.appTheme) { theme in
+          presenter.dispatch(action: ThemeSelected(appTheme: theme))
         }
       }
 
@@ -79,8 +78,8 @@ struct SettingsTab: View {
         .sheet(isPresented: $aboutPage) {
           if let url = URL(string: "https://github.com/c0de-wizard/tv-maniac") {
             SFSafariViewWrapper(url: url)
-              .appTint(theme)
-              .appTheme(theme)
+              .appTint()
+              .appTheme()
           }
         }
 
@@ -94,8 +93,8 @@ struct SettingsTab: View {
           // TODO: Add Privacy Policy
           if let url = URL(string: "https://github.com/c0de-wizard/tv-maniac") {
             SFSafariViewWrapper(url: url)
-              .appTint(theme)
-              .appTheme(theme)
+              .appTint()
+              .appTheme()
           }
         }
       }
@@ -104,8 +103,8 @@ struct SettingsTab: View {
     .background(Color.backgroundColor)
     .navigationTitle("Settings")
     .navigationBarTitleDisplayMode(.inline)
-    .onAppear {
-      self.theme = uiState.appTheme.toDeveiceAppTheme()
+    .onChange(of: uiState.appTheme) { newTheme in
+      store.appTheme = newTheme.toDeveiceAppTheme()
     }
   }
 

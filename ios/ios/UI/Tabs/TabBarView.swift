@@ -32,6 +32,7 @@ public struct TabBarView: View {
         }
       }
     }
+    .appTheme()
     .onChange(of: selectedTab) { newTab in
       switch newTab {
       case .discover: presenter.onDiscoverClicked()

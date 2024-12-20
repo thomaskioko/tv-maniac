@@ -13,6 +13,7 @@ import TvManiacKit
 struct RootNavigationView: View {
   private let rootPresenter: RootPresenter
   @StateObject @KotlinStateFlow private var themeState: ThemeState
+  @StateObject private var store = SettingsAppStorage.shared
 
   init(rootPresenter: RootPresenter) {
     self.rootPresenter = rootPresenter
@@ -42,6 +43,9 @@ struct RootNavigationView: View {
         }
       )
     }
-    .appTheme(themeState.appTheme.toDeveiceAppTheme())
+    .appTheme()
+    .onChange(of: themeState.appTheme) { newTheme in
+      store.appTheme = newTheme.toDeveiceAppTheme()
+    }
   }
 }

@@ -35,17 +35,6 @@ public enum DeveiceAppTheme: String, CaseIterable {
   }
 }
 
-public func toTheme(appTheme: DeveiceAppTheme) -> AppTheme {
-  switch appTheme {
-  case .system:
-    return AppTheme.systemTheme
-  case .light:
-    return AppTheme.lightTheme
-  case .dark:
-    return AppTheme.darkTheme
-  }
-}
-
 public extension AppTheme {
   func toDeveiceAppTheme() -> DeveiceAppTheme {
     switch self {

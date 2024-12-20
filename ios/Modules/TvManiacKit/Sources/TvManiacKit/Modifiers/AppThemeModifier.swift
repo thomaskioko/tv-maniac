@@ -2,20 +2,20 @@ import SwiftUI
 import TvManiac
 
 struct AppThemeModifier: ViewModifier {
-  let theme: DeveiceAppTheme
-  @Environment(\.colorScheme) var systemTheme
+  @Environment(\.colorScheme) private var colorScheme
+  @AppStorage("app.theme") private var appTheme: DeveiceAppTheme = .light
 
   func body(content: Content) -> some View {
     content
-      .environment(\.colorScheme, theme.overrideTheme ?? systemTheme)
+      .environment(\.colorScheme, appTheme.overrideTheme ?? colorScheme)
   }
 }
 
 struct AppTintModifier: ViewModifier {
-  let theme: DeveiceAppTheme
+  @AppStorage("app.theme") private var appTheme: DeveiceAppTheme = .light
 
   func body(content: Content) -> some View {
     content
-      .tint(theme.toAppThemeColor())
+      .tint(appTheme.toAppThemeColor())
   }
 }

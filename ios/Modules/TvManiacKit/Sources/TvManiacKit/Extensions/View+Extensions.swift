@@ -1,11 +1,11 @@
 import SwiftUI
 
 public extension View {
-  func appTheme(_ theme: DeveiceAppTheme) -> some View {
-    modifier(AppThemeModifier(theme: theme))
+  func appTheme() -> some View {
+    modifier(AppThemeModifier())
   }
 
-  func appTint(_ theme: DeveiceAppTheme) -> some View {
-    modifier(AppTintModifier(theme: theme))
+  func appTint() -> some View {
+    modifier(AppTintModifier())
   }
 }
