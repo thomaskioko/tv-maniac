@@ -35,51 +35,37 @@ public struct EpisodeListView: View {
     }
 
     public var body: some View {
-        VStack {
-            EpisodeCollapsible(
-                episodeCount: episodeCount,
-                watchProgress: CGFloat(watchProgress),
-                isCollapsed: expandEpisodeItems,
-                onCollapseClicked: onEpisodeHeaderClicked,
-                onWatchedStateClicked: {
-                    onWatchedStateClicked()
-                    showingAlert = !showSeasonWatchStateDialog
-                }
-            ) {
-                VStack {
-                    VerticalEpisodeListView(items: items)
-                }
+        EpisodeCollapsible(
+            episodeCount: episodeCount,
+            watchProgress: CGFloat(watchProgress),
+            isCollapsed: expandEpisodeItems,
+            onCollapseClicked: onEpisodeHeaderClicked,
+            onWatchedStateClicked: {
+                onWatchedStateClicked()
+                showingAlert = !showSeasonWatchStateDialog
             }
-            .alert(isPresented: $showingAlert, content: {
-                let title = isSeasonWatched ? "Mark as unwatched" : "Mark as watched"
-                let messageBody = isSeasonWatched ?
-                    "Are you sure you want to mark the entire season as unwatched?" : "Are you sure you want to mark the entire season as watched?"
-                return Alert(
-                    title: Text(title),
-                    message: Text(messageBody),
-                    primaryButton: .default(Text("No")) {},
-                    secondaryButton: .default(Text("Yes"))
-                )
-            })
-        }
-    }
-
-    @ViewBuilder
-    func VerticalEpisodeListView(items: [SwiftEpisode]) -> some View {
-        VStack {
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack {
-                    ForEach(items, id: \.episodeId) { item in
-                        EpisodeItemView(
-                            imageUrl: item.imageUrl,
-                            episodeTitle: item.title,
-                            episodeOverView: item.overview
-                        )
-                        .padding(.top, item.id == items.first?.id ? 16 : 8)
-                    }
+        ) {
+            LazyVStack {
+                ForEach(items, id: \.episodeId) { item in
+                    EpisodeItemView(
+                        imageUrl: item.imageUrl,
+                        episodeTitle: item.title,
+                        episodeOverView: item.overview
+                    )
                 }
             }
         }
+        .alert(isPresented: $showingAlert, content: {
+            let title = isSeasonWatched ? "Mark as unwatched" : "Mark as watched"
+            let messageBody = isSeasonWatched ?
+                "Are you sure you want to mark the entire season as unwatched?" : "Are you sure you want to mark the entire season as watched?"
+            return Alert(
+                title: Text(title),
+                message: Text(messageBody),
+                primaryButton: .default(Text("No")) {},
+                secondaryButton: .default(Text("Yes"))
+            )
+        })
     }
 }
 
@@ -109,7 +95,7 @@ public struct EpisodeListView: View {
                 title: "E3 Model 103",
                 overview: "Malcolm confides in Kokoro about his recurring nightmare. The three children continue their underground trek, unaware of looming danger.",
                 imageUrl: "https://image.tmdb.org/t/p/w780/https://image.tmdb.org/t/p/w780/uNXoR4PR4Uh2ymXz12Z1mhwZoJS.jpg"
-            )
+            ),
         ],
         onEpisodeHeaderClicked: {},
         onWatchedStateClicked: {}

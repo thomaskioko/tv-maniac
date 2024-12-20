@@ -15,7 +15,6 @@ public struct ShowInfoView: View {
     private let onAddToLibrary: () -> Void
     private let onSeasonClicked: (Int, SwiftSeason) -> Void
     private let onShowClicked: (Int64) -> Void
-    @Binding var titleRect: CGRect
 
     public init(
         isFollowed: Bool,
@@ -30,8 +29,7 @@ public struct ShowInfoView: View {
         onWatchTrailer: @escaping () -> Void,
         onAddToLibrary: @escaping () -> Void,
         onSeasonClicked: @escaping (Int, SwiftSeason) -> Void,
-        onShowClicked: @escaping (Int64) -> Void,
-        titleRect: Binding<CGRect>
+        onShowClicked: @escaping (Int64) -> Void
     ) {
         self.isFollowed = isFollowed
         self.openTrailersInYoutube = openTrailersInYoutube
@@ -46,14 +44,10 @@ public struct ShowInfoView: View {
         self.onAddToLibrary = onAddToLibrary
         self.onSeasonClicked = onSeasonClicked
         self.onShowClicked = onShowClicked
-        self._titleRect = titleRect
     }
 
     public var body: some View {
         VStack {
-            Spacer(minLength: nil)
-                .background(GeometryGetter(rect: self.$titleRect))
-
             if !genreList.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center) {
@@ -227,8 +221,7 @@ public struct ShowInfoView: View {
             onWatchTrailer: {},
             onAddToLibrary: {},
             onSeasonClicked: { _, _ in },
-            onShowClicked: { _ in },
-            titleRect: .constant(CGRect())
+            onShowClicked: { _ in }
         )
     }
     .background(Color.background)

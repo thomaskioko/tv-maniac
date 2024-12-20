@@ -23,11 +23,11 @@ public struct EpisodeItemView: View {
         imageUrl: String?,
         episodeTitle: String,
         episodeOverView: String,
-        episodeWidth: CGFloat = 120,
-        episodeHeight: CGFloat = 140,
-        shadowRadius: CGFloat = 2.5,
-        cornerRadius: CGFloat = 2,
-        posterRadius: CGFloat = 0
+        episodeWidth: CGFloat = Constants.defaultEpisodeWidth,
+        episodeHeight: CGFloat = Constants.defaultEpisodeHeight,
+        shadowRadius: CGFloat = Constants.defaultShadowRadius,
+        cornerRadius: CGFloat = Constants.defaultCornerRadius,
+        posterRadius: CGFloat = Constants.defaultPosterRadius
     ) {
         self.imageUrl = imageUrl
         self.episodeTitle = episodeTitle
@@ -40,7 +40,7 @@ public struct EpisodeItemView: View {
     }
 
     public var body: some View {
-        HStack {
+        HStack(spacing: 0) {
             PosterItemView(
                 title: nil,
                 posterUrl: imageUrl,
@@ -48,31 +48,36 @@ public struct EpisodeItemView: View {
                 posterHeight: episodeHeight,
                 posterRadius: posterRadius
             )
+            .clipped()
 
-            VStack {
-                Text(episodeTitle)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom, 0.5)
-                    .padding(.top, 16)
-
-                Text(episodeOverView)
-                    .font(.callout)
-                    .padding([.top], 2)
-                    .lineLimit(4)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                Spacer()
-            }
-            .padding(.horizontal, 8)
+            episodeDetails
         }
+        .frame(maxWidth: .infinity)
         .frame(height: episodeHeight)
         .background(Color.content_background)
         .cornerRadius(cornerRadius)
         .padding(.horizontal)
+    }
+
+    private var episodeDetails: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(episodeTitle)
+                .font(.title3)
+                .fontWeight(.semibold)
+                .lineLimit(1)
+                .padding(.top, 8)
+
+            Text(episodeOverView)
+                .font(.callout)
+                .padding(.top, 2)
+                .lineLimit(4)
+                .multilineTextAlignment(.leading)
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical)
+        .padding(.horizontal, 8)
     }
 
     private var episodePlaceholder: some View {
@@ -98,6 +103,18 @@ public struct EpisodeItemView: View {
             .shadow(radius: shadowRadius)
         }
     }
+}
+
+public enum Constants {
+    public static let defaultEpisodeWidth: CGFloat = 120
+    public static let defaultEpisodeHeight: CGFloat = 140
+    public static let defaultShadowRadius: CGFloat = 2.5
+    public static let defaultCornerRadius: CGFloat = 2
+    public static let defaultPosterRadius: CGFloat = 0
+    public static let horizontalPadding: CGFloat = 16
+    public static let verticalPadding: CGFloat = 16
+    public static let titleLineLimit: Int = 1
+    public static let overviewLineLimit: Int = 4
 }
 
 #Preview {
