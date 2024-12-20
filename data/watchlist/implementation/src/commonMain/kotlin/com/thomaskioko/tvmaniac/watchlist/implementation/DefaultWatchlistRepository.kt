@@ -48,10 +48,11 @@ class DefaultWatchlistRepository(
 
   override fun observeUnSyncedItems(): Flow<Unit> {
     return watchlistDao.observeUnSyncedWatchlist()
-      .flatMapConcat { ids ->
+      .flatMapMerge { ids ->
         flow {
-          ids.onEach { id ->
+          ids.forEach { id ->
             watchlistMetadataStore.stream(StoreReadRequest.fresh(id)).collect()
+            emit(Unit)
           }
         }
       }
