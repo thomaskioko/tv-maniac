@@ -31,20 +31,22 @@ public struct ShowHeaderInfoView: View {
         .titleFont(size: 30)
         .foregroundColor(.textColor)
         .lineLimit(1)
-        .padding(.top, 12)
-        .padding([.leading, .trailing], 16)
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .center)
 
       OverviewBoxView(overview: overview)
+        .padding(.horizontal, 16)
+        
 
       showDetailMetadata
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
     }
-    .padding([.trailing, .leading, .bottom], 16)
   }
 
   private var showDetailMetadata: some View {
     ScrollView(.horizontal, showsIndicators: false) {
       HStack(alignment: .center) {
-
         if let status = status, !status.isEmpty {
           BorderTextView(
             text: status,

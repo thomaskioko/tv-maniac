@@ -46,11 +46,10 @@ public struct HeaderView: View {
           gradient: Gradient(colors: [
             .clear,
             .clear,
-            .clear,
-            Color.background.opacity(0),
-            Color.background.opacity(0.8),
-            Color.background.opacity(0.97),
-            Color.background,
+            Color.background.opacity(0.1),
+            Color.background.opacity(0.3),
+            Color.background.opacity(0.6),
+            Color.background.opacity(0.9),
             Color.background,
           ]),
           startPoint: .top,
@@ -79,7 +78,6 @@ public struct HeaderView: View {
     .clipped()
   }
 }
-
 
 #Preview {
   VStack {
