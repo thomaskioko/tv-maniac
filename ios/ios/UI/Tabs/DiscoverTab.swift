@@ -179,7 +179,7 @@ struct DiscoverTab: View {
     VStack(alignment: .leading) {
       Text(selectedShow?.title ?? "")
         .font(.system(size: 46, weight: .bold))
-        .foregroundColor(.textColor)
+        .foregroundColor(.white)
         .lineLimit(1)
         .frame(maxWidth: .infinity, alignment: .center)
 

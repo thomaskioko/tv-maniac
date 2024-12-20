@@ -50,8 +50,12 @@ struct SearchTab: View {
     )
     .disableAutocorrection(true)
     .textInputAutocapitalization(.never)
-    .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+    .scrollContentBackground(.hidden)
     .toolbarBackground(.visible, for: .navigationBar)
+    .toolbarBackground(
+      Color.background.opacity(0.9),
+      for: .navigationBar
+    )
   }
 
   @ViewBuilder

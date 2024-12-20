@@ -3,6 +3,7 @@ import SwiftUI
 public struct GlassToolbar: View {
   private let title: String
   private let opacity: Double
+  @Environment(\.colorScheme) private var colorScheme
 
   public init(title: String, opacity: Double) {
     self.title = title
@@ -11,23 +12,20 @@ public struct GlassToolbar: View {
 
   public var body: some View {
     ZStack(alignment: .bottom) {
-      // Blur effect background
-      VisualEffectView(effect: UIBlurEffect(style: .dark))
+      VisualEffectView(effect: UIBlurEffect(style: colorScheme == .dark ? .dark : .light))
         .frame(height: 44 + ((UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.safeAreaInsets.top ?? 0))
         .opacity(opacity)
         .ignoresSafeArea()
 
-      // Title
       Text(title)
         .font(.system(size: 18, weight: .bold))
-        .foregroundColor(.white)
+        .foregroundColor(colorScheme == .dark ? .white : .black)
         .opacity(opacity)
         .padding(.bottom, 16)
     }
   }
 }
 
-// Add UIViewRepresentable for UIVisualEffectView
 struct VisualEffectView: UIViewRepresentable {
   let effect: UIVisualEffect
 
