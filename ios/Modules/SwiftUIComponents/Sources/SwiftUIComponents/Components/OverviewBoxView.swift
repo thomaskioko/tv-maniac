@@ -22,26 +22,36 @@ public struct OverviewBoxView: View {
         if let overview, !overview.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
                 Text(overview)
-                    .font(.avenirNext(size: 17))
+                    .font(.callout)
                     .foregroundColor(.textColor)
                     .lineLimit(showFullText ? nil : lineLimit)
+                    .lineSpacing(4)
                     .multilineTextAlignment(.leading)
-                    .padding(.bottom, -14)
-
-                GeometryReader { geometry in
-                    Text(overview)
-                        .font(.avenirNext(size: 17))
-                        .foregroundColor(.clear)
-                        .lineLimit(lineLimit)
-                        .background(
-                            GeometryReader { fullTextGeometry in
-                                Color.clear.onAppear {
-                                    self.isTruncated = fullTextGeometry.size.height > geometry.size.height
+                    .background(
+                        // Render the limited text and measure its size
+                        Text(overview)
+                            .lineLimit(lineLimit)
+                            .font(.callout)
+                            .lineSpacing(4)
+                            .background(GeometryReader { displayedGeometry in
+                                // Create a ZStack with unbounded height to allow the inner Text as much
+                                // height as it likes, but no extra width.
+                                ZStack {
+                                    // Render the text without restrictions and measure its size
+                                    Text(overview)
+                                        .font(.callout)
+                                        .lineSpacing(4)
+                                        .background(GeometryReader { fullGeometry in
+                                            // And compare the two
+                                            Color.clear.onAppear {
+                                                self.isTruncated = fullGeometry.size.height > displayedGeometry.size.height
+                                            }
+                                        })
                                 }
-                            }
-                        )
-                }
-                .frame(height: 0)
+                                .frame(height: .greatestFiniteMagnitude)
+                            })
+                            .hidden() // Hide the background
+                    )
 
                 if isTruncated {
                     HStack {
@@ -55,7 +65,6 @@ public struct OverviewBoxView: View {
                                     .textCase(.uppercase)
                                     .font(.avenirNext(size: 12))
                                     .foregroundStyle(Color.accent)
-                                    .padding(.trailing, 16)
                             }
                     }
                 }
