@@ -38,23 +38,24 @@ struct DiscoverTab: View {
 
   @ViewBuilder
   private func discoverLoadedContent(state: DataLoaded) -> some View {
-    ScrollView(showsIndicators: false) {
-      ZStack(alignment: .bottom) {
-        ParallaxHeader(
-          coordinateSpace: CoordinateSpaces.scrollView,
-          defaultHeight: 550,
-          onScroll: { offset in
-            let opacity = -offset - 150
-            let normalizedOpacity = opacity / 200
-            showGlass = max(0, min(1, normalizedOpacity))
-          }
-        ) {
+    ParallaxView(
+      imageHeight: 550,
+      collapsedImageHeight: 120,
+      header: { _ in
+        ZStack(alignment: .bottom) {
           headerContent(shows: state.featuredShows)
+          showInfoOverlay(state.featuredShows.map { $0.toSwift() })
         }
-        showInfoOverlay(state.featuredShows.map { $0.toSwift() })
+      },
+      content: {
+        discoverListContent(state: state)
+      },
+      onScroll: { offset in
+        let opacity = -offset - 150
+        let normalizedOpacity = opacity / 200
+        showGlass = max(0, min(1, normalizedOpacity))
       }
-      discoverListContent(state: state)
-    }
+    )
     .background(Color.background)
     .navigationBarTitleDisplayMode(.inline)
     .navigationBarColor(backgroundColor: .clear)
@@ -88,6 +89,8 @@ struct DiscoverTab: View {
         ) { index in
           CarouselItemView(item: items[index])
         }
+        .allowsHitTesting(true)
+        .gesture(DragGesture())
 
         headerNavigationBar(shows: items)
       }
@@ -117,10 +120,9 @@ struct DiscoverTab: View {
           }
           .frame(height: scrollViewHeight)
         }
-        .ignoresSafeArea()
-        .onTapGesture {
+        .simultaneousGesture(TapGesture().onEnded {
           presenter.dispatch(action: ShowClicked(id: item.tmdbId))
-        }
+        })
       }
     }
   }
@@ -268,7 +270,6 @@ struct DiscoverTab: View {
     }
     .padding(.top, 16)
     .background(Color.background)
-    .offset(y: -10)
   }
 
   // MARK: - Discover List Content
@@ -309,6 +310,7 @@ struct DiscoverTab: View {
       )
     }
     .padding(.top, 16)
+    .padding(.bottom, 90)
     .background(Color.background)
     .offset(y: -10)
   }
