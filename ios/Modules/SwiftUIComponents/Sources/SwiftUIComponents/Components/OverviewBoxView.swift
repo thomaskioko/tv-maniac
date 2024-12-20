@@ -5,29 +5,22 @@ public struct OverviewBoxView: View {
     private let lineLimit: Int
     @State private var showFullText = false
     @State private var isTruncated = false
-    @Binding private var titleRect: CGRect
 
     public init(
         overview: String?,
         lineLimit: Int = 4,
         showFullText: Bool = false,
-        isTruncated: Bool = false,
-        titleRect: Binding<CGRect> = .constant(.zero)
+        isTruncated: Bool = false
     ) {
         self.overview = overview
         self.lineLimit = lineLimit
         self.showFullText = showFullText
         self.isTruncated = isTruncated
-        self._titleRect = titleRect
     }
 
     public var body: some View {
         if let overview, !overview.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
-                Spacer(minLength: nil)
-                    .background(GeometryGetter(rect: self.$titleRect))
-                    .frame(height: 0)
-
                 Text(overview)
                     .font(.avenirNext(size: 17))
                     .foregroundColor(.textColor)
@@ -86,12 +79,12 @@ struct CustomContainer<Content: View>: View {
 
 #Preview {
     VStack(spacing: 20) {
-        //Long Text
+        // Long Text
         OverviewBoxView(
             overview: "Set in the utopian region of Piltover and the oppressed underground of Zaun, the story follows the origins of two iconic League champions-and the power that will tear them apart."
         )
 
-        //Short Text
+        // Short Text
         OverviewBoxView(
             overview: "Set in the utopian region of Piltover and the oppressed underground of Zaun, the story follows the origins of two iconic League."
         )

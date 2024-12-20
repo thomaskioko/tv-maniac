@@ -30,9 +30,9 @@ struct RootNavigationView: View {
           case let .home(child):
             TabBarView(presenter: child.presenter)
           case let .showDetails(child):
-            EmptyView()
+            ShowDetailsView(presenter: child.presenter)
           case let .seasonDetails(child):
-            EmptyView()
+            SeasonDetailsView(presenter: child.presenter)
           case let .moreShows(child):
             EmptyView()
           case let .trailers(child):
