@@ -7,7 +7,8 @@ import TvManiacUI
 struct DiscoverTab: View {
   private let presenter: DiscoverShowsPresenter
   @StateObject @KotlinStateFlow private var uiState: DiscoverState
-  @State private var currentIndex = 0
+  @StateObject private var store = SettingsAppStorage.shared
+  @State private var currentIndex: Int
   @State private var showNavigationBar = false
   @State private var selectedShow: SwiftShow?
   @State private var showGlass: Double = 0
@@ -16,6 +17,7 @@ struct DiscoverTab: View {
   init(presenter: DiscoverShowsPresenter) {
     self.presenter = presenter
     _uiState = .init(presenter.state)
+    _currentIndex = State(initialValue: SettingsAppStorage.shared.savedIndex)
   }
 
   var body: some View {
@@ -82,6 +84,7 @@ struct DiscoverTab: View {
           currentIndex: $currentIndex,
           onItemScrolled: { item in
             selectedShow = item
+            store.savedIndex = currentIndex
           },
           onItemTapped: { id in
             presenter.dispatch(action: ShowClicked(id: id))

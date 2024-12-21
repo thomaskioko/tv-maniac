@@ -55,8 +55,7 @@ public struct CarouselView<T, Content: View>: View {
           notifyActiveItem()
         }
         .onAppear {
-          currentIndex = 1
-          offset = -screenWidth
+          offset = -CGFloat(currentIndex) * screenWidth
           startAutoScroll()
           notifyActiveItem()
         }

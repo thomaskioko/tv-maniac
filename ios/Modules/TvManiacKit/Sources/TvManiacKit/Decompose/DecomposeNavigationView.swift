@@ -2,9 +2,9 @@ import SwiftUI
 import TvManiac
 
 public struct DecomposeNavigationView<T: AnyObject, Content: View>: View {
+  @StateObject @KotlinStateFlow private var childStack: ChildStack<AnyObject, T>
   private let content: (T) -> Content
   private let onBack: (_ toIndex: Int32) -> Void
-  @StateObject @KotlinStateFlow private var childStack: ChildStack<AnyObject, T>
   private var stack: [Child<AnyObject, T>] { childStack.items }
 
   public init(
