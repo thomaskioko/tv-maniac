@@ -111,11 +111,10 @@ class ShowInfoViewTest: XCTestCase {
           inLibrary: false
         ),
       ],
-      onWatchTrailer: {},
+      onAddToCustomList: {},
       onAddToLibrary: {},
       onSeasonClicked: { _, _ in },
-      onShowClicked: { _ in },
-      titleRect: .constant(CGRect())
+      onShowClicked: { _ in }
     )
     .background(Color.background)
     .assertSnapshot(testName: "ShowInfoView")
