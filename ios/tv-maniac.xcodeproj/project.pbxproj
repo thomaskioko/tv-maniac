@@ -23,7 +23,6 @@
 		D653926B29DAD8FA000EE673 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = D653926A29DAD8FA000EE673 /* config.json */; };
 		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
 		D68C97502C8EFBD800FAC88A /* TvManiacUI in Frameworks */ = {isa = PBXBuildFile; productRef = D68C974F2C8EFBD800FAC88A /* TvManiacUI */; };
-		D6A6FE9D2C9094070089AA3B /* Mapper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A6FE9C2C9094070089AA3B /* Mapper+Extensions.swift */; };
 		E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9AC834B26CEE00D00829A0D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -58,7 +57,6 @@
 		D653926A29DAD8FA000EE673 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
 		D6619D352C89D36F00D273E7 /* SwiftUIComponents */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SwiftUIComponents; sourceTree = "<group>"; };
 		D68C974E2C8EFB7C00FAC88A /* TvManiacUI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TvManiacUI; sourceTree = "<group>"; };
-		D6A6FE9C2C9094070089AA3B /* Mapper+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Mapper+Extensions.swift"; sourceTree = "<group>"; };
 		D6BDF2BB2C933DBB0042C86D /* SnapshotTestingLib */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SnapshotTestingLib; sourceTree = "<group>"; };
 		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -190,19 +188,10 @@
 		D68FFDDE2B21162A001EB447 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				D6A6FE9A2C9093BF0089AA3B /* Extensions */,
 				D636CE4B2B44878F003F7876 /* MoreShows */,
 				D653924929D8B6B8000EE673 /* Profile */,
 			);
 			name = View;
-			sourceTree = "<group>";
-		};
-		D6A6FE9A2C9093BF0089AA3B /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				D6A6FE9C2C9094070089AA3B /* Mapper+Extensions.swift */,
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		D6B723A62C7F521700A8A3C9 /* Modules */ = {
@@ -311,7 +300,6 @@
 				D653925529DABD04000EE673 /* Config.swift in Sources */,
 				D653926029DAC949000EE673 /* AuthenticatedProfileView.swift in Sources */,
 				D653925D29DAC89D000EE673 /* ProfileView.swift in Sources */,
-				D6A6FE9D2C9094070089AA3B /* Mapper+Extensions.swift in Sources */,
 				D653925729DABD8F000EE673 /* ApplicationError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

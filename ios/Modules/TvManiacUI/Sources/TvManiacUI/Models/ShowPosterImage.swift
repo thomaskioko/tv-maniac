@@ -1,5 +1,4 @@
 import Foundation
-import TvManiac
 
 public struct ShowPosterImage: Identifiable {
   public let id: UUID = .init()
@@ -18,38 +17,5 @@ public struct ShowPosterImage: Identifiable {
     self.title = title
     self.posterUrl = posterUrl
     self.inLibrary = inLibrary
-  }
-}
-
-public extension TvManiac.WatchlistItem {
-  func toSwift() -> ShowPosterImage {
-    .init(
-      tmdbId: tmdbId,
-      title: title,
-      posterUrl: posterImageUrl,
-      inLibrary: true
-    )
-  }
-}
-
-public extension SeasonImagesModel {
-  func toSwift() -> ShowPosterImage {
-    .init(
-      tmdbId: id,
-      title: "",
-      posterUrl: imageUrl,
-      inLibrary: false
-    )
-  }
-}
-
-public extension TvManiac.TvShow {
-  func toSwift() -> ShowPosterImage {
-    .init(
-      tmdbId: tmdbId,
-      title: title,
-      posterUrl: posterImageUrl,
-      inLibrary: inLibrary
-    )
   }
 }

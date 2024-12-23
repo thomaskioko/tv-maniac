@@ -1,5 +1,5 @@
 import Foundation
-import TvManiac
+
 public struct SwiftShowGenre: Identifiable {
     public let id: UUID = UUID()
     public let tmdbId: Int64
@@ -13,8 +13,4 @@ public struct SwiftShowGenre: Identifiable {
     }
 }
 
-public extension TvManiac.ShowGenre {
-  func toSwift() -> SwiftShowGenre {
-    .init(tmdbId: id, name: name, imageUrl: posterUrl)
-  }
-}
+

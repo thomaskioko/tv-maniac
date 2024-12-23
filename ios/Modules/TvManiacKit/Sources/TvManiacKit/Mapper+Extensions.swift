@@ -1,8 +1,60 @@
-import SwiftUI
 import TvManiac
 import TvManiacUI
 
-extension TvManiac.Show {
+public extension TvManiac.WatchlistItem {
+  func toSwift() -> ShowPosterImage {
+    .init(
+      tmdbId: tmdbId,
+      title: title,
+      posterUrl: posterImageUrl,
+      inLibrary: true
+    )
+  }
+}
+
+public extension SeasonImagesModel {
+  func toSwift() -> ShowPosterImage {
+    .init(
+      tmdbId: id,
+      title: "",
+      posterUrl: imageUrl,
+      inLibrary: false
+    )
+  }
+}
+
+public extension TvManiac.TvShow {
+  func toSwift() -> ShowPosterImage {
+    .init(
+      tmdbId: tmdbId,
+      title: title,
+      posterUrl: posterImageUrl,
+      inLibrary: inLibrary
+    )
+  }
+}
+
+public extension DiscoverShow {
+  func toSwift() -> SwiftShow {
+    .init(
+      tmdbId: tmdbId,
+      title: title,
+      posterUrl: posterImageUrl,
+      backdropUrl: nil,
+      inLibrary: inLibrary,
+      overview: overView
+    )
+  }
+}
+
+public extension TvManiac.ShowGenre {
+  func toSwift() -> SwiftShowGenre {
+    .init(tmdbId: id, name: name, imageUrl: posterUrl)
+  }
+}
+
+
+public extension TvManiac.Show {
     func toSwift() -> SwiftShow {
         .init(
             tmdbId: tmdbId,
@@ -14,7 +66,7 @@ extension TvManiac.Show {
     }
 }
 
-extension TvManiac.Trailer {
+public extension TvManiac.Trailer {
     func toSwift() -> SwiftTrailer {
         .init(
             showId: showId,
@@ -25,7 +77,7 @@ extension TvManiac.Trailer {
     }
 }
 
-extension TvManiac.Casts {
+public extension TvManiac.Casts {
     func toSwift() -> SwiftCast {
         .init(
             castId: id,
@@ -36,13 +88,13 @@ extension TvManiac.Casts {
     }
 }
 
-extension TvManiac.Providers {
+public extension TvManiac.Providers {
     func toSwift() -> SwiftProviders {
         .init(providerId: id, logoUrl: logoUrl)
     }
 }
 
-extension Season {
+public extension Season {
     func toSwift() -> SwiftSeason {
         .init(
             tvShowId: tvShowId,
@@ -53,13 +105,13 @@ extension Season {
     }
 }
 
-extension String {
+public extension String {
     func toSwift() -> SwiftGenres {
         .init(name: self)
     }
 }
 
-extension TvManiac.TvShow {
+public extension TvManiac.TvShow {
     func toSwift() -> SwiftShow {
         .init(
             tmdbId: tmdbId,
@@ -70,13 +122,13 @@ extension TvManiac.TvShow {
     }
 }
 
-extension EpisodeDetailsModel {
+public extension EpisodeDetailsModel {
     func toSwift() -> SwiftEpisode {
         .init(episodeId: id, title: episodeTitle, overview: overview, imageUrl: imageUrl)
     }
 }
 
-extension SeasonImagesModel {
+public extension SeasonImagesModel {
     func toSwift() -> SwiftShow {
         .init(tmdbId: id, title: "", posterUrl: imageUrl, inLibrary: false)
     }
@@ -105,3 +157,4 @@ public extension ShowItem {
     )
   }
 }
+
