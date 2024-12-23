@@ -8,6 +8,7 @@ struct ShowDetailsView: View {
   private let presenter: ShowDetailsPresenter
   @StateObject @KotlinStateFlow private var uiState: ShowDetailsContent
   @State private var showGlass: Double = 0
+  @State private var showCustomList = false
 
   init(presenter: ShowDetailsPresenter) {
     self.presenter = presenter
@@ -58,6 +59,13 @@ struct ShowDetailsView: View {
     .animation(.easeInOut(duration: 0.25), value: showGlass)
     .coordinateSpace(name: CoordinateSpaces.scrollView)
     .edgesIgnoringSafeArea(.top)
+    .sheet(isPresented: $showCustomList) {
+      WatchlistSelector(
+        showView: $showCustomList,
+        title: uiState.showDetails?.title ?? "",
+        posterUrl: uiState.showDetails?.posterImageUrl
+      )
+    }
   }
 
   @ViewBuilder
@@ -69,11 +77,11 @@ struct ShowDetailsView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.background)
     case .error:
-       FullScreenView(
-                buttonText: "Retry",
-                action: { presenter.dispatch(action: ReloadShowDetails()) }
-            )
-    case  .loaded(let state):
+      FullScreenView(
+        buttonText: "Retry",
+        action: { presenter.dispatch(action: ReloadShowDetails()) }
+      )
+    case let .loaded(state):
       if let show = uiState.showDetails {
         ShowInfoView(
           isFollowed: show.isFollowed,
@@ -85,8 +93,8 @@ struct ShowDetailsView: View {
           castsList: state.castsList.map { $0.toSwift() },
           recommendedShowList: state.recommendedShowList.map { $0.toSwift() },
           similarShows: state.similarShows.map { $0.toSwift() },
-          onWatchTrailer: {
-            presenter.dispatch(action: WatchTrailerClicked(id: show.tmdbId))
+          onAddToCustomList: {
+            showCustomList.toggle()
           },
           onAddToLibrary: {
             presenter.dispatch(action: FollowShowClicked(addToLibrary: show.isFollowed))

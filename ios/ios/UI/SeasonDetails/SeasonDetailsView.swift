@@ -34,8 +34,12 @@ struct SeasonDetailsView: View {
       Color.background.edgesIgnoringSafeArea(.all)
 
       switch onEnum(of: uiState) {
-      case .initialSeasonsState: LoadingIndicatorView(animate: true)
-      case let .seasonDetailsLoaded(state): SeasonDetailsContent(state)
+      case .initialSeasonsState:
+        CenteredFullScreenView {
+          LoadingIndicatorView(animate: true)
+        }
+      case let .seasonDetailsLoaded(state):
+        SeasonDetailsContent(state)
       case .seasonDetailsErrorState:
         FullScreenView(
           systemName: "exclamationmark.triangle.fill",
@@ -54,7 +58,6 @@ struct SeasonDetailsView: View {
         if let state = uiState as? SeasonDetailsLoaded {
           ProgressView(value: state.watchProgress, total: 1)
             .progressViewStyle(RoundedRectProgressViewStyle())
-            .background(Color.background)
             .offset(y: progressViewOffset)
         }
       },
@@ -86,10 +89,21 @@ struct SeasonDetailsView: View {
         )
       },
       content: {
-        OverviewBoxView(
-          overview: state.seasonOverview
-        )
-        .padding()
+        if state.seasonOverview != nil, !state.seasonOverview.isEmpty {
+          Text("Season Overview")
+            .font(.title3)
+            .fontWeight(.bold)
+            .foregroundColor(.textColor)
+            .lineLimit(1)
+            .padding(.top, 24)
+            .padding(.horizontal)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+          OverviewBoxView(
+            overview: state.seasonOverview
+          )
+          .padding()
+        }
 
         EpisodeListView(
           episodeCount: state.episodeCount,
@@ -109,7 +123,7 @@ struct SeasonDetailsView: View {
         let normalizedOpacity = opacity / 200
         showGlass = max(0, min(1, normalizedOpacity))
 
-        let startOffset = CGFloat(240)
+        let startOffset = CGFloat(245)
         let endOffset = 0
         progressViewOffset = max(CGFloat(endOffset), startOffset + offset)
       }

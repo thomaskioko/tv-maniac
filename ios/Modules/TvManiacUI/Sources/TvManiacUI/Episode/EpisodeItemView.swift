@@ -68,10 +68,12 @@ public struct EpisodeItemView: View {
                 .padding(.top, 8)
 
             Text(episodeOverView)
-                .font(.callout)
-                .padding(.top, 2)
+                .font(.caption)
+                .foregroundColor(.textColor)
+                .lineSpacing(4)
                 .lineLimit(4)
                 .multilineTextAlignment(.leading)
+                .padding(.top, 2)
 
             Spacer()
         }

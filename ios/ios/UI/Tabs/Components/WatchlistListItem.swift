@@ -36,19 +36,21 @@ struct WatchlistListItem: View {
           .foregroundColor(.textColor)
           .lineLimit(1)
 
-        HStack {
+        HStack(spacing: 4) {
           if item.seasonCount > 0 {
             Text("^[\(item.seasonCount) Season](inflect: true)")
-              .font(.avenirNext(size: 14))
+              .font(.caption)
+              .foregroundColor(.gray)
           }
 
           if item.episodeCount > 0 {
             Text("•")
-              .font(.caption)
+              .font(.avenirNext(size: 8))
               .foregroundColor(.secondary)
 
             Text("^[\(item.episodeCount) Episode](inflect: true)")
-              .font(.avenirNext(size: 14))
+              .font(.caption)
+              .foregroundColor(.gray)
           }
         }
 
@@ -60,18 +62,18 @@ struct WatchlistListItem: View {
               borderOpacity: 0.12,
               weight: .bold
             )
+
             Text("•")
               .font(.avenirNext(size: 8))
-              .foregroundColor(.accent)
+              .foregroundColor(.secondary)
           }
 
           if let year = item.year {
             Text("\(year)")
-              .font(.avenirNext(size: 14))
+              .font(.caption)
+                        .foregroundColor(.gray)
           }
         }
-        .font(.subheadline)
-        .foregroundColor(.gray)
         .padding(.top, 4)
 
         Spacer()

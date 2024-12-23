@@ -35,37 +35,49 @@ public struct EpisodeListView: View {
     }
 
     public var body: some View {
-        EpisodeCollapsible(
-            episodeCount: episodeCount,
-            watchProgress: CGFloat(watchProgress),
-            isCollapsed: expandEpisodeItems,
-            onCollapseClicked: onEpisodeHeaderClicked,
-            onWatchedStateClicked: {
-                onWatchedStateClicked()
-                showingAlert = !showSeasonWatchStateDialog
+        VStack {
+            EpisodeCollapsible(
+                episodeCount: episodeCount,
+                watchProgress: CGFloat(watchProgress),
+                isCollapsed: expandEpisodeItems,
+                onCollapseClicked: onEpisodeHeaderClicked,
+                onWatchedStateClicked: {
+                    onWatchedStateClicked()
+                    showingAlert = !showSeasonWatchStateDialog
+                }
+            ) {
+                verticalEpisodeListView
             }
-        ) {
-            LazyVStack {
-                ForEach(items, id: \.episodeId) { item in
-                    EpisodeItemView(
-                        imageUrl: item.imageUrl,
-                        episodeTitle: item.title,
-                        episodeOverView: item.overview
-                    )
+            .alert(isPresented: $showingAlert, content: {
+                let title = isSeasonWatched ? "Mark as unwatched" : "Mark as watched"
+                let messageBody = isSeasonWatched ?
+                    "Are you sure you want to mark the entire season as unwatched?" : "Are you sure you want to mark the entire season as watched?"
+                return Alert(
+                    title: Text(title),
+                    message: Text(messageBody),
+                    primaryButton: .default(Text("No")) {},
+                    secondaryButton: .default(Text("Yes"))
+                )
+            })
+        }
+        .padding(.top, 16)
+    }
+
+    @ViewBuilder
+    private var verticalEpisodeListView: some View {
+        VStack {
+            ScrollView(.vertical, showsIndicators: false) {
+                LazyVStack(spacing: 8) {
+                    ForEach(items, id: \.episodeId) { item in
+                        EpisodeItemView(
+                            imageUrl: item.imageUrl,
+                            episodeTitle: item.title,
+                            episodeOverView: item.overview
+                        )
+                    }
                 }
             }
         }
-        .alert(isPresented: $showingAlert, content: {
-            let title = isSeasonWatched ? "Mark as unwatched" : "Mark as watched"
-            let messageBody = isSeasonWatched ?
-                "Are you sure you want to mark the entire season as unwatched?" : "Are you sure you want to mark the entire season as watched?"
-            return Alert(
-                title: Text(title),
-                message: Text(messageBody),
-                primaryButton: .default(Text("No")) {},
-                secondaryButton: .default(Text("Yes"))
-            )
-        })
     }
 }
 
