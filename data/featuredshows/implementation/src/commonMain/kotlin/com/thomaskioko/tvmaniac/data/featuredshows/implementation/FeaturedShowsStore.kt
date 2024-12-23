@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.FEATURED_SHOWS_TODAY
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.util.FormatterUtil
@@ -37,7 +37,7 @@ class FeaturedShowsStore(
   Store<Long, List<ShowEntity>> by StoreBuilder.from(
       fetcher =
         Fetcher.of { page ->
-          when (val response = tmdbRemoteDataSource.getDiscoverShows(page = page)) {
+          when (val response = tmdbRemoteDataSource.discoverShows(page = page)) {
             is ApiResponse.Success -> response.body.results
             is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
             is ApiResponse.Error.HttpError ->
@@ -73,7 +73,6 @@ class FeaturedShowsStore(
                         show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                     ),
                   )
-
                   featuredShowsDao.upsert(
                     Featured_shows(
                       id = Id(show.id.toLong()),

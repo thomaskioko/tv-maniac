@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.KermitLogger
-import com.thomaskioko.tvmaniac.core.networkutil.mapResult
+import com.thomaskioko.tvmaniac.core.networkutil.mapToEither
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.core.paging.CommonPagingConfig
@@ -15,8 +15,8 @@ import com.thomaskioko.tvmaniac.discover.api.TrendingShowsParams
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRENDING_SHOWS_TODAY
-import com.thomaskioko.tvmaniac.shows.api.DEFAULT_DAY_TIME_WINDOW
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.DEFAULT_DAY_TIME_WINDOW
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
-import org.mobilenativefoundation.store.store5.impl.extensions.get
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -51,7 +50,7 @@ class DefaultTrendingShowsRepository(
           refresh = refresh
         )
       )
-      .mapResult(getShows())
+      .mapToEither()
       .flowOn(dispatchers.io)
   }
 
@@ -96,15 +95,10 @@ class DefaultTrendingShowsRepository(
     )
   }
 
-  private suspend fun updateRequestManager(page: Long) {
+  private fun updateRequestManager(page: Long) {
     requestManagerRepository.upsert(
       entityId = TRENDING_SHOWS_TODAY.requestId + page,
       requestType = TRENDING_SHOWS_TODAY.name
     )
   }
-
-  private suspend fun getShows(): List<ShowEntity> =
-    store.get(
-      key = TrendingShowsParams(timeWindow = DEFAULT_DAY_TIME_WINDOW, page = DEFAULT_API_PAGE)
-    )
 }

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.inject
 
 import android.app.Application
-import com.thomaskioko.tvmaniac.initializers.AppInitializers
+import com.thomaskioko.tvmaniac.core.base.AppInitializers
 import me.tatarka.inject.annotations.Provides
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent

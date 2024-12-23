@@ -8,3 +8,4 @@ data object ReloadShowContent : SearchShowAction
 data object LoadDiscoverShows : SearchShowAction
 data class QueryChanged(val query: String) : SearchShowAction
 data class SearchShowClicked(val id: Long): SearchShowAction
+data class GenreCategoryClicked(val id: Long): SearchShowAction

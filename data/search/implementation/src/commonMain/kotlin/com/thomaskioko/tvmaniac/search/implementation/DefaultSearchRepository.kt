@@ -1,18 +1,17 @@
 package com.thomaskioko.tvmaniac.search.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.mapResult
+import com.thomaskioko.tvmaniac.core.networkutil.mapToEither
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.search.api.SearchRepository
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.StoreReadRequest
-import org.mobilenativefoundation.store.store5.impl.extensions.get
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -34,7 +33,7 @@ class DefaultSearchRepository(
         refresh = hasNoLocalData(query),
       ),
     )
-      .mapResult(store.get(key = query))
+      .mapToEither()
       .flowOn(dispatchers.io)
 
   private suspend fun hasNoLocalData(query: String): Boolean {

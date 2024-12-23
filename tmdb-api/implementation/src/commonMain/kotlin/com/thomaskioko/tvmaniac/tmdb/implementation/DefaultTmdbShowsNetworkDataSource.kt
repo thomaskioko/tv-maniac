@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.tmdb.implementation
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.model.safeRequest
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
+import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbGenreResult
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import io.ktor.client.request.parameter
 import io.ktor.http.HttpMethod
@@ -27,7 +28,13 @@ class DefaultTmdbShowsNetworkDataSource(
       }
     }
 
-  override suspend fun getDiscoverShows(page: Long, sortBy: String): ApiResponse<TmdbShowResult> =
+  override suspend fun discoverShows(
+    page: Long,
+    sortBy: String,
+    genres: String?,
+    watchProviders: String?,
+    screenedTheatrically: Boolean
+  ): ApiResponse<TmdbShowResult> =
     httpClient.safeRequest {
       url {
         method = HttpMethod.Get
@@ -35,7 +42,10 @@ class DefaultTmdbShowsNetworkDataSource(
         parameter("page", "$page")
         parameter("sort_by", sortBy)
         parameter("include_adult", "false")
-        parameter("screened_theatrically", "true")
+        parameter("screened_theatrically", screenedTheatrically)
+
+        genres?.let { parameter("with_genres", it) }
+        watchProviders?.let { parameter("with_watch_providers", it) }
       }
     }
 
@@ -103,6 +113,14 @@ class DefaultTmdbShowsNetworkDataSource(
         method = HttpMethod.Get
         path("3/search/tv")
         parameter("query", query)
+      }
+    }
+
+  override suspend fun getGenre(): ApiResponse<TmdbGenreResult> =
+    httpClient.safeRequest {
+      url {
+        method = HttpMethod.Get
+        path("3/genre/tv/list")
       }
     }
 }

@@ -10,11 +10,11 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
-import com.thomaskioko.tvmaniac.shows.api.Category.POPULAR
-import com.thomaskioko.tvmaniac.shows.api.Category.TOP_RATED
-import com.thomaskioko.tvmaniac.shows.api.Category.TRENDING_TODAY
-import com.thomaskioko.tvmaniac.shows.api.Category.UPCOMING
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.Category.POPULAR
+import com.thomaskioko.tvmaniac.shows.api.model.Category.TOP_RATED
+import com.thomaskioko.tvmaniac.shows.api.model.Category.TRENDING_TODAY
+import com.thomaskioko.tvmaniac.shows.api.model.Category.UPCOMING
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,13 +27,15 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-typealias MoreShowsPresenterFactory =
-  (
-    ComponentContext,
+@Inject
+class MoreShowsPresenterFactory(
+  val create: (
+    componentContext: ComponentContext,
     id: Long,
     onBack: () -> Unit,
     onNavigateToShowDetails: (id: Long) -> Unit,
-  ) -> MoreShowsPresenter
+  ) -> MoreShowsPresenter,
+)
 
 @Inject
 class MoreShowsPresenter(

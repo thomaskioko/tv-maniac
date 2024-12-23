@@ -9,7 +9,7 @@ dependencies {
   implementation(projects.android.resources)
 
   implementation(projects.android.ui.discover)
-  implementation(projects.android.ui.library)
+  implementation(projects.android.ui.watchlist)
   implementation(projects.android.ui.search)
   implementation(projects.android.ui.settings)
 

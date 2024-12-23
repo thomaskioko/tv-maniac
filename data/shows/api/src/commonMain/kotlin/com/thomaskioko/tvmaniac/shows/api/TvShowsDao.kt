@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.shows.api
 
 import com.thomaskioko.tvmaniac.core.db.Tvshows
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
 interface TvShowsDao {

@@ -5,50 +5,53 @@ public struct OverviewBoxView: View {
     private let lineLimit: Int
     @State private var showFullText = false
     @State private var isTruncated = false
-    @Binding private var titleRect: CGRect
 
     public init(
         overview: String?,
         lineLimit: Int = 4,
         showFullText: Bool = false,
-        isTruncated: Bool = false,
-        titleRect: Binding<CGRect> = .constant(.zero)
+        isTruncated: Bool = false
     ) {
         self.overview = overview
         self.lineLimit = lineLimit
         self.showFullText = showFullText
         self.isTruncated = isTruncated
-        self._titleRect = titleRect
     }
 
     public var body: some View {
         if let overview, !overview.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
-                Spacer(minLength: nil)
-                    .background(GeometryGetter(rect: self.$titleRect))
-                    .frame(height: 0)
-
                 Text(overview)
-                    .font(.avenirNext(size: 17))
+                    .font(.callout)
                     .foregroundColor(.textColor)
                     .lineLimit(showFullText ? nil : lineLimit)
+                    .lineSpacing(4)
                     .multilineTextAlignment(.leading)
-                    .padding(.bottom, -14)
-
-                GeometryReader { geometry in
-                    Text(overview)
-                        .font(.avenirNext(size: 17))
-                        .foregroundColor(.clear)
-                        .lineLimit(lineLimit)
-                        .background(
-                            GeometryReader { fullTextGeometry in
-                                Color.clear.onAppear {
-                                    self.isTruncated = fullTextGeometry.size.height > geometry.size.height
+                    .background(
+                        // Render the limited text and measure its size
+                        Text(overview)
+                            .lineLimit(lineLimit)
+                            .font(.callout)
+                            .lineSpacing(4)
+                            .background(GeometryReader { displayedGeometry in
+                                // Create a ZStack with unbounded height to allow the inner Text as much
+                                // height as it likes, but no extra width.
+                                ZStack {
+                                    // Render the text without restrictions and measure its size
+                                    Text(overview)
+                                        .font(.callout)
+                                        .lineSpacing(4)
+                                        .background(GeometryReader { fullGeometry in
+                                            // And compare the two
+                                            Color.clear.onAppear {
+                                                self.isTruncated = fullGeometry.size.height > displayedGeometry.size.height
+                                            }
+                                        })
                                 }
-                            }
-                        )
-                }
-                .frame(height: 0)
+                                .frame(height: .greatestFiniteMagnitude)
+                            })
+                            .hidden() // Hide the background
+                    )
 
                 if isTruncated {
                     HStack {
@@ -62,7 +65,6 @@ public struct OverviewBoxView: View {
                                     .textCase(.uppercase)
                                     .font(.avenirNext(size: 12))
                                     .foregroundStyle(Color.accent)
-                                    .padding(.trailing, 16)
                             }
                     }
                 }
@@ -86,12 +88,12 @@ struct CustomContainer<Content: View>: View {
 
 #Preview {
     VStack(spacing: 20) {
-        //Long Text
+        // Long Text
         OverviewBoxView(
             overview: "Set in the utopian region of Piltover and the oppressed underground of Zaun, the story follows the origins of two iconic League champions-and the power that will tear them apart."
         )
 
-        //Short Text
+        // Short Text
         OverviewBoxView(
             overview: "Set in the utopian region of Piltover and the oppressed underground of Zaun, the story follows the origins of two iconic League."
         )

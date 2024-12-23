@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepo
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowsPresenter
@@ -19,12 +20,12 @@ import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.ShowMapper
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenter
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenter
-import com.thomaskioko.tvmaniac.presentation.watchlist.LibraryPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenter
+import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenterFactory
 import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
-import com.thomaskioko.tvmaniac.watchlist.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -42,6 +43,7 @@ class HomePresenterTest {
   private val trendingShowsRepository = FakeTrendingShowsRepository()
   private val upcomingShowsRepository = FakeUpcomingShowsRepository()
   private val searchRepository = FakeSearchRepository()
+  private val genreRepository = FakeGenreRepository()
 
   private lateinit var presenter: HomePresenter
 
@@ -50,19 +52,24 @@ class HomePresenterTest {
     Dispatchers.setMain(testDispatcher)
     lifecycle.resume()
 
-    presenter = buildHomePresenterFactory()
+    presenter = buildHomePresenterFactory().create(
+      componentContext = DefaultComponentContext(lifecycle = lifecycle),
+      onShowClicked = {},
+      onMoreShowClicked = {},
+      onShowGenreClicked = {}
+    )
   }
 
   @Test
   fun `initial state should be Discover`() = runTest {
-    presenter.stack.test {
+    presenter.homeChildStack.test {
       awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
     }
   }
 
   @Test
   fun `should return Search as active instance when onSearchClicked`() = runTest {
-    presenter.stack.test {
+    presenter.homeChildStack.test {
       awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
       presenter.onSearchClicked()
 
@@ -72,17 +79,17 @@ class HomePresenterTest {
 
   @Test
   fun `should return Library as active instance when onSettingsClicked`() = runTest {
-    presenter.stack.test {
+    presenter.homeChildStack.test {
       awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
       presenter.onLibraryClicked()
 
-      awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Library>()
+      awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Watchlist>()
     }
   }
 
   @Test
   fun `should return Settings as active instance when onSettingsClicked`() = runTest {
-    presenter.stack.test {
+    presenter.homeChildStack.test {
       awaitItem().active.instance.shouldBeInstanceOf<HomePresenter.Child.Discover>()
       presenter.onSettingsClicked()
 
@@ -93,14 +100,13 @@ class HomePresenterTest {
   private fun buildSearchPresenterFactory(
     componentContext: ComponentContext,
   ): SearchPresenterFactory = SearchPresenterFactory(
-    create = { _: ComponentContext, _: (id: Long) -> Unit ->
+    create = { _: ComponentContext, _: (id: Long) -> Unit, _: (id: Long) -> Unit ->
       SearchShowsPresenter(
         componentContext = componentContext,
         searchRepository = searchRepository,
         onNavigateToShowDetails = {},
-        featuredShowsRepository = featuredShowsRepository,
-        trendingShowsRepository = trendingShowsRepository,
-        upcomingShowsRepository = upcomingShowsRepository,
+        onNavigateToGenre = {},
+        genreRepository = genreRepository,
         mapper = ShowMapper(
           formatterUtil = FakeFormatterUtil(),
         ),
@@ -108,18 +114,13 @@ class HomePresenterTest {
     }
   )
 
-  private fun buildHomePresenterFactory(
-    componentContext: ComponentContext = DefaultComponentContext(lifecycle = lifecycle)
-  ): HomePresenter =
-    HomePresenter(
-      componentContext = componentContext,
-      onShowClicked = {},
-      onMoreShowClicked = {},
+  private fun buildHomePresenterFactory(): HomePresenter.Factory =
+    DefaultHomePresenter.Factory(
+      discoverPresenterFactory = buildDiscoverPresenterFactory(DefaultComponentContext(lifecycle = lifecycle)),
+      watchlistPresenterFactory = buildLibraryPresenterFactory(DefaultComponentContext(lifecycle = lifecycle)),
+      searchPresenterFactory = buildSearchPresenterFactory(DefaultComponentContext(lifecycle = lifecycle)),
+      settingsPresenterFactory = buildSettingsPresenterFactory(DefaultComponentContext(lifecycle = lifecycle)),
       traktAuthManager = traktAuthManager,
-      searchPresenterFactory = buildSearchPresenterFactory(componentContext),
-      settingsPresenterFactory = buildSettingsPresenterFactory(componentContext),
-      discoverPresenterFactory = buildDiscoverPresenterFactory(componentContext),
-      libraryPresenterFactory = buildLibraryPresenterFactory(componentContext),
     )
 
   private fun buildSettingsPresenterFactory(
@@ -147,18 +148,19 @@ class HomePresenterTest {
         upcomingShowsRepository = upcomingShowsRepository,
         topRatedShowsRepository = FakeTopRatedShowsRepository(),
         popularShowsRepository = FakePopularShowsRepository(),
+        watchlistRepository = FakeWatchlistRepository(),
       )
     }
     )
 
   private fun buildLibraryPresenterFactory(
     componentContext: ComponentContext,
-  ): LibraryPresenterFactory =LibraryPresenterFactory(
+  ): WatchlistPresenterFactory =WatchlistPresenterFactory(
     create = { _: ComponentContext, _: (showDetails: Long) -> Unit ->
-    LibraryPresenter(
+    WatchlistPresenter(
       componentContext = componentContext,
       navigateToShowDetails = {},
-      repository = FakeLibraryRepository(),
+      repository = FakeWatchlistRepository(),
     )
   })
 }

@@ -11,7 +11,8 @@ import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepo
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
+import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
@@ -34,6 +35,7 @@ class DiscoverShowsPresenterTest {
   private val upcomingShowsRepository = FakeUpcomingShowsRepository()
   private val topRatedShowsRepository = FakeTopRatedShowsRepository()
   private val popularShowsRepository = FakePopularShowsRepository()
+  private val watchlistRepository = FakeWatchlistRepository()
 
   private lateinit var presenter: DiscoverShowsPresenter
 
@@ -255,6 +257,7 @@ class DiscoverShowsPresenterTest {
           title = it.title,
           posterImageUrl = it.posterPath,
           inLibrary = it.inLibrary,
+          overView = it.overview
         )
       }
       .toImmutableList()
@@ -275,6 +278,7 @@ class DiscoverShowsPresenterTest {
         upcomingShowsRepository = upcomingShowsRepository,
         topRatedShowsRepository = topRatedShowsRepository,
         popularShowsRepository = popularShowsRepository,
+      watchlistRepository = watchlistRepository,
       )
       .also { lifecycle.resume() }
 }

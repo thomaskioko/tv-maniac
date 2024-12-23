@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.discover.api
 
 import androidx.paging.PagingSource
 import com.thomaskioko.tvmaniac.core.db.Trending_shows
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
 interface TrendingShowsDao {

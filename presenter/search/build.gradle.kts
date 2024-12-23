@@ -12,6 +12,7 @@ kotlin {
         implementation(projects.data.trendingshows.api)
         implementation(projects.data.upcomingshows.api)
         implementation(projects.data.search.api)
+        implementation(projects.data.genre.api)
 
         api(libs.decompose.decompose)
         api(libs.essenty.lifecycle)
@@ -25,10 +26,8 @@ kotlin {
     commonTest {
       dependencies {
         implementation(projects.core.util.testing)
-        implementation(projects.data.featuredshows.testing)
-        implementation(projects.data.trendingshows.testing)
-        implementation(projects.data.upcomingshows.testing)
         implementation(projects.data.search.testing)
+        implementation(projects.data.genre.testing)
 
         implementation(libs.bundles.unittest)
       }

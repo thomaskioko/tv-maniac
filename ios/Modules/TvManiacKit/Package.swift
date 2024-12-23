@@ -16,6 +16,7 @@ let package = Package(
   ],
   dependencies: [
       .package(name: "SwiftUIComponents", path: "../SwiftUIComponents"),
+      .package(name: "TvManiacUI", path: "../TvManiacUI"),
   ],
   targets: [
     .binaryTarget(
@@ -26,7 +27,8 @@ let package = Package(
       name: "TvManiacKit",
       dependencies: [
         "SwiftUIComponents",
-        "TvManiac"
+        "TvManiac",
+        "TvManiacUI"
       ]
     ),
   ]

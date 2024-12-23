@@ -13,7 +13,7 @@ kotlin {
       implementation(projects.traktAuth.api)
 
       implementation(projects.presenter.discover)
-      implementation(projects.presenter.library)
+      implementation(projects.presenter.watchlist)
       implementation(projects.presenter.moreShows)
       implementation(projects.presenter.search)
       implementation(projects.presenter.seasondetails)
@@ -32,7 +32,7 @@ kotlin {
       implementation(projects.traktAuth.testing)
       implementation(projects.data.cast.testing)
       implementation(projects.data.featuredshows.testing)
-      implementation(projects.data.library.testing)
+      implementation(projects.data.watchlist.testing)
       implementation(projects.data.popularshows.testing)
       implementation(projects.data.recommendedshows.testing)
       implementation(projects.data.seasons.testing)

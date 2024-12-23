@@ -3,15 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60D952A2CDBE1160039884B /* TvManiacKit */; };
 		D628B5C02A0C167E00015E45 /* config.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5BF2A0C167E00015E45 /* config.yaml */; };
 		D628B5C42A0C171300015E45 /* dev.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5C32A0C171300015E45 /* dev.yaml */; };
-		D62F1BC62B34442D004650E3 /* SeasonDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62F1BC52B34442D004650E3 /* SeasonDetailsView.swift */; };
 		D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */; };
 		D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D653924729D8B6A6000EE673 /* OAuthSwift */; };
 		D653924D29D8B70E000EE673 /* TraktManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653924C29D8B70E000EE673 /* TraktManagerError.swift */; };
@@ -24,20 +22,8 @@
 		D653926029DAC949000EE673 /* AuthenticatedProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925F29DAC949000EE673 /* AuthenticatedProfileView.swift */; };
 		D653926B29DAD8FA000EE673 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = D653926A29DAD8FA000EE673 /* config.json */; };
 		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
-		D67761852B1CE6AE00537DD5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67761842B1CE6AE00537DD5 /* AppDelegate.swift */; };
-		D67761892B1CED9E00537DD5 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67761882B1CED9E00537DD5 /* RootView.swift */; };
 		D68C97502C8EFBD800FAC88A /* TvManiacUI in Frameworks */ = {isa = PBXBuildFile; productRef = D68C974F2C8EFBD800FAC88A /* TvManiacUI */; };
-		D6A6FE9D2C9094070089AA3B /* Mapper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A6FE9C2C9094070089AA3B /* Mapper+Extensions.swift */; };
-		D6F6351A2C4EA6FB00D921A6 /* HomeChildView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F635192C4EA6FB00D921A6 /* HomeChildView.swift */; };
-		D6F6351D2C4FEEF100D921A6 /* HomeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F6351C2C4FEEF100D921A6 /* HomeTabView.swift */; };
-		D6F6352E2C52C24A00D921A6 /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F6352D2C52C24A00D921A6 /* SplashScreenView.swift */; };
-		E98381A127936DC90039CB08 /* ShowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983819E27936DC90039CB08 /* ShowDetailView.swift */; };
-		E989E1162940E78E00C01A39 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E989E1152940E78E00C01A39 /* SettingsView.swift */; };
-		E989E1182940EAB300C01A39 /* ThemeUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = E989E1172940EAB300C01A39 /* ThemeUtilities.swift */; };
 		E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9AC834B26CEE00D00829A0D /* Assets.xcassets */; };
-		E9AC835126CEEA1500829A0D /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835026CEEA1500829A0D /* DiscoverView.swift */; };
-		E9AC835326CEEA9800829A0D /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835226CEEA9800829A0D /* SearchView.swift */; };
-		E9AC835526CEEAB800829A0D /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AC835426CEEAB800829A0D /* LibraryView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -54,13 +40,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D60D95292CDBDFB30039884B /* TvManiacKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TvManiacKit; sourceTree = "<group>"; };
 		D628B5BF2A0C167E00015E45 /* config.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; name = config.yaml; path = ../../../core/util/src/commonMain/resources/config.yaml; sourceTree = "<group>"; };
 		D628B5C32A0C171300015E45 /* dev.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = dev.yaml; sourceTree = "<group>"; };
-		D62F1BC52B34442D004650E3 /* SeasonDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonDetailsView.swift; sourceTree = "<group>"; };
 		D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreShowsView.swift; sourceTree = "<group>"; };
 		D653924C29D8B70E000EE673 /* TraktManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktManagerError.swift; sourceTree = "<group>"; };
 		D653924E29D8BC7E000EE673 /* TraktAuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktAuthViewModel.swift; sourceTree = "<group>"; };
@@ -72,22 +56,15 @@
 		D653925F29DAC949000EE673 /* AuthenticatedProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatedProfileView.swift; sourceTree = "<group>"; };
 		D653926A29DAD8FA000EE673 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
 		D6619D352C89D36F00D273E7 /* SwiftUIComponents */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SwiftUIComponents; sourceTree = "<group>"; };
-		D67761842B1CE6AE00537DD5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D67761882B1CED9E00537DD5 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		D68C974E2C8EFB7C00FAC88A /* TvManiacUI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TvManiacUI; sourceTree = "<group>"; };
-		D6A6FE9C2C9094070089AA3B /* Mapper+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Mapper+Extensions.swift"; sourceTree = "<group>"; };
 		D6BDF2BB2C933DBB0042C86D /* SnapshotTestingLib */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SnapshotTestingLib; sourceTree = "<group>"; };
-		D6F635192C4EA6FB00D921A6 /* HomeChildView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeChildView.swift; sourceTree = "<group>"; };
-		D6F6351C2C4FEEF100D921A6 /* HomeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTabView.swift; sourceTree = "<group>"; };
-		D6F6352D2C52C24A00D921A6 /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
-		E983819E27936DC90039CB08 /* ShowDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDetailView.swift; sourceTree = "<group>"; };
-		E989E1152940E78E00C01A39 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		E989E1172940EAB300C01A39 /* ThemeUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeUtilities.swift; sourceTree = "<group>"; };
 		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		E9AC835026CEEA1500829A0D /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
-		E9AC835226CEEA9800829A0D /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
-		E9AC835426CEEAB800829A0D /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		D65009DC2CF644BE00394D67 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
+		D6FE248E2D060E7200AB7700 /* UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UI; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		9E9525AE31530CCB1C932286 /* Frameworks */ = {
@@ -127,12 +104,11 @@
 			children = (
 				E9AC834B26CEE00D00829A0D /* Assets.xcassets */,
 				D653926A29DAD8FA000EE673 /* config.json */,
-				D653925129DABCBA000EE673 /* Configuration */,
-				D6A6FE9A2C9093BF0089AA3B /* Extensions */,
 				7555FF8C242A565B00829871 /* Info.plist */,
-				2152FB032600AC8F00CF470E /* iOSApp.swift */,
+				D65009DC2CF644BE00394D67 /* App */,
+				D653925129DABCBA000EE673 /* Configuration */,
 				D628B5BE2A0C165400015E45 /* Resources */,
-				D68FFDD92B1FC89C001EB447 /* Utils */,
+				D6FE248E2D060E7200AB7700 /* UI */,
 				D68FFDDE2B21162A001EB447 /* View */,
 			);
 			path = ios;
@@ -145,14 +121,6 @@
 				D628B5BF2A0C167E00015E45 /* config.yaml */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		D62F1BC42B344313004650E3 /* SeasonDetails */ = {
-			isa = PBXGroup;
-			children = (
-				D62F1BC52B34442D004650E3 /* SeasonDetailsView.swift */,
-			);
-			path = SeasonDetails;
 			sourceTree = "<group>";
 		};
 		D636CE4B2B44878F003F7876 /* MoreShows */ = {
@@ -217,55 +185,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		D667A42E2B23DC0E009C951E /* Root */ = {
-			isa = PBXGroup;
-			children = (
-				D67761882B1CED9E00537DD5 /* RootView.swift */,
-				D6F6352D2C52C24A00D921A6 /* SplashScreenView.swift */,
-			);
-			path = Root;
-			sourceTree = "<group>";
-		};
-		D68FFDD92B1FC89C001EB447 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				D67761842B1CE6AE00537DD5 /* AppDelegate.swift */,
-				E989E1172940EAB300C01A39 /* ThemeUtilities.swift */,
-			);
-			name = Utils;
-			sourceTree = "<group>";
-		};
 		D68FFDDE2B21162A001EB447 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				E9B6869027873707001698B7 /* Discover */,
-				D6F6351B2C4FEEC600D921A6 /* Home */,
-				E9B6869227873747001698B7 /* Library */,
 				D636CE4B2B44878F003F7876 /* MoreShows */,
 				D653924929D8B6B8000EE673 /* Profile */,
-				D667A42E2B23DC0E009C951E /* Root */,
-				E9B6869127873738001698B7 /* Search */,
-				D62F1BC42B344313004650E3 /* SeasonDetails */,
-				D68FFDDF2B211690001EB447 /* Settings */,
-				E983819927936D8E0039CB08 /* ShowDetails */,
 			);
 			name = View;
-			sourceTree = "<group>";
-		};
-		D68FFDDF2B211690001EB447 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				E989E1152940E78E00C01A39 /* SettingsView.swift */,
-			);
-			path = Settings;
-			sourceTree = "<group>";
-		};
-		D6A6FE9A2C9093BF0089AA3B /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				D6A6FE9C2C9094070089AA3B /* Mapper+Extensions.swift */,
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		D6B723A62C7F521700A8A3C9 /* Modules */ = {
@@ -277,48 +203,6 @@
 				D68C974E2C8EFB7C00FAC88A /* TvManiacUI */,
 			);
 			path = Modules;
-			sourceTree = "<group>";
-		};
-		D6F6351B2C4FEEC600D921A6 /* Home */ = {
-			isa = PBXGroup;
-			children = (
-				D6F6351C2C4FEEF100D921A6 /* HomeTabView.swift */,
-				D6F635192C4EA6FB00D921A6 /* HomeChildView.swift */,
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
-		E983819927936D8E0039CB08 /* ShowDetails */ = {
-			isa = PBXGroup;
-			children = (
-				E983819E27936DC90039CB08 /* ShowDetailView.swift */,
-			);
-			path = ShowDetails;
-			sourceTree = "<group>";
-		};
-		E9B6869027873707001698B7 /* Discover */ = {
-			isa = PBXGroup;
-			children = (
-				E9AC835026CEEA1500829A0D /* DiscoverView.swift */,
-			);
-			path = Discover;
-			sourceTree = "<group>";
-		};
-		E9B6869127873738001698B7 /* Search */ = {
-			isa = PBXGroup;
-			children = (
-				E9AC835226CEEA9800829A0D /* SearchView.swift */,
-			);
-			path = Search;
-			sourceTree = "<group>";
-		};
-		E9B6869227873747001698B7 /* Library */ = {
-			isa = PBXGroup;
-			children = (
-				E9AC835426CEEAB800829A0D /* LibraryView.swift */,
-			);
-			name = Library;
-			path = Feature;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -336,6 +220,10 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D65009DC2CF644BE00394D67 /* App */,
+				D6FE248E2D060E7200AB7700 /* UI */,
 			);
 			name = "tv-maniac";
 			packageProductDependencies = (
@@ -404,28 +292,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9AC835526CEEAB800829A0D /* LibraryView.swift in Sources */,
 				D653925329DABCEA000EE673 /* ConfigLoader.swift in Sources */,
 				D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */,
-				E989E1162940E78E00C01A39 /* SettingsView.swift in Sources */,
-				E98381A127936DC90039CB08 /* ShowDetailView.swift in Sources */,
 				D653925B29DAC6A5000EE673 /* UnauthenticatedProfileView.swift in Sources */,
-				E9AC835326CEEA9800829A0D /* SearchView.swift in Sources */,
-				D6F6351A2C4EA6FB00D921A6 /* HomeChildView.swift in Sources */,
-				D62F1BC62B34442D004650E3 /* SeasonDetailsView.swift in Sources */,
 				D653924D29D8B70E000EE673 /* TraktManagerError.swift in Sources */,
-				E989E1182940EAB300C01A39 /* ThemeUtilities.swift in Sources */,
-				D67761892B1CED9E00537DD5 /* RootView.swift in Sources */,
-				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
-				D6F6352E2C52C24A00D921A6 /* SplashScreenView.swift in Sources */,
-				D67761852B1CE6AE00537DD5 /* AppDelegate.swift in Sources */,
-				D6F6351D2C4FEEF100D921A6 /* HomeTabView.swift in Sources */,
-				E9AC835126CEEA1500829A0D /* DiscoverView.swift in Sources */,
 				D653924F29D8BC7E000EE673 /* TraktAuthViewModel.swift in Sources */,
 				D653925529DABD04000EE673 /* Config.swift in Sources */,
 				D653926029DAC949000EE673 /* AuthenticatedProfileView.swift in Sources */,
 				D653925D29DAC89D000EE673 /* ProfileView.swift in Sources */,
-				D6A6FE9D2C9094070089AA3B /* Mapper+Extensions.swift in Sources */,
 				D653925729DABD8F000EE673 /* ApplicationError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -489,7 +363,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -550,7 +424,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "";
@@ -577,7 +451,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
 				INFOPLIST_FILE = ios/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TvManiac;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -622,7 +496,7 @@
 				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "";
 				INFOPLIST_FILE = ios/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TvManiac;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

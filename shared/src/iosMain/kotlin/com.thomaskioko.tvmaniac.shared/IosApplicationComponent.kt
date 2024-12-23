@@ -4,11 +4,13 @@ import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent.CreateComponent
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import com.thomaskioko.tvmaniac.core.base.AppInitializers
 import kotlin.reflect.KClass
 
 @MergeComponent(AppScope::class)
 @SingleIn(AppScope::class)
 abstract class IosApplicationComponent : IosViewPresenterComponent.Factory {
+  abstract val initializers: AppInitializers
   abstract val componentFactory: IosViewPresenterComponent.Factory
 
   companion object {

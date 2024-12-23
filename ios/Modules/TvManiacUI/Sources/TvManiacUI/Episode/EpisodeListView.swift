@@ -46,9 +46,7 @@ public struct EpisodeListView: View {
                     showingAlert = !showSeasonWatchStateDialog
                 }
             ) {
-                VStack {
-                    VerticalEpisodeListView(items: items)
-                }
+                verticalEpisodeListView
             }
             .alert(isPresented: $showingAlert, content: {
                 let title = isSeasonWatched ? "Mark as unwatched" : "Mark as watched"
@@ -62,20 +60,20 @@ public struct EpisodeListView: View {
                 )
             })
         }
+        .padding(.top, 16)
     }
 
     @ViewBuilder
-    func VerticalEpisodeListView(items: [SwiftEpisode]) -> some View {
+    private var verticalEpisodeListView: some View {
         VStack {
             ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack {
+                LazyVStack(spacing: 8) {
                     ForEach(items, id: \.episodeId) { item in
                         EpisodeItemView(
                             imageUrl: item.imageUrl,
                             episodeTitle: item.title,
                             episodeOverView: item.overview
                         )
-                        .padding(.top, item.id == items.first?.id ? 16 : 8)
                     }
                 }
             }
@@ -109,7 +107,7 @@ public struct EpisodeListView: View {
                 title: "E3 Model 103",
                 overview: "Malcolm confides in Kokoro about his recurring nightmare. The three children continue their underground trek, unaware of looming danger.",
                 imageUrl: "https://image.tmdb.org/t/p/w780/https://image.tmdb.org/t/p/w780/uNXoR4PR4Uh2ymXz12Z1mhwZoJS.jpg"
-            )
+            ),
         ],
         onEpisodeHeaderClicked: {},
         onWatchedStateClicked: {}

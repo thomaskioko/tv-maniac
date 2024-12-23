@@ -56,15 +56,18 @@ SELECT
     tvshows.poster_path,
     tvshows.backdrop_path,
     GROUP_CONCAT(genres.name, ', ') AS genre_list,
-    CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshows
 LEFT OUTER JOIN
-    library ON tvshows.id = library.id
+    watchlist ON tvshows.id = watchlist.id
 LEFT OUTER JOIN
-    genres ON tvshows.id = genres.tmdb_id
+    show_genres ON tvshows.id = show_genres.show_id
+LEFT OUTER JOIN
+    genres ON show_genres.genre_id = genres.id
 WHERE
-    tvshows.id = ?;
+      tvshows.id = ?
+GROUP BY tvshows.id;
 
 searchShows:
 SELECT
@@ -75,11 +78,11 @@ SELECT
     tvshows.status,
     tvshows.vote_average,
     tvshows.first_air_date,
-    CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshows
 LEFT OUTER JOIN
-    library ON tvshows.id = library.id
+    watchlist ON tvshows.id = watchlist.id
 WHERE
     name LIKE '%' || ? || '%'
     OR LOWER(name) LIKE '%' || LOWER(?) || '%'

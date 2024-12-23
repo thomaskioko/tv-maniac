@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.core.db.Featured_shows
 import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsDao
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -34,12 +34,13 @@ class DefaultFeaturedShowsDao(
 
   override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> =
     featuredShowsQueries
-      .featuredShows { id, title, posterPath, inLibrary ->
+      .featuredShows { id, title, posterPath, overview, inLibrary ->
         ShowEntity(
           id = id.id,
           title = title,
           posterPath = posterPath,
           inLibrary = inLibrary == 1L,
+          overview = overview
         )
       }
       .asFlow()

@@ -16,7 +16,14 @@ public struct ShowHeaderInfoView: View {
   private let language: String?
   private let rating: Double
 
-  public init(title: String, overview: String, status: String?, year: String, language: String?, rating: Double) {
+  public init(
+    title: String,
+    overview: String,
+    status: String?,
+    year: String,
+    language: String?,
+    rating: Double
+  ) {
     self.title = title
     self.overview = overview
     self.status = status
@@ -28,63 +35,69 @@ public struct ShowHeaderInfoView: View {
   public var body: some View {
     VStack(spacing: 0) {
       Text(title)
-        .titleFont(size: 30)
+        .font(.largeTitle)
+        .fontWeight(.bold)
         .foregroundColor(.textColor)
         .lineLimit(1)
-        .padding(.top, 12)
-        .padding([.leading, .trailing], 16)
-
-      OverviewBoxView(overview: overview)
+        .padding(.horizontal)
+        .frame(maxWidth: .infinity, alignment: .center)
 
       showDetailMetadata
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+
+      OverviewBoxView(overview: overview)
+        .padding(.horizontal, 16)
     }
-    .padding([.trailing, .leading, .bottom], 16)
   }
 
   private var showDetailMetadata: some View {
-    ScrollView(.horizontal, showsIndicators: false) {
-      HStack(alignment: .center) {
-
-        if let status = status, !status.isEmpty {
-          BorderTextView(
-            text: status,
-            colorOpacity: 0.12,
-            borderOpacity: 0.12,
-            weight: .bold
-          )
-
-          Text("•")
-            .font(.avenirNext(size: 8))
-            .foregroundColor(.accent)
-        }
-
-        Text(year)
-          .font(.avenirNext(size: 14))
-          .fontWeight(.bold)
-
-        if let language = language {
-          Text("•")
-            .font(.avenirNext(size: 8))
-            .foregroundColor(.accent)
-
-          Text(language)
-            .font(.avenirNext(size: 14))
-            .fontWeight(.bold)
-        }
-
-        Text("•")
-          .font(.avenirNext(size: 8))
-          .foregroundColor(.accent)
-
-        Text(String(format: "%.1f", rating))
-          .font(.avenirNext(size: 14))
-          .fontWeight(.bold)
+    HStack(alignment: .center) {
+      if let status = status, !status.isEmpty {
+        BorderTextView(
+          text: status,
+          colorOpacity: 0.12,
+          borderOpacity: 0.12,
+          weight: .bold
+        )
 
         Text("•")
           .font(.avenirNext(size: 8))
           .foregroundColor(.accent)
       }
+
+      Text(year)
+        .font(.avenirNext(size: 14))
+        .fontWeight(.semibold)
+
+      if let language = language {
+        Text("•")
+          .font(.avenirNext(size: 8))
+          .foregroundColor(.accent)
+
+        Text(language)
+          .font(.avenirNext(size: 14))
+          .fontWeight(.semibold)
+      }
+
+      Text("•")
+        .font(.avenirNext(size: 8))
+        .foregroundColor(.accent)
+
+      Image(systemName: "star.fill")
+        .resizable()
+        .frame(width: 14, height: 14)
+        .foregroundColor(.accent)
+
+      Text(String(format: "%.1f", rating))
+        .font(.avenirNext(size: 14))
+        .fontWeight(.semibold)
+
+      Text("•")
+        .font(.avenirNext(size: 8))
+        .foregroundColor(.accent)
     }
+    .frame(maxWidth: .infinity, alignment: .center)
   }
 }
 

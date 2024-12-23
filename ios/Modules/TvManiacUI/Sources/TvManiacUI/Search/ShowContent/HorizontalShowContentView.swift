@@ -42,14 +42,14 @@ public struct HorizontalShowContentView: View {
 
   public var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      headerView
+      chevronView
       scrollContent
     }
   }
 
   // MARK: - Subviews
   @ViewBuilder
-  private var headerView: some View {
+  private var chevronView: some View {
     ChevronTitle(
       title: title,
       chevronStyle: chevronStyle,

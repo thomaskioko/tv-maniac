@@ -22,7 +22,7 @@ import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
-import com.thomaskioko.tvmaniac.watchlist.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlin.test.AfterTest
@@ -39,7 +39,7 @@ class ShowDetailsPresenterTest {
   private val seasonsRepository = FakeSeasonsRepository()
   private val trailerRepository = FakeTrailerRepository()
   private val similarShowsRepository = FakeSimilarShowsRepository()
-  private val libraryRepository = FakeLibraryRepository()
+  private val libraryRepository = FakeWatchlistRepository()
   private val watchProviders = FakeWatchProviderRepository()
   private val castRepository = FakeCastRepository()
   private val recommendedShowsRepository = FakeRecommendedShowsRepository()
@@ -269,7 +269,7 @@ class ShowDetailsPresenterTest {
       trailerRepository = trailerRepository,
       seasonsRepository = seasonsRepository,
       similarShowsRepository = similarShowsRepository,
-      libraryRepository = libraryRepository,
+      watchlistRepository = libraryRepository,
       watchProviders = watchProviders,
       recommendedShowsRepository = recommendedShowsRepository,
       castRepository = castRepository,

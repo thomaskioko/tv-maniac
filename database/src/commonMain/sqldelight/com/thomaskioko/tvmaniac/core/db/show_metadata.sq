@@ -1,0 +1,31 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+CREATE TABLE show_metadata (
+    show_id INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
+    season_count INTEGER NOT NULL DEFAULT 0,
+    episode_count INTEGER NOT NULL DEFAULT 0,
+    status TEXT DEFAULT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+CREATE UNIQUE INDEX IF NOT EXISTS `index_show_metadata_show_id` ON `show_metadata` (`show_id`);
+
+-- queries
+upsert:
+INSERT OR REPLACE INTO show_metadata(
+    show_id,
+    season_count,
+    episode_count,
+    status
+) VALUES (?, ?, ?, ?);
+
+getMetadata:
+SELECT *
+FROM show_metadata
+WHERE show_id = ?;
+
+delete:
+DELETE FROM show_metadata
+WHERE show_id = ?;

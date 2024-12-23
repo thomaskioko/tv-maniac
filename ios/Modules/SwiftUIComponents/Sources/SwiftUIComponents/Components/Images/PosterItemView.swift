@@ -38,8 +38,24 @@ public struct PosterItemView: View {
 
     public var body: some View {
         if let posterUrl = posterUrl {
-            WebImage(url: URL(string: posterUrl), options: .highPriority) { image in
-                image.resizable()
+            WebImage(
+                url: URL(string: posterUrl),
+                options: [
+                   .retryFailed,
+                    .highPriority,
+                   .scaleDownLargeImages
+                ],
+                context: [
+                    .imageThumbnailPixelSize: CGSize(
+                        width: posterWidth * 2,
+                        height: posterHeight * 2
+                    ),
+                    .imageForceDecodePolicy: SDImageForceDecodePolicy.never.rawValue
+                ]
+            ) { image in
+                image
+                .resizable()
+                .scaledToFill()
             } placeholder: {
                 PosterPlaceholder(
                     title: title,
@@ -47,22 +63,16 @@ public struct PosterItemView: View {
                     posterHeight: posterHeight
                 )
             }
-            .aspectRatio(contentMode: .fill)
-            .overlay {
-                OverlayBackground(
-                    isInLibrary: isInLibrary,
-                    libraryImageOverlay: libraryImageOverlay
-                )
-                .frame(width: posterWidth)
-            }
+            .indicator(.activity)
             .transition(.opacity)
+            .scaledToFill()
+            .clipShape(RoundedRectangle(cornerRadius: posterRadius, style: .continuous))
             .frame(width: posterWidth, height: posterHeight)
-            .clipShape(
-                RoundedRectangle(
-                    cornerRadius: posterRadius,
-                    style: .continuous
-                )
-            )
+            .overlay {
+              if isInLibrary {
+                LibraryOverlay(libraryImageOverlay: libraryImageOverlay)
+              }
+            }
         } else {
             PosterPlaceholder(
                 title: title,
@@ -75,40 +85,35 @@ public struct PosterItemView: View {
 }
 
 @ViewBuilder
-private func OverlayBackground(
-    isInLibrary: Bool,
-    libraryImageOverlay: String
-) -> some View {
-    ZStack {
-        if isInLibrary {
-            VStack {
-                Spacer()
-                HStack {
-                    Spacer()
-
-                    Image(systemName: libraryImageOverlay)
-                        .imageScale(.medium)
-                        .foregroundColor(.white.opacity(0.9))
-                        .padding([.vertical])
-                        .padding(.trailing, 16)
-                        .font(.caption)
-                }
-                .background {
-                    Color.black.opacity(0.6)
-                        .mask {
-                            LinearGradient(colors:
-                                [Color.black,
-                                 Color.black.opacity(0.924),
-                                 Color.black.opacity(0.707),
-                                 Color.black.opacity(0.383),
-                                 Color.black.opacity(0)],
-                                startPoint: .bottom,
-                                endPoint: .top)
-                        }
-                }
-            }
+private func LibraryOverlay(libraryImageOverlay: String) -> some View {
+  VStack {
+    Spacer()
+    HStack {
+      Spacer()
+      Image(systemName: libraryImageOverlay)
+        .imageScale(.medium)
+        .foregroundColor(.white.opacity(0.9))
+        .padding([.vertical])
+        .padding(.trailing, 16)
+        .font(.caption)
+    }
+    .background {
+      Color.black.opacity(0.6)
+        .mask {
+          LinearGradient(
+            colors: [
+              Color.black,
+              Color.black.opacity(0.924),
+              Color.black.opacity(0.707),
+              Color.black.opacity(0.383),
+              Color.black.opacity(0)
+            ],
+            startPoint: .bottom,
+            endPoint: .top
+          )
         }
     }
+  }
 }
 
 private enum DimensionConstants {

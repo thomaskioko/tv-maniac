@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.topratedshows.data.api
 import androidx.paging.PagingSource
 import com.thomaskioko.tvmaniac.core.db.TopRatedShows
 import com.thomaskioko.tvmaniac.core.db.Toprated_shows
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
 interface TopRatedShowsDao {
