@@ -30,6 +30,7 @@ kotlin {
         implementation(projects.data.topratedshows.testing)
         implementation(projects.data.trendingshows.testing)
         implementation(projects.data.upcomingshows.testing)
+        implementation(projects.data.watchlist.testing)
 
         implementation(libs.bundles.unittest)
       }
