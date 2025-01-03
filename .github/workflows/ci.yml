@@ -64,8 +64,15 @@ jobs:
           echo "TRAKT_CLIENT_SECRET=$TRAKT_CLIENT_SECRET" >> ./local.properties
           echo "TRAKT_REDIRECT_URI=$TRAKT_REDIRECT_URI" >> ./local.properties
 
-      - name: Build with Gradle
-        run: ./gradlew assemble
+      - name: Build Android App
+        run: |
+          ./gradlew check \
+            :android:app:assemble \
+            :android:app:bundle \
+            -x assembleNonMinifiedRelease \
+            -x bundleNonMinifiedRelease \
+            -Pandroidx.baselineprofile.skipgeneration=true \
+            --no-configuration-cache
 
   android-lint:
     runs-on: ubuntu-latest
@@ -374,30 +381,3 @@ jobs:
 #          name: test-results
 #          path: fastlane/test_output
 #
-  create-release:
-    needs: [build-android, android-lint, android-screenshot-test, common-test, spotless, dependency-health, jvm-test]
-    if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JDK_VERSION }}
-          distribution: ${{ env.DISTRIBUTION }}
-
-      - name: Create release
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          draft: true
-          files: android/app/build/outputs/apk/dev/debug/app-dev-debug.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload build outputs (APKs)
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-outputs
-          path: android/app/build/outputs

@@ -50,9 +50,15 @@ gradlePlugin {
       id = "plugin.tvmaniac.android.library"
       implementationClass = "com.thomaskioko.tvmaniac.plugins.AndroidLibraryPlugin"
     }
+
     register("androidComposeLibrary") {
       id = "plugin.tvmaniac.compose.library"
       implementationClass = "com.thomaskioko.tvmaniac.plugins.ComposeLibraryPlugin"
+    }
+
+    register("kotlinAndroid") {
+      id = "plugin.tvmaniac.kotlin.android"
+      implementationClass = "com.thomaskioko.tvmaniac.plugins.KotlinAndroidConventionPlugin"
     }
 
     register("spotless") {

@@ -93,3 +93,4 @@ fastlane/builds
 
 derived_data/
 *.xcresult
+/core/util/src/commonMain/resources/config.yaml
