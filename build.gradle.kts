@@ -15,4 +15,6 @@ plugins {
   alias(libs.plugins.tvmaniac.git.hooks)
   alias(libs.plugins.tvmaniac.spotless)
   alias(libs.plugins.tvmaniac.root)
+  alias(libs.plugins.android.test) apply false
+  alias(libs.plugins.androidx.baselineprofile) apply false
 }

@@ -1,6 +1,5 @@
 plugins {
   alias(libs.plugins.tvmaniac.application)
-  alias(libs.plugins.ksp)
 }
 
 android {
@@ -80,6 +79,7 @@ dependencies {
   implementation(libs.androidx.core.core)
   implementation(libs.androidx.core.splashscreen)
   implementation(libs.androidx.compose.material3)
+  implementation(libs.androidx.profileinstaller)
   implementation(libs.appauth)
 
   implementation(libs.decompose.decompose)
@@ -97,4 +97,11 @@ dependencies {
   implementation(libs.androidx.compose.ui.ui)
   implementation(libs.coroutines.core)
   implementation(libs.ktor.core)
+
+  baselineProfile(projects.android.benchmark)
+}
+
+baselineProfile {
+  mergeIntoMain = true
+  saveInSrc = true
 }
