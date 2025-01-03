@@ -12,7 +12,7 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowMetadata
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
-import com.thomaskioko.tvmaniac.shows.api.LibraryRepository
+import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,20 +41,20 @@ class ShowDetailsPresenterFactory(
 class ShowDetailsPresenter
 @Inject
 constructor(
-  @Assisted componentContext: ComponentContext,
-  @Assisted private val showId: Long,
-  @Assisted private val onBack: () -> Unit,
-  @Assisted private val onNavigateToShow: (id: Long) -> Unit,
-  @Assisted private val onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
-  @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
-  private val castRepository: CastRepository,
-  private val libraryRepository: LibraryRepository,
-  private val recommendedShowsRepository: RecommendedShowsRepository,
-  private val seasonsRepository: SeasonsRepository,
-  private val showDetailsRepository: ShowDetailsRepository,
-  private val similarShowsRepository: SimilarShowsRepository,
-  private val trailerRepository: TrailerRepository,
-  private val watchProviders: WatchProviderRepository,
+    @Assisted componentContext: ComponentContext,
+    @Assisted private val showId: Long,
+    @Assisted private val onBack: () -> Unit,
+    @Assisted private val onNavigateToShow: (id: Long) -> Unit,
+    @Assisted private val onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
+    @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
+    private val castRepository: CastRepository,
+    private val watchlistRepository: WatchlistRepository,
+    private val recommendedShowsRepository: RecommendedShowsRepository,
+    private val seasonsRepository: SeasonsRepository,
+    private val showDetailsRepository: ShowDetailsRepository,
+    private val similarShowsRepository: SimilarShowsRepository,
+    private val trailerRepository: TrailerRepository,
+    private val watchProviders: WatchProviderRepository,
 ) : ComponentContext by componentContext {
 
   private val coroutineScope = coroutineScope()
@@ -83,8 +83,8 @@ constructor(
       is WatchTrailerClicked -> onNavigateToTrailer(action.id)
       is FollowShowClicked -> {
         coroutineScope.launch {
-          libraryRepository.updateLibrary(
-            traktId = showId,
+          watchlistRepository.updateLibrary(
+            id = showId,
             addToLibrary = !action.addToLibrary,
           )
         }

@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.tmdb.api
 
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbGenreResult
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 
 const val DEFAULT_API_PAGE: Long = 1
@@ -21,10 +22,14 @@ interface TmdbShowsNetworkDataSource {
    *
    * @param page Page number
    * @param sortBy Default: popularity.desc.
+   * @param genres Comma separated list of genre ids.
    */
-  suspend fun getDiscoverShows(
-    page: Long,
+  suspend fun discoverShows(
+    page: Long = DEFAULT_API_PAGE,
     sortBy: String = DEFAULT_SORT_ORDER,
+    genres: String? = null,
+    watchProviders: String? = null,
+    screenedTheatrically: Boolean = true
   ): ApiResponse<TmdbShowResult>
 
   /**
@@ -80,4 +85,9 @@ interface TmdbShowsNetworkDataSource {
    * @param query Search query
    */
   suspend fun searchShows(query: String): ApiResponse<TmdbShowResult>
+
+  /**
+   * Get the list of official genres for TV shows.
+   */
+  suspend fun getGenre(): ApiResponse<TmdbGenreResult>
 }

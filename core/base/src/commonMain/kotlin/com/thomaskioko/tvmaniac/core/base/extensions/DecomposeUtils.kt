@@ -1,12 +1,22 @@
 package com.thomaskioko.tvmaniac.core.base.extensions
 
+import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.doOnDestroy
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlin.coroutines.CoroutineContext
 
 /**
  * This helper implementation in from Cofetti Kmp App See
@@ -19,4 +29,35 @@ fun LifecycleOwner.coroutineScope(
   lifecycle.doOnDestroy(scope::cancel)
 
   return scope
+}
+
+/**
+ * Creates a Main [CoroutineScope] instance tied to the lifecycle of this [ComponentContext].
+ */
+fun LifecycleOwner.componentCoroutineScope(): CoroutineScope =
+  MainScope().also { coroutineScope ->
+    lifecycle.doOnDestroy { coroutineScope.cancel() }
+  }
+
+/**
+ * Converts this Decompose [Value] to Kotlin [StateFlow].
+ */
+fun <T : Any> Value<T>.asStateFlow(coroutineScope: CoroutineScope): StateFlow<T> = asFlow()
+  .stateIn(
+    scope = coroutineScope,
+    started = SharingStarted.Lazily,
+    initialValue = value,
+  )
+
+/**
+ * Converts this Decompose [Value] to Kotlin [Flow].
+ */
+fun <T : Any> Value<T>.asFlow(): Flow<T> = callbackFlow {
+  val cancellation = subscribe { value ->
+    trySendBlocking(value)
+  }
+
+  awaitClose {
+    cancellation.cancel()
+  }
 }

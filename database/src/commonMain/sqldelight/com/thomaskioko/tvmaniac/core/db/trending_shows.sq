@@ -32,13 +32,13 @@ SELECT
     trending_shows.page,
     tvshows.name,
     tvshows.poster_path,
-    CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     trending_shows
 INNER JOIN
     tvshows ON tvshows.id = trending_shows.id
 LEFT OUTER JOIN
-    library ON tvshows.id = library.id
+    watchlist ON tvshows.id = watchlist.id
 ORDER BY
     tvshows.popularity DESC;
 
@@ -48,13 +48,13 @@ SELECT
     trending_shows.page,
     tvshows.name,
     tvshows.poster_path,
-    CASE WHEN library.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     trending_shows
 INNER JOIN
     tvshows ON tvshows.id = trending_shows.id
 LEFT OUTER JOIN
-    library ON tvshows.id = library.id
+    watchlist ON tvshows.id = watchlist.id
 ORDER BY
     trending_shows.page ASC
 LIMIT

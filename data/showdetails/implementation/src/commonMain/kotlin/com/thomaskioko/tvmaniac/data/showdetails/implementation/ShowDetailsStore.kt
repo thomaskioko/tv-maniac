@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.data.showdetails.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.core.db.Casts
-import com.thomaskioko.tvmaniac.core.db.Genres
 import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.core.db.Trailers
 import com.thomaskioko.tvmaniac.core.db.TvshowDetails
@@ -34,7 +33,6 @@ class ShowDetailsStore(
   private val showDetailsDao: ShowDetailsDao,
   private val seasonDao: SeasonsDao,
   private val trailerDao: TrailerDao,
-  private val genreDao: DefaultGenreDao,
   private val formatterUtil: FormatterUtil,
   private val dateFormatter: PlatformDateFormatter,
   private val requestManagerRepository: RequestManagerRepository,
@@ -76,16 +74,6 @@ class ShowDetailsStore(
                   backdrop_path = show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                 ),
               )
-              // Insert Genres
-              show.genres.forEach { genre ->
-                genreDao.upsert(
-                  Genres(
-                    id = Id(genre.id.toLong()),
-                    tmdb_id = Id(id),
-                    name = genre.name,
-                  ),
-                )
-              }
 
               // Insert Cast
               show.credits.cast.forEach { cast ->

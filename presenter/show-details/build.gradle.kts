@@ -8,7 +8,7 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.data.library.api)
+        implementation(projects.data.watchlist.api)
         implementation(projects.data.seasons.api)
         implementation(projects.data.showdetails.api)
         implementation(projects.data.shows.api)
@@ -29,7 +29,7 @@ kotlin {
     commonTest {
       dependencies {
         implementation(projects.data.cast.testing)
-        implementation(projects.data.library.testing)
+        implementation(projects.data.watchlist.testing)
         implementation(projects.data.recommendedshows.testing)
         implementation(projects.data.seasons.testing)
         implementation(projects.data.showdetails.testing)

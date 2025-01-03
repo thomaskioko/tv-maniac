@@ -9,10 +9,10 @@ import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
 import kotlinx.coroutines.flow.StateFlow
 
 interface RootPresenter {
-  val stack: StateFlow<ChildStack<*, Child>>
+  val childStack: StateFlow<ChildStack<*, Child>>
   val themeState: StateFlow<ThemeState>
 
-  fun bringToFront(config: Config)
+  fun bringToFront(config: RootDestinationConfig)
 
   fun onBackClicked()
 
@@ -28,5 +28,7 @@ interface RootPresenter {
     class MoreShows(val presenter: MoreShowsPresenter) : Child
 
     class Trailers(val presenter: TrailersPresenter) : Child
+
+    data object GenreShows : Child
   }
 }

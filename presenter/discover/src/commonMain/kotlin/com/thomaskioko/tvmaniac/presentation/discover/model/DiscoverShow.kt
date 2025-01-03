@@ -5,4 +5,5 @@ data class DiscoverShow(
   val title: String = "",
   val posterImageUrl: String? = null,
   val inLibrary: Boolean = false,
+  val overView: String? = "",
 )

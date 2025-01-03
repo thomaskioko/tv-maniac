@@ -26,7 +26,7 @@ public struct SearchResultListView: View {
               year: item.year,
               voteAverage: item.voteAverage
             )
-            .padding([.leading, .trailing], 8)
+            .padding(.horizontal, 8)
             .onTapGesture { onClick(item.tmdbId) }
           }
         }

@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.presentation.discover
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -15,6 +15,7 @@ fun List<ShowEntity>?.toShowList(): ImmutableList<DiscoverShow> =
         title = it.title,
         posterImageUrl = it.posterPath,
         inLibrary = it.inLibrary,
+        overView = it.overview
       )
     }
     ?.toImmutableList()

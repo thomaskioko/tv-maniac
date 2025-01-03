@@ -1,17 +1,23 @@
 package com.thomaskioko.tvmaniac.ui.search
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material.icons.outlined.ErrorOutline
@@ -33,17 +39,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
+import com.thomaskioko.tvmaniac.compose.components.PosterBackdropCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.search.DismissSnackBar
-import com.thomaskioko.tvmaniac.presentation.search.EmptySearchState
-import com.thomaskioko.tvmaniac.presentation.search.ErrorSearchState
+import com.thomaskioko.tvmaniac.presentation.search.EmptySearchResult
+import com.thomaskioko.tvmaniac.presentation.search.GenreCategoryClicked
+import com.thomaskioko.tvmaniac.presentation.search.InitialSearchState
 import com.thomaskioko.tvmaniac.presentation.search.ReloadShowContent
 import com.thomaskioko.tvmaniac.presentation.search.SearchResultAvailable
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowAction
@@ -51,11 +62,12 @@ import com.thomaskioko.tvmaniac.presentation.search.SearchShowClicked
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowState
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.search.ShowContentAvailable
-import com.thomaskioko.tvmaniac.presentation.search.ShowItem
+import com.thomaskioko.tvmaniac.presentation.search.model.ShowGenre
+import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.ui.search.components.HorizontalShowContentRow
 import com.thomaskioko.tvmaniac.ui.search.components.SearchResultItem
 import com.thomaskioko.tvmaniac.ui.search.components.SearchTextContainer
+import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -92,9 +104,9 @@ internal fun SearchScreen(
           Text(
             text = stringResource(id = R.string.menu_item_search),
             style =
-            MaterialTheme.typography.titleLarge.copy(
-              color = MaterialTheme.colorScheme.onSurface,
-            ),
+              MaterialTheme.typography.titleLarge.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+              ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
@@ -104,10 +116,10 @@ internal fun SearchScreen(
         },
         scrollBehavior = scrollBehavior,
         colors =
-        TopAppBarDefaults.centerAlignedTopAppBarColors(
-          containerColor = MaterialTheme.colorScheme.background,
-          scrolledContainerColor = MaterialTheme.colorScheme.background,
-        ),
+          TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = MaterialTheme.colorScheme.background,
+          ),
       )
     },
     content = { paddingValues ->
@@ -141,17 +153,22 @@ private fun SearchScreenContent(
   ) {
 
     when (state) {
-      is EmptySearchState -> EmptyContent(
-        imageVector = Icons.Filled.SearchOff,
-        title = stringResource(R.string.search_no_results),
-      )
-      is ErrorSearchState -> EmptyContent(
-        imageVector = Icons.Outlined.ErrorOutline,
-        title =  stringResource(R.string.generic_empty_content),
-        message = stringResource(R.string.missing_api_key),
-        buttonText = stringResource(id = R.string.generic_retry),
-        onClick = { onAction(ReloadShowContent) },
-      )
+      is EmptySearchResult -> {
+        if (state.errorMessage != null) {
+          EmptyContent(
+            imageVector = Icons.Outlined.ErrorOutline,
+            title = stringResource(R.string.generic_empty_content),
+            message = stringResource(R.string.missing_api_key),
+            buttonText = stringResource(id = R.string.generic_retry),
+            onClick = { onAction(ReloadShowContent) },
+          )
+        } else {
+          EmptyContent(
+            imageVector = Icons.Filled.SearchOff,
+            title = stringResource(R.string.search_no_results),
+          )
+        }
+      }
       is SearchResultAvailable ->
         SearchResultsContent(
           onAction = onAction,
@@ -161,14 +178,13 @@ private fun SearchScreenContent(
       is ShowContentAvailable -> {
         ShowContent(
           onAction = onAction,
-          featuredShows = state.featuredShows,
-          trendingShows = state.trendingShows,
-          upcomingShows = state.upcomingShows,
+          genres = state.genres,
           errorMessage = state.errorMessage,
           snackBarHostState = snackBarHostState,
           lazyListState = lazyListState,
         )
       }
+      is InitialSearchState -> LoadingIndicator()
     }
   }
 }
@@ -237,9 +253,7 @@ private fun ShowContent(
   snackBarHostState: SnackbarHostState,
   lazyListState: LazyListState,
   onAction: (SearchShowAction) -> Unit,
-  featuredShows: ImmutableList<ShowItem>?,
-  trendingShows: ImmutableList<ShowItem>?,
-  upcomingShows: ImmutableList<ShowItem>?,
+  genres: ImmutableList<ShowGenre>,
   modifier: Modifier = Modifier,
 ) {
 
@@ -258,47 +272,46 @@ private fun ShowContent(
       }
     }
   }
+  GenreContent(
+    genres = genres,
+    onItemClicked = { onAction(GenreCategoryClicked(it)) },
+    modifier = modifier,
+    lazyListState = lazyListState,
+  )
+}
 
-  LazyColumn(
-    modifier =
-    modifier
-      .fillMaxSize(),
-    state = lazyListState,
-  ) {
-    item {
-      Spacer(Modifier.height(16.dp))
-    }
+@Composable
+private fun GenreContent(
+  lazyListState: LazyListState,
+  genres: ImmutableList<ShowGenre>,
+  onItemClicked: (Long) -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  Column(modifier = modifier.fillMaxSize().padding(top = 4.dp)) {
+    BoxTextItems(
+      modifier = Modifier.padding(vertical = 12.dp),
+      title = "Browse by Genre",
+    )
 
-    item {
-      HorizontalShowContentRow(
-        title = stringResource(id = R.string.title_category_featured),
-        tvShows = featuredShows,
-        onItemClicked = { onAction(SearchShowClicked(it)) },
-      )
-    }
+    LazyVerticalStaggeredGrid(
+      columns = StaggeredGridCells.Fixed(2),
+      verticalItemSpacing = 8.dp,
+      flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+      horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+      items(genres) { showGenre ->
 
-    item {
-      Spacer(Modifier.height(8.dp))
-    }
-
-    item {
-      HorizontalShowContentRow(
-        title = stringResource(id = R.string.title_category_trending_today),
-        tvShows = trendingShows,
-        onItemClicked = { onAction(SearchShowClicked(it)) },
-      )
-    }
-
-    item {
-      Spacer(Modifier.height(8.dp))
-    }
-
-    item {
-      HorizontalShowContentRow(
-        title = stringResource(id = R.string.title_category_upcoming),
-        tvShows = upcomingShows,
-        onItemClicked = { onAction(SearchShowClicked(it)) },
-      )
+        PosterBackdropCard(
+          darkTheme = true,
+          textAlign = TextAlign.Center,
+          imageUrl = showGenre.posterUrl,
+          title = showGenre.name,
+          modifier = Modifier
+            .width(160.dp)
+            .heightIn(160.dp, 220.dp),
+          onClick = { onItemClicked(showGenre.id) },
+        )
+      }
     }
   }
 }

@@ -3,6 +3,7 @@ import SwiftUI
 public extension Color {
     static let accent = Color(.accent)
     static let background = Color(.background)
+    static let backgroundColor = Color(.backgroundColor)
     static let accentBlue = Color(.accentBlue)
     static let yellow = Color(.accentYellow)
     static let gradient_background = Color(.background)
@@ -14,7 +15,7 @@ public extension Color {
     static var linearGradient = LinearGradient(
         gradient: Gradient(stops: [
             .init(color: .gradient_background, location: 0),
-            .init(color: .clear, location: 0.8)
+            .init(color: .clear, location: 0.8),
         ]),
         startPoint: .bottom,
         endPoint: .top
@@ -26,14 +27,14 @@ public extension Color {
             Color.black.opacity(0.383),
             Color.black.opacity(0.707),
             Color.black.opacity(0.924),
-            Color.black
+            Color.black,
         ],
         startPoint: .top,
         endPoint: .bottom
     )
 
     static var iosBlue: Color {
-        Color(red: 0/255, green: 122/255, blue: 255/255)
+        Color(red: 0 / 255, green: 122 / 255, blue: 255 / 255)
     }
 
     static func hex(_ hex: String) -> Color {

@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.KermitLogger
-import com.thomaskioko.tvmaniac.core.networkutil.mapResult
+import com.thomaskioko.tvmaniac.core.networkutil.mapToEither
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.core.paging.CommonPagingConfig.pagingConfig
@@ -14,7 +14,7 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_SHOWS
-import com.thomaskioko.tvmaniac.shows.api.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_SORT_ORDER
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
@@ -57,7 +57,7 @@ class DefaultUpcomingShowsRepository(
     val refresh = forceRefresh || isRequestExpired(params.page)
     return store
       .stream(StoreReadRequest.cached(key = params, refresh = refresh))
-      .mapResult(getShows(params))
+      .mapToEither()
       .flowOn(dispatchers.io)
   }
 

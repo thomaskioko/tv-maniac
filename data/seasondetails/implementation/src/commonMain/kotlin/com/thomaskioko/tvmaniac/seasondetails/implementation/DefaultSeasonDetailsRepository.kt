@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import com.thomaskioko.tvmaniac.core.db.Season_images
-import com.thomaskioko.tvmaniac.core.networkutil.mapResult
+import com.thomaskioko.tvmaniac.core.networkutil.mapToEither
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -41,7 +41,7 @@ class DefaultSeasonDetailsRepository(
             ),
         ),
       )
-      .mapResult()
+      .mapToEither()
 
   override fun observeSeasonImages(id: Long): Flow<List<Season_images>> =
     seasonDetailsDao.observeSeasonImages(id)

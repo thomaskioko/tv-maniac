@@ -11,11 +11,10 @@ public struct ShowInfoView: View {
     private let castsList: [SwiftCast]
     private let recommendedShowList: [SwiftShow]
     private let similarShows: [SwiftShow]
-    private let onWatchTrailer: () -> Void
+    private let onAddToCustomList: () -> Void
     private let onAddToLibrary: () -> Void
     private let onSeasonClicked: (Int, SwiftSeason) -> Void
     private let onShowClicked: (Int64) -> Void
-    @Binding var titleRect: CGRect
 
     public init(
         isFollowed: Bool,
@@ -27,11 +26,10 @@ public struct ShowInfoView: View {
         castsList: [SwiftCast],
         recommendedShowList: [SwiftShow],
         similarShows: [SwiftShow],
-        onWatchTrailer: @escaping () -> Void,
+        onAddToCustomList: @escaping () -> Void,
         onAddToLibrary: @escaping () -> Void,
         onSeasonClicked: @escaping (Int, SwiftSeason) -> Void,
-        onShowClicked: @escaping (Int64) -> Void,
-        titleRect: Binding<CGRect>
+        onShowClicked: @escaping (Int64) -> Void
     ) {
         self.isFollowed = isFollowed
         self.openTrailersInYoutube = openTrailersInYoutube
@@ -42,23 +40,23 @@ public struct ShowInfoView: View {
         self.castsList = castsList
         self.recommendedShowList = recommendedShowList
         self.similarShows = similarShows
-        self.onWatchTrailer = onWatchTrailer
+        self.onAddToCustomList = onAddToCustomList
         self.onAddToLibrary = onAddToLibrary
         self.onSeasonClicked = onSeasonClicked
         self.onShowClicked = onShowClicked
-        self._titleRect = titleRect
     }
 
     public var body: some View {
         VStack {
-            Spacer(minLength: nil)
-                .background(GeometryGetter(rect: self.$titleRect))
-
             if !genreList.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center) {
                         ForEach(genreList, id: \.name) { item in
-                            ChipView(label: item.name)
+                            BorderTextView(
+                                text: item.name,
+                                colorOpacity: 0.12,
+                                borderOpacity: 0.12
+                            )
                         }
                     }
                     .padding(.horizontal)
@@ -66,20 +64,8 @@ public struct ShowInfoView: View {
             }
 
             HStack(alignment: .center, spacing: 8) {
-                OutlinedButton(
-                    text: "Watch Trailer",
-                    systemImageName: "film.fill",
-                    action: onWatchTrailer
-                )
-
-                let followText = isFollowed ? "Unfollow Show" : "Follow Show"
-                let buttonSystemImage = isFollowed ? "checkmark.square.fill" : "plus.square.fill.on.square.fill"
-
-                OutlinedButton(
-                    text: followText,
-                    systemImageName: buttonSystemImage,
-                    action: onAddToLibrary
-                )
+                watchlistButton
+                listButton
             }
             .padding(.top, 10)
 
@@ -111,6 +97,54 @@ public struct ShowInfoView: View {
                 onClick: { id in onShowClicked(id) }
             )
         }
+    }
+
+    private var watchlistButton: some View {
+        Button(action: onAddToLibrary) {
+            VStack {
+                if #available(iOS 17.0, *) {
+                    Image(systemName: isFollowed ? "minus.circle.fill" : "plus.circle.fill")
+                        .symbolEffect(isFollowed ? .bounce.down : .bounce.up, value: isFollowed)
+                } else {
+                    Image(systemName: isFollowed ? "minus.circle.fill" : "plus.circle.fill")
+                }
+
+                Text(isFollowed ? "Stop Tracking" : "Track")
+                    .lineLimit(1)
+                    .padding(.top, 2)
+                    .font(.caption)
+            }
+            .padding(.vertical, 4)
+            .frame(width: DrawingConstants.buttonWidth, height: DrawingConstants.buttonHeight)
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.small)
+        .tint(isFollowed ? .red.opacity(0.95) : Color.accent)
+        .buttonBorderShape(.roundedRectangle(radius: DrawingConstants.buttonRadius))
+    }
+
+    private var listButton: some View {
+        Button(action: onAddToCustomList) {
+            VStack {
+                Image(systemName: false ? "rectangle.on.rectangle.angled.fill" : "rectangle.on.rectangle.angled")
+                Text("Add To List")
+                    .padding(.top, 2)
+                    .font(.caption)
+                    .lineLimit(1)
+            }
+            .padding(.vertical, 4)
+            .frame(width: DrawingConstants.buttonWidth, height: DrawingConstants.buttonHeight)
+        }
+        .controlSize(.small)
+        .buttonStyle(.bordered)
+        .buttonBorderShape(.roundedRectangle(radius: DrawingConstants.buttonRadius))
+        .tint(.primary)
+    }
+
+    private enum DrawingConstants {
+        static let buttonWidth: CGFloat = 85
+        static let buttonHeight: CGFloat = 35
+        static let buttonRadius: CGFloat = 12
     }
 }
 
@@ -224,11 +258,10 @@ public struct ShowInfoView: View {
                     inLibrary: false
                 ),
             ],
-            onWatchTrailer: {},
+            onAddToCustomList: {},
             onAddToLibrary: {},
             onSeasonClicked: { _, _ in },
-            onShowClicked: { _ in },
-            titleRect: .constant(CGRect())
+            onShowClicked: { _ in }
         )
     }
     .background(Color.background)

@@ -7,12 +7,13 @@ import com.thomaskioko.tvmaniac.core.db.Episode_image
 import com.thomaskioko.tvmaniac.core.db.Featured_shows
 import com.thomaskioko.tvmaniac.core.db.Genres
 import com.thomaskioko.tvmaniac.core.db.Last_requests
-import com.thomaskioko.tvmaniac.core.db.Library
 import com.thomaskioko.tvmaniac.core.db.Popular_shows
 import com.thomaskioko.tvmaniac.core.db.Recommended_shows
 import com.thomaskioko.tvmaniac.core.db.Season
 import com.thomaskioko.tvmaniac.core.db.Season_images
 import com.thomaskioko.tvmaniac.core.db.Season_videos
+import com.thomaskioko.tvmaniac.core.db.Show_genres
+import com.thomaskioko.tvmaniac.core.db.Show_metadata
 import com.thomaskioko.tvmaniac.core.db.Similar_shows
 import com.thomaskioko.tvmaniac.core.db.Toprated_shows
 import com.thomaskioko.tvmaniac.core.db.Trailers
@@ -21,9 +22,10 @@ import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.db.Tvshows
 import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.core.db.Watch_providers
-import com.thomaskioko.tvmaniac.db.IdAdapter
-import com.thomaskioko.tvmaniac.db.InstantColumnAdapter
-import com.thomaskioko.tvmaniac.db.intColumnAdapter
+import com.thomaskioko.tvmaniac.core.db.Watchlist
+import com.thomaskioko.tvmaniac.db.adapters.IdAdapter
+import com.thomaskioko.tvmaniac.db.adapters.InstantColumnAdapter
+import com.thomaskioko.tvmaniac.db.adapters.intColumnAdapter
 
 expect fun inMemorySqlDriver(): SqlDriver
 
@@ -61,10 +63,6 @@ abstract class BaseDatabaseTest {
         Trailers.Adapter(
           show_idAdapter = IdAdapter(),
         ),
-      libraryAdapter =
-        Library.Adapter(
-          idAdapter = IdAdapter(),
-        ),
       trending_showsAdapter =
         Trending_shows.Adapter(
           idAdapter = IdAdapter(),
@@ -93,7 +91,6 @@ abstract class BaseDatabaseTest {
       genresAdapter =
         Genres.Adapter(
           idAdapter = IdAdapter(),
-          tmdb_idAdapter = IdAdapter(),
         ),
       season_imagesAdapter =
         Season_images.Adapter(
@@ -123,6 +120,16 @@ abstract class BaseDatabaseTest {
         Featured_shows.Adapter(
           idAdapter = IdAdapter(),
         ),
+      show_genresAdapter = Show_genres.Adapter(
+        show_idAdapter = IdAdapter(),
+        genre_idAdapter = IdAdapter(),
+      ),
+      show_metadataAdapter = Show_metadata.Adapter(
+        show_idAdapter = IdAdapter()
+      ),
+      watchlistAdapter = Watchlist.Adapter(
+        idAdapter = IdAdapter()
+      )
     )
 
   fun closeDb() {

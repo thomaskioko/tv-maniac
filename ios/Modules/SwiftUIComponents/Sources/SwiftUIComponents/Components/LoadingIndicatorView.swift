@@ -26,7 +26,7 @@ public struct LoadingIndicatorView: View {
           style: style
         )
         .rotationEffect(Angle(degrees: animate ? 360 : 0))
-        .animation(Animation.linear(duration: 0.7).repeatForever(autoreverses: false))
+        .animation(.linear(duration: 0.7).repeatForever(autoreverses: false), value: animate)
         .frame(width: 100, height: 50)
 
       Circle()
@@ -39,7 +39,7 @@ public struct LoadingIndicatorView: View {
           style: style
         )
         .rotationEffect(Angle(degrees: animate ? 360 : 0))
-        .animation(Animation.linear(duration: 0.7).repeatForever(autoreverses: false))
+        .animation(.linear(duration: 0.7).repeatForever(autoreverses: false), value: animate)
         .frame(width: 100, height: 50)
 
       Spacer()

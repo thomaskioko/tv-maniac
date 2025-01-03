@@ -18,13 +18,13 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Discover
-import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Library
+import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Watchlist
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Search
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Settings
 import com.thomaskioko.tvmaniac.resources.R
 import com.thomaskioko.tvmaniac.ui.search.SearchScreen
 import com.thomaskioko.tvmaniac.ui.discover.DiscoverScreen
-import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
+import com.thomaskioko.tvmaniac.ui.library.WatchlistScreen
 import com.thomaskioko.tvmaniac.ui.settings.SettingsScreen
 
 @Composable
@@ -40,7 +40,7 @@ fun HomeScreen(
 
 @Composable
 private fun ChildrenContent(homePresenter: HomePresenter, modifier: Modifier = Modifier) {
-  val childStack by homePresenter.stack.collectAsState()
+  val childStack by homePresenter.homeChildStack.collectAsState()
 
   Children(
     modifier = modifier,
@@ -54,8 +54,8 @@ private fun ChildrenContent(homePresenter: HomePresenter, modifier: Modifier = M
           modifier = fillMaxSizeModifier,
         )
       }
-      is Library -> {
-        LibraryScreen(
+      is Watchlist -> {
+        WatchlistScreen(
           presenter = screen.presenter,
           modifier = fillMaxSizeModifier,
         )
@@ -81,7 +81,7 @@ internal fun BottomNavigationContent(
   component: HomePresenter,
   modifier: Modifier = Modifier,
 ) {
-  val childStack by component.stack.collectAsState()
+  val childStack by component.homeChildStack.collectAsState()
   val activeComponent = childStack.active.instance
 
   TvManiacNavigationBar(
@@ -104,7 +104,7 @@ internal fun BottomNavigationContent(
     TvManiacBottomNavigationItem(
       imageVector = Icons.Outlined.VideoLibrary,
       title = stringResource(id = R.string.menu_item_library),
-      selected = activeComponent is Library,
+      selected = activeComponent is Watchlist,
       onClick = { component.onLibraryClicked() },
     )
 
