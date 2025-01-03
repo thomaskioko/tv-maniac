@@ -180,6 +180,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 tvmaniac-android-library = { id = "plugin.tvmaniac.android.library" }
 tvmaniac-application = { id = "plugin.tvmaniac.application" }
 tvmaniac-compose-library = { id = "plugin.tvmaniac.compose.library" }
+tvmaniac-kotlin-android = { id = "plugin.tvmaniac.kotlin.android" }
 tvmaniac-multiplatform = { id = "plugin.tvmaniac.multiplatform" }
 tvmaniac-spotless = { id = "plugin.tvmaniac.spotless" }
 tvmaniac-git-hooks = { id = "plugin.tvmaniac.git-hooks" }
