@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.benchmark.benchmark
 
+import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.StartupTimingMetric
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
@@ -16,10 +17,16 @@ class StartupBenchmark {
   val benchmarkRule = MacrobenchmarkRule()
 
   @Test
-  fun startup() = benchmarkRule.measureRepeated(
+  fun startupCompilationModePartial() = startup(CompilationMode.Partial())
+
+  @Test
+  fun startupCompilationModeNone() = startup(CompilationMode.None())
+
+  private fun startup(compilationMode: CompilationMode) = benchmarkRule.measureRepeated(
     packageName = TARGET_PACKAGE,
     metrics = listOf(StartupTimingMetric()),
     iterations = DEFAULT_ITERATIONS,
+    compilationMode = compilationMode,
     startupMode = StartupMode.COLD,
   ) {
     pressHome()
