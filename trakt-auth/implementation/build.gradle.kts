@@ -31,5 +31,4 @@ kotlin {
 
 android { namespace = "com.thomaskioko.tvmaniac.traktauth.implementation" }
 
-addKspDependencyForAllTargets(libs.kotlinInject.compiler)
 addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
