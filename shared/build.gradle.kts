@@ -124,6 +124,7 @@ kotlin {
 
 android { namespace = "com.thomaskioko.tvmaniac.shared" }
 
+addKspDependencyForAllTargets(libs.kotlinInject.compiler)
 addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
 
 kotlin.sourceSets.all { languageSettings.optIn("kotlin.experimental.ExperimentalObjCName") }
