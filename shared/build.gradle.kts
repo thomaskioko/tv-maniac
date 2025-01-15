@@ -29,6 +29,7 @@ kotlin {
       isStatic = !debuggable
       linkerOpts.add("-lsqlite3")
       freeCompilerArgs += if (debuggable) "-Xadd-light-debug=enable" else ""
+      freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin")
 
       export(projects.navigation.api)
       export(projects.datastore.api)
