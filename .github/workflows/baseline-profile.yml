@@ -1,0 +1,56 @@
+name: Weekly Baseline Profile Generation
+
+on:
+  schedule:
+    - cron:  '30 0 * * 0,3,5' #Every Sunday, Wednesday, and Friday at 12:30AM
+
+jobs:
+  baseline_profiles:
+    name: "Generate Baseline Profiles"
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-disabled: true
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: Build app and benchmark
+        run: ./gradlew assembleNonMinifiedRelease
+
+      - name: Clear Gradle Managed Devices
+        run: ./gradlew cleanManagedDevices
+
+      - name: Generate Baseline Profile
+        run: ./gradlew :android:app:generateBaselineProfile
+          -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=baselineprofile
+          -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
+          --no-configuration-cache
+
+       ## ToDo: Commit baseline profile changes to main.

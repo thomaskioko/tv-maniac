@@ -46,6 +46,7 @@ develocity {
 include(
   ":android:app",
   ":android:designsystem",
+  ":android:benchmark",
   ":android:ui:discover",
   ":android:ui:home",
   ":android:ui:more-shows",
