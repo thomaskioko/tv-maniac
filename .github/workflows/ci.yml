@@ -18,6 +18,9 @@ env:
   GRADLE_CACHE_PATH: |
     ~/.gradle/caches
     ~/.gradle/wrapper
+  SPM_CACHE_PATH: |
+    ~/Library/Caches/org.swift.swiftpm
+    ~/Library/Developer/Xcode/DerivedData
 
 jobs:
   build-android:
@@ -295,19 +298,27 @@ jobs:
 
       - name: 🧰 Install xcbeautify
         run: brew install xcbeautify
-          
+
       - name: 🔄 Clean SPM cache
         run: |
           rm -rf $HOME/Library/Developer/Xcode/DerivedData
-        
+
       - name: 🔍 Verify Xcode Path
         run: xcode-select -p
-          
+
       - name: 💎 Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0
           bundler-cache: true
+
+      - name: Cache SPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.SPM_CACHE_PATH }}
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
 
       - name: 📦 Setup Gradle Cache
         uses: actions/cache@v4
@@ -354,6 +365,14 @@ jobs:
         with:
           ruby-version: 3.3.0
           bundler-cache: true
+
+      - name: Cache SPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.SPM_CACHE_PATH }}
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
 
       - name: 📦 Setup Gradle Cache
         uses: actions/cache@v4
