@@ -293,6 +293,16 @@ jobs:
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
 
+      - name: 🧰 Install xcbeautify
+        run: brew install xcbeautify
+          
+      - name: 🔄 Clean SPM cache
+        run: |
+          rm -rf $HOME/Library/Developer/Xcode/DerivedData
+        
+      - name: 🔍 Verify Xcode Path
+        run: xcode-select -p
+          
       - name: 💎 Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
