@@ -282,49 +282,11 @@ jobs:
           name: common-test-report
           path: ./**/build/reports/tests/
 
-  resolve-spm:
-    runs-on: macos-latest
-
-    steps:
-      - name: 🚚 Checkout
-        uses: actions/checkout@v3
-
-      - name: 🍔 Get SPM cache
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.SPM_CACHE_PATH }}
-          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-spm-
-
-      - name: 📀 Setup Xcode version
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: ${{ env.XCODE_VERSION }}
-
-      - name: 💎 Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3.0
-          bundler-cache: true
-
-      - name: 🤓 Resolve SPM
-        run: xcodebuild -resolvePackageDependencies
-
   build-ios:
     runs-on: macos-latest
     steps:
       - name: 🚚 Checkout project
         uses: actions/checkout@v4
-
-      - name: 🍔 Get SPM cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.SPM_CACHE_PATH }}
-          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-spm-
 
       - name: 📀 Setup Xcode version
         uses: maxim-lobanov/setup-xcode@v1
@@ -382,14 +344,6 @@ jobs:
         with:
           ruby-version: 3.3.0
           bundler-cache: true
-
-      - name: 📦 Cache SPM dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.SPM_CACHE_PATH }}
-          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-spm-
 
       - name: 📦 Setup Gradle Cache
         uses: actions/cache@v4
