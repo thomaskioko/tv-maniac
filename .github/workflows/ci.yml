@@ -13,7 +13,7 @@ concurrency:
 env:
   JDK_VERSION: 21
   DISTRIBUTION: 'temurin'
-  XCODE_VERSION: '15.4'
+  XCODE_VERSION: latest-stable
   GRADLE_CACHE_PATH: |
     ~/.gradle/caches
     ~/.gradle/wrapper
