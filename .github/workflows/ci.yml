@@ -336,9 +336,6 @@ jobs:
 
       - name: 🧱 Build iOS App
         run: bundle exec fastlane build_tvmaniac
-        env:
-          FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: "120"
-          FASTLANE_XCODEBUILD_SETTINGS_RETRIES: "5"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
