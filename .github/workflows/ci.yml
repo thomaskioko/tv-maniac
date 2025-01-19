@@ -285,7 +285,7 @@ jobs:
           path: ./**/build/reports/tests/
 
   build-ios:
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 60
     env:
       FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
