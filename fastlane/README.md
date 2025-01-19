@@ -15,6 +15,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
+### ios snapshot_tests
+
+```sh
+[bundle exec] fastlane ios snapshot_tests
+```
+
+Run Snapshot Tests
+
 ### ios build_tvmaniac
 
 ```sh
@@ -22,30 +30,6 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 ```
 
 Build iOS App
-
-### ios ui_tests
-
-```sh
-[bundle exec] fastlane ios ui_tests
-```
-
-Run All UI Tests
-
-### ios swift_ui_components_tests
-
-```sh
-[bundle exec] fastlane ios swift_ui_components_tests
-```
-
-Run SwiftUIComponents Tests
-
-### ios tvmaniac_ui_components_tests
-
-```sh
-[bundle exec] fastlane ios tvmaniac_ui_components_tests
-```
-
-Run TvManiacUITests Tests
 
 ### ios clear_derived_data_lane
 
@@ -55,13 +39,13 @@ Run TvManiacUITests Tests
 
 Clear derived data
 
-### ios copy_debug_simulator_xcframework
+### ios generate_xcframework
 
 ```sh
-[bundle exec] fastlane ios copy_debug_simulator_xcframework
+[bundle exec] fastlane ios generate_xcframework
 ```
 
-Copy Debug Simulator XCFramework
+Generate XCFramework
 
 ----
 

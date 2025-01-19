@@ -2,9 +2,9 @@ name: Android and iOS CI Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    types: [opened, synchronize]
+    types: [ opened, synchronize ]
 
 concurrency:
   group: ci-${{ github.ref }}-${{ github.head_ref }}
@@ -12,9 +12,8 @@ concurrency:
 
 env:
   JDK_VERSION: 21
-  DISTRIBUTION: 'zulu'
-  FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
-  XCODE_VERSION: '15.3'
+  DISTRIBUTION: 'temurin'
+  XCODE_VERSION: latest-stable
   GRADLE_CACHE_PATH: |
     ~/.gradle/caches
     ~/.gradle/wrapper
@@ -34,7 +33,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Checkout Code
+      - name: 🚚 Checkout Code
         uses: actions/checkout@v4
 
       - name: Set up JDK
@@ -64,7 +63,7 @@ jobs:
           echo "TRAKT_CLIENT_SECRET=$TRAKT_CLIENT_SECRET" >> ./local.properties
           echo "TRAKT_REDIRECT_URI=$TRAKT_REDIRECT_URI" >> ./local.properties
 
-      - name: Build Android App
+      - name: 🤖 Build Android App
         run: |
           ./gradlew check \
             :android:app:assemble \
@@ -73,6 +72,7 @@ jobs:
             -x bundleNonMinifiedRelease \
             -Pandroidx.baselineprofile.skipgeneration=true \
             --no-configuration-cache
+
 
   android-lint:
     runs-on: ubuntu-latest
@@ -129,6 +129,7 @@ jobs:
           path: |
             **/build/reports/spotless
             app/build/reports/spotless
+
 
   dependency-health:
     runs-on: ubuntu-latest
@@ -283,101 +284,114 @@ jobs:
           name: common-test-report
           path: ./**/build/reports/tests/
 
-  # TODO: Uncomment this once we have a proper build lane
-  # build-ios:
-  #   needs: [common-test]
-  #   runs-on: macos-latest
-  #   steps:
-  #     - name: Checkout project
-  #       uses: actions/checkout@v4
+  build-ios:
+    runs-on: macos-14
+    timeout-minutes: 60
+    env:
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
 
-  #     - name: Setup Xcode
-  #       uses: maxim-lobanov/setup-xcode@v1
-  #       with:
-  #         xcode-version: ${{ env.XCODE_VERSION }}
+    steps:
+      - name: 🚚 Checkout project
+        uses: actions/checkout@v4
 
-  #     - name: Set up Ruby
-  #       uses: ruby/setup-ruby@v1
-  #       with:
-  #         ruby-version: 3.3.0
-  #         bundler-cache: true
+      - name: 📀 Setup Xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
 
-  #     - name: Cache SPM dependencies
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ${{ env.SPM_CACHE_PATH }}
-  #         key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-spm-
+      - name: 💎 Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
 
-  #     - name: Setup Gradle Cache
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ${{ env.GRADLE_CACHE_PATH }}
-  #         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-gradle-
+      - name: Cache SPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.SPM_CACHE_PATH }}
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
 
-  #     - name: Install dependencies with Bundler
-  #       run: bundle install
+      - name: 📦 Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GRADLE_CACHE_PATH }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-  #     - name: Build iOS App
-  #       run: bundle exec fastlane build_tvmaniac
+      - name: 🧹 Clear Derived Data
+        run: bundle exec fastlane clear_derived_data_lane
 
-  #     - name: Clear Derived Data
-  #       run: bundle exec fastlane clear_derived_data_lane
+      - name: 📦 Install dependencies with Bundler
+        run: bundle install
 
-  #     - name: Upload test results
-  #       uses: actions/upload-artifact@v4
-  #       if: failure()
-  #       with:
-  #         name: test-results
-  #         path: fastlane/test_output
+      - name: 🧱 Build iOS App
+        run: bundle exec fastlane build_tvmaniac
 
-#  ios-ui-test:
-#    needs: [common-test]
-#    runs-on: macos-latest
-#    steps:
-#      - name: Checkout project
-#        uses: actions/checkout@v4
-#
-#      - name: Setup Xcode
-#        uses: maxim-lobanov/setup-xcode@v1
-#        with:
-#          xcode-version: ${{ env.XCODE_VERSION }}
-#
-#      - name: Set up Ruby
-#        uses: ruby/setup-ruby@v1
-#        with:
-#          ruby-version: 3.3.0
-#          bundler-cache: true
-#
-#      - name: Cache SPM dependencies
-#        uses: actions/cache@v4
-#        with:
-#          path: ${{ env.SPM_CACHE_PATH }}
-#          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-#          restore-keys: |
-#            ${{ runner.os }}-spm-
-#
-#      - name: Setup Gradle Cache
-#        uses: actions/cache@v4
-#        with:
-#          path: ${{ env.GRADLE_CACHE_PATH }}
-#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-#          restore-keys: |
-#            ${{ runner.os }}-gradle-
-#
-#      - name: Install dependencies with Bundler
-#        run: bundle install
-#
-#      - name: Run UI Tests
-#        run: bundle exec fastlane ui_tests
-#
-#      - name: Upload test results
-#        uses: actions/upload-artifact@v4
-#        if: failure()
-#        with:
-#          name: test-results
-#          path: fastlane/test_output
-#
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-build
+          path: |
+            build/
+            fastlane/logs
+
+  ios-snapshot-test:
+    runs-on: macos-14
+    timeout-minutes: 60
+    env:
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
+
+    steps:
+      - name: 🚚 Checkout project
+        uses: actions/checkout@v4
+
+      - name: 📀 Setup Xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: 📱 List Available Simulators
+        run: xcrun simctl list devices
+
+      - name: 💎 Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - run: brew install swiftlint
+
+      - name: Cache SPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.SPM_CACHE_PATH }}
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: 📦 Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GRADLE_CACHE_PATH }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Install dependencies with Bundler
+        run: bundle install
+
+      - name: 📸 Run Snapshot Tests
+        run: bundle exec fastlane snapshot_tests
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: snapshot-test-results
+          path: |
+            fastlane/test_output
+            fastlane/logs
+            derived_data/Logs/Test
+

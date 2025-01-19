@@ -1,94 +1,83 @@
-fastlane_version "2.68.0"
-
 default_platform(:ios)
 
-XC_PROJECT = File.absolute_path('../ios/tv-maniac.xcodeproj')
-TEST_DEVICE = "iPhone 15 Pro (17.5)"
+# Set timeout for xcodebuild commands
+TEST_DEVICE = "iPhone 16 Pro (18.0)"
 
 platform :ios do
+
   before_all do
-    if is_ci
-      setup_ci
-      ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
-    end
+    setup_ci
+    ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "180"
+  end
+
+  desc "Run Snapshot Tests"
+  lane :snapshot_tests do
+    # Clear derived data first for clean state
+    clear_derived_data_lane
+
+    generate_xcframework
+
+    # Run SwiftUI Components snapshot tests
+    run_tests(
+      project: "ios/tv-maniac.xcodeproj",
+      scheme: "SwiftUIComponents",
+      device: TEST_DEVICE,
+      clean: true,
+      result_bundle: true,
+      xcargs: "-retry-tests-on-failure",
+      number_of_retries: 2,
+      fail_build: true,
+      derived_data_path: "derived_data"
+    )
+
+    # Run TvManiacUI snapshot tests
+    run_tests(
+      project: "ios/tv-maniac.xcodeproj",
+      scheme: "TvManiacUI",
+      device: TEST_DEVICE,
+      clean: true,
+      result_bundle: true,
+      xcargs: "-retry-tests-on-failure",
+      number_of_retries: 2,
+      fail_build: true,
+      derived_data_path: "derived_data"
+    )
   end
 
   desc "Build iOS App"
   lane :build_tvmaniac do
-
     # Clear derived data first
     clear_derived_data_lane
-    
-    # Clean and build
-    copy_debug_simulator_xcframework
-    
-    xcargs = {
-      :BUILD_LIBRARY_FOR_DISTRIBUTION => "NO",
-      :SKIP_INSTALL => "NO",
-      :APPTENTIVE_DISTRIBUTION => "Framework"
-    }
 
-    gym(
+    generate_xcframework
+
+    # Build the app
+    build_ios_app(
+      project: "ios/tv-maniac.xcodeproj",
       scheme: "tv-maniac",
-      project: XC_PROJECT,
-      output_directory: 'build',
-      include_symbols: true,
-      include_bitcode: false,
-      skip_archive: true,
-      skip_codesigning: true,
-      xcargs: xcargs,
+      configuration: "Debug",
+      destination: "platform=iOS Simulator,name=#{TEST_DEVICE}",
+      derived_data_path: "derived_data",
+      xcargs: "-skipPackagePluginValidation -resolvePackageDependencies",
+      output_directory: "build",
+      output_name: "tv-maniac-debug",
       buildlog_path: "fastlane/logs",
-      clean: true
+      clean: true,
+      skip_package_ipa: true,
+      skip_archive: true,
+      skip_codesigning: true
     )
-  end
-
-  desc "Run All UI Tests"
-  lane :ui_tests do
-    copy_debug_simulator_xcframework
-    swift_ui_components_tests
-    tvmaniac_ui_components_tests
-  end
-
-  desc "Run SwiftUIComponents Tests"
-  lane :swift_ui_components_tests do
-      run_tests(
-        project: XC_PROJECT,
-        scheme: "SwiftUIComponents",
-        device: TEST_DEVICE,
-        derived_data_path: "derived_data",
-        result_bundle: true,
-        output_directory: "fastlane/test_output/SwiftUIComponents",
-        output_types: "html,junit",
-        clean: true
-      )
-  end
-
-  desc "Run TvManiacUITests Tests"
-  lane :tvmaniac_ui_components_tests do
-      run_tests(
-        project: XC_PROJECT,
-        scheme: "TvManiacUITests",
-        device: TEST_DEVICE,
-        derived_data_path: "derived_data",
-        result_bundle: true,
-        output_directory: "fastlane/test_output/TvManiacUITests",
-        output_types: "html,junit",
-        clean: true
-      )
   end
 
   desc "Clear derived data"
   lane :clear_derived_data_lane do
-    UI.message("Clearing derived data...")
-    clear_derived_data
-  end
-
-  desc "Copy Debug Simulator XCFramework"
-  lane :copy_debug_simulator_xcframework do
-    gradle(
-      task: "shared:copyDebugSimulatorXCFramework",
-      project_dir: File.expand_path('../')
+    clear_derived_data(
+      derived_data_path: "derived_data"
     )
   end
 
+  desc "Generate XCFramework"
+  lane :generate_xcframework do
+    gradle(tasks: [":shared:copyXCFramework"])
+  end
 end
