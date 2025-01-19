@@ -24,7 +24,7 @@ platform :ios do
       device: TEST_DEVICE,
       clean: true,
       result_bundle: true,
-      xcargs: "-retry-tests-on-failure",
+      xcargs: "-retry-tests-on-failure -skipPackagePluginValidation",
       number_of_retries: 2,
       fail_build: true,
       derived_data_path: "derived_data"
@@ -37,7 +37,7 @@ platform :ios do
       device: TEST_DEVICE,
       clean: true,
       result_bundle: true,
-      xcargs: "-retry-tests-on-failure",
+      xcargs: "-retry-tests-on-failure -skipPackagePluginValidation",
       number_of_retries: 2,
       fail_build: true,
       derived_data_path: "derived_data"
@@ -65,7 +65,14 @@ platform :ios do
       clean: true,
       skip_package_ipa: true,
       skip_archive: true,
-      skip_codesigning: true
+      skip_codesigning: true,
+      export_method: "development",
+      export_options: {
+        method: "development",
+        signingStyle: "automatic",
+        compileBitcode: false,
+        provisioningProfiles: {}
+      }
     )
   end
 
