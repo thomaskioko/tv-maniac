@@ -353,6 +353,9 @@ jobs:
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
 
+      - name: 📱 List Available Simulators
+        run: xcrun simctl list devices
+
       - name: 💎 Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
