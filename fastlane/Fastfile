@@ -1,13 +1,14 @@
-fastlane_version "2.68.0"
-
 default_platform(:ios)
 
 # Set timeout for xcodebuild commands
 TEST_DEVICE = "iPhone 15 Pro (17.5)"
-ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "180"
-ENV["FASTLANE_XCODEBUILD_SETTINGS_RETRIES"] = "5"
 
 platform :ios do
+
+  before_all do
+    setup_ci
+    ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "180"
+  end
 
   desc "Run Snapshot Tests"
   lane :snapshot_tests do
