@@ -39,13 +39,13 @@ Build iOS App
 
 Clear derived data
 
-### ios gradle_tasks
+### ios generate_xcframework
 
 ```sh
-[bundle exec] fastlane ios gradle_tasks
+[bundle exec] fastlane ios generate_xcframework
 ```
 
-Run gradle tasks
+Generate XCFramework
 
 ----
 
