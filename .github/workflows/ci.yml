@@ -12,8 +12,7 @@ concurrency:
 
 env:
   JDK_VERSION: 21
-  DISTRIBUTION: 'zulu'
-  FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
+  DISTRIBUTION: 'temurin'
   XCODE_VERSION: '15.3'
   GRADLE_CACHE_PATH: |
     ~/.gradle/caches
@@ -286,7 +285,11 @@ jobs:
           path: ./**/build/reports/tests/
 
   build-ios:
-    runs-on: macos-latest
+    runs-on: macos-14
+    timeout-minutes: 60
+    env:
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
+
     steps:
       - name: 🚚 Checkout project
         uses: actions/checkout@v4
@@ -295,16 +298,6 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
-
-      - name: 🧰 Install xcbeautify
-        run: brew install xcbeautify
-
-      - name: 🔄 Clean SPM cache
-        run: |
-          rm -rf $HOME/Library/Developer/Xcode/DerivedData
-
-      - name: 🔍 Verify Xcode Path
-        run: xcode-select -p
 
       - name: 💎 Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -347,7 +340,11 @@ jobs:
             fastlane/logs
 
   ios-snapshot-test:
-    runs-on: macos-latest
+    runs-on: macos-14
+    timeout-minutes: 60
+    env:
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
+
     steps:
       - name: 🚚 Checkout project
         uses: actions/checkout@v4
@@ -362,6 +359,8 @@ jobs:
         with:
           ruby-version: 3.3.0
           bundler-cache: true
+
+      - run: brew install swiftlint
 
       - name: Cache SPM dependencies
         uses: actions/cache@v4
