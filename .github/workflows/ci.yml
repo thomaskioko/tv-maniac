@@ -74,6 +74,7 @@ jobs:
             --no-configuration-cache
 
 
+
   android-lint:
     runs-on: ubuntu-latest
     steps:
@@ -92,14 +93,14 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Lint Project
-        run: ./gradlew lint
+        run: ./gradlew :android:app:lintRelease
 
       - name: Upload Lint Report
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: android-lint-report
-          path: app/build/reports/lint-results*.html
+          path: '**/build/reports/lint-results-*.html'
 
   spotless:
     runs-on: ubuntu-latest
@@ -119,17 +120,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Run Spotless
-        run: ./gradlew spotlessCheck
-
-      - name: Upload Spotless Report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: spotless-report
-          path: |
-            **/build/reports/spotless
-            app/build/reports/spotless
-
+        run: ./gradlew spotlessCheck --no-configuration-cache
 
   dependency-health:
     runs-on: ubuntu-latest
@@ -151,12 +142,12 @@ jobs:
       - name: Dependency Health
         run: ./gradlew buildHealth
 
-      - name: Upload Dependency Report
+      - name: Upload Dependency health Report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: dependency-health-report
-          path: ./**/build/reports/tests/
+          path: '**/build/reports/dependency-analysis/build-health-report.txt'
 
   android-screenshot-test:
     runs-on: ubuntu-latest
@@ -215,7 +206,7 @@ jobs:
           commit_message: "🤖 Beep Beep: Update screenshots 🤖"
 
       - name: Upload screenshot results
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: screenshot-test-results
@@ -241,12 +232,13 @@ jobs:
       - name: Run JVM Tests
         run: ./gradlew jvmTest
 
-      - name: Upload Test Report
+      - name: Upload Test Reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: jvm-test-report
-          path: ./**/build/reports/tests/
+          name: test-report
+          path: '**/build/reports/*'
+
 
   common-test:
     runs-on: macos-latest
@@ -282,7 +274,7 @@ jobs:
         if: always()
         with:
           name: common-test-report
-          path: ./**/build/reports/tests/
+          path: '**/build/reports/*'
 
   build-ios:
     runs-on: macos-15
