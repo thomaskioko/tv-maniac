@@ -9,7 +9,7 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 
 fun Project.configureAndroid() {
-  android {
+  extensions.configure<BaseExtension> {
     compileSdkVersion(Versions.COMPILE_SDK)
 
     defaultConfig {
@@ -32,7 +32,7 @@ fun Project.configureAndroid() {
     }
   }
 
-  androidComponents {
+  extensions.configure(AndroidComponentsExtension::class.java) {
     beforeVariants(selector().withBuildType("release")) { variantBuilder ->
       (variantBuilder as? HasUnitTestBuilder)?.apply {
         enableUnitTest = false
@@ -43,10 +43,4 @@ fun Project.configureAndroid() {
   dependencies {
     add("coreLibraryDesugaring", libs.findLibrary("android-desugarJdkLibs").get())
   }
-}
-
-fun Project.android(action: BaseExtension.() -> Unit) = extensions.configure<BaseExtension>(action)
-
-private fun Project.androidComponents(action: AndroidComponentsExtension<*, *, *>.() -> Unit) {
-  extensions.configure(AndroidComponentsExtension::class.java, action)
 }

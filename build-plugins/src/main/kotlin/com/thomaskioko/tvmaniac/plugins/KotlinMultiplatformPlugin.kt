@@ -1,26 +1,24 @@
 package com.thomaskioko.tvmaniac.plugins
 
 import com.thomaskioko.tvmaniac.extensions.configureKotlinJvm
-import com.thomaskioko.tvmaniac.extensions.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import java.util.Locale
 
-class KotlinMultiplatformConventionPlugin : Plugin<Project> {
+class KotlinMultiplatformPlugin : Plugin<Project> {
   override fun apply(target: Project) = with(target) {
     with(pluginManager) {
       apply("org.jetbrains.kotlin.multiplatform")
       apply("com.autonomousapps.dependency-analysis")
     }
 
-    version = libs.findVersion("shared-module-version")
+    configureKotlinJvm()
 
     extensions.configure<KotlinMultiplatformExtension> {
       applyDefaultHierarchyTemplate()
@@ -75,23 +73,6 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
         }
       }
     }
-
-    configureKotlinJvm()
-
-    target.afterEvaluate {
-      // Remove log pollution until Android support in KMP improves.
-      extensions.findByType<KotlinMultiplatformExtension>()?.let { kmpExt ->
-        kmpExt.sourceSets.removeAll {
-          setOf(
-            "androidAndroidTestRelease",
-            "androidTestFixtures",
-            "androidTestFixturesDebug",
-            "androidTestFixturesRelease",
-            "androidTestFixturesDemo",
-          ).contains(it.name)
-        }
-      }
-    }
   }
 }
 
@@ -106,6 +87,7 @@ fun Project.addLanguageArgs(vararg args: String) {
 }
 
 fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("", dependencyNotation)
+
 private fun Project.addKspDependencyForAllTargets(
   configurationNameSuffix: String,
   dependencyNotation: Any,
