@@ -3,10 +3,10 @@ package com.thomaskioko.tvmaniac.ui.discover
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,6 +41,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -49,21 +51,23 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.lerp
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
+import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
+import com.thomaskioko.tvmaniac.compose.components.ParallaxCarouselImage
+import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
-import com.thomaskioko.tvmaniac.compose.components.PosterCard
-import com.thomaskioko.tvmaniac.compose.extensions.verticalGradientScrim
 import com.thomaskioko.tvmaniac.compose.theme.MinContrastOfPrimaryVsSurface
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
@@ -87,7 +91,6 @@ import com.thomaskioko.tvmaniac.presentation.discover.UpComingClicked
 import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import kotlin.math.absoluteValue
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -123,17 +126,18 @@ internal fun DiscoverScreen(
   when (state) {
     Loading ->
       LoadingIndicator(
-        modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
+        modifier = Modifier
+          .fillMaxSize()
+          .wrapContentSize(Alignment.Center),
       )
     EmptyState ->
       EmptyContent(
         modifier = modifier,
         imageVector = Icons.Filled.Movie,
-        title =  stringResource(R.string.generic_empty_content),
+        title = stringResource(R.string.generic_empty_content),
         message = stringResource(R.string.missing_api_key),
         buttonText = stringResource(id = R.string.generic_retry),
-        onClick = { onAction(ReloadData)
-                  },
+        onClick = { onAction(ReloadData) },
       )
     is DataLoaded ->
       DiscoverContent(
@@ -145,6 +149,9 @@ internal fun DiscoverScreen(
       )
     is ErrorState ->
       ErrorUi(
+        modifier = Modifier
+          .fillMaxSize()
+          .wrapContentSize(Alignment.Center),
         errorIcon = {
           Image(
             modifier = Modifier.size(120.dp),
@@ -155,7 +162,6 @@ internal fun DiscoverScreen(
         },
         errorMessage = state.errorMessage,
         onRetry = { onAction(ReloadData) },
-        modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
       )
   }
 }
@@ -177,16 +183,18 @@ private fun DiscoverContent(
         )
       when (snackBarResult) {
         SnackbarResult.ActionPerformed,
-        SnackbarResult.Dismissed, -> onAction(SnackBarDismissed)
+        SnackbarResult.Dismissed,
+          -> onAction(SnackBarDismissed)
       }
     }
   }
 
-  val pullRefreshState =
-    rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
+  val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
 
   Box(
-    modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState),
+    modifier = Modifier
+      .fillMaxSize()
+      .pullRefresh(pullRefreshState),
     contentAlignment = Alignment.BottomCenter,
   ) {
     LazyColumn(
@@ -246,7 +254,7 @@ private fun DiscoverContent(
       modifier = Modifier.align(Alignment.TopCenter),
       scale = true,
       backgroundColor = MaterialTheme.colorScheme.background,
-      contentColor = MaterialTheme.colorScheme.secondary
+      contentColor = MaterialTheme.colorScheme.secondary,
     )
 
     SnackbarHost(hostState = snackBarHostState)
@@ -260,6 +268,7 @@ fun DiscoverHeaderContent(
   modifier: Modifier = Modifier,
   onShowClicked: (Long) -> Unit,
 ) {
+
   val selectedImageUrl = showList.getOrNull(pagerState.currentPage)?.posterImageUrl
 
   DynamicColorContainer(selectedImageUrl) {
@@ -269,17 +278,13 @@ fun DiscoverHeaderContent(
           WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
         ),
     ) {
-      val backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
 
-      HorizontalPagerItem(
-        list = showList,
+      PosterCardsPager(
         pagerState = pagerState,
-        backgroundColor = backgroundColor,
+        list = showList,
         onClick = onShowClicked,
       )
     }
-
-    Spacer(modifier = Modifier.height(16.dp))
   }
 }
 
@@ -308,66 +313,35 @@ private fun DynamicColorContainer(
   }
 }
 
+
 @Composable
-fun HorizontalPagerItem(
-  list: ImmutableList<DiscoverShow>,
+fun PosterCardsPager(
   pagerState: PagerState,
-  backgroundColor: Color,
+  list: ImmutableList<DiscoverShow>,
   modifier: Modifier = Modifier,
   onClick: (Long) -> Unit,
 ) {
-  Column(
-    modifier =
-      modifier
-        .windowInsetsPadding(
-          WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
-        )
-        .fillMaxWidth()
-        .verticalGradientScrim(
-          color = backgroundColor,
-          startYPercentage = 1f,
-          endYPercentage = 0.5f,
-        )
-        .padding(top = 84.dp),
-  ) {
+  val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+  val pagerHeight = screenHeight / 1.5f
+  Box {
     HorizontalPager(
+      modifier = modifier
+        .fillMaxWidth()
+        .height(pagerHeight),
       state = pagerState,
-      beyondViewportPageCount = 2,
-      contentPadding = PaddingValues(horizontal = 45.dp),
-      modifier = Modifier.fillMaxSize(),
-    ) { pageNumber ->
-      Box(
-        modifier =
-          Modifier.graphicsLayer {
-            val pageOffset =
-              ((pagerState.currentPage - pageNumber) + pagerState.currentPageOffsetFraction)
-                .absoluteValue
+      verticalAlignment = Alignment.Bottom,
+    ) { currentPage ->
 
-            // We animate the scaleX + scaleY, between 85% and 100%
-            lerp(
-                start = 0.85f,
-                stop = 1f,
-                fraction = 1f - pageOffset.coerceIn(0f, 1f),
-              )
-              .also { scale ->
-                scaleX = scale
-                scaleY = scale
-              }
-
-            // We animate the alpha, between 50% and 100%
-            alpha =
-              lerp(
-                start = 0.5f,
-                stop = 1f,
-                fraction = 1f - pageOffset.coerceIn(0f, 1f),
-              )
-          }
+      ParallaxCarouselImage(
+        state = pagerState,
+        currentPage = currentPage,
+        imageUrl = list[currentPage].posterImageUrl,
+        modifier = Modifier
+          .clickable(onClick = { onClick(list[currentPage].tmdbId) }),
       ) {
-        PosterCard(
-          title = list[pageNumber].title,
-          imageUrl = list[pageNumber].posterImageUrl,
-          onClick = { onClick(list[pageNumber].tmdbId) },
-          modifier = Modifier.fillMaxWidth(),
+        ShowCardOverlay(
+          title = list[currentPage].title,
+          overview = list[currentPage].overView,
         )
       }
     }
@@ -377,29 +351,89 @@ fun HorizontalPagerItem(
         snapshotFlow { pagerState.currentPage }.collect { page -> pagerState.scrollToPage(page) }
       }
 
-      Row(
-        Modifier.height(50.dp)
-          .fillMaxWidth()
-          .align(Alignment.CenterHorizontally)
-          .padding(top = 16.dp),
-        horizontalArrangement = Arrangement.Center,
-      ) {
-        repeat(list.size) { iteration ->
-          val color =
-            if (pagerState.currentPage == iteration) {
-              MaterialTheme.colorScheme.primary
-            } else {
-              MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
-            }
+      CircularIndicator(
+        modifier = Modifier
+          .align(Alignment.BottomCenter),
+        size = list.size,
+        currentPage = pagerState.currentPage,
+      )
+    }
+  }
+}
 
-          Box(
-            modifier = Modifier.padding(2.dp).clip(CircleShape).background(color).size(8.dp),
-          )
-        }
+@Composable
+private fun CircularIndicator(
+  size: Int,
+  currentPage: Int,
+  modifier: Modifier = Modifier,
+) {
+  Row(
+    modifier = modifier
+      .fillMaxWidth()
+      .padding(bottom = 8.dp),
+    horizontalArrangement = Arrangement.Center,
+    verticalAlignment = Alignment.CenterVertically,
+  ) {
+    repeat(size) { iteration ->
+      val color = if (currentPage == iteration) MaterialTheme.colorScheme.surface else Color.Gray
+      val size = if (currentPage == iteration) 10.dp else 6.dp
+
+      Box(
+        modifier = Modifier
+          .padding(2.dp)
+          .clip(CircleShape)
+          .size(size)
+          .background(color),
+      )
+    }
+  }
+}
+
+@Composable
+private fun ShowCardOverlay(
+  title: String,
+  overview: String?,
+) {
+  Box(
+    modifier = Modifier
+      .fillMaxSize()
+      .background(
+        Brush.verticalGradient(
+          listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
+          startY = 500f,
+          endY = 1000f,
+        ),
+      ),
+  ) {
+    Column(
+      modifier = Modifier
+        .align(Alignment.BottomCenter)
+        .offset(y = -(20).dp)
+        .padding(16.dp),
+      horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+
+      Text(
+        text = title,
+        style = MaterialTheme.typography.headlineLarge,
+        color = MaterialTheme.colorScheme.surface,
+        overflow = TextOverflow.Ellipsis,
+        maxLines = 1,
+      )
+
+      Spacer(modifier = Modifier.height(8.dp))
+
+      overview?.let {
+        ExpandingText(
+          text = overview,
+          textStyle = MaterialTheme.typography.labelLarge,
+          color = MaterialTheme.colorScheme.surface,
+        )
       }
     }
   }
 }
+
 
 @Composable
 private fun HorizontalRowContent(
@@ -411,7 +445,9 @@ private fun HorizontalRowContent(
   AnimatedVisibility(visible = tvShows.isNotEmpty()) {
     Column {
       BoxTextItems(
-        modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(start = 16.dp),
         title = category,
         label = stringResource(id = R.string.str_more),
         onMoreClicked = onMoreClicked,
