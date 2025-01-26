@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.compose.components
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,11 +9,15 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LibraryAddCheck
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -24,8 +29,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
@@ -138,6 +145,42 @@ private fun TvManiacButtonContent(
     ),
   ) {
     text()
+  }
+}
+
+@Composable
+fun ScrimButton(
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  show: Boolean = false,
+  alpha: Float = 0.4f,
+  content: @Composable () -> Unit,
+) {
+  val isLight = MaterialTheme.colorScheme.surface.luminance() > 0.5
+  TvManiacTheme(darkTheme = if (!show) isLight else !isLight) {
+    IconButton(
+      onClick = onClick,
+      modifier = modifier.iconButtonBackgroundScrim(enabled = !show, alpha = alpha),
+    ) {
+      content()
+    }
+  }
+}
+
+@Composable
+fun RefreshButton(
+  isRefreshing: Boolean,
+  modifier: Modifier = Modifier,
+  content: @Composable () -> Unit,
+) {
+  Crossfade(isRefreshing, label = "ActionButtonCrossfade") { targetRefreshing ->
+    if (targetRefreshing) {
+      AutoSizedCircularProgressIndicator(
+        modifier = modifier
+      )
+    } else {
+      content()
+    }
   }
 }
 
