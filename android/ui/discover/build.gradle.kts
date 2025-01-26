@@ -30,6 +30,7 @@ addCompilerOptInArgs(
     listOf(
         "androidx.compose.foundation.ExperimentalFoundationApi",
         "androidx.compose.material.ExperimentalMaterialApi",
+        "androidx.compose.material3.ExperimentalMaterial3Api",
         "dev.chrisbanes.snapper.ExperimentalSnapperApi",
     ),
 )

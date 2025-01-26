@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.ui.discover
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +25,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -32,10 +35,12 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -47,7 +52,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,6 +64,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
+import com.thomaskioko.tvmaniac.compose.components.CollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -73,6 +78,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
 import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
 import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
+import com.thomaskioko.tvmaniac.presentation.discover.AccountClicked
 import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowAction
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
@@ -92,6 +98,7 @@ import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.resources.R
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.delay
 
 @Composable
 fun DiscoverScreen(
@@ -101,7 +108,6 @@ fun DiscoverScreen(
   val discoverState by presenter.state.collectAsState()
   val pagerState =
     rememberPagerState(
-      initialPage = 2,
       pageCount = { (discoverState as? DataLoaded)?.featuredShows?.size ?: 0 },
     )
   val snackBarHostState = remember { SnackbarHostState() }
@@ -144,7 +150,7 @@ internal fun DiscoverScreen(
         modifier = modifier,
         pagerState = pagerState,
         snackBarHostState = snackBarHostState,
-        state = state,
+        dataLoadedState = state,
         onAction = onAction,
       )
     is ErrorState ->
@@ -168,14 +174,14 @@ internal fun DiscoverScreen(
 
 @Composable
 private fun DiscoverContent(
-  state: DataLoaded,
+  dataLoadedState: DataLoaded,
   snackBarHostState: SnackbarHostState,
   pagerState: PagerState,
   onAction: (DiscoverShowAction) -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  LaunchedEffect(key1 = state.errorMessage) {
-    state.errorMessage?.let {
+  LaunchedEffect(key1 = dataLoadedState.errorMessage) {
+    dataLoadedState.errorMessage?.let {
       val snackBarResult =
         snackBarHostState.showSnackbar(
           message = it,
@@ -190,66 +196,23 @@ private fun DiscoverContent(
   }
 
   val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
+  val listState = rememberLazyListState()
 
   Box(
     modifier = Modifier
       .fillMaxSize()
       .pullRefresh(pullRefreshState),
-    contentAlignment = Alignment.BottomCenter,
   ) {
-    LazyColumn(
-      modifier =
-        modifier
-          .fillMaxSize()
-          .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
-    ) {
-      item {
-        DiscoverHeaderContent(
-          pagerState = pagerState,
-          showList = state.featuredShows,
-          onShowClicked = { onAction(ShowClicked(it)) },
-        )
-      }
-
-      item {
-        HorizontalRowContent(
-          category = stringResource(id = R.string.title_category_upcoming),
-          tvShows = state.upcomingShows,
-          onItemClicked = { onAction(ShowClicked(it)) },
-          onMoreClicked = { onAction(UpComingClicked) },
-        )
-      }
-
-      item {
-        HorizontalRowContent(
-          category = stringResource(id = R.string.title_category_trending_today),
-          tvShows = state.trendingToday,
-          onItemClicked = { onAction(ShowClicked(it)) },
-          onMoreClicked = { onAction(TrendingClicked) },
-        )
-      }
-
-      item {
-        HorizontalRowContent(
-          category = stringResource(id = R.string.title_category_popular),
-          tvShows = state.popularShows,
-          onItemClicked = { onAction(ShowClicked(it)) },
-          onMoreClicked = { onAction(PopularClicked) },
-        )
-      }
-
-      item {
-        HorizontalRowContent(
-          category = stringResource(id = R.string.title_category_top_rated),
-          tvShows = state.topRatedShows,
-          onItemClicked = { onAction(ShowClicked(it)) },
-          onMoreClicked = { onAction(TopRatedClicked) },
-        )
-      }
-    }
+    LazyColumnContent(
+      modifier = modifier,
+      pagerState = pagerState,
+      dataLoadedState = dataLoadedState,
+      listState = listState,
+      onAction = onAction,
+    )
 
     PullRefreshIndicator(
-      refreshing = state.isRefreshing,
+      refreshing = dataLoadedState.isRefreshing,
       state = pullRefreshState,
       modifier = Modifier.align(Alignment.TopCenter),
       scale = true,
@@ -257,7 +220,93 @@ private fun DiscoverContent(
       contentColor = MaterialTheme.colorScheme.secondary,
     )
 
+    CollapsableTopAppBar(
+      listState = listState,
+      title = {
+        Text(
+          text = "Discover",
+          style = MaterialTheme.typography.titleLarge.copy(
+            color = MaterialTheme.colorScheme.onSurface,
+          ),
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+          modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+        )
+      },
+      primaryActionIcon = {
+        Icon(
+          imageVector = Icons.Default.Person,
+          contentDescription = null,
+          tint = MaterialTheme.colorScheme.onBackground,
+        )
+      },
+      onPrimaryIconPressed = {
+       onAction(AccountClicked)
+      }
+    )
+
     SnackbarHost(hostState = snackBarHostState)
+  }
+}
+
+@Composable
+private fun LazyColumnContent(
+  pagerState: PagerState,
+  dataLoadedState: DataLoaded,
+  listState: LazyListState,
+  modifier: Modifier = Modifier,
+  onAction: (DiscoverShowAction) -> Unit,
+) {
+  LazyColumn(
+    modifier =
+      modifier
+        .fillMaxSize()
+        .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
+    state = listState,
+  ) {
+    item {
+      DiscoverHeaderContent(
+        pagerState = pagerState,
+        showList = dataLoadedState.featuredShows,
+        onShowClicked = { onAction(ShowClicked(it)) },
+      )
+    }
+
+    item {
+      HorizontalRowContent(
+        category = stringResource(id = R.string.title_category_upcoming),
+        tvShows = dataLoadedState.upcomingShows,
+        onItemClicked = { onAction(ShowClicked(it)) },
+        onMoreClicked = { onAction(UpComingClicked) },
+      )
+    }
+
+    item {
+      HorizontalRowContent(
+        category = stringResource(id = R.string.title_category_trending_today),
+        tvShows = dataLoadedState.trendingToday,
+        onItemClicked = { onAction(ShowClicked(it)) },
+        onMoreClicked = { onAction(TrendingClicked) },
+      )
+    }
+
+    item {
+      HorizontalRowContent(
+        category = stringResource(id = R.string.title_category_popular),
+        tvShows = dataLoadedState.popularShows,
+        onItemClicked = { onAction(ShowClicked(it)) },
+        onMoreClicked = { onAction(PopularClicked) },
+      )
+    }
+
+    item {
+      HorizontalRowContent(
+        category = stringResource(id = R.string.title_category_top_rated),
+        tvShows = dataLoadedState.topRatedShows,
+        onItemClicked = { onAction(ShowClicked(it)) },
+        onMoreClicked = { onAction(TopRatedClicked) },
+      )
+    }
   }
 }
 
@@ -347,8 +396,25 @@ fun PosterCardsPager(
     }
 
     if (list.isNotEmpty()) {
-      LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page -> pagerState.scrollToPage(page) }
+      LaunchedEffect(Unit) {
+        while (true) {
+          delay(4_500)
+
+          // Animate to next page with custom animation spec
+          val nextPage = if (pagerState.currentPage + 1 < list.size) {
+            pagerState.currentPage + 1
+          } else {
+            0
+          }
+
+          pagerState.animateScrollToPage(
+            page = nextPage,
+            animationSpec = tween(
+              durationMillis = 800,
+              easing = FastOutSlowInEasing
+            )
+          )
+        }
       }
 
       CircularIndicator(

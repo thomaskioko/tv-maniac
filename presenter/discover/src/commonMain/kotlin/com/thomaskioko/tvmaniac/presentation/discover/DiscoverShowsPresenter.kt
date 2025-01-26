@@ -103,6 +103,9 @@ class DiscoverShowsPresenter(
             )
           }
         }
+        AccountClicked -> {
+          //TODO:: Add implementation.
+        }
       }
     }
 
