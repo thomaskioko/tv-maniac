@@ -73,11 +73,7 @@ import com.thomaskioko.tvmaniac.compose.components.ParallaxCarouselImage
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
-import com.thomaskioko.tvmaniac.compose.theme.MinContrastOfPrimaryVsSurface
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.compose.theme.contrastAgainst
-import com.thomaskioko.tvmaniac.compose.util.DynamicThemePrimaryColorsFromImage
-import com.thomaskioko.tvmaniac.compose.util.rememberDominantColorState
 import com.thomaskioko.tvmaniac.presentation.discover.AccountClicked
 import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowAction
@@ -318,47 +314,17 @@ fun DiscoverHeaderContent(
   onShowClicked: (Long) -> Unit,
 ) {
 
-  val selectedImageUrl = showList.getOrNull(pagerState.currentPage)?.posterImageUrl
-
-  DynamicColorContainer(selectedImageUrl) {
-    Column(
-      modifier =
-        modifier.windowInsetsPadding(
-          WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
-        ),
-    ) {
-
-      PosterCardsPager(
-        pagerState = pagerState,
-        list = showList,
-        onClick = onShowClicked,
-      )
-    }
-  }
-}
-
-@Composable
-private fun DynamicColorContainer(
-  selectedImageUrl: String?,
-  content: @Composable () -> Unit,
-) {
-  val surfaceColor = MaterialTheme.colorScheme.surface
-  val dominantColorState = rememberDominantColorState { color ->
-    // We want a color which has sufficient contrast against the surface color
-    color.contrastAgainst(surfaceColor) >= MinContrastOfPrimaryVsSurface
-  }
-
-  DynamicThemePrimaryColorsFromImage(dominantColorState) {
-    // When the selected image url changes, call updateColorsFromImageUrl() or reset()
-    LaunchedEffect(selectedImageUrl) {
-      if (selectedImageUrl != null) {
-        dominantColorState.updateColorsFromImageUrl(selectedImageUrl)
-      } else {
-        dominantColorState.reset()
-      }
-    }
-
-    content()
+  Column(
+    modifier =
+      modifier.windowInsetsPadding(
+        WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
+      ),
+  ) {
+    PosterCardsPager(
+      pagerState = pagerState,
+      list = showList,
+      onClick = onShowClicked,
+    )
   }
 }
 
@@ -441,7 +407,7 @@ private fun CircularIndicator(
     verticalAlignment = Alignment.CenterVertically,
   ) {
     repeat(size) { iteration ->
-      val color = if (currentPage == iteration) MaterialTheme.colorScheme.surface else Color.Gray
+      val color = if (currentPage == iteration) MaterialTheme.colorScheme.onSecondary else Color.Gray
       val size = if (currentPage == iteration) 10.dp else 6.dp
 
       Box(
@@ -482,7 +448,7 @@ private fun ShowCardOverlay(
       Text(
         text = title,
         style = MaterialTheme.typography.headlineLarge,
-        color = MaterialTheme.colorScheme.surface,
+        color = MaterialTheme.colorScheme.onSecondary,
         overflow = TextOverflow.Ellipsis,
         maxLines = 1,
       )
@@ -493,7 +459,7 @@ private fun ShowCardOverlay(
         ExpandingText(
           text = overview,
           textStyle = MaterialTheme.typography.labelLarge,
-          color = MaterialTheme.colorScheme.surface,
+          color = MaterialTheme.colorScheme.onSecondary,
         )
       }
     }

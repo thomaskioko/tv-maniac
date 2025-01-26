@@ -13,6 +13,7 @@ val discoverShow =
     tmdbId = 84958,
     title = "Loki",
     posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+    overView = "After stealing the Tesseract during the events of “Avengers: Endgame,” an "
   )
 
 val discoverContentSuccess =
