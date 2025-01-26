@@ -115,7 +115,7 @@ constructor(
           },
           { result ->
             updateState(
-              result?.toShowDetails(),
+              result.toShowDetails(),
               isWebViewInstalled,
               showMetadataResult,
               additionalContentResult
@@ -171,7 +171,7 @@ constructor(
               recommendedShowList = additionalContent.recommendedShows,
               trailersList = additionalContent.trailers,
               openTrailersInYoutube =
-                (currentState.showInfo as? ShowInfoState.Loaded)?.openTrailersInYoutube ?: false,
+                (currentState.showInfo as? ShowInfoState.Loaded)?.openTrailersInYoutube == true,
               selectedSeasonIndex =
                 (currentState.showInfo as? ShowInfoState.Loaded)?.selectedSeasonIndex ?: 0
             )

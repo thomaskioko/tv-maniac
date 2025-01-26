@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,10 +28,12 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.LibraryAdd
 import androidx.compose.material.icons.filled.LibraryAddCheck
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -69,21 +70,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
-import com.thomaskioko.tvmaniac.compose.components.CollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
+import com.thomaskioko.tvmaniac.compose.components.PosterCard
+import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvManiacChip
 import com.thomaskioko.tvmaniac.compose.components.TvManiacOutlinedButton
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTextButton
-import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -95,8 +95,8 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.FollowShowClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.ReloadShowDetails
 import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsAction
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsContent
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowInfoState
 import com.thomaskioko.tvmaniac.presentation.showdetails.WatchTrailerClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Casts
@@ -124,7 +124,7 @@ fun ShowDetailsScreen(
   ShowDetailsScreen(
     modifier = modifier,
     state = state,
-    title = (state as? ShowDetailsContent)?.showDetails?.title ?: "",
+    title = state.showDetails?.title ?: "",
     snackBarHostState = snackBarHostState,
     listState = listState,
     onAction = presenter::dispatch,
@@ -160,7 +160,8 @@ internal fun ShowDetailsScreen(
             )
           when (actionResult) {
             SnackbarResult.ActionPerformed,
-            SnackbarResult.Dismissed, -> {
+            SnackbarResult.Dismissed,
+              -> {
               onAction(DismissErrorSnackbar)
             }
           }
@@ -177,7 +178,9 @@ internal fun ShowDetailsScreen(
           )
         } else if (!state.isUpdating && state.errorMessage != null) {
           ErrorUi(
-            modifier = Modifier.fillMaxSize().padding(top = 16.dp),
+            modifier = Modifier
+              .fillMaxSize()
+              .padding(top = 16.dp),
             errorMessage = stringResource(R.string.generic_error_message),
             onRetry = { onAction(ReloadShowDetails) },
             errorIcon = {
@@ -192,13 +195,37 @@ internal fun ShowDetailsScreen(
           )
         }
 
-        CollapsableTopAppBar(
+        RefreshCollapsableTopAppBar(
           listState = listState,
-          title = title,
-          isUpdating = state.isUpdating || state.showInfo is ShowInfoState.Loading,
+          title = {
+            Text(
+              text = title,
+              style =
+                MaterialTheme.typography.titleMedium.copy(
+                  color = MaterialTheme.colorScheme.onSurface,
+                ),
+              maxLines = 1,
+              overflow = TextOverflow.Ellipsis,
+            )
+          },
+          navigationIcon = {
+            Icon(
+              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+              contentDescription = stringResource(R.string.cd_navigate_back),
+              tint = MaterialTheme.colorScheme.onBackground,
+            )
+          },
+          actionIcon = {
+            Icon(
+              imageVector = Icons.Default.Refresh,
+              contentDescription = null,
+              tint = MaterialTheme.colorScheme.onBackground,
+            )
+          },
+          isRefreshing = state.isUpdating || state.showInfo is ShowInfoState.Loading,
           showActionIcon = state.showInfo != ShowInfoState.Empty,
-          onNavIconPressed = { onAction(DetailBackClicked) },
-          onActionIconPressed = { onAction(ReloadShowDetails) },
+          onNavIconClicked = { onAction(DetailBackClicked) },
+          onActionIconClicked = { onAction(ReloadShowDetails) },
         )
       }
     },
@@ -220,7 +247,6 @@ fun LazyColumnContent(
   ) {
     item {
       HeaderContent(
-        listState = listState,
         show = detailsContent.showDetails,
         onUpdateFavoriteClicked = { onAction(FollowShowClicked(it)) },
         onWatchTrailerClicked = { onAction(WatchTrailerClicked(it)) },
@@ -243,7 +269,9 @@ private fun EmptyInfoContent(
 ) {
   Column {
     ErrorUi(
-      modifier = modifier.fillMaxWidth().padding(top = 16.dp),
+      modifier = modifier
+        .fillMaxWidth()
+        .padding(top = 16.dp),
       errorMessage = stringResource(R.string.generic_error_message),
       onRetry = { onAction(ReloadShowDetails) },
     )
@@ -260,14 +288,17 @@ private fun ShowInfoContent(
 ) {
   when (showInfoState) {
     ShowInfoState.Empty,
-    ShowInfoState.Loading ->
+    ShowInfoState.Loading,
+      ->
       LoadingIndicator(
-        modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
+        modifier = Modifier
+          .fillMaxSize()
+          .wrapContentSize(Alignment.Center),
       )
     is ShowInfoState.Error ->
       EmptyInfoContent(
         modifier = Modifier.fillMaxSize(),
-        onAction = { onAction(ReloadShowDetails) }
+        onAction = { onAction(ReloadShowDetails) },
       )
     is ShowInfoState.Loaded -> {
       Column(modifier = modifier.fillMaxWidth()) {
@@ -305,27 +336,20 @@ private fun ShowInfoContent(
 @Composable
 private fun HeaderContent(
   show: ShowDetails?,
-  listState: LazyListState,
   onUpdateFavoriteClicked: (Boolean) -> Unit,
   onWatchTrailerClicked: (Long) -> Unit,
 ) {
   Box(
     modifier =
-      Modifier.fillMaxWidth().height(HEADER_HEIGHT).clipToBounds().offset {
-        IntOffset(
-          x = 0,
-          y =
-            if (listState.firstVisibleItemIndex == 0) {
-              listState.firstVisibleItemScrollOffset / 2
-            } else {
-              0
-            },
-        )
-      },
+      Modifier
+        .fillMaxWidth()
+        .height(HEADER_HEIGHT),
   ) {
     KenBurnsViewImage(
       imageUrl = show?.backdropImageUrl,
-      modifier = Modifier.fillMaxSize().clipToBounds(),
+      modifier = Modifier
+        .fillMaxSize()
+        .clipToBounds(),
     )
 
     if (show != null) {
@@ -348,7 +372,8 @@ private fun Body(
 
   Box(
     modifier =
-      Modifier.fillMaxSize()
+      Modifier
+        .fillMaxSize()
         .clipToBounds()
         .background(Brush.verticalGradient(surfaceGradient))
         .padding(horizontal = 16.dp),
@@ -531,7 +556,9 @@ fun ShowDetailButtons(
     horizontalArrangement = Arrangement.Center,
   ) {
     TvManiacOutlinedButton(
-      modifier = Modifier.fillMaxWidth().weight(1f),
+      modifier = Modifier
+        .fillMaxWidth()
+        .weight(1f),
       leadingIcon = {
         Image(
           imageVector =
@@ -563,7 +590,9 @@ fun ShowDetailButtons(
     Spacer(modifier = Modifier.width(8.dp))
 
     TvManiacOutlinedButton(
-      modifier = Modifier.fillMaxWidth().weight(1f),
+      modifier = Modifier
+        .fillMaxWidth()
+        .weight(1f),
       leadingIcon = {
         Image(
           imageVector = Icons.Filled.Movie,
@@ -662,7 +691,8 @@ fun WatchProvider(
 
         Card(
           modifier =
-            Modifier.size(width = 80.dp, height = 60.dp)
+            Modifier
+              .size(width = 80.dp, height = 60.dp)
               .padding(
                 end = if (index == list.size - 1) 16.dp else 8.dp,
               ),
@@ -677,7 +707,10 @@ fun WatchProvider(
             model = tvShow.logoUrl,
             contentDescription = tvShow.name,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxWidth().aspectRatio(1f).animateItem(),
+            modifier = Modifier
+              .fillMaxWidth()
+              .aspectRatio(1f)
+              .animateItem(),
           )
         }
       }
@@ -718,25 +751,33 @@ private fun CastContent(
               ),
           ) {
             Box(
-              modifier = Modifier.fillMaxSize().size(width = 120.dp, height = 160.dp),
+              modifier = Modifier
+                .fillMaxSize()
+                .size(width = 120.dp, height = 160.dp),
               contentAlignment = Alignment.BottomStart,
             ) {
               AsyncImageComposable(
                 model = cast.profileUrl,
                 contentDescription = cast.name,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth().animateItem(),
+                modifier = Modifier
+                  .fillMaxWidth()
+                  .animateItem(),
               )
 
               Box(
-                modifier = Modifier.matchParentSize().background(contentBackgroundGradient()),
+                modifier = Modifier
+                  .matchParentSize()
+                  .background(contentBackgroundGradient()),
               )
               Column(
                 modifier = Modifier.padding(8.dp),
               ) {
                 Text(
                   text = cast.name,
-                  modifier = Modifier.padding(vertical = 2.dp).wrapContentWidth(),
+                  modifier = Modifier
+                    .padding(vertical = 2.dp)
+                    .wrapContentWidth(),
                   overflow = TextOverflow.Ellipsis,
                   maxLines = 1,
                   style =
@@ -796,7 +837,7 @@ private fun TrailersContent(
               CardDefaults.cardElevation(
                 defaultElevation = 4.dp,
               ),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
           ) {
             Box {
               AsyncImageComposable(
@@ -804,32 +845,39 @@ private fun TrailersContent(
                 contentDescription = trailer.name,
                 contentScale = ContentScale.Crop,
                 modifier =
-                  Modifier.height(140.dp).aspectRatio(3 / 1.5f).drawWithCache {
-                    val gradient =
-                      Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color.Black),
-                        startY = size.height / 3,
-                        endY = size.height,
-                      )
-                    onDrawWithContent {
-                      drawContent()
-                      drawRect(gradient, blendMode = BlendMode.Multiply)
-                    }
-                  },
+                  Modifier
+                    .height(140.dp)
+                    .aspectRatio(3 / 1.5f)
+                    .drawWithCache {
+                      val gradient =
+                        Brush.verticalGradient(
+                          colors = listOf(Color.Transparent, Color.Black),
+                          startY = size.height / 3,
+                          endY = size.height,
+                        )
+                      onDrawWithContent {
+                        drawContent()
+                        drawRect(gradient, blendMode = BlendMode.Multiply)
+                      }
+                    },
               )
 
               Icon(
                 imageVector = Icons.Filled.PlayCircle,
                 contentDescription = trailer.name,
                 tint = MaterialTheme.colorScheme.onSecondary,
-                modifier = Modifier.align(Alignment.Center).size(48.dp),
+                modifier = Modifier
+                  .align(Alignment.Center)
+                  .size(48.dp),
               )
             }
           }
 
           Text(
             text = trailer.name,
-            modifier = Modifier.padding(vertical = 8.dp).widthIn(0.dp, 280.dp),
+            modifier = Modifier
+              .padding(vertical = 8.dp)
+              .widthIn(0.dp, 280.dp),
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
             style =
