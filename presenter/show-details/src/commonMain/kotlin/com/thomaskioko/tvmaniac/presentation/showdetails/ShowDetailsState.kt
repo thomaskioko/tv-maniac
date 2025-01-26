@@ -11,6 +11,7 @@ import kotlinx.collections.immutable.ImmutableList
 data class ShowDetailsContent(
   val errorMessage: String? = null,
   val isUpdating: Boolean = false,
+  val showListSheet: Boolean = false,
   val showDetails: ShowDetails? = null,
   val showInfo: ShowInfoState = ShowInfoState.Loading,
 )

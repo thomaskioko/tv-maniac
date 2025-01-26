@@ -89,10 +89,14 @@ constructor(
           )
         }
       }
-      ReloadShowDetails -> coroutineScope.launch { observeShowDetails(forceReload = true) }
       DetailBackClicked -> onBack()
-      DismissErrorSnackbar ->
-        coroutineScope.launch { _state.update { it.copy(errorMessage = null) } }
+      ReloadShowDetails -> coroutineScope.launch { observeShowDetails(forceReload = true) }
+      DismissErrorSnackbar -> coroutineScope.launch { _state.update { it.copy(errorMessage = null) } }
+      DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
+      ShowShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = true) } }
+      CreateCustomList -> {
+        //TODO:: Add implementation
+      }
     }
   }
 

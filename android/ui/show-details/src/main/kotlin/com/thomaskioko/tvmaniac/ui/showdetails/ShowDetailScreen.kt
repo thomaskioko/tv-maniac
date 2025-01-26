@@ -29,11 +29,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.LibraryAdd
 import androidx.compose.material.icons.filled.LibraryAddCheck
-import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.outlined.AutoAwesomeMotion
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -63,10 +64,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -74,16 +77,18 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
+import com.thomaskioko.tvmaniac.compose.components.FilledHorizontalIconButton
+import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
+import com.thomaskioko.tvmaniac.compose.components.FilledVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
+import com.thomaskioko.tvmaniac.compose.components.SheetDragHandle
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvManiacChip
-import com.thomaskioko.tvmaniac.compose.components.TvManiacOutlinedButton
-import com.thomaskioko.tvmaniac.compose.components.TvManiacTextButton
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -91,6 +96,7 @@ import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
 import com.thomaskioko.tvmaniac.presentation.showdetails.DetailBackClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.DetailShowClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.DismissErrorSnackbar
+import com.thomaskioko.tvmaniac.presentation.showdetails.DismissShowsListSheet
 import com.thomaskioko.tvmaniac.presentation.showdetails.FollowShowClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.ReloadShowDetails
 import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonClicked
@@ -98,6 +104,7 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsContent
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowInfoState
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowShowsListSheet
 import com.thomaskioko.tvmaniac.presentation.showdetails.WatchTrailerClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Casts
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Providers
@@ -107,7 +114,6 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
 import com.thomaskioko.tvmaniac.resources.R
-import com.thomaskioko.tvmaniac.ui.showdetails.DetailConstants.HEADER_HEIGHT
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
@@ -142,10 +148,19 @@ internal fun ShowDetailsScreen(
 ) {
   TvManiacBottomSheetScaffold(
     modifier = modifier,
-    showBottomSheet = false,
-    onDismissBottomSheet = {},
+    showBottomSheet = state.showListSheet,
+    onDismissBottomSheet = { onAction(DismissShowsListSheet) },
+    sheetDragHandle = {
+      SheetDragHandle(
+        title = "Add To ...",
+        textAlign = TextAlign.Start,
+        imageVector = Icons.Filled.Cancel,
+        onClick = { onAction(DismissShowsListSheet) },
+        tint = MaterialTheme.colorScheme.secondary
+      )
+    },
     sheetContent = {
-      // TODO: Add Trailer content
+      ShowListSheetContent(state, onAction)
     },
     snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
     content = { contentPadding ->
@@ -233,6 +248,98 @@ internal fun ShowDetailsScreen(
 }
 
 @Composable
+private fun ShowListSheetContent(
+  state: ShowDetailsContent,
+  onAction: (ShowDetailsAction) -> Unit,
+) {
+  var title = state.showDetails?.title ?: ""
+  Column(
+    modifier = Modifier
+      .fillMaxSize()
+      .padding(horizontal = 16.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    Spacer(modifier = Modifier.height(24.dp))
+
+    val title = stringResource(id = R.string.cd_show_images, title)
+
+    Card(
+      modifier = Modifier
+        .size(width = 150.dp, height = 240.dp),
+      shape = MaterialTheme.shapes.medium,
+      colors = CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+      ),
+      elevation = CardDefaults.cardElevation(
+        defaultElevation = 8.dp,
+      ),
+    ) {
+      AsyncImageComposable(
+        model = state.showDetails?.posterImageUrl,
+        contentDescription = title,
+        contentScale = ContentScale.Crop,
+      )
+    }
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    //TODO:: Add check for empty list and display list
+
+    EmptyListContent(title, onAction)
+  }
+}
+
+@Composable
+private fun EmptyListContent(
+  title: String,
+  onAction: (ShowDetailsAction) -> Unit,
+) {
+  Column(
+    modifier = Modifier
+      .fillMaxSize()
+      .padding(horizontal = 16.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    Text(
+      text = title,
+      style = MaterialTheme.typography.titleMedium.copy(
+        color = MaterialTheme.colorScheme.onSurface,
+      ),
+      maxLines = 1,
+      overflow = TextOverflow.Ellipsis,
+    )
+
+    Spacer(modifier = Modifier.height(48.dp))
+
+    Text(
+      text = "Create List",
+      style = MaterialTheme.typography.headlineSmall,
+      fontWeight = FontWeight.Bold,
+      color = MaterialTheme.colorScheme.onSurface,
+      overflow = TextOverflow.Ellipsis,
+      maxLines = 1,
+    )
+
+    Text(
+      modifier = Modifier
+        .padding(top = 8.dp, bottom = 16.dp),
+      text = "You don't have any list. Create a new one?",
+      style = MaterialTheme.typography.labelMedium,
+      color = MaterialTheme.colorScheme.onSurface,
+    )
+
+    FilledHorizontalIconButton(
+      shape = MaterialTheme.shapes.medium,
+      text = "Create",
+      imageVector = Icons.Filled.LibraryAddCheck,
+      containerColor = MaterialTheme.colorScheme.secondary,
+      style = MaterialTheme.typography.labelMedium,
+      onClick = { onAction(DismissShowsListSheet) },
+    )
+  }
+}
+
+@Composable
 fun LazyColumnContent(
   detailsContent: ShowDetailsContent,
   listState: LazyListState,
@@ -249,7 +356,7 @@ fun LazyColumnContent(
       HeaderContent(
         show = detailsContent.showDetails,
         onUpdateFavoriteClicked = { onAction(FollowShowClicked(it)) },
-        onWatchTrailerClicked = { onAction(WatchTrailerClicked(it)) },
+        onAddToListClicked = { onAction(ShowShowsListSheet) },
       )
     }
 
@@ -337,13 +444,15 @@ private fun ShowInfoContent(
 private fun HeaderContent(
   show: ShowDetails?,
   onUpdateFavoriteClicked: (Boolean) -> Unit,
-  onWatchTrailerClicked: (Long) -> Unit,
+  onAddToListClicked: () -> Unit,
 ) {
+  val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+  val headerHeight = screenHeight / 1.5f
   Box(
     modifier =
       Modifier
         .fillMaxWidth()
-        .height(HEADER_HEIGHT),
+        .height(headerHeight),
   ) {
     KenBurnsViewImage(
       imageUrl = show?.backdropImageUrl,
@@ -356,7 +465,7 @@ private fun HeaderContent(
       Body(
         show = show,
         onUpdateFavoriteClicked = onUpdateFavoriteClicked,
-        onWatchTrailerClicked = onWatchTrailerClicked,
+        onAddToListClicked = onAddToListClicked,
       )
     }
   }
@@ -366,7 +475,7 @@ private fun HeaderContent(
 private fun Body(
   show: ShowDetails,
   onUpdateFavoriteClicked: (Boolean) -> Unit,
-  onWatchTrailerClicked: (Long) -> Unit,
+  onAddToListClicked: () -> Unit,
 ) {
   val surfaceGradient = backgroundGradient().reversed()
 
@@ -394,7 +503,14 @@ private fun Body(
         maxLines = 1,
       )
 
-      Spacer(modifier = Modifier.height(8.dp))
+      ShowMetadata(
+        modifier = Modifier.padding(top = 16.dp),
+        releaseYear = show.year,
+        status = show.status,
+        seasonNumber = show.numberOfSeasons,
+        language = show.language,
+        rating = show.rating,
+      )
 
       ExpandingText(
         text = show.overview,
@@ -404,26 +520,16 @@ private fun Body(
 
       Spacer(modifier = Modifier.height(8.dp))
 
-      ShowMetadata(
-        releaseYear = show.year,
-        status = show.status,
-        seasonNumber = show.numberOfSeasons,
-        language = show.language,
-        rating = show.rating,
-      )
-
       GenreText(show.genres)
 
       Spacer(modifier = Modifier.height(8.dp))
 
       ShowDetailButtons(
-        id = show.tmdbId,
         isFollowed = show.isFollowed,
-        onUpdateFavoriteClicked = onUpdateFavoriteClicked,
-        onWatchTrailerClicked = onWatchTrailerClicked,
+        onTrackShowClicked = onUpdateFavoriteClicked,
+        onAddToList = onAddToListClicked,
       )
 
-      Spacer(modifier = Modifier.height(8.dp))
     }
 
     Spacer(Modifier.height(16.dp))
@@ -523,7 +629,7 @@ private fun GenreText(
     items(genreList) { genre ->
       Spacer(modifier = Modifier.width(4.dp))
 
-      TvManiacTextButton(
+      FilledTextButton(
         onClick = {},
         shape = RoundedCornerShape(4.dp),
         buttonColors =
@@ -546,69 +652,30 @@ private fun GenreText(
 @Composable
 fun ShowDetailButtons(
   isFollowed: Boolean,
-  id: Long,
-  onUpdateFavoriteClicked: (Boolean) -> Unit,
-  onWatchTrailerClicked: (Long) -> Unit,
+  onTrackShowClicked: (Boolean) -> Unit,
+  onAddToList: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
   Row(
-    modifier = modifier,
-    horizontalArrangement = Arrangement.Center,
+    modifier = modifier.padding(top = 8.dp),
+    horizontalArrangement = Arrangement.spacedBy(8.dp),
   ) {
-    TvManiacOutlinedButton(
-      modifier = Modifier
-        .fillMaxWidth()
-        .weight(1f),
-      leadingIcon = {
-        Image(
-          imageVector =
-            if (isFollowed) {
-              Icons.Filled.LibraryAddCheck
-            } else {
-              Icons.Filled.LibraryAdd
-            },
-          contentDescription = null,
-          colorFilter =
-            ColorFilter.tint(
-              MaterialTheme.colorScheme.secondary.copy(
-                alpha = 0.8F,
-              ),
-            ),
-        )
-      },
-      text =
-        if (isFollowed) {
-          stringResource(id = R.string.unfollow)
-        } else {
-          stringResource(id = R.string.following)
-        },
-      textPadding = 8.dp,
-      onClick = { onUpdateFavoriteClicked(isFollowed) },
-      borderColor = MaterialTheme.colorScheme.secondary,
+    FilledVerticalIconButton(
+      shape = MaterialTheme.shapes.medium,
+      text = if (isFollowed) stringResource(id = R.string.unfollow) else stringResource(id = R.string.following),
+      imageVector = if (isFollowed) Icons.Filled.LibraryAddCheck else Icons.Filled.LibraryAdd,
+      containerColor = if (!isFollowed) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error,
+      style = MaterialTheme.typography.labelMedium,
+      onClick = { onTrackShowClicked(isFollowed) },
     )
 
-    Spacer(modifier = Modifier.width(8.dp))
-
-    TvManiacOutlinedButton(
-      modifier = Modifier
-        .fillMaxWidth()
-        .weight(1f),
-      leadingIcon = {
-        Image(
-          imageVector = Icons.Filled.Movie,
-          contentDescription = null,
-          colorFilter =
-            ColorFilter.tint(
-              MaterialTheme.colorScheme.secondary.copy(
-                alpha = 0.8F,
-              ),
-            ),
-        )
-      },
-      text = stringResource(id = R.string.btn_trailer),
-      textPadding = 8.dp,
-      borderColor = MaterialTheme.colorScheme.secondary,
-      onClick = { onWatchTrailerClicked(id) },
+    FilledVerticalIconButton(
+      shape = MaterialTheme.shapes.medium,
+      text = stringResource(id = R.string.btn_add_to_list),
+      imageVector = Icons.Outlined.AutoAwesomeMotion,
+      containerColor = Color.Gray,
+      style = MaterialTheme.typography.labelMedium,
+      onClick = onAddToList,
     )
   }
 }
@@ -960,10 +1027,6 @@ fun SimilarShowsContent(
       }
     }
   }
-}
-
-private object DetailConstants {
-  val HEADER_HEIGHT = 550.dp
 }
 
 @ThemePreviews
