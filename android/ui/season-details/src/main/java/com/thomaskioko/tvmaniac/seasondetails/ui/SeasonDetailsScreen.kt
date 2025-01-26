@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Autorenew
 import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -123,6 +124,7 @@ internal fun SeasonDetailsScreen(
         )
       SheetDragHandle(
         title = title,
+        imageVector = Icons.Outlined.KeyboardArrowDown,
         onClick = { onAction(DismissSeasonGallery) },
       )
     },

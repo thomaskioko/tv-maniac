@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -21,6 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -28,19 +31,29 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 @Composable
 fun SheetDragHandle(
   onClick: () -> Unit,
+  imageVector: ImageVector,
   modifier: Modifier = Modifier,
   title: String? = null,
+  textAlign: TextAlign? = null,
+  tint: Color = LocalContentColor.current
 ) {
   Box(
-    modifier =
-      modifier.fillMaxWidth().statusBarsPadding().height(56.dp).background(Color.Transparent),
+    modifier = modifier
+        .fillMaxWidth()
+        .statusBarsPadding()
+        .height(56.dp)
+        .background(Color.Transparent),
   ) {
     Row(
-      modifier = Modifier.fillMaxWidth().align(Alignment.CenterStart).padding(start = 16.dp),
+      modifier = Modifier
+        .fillMaxWidth()
+        .align(Alignment.CenterStart)
+        .padding(start = 16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
       Icon(
-        imageVector = Icons.Outlined.KeyboardArrowDown,
+        imageVector = imageVector,
+        tint = tint,
         contentDescription = "Expand/Collapse",
         modifier = Modifier.size(24.dp).clickable { onClick() },
       )
@@ -53,6 +66,8 @@ fun SheetDragHandle(
           style = MaterialTheme.typography.titleMedium,
           maxLines = 1,
           overflow = TextOverflow.Ellipsis,
+          textAlign = textAlign,
+          modifier = Modifier.fillMaxWidth()
         )
       }
     }
@@ -67,6 +82,7 @@ private fun CustomSheetDragHandlePreview() {
       SheetDragHandle(
         title = "Drag Handle",
         onClick = {},
+        imageVector = Icons.Outlined.KeyboardArrowDown
       )
     }
   }
