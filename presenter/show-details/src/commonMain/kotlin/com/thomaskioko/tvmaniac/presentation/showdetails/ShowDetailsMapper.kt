@@ -15,9 +15,34 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
+import com.thomaskioko.tvmaniac.util.FormatterUtil
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import me.tatarka.inject.annotations.Inject
+
+@Inject
+class ShowDetailsMapper(
+  private val formatterUtil: FormatterUtil,
+) {
+
+  fun toShowDetails(show: TvshowDetails): ShowDetails =
+    ShowDetails(
+      tmdbId = show.id.id,
+      title = show.name,
+      overview = show.overview,
+      language = show.language,
+      posterImageUrl = show.poster_path,
+      backdropImageUrl = show.backdrop_path,
+      votes = show.vote_count,
+      rating = formatterUtil.formatDouble(show.vote_average, 1),
+      genres = show.genre_list?.split(", ")?.toImmutableList() ?: persistentListOf(),
+      year = show.last_air_date ?: show.first_air_date ?: "",
+      status = show.status,
+      isFollowed = show.in_library == 1L,
+    )
+
+}
 
 internal fun Either<Failure, List<ShowSeasons>>.toSeasonsListOrEmpty(): ImmutableList<Season> =
   (this as? Either.Right)?.right?.toSeasonsList() ?: persistentListOf()
@@ -38,89 +63,74 @@ internal fun Either<Failure, List<Trailers>>.toTrailerListOrEmpty(): ImmutableLi
 
 internal fun List<ShowCast>?.toCastList(): ImmutableList<Casts> =
   this?.map {
-      Casts(
-        id = it.id.id,
-        name = it.name,
-        profileUrl = it.profile_path,
-        characterName = it.character_name,
-      )
-    }
+    Casts(
+      id = it.id.id,
+      name = it.name,
+      profileUrl = it.profile_path,
+      characterName = it.character_name,
+    )
+  }
     ?.toImmutableList()
     ?: persistentListOf()
 
 private fun List<SimilarShows>?.toSimilarShowList(): ImmutableList<Show> =
   this?.map {
-      Show(
-        tmdbId = it.id.id,
-        title = it.name,
-        posterImageUrl = it.poster_path,
-        backdropImageUrl = it.backdrop_path,
-        isInLibrary = it.in_library == 1L,
-      )
-    }
+    Show(
+      tmdbId = it.id.id,
+      title = it.name,
+      posterImageUrl = it.poster_path,
+      backdropImageUrl = it.backdrop_path,
+      isInLibrary = it.in_library == 1L,
+    )
+  }
     ?.toImmutableList()
     ?: persistentListOf()
 
 private fun List<RecommendedShows>?.toRecommendedShowList(): ImmutableList<Show> =
   this?.map {
-      Show(
-        tmdbId = it.id.id,
-        title = it.name,
-        posterImageUrl = it.poster_path,
-        backdropImageUrl = it.backdrop_path,
-        isInLibrary = it.in_library == 1L,
-      )
-    }
+    Show(
+      tmdbId = it.id.id,
+      title = it.name,
+      posterImageUrl = it.poster_path,
+      backdropImageUrl = it.backdrop_path,
+      isInLibrary = it.in_library == 1L,
+    )
+  }
     ?.toImmutableList()
     ?: persistentListOf()
 
 private fun List<WatchProviders>?.toWatchProviderList(): ImmutableList<Providers> =
   this?.map {
-      Providers(
-        id = it.id.id,
-        name = it.name ?: "",
-        logoUrl = it.logo_path,
-      )
-    }
+    Providers(
+      id = it.id.id,
+      name = it.name ?: "",
+      logoUrl = it.logo_path,
+    )
+  }
     ?.toImmutableList()
     ?: persistentListOf()
 
-internal fun TvshowDetails.toShowDetails(): ShowDetails =
-  ShowDetails(
-    tmdbId = id.id,
-    title = name,
-    overview = overview,
-    language = language,
-    posterImageUrl = poster_path,
-    backdropImageUrl = backdrop_path,
-    votes = vote_count,
-    rating = vote_average,
-    genres = genre_list?.split(", ")?.toImmutableList() ?: persistentListOf(),
-    year = last_air_date ?: first_air_date ?: "",
-    status = status,
-    isFollowed = in_library == 1L,
-  )
 
 private fun List<ShowSeasons>?.toSeasonsList(): ImmutableList<Season> =
   this?.map {
-      Season(
-        seasonId = it.season_id.id,
-        tvShowId = it.show_id.id,
-        name = it.season_title,
-        seasonNumber = it.season_number,
-      )
-    }
+    Season(
+      seasonId = it.season_id.id,
+      tvShowId = it.show_id.id,
+      name = it.season_title,
+      seasonNumber = it.season_number,
+    )
+  }
     ?.toImmutableList()
     ?: persistentListOf()
 
 private fun List<Trailers>?.toTrailerList(): ImmutableList<Trailer> =
   this?.map {
-      Trailer(
-        showId = it.show_id.id,
-        key = it.key,
-        name = it.name,
-        youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg",
-      )
-    }
+    Trailer(
+      showId = it.show_id.id,
+      key = it.key,
+      name = it.name,
+      youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg",
+    )
+  }
     ?.toImmutableList()
     ?: persistentListOf()
