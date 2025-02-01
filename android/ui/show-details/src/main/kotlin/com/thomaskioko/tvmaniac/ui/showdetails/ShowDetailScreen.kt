@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.LibraryAdd
 import androidx.compose.material.icons.filled.LibraryAddCheck
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.AutoAwesomeMotion
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.ButtonDefaults
@@ -504,7 +505,6 @@ private fun Body(
       )
 
       ShowMetadata(
-        modifier = Modifier.padding(top = 16.dp),
         releaseYear = show.year,
         status = show.status,
         seasonNumber = show.numberOfSeasons,
@@ -546,7 +546,9 @@ fun ShowMetadata(
   modifier: Modifier = Modifier,
 ) {
   Column(
-    modifier = modifier,
+    modifier = modifier.padding(vertical = 8.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center,
   ) {
     val resources = LocalContext.current.resources
 
@@ -560,16 +562,14 @@ fun ShowMetadata(
       withStyle(tagStyle) { append("  •  ") }
     }
     val text = buildAnnotatedString {
-      val statusStyle =
-        MaterialTheme.typography.labelMedium
+      val statusStyle = MaterialTheme.typography.labelMedium
           .toSpanStyle()
           .copy(
             color = MaterialTheme.colorScheme.secondary,
             background = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
           )
 
-      val tagStyle =
-        MaterialTheme.typography.labelMedium
+      val tagStyle = MaterialTheme.typography.labelMedium
           .toSpanStyle()
           .copy(
             color = MaterialTheme.colorScheme.onSurface,
@@ -602,20 +602,44 @@ fun ShowMetadata(
         withStyle(tagStyle) { append(language) }
         append(divider)
       }
-      withStyle(tagStyle) { append("$rating") }
-      append(divider)
     }
 
-    Text(
-      text = text,
-      style = MaterialTheme.typography.bodyMedium,
+    Row(
       modifier = Modifier.fillMaxWidth(),
-      overflow = TextOverflow.Ellipsis,
-      maxLines = 1,
-      fontWeight = FontWeight.Medium,
-    )
+      horizontalArrangement = Arrangement.Center,
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Text(
+          text = text,
+          style = MaterialTheme.typography.bodyMedium,
+          overflow = TextOverflow.Ellipsis,
+          maxLines = 1,
+          fontWeight = FontWeight.Medium,
+        )
 
-    Spacer(modifier = Modifier.height(8.dp))
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          modifier = Modifier.padding(end = 4.dp)
+        ) {
+          Icon(
+            imageVector = Icons.Filled.Star,
+            contentDescription = null,
+            modifier = Modifier.size(12.dp),
+            tint = MaterialTheme.colorScheme.secondary
+          )
+          Text(
+            text = rating.toString(),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.padding(start = 2.dp)
+          )
+        }
+      }
+    }
   }
 }
 
