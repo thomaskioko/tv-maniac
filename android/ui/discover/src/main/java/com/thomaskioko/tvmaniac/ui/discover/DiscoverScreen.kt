@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -197,7 +198,7 @@ private fun DiscoverContent(
   Box(
     modifier = Modifier
       .fillMaxSize()
-      .pullRefresh(pullRefreshState),
+      .pullRefresh(pullRefreshState)
   ) {
     LazyColumnContent(
       modifier = modifier,
@@ -210,7 +211,9 @@ private fun DiscoverContent(
     PullRefreshIndicator(
       refreshing = dataLoadedState.isRefreshing,
       state = pullRefreshState,
-      modifier = Modifier.align(Alignment.TopCenter),
+      modifier = Modifier
+        .align(Alignment.TopCenter)
+        .statusBarsPadding(),
       scale = true,
       backgroundColor = MaterialTheme.colorScheme.background,
       contentColor = MaterialTheme.colorScheme.secondary,
@@ -226,7 +229,9 @@ private fun DiscoverContent(
           ),
           maxLines = 1,
           overflow = TextOverflow.Ellipsis,
-          modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp),
         )
       },
       primaryActionIcon = {
