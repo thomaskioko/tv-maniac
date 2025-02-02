@@ -49,8 +49,6 @@ public struct CarouselView<T, Content: View>: View {
               }
             }
             .cornerRadius(0)
-            .shadow(color: Color.black.opacity(0.2), radius: 5, x: 5, y: 5)
-            .shadow(color: Color.black.opacity(0.2), radius: 5, x: -5, y: -5)
             .simultaneousGesture(
               DragGesture(minimumDistance: 0)
                 .onChanged { _ in

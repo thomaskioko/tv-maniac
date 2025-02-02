@@ -92,9 +92,6 @@ struct DiscoverTab: View {
         ) { index in
           CarouselItemView(item: items[index])
         }
-        .allowsHitTesting(true)
-        .gesture(DragGesture())
-
         headerNavigationBar(shows: items)
       }
     }
@@ -106,25 +103,15 @@ struct DiscoverTab: View {
       let scrollViewHeight = geometry.size.height
 
       ZStack(alignment: .bottom) {
-        ScrollView(showsIndicators: false) {
-          GeometryReader { imageGeometry in
-            let minY = imageGeometry.frame(in: .global).minY
-            let scrollOffset = minY - geometry.frame(in: .global).minY
-            let stretchFactor = max(0, scrollOffset)
-
-            PosterItemView(
-              title: item.title,
-              posterUrl: item.posterUrl,
-              posterWidth: geometry.size.width,
-              posterHeight: scrollViewHeight + stretchFactor
-            )
-            .offset(y: -stretchFactor)
-          }
-          .frame(height: scrollViewHeight)
-        }
-        .simultaneousGesture(TapGesture().onEnded {
+        PosterItemView(
+          title: item.title,
+          posterUrl: item.posterUrl,
+          posterWidth: geometry.size.width,
+          posterHeight: scrollViewHeight
+        )
+        .onTapGesture {
           presenter.dispatch(action: ShowClicked(id: item.tmdbId))
-        })
+        }
       }
     }
   }
@@ -367,4 +354,38 @@ struct DiscoverTab: View {
   private enum CoordinateSpaces {
     case scrollView
   }
+}
+
+struct PullToRefreshView: View {
+    var coordinateSpaceName: String
+    var onRefresh: () async -> Void
+    @State private var needRefresh: Bool = false
+    
+    var body: some View {
+        GeometryReader { geo in
+            if geo.frame(in: .named(coordinateSpaceName)).midY > 50 {
+                Spacer()
+                    .onAppear {
+                        needRefresh = true
+                    }
+            } else if geo.frame(in: .named(coordinateSpaceName)).midY < 1 {
+                Spacer()
+                    .onAppear {
+                        if needRefresh {
+                            needRefresh = false
+                            Task {
+                                await onRefresh()
+                            }
+                        }
+                    }
+            }
+            HStack {
+                Spacer()
+                if needRefresh {
+                    ProgressView()
+                }
+                Spacer()
+            }
+        }.padding(.top, -50)
+    }
 }
