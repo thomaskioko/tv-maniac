@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 /// A view that displays a horizontally scrolling carousel of show posters
 /// with auto-scrolling and interactive gesture support.
@@ -8,6 +9,10 @@ public struct CarouselView<T, Content: View>: View {
   private let onItemScrolled: (T) -> Void
   private let onItemTapped: (Int64) -> Void
   private let content: (Int) -> Content
+
+  @State private var timer: Timer.TimerPublisher = Timer.publish(every: 3, on: .main, in: .common)
+  @State private var timerCancellable: Cancellable?
+  @State private var isDragging: Bool = false
 
   public init(
     items: [T],
@@ -46,11 +51,43 @@ public struct CarouselView<T, Content: View>: View {
             .cornerRadius(0)
             .shadow(color: Color.black.opacity(0.2), radius: 5, x: 5, y: 5)
             .shadow(color: Color.black.opacity(0.2), radius: 5, x: -5, y: -5)
+            .simultaneousGesture(
+              DragGesture(minimumDistance: 0)
+                .onChanged { _ in
+                  isDragging = true
+                  stopAutoScroll()
+                }
+                .onEnded { _ in
+                  isDragging = false
+                  setupAutoScroll()
+                }
+            )
           })
         }
       }
       .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+      .onAppear {
+        setupAutoScroll()
+      }
+      .onDisappear {
+        stopAutoScroll()
+      }
     }
+  }
+
+  private func setupAutoScroll() {
+    guard !isDragging else { return }
+    timer = Timer.publish(every: 3, on: .main, in: .common)
+    timerCancellable = timer.autoconnect().sink { _ in
+      withAnimation(.easeOut(duration: 0.6)) {
+        currentIndex = (currentIndex + 1) % items.count
+      }
+    }
+  }
+
+  private func stopAutoScroll() {
+    timerCancellable?.cancel()
+    timerCancellable = nil
   }
 
   private func notifyActiveItem() {
