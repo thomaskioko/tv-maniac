@@ -100,7 +100,6 @@ struct DiscoverTab: View {
     }
   }
 
-  /// A view that displays a single item in the carousel
   @ViewBuilder
   private func CarouselItemView(item: SwiftShow) -> some View {
     GeometryReader { geometry in
@@ -227,8 +226,8 @@ struct DiscoverTab: View {
     HStack(spacing: 5) {
       ForEach(shows.indices, id: \.self) { index in
         Circle()
-          .fill(currentIndex - 1 == index ? .white : .gray.opacity(0.5))
-          .frame(width: currentIndex - 1 == index ? 10 : 6, height: currentIndex - 1 == index ? 10 : 6)
+          .fill(currentIndex == index ? .white : .gray.opacity(0.5))
+          .frame(width: currentIndex == index ? 10 : 6, height: currentIndex == index ? 10 : 6)
       }
     }
     .animation(.easeInOut, value: currentIndex)
@@ -362,8 +361,7 @@ struct DiscoverTab: View {
     if shows.isEmpty {
       return nil
     }
-    let actualIndex = (currentIndex - 1) % shows.count
-    return shows[actualIndex >= 0 ? actualIndex : shows.count - 1]
+    return shows[currentIndex]
   }
 
   private enum CoordinateSpaces {
