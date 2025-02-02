@@ -4,7 +4,6 @@ TvManiac
 ![kmp](https://img.shields.io/badge/multiplatform-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
 ![compose](https://img.shields.io/badge/jetpack_compose-2bab6b.svg?style=for-the-badge&logo=android&logoColor=white)
 ![swiftui](https://img.shields.io/badge/swiftui-%23000000.svg?style=for-the-badge&logo=swift&logoColor=white)
-[![TvManiac Debug](https://img.shields.io/badge/Debug--Apk-download-green?style=for-the-badge&logo=android)](https://github.com/c0de-wizard/tv-maniac/releases/latest/download/app-debug.apk)
 
 **TvManiac** is a personalized entertainment tracking and recommendation Multiplatform app. By utilizing
 [TMDB](https://developer.themoviedb.org/docs), we can view shows, create a watchlist get statistics, and much more. This project aims to demonstrate KMP development capabilities. This is currently running on:
@@ -17,7 +16,7 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 
 | Android | iOS |
 | -- | -- |
-| <video src="https://github.com/thomaskioko/tv-maniac/assets/841885/a9991256-27a8-4a99-87f3-0f071c7cbc68" width=350/> | <video src="https://github.com/user-attachments/assets/d446aabc-5569-456b-9964-bbd1a9bfe371" width=350/> |
+| <video src="https://github.com/user-attachments/assets/90ec7924-7d50-40a4-bb0b-89d79aa9bbcd" width=350/> | <video src="https://github.com/user-attachments/assets/69f101b7-e100-4775-9893-6687e455560c" width=350/> |
 
 
 > [!IMPORTANT]
@@ -39,68 +38,6 @@ This is my playground for learning Kotlin Multiplatform. With that said, I'm sur
 
 ![TvManiac Architecture](https://github.com/thomaskioko/tv-maniac/assets/841885/84e314fc-71a5-40e5-b034-213e6b546f9a)
 
-
-### Android Screenshots
-
-<table>
-  <td>
-    <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AndroidHomeLight.png?raw=true" alt="Home Screen Light" width="500"/>
-    </p>
-  </td>
-    <td>
-    <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AndroidDetailLight.png?raw=true" alt="Home Screen Light" width="500"/>
-    </p>
-  </td>
-    <td>
-    <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/EpisodeListLight.png?raw=true" alt="Episodes List Light" width="500"/>
-    </p>
-  </td>
-  <td>
-    <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AnroidHomeDark.png?raw=true" alt="Show Details Dark" width="500"/>
-    </p>
-  </td>
-</tr>
-    <td>
-    <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/AnroidDetailDark.png?raw=true" alt="Show Details Dark" width="500"/>
-    </p>
-  </td>
-  <td>
-    <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/EpisodeListDark.png?raw=true" alt="Episodes List Dark" width="500"/>
-    </p>
-  </td>
-</table>
-
-### 🔆 iOS Screenshots
-
-<table>
-  <td>
-    <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOSHomeLight.png?raw=true" alt="Home Screen Light" width="500"/>
-    </p>
-  </td>
-    <td>
-    <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOSDetailLight.png?raw=true" alt="Home Screen Light" width="500"/>
-    </p>
-  </td>
-    <td>
-    <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOSHomeDark.png?raw=true" alt="Home Screen Dark" width="500"/>
-    </p>
-  </td>
-  <td>
-    <p align="center">
-      <img src="https://github.com/c0de-wizard/tv-maniac/blob/main/art/iOSDetailDark.png?raw=true" alt="Show Details Dark" width="500"/>
-    </p>
-  </td>
-</tr>
-</table>
 
 ## Libraries Used
 ### Android
