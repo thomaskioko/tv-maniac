@@ -1,21 +1,32 @@
 package com.thomaskioko.tvmaniac.compose.components
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.util.lerp
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.load
 import coil.request.ImageRequest
 import com.flaviofaria.kenburnsview.KenBurnsView
+import kotlin.math.absoluteValue
 
 @Composable
 fun AsyncImageComposable(
@@ -36,9 +47,9 @@ fun AsyncImageComposable(
     model =
       requestBuilder?.let { builder ->
         when (model) {
-            is ImageRequest -> model.newBuilder()
-            else -> ImageRequest.Builder(LocalContext.current).data(model)
-          }
+          is ImageRequest -> model.newBuilder()
+          else -> ImageRequest.Builder(LocalContext.current).data(model)
+        }
           .apply { this.builder() }
           .build()
       }
@@ -64,4 +75,47 @@ fun KenBurnsViewImage(
   val kenBuns = remember { KenBurnsView(context) }
 
   AndroidView({ kenBuns }, modifier = modifier) { it.load(imageUrl) }
+}
+
+@Composable
+fun ParallaxCarouselImage(
+  state: PagerState,
+  currentPage: Int,
+  imageUrl: String?,
+  modifier: Modifier = Modifier,
+  shape: Shape = RectangleShape,
+  overlayContent: @Composable () -> Unit = {},
+) {
+  val currentPageOffset = calculatePageOffset(state, currentPage)
+  val cardTranslationX = lerp(100f, 0f, 1f - currentPageOffset)
+  val cardScaleX = lerp(0.8f, 1f, 1f - currentPageOffset.absoluteValue.coerceIn(0f, 1f))
+  val screenWidth = LocalConfiguration.current.screenWidthDp
+  val parallaxOffset = currentPageOffset * screenWidth * 2f
+
+  Box(
+    modifier = modifier
+      .fillMaxWidth()
+      .graphicsLayer {
+        scaleX = cardScaleX
+        translationX = cardTranslationX
+      },
+  ) {
+    AsyncImageComposable(
+      modifier = Modifier
+        .fillMaxSize()
+        .clip(shape)
+        .graphicsLayer {
+          translationX = lerp(10f, 0f, 1f - currentPageOffset) + parallaxOffset
+        },
+      model = imageUrl,
+      contentDescription = null,
+      contentScale = ContentScale.Crop,
+    )
+
+    overlayContent()
+  }
+}
+
+private fun calculatePageOffset(state: PagerState, currentPage: Int): Float {
+  return (state.currentPage + state.currentPageOffsetFraction - currentPage).coerceIn(-1f, 1f)
 }

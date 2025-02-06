@@ -41,20 +41,21 @@ class ShowDetailsPresenterFactory(
 class ShowDetailsPresenter
 @Inject
 constructor(
-    @Assisted componentContext: ComponentContext,
-    @Assisted private val showId: Long,
-    @Assisted private val onBack: () -> Unit,
-    @Assisted private val onNavigateToShow: (id: Long) -> Unit,
-    @Assisted private val onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
-    @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
-    private val castRepository: CastRepository,
-    private val watchlistRepository: WatchlistRepository,
-    private val recommendedShowsRepository: RecommendedShowsRepository,
-    private val seasonsRepository: SeasonsRepository,
-    private val showDetailsRepository: ShowDetailsRepository,
-    private val similarShowsRepository: SimilarShowsRepository,
-    private val trailerRepository: TrailerRepository,
-    private val watchProviders: WatchProviderRepository,
+  @Assisted componentContext: ComponentContext,
+  @Assisted private val showId: Long,
+  @Assisted private val onBack: () -> Unit,
+  @Assisted private val onNavigateToShow: (id: Long) -> Unit,
+  @Assisted private val onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
+  @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
+  private val castRepository: CastRepository,
+  private val watchlistRepository: WatchlistRepository,
+  private val recommendedShowsRepository: RecommendedShowsRepository,
+  private val seasonsRepository: SeasonsRepository,
+  private val showDetailsRepository: ShowDetailsRepository,
+  private val similarShowsRepository: SimilarShowsRepository,
+  private val trailerRepository: TrailerRepository,
+  private val watchProviders: WatchProviderRepository,
+  private val showDetailsMapper: ShowDetailsMapper,
 ) : ComponentContext by componentContext {
 
   private val coroutineScope = coroutineScope()
@@ -89,40 +90,44 @@ constructor(
           )
         }
       }
-      ReloadShowDetails -> coroutineScope.launch { observeShowDetails(forceReload = true) }
       DetailBackClicked -> onBack()
-      DismissErrorSnackbar ->
-        coroutineScope.launch { _state.update { it.copy(errorMessage = null) } }
+      ReloadShowDetails -> coroutineScope.launch { observeShowDetails(forceReload = true) }
+      DismissErrorSnackbar -> coroutineScope.launch { _state.update { it.copy(errorMessage = null) } }
+      DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
+      ShowShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = true) } }
+      CreateCustomList -> {
+        //TODO:: Add implementation
+      }
     }
   }
 
   private suspend fun observeShowDetails(forceReload: Boolean = false) {
     return combine(
-        showDetailsRepository.observeShowDetails(showId, forceReload),
-        trailerRepository.isYoutubePlayerInstalled(),
-        observeShowMetadata(forceReload),
-        observeAdditionalContent(forceReload),
-      ) { showDetailsResult, isWebViewInstalled, showMetadataResult, additionalContentResult ->
-        showDetailsResult.fold(
-          { error ->
-            _state.update {
-              it.copy(
-                isUpdating = false,
-                errorMessage = error.errorMessage ?: "An unknown error occurred",
-                showInfo = ShowInfoState.Error
-              )
-            }
-          },
-          { result ->
-            updateState(
-              result?.toShowDetails(),
-              isWebViewInstalled,
-              showMetadataResult,
-              additionalContentResult
+      showDetailsRepository.observeShowDetails(showId, forceReload),
+      trailerRepository.isYoutubePlayerInstalled(),
+      observeShowMetadata(forceReload),
+      observeAdditionalContent(forceReload),
+    ) { showDetailsResult, isWebViewInstalled, showMetadataResult, additionalContentResult ->
+      showDetailsResult.fold(
+        { error ->
+          _state.update {
+            it.copy(
+              isUpdating = false,
+              errorMessage = error.errorMessage ?: "An unknown error occurred",
+              showInfo = ShowInfoState.Error,
             )
           }
-        )
-      }
+        },
+        { result ->
+          updateState(
+            showDetails = showDetailsMapper.toShowDetails(result),
+            isWebViewInstalled = isWebViewInstalled,
+            showMetadata = showMetadataResult,
+            additionalContent = additionalContentResult,
+          )
+        },
+      )
+    }
       .onStart { _state.update { it.copy(isUpdating = true, showInfo = ShowInfoState.Loading) } }
       .collect()
   }
@@ -171,9 +176,9 @@ constructor(
               recommendedShowList = additionalContent.recommendedShows,
               trailersList = additionalContent.trailers,
               openTrailersInYoutube =
-                (currentState.showInfo as? ShowInfoState.Loaded)?.openTrailersInYoutube ?: false,
+                (currentState.showInfo as? ShowInfoState.Loaded)?.openTrailersInYoutube == true,
               selectedSeasonIndex =
-                (currentState.showInfo as? ShowInfoState.Loaded)?.selectedSeasonIndex ?: 0
+                (currentState.showInfo as? ShowInfoState.Loaded)?.selectedSeasonIndex ?: 0,
             )
         }
 

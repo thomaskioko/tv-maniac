@@ -4,6 +4,12 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetails
 
 sealed interface ShowDetailsAction
 
+data object DismissShowsListSheet : ShowDetailsAction
+
+data object ShowShowsListSheet : ShowDetailsAction
+
+data object CreateCustomList : ShowDetailsAction
+
 data object DismissErrorSnackbar : ShowDetailsAction
 
 data object DetailBackClicked : ShowDetailsAction

@@ -51,7 +51,7 @@ fun BasicDialog(
       )
     },
     confirmButton = {
-      TvManiacOutlinedButton(
+      HorizontalOutlinedButton(
         enabled = enableConfirmButton,
         text = confirmButtonText,
         onClick = confirmButtonClicked,
@@ -59,7 +59,7 @@ fun BasicDialog(
     },
     dismissButton = {
       dismissButtonText?.let {
-        TvManiacOutlinedButton(
+        HorizontalOutlinedButton(
           enabled = enableDismissButton,
           text = dismissButtonText,
           onClick = dismissButtonClicked,

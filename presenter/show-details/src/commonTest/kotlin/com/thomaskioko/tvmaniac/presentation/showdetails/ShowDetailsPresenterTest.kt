@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.presentation.showdetails
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
 import com.thomaskioko.tvmaniac.core.db.RecommendedShows
 import com.thomaskioko.tvmaniac.core.db.ShowCast
 import com.thomaskioko.tvmaniac.core.db.ShowSeasons
@@ -44,6 +45,7 @@ class ShowDetailsPresenterTest {
   private val castRepository = FakeCastRepository()
   private val recommendedShowsRepository = FakeRecommendedShowsRepository()
   private val showDetailsRepository = FakeShowDetailsRepository()
+  private val fakeFormatterUtil = FakeFormatterUtil()
   private val testDispatcher = StandardTestDispatcher()
 
   private lateinit var presenter: ShowDetailsPresenter
@@ -93,19 +95,17 @@ class ShowDetailsPresenterTest {
     buildMockData(showDetailResult = Either.Left(ServerError(errorMessage)))
 
     presenter.state.test {
-      awaitItem() shouldBe
-        ShowDetailsContent(
-          showDetails = null,
-          isUpdating = true,
-        )
+      awaitItem() shouldBe ShowDetailsContent(
+        showDetails = null,
+        isUpdating = true,
+      )
 
-      awaitItem() shouldBe
-        ShowDetailsContent(
-          showDetails = null,
-          isUpdating = false,
-          errorMessage = errorMessage,
-          showInfo = ShowInfoState.Error
-        )
+      awaitItem() shouldBe ShowDetailsContent(
+        showDetails = null,
+        isUpdating = false,
+        errorMessage = errorMessage,
+        showInfo = ShowInfoState.Error,
+      )
     }
   }
 
@@ -114,11 +114,10 @@ class ShowDetailsPresenterTest {
     buildMockData()
 
     presenter.state.test {
-      awaitItem() shouldBe
-        ShowDetailsContent(
-          showDetails = null,
-          isUpdating = true,
-        )
+      awaitItem() shouldBe ShowDetailsContent(
+        showDetails = null,
+        isUpdating = true,
+      )
 
       val emission = awaitItem()
       emission.showDetails shouldBe showDetailsContent.showDetails
@@ -151,8 +150,7 @@ class ShowDetailsPresenterTest {
       buildMockData()
 
       presenter.state.test {
-        awaitItem() shouldBe
-          ShowDetailsContent(
+        awaitItem() shouldBe ShowDetailsContent(
             showDetails = null,
             isUpdating = true,
           )
@@ -190,18 +188,16 @@ class ShowDetailsPresenterTest {
     )
 
     presenter.state.test {
-      awaitItem() shouldBe
-        ShowDetailsContent(
+      awaitItem() shouldBe ShowDetailsContent(
           showDetails = null,
           isUpdating = true,
         )
 
-      awaitItem() shouldBe
-        ShowDetailsContent(
+      awaitItem() shouldBe ShowDetailsContent(
           showDetails = null,
           isUpdating = false,
           errorMessage = "Failed to fetch show details",
-          showInfo = ShowInfoState.Error
+          showInfo = ShowInfoState.Error,
         )
 
       presenter.dispatch(DismissErrorSnackbar)
@@ -214,8 +210,7 @@ class ShowDetailsPresenterTest {
   @Test
   fun `should invoke navigateToSeason when SeasonClicked`() = runTest {
     var navigatedToSeason = false
-    val presenter =
-      buildShowDetailsPresenter(
+    val presenter = buildShowDetailsPresenter(
         onNavigateToSeason = { navigatedToSeason = true },
       )
 
@@ -274,6 +269,9 @@ class ShowDetailsPresenterTest {
       recommendedShowsRepository = recommendedShowsRepository,
       castRepository = castRepository,
       showDetailsRepository = showDetailsRepository,
+      showDetailsMapper = ShowDetailsMapper(
+        formatterUtil = fakeFormatterUtil,
+      ),
     )
   }
 }

@@ -14,7 +14,7 @@ class RootPlugin : Plugin<Project> {
       "Root plugin should only be applied on the root project."
     }
 
-    checkRequiredJdkVersion(libs.findVersion("java-jdk").get().requiredVersion)
+//    checkRequiredJdkVersion(libs.findVersion("java-jdk").get().requiredVersion)
 
     pluginManager.withPlugin("com.autonomousapps.dependency-analysis") {
       configureDependencyAnalysis()

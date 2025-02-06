@@ -11,12 +11,10 @@ import kotlinx.collections.immutable.persistentListOf
 
 val showDetailsContent =
   ShowDetailsContent(
-    showDetails =
-      ShowDetails(
+    showDetails = ShowDetails(
         tmdbId = 849583,
         title = "Loki",
-        overview =
-          "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
+        overview =  "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
         posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         language = "en",
@@ -25,6 +23,7 @@ val showDetailsContent =
         votes = 1L,
         rating = 8.0,
         genres = persistentListOf("1234"),
+        isFollowed = false,
       ),
     showInfo = ShowInfoState.Empty,
     errorMessage = null,

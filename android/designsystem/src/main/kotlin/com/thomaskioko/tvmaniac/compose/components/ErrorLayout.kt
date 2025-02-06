@@ -106,7 +106,7 @@ fun ErrorUi(
       Spacer(modifier = Modifier.height(8.dp))
 
       AnimatedVisibility(visible = showRetryButton) {
-        TvManiacOutlinedButton(
+        HorizontalOutlinedButton(
           text = "Retry",
           onClick = onRetry,
         )
@@ -134,7 +134,7 @@ fun RowError(
 
     Spacer(modifier = Modifier.height(8.dp))
 
-    TvManiacOutlinedButton(
+    HorizontalOutlinedButton(
       text = "Retry",
       onClick = onRetry,
     )

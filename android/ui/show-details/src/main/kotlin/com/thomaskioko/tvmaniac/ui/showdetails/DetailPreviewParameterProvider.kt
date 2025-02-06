@@ -15,6 +15,7 @@ val showDetailsContent =
   ShowDetailsContent(
     showDetails =
       ShowDetails(
+        tmdbId = 849583,
         title = "Loki",
         overview =
           "After stealing the Tesseract during the events of “Avengers: Endgame,” " +
@@ -31,6 +32,7 @@ val showDetailsContent =
         genres = persistentListOf("Horror", "Action"),
         status = "Returning Series",
         year = "2024",
+        isFollowed = false
       ),
     showInfo =
       ShowInfoState.Loaded(

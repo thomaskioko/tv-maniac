@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 /// A view that displays a horizontally scrolling carousel of show posters
 /// with auto-scrolling and interactive gesture support.
@@ -9,13 +10,9 @@ public struct CarouselView<T, Content: View>: View {
   private let onItemTapped: (Int64) -> Void
   private let content: (Int) -> Content
 
-  @GestureState private var dragOffset: CGFloat = 0
-  @State private var offset: CGFloat = 0
-  @State private var dragging = false
-
-  /// The time interval between auto-scrolls in seconds
-  private let autoScrollInterval: TimeInterval = 6.0
-  @State private var autoScrollTimer: Timer?
+  @State private var timer: Timer.TimerPublisher = Timer.publish(every: 3, on: .main, in: .common)
+  @State private var timerCancellable: Cancellable?
+  @State private var isDragging: Bool = false
 
   public init(
     items: [T],
@@ -31,142 +28,68 @@ public struct CarouselView<T, Content: View>: View {
     self.content = content
   }
 
-  /// The items to display, including wraparound items for infinite scrolling
-  private var displayItems: [T] {
-    guard let first = items.first, let last = items.last else { return [] }
-    return [last] + items + [first]
-  }
-
   public var body: some View {
     ZStack(alignment: .bottom) {
-      GeometryReader { geometry in
-        let screenWidth = geometry.size.width
-
-        HStack(spacing: 0) {
-          ForEach(displayItems.indices, id: \.self) { index in
-            let actualIndex = (index - 1) % items.count
-            content(actualIndex >= 0 ? actualIndex : items.count - 1)
-              .frame(width: screenWidth)
-          }
-        }
-        .offset(x: offset + dragOffset)
-        .onChange(of: currentIndex) { _ in
-          resetOffsetIfNeeded(geometry: geometry)
-          notifyActiveItem()
-        }
-        .onAppear {
-          offset = -CGFloat(currentIndex) * screenWidth
-          startAutoScroll()
-          notifyActiveItem()
-        }
-        .onDisappear {
-          autoScrollTimer?.invalidate()
-        }
-        .gesture(
-          DragGesture()
-            .updating($dragOffset) { value, state, _ in
-              state = value.translation.width
-              if !dragging {
-                dragging = true
-                autoScrollTimer?.invalidate()
+      TabView(selection: $currentIndex) {
+        ForEach(items.indices, id: \.self) { index in
+          ZStack(alignment: Alignment(horizontal: .trailing, vertical: .bottom), content: {
+            GeometryReader { reader in
+              let screenWidth = reader.size.width
+              
+              HStack(spacing: 0) {
+                content(index)
+                  .offset(x: -reader.frame(in: .global).minX)
+                  .frame(width: screenWidth)
               }
-
-              handleDragUpdate(
-                translation: value.translation.width,
-                screenWidth: screenWidth
-              )
+              .onChange(of: currentIndex) { _ in
+                notifyActiveItem()
+              }
+              .onAppear {
+                notifyActiveItem()
+              }
             }
-            .onEnded { value in
-              dragging = false
-              let velocity = value.predictedEndTranslation.width - value.translation.width
-              let translation = value.translation.width
-
-              handleDragEnd(
-                velocity: velocity,
-                translation: translation,
-                screenWidth: screenWidth
-              )
-            }
-        )
-        .animation(dragging ? nil : .easeOut, value: dragOffset)
-      }
-    }
-  }
-
-  /// Starts the auto-scroll timer if not already running
-  private func startAutoScroll() {
-    autoScrollTimer?.invalidate()
-    autoScrollTimer = Timer.scheduledTimer(withTimeInterval: autoScrollInterval, repeats: true) { _ in
-      if !dragging {
-        withAnimation(.easeOut(duration: 0.6)) {
-          currentIndex += 1
-          offset = -CGFloat(currentIndex) * UIScreen.main.bounds.width
+            .cornerRadius(0)
+            .simultaneousGesture(
+              DragGesture(minimumDistance: 0)
+                .onChanged { _ in
+                  isDragging = true
+                  stopAutoScroll()
+                }
+                .onEnded { _ in
+                  isDragging = false
+                  setupAutoScroll()
+                }
+            )
+          })
         }
       }
-    }
-  }
-
-  /// Resets the offset when reaching the end to enable infinite scrolling
-  /// - Parameter geometry: The geometry proxy providing the container's dimensions
-  private func resetOffsetIfNeeded(geometry: GeometryProxy) {
-    let screenWidth = geometry.size.width
-    if currentIndex == displayItems.count - 1 {
-      withAnimation(.none) {
-        currentIndex = 1
-        offset = -screenWidth
+      .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+      .onAppear {
+        setupAutoScroll()
       }
-    }
-    if currentIndex == 0 {
-      withAnimation(.none) {
-        currentIndex = items.count
-        offset = -CGFloat(items.count) * screenWidth
+      .onDisappear {
+        stopAutoScroll()
       }
     }
   }
 
-  /// Notifies observers about the currently active item
+  private func setupAutoScroll() {
+    guard !isDragging else { return }
+    timer = Timer.publish(every: 3, on: .main, in: .common)
+    timerCancellable = timer.autoconnect().sink { _ in
+      withAnimation(.easeOut(duration: 0.6)) {
+        currentIndex = (currentIndex + 1) % items.count
+      }
+    }
+  }
+
+  private func stopAutoScroll() {
+    timerCancellable?.cancel()
+    timerCancellable = nil
+  }
+
   private func notifyActiveItem() {
-    let actualIndex = (currentIndex - 1) % items.count
-    onItemScrolled(items[actualIndex])
-  }
-
-  /// Handles the drag gesture state update
-  private func handleDragUpdate(
-    translation: CGFloat,
-    screenWidth: CGFloat
-  ) {
-    let halfScreenWidth = screenWidth / 2
-
-    if abs(translation) > halfScreenWidth {
-      let direction = translation > 0 ? -1 : 1
-      let nextIndex = (currentIndex + direction - 1) % items.count
-      guard nextIndex >= 0 && nextIndex < items.count else { return }
-      onItemScrolled(items[nextIndex])
-    } else {
-      let actualIndex = (currentIndex - 1) % items.count
-      guard actualIndex >= 0 && actualIndex < items.count else { return }
-      onItemScrolled(items[actualIndex])
-    }
-  }
-
-  /// Handles the end of a drag gesture
-  private func handleDragEnd(
-    velocity: CGFloat,
-    translation: CGFloat,
-    screenWidth: CGFloat
-  ) {
-    if abs(velocity) > 100 || abs(translation) > screenWidth * 0.2 {
-      let direction: Int = translation > 0 ? -1 : 1
-      let targetIndex = currentIndex + direction
-      currentIndex = targetIndex
-      offset = -CGFloat(targetIndex) * screenWidth
-    } else {
-      offset = -CGFloat(currentIndex) * screenWidth
-    }
-
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-      startAutoScroll()
-    }
+    onItemScrolled(items[currentIndex])
   }
 }
 

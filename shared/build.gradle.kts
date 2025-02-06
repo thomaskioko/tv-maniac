@@ -17,8 +17,6 @@ plugins {
   alias(libs.plugins.tvmaniac.xcframework)
 }
 
-version = libs.versions.shared.module.version.get()
-
 kotlin {
   val xcFramework = XCFramework("TvManiac")
 

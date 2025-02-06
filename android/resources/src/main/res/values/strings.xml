@@ -29,9 +29,9 @@
     <string name="dialog_message_unwatched">Are you sure you want to mark the entire season as unwatched?</string>
     <string name="dialog_message_watched">Are you sure you want to mark the entire season as watched?</string>
 
-    <string name="following">Follow</string>
-    <string name="unfollow">Unfollow</string>
-    <string name="btn_trailer">Trailer</string>
+    <string name="following">Track</string>
+    <string name="unfollow">Stop Tracking</string>
+    <string name="btn_add_to_list">Add To List</string>
     <string name="title_recommended">Recommendations</string>
     <string name="title_similar">Similar Shows</string>
     <string name="title_seasons">Browse Seasons</string>
