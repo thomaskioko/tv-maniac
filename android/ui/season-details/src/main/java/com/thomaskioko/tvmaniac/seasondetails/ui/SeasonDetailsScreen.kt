@@ -28,9 +28,12 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Autorenew
 import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -53,12 +56,12 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
-import com.thomaskioko.tvmaniac.compose.components.CollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
+import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.SheetDragHandle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
@@ -72,9 +75,9 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.ReloadSeasonDetails
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsBackClicked
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsErrorState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonGalleryClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.UpdateSeasonWatchedState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Cast
@@ -121,6 +124,7 @@ internal fun SeasonDetailsScreen(
         )
       SheetDragHandle(
         title = title,
+        imageVector = Icons.Outlined.KeyboardArrowDown,
         onClick = { onAction(DismissSeasonGallery) },
       )
     },
@@ -158,13 +162,37 @@ internal fun SeasonDetailsScreen(
             )
         }
 
-        CollapsableTopAppBar(
+        RefreshCollapsableTopAppBar(
           listState = listState,
-          title = (state as? SeasonDetailsLoaded)?.seasonName ?: "",
-          isUpdating = state.isUpdating,
-          onNavIconPressed = { onAction(SeasonDetailsBackClicked) },
-          onActionIconPressed = { onAction(ReloadSeasonDetails) },
+          title = {
+            Text(
+              text = (state as? SeasonDetailsLoaded)?.seasonName ?: "",
+              style =
+                MaterialTheme.typography.titleMedium.copy(
+                  color = MaterialTheme.colorScheme.onSurface,
+                ),
+              maxLines = 1,
+              overflow = TextOverflow.Ellipsis,
+            )
+          },
+          navigationIcon = {
+            Icon(
+              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+              contentDescription = stringResource(R.string.cd_navigate_back),
+              tint = MaterialTheme.colorScheme.onBackground,
+            )
+          },
+          actionIcon = {
+            Icon(
+              imageVector = Icons.Default.Refresh,
+              contentDescription = null,
+              tint = MaterialTheme.colorScheme.onBackground,
+            )
+          },
+          isRefreshing = state.isUpdating,
           showActionIcon = state is SeasonDetailsLoaded,
+          onNavIconClicked = { onAction(SeasonDetailsBackClicked) },
+          onActionIconClicked = { onAction(ReloadSeasonDetails) },
         )
       }
     },

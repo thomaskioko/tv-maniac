@@ -61,7 +61,7 @@ fun EmptyContent(
     }
 
     buttonText?.let {
-      TvManiacOutlinedButton(
+      HorizontalOutlinedButton(
         modifier = Modifier.padding(top = 16.dp),
         text = buttonText,
         onClick = onClick,

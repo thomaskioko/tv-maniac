@@ -16,7 +16,7 @@ let package = Package(
   ],
   dependencies: [
       .package(name: "SwiftUIComponents", path: "../SwiftUIComponents"),
-      .package(name: "TvManiacUI", path: "../TvManiacUI"),
+      .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
   ],
   targets: [
     .binaryTarget(
@@ -28,9 +28,16 @@ let package = Package(
       dependencies: [
         "SwiftUIComponents",
         "TvManiac",
-        "TvManiacUI"
       ]
     ),
+    .testTarget(
+        name: "TvManiacKitTests",
+        dependencies: [
+            "SnapshotTestingLib",
+            "TvManiacKit"
+        ],
+        exclude: ["__Snapshots__"]
+    )
   ]
 )
 

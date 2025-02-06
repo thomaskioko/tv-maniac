@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftUIComponents
 import TvManiac
 import TvManiacKit
-import TvManiacUI
 
 struct DiscoverTab: View {
   private let presenter: DiscoverShowsPresenter
@@ -92,40 +91,26 @@ struct DiscoverTab: View {
         ) { index in
           CarouselItemView(item: items[index])
         }
-        .allowsHitTesting(true)
-        .gesture(DragGesture())
-
         headerNavigationBar(shows: items)
       }
     }
   }
 
-  /// A view that displays a single item in the carousel
   @ViewBuilder
   private func CarouselItemView(item: SwiftShow) -> some View {
     GeometryReader { geometry in
       let scrollViewHeight = geometry.size.height
 
       ZStack(alignment: .bottom) {
-        ScrollView(showsIndicators: false) {
-          GeometryReader { imageGeometry in
-            let minY = imageGeometry.frame(in: .global).minY
-            let scrollOffset = minY - geometry.frame(in: .global).minY
-            let stretchFactor = max(0, scrollOffset)
-
-            PosterItemView(
-              title: item.title,
-              posterUrl: item.posterUrl,
-              posterWidth: geometry.size.width,
-              posterHeight: scrollViewHeight + stretchFactor
-            )
-            .offset(y: -stretchFactor)
-          }
-          .frame(height: scrollViewHeight)
-        }
-        .simultaneousGesture(TapGesture().onEnded {
+        PosterItemView(
+          title: item.title,
+          posterUrl: item.posterUrl,
+          posterWidth: geometry.size.width,
+          posterHeight: scrollViewHeight
+        )
+        .onTapGesture {
           presenter.dispatch(action: ShowClicked(id: item.tmdbId))
-        })
+        }
       }
     }
   }
@@ -227,8 +212,8 @@ struct DiscoverTab: View {
     HStack(spacing: 5) {
       ForEach(shows.indices, id: \.self) { index in
         Circle()
-          .fill(currentIndex - 1 == index ? .white : .gray.opacity(0.5))
-          .frame(width: currentIndex - 1 == index ? 10 : 6, height: currentIndex - 1 == index ? 10 : 6)
+          .fill(currentIndex == index ? .white : .gray.opacity(0.5))
+          .frame(width: currentIndex == index ? 10 : 6, height: currentIndex == index ? 10 : 6)
       }
     }
     .animation(.easeInOut, value: currentIndex)
@@ -362,11 +347,44 @@ struct DiscoverTab: View {
     if shows.isEmpty {
       return nil
     }
-    let actualIndex = (currentIndex - 1) % shows.count
-    return shows[actualIndex >= 0 ? actualIndex : shows.count - 1]
+    return shows[currentIndex]
   }
 
   private enum CoordinateSpaces {
     case scrollView
   }
+}
+
+struct PullToRefreshView: View {
+    var coordinateSpaceName: String
+    var onRefresh: () async -> Void
+    @State private var needRefresh: Bool = false
+    
+    var body: some View {
+        GeometryReader { geo in
+            if geo.frame(in: .named(coordinateSpaceName)).midY > 50 {
+                Spacer()
+                    .onAppear {
+                        needRefresh = true
+                    }
+            } else if geo.frame(in: .named(coordinateSpaceName)).midY < 1 {
+                Spacer()
+                    .onAppear {
+                        if needRefresh {
+                            needRefresh = false
+                            Task {
+                                await onRefresh()
+                            }
+                        }
+                    }
+            }
+            HStack {
+                Spacer()
+                if needRefresh {
+                    ProgressView()
+                }
+                Spacer()
+            }
+        }.padding(.top, -50)
+    }
 }

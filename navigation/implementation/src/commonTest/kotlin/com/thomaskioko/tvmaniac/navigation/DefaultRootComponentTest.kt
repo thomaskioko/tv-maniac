@@ -35,6 +35,7 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresente
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenter
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsMapper
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
@@ -272,6 +273,7 @@ class DefaultRootComponentTest {
           similarShowsRepository = FakeSimilarShowsRepository(),
           trailerRepository = FakeTrailerRepository(),
           watchProviders = FakeWatchProviderRepository(),
+          showDetailsMapper = ShowDetailsMapper(FakeFormatterUtil()),
         )
       },
     )

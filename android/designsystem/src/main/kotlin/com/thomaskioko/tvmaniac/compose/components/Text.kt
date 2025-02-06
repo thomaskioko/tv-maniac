@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
@@ -105,6 +106,7 @@ fun ExpandingText(
   expandable: Boolean = true,
   collapsedMaxLines: Int = 4,
   expandedMaxLines: Int = Int.MAX_VALUE,
+  color: Color = MaterialTheme.colorScheme.onSurface,
 ) {
   var canTextExpand by remember(text) { mutableStateOf(true) }
   var expanded by remember { mutableStateOf(false) }
@@ -114,7 +116,7 @@ fun ExpandingText(
     style = textStyle,
     fontWeight = fontWeight,
     overflow = TextOverflow.Ellipsis,
-    color = MaterialTheme.colorScheme.onSurface,
+    color = color,
     maxLines = if (expanded) expandedMaxLines else collapsedMaxLines,
     modifier =
       modifier.clickable(

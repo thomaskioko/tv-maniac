@@ -38,17 +38,9 @@ dependencies {
 
 gradlePlugin {
   plugins {
-    register("kotlinMultiplatformPlugin") {
-      id = "plugin.tvmaniac.multiplatform"
-      implementationClass = "com.thomaskioko.tvmaniac.plugins.KotlinMultiplatformConventionPlugin"
-    }
     register("androidApplication") {
       id = "plugin.tvmaniac.application"
       implementationClass = "com.thomaskioko.tvmaniac.plugins.ApplicationPlugin"
-    }
-    register("androidLibrary") {
-      id = "plugin.tvmaniac.android.library"
-      implementationClass = "com.thomaskioko.tvmaniac.plugins.AndroidLibraryPlugin"
     }
 
     register("androidComposeLibrary") {
@@ -56,14 +48,14 @@ gradlePlugin {
       implementationClass = "com.thomaskioko.tvmaniac.plugins.ComposeLibraryPlugin"
     }
 
-    register("kotlinAndroid") {
-      id = "plugin.tvmaniac.kotlin.android"
-      implementationClass = "com.thomaskioko.tvmaniac.plugins.KotlinAndroidConventionPlugin"
+    register("androidLibrary") {
+      id = "plugin.tvmaniac.android.library"
+      implementationClass = "com.thomaskioko.tvmaniac.plugins.AndroidLibraryPlugin"
     }
 
-    register("spotless") {
-      id = "plugin.tvmaniac.spotless"
-      implementationClass = "com.thomaskioko.tvmaniac.plugins.SpotlessPlugin"
+    register("kotlinAndroid") {
+      id = "plugin.tvmaniac.kotlin.android"
+      implementationClass = "com.thomaskioko.tvmaniac.plugins.KotlinAndroidPlugin"
     }
 
     register("git-hooks") {
@@ -71,10 +63,21 @@ gradlePlugin {
       implementationClass = "com.thomaskioko.tvmaniac.plugins.GitHooksPlugin"
     }
 
+    register("kotlinMultiplatformPlugin") {
+      id = "plugin.tvmaniac.multiplatform"
+      implementationClass = "com.thomaskioko.tvmaniac.plugins.KotlinMultiplatformPlugin"
+    }
+
     register("root") {
       id = "plugin.tvmaniac.root"
       implementationClass = "com.thomaskioko.tvmaniac.plugins.RootPlugin"
     }
+
+    register("spotless") {
+      id = "plugin.tvmaniac.spotless"
+      implementationClass = "com.thomaskioko.tvmaniac.plugins.SpotlessPlugin"
+    }
+
     register("xcframework") {
       id = "plugin.tvmaniac.xcframework"
       implementationClass = "com.thomaskioko.tvmaniac.plugins.XCFrameworkPlugin"
