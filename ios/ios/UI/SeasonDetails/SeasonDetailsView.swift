@@ -10,7 +10,6 @@ import SwiftUI
 import SwiftUIComponents
 import TvManiac
 import TvManiacKit
-import TvManiacUI
 
 struct SeasonDetailsView: View {
   private let presenter: SeasonDetailsPresenter

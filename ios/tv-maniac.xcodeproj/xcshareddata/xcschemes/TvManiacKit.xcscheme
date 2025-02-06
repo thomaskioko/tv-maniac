@@ -6,13 +6,36 @@
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES"
       buildArchitectures = "Automatic">
+      <PreActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Run Script"
+               scriptText = "# Type a script or drag a script file from your workspace to insert its path.&#10;&#10;">
+            </ActionContent>
+         </ExecutionAction>
+      </PreActions>
       <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "TvManiacKit"
+               BuildableName = "TvManiacKit"
+               BlueprintName = "TvManiacKit"
+               ReferencedContainer = "container:Modules/TvManiacKit">
+            </BuildableReference>
+         </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
-            buildForAnalyzing = "YES">
+            buildForAnalyzing = "NO">
             <AutocreatedTestPlanReference>
             </AutocreatedTestPlanReference>
          </BuildActionEntry>
@@ -29,10 +52,10 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "TvManiacUITests"
-               BuildableName = "TvManiacUITests"
-               BlueprintName = "TvManiacUITests"
-               ReferencedContainer = "container:Modules/TvManiacUI">
+               BlueprintIdentifier = "TvManiacKitTests"
+               BuildableName = "TvManiacKitTests"
+               BlueprintName = "TvManiacKitTests"
+               ReferencedContainer = "container:Modules/TvManiacKit">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -57,10 +80,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "TvManiacUITests"
-            BuildableName = "TvManiacUITests"
-            BlueprintName = "TvManiacUITests"
-            ReferencedContainer = "container:Modules/TvManiacUI">
+            BlueprintIdentifier = "TvManiacKit"
+            BuildableName = "TvManiacKit"
+            BlueprintName = "TvManiacKit"
+            ReferencedContainer = "container:Modules/TvManiacKit">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

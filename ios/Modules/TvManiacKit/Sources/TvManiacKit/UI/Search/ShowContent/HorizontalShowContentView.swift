@@ -1,10 +1,3 @@
-//
-//  HorizontalShowContentView.swift
-//  TvManiacUI
-//
-//  Created by Thomas Kioko on 11/4/24.
-//
-
 import SwiftUI
 import SwiftUIComponents
 

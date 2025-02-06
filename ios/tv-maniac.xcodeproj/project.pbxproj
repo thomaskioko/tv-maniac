@@ -22,7 +22,6 @@
 		D653926029DAC949000EE673 /* AuthenticatedProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925F29DAC949000EE673 /* AuthenticatedProfileView.swift */; };
 		D653926B29DAD8FA000EE673 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = D653926A29DAD8FA000EE673 /* config.json */; };
 		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
-		D68C97502C8EFBD800FAC88A /* TvManiacUI in Frameworks */ = {isa = PBXBuildFile; productRef = D68C974F2C8EFBD800FAC88A /* TvManiacUI */; };
 		E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9AC834B26CEE00D00829A0D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -56,7 +55,6 @@
 		D653925F29DAC949000EE673 /* AuthenticatedProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatedProfileView.swift; sourceTree = "<group>"; };
 		D653926A29DAD8FA000EE673 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
 		D6619D352C89D36F00D273E7 /* SwiftUIComponents */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SwiftUIComponents; sourceTree = "<group>"; };
-		D68C974E2C8EFB7C00FAC88A /* TvManiacUI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TvManiacUI; sourceTree = "<group>"; };
 		D6BDF2BB2C933DBB0042C86D /* SnapshotTestingLib */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SnapshotTestingLib; sourceTree = "<group>"; };
 		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -74,7 +72,6 @@
 				D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */,
 				D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */,
 				D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */,
-				D68C97502C8EFBD800FAC88A /* TvManiacUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -200,7 +197,6 @@
 				D6BDF2BB2C933DBB0042C86D /* SnapshotTestingLib */,
 				D6619D352C89D36F00D273E7 /* SwiftUIComponents */,
 				D60D95292CDBDFB30039884B /* TvManiacKit */,
-				D68C974E2C8EFB7C00FAC88A /* TvManiacUI */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -229,7 +225,6 @@
 			packageProductDependencies = (
 				D653924729D8B6A6000EE673 /* OAuthSwift */,
 				D6619D362C89D37900D273E7 /* SwiftUIComponents */,
-				D68C974F2C8EFBD800FAC88A /* TvManiacUI */,
 				D60D952A2CDBE1160039884B /* TvManiacKit */,
 			);
 			productName = ios;
@@ -568,10 +563,6 @@
 		D6619D362C89D37900D273E7 /* SwiftUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftUIComponents;
-		};
-		D68C974F2C8EFBD800FAC88A /* TvManiacUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = TvManiacUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

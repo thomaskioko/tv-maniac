@@ -1,5 +1,4 @@
 import TvManiac
-import TvManiacUI
 
 public extension TvManiac.WatchlistItem {
   func toSwift() -> ShowPosterImage {
