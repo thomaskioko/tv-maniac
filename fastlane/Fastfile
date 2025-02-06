@@ -30,10 +30,10 @@ platform :ios do
       derived_data_path: "derived_data"
     )
 
-    # Run TvManiacUI snapshot tests
+    # Run TvManiacKit snapshot tests
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
-      scheme: "TvManiacUI",
+      scheme: "TvManiacKit",
       device: TEST_DEVICE,
       clean: true,
       result_bundle: true,
