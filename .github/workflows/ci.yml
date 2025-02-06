@@ -23,6 +23,7 @@ env:
 
 jobs:
   build-android:
+    needs: android-screenshot-test
     runs-on: ubuntu-latest
     env:
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
@@ -74,8 +75,8 @@ jobs:
             --no-configuration-cache
 
 
-
   android-lint:
+    needs: android-screenshot-test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
