@@ -10,8 +10,8 @@ android { namespace = "com.thomaskioko.tvmaniac.ui.discover" }
 dependencies {
   api(projects.presenter.discover)
 
-  implementation(projects.android.designsystem)
-  implementation(projects.android.resources)
+  implementation(projects.androidDesignsystem)
+  implementation(projects.androidResources)
 
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material3)
@@ -19,7 +19,7 @@ dependencies {
   implementation(libs.androidx.compose.runtime)
   implementation(libs.snapper)
 
-  testImplementation(projects.android.screenshotTests)
+  testImplementation(projects.core.screenshotTests)
   testImplementation(libs.androidx.compose.ui.test)
   testImplementation(libs.robolectric)
   testRuntimeOnly(libs.roborazzi)

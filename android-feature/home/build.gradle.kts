@@ -5,13 +5,13 @@ android { namespace = "com.thomaskioko.tvmaniac.ui.home" }
 dependencies {
   api(projects.presenter.home)
 
-  implementation(projects.android.designsystem)
-  implementation(projects.android.resources)
+  implementation(projects.androidDesignsystem)
+  implementation(projects.androidResources)
 
-  implementation(projects.android.ui.discover)
-  implementation(projects.android.ui.watchlist)
-  implementation(projects.android.ui.search)
-  implementation(projects.android.ui.settings)
+  implementation(projects.androidFeature.discover)
+  implementation(projects.androidFeature.watchlist)
+  implementation(projects.androidFeature.search)
+  implementation(projects.androidFeature.settings)
 
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.runtime)

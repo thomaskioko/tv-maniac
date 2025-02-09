@@ -8,8 +8,8 @@ dependencies {
   api(projects.presenter.settings)
   api(projects.datastore.api)
 
-  implementation(projects.android.designsystem)
-  implementation(projects.android.resources)
+  implementation(projects.androidDesignsystem)
+  implementation(projects.androidResources)
 
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material3)

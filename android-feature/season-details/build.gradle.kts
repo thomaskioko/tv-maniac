@@ -10,8 +10,8 @@ android { namespace = "com.thomaskioko.tvmaniac.ui.seasondetails" }
 dependencies {
   api(projects.presenter.seasondetails)
 
-  implementation(projects.android.designsystem)
-  implementation(projects.android.resources)
+  implementation(projects.androidDesignsystem)
+  implementation(projects.androidResources)
 
   implementation(libs.androidx.compose.constraintlayout)
   implementation(libs.androidx.compose.foundation)
@@ -19,7 +19,7 @@ dependencies {
   implementation(libs.androidx.compose.runtime)
   implementation(libs.snapper)
 
-  testImplementation(projects.android.screenshotTests)
+  testImplementation(projects.core.screenshotTests)
   testImplementation(libs.androidx.compose.ui.test)
   testImplementation(libs.robolectric)
   testRuntimeOnly(libs.roborazzi)

@@ -5,20 +5,20 @@ plugins {
   alias(libs.plugins.roborazzi)
 }
 
-android { namespace = "com.thomaskioko.tvmaniac.ui.library" }
+android { namespace = "com.thomaskioko.tvmaniac.ui.search" }
 
 dependencies {
-  api(projects.presenter.watchlist)
+  api(projects.presenter.search)
 
-  implementation(projects.android.designsystem)
-  implementation(projects.android.resources)
+  implementation(projects.androidDesignsystem)
+  implementation(projects.androidResources)
 
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material3)
   implementation(libs.androidx.compose.runtime)
-  implementation(libs.kotlinx.collections)
+  implementation(libs.snapper)
 
-  testImplementation(projects.android.screenshotTests)
+  testImplementation(projects.core.screenshotTests)
   testImplementation(libs.androidx.compose.ui.test)
   testImplementation(libs.robolectric)
   testRuntimeOnly(libs.roborazzi)
@@ -26,8 +26,7 @@ dependencies {
 
 addCompilerOptInArgs(
   listOf(
-    "androidx.compose.foundation.ExperimentalFoundationApi",
-    "androidx.compose.material.ExperimentalMaterialApi",
     "androidx.compose.material3.ExperimentalMaterial3Api",
+    "dev.chrisbanes.snapper.ExperimentalSnapperApi",
   )
 )

@@ -5,20 +5,21 @@ plugins {
   alias(libs.plugins.roborazzi)
 }
 
-android { namespace = "com.thomaskioko.tvmaniac.ui.moreshows" }
+android { namespace = "com.thomaskioko.tvmaniac.ui.showdetails" }
 
 dependencies {
-  api(projects.presenter.moreShows)
+  api(projects.presenter.showDetails)
 
-  implementation(projects.android.designsystem)
+  implementation(projects.androidDesignsystem)
+  implementation(projects.androidResources)
 
   implementation(libs.androidx.compose.foundation)
-  implementation(libs.androidx.compose.material)
+  implementation(libs.androidx.compose.material.icons)
   implementation(libs.androidx.compose.material3)
   implementation(libs.androidx.compose.runtime)
-  implementation(libs.androidx.paging.compose)
+  implementation(libs.snapper)
 
-  testImplementation(projects.android.screenshotTests)
+  testImplementation(projects.core.screenshotTests)
   testImplementation(libs.androidx.compose.ui.test)
   testImplementation(libs.robolectric)
   testRuntimeOnly(libs.roborazzi)
@@ -26,8 +27,8 @@ dependencies {
 
 addCompilerOptInArgs(
   listOf(
-    "androidx.compose.material.ExperimentalMaterialApi",
+    "androidx.compose.foundation.ExperimentalFoundationApi",
     "androidx.compose.material3.ExperimentalMaterial3Api",
-    "androidx.compose.foundation.ExperimentalFoundationApi"
+    "dev.chrisbanes.snapper.ExperimentalSnapperApi"
   )
 )

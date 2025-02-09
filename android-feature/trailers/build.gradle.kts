@@ -5,8 +5,8 @@ android { namespace = "com.thomaskioko.tvmaniac.ui.trailers" }
 dependencies {
   api(projects.presenter.trailers)
 
-  implementation(projects.android.designsystem)
-  implementation(projects.android.resources)
+  implementation(projects.androidDesignsystem)
+  implementation(projects.androidResources)
 
   implementation(libs.androidx.compose.constraintlayout)
   implementation(libs.androidx.compose.foundation)
