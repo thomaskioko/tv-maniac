@@ -7,12 +7,12 @@ android {
 }
 
 dependencies {
-  implementation(projects.android.designsystem)
-  implementation(projects.android.ui.home)
-  implementation(projects.android.ui.moreShows)
-  implementation(projects.android.ui.seasonDetails)
-  implementation(projects.android.ui.showDetails)
-  implementation(projects.android.ui.trailers)
+  implementation(projects.androidDesignsystem)
+  implementation(projects.androidFeature.home)
+  implementation(projects.androidFeature.moreShows)
+  implementation(projects.androidFeature.seasonDetails)
+  implementation(projects.androidFeature.showDetails)
+  implementation(projects.androidFeature.trailers)
   implementation(projects.core.base)
   implementation(projects.core.util)
   implementation(projects.traktAuth.api)
@@ -97,7 +97,7 @@ dependencies {
   implementation(libs.coroutines.core)
   implementation(libs.ktor.core)
 
-  baselineProfile(projects.android.benchmark)
+  baselineProfile(projects.benchmark)
 
   runtimeOnly(libs.androidx.profileinstaller)
 }

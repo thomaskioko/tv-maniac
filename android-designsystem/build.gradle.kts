@@ -11,7 +11,7 @@ dependencies {
   api(libs.androidx.compose.material.icons)
   api(libs.androidx.compose.runtime)
 
-  implementation(projects.android.resources)
+  implementation(projects.androidResources)
 
   implementation(libs.androidx.annotation)
   implementation(libs.androidx.collections)

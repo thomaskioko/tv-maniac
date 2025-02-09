@@ -67,8 +67,8 @@ jobs:
       - name: 🤖 Build Android App
         run: |
           ./gradlew check \
-            :android:app:assemble \
-            :android:app:bundle \
+            :app:assemble \
+            :app:bundle \
             -x assembleNonMinifiedRelease \
             -x bundleNonMinifiedRelease \
             -Pandroidx.baselineprofile.skipgeneration=true \
@@ -157,7 +157,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Lint Project
-        run: ./gradlew :android:app:lintRelease
+        run: ./gradlew :app:lintRelease
 
       - name: Upload Lint Report
         if: ${{ !cancelled() }}

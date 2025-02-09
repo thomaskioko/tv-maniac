@@ -30,7 +30,7 @@ android {
     }
   }
 
-  targetProjectPath = ":android:app"
+  targetProjectPath = ":app"
 }
 
 @Suppress("UnstableApiUsage")
