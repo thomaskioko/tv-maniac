@@ -70,5 +70,15 @@ gradlePlugin {
       id = "com.thomaskioko.tvmaniac.gradle.root"
       implementationClass = "com.thomaskioko.tvmaniac.gradle.plugin.RootPlugin"
     }
+
+    create("spotlessPlugin") {
+      id = "com.thomaskioko.tvmaniac.gradle.spotless"
+      implementationClass = "com.thomaskioko.tvmaniac.gradle.plugin.checks.SpotlessPlugin"
+    }
+
+    create("xcframework") {
+      id = "com.thomaskioko.tvmaniac.gradle.xcframework"
+      implementationClass = "com.thomaskioko.tvmaniac.gradle.plugin.tasks.XCFrameworkPlugin"
+    }
   }
 }

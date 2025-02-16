@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.extensions
+package com.thomaskioko.tvmaniac.gradle.plugin.utils
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget.IOS_SIMULATOR_ARM64
 import java.io.File
 import java.util.Locale
 
-enum class NativeTargetType(
+internal enum class NativeTargetType(
   val targets: List<KonanTarget>,
   private val platformName: String,
 ) {
@@ -21,7 +21,7 @@ enum class NativeTargetType(
 
   companion object {
     fun fromPlatformName(platformName: String?): NativeTargetType =
-      values().firstOrNull { it.platformName == platformName?.lowercase() } ?: SIMULATOR
+      NativeTargetType.entries.firstOrNull { it.platformName == platformName?.lowercase() } ?: SIMULATOR
   }
 }
 

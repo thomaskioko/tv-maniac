@@ -1,22 +1,19 @@
-package com.thomaskioko.tvmaniac.plugins
+package com.thomaskioko.tvmaniac.gradle.plugin.tasks
 
-import com.thomaskioko.tvmaniac.extensions.NativeTargetType
-import com.thomaskioko.tvmaniac.extensions.XcodeBuildEnvironment.GROUP_NAME
-import com.thomaskioko.tvmaniac.extensions.XcodeBuildEnvironment.capitalizedName
-import com.thomaskioko.tvmaniac.extensions.XcodeBuildEnvironment.intermediatesDir
-import com.thomaskioko.tvmaniac.extensions.XcodeBuildEnvironment.nativeBuildTargetTypes
-import com.thomaskioko.tvmaniac.extensions.XcodeBuildEnvironment.nativeBuildType
-import com.thomaskioko.tvmaniac.extensions.XcodeBuildEnvironment.nativeTargetType
-import com.thomaskioko.tvmaniac.extensions.nativeFrameworks
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.NativeTargetType
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.XcodeBuildEnvironment.GROUP_NAME
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.XcodeBuildEnvironment.capitalizedName
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.XcodeBuildEnvironment.intermediatesDir
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.XcodeBuildEnvironment.nativeBuildTargetTypes
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.XcodeBuildEnvironment.nativeBuildType
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.XcodeBuildEnvironment.nativeTargetType
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.nativeFrameworks
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.findByType
-import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
@@ -27,7 +24,7 @@ import kotlin.io.path.listDirectoryEntries
 /**
  * Configuration options for XCFramework generation.
  */
-interface XCFrameworkExtension {
+internal interface XCFrameworkExtension {
   /** Name of the generated framework */
   val frameworkName: Property<String>
 
@@ -46,12 +43,12 @@ interface XCFrameworkExtension {
  * - Cleanup of existing frameworks and intermediate files
  * - Support for different native target types (Device/Simulator)
  */
-abstract class XCFrameworkPlugin : Plugin<Project> {
-  override fun apply(project: Project) = with(project) {
+public abstract class XCFrameworkPlugin : Plugin<Project> {
+  override fun apply(project: Project): Unit = with(project) {
     validateConfiguration()
 
     // Create and configure extension with defaults
-    val extension = extensions.create<XCFrameworkExtension>("xcframework").apply {
+    val extension = extensions.create("xcframework", XCFrameworkExtension::class.java).apply {
       frameworkName.convention("TvManiac.xcframework")
       outputPath.convention("ios/Modules/TvManiacKit")
       cleanIntermediate.convention(true)
@@ -82,51 +79,52 @@ abstract class XCFrameworkPlugin : Plugin<Project> {
     buildInfix: String = "",
     extension: XCFrameworkExtension,
   ): TaskProvider<Copy> {
-    val multiplatformExtension = extensions.findByType<KotlinMultiplatformExtension>()
+    val multiplatformExtension = extensions.findByType(KotlinMultiplatformExtension::class.java)
       ?: throw GradleException("KotlinMultiplatformExtension not found. Apply Kotlin Multiplatform plugin first.")
 
     val projectName = name
     val projectDir = rootProject.projectDir
 
     // Register assembly task
-    val assembleXCFrameworkTask = tasks.register<XCFrameworkTask>("assemble${buildInfix}XCFramework") {
-      group = GROUP_NAME
-      buildType = nativeBuildType
+    val assembleXCFrameworkTask = tasks.register("assemble${buildInfix}XCFramework", XCFrameworkTask::class.java) { extension ->
+      extension.group = GROUP_NAME
+      extension.buildType = nativeBuildType
 
       val frameworks = multiplatformExtension.nativeFrameworks(nativeBuildType, targetType.targets)
-      from(*frameworks.toTypedArray())
+      extension.from(*frameworks.toTypedArray())
     }
 
     // Register copy task
-    return tasks.register<Copy>("copy${buildInfix}XCFramework") {
-      group = GROUP_NAME
-      description = "Copies the $buildInfix XCFramework to ${extension.outputPath.get()}"
+    return tasks.register("copy${buildInfix}XCFramework", Copy::class.java) { copyExtension ->
+      copyExtension.group = GROUP_NAME
+      copyExtension.description = "Copies the $buildInfix XCFramework to ${extension.outputPath.get()}"
 
       val outputDir = projectDir.resolve(
         "${extension.outputPath.get()}/${extension.frameworkName.get()}",
       )
 
-      dependsOn(assembleXCFrameworkTask)
+      copyExtension.dependsOn(assembleXCFrameworkTask)
 
-      from(
+      copyExtension.from(
         assembleXCFrameworkTask.map {
           it.outputDir.resolve(nativeBuildType.getName())
             .resolve("$projectName.xcframework")
         },
       )
 
-      into(outputDir)
+      copyExtension.into(outputDir)
 
-      doFirst {
-        logger.lifecycle("Cleaning existing XCFramework at: ${outputDir.absolutePath}")
+      copyExtension.doFirst {
+        copyExtension.logger.lifecycle("Cleaning existing XCFramework at: ${outputDir.absolutePath}")
         outputDir.deleteRecursively()
 
         if (extension.cleanIntermediate.get()) {
-          logger.lifecycle("Cleaning intermediates for $projectName")
-          intermediatesDir?.toPath()?.listDirectoryEntries("${extension.frameworkName.get()}*")?.forEach {
-            it.deleteRecursively()
-            logger.lifecycle("Cleaned intermediate files: ${it.fileName}")
-          }
+          copyExtension.logger.lifecycle("Cleaning intermediates for $projectName")
+          intermediatesDir?.toPath()
+            ?.listDirectoryEntries("${extension.frameworkName.get()}*")?.forEach {
+              it.deleteRecursively()
+              copyExtension.logger.lifecycle("Cleaned intermediate files: ${it.fileName}")
+            }
         }
       }
     }
