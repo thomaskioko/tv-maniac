@@ -38,6 +38,10 @@ public abstract class AndroidExtension(private val project: Project) {
   public fun useRoborazzi() {
     project.plugins.apply("io.github.takahirom.roborazzi")
 
+    project.android {
+      testOptions.unitTests.isIncludeAndroidResources = true
+    }
+
     project.dependencies.apply {
       add("testImplementation", project.getDependency("androidx-compose-ui-test"))
       add("testImplementation", project.getDependency("robolectric"))
