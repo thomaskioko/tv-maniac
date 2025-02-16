@@ -49,7 +49,7 @@ import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistState
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.ReloadWatchlist
 import com.thomaskioko.tvmaniac.presentation.watchlist.model.WatchlistItem
-import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.android.resources.R
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.inject
 import androidx.activity.ComponentActivity
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.defaultComponentContext
-import com.thomaskioko.tvmaniac.TvManicApplication
+import com.thomaskioko.tvmaniac.app.TvManicApplication
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager

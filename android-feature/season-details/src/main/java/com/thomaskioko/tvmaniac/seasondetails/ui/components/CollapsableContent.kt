@@ -43,7 +43,7 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.OnEpisodeHeaderClicke
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.ShowMarkSeasonDialog
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
-import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.ui.seasonDetailsLoaded
 import kotlinx.collections.immutable.ImmutableList
 

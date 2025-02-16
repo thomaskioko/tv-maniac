@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac
+package com.thomaskioko.tvmaniac.app
 
 import android.graphics.Color
 import android.os.Bundle
@@ -13,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import com.thomaskioko.tvmaniac.RootScreen
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.inject.ActivityComponent
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     val splashScreen = installSplashScreen()
     super.onCreate(savedInstanceState)
-    component = ActivityComponent.create(this)
+    component = ActivityComponent.Companion.create(this)
 
     WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -38,27 +39,27 @@ class MainActivity : ComponentActivity() {
 
       splashScreen.setKeepOnScreenCondition { themeState.isFetching }
 
-      DisposableEffect(darkTheme) {
-        enableEdgeToEdge(
-          statusBarStyle =
-            SystemBarStyle.auto(
-              Color.TRANSPARENT,
-              Color.TRANSPARENT,
-            ) {
-              darkTheme
-            },
-          navigationBarStyle =
-            SystemBarStyle.auto(
-              lightScrim,
-              darkScrim,
-            ) {
-              darkTheme
-            },
-        )
-        onDispose {}
-      }
+        DisposableEffect(darkTheme) {
+            enableEdgeToEdge(
+                statusBarStyle =
+                    SystemBarStyle.Companion.auto(
+                        Color.TRANSPARENT,
+                        Color.TRANSPARENT,
+                    ) {
+                        darkTheme
+                    },
+                navigationBarStyle =
+                    SystemBarStyle.Companion.auto(
+                        lightScrim,
+                        darkScrim,
+                    ) {
+                        darkTheme
+                    },
+            )
+            onDispose {}
+        }
 
-      TvManiacTheme(darkTheme = darkTheme) { RootScreen(rootPresenter = component.rootPresenter) }
+        TvManiacTheme(darkTheme = darkTheme) { RootScreen(rootPresenter = component.rootPresenter) }
     }
   }
 }
