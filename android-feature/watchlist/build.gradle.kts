@@ -1,11 +1,19 @@
-import com.thomaskioko.tvmaniac.extensions.addCompilerOptInArgs
-
 plugins {
-  alias(libs.plugins.tvmaniac.compose.library)
-  alias(libs.plugins.roborazzi)
+  alias(libs.plugins.tvmaniac.android)
 }
 
-android { namespace = "com.thomaskioko.tvmaniac.ui.library" }
+tvmaniac {
+  android {
+    useCompose()
+    useRoborazzi()
+  }
+
+  optIn(
+    "androidx.compose.foundation.ExperimentalFoundationApi",
+    "androidx.compose.material.ExperimentalMaterialApi",
+    "androidx.compose.material3.ExperimentalMaterial3Api",
+  )
+}
 
 dependencies {
   api(projects.presenter.watchlist)
@@ -19,15 +27,4 @@ dependencies {
   implementation(libs.kotlinx.collections)
 
   testImplementation(projects.core.screenshotTests)
-  testImplementation(libs.androidx.compose.ui.test)
-  testImplementation(libs.robolectric)
-  testRuntimeOnly(libs.roborazzi)
 }
-
-addCompilerOptInArgs(
-  listOf(
-    "androidx.compose.foundation.ExperimentalFoundationApi",
-    "androidx.compose.material.ExperimentalMaterialApi",
-    "androidx.compose.material3.ExperimentalMaterial3Api",
-  )
-)

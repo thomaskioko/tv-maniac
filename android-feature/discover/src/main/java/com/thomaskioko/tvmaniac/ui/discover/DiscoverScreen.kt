@@ -92,7 +92,7 @@ import com.thomaskioko.tvmaniac.presentation.discover.TopRatedClicked
 import com.thomaskioko.tvmaniac.presentation.discover.TrendingClicked
 import com.thomaskioko.tvmaniac.presentation.discover.UpComingClicked
 import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
-import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.android.resources.R
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay

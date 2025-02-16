@@ -1,4 +1,12 @@
-plugins { alias(libs.plugins.tvmaniac.multiplatform) }
+plugins {
+  alias(libs.plugins.tvmaniac.kmp)
+}
+
+tvmaniac {
+  multiplatform {
+    useKotlinInject()
+  }
+}
 
 kotlin {
   sourceSets {
@@ -11,7 +19,6 @@ kotlin {
         api(libs.decompose.decompose)
         api(libs.essenty.lifecycle)
 
-        implementation(libs.bundles.kotlinInject)
       }
     }
 

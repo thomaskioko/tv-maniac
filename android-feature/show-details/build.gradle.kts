@@ -1,11 +1,19 @@
-import com.thomaskioko.tvmaniac.extensions.addCompilerOptInArgs
-
 plugins {
-  alias(libs.plugins.tvmaniac.compose.library)
-  alias(libs.plugins.roborazzi)
+  alias(libs.plugins.tvmaniac.android)
 }
 
-android { namespace = "com.thomaskioko.tvmaniac.ui.showdetails" }
+tvmaniac {
+  android {
+    useCompose()
+    useRoborazzi()
+  }
+
+  optIn(
+    "androidx.compose.foundation.ExperimentalFoundationApi",
+    "androidx.compose.material3.ExperimentalMaterial3Api",
+    "dev.chrisbanes.snapper.ExperimentalSnapperApi",
+  )
+}
 
 dependencies {
   api(projects.presenter.showDetails)
@@ -17,18 +25,8 @@ dependencies {
   implementation(libs.androidx.compose.material.icons)
   implementation(libs.androidx.compose.material3)
   implementation(libs.androidx.compose.runtime)
+  implementation(libs.coil.compose)
   implementation(libs.snapper)
 
   testImplementation(projects.core.screenshotTests)
-  testImplementation(libs.androidx.compose.ui.test)
-  testImplementation(libs.robolectric)
-  testRuntimeOnly(libs.roborazzi)
 }
-
-addCompilerOptInArgs(
-  listOf(
-    "androidx.compose.foundation.ExperimentalFoundationApi",
-    "androidx.compose.material3.ExperimentalMaterial3Api",
-    "dev.chrisbanes.snapper.ExperimentalSnapperApi"
-  )
-)

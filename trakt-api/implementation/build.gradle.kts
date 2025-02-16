@@ -1,10 +1,15 @@
-import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
-
 plugins {
-  alias(libs.plugins.tvmaniac.android.library)
-  alias(libs.plugins.tvmaniac.multiplatform)
-  alias(libs.plugins.serialization)
-  alias(libs.plugins.ksp)
+  alias(libs.plugins.tvmaniac.kmp)
+}
+
+tvmaniac {
+  multiplatform {
+    addAndroidTarget()
+    useKotlinInject()
+    useKspAnvilCompiler()
+    useSerialization()
+
+  }
 }
 
 kotlin {
@@ -27,7 +32,6 @@ kotlin {
         implementation(libs.ktor.logging)
         implementation(libs.ktor.negotiation)
         implementation(libs.ktor.serialization.json)
-        implementation(libs.bundles.kotlinInject)
         implementation(libs.sqldelight.extensions)
       }
     }
@@ -41,7 +45,3 @@ kotlin {
     }
   }
 }
-
-addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
-
-android { namespace = "com.thomaskioko.trakt.api.implementation" }

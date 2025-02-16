@@ -1,10 +1,14 @@
-import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
-
 plugins {
-  alias(libs.plugins.tvmaniac.android.library)
-  alias(libs.plugins.tvmaniac.multiplatform)
+  alias(libs.plugins.tvmaniac.kmp)
   alias(libs.plugins.sqldelight)
-  alias(libs.plugins.ksp)
+}
+
+tvmaniac {
+  multiplatform {
+    addAndroidTarget()
+    useKotlinInject()
+    useKspAnvilCompiler()
+  }
 }
 
 kotlin {
@@ -32,10 +36,6 @@ kotlin {
     iosMain { dependencies { implementation(libs.sqldelight.driver.native) } }
   }
 }
-
-addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
-
-android { namespace = "com.thomaskioko.tvmaniac.db" }
 
 sqldelight {
   databases { create("TvManiacDatabase") { packageName.set("com.thomaskioko.tvmaniac.core.db") } }

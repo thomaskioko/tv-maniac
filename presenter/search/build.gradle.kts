@@ -1,6 +1,16 @@
-import com.thomaskioko.tvmaniac.plugins.addLanguageArgs
+plugins {
+  alias(libs.plugins.tvmaniac.kmp)
+}
 
-plugins { id("plugin.tvmaniac.multiplatform") }
+tvmaniac {
+  multiplatform {
+    useKotlinInject()
+  }
+
+  optIn(
+    "kotlinx.coroutines.ExperimentalCoroutinesApi"
+  )
+}
 
 kotlin {
   sourceSets {
@@ -19,7 +29,6 @@ kotlin {
         api(libs.kotlinx.collections)
 
         implementation(libs.coroutines.core)
-        implementation(libs.bundles.kotlinInject)
       }
     }
 
@@ -34,7 +43,3 @@ kotlin {
     }
   }
 }
-
-addLanguageArgs(
-  "kotlinx.coroutines.ExperimentalCoroutinesApi",
-)
