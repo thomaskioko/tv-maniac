@@ -189,15 +189,13 @@ sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 # Project Plugins
-tvmaniac-android-library = { id = "plugin.tvmaniac.android.library" }
-tvmaniac-application = { id = "plugin.tvmaniac.application" }
-tvmaniac-compose-library = { id = "plugin.tvmaniac.compose.library" }
-tvmaniac-kotlin-android = { id = "plugin.tvmaniac.kotlin.android" }
-tvmaniac-multiplatform = { id = "plugin.tvmaniac.multiplatform" }
-tvmaniac-spotless = { id = "plugin.tvmaniac.spotless" }
-tvmaniac-git-hooks = { id = "plugin.tvmaniac.git-hooks" }
-tvmaniac-root = { id = "plugin.tvmaniac.root" }
-tvmaniac-xcframework = { id = "plugin.tvmaniac.xcframework" }
+tvmaniac-application = { id = "com.thomaskioko.tvmaniac.gradle.app" }
+tvmaniac-android = { id = "com.thomaskioko.tvmaniac.gradle.android" }
+tvmaniac-baseline-profile = { id = "com.thomaskioko.tvmaniac.gradle.baseline.profile" }
+tvmaniac-kmp = { id = "com.thomaskioko.tvmaniac.gradle.multiplatform" }
+tvmaniac-spotless = { id = "com.thomaskioko.tvmaniac.gradle.spotless" }
+tvmaniac-root = { id = "com.thomaskioko.tvmaniac.gradle.root" }
+tvmaniac-xcframework = { id = "com.thomaskioko.tvmaniac.gradle.xcframework" }
 
 [bundles]
 kotlinInject = [
