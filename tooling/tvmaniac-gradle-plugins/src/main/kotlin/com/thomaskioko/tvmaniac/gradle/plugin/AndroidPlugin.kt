@@ -13,7 +13,6 @@ import com.thomaskioko.tvmaniac.gradle.plugin.utils.baseExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.getDependencyOrNull
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.getVersion
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.javaTargetVersion
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.stringProperty
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
