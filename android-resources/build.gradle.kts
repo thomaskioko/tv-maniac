@@ -1,3 +1,3 @@
-plugins { id("plugin.tvmaniac.android.library") }
-
-android { namespace = "com.thomaskioko.tvmaniac.resources" }
+plugins {
+  alias(libs.plugins.tvmaniac.android)
+}

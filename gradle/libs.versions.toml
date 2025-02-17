@@ -1,5 +1,19 @@
 [versions]
+app-version-code = "1"
+app-version-name = "1.0.0"
+
+android-compile = "35"
+android-min = "24"
+android-target = "35"
+
+jdk = "17"
+java-target = "17"
+java-toolchain = "23"
+
+ktfmt = "0.44"
+
 agp = "8.8.1"
+android-lint = "31.8.0"
 androidx-activity = "1.10.0"
 androidx-annotation = "1.9.1"
 androidx-browser = "1.8.0"
@@ -29,8 +43,6 @@ essenty = "2.4.0"
 espressoCore = "3.6.1"
 desugar = "2.1.4"
 gradle-doctor = "0.10.0"
-java-jdk = "21"
-java-target = "21"
 junit = "1.2.1"
 kenburns = "1.0.7"
 kermit = "2.0.5"
@@ -40,14 +52,13 @@ kotlininject = "0.7.2"
 kotlin-inject-anvil = "0.1.2"
 kotlinx-collections = "0.3.8"
 ksp = "2.1.10-1.0.30"
-ktfmt = "0.44"
 ktor = "3.0.3"
 lint = "1.4.2"
 napier = "2.7.1"
 robolectric = "4.14.1"
 roborazzi = "1.42.0"
 profileinstaller = "1.4.1"
-serialization-json = "1.8.0"
+serialization = "1.8.0"
 skie = "0.10.1"
 snapper = "0.3.0"
 sqldelight = "2.0.2"
@@ -59,12 +70,14 @@ yamlkt = "0.13.0"
 youtubePlayer = "12.1.1"
 
 [libraries]
+android-lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "android-lint" }
+android-lint-checks = { module = "com.android.tools.lint:lint-checks", version.ref = "android-lint" }
+android-lint-tests = { module = "com.android.tools.lint:lint-tests", version.ref = "android-lint" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation" }
 androidx-compose-material-icons = { module = "androidx.compose.material:material-icons-extended" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-compose-ui-ui = { module = "androidx.compose.ui:ui" }
-androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util" }
 androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "androidx-compose-ui-test" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "androidx-compose-ui-test" }
 androidx-collections = { group = "androidx.collection", name = "collection", version.ref = "androidx-collections" }
@@ -93,6 +106,7 @@ androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomato
 
 appauth = { module = "net.openid:appauth", version.ref = "appauth" }
 
+baselineprofile-gradlePlugin = { group = "androidx.benchmark", name = "benchmark-baseline-profile-gradle-plugin", version.ref = "baselineprofile" }
 coil-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
@@ -117,7 +131,8 @@ kotlinInject-anvil-runtime-optional = { group = "software.amazon.lastmile.kotlin
 kotlinx-atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu" }
 kotlinx-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-json" }
+kotlin-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "serialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -152,11 +167,13 @@ youtubePlayer = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core
 
 # Build logic dependencies
 android-desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
-android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-compose-compiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
-kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-dependency-analysis-gradlePlugin = { module = "com.autonomousapps:dependency-analysis-gradle-plugin", version.ref = "dependency-analysis" }
-gradledoctor-plugin = { group = "com.osacky.doctor", name = "doctor-plugin", version.ref = "gradle-doctor" }
+android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+compose-compiler-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
+dependency-analysis-gradle-plugin = { module = "com.autonomousapps:dependency-analysis-gradle-plugin", version.ref = "dependency-analysis" }
+gradle-doctor-gradle-plugin = { group = "com.osacky.doctor", name = "doctor-plugin", version.ref = "gradle-doctor" }
+skie-gradle-plugin = { module = "co.touchlab.skie:gradle-plugin", version = "0.10.1" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -176,15 +193,13 @@ sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 # Project Plugins
-tvmaniac-android-library = { id = "plugin.tvmaniac.android.library" }
-tvmaniac-application = { id = "plugin.tvmaniac.application" }
-tvmaniac-compose-library = { id = "plugin.tvmaniac.compose.library" }
-tvmaniac-kotlin-android = { id = "plugin.tvmaniac.kotlin.android" }
-tvmaniac-multiplatform = { id = "plugin.tvmaniac.multiplatform" }
-tvmaniac-spotless = { id = "plugin.tvmaniac.spotless" }
-tvmaniac-git-hooks = { id = "plugin.tvmaniac.git-hooks" }
-tvmaniac-root = { id = "plugin.tvmaniac.root" }
-tvmaniac-xcframework = { id = "plugin.tvmaniac.xcframework" }
+tvmaniac-application = { id = "com.thomaskioko.tvmaniac.gradle.app" }
+tvmaniac-android = { id = "com.thomaskioko.tvmaniac.gradle.android" }
+tvmaniac-baseline-profile = { id = "com.thomaskioko.tvmaniac.gradle.baseline.profile" }
+tvmaniac-kmp = { id = "com.thomaskioko.tvmaniac.gradle.multiplatform" }
+tvmaniac-spotless = { id = "com.thomaskioko.tvmaniac.gradle.spotless" }
+tvmaniac-root = { id = "com.thomaskioko.tvmaniac.gradle.root" }
+tvmaniac-xcframework = { id = "com.thomaskioko.tvmaniac.gradle.xcframework" }
 
 [bundles]
 kotlinInject = [
@@ -197,4 +212,10 @@ unittest = [
   "kotest-assertions",
   "kotlin-test",
   "turbine",
+]
+
+lint = [
+  "android-lint-api",
+  "android-lint-checks",
+  "android-lint-tests"
 ]

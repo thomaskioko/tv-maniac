@@ -67,7 +67,7 @@ import com.thomaskioko.tvmaniac.presentation.settings.ThemeSelected
 import com.thomaskioko.tvmaniac.presentation.settings.TraktLoginClicked
 import com.thomaskioko.tvmaniac.presentation.settings.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.presentation.settings.UserInfo
-import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.android.resources.R
 
 @Composable
 fun SettingsScreen(

@@ -1,6 +1,11 @@
 plugins {
-  id("plugin.tvmaniac.multiplatform")
-  alias(libs.plugins.serialization)
+  alias(libs.plugins.tvmaniac.kmp)
+}
+
+tvmaniac {
+  multiplatform {
+    useSerialization()
+  }
 }
 
 kotlin {
@@ -9,8 +14,6 @@ kotlin {
       dependencies {
         api(projects.database)
         api(projects.core.networkUtil)
-
-        implementation(libs.ktor.serialization)
       }
     }
   }

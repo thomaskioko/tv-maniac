@@ -1,6 +1,12 @@
-import com.thomaskioko.tvmaniac.plugins.addLanguageArgs
+plugins {
+  alias(libs.plugins.tvmaniac.kmp)
+}
 
-plugins { id("plugin.tvmaniac.multiplatform") }
+tvmaniac {
+  optIn(
+    "androidx.paging.ExperimentalPagingApi",
+  )
+}
 
 kotlin {
   sourceSets {
@@ -12,7 +18,3 @@ kotlin {
     }
   }
 }
-
-addLanguageArgs(
-  "androidx.paging.ExperimentalPagingApi",
-)

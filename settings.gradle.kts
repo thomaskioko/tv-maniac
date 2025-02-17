@@ -5,7 +5,7 @@ enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 rootProject.name = "tv-maniac"
 
 pluginManagement {
-  includeBuild("build-plugins")
+  includeBuild("tooling")
 
   repositories {
     gradlePluginPortal()

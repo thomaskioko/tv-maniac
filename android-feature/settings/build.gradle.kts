@@ -1,8 +1,16 @@
-import com.thomaskioko.tvmaniac.extensions.addCompilerOptInArgs
+plugins {
+  alias(libs.plugins.tvmaniac.android)
+}
 
-plugins { alias(libs.plugins.tvmaniac.compose.library) }
+tvmaniac {
+  android {
+    useCompose()
+  }
 
-android { namespace = "com.thomaskioko.tvmaniac.ui.settings" }
+  optIn(
+    "androidx.compose.material3.ExperimentalMaterial3Api",
+  )
+}
 
 dependencies {
   api(projects.presenter.settings)
@@ -14,10 +22,5 @@ dependencies {
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material3)
   implementation(libs.androidx.compose.runtime)
+  implementation(libs.coil.compose)
 }
-
-addCompilerOptInArgs(
-  listOf(
-    "androidx.compose.material3.ExperimentalMaterial3Api",
-  )
-)

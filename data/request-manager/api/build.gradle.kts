@@ -1,6 +1,17 @@
-import com.thomaskioko.tvmaniac.plugins.addLanguageArgs
+plugins {
+  alias(libs.plugins.tvmaniac.kmp)
+}
 
-plugins { alias(libs.plugins.tvmaniac.multiplatform) }
+tvmaniac {
+  multiplatform {
+    useKotlinInject()
+    useKspAnvilCompiler()
+  }
+
+  optIn(
+    "kotlinx.coroutines.ExperimentalCoroutinesApi",
+  )
+}
 
 kotlin {
   sourceSets {
@@ -12,7 +23,3 @@ kotlin {
     }
   }
 }
-
-addLanguageArgs(
-  "kotlinx.coroutines.ExperimentalCoroutinesApi",
-)

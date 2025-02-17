@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.seasondetails.ui.components
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -43,7 +43,7 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.OnEpisodeHeaderClicke
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.ShowMarkSeasonDialog
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
-import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.ui.seasonDetailsLoaded
 import kotlinx.collections.immutable.ImmutableList
 
@@ -105,7 +105,7 @@ private fun SeasonTitleHeader(
     MutableTransitionState(expanded).apply { targetState = !expanded }
   }
 
-  val transition = updateTransition(transitionState, label = "transition")
+  val transition = rememberTransition(transitionState)
   val arrowRotationDegree by
     transition.animateFloat(
       label = "rotationDegreeTransition",

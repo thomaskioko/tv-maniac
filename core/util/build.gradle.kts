@@ -1,18 +1,29 @@
-import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
-import com.thomaskioko.tvmaniac.plugins.addLanguageArgs
-
 plugins {
-  alias(libs.plugins.tvmaniac.android.library)
-  alias(libs.plugins.tvmaniac.multiplatform)
-  alias(libs.plugins.serialization)
-  alias(libs.plugins.ksp)
+  alias(libs.plugins.tvmaniac.kmp)
+}
+
+tvmaniac {
+  multiplatform {
+    addAndroidTarget(
+      androidConfig = {
+        sourceSets["main"].resources.setSrcDirs(listOf("src/commonMain/resources"))
+      }
+    )
+    useKotlinInject()
+    useKspAnvilCompiler()
+    useSerialization()
+  }
+
+  optIn(
+    "kotlinx.coroutines.ExperimentalCoroutinesApi",
+    "kotlinx.cinterop.ExperimentalForeignApi",
+    "kotlinx.cinterop.BetaInteropApi",
+  )
 }
 
 kotlin {
   sourceSets {
     commonMain.dependencies {
-      api(libs.ktor.serialization)
-
       implementation(projects.core.base)
       implementation(projects.core.logger)
       implementation(libs.coroutines.core)
@@ -26,19 +37,3 @@ kotlin {
     commonTest.dependencies { implementation(libs.bundles.unittest) }
   }
 }
-
-android {
-  namespace = "com.thomaskioko.tvmaniac.util"
-
-  sourceSets["main"].apply {
-    resources.srcDirs("src/commonMain/resources") // <-- add the commonMain Resources
-  }
-}
-
-addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
-
-addLanguageArgs(
-  "kotlinx.coroutines.ExperimentalCoroutinesApi",
-  "kotlinx.cinterop.ExperimentalForeignApi",
-  "kotlinx.cinterop.BetaInteropApi",
-)

@@ -1,10 +1,18 @@
-import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
-import com.thomaskioko.tvmaniac.plugins.addLanguageArgs
-
 plugins {
-  alias(libs.plugins.tvmaniac.multiplatform)
-  alias(libs.plugins.ksp)
+  alias(libs.plugins.tvmaniac.kmp)
 }
+
+tvmaniac {
+  multiplatform {
+    useKotlinInject()
+    useKspAnvilCompiler()
+  }
+
+  optIn(
+    "androidx.paging.ExperimentalPagingApi",
+  )
+}
+
 
 kotlin {
   sourceSets {
@@ -22,7 +30,6 @@ kotlin {
 
         api(libs.coroutines.core)
 
-        implementation(libs.bundles.kotlinInject)
         implementation(libs.sqldelight.extensions)
         implementation(libs.kotlinx.atomicfu)
         implementation(libs.store5)
@@ -32,9 +39,3 @@ kotlin {
     commonTest { dependencies { implementation(libs.bundles.unittest) } }
   }
 }
-
-addLanguageArgs(
-  "androidx.paging.ExperimentalPagingApi",
-)
-
-addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)

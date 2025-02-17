@@ -1,6 +1,12 @@
-plugins { alias(libs.plugins.tvmaniac.compose.library) }
+plugins {
+  alias(libs.plugins.tvmaniac.android)
+}
 
-android { namespace = "com.thomaskioko.tvmaniac.ui.trailers" }
+tvmaniac {
+  android {
+    useCompose()
+  }
+}
 
 dependencies {
   api(projects.presenter.trailers)
@@ -12,5 +18,6 @@ dependencies {
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material3)
   implementation(libs.androidx.compose.runtime)
+  implementation(libs.coil.compose)
   implementation(libs.youtubePlayer)
 }

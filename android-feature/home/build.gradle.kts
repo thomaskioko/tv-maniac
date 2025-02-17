@@ -1,6 +1,12 @@
-plugins { alias(libs.plugins.tvmaniac.compose.library) }
+plugins {
+  alias(libs.plugins.tvmaniac.android)
+}
 
-android { namespace = "com.thomaskioko.tvmaniac.ui.home" }
+tvmaniac {
+  android {
+    useCompose()
+  }
+}
 
 dependencies {
   api(projects.presenter.home)
