@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.gradle.plugin.utils.androidExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.baseExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.disableAndroidApplicationTasks
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.stringProperty
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.getVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -24,6 +25,11 @@ public abstract class AppPlugin : Plugin<Project> {
     target.androidExtension.enableBuildConfig()
 
     target.androidApp {
+      defaultConfig {
+        versionCode = target.getVersion("app-version-code").toInt()
+        versionName = target.getVersion("app-version-name")
+      }
+
       signingConfigs {
         named("debug") {
           val debugKeystore = target.rootProject.file("gradle/debug.keystore")
