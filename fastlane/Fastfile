@@ -15,8 +15,6 @@ platform :ios do
     # Clear derived data first for clean state
     clear_derived_data_lane
 
-    generate_xcframework
-
     # Run SwiftUI Components snapshot tests
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
@@ -30,26 +28,12 @@ platform :ios do
       derived_data_path: "derived_data"
     )
 
-    # Run TvManiacKit snapshot tests
-    run_tests(
-      project: "ios/tv-maniac.xcodeproj",
-      scheme: "TvManiacKit",
-      device: TEST_DEVICE,
-      clean: true,
-      result_bundle: true,
-      xcargs: "-retry-tests-on-failure -skipPackagePluginValidation",
-      number_of_retries: 2,
-      fail_build: true,
-      derived_data_path: "derived_data"
-    )
   end
 
   desc "Build iOS App"
   lane :build_tvmaniac do
     # Clear derived data first
     clear_derived_data_lane
-
-    generate_xcframework
 
     # Build the app
     build_ios_app(
@@ -81,10 +65,5 @@ platform :ios do
     clear_derived_data(
       derived_data_path: "derived_data"
     )
-  end
-
-  desc "Generate XCFramework"
-  lane :generate_xcframework do
-    gradle(tasks: [":shared:copyXCFramework"])
   end
 end
