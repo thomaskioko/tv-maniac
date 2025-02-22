@@ -1,6 +1,6 @@
 import SnapshotTestingLib
 import SwiftUI
-import TvManiacKit
+import SwiftUIComponents
 import XCTest
 
 class TrailerListViewTest: XCTestCase {
