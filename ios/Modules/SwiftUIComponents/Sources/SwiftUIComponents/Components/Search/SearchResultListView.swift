@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftUIComponents
 
 public struct SearchResultListView: View {
   private let items: [SwiftSearchShow]

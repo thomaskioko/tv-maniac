@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import SwiftUIComponents
 
 public struct EpisodeItemView: View {
     private let imageUrl: String?

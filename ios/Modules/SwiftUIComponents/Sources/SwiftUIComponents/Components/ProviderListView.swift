@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import SwiftUIComponents
 
 public struct ProviderListView: View {
     private let items: [SwiftProviders]

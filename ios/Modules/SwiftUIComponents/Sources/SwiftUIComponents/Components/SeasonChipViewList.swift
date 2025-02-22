@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import SwiftUIComponents
 
 public struct SeasonChipViewList: View {
     private let items: [SwiftSeason]

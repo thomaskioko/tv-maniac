@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftUIComponents
 
 public struct ShowContentItemView: View {
     private let title: String

@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import SwiftUIComponents
 
 public struct ImageGalleryContentView: View {
   private let items: [ShowPosterImage]

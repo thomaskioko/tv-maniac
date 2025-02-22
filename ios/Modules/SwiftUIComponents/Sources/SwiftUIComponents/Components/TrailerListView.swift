@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftUIComponents
 
 public struct TrailerListView: View {
     private let trailers: [SwiftTrailer]

@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftUIComponents
 
 public struct EpisodeCollapsible<Content: View>: View {
     private let episodeCount: Int64

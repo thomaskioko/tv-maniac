@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftUIComponents
 
 public struct EpisodeListView: View {
     @State private var showingAlert: Bool = false

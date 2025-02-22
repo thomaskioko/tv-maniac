@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftUIComponents
 
 public struct GridView: View {
     private let posterWidth: CGFloat

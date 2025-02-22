@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import SwiftUIComponents
 
 public struct CastListView: View {
     private let casts: [SwiftCast]

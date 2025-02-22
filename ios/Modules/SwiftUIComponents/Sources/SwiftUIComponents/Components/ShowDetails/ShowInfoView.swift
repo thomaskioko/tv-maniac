@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftUIComponents
 
 public struct ShowInfoView: View {
     private let isFollowed: Bool
