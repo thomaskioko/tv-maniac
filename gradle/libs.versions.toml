@@ -199,7 +199,6 @@ tvmaniac-baseline-profile = { id = "com.thomaskioko.tvmaniac.gradle.baseline.pro
 tvmaniac-kmp = { id = "com.thomaskioko.tvmaniac.gradle.multiplatform" }
 tvmaniac-spotless = { id = "com.thomaskioko.tvmaniac.gradle.spotless" }
 tvmaniac-root = { id = "com.thomaskioko.tvmaniac.gradle.root" }
-tvmaniac-xcframework = { id = "com.thomaskioko.tvmaniac.gradle.xcframework" }
 
 [bundles]
 kotlinInject = [

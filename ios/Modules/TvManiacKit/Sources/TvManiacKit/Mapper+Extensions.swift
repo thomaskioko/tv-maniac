@@ -1,3 +1,4 @@
+import SwiftUIComponents
 import TvManiac
 
 public extension TvManiac.WatchlistItem {

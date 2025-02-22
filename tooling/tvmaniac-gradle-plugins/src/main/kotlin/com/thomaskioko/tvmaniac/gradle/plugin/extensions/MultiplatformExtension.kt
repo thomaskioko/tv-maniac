@@ -47,8 +47,6 @@ public abstract class MultiplatformExtension(private val project: Project) {
     val xcFramework = XCFrameworkConfig(project, frameworkName)
 
     project.kotlinMultiplatform {
-
-
       targets.withType(KotlinNativeTarget::class.java).configureEach {
         it.binaries.framework {
           baseName = frameworkName
