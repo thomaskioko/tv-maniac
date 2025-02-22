@@ -8,7 +8,6 @@ import co.touchlab.skie.configuration.SuspendInterop
 plugins {
   alias(libs.plugins.tvmaniac.kmp)
   alias(libs.plugins.skie)
-  alias(libs.plugins.tvmaniac.xcframework)
 }
 
 tvmaniac {
@@ -21,10 +20,9 @@ tvmaniac {
       frameworkName = "TvManiac",
     ) { framework ->
       with(framework) {
-        isStatic = !debuggable
-        linkerOpts.add("-lsqlite3")
+        isStatic = true
         freeCompilerArgs += if (debuggable) "-Xadd-light-debug=enable" else ""
-        freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin")
+        freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
 
         export(projects.navigation.api)
         export(projects.datastore.api)
