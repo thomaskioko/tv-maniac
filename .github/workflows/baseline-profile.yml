@@ -39,7 +39,7 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Accept licenses
-        run: yes | sdkmanager --licenses || true
+        run: yes | sdkmanager --licenses || trueMovr
 
       - name: Build app and benchmark
         run: ./gradlew assembleNonMinifiedRelease
@@ -48,7 +48,7 @@ jobs:
         run: ./gradlew cleanManagedDevices
 
       - name: Generate Baseline Profile
-        run: ./gradlew :android:app:generateBaselineProfile
+        run: ./gradlew :app:generateBaselineProfile
           -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=baselineprofile
           -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
           --no-configuration-cache

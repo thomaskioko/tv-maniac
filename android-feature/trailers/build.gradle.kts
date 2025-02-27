@@ -1,0 +1,23 @@
+plugins {
+  alias(libs.plugins.tvmaniac.android)
+}
+
+tvmaniac {
+  android {
+    useCompose()
+  }
+}
+
+dependencies {
+  api(projects.presenter.trailers)
+
+  implementation(projects.androidDesignsystem)
+  implementation(projects.androidResources)
+
+  implementation(libs.androidx.compose.constraintlayout)
+  implementation(libs.androidx.compose.foundation)
+  implementation(libs.androidx.compose.material3)
+  implementation(libs.androidx.compose.runtime)
+  implementation(libs.coil.compose)
+  implementation(libs.youtubePlayer)
+}

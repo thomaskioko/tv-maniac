@@ -5,7 +5,7 @@ enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 rootProject.name = "tv-maniac"
 
 pluginManagement {
-  includeBuild("build-plugins")
+  includeBuild("tooling")
 
   repositories {
     gradlePluginPortal()
@@ -32,7 +32,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.develocity") version ("3.19.1")
+  id("com.gradle.develocity") version ("3.19.2")
   id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
 }
 
@@ -44,24 +44,24 @@ develocity {
 }
 
 include(
-  ":android:app",
-  ":android:designsystem",
-  ":android:benchmark",
-  ":android:ui:discover",
-  ":android:ui:home",
-  ":android:ui:more-shows",
-  ":android:resources",
-  ":android:screenshot-tests",
-  ":android:ui:search",
-  ":android:ui:season-details",
-  ":android:ui:settings",
-  ":android:ui:show-details",
-  ":android:ui:trailers",
-  ":android:ui:watchlist",
+  ":app",
+  ":android-designsystem",
+  ":android-feature:discover",
+  ":android-feature:home",
+  ":android-feature:more-shows",
+  ":android-feature:search",
+  ":android-feature:season-details",
+  ":android-feature:settings",
+  ":android-feature:show-details",
+  ":android-feature:trailers",
+  ":android-feature:watchlist",
+  ":android-resources",
+  ":benchmark",
   ":core:base",
   ":core:logger",
   ":core:network-util",
   ":core:paging",
+  ":core:screenshot-tests",
   ":core:util",
   ":core:util:testing",
   ":database",

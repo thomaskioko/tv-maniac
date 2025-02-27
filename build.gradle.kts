@@ -13,8 +13,8 @@ plugins {
   alias(libs.plugins.skie) apply false
   alias(libs.plugins.spotless) apply false
   alias(libs.plugins.sqldelight) apply false
+  alias(libs.plugins.roborazzi) apply false
 
-  alias(libs.plugins.tvmaniac.git.hooks)
   alias(libs.plugins.tvmaniac.spotless)
   alias(libs.plugins.tvmaniac.root)
 }

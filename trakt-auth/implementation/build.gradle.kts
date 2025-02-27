@@ -1,10 +1,15 @@
-import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
-
 plugins {
-  alias(libs.plugins.tvmaniac.android.library)
-  alias(libs.plugins.tvmaniac.multiplatform)
-  alias(libs.plugins.ksp)
+  alias(libs.plugins.tvmaniac.kmp)
 }
+
+tvmaniac {
+  multiplatform {
+    addAndroidTarget()
+    useKotlinInject()
+    useKspAnvilCompiler()
+  }
+}
+
 
 kotlin {
   sourceSets {
@@ -28,7 +33,3 @@ kotlin {
     }
   }
 }
-
-android { namespace = "com.thomaskioko.tvmaniac.traktauth.implementation" }
-
-addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
