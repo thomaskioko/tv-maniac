@@ -2,4 +2,5 @@
 <lint>
   <issue id="GradleDependency" severity="ignore" />
   <issue id="QueryPermissionsNeeded" severity="ignore" />
+  <issue id="AndroidGradlePluginVersion" severity="ignore" />
 </lint>
