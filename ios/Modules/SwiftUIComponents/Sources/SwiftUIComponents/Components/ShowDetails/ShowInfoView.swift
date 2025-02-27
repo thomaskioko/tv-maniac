@@ -14,6 +14,7 @@ public struct ShowInfoView: View {
     private let onAddToLibrary: () -> Void
     private let onSeasonClicked: (Int, SwiftSeason) -> Void
     private let onShowClicked: (Int64) -> Void
+    @State private var toast: Toast?
 
     public init(
         isFollowed: Bool,
@@ -79,7 +80,15 @@ public struct ShowInfoView: View {
 
             TrailerListView(
                 trailers: trailerList,
-                openInYouTube: openTrailersInYoutube
+                openInYouTube: openTrailersInYoutube,
+                onError: { error in
+                    toast = Toast(
+                        type: .error,
+                        title: "Error",
+                        message: "Failed to play video: \(error.localizedDescription)",
+                        duration: 3.5
+                    )
+                }
             )
 
             CastListView(casts: castsList)
@@ -96,6 +105,7 @@ public struct ShowInfoView: View {
                 onClick: { id in onShowClicked(id) }
             )
         }
+        .toastView(toast: $toast)
     }
 
     private var watchlistButton: some View {

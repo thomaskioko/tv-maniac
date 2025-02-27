@@ -8,35 +8,38 @@ public struct YoutubeItemView: View {
   private let name: String
   private let thumbnailUrl: String
   private let player: YouTubePlayer
-    
+  private let onError: ((Error) -> Void)?
+
   @State private var isLoading = false
-    
+
   public init(
     openInYouTube: Bool,
     key: String,
     name: String,
-    thumbnailUrl: String
+    thumbnailUrl: String,
+    onError: ((Error) -> Void)? = nil
   ) {
     self.openInYouTube = openInYouTube
     self.key = key
     self.name = name
     self.thumbnailUrl = thumbnailUrl
+    self.onError = onError
 
-    self.player = YouTubePlayer(
+    player = YouTubePlayer(
       source: .video(id: key),
+      parameters: .init(
+        autoPlay: true,
+        loopEnabled: true,
+        showControls: true
+      ),
       configuration: .init(
-        automaticallyAdjustsContentInsets: true,
-        allowsPictureInPictureMediaPlayback: false,
         fullscreenMode: .system,
-        autoPlay: false,
-        showControls: true,
-        useModestBranding: true,
-        playInline: false,
-        showRelatedVideos: false
+        allowsPictureInPictureMediaPlayback: false,
+        automaticallyAdjustsContentInsets: true
       )
     )
   }
-    
+
   public var body: some View {
     ZStack {
       YouTubePlayerView(player)
@@ -45,7 +48,7 @@ public struct YoutubeItemView: View {
           height: DimensionConstants.imageHeight
         )
         .opacity(0)
-            
+
       VStack {
         WebImage(url: URL(string: thumbnailUrl)) { image in
           image.resizable()
@@ -66,14 +69,13 @@ public struct YoutubeItemView: View {
         )
         .overlay { overlay }
         .shadow(radius: 2.5)
-                
+
         HStack {
           Text(name)
             .font(.avenirNext(size: 14))
             .foregroundColor(.secondary)
             .lineLimit(DimensionConstants.lineLimits)
             .padding([.trailing])
-
 
           Spacer()
         }
@@ -85,7 +87,7 @@ public struct YoutubeItemView: View {
     .accessibilityLabel(name)
     .onTapGesture(perform: openVideo)
   }
-    
+
   private var placeholder: some View {
     ZStack {
       Color.secondary
@@ -105,7 +107,7 @@ public struct YoutubeItemView: View {
       )
     )
   }
-    
+
   private var overlay: some View {
     ZStack {
       Color.black.opacity(DimensionConstants.overlayOpacity)
@@ -149,15 +151,23 @@ public struct YoutubeItemView: View {
       )
     )
   }
-    
+
   private func openVideo() {
     if openInYouTube {
       if let url = urlBuilder(path: key) {
         UIApplication.shared.open(url)
       }
     } else {
-      self.isLoading = true
-      player.play()
+      isLoading = true
+      Task { @MainActor in
+        do {
+          try await player.play()
+        } catch {
+          print("Failed to play video: \(error)")
+          isLoading = false
+          onError?(error)
+        }
+      }
     }
   }
 }
