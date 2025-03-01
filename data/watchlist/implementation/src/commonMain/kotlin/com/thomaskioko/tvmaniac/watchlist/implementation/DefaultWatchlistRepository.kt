@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.watchlist.implementation
 
-import com.thomaskioko.tvmaniac.core.db.SearchWatchlist
-import com.thomaskioko.tvmaniac.core.db.Watchlists
+import com.thomaskioko.tvmaniac.db.SearchWatchlist
+import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.model.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either

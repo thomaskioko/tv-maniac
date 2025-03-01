@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.resourcemanager.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Last_requestsQueries
+import com.thomaskioko.tvmaniac.db.Last_requestsQueries
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import io.kotest.matchers.shouldBe
 import kotlin.test.AfterTest

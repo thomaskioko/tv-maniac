@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.watchproviders.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.db.WatchProviders
+import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.core.networkutil.mapToEither
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure

@@ -3,10 +3,10 @@ package com.thomaskioko.tvmaniac.data.cast.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.db.Casts
-import com.thomaskioko.tvmaniac.core.db.SeasonCast
-import com.thomaskioko.tvmaniac.core.db.ShowCast
-import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.Casts
+import com.thomaskioko.tvmaniac.db.SeasonCast
+import com.thomaskioko.tvmaniac.db.ShowCast
+import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.db.Id
 import kotlinx.coroutines.flow.Flow

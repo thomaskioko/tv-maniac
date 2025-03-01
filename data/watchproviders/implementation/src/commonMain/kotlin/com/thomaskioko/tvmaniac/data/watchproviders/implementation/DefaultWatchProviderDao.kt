@@ -3,9 +3,9 @@ package com.thomaskioko.tvmaniac.data.watchproviders.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.core.db.WatchProviders
-import com.thomaskioko.tvmaniac.core.db.Watch_providers
+import com.thomaskioko.tvmaniac.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.WatchProviders
+import com.thomaskioko.tvmaniac.db.Watch_providers
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderDao
 import com.thomaskioko.tvmaniac.db.Id
 import kotlinx.coroutines.flow.Flow

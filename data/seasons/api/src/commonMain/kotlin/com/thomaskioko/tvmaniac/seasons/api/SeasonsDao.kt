@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.seasons.api
 
-import com.thomaskioko.tvmaniac.core.db.Season
-import com.thomaskioko.tvmaniac.core.db.ShowSeasons
+import com.thomaskioko.tvmaniac.db.Season
+import com.thomaskioko.tvmaniac.db.ShowSeasons
 import kotlinx.coroutines.flow.Flow
 
 interface SeasonsDao {

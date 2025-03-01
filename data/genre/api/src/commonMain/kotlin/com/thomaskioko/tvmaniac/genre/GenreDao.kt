@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.genre
 
-import com.thomaskioko.tvmaniac.core.db.Genres
-import com.thomaskioko.tvmaniac.core.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Genres
+import com.thomaskioko.tvmaniac.db.Tvshows
 import kotlinx.coroutines.flow.Flow
 
 interface GenreDao {

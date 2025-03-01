@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.resourcemanager.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Last_requests
-import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.Last_requests
+import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import kotlin.time.Duration
 import kotlinx.datetime.Clock

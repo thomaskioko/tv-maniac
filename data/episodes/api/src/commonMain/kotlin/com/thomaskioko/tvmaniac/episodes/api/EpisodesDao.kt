@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
-import com.thomaskioko.tvmaniac.core.db.Episode as EpisodeCache
+import com.thomaskioko.tvmaniac.db.Episode as EpisodeCache
 
 interface EpisodesDao {
 

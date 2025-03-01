@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.recommendedshows.implementation
 
-import com.thomaskioko.tvmaniac.core.db.RecommendedShows
-import com.thomaskioko.tvmaniac.core.db.Tvshows
+import com.thomaskioko.tvmaniac.db.RecommendedShows
+import com.thomaskioko.tvmaniac.db.Tvshows
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsDao
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsParams

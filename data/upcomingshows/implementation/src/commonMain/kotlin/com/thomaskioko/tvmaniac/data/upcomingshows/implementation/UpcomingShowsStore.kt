@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.data.upcomingshows.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
-import com.thomaskioko.tvmaniac.core.db.Tvshows
-import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
+import com.thomaskioko.tvmaniac.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.db.Id

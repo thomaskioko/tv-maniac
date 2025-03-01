@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
-import com.thomaskioko.tvmaniac.core.db.Casts
-import com.thomaskioko.tvmaniac.core.db.Episode
+import com.thomaskioko.tvmaniac.db.Casts
+import com.thomaskioko.tvmaniac.db.Episode
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.db.Id

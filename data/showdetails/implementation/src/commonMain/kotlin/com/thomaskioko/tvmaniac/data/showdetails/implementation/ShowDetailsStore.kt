@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.data.showdetails.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
-import com.thomaskioko.tvmaniac.core.db.Casts
-import com.thomaskioko.tvmaniac.core.db.Season
-import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.core.db.TvshowDetails
-import com.thomaskioko.tvmaniac.core.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Casts
+import com.thomaskioko.tvmaniac.db.Season
+import com.thomaskioko.tvmaniac.db.Trailers
+import com.thomaskioko.tvmaniac.db.TvshowDetails
+import com.thomaskioko.tvmaniac.db.Tvshows
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsDao

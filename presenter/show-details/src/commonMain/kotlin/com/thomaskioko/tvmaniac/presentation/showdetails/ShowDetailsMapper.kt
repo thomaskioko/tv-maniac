@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
-import com.thomaskioko.tvmaniac.core.db.RecommendedShows
-import com.thomaskioko.tvmaniac.core.db.ShowCast
-import com.thomaskioko.tvmaniac.core.db.ShowSeasons
-import com.thomaskioko.tvmaniac.core.db.SimilarShows
-import com.thomaskioko.tvmaniac.core.db.Trailers
-import com.thomaskioko.tvmaniac.core.db.TvshowDetails
-import com.thomaskioko.tvmaniac.core.db.WatchProviders
+import com.thomaskioko.tvmaniac.db.RecommendedShows
+import com.thomaskioko.tvmaniac.db.ShowCast
+import com.thomaskioko.tvmaniac.db.ShowSeasons
+import com.thomaskioko.tvmaniac.db.SimilarShows
+import com.thomaskioko.tvmaniac.db.Trailers
+import com.thomaskioko.tvmaniac.db.TvshowDetails
+import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.Casts

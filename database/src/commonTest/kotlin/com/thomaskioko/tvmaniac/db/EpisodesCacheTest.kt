@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.db
+package com.thomaskioko.tvmaniac.db
 
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id

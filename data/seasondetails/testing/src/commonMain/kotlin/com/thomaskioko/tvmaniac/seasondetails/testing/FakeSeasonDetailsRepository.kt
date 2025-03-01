@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.seasondetails.testing
 
-import com.thomaskioko.tvmaniac.core.db.Season_images
+import com.thomaskioko.tvmaniac.db.Season_images
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
