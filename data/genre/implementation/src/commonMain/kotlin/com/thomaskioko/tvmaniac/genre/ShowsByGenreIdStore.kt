@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.genre
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.db.Genres
-import com.thomaskioko.tvmaniac.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
@@ -22,7 +22,7 @@ class ShowsByGenreIdStore(
   private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
   private val formatterUtil: FormatterUtil,
   private val scope: AppCoroutineScope,
-) : Store<String, List<Tvshows>> by StoreBuilder.from(
+) : Store<String, List<Tvshow>> by StoreBuilder.from(
   fetcher = Fetcher.of { id: String ->
     when (val response = tmdbRemoteDataSource.discoverShows(genres = id)) {
         is ApiResponse.Success -> response.body

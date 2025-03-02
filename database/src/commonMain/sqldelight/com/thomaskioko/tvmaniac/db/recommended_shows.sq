@@ -6,8 +6,8 @@ CREATE TABLE recommended_shows (
     id INTEGER AS Id<TmdbId>,
     recommended_show_id INTEGER AS Id<RecommendedShowId> NOT NULL,
     PRIMARY KEY (recommended_show_id, id),
-    FOREIGN KEY(recommended_show_id) REFERENCES tvshows(id),
-    FOREIGN KEY(id) REFERENCES tvshows(id)
+    FOREIGN KEY(recommended_show_id) REFERENCES tvshow(id),
+    FOREIGN KEY(id) REFERENCES tvshow(id)
 );
 
 upsert:
@@ -19,17 +19,17 @@ VALUES(?,?);
 
 recommendedShows:
 SELECT
-   tvshows.id,
-   tvshows.name,
-   tvshows.poster_path,
-   tvshows.backdrop_path,
+   tvshow.id,
+   tvshow.name,
+   tvshow.poster_path,
+   tvshow.backdrop_path,
     CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
-    tvshows
+    tvshow
 JOIN
-    recommended_shows ON recommended_shows.id = tvshows.id
+    recommended_shows ON recommended_shows.id = tvshow.id
 LEFT OUTER JOIN
-    watchlist ON tvshows.id = watchlist.id
+    watchlist ON tvshow.id = watchlist.id
 WHERE
     recommended_shows.recommended_show_id = ?;
 

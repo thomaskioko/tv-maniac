@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.search.implementation
 
-import com.thomaskioko.tvmaniac.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
@@ -36,7 +36,7 @@ class SearchShowStore(
       writer = { _, shows ->
         shows.forEach { show ->
           tvShowsDao.upsert(
-            Tvshows(
+            Tvshow(
               id = Id(show.id.toLong()),
               name = show.name,
               overview = show.overview,

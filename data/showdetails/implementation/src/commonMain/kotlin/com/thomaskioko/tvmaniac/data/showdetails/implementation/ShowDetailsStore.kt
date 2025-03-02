@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.db.Casts
 import com.thomaskioko.tvmaniac.db.Season
 import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.db.TvshowDetails
-import com.thomaskioko.tvmaniac.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsDao
@@ -56,7 +56,7 @@ class ShowDetailsStore(
           writer = { id, show ->
             databaseTransactionRunner {
               tvShowsDao.upsert(
-                Tvshows(
+                Tvshow(
                   id = Id(id),
                   name = show.name,
                   overview = show.overview,

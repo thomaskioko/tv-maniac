@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.popularshows.implementation
 
 import com.thomaskioko.tvmaniac.db.Popular_shows
-import com.thomaskioko.tvmaniac.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsDao
 import com.thomaskioko.tvmaniac.db.Id
@@ -44,7 +44,7 @@ class PopularShowsStore(
           writer = { _, trendingShows ->
             trendingShows.results.forEach { show ->
               tvShowsDao.upsert(
-                Tvshows(
+                Tvshow(
                   id = Id(show.id.toLong()),
                   name = show.name,
                   overview = show.overview,

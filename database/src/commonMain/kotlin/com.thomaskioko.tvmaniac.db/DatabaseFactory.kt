@@ -19,7 +19,7 @@ import com.thomaskioko.tvmaniac.db.Toprated_shows
 import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.db.Trending_shows
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.db.Watch_providers
 import com.thomaskioko.tvmaniac.db.Watchlist
@@ -71,8 +71,8 @@ class DatabaseFactory(private val sqlDriver: SqlDriver) {
           idAdapter = IdAdapter(),
           pageAdapter = IdAdapter(),
         ),
-      tvshowsAdapter =
-        Tvshows.Adapter(
+      tvshowAdapter =
+        Tvshow.Adapter(
           idAdapter = IdAdapter(),
           genre_idsAdapter = intColumnAdapter,
         ),

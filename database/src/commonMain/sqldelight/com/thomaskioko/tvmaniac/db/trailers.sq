@@ -9,7 +9,7 @@ CREATE TABLE trailers (
     site TEXT NOT NULL,
     size INTEGER NOT NULL,
     type TEXT NOT NULL,
-    FOREIGN KEY(show_id)REFERENCES tvshows(id)
+    FOREIGN KEY(show_id)REFERENCES tvshow(id)
 );
 
 insertOrReplace:

@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.similar.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.db.SimilarShows
-import com.thomaskioko.tvmaniac.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -50,7 +50,7 @@ class SimilarShowStore(
           writer = { param: SimilarParams, response ->
             response.results.forEach { show ->
               tvShowsDao.upsert(
-                Tvshows(
+                Tvshow(
                   id = Id(show.id.toLong()),
                   name = show.name,
                   overview = show.overview,

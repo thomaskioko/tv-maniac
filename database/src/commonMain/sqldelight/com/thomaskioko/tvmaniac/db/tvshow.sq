@@ -3,7 +3,7 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 import kotlin.Int;
 import kotlin.collections.List;
 
-CREATE TABLE tvshows(
+CREATE TABLE tvshow(
     id INTEGER AS Id<TmdbId> NOT NULL PRIMARY KEY,
     backdrop_path TEXT DEFAULT NULL,
     first_air_date TEXT DEFAULT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE tvshows(
 );
 
 upsert:
-INSERT OR REPLACE INTO tvshows(
+INSERT OR REPLACE INTO tvshow(
     id,
     name,
     overview,
@@ -43,46 +43,46 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?, ?,?);
 
 tvshowDetails:
 SELECT
-    tvshows.id,
-    tvshows.name,
-    tvshows.overview,
-    tvshows.language,
-    tvshows.first_air_date,
-    tvshows.last_air_date,
-    tvshows.popularity,
-    tvshows.vote_average,
-    tvshows.status,
-    tvshows.vote_count,
-    tvshows.poster_path,
-    tvshows.backdrop_path,
+    tvshow.id,
+    tvshow.name,
+    tvshow.overview,
+    tvshow.language,
+    tvshow.first_air_date,
+    tvshow.last_air_date,
+    tvshow.popularity,
+    tvshow.vote_average,
+    tvshow.status,
+    tvshow.vote_count,
+    tvshow.poster_path,
+    tvshow.backdrop_path,
     GROUP_CONCAT(genres.name, ', ') AS genre_list,
     CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
-    tvshows
+    tvshow
 LEFT OUTER JOIN
-    watchlist ON tvshows.id = watchlist.id
+    watchlist ON tvshow.id = watchlist.id
 LEFT OUTER JOIN
-    show_genres ON tvshows.id = show_genres.show_id
+    show_genres ON tvshow.id = show_genres.show_id
 LEFT OUTER JOIN
     genres ON show_genres.genre_id = genres.id
 WHERE
-      tvshows.id = ?
-GROUP BY tvshows.id;
+      tvshow.id = ?
+GROUP BY tvshow.id;
 
 searchShows:
 SELECT
-    tvshows.id,
-    tvshows.name,
-    tvshows.poster_path,
-    tvshows.overview,
-    tvshows.status,
-    tvshows.vote_average,
-    tvshows.first_air_date,
+    tvshow.id,
+    tvshow.name,
+    tvshow.poster_path,
+    tvshow.overview,
+    tvshow.status,
+    tvshow.vote_average,
+    tvshow.first_air_date,
     CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
-    tvshows
+    tvshow
 LEFT OUTER JOIN
-    watchlist ON tvshows.id = watchlist.id
+    watchlist ON tvshow.id = watchlist.id
 WHERE
     name LIKE '%' || ? || '%'
     OR LOWER(name) LIKE '%' || LOWER(?) || '%'
@@ -97,15 +97,15 @@ ORDER BY
 
 searchShowsCount:
 SELECT COUNT(*)
-FROM tvshows
+FROM tvshow
 WHERE
 name LIKE '%' || ? || '%'
 OR LOWER(name) LIKE '%' || LOWER(?) || '%';
 
 delete:
 DELETE
-FROM tvshows
+FROM tvshow
 WHERE id = ?;
 
 deleteAll:
-DELETE FROM tvshows;
+DELETE FROM tvshow;

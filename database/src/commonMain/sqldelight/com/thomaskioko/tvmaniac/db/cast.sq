@@ -11,7 +11,7 @@ CREATE TABLE casts (
     popularity REAL,
     tmdb_id INTEGER AS Id<TmdbId> DEFAULT NULL,
     season_id INTEGER AS Id<SeasonId> DEFAULT NULL,
-    FOREIGN KEY(tmdb_id) REFERENCES tvshows(id)  ON DELETE CASCADE,
+    FOREIGN KEY(tmdb_id) REFERENCES tvshow(id)  ON DELETE CASCADE,
     FOREIGN KEY(season_id) REFERENCES season(id)  ON DELETE CASCADE
 );
 

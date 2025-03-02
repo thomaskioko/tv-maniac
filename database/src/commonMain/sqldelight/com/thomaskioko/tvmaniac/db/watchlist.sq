@@ -6,7 +6,7 @@ CREATE TABLE watchlist(
     id INTEGER AS Id<TmdbId> PRIMARY KEY,
     created_at INTEGER NOT NULL,
    `is_synced` INTEGER AS Boolean DEFAULT 0,
-    FOREIGN KEY(id) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY(id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- indices
@@ -24,40 +24,40 @@ VALUES( ?, ?);
 
 watchlists:
 SELECT
-    tvshows.id,
-    tvshows.name,
-    tvshows.poster_path,
-    tvshows.first_air_date,
+    tvshow.id,
+    tvshow.name,
+    tvshow.poster_path,
+    tvshow.first_air_date,
     watchlist.created_at,
     show_metadata.season_count,
     show_metadata.episode_count,
     show_metadata.status
 FROM
-    tvshows
+    tvshow
 JOIN
-    watchlist ON tvshows.id = watchlist.id
+    watchlist ON tvshow.id = watchlist.id
 LEFT JOIN
-    show_metadata ON tvshows.id = show_metadata.show_id
+    show_metadata ON tvshow.id = show_metadata.show_id
 ORDER BY
     watchlist.created_at DESC;
 
 searchWatchlist:
 SELECT
-    tvshows.id,
-    tvshows.name,
-    tvshows.poster_path,
-    tvshows.status,
-    tvshows.first_air_date,
+    tvshow.id,
+    tvshow.name,
+    tvshow.poster_path,
+    tvshow.status,
+    tvshow.first_air_date,
     watchlist.created_at,
     show_metadata.season_count,
     show_metadata.episode_count,
     show_metadata.status
 FROM
-    tvshows
+    tvshow
 JOIN
-    watchlist ON tvshows.id = watchlist.id
+    watchlist ON tvshow.id = watchlist.id
 LEFT JOIN
-    show_metadata ON tvshows.id = show_metadata.show_id
+    show_metadata ON tvshow.id = show_metadata.show_id
 WHERE
     name LIKE '%' || ? || '%'
     OR LOWER(name) LIKE '%' || LOWER(?) || '%'
@@ -76,11 +76,11 @@ WHERE id = ?;
 
 unsyncedWatchlist:
 SELECT
-    tvshows.id
+    tvshow.id
 FROM
-    tvshows
+    tvshow
 JOIN
-    watchlist ON tvshows.id = watchlist.id
+    watchlist ON tvshow.id = watchlist.id
 WHERE is_synced = 0;
 
 delete:

@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 CREATE TABLE IF NOT EXISTS popular_shows(
     `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
     `page` INTEGER AS Id<PageId> NOT NULL,
-     FOREIGN KEY(`id`) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
+     FOREIGN KEY(`id`) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- indices
@@ -30,30 +30,30 @@ popularShows:
 SELECT
     popular_shows.id,
     popular_shows.page,
-    tvshows.name,
-    tvshows.poster_path,
+    tvshow.name,
+    tvshow.poster_path,
     CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     popular_shows
 INNER JOIN
-    tvshows ON tvshows.id = popular_shows.id
+    tvshow ON tvshow.id = popular_shows.id
 LEFT OUTER JOIN
-    watchlist ON tvshows.id = watchlist.id
+    watchlist ON tvshow.id = watchlist.id
 ORDER BY page ASC;
 
 pagedPopularShows:
 SELECT
     popular_shows.id,
     popular_shows.page,
-    tvshows.name,
-    tvshows.poster_path,
+    tvshow.name,
+    tvshow.poster_path,
     CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     popular_shows
 INNER JOIN
-    tvshows ON tvshows.id = popular_shows.id
+    tvshow ON tvshow.id = popular_shows.id
 LEFT OUTER JOIN
-    watchlist ON tvshows.id = watchlist.id
+    watchlist ON tvshow.id = watchlist.id
 ORDER BY
     popular_shows.page ASC
 LIMIT

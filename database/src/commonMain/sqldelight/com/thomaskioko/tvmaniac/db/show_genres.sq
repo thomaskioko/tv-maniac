@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 CREATE TABLE IF NOT EXISTS `show_genres` (
     `show_id` INTEGER AS Id<TmdbId> NOT NULL,
     `genre_id` INTEGER AS Id<GenreId> NOT NULL,
-    FOREIGN KEY(`show_id`) REFERENCES `tvshows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(`show_id`) REFERENCES tvshow(`id`) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY(`genre_id`) REFERENCES `genres`(`id`) ON UPDATE CASCADE ON DELETE CASCADE,
     PRIMARY KEY (`show_id`, `genre_id`)
 );
@@ -19,6 +19,6 @@ VALUES (?, ?);
 
 showsByGenreId:
 SELECT s.*
-FROM tvshows s
+FROM tvshow s
 INNER JOIN show_genres sg ON s.id = sg.show_id
 WHERE sg.genre_id = ?;

@@ -5,7 +5,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
@@ -23,12 +23,12 @@ class DefaultTvShowsDao(
   private val dispatchers: AppCoroutineDispatchers,
 ) : TvShowsDao {
 
-  private val tvShowsQueries = database.tvshowsQueries
+  private val tvShowQueries = database.tvshowQueries
   private val genresQueries = database.show_genresQueries
 
-  override fun upsert(show: Tvshows) {
-    tvShowsQueries.transaction {
-      tvShowsQueries.upsert(
+  override fun upsert(show: Tvshow) {
+    tvShowQueries.transaction {
+      tvShowQueries.upsert(
         id = show.id,
         name = show.name,
         overview = show.overview,
@@ -55,12 +55,12 @@ class DefaultTvShowsDao(
     }
   }
 
-  override fun upsert(list: List<Tvshows>) {
+  override fun upsert(list: List<Tvshow>) {
     list.forEach { upsert(it) }
   }
 
   override fun observeShowsByQuery(query: String): Flow<List<ShowEntity>> {
-    return tvShowsQueries
+    return tvShowQueries
       .searchShows(query, query, query, query)
       { id, title, imageUrl, overview, status, voteAverage, year, inLibrary ->
         ShowEntity(
@@ -79,12 +79,12 @@ class DefaultTvShowsDao(
   }
 
   override fun observeQueryCount(query: String): Flow<Long> {
-    return tvShowsQueries.searchShowsCount(query, query)
+    return tvShowQueries.searchShowsCount(query, query)
       .asFlow()
       .mapToOne(dispatchers.io)
   }
 
   override fun deleteTvShows() {
-    tvShowsQueries.transaction { tvShowsQueries.deleteAll() }
+    tvShowQueries.transaction { tvShowQueries.deleteAll() }
   }
 }

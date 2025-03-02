@@ -6,7 +6,7 @@ CREATE TABLE show_metadata (
     season_count INTEGER NOT NULL DEFAULT 0,
     episode_count INTEGER NOT NULL DEFAULT 0,
     status TEXT DEFAULT NULL,
-    FOREIGN KEY(show_id) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- indices

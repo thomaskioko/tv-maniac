@@ -5,7 +5,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Genres
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.db.Id
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -45,7 +45,7 @@ class DefaultGenreDao(
       .mapToList(dispatchers.io)
   }
 
-  override fun observeShowsByGenreId(id: String): Flow<List<Tvshows>> {
+  override fun observeShowsByGenreId(id: String): Flow<List<Tvshow>> {
     return database.show_genresQueries.showsByGenreId(Id(id.toLong()))
       .asFlow()
       .mapToList(dispatchers.io)

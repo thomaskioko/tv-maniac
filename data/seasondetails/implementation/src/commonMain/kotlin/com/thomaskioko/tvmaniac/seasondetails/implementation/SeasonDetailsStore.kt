@@ -89,7 +89,7 @@ class SeasonDetailsStore(
                   name = cast.name,
                   profile_path = cast.profilePath?.let { formatterUtil.formatTmdbPosterPath(it) },
                   popularity = cast.popularity,
-                  tmdb_id = null,
+                  tmdb_id = Id(params.showId),
                 ),
               )
             }

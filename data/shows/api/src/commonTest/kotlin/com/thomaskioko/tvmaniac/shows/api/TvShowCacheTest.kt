@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.shows.api
 
 import com.thomaskioko.tvmaniac.db.Trending_shows
-import com.thomaskioko.tvmaniac.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.shows.api.MockData.getShow
@@ -17,7 +17,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     get() = database.trending_showsQueries
 
   private val tvShowQueries
-    get() = database.tvshowsQueries
+    get() = database.tvshowQueries
 
   @Test
   fun `should return shows when data is available`() {
@@ -168,7 +168,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     val popularity: Double
   )
 
-  private fun Tvshows.insertTvShowQuery() {
+  private fun Tvshow.insertTvShowQuery() {
     tvShowQueries.upsert(
       id = id,
       name = name,
