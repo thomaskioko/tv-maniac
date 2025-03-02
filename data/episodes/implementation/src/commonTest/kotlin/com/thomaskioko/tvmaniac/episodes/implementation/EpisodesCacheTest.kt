@@ -1,6 +1,7 @@
-package com.thomaskioko.tvmaniac.db
+package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
+import com.thomaskioko.tvmaniac.db.Episode
 import com.thomaskioko.tvmaniac.db.Id
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test

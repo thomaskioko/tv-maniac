@@ -22,6 +22,11 @@ kotlin {
       }
     }
 
-    commonTest { dependencies { implementation(libs.bundles.unittest) } }
+    commonTest {
+      dependencies {
+        implementation(projects.database.test)
+        implementation(libs.bundles.unittest)
+      }
+    }
   }
 }
