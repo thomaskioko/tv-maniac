@@ -22,7 +22,7 @@ class DefaultFeaturedShowsDao(
   private val dispatchers: AppCoroutineDispatchers,
 ) : FeaturedShowsDao {
 
-  private val featuredShowsQueries = database.featured_showsQueries
+  private val featuredShowsQueries = database.featuredShowsQueries
 
   override fun upsert(show: Featured_shows) {
     featuredShowsQueries.transaction {

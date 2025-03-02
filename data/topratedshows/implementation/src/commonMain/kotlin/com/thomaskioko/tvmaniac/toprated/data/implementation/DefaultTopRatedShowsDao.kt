@@ -24,7 +24,7 @@ class DefaultTopRatedShowsDao(
   database: TvManiacDatabase,
   private val dispatchers: AppCoroutineDispatchers,
 ) : TopRatedShowsDao {
-  private val topRatedShowsQueries = database.toprated_showsQueries
+  private val topRatedShowsQueries = database.topratedShowsQueries
 
   override fun upsert(show: Toprated_shows) {
     topRatedShowsQueries.transaction {

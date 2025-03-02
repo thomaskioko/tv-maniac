@@ -67,7 +67,7 @@ class DefaultWatchlistDao(
   }
 
   override fun upsert(entity: Show_metadata) {
-    database.show_metadataQueries.upsert(
+    database.showMetadataQueries.upsert(
       show_id = entity.show_id,
       season_count = entity.season_count,
       episode_count = entity.episode_count,

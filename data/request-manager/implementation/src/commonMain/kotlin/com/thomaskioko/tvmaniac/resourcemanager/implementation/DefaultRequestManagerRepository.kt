@@ -19,20 +19,20 @@ class DefaultRequestManagerRepository(
 ) : RequestManagerRepository {
 
   override fun upsert(entityId: Long, requestType: String, timestamp: Instant): Long {
-    database.last_requestsQueries.upsert(
+    database.lastRequestsQueries.upsert(
       entity_id = entityId,
       request_type = requestType,
       timestamp = timestamp
     )
-    return database.last_requestsQueries.lastInsertRowId().executeAsOne()
+    return database.lastRequestsQueries.lastInsertRowId().executeAsOne()
   }
 
   override fun delete(entityId: Long, requestType: String) {
-    database.last_requestsQueries.delete(entityId, requestType)
+    database.lastRequestsQueries.delete(entityId, requestType)
   }
 
   override fun deleteAll() {
-    database.last_requestsQueries.deleteAll()
+    database.lastRequestsQueries.deleteAll()
   }
 
   override fun isRequestExpired(entityId: Long, requestType: String, threshold: Duration): Boolean =
@@ -43,7 +43,7 @@ class DefaultRequestManagerRepository(
   }
 
   private fun getLastRequest(requestType: String, entityId: Long): Last_requests? {
-    return database.last_requestsQueries
+    return database.lastRequestsQueries
       .getLastRequestForId(requestType, entityId)
       .executeAsOneOrNull()
   }

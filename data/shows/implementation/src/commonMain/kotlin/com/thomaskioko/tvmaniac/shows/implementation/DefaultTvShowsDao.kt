@@ -23,8 +23,8 @@ class DefaultTvShowsDao(
   private val dispatchers: AppCoroutineDispatchers,
 ) : TvShowsDao {
 
-  private val tvShowQueries = database.tvshowQueries
-  private val genresQueries = database.show_genresQueries
+  private val tvShowQueries = database.tvShowQueries
+  private val genresQueries = database.showGenresQueries
 
   override fun upsert(show: Tvshow) {
     tvShowQueries.transaction {

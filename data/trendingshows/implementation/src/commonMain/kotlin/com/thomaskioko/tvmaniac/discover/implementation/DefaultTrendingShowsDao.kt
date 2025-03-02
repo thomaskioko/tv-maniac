@@ -24,7 +24,7 @@ class DefaultTrendingShowsDao(
   private val dispatchers: AppCoroutineDispatchers,
 ) : TrendingShowsDao {
 
-  private val trendingShowsQueries = database.trending_showsQueries
+  private val trendingShowsQueries = database.trendingShowsQueries
 
   override fun upsert(show: Trending_shows) {
     trendingShowsQueries.transaction {

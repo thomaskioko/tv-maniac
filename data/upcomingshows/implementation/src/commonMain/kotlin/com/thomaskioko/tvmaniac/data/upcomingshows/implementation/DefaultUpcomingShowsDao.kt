@@ -23,7 +23,7 @@ class DefaultUpcomingShowsDao(
   database: TvManiacDatabase,
   private val dispatchers: AppCoroutineDispatchers,
 ) : UpcomingShowsDao {
-  private val upcomingShowsQueries = database.upcoming_showsQueries
+  private val upcomingShowsQueries = database.upcomingShowsQueries
 
   override fun upsert(show: Upcoming_shows) {
     upcomingShowsQueries.transaction {

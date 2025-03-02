@@ -26,11 +26,11 @@ class DefaultSeasonDetailsDao(
 ) : SeasonDetailsDao {
 
   private val seasonQueries
-    get() = database.seasonQueries
+    get() = database.seasonsQueries
 
   override fun fetchSeasonDetails(showId: Long, seasonNumber: Long): SeasonDetailsWithEpisodes {
     val queryResult =
-      database.seasonQueries
+      database.seasonsQueries
         .seasonDetails(
           showId = Id(showId),
           seasonNumber = seasonNumber,
@@ -57,7 +57,7 @@ class DefaultSeasonDetailsDao(
 
   override fun upsertSeasonImage(seasonId: Long, imageUrl: String) {
     database.transaction {
-      database.season_imagesQueries.upsert(
+      database.seasonImagesQueries.upsert(
         season_id = Id(seasonId),
         image_url = imageUrl,
       )
@@ -65,10 +65,10 @@ class DefaultSeasonDetailsDao(
   }
 
   override fun fetchSeasonImages(id: Long): List<Season_images> =
-    database.season_imagesQueries.seasonImages(Id(id)).executeAsList()
+    database.seasonImagesQueries.seasonImages(Id(id)).executeAsList()
 
   override fun observeSeasonImages(id: Long): Flow<List<Season_images>> =
-    database.season_imagesQueries.seasonImages(Id(id)).asFlow().mapToList(dispatcher.io)
+    database.seasonImagesQueries.seasonImages(Id(id)).asFlow().mapToList(dispatcher.io)
 
   private fun mapSeasonDetails(resultItem: List<SeasonDetails>): SeasonDetailsWithEpisodes {
     val seasonDetails = resultItem.first()

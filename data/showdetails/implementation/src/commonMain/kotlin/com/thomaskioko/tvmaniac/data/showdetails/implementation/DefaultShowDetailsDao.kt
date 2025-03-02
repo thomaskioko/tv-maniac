@@ -20,7 +20,7 @@ class DefaultShowDetailsDao(
   database: TvManiacDatabase,
   private val dispatchers: AppCoroutineDispatchers,
 ) : ShowDetailsDao {
-  private val tvShowQueries = database.tvshowQueries
+  private val tvShowQueries = database.tvShowQueries
 
   override fun observeTvShows(id: Long): Flow<TvshowDetails> =
     tvShowQueries.tvshowDetails(Id(id)).asFlow().mapToOne(dispatchers.io)

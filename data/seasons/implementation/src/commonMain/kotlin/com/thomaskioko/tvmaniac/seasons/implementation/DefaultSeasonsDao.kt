@@ -23,7 +23,7 @@ class DefaultSeasonsDao(
 ) : SeasonsDao {
 
   private val seasonQueries
-    get() = database.seasonQueries
+    get() = database.seasonsQueries
 
   override fun upsert(season: Season) {
     database.transaction {
@@ -44,11 +44,11 @@ class DefaultSeasonsDao(
   }
 
   override fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>> {
-    return database.seasonQueries.showSeasons(Id(id)).asFlow().mapToList(dispatcher.io)
+    return database.seasonsQueries.showSeasons(Id(id)).asFlow().mapToList(dispatcher.io)
   }
 
   override fun fetchShowSeasons(id: Long): List<ShowSeasons> =
-    database.seasonQueries.showSeasons(id = Id(id)).executeAsList()
+    database.seasonsQueries.showSeasons(id = Id(id)).executeAsList()
 
   override fun delete(id: Long) {
     seasonQueries.delete(Id(id))

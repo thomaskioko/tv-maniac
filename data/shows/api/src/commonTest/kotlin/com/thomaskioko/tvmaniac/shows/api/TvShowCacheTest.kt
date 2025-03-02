@@ -14,10 +14,10 @@ import kotlin.test.Test
 internal class TvShowCacheTest : BaseDatabaseTest() {
 
   private val trendingShowsQueries
-    get() = database.trending_showsQueries
+    get() = database.trendingShowsQueries
 
   private val tvShowQueries
-    get() = database.tvshowQueries
+    get() = database.tvShowQueries
 
   @Test
   fun `should return shows when data is available`() {

@@ -46,7 +46,7 @@ class DefaultGenreDao(
   }
 
   override fun observeShowsByGenreId(id: String): Flow<List<Tvshow>> {
-    return database.show_genresQueries.showsByGenreId(Id(id.toLong()))
+    return database.showGenresQueries.showsByGenreId(Id(id.toLong()))
       .asFlow()
       .mapToList(dispatchers.io)
   }

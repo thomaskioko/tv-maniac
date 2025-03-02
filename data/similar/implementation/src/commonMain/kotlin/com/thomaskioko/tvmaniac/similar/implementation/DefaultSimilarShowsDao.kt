@@ -22,8 +22,8 @@ class DefaultSimilarShowsDao(
 ) : SimilarShowsDao {
 
   override fun upsert(showId: Long, similarShowId: Long) {
-    database.similar_showsQueries.transaction {
-      database.similar_showsQueries.insertOrReplace(
+    database.similarShowsQueries.transaction {
+      database.similarShowsQueries.insertOrReplace(
         id = Id(similarShowId),
         similar_show_id = Id(showId),
       )
@@ -31,17 +31,17 @@ class DefaultSimilarShowsDao(
   }
 
   override fun observeSimilarShows(traktId: Long): Flow<List<SimilarShows>> {
-    return database.similar_showsQueries
+    return database.similarShowsQueries
       .similarShows(Id(traktId))
       .asFlow()
       .mapToList(dispatchers.io)
   }
 
   override fun delete(id: Long) {
-    database.similar_showsQueries.delete(Id(id))
+    database.similarShowsQueries.delete(Id(id))
   }
 
   override fun deleteAll() {
-    database.transaction { database.similar_showsQueries.deleteAll() }
+    database.transaction { database.similarShowsQueries.deleteAll() }
   }
 }
