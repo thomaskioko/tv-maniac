@@ -40,7 +40,7 @@ kotlin {
 sqldelight {
   databases {
     create("TvManiacDatabase"){
-      packageName.set("com.thomaskioko.tvmaniac.core.db")
+      packageName.set("com.thomaskioko.tvmaniac.db")
 
       schemaOutputDirectory.set(file("src/commonMain/sqldelight/com/thomaskioko/tvmaniac/schemas"))
     }
