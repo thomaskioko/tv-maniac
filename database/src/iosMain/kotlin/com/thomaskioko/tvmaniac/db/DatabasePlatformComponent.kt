@@ -13,5 +13,8 @@ interface DatabasePlatformComponent {
 
   @Provides
   @SingleIn(AppScope::class)
-  fun provideSqlDriver(): SqlDriver = NativeSqliteDriver(TvManiacDatabase.Schema, "tvShows.db")
+  fun provideSqlDriver(): SqlDriver = NativeSqliteDriver(
+    schema = TvManiacDatabase.Schema,
+    name = "tvShows.db"
+  )
 }
