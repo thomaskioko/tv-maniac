@@ -1,18 +1,12 @@
 import com.thomaskioko.tvmaniac.db.CastId;
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.SeasonId;
-import com.thomaskioko.tvmaniac.db.TmdbId;
 
-CREATE TABLE casts (
+CREATE TABLE IF NOT EXISTS casts (
     id INTEGER AS Id<CastId> NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
     character_name TEXT NOT NULL,
     profile_path TEXT,
-    popularity REAL,
-    tmdb_id INTEGER AS Id<TmdbId> DEFAULT NULL,
-    season_id INTEGER AS Id<SeasonId> DEFAULT NULL,
-    FOREIGN KEY(tmdb_id) REFERENCES tvshow(id)  ON DELETE CASCADE,
-    FOREIGN KEY(season_id) REFERENCES season(id)  ON DELETE CASCADE
+    popularity REAL
 );
 
 upsert:
@@ -21,34 +15,18 @@ INSERT OR REPLACE INTO casts(
     name,
     character_name,
     profile_path,
-    popularity,
-    tmdb_id,
-    season_id
+    popularity
 )
-VALUES(?,?, ?, ?,?, ?,?);
+VALUES(?,?, ?, ?,?);
 
-showCast:
+cast:
 SELECT
     casts.id,
     casts.name,
     casts.character_name,
-    casts.profile_path
+    casts.profile_path,
+    casts.popularity
 FROM
     casts
 WHERE
-    casts.tmdb_id = ?
-ORDER BY
-    casts.popularity DESC;
-
-seasonCast:
-SELECT
-    casts.id,
-    casts.name,
-    casts.character_name,
-    casts.profile_path
-FROM
-    casts
-WHERE
-    casts.season_id = :seasonId
-ORDER BY
-    casts.popularity DESC;
+    casts.id = ?;

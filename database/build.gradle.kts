@@ -39,10 +39,12 @@ kotlin {
 
 sqldelight {
   databases {
-    create("TvManiacDatabase"){
-      packageName.set("com.thomaskioko.tvmaniac.db")
+    create("TvManiacDatabase") {
+      packageName = "com.thomaskioko.tvmaniac.db"
 
       schemaOutputDirectory.set(file("src/commonMain/sqldelight/com/thomaskioko/tvmaniac/schemas"))
+      migrationOutputDirectory.set(file("src/commonMain/sqldelight/com/thomaskioko/tvmaniac/migrations"))
+      verifyMigrations = true
     }
   }
 }

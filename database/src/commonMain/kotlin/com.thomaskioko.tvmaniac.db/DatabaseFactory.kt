@@ -111,8 +111,6 @@ class DatabaseFactory(private val sqlDriver: SqlDriver) {
       castsAdapter =
         Casts.Adapter(
           idAdapter = IdAdapter(),
-          season_idAdapter = IdAdapter(),
-          tmdb_idAdapter = IdAdapter(),
         ),
       watch_providersAdapter =
         Watch_providers.Adapter(
@@ -135,6 +133,12 @@ class DatabaseFactory(private val sqlDriver: SqlDriver) {
       show_metadataAdapter =
         Show_metadata.Adapter(
           show_idAdapter = IdAdapter(),
+        ),
+      cast_appearanceAdapter =
+        Cast_appearance.Adapter(
+          cast_idAdapter = IdAdapter(),
+          show_idAdapter = IdAdapter(),
+          season_idAdapter = IdAdapter(),
         )
     )
 }
