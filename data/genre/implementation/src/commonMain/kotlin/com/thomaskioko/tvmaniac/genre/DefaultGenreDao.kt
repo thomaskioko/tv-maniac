@@ -23,11 +23,13 @@ class DefaultGenreDao(
   private val genresQueries = database.genresQueries
 
   override fun upsert(entity: Genres) {
-    genresQueries.upsert(
-      id = entity.id,
-      name = entity.name,
-      poster_url = entity.poster_url
-    )
+    database.transaction {
+      genresQueries.upsert(
+        id = entity.id,
+        name = entity.name,
+        poster_url = entity.poster_url,
+      )
+    }
   }
 
   override fun getGenres(): List<Genres> = genresQueries.genres().executeAsList()
