@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsDao
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerDao
+import com.thomaskioko.tvmaniac.db.Cast_appearance
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -80,13 +81,18 @@ class ShowDetailsStore(
                 castDao.upsert(
                   Casts(
                     id = Id(cast.id.toLong()),
-                    tmdb_id = Id(show.id.toLong()),
                     character_name = cast.character,
                     name = cast.name,
                     profile_path = cast.profilePath?.let { formatterUtil.formatTmdbPosterPath(it) },
                     popularity = cast.popularity,
-                    season_id = null,
                   ),
+                )
+                castDao.upsert(
+                  Cast_appearance(
+                    cast_id = Id(cast.id.toLong()),
+                    show_id = Id(show.id.toLong()),
+                    season_id = null,
+                  )
                 )
               }
 

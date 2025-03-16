@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.db.Casts
 import com.thomaskioko.tvmaniac.db.Episode
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
+import com.thomaskioko.tvmaniac.db.Cast_appearance
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -84,13 +85,18 @@ class SeasonDetailsStore(
               castDao.upsert(
                 Casts(
                   id = Id(cast.id.toLong()),
-                  season_id = Id(params.seasonId),
                   character_name = cast.character,
                   name = cast.name,
                   profile_path = cast.profilePath?.let { formatterUtil.formatTmdbPosterPath(it) },
                   popularity = cast.popularity,
-                  tmdb_id = Id(params.showId),
                 ),
+              )
+              castDao.upsert(
+                Cast_appearance(
+                  cast_id = Id(cast.id.toLong()),
+                  show_id = Id(params.showId),
+                  season_id = Id(params.seasonId),
+                )
               )
             }
 
