@@ -262,12 +262,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Run Common iOS Unit Tests
-        run: |
-          if [[ $(uname -m) == 'arm64' ]]; then
-            ./gradlew clean iosSimulatorArm64Test
-          else
-            ./gradlew clean iosX64Test
-          fi
+        run: ./gradlew clean iosSimulatorArm64Test
 
       - name: Upload Common Test Report
         uses: actions/upload-artifact@v4
@@ -329,6 +324,7 @@ jobs:
           path: |
             build/
             fastlane/logs
+
 
   ios-snapshot-test:
     runs-on: macos-15
