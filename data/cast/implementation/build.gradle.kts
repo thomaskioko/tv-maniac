@@ -7,6 +7,10 @@ tvmaniac {
     useKotlinInject()
     useKspAnvilCompiler()
   }
+
+  optIn(
+    "kotlinx.coroutines.ExperimentalCoroutinesApi",
+  )
 }
 
 kotlin {
@@ -20,6 +24,14 @@ kotlin {
         implementation(libs.sqldelight.extensions)
         implementation(libs.kotlinx.atomicfu)
         implementation(libs.store5)
+      }
+    }
+
+    commonTest {
+      dependencies {
+        implementation(projects.database.test)
+
+        implementation(libs.bundles.unittest)
       }
     }
   }

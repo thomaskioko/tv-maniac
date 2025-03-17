@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.cast.testing
 
-import com.thomaskioko.tvmaniac.core.db.SeasonCast
-import com.thomaskioko.tvmaniac.core.db.ShowCast
+import com.thomaskioko.tvmaniac.db.SeasonCast
+import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.data.cast.api.CastRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow

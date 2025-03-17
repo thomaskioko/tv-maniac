@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.similar.api
 
-import com.thomaskioko.tvmaniac.core.db.SimilarShows
+import com.thomaskioko.tvmaniac.db.SimilarShows
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import kotlinx.coroutines.flow.Flow

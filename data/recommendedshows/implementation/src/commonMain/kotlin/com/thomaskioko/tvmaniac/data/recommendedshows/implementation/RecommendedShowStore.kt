@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.recommendedshows.implementation
 
-import com.thomaskioko.tvmaniac.core.db.RecommendedShows
-import com.thomaskioko.tvmaniac.core.db.Tvshows
+import com.thomaskioko.tvmaniac.db.RecommendedShows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsDao
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsParams
@@ -50,7 +50,7 @@ class RecommendedShowStore(
           writer = { param: RecommendedShowsParams, response ->
             response.results.forEach { show ->
               tvShowsDao.upsert(
-                Tvshows(
+                Tvshow(
                   id = Id(show.id.toLong()),
                   name = show.name,
                   overview = show.overview,

@@ -1,6 +1,7 @@
-package com.thomaskioko.tvmaniac.core.db
+package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
+import com.thomaskioko.tvmaniac.db.Episode
 import com.thomaskioko.tvmaniac.db.Id
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
@@ -12,6 +13,10 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
 
   @Test
   fun insertEpisodes_andEpisodeByEpisodeId_returnsExpectedData() {
+    insertShow()
+
+    insertSeason()
+
     getEpisodeCacheList().insertEpisodeEntityQuery()
     val entity = getEpisodeCacheList().first()
 
@@ -27,6 +32,38 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
 
   private fun List<Episode>.insertEpisodeEntityQuery() {
     map { it.insertEpisodeEntityQuery() }
+  }
+
+  private fun insertShow() {
+    database.tvShowQueries.upsert(
+      id = Id(123232),
+      name = "Loki",
+      overview = "After stealing the Tesseract, Loki is brought to the Time Variance Authority.",
+      language = "en",
+      first_air_date = "2021-06-09",
+      vote_average = 8.2,
+      vote_count = 7000,
+      popularity = 95.5,
+      genre_ids = listOf(18, 10765),
+      status = "Returning Series",
+      episode_numbers = null,
+      last_air_date = null,
+      season_numbers = null,
+      poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      backdrop_path = "/kXkuE8WXlCD8zMX7MxzBEKmLJUZ.jpg"
+    )
+  }
+
+  private fun insertSeason() {
+    database.seasonsQueries.upsert(
+      id = Id(114355),
+      show_id = Id(123232),
+      season_number = 1,
+      episode_count = 6,
+      title = "Season 1",
+      overview = "Season 1 of Loki",
+      image_url = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg"
+    )
   }
 
   private fun Episode.insertEpisodeEntityQuery() {

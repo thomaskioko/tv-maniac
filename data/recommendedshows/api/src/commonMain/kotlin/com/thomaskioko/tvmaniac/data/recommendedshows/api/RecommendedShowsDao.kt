@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.data.recommendedshows.api
 
-import com.thomaskioko.tvmaniac.core.db.RecommendedShows
+import com.thomaskioko.tvmaniac.db.RecommendedShows
 import kotlinx.coroutines.flow.Flow
 
 interface RecommendedShowsDao {

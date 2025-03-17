@@ -4,9 +4,9 @@ import androidx.paging.PagingSource
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.db.TopRatedShows
-import com.thomaskioko.tvmaniac.core.db.Toprated_shows
-import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.TopRatedShows
+import com.thomaskioko.tvmaniac.db.Toprated_shows
+import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.paging.QueryPagingSource
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
@@ -24,7 +24,7 @@ class DefaultTopRatedShowsDao(
   database: TvManiacDatabase,
   private val dispatchers: AppCoroutineDispatchers,
 ) : TopRatedShowsDao {
-  private val topRatedShowsQueries = database.toprated_showsQueries
+  private val topRatedShowsQueries = database.topratedShowsQueries
 
   override fun upsert(show: Toprated_shows) {
     topRatedShowsQueries.transaction {

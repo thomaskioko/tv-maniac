@@ -4,8 +4,8 @@ import androidx.paging.PagingSource
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.db.Popular_shows
-import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.Popular_shows
+import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.core.paging.QueryPagingSource
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsDao
 import com.thomaskioko.tvmaniac.db.Id
@@ -23,7 +23,7 @@ class DefaultPopularShowsDao(
   database: TvManiacDatabase,
   private val dispatchers: AppCoroutineDispatchers,
 ) : PopularShowsDao {
-  private val popularShowsQueries = database.popular_showsQueries
+  private val popularShowsQueries = database.popularShowsQueries
 
   override fun upsert(show: Popular_shows) {
     popularShowsQueries.transaction {

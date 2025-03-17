@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.watchlist.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
-import com.thomaskioko.tvmaniac.core.db.Show_metadata
-import com.thomaskioko.tvmaniac.core.db.Watchlists
+import com.thomaskioko.tvmaniac.db.Show_metadata
+import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id

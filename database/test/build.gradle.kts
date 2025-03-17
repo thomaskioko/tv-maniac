@@ -6,6 +6,10 @@ tvmaniac {
   multiplatform {
     addAndroidTarget()
   }
+
+  optIn(
+    "kotlin.uuid.ExperimentalUuidApi"
+  )
 }
 
 kotlin {

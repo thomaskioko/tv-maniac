@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 CREATE TABLE IF NOT EXISTS toprated_shows(
     `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
     `page` INTEGER AS Id<PageId> NOT NULL,
-     FOREIGN KEY(`id`) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
+     FOREIGN KEY(`id`) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- indices
@@ -30,31 +30,31 @@ topRatedShows:
 SELECT
     toprated_shows.id,
     toprated_shows.page,
-    tvshows.name,
-    tvshows.poster_path,
+    tvshow.name,
+    tvshow.poster_path,
     CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     toprated_shows
 INNER JOIN
-    tvshows ON tvshows.id = toprated_shows.id
+    tvshow ON tvshow.id = toprated_shows.id
 LEFT OUTER JOIN
-    watchlist ON tvshows.id = watchlist.id
+    watchlist ON tvshow.id = watchlist.id
 ORDER BY
-    tvshows.popularity DESC;
+    tvshow.popularity DESC;
 
 topRatedShowByPage:
 SELECT
     toprated_shows.id,
     toprated_shows.page,
-    tvshows.name,
-    tvshows.poster_path,
+    tvshow.name,
+    tvshow.poster_path,
     CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     toprated_shows
 INNER JOIN
-    tvshows ON tvshows.id = toprated_shows.id
+    tvshow ON tvshow.id = toprated_shows.id
 LEFT OUTER JOIN
-    watchlist ON tvshows.id = watchlist.id
+    watchlist ON tvshow.id = watchlist.id
 WHERE
     toprated_shows.page = :page;
 
@@ -62,15 +62,15 @@ pagedTopRatedShows:
 SELECT
     toprated_shows.id,
     toprated_shows.page,
-    tvshows.name,
-    tvshows.poster_path,
+    tvshow.name,
+    tvshow.poster_path,
     CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     toprated_shows
 INNER JOIN
-    tvshows ON tvshows.id = toprated_shows.id
+    tvshow ON tvshow.id = toprated_shows.id
 LEFT OUTER JOIN
-    watchlist ON tvshows.id = watchlist.id
+    watchlist ON tvshow.id = watchlist.id
 ORDER BY
     toprated_shows.page ASC
 LIMIT

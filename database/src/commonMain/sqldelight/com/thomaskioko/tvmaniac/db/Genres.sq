@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS `genres` (
     `name` TEXT NOT NULL,
     `poster_url` TEXT,
      PRIMARY KEY (id, id),
-     FOREIGN KEY(id) REFERENCES tvshows(id) ON UPDATE CASCADE ON DELETE CASCADE
+     FOREIGN KEY(id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- indices

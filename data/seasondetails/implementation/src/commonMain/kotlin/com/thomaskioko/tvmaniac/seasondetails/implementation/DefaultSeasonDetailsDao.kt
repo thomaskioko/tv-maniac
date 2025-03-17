@@ -3,9 +3,9 @@ package com.thomaskioko.tvmaniac.seasondetails.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.db.SeasonDetails
-import com.thomaskioko.tvmaniac.core.db.Season_images
-import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.SeasonDetails
+import com.thomaskioko.tvmaniac.db.Season_images
+import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
@@ -26,11 +26,11 @@ class DefaultSeasonDetailsDao(
 ) : SeasonDetailsDao {
 
   private val seasonQueries
-    get() = database.seasonQueries
+    get() = database.seasonsQueries
 
   override fun fetchSeasonDetails(showId: Long, seasonNumber: Long): SeasonDetailsWithEpisodes {
     val queryResult =
-      database.seasonQueries
+      database.seasonsQueries
         .seasonDetails(
           showId = Id(showId),
           seasonNumber = seasonNumber,
@@ -57,7 +57,7 @@ class DefaultSeasonDetailsDao(
 
   override fun upsertSeasonImage(seasonId: Long, imageUrl: String) {
     database.transaction {
-      database.season_imagesQueries.upsert(
+      database.seasonImagesQueries.upsert(
         season_id = Id(seasonId),
         image_url = imageUrl,
       )
@@ -65,10 +65,10 @@ class DefaultSeasonDetailsDao(
   }
 
   override fun fetchSeasonImages(id: Long): List<Season_images> =
-    database.season_imagesQueries.seasonImages(Id(id)).executeAsList()
+    database.seasonImagesQueries.seasonImages(Id(id)).executeAsList()
 
   override fun observeSeasonImages(id: Long): Flow<List<Season_images>> =
-    database.season_imagesQueries.seasonImages(Id(id)).asFlow().mapToList(dispatcher.io)
+    database.seasonImagesQueries.seasonImages(Id(id)).asFlow().mapToList(dispatcher.io)
 
   private fun mapSeasonDetails(resultItem: List<SeasonDetails>): SeasonDetailsWithEpisodes {
     val seasonDetails = resultItem.first()

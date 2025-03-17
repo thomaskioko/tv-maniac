@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.watchproviders.api
 
-import com.thomaskioko.tvmaniac.core.db.WatchProviders
-import com.thomaskioko.tvmaniac.core.db.Watch_providers
+import com.thomaskioko.tvmaniac.db.WatchProviders
+import com.thomaskioko.tvmaniac.db.Watch_providers
 import kotlinx.coroutines.flow.Flow
 
 interface WatchProviderDao {
