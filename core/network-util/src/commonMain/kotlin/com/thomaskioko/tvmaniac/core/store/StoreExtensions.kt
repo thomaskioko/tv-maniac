@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.core.networkutil
+package com.thomaskioko.tvmaniac.core.store
 
 import com.thomaskioko.tvmaniac.core.networkutil.model.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
