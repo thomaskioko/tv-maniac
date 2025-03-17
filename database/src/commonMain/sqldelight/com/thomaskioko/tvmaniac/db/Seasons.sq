@@ -2,7 +2,7 @@ import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.SeasonId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
-CREATE TABLE season (
+CREATE TABLE IF NOT EXISTS season (
     id INTEGER AS Id<SeasonId>  NOT NULL PRIMARY KEY,
     show_id INTEGER AS Id<TmdbId> NOT NULL,
     season_number INTEGER NOT NULL,

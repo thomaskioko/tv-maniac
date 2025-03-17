@@ -3,7 +3,7 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 import kotlin.Int;
 import kotlin.collections.List;
 
-CREATE TABLE tvshow(
+CREATE TABLE IF NOT EXISTS tvshow(
     id INTEGER AS Id<TmdbId> NOT NULL PRIMARY KEY,
     backdrop_path TEXT DEFAULT NULL,
     first_air_date TEXT DEFAULT NULL,
