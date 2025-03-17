@@ -26,6 +26,15 @@ class DefaultTvShowsDao(
   private val tvShowQueries = database.tvShowQueries
   private val genresQueries = database.showGenresQueries
 
+  override suspend fun shouldUpdateShows(shows: List<Int>): Boolean {
+    if (shows.isEmpty()) return false
+
+    return shows.any { id ->
+      !tvShowQueries.exists(Id(id.toLong()))
+        .executeAsOne()
+    }
+  }
+
   override fun upsert(show: Tvshow) {
     tvShowQueries.transaction {
       tvShowQueries.upsert(

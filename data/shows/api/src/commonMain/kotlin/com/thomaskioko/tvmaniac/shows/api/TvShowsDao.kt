@@ -14,4 +14,6 @@ interface TvShowsDao {
   fun observeQueryCount(query: String): Flow<Long>
 
   fun deleteTvShows()
+
+  suspend fun shouldUpdateShows(shows: List<Int>): Boolean
 }

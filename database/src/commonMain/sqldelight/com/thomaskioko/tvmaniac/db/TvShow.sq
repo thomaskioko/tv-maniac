@@ -109,3 +109,8 @@ WHERE id = ?;
 
 deleteAll:
 DELETE FROM tvshow;
+
+exists:
+SELECT EXISTS(
+    SELECT 1 FROM tvshow WHERE id = ?
+);
