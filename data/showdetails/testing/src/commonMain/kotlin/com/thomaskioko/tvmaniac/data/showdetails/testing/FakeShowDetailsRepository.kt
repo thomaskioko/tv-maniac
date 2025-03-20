@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.data.showdetails.testing
 
-import com.thomaskioko.tvmaniac.core.db.TvshowDetails
+import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository

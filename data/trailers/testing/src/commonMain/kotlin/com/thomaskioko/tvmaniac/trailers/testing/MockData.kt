@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.trailers.testing
 
-import com.thomaskioko.tvmaniac.core.db.Trailers
+import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.db.Id
 
 val trailers =

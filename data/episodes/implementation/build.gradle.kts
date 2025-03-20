@@ -1,8 +1,12 @@
-import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
-
 plugins {
-  alias(libs.plugins.tvmaniac.multiplatform)
-  alias(libs.plugins.ksp)
+  alias(libs.plugins.tvmaniac.kmp)
+}
+
+tvmaniac {
+  multiplatform {
+    useKotlinInject()
+    useKspAnvilCompiler()
+  }
 }
 
 kotlin {
@@ -14,13 +18,15 @@ kotlin {
         implementation(projects.data.shows.api)
         implementation(projects.tmdbApi.api)
 
-        implementation(libs.bundles.kotlinInject)
         implementation(libs.sqldelight.extensions)
       }
     }
 
-    commonTest { dependencies { implementation(libs.bundles.unittest) } }
+    commonTest {
+      dependencies {
+        implementation(projects.database.test)
+        implementation(libs.bundles.unittest)
+      }
+    }
   }
 }
-
-addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)

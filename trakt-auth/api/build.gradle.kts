@@ -1,6 +1,11 @@
 plugins {
-  alias(libs.plugins.tvmaniac.android.library)
-  alias(libs.plugins.tvmaniac.multiplatform)
+  alias(libs.plugins.tvmaniac.kmp)
+}
+
+tvmaniac {
+  multiplatform {
+    addAndroidTarget()
+  }
 }
 
 kotlin {
@@ -20,5 +25,3 @@ kotlin {
     }
   }
 }
-
-android { namespace = "com.thomaskioko.tvmaniac.traktauth.api" }

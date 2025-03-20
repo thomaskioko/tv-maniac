@@ -1,5 +1,5 @@
 {
-  "originHash" : "85896b654271ac6d3b27dc21fd3cc23bc00e33ff3fcb3d10bd19005a07e11d63",
+  "originHash" : "437dd41be3727475ef3f6b4dfc394ec35dc2b0e60633e97a9535f510f2627efd",
   "pins" : [
     {
       "identity" : "sdwebimage",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SvenTiigi/YouTubePlayerKit.git",
       "state" : {
-        "revision" : "fe1c1ec340f6d79866131432ecaa190fd6bbc4cb",
-        "version" : "1.9.0"
+        "revision" : "29ef4217810e15ce8c7fce6608a1eecd0935b621",
+        "version" : "2.0.0"
       }
     }
   ],

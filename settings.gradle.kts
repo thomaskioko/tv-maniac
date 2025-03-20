@@ -5,7 +5,7 @@ enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 rootProject.name = "tv-maniac"
 
 pluginManagement {
-  includeBuild("build-plugins")
+  includeBuild("tooling")
 
   repositories {
     gradlePluginPortal()
@@ -32,7 +32,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.develocity") version ("3.19.1")
+  id("com.gradle.develocity") version ("3.19.2")
   id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
 }
 

@@ -11,33 +11,19 @@ let package = Package(
   products: [
     .library(
       name: "TvManiacKit",
-      targets: ["TvManiacKit", "TvManiac"]
+      targets: ["TvManiacKit"]
     ),
   ],
   dependencies: [
       .package(name: "SwiftUIComponents", path: "../SwiftUIComponents"),
-      .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
   ],
   targets: [
-    .binaryTarget(
-      name: "TvManiac",
-      path: "TvManiac.xcframework"
-    ),
     .target(
       name: "TvManiacKit",
       dependencies: [
-        "SwiftUIComponents",
-        "TvManiac",
+          "SwiftUIComponents",
       ]
     ),
-    .testTarget(
-        name: "TvManiacKitTests",
-        dependencies: [
-            "SnapshotTestingLib",
-            "TvManiacKit"
-        ],
-        exclude: ["__Snapshots__"]
-    )
   ]
 )
 

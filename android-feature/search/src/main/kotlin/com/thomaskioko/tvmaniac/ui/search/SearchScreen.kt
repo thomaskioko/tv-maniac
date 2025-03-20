@@ -64,7 +64,7 @@ import com.thomaskioko.tvmaniac.presentation.search.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.search.ShowContentAvailable
 import com.thomaskioko.tvmaniac.presentation.search.model.ShowGenre
 import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
-import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.ui.search.components.SearchResultItem
 import com.thomaskioko.tvmaniac.ui.search.components.SearchTextContainer
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior

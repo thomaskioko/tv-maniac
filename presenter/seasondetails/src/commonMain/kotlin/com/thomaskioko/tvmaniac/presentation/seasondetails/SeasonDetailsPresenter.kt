@@ -18,12 +18,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SeasonDetailsPresenterFactory(
-  val create : (
-    componentContext:ComponentContext,
-  param: SeasonDetailsUiParam,
-  onBack: () -> Unit,
-  onNavigateToEpisodeDetails: (id: Long) -> Unit,
-) -> SeasonDetailsPresenter
+  val create: (
+    componentContext: ComponentContext,
+    param: SeasonDetailsUiParam,
+    onBack: () -> Unit,
+    onNavigateToEpisodeDetails: (id: Long) -> Unit,
+  ) -> SeasonDetailsPresenter,
 )
 
 class SeasonDetailsPresenter

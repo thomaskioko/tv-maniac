@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.seasondetails
 
-import com.thomaskioko.tvmaniac.core.db.SeasonCast
-import com.thomaskioko.tvmaniac.core.db.Season_images
+import com.thomaskioko.tvmaniac.db.SeasonCast
+import com.thomaskioko.tvmaniac.db.Season_images
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Cast
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonImagesModel

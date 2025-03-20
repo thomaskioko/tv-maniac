@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.genre
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
-import com.thomaskioko.tvmaniac.core.db.Genres
+import com.thomaskioko.tvmaniac.db.Genres
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource

@@ -1,6 +1,15 @@
 plugins {
-  alias(libs.plugins.tvmaniac.android.library)
-  alias(libs.plugins.tvmaniac.multiplatform)
+  alias(libs.plugins.tvmaniac.kmp)
+}
+
+tvmaniac {
+  multiplatform {
+    addAndroidTarget()
+  }
+
+  optIn(
+    "kotlin.uuid.ExperimentalUuidApi"
+  )
 }
 
 kotlin {
@@ -10,6 +19,7 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.database)
+        implementation(libs.kotlinx.datetime)
 
         implementation(libs.kotlin.test)
       }
@@ -20,5 +30,3 @@ kotlin {
     jvmMain { dependencies { implementation(libs.sqldelight.driver.jvm) } }
   }
 }
-
-android { namespace = "com.thomaskioko.tvmaniac.database.test" }

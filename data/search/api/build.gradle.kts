@@ -1,4 +1,6 @@
-plugins { alias(libs.plugins.tvmaniac.multiplatform) }
+plugins {
+  alias(libs.plugins.tvmaniac.kmp)
+}
 
 kotlin {
   sourceSets {

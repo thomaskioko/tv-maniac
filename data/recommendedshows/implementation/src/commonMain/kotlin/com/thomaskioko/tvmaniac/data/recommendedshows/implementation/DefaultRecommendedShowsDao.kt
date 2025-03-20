@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.data.recommendedshows.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.db.RecommendedShows
-import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.RecommendedShows
+import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsDao
 import com.thomaskioko.tvmaniac.db.Id
 import kotlinx.coroutines.flow.Flow
@@ -21,8 +21,8 @@ class DefaultRecommendedShowsDao(
   private val dispatchers: AppCoroutineDispatchers,
 ) : RecommendedShowsDao {
   override fun upsert(showId: Long, recommendedShowId: Long) {
-    database.recommended_showsQueries.transaction {
-      database.recommended_showsQueries.upsert(
+    database.recommendedShowsQueries.transaction {
+      database.recommendedShowsQueries.upsert(
         id = Id(recommendedShowId),
         recommended_show_id = Id(showId),
       )
@@ -30,17 +30,17 @@ class DefaultRecommendedShowsDao(
   }
 
   override fun observeRecommendedShows(traktId: Long): Flow<List<RecommendedShows>> {
-    return database.recommended_showsQueries
+    return database.recommendedShowsQueries
       .recommendedShows(Id(traktId))
       .asFlow()
       .mapToList(dispatchers.io)
   }
 
   override fun delete(id: Long) {
-    database.similar_showsQueries.delete(Id(id))
+    database.recommendedShowsQueries.delete(Id(id))
   }
 
   override fun deleteAll() {
-    database.transaction { database.similar_showsQueries.deleteAll() }
+    database.transaction { database.recommendedShowsQueries.deleteAll() }
   }
 }

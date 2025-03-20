@@ -1,0 +1,116 @@
+import com.thomaskioko.tvmaniac.db.CastId;
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.SeasonId;
+import kotlin.Int;
+import kotlin.collections.List;
+
+BEGIN TRANSACTION;
+
+CREATE TABLE IF NOT EXISTS tvshow(
+    id INTEGER AS Id<TmdbId> NOT NULL PRIMARY KEY,
+    backdrop_path TEXT DEFAULT NULL,
+    first_air_date TEXT DEFAULT NULL,
+    language TEXT,
+    name TEXT NOT NULL,
+    overview TEXT NOT NULL,
+    popularity REAL NOT NULL,
+    poster_path TEXT,
+    episode_numbers TEXT DEFAULT NULL,
+    last_air_date TEXT DEFAULT NULL,
+    season_numbers TEXT DEFAULT NULL,
+    status TEXT DEFAULT NULL,
+    vote_average REAL NOT NULL,
+    vote_count INTEGER NOT NULL,
+    genre_ids TEXT AS List<Int> NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS season (
+    id INTEGER AS Id<SeasonId>  NOT NULL PRIMARY KEY,
+    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    season_number INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    episode_count INTEGER NOT NULL,
+    overview TEXT,
+    image_url TEXT DEFAULT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- Create new tables with the updated schema
+CREATE TABLE IF NOT EXISTS tvshow_new(
+    id INTEGER AS Id<TmdbId> NOT NULL PRIMARY KEY,
+    backdrop_path TEXT DEFAULT NULL,
+    first_air_date TEXT DEFAULT NULL,
+    language TEXT,
+    name TEXT NOT NULL,
+    overview TEXT NOT NULL,
+    popularity REAL NOT NULL,
+    poster_path TEXT,
+    episode_numbers TEXT DEFAULT NULL,
+    last_air_date TEXT DEFAULT NULL,
+    season_numbers TEXT DEFAULT NULL,
+    status TEXT DEFAULT NULL,
+    vote_average REAL NOT NULL,
+    vote_count INTEGER NOT NULL,
+    genre_ids TEXT AS List<Int> NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS season_new (
+    id INTEGER AS Id<SeasonId> NOT NULL PRIMARY KEY,
+    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    season_number INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    episode_count INTEGER NOT NULL,
+    overview TEXT,
+    image_url TEXT DEFAULT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow_new(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- Copy data from old tables to new tables
+INSERT INTO tvshow_new
+SELECT * FROM tvshow;
+
+INSERT INTO season_new
+SELECT * FROM season;
+
+-- Create casts table with updated schema
+CREATE TABLE IF NOT EXISTS casts_new (
+    id INTEGER AS Id<CastId> NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    character_name TEXT NOT NULL,
+    profile_path TEXT,
+    popularity REAL
+);
+
+-- Copy data from old casts table if it exists
+INSERT INTO casts_new
+SELECT id, name, character_name, profile_path, popularity
+FROM casts;
+
+-- Create the cast_appearance table
+CREATE TABLE IF NOT EXISTS cast_appearance (
+    cast_id INTEGER AS Id<CastId> NOT NULL,
+    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    season_id INTEGER AS Id<SeasonId>,
+    PRIMARY KEY (cast_id, show_id, season_id),
+    FOREIGN KEY(cast_id) REFERENCES casts_new(id) ON DELETE CASCADE,
+    FOREIGN KEY(show_id) REFERENCES tvshow_new(id) ON DELETE CASCADE,
+    FOREIGN KEY(season_id) REFERENCES season_new(id) ON DELETE CASCADE
+);
+
+-- Create unique indexes
+CREATE UNIQUE INDEX IF NOT EXISTS `index_cast_appearance_unique` ON `cast_appearance` (`cast_id`, `show_id`, `season_id`);
+CREATE UNIQUE INDEX IF NOT EXISTS `index_cast_appearance_id` ON `cast_appearance` (`cast_id`);
+
+-- Drop old tables only after successful data transfer
+DROP TABLE IF EXISTS tvshow;
+DROP TABLE IF EXISTS season;
+DROP TABLE IF EXISTS casts;
+
+-- Rename new tables to their final names
+ALTER TABLE tvshow_new RENAME TO tvshow;
+ALTER TABLE season_new RENAME TO season;
+ALTER TABLE casts_new RENAME TO casts;
+
+COMMIT;
+

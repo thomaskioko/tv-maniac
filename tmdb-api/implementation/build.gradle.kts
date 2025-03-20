@@ -1,10 +1,15 @@
-import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
-
 plugins {
-  alias(libs.plugins.tvmaniac.android.library)
-  alias(libs.plugins.tvmaniac.multiplatform)
-  alias(libs.plugins.ksp)
-  alias(libs.plugins.serialization)
+  alias(libs.plugins.tvmaniac.kmp)
+}
+
+tvmaniac {
+  useSerialization()
+
+  multiplatform {
+    addAndroidTarget()
+    useKotlinInject()
+    useKspAnvilCompiler()
+  }
 }
 
 kotlin {
@@ -17,7 +22,6 @@ kotlin {
         implementation(projects.core.logger)
         implementation(projects.tmdbApi.api)
 
-        implementation(libs.bundles.kotlinInject)
         implementation(libs.ktor.core)
         implementation(libs.ktor.logging)
         implementation(libs.ktor.negotiation)
@@ -38,6 +42,3 @@ kotlin {
   }
 }
 
-android { namespace = "com.thomaskioko.tvmaniac.tmdb.implementation" }
-
-addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)

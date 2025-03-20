@@ -21,7 +21,7 @@ import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Discover
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Watchlist
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Search
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Settings
-import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.ui.search.SearchScreen
 import com.thomaskioko.tvmaniac.ui.discover.DiscoverScreen
 import com.thomaskioko.tvmaniac.ui.library.WatchlistScreen

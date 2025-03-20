@@ -4,8 +4,8 @@ import androidx.paging.PagingSource
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
+import com.thomaskioko.tvmaniac.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.core.paging.QueryPagingSource
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.db.Id
@@ -23,7 +23,7 @@ class DefaultUpcomingShowsDao(
   database: TvManiacDatabase,
   private val dispatchers: AppCoroutineDispatchers,
 ) : UpcomingShowsDao {
-  private val upcomingShowsQueries = database.upcoming_showsQueries
+  private val upcomingShowsQueries = database.upcomingShowsQueries
 
   override fun upsert(show: Upcoming_shows) {
     upcomingShowsQueries.transaction {

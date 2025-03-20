@@ -41,7 +41,7 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.search.ClearQuery
 import com.thomaskioko.tvmaniac.presentation.search.QueryChanged
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowAction
-import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.android.resources.R
 import kotlinx.coroutines.launch
 
 @Composable

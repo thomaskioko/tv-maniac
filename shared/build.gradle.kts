@@ -1,53 +1,51 @@
-import co.touchlab.skie.configuration.FlowInterop
+import co.touchlab.skie.configuration.DefaultArgumentInterop
 import co.touchlab.skie.configuration.EnumInterop
+import co.touchlab.skie.configuration.FlowInterop
 import co.touchlab.skie.configuration.SealedInterop
 import co.touchlab.skie.configuration.SuppressSkieWarning
 import co.touchlab.skie.configuration.SuspendInterop
-import com.thomaskioko.tvmaniac.plugins.addKspDependencyForAllTargets
-import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
-import co.touchlab.skie.configuration.DefaultArgumentInterop
 
 plugins {
-  alias(libs.plugins.ksp)
+  alias(libs.plugins.tvmaniac.kmp)
   alias(libs.plugins.skie)
-  alias(libs.plugins.tvmaniac.android.library)
-  alias(libs.plugins.tvmaniac.multiplatform)
-  alias(libs.plugins.tvmaniac.xcframework)
 }
 
-kotlin {
-  val xcFramework = XCFramework("TvManiac")
+tvmaniac {
 
-  targets.withType<KotlinNativeTarget>().configureEach {
-    binaries.withType<Framework> {
-      baseName = "TvManiac"
+  multiplatform {
+    useKspAnvil()
+    useKotlinInject()
 
-      isStatic = !debuggable
-      linkerOpts.add("-lsqlite3")
-      freeCompilerArgs += if (debuggable) "-Xadd-light-debug=enable" else ""
-      freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin")
+    addIosTargetsWithXcFramework(
+      frameworkName = "TvManiac",
+    ) { framework ->
+      with(framework) {
+        isStatic = true
+        freeCompilerArgs += if (debuggable) "-Xadd-light-debug=enable" else ""
+        freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
 
-      export(projects.navigation.api)
-      export(projects.datastore.api)
-      export(projects.presenter.discover)
-      export(projects.presenter.home)
-      export(projects.presenter.watchlist)
-      export(projects.presenter.moreShows)
-      export(projects.presenter.search)
-      export(projects.presenter.seasondetails)
-      export(projects.presenter.settings)
-      export(projects.presenter.showDetails)
-      export(projects.presenter.trailers)
+        export(projects.navigation.api)
+        export(projects.datastore.api)
+        export(projects.presenter.discover)
+        export(projects.presenter.home)
+        export(projects.presenter.watchlist)
+        export(projects.presenter.moreShows)
+        export(projects.presenter.search)
+        export(projects.presenter.seasondetails)
+        export(projects.presenter.settings)
+        export(projects.presenter.showDetails)
+        export(projects.presenter.trailers)
 
-      export(libs.decompose.decompose)
-      export(libs.essenty.lifecycle)
-
-      xcFramework.add(this)
+        export(libs.decompose.decompose)
+        export(libs.essenty.lifecycle)
+      }
     }
   }
 
+  optIn("kotlin.experimental.ExperimentalObjCName")
+}
+
+kotlin {
   sourceSets {
     commonMain {
       dependencies {
@@ -115,18 +113,10 @@ kotlin {
 
         implementation(projects.navigation.implementation)
 
-        implementation(libs.bundles.kotlinInject)
       }
     }
   }
 }
-
-android { namespace = "com.thomaskioko.tvmaniac.shared" }
-
-addKspDependencyForAllTargets(libs.kotlinInject.compiler)
-addKspDependencyForAllTargets(libs.kotlinInject.anvil.compiler)
-
-kotlin.sourceSets.all { languageSettings.optIn("kotlin.experimental.ExperimentalObjCName") }
 
 skie {
   analytics {

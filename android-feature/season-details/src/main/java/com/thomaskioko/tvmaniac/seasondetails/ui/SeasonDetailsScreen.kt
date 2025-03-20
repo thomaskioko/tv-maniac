@@ -82,7 +82,7 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonGalleryClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.UpdateSeasonWatchedState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Cast
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonImagesModel
-import com.thomaskioko.tvmaniac.resources.R
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.ui.components.CollapsableContent
 import com.thomaskioko.tvmaniac.seasondetails.ui.components.ShowLinearProgressIndicator
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior

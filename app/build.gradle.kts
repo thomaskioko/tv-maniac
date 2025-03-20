@@ -2,8 +2,20 @@ plugins {
   alias(libs.plugins.tvmaniac.application)
 }
 
-android {
-  namespace = "com.thomaskioko.tvmaniac"
+tvmaniac {
+  app {
+    applicationId("com.thomaskioko.tvmaniac")
+    minify(
+      rootProject.file("app/proguard-rules.pro"),
+    )
+  }
+
+  android {
+    useKspAnvil()
+    useCompose()
+    useBaselineProfile()
+    useManagedDevices()
+  }
 }
 
 dependencies {
@@ -84,8 +96,6 @@ dependencies {
   implementation(libs.decompose.decompose)
   implementation(libs.decompose.extensions.compose)
   implementation(libs.bundles.kotlinInject)
-  ksp(libs.kotlinInject.compiler)
-  ksp(libs.kotlinInject.anvil.compiler)
 
   implementation(libs.androidx.datastore.core)
   implementation(libs.androidx.savedstate)
@@ -100,9 +110,4 @@ dependencies {
   baselineProfile(projects.benchmark)
 
   runtimeOnly(libs.androidx.profileinstaller)
-}
-
-baselineProfile {
-  mergeIntoMain = true
-  saveInSrc = true
 }

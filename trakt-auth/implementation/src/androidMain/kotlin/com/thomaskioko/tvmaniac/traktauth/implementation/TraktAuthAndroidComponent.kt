@@ -22,8 +22,8 @@ interface TraktAuthAndroidComponent {
   @SingleIn(ActivityScope::class)
   fun provideAuthConfig(): AuthorizationServiceConfiguration {
     return AuthorizationServiceConfiguration(
-      Uri.parse("https://trakt.tv/oauth/authorize"),
-      Uri.parse("https://trakt.tv/oauth/token"),
+      "https://trakt.tv/oauth/authorize".toUri(),
+      "https://trakt.tv/oauth/token".toUri(),
     )
   }
 

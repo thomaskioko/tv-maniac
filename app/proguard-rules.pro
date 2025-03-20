@@ -26,3 +26,5 @@
                 AnnotationDefault
 
 -renamesourcefileattribute SourceFile
+
+-keepattributes *

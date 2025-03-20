@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.data.recommendedshows.testing
 
-import com.thomaskioko.tvmaniac.core.db.RecommendedShows
+import com.thomaskioko.tvmaniac.db.RecommendedShows
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsRepository

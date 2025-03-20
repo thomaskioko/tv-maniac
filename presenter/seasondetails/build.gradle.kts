@@ -1,6 +1,12 @@
 plugins {
-  alias(libs.plugins.tvmaniac.multiplatform)
-  alias(libs.plugins.serialization)
+  alias(libs.plugins.tvmaniac.kmp)
+}
+
+tvmaniac {
+  multiplatform {
+    useKotlinInject()
+    useSerialization()
+  }
 }
 
 kotlin {
@@ -17,7 +23,6 @@ kotlin {
         api(libs.essenty.lifecycle)
         api(libs.kotlinx.collections)
 
-        implementation(libs.bundles.kotlinInject)
       }
     }
 
