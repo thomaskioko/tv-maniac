@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.cast.implementation
 
-import com.thomaskioko.tvmaniac.core.db.SeasonCast
-import com.thomaskioko.tvmaniac.core.db.ShowCast
+import com.thomaskioko.tvmaniac.db.SeasonCast
+import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.data.cast.api.CastRepository
 import kotlinx.coroutines.flow.Flow

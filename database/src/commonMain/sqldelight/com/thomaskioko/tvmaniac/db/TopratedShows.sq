@@ -1,0 +1,87 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.PageId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+CREATE TABLE IF NOT EXISTS toprated_shows(
+    `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
+    `page` INTEGER AS Id<PageId> NOT NULL,
+     FOREIGN KEY(`id`) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_toprated_shows_show_id` ON `toprated_shows` (`id`);
+
+-- queries
+
+insert:
+INSERT OR REPLACE INTO toprated_shows(
+    `id`,
+    `page`
+) VALUES (
+    :id,
+    :page
+);
+
+count:
+SELECT count(*) FROM toprated_shows;
+
+topRatedShows:
+SELECT
+    toprated_shows.id,
+    toprated_shows.page,
+    tvshow.name,
+    tvshow.poster_path,
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    toprated_shows
+INNER JOIN
+    tvshow ON tvshow.id = toprated_shows.id
+LEFT OUTER JOIN
+    watchlist ON tvshow.id = watchlist.id
+ORDER BY
+    tvshow.popularity DESC;
+
+topRatedShowByPage:
+SELECT
+    toprated_shows.id,
+    toprated_shows.page,
+    tvshow.name,
+    tvshow.poster_path,
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    toprated_shows
+INNER JOIN
+    tvshow ON tvshow.id = toprated_shows.id
+LEFT OUTER JOIN
+    watchlist ON tvshow.id = watchlist.id
+WHERE
+    toprated_shows.page = :page;
+
+pagedTopRatedShows:
+SELECT
+    toprated_shows.id,
+    toprated_shows.page,
+    tvshow.name,
+    tvshow.poster_path,
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    toprated_shows
+INNER JOIN
+    tvshow ON tvshow.id = toprated_shows.id
+LEFT OUTER JOIN
+    watchlist ON tvshow.id = watchlist.id
+ORDER BY
+    toprated_shows.page ASC
+LIMIT
+    :limit OFFSET :offset;
+
+pageExists:
+SELECT EXISTS(SELECT 1 FROM toprated_shows WHERE page = :page LIMIT 1);
+
+delete:
+DELETE FROM toprated_shows
+WHERE id = :id;
+
+deleteAll:
+DELETE FROM toprated_shows;

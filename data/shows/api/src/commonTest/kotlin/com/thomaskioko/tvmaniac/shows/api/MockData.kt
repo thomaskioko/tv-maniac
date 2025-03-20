@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.shows.api
 
-import com.thomaskioko.tvmaniac.core.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.db.Id
 
 object MockData {
 
   fun getShow() =
-    Tvshows(
+    Tvshow(
       id = Id(84958),
       name = "Loki",
       overview =
@@ -32,7 +32,7 @@ object MockData {
 
   fun showList() =
     listOf(
-      Tvshows(
+      Tvshow(
         id = Id(84958),
         name = "Loki",
         overview =
@@ -55,7 +55,7 @@ object MockData {
         vote_average = 8.1,
         last_air_date = "2019",
       ),
-      Tvshows(
+      Tvshow(
         id = Id(126280),
         name = "Sex/Life",
         overview =

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.trailers
 
-import com.thomaskioko.tvmaniac.core.db.Trailers
+import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

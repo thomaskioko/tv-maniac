@@ -1,0 +1,43 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+CREATE TABLE IF NOT EXISTS featured_shows (
+    `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
+     FOREIGN KEY(`id`) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_featured_shows_show_id` ON `featured_shows` (`id`);
+
+-- queries
+
+insert:
+INSERT OR IGNORE INTO featured_shows(
+    `id`
+) VALUES (
+    :id
+);
+
+featuredShows:
+SELECT
+    featured_shows.id,
+    tvshow.name,
+    tvshow.poster_path,
+    tvshow.overview,
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    featured_shows
+INNER JOIN
+    tvshow ON tvshow.id = featured_shows.id
+LEFT OUTER JOIN
+    watchlist ON tvshow.id = watchlist.id
+ORDER BY
+    tvshow.popularity DESC;
+
+delete:
+DELETE FROM featured_shows
+WHERE id = :id;
+
+deleteAll:
+DELETE FROM featured_shows;

@@ -3,9 +3,9 @@ package com.thomaskioko.tvmaniac.genre
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.db.Genres
-import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.core.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Genres
+import com.thomaskioko.tvmaniac.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.db.Id
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -23,11 +23,13 @@ class DefaultGenreDao(
   private val genresQueries = database.genresQueries
 
   override fun upsert(entity: Genres) {
-    genresQueries.upsert(
-      id = entity.id,
-      name = entity.name,
-      poster_url = entity.poster_url
-    )
+    database.transaction {
+      genresQueries.upsert(
+        id = entity.id,
+        name = entity.name,
+        poster_url = entity.poster_url,
+      )
+    }
   }
 
   override fun getGenres(): List<Genres> = genresQueries.genres().executeAsList()
@@ -45,8 +47,8 @@ class DefaultGenreDao(
       .mapToList(dispatchers.io)
   }
 
-  override fun observeShowsByGenreId(id: String): Flow<List<Tvshows>> {
-    return database.show_genresQueries.showsByGenreId(Id(id.toLong()))
+  override fun observeShowsByGenreId(id: String): Flow<List<Tvshow>> {
+    return database.showGenresQueries.showsByGenreId(Id(id.toLong()))
       .asFlow()
       .mapToList(dispatchers.io)
   }

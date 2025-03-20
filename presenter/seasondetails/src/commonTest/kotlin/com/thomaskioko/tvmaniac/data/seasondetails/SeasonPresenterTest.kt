@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.data.seasondetails
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.core.db.SeasonCast
+import com.thomaskioko.tvmaniac.db.SeasonCast
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.ServerError
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository

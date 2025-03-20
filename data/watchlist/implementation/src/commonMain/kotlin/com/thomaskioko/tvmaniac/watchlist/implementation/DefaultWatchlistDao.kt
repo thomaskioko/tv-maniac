@@ -3,10 +3,10 @@ package com.thomaskioko.tvmaniac.watchlist.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.db.SearchWatchlist
-import com.thomaskioko.tvmaniac.core.db.Show_metadata
-import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.core.db.Watchlists
+import com.thomaskioko.tvmaniac.db.SearchWatchlist
+import com.thomaskioko.tvmaniac.db.Show_metadata
+import com.thomaskioko.tvmaniac.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
@@ -67,7 +67,7 @@ class DefaultWatchlistDao(
   }
 
   override fun upsert(entity: Show_metadata) {
-    database.show_metadataQueries.upsert(
+    database.showMetadataQueries.upsert(
       show_id = entity.show_id,
       season_count = entity.season_count,
       episode_count = entity.episode_count,

@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.presentation.watchlist
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.core.db.Watchlists
-import com.thomaskioko.tvmaniac.core.db.SearchWatchlist
+import com.thomaskioko.tvmaniac.db.Watchlists
+import com.thomaskioko.tvmaniac.db.SearchWatchlist
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository

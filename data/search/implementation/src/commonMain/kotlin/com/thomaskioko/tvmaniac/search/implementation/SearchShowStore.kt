@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.search.implementation
 
-import com.thomaskioko.tvmaniac.core.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
@@ -18,8 +18,7 @@ class SearchShowStore(
   private val tvShowsDao: TvShowsDao,
   private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
   private val formatterUtil: FormatterUtil,
-) :
-  Store<String, List<ShowEntity>> by StoreBuilder.from(
+) : Store<String, List<ShowEntity>> by StoreBuilder.from(
     fetcher =
     Fetcher.of { query: String ->
       when (val response = tmdbRemoteDataSource.searchShows(query)) {
@@ -34,9 +33,9 @@ class SearchShowStore(
     SourceOfTruth.Companion.of(
       reader = { query: String -> tvShowsDao.observeShowsByQuery(query) },
       writer = { _, shows ->
-        shows.forEach { show ->
-          tvShowsDao.upsert(
-            Tvshows(
+        if (tvShowsDao.shouldUpdateShows(shows.map { it.id })) {
+          val tvShows = shows.map { show ->
+            Tvshow(
               id = Id(show.id.toLong()),
               name = show.name,
               overview = show.overview,
@@ -46,15 +45,15 @@ class SearchShowStore(
               vote_count = show.voteCount.toLong(),
               genre_ids = show.genreIds,
               poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-              backdrop_path =
-              show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+              backdrop_path = show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
               status = null,
               first_air_date = null,
               episode_numbers = null,
               last_air_date = null,
               season_numbers = null,
-            ),
-          )
+            )
+          }
+          tvShowsDao.upsert(tvShows)
         }
       },
     ),

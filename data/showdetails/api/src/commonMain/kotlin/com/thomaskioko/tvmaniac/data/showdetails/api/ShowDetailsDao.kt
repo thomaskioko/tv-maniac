@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.data.showdetails.api
 
-import com.thomaskioko.tvmaniac.core.db.TvshowDetails
+import com.thomaskioko.tvmaniac.db.TvshowDetails
 import kotlinx.coroutines.flow.Flow
 
 interface ShowDetailsDao {

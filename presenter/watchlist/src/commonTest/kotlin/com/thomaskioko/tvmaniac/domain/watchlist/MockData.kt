@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.watchlist
 
-import com.thomaskioko.tvmaniac.core.db.Watchlists
+import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.presentation.watchlist.model.WatchlistItem

@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
-import com.thomaskioko.tvmaniac.core.db.Trending_shows
-import com.thomaskioko.tvmaniac.core.db.Tvshows
+import com.thomaskioko.tvmaniac.db.Trending_shows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
@@ -55,7 +55,7 @@ class TrendingShowsStore(
             databaseTransactionRunner {
               trendingShows.results.forEach { show ->
                 tvShowsDao.upsert(
-                  Tvshows(
+                  Tvshow(
                     id = Id(show.id.toLong()),
                     name = show.name,
                     overview = show.overview,

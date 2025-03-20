@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.similar.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.db.SimilarShows
-import com.thomaskioko.tvmaniac.core.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.db.SimilarShows
+import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsDao
 import kotlinx.coroutines.flow.Flow
@@ -22,8 +22,8 @@ class DefaultSimilarShowsDao(
 ) : SimilarShowsDao {
 
   override fun upsert(showId: Long, similarShowId: Long) {
-    database.similar_showsQueries.transaction {
-      database.similar_showsQueries.insertOrReplace(
+    database.similarShowsQueries.transaction {
+      database.similarShowsQueries.insertOrReplace(
         id = Id(similarShowId),
         similar_show_id = Id(showId),
       )
@@ -31,17 +31,17 @@ class DefaultSimilarShowsDao(
   }
 
   override fun observeSimilarShows(traktId: Long): Flow<List<SimilarShows>> {
-    return database.similar_showsQueries
+    return database.similarShowsQueries
       .similarShows(Id(traktId))
       .asFlow()
       .mapToList(dispatchers.io)
   }
 
   override fun delete(id: Long) {
-    database.similar_showsQueries.delete(Id(id))
+    database.similarShowsQueries.delete(Id(id))
   }
 
   override fun deleteAll() {
-    database.transaction { database.similar_showsQueries.deleteAll() }
+    database.transaction { database.similarShowsQueries.deleteAll() }
   }
 }

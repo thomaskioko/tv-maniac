@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.seasons.api
 
-import com.thomaskioko.tvmaniac.core.db.ShowSeasons
+import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import kotlinx.coroutines.flow.Flow

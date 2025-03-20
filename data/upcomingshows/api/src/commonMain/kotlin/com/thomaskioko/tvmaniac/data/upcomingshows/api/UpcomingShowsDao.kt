@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.upcomingshows.api
 
 import androidx.paging.PagingSource
-import com.thomaskioko.tvmaniac.core.db.Upcoming_shows
+import com.thomaskioko.tvmaniac.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 

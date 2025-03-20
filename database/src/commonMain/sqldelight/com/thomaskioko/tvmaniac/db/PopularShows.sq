@@ -1,0 +1,70 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.PageId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+CREATE TABLE IF NOT EXISTS popular_shows(
+    `id` INTEGER AS Id<TmdbId> PRIMARY KEY NOT NULL,
+    `page` INTEGER AS Id<PageId> NOT NULL,
+     FOREIGN KEY(`id`) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- indices
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_popular_shows_show_id` ON `popular_shows` (`id`);
+
+-- queries
+
+insert:
+INSERT OR REPLACE INTO popular_shows(
+    `id`,
+    `page`
+) VALUES (
+    :id,
+    :page
+);
+
+count:
+SELECT count(*) FROM popular_shows;
+
+popularShows:
+SELECT
+    popular_shows.id,
+    popular_shows.page,
+    tvshow.name,
+    tvshow.poster_path,
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    popular_shows
+INNER JOIN
+    tvshow ON tvshow.id = popular_shows.id
+LEFT OUTER JOIN
+    watchlist ON tvshow.id = watchlist.id
+ORDER BY page ASC;
+
+pagedPopularShows:
+SELECT
+    popular_shows.id,
+    popular_shows.page,
+    tvshow.name,
+    tvshow.poster_path,
+    CASE WHEN watchlist.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM
+    popular_shows
+INNER JOIN
+    tvshow ON tvshow.id = popular_shows.id
+LEFT OUTER JOIN
+    watchlist ON tvshow.id = watchlist.id
+ORDER BY
+    popular_shows.page ASC
+LIMIT
+    :limit OFFSET :offset;
+
+pageExists:
+SELECT EXISTS(SELECT 1 FROM popular_shows WHERE page = :page LIMIT 1);
+
+delete:
+DELETE FROM popular_shows
+WHERE page = :id;
+
+deleteAll:
+DELETE FROM popular_shows;

@@ -8,6 +8,9 @@
   "platformCommit": true,
   "rebaseWhen": "conflicted",
   "gitAuthor": "Renovate Bot <renovate-bot@github.com>",
+  "ignorePaths": [
+    "**/.ruby-version"
+  ],
   "packageRules": [
     {
       "matchDatasources": [
