@@ -65,7 +65,12 @@ public abstract class BasePlugin : Plugin<Project> {
 
 
         // Enable new Kotlin 2.1
-        freeCompilerArgs.addAll("-Xwhen-guards", "-Xnon-local-break-continue", "-Xmulti-dollar-interpolation")
+        freeCompilerArgs.addAll(
+          "-Xnon-local-break-continue",
+          "-Xmulti-dollar-interpolation",
+          "-Xexpect-actual-classes",
+          "-Xwhen-guards",
+        )
 
         if (this is KotlinJvmCompilerOptions) {
           jvmTarget.set(project.jvmTarget)
