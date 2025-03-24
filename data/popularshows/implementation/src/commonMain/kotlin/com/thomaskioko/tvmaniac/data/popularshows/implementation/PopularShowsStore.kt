@@ -1,22 +1,25 @@
 package com.thomaskioko.tvmaniac.data.popularshows.implementation
 
-import com.thomaskioko.tvmaniac.db.Popular_shows
-import com.thomaskioko.tvmaniac.db.Tvshow
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.store.storeBuilder
+import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsDao
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.Popular_shows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.POPULAR_SHOWS
-import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
+import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.StoreBuilder
 
 @Inject
 class PopularShowsStore(
@@ -26,8 +29,8 @@ class PopularShowsStore(
   private val popularShowsDao: PopularShowsDao,
   private val tvShowsDao: TvShowsDao,
   private val formatterUtil: FormatterUtil,
-) :
-  Store<Long, List<ShowEntity>> by StoreBuilder.from(
+  private val dispatchers: AppCoroutineDispatchers,
+) : Store<Long, List<ShowEntity>> by storeBuilder(
       fetcher =
         Fetcher.of { page ->
           when (val response = tmdbRemoteDataSource.getPopularShows(page = page)) {
@@ -38,8 +41,7 @@ class PopularShowsStore(
             is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
           }
         },
-      sourceOfTruth =
-        SourceOfTruth.of(
+      sourceOfTruth = SourceOfTruth.of<Long, TmdbShowResult, List<ShowEntity>>(
           reader = { page -> popularShowsDao.observePopularShows(page) },
           writer = { _, trendingShows ->
             trendingShows.results.forEach { show ->
@@ -78,6 +80,10 @@ class PopularShowsStore(
           },
           delete = popularShowsDao::deletePopularShow,
           deleteAll = popularShowsDao::deletePopularShows,
+        )
+        .usingDispatchers(
+          readDispatcher = dispatchers.databaseRead,
+          writeDispatcher = dispatchers.databaseWrite,
         ),
     )
     .build()
