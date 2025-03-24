@@ -13,7 +13,7 @@ java-toolchain = "23"
 ktfmt = "0.44"
 
 agp = "8.9.0"
-android-lint = "31.9.0"
+android-lint = "31.9.1"
 androidx-activity = "1.10.1"
 androidx-annotation = "1.9.1"
 androidx-browser = "1.8.0"
