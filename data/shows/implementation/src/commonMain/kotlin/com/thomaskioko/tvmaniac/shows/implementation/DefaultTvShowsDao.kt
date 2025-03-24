@@ -55,11 +55,13 @@ class DefaultTvShowsDao(
         backdrop_path = show.backdrop_path,
       )
 
-      show.genre_ids.forEach {
-        genresQueries.upsert(
-          show_id = show.id,
-          genre_id = Id(it.toLong())
-        )
+      show.genre_ids.forEach { genreId ->
+        if (genresQueries.exists(Id(genreId.toLong())).executeAsOne()) {
+          genresQueries.upsert(
+            show_id = show.id,
+            genre_id = Id(genreId.toLong())
+          )
+        }
       }
     }
   }
