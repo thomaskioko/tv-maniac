@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.genre
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Tvshow
-import com.thomaskioko.tvmaniac.core.networkutil.mapToEither
+import com.thomaskioko.tvmaniac.core.store.mapToEither
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import kotlinx.coroutines.flow.Flow

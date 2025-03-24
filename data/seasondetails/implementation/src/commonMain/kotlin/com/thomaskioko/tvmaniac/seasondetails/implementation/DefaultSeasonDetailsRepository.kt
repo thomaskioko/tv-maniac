@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import com.thomaskioko.tvmaniac.db.Season_images
-import com.thomaskioko.tvmaniac.core.networkutil.mapToEither
+import com.thomaskioko.tvmaniac.core.store.mapToEither
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository

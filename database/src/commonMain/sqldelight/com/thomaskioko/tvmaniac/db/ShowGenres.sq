@@ -13,6 +13,11 @@ CREATE TABLE IF NOT EXISTS `show_genres` (
 
 -- queries
 
+exists:
+SELECT EXISTS(
+    SELECT 1 FROM genres WHERE id = ?
+);
+
 upsert:
 INSERT OR REPLACE INTO show_genres (show_id, genre_id)
 VALUES (?, ?);

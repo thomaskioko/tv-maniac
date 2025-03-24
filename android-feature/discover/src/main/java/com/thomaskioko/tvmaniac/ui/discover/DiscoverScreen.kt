@@ -341,6 +341,8 @@ fun PosterCardsPager(
   modifier: Modifier = Modifier,
   onClick: (Long) -> Unit,
 ) {
+  if(list.isEmpty()) return
+
   val screenHeight = LocalConfiguration.current.screenHeightDp.dp
   val pagerHeight = screenHeight / 1.5f
   Box {

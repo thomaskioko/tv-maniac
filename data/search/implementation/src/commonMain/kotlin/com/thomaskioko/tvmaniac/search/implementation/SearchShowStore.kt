@@ -1,26 +1,29 @@
 package com.thomaskioko.tvmaniac.search.implementation
 
-import com.thomaskioko.tvmaniac.db.Tvshow
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.store.storeBuilder
+import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
+import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.StoreBuilder
 
 @Inject
 class SearchShowStore(
   private val tvShowsDao: TvShowsDao,
   private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
   private val formatterUtil: FormatterUtil,
-) : Store<String, List<ShowEntity>> by StoreBuilder.from(
-    fetcher =
-    Fetcher.of { query: String ->
+  private val dispatchers: AppCoroutineDispatchers,
+) : Store<String, List<ShowEntity>> by storeBuilder(
+    fetcher = Fetcher.of { query: String ->
       when (val response = tmdbRemoteDataSource.searchShows(query)) {
         is ApiResponse.Success -> response.body.results
         is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
@@ -29,8 +32,7 @@ class SearchShowStore(
         is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
       }
     },
-    sourceOfTruth =
-    SourceOfTruth.Companion.of(
+    sourceOfTruth = SourceOfTruth.of<String, List<TmdbShowResponse>, List<ShowEntity>>(
       reader = { query: String -> tvShowsDao.observeShowsByQuery(query) },
       writer = { _, shows ->
         if (tvShowsDao.shouldUpdateShows(shows.map { it.id })) {
@@ -56,6 +58,9 @@ class SearchShowStore(
           tvShowsDao.upsert(tvShows)
         }
       },
+    ).usingDispatchers(
+      readDispatcher = dispatchers.databaseRead,
+      writeDispatcher = dispatchers.databaseWrite,
     ),
   )
     .build()

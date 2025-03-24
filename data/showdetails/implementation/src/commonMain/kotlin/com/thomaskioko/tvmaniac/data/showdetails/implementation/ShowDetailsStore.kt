@@ -1,30 +1,32 @@
 package com.thomaskioko.tvmaniac.data.showdetails.implementation
 
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
-import com.thomaskioko.tvmaniac.db.Casts
-import com.thomaskioko.tvmaniac.db.Season
-import com.thomaskioko.tvmaniac.db.Trailers
-import com.thomaskioko.tvmaniac.db.TvshowDetails
-import com.thomaskioko.tvmaniac.db.Tvshow
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.store.storeBuilder
+import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsDao
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerDao
 import com.thomaskioko.tvmaniac.db.Cast_appearance
+import com.thomaskioko.tvmaniac.db.Casts
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.Season
+import com.thomaskioko.tvmaniac.db.Trailers
+import com.thomaskioko.tvmaniac.db.Tvshow
+import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SHOW_DETAILS
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
+import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowDetailsResponse
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.StoreBuilder
 
 @Inject
 class ShowDetailsStore(
@@ -38,11 +40,9 @@ class ShowDetailsStore(
   private val dateFormatter: PlatformDateFormatter,
   private val requestManagerRepository: RequestManagerRepository,
   private val databaseTransactionRunner: DatabaseTransactionRunner,
-  private val scope: AppCoroutineScope,
-) :
-  Store<Long, TvshowDetails> by StoreBuilder.from(
-      fetcher =
-        Fetcher.of { id ->
+  private val dispatchers: AppCoroutineDispatchers,
+) : Store<Long, TvshowDetails> by storeBuilder(
+      fetcher = Fetcher.of { id ->
           when (val response = remoteDataSource.getShowDetails(id)) {
             is ApiResponse.Success -> response.body
             is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
@@ -51,8 +51,7 @@ class ShowDetailsStore(
             is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
           }
         },
-      sourceOfTruth =
-        SourceOfTruth.Companion.of(
+      sourceOfTruth = SourceOfTruth.of<Long, TmdbShowDetailsResponse, TvshowDetails>(
           reader = { id: Long -> showDetailsDao.observeTvShows(id) },
           writer = { id, show ->
             databaseTransactionRunner {
@@ -133,7 +132,10 @@ class ShowDetailsStore(
               )
             }
           },
+        )
+        .usingDispatchers(
+          readDispatcher = dispatchers.databaseRead,
+          writeDispatcher = dispatchers.databaseWrite,
         ),
     )
-    .scope(scope.io)
     .build()

@@ -72,6 +72,7 @@ jobs:
             -Pandroidx.baselineprofile.skipgeneration=true \
             --no-configuration-cache
 
+
   android-screenshot-test:
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -238,7 +239,7 @@ jobs:
           name: test-report
           path: '**/build/reports/*'
 
-  common-test:
+  common-ios-test:
     runs-on: macos-latest
 
     steps:
@@ -266,7 +267,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: common-test-report
+          name: common-ios-test-report
           path: '**/build/reports/*'
 
   build-ios:
@@ -322,6 +323,8 @@ jobs:
           path: |
             build/
             fastlane/logs
+
+
 
 
 
