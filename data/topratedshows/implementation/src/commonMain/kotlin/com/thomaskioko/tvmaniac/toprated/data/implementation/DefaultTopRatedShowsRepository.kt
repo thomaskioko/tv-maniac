@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.toprated.data.implementation
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.logger.KermitLogger
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.store.mapToEither
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
@@ -33,7 +33,7 @@ class DefaultTopRatedShowsRepository(
   private val store: TopRatedShowsStore,
   private val requestManagerRepository: RequestManagerRepository,
   private val dao: TopRatedShowsDao,
-  private val kermitLogger: KermitLogger,
+  private val logger: Logger,
   private val dispatchers: AppCoroutineDispatchers,
 ) : TopRatedShowsRepository {
 
@@ -65,7 +65,7 @@ class DefaultTopRatedShowsRepository(
       } catch (e: CancellationException) {
         throw e
       } catch (e: Exception) {
-        kermitLogger.error("Error while fetching from TopRatedShows RemoteMediator", e)
+        logger.error("Error while fetching from TopRatedShows RemoteMediator", e)
         FetchResult.Error(e)
       }
     } else {

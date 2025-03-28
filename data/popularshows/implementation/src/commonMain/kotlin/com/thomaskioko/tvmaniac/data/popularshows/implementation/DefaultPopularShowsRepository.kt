@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.data.popularshows.implementation
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.logger.KermitLogger
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.store.mapToEither
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
@@ -33,7 +33,7 @@ class DefaultPopularShowsRepository(
   private val store: PopularShowsStore,
   private val popularShowsDao: PopularShowsDao,
   private val requestManagerRepository: RequestManagerRepository,
-  private val kermitLogger: KermitLogger,
+  private val logger: Logger,
   private val dispatchers: AppCoroutineDispatchers,
 ) : PopularShowsRepository {
 
@@ -65,7 +65,7 @@ class DefaultPopularShowsRepository(
       } catch (e: CancellationException) {
         throw e
       } catch (e: Exception) {
-        kermitLogger.error("Error while fetching from PopularShows RemoteMediator", e)
+        logger.error("Error while fetching from PopularShows RemoteMediator", e)
         FetchResult.Error(e)
       }
     } else {

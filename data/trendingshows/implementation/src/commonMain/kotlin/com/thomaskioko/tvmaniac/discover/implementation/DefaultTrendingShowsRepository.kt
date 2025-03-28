@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.discover.implementation
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.logger.KermitLogger
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.store.mapToEither
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
@@ -35,7 +35,7 @@ class DefaultTrendingShowsRepository(
   private val store: TrendingShowsStore,
   private val requestManagerRepository: RequestManagerRepository,
   private val dao: TrendingShowsDao,
-  private val kermitLogger: KermitLogger,
+  private val kermitLogger: Logger,
   private val dispatchers: AppCoroutineDispatchers,
 ) : TrendingShowsRepository {
 

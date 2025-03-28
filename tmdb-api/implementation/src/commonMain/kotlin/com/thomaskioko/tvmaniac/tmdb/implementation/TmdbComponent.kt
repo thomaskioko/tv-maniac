@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.Configs
-import com.thomaskioko.tvmaniac.core.logger.KermitLogger
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbSeasonDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
@@ -37,7 +37,7 @@ interface TmdbComponent  {
     configs: Configs,
     json: TmdbJson,
     httpClientEngine: TmdbHttpClientEngine,
-    logger: KermitLogger,
+    logger: Logger,
   ): TmdbHttpClient =
     tmdbHttpClient(
       tmdbApiKey = configs.tmdbApiKey,

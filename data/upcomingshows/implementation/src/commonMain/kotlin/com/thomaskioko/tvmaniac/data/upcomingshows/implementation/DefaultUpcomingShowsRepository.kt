@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.data.upcomingshows.implementation
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.logger.KermitLogger
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.store.mapToEither
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
@@ -39,7 +39,7 @@ class DefaultUpcomingShowsRepository(
   private val store: UpcomingShowsStore,
   private val dao: UpcomingShowsDao,
   private val requestManagerRepository: RequestManagerRepository,
-  private val kermitLogger: KermitLogger,
+  private val kermitLogger: Logger,
   private val dispatchers: AppCoroutineDispatchers,
 ) : UpcomingShowsRepository {
 
