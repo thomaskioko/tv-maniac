@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface TrendingShowsDao {
   fun upsert(show: Trending_shows)
 
-  fun observeTvShow(): Flow<List<ShowEntity>>
+  fun observeTvShow(page: Long): Flow<List<ShowEntity>>
 
   fun getPagedTrendingShows(): PagingSource<Int, ShowEntity>
 

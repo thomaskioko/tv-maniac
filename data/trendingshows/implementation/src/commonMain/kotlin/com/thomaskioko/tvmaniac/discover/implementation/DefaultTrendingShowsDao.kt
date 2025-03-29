@@ -35,9 +35,9 @@ class DefaultTrendingShowsDao(
     }
   }
 
-  override fun observeTvShow(): Flow<List<ShowEntity>> =
+  override fun observeTvShow(page: Long): Flow<List<ShowEntity>> =
     trendingShowsQueries
-      .trendingShows { id, page, title, imageUrl, inLib ->
+      .trendingShowsByPage(Id(page)) { id, page, title, imageUrl, inLib ->
         ShowEntity(
           id = id.id,
           page = page.id,

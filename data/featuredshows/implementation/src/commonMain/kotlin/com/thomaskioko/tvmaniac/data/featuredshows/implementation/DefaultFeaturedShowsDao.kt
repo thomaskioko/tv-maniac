@@ -3,10 +3,10 @@ package com.thomaskioko.tvmaniac.data.featuredshows.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.db.Featured_shows
-import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsDao
+import com.thomaskioko.tvmaniac.db.Featured_shows
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject

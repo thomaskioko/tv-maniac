@@ -32,7 +32,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         .insert()
     }
 
-    val entities = trendingShowsQueries.trendingShows().executeAsList()
+    val entities = trendingShowsQueries.trendingShowsByPage(Id(1)).executeAsList()
 
     entities.size shouldBe 2
   }

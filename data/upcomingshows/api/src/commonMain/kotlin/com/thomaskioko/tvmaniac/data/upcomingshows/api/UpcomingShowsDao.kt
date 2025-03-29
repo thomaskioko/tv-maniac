@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface UpcomingShowsDao {
   fun upsert(show: Upcoming_shows)
 
-  fun observeUpcomingShows(): Flow<List<ShowEntity>>
+  fun observeUpcomingShows(page: Long): Flow<List<ShowEntity>>
 
   fun getPagedUpcomingShows(): PagingSource<Int, ShowEntity>
 

@@ -48,7 +48,7 @@ class UpcomingShowsStore(
     }
   },
   sourceOfTruth = SourceOfTruth.of<UpcomingParams, TmdbShowResult, List<ShowEntity>>(
-    reader = { _ -> upcomingShowsDao.observeUpcomingShows() },
+    reader = { param -> upcomingShowsDao.observeUpcomingShows(param.page) },
     writer = { _: UpcomingParams, trendingShows ->
       databaseTransactionRunner {
         trendingShows.results.forEach { show ->
