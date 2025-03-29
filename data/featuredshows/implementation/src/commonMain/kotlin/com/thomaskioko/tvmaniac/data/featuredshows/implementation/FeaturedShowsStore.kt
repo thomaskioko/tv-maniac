@@ -22,8 +22,6 @@ import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 
-private const val FEATURED_SHOWS_COUNT = 5
-
 @Inject
 class FeaturedShowsStore(
   private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
@@ -47,13 +45,10 @@ class FeaturedShowsStore(
   sourceOfTruth = SourceOfTruth.of<Long, List<TmdbShowResponse>, List<ShowEntity>>(
     reader = { page: Long -> featuredShowsDao.observeFeaturedShows(page) },
     writer = { _, shows ->
-      // Split the transaction into smaller chunks to reduce lock time
-      val selectedShows = shows.shuffled().take(FEATURED_SHOWS_COUNT)
-
       databaseTransactionRunner {
         featuredShowsDao.deleteFeaturedShows()
 
-        selectedShows.forEach { show ->
+        shows.forEach { show ->
 
           tvShowsDao.upsert(
             Tvshow(
