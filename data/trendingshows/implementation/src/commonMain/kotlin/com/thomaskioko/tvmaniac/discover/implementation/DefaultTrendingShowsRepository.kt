@@ -2,11 +2,7 @@ package com.thomaskioko.tvmaniac.discover.implementation
 
 import androidx.paging.Pager
 import androidx.paging.PagingData
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.core.store.mapToEither
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.core.paging.CommonPagingConfig
 import com.thomaskioko.tvmaniac.core.paging.FetchResult
 import com.thomaskioko.tvmaniac.core.paging.PaginatedRemoteMediator
@@ -20,10 +16,9 @@ import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
+import org.mobilenativefoundation.store.store5.impl.extensions.get
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -36,22 +31,19 @@ class DefaultTrendingShowsRepository(
   private val requestManagerRepository: RequestManagerRepository,
   private val dao: TrendingShowsDao,
   private val kermitLogger: Logger,
-  private val dispatchers: AppCoroutineDispatchers,
 ) : TrendingShowsRepository {
 
-  override suspend fun observeTrendingShows(
-    forceRefresh: Boolean
-  ): Flow<Either<Failure, List<ShowEntity>>> {
-    val refresh = forceRefresh || isRequestExpired(DEFAULT_API_PAGE)
-    return store
-      .stream(
-        StoreReadRequest.cached(
-          key = TrendingShowsParams(timeWindow = DEFAULT_DAY_TIME_WINDOW, page = DEFAULT_API_PAGE),
-          refresh = refresh
-        )
-      )
-      .mapToEither()
-      .flowOn(dispatchers.io)
+  override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> = dao.observeTvShow(page)
+
+  override suspend fun fetchTrendingShows(forceRefresh: Boolean) {
+    val page = DEFAULT_API_PAGE //TODO:: Get the page from the dao
+    val refresh = forceRefresh || isRequestExpired(page)
+    //TODO:: Get the page from the dao
+    val param = TrendingShowsParams(timeWindow = DEFAULT_DAY_TIME_WINDOW, page = page)
+    when {
+      refresh -> store.fresh(param)
+      else -> store.get(param)
+    }
   }
 
   override fun getPagedTrendingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
