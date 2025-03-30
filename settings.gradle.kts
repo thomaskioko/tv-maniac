@@ -60,6 +60,7 @@ include(
   ":core:base",
   ":core:logger:api",
   ":core:logger:implementation",
+  ":core:logger:fixture",
   ":core:network-util",
   ":core:paging",
   ":core:screenshot-tests",
