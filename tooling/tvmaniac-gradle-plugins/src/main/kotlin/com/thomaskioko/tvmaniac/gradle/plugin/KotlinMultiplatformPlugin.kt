@@ -9,6 +9,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.defaultTestSetup
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 /**
@@ -34,24 +35,20 @@ public abstract class KotlinMultiplatformPlugin : Plugin<Project> {
       iosSimulatorArm64()
 
       targets.withType(KotlinNativeTarget::class.java).configureEach {
-
-        it.binaries.all {
-          it.linkerOpts("-lsqlite3")
+        it.binaries.withType(Framework::class.java).configureEach { framework ->
+          framework.linkerOpts("-lsqlite3")
         }
 
-        it.compilations.configureEach {
-          it.compileTaskProvider.configure {
-            compilerOptions {
-              freeCompilerArgs.add("-Xallocator=custom")
-              freeCompilerArgs.add("-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion")
-              freeCompilerArgs.add("-Xadd-light-debug=enable")
-              freeCompilerArgs.add("-Xexpect-actual-classes")
-
-              freeCompilerArgs.addAll(
-                "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-                "-opt-in=kotlinx.cinterop.BetaInteropApi",
-              )
-            }
+        it.compilations.configureEach { compilation ->
+          compilation.compileTaskProvider.configure { compileTask ->
+            compileTask.compilerOptions.freeCompilerArgs.addAll(
+              "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+              "-opt-in=kotlinx.cinterop.BetaInteropApi",
+              "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+              "-Xallocator=custom",
+              "-Xadd-light-debug=enable",
+              "-Xexpect-actual-classes",
+            )
           }
         }
       }
