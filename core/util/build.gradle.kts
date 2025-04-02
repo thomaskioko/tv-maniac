@@ -23,7 +23,7 @@ kotlin {
   sourceSets {
     commonMain.dependencies {
       implementation(projects.core.base)
-      implementation(projects.core.logger)
+      implementation(projects.core.logger.api)
       implementation(libs.coroutines.core)
       implementation(libs.kermit)
       implementation(libs.kotlinx.datetime)
