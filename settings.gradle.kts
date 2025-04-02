@@ -66,6 +66,7 @@ include(
   ":core:screenshot-tests",
   ":core:util",
   ":core:util:testing",
+  ":core:view",
   ":database",
   ":database:test",
   ":datastore:api",
