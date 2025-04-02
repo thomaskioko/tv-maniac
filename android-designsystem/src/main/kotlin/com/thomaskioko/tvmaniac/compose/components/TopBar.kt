@@ -115,13 +115,13 @@ fun RefreshCollapsableTopAppBar(
 }
 
 @Composable
-fun CollapsableTopAppBar(
+fun RefreshCollapsableTopAppBar(
   listState: LazyListState,
   modifier: Modifier = Modifier,
+  scrollBehavior: TopAppBarScrollBehavior? = null,
   title: @Composable () -> Unit = {},
   navigationIcon: @Composable () -> Unit = {},
-  primaryActionIcon: @Composable () -> Unit = {},
-  onPrimaryIconPressed: () -> Unit = {},
+  actions: @Composable RowScope.(Boolean) -> Unit = {},
 ) {
   var appBarHeight by remember { mutableIntStateOf(0) }
   val showAppBarBackground by remember {
@@ -141,15 +141,61 @@ fun CollapsableTopAppBar(
     }
   }
 
-  CollapsableTopAppBar(
+  RefreshCollapsableTopAppBar(
     modifier = modifier
       .fillMaxWidth()
       .onSizeChanged { appBarHeight = it.height },
+    scrollBehavior = scrollBehavior,
     title = title,
-    showAppBarBackground = showAppBarBackground,
     navigationIcon = navigationIcon,
-    primaryActionIcon = primaryActionIcon,
-    onPrimaryIconPressed = onPrimaryIconPressed,
+    showAppBarBackground = showAppBarBackground,
+    actions = { actions(showAppBarBackground) },
+  )
+}
+
+@Composable
+internal fun RefreshCollapsableTopAppBar(
+  showAppBarBackground: Boolean,
+  scrollBehavior: TopAppBarScrollBehavior?,
+  title: @Composable () -> Unit,
+  navigationIcon: @Composable () -> Unit,
+  actions: @Composable RowScope.(Boolean) -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  val backgroundColor by animateColorAsState(
+    targetValue = when {
+      showAppBarBackground -> MaterialTheme.colorScheme.surface
+      else -> Color.Transparent
+    },
+    animationSpec = spring(),
+    label = "backgroundColorAnimation",
+  )
+
+  val elevation by animateDpAsState(
+    targetValue = when {
+      showAppBarBackground -> 4.dp
+      else -> 0.dp
+    },
+    animationSpec = spring(),
+    label = "elevationAnimation",
+  )
+
+  TopAppBar(
+    title = {
+      Crossfade(
+        targetState = showAppBarBackground,
+        label = "titleAnimation",
+      ) { show ->
+        if (show) title()
+      }
+    },
+    navigationIcon = navigationIcon,
+    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+      containerColor = backgroundColor,
+    ),
+    actions = { actions(showAppBarBackground) },
+    modifier = modifier.shadow(elevation = elevation),
+    scrollBehavior = scrollBehavior,
   )
 }
 
@@ -185,6 +231,7 @@ internal fun RefreshCollapsableTopAppBar(
   )
 
   TopAppBar(
+    modifier = modifier.shadow(elevation = elevation),
     title = {
       Crossfade(
         targetState = showAppBarBackground,
@@ -206,81 +253,22 @@ internal fun RefreshCollapsableTopAppBar(
     ),
     actions = {
       if (showActionIcon) {
-        RefreshButton(
-          modifier = Modifier
-            .size(20.dp)
-            .padding(2.dp),
-          isRefreshing = isRefreshing,
-          content = {
-            ScrimButton(
-              show = showAppBarBackground,
-              onClick = onActionClicked,
-            ) {
-              actionIcon()
-            }
-          },
-        )
-      }
 
-    },
-    modifier = modifier.shadow(elevation = elevation),
-    scrollBehavior = scrollBehavior,
-  )
-}
-
-@Composable
-internal fun CollapsableTopAppBar(
-  showAppBarBackground: Boolean,
-  title: @Composable () -> Unit,
-  navigationIcon: @Composable () -> Unit,
-  primaryActionIcon: @Composable () -> Unit,
-  onPrimaryIconPressed: () -> Unit,
-  modifier: Modifier = Modifier,
-) {
-  val backgroundColor by animateColorAsState(
-    targetValue =
-      when {
-        showAppBarBackground -> MaterialTheme.colorScheme.surface
-        else -> Color.Transparent
-      },
-    animationSpec = spring(),
-    label = "backgroundColorAnimation",
-  )
-
-  val elevation by animateDpAsState(
-    targetValue =
-      when {
-        showAppBarBackground -> 4.dp
-        else -> 0.dp
-      },
-    animationSpec = spring(),
-    label = "elevationAnimation",
-  )
-
-  TopAppBar(
-    title = {
-      Crossfade(
-        targetState = showAppBarBackground,
-        label = "titleAnimation",
-      ) { show ->
-        if (show) {
-          title()
+        ScrimButton(
+          show = showAppBarBackground,
+          onClick = onActionClicked,
+        ) {
+          RefreshButton(
+            modifier = Modifier
+              .size(20.dp)
+              .padding(2.dp),
+            isRefreshing = isRefreshing,
+            content = actionIcon,
+          )
         }
       }
     },
-    navigationIcon = navigationIcon,
-    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-      containerColor = backgroundColor,
-    ),
-    actions = {
-      ScrimButton(
-        show = showAppBarBackground,
-        onClick = onPrimaryIconPressed,
-      ) {
-        primaryActionIcon()
-      }
-    },
-    modifier = modifier.shadow(elevation = elevation),
+    scrollBehavior = scrollBehavior,
   )
 }
 
