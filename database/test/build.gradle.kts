@@ -8,7 +8,7 @@ tvmaniac {
   }
 
   optIn(
-    "kotlin.uuid.ExperimentalUuidApi"
+      "kotlin.uuid.ExperimentalUuidApi",
   )
 }
 
