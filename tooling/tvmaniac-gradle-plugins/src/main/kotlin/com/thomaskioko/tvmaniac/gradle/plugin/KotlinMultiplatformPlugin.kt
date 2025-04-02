@@ -35,7 +35,7 @@ public abstract class KotlinMultiplatformPlugin : Plugin<Project> {
       iosSimulatorArm64()
 
       targets.withType(KotlinNativeTarget::class.java).configureEach {
-        it.binaries.withType(Framework::class.java).configureEach { framework ->
+        it.binaries.all { framework ->
           framework.linkerOpts("-lsqlite3")
         }
 
