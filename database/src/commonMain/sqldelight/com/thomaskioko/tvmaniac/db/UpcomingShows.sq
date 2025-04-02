@@ -23,7 +23,7 @@ INSERT OR REPLACE INTO upcoming_shows(
     :page
 );
 
-upcomingShows:
+upcomingShowsByPage:
 SELECT
     upcoming_shows.id,
     upcoming_shows.page,
@@ -35,7 +35,9 @@ FROM
 INNER JOIN
     tvshow ON tvshow.id = upcoming_shows.id
 LEFT OUTER JOIN
-    watchlist ON tvshow.id = watchlist.id;
+    watchlist ON tvshow.id = watchlist.id
+WHERE
+    upcoming_shows.page = :page;
 
 pagedUpcomingShows:
 SELECT

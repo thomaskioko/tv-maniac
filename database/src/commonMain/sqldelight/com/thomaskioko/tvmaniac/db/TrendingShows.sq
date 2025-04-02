@@ -26,7 +26,7 @@ INSERT OR REPLACE INTO trending_shows(
 count:
 SELECT count(*) FROM trending_shows;
 
-trendingShows:
+trendingShowsByPage:
 SELECT
     trending_shows.id,
     trending_shows.page,
@@ -39,8 +39,8 @@ INNER JOIN
     tvshow ON tvshow.id = trending_shows.id
 LEFT OUTER JOIN
     watchlist ON tvshow.id = watchlist.id
-ORDER BY
-    tvshow.popularity DESC;
+WHERE
+    trending_shows.page = :page;
 
 pagedTrendingShows:
 SELECT

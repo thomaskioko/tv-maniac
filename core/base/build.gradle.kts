@@ -18,6 +18,8 @@ tvmaniac {
 kotlin {
   sourceSets {
     commonMain.dependencies {
+      api(projects.core.view)
+
       implementation(libs.coroutines.core)
       implementation(libs.decompose.decompose)
       implementation(libs.bundles.kotlinInject)

@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface GenreRepository {
-  suspend fun observeGenresWithShows(
+  fun observeGenresWithShows(
     forceRefresh: Boolean = false
   ): Flow<Either<Failure, List<ShowGenresEntity>>>
 

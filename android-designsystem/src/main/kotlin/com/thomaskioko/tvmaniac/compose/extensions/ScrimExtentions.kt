@@ -78,12 +78,13 @@ fun Modifier.iconButtonBackgroundScrim(
   @FloatRange(from = 0.0, to = 1.0) alpha: Float,
 ): Modifier = composed {
   if (enabled) {
-    Modifier.padding(start = 8.dp, end = 16.dp)
+    Modifier
+      .padding(horizontal = 8.dp)
       .background(
         color = MaterialTheme.colorScheme.background.copy(alpha = alpha),
         shape = shape,
       )
   } else {
-    this.padding(start = 8.dp, end = 16.dp)
+    this.padding(horizontal = 4.dp)
   }
 }

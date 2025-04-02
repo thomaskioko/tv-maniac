@@ -37,6 +37,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -64,35 +65,31 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
-import com.thomaskioko.tvmaniac.compose.components.CollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
-import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ParallaxCarouselImage
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
+import com.thomaskioko.tvmaniac.compose.components.RefreshButton
+import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
+import com.thomaskioko.tvmaniac.compose.components.ScrimButton
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.discover.AccountClicked
-import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowAction
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
-import com.thomaskioko.tvmaniac.presentation.discover.EmptyState
-import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
-import com.thomaskioko.tvmaniac.presentation.discover.Loading
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverViewState
+import com.thomaskioko.tvmaniac.presentation.discover.MessageShown
 import com.thomaskioko.tvmaniac.presentation.discover.PopularClicked
 import com.thomaskioko.tvmaniac.presentation.discover.RefreshData
-import com.thomaskioko.tvmaniac.presentation.discover.ReloadData
 import com.thomaskioko.tvmaniac.presentation.discover.ShowClicked
-import com.thomaskioko.tvmaniac.presentation.discover.SnackBarDismissed
 import com.thomaskioko.tvmaniac.presentation.discover.TopRatedClicked
 import com.thomaskioko.tvmaniac.presentation.discover.TrendingClicked
 import com.thomaskioko.tvmaniac.presentation.discover.UpComingClicked
 import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
-import com.thomaskioko.tvmaniac.android.resources.R
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
@@ -105,7 +102,7 @@ fun DiscoverScreen(
   val discoverState by presenter.state.collectAsState()
   val pagerState =
     rememberPagerState(
-      pageCount = { (discoverState as? DataLoaded)?.featuredShows?.size ?: 0 },
+      pageCount = { discoverState.featuredShows.size },
     )
   val snackBarHostState = remember { SnackbarHostState() }
 
@@ -120,41 +117,41 @@ fun DiscoverScreen(
 
 @Composable
 internal fun DiscoverScreen(
-  state: DiscoverState,
+  state: DiscoverViewState,
   snackBarHostState: SnackbarHostState,
   pagerState: PagerState,
   onAction: (DiscoverShowAction) -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  when (state) {
-    Loading ->
-      LoadingIndicator(
-        modifier = Modifier
-          .fillMaxSize()
-          .wrapContentSize(Alignment.Center),
-      )
-    EmptyState ->
+  LaunchedEffect(key1 = state.message) {
+    state.message?.let {
+      val snackBarResult =
+        snackBarHostState.showSnackbar(
+          message = it.message,
+          duration = SnackbarDuration.Short,
+        )
+      when (snackBarResult) {
+        SnackbarResult.ActionPerformed,
+        SnackbarResult.Dismissed,
+          -> onAction(MessageShown(it.id))
+      }
+    }
+  }
+  when {
+    state.isEmpty ->
       EmptyContent(
         modifier = modifier,
         imageVector = Icons.Filled.Movie,
         title = stringResource(R.string.generic_empty_content),
         message = stringResource(R.string.missing_api_key),
         buttonText = stringResource(id = R.string.generic_retry),
-        onClick = { onAction(ReloadData) },
+        onClick = { onAction(RefreshData) },
       )
-    is DataLoaded ->
-      DiscoverContent(
-        modifier = modifier,
-        pagerState = pagerState,
-        snackBarHostState = snackBarHostState,
-        dataLoadedState = state,
-        onAction = onAction,
-      )
-    is ErrorState ->
+    state.showError ->
       ErrorUi(
         modifier = Modifier
-          .fillMaxSize()
-          .wrapContentSize(Alignment.Center),
+            .fillMaxSize()
+            .wrapContentSize(Alignment.Center),
         errorIcon = {
           Image(
             modifier = Modifier.size(120.dp),
@@ -163,42 +160,36 @@ internal fun DiscoverScreen(
             contentDescription = null,
           )
         },
-        errorMessage = state.errorMessage,
-        onRetry = { onAction(ReloadData) },
+        errorMessage = state.message?.message,
+        onRetry = { onAction(RefreshData) },
+      )
+    else ->
+      DiscoverContent(
+        modifier = modifier,
+        pagerState = pagerState,
+        snackBarHostState = snackBarHostState,
+        dataLoadedState = state,
+        onAction = onAction,
       )
   }
 }
 
 @Composable
 private fun DiscoverContent(
-  dataLoadedState: DataLoaded,
+  dataLoadedState: DiscoverViewState,
   snackBarHostState: SnackbarHostState,
   pagerState: PagerState,
   onAction: (DiscoverShowAction) -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  LaunchedEffect(key1 = dataLoadedState.errorMessage) {
-    dataLoadedState.errorMessage?.let {
-      val snackBarResult =
-        snackBarHostState.showSnackbar(
-          message = it,
-          duration = SnackbarDuration.Short,
-        )
-      when (snackBarResult) {
-        SnackbarResult.ActionPerformed,
-        SnackbarResult.Dismissed,
-          -> onAction(SnackBarDismissed)
-      }
-    }
-  }
 
   val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
   val listState = rememberLazyListState()
 
   Box(
     modifier = Modifier
-      .fillMaxSize()
-      .pullRefresh(pullRefreshState)
+        .fillMaxSize()
+        .pullRefresh(pullRefreshState),
   ) {
     LazyColumnContent(
       modifier = modifier,
@@ -212,14 +203,14 @@ private fun DiscoverContent(
       refreshing = dataLoadedState.isRefreshing,
       state = pullRefreshState,
       modifier = Modifier
-        .align(Alignment.TopCenter)
-        .statusBarsPadding(),
+          .align(Alignment.TopCenter)
+          .statusBarsPadding(),
       scale = true,
       backgroundColor = MaterialTheme.colorScheme.background,
       contentColor = MaterialTheme.colorScheme.secondary,
     )
 
-    CollapsableTopAppBar(
+    RefreshCollapsableTopAppBar(
       listState = listState,
       title = {
         Text(
@@ -230,20 +221,44 @@ private fun DiscoverContent(
           maxLines = 1,
           overflow = TextOverflow.Ellipsis,
           modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp),
+              .fillMaxWidth()
+              .padding(start = 16.dp),
         )
       },
-      primaryActionIcon = {
-        Icon(
-          imageVector = Icons.Default.Person,
-          contentDescription = null,
-          tint = MaterialTheme.colorScheme.onBackground,
-        )
+      actions = { showScrim ->
+        ScrimButton(
+          show = showScrim,
+          onClick = {
+            onAction(AccountClicked)
+          },
+        ) {
+          Icon(
+            imageVector = Icons.Default.Person,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onBackground,
+          )
+        }
+
+        ScrimButton(
+          show = showScrim,
+          onClick = {
+            onAction(RefreshData)
+          },
+        ) {
+          RefreshButton(
+            modifier = Modifier
+              .size(20.dp),
+            isRefreshing = dataLoadedState.isRefreshing,
+            content = {
+              Icon(
+                imageVector = Icons.Default.Refresh,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onBackground,
+              )
+            }
+          )
+        }
       },
-      onPrimaryIconPressed = {
-       onAction(AccountClicked)
-      }
     )
 
     SnackbarHost(hostState = snackBarHostState)
@@ -253,18 +268,23 @@ private fun DiscoverContent(
 @Composable
 private fun LazyColumnContent(
   pagerState: PagerState,
-  dataLoadedState: DataLoaded,
+  dataLoadedState: DiscoverViewState,
   listState: LazyListState,
   modifier: Modifier = Modifier,
   onAction: (DiscoverShowAction) -> Unit,
 ) {
   LazyColumn(
-    modifier =
-      modifier
+    modifier = modifier
         .fillMaxSize()
         .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
     state = listState,
   ) {
+    if (dataLoadedState.featuredShows.isEmpty()) {
+      item {
+        Spacer(modifier = Modifier.padding(top = 108.dp))
+      }
+    }
+
     item {
       DiscoverHeaderContent(
         pagerState = pagerState,
@@ -341,15 +361,15 @@ fun PosterCardsPager(
   modifier: Modifier = Modifier,
   onClick: (Long) -> Unit,
 ) {
-  if(list.isEmpty()) return
+  if (list.isEmpty()) return
 
   val screenHeight = LocalConfiguration.current.screenHeightDp.dp
   val pagerHeight = screenHeight / 1.5f
   Box {
     HorizontalPager(
       modifier = modifier
-        .fillMaxWidth()
-        .height(pagerHeight),
+          .fillMaxWidth()
+          .height(pagerHeight),
       state = pagerState,
       verticalAlignment = Alignment.Bottom,
     ) { currentPage ->
@@ -384,8 +404,8 @@ fun PosterCardsPager(
             page = nextPage,
             animationSpec = tween(
               durationMillis = 800,
-              easing = FastOutSlowInEasing
-            )
+              easing = FastOutSlowInEasing,
+            ),
           )
         }
       }
@@ -408,8 +428,8 @@ private fun CircularIndicator(
 ) {
   Row(
     modifier = modifier
-      .fillMaxWidth()
-      .padding(bottom = 8.dp),
+        .fillMaxWidth()
+        .padding(bottom = 8.dp),
     horizontalArrangement = Arrangement.Center,
     verticalAlignment = Alignment.CenterVertically,
   ) {
@@ -419,10 +439,10 @@ private fun CircularIndicator(
 
       Box(
         modifier = Modifier
-          .padding(2.dp)
-          .clip(CircleShape)
-          .size(size)
-          .background(color),
+            .padding(2.dp)
+            .clip(CircleShape)
+            .size(size)
+            .background(color),
       )
     }
   }
@@ -435,20 +455,20 @@ private fun ShowCardOverlay(
 ) {
   Box(
     modifier = Modifier
-      .fillMaxSize()
-      .background(
-        Brush.verticalGradient(
-          listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
-          startY = 500f,
-          endY = 1000f,
+        .fillMaxSize()
+        .background(
+            Brush.verticalGradient(
+                listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
+                startY = 500f,
+                endY = 1000f,
+            ),
         ),
-      ),
   ) {
     Column(
       modifier = Modifier
-        .align(Alignment.BottomCenter)
-        .offset(y = -(20).dp)
-        .padding(16.dp),
+          .align(Alignment.BottomCenter)
+          .offset(y = -(20).dp)
+          .padding(16.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
@@ -485,8 +505,8 @@ private fun HorizontalRowContent(
     Column {
       BoxTextItems(
         modifier = Modifier
-          .fillMaxWidth()
-          .padding(start = 16.dp),
+            .fillMaxWidth()
+            .padding(start = 16.dp),
         title = category,
         label = stringResource(id = R.string.str_more),
         onMoreClicked = onMoreClicked,
@@ -517,7 +537,7 @@ private fun HorizontalRowContent(
 @ThemePreviews
 @Composable
 private fun DiscoverScreenPreview(
-  @PreviewParameter(DiscoverPreviewParameterProvider::class) state: DiscoverState,
+  @PreviewParameter(DiscoverPreviewParameterProvider::class) state: DiscoverViewState,
 ) {
   TvManiacTheme {
     TvManiacBackground {

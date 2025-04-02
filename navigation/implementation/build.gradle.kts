@@ -14,6 +14,8 @@ kotlin {
   sourceSets {
     commonMain.dependencies {
       implementation(projects.core.base)
+      implementation(projects.core.logger.api)
+      implementation(projects.domain.discover)
       implementation(projects.traktAuth.api)
       implementation(projects.navigation.api)
 
@@ -31,6 +33,7 @@ kotlin {
 
     commonTest.dependencies {
       implementation(projects.core.util.testing)
+      implementation(projects.core.logger.fixture)
       implementation(projects.datastore.testing)
       implementation(projects.traktAuth.testing)
       implementation(projects.data.cast.testing)

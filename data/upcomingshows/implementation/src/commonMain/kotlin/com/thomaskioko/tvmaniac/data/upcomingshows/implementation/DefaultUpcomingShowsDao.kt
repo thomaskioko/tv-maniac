@@ -34,9 +34,9 @@ class DefaultUpcomingShowsDao(
     }
   }
 
-  override fun observeUpcomingShows(): Flow<List<ShowEntity>> =
+  override fun observeUpcomingShows(page: Long): Flow<List<ShowEntity>> =
     upcomingShowsQueries
-      .upcomingShows { id, page, title, imageUrl, inLib ->
+      .upcomingShowsByPage(Id(page)) { id, page, title, imageUrl, inLib ->
         ShowEntity(
           id = id.id,
           page = page.id,

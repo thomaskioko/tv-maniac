@@ -253,7 +253,7 @@ private fun ShowListSheetContent(
   state: ShowDetailsContent,
   onAction: (ShowDetailsAction) -> Unit,
 ) {
-  var title = state.showDetails?.title ?: ""
+  val title = state.showDetails?.title ?: ""
   Column(
     modifier = Modifier
       .fillMaxSize()
@@ -632,7 +632,7 @@ fun ShowMetadata(
             tint = MaterialTheme.colorScheme.secondary
           )
           Text(
-            text = rating.toString(),
+            text = "$rating",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.padding(start = 2.dp)

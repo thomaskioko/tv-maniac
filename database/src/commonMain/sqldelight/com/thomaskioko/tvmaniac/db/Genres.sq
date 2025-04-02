@@ -1,17 +1,11 @@
 import com.thomaskioko.tvmaniac.db.GenreId;
 import com.thomaskioko.tvmaniac.db.Id;
 
-CREATE TABLE IF NOT EXISTS `genres` (
-    `id` INTEGER AS Id<GenreId> NOT NULL,
-    `name` TEXT NOT NULL,
-    `poster_url` TEXT,
-     PRIMARY KEY (id, id),
-     FOREIGN KEY(id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS genres (
+    id INTEGER AS Id<GenreId> NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    poster_url TEXT
 );
-
--- indices
-
-CREATE UNIQUE INDEX IF NOT EXISTS `index_genres_genre_id` ON `genres` (`id`);
 
 -- queries
 

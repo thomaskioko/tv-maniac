@@ -61,6 +61,8 @@ kotlin {
         api(projects.presenter.trailers)
 
         implementation(projects.core.base)
+        implementation(projects.core.logger.api)
+        implementation(projects.core.logger.implementation)
         implementation(projects.data.cast.api)
         implementation(projects.data.cast.implementation)
         implementation(projects.data.genre.api)

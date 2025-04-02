@@ -12,25 +12,26 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
+        api(projects.core.view)
         implementation(projects.core.base)
-        implementation(projects.data.shows.api)
-        implementation(projects.data.featuredshows.api)
-        implementation(projects.data.popularshows.api)
-        implementation(projects.data.topratedshows.api)
-        implementation(projects.data.trendingshows.api)
-        implementation(projects.data.upcomingshows.api)
+        implementation(projects.core.logger.api)
+        implementation(projects.domain.discover)
         implementation(projects.data.watchlist.api)
 
         api(libs.decompose.decompose)
         api(libs.essenty.lifecycle)
         api(libs.kotlinx.collections)
 
+        implementation(libs.coroutines.core)
+
       }
     }
 
     commonTest {
       dependencies {
+        implementation(projects.core.logger.fixture)
         implementation(projects.data.featuredshows.testing)
+        implementation(projects.data.genre.testing)
         implementation(projects.data.popularshows.testing)
         implementation(projects.data.topratedshows.testing)
         implementation(projects.data.trendingshows.testing)
