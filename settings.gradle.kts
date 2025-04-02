@@ -127,6 +127,7 @@ include(
   ":data:watchproviders:api",
   ":data:watchproviders:implementation",
   ":data:watchproviders:testing",
+  ":domain:discover",
   ":navigation:api",
   ":navigation:implementation",
   ":presenter:discover",
