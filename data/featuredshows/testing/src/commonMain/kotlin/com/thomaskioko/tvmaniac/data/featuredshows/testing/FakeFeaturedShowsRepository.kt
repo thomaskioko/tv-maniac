@@ -1,24 +1,23 @@
 package com.thomaskioko.tvmaniac.data.featuredshows.testing
 
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class FakeFeaturedShowsRepository : FeaturedShowsRepository {
 
-  private var entityListResult: Channel<Either<Failure, List<ShowEntity>>> =
-    Channel(Channel.UNLIMITED)
+  private val shows = MutableStateFlow<List<ShowEntity>>(emptyList())
 
-  suspend fun setFeaturedShows(result: Either<Failure, List<ShowEntity>>) {
-    entityListResult.send(result)
+  fun setFeaturedShows(result: List<ShowEntity>) {
+    shows.value = result
   }
 
-  override suspend fun observeFeaturedShows(
-    page: Long,
-    forceRefresh: Boolean
-  ): Flow<Either<Failure, List<ShowEntity>>> = entityListResult.receiveAsFlow()
+  override suspend fun fetchFeaturedShows(forceRefresh: Boolean) {
+  }
+
+  override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> {
+    return shows.asStateFlow()
+  }
 }

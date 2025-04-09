@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation
 
-import com.thomaskioko.tvmaniac.core.logger.KermitLogger
+import com.thomaskioko.tvmaniac.core.logger.Logger as KermitLogger
 import com.thomaskioko.tvmaniac.core.networkutil.model.HttpExceptions
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
@@ -80,8 +80,7 @@ fun traktHttpClient(
 
     install(Logging) {
       level = LogLevel.INFO
-      logger =
-        if (isDebug) {
+      logger = if (isDebug) {
           object : Logger {
             override fun log(message: String) {
               kermitLogger.info("TraktHttp", message)

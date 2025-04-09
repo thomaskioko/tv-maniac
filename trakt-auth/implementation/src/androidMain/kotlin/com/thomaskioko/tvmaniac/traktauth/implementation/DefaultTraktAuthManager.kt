@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.traktauth.implementation
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
-import com.thomaskioko.tvmaniac.core.logger.KermitLogger
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import me.tatarka.inject.annotations.Inject
@@ -22,7 +22,7 @@ class DefaultTraktAuthManager(
   private val traktAuthRepository: TraktAuthRepository,
   private val clientAuth: Lazy<ClientAuthentication>,
   private val authService: Lazy<AuthorizationService>,
-  private val logger: KermitLogger,
+  private val logger: Logger,
 ) : TraktAuthManager {
 
   private lateinit var launcher: ActivityResultLauncher<Unit>

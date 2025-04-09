@@ -22,7 +22,7 @@ class FakeGenreRepository : GenreRepository {
     showListResult.send(result)
   }
 
-  override suspend fun observeGenresWithShows(forceRefresh: Boolean): Flow<Either<Failure, List<ShowGenresEntity>>> {
+  override fun observeGenresWithShows(forceRefresh: Boolean): Flow<Either<Failure, List<ShowGenresEntity>>> {
     return entityListResult.receiveAsFlow()
   }
 

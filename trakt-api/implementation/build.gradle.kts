@@ -24,7 +24,7 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.core.logger)
+        implementation(projects.core.logger.api)
         implementation(projects.datastore.api)
         implementation(projects.traktApi.api)
 

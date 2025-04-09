@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.data.upcomingshows.implementation
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.logger.KermitLogger
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.store.mapToEither
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
@@ -39,8 +39,7 @@ class DefaultUpcomingShowsRepository(
   private val store: UpcomingShowsStore,
   private val dao: UpcomingShowsDao,
   private val requestManagerRepository: RequestManagerRepository,
-  private val kermitLogger: KermitLogger,
-  private val dispatchers: AppCoroutineDispatchers,
+  private val kermitLogger: Logger,
 ) : UpcomingShowsRepository {
 
   // TODO:: Load this from duration repository. Default range is 4 months
@@ -48,18 +47,18 @@ class DefaultUpcomingShowsRepository(
     UpcomingParams(
       startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
       endDate = dateFormatter.formatDate(startOfDay.plus(122.days).toEpochMilliseconds()),
-      page = DEFAULT_API_PAGE,
+      page = DEFAULT_API_PAGE, //TODO:: Get the page from the dao
     )
 
-  override suspend fun observeUpcomingShows(
-    forceRefresh: Boolean
-  ): Flow<Either<Failure, List<ShowEntity>>> {
+  override suspend fun fetchUpcomingShows(forceRefresh: Boolean) {
     val refresh = forceRefresh || isRequestExpired(params.page)
-    return store
-      .stream(StoreReadRequest.cached(key = params, refresh = refresh))
-      .mapToEither()
-      .flowOn(dispatchers.io)
+    when {
+      refresh -> store.fresh(params)
+      else -> store.get(params)
+    }
   }
+
+  override fun observeUpcomingShows(page: Long): Flow<List<ShowEntity>> = dao.observeUpcomingShows(page)
 
   override fun getPagedUpcomingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
     return Pager(
@@ -112,7 +111,6 @@ class DefaultUpcomingShowsRepository(
     requestManagerRepository.upsert(entityId = page, requestType = UPCOMING_SHOWS.name)
   }
 
-  private suspend fun getShows(params: UpcomingParams): List<ShowEntity> = store.get(key = params)
 }
 
 data class UpcomingParams(

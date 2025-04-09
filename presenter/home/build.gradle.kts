@@ -15,6 +15,8 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
+        implementation(projects.core.logger.api)
+        implementation(projects.domain.discover)
         implementation(projects.presenter.discover)
         implementation(projects.presenter.search)
         implementation(projects.presenter.settings)
@@ -28,8 +30,9 @@ kotlin {
 
     commonTest {
       dependencies {
-        implementation(projects.datastore.testing)
+        implementation(projects.core.logger.fixture)
         implementation(projects.core.util.testing)
+        implementation(projects.datastore.testing)
         implementation(projects.traktAuth.testing)
         implementation(projects.data.featuredshows.testing)
         implementation(projects.data.genre.testing)

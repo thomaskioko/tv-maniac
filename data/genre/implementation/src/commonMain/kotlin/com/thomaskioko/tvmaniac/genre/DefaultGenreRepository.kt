@@ -24,7 +24,7 @@ class DefaultGenreRepository(
   private val dispatchers: AppCoroutineDispatchers,
 ) : GenreRepository {
 
-  override suspend fun observeGenresWithShows(forceRefresh: Boolean): Flow<Either<Failure, List<ShowGenresEntity>>> {
+  override fun observeGenresWithShows(forceRefresh: Boolean): Flow<Either<Failure, List<ShowGenresEntity>>> {
     return store
       .stream(
         StoreReadRequest.cached(
