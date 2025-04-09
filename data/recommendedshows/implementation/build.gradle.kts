@@ -15,7 +15,7 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.paging)
-        implementation(projects.core.logger)
+        implementation(projects.core.logger.api)
         implementation(projects.core.util)
         implementation(projects.data.recommendedshows.api)
         implementation(projects.data.requestManager.api)

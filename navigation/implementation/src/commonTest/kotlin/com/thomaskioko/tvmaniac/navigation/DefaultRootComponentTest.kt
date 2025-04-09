@@ -6,22 +6,29 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
+import com.thomaskioko.tvmaniac.data.featuredshows.api.interactor.FeaturedShowsInteractor
 import com.thomaskioko.tvmaniac.data.featuredshows.testing.FakeFeaturedShowsRepository
+import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsInteractor
 import com.thomaskioko.tvmaniac.data.popularshows.testing.FakePopularShowsRepository
 import com.thomaskioko.tvmaniac.data.recommendedshows.testing.FakeRecommendedShowsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepository
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
+import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.Home
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.MoreShows
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverPresenterFactory
+import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.home.DefaultHomePresenter
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter
@@ -47,6 +54,7 @@ import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
+import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
@@ -74,6 +82,13 @@ class DefaultRootComponentTest {
   private val popularShowsRepository = FakePopularShowsRepository()
   private val searchRepository = FakeSearchRepository()
   private val genreRepository = FakeGenreRepository()
+  private val coroutineDispatcher = AppCoroutineDispatchers(
+    main = testDispatcher,
+    io = testDispatcher,
+    computation = testDispatcher,
+    databaseWrite = testDispatcher,
+    databaseRead = testDispatcher,
+  )
 
   private lateinit var presenter: DefaultRootPresenter
 
@@ -170,22 +185,46 @@ class DefaultRootComponentTest {
 
   private fun buildDiscoverPresenterFactory(
     componentContext: ComponentContext,
-  ): DiscoverPresenterFactory =
-    DiscoverPresenterFactory(
-      create = { _: ComponentContext, _: (id: Long) -> Unit, _: (categoryId: Long) -> Unit ->
-        DiscoverShowsPresenter(
-          componentContext = componentContext,
-          onNavigateToShowDetails = {},
-          onNavigateToMore = {},
+  ): DiscoverPresenterFactory = DiscoverPresenterFactory(
+    create = { _: ComponentContext, _: (id: Long) -> Unit, _: (categoryId: Long) -> Unit ->
+      DiscoverShowsPresenter(
+        componentContext = componentContext,
+        onNavigateToShowDetails = {},
+        onNavigateToMore = {},
+        discoverShowsInteractor = DiscoverShowsInteractor(
           featuredShowsRepository = featuredShowsRepository,
-          trendingShowsRepository = trendingShowsRepository,
-          upcomingShowsRepository = upcomingShowsRepository,
           topRatedShowsRepository = topRatedShowsRepository,
           popularShowsRepository = popularShowsRepository,
-          watchlistRepository = FakeWatchlistRepository(),
-        )
-      },
-    )
+          trendingShowsRepository = trendingShowsRepository,
+          upcomingShowsRepository = upcomingShowsRepository,
+          genreRepository = genreRepository,
+          dispatchers = coroutineDispatcher,
+        ),
+        watchlistRepository = FakeWatchlistRepository(),
+        featuredShowsInteractor = FeaturedShowsInteractor(
+          featuredShowsRepository = featuredShowsRepository,
+          dispatchers = coroutineDispatcher,
+        ),
+        topRatedShowsInteractor = TopRatedShowsInteractor(
+          topRatedShowsRepository = topRatedShowsRepository,
+          dispatchers = coroutineDispatcher,
+        ),
+        popularShowsInteractor = PopularShowsInteractor(
+          popularShowsRepository = popularShowsRepository,
+          dispatchers = coroutineDispatcher,
+        ),
+        trendingShowsInteractor = TrendingShowsInteractor(
+          trendingShowsRepository = trendingShowsRepository,
+          dispatchers = coroutineDispatcher,
+        ),
+        upcomingShowsInteractor = UpcomingShowsInteractor(
+          upcomingShowsRepository = upcomingShowsRepository,
+          dispatchers = coroutineDispatcher,
+        ),
+        logger = FakeLogger(),
+      )
+    },
+  )
 
   private fun buildLibraryPresenterFactory(
     componentContext: ComponentContext,

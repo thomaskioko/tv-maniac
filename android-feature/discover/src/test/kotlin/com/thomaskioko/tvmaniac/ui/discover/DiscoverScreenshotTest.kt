@@ -6,9 +6,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
-import com.thomaskioko.tvmaniac.presentation.discover.EmptyState
-import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
-import com.thomaskioko.tvmaniac.presentation.discover.Loading
+import com.thomaskioko.tvmaniac.core.view.UiMessage
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverViewState
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import org.junit.Rule
 import org.junit.Test
@@ -24,14 +23,15 @@ import org.robolectric.annotation.LooperMode
 @LooperMode(LooperMode.Mode.PAUSED)
 class DiscoverScreenshotTest {
 
-  @get:Rule val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+  @get:Rule
+  val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
   @Test
   fun discoverScreenEmptyState() {
     composeTestRule.captureMultiDevice("DiscoverScreenEmptyState") {
       TvManiacBackground {
         DiscoverScreen(
-          state = EmptyState,
+          state = DiscoverViewState.Empty,
           pagerState = rememberPagerState(pageCount = { 5 }),
           snackBarHostState = remember { SnackbarHostState() },
           onAction = {},
@@ -45,7 +45,13 @@ class DiscoverScreenshotTest {
     composeTestRule.captureMultiDevice("DiscoverScreenLoading") {
       TvManiacBackground {
         DiscoverScreen(
-          state = Loading,
+          state = DiscoverViewState.Empty.copy(
+            featuredRefreshing = true,
+            topRatedRefreshing = true,
+            trendingRefreshing = true,
+            upcomingRefreshing = true,
+            popularRefreshing = true,
+          ),
           pagerState = rememberPagerState(pageCount = { 5 }),
           snackBarHostState = remember { SnackbarHostState() },
           onAction = {},
@@ -59,7 +65,9 @@ class DiscoverScreenshotTest {
     composeTestRule.captureMultiDevice("DiscoverScreenErrorState") {
       TvManiacBackground {
         DiscoverScreen(
-          state = ErrorState(errorMessage = "Opps! Something went wrong"),
+          state = DiscoverViewState.Empty.copy(
+            message = UiMessage(message = "Opps! Something went wrong"),
+          ),
           pagerState = rememberPagerState(pageCount = { 5 }),
           snackBarHostState = remember { SnackbarHostState() },
           onAction = {},

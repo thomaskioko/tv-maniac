@@ -1,10 +1,8 @@
 package com.thomaskioko.tvmaniac.ui.discover
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.presentation.discover.DataLoaded
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverState
-import com.thomaskioko.tvmaniac.presentation.discover.EmptyState
-import com.thomaskioko.tvmaniac.presentation.discover.ErrorState
+import com.thomaskioko.tvmaniac.core.view.UiMessage
+import com.thomaskioko.tvmaniac.presentation.discover.DiscoverViewState
 import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import kotlinx.collections.immutable.toImmutableList
 
@@ -13,11 +11,11 @@ val discoverShow =
     tmdbId = 84958,
     title = "Loki",
     posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-    overView = "After stealing the Tesseract during the events of “Avengers: Endgame,” an "
+    overView = "After stealing the Tesseract during the events of “Avengers: Endgame,” an ",
   )
 
 val discoverContentSuccess =
-  DataLoaded(
+  DiscoverViewState(
     featuredShows = createDiscoverShowList(5),
     topRatedShows = createDiscoverShowList(),
     popularShows = createDiscoverShowList(),
@@ -26,13 +24,17 @@ val discoverContentSuccess =
 
 private fun createDiscoverShowList(size: Int = 20) = List(size) { discoverShow }.toImmutableList()
 
-class DiscoverPreviewParameterProvider : PreviewParameterProvider<DiscoverState> {
-  override val values: Sequence<DiscoverState>
+class DiscoverPreviewParameterProvider : PreviewParameterProvider<DiscoverViewState> {
+  override val values: Sequence<DiscoverViewState>
     get() {
       return sequenceOf(
-        EmptyState,
+        DiscoverViewState.Empty,
         discoverContentSuccess,
-        ErrorState(errorMessage = "Opps! Something went wrong"),
+        DiscoverViewState(
+          message = UiMessage(
+            "Opps! Something went wrong",
+          ),
+        ),
       )
     }
 }

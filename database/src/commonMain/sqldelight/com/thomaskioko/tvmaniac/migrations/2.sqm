@@ -1,0 +1,37 @@
+import com.thomaskioko.tvmaniac.db.GenreId;
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+BEGIN TRANSACTION;
+
+-- Rename existing tables
+ALTER TABLE genres RENAME TO genres_old;
+ALTER TABLE show_genres RENAME TO show_genres_old;
+
+-- Create new tables with identical structure and constraints
+CREATE TABLE genres (
+   id INTEGER AS Id<GenreId> NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    poster_url TEXT
+);
+
+CREATE TABLE show_genres (
+    show_id INTEGER AS Id<TmdbId> NOT NULL,
+    genre_id INTEGER AS Id<GenreId> NOT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(genre_id) REFERENCES genres(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (show_id, genre_id)
+);
+
+-- Transfer data from old tables to new ones
+INSERT INTO genres (id, name, poster_url)
+SELECT id, name, poster_url FROM genres_old;
+
+INSERT INTO show_genres (show_id, genre_id)
+SELECT show_id, genre_id FROM show_genres_old;
+
+-- Drop old tables
+DROP TABLE genres_old;
+DROP TABLE show_genres_old;
+
+COMMIT;

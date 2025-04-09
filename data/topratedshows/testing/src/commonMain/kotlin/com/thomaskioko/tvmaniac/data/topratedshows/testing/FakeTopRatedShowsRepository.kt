@@ -1,35 +1,28 @@
 package com.thomaskioko.tvmaniac.data.topratedshows.testing
 
 import androidx.paging.PagingData
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class FakeTopRatedShowsRepository : TopRatedShowsRepository {
+  private val shows = MutableStateFlow<List<ShowEntity>>(emptyList())
+  private val pagedShows = MutableStateFlow<PagingData<ShowEntity>>(PagingData.empty())
 
-  private var entityListResult: Channel<Either<Failure, List<ShowEntity>>> =
-    Channel(Channel.UNLIMITED)
-  private var pagedList: Channel<PagingData<ShowEntity>> = Channel(Channel.UNLIMITED)
-
-  suspend fun setTopRatedShows(result: Either<Failure, List<ShowEntity>>) {
-    entityListResult.send(result)
+  fun setTopRatedShows(result: List<ShowEntity>) {
+    shows.value = result
   }
 
-  suspend fun setPagedData(result: PagingData<ShowEntity>) {
-    pagedList.send(result)
+  override suspend fun fetchTopRatedShows(forceRefresh: Boolean) {
   }
 
-  override suspend fun observeTopRatedShows(
-    forceRefresh: Boolean
-  ): Flow<Either<Failure, List<ShowEntity>>> {
-    return entityListResult.receiveAsFlow()
+  override fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>> {
+    return shows.asStateFlow()
   }
 
   override fun getPagedTopRatedShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
-    return pagedList.receiveAsFlow()
+    return pagedShows.asStateFlow()
   }
 }

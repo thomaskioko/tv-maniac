@@ -50,7 +50,7 @@ class TrendingShowsStore(
       }
     },
   sourceOfTruth = SourceOfTruth.of<TrendingShowsParams, TmdbShowResult, List<ShowEntity>>(
-    reader = { _: TrendingShowsParams -> trendingShowsDao.observeTvShow() },
+    reader = { param: TrendingShowsParams -> trendingShowsDao.observeTvShow(param.page) },
     writer = { _: TrendingShowsParams, trendingShows ->
       databaseTransactionRunner {
         trendingShows.results.forEach { show ->

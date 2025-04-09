@@ -3,36 +3,37 @@ package com.thomaskioko.tvmaniac.presentation.discover
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsRepository
-import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
-import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
-import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
-import com.thomaskioko.tvmaniac.shows.api.model.Category
+import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessageManager
+import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.data.featuredshows.api.interactor.FeaturedShowsInteractor
+import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsInteractor
+import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
+import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
+import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
-import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
-import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsRepository
+import com.thomaskioko.tvmaniac.shows.api.model.Category
+import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
+
 @Inject
 class DiscoverPresenterFactory(
-   val create: (
+  val create: (
     componentContext: ComponentContext,
     onNavigateToShowDetails: (id: Long) -> Unit,
     onNavigateToMore: (categoryId: Long) -> Unit,
-  ) -> DiscoverShowsPresenter
+  ) -> DiscoverShowsPresenter,
 )
 
 @Inject
@@ -40,18 +41,20 @@ class DiscoverShowsPresenter(
   @Assisted componentContext: ComponentContext,
   @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
   @Assisted private val onNavigateToMore: (Long) -> Unit,
-  private val featuredShowsRepository: FeaturedShowsRepository,
-  private val trendingShowsRepository: TrendingShowsRepository,
-  private val upcomingShowsRepository: UpcomingShowsRepository,
-  private val topRatedShowsRepository: TopRatedShowsRepository,
-  private val popularShowsRepository: PopularShowsRepository,
+  private val discoverShowsInteractor: DiscoverShowsInteractor,
   private val watchlistRepository: WatchlistRepository,
-  private val coroutineScope: CoroutineScope = componentContext.coroutineScope()
+  private val featuredShowsInteractor: FeaturedShowsInteractor,
+  private val topRatedShowsInteractor: TopRatedShowsInteractor,
+  private val popularShowsInteractor: PopularShowsInteractor,
+  private val trendingShowsInteractor: TrendingShowsInteractor,
+  private val upcomingShowsInteractor: UpcomingShowsInteractor,
+  private val logger: Logger,
+  private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
 ) : ComponentContext by componentContext {
 
   internal val presenterInstance = instanceKeeper.getOrCreate { PresenterInstance() }
 
-  val state: StateFlow<DiscoverState> = presenterInstance.state
+  val state: StateFlow<DiscoverViewState> = presenterInstance.state
 
   init {
     presenterInstance.init()
@@ -62,11 +65,47 @@ class DiscoverShowsPresenter(
   }
 
   internal inner class PresenterInstance : InstanceKeeper.Instance {
-    private val _state = MutableStateFlow<DiscoverState>(Loading)
-    val state: StateFlow<DiscoverState> = _state.asStateFlow()
+
+    private val featuredLoadingState = ObservableLoadingCounter()
+    private val topRatedLoadingState = ObservableLoadingCounter()
+    private val popularLoadingState = ObservableLoadingCounter()
+    private val trendingLoadingState = ObservableLoadingCounter()
+    private val upcomingLoadingState = ObservableLoadingCounter()
+    private val uiMessageManager = UiMessageManager()
+
+    val state: StateFlow<DiscoverViewState> = combine(
+      featuredLoadingState.observable,
+      topRatedLoadingState.observable,
+      popularLoadingState.observable,
+      trendingLoadingState.observable,
+      upcomingLoadingState.observable,
+      discoverShowsInteractor.flow,
+      uiMessageManager.message,
+    ) { featuredShowsIsUpdating, topRatedShowsIsUpdating, popularShowsIsUpdating,
+        trendingShowsIsUpdating, upComingIsUpdating, showData, message ->
+
+      DiscoverViewState(
+        message = message,
+        featuredRefreshing = featuredShowsIsUpdating,
+        topRatedRefreshing = topRatedShowsIsUpdating,
+        popularRefreshing = popularShowsIsUpdating,
+        trendingRefreshing = topRatedShowsIsUpdating,
+        upcomingRefreshing = upComingIsUpdating,
+        featuredShows = showData.featuredShows.toShowList(),
+        topRatedShows = showData.topRatedShows.toShowList(),
+        popularShows = showData.popularShows.toShowList(),
+        trendingToday = showData.trendingShows.toShowList(),
+        upcomingShows = showData.upcomingShows.toShowList(),
+      )
+    }.stateIn(
+      scope = coroutineScope,
+      started = SharingStarted.WhileSubscribed(),
+      initialValue = DiscoverViewState.Empty,
+    )
 
     fun init() {
-      coroutineScope.launch { observeShowData() }
+      discoverShowsInteractor(Unit)
+      observeShowData()
     }
 
     fun dispatch(action: DiscoverShowAction) {
@@ -76,25 +115,7 @@ class DiscoverShowsPresenter(
         TopRatedClicked -> onNavigateToMore(Category.TOP_RATED.id)
         TrendingClicked -> onNavigateToMore(Category.TRENDING_TODAY.id)
         UpComingClicked -> onNavigateToMore(Category.UPCOMING.id)
-        RefreshData ->
-          coroutineScope.launch {
-            _state.update { (it as? DataLoaded)?.copy(isRefreshing = true) ?: it }
-            observeShowData(true)
-          }
-        ReloadData ->
-          coroutineScope.launch {
-            _state.update { Loading }
-            observeShowData(true)
-          }
-        SnackBarDismissed ->
-          coroutineScope.launch {
-            _state.update { state ->
-              (state as? DataLoaded)?.copy(
-                errorMessage = null,
-              )
-                ?: state
-            }
-          }
+        RefreshData -> observeShowData(forceRefresh = true)
         is UpdateShowInLibrary -> {
           coroutineScope.launch {
             watchlistRepository.updateLibrary(
@@ -106,47 +127,43 @@ class DiscoverShowsPresenter(
         AccountClicked -> {
           //TODO:: Add implementation.
         }
+        is MessageShown -> {
+          clearMessage(action.id)
+        }
       }
     }
 
-    private fun isEmpty(vararg responses: List<ShowEntity>?): Boolean {
-      return responses.all { it.isNullOrEmpty() }
+    fun clearMessage(id: Long) {
+      coroutineScope.launch {
+        uiMessageManager.clearMessage(id)
+      }
     }
 
-    private suspend fun observeShowData(refresh: Boolean = false) {
-      combine(
-          featuredShowsRepository.observeFeaturedShows(forceRefresh = refresh),
-          topRatedShowsRepository.observeTopRatedShows(forceRefresh = refresh),
-          popularShowsRepository.observePopularShows(forceRefresh = refresh),
-          upcomingShowsRepository.observeUpcomingShows(forceRefresh = refresh),
-          trendingShowsRepository.observeTrendingShows(forceRefresh = refresh),
-        ) { featured, topRated, popular, upcomingShows, trendingToday ->
-          if (
-            isEmpty(
-              featured.getOrNull(),
-              topRated.getOrNull(),
-              popular.getOrNull(),
-              upcomingShows.getOrNull(),
-              trendingToday.getOrNull(),
-            )
-          ) {
-            _state.update { EmptyState }
-          } else {
-            _state.update {
-              DataLoaded(
-                featuredShows = featured.getOrNull().toShowList(),
-                topRatedShows = topRated.getOrNull().toShowList(),
-                popularShows = popular.getOrNull().toShowList(),
-                upcomingShows = upcomingShows.getOrNull().toShowList(),
-                trendingToday = trendingToday.getOrNull().toShowList(),
-                errorMessage = getErrorMessage(topRated, popular, upcomingShows, featured),
-              )
-            }
-          }
-        }
-        .onStart { Loading }
-        .catch { ErrorState(errorMessage = it.message) }
-        .collect()
+    private fun observeShowData(forceRefresh: Boolean = false) {
+
+      coroutineScope.launch {
+        featuredShowsInteractor(forceRefresh)
+          .collectStatus(featuredLoadingState, logger, uiMessageManager)
+      }
+
+      coroutineScope.launch {
+        topRatedShowsInteractor(forceRefresh)
+          .collectStatus(topRatedLoadingState, logger, uiMessageManager)
+      }
+
+      coroutineScope.launch {
+        popularShowsInteractor(forceRefresh)
+          .collectStatus(popularLoadingState, logger, uiMessageManager)
+      }
+
+      coroutineScope.launch {
+        trendingShowsInteractor(forceRefresh)
+          .collectStatus(trendingLoadingState, logger, uiMessageManager)
+      }
+      coroutineScope.launch {
+        upcomingShowsInteractor(forceRefresh)
+          .collectStatus(upcomingLoadingState, logger, uiMessageManager)
+      }
     }
 
     override fun onDestroy() {

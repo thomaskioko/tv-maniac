@@ -5,12 +5,13 @@ import TvManiacKit
 
 struct DiscoverTab: View {
   private let presenter: DiscoverShowsPresenter
-  @StateObject @KotlinStateFlow private var uiState: DiscoverState
+  @StateObject @KotlinStateFlow private var uiState: DiscoverViewState
   @StateObject private var store = SettingsAppStorage.shared
   @State private var currentIndex: Int
   @State private var showNavigationBar = false
   @State private var selectedShow: SwiftShow?
   @State private var showGlass: Double = 0
+  @State private var rotationAngle: Double = 0
   private let title = "Discover"
 
   init(presenter: DiscoverShowsPresenter) {
@@ -20,25 +21,22 @@ struct DiscoverTab: View {
   }
 
   var body: some View {
-    switch onEnum(of: uiState) {
-    case .loading:
-      LoadingIndicatorView()
-    case let .dataLoaded(state):
-      discoverLoadedContent(state: state)
-    case .emptyState:
-      emptyView
-    case let .errorState(error):
+    if uiState.showError {
       FullScreenView(
         systemName: "exclamationmark.arrow.triangle.2.circlepath",
-        message: error.errorMessage ?? "Something went wrong!!"
+        message: uiState.message?.message ?? "Something went wrong!!"
       )
+    } else if uiState.isEmpty {
+      emptyView
+    } else {
+      discoverLoadedContent(state: uiState)
     }
   }
 
   // MARK: - Discover Content
 
   @ViewBuilder
-  private func discoverLoadedContent(state: DataLoaded) -> some View {
+  private func discoverLoadedContent(state: DiscoverViewState) -> some View {
     ParallaxView(
       imageHeight: 550,
       collapsedImageHeight: 120,
@@ -131,31 +129,45 @@ struct DiscoverTab: View {
         HStack(spacing: 8) {
           Button(
             action: {
-              presenter.dispatch(action: UpdateShowInLibrary(id: show.tmdbId, inLibrary: show.inLibrary))
+              // TODO: Invoke account navigation action.
+            }) {
+              Image(systemName: "person")
+                .font(.avenirNext(size: 17))
+                .foregroundColor(.white)
+                .frame(width: 32, height: 32)
+                .padding(2)
+                .background(Color.black.opacity(0.3))
+                .clipShape(Circle())
             }
+
+          Button(
+            action: { presenter.dispatch(action: RefreshData()) }
           ) {
-            Image(systemName: show.inLibrary == true ? "checkmark" : "plus")
-              .font(.avenirNext(size: 17))
-              .foregroundColor(.white)
-              .frame(width: 28, height: 28)
-              .padding(2)
-              .background(Color.black.opacity(0.3))
-              .clipShape(Circle())
+            if uiState.isRefreshing {
+              Image(systemName: "arrow.clockwise")
+                .font(.avenirNext(size: 17))
+                .foregroundColor(.white)
+                .frame(width: 32, height: 32)
+                .padding(2)
+                .background(Color.black.opacity(0.3))
+                .clipShape(Circle())
+                .rotationEffect(.degrees(rotationAngle))
+                .onAppear {
+                  withAnimation(.linear(duration: 1.0).repeatForever(autoreverses: false)) {
+                    rotationAngle = 360
+                  }
+                }
+            } else {
+              Image(systemName: "arrow.clockwise")
+                .font(.avenirNext(size: 17))
+                .foregroundColor(.white)
+                .frame(width: 32, height: 32)
+                .padding(2)
+                .background(Color.black.opacity(0.3))
+                .clipShape(Circle())
+            }
           }
         }
-
-        Button(
-          action: {
-            // TODO: Invoke account navigation action.
-          }) {
-            Image(systemName: "person")
-              .font(.avenirNext(size: 17))
-              .foregroundColor(.white)
-              .frame(width: 28, height: 28)
-              .padding(2)
-              .background(Color.black.opacity(0.3))
-              .clipShape(Circle())
-          }
       }
     }
     .padding(.horizontal)
@@ -222,12 +234,12 @@ struct DiscoverTab: View {
   // MARK: - Discover Content
 
   @ViewBuilder
-  private func discoverContent(dataLoaded: DataLoaded) -> some View {
+  private func discoverContent(state: DiscoverViewState) -> some View {
     VStack {
       HorizontalItemListView(
         title: "Upcoming",
         chevronStyle: .chevronOnly,
-        items: dataLoaded.upcomingShows.map { $0.toSwift() },
+        items: state.upcomingShows.map { $0.toSwift() },
         onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
         onMoreClicked: { presenter.dispatch(action: UpComingClicked()) }
       )
@@ -235,7 +247,7 @@ struct DiscoverTab: View {
       HorizontalItemListView(
         title: "Trending Today",
         chevronStyle: .chevronOnly,
-        items: dataLoaded.trendingToday.map { $0.toSwift() },
+        items: state.trendingToday.map { $0.toSwift() },
         onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
         onMoreClicked: { presenter.dispatch(action: TrendingClicked()) }
       )
@@ -243,7 +255,7 @@ struct DiscoverTab: View {
       HorizontalItemListView(
         title: "Popular",
         chevronStyle: .chevronOnly,
-        items: dataLoaded.popularShows.map { $0.toSwift() },
+        items: state.popularShows.map { $0.toSwift() },
         onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
         onMoreClicked: { presenter.dispatch(action: PopularClicked()) }
       )
@@ -251,7 +263,7 @@ struct DiscoverTab: View {
       HorizontalItemListView(
         title: "Top Rated",
         chevronStyle: .chevronOnly,
-        items: dataLoaded.topRatedShows.map { $0.toSwift() },
+        items: state.topRatedShows.map { $0.toSwift() },
         onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
         onMoreClicked: { presenter.dispatch(action: TopRatedClicked()) }
       )
@@ -263,7 +275,7 @@ struct DiscoverTab: View {
   // MARK: - Discover List Content
 
   @ViewBuilder
-  private func discoverListContent(state: DataLoaded) -> some View {
+  private func discoverListContent(state: DiscoverViewState) -> some View {
     VStack {
       HorizontalItemListView(
         title: "Upcoming",
@@ -325,7 +337,7 @@ struct DiscoverTab: View {
         .padding(.bottom, 16)
 
       Button(action: {
-        presenter.dispatch(action: ReloadData())
+        presenter.dispatch(action: RefreshData())
       }, label: {
         Text("Retry")
           .bodyMediumFont(size: 16)
@@ -356,35 +368,35 @@ struct DiscoverTab: View {
 }
 
 struct PullToRefreshView: View {
-    var coordinateSpaceName: String
-    var onRefresh: () async -> Void
-    @State private var needRefresh: Bool = false
-    
-    var body: some View {
-        GeometryReader { geo in
-            if geo.frame(in: .named(coordinateSpaceName)).midY > 50 {
-                Spacer()
-                    .onAppear {
-                        needRefresh = true
-                    }
-            } else if geo.frame(in: .named(coordinateSpaceName)).midY < 1 {
-                Spacer()
-                    .onAppear {
-                        if needRefresh {
-                            needRefresh = false
-                            Task {
-                                await onRefresh()
-                            }
-                        }
-                    }
+  var coordinateSpaceName: String
+  var onRefresh: () async -> Void
+  @State private var needRefresh: Bool = false
+
+  var body: some View {
+    GeometryReader { geo in
+      if geo.frame(in: .named(coordinateSpaceName)).midY > 50 {
+        Spacer()
+          .onAppear {
+            needRefresh = true
+          }
+      } else if geo.frame(in: .named(coordinateSpaceName)).midY < 1 {
+        Spacer()
+          .onAppear {
+            if needRefresh {
+              needRefresh = false
+              Task {
+                await onRefresh()
+              }
             }
-            HStack {
-                Spacer()
-                if needRefresh {
-                    ProgressView()
-                }
-                Spacer()
-            }
-        }.padding(.top, -50)
-    }
+          }
+      }
+      HStack {
+        Spacer()
+        if needRefresh {
+          ProgressView()
+        }
+        Spacer()
+      }
+    }.padding(.top, -50)
+  }
 }
