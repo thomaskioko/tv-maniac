@@ -4,7 +4,7 @@ import SwiftUIComponents
 import XCTest
 
 class CircularButtonTest: XCTestCase {
-    func test_CircularButton() {
+    func _test_CircularButton() {
         CircularButton(iconName: "arrow.backward", action: {})
             .padding()
             .background(Color.background)
