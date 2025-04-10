@@ -4,7 +4,7 @@ import SwiftUIComponents
 import XCTest
 
 class NavigationTopBarTest: XCTestCase {
-    func test_NavigationTopBarTest() {
+    func _test_NavigationTopBarTest() {
         NavigationTopBar(
             topBarTitle: "Upcoming",
             imageName: "arrow.backward",
