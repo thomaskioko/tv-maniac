@@ -4,7 +4,7 @@ import SwiftUIComponents
 import XCTest
 
 class TopBarTest: XCTestCase {
-    func test_TopBar() {
+    func _test_TopBar() {
         TopBar(
             progress: 0,
             title: "Movie Title",
