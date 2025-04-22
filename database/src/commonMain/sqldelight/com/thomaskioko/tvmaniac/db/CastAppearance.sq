@@ -35,8 +35,7 @@ SELECT
     ca.season_id
 FROM casts cm
 JOIN cast_appearance ca ON cm.id = ca.cast_id
-WHERE ca.show_id = ?
-ORDER BY cm.name;
+WHERE ca.show_id = ?;
 
 seasonCast:
 SELECT
@@ -46,6 +45,5 @@ SELECT
     cm.character_name
 FROM casts cm
 JOIN cast_appearance ca ON cm.id = ca.cast_id
-WHERE ca.season_id = ?
-ORDER BY cm.popularity;
+WHERE ca.season_id = ?;
 
