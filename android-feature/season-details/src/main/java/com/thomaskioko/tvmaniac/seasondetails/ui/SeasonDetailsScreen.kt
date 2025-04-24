@@ -31,7 +31,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.outlined.Autorenew
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.Card
@@ -55,8 +54,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
-import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -70,19 +69,15 @@ import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonDialog
 import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonGallery
-import com.thomaskioko.tvmaniac.presentation.seasondetails.InitialSeasonsState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.ReloadSeasonDetails
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailState
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsBackClicked
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsErrorState
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonGalleryClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.UpdateSeasonWatchedState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Cast
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonImagesModel
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.ui.components.CollapsableContent
 import com.thomaskioko.tvmaniac.seasondetails.ui.components.ShowLinearProgressIndicator
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -104,7 +99,7 @@ fun SeasonDetailsScreen(
 
 @Composable
 internal fun SeasonDetailsScreen(
-  state: SeasonDetailState,
+  state: SeasonDetailsModel,
   modifier: Modifier = Modifier,
   onAction: (SeasonDetailsAction) -> Unit,
 ) {
@@ -120,7 +115,7 @@ internal fun SeasonDetailsScreen(
       val title =
         stringResource(
           id = R.string.cd_show_images,
-          (state as? SeasonDetailsLoaded)?.seasonName ?: ""
+          state.seasonName,
         )
       SheetDragHandle(
         title = title,
@@ -130,43 +125,37 @@ internal fun SeasonDetailsScreen(
     },
     content = { contentPadding ->
       Box(Modifier.fillMaxSize()) {
-        when (state) {
-          InitialSeasonsState ->
-            EmptyContent(
-              imageVector = Icons.Outlined.Autorenew,
-              message = stringResource(id = R.string.generic_fetching_data),
-            )
-          is SeasonDetailsLoaded ->
-            LazyColumnContent(
-              seasonDetailsModel = state,
-              isLoading = state.isUpdating,
-              showSeasonWatchStateDialog = state.showSeasonWatchStateDialog,
-              contentPadding = contentPadding,
-              onAction = onAction,
-              listState = listState,
-            )
-          is SeasonDetailsErrorState ->
-            ErrorUi(
-              errorIcon = {
-                Image(
-                  modifier = Modifier.size(120.dp),
-                  imageVector = Icons.Outlined.ErrorOutline,
-                  colorFilter =
-                    ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
-                  contentDescription = null,
-                )
-              },
-              modifier = Modifier.fillMaxSize(),
-              errorMessage = state.errorMessage,
-              onRetry = { onAction(ReloadSeasonDetails) },
-            )
+        if (state.message == null) {
+          LazyColumnContent(
+            seasonDetailsModel = state,
+            isLoading = state.isUpdating,
+            showSeasonWatchStateDialog = state.showSeasonWatchStateDialog,
+            contentPadding = contentPadding,
+            onAction = onAction,
+            listState = listState,
+          )
+        } else {
+          ErrorUi(
+            errorIcon = {
+              Image(
+                modifier = Modifier.size(120.dp),
+                imageVector = Icons.Outlined.ErrorOutline,
+                colorFilter =
+                  ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+                contentDescription = null,
+              )
+            },
+            modifier = Modifier.fillMaxSize(),
+            errorMessage = state.message?.message,
+            onRetry = { onAction(ReloadSeasonDetails) },
+          )
         }
 
         RefreshCollapsableTopAppBar(
           listState = listState,
           title = {
             Text(
-              text = (state as? SeasonDetailsLoaded)?.seasonName ?: "",
+              text = state.seasonName,
               style =
                 MaterialTheme.typography.titleMedium.copy(
                   color = MaterialTheme.colorScheme.onSurface,
@@ -190,7 +179,7 @@ internal fun SeasonDetailsScreen(
             )
           },
           isRefreshing = state.isUpdating,
-          showActionIcon = state is SeasonDetailsLoaded,
+          showActionIcon = state.message != null,
           onNavIconClicked = { onAction(SeasonDetailsBackClicked) },
           onActionIconClicked = { onAction(ReloadSeasonDetails) },
         )
@@ -204,7 +193,7 @@ fun LazyColumnContent(
   listState: LazyListState,
   isLoading: Boolean,
   showSeasonWatchStateDialog: Boolean,
-  seasonDetailsModel: SeasonDetailsLoaded,
+  seasonDetailsModel: SeasonDetailsModel,
   contentPadding: PaddingValues,
   onAction: (SeasonDetailsAction) -> Unit,
   modifier: Modifier = Modifier,
@@ -263,7 +252,9 @@ fun ImageGalleryContent(
   ) {
     items(imageList) { item ->
       PosterCard(
-        modifier = Modifier.fillMaxWidth().animateItem(),
+        modifier = Modifier
+          .fillMaxWidth()
+          .animateItem(),
         imageUrl = item.imageUrl,
         title = "",
         onClick = {},
@@ -289,34 +280,41 @@ private fun HeaderContent(
 
   Box(
     modifier =
-      Modifier.fillMaxWidth().height(350.dp).clipToBounds().offset {
-        IntOffset(
-          x = 0,
-          y =
-            if (listState.firstVisibleItemIndex == 0) {
+      Modifier
+        .fillMaxWidth()
+        .height(350.dp)
+        .clipToBounds()
+        .offset {
+          IntOffset(
+            x = 0,
+            y = if (listState.firstVisibleItemIndex == 0) {
               listState.firstVisibleItemScrollOffset / 2
             } else {
               0
             },
-        )
-      },
+          )
+        },
     contentAlignment = Alignment.BottomCenter,
   ) {
     PosterCard(
       imageUrl = imageUrl,
       title = title,
-      modifier = Modifier.fillMaxWidth().padding(top = offsetDp),
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = offsetDp),
     )
 
     Box(
-      modifier = Modifier.matchParentSize().background(contentBackgroundGradient()),
+      modifier = Modifier
+        .matchParentSize()
+        .background(contentBackgroundGradient()),
     )
 
     Row(
-      modifier =
-        Modifier.align(Alignment.BottomStart)
-          .padding(horizontal = 16.dp, vertical = 32.dp)
-          .clickable { onAction(SeasonGalleryClicked) },
+      modifier = Modifier
+        .align(Alignment.BottomStart)
+        .padding(horizontal = 16.dp, vertical = 32.dp)
+        .clickable { onAction(SeasonGalleryClicked) },
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -343,7 +341,10 @@ private fun HeaderContent(
       modifier = Modifier.align(Alignment.BottomEnd),
     ) {
       LoadingIndicator(
-        modifier = Modifier.align(Alignment.BottomEnd).padding(32.dp).size(28.dp),
+        modifier = Modifier
+          .align(Alignment.BottomEnd)
+          .padding(32.dp)
+          .size(28.dp),
       )
     }
 
@@ -351,14 +352,16 @@ private fun HeaderContent(
 
     ShowLinearProgressIndicator(
       progress = watchProgress,
-      modifier = Modifier.height(8.dp).fillMaxWidth(),
+      modifier = Modifier
+        .height(8.dp)
+        .fillMaxWidth(),
     )
   }
 }
 
 @Composable
 private fun BodyContent(
-  seasonDetailsModel: SeasonDetailsLoaded,
+  seasonDetailsModel: SeasonDetailsModel,
   onAction: (SeasonDetailsAction) -> Unit,
   modifier: Modifier = Modifier,
 ) {
@@ -367,7 +370,9 @@ private fun BodyContent(
   ) {
     Text(
       text = stringResource(R.string.title_season_overview),
-      modifier = Modifier.fillMaxWidth().padding(16.dp),
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp),
       style =
         MaterialTheme.typography.titleLarge.copy(
           color = MaterialTheme.colorScheme.onSurface,
@@ -379,13 +384,17 @@ private fun BodyContent(
       text = seasonDetailsModel.seasonOverview,
       textStyle = MaterialTheme.typography.bodyMedium,
       fontWeight = FontWeight.Normal,
-      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 16.dp),
     )
 
     Spacer(modifier = Modifier.height(8.dp))
 
     CollapsableContent(
-      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 16.dp),
       episodesCount = seasonDetailsModel.episodeCount,
       watchProgress = seasonDetailsModel.watchProgress,
       isSeasonWatched = seasonDetailsModel.isSeasonWatched,
@@ -402,10 +411,13 @@ private fun BodyContent(
 private fun CastContent(
   castList: ImmutableList<Cast>,
 ) {
+  if (castList.isEmpty()) return
   Column {
     Text(
       text = stringResource(R.string.title_casts),
-      modifier = Modifier.padding(16.dp).fillMaxWidth(),
+      modifier = Modifier
+        .padding(16.dp)
+        .fillMaxWidth(),
       style =
         MaterialTheme.typography.titleLarge.copy(
           color = MaterialTheme.colorScheme.onSurface,
@@ -437,24 +449,32 @@ private fun CastContent(
               ),
           ) {
             Box(
-              modifier = Modifier.fillMaxSize().size(width = 120.dp, height = 160.dp),
+              modifier = Modifier
+                .fillMaxSize()
+                .size(width = 120.dp, height = 160.dp),
               contentAlignment = Alignment.BottomStart,
             ) {
               PosterCard(
                 imageUrl = cast.profileUrl,
                 title = cast.name,
-                modifier = Modifier.fillMaxWidth().animateItem(),
+                modifier = Modifier
+                  .fillMaxWidth()
+                  .animateItem(),
               )
 
               Box(
-                modifier = Modifier.matchParentSize().background(contentBackgroundGradient()),
+                modifier = Modifier
+                  .matchParentSize()
+                  .background(contentBackgroundGradient()),
               )
               Column(
                 modifier = Modifier.padding(8.dp),
               ) {
                 Text(
                   text = cast.name,
-                  modifier = Modifier.padding(vertical = 4.dp).wrapContentWidth(),
+                  modifier = Modifier
+                    .padding(vertical = 4.dp)
+                    .wrapContentWidth(),
                   overflow = TextOverflow.Ellipsis,
                   maxLines = 1,
                   style =
@@ -517,7 +537,7 @@ private fun SeasonsWatchDialog(
 @ThemePreviews
 @Composable
 private fun SeasonDetailScreenPreview(
-  @PreviewParameter(SeasonPreviewParameterProvider::class) state: SeasonDetailState,
+  @PreviewParameter(SeasonPreviewParameterProvider::class) state: SeasonDetailsModel,
 ) {
   TvManiacTheme {
     Surface {
