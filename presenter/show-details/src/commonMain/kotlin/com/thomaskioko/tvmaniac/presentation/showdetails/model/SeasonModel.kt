@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails.model
 
-data class Season(
+data class SeasonModel(
   val seasonId: Long,
   val tvShowId: Long,
   val name: String,

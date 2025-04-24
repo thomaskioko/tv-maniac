@@ -47,6 +47,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
     }
   }
 
@@ -55,6 +56,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       presenter.dispatch(QueryChanged(""))
       expectNoEvents()
@@ -78,6 +80,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       setList(createGenreShowList())
 
@@ -93,6 +96,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       presenter.dispatch(QueryChanged("te"))
       expectNoEvents()
@@ -105,11 +109,12 @@ class SearchShowsPresenterTest {
 
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       setList(createGenreShowList())
       awaitItem() shouldBe ShowContentAvailable(
-          isUpdating = false,
-          genres = genreList(),
+        isUpdating = false,
+        genres = genreList(),
       )
 
       presenter.dispatch(QueryChanged("test"))
@@ -132,12 +137,13 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       setList(createGenreShowList())
 
       awaitItem() shouldBe ShowContentAvailable(
-          isUpdating = false,
-          genres = genreList(),
+        isUpdating = false,
+        genres = genreList(),
       )
 
       // Dispatch first query change
@@ -195,6 +201,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       presenter.dispatch(QueryChanged("ab"))
       expectNoEvents()
@@ -228,10 +235,14 @@ class SearchShowsPresenterTest {
 
       testScheduler.advanceTimeBy(300)
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       presenter.dispatch(QueryChanged("test"))
 
       fakeSearchRepository.setSearchResult(Either.Right(createDiscoverShowList()))
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
+
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
       awaitItem() shouldBe SearchResultAvailable(
@@ -251,6 +262,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       presenter.dispatch(QueryChanged("test"))
 
@@ -269,6 +281,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       presenter.dispatch(QueryChanged("empty"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "empty")
@@ -350,6 +363,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       presenter.dispatch(QueryChanged("test"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
@@ -378,7 +392,7 @@ class SearchShowsPresenterTest {
 
 
   private suspend fun TestScope.setList(list: List<ShowGenresEntity>) {
-    genreRepository.setGenreResult(Either.Right(list))
+    genreRepository.setGenreResult(list)
 
     testScheduler.advanceUntilIdle()
   }

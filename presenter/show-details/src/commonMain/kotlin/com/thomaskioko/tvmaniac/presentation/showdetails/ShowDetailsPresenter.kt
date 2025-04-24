@@ -2,25 +2,22 @@ package com.thomaskioko.tvmaniac.presentation.showdetails
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.data.cast.api.CastRepository
-import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsRepository
-import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
-import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
-import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.AdditionalContent
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowMetadata
+import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessageManager
+import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
+import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
-import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
-import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -38,29 +35,50 @@ class ShowDetailsPresenterFactory(
   ) -> ShowDetailsPresenter,
 )
 
-class ShowDetailsPresenter
 @Inject
-constructor(
+class ShowDetailsPresenter(
   @Assisted componentContext: ComponentContext,
   @Assisted private val showId: Long,
   @Assisted private val onBack: () -> Unit,
   @Assisted private val onNavigateToShow: (id: Long) -> Unit,
   @Assisted private val onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
   @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
-  private val castRepository: CastRepository,
   private val watchlistRepository: WatchlistRepository,
-  private val recommendedShowsRepository: RecommendedShowsRepository,
-  private val seasonsRepository: SeasonsRepository,
-  private val showDetailsRepository: ShowDetailsRepository,
-  private val similarShowsRepository: SimilarShowsRepository,
-  private val trailerRepository: TrailerRepository,
-  private val watchProviders: WatchProviderRepository,
-  private val showDetailsMapper: ShowDetailsMapper,
+  private val recommendedShowsInteractor: RecommendedShowsInteractor,
+  private val showDetailsInteractor: ShowDetailsInteractor,
+  private val similarShowsInteractor: SimilarShowsInteractor,
+  private val watchProvidersInteractor: WatchProvidersInteractor,
+  private val observableShowDetailsInteractor: ObservableShowDetailsInteractor,
+  private val logger: Logger,
 ) : ComponentContext by componentContext {
 
+  private val recommendedShowsLoadingState = ObservableLoadingCounter()
+  private val showDetailsLoadingState = ObservableLoadingCounter()
+  private val similarShowsLoadingState = ObservableLoadingCounter()
+  private val watchProvidersLoadingState = ObservableLoadingCounter()
+  private val uiMessageManager = UiMessageManager()
+
   private val coroutineScope = coroutineScope()
-  private val _state = MutableStateFlow(ShowDetailsContent(showDetails = null))
-  val state: StateFlow<ShowDetailsContent> = _state.asStateFlow()
+  private val _state = MutableStateFlow(ShowDetailsContent.Empty)
+  val state: StateFlow<ShowDetailsContent> = combine(
+    recommendedShowsLoadingState.observable,
+    showDetailsLoadingState.observable,
+    similarShowsLoadingState.observable,
+    watchProvidersLoadingState.observable,
+    observableShowDetailsInteractor.flow,
+  ) { recommendedShowsUpdating, showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating, showDetails ->
+    ShowDetailsContent(
+      showDetails = showDetails.toShowDetails(),
+      recommendedShowsRefreshing = recommendedShowsUpdating,
+      showDetailsRefreshing = showDetailsUpdating,
+      similarShowsRefreshing = similarShowsUpdating,
+      watchProvidersRefreshing = watchProvidersUpdating,
+    )
+  }.stateIn(
+    scope = coroutineScope,
+    started = SharingStarted.WhileSubscribed(),
+    initialValue = _state.value,
+  )
 
   init {
     coroutineScope.launch { observeShowDetails() }
@@ -70,13 +88,7 @@ constructor(
     when (action) {
       is SeasonClicked -> {
         _state.update {
-          it.copy(
-            showInfo =
-              (it.showInfo as? ShowInfoState.Loaded)?.copy(
-                selectedSeasonIndex = action.params.selectedSeasonIndex,
-              )
-                ?: it.showInfo,
-          )
+          it.copy(selectedSeasonIndex = action.params.selectedSeasonIndex)
         }
         onNavigateToSeason(action.params)
       }
@@ -92,7 +104,7 @@ constructor(
       }
       DetailBackClicked -> onBack()
       ReloadShowDetails -> coroutineScope.launch { observeShowDetails(forceReload = true) }
-      DismissErrorSnackbar -> coroutineScope.launch { _state.update { it.copy(errorMessage = null) } }
+      DismissErrorSnackbar -> coroutineScope.launch { _state.update { it.copy(message = null) } }
       DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
       ShowShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = true) } }
       CreateCustomList -> {
@@ -101,105 +113,30 @@ constructor(
     }
   }
 
-  private suspend fun observeShowDetails(forceReload: Boolean = false) {
-    return combine(
-      showDetailsRepository.observeShowDetails(showId, forceReload),
-      trailerRepository.isYoutubePlayerInstalled(),
-      observeShowMetadata(forceReload),
-      observeAdditionalContent(forceReload),
-    ) { showDetailsResult, isWebViewInstalled, showMetadataResult, additionalContentResult ->
-      showDetailsResult.fold(
-        { error ->
-          _state.update {
-            it.copy(
-              isUpdating = false,
-              errorMessage = error.errorMessage ?: "An unknown error occurred",
-              showInfo = ShowInfoState.Error,
-            )
-          }
-        },
-        { result ->
-          updateState(
-            showDetails = showDetailsMapper.toShowDetails(result),
-            isWebViewInstalled = isWebViewInstalled,
-            showMetadata = showMetadataResult,
-            additionalContent = additionalContentResult,
-          )
-        },
-      )
-    }
-      .onStart { _state.update { it.copy(isUpdating = true, showInfo = ShowInfoState.Loading) } }
-      .collect()
-  }
+  private fun observeShowDetails(forceReload: Boolean = false) {
 
-  private fun observeShowMetadata(forceReload: Boolean) =
-    combine(
-      seasonsRepository.observeSeasonsByShowId(showId).map { it.toSeasonsListOrEmpty() },
-      castRepository.observeShowCast(showId).map { it.toCastList() },
-      watchProviders.observeWatchProviders(showId, forceReload).map {
-        it.toWatchProviderListOrEmpty()
-      },
-    ) { seasons, cast, providers ->
-      ShowMetadata(seasons, cast, providers)
+    coroutineScope.launch {
+      observableShowDetailsInteractor(showId)
     }
 
-  private fun observeAdditionalContent(forceReload: Boolean) =
-    combine(
-      similarShowsRepository.observeSimilarShows(showId, forceReload).map {
-        it.toSimilarShowListOrEmpty()
-      },
-      recommendedShowsRepository.observeRecommendedShows(showId, forceReload).map {
-        it.toRecommendedShowListOrEmpty()
-      },
-      trailerRepository.observeTrailers(showId).map { it.toTrailerListOrEmpty() },
-    ) { similarShows, recommendedShows, trailers ->
-      AdditionalContent(similarShows, recommendedShows, trailers)
+    coroutineScope.launch {
+      recommendedShowsInteractor(RecommendedShowsInteractor.Param(showId, forceReload))
+        .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
     }
 
-  private fun updateState(
-    showDetails: ShowDetails?,
-    isWebViewInstalled: Boolean,
-    showMetadata: ShowMetadata,
-    additionalContent: AdditionalContent,
-  ) {
-    _state.update { currentState ->
-      val newShowInfoState =
-        when {
-          isContentEmpty(showMetadata, additionalContent) -> ShowInfoState.Empty
-          else ->
-            ShowInfoState.Loaded(
-              hasWebViewInstalled = isWebViewInstalled,
-              providers = showMetadata.providers,
-              castsList = showMetadata.cast,
-              seasonsList = showMetadata.seasons,
-              similarShows = additionalContent.similarShows,
-              recommendedShowList = additionalContent.recommendedShows,
-              trailersList = additionalContent.trailers,
-              openTrailersInYoutube =
-                (currentState.showInfo as? ShowInfoState.Loaded)?.openTrailersInYoutube == true,
-              selectedSeasonIndex =
-                (currentState.showInfo as? ShowInfoState.Loaded)?.selectedSeasonIndex ?: 0,
-            )
-        }
-
-      currentState.copy(
-        showDetails = showDetails ?: currentState.showDetails,
-        showInfo = newShowInfoState,
-        isUpdating = false,
-        errorMessage = null,
-      )
+    coroutineScope.launch {
+      showDetailsInteractor(ShowDetailsInteractor.Param(showId, forceReload))
+        .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
     }
-  }
 
-  private fun isContentEmpty(
-    showMetadata: ShowMetadata,
-    additionalContent: AdditionalContent,
-  ): Boolean {
-    return showMetadata.seasons.isEmpty() &&
-      showMetadata.cast.isEmpty() &&
-      showMetadata.providers.isEmpty() &&
-      additionalContent.similarShows.isEmpty() &&
-      additionalContent.recommendedShows.isEmpty() &&
-      additionalContent.trailers.isEmpty()
+    coroutineScope.launch {
+      similarShowsInteractor(SimilarShowsInteractor.Param(showId, forceReload))
+        .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
+    }
+
+    coroutineScope.launch {
+      watchProvidersInteractor(WatchProvidersInteractor.Param(showId, forceReload))
+        .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
+    }
   }
 }

@@ -4,6 +4,12 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
+import com.thomaskioko.tvmaniac.data.recommendedshows.testing.FakeRecommendedShowsRepository
+import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
+import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.db.RecommendedShows
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
@@ -11,42 +17,50 @@ import com.thomaskioko.tvmaniac.db.SimilarShows
 import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
-import com.thomaskioko.tvmaniac.core.networkutil.model.ServerError
-import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
-import com.thomaskioko.tvmaniac.data.recommendedshows.testing.FakeRecommendedShowsRepository
-import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
-import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
+import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
+import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ProviderModel
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.TrailerModel
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeInstanceOf
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.Test
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class ShowDetailsPresenterTest {
 
   private val seasonsRepository = FakeSeasonsRepository()
   private val trailerRepository = FakeTrailerRepository()
   private val similarShowsRepository = FakeSimilarShowsRepository()
-  private val libraryRepository = FakeWatchlistRepository()
-  private val watchProviders = FakeWatchProviderRepository()
+  private val watchlistRepository = FakeWatchlistRepository()
+  private val watchProvidersRepository = FakeWatchProviderRepository()
   private val castRepository = FakeCastRepository()
   private val recommendedShowsRepository = FakeRecommendedShowsRepository()
   private val showDetailsRepository = FakeShowDetailsRepository()
   private val fakeFormatterUtil = FakeFormatterUtil()
   private val testDispatcher = StandardTestDispatcher()
+  private val coroutineDispatcher = AppCoroutineDispatchers(
+    main = testDispatcher,
+    io = testDispatcher,
+    computation = testDispatcher,
+    databaseWrite = testDispatcher,
+    databaseRead = testDispatcher,
+  )
 
   private lateinit var presenter: ShowDetailsPresenter
 
@@ -64,48 +78,55 @@ class ShowDetailsPresenterTest {
   @Test
   fun `should return SeasonDetailsLoaded when all data is available`() = runTest {
     buildMockData(
-      showDetailResult = Either.Right(tvShowDetails),
-      seasonResult = Either.Right(emptyList()),
-      castList = emptyList(),
-      watchProviderResult = Either.Right(watchProviderList),
-      similarShowResult = Either.Right(similarShowList),
-      recommendedShowResult = Either.Right(recommendedShowList),
-      trailersResult = Either.Right(trailers),
+      showDetailResult = tvShowDetails,
+      watchProviderResult = watchProviderList,
+      similarShowResult = similarShowList,
+      recommendedShowResult = recommendedShowList,
+      trailersResult = trailers,
     )
 
     presenter.state.test {
-      awaitItem() shouldBe
-        ShowDetailsContent(
-          showDetails = null,
-          isUpdating = true,
-        )
+      awaitItem() shouldBe ShowDetailsContent.Empty
 
       val emission = awaitItem()
-      emission.showDetails shouldBe showDetailsContent.showDetails
-      emission.isUpdating shouldBe false
-      emission.errorMessage shouldBe null
-
-      emission.showInfo.shouldBeInstanceOf<ShowInfoState.Loaded>()
-    }
-  }
-
-  @Test
-  fun `should update state with error when show details fetch fails`() = runTest {
-    val errorMessage = "Failed to fetch show details"
-    buildMockData(showDetailResult = Either.Left(ServerError(errorMessage)))
-
-    presenter.state.test {
-      awaitItem() shouldBe ShowDetailsContent(
-        showDetails = null,
-        isUpdating = true,
+      emission.showDetails shouldBe showDetailsContent.showDetails.copy(
+        recommendedShows = persistentListOf(
+          ShowModel(
+            tmdbId = 184958,
+            title = "Loki",
+            posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            isInLibrary = false,
+          ),
+        ),
+        providers = persistentListOf(
+          ProviderModel(
+            id = 184958,
+            logoUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            name = "Netflix",
+          ),
+        ),
+        similarShows = persistentListOf(
+          ShowModel(
+            tmdbId = 184958,
+            title = "Loki",
+            posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            isInLibrary = false,
+          ),
+        ),
+        trailersList = persistentListOf(
+          TrailerModel(
+            showId = 84958,
+            key = "Fd43V",
+            name = "Some title",
+            youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
+          ),
+        ),
       )
+      emission.isRefreshing shouldBe false
+      emission.message shouldBe null
 
-      awaitItem() shouldBe ShowDetailsContent(
-        showDetails = null,
-        isUpdating = false,
-        errorMessage = errorMessage,
-        showInfo = ShowInfoState.Error,
-      )
     }
   }
 
@@ -114,29 +135,22 @@ class ShowDetailsPresenterTest {
     buildMockData()
 
     presenter.state.test {
-      awaitItem() shouldBe ShowDetailsContent(
-        showDetails = null,
-        isUpdating = true,
-      )
+      awaitItem() shouldBe ShowDetailsContent.Empty
 
       val emission = awaitItem()
       emission.showDetails shouldBe showDetailsContent.showDetails
-      emission.isUpdating shouldBe false
-      emission.errorMessage shouldBe null
-      emission.showInfo shouldBe ShowInfoState.Empty
+      emission.isRefreshing shouldBe false
+      emission.message shouldBe null
 
-      seasonsRepository.setSeasonsResult(Either.Right(seasons))
-      watchProviders.setWatchProvidersResult(Either.Right(watchProviderList))
-      similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowList))
-      recommendedShowsRepository.setObserveRecommendedShows(Either.Right(recommendedShowList))
-      trailerRepository.setTrailerResult(Either.Right(trailers))
+      seasonsRepository.setSeasonsResult(seasons)
+      watchProvidersRepository.setWatchProvidersResult(watchProviderList)
+      similarShowsRepository.setSimilarShowsResult(similarShowList)
+      recommendedShowsRepository.setObserveRecommendedShows(recommendedShowList)
+      trailerRepository.setTrailerResult(trailers)
 
       presenter.dispatch(ReloadShowDetails)
 
-      awaitItem().showInfo.shouldBeInstanceOf<ShowInfoState.Loading>()
-
-      val updatedState = awaitItem().showInfo
-      updatedState.shouldBeInstanceOf<ShowInfoState.Loaded>()
+      val updatedState = awaitItem().showDetails
       updatedState.seasonsList.size shouldBe 1
       updatedState.similarShows.size shouldBe 1
       updatedState.providers.size shouldBe 1
@@ -146,33 +160,24 @@ class ShowDetailsPresenterTest {
   @Test
   fun `should update infoState to Loaded with correct data when ReloadShowDetails and fetching season fails`() =
     runTest {
-      val errorMessage = "Failed to fetch show details"
       buildMockData()
 
       presenter.state.test {
-        awaitItem() shouldBe ShowDetailsContent(
-            showDetails = null,
-            isUpdating = true,
-          )
+        awaitItem() shouldBe ShowDetailsContent.Empty
 
         val emission = awaitItem()
         emission.showDetails shouldBe showDetailsContent.showDetails
-        emission.isUpdating shouldBe false
-        emission.errorMessage shouldBe null
-        emission.showInfo shouldBe ShowInfoState.Empty
+        emission.isRefreshing shouldBe false
+        emission.message shouldBe null
 
-        seasonsRepository.setSeasonsResult(Either.Left(ServerError(errorMessage)))
-        watchProviders.setWatchProvidersResult(Either.Right(watchProviderList))
-        similarShowsRepository.setSimilarShowsResult(Either.Right(similarShowList))
-        recommendedShowsRepository.setObserveRecommendedShows(Either.Right(recommendedShowList))
-        trailerRepository.setTrailerResult(Either.Right(trailers))
+        watchProvidersRepository.setWatchProvidersResult(watchProviderList)
+        similarShowsRepository.setSimilarShowsResult(similarShowList)
+        recommendedShowsRepository.setObserveRecommendedShows(recommendedShowList)
+        trailerRepository.setTrailerResult(trailers)
 
         presenter.dispatch(ReloadShowDetails)
 
-        awaitItem().showInfo.shouldBeInstanceOf<ShowInfoState.Loading>()
-
-        val updatedState = awaitItem().showInfo
-        updatedState.shouldBeInstanceOf<ShowInfoState.Loaded>()
+        val updatedState = awaitItem().showDetails
         updatedState.seasonsList.size shouldBe 0
         updatedState.similarShows.size shouldBe 1
         updatedState.providers.size shouldBe 1
@@ -180,39 +185,11 @@ class ShowDetailsPresenterTest {
     }
 
   @Test
-  fun `should clear error message when DismissErrorSnackbar`() = runTest {
-    val errorMessage = "Failed to fetch show details"
-
-    buildMockData(
-      showDetailResult = Either.Left(ServerError(errorMessage)),
-    )
-
-    presenter.state.test {
-      awaitItem() shouldBe ShowDetailsContent(
-          showDetails = null,
-          isUpdating = true,
-        )
-
-      awaitItem() shouldBe ShowDetailsContent(
-          showDetails = null,
-          isUpdating = false,
-          errorMessage = "Failed to fetch show details",
-          showInfo = ShowInfoState.Error,
-        )
-
-      presenter.dispatch(DismissErrorSnackbar)
-
-      val updatedState = awaitItem()
-      updatedState.errorMessage shouldBe null
-    }
-  }
-
-  @Test
   fun `should invoke navigateToSeason when SeasonClicked`() = runTest {
     var navigatedToSeason = false
     val presenter = buildShowDetailsPresenter(
-        onNavigateToSeason = { navigatedToSeason = true },
-      )
+      onNavigateToSeason = { navigatedToSeason = true },
+    )
 
     presenter.dispatch(
       SeasonClicked(
@@ -229,20 +206,20 @@ class ShowDetailsPresenterTest {
   }
 
   private suspend fun buildMockData(
-    isYoutubeInstalled: Boolean = true,
+    isYoutubeInstalled: Boolean = false,
     castList: List<ShowCast> = emptyList(),
-    showDetailResult: Either<Failure, TvshowDetails> = Either.Right(tvShowDetails),
-    seasonResult: Either<Failure, List<ShowSeasons>> = Either.Right(emptyList()),
-    watchProviderResult: Either<Failure, List<WatchProviders>> = Either.Right(emptyList()),
-    similarShowResult: Either<Failure, List<SimilarShows>> = Either.Right(emptyList()),
-    recommendedShowResult: Either<Failure, List<RecommendedShows>> = Either.Right(emptyList()),
-    trailersResult: Either<Failure, List<Trailers>> = Either.Right(emptyList()),
+    showDetailResult: TvshowDetails = tvShowDetails,
+    seasonResult: List<ShowSeasons> = emptyList(),
+    watchProviderResult: List<WatchProviders> = emptyList(),
+    similarShowResult: List<SimilarShows> = emptyList(),
+    recommendedShowResult: List<RecommendedShows> = emptyList(),
+    trailersResult: List<Trailers> = emptyList(),
   ) {
     showDetailsRepository.setShowDetailsResult(showDetailResult)
     trailerRepository.setYoutubePlayerInstalled(isYoutubeInstalled)
     seasonsRepository.setSeasonsResult(seasonResult)
     castRepository.setShowCast(castList)
-    watchProviders.setWatchProvidersResult(watchProviderResult)
+    watchProvidersRepository.setWatchProvidersResult(watchProviderResult)
     similarShowsRepository.setSimilarShowsResult(similarShowResult)
     recommendedShowsRepository.setObserveRecommendedShows(recommendedShowResult)
     trailerRepository.setTrailerResult(trailersResult)
@@ -261,17 +238,35 @@ class ShowDetailsPresenterTest {
       onNavigateToSeason = onNavigateToSeason,
       onNavigateToShow = onNavigateToShow,
       onNavigateToTrailer = onNavigateToTrailer,
-      trailerRepository = trailerRepository,
-      seasonsRepository = seasonsRepository,
-      similarShowsRepository = similarShowsRepository,
-      watchlistRepository = libraryRepository,
-      watchProviders = watchProviders,
-      recommendedShowsRepository = recommendedShowsRepository,
-      castRepository = castRepository,
-      showDetailsRepository = showDetailsRepository,
-      showDetailsMapper = ShowDetailsMapper(
-        formatterUtil = fakeFormatterUtil,
+      watchlistRepository = watchlistRepository,
+      recommendedShowsInteractor = RecommendedShowsInteractor(
+        recommendedShowsRepository = recommendedShowsRepository,
+        dispatchers = coroutineDispatcher,
       ),
+      showDetailsInteractor = ShowDetailsInteractor(
+        showDetailsRepository = showDetailsRepository,
+        dispatchers = coroutineDispatcher,
+      ),
+      similarShowsInteractor = SimilarShowsInteractor(
+        similarShowsRepository = similarShowsRepository,
+        dispatchers = coroutineDispatcher,
+      ),
+      watchProvidersInteractor = WatchProvidersInteractor(
+        repository = watchProvidersRepository,
+        dispatchers = coroutineDispatcher,
+      ),
+      observableShowDetailsInteractor = ObservableShowDetailsInteractor(
+        castRepository = castRepository,
+        recommendedShowsRepository = recommendedShowsRepository,
+        seasonsRepository = seasonsRepository,
+        showDetailsRepository = showDetailsRepository,
+        similarShowsRepository = similarShowsRepository,
+        trailerRepository = trailerRepository,
+        watchProviders = watchProvidersRepository,
+        formatterUtil = fakeFormatterUtil,
+        dispatchers = coroutineDispatcher,
+      ),
+      logger = FakeLogger(),
     )
   }
 }

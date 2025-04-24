@@ -1,8 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails.model
 
-data class Casts(
+data class ProviderModel(
   val id: Long,
+  val logoUrl: String?,
   val name: String,
-  val profileUrl: String? = null,
-  val characterName: String,
 )

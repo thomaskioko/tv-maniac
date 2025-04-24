@@ -245,7 +245,7 @@ class DiscoverShowsPresenterTest {
     popularShowsRepository.setPopularShows(list)
     upcomingShowsRepository.setUpcomingShows(list)
     trendingShowsRepository.setTrendingShows(list)
-    genreRepository.setGenreResult(Either.Right(emptyList()))
+    genreRepository.setGenreResult(emptyList())
   }
 
   private fun createDiscoverShowList(size: Int = LIST_SIZE) = List(size) {

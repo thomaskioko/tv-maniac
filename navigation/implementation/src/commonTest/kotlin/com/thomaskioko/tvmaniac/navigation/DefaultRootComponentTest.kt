@@ -23,12 +23,19 @@ import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRep
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
+import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.ObservableSeasonDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
+import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.Home
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.MoreShows
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverPresenterFactory
-import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.home.DefaultHomePresenter
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter
@@ -42,7 +49,6 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresente
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenter
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsMapper
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
@@ -304,15 +310,35 @@ class DefaultRootComponentTest {
           onNavigateToSeason = {},
           onNavigateToTrailer = {},
           componentContext = componentContext,
-          castRepository = FakeCastRepository(),
           watchlistRepository = FakeWatchlistRepository(),
-          recommendedShowsRepository = FakeRecommendedShowsRepository(),
-          seasonsRepository = FakeSeasonsRepository(),
-          showDetailsRepository = FakeShowDetailsRepository(),
-          similarShowsRepository = FakeSimilarShowsRepository(),
-          trailerRepository = FakeTrailerRepository(),
-          watchProviders = FakeWatchProviderRepository(),
-          showDetailsMapper = ShowDetailsMapper(FakeFormatterUtil()),
+          recommendedShowsInteractor = RecommendedShowsInteractor(
+            recommendedShowsRepository = FakeRecommendedShowsRepository(),
+            dispatchers = coroutineDispatcher,
+          ),
+          showDetailsInteractor = ShowDetailsInteractor(
+            showDetailsRepository = FakeShowDetailsRepository(),
+            dispatchers = coroutineDispatcher,
+          ),
+          watchProvidersInteractor = WatchProvidersInteractor(
+            repository = FakeWatchProviderRepository(),
+            dispatchers = coroutineDispatcher,
+          ),
+          similarShowsInteractor = SimilarShowsInteractor(
+            similarShowsRepository = FakeSimilarShowsRepository(),
+            dispatchers = coroutineDispatcher,
+          ),
+          observableShowDetailsInteractor = ObservableShowDetailsInteractor(
+            castRepository = FakeCastRepository(),
+            recommendedShowsRepository = FakeRecommendedShowsRepository(),
+            seasonsRepository = FakeSeasonsRepository(),
+            showDetailsRepository = FakeShowDetailsRepository(),
+            similarShowsRepository = FakeSimilarShowsRepository(),
+            trailerRepository = FakeTrailerRepository(),
+            watchProviders = FakeWatchProviderRepository(),
+            formatterUtil = FakeFormatterUtil(),
+            dispatchers = coroutineDispatcher,
+          ),
+          logger = FakeLogger(),
         )
       },
     )
@@ -337,8 +363,15 @@ class DefaultRootComponentTest {
           param = param,
           onBack = {},
           onEpisodeClick = {},
-          seasonDetailsRepository = FakeSeasonDetailsRepository(),
-          castRepository = FakeCastRepository(),
+          observableSeasonDetailsInteractor = ObservableSeasonDetailsInteractor(
+            seasonDetailsRepository = FakeSeasonDetailsRepository(),
+            castRepository = FakeCastRepository(),
+          ),
+          seasonDetailsInteractor = SeasonDetailsInteractor(
+            seasonDetailsRepository = FakeSeasonDetailsRepository(),
+            dispatchers = coroutineDispatcher,
+          ),
+          logger = FakeLogger(),
         )
       },
     )

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.seasondetails
 
-import com.thomaskioko.tvmaniac.db.SeasonCast
-import com.thomaskioko.tvmaniac.db.Season_images
+import com.thomaskioko.tvmaniac.domain.seasondetails.model.SeasonCast
+import com.thomaskioko.tvmaniac.domain.seasondetails.model.SeasonImages
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.Cast
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonImagesModel
@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 
-fun List<EpisodeDetails>.toEpisodes(): PersistentList<EpisodeDetailsModel> =
+internal fun List<EpisodeDetails>.toEpisodes(): PersistentList<EpisodeDetailsModel> =
   map {
       EpisodeDetailsModel(
         id = it.id,
@@ -31,22 +31,22 @@ fun List<EpisodeDetails>.toEpisodes(): PersistentList<EpisodeDetailsModel> =
     }
     .toPersistentList()
 
-fun List<Season_images>.toImageList(): PersistentList<SeasonImagesModel> =
+internal fun List<SeasonImages>.toImageList(): PersistentList<SeasonImagesModel> =
   map {
       SeasonImagesModel(
         id = it.id,
-        imageUrl = it.image_url,
+        imageUrl = it.imageUrl,
       )
     }
     .toPersistentList()
 
-fun List<SeasonCast>.toCastList(): PersistentList<Cast> =
-  map {
+internal fun List<SeasonCast>.toCastList(): PersistentList<Cast> =
+  this.map {
       Cast(
-        id = it.id.id,
+        id = it.id,
         name = it.name,
-        profileUrl = it.profile_path,
-        characterName = it.character_name,
+        profileUrl = it.profilePath,
+        characterName = it.characterName,
       )
     }
     .toPersistentList()

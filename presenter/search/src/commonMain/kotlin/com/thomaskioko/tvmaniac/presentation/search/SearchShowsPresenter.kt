@@ -81,7 +81,7 @@ class SearchShowsPresenter(
             (it as? ShowContentAvailable)?.copy(errorMessage = null) ?: it
           }
         }
-        ReloadShowContent -> coroutineScope.launch { observeGenre(refresh = true) }
+        ReloadShowContent -> coroutineScope.launch { genreRepository.fetchGenresWithShows(true) }
         LoadDiscoverShows, ClearQuery -> coroutineScope.launch { observeGenre() }
         is QueryChanged -> handleQueryChange(action.query)
         is SearchShowClicked -> onNavigateToShowDetails(action.id)
@@ -89,21 +89,16 @@ class SearchShowsPresenter(
       }
     }
 
-    private suspend fun observeGenre(refresh: Boolean = false) {
-      genreRepository.observeGenresWithShows(refresh)
+    private suspend fun observeGenre() {
+      genreRepository.observeGenresWithShows()
         .onStart { updateShowState() }
         .collect { result ->
-          result.fold(
-            onFailure = { handleErrorState(it) },
-            onSuccess = { list ->
-              _state.update {
-                ShowContentAvailable(
-                  isUpdating = false,
-                  genres = mapper.toGenreList(list),
-                )
-              }
-            },
-          )
+          _state.update {
+            ShowContentAvailable(
+              isUpdating = false,
+              genres = mapper.toGenreList(result),
+            )
+          }
         }
     }
 

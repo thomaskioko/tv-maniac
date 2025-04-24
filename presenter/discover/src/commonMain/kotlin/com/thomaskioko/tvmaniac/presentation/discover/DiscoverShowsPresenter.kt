@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.shows.api.model.Category
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -73,6 +74,7 @@ class DiscoverShowsPresenter(
     private val upcomingLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
+    private val _state: MutableStateFlow<DiscoverViewState> = MutableStateFlow(DiscoverViewState.Empty)
     val state: StateFlow<DiscoverViewState> = combine(
       featuredLoadingState.observable,
       topRatedLoadingState.observable,
@@ -81,10 +83,11 @@ class DiscoverShowsPresenter(
       upcomingLoadingState.observable,
       discoverShowsInteractor.flow,
       uiMessageManager.message,
+      _state
     ) { featuredShowsIsUpdating, topRatedShowsIsUpdating, popularShowsIsUpdating,
-        trendingShowsIsUpdating, upComingIsUpdating, showData, message ->
+        trendingShowsIsUpdating, upComingIsUpdating, showData, message, currentState ->
 
-      DiscoverViewState(
+      currentState.copy(
         message = message,
         featuredRefreshing = featuredShowsIsUpdating,
         topRatedRefreshing = topRatedShowsIsUpdating,
@@ -100,7 +103,7 @@ class DiscoverShowsPresenter(
     }.stateIn(
       scope = coroutineScope,
       started = SharingStarted.WhileSubscribed(),
-      initialValue = DiscoverViewState.Empty,
+      initialValue = _state.value,
     )
 
     fun init() {
