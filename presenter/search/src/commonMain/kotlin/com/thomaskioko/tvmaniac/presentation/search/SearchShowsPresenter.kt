@@ -4,7 +4,6 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.genre.GenreRepository
 import com.thomaskioko.tvmaniac.search.api.SearchRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
@@ -116,8 +115,10 @@ class SearchShowsPresenter(
         .distinctUntilChanged()
         .debounce(300)
         .filter { it.trim().length >= 3 }
-        .onEach { query -> updateSearchLoadingState(query) }
-        .flatMapLatest { query -> searchRepository.search(query) }
+        .onEach { query ->
+          updateSearchLoadingState(query)
+        }
+        .flatMapLatest { query -> searchRepository.observeSearchResults(query) }
         .catch { error ->
           _state.update {
             EmptySearchResult(
@@ -127,14 +128,12 @@ class SearchShowsPresenter(
           }
         }
         .collect { result ->
-          result.fold(
-            onFailure = { handleErrorState(it) },
-            onSuccess = { handleSearchResults(it) },
-          )
+          handleSearchResults(result)
         }
     }
 
-    private fun updateSearchLoadingState(query: String) {
+    private suspend fun updateSearchLoadingState(query: String) {
+      searchRepository.search(query)
       _state.update { state ->
         when (state) {
           is SearchResultAvailable -> state.copy(isUpdating = true, query = query)
@@ -153,31 +152,22 @@ class SearchShowsPresenter(
       }
     }
 
-    private fun handleErrorState(error: Failure) {
-      _state.update { state ->
-        EmptySearchResult(
-          query = state.query,
-          errorMessage = error.errorMessage ?: "An unknown error occurred"
-        )
-      }
-    }
-
     private fun handleSearchResults(shows: List<ShowEntity>) {
       _state.update { state ->
         val currentQuery = queryFlow.replayCache.lastOrNull() ?: state.query
         when {
           !state.isUpdating && shows.isEmpty() -> EmptySearchResult(
-            query = currentQuery
+            query = currentQuery,
           )
           state is SearchResultAvailable -> state.copy(
             isUpdating = false,
             results = mapper.toShowList(shows),
-            query = currentQuery
+            query = currentQuery,
           )
           else -> SearchResultAvailable(
             isUpdating = false,
             results = mapper.toShowList(shows),
-            query = currentQuery
+            query = currentQuery,
           )
         }
       }

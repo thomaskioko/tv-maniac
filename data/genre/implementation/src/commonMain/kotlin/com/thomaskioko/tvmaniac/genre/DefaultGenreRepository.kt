@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.genre
 
 import com.thomaskioko.tvmaniac.db.Tvshow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
@@ -19,15 +20,17 @@ class DefaultGenreRepository(
 ) : GenreRepository {
 
   override suspend fun fetchGenresWithShows(forceRefresh: Boolean) {
+    val isEmpty = genreDao.getGenres().isEmpty()
     when {
-      forceRefresh -> store.fresh(Unit)
+      forceRefresh || isEmpty -> store.fresh(Unit)
       else -> store.get(Unit)
     }
   }
 
   override suspend fun fetchShowByGenreId(id: String, forceRefresh: Boolean) {
+    val isEmpty = genreDao.observeShowsByGenreId(id).first().isEmpty()
     when {
-      forceRefresh -> showsByGenreIdStore.fresh(id)
+      forceRefresh || isEmpty -> showsByGenreIdStore.fresh(id)
       else -> showsByGenreIdStore.get(id)
     }
   }
