@@ -33,9 +33,8 @@ class DefaultPopularShowsRepository(
 
   override suspend fun fetchPopularShows(forceRefresh: Boolean) {
     val page = DEFAULT_API_PAGE //TODO:: Get the page from the dao
-    val refresh = forceRefresh || isRequestExpired(page)
     when {
-      refresh -> store.fresh(page)
+      forceRefresh -> store.fresh(page)
       else -> store.get(page)
     }
   }
@@ -52,7 +51,7 @@ class DefaultPopularShowsRepository(
   }
 
   private suspend fun fetchPage(page: Long, forceRefresh: Boolean): FetchResult {
-    return if (shouldFetchPage(page, forceRefresh)) {
+    return if (forceRefresh) {
       try {
         val result = store.fresh(page)
         updateRequestManager(page)
@@ -66,20 +65,6 @@ class DefaultPopularShowsRepository(
     } else {
       FetchResult.NoFetch
     }
-  }
-
-  private fun shouldFetchPage(page: Long, forceRefresh: Boolean): Boolean {
-    if (forceRefresh) return true
-    val pageExists = popularShowsDao.pageExists(page)
-    return !pageExists || isRequestExpired(page)
-  }
-
-  private fun isRequestExpired(page: Long): Boolean {
-    return requestManagerRepository.isRequestExpired(
-      entityId = page,
-      requestType = POPULAR_SHOWS.name,
-      threshold = POPULAR_SHOWS.duration
-    )
   }
 
   private fun updateRequestManager(page: Long) {

@@ -110,7 +110,7 @@ class DiscoverShowsInteractorTest {
     popularShowsRepository.setPopularShows(shows)
     trendingShowsRepository.setTrendingShows(shows)
     upcomingShowsRepository.setUpcomingShows(shows)
-    genreRepository.setGenreResult(Either.Right(emptyList()))
+    genreRepository.setGenreResult(emptyList())
   }
 
   private fun createTestShows() = List(3) {

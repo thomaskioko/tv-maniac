@@ -7,23 +7,25 @@ tvmaniac {
     useKotlinInject()
     useSerialization()
   }
+
+  optIn(
+    "kotlinx.coroutines.ExperimentalCoroutinesApi"
+  )
 }
 
 kotlin {
   sourceSets {
     commonMain {
       dependencies {
+        api(projects.core.view)
         implementation(projects.core.base)
-        implementation(projects.data.cast.api)
-        implementation(projects.data.recommendedshows.api)
-        implementation(projects.data.seasons.api)
-        implementation(projects.data.showdetails.api)
-        implementation(projects.data.shows.api)
-        implementation(projects.data.similar.api)
-        implementation(projects.data.trailers.api)
+        implementation(projects.core.logger.api)
         implementation(projects.core.util)
+        implementation(projects.domain.recommendedshows)
+        implementation(projects.domain.showdetails)
+        implementation(projects.domain.similarshows)
+        implementation(projects.domain.watchproviders)
         implementation(projects.data.watchlist.api)
-        implementation(projects.data.watchproviders.api)
 
         api(libs.decompose.decompose)
         api(libs.essenty.lifecycle)
@@ -34,6 +36,8 @@ kotlin {
 
     commonTest {
       dependencies {
+        implementation(projects.core.logger.fixture)
+        implementation(projects.core.util.testing)
         implementation(projects.data.cast.testing)
         implementation(projects.data.watchlist.testing)
         implementation(projects.data.recommendedshows.testing)
@@ -42,7 +46,6 @@ kotlin {
         implementation(projects.data.similar.testing)
         implementation(projects.data.trailers.testing)
         implementation(projects.data.watchproviders.testing)
-        implementation(projects.core.util.testing)
 
         implementation(libs.bundles.unittest)
       }

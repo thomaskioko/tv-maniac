@@ -16,7 +16,7 @@ struct SeasonDetailsView: View {
 
   @Environment(\.presentationMode) var presentationMode
 
-  @StateFlow private var uiState: SeasonDetailState
+  @StateFlow private var uiState: SeasonDetails
   @State private var isTruncated = false
   @State private var showFullText = false
   @State private var showModal = false
@@ -32,14 +32,9 @@ struct SeasonDetailsView: View {
     ZStack {
       Color.background.edgesIgnoringSafeArea(.all)
 
-      switch onEnum(of: uiState) {
-      case .initialSeasonsState:
-        CenteredFullScreenView {
-          LoadingIndicatorView(animate: true)
-        }
-      case let .seasonDetailsLoaded(state):
-        SeasonDetailsContent(state)
-      case .seasonDetailsErrorState:
+      if uiState.message != nil {
+        SeasonDetailsContent(uiState)
+      } else {
         FullScreenView(
           systemName: "exclamationmark.triangle.fill",
           message: "Something went wrong",
@@ -53,26 +48,22 @@ struct SeasonDetailsView: View {
     .navigationBarColor(backgroundColor: .clear)
     .overlay(
       VStack(spacing: 0) {
-        GlassToolbar(title: (uiState as? SeasonDetailsLoaded)?.seasonName ?? "", opacity: showGlass)
-        if let state = uiState as? SeasonDetailsLoaded {
-          ProgressView(value: state.watchProgress, total: 1)
-            .progressViewStyle(RoundedRectProgressViewStyle())
-            .offset(y: progressViewOffset)
-        }
+        GlassToolbar(title: uiState.seasonName, opacity: showGlass)
+        ProgressView(value: uiState.watchProgress, total: 1)
+          .progressViewStyle(RoundedRectProgressViewStyle())
+          .offset(y: progressViewOffset)
       },
       alignment: .top
     )
     .animation(.easeInOut(duration: 0.25), value: showGlass)
     .edgesIgnoringSafeArea(.top)
     .sheet(isPresented: $showModal) {
-      if let uiState = uiState as? SeasonDetailsLoaded {
-        ImageGalleryContentView(items: uiState.seasonImages.map { $0.toSwift() })
-      }
+      ImageGalleryContentView(items: uiState.seasonImages.map { $0.toSwift() })
     }
   }
 
   @ViewBuilder
-  private func SeasonDetailsContent(_ state: SeasonDetailsLoaded) -> some View {
+  private func SeasonDetailsContent(_ state: SeasonDetails) -> some View {
     ParallaxView(
       imageHeight: DimensionConstants.imageHeight,
       collapsedImageHeight: DimensionConstants.collapsedImageHeight,
@@ -131,7 +122,7 @@ struct SeasonDetailsView: View {
   }
 
   @ViewBuilder
-  private func HeaderContent(state: SeasonDetailsLoaded, progress: CGFloat, headerHeight: CGFloat) -> some View {
+  private func HeaderContent(state: SeasonDetails, progress: CGFloat, headerHeight: CGFloat) -> some View {
     ZStack(alignment: .bottom) {
       HeaderCoverArtWorkView(
         imageUrl: state.imageUrl,
@@ -193,7 +184,7 @@ struct SeasonDetailsView: View {
 
   private func toCastsList(_ list: [Cast]) -> [SwiftCast] {
     return list.map { cast -> SwiftCast in
-      .init(castId: cast.id, name: cast.name, characterName: cast.characterName, profileUrl: cast.profileUrl)
+        .init(castId: cast.id, name: cast.name, characterName: cast.characterName, profileUrl: cast.profileUrl)
     }
   }
 

@@ -14,10 +14,12 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCH_PROV
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.WatchProvidersResult
 import com.thomaskioko.tvmaniac.util.FormatterUtil
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
+import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
 class WatchProvidersStore(
@@ -32,8 +34,7 @@ class WatchProvidersStore(
     when (val response = remoteDataSource.getShowWatchProviders(id)) {
       is ApiResponse.Success -> response.body
       is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
-      is ApiResponse.Error.HttpError ->
-        throw Throwable("${response.code} - ${response.errorMessage}")
+      is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
       is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
     }
   },
@@ -47,8 +48,7 @@ class WatchProvidersStore(
             dao.upsert(
               Watch_providers(
                 id = Id(it.providerId.toLong()),
-                logo_path =
-                  it.logoPath?.let { path -> formatterUtil.formatTmdbPosterPath(path) },
+                logo_path = it.logoPath?.let { path -> formatterUtil.formatTmdbPosterPath(path) },
                 name = it.providerName,
                 tmdb_id = Id(id),
               ),
@@ -58,8 +58,7 @@ class WatchProvidersStore(
             dao.upsert(
               Watch_providers(
                 id = Id(it.providerId.toLong()),
-                logo_path =
-                  it.logoPath?.let { path -> formatterUtil.formatTmdbPosterPath(path) },
+                logo_path = it.logoPath?.let { path -> formatterUtil.formatTmdbPosterPath(path) },
                 name = it.providerName,
                 tmdb_id = Id(id),
               ),
@@ -79,5 +78,13 @@ class WatchProvidersStore(
     readDispatcher = dispatchers.databaseRead,
     writeDispatcher = dispatchers.databaseWrite,
   ),
-)
-  .build()
+).validator(
+  Validator.by {
+    withContext(dispatchers.io) {
+      requestManagerRepository.isRequestValid(
+        requestType = WATCH_PROVIDERS.name,
+        threshold = WATCH_PROVIDERS.duration,
+      )
+    }
+  },
+).build()

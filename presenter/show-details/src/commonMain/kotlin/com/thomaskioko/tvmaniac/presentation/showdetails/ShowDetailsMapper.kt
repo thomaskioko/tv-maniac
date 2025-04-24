@@ -1,136 +1,90 @@
 package com.thomaskioko.tvmaniac.presentation.showdetails
 
-import com.thomaskioko.tvmaniac.db.RecommendedShows
-import com.thomaskioko.tvmaniac.db.ShowCast
-import com.thomaskioko.tvmaniac.db.ShowSeasons
-import com.thomaskioko.tvmaniac.db.SimilarShows
-import com.thomaskioko.tvmaniac.db.Trailers
-import com.thomaskioko.tvmaniac.db.TvshowDetails
-import com.thomaskioko.tvmaniac.db.WatchProviders
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Casts
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Providers
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
-import com.thomaskioko.tvmaniac.util.FormatterUtil
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.CastModel
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ProviderModel
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.SeasonModel
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowModel
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetailsModel
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.TrailerModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import me.tatarka.inject.annotations.Inject
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Casts as DomainCasts
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Providers as DomainProviders
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Season as DomainSeason
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Show as DomainShow
+import com.thomaskioko.tvmaniac.domain.showdetails.model.ShowDetails as DomainShowDetails
+import com.thomaskioko.tvmaniac.domain.showdetails.model.Trailer as DomainTrailer
 
-@Inject
-class ShowDetailsMapper(
-  private val formatterUtil: FormatterUtil,
-) {
+fun DomainShowDetails.toShowDetails(): ShowDetailsModel = ShowDetailsModel(
+    tmdbId = tmdbId,
+    title = title,
+    overview = overview,
+    language = language,
+    posterImageUrl = posterImageUrl,
+    backdropImageUrl = backdropImageUrl,
+    votes = votes,
+    rating = rating,
+    year = year,
+    status = status,
+    isInLibrary = isInLibrary,
+    hasWebViewInstalled = hasWebViewInstalled,
+    numberOfSeasons = numberOfSeasons,
+    genres = genres.toImmutableList(),
+    seasonsList = seasonsList.toSeasonsList(),
+    providers = providers.toWatchProviderList(),
+    castsList = castsList.toCastList(),
+    similarShows = similarShows.toShowList(),
+    recommendedShows = recommendedShows.toShowList(),
+    trailersList = trailersList.toTrailerList(),
+)
 
-  fun toShowDetails(show: TvshowDetails): ShowDetails =
-    ShowDetails(
-      tmdbId = show.id.id,
-      title = show.name,
-      overview = show.overview,
-      language = show.language,
-      posterImageUrl = show.poster_path,
-      backdropImageUrl = show.backdrop_path,
-      votes = show.vote_count,
-      rating = formatterUtil.formatDouble(show.vote_average, 1),
-      genres = show.genre_list?.split(", ")?.toImmutableList() ?: persistentListOf(),
-      year = show.last_air_date ?: show.first_air_date ?: "",
-      status = show.status,
-      isFollowed = show.in_library == 1L,
-    )
+internal fun List<DomainCasts>.toCastList(): ImmutableList<CastModel> =
+    this.map {
+        CastModel(
+            id = it.id,
+            name = it.name,
+            profileUrl = it.profileUrl,
+            characterName = it.characterName,
+        )
+    }.toImmutableList()
 
-}
+internal fun List<DomainShow>.toShowList(): ImmutableList<ShowModel> =
+    this.map {
+        ShowModel(
+            tmdbId = it.tmdbId,
+            title = it.title,
+            posterImageUrl = it.posterImageUrl,
+            backdropImageUrl = it.backdropImageUrl,
+            isInLibrary = it.isInLibrary,
+        )
+    }.toImmutableList()
 
-internal fun Either<Failure, List<ShowSeasons>>.toSeasonsListOrEmpty(): ImmutableList<Season> =
-  (this as? Either.Right)?.right?.toSeasonsList() ?: persistentListOf()
+internal fun List<DomainProviders>.toWatchProviderList(): ImmutableList<ProviderModel> =
+    this.map {
+        ProviderModel(
+            id = it.id,
+            name = it.name,
+            logoUrl = it.logoUrl,
+        )
+    }.toImmutableList()
 
-internal fun Either<Failure, List<WatchProviders>>.toWatchProviderListOrEmpty():
-  ImmutableList<Providers> =
-  (this as? Either.Right)?.right?.toWatchProviderList() ?: persistentListOf()
-
-internal fun Either<Failure, List<SimilarShows>>.toSimilarShowListOrEmpty(): ImmutableList<Show> =
-  (this as? Either.Right)?.right?.toSimilarShowList() ?: persistentListOf()
-
-internal fun Either<Failure, List<RecommendedShows>>.toRecommendedShowListOrEmpty():
-  ImmutableList<Show> =
-  (this as? Either.Right)?.right?.toRecommendedShowList() ?: persistentListOf()
-
-internal fun Either<Failure, List<Trailers>>.toTrailerListOrEmpty(): ImmutableList<Trailer> =
-  (this as? Either.Right)?.right?.toTrailerList() ?: persistentListOf()
-
-internal fun List<ShowCast>?.toCastList(): ImmutableList<Casts> =
-  this?.map {
-    Casts(
-      id = it.id.id,
-      name = it.name,
-      profileUrl = it.profile_path,
-      characterName = it.character_name,
-    )
-  }
-    ?.toImmutableList()
-    ?: persistentListOf()
-
-private fun List<SimilarShows>?.toSimilarShowList(): ImmutableList<Show> =
-  this?.map {
-    Show(
-      tmdbId = it.id.id,
-      title = it.name,
-      posterImageUrl = it.poster_path,
-      backdropImageUrl = it.backdrop_path,
-      isInLibrary = it.in_library == 1L,
-    )
-  }
-    ?.toImmutableList()
-    ?: persistentListOf()
-
-private fun List<RecommendedShows>?.toRecommendedShowList(): ImmutableList<Show> =
-  this?.map {
-    Show(
-      tmdbId = it.id.id,
-      title = it.name,
-      posterImageUrl = it.poster_path,
-      backdropImageUrl = it.backdrop_path,
-      isInLibrary = it.in_library == 1L,
-    )
-  }
-    ?.toImmutableList()
-    ?: persistentListOf()
-
-private fun List<WatchProviders>?.toWatchProviderList(): ImmutableList<Providers> =
-  this?.map {
-    Providers(
-      id = it.id.id,
-      name = it.name ?: "",
-      logoUrl = it.logo_path,
-    )
-  }
-    ?.toImmutableList()
-    ?: persistentListOf()
+internal fun List<DomainSeason>.toSeasonsList(): ImmutableList<SeasonModel> =
+    this.map {
+        SeasonModel(
+            seasonId = it.seasonId,
+            tvShowId = it.tvShowId,
+            name = it.name,
+            seasonNumber = it.seasonNumber,
+        )
+    }.toImmutableList()
 
 
-private fun List<ShowSeasons>?.toSeasonsList(): ImmutableList<Season> =
-  this?.map {
-    Season(
-      seasonId = it.season_id.id,
-      tvShowId = it.show_id.id,
-      name = it.season_title,
-      seasonNumber = it.season_number,
-    )
-  }
-    ?.toImmutableList()
-    ?: persistentListOf()
-
-private fun List<Trailers>?.toTrailerList(): ImmutableList<Trailer> =
-  this?.map {
-    Trailer(
-      showId = it.show_id.id,
-      key = it.key,
-      name = it.name,
-      youtubeThumbnailUrl = "https://i.ytimg.com/vi/${it.key}/hqdefault.jpg",
-    )
-  }
-    ?.toImmutableList()
-    ?: persistentListOf()
+internal fun List<DomainTrailer>.toTrailerList(): ImmutableList<TrailerModel> =
+    this.map {
+        TrailerModel(
+            showId = it.showId,
+            key = it.key,
+            name = it.name,
+            youtubeThumbnailUrl = it.youtubeThumbnailUrl,
+        )
+    }.toImmutableList()

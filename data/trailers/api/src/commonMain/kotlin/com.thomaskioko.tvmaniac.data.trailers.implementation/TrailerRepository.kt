@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface TrailerRepository {
   fun isYoutubePlayerInstalled(): Flow<Boolean>
 
-  fun observeTrailers(id: Long): Flow<Either<Failure, List<Trailers>>>
+  fun observeTrailers(id: Long): Flow<List<Trailers>>
 }

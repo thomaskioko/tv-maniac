@@ -20,13 +20,13 @@ struct ShowDetailsView: View {
       collapsedImageHeight: DimensionConstants.collapsedImageHeight,
       header: { proxy in
         HeaderView(
-          title: uiState.showDetails?.title ?? "",
-          overview: uiState.showDetails?.overview ?? "",
-          backdropImageUrl: uiState.showDetails?.backdropImageUrl ?? "",
-          status: uiState.showDetails?.status ?? "",
-          year: uiState.showDetails?.year ?? "",
-          language: uiState.showDetails?.language ?? "",
-          rating: uiState.showDetails?.rating ?? 0,
+          title: uiState.showDetails.title,
+          overview: uiState.showDetails.overview,
+          backdropImageUrl: uiState.showDetails.backdropImageUrl,
+          status: uiState.showDetails.status,
+          year: uiState.showDetails.year,
+          language: uiState.showDetails.language,
+          rating: uiState.showDetails.rating,
           progress: proxy.getTitleOpacity(
             geometry: proxy,
             imageHeight: DimensionConstants.imageHeight,
@@ -49,9 +49,9 @@ struct ShowDetailsView: View {
     .navigationBarColor(backgroundColor: .clear)
     .overlay(
       GlassToolbar(
-        title: uiState.showDetails?.title ?? "",
+        title: uiState.showDetails.title,
         opacity: showGlass,
-        isLoading: uiState.isUpdating
+        isLoading: uiState.isRefreshing
       ),
       alignment: .top
     )
@@ -61,59 +61,44 @@ struct ShowDetailsView: View {
     .sheet(isPresented: $showCustomList) {
       WatchlistSelector(
         showView: $showCustomList,
-        title: uiState.showDetails?.title ?? "",
-        posterUrl: uiState.showDetails?.posterImageUrl
+        title: uiState.showDetails.title,
+        posterUrl: uiState.showDetails.posterImageUrl
       )
     }
   }
 
   @ViewBuilder
   private var showInfoDetails: some View {
-    switch onEnum(of: uiState.showInfo) {
-    case .loading, .empty:
-      ProgressView()
-        .progressViewStyle(CircularProgressViewStyle())
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.background)
-    case .error:
-      FullScreenView(
-        buttonText: "Retry",
-        action: { presenter.dispatch(action: ReloadShowDetails()) }
-      )
-    case let .loaded(state):
-      if let show = uiState.showDetails {
-        ShowInfoView(
-          isFollowed: show.isFollowed,
-          openTrailersInYoutube: state.openTrailersInYoutube,
-          genreList: show.genres.map { $0.toSwift() },
-          seasonList: state.seasonsList.map { $0.toSwift() },
-          providerList: state.providers.map { $0.toSwift() },
-          trailerList: state.trailersList.map { $0.toSwift() },
-          castsList: state.castsList.map { $0.toSwift() },
-          recommendedShowList: state.recommendedShowList.map { $0.toSwift() },
-          similarShows: state.similarShows.map { $0.toSwift() },
-          onAddToCustomList: {
-            showCustomList.toggle()
-          },
-          onAddToLibrary: {
-            presenter.dispatch(action: FollowShowClicked(addToLibrary: show.isFollowed))
-          },
-          onSeasonClicked: { index, season in
-            let params = ShowSeasonDetailsParam(
-              showId: season.tvShowId,
-              seasonId: season.seasonId,
-              seasonNumber: season.seasonNumber,
-              selectedSeasonIndex: Int32(index)
-            )
-
-            presenter.dispatch(action: SeasonClicked(params: params))
-          },
-          onShowClicked: { id in
-            presenter.dispatch(action: DetailShowClicked(id: id))
-          }
+    ShowInfoView(
+      isFollowed: uiState.showDetails.isInLibrary,
+      openTrailersInYoutube: uiState.showDetails.hasWebViewInstalled,
+      genreList: uiState.showDetails.genres.map { $0.toSwift() },
+      seasonList: uiState.showDetails.seasonsList.map { $0.toSwift() },
+      providerList: uiState.showDetails.providers.map { $0.toSwift() },
+      trailerList: uiState.showDetails.trailersList.map { $0.toSwift() },
+      castsList: uiState.showDetails.castsList.map { $0.toSwift() },
+      recommendedShowList: uiState.showDetails.recommendedShows.map { $0.toSwift() },
+      similarShows: uiState.showDetails.similarShows.map { $0.toSwift() },
+      onAddToCustomList: {
+        showCustomList.toggle()
+      },
+      onAddToLibrary: {
+        presenter.dispatch(action: FollowShowClicked(addToLibrary: uiState.showDetails.isInLibrary))
+      },
+      onSeasonClicked: { index, season in
+        let params = ShowSeasonDetailsParam(
+          showId: season.tvShowId,
+          seasonId: season.seasonId,
+          seasonNumber: season.seasonNumber,
+          selectedSeasonIndex: Int32(index)
         )
+
+        presenter.dispatch(action: SeasonClicked(params: params))
+      },
+      onShowClicked: { id in
+        presenter.dispatch(action: DetailShowClicked(id: id))
       }
-    }
+    )
   }
 
   private enum CoordinateSpaces {

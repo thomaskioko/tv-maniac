@@ -25,7 +25,7 @@ data class SearchResultAvailable(
   override val query: String? = null,
   override val isUpdating: Boolean = false,
   val errorMessage: String? = null,
-  val results: ImmutableList<ShowItem>? = null,
+  val results: ImmutableList<ShowItem> = persistentListOf(),
 ): SearchShowState
 
 data class ShowContentAvailable(

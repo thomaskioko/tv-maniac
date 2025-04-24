@@ -2,11 +2,7 @@ package com.thomaskioko.tvmaniac.data.upcomingshows.implementation
 
 import androidx.paging.Pager
 import androidx.paging.PagingData
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.core.store.mapToEither
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.core.paging.CommonPagingConfig.pagingConfig
 import com.thomaskioko.tvmaniac.core.paging.FetchResult
 import com.thomaskioko.tvmaniac.core.paging.PaginatedRemoteMediator
@@ -19,17 +15,15 @@ import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_API_PAGE
 import com.thomaskioko.tvmaniac.tmdb.api.DEFAULT_SORT_ORDER
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import com.thomaskioko.tvmaniac.util.startOfDay
-import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 import org.mobilenativefoundation.store.store5.impl.extensions.get
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import kotlin.time.Duration.Companion.days
 
 @Inject
 @SingleIn(AppScope::class)
@@ -51,9 +45,8 @@ class DefaultUpcomingShowsRepository(
     )
 
   override suspend fun fetchUpcomingShows(forceRefresh: Boolean) {
-    val refresh = forceRefresh || isRequestExpired(params.page)
     when {
-      refresh -> store.fresh(params)
+      forceRefresh -> store.fresh(params)
       else -> store.get(params)
     }
   }
@@ -62,24 +55,23 @@ class DefaultUpcomingShowsRepository(
 
   override fun getPagedUpcomingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
     return Pager(
-        config = pagingConfig,
-        remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
-        pagingSourceFactory = dao::getPagedUpcomingShows
-      )
+      config = pagingConfig,
+      remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
+      pagingSourceFactory = dao::getPagedUpcomingShows,
+    )
       .flow
   }
 
   private suspend fun fetchPage(page: Long, forceRefresh: Boolean): FetchResult {
-    return if (shouldFetchPage(page, forceRefresh)) {
+    return if (forceRefresh || !dao.pageExists(page)) {
       try {
-        val result =
-          store.fresh(
-            UpcomingParams(
-              startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
-              endDate = dateFormatter.formatDate(startOfDay.plus(122.days).toEpochMilliseconds()),
-              page = page,
-            )
-          )
+        val result = store.fresh(
+          UpcomingParams(
+            startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
+            endDate = dateFormatter.formatDate(startOfDay.plus(122.days).toEpochMilliseconds()),
+            page = page,
+          ),
+        )
         updateRequestManager(page)
         FetchResult.Success(endOfPaginationReached = result.isEmpty())
       } catch (e: CancellationException) {
@@ -91,20 +83,6 @@ class DefaultUpcomingShowsRepository(
     } else {
       FetchResult.NoFetch
     }
-  }
-
-  private fun shouldFetchPage(page: Long, forceRefresh: Boolean): Boolean {
-    if (forceRefresh) return true
-    val pageExists = dao.pageExists(page)
-    return !pageExists || isRequestExpired(page)
-  }
-
-  private fun isRequestExpired(page: Long): Boolean {
-    return requestManagerRepository.isRequestExpired(
-      entityId = page,
-      requestType = UPCOMING_SHOWS.name,
-      threshold = UPCOMING_SHOWS.duration,
-    )
   }
 
   private fun updateRequestManager(page: Long) {

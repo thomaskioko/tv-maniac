@@ -33,9 +33,8 @@ class DefaultTopRatedShowsRepository(
 
   override suspend fun fetchTopRatedShows(forceRefresh: Boolean) {
     val page = DEFAULT_API_PAGE //TODO:: Get the page from the dao
-    val refresh = forceRefresh || isRequestExpired(page)
     when {
-      refresh -> store.fresh(page)
+      forceRefresh -> store.fresh(page)
       else -> store.get(page)
     }
   }
@@ -44,10 +43,10 @@ class DefaultTopRatedShowsRepository(
 
   override fun getPagedTopRatedShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
     return Pager(
-        config = pagingConfig,
-        remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
-        pagingSourceFactory = dao::getPagedTopRatedShows
-      )
+      config = pagingConfig,
+      remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
+      pagingSourceFactory = dao::getPagedTopRatedShows,
+    )
       .flow
   }
 

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.data.seasondetails
 
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
@@ -9,8 +9,8 @@ import kotlinx.collections.immutable.persistentListOf
 
 internal fun buildSeasonDetailsLoaded(
   episodeDetailsList: ImmutableList<EpisodeDetailsModel> = persistentListOf()
-): SeasonDetailsLoaded {
-  return SeasonDetailsLoaded(
+): SeasonDetailsModel {
+  return SeasonDetailsModel(
     seasonId = 12343L,
     seasonName = "Season 01",
     episodeCount = 1,

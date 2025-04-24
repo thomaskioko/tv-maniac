@@ -8,6 +8,7 @@ kotlin {
       dependencies {
         api(projects.database)
         api(projects.core.networkUtil)
+
         implementation(projects.data.shows.api)
 
         api(libs.coroutines.core)

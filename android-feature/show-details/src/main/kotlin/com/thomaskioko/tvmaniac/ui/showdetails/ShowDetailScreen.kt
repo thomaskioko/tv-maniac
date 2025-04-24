@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.ui.showdetails
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -36,7 +34,6 @@ import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.AutoAwesomeMotion
-import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -63,7 +60,6 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -75,6 +71,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -82,7 +79,6 @@ import com.thomaskioko.tvmaniac.compose.components.FilledHorizontalIconButton
 import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
 import com.thomaskioko.tvmaniac.compose.components.FilledVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
-import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.SheetDragHandle
@@ -104,17 +100,15 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.SeasonClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsAction
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsContent
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowInfoState
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowShowsListSheet
 import com.thomaskioko.tvmaniac.presentation.showdetails.WatchTrailerClicked
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Casts
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Providers
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Season
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Show
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.CastModel
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ProviderModel
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.SeasonModel
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowModel
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.Trailer
-import com.thomaskioko.tvmaniac.android.resources.R
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.TrailerModel
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
@@ -131,7 +125,7 @@ fun ShowDetailsScreen(
   ShowDetailsScreen(
     modifier = modifier,
     state = state,
-    title = state.showDetails?.title ?: "",
+    title = state.showDetails.title,
     snackBarHostState = snackBarHostState,
     listState = listState,
     onAction = presenter::dispatch,
@@ -157,7 +151,7 @@ internal fun ShowDetailsScreen(
         textAlign = TextAlign.Start,
         imageVector = Icons.Filled.Cancel,
         onClick = { onAction(DismissShowsListSheet) },
-        tint = MaterialTheme.colorScheme.secondary
+        tint = MaterialTheme.colorScheme.secondary,
       )
     },
     sheetContent = {
@@ -165,15 +159,14 @@ internal fun ShowDetailsScreen(
     },
     snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
     content = { contentPadding ->
-      LaunchedEffect(key1 = state.errorMessage) {
-        if (state.errorMessage != null) {
-          val actionResult =
-            snackBarHostState.showSnackbar(
-              message = state.errorMessage!!,
-              actionLabel = "Dismiss",
-              withDismissAction = false,
-              duration = SnackbarDuration.Short,
-            )
+      LaunchedEffect(key1 = state.message) {
+        if (state.message?.message != null) {
+          val actionResult = snackBarHostState.showSnackbar(
+            message = state.message!!.message,
+            actionLabel = "Dismiss",
+            withDismissAction = false,
+            duration = SnackbarDuration.Short,
+          )
           when (actionResult) {
             SnackbarResult.ActionPerformed,
             SnackbarResult.Dismissed,
@@ -185,31 +178,12 @@ internal fun ShowDetailsScreen(
       }
 
       Box(Modifier.fillMaxSize()) {
-        if (state.showDetails != null) {
-          LazyColumnContent(
-            detailsContent = state,
-            contentPadding = contentPadding,
-            listState = listState,
-            onAction = onAction,
-          )
-        } else if (!state.isUpdating && state.errorMessage != null) {
-          ErrorUi(
-            modifier = Modifier
-              .fillMaxSize()
-              .padding(top = 16.dp),
-            errorMessage = stringResource(R.string.generic_error_message),
-            onRetry = { onAction(ReloadShowDetails) },
-            errorIcon = {
-              Image(
-                modifier = Modifier.size(120.dp),
-                imageVector = Icons.Outlined.ErrorOutline,
-                colorFilter =
-                  ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
-                contentDescription = null,
-              )
-            },
-          )
-        }
+        LazyColumnContent(
+          detailsContent = state,
+          contentPadding = contentPadding,
+          listState = listState,
+          onAction = onAction,
+        )
 
         RefreshCollapsableTopAppBar(
           listState = listState,
@@ -238,8 +212,8 @@ internal fun ShowDetailsScreen(
               tint = MaterialTheme.colorScheme.onBackground,
             )
           },
-          isRefreshing = state.isUpdating || state.showInfo is ShowInfoState.Loading,
-          showActionIcon = state.showInfo != ShowInfoState.Empty,
+          isRefreshing = state.isRefreshing,
+          showActionIcon = state.message == null,
           onNavIconClicked = { onAction(DetailBackClicked) },
           onActionIconClicked = { onAction(ReloadShowDetails) },
         )
@@ -253,7 +227,6 @@ private fun ShowListSheetContent(
   state: ShowDetailsContent,
   onAction: (ShowDetailsAction) -> Unit,
 ) {
-  val title = state.showDetails?.title ?: ""
   Column(
     modifier = Modifier
       .fillMaxSize()
@@ -262,7 +235,7 @@ private fun ShowListSheetContent(
   ) {
     Spacer(modifier = Modifier.height(24.dp))
 
-    val title = stringResource(id = R.string.cd_show_images, title)
+    val title = stringResource(id = R.string.cd_show_images, state.showDetails.title)
 
     Card(
       modifier = Modifier
@@ -276,7 +249,7 @@ private fun ShowListSheetContent(
       ),
     ) {
       AsyncImageComposable(
-        model = state.showDetails?.posterImageUrl,
+        model = state.showDetails.posterImageUrl,
         contentDescription = title,
         contentScale = ContentScale.Crop,
       )
@@ -362,10 +335,20 @@ fun LazyColumnContent(
     }
 
     item {
-      ShowInfoContent(
-        showInfoState = detailsContent.showInfo,
-        onAction = onAction,
-      )
+      if (!detailsContent.isRefreshing && detailsContent.message != null) {
+        ErrorUi(
+          modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 16.dp),
+          errorMessage = stringResource(R.string.generic_error_message),
+          onRetry = { onAction(ReloadShowDetails) },
+        )
+      } else {
+        ShowInfoContent(
+          showDetails = detailsContent.showDetails,
+          onAction = onAction,
+        )
+      }
     }
   }
 }
@@ -390,68 +373,50 @@ private fun EmptyInfoContent(
 
 @Composable
 private fun ShowInfoContent(
-  showInfoState: ShowInfoState,
+  showDetails: ShowDetailsModel,
   onAction: (ShowDetailsAction) -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  when (showInfoState) {
-    ShowInfoState.Empty,
-    ShowInfoState.Loading,
-      ->
-      LoadingIndicator(
-        modifier = Modifier
-          .fillMaxSize()
-          .wrapContentSize(Alignment.Center),
-      )
-    is ShowInfoState.Error ->
-      EmptyInfoContent(
-        modifier = Modifier.fillMaxSize(),
-        onAction = { onAction(ReloadShowDetails) },
-      )
-    is ShowInfoState.Loaded -> {
-      Column(modifier = modifier.fillMaxWidth()) {
-        SeasonsContent(
-          seasonsList = showInfoState.seasonsList,
-          selectedSeasonIndex = showInfoState.selectedSeasonIndex,
-          onAction = onAction,
-        )
+  Column(modifier = modifier.fillMaxWidth()) {
+    SeasonsContent(
+      seasonsList = showDetails.seasonsList,
+      selectedSeasonIndex = showDetails.selectedSeasonIndex,
+      onAction = onAction,
+    )
 
-        WatchProvider(list = showInfoState.providers)
+    WatchProvider(list = showDetails.providers)
 
-        TrailersContent(
-          trailersList = showInfoState.trailersList,
-          onAction = onAction,
-        )
+    TrailersContent(
+      trailersList = showDetails.trailersList,
+      onAction = onAction,
+    )
 
-        CastContent(castsList = showInfoState.castsList)
+    CastContent(castsList = showDetails.castsList)
 
-        RecommendedShowsContent(
-          recommendedShows = showInfoState.recommendedShowList,
-          onShowClicked = { onAction(DetailShowClicked(it)) },
-        )
+    RecommendedShowsContent(
+      recommendedShows = showDetails.recommendedShows,
+      onShowClicked = { onAction(DetailShowClicked(it)) },
+    )
 
-        SimilarShowsContent(
-          similarShows = showInfoState.similarShows,
-          onShowClicked = { onAction(DetailShowClicked(it)) },
-        )
+    SimilarShowsContent(
+      similarShows = showDetails.similarShows,
+      onShowClicked = { onAction(DetailShowClicked(it)) },
+    )
 
-        Spacer(modifier = Modifier.height(54.dp))
-      }
-    }
+    Spacer(modifier = Modifier.height(54.dp))
   }
 }
 
 @Composable
 private fun HeaderContent(
-  show: ShowDetails?,
+  show: ShowDetailsModel?,
   onUpdateFavoriteClicked: (Boolean) -> Unit,
   onAddToListClicked: () -> Unit,
 ) {
   val screenHeight = LocalConfiguration.current.screenHeightDp.dp
   val headerHeight = screenHeight / 1.5f
   Box(
-    modifier =
-      Modifier
+    modifier = Modifier
         .fillMaxWidth()
         .height(headerHeight),
   ) {
@@ -474,19 +439,18 @@ private fun HeaderContent(
 
 @Composable
 private fun Body(
-  show: ShowDetails,
+  show: ShowDetailsModel,
   onUpdateFavoriteClicked: (Boolean) -> Unit,
   onAddToListClicked: () -> Unit,
 ) {
   val surfaceGradient = backgroundGradient().reversed()
 
   Box(
-    modifier =
-      Modifier
-        .fillMaxSize()
-        .clipToBounds()
-        .background(Brush.verticalGradient(surfaceGradient))
-        .padding(horizontal = 16.dp),
+    modifier = Modifier
+      .fillMaxSize()
+      .clipToBounds()
+      .background(Brush.verticalGradient(surfaceGradient))
+      .padding(horizontal = 16.dp),
   ) {
     Spacer(modifier = Modifier.height(16.dp))
 
@@ -525,7 +489,7 @@ private fun Body(
       Spacer(modifier = Modifier.height(8.dp))
 
       ShowDetailButtons(
-        isFollowed = show.isFollowed,
+        isFollowed = show.isInLibrary,
         onTrackShowClicked = onUpdateFavoriteClicked,
         onAddToList = onAddToListClicked,
       )
@@ -563,17 +527,17 @@ fun ShowMetadata(
     }
     val text = buildAnnotatedString {
       val statusStyle = MaterialTheme.typography.labelMedium
-          .toSpanStyle()
-          .copy(
-            color = MaterialTheme.colorScheme.secondary,
-            background = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
-          )
+        .toSpanStyle()
+        .copy(
+          color = MaterialTheme.colorScheme.secondary,
+          background = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
+        )
 
       val tagStyle = MaterialTheme.typography.labelMedium
-          .toSpanStyle()
-          .copy(
-            color = MaterialTheme.colorScheme.onSurface,
-          )
+        .toSpanStyle()
+        .copy(
+          color = MaterialTheme.colorScheme.onSurface,
+        )
 
       AnimatedVisibility(visible = !status.isNullOrBlank()) {
         status?.let {
@@ -607,11 +571,11 @@ fun ShowMetadata(
     Row(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.Center,
-      verticalAlignment = Alignment.CenterVertically
+      verticalAlignment = Alignment.CenterVertically,
     ) {
       Row(
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
       ) {
         Text(
           text = text,
@@ -623,19 +587,19 @@ fun ShowMetadata(
 
         Row(
           verticalAlignment = Alignment.CenterVertically,
-          modifier = Modifier.padding(end = 4.dp)
+          modifier = Modifier.padding(end = 4.dp),
         ) {
           Icon(
             imageVector = Icons.Filled.Star,
             contentDescription = null,
             modifier = Modifier.size(12.dp),
-            tint = MaterialTheme.colorScheme.secondary
+            tint = MaterialTheme.colorScheme.secondary,
           )
           Text(
             text = "$rating",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.padding(start = 2.dp)
+            modifier = Modifier.padding(start = 2.dp),
           )
         }
       }
@@ -706,7 +670,7 @@ fun ShowDetailButtons(
 
 @Composable
 private fun SeasonsContent(
-  seasonsList: ImmutableList<Season>,
+  seasonsList: ImmutableList<SeasonModel>,
   selectedSeasonIndex: Int,
   onAction: (ShowDetailsAction) -> Unit,
 ) {
@@ -757,7 +721,7 @@ private fun SeasonsContent(
 
 @Composable
 fun WatchProvider(
-  list: ImmutableList<Providers>,
+  list: ImmutableList<ProviderModel>,
   modifier: Modifier = Modifier,
 ) {
   if (list.isEmpty()) return
@@ -811,7 +775,7 @@ fun WatchProvider(
 
 @Composable
 private fun CastContent(
-  castsList: ImmutableList<Casts>,
+  castsList: ImmutableList<CastModel>,
 ) {
   if (castsList.isEmpty()) return
 
@@ -900,7 +864,7 @@ private fun CastContent(
 
 @Composable
 private fun TrailersContent(
-  trailersList: ImmutableList<Trailer>,
+  trailersList: ImmutableList<TrailerModel>,
   onAction: (ShowDetailsAction) -> Unit,
 ) {
   if (trailersList.isEmpty()) return
@@ -984,7 +948,7 @@ private fun TrailersContent(
 
 @Composable
 fun RecommendedShowsContent(
-  recommendedShows: ImmutableList<Show>,
+  recommendedShows: ImmutableList<ShowModel>,
   modifier: Modifier = Modifier,
   onShowClicked: (Long) -> Unit = {},
 ) {
@@ -1019,7 +983,7 @@ fun RecommendedShowsContent(
 
 @Composable
 fun SimilarShowsContent(
-  similarShows: ImmutableList<Show>,
+  similarShows: ImmutableList<ShowModel>,
   modifier: Modifier = Modifier,
   onShowClicked: (Long) -> Unit = {},
 ) {

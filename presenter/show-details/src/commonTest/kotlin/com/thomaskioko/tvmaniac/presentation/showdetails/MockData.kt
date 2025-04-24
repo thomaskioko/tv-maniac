@@ -6,32 +6,29 @@ import com.thomaskioko.tvmaniac.db.SimilarShows
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetails
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetailsModel
 import kotlinx.collections.immutable.persistentListOf
 
 val showDetailsContent =
   ShowDetailsContent(
-    showDetails = ShowDetails(
-        tmdbId = 849583,
-        title = "Loki",
-        overview =  "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
-        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        language = "en",
-        year = "2021-06-09",
-        status = "Ended",
-        votes = 1L,
-        rating = 8.0,
-        genres = persistentListOf("1234"),
-        isFollowed = false,
-      ),
-    showInfo = ShowInfoState.Empty,
-    errorMessage = null,
-    isUpdating = false,
+    showDetails = ShowDetailsModel.Empty.copy(
+      tmdbId = 849583,
+      title = "Loki",
+      overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
+      posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      language = "en",
+      year = "2021-06-09",
+      status = "Ended",
+      votes = 1L,
+      rating = 8.0,
+      genres = persistentListOf("1234"),
+      isInLibrary = false,
+    ),
+    message = null,
   )
 
-val similarShowList =
-  listOf(
+val similarShowList =  listOf(
     SimilarShows(
       id = Id(184958),
       name = "Loki",
@@ -41,8 +38,7 @@ val similarShowList =
     ),
   )
 
-val seasons =
-  listOf(
+val seasons = listOf(
     ShowSeasons(
       season_id = Id(84958),
       show_id = Id(114355),
@@ -51,8 +47,7 @@ val seasons =
     ),
   )
 
-val tvShowDetails =
-  TvshowDetails(
+val tvShowDetails = TvshowDetails(
     id = Id(849583),
     name = "Loki",
     overview =
@@ -70,22 +65,20 @@ val tvShowDetails =
     in_library = 0,
   )
 
-val recommendedShowList =
-  listOf(
+val recommendedShowList = listOf(
     RecommendedShows(
       id = Id(184958),
       name = "Loki",
       poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
       backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
       in_library = 0,
-    )
+    ),
   )
 
-val watchProviderList =
-  listOf(
+val watchProviderList = listOf(
     WatchProviders(
       id = Id(184958),
       name = "Netflix",
       logo_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-    )
+    ),
   )

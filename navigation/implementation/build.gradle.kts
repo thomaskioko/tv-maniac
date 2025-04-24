@@ -8,6 +8,10 @@ tvmaniac {
     useKspAnvilCompiler()
     useSerialization()
   }
+
+  optIn(
+    "kotlinx.coroutines.ExperimentalCoroutinesApi"
+  )
 }
 
 kotlin {
@@ -16,6 +20,11 @@ kotlin {
       implementation(projects.core.base)
       implementation(projects.core.logger.api)
       implementation(projects.domain.discover)
+      implementation(projects.domain.recommendedshows)
+      implementation(projects.domain.seasondetails)
+      implementation(projects.domain.showdetails)
+      implementation(projects.domain.similarshows)
+      implementation(projects.domain.watchproviders)
       implementation(projects.traktAuth.api)
       implementation(projects.navigation.api)
 

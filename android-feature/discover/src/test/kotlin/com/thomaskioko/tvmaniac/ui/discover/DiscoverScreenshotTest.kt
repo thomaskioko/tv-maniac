@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.ui.discover
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.pager.rememberPagerState
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -33,6 +35,7 @@ class DiscoverScreenshotTest {
         DiscoverScreen(
           state = DiscoverViewState.Empty,
           pagerState = rememberPagerState(pageCount = { 5 }),
+          dismissSnackbarState = rememberDismissState { true },
           snackBarHostState = remember { SnackbarHostState() },
           onAction = {},
         )
@@ -53,6 +56,7 @@ class DiscoverScreenshotTest {
             popularRefreshing = true,
           ),
           pagerState = rememberPagerState(pageCount = { 5 }),
+          dismissSnackbarState = rememberDismissState { true },
           snackBarHostState = remember { SnackbarHostState() },
           onAction = {},
         )
@@ -68,6 +72,7 @@ class DiscoverScreenshotTest {
           state = DiscoverViewState.Empty.copy(
             message = UiMessage(message = "Opps! Something went wrong"),
           ),
+          dismissSnackbarState = rememberDismissState { true },
           pagerState = rememberPagerState(pageCount = { 5 }),
           snackBarHostState = remember { SnackbarHostState() },
           onAction = {},
@@ -83,6 +88,7 @@ class DiscoverScreenshotTest {
         DiscoverScreen(
           state = discoverContentSuccess,
           pagerState = rememberPagerState(pageCount = { 5 }),
+          dismissSnackbarState = rememberDismissState { true },
           snackBarHostState = remember { SnackbarHostState() },
           onAction = {},
         )

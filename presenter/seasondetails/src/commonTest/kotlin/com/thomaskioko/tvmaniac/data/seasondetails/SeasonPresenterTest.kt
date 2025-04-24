@@ -3,28 +3,24 @@ package com.thomaskioko.tvmaniac.data.seasondetails
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.db.SeasonCast
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.ServerError
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.SeasonCast
+import com.thomaskioko.tvmaniac.domain.seasondetails.ObservableSeasonDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.presentation.seasondetails.EpisodeClicked
-import com.thomaskioko.tvmaniac.presentation.seasondetails.InitialSeasonsState
 import com.thomaskioko.tvmaniac.presentation.seasondetails.ReloadSeasonDetails
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsBackClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsErrorState
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsLoaded
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonGalleryClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeInstanceOf
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.Test
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -32,6 +28,9 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class SeasonPresenterTest {
 
@@ -39,6 +38,13 @@ class SeasonPresenterTest {
   private val testDispatcher = StandardTestDispatcher()
   private val seasonDetailsRepository = FakeSeasonDetailsRepository()
   private val castRepository = FakeCastRepository()
+  private val coroutineDispatcher = AppCoroutineDispatchers(
+    main = testDispatcher,
+    io = testDispatcher,
+    computation = testDispatcher,
+    databaseWrite = testDispatcher,
+    databaseRead = testDispatcher,
+  )
 
   private lateinit var presenter: SeasonDetailsPresenter
 
@@ -55,34 +61,33 @@ class SeasonPresenterTest {
 
   @Test
   fun `should emit InitialSeasonsState when no data is fetched`() = runTest {
-    presenter.state.test { awaitItem() shouldBe InitialSeasonsState }
+    presenter.state.test { awaitItem() shouldBe SeasonDetailsModel.Empty }
   }
 
   @Test
   fun `should emit SeasonDetailsContent when data is fetched`() = runTest {
-    val seasonDetails =
-      buildSeasonDetailsWithEpisodes(
-        episodeCount = 1,
-        episodes =
-          listOf(
-            EpisodeDetails(
-              runtime = 45,
-              overview =
-                "The journey to reunite the Ingham family continues as they travel to the USA.",
-              episodeNumber = 1,
-              stillPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-              name = "Some title",
-              seasonId = 12343,
-              id = 12345,
-              seasonNumber = 0,
-              voteAverage = 8.0,
-              voteCount = 4958,
-              isWatched = false,
-            ),
+    val seasonDetails = buildSeasonDetailsWithEpisodes(
+      episodeCount = 1,
+      episodes =
+        listOf(
+          EpisodeDetails(
+            runtime = 45,
+            overview =
+              "The journey to reunite the Ingham family continues as they travel to the USA.",
+            episodeNumber = 1,
+            stillPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            name = "Some title",
+            seasonId = 12343,
+            id = 12345,
+            seasonNumber = 0,
+            voteAverage = 8.0,
+            voteCount = 4958,
+            isWatched = false,
           ),
-      )
+        ),
+    )
 
-    seasonDetailsRepository.setSeasonsResult(Either.Right(seasonDetails))
+    seasonDetailsRepository.setSeasonsResult(seasonDetails)
     castRepository.setSeasonCast(emptyList())
 
     val expectedResult =
@@ -106,80 +111,94 @@ class SeasonPresenterTest {
       )
 
     presenter.state.test {
-      awaitItem() shouldBe InitialSeasonsState
+      awaitItem() shouldBe SeasonDetailsModel.Empty
       awaitItem() shouldBe expectedResult
     }
   }
 
   @Test
-  fun `should update state when ReloadSeasonDetails action is dispatched and data is fetched`() =
-    runTest {
-      val updatedDetails =
-        buildSeasonDetailsWithEpisodes(
-          episodeCount = 1,
-          episodes =
-            listOf(
-              EpisodeDetails(
-                id = 1,
-                seasonId = 2L,
-                name = "Episode 1",
-                overview = "Episode 1 Overview",
-                episodeNumber = 1,
-                runtime = 123L,
-                voteAverage = 4.5,
-                voteCount = 100,
-                isWatched = false,
-                seasonNumber = 1,
-                stillPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-              ),
-            ),
-        )
-      val updatedCast =
-        listOf(
-          SeasonCast(
-            id = Id(1L),
-            name = "Updated Actor",
-            character_name = "Updated Character",
-            profile_path = "updated_profile_path",
-          ),
-        )
+  fun `should update state when ReloadSeasonDetails action is dispatched and data is fetched`() = runTest {
+    val updatedDetails = buildSeasonDetailsWithEpisodes(
+      episodeCount = 1,
+      episodes = listOf(
+        EpisodeDetails(
+          id = 1,
+          seasonId = 2L,
+          name = "Episode 1",
+          overview = "Episode 1 Overview",
+          episodeNumber = 1,
+          runtime = 123L,
+          voteAverage = 4.5,
+          voteCount = 100,
+          isWatched = false,
+          seasonNumber = 1,
+          stillPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        ),
+      ),
+    )
+    val updatedCast = listOf(
+      SeasonCast(
+        id = Id(1L),
+        name = "Updated Actor",
+        character_name = "Updated Character",
+        profile_path = "updated_profile_path",
+      ),
+    )
 
-      val errorMessage = "Error fetching details"
 
-      seasonDetailsRepository.setSeasonsResult(Either.Left(ServerError(errorMessage)))
-      castRepository.setSeasonCast(emptyList())
-
-      presenter.state.test {
-        awaitItem() shouldBe InitialSeasonsState
-
-        awaitItem() shouldBe SeasonDetailsErrorState(errorMessage = errorMessage)
-
-        // Update the repositories with new data
-        seasonDetailsRepository.setSeasonsResult(Either.Right(updatedDetails))
-        castRepository.setSeasonCast(updatedCast)
-
-        // Dispatch the ReloadSeasonDetails action
-        presenter.dispatch(ReloadSeasonDetails)
-
-        val updatedState = awaitItem()
-        updatedState.shouldBeInstanceOf<SeasonDetailsLoaded>()
-        updatedState.seasonName shouldBe "Season 01"
-        updatedState.episodeCount shouldBe 1
-        updatedState.episodeDetailsList.size shouldBe 1
-        updatedState.seasonCast[0].name shouldBe "Updated Actor"
-      }
-    }
-
-  @Test
-  fun `should emitt ErrorState when fetching data fails`() = runTest {
-    val errorMessage = "Error fetching details"
-
-    seasonDetailsRepository.setSeasonsResult(Either.Left(ServerError(errorMessage)))
     castRepository.setSeasonCast(emptyList())
 
     presenter.state.test {
-      awaitItem() shouldBe InitialSeasonsState
-      awaitItem() shouldBe SeasonDetailsErrorState(errorMessage = errorMessage)
+      awaitItem() shouldBe SeasonDetailsModel.Empty
+
+      // Update the repositories with new data
+      seasonDetailsRepository.setSeasonsResult(updatedDetails)
+      castRepository.setSeasonCast(updatedCast)
+
+      awaitItem() shouldBe SeasonDetailsModel(
+        isUpdating = false,
+        showGalleryBottomSheet = false,
+        seasonImages = persistentListOf(),
+        showSeasonWatchStateDialog = false,
+        expandEpisodeItems = false,
+        watchProgress = 0F,
+        isSeasonWatched = false,
+        episodeCount = 1,
+        seasonId = 12343,
+        seasonName = "Season 01",
+        seasonOverview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
+        imageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        episodeDetailsList = persistentListOf(
+          EpisodeDetailsModel(
+            id = 1,
+            seasonId = 2,
+            episodeTitle = "Episode 1",
+            overview = "Episode 1 Overview",
+            episodeNumberTitle = "E1 • Episode 1",
+            runtime = 123L,
+            voteCount = 100,
+            imageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            episodeNumber = "1",
+            seasonEpisodeNumber = "S01 | E1",
+          )
+        ),
+        seasonCast = persistentListOf(),
+      )
+
+      val state = awaitItem()
+      state.seasonName shouldBe "Season 01"
+      state.episodeCount shouldBe 1
+      state.episodeDetailsList.size shouldBe 1
+      state.seasonCast.size shouldBe 1
+
+      // Dispatch the ReloadSeasonDetails action
+      presenter.dispatch(ReloadSeasonDetails)
+
+      val updatedState = awaitItem()
+      updatedState.seasonName shouldBe "Season 01"
+      updatedState.episodeCount shouldBe 1
+      updatedState.episodeDetailsList.size shouldBe 1
+      updatedState.seasonCast[0].name shouldBe "Updated Actor"
     }
   }
 
@@ -210,35 +229,28 @@ class SeasonPresenterTest {
   }
 
   @Test
-  fun `should toggle showGalleryBottomSheet when SeasonGalleryClicked action is dispatched`() =
-    runTest {
-      val initialDetails = buildSeasonDetailsWithEpisodes()
-      seasonDetailsRepository.setSeasonsResult(Either.Right(initialDetails))
-      castRepository.setSeasonCast(emptyList())
+  fun `should toggle showGalleryBottomSheet when SeasonGalleryClicked action is dispatched`() = runTest {
+    val initialDetails = buildSeasonDetailsWithEpisodes()
+    seasonDetailsRepository.setSeasonsResult(initialDetails)
+    castRepository.setSeasonCast(emptyList())
 
-      presenter.state.test {
-        awaitItem() shouldBe InitialSeasonsState
+    presenter.state.test {
+      awaitItem() shouldBe SeasonDetailsModel.Empty
 
-        val loadedState = awaitItem()
-        loadedState.shouldBeInstanceOf<SeasonDetailsLoaded>()
-        loadedState.showGalleryBottomSheet shouldBe false
+      presenter.dispatch(SeasonGalleryClicked)
 
-        presenter.dispatch(SeasonGalleryClicked)
+      // Check updated state
+      val updatedState = awaitItem()
+      updatedState.showGalleryBottomSheet shouldBe true
 
-        // Check updated state
-        val updatedState = awaitItem()
-        updatedState.shouldBeInstanceOf<SeasonDetailsLoaded>()
-        updatedState.showGalleryBottomSheet shouldBe true
+      // Dispatch action again
+      presenter.dispatch(SeasonGalleryClicked)
 
-        // Dispatch action again
-        presenter.dispatch(SeasonGalleryClicked)
-
-        // Check state toggled back
-        val toggledState = awaitItem()
-        toggledState.shouldBeInstanceOf<SeasonDetailsLoaded>()
-        toggledState.showGalleryBottomSheet shouldBe false
-      }
+      // Check state toggled back
+      val toggledState = awaitItem()
+      toggledState.showGalleryBottomSheet shouldBe false
     }
+  }
 
   private fun buildSeasonDetailsPresenter(
     onBack: () -> Unit = {},
@@ -254,8 +266,15 @@ class SeasonPresenterTest {
         ),
       onBack = onBack,
       onEpisodeClick = onEpisodeClick,
-      seasonDetailsRepository = seasonDetailsRepository,
-      castRepository = castRepository,
+      observableSeasonDetailsInteractor = ObservableSeasonDetailsInteractor(
+        seasonDetailsRepository = seasonDetailsRepository,
+        castRepository = castRepository,
+      ),
+      seasonDetailsInteractor = SeasonDetailsInteractor(
+        seasonDetailsRepository = seasonDetailsRepository,
+        dispatchers = coroutineDispatcher,
+      ),
+      logger = FakeLogger(),
     )
   }
 }

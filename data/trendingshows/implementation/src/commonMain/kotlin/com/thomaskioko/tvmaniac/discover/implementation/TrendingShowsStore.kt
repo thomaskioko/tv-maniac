@@ -18,10 +18,12 @@ import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
+import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
+import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
 class TrendingShowsStore(
@@ -34,21 +36,20 @@ class TrendingShowsStore(
   private val databaseTransactionRunner: DatabaseTransactionRunner,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Store<TrendingShowsParams, List<ShowEntity>> by storeBuilder(
-  fetcher =
-    Fetcher.of { params: TrendingShowsParams ->
-      when (val response = tmdbRemoteDataSource.getTrendingShows(params.timeWindow)) {
-        is ApiResponse.Success -> response.body
-        is ApiResponse.Error.GenericError -> {
-          throw Throwable("${response.errorMessage}")
-        }
-        is ApiResponse.Error.HttpError -> {
-          throw Throwable("${response.code} - ${response.errorMessage}")
-        }
-        is ApiResponse.Error.SerializationError -> {
-          throw Throwable("${response.errorMessage}")
-        }
+  fetcher = Fetcher.of { params: TrendingShowsParams ->
+    when (val response = tmdbRemoteDataSource.getTrendingShows(params.timeWindow)) {
+      is ApiResponse.Success -> response.body
+      is ApiResponse.Error.GenericError -> {
+        throw Throwable("${response.errorMessage}")
       }
-    },
+      is ApiResponse.Error.HttpError -> {
+        throw Throwable("${response.code} - ${response.errorMessage}")
+      }
+      is ApiResponse.Error.SerializationError -> {
+        throw Throwable("${response.errorMessage}")
+      }
+    }
+  },
   sourceOfTruth = SourceOfTruth.of<TrendingShowsParams, TmdbShowResult, List<ShowEntity>>(
     reader = { param: TrendingShowsParams -> trendingShowsDao.observeTvShow(param.page) },
     writer = { _: TrendingShowsParams, trendingShows ->
@@ -91,5 +92,13 @@ class TrendingShowsStore(
     readDispatcher = dispatchers.databaseRead,
     writeDispatcher = dispatchers.databaseWrite,
   ),
-)
-  .build()
+).validator(
+    Validator.by {
+      withContext(dispatchers.io) {
+        requestManagerRepository.isRequestValid(
+          requestType = TRENDING_SHOWS_TODAY.name,
+          threshold = TRENDING_SHOWS_TODAY.duration,
+        )
+      }
+    },
+  ).build()

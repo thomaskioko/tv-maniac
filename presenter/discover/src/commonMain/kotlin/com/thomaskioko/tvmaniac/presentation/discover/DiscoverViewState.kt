@@ -25,7 +25,7 @@ data class DiscoverViewState(
     get() = !isRefreshing && isEmpty(featuredShows, topRatedShows, popularShows, upcomingShows, trendingToday)
 
   val showError: Boolean
-    get() = message != null && !isRefreshing
+    get() = message != null && isEmpty
 
   private fun isEmpty(vararg responses: List<DiscoverShow>?): Boolean {
     return responses.all { it.isNullOrEmpty() }

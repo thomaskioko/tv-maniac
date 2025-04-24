@@ -48,12 +48,11 @@ class TrailersPresenterTest {
 
   @Test
   fun `given result is success correct state is emitted`() = runTest {
-    repository.setTrailerResult(Either.Right(trailers))
+    repository.setTrailerResult(trailers)
 
     presenter.state.test {
       awaitItem() shouldBe LoadingTrailers
-      awaitItem() shouldBe
-        TrailersContent(
+      awaitItem() shouldBe TrailersContent(
           selectedVideoKey = "Fd43V",
           trailersList =
             persistentListOf(
@@ -70,37 +69,20 @@ class TrailersPresenterTest {
 
   @Test
   fun `given reload is clicked then correct state is emitted`() = runTest {
-    repository.setTrailerResult(Either.Right(trailers))
-
-    repository.setTrailerResult(Either.Left(ServerError("Something went wrong.")))
+    repository.setTrailerResult(emptyList())
 
     presenter.state.test {
       awaitItem() shouldBe LoadingTrailers
-      awaitItem() shouldBe
-        TrailersContent(
-          selectedVideoKey = "Fd43V",
-          trailersList =
-            persistentListOf(
-              Trailer(
-                showId = 84958,
-                key = "Fd43V",
-                name = "Some title",
-                youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
-              ),
-            ),
-        )
-
-      awaitItem() shouldBe TrailerError("Something went wrong.")
+      awaitItem() shouldBe TrailersContent()
 
       presenter.dispatch(ReloadTrailers)
 
-      repository.setTrailerResult(Either.Right(trailers))
+      repository.setTrailerResult(trailers)
 
       awaitItem() shouldBe
         TrailersContent(
           selectedVideoKey = "Fd43V",
-          trailersList =
-            persistentListOf(
+          trailersList = persistentListOf(
               Trailer(
                 showId = 84958,
                 key = "Fd43V",

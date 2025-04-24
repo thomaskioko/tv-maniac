@@ -1,22 +1,18 @@
 package com.thomaskioko.tvmaniac.seasons.testing
 
 import com.thomaskioko.tvmaniac.db.ShowSeasons
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class FakeSeasonsRepository : SeasonsRepository {
 
-  private var seasonsResult: Channel<Either<Failure, List<ShowSeasons>>> =
-    Channel(Channel.UNLIMITED)
+  private var seasonsResult = MutableStateFlow<List<ShowSeasons>>(emptyList())
 
-  suspend fun setSeasonsResult(result: Either<Failure, List<ShowSeasons>>) {
-    seasonsResult.send(result)
+  suspend fun setSeasonsResult(result: List<ShowSeasons>) {
+    seasonsResult.emit(result)
   }
 
-  override fun observeSeasonsByShowId(id: Long): Flow<Either<Failure, List<ShowSeasons>>> =
-    seasonsResult.receiveAsFlow()
+  override fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>> = seasonsResult.asStateFlow()
 }

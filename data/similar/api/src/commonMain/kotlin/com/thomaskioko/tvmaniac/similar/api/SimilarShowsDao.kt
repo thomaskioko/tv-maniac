@@ -7,7 +7,7 @@ interface SimilarShowsDao {
 
   fun upsert(showId: Long, similarShowId: Long)
 
-  fun observeSimilarShows(traktId: Long): Flow<List<SimilarShows>>
+  fun observeSimilarShows(showId: Long): Flow<List<SimilarShows>>
 
   fun delete(id: Long)
 

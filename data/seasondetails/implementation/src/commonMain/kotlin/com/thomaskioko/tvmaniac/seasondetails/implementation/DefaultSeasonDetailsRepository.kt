@@ -1,18 +1,15 @@
 package com.thomaskioko.tvmaniac.seasondetails.implementation
 
 import com.thomaskioko.tvmaniac.db.Season_images
-import com.thomaskioko.tvmaniac.core.store.mapToEither
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SEASON_DETAILS
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.StoreReadRequest
+import org.mobilenativefoundation.store.store5.impl.extensions.fresh
+import org.mobilenativefoundation.store.store5.impl.extensions.get
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -21,28 +18,23 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultSeasonDetailsRepository(
-  private val seasonDetailsStore: SeasonDetailsStore,
-  private val seasonDetailsDao: SeasonDetailsDao,
-  private val requestManagerRepository: RequestManagerRepository,
+  private val store: SeasonDetailsStore,
+  private val dao: SeasonDetailsDao,
 ) : SeasonDetailsRepository {
+  override suspend fun fetchSeasonDetails(
+    param: SeasonDetailsParam,
+    forceRefresh: Boolean,
+  ) {
+    val isEmpty = dao.observeSeasonEpisodeDetails(param.showId, param.seasonNumber).first().episodes.isEmpty()
+    when {
+      forceRefresh || isEmpty -> store.fresh(param)
+      else -> store.get(param)
+    }
+  }
 
   override fun observeSeasonDetails(
     param: SeasonDetailsParam,
-  ): Flow<Either<Failure, SeasonDetailsWithEpisodes>> =
-    seasonDetailsStore
-      .stream(
-        StoreReadRequest.cached(
-          key = param,
-          refresh =
-            requestManagerRepository.isRequestExpired(
-              entityId = param.seasonId,
-              requestType = SEASON_DETAILS.name,
-              threshold = SEASON_DETAILS.duration,
-            ),
-        ),
-      )
-      .mapToEither()
+  ): Flow<SeasonDetailsWithEpisodes> = dao.observeSeasonEpisodeDetails(param.showId, param.seasonNumber)
 
-  override fun observeSeasonImages(id: Long): Flow<List<Season_images>> =
-    seasonDetailsDao.observeSeasonImages(id)
+  override fun observeSeasonImages(id: Long): Flow<List<Season_images>> = dao.observeSeasonImages(id)
 }

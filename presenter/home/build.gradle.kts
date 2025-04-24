@@ -8,6 +8,10 @@ tvmaniac {
     useKspAnvilCompiler()
     useSerialization()
   }
+
+  optIn(
+    "kotlinx.coroutines.ExperimentalCoroutinesApi"
+  )
 }
 
 kotlin {

@@ -2,6 +2,12 @@ plugins {
   alias(libs.plugins.tvmaniac.kmp)
 }
 
+tvmaniac {
+  optIn(
+    "kotlinx.coroutines.ExperimentalCoroutinesApi",
+  )
+}
+
 kotlin {
   sourceSets {
     commonMain {

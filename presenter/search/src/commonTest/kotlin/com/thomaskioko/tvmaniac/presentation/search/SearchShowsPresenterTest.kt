@@ -47,6 +47,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
     }
   }
 
@@ -55,6 +56,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       presenter.dispatch(QueryChanged(""))
       expectNoEvents()
@@ -78,6 +80,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       setList(createGenreShowList())
 
@@ -93,6 +96,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       presenter.dispatch(QueryChanged("te"))
       expectNoEvents()
@@ -105,18 +109,19 @@ class SearchShowsPresenterTest {
 
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       setList(createGenreShowList())
       awaitItem() shouldBe ShowContentAvailable(
-          isUpdating = false,
-          genres = genreList(),
+        isUpdating = false,
+        genres = genreList(),
       )
 
       presenter.dispatch(QueryChanged("test"))
 
       testScheduler.advanceTimeBy(300) // Wait for debounce
 
-      fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
+      fakeSearchRepository.setSearchResult(emptyList())
 
       testScheduler.advanceUntilIdle()
 
@@ -132,12 +137,13 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       setList(createGenreShowList())
 
       awaitItem() shouldBe ShowContentAvailable(
-          isUpdating = false,
-          genres = genreList(),
+        isUpdating = false,
+        genres = genreList(),
       )
 
       // Dispatch first query change
@@ -149,21 +155,20 @@ class SearchShowsPresenterTest {
       // Advance time to trigger debounce and receive the result
       testScheduler.advanceTimeBy(300)
 
-      fakeSearchRepository.setSearchResult(Either.Right(createDiscoverShowList()))
+      fakeSearchRepository.setSearchResult(createDiscoverShowList())
 
       val firstResult = awaitItem()
       firstResult shouldBe SearchResultAvailable(
         isUpdating = false,
-        results = uiModelList(),
         query = "test",
       )
 
       // Dispatch second query change to validate previous results shown as `isUpdating`
       presenter.dispatch(QueryChanged("new"))
       awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = true,
+        isUpdating = false,
         query = "new",
-        results = (firstResult as SearchResultAvailable).results,
+        results = uiModelList(),
       )
     }
   }
@@ -180,6 +185,10 @@ class SearchShowsPresenterTest {
 
       presenter.dispatch(QueryChanged("test"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
+      awaitItem() shouldBe SearchResultAvailable(
+        isUpdating = false,
+        query = "test",
+      )
 
       presenter.dispatch(QueryChanged("te"))
       expectNoEvents()
@@ -195,6 +204,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       presenter.dispatch(QueryChanged("ab"))
       expectNoEvents()
@@ -205,7 +215,12 @@ class SearchShowsPresenterTest {
 
       testScheduler.advanceTimeBy(300)
 
-      fakeSearchRepository.setSearchResult(Either.Right(createDiscoverShowList()))
+      fakeSearchRepository.setSearchResult(createDiscoverShowList())
+
+      awaitItem() shouldBe SearchResultAvailable(
+        isUpdating = false,
+        query = "abc",
+      )
 
       awaitItem() shouldBe SearchResultAvailable(
         isUpdating = false,
@@ -228,10 +243,14 @@ class SearchShowsPresenterTest {
 
       testScheduler.advanceTimeBy(300)
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       presenter.dispatch(QueryChanged("test"))
 
-      fakeSearchRepository.setSearchResult(Either.Right(createDiscoverShowList()))
+      fakeSearchRepository.setSearchResult(createDiscoverShowList())
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
+
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
       awaitItem() shouldBe SearchResultAvailable(
@@ -251,6 +270,7 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       presenter.dispatch(QueryChanged("test"))
 
@@ -258,7 +278,7 @@ class SearchShowsPresenterTest {
 
       testScheduler.advanceTimeBy(300)
 
-      fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
+      fakeSearchRepository.setSearchResult(emptyList())
 
       awaitItem() shouldBe SearchResultAvailable("test", results = persistentListOf())
     }
@@ -269,13 +289,14 @@ class SearchShowsPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe InitialSearchState()
       awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
       presenter.dispatch(QueryChanged("empty"))
       awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "empty")
 
       testScheduler.advanceTimeBy(300)
 
-      fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
+      fakeSearchRepository.setSearchResult(emptyList())
       awaitItem() shouldBe SearchResultAvailable("empty", results = persistentListOf())
 
       presenter.dispatch(QueryChanged("test"))
@@ -283,7 +304,12 @@ class SearchShowsPresenterTest {
 
       testScheduler.advanceTimeBy(300)
 
-      fakeSearchRepository.setSearchResult(Either.Right(createDiscoverShowList()))
+      fakeSearchRepository.setSearchResult(createDiscoverShowList())
+
+      awaitItem() shouldBe SearchResultAvailable(
+        isUpdating = false,
+        query = "test",
+      )
 
       val firstResult = awaitItem()
       firstResult shouldBe SearchResultAvailable(
@@ -301,8 +327,14 @@ class SearchShowsPresenterTest {
 
       testScheduler.advanceTimeBy(300)
 
-      fakeSearchRepository.setSearchResult(Either.Right(emptyList()))
-      awaitItem() shouldBe SearchResultAvailable("none", results = persistentListOf())
+      fakeSearchRepository.setSearchResult(emptyList())
+
+      awaitItem() shouldBe SearchResultAvailable(
+        isUpdating = false,
+        query = "none",
+        results = firstResult.results,
+      )
+      awaitItem() shouldBe EmptySearchResult("none")
     }
   }
 
@@ -324,7 +356,12 @@ class SearchShowsPresenterTest {
 
       testScheduler.advanceTimeBy(300)
 
-      fakeSearchRepository.setSearchResult(Either.Right(createDiscoverShowList()))
+      fakeSearchRepository.setSearchResult(createDiscoverShowList())
+
+      awaitItem() shouldBe SearchResultAvailable(
+        isUpdating = false,
+        query = "test",
+      )
 
       awaitItem() shouldBe SearchResultAvailable(
         isUpdating = false,
@@ -345,23 +382,6 @@ class SearchShowsPresenterTest {
     }
   }
 
-  @Test
-  fun `should handle error states correctly`() = runTest {
-    presenter.state.test {
-      awaitItem() shouldBe InitialSearchState()
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-
-      presenter.dispatch(QueryChanged("test"))
-      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
-
-      testScheduler.advanceTimeBy(300)
-
-      val error = ServerError("Test error")
-      fakeSearchRepository.setSearchResult(Either.Left(error))
-
-      awaitItem() shouldBe EmptySearchResult(query = "test", errorMessage = error.errorMessage)
-    }
-  }
 
   private fun buildPresenter(
     lifecycle: LifecycleRegistry = LifecycleRegistry(),
@@ -378,7 +398,7 @@ class SearchShowsPresenterTest {
 
 
   private suspend fun TestScope.setList(list: List<ShowGenresEntity>) {
-    genreRepository.setGenreResult(Either.Right(list))
+    genreRepository.setGenreResult(list)
 
     testScheduler.advanceUntilIdle()
   }

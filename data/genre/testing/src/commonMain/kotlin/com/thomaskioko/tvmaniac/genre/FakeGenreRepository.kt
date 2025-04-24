@@ -1,32 +1,29 @@
 package com.thomaskioko.tvmaniac.genre
 
 import com.thomaskioko.tvmaniac.db.Tvshow
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class FakeGenreRepository : GenreRepository {
-  private var entityListResult: Channel<Either<Failure, List<ShowGenresEntity>>> =
-    Channel(Channel.UNLIMITED)
+  private var entityListResult = MutableStateFlow<List<ShowGenresEntity>>(emptyList())
+  private var showListResult = MutableStateFlow<List<Tvshow>>(emptyList())
 
-  private var showListResult: Channel<Either<Failure, List<Tvshow>>> =
-    Channel(Channel.UNLIMITED)
-
-  suspend fun setGenreResult(result: Either<Failure, List<ShowGenresEntity>>) {
-    entityListResult.send(result)
+  suspend fun setGenreResult(result: List<ShowGenresEntity>) {
+    entityListResult.emit(result)
   }
 
-  suspend fun setShowResult(result: Either<Failure, List<Tvshow>>) {
-    showListResult.send(result)
+  suspend fun setShowResult(result: List<Tvshow>) {
+    showListResult.emit(result)
   }
 
-  override fun observeGenresWithShows(forceRefresh: Boolean): Flow<Either<Failure, List<ShowGenresEntity>>> {
-    return entityListResult.receiveAsFlow()
+  override suspend fun fetchGenresWithShows(forceRefresh: Boolean) {
   }
 
-  override suspend fun observeGenreByShowId(id: String, forceRefresh: Boolean): Flow<Either<Failure, List<Tvshow>>> {
-    return showListResult.receiveAsFlow()
+  override suspend fun fetchShowByGenreId(id: String, forceRefresh: Boolean) {
   }
+
+  override fun observeGenresWithShows(): Flow<List<ShowGenresEntity>> = entityListResult.asStateFlow()
+
+  override suspend fun observeShowByGenreId(id: String): Flow<List<Tvshow>> = showListResult.asStateFlow()
 }

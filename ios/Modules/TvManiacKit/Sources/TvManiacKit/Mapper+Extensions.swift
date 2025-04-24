@@ -12,7 +12,7 @@ public extension TvManiac.WatchlistItem {
   }
 }
 
-public extension SeasonImagesModel {
+public extension TvManiac.SeasonImagesModel {
   func toSwift() -> ShowPosterImage {
     .init(
       tmdbId: id,

@@ -1,17 +1,13 @@
 package com.thomaskioko.tvmaniac.search.implementation
 
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.store.mapToEither
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.search.api.SearchRepository
-import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOn
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.StoreReadRequest
+import org.mobilenativefoundation.store.store5.impl.extensions.fresh
+import org.mobilenativefoundation.store.store5.impl.extensions.get
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -24,17 +20,16 @@ private const val MIN_SHOW_COUNT = 10
 class DefaultSearchRepository(
   private val tvShowsDao: TvShowsDao,
   private val store: SearchShowStore,
-  private val dispatchers: AppCoroutineDispatchers,
 ) : SearchRepository {
-  override suspend fun search(query: String): Flow<Either<Failure, List<ShowEntity>>> =
-    store.stream(
-      StoreReadRequest.cached(
-        key = query,
-        refresh = hasNoLocalData(query),
-      ),
-    )
-      .mapToEither()
-      .flowOn(dispatchers.io)
+  override suspend fun search(query: String) {
+    val shouldFetch = hasNoLocalData(query)
+    when {
+      shouldFetch -> store.fresh(query)
+      else -> store.get(query)
+    }
+  }
+
+  override fun observeSearchResults(query: String): Flow<List<ShowEntity>> = tvShowsDao.observeShowsByQuery(query)
 
   private suspend fun hasNoLocalData(query: String): Boolean {
     return tvShowsDao.observeQueryCount(query)

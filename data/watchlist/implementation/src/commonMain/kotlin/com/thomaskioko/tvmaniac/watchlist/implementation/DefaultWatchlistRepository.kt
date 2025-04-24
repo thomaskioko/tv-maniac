@@ -33,22 +33,17 @@ class DefaultWatchlistRepository(
 
   override suspend fun updateLibrary(id: Long, addToLibrary: Boolean) {
     when {
-      addToLibrary ->
-        watchlistDao.upsert(id)
+      addToLibrary -> watchlistDao.upsert(id)
       else -> watchlistDao.delete(id)
     }
   }
 
   override fun observeWatchlist(): Flow<Either<Failure, List<Watchlists>>> =
-    watchlistDao
-      .observeShowsInWatchlist()
-      .distinctUntilChanged()
-      .map { Either.Right(it) }
+    watchlistDao.observeShowsInWatchlist().distinctUntilChanged().map { Either.Right(it) }
       .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
 
   override fun observeUnSyncedItems(): Flow<Unit> {
-    return watchlistDao.observeUnSyncedWatchlist()
-      .flatMapMerge { ids ->
+    return watchlistDao.observeUnSyncedWatchlist().flatMapMerge { ids ->
         flow {
           ids.forEach { id ->
             watchlistMetadataStore.stream(StoreReadRequest.fresh(id)).collect()
@@ -59,9 +54,7 @@ class DefaultWatchlistRepository(
   }
 
   override fun searchWatchlistByQuery(query: String): Flow<Either<Failure, List<SearchWatchlist>>> {
-    return watchlistDao
-      .observeWatchlistByQuery(query)
-      .map { Either.Right(it) }
+    return watchlistDao.observeWatchlistByQuery(query).map { Either.Right(it) }
       .catch { Either.Left(DefaultError(exceptionHandler.resolveError(it))) }
   }
 }

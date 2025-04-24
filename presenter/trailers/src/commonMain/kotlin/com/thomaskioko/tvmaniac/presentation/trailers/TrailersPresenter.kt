@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.presentation.trailers
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,20 +48,14 @@ constructor(
   }
 
   private suspend fun observeTrailerInfo() {
-    repository.observeTrailers(traktShowId).collectLatest { result ->
-      when (result) {
-        is Either.Left -> {
-          _state.update { TrailerError(result.left.errorMessage) }
-        }
-        is Either.Right -> {
-          _state.update {
-            TrailersContent(
-              selectedVideoKey = result.right.toTrailerList().firstOrNull()?.key,
-              trailersList = result.right.toTrailerList(),
-            )
-          }
+    repository.observeTrailers(traktShowId)
+      .collectLatest { result ->
+        _state.update {
+          TrailersContent(
+            selectedVideoKey = result.toTrailerList().firstOrNull()?.key,
+            trailersList = result.toTrailerList(),
+          )
         }
       }
-    }
   }
 }
