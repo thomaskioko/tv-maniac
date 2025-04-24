@@ -6,8 +6,10 @@ import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import kotlinx.coroutines.flow.Flow
 
 interface ShowDetailsRepository {
-  fun observeShowDetails(
+  suspend fun fetchShowDetails(
     id: Long,
-    forceReload: Boolean = false
-  ): Flow<Either<Failure, TvshowDetails>>
+    forceRefresh: Boolean = false
+  )
+
+  fun observeShowDetails(id: Long): Flow<TvshowDetails>
 }

@@ -9,16 +9,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 
 class FakeShowDetailsRepository : ShowDetailsRepository {
-  private val showDetails = MutableStateFlow<Either<Failure, TvshowDetails>?>(null)
+  private val showDetails = MutableStateFlow<TvshowDetails?>(null)
 
-  fun setShowDetailsResult(result: Either<Failure, TvshowDetails>) {
+  fun setShowDetailsResult(result: TvshowDetails) {
     showDetails.value = result
   }
 
-  override fun observeShowDetails(
-    id: Long,
-    forceReload: Boolean
-  ): Flow<Either<Failure, TvshowDetails>> {
-    return showDetails.filterNotNull()
+  override suspend fun fetchShowDetails(id: Long, forceRefresh: Boolean) {
   }
+
+  override fun observeShowDetails(id: Long): Flow<TvshowDetails> = showDetails.filterNotNull()
 }

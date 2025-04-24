@@ -37,11 +37,10 @@ class DefaultTrendingShowsRepository(
 
   override suspend fun fetchTrendingShows(forceRefresh: Boolean) {
     val page = DEFAULT_API_PAGE //TODO:: Get the page from the dao
-    val refresh = forceRefresh || isRequestExpired(page)
     //TODO:: Get the page from the dao
     val param = TrendingShowsParams(timeWindow = DEFAULT_DAY_TIME_WINDOW, page = page)
     when {
-      refresh -> store.fresh(param)
+      forceRefresh -> store.fresh(param)
       else -> store.get(param)
     }
   }
@@ -81,7 +80,7 @@ class DefaultTrendingShowsRepository(
 
   private fun isRequestExpired(page: Long): Boolean {
     return requestManagerRepository.isRequestExpired(
-      entityId = TRENDING_SHOWS_TODAY.requestId + page,
+      entityId = page,
       requestType = TRENDING_SHOWS_TODAY.name,
       threshold = TRENDING_SHOWS_TODAY.duration
     )

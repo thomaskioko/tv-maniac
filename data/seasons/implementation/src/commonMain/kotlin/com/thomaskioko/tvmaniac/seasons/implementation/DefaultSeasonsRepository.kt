@@ -20,13 +20,8 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(AppScope::class)
 class DefaultSeasonsRepository(
   private val seasonsDao: SeasonsDao,
-  private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonsRepository {
 
-  override fun observeSeasonsByShowId(id: Long): Flow<Either<Failure, List<ShowSeasons>>> =
-    seasonsDao
-      .observeSeasonsByShowId(id)
-      .map { seasons -> Either.Right(seasons) }
-      .distinctUntilChanged()
-      .flowOn(dispatcher.io)
+  override fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>> =
+    seasonsDao.observeSeasonsByShowId(id)
 }

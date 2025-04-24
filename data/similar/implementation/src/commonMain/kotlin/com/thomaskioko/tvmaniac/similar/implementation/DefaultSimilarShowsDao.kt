@@ -30,9 +30,9 @@ class DefaultSimilarShowsDao(
     }
   }
 
-  override fun observeSimilarShows(traktId: Long): Flow<List<SimilarShows>> {
+  override fun observeSimilarShows(showId: Long): Flow<List<SimilarShows>> {
     return database.similarShowsQueries
-      .similarShows(Id(traktId))
+      .similarShows(Id(showId))
       .asFlow()
       .mapToList(dispatchers.io)
   }
