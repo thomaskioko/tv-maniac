@@ -23,15 +23,15 @@
       ]
     },
     {
+      "groupName": "Kotlin, KSP and Skie",
       "matchPackagePatterns": [
         "org.jetbrains.kotlin",
         "com.google.devtools.ksp",
-        "androidx.compose.compiler"
+        "co.touchlab.skie"
       ],
       "excludePackagePatterns": [
         "org.jetbrains.kotlinx"
-      ],
-      "groupName": "Kotlin, KSP and Compose Compiler"
+      ]
     },
     {
       "matchPackagePatterns": [
@@ -53,7 +53,9 @@
     },
     {
       "groupName": "Project Plugins",
-      "matchPackagePatterns": ["^plugin\\.tvmaniac\\..*"],
+      "matchPackagePatterns": [
+        "^plugin\\.tvmaniac\\..*"
+      ],
       "enabled": false
     }
   ]
