@@ -10,6 +10,8 @@ interface RequestManagerRepository {
 
   fun isRequestExpired(entityId: Long, requestType: String, threshold: Duration): Boolean
 
+  fun isRequestValid(requestType: String, threshold: Duration) : Boolean
+
   fun delete(entityId: Long, requestType: String)
 
   fun deleteAll()
