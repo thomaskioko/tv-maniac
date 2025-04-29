@@ -18,7 +18,7 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.database)
+        implementation(projects.data.database.sqldelight)
         implementation(projects.data.cast.api)
 
         implementation(libs.sqldelight.extensions)
@@ -29,7 +29,7 @@ kotlin {
 
     commonTest {
       dependencies {
-        implementation(projects.database.test)
+        implementation(projects.data.database.test)
 
         implementation(libs.bundles.unittest)
       }

@@ -73,7 +73,7 @@ dependencies {
   implementation(projects.data.upcomingshows.implementation)
   implementation(projects.data.watchproviders.api)
   implementation(projects.data.watchproviders.implementation)
-  implementation(projects.database)
+  implementation(projects.data.database.sqldelight)
   implementation(projects.data.datastore.api)
   implementation(projects.data.datastore.implementation)
   implementation(projects.domain.discover)

@@ -6,7 +6,7 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        api(projects.database)
+        implementation(projects.data.database.sqldelight)
 
         api(libs.coroutines.core)
       }
@@ -14,7 +14,7 @@ kotlin {
 
     commonTest {
       dependencies {
-        implementation(projects.database.test)
+        implementation(projects.data.database.test)
 
         implementation(libs.kotest.assertions)
         implementation(libs.kotlin.test)

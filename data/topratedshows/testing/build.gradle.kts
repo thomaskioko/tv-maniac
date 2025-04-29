@@ -7,7 +7,7 @@ kotlin {
     commonMain {
       dependencies {
         api(projects.data.topratedshows.api)
-        implementation(projects.database)
+        implementation(projects.data.database.sqldelight)
 
         implementation(libs.coroutines.core)
       }

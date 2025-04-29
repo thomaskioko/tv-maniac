@@ -14,8 +14,9 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.core.paging)
         implementation(projects.core.logger.api)
+        implementation(projects.core.networkUtil)
+        implementation(projects.core.paging)
         implementation(projects.core.util)
         implementation(projects.data.recommendedshows.api)
         implementation(projects.data.requestManager.api)

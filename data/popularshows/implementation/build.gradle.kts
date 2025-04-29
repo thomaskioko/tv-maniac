@@ -25,7 +25,7 @@ kotlin {
         implementation(projects.core.util)
         implementation(projects.data.popularshows.api)
         implementation(projects.data.requestManager.api)
-        implementation(projects.database)
+        implementation(projects.data.database.sqldelight)
         implementation(projects.tmdbApi.api)
 
         api(libs.coroutines.core)

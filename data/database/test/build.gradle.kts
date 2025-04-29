@@ -18,7 +18,8 @@ kotlin {
 
     commonMain {
       dependencies {
-        implementation(projects.database)
+        api(projects.data.database.sqldelight)
+
         implementation(libs.kotlinx.datetime)
 
         implementation(libs.kotlin.test)

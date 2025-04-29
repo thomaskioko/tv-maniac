@@ -9,7 +9,7 @@ kotlin {
         api(projects.core.networkUtil)
         api(projects.data.shows.api)
 
-        implementation(projects.database)
+        implementation(projects.data.database.sqldelight)
         implementation(projects.core.base)
 
         api(libs.coroutines.core)

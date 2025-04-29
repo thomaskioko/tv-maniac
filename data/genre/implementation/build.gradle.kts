@@ -18,7 +18,7 @@ kotlin {
         implementation(projects.core.base)
         implementation(projects.core.networkUtil)
         implementation(projects.core.util)
-        implementation(projects.database)
+        implementation(projects.data.database.sqldelight)
         implementation(projects.data.genre.api)
         implementation(projects.tmdbApi.api)
 

@@ -26,7 +26,7 @@ kotlin {
 
     commonTest {
       dependencies {
-        implementation(projects.database.test)
+        implementation(projects.data.database.test)
 
         implementation(libs.kotest.assertions)
         implementation(libs.kotlin.test)

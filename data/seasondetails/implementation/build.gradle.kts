@@ -14,7 +14,8 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.database)
+        implementation(projects.core.networkUtil)
+        implementation(projects.data.database.sqldelight)
         implementation(projects.data.datastore.api)
         implementation(projects.tmdbApi.api)
         implementation(projects.core.util)
