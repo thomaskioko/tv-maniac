@@ -36,7 +36,7 @@ kotlin {
       dependencies {
         implementation(projects.core.logger.fixture)
         implementation(projects.core.util.testing)
-        implementation(projects.datastore.testing)
+        implementation(projects.data.datastore.testing)
         implementation(projects.traktAuth.testing)
         implementation(projects.data.featuredshows.testing)
         implementation(projects.data.genre.testing)

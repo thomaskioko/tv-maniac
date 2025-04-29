@@ -23,6 +23,7 @@ kotlin {
 
     commonTest {
       dependencies {
+        implementation(projects.database)
         implementation(projects.database.test)
 
         implementation(libs.kotlin.test)

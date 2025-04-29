@@ -15,7 +15,7 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.database)
-        implementation(projects.datastore.api)
+        implementation(projects.data.datastore.api)
         implementation(projects.tmdbApi.api)
         implementation(projects.core.util)
         implementation(projects.data.cast.api)

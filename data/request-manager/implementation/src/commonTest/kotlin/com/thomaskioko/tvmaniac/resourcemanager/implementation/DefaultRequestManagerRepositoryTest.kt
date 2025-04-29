@@ -44,8 +44,7 @@ class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
     repository.upsert(entityId, requestType, initialTimestamp)
 
     // Check the initial state
-    val initialRequest =
-      lastRequestsQueries.getLastRequestForId(requestType, entityId).executeAsOne()
+    val initialRequest = lastRequestsQueries.getLastRequestForId(requestType, entityId).executeAsOne()
     initialRequest.entity_id shouldBe entityId
     initialRequest.request_type shouldBe requestType
     initialRequest.timestamp.toEpochMilliseconds() shouldBe initialTimestamp.toEpochMilliseconds()

@@ -20,7 +20,7 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.datastore.api)
+        implementation(projects.data.datastore.api)
 
         api(libs.androidx.datastore.preference)
 

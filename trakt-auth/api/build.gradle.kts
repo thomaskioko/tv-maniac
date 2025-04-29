@@ -19,7 +19,7 @@ kotlin {
 
     commonMain {
       dependencies {
-        api(projects.datastore.api)
+        api(projects.data.datastore.api)
         api(libs.coroutines.core)
       }
     }

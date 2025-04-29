@@ -6,7 +6,7 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        implementation(projects.datastore.api)
+        implementation(projects.data.datastore.api)
         implementation(libs.coroutines.core)
       }
     }
