@@ -17,10 +17,10 @@ kotlin {
       dependencies {
         api(libs.coroutines.core)
 
+        implementation(projects.api.tmdb.api)
         implementation(projects.core.base)
         implementation(projects.core.networkUtil)
         implementation(projects.data.database.sqldelight)
-        implementation(projects.tmdbApi.api)
         implementation(projects.core.util)
         implementation(projects.data.watchlist.api)
 

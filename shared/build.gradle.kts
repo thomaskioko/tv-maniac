@@ -60,6 +60,8 @@ kotlin {
         api(projects.presenter.showDetails)
         api(projects.presenter.trailers)
 
+        implementation(projects.api.tmdb.api)
+        implementation(projects.api.tmdb.implementation)
         implementation(projects.core.base)
         implementation(projects.core.logger.api)
         implementation(projects.core.logger.implementation)
@@ -103,11 +105,8 @@ kotlin {
         implementation(projects.data.upcomingshows.implementation)
         implementation(projects.data.watchproviders.api)
         implementation(projects.data.watchproviders.implementation)
-
         implementation(projects.data.datastore.api)
         implementation(projects.data.datastore.implementation)
-        implementation(projects.tmdbApi.api)
-        implementation(projects.tmdbApi.implementation)
         implementation(projects.traktApi.api)
         implementation(projects.traktApi.implementation)
         implementation(projects.traktAuth.api)

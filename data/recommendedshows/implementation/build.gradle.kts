@@ -13,6 +13,7 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
+        implementation(projects.api.tmdb.api)
         implementation(projects.core.base)
         implementation(projects.core.logger.api)
         implementation(projects.core.networkUtil)
@@ -21,7 +22,6 @@ kotlin {
         implementation(projects.data.recommendedshows.api)
         implementation(projects.data.requestManager.api)
         implementation(projects.data.shows.api)
-        implementation(projects.tmdbApi.api)
 
         implementation(libs.sqldelight.extensions)
         implementation(libs.kotlinx.atomicfu)

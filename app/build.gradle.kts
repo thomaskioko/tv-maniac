@@ -25,6 +25,8 @@ dependencies {
   implementation(projects.androidFeature.seasonDetails)
   implementation(projects.androidFeature.showDetails)
   implementation(projects.androidFeature.trailers)
+  implementation(projects.api.tmdb.api)
+  implementation(projects.api.tmdb.implementation)
   implementation(projects.core.base)
   implementation(projects.core.util)
   implementation(projects.traktAuth.api)
@@ -92,8 +94,6 @@ dependencies {
   implementation(projects.presenter.settings)
   implementation(projects.presenter.showDetails)
   implementation(projects.presenter.trailers)
-  implementation(projects.tmdbApi.api)
-  implementation(projects.tmdbApi.implementation)
 
   implementation(libs.androidx.compose.activity)
   implementation(libs.androidx.core.core)

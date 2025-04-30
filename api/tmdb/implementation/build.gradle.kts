@@ -20,7 +20,7 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.logger.api)
-        implementation(projects.tmdbApi.api)
+        implementation(projects.api.tmdb.api)
 
         implementation(libs.ktor.core)
         implementation(libs.ktor.logging)
