@@ -34,7 +34,7 @@ kotlin {
 
     commonTest {
       dependencies {
-        implementation(projects.core.logger.fixture)
+        implementation(projects.core.logger.testing)
         implementation(projects.core.util.testing)
         implementation(projects.data.datastore.testing)
         implementation(projects.traktAuth.testing)

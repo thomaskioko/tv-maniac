@@ -29,7 +29,7 @@ kotlin {
 
     commonTest {
       dependencies {
-        implementation(projects.core.logger.fixture)
+        implementation(projects.core.logger.testing)
         implementation(projects.data.featuredshows.testing)
         implementation(projects.data.genre.testing)
         implementation(projects.data.popularshows.testing)

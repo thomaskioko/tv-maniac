@@ -32,7 +32,7 @@ kotlin {
 
     commonTest {
       dependencies {
-        implementation(projects.core.logger.fixture)
+        implementation(projects.core.logger.testing)
         implementation(projects.data.seasondetails.testing)
         implementation(projects.data.cast.testing)
 
