@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
-import com.thomaskioko.tvmaniac.core.logger.Logger as KermitLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.DefaultRequest
@@ -15,6 +14,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import com.thomaskioko.tvmaniac.core.logger.Logger as KermitLogger
 
 const val TIMEOUT_DURATION: Long = 60_000
 
@@ -53,13 +53,13 @@ fun tmdbHttpClient(
     install(Logging) {
       level = LogLevel.INFO
       logger = if (isDebug) {
-          object : Logger {
-            override fun log(message: String) {
-              kermitLogger.info("TmbdHttp", message)
-            }
+        object : Logger {
+          override fun log(message: String) {
+            kermitLogger.info("TmbdHttp", message)
           }
-        } else {
-          Logger.EMPTY
         }
+      } else {
+        Logger.EMPTY
+      }
     }
   }

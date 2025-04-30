@@ -152,7 +152,8 @@ class MoreShowsPresenter(
   }
 
   /** Helper method used to get a show object in iOS */
-  @Suppress("unused") fun getElement(index: Int): TvShow? = showsPagingDataPresenter[index]
+  @Suppress("unused")
+  fun getElement(index: Int): TvShow? = showsPagingDataPresenter[index]
 
   private fun Flow<PagingData<ShowEntity>>.mapToTvShow(): Flow<PagingData<TvShow>> = map {
     it.map { show ->

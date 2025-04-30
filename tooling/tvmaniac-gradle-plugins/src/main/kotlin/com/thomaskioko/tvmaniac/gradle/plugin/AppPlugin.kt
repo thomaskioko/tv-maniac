@@ -6,8 +6,8 @@ import com.thomaskioko.tvmaniac.gradle.plugin.utils.androidComponents
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.androidExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.baseExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.disableAndroidApplicationTasks
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.stringProperty
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.getVersion
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.stringProperty
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

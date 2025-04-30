@@ -33,7 +33,7 @@ class DefaultTmdbShowsNetworkDataSource(
     sortBy: String,
     genres: String?,
     watchProviders: String?,
-    screenedTheatrically: Boolean
+    screenedTheatrically: Boolean,
   ): ApiResponse<TmdbShowResult> =
     httpClient.safeRequest {
       url {

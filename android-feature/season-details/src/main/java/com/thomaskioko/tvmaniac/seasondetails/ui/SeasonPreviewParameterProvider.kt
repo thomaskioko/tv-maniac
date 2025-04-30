@@ -24,29 +24,29 @@ val episodeDetailsModel =
   )
 
 val seasonDetailsLoaded = SeasonDetailsModel(
-    seasonId = 1,
-    seasonName = "Specials",
-    episodeCount = 8,
-    watchProgress = 0.4f,
-    imageUrl = "https://image.tmdb.org/t/p/w500/path/to/image.jpg",
-    episodeDetailsList = List(8) { episodeDetailsModel }.toPersistentList(),
-    seasonImages =
-      persistentListOf(
-        SeasonImagesModel(
-          id = 1L,
-          imageUrl = null,
-        ),
-        SeasonImagesModel(
-          id = 1L,
-          imageUrl = null,
-        ),
+  seasonId = 1,
+  seasonName = "Specials",
+  episodeCount = 8,
+  watchProgress = 0.4f,
+  imageUrl = "https://image.tmdb.org/t/p/w500/path/to/image.jpg",
+  episodeDetailsList = List(8) { episodeDetailsModel }.toPersistentList(),
+  seasonImages =
+    persistentListOf(
+      SeasonImagesModel(
+        id = 1L,
+        imageUrl = null,
       ),
-    seasonOverview =
-      "After stealing the Tesseract in Avengers: Endgame, Loki lands before the " +
-        "Time Variance Authority.",
-    isSeasonWatched = false,
-    seasonCast = persistentListOf(),
-  )
+      SeasonImagesModel(
+        id = 1L,
+        imageUrl = null,
+      ),
+    ),
+  seasonOverview =
+    "After stealing the Tesseract in Avengers: Endgame, Loki lands before the " +
+      "Time Variance Authority.",
+  isSeasonWatched = false,
+  seasonCast = persistentListOf(),
+)
 
 class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsModel> {
   override val values: Sequence<SeasonDetailsModel>

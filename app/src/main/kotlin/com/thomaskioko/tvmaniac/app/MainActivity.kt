@@ -39,27 +39,27 @@ class MainActivity : ComponentActivity() {
 
       splashScreen.setKeepOnScreenCondition { themeState.isFetching }
 
-        DisposableEffect(darkTheme) {
-            enableEdgeToEdge(
-                statusBarStyle =
-                    SystemBarStyle.Companion.auto(
-                        Color.TRANSPARENT,
-                        Color.TRANSPARENT,
-                    ) {
-                        darkTheme
-                    },
-                navigationBarStyle =
-                    SystemBarStyle.Companion.auto(
-                        lightScrim,
-                        darkScrim,
-                    ) {
-                        darkTheme
-                    },
-            )
-            onDispose {}
-        }
+      DisposableEffect(darkTheme) {
+        enableEdgeToEdge(
+          statusBarStyle =
+            SystemBarStyle.Companion.auto(
+              Color.TRANSPARENT,
+              Color.TRANSPARENT,
+            ) {
+              darkTheme
+            },
+          navigationBarStyle =
+            SystemBarStyle.Companion.auto(
+              lightScrim,
+              darkScrim,
+            ) {
+              darkTheme
+            },
+        )
+        onDispose {}
+      }
 
-        TvManiacTheme(darkTheme = darkTheme) { RootScreen(rootPresenter = component.rootPresenter) }
+      TvManiacTheme(darkTheme = darkTheme) { RootScreen(rootPresenter = component.rootPresenter) }
     }
   }
 }

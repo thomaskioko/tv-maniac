@@ -65,8 +65,8 @@ fun PosterCard(
           contentScale = contentScale,
           contentDescription = title?.let { stringResource(R.string.cd_show_poster, title) },
           modifier = Modifier
-              .fillMaxSize()
-              .aspectRatio(aspectRatio),
+            .fillMaxSize()
+            .aspectRatio(aspectRatio),
         )
       }
     },
@@ -86,9 +86,9 @@ private fun PlaceholderContent(
     imageUrl?.let {
       Icon(
         modifier = Modifier
-            .size(imageSize)
-            .padding(4.dp)
-            .align(Alignment.CenterHorizontally),
+          .size(imageSize)
+          .padding(4.dp)
+          .align(Alignment.CenterHorizontally),
         imageVector = Icons.Outlined.Movie,
         contentDescription = title,
         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
@@ -134,13 +134,13 @@ fun PosterBackdropCard(
           PlaceholderContent(
             modifier = Modifier.align(Alignment.Center),
             imageUrl = imageUrl,
-            imageSize = 84.dp
+            imageSize = 84.dp,
           )
 
           AsyncImageComposable(
             modifier = Modifier
-                .fillMaxSize()
-                .aspectRatio(2 / 3f),
+              .fillMaxSize()
+              .aspectRatio(2 / 3f),
             model = imageUrl,
             contentScale = contentScale,
             contentDescription = stringResource(R.string.cd_show_poster, title),
@@ -149,8 +149,8 @@ fun PosterBackdropCard(
 
           Spacer(
             Modifier
-                .matchParentSize()
-                .drawForegroundGradientScrim(MaterialTheme.colorScheme.background),
+              .matchParentSize()
+              .drawForegroundGradientScrim(MaterialTheme.colorScheme.background),
           )
 
           Text(
@@ -161,9 +161,9 @@ fun PosterBackdropCard(
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .align(Alignment.BottomStart),
+              .fillMaxWidth()
+              .padding(16.dp)
+              .align(Alignment.BottomStart),
           )
         }
       }
@@ -181,13 +181,13 @@ internal fun PosterCard(
 ) {
   Card(
     modifier = modifier
-        .width(imageWidth)
-        .clickable { onClick() },
+      .width(imageWidth)
+      .clickable { onClick() },
     shape = shape,
     elevation =
-    CardDefaults.cardElevation(
-      defaultElevation = 4.dp,
-    ),
+      CardDefaults.cardElevation(
+        defaultElevation = 4.dp,
+      ),
     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
   ) {
     content()
@@ -205,8 +205,8 @@ private fun PosterCardPreview() {
         title = "Loki",
         onClick = {},
         modifier = Modifier
-            .width(100.dp)
-            .aspectRatio(0.8f),
+          .width(100.dp)
+          .aspectRatio(0.8f),
       )
     }
   }
@@ -222,8 +222,8 @@ private fun PosterBackdropPreview() {
         title = "Game of Thrones",
         onClick = {},
         modifier = Modifier
-            .fillMaxWidth()
-            .height(240.dp),
+          .fillMaxWidth()
+          .height(240.dp),
       )
     }
   }

@@ -10,11 +10,11 @@ import kotlinx.collections.immutable.toPersistentList
 val list =
   List(6) {
     WatchlistItem(
-        tmdbId = 84958,
-        title = "Loki",
-        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-      )
-    }
+      tmdbId = 84958,
+      title = "Loki",
+      posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+    )
+  }
     .toPersistentList()
 
 class WatchlistPreviewParameterProvider : PreviewParameterProvider<WatchlistState> {

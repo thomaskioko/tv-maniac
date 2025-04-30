@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.watchlist
 
-import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.db.SearchWatchlist
+import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.presentation.watchlist.model.WatchlistItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList

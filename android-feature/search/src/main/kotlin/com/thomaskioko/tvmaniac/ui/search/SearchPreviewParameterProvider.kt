@@ -2,16 +2,16 @@ package com.thomaskioko.tvmaniac.ui.search
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.presentation.search.EmptySearchResult
-import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
 import com.thomaskioko.tvmaniac.presentation.search.SearchResultAvailable
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowState
 import com.thomaskioko.tvmaniac.presentation.search.ShowContentAvailable
 import com.thomaskioko.tvmaniac.presentation.search.model.ShowGenre
+import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
 import kotlinx.collections.immutable.toImmutableList
 
 class SearchPreviewParameterProvider : PreviewParameterProvider<SearchShowState> {
   override val values: Sequence<SearchShowState>
-    get()  {
+    get() {
       return sequenceOf(
         EmptySearchResult(),
         EmptySearchResult(errorMessage = "Something went wrong"),
@@ -20,7 +20,7 @@ class SearchPreviewParameterProvider : PreviewParameterProvider<SearchShowState>
         ),
         SearchResultAvailable(
           results = createDiscoverShowList(),
-        )
+        ),
       )
     }
 }
@@ -35,8 +35,11 @@ internal val discoverShow = ShowItem(
   status = "Ended",
   inLibrary = false,
 )
-internal fun createGenreShowList(size: Int = 5) = List(size) { ShowGenre(
-  id = 84958,
-  name = "Horror",
-  posterUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-) }.toImmutableList()
+
+internal fun createGenreShowList(size: Int = 5) = List(size) {
+  ShowGenre(
+    id = 84958,
+    name = "Horror",
+    posterUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+  )
+}.toImmutableList()

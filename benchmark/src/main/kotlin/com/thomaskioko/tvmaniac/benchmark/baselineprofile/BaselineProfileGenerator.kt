@@ -14,10 +14,10 @@ class BaselineProfileGenerator {
 
   @Test
   fun generateBaselineProfile() = rule.collect(
-      packageName = TARGET_PACKAGE,
-      includeInStartupProfile = true,
-      profileBlock = {
-        startActivityAndWait()
-      }
-    )
+    packageName = TARGET_PACKAGE,
+    includeInStartupProfile = true,
+    profileBlock = {
+      startActivityAndWait()
+    },
+  )
 }

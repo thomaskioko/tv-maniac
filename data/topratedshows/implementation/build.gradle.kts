@@ -9,7 +9,7 @@ tvmaniac {
   }
 
   optIn(
-    "androidx.paging.ExperimentalPagingApi"
+    "androidx.paging.ExperimentalPagingApi",
   )
 }
 

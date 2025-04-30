@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -67,7 +68,6 @@ import com.thomaskioko.tvmaniac.presentation.settings.ThemeSelected
 import com.thomaskioko.tvmaniac.presentation.settings.TraktLoginClicked
 import com.thomaskioko.tvmaniac.presentation.settings.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.presentation.settings.UserInfo
-import com.thomaskioko.tvmaniac.android.resources.R
 
 @Composable
 fun SettingsScreen(
@@ -104,15 +104,17 @@ internal fun SettingsScreen(
               ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+            modifier = Modifier
+              .fillMaxWidth()
+              .padding(start = 16.dp),
           )
         },
         modifier = Modifier,
         colors =
-        TopAppBarDefaults.centerAlignedTopAppBarColors(
-          containerColor = MaterialTheme.colorScheme.background,
-          scrolledContainerColor = MaterialTheme.colorScheme.background,
-        ),
+          TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = MaterialTheme.colorScheme.background,
+          ),
       )
     },
     snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -134,7 +136,9 @@ internal fun SettingsScreen(
         showTraktDialog = state.showTraktDialog,
         isLoading = state.isLoading,
         onAction = onAction,
-        modifier = Modifier.fillMaxSize().padding(innerPadding),
+        modifier = Modifier
+          .fillMaxSize()
+          .padding(innerPadding),
       )
     },
   )
@@ -205,7 +209,8 @@ private fun TraktProfileSettingsItem(
 
   Column(
     modifier =
-      Modifier.fillMaxWidth()
+      Modifier
+        .fillMaxWidth()
         .clickable { onAction(ShowTraktDialog) }
         .padding(start = 16.dp, end = 16.dp),
   ) {
@@ -222,7 +227,9 @@ private fun TraktProfileSettingsItem(
       if (!traktUserPicUrl.isNullOrBlank()) {
         if (isLoading) {
           CircularProgressIndicator(
-            modifier = Modifier.padding(end = 16.dp).size(48.dp),
+            modifier = Modifier
+              .padding(end = 16.dp)
+              .size(48.dp),
             color = MaterialTheme.colorScheme.secondary,
           )
         } else {
@@ -234,7 +241,8 @@ private fun TraktProfileSettingsItem(
                 traktUserName ?: traktFullName ?: "",
               ),
             modifier =
-              Modifier.padding(end = 16.dp)
+              Modifier
+                .padding(end = 16.dp)
                 .size(48.dp)
                 .clip(CircleShape)
                 .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape),
@@ -245,7 +253,9 @@ private fun TraktProfileSettingsItem(
           imageVector = Icons.Filled.Person,
           tint = MaterialTheme.colorScheme.secondary,
           contentDescription = null,
-          modifier = Modifier.padding(end = 16.dp).size(48.dp),
+          modifier = Modifier
+            .padding(end = 16.dp)
+            .size(48.dp),
         )
       }
 
@@ -335,7 +345,10 @@ private fun SettingsThemeItem(
 
   Column(
     modifier =
-      Modifier.fillMaxWidth().clickable { onThemeClicked() }.padding(start = 16.dp, end = 16.dp),
+      Modifier
+        .fillMaxWidth()
+        .clickable { onThemeClicked() }
+        .padding(start = 16.dp, end = 16.dp),
   ) {
     Spacer(modifier = Modifier.height(8.dp))
 
@@ -354,11 +367,15 @@ private fun SettingsThemeItem(
         imageVector = Icons.Filled.Palette,
         tint = MaterialTheme.colorScheme.secondary,
         contentDescription = null,
-        modifier = Modifier.padding(end = 16.dp).size(48.dp),
+        modifier = Modifier
+          .padding(end = 16.dp)
+          .size(48.dp),
       )
 
       Column(
-        modifier = Modifier.padding(end = 8.dp, bottom = 8.dp).weight(1f),
+        modifier = Modifier
+          .padding(end = 8.dp, bottom = 8.dp)
+          .weight(1f),
       ) {
         TitleItem(appThemeTitle)
         SettingDescription(stringResource(R.string.settings_theme_description))
@@ -448,7 +465,9 @@ private fun ThemeMenuItem(
     },
     text = {
       Row(
-        modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(start = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
       ) {
@@ -476,7 +495,10 @@ private fun ThemeMenuItem(
 @Composable
 private fun AboutSettingsItem() {
   Column(
-    modifier = Modifier.fillMaxSize().clickable {}.padding(start = 16.dp, end = 16.dp),
+    modifier = Modifier
+      .fillMaxSize()
+      .clickable {}
+      .padding(start = 16.dp, end = 16.dp),
   ) {
     SettingHeaderTitle(title = stringResource(R.string.settings_title_info))
 

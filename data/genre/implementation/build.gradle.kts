@@ -9,7 +9,7 @@ tvmaniac {
   }
 
   optIn(
-    "kotlinx.coroutines.DelicateCoroutinesApi"
+    "kotlinx.coroutines.DelicateCoroutinesApi",
   )
 }
 

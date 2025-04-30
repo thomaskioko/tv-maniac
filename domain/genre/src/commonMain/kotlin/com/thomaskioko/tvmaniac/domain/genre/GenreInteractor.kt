@@ -10,7 +10,7 @@ import me.tatarka.inject.annotations.Inject
 class GenreInteractor(
   private val genreRepository: GenreRepository,
   private val dispatchers: AppCoroutineDispatchers,
-): Interactor<Unit>() {
+) : Interactor<Unit>() {
   override suspend fun doWork(params: Unit) {
     withContext(dispatchers.io) {
       genreRepository.fetchGenresWithShows()

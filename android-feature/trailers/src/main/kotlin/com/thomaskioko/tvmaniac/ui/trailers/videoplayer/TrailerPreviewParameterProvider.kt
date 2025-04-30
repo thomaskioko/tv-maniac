@@ -9,13 +9,13 @@ import kotlinx.collections.immutable.toPersistentList
 
 private val trailersList =
   List(4) {
-      Trailer(
-        showId = 1232,
-        key = "er",
-        name = "Trailer Name",
-        youtubeThumbnailUrl = "",
-      )
-    }
+    Trailer(
+      showId = 1232,
+      key = "er",
+      name = "Trailer Name",
+      youtubeThumbnailUrl = "",
+    )
+  }
     .toPersistentList()
 
 class TrailerPreviewParameterProvider : PreviewParameterProvider<TrailersState> {

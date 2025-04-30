@@ -77,7 +77,7 @@ class DefaultTopRatedShowsRepository(
     return requestManagerRepository.isRequestExpired(
       entityId = page,
       requestType = TOP_RATED_SHOWS.name,
-      threshold = TOP_RATED_SHOWS.duration
+      threshold = TOP_RATED_SHOWS.duration,
     )
   }
 

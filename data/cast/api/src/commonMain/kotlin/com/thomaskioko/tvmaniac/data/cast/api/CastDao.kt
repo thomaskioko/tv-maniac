@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.data.cast.api
 
-import com.thomaskioko.tvmaniac.db.SeasonCast
-import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.Cast_appearance
 import com.thomaskioko.tvmaniac.db.Casts
+import com.thomaskioko.tvmaniac.db.SeasonCast
+import com.thomaskioko.tvmaniac.db.ShowCast
 import kotlinx.coroutines.flow.Flow
 
 interface CastDao {

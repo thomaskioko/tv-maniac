@@ -6,8 +6,8 @@ import app.cash.sqldelight.SuspendingTransacter
 import app.cash.sqldelight.Transacter
 import app.cash.sqldelight.TransacterBase
 import app.cash.sqldelight.TransactionCallbacks
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
 internal class OffsetQueryPagingSource<RowType : Any>(
   private val queryProvider: (limit: Int, offset: Int) -> Query<RowType>,

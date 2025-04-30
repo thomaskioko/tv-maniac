@@ -20,8 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.android.resources.R
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
 fun TvManiacNavigationBar(
@@ -69,9 +69,11 @@ fun RowScope.TvManiacBottomNavigationItem(
 }
 
 object NavigationDefaultColors {
-  @Composable fun navigationContentColor() = MaterialTheme.colorScheme.onSurfaceVariant
+  @Composable
+  fun navigationContentColor() = MaterialTheme.colorScheme.onSurfaceVariant
 
-  @Composable fun navigationSelectedItemColor() = MaterialTheme.colorScheme.secondary
+  @Composable
+  fun navigationSelectedItemColor() = MaterialTheme.colorScheme.secondary
 }
 
 @ThemePreviews
@@ -79,33 +81,33 @@ object NavigationDefaultColors {
 private fun TvManiacTvManiacNavigationBarPreviewPreview() {
   TvManiacTheme {
     Surface {
-      TvManiacNavigationBar  {
+      TvManiacNavigationBar {
         TvManiacBottomNavigationItem(
           imageVector = Icons.Outlined.Movie,
           title = stringResource(id = R.string.menu_item_discover),
           selected = true,
-          onClick = {  },
+          onClick = { },
         )
 
         TvManiacBottomNavigationItem(
           imageVector = Icons.Outlined.Search,
           title = stringResource(id = R.string.menu_item_search),
           selected = false,
-          onClick = {  },
+          onClick = { },
         )
 
         TvManiacBottomNavigationItem(
           imageVector = Icons.Outlined.VideoLibrary,
           title = stringResource(id = R.string.menu_item_library),
-           selected = false,
-          onClick = {  },
+          selected = false,
+          onClick = { },
         )
 
         TvManiacBottomNavigationItem(
           imageVector = Icons.Outlined.Settings,
           title = stringResource(id = R.string.menu_item_settings),
-           selected = false,
-          onClick = {  },
+          selected = false,
+          onClick = { },
         )
       }
     }

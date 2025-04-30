@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.discover.api
 
 import androidx.paging.PagingData
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 

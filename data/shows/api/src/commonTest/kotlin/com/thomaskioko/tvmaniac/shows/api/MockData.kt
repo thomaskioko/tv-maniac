@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.shows.api
 
-import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.Tvshow
 
 object MockData {
 

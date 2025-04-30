@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.core.base.scope
 
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Delay
@@ -12,6 +11,7 @@ import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
 import platform.darwin.dispatch_queue_t
 import platform.darwin.dispatch_time
+import kotlin.coroutines.CoroutineContext
 
 val applicationNsQueueDispatcher: CoroutineDispatcher = NsQueueDispatcher(dispatch_get_main_queue())
 

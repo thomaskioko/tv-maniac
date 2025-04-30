@@ -17,14 +17,14 @@ fun PaddingValues.copy(
   copyBottom: Boolean = true,
 ): PaddingValues {
   return remember(this) {
-      derivedStateOf {
-        PaddingValues(
-          start = if (copyStart) calculateStartPadding(LayoutDirection.Ltr) else 0.dp,
-          top = if (copyTop) calculateTopPadding() else 0.dp,
-          end = if (copyEnd) calculateEndPadding(LayoutDirection.Ltr) else 0.dp,
-          bottom = if (copyBottom) calculateBottomPadding() else 0.dp,
-        )
-      }
+    derivedStateOf {
+      PaddingValues(
+        start = if (copyStart) calculateStartPadding(LayoutDirection.Ltr) else 0.dp,
+        top = if (copyTop) calculateTopPadding() else 0.dp,
+        end = if (copyEnd) calculateEndPadding(LayoutDirection.Ltr) else 0.dp,
+        bottom = if (copyBottom) calculateBottomPadding() else 0.dp,
+      )
     }
+  }
     .value
 }

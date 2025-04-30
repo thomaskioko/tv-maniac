@@ -4,21 +4,19 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.ServerError
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import io.kotest.matchers.shouldBe
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.Test
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class TrailersPresenterTest {
 
@@ -53,17 +51,17 @@ class TrailersPresenterTest {
     presenter.state.test {
       awaitItem() shouldBe LoadingTrailers
       awaitItem() shouldBe TrailersContent(
-          selectedVideoKey = "Fd43V",
-          trailersList =
-            persistentListOf(
-              Trailer(
-                showId = 84958,
-                key = "Fd43V",
-                name = "Some title",
-                youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
-              ),
+        selectedVideoKey = "Fd43V",
+        trailersList =
+          persistentListOf(
+            Trailer(
+              showId = 84958,
+              key = "Fd43V",
+              name = "Some title",
+              youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
             ),
-        )
+          ),
+      )
     }
   }
 
@@ -83,13 +81,13 @@ class TrailersPresenterTest {
         TrailersContent(
           selectedVideoKey = "Fd43V",
           trailersList = persistentListOf(
-              Trailer(
-                showId = 84958,
-                key = "Fd43V",
-                name = "Some title",
-                youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
-              ),
+            Trailer(
+              showId = 84958,
+              key = "Fd43V",
+              name = "Some title",
+              youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
             ),
+          ),
         )
     }
   }

@@ -1,28 +1,6 @@
 package com.thomaskioko.tvmaniac.db
 
 import app.cash.sqldelight.db.SqlDriver
-import com.thomaskioko.tvmaniac.db.Casts
-import com.thomaskioko.tvmaniac.db.Episode
-import com.thomaskioko.tvmaniac.db.Episode_image
-import com.thomaskioko.tvmaniac.db.Featured_shows
-import com.thomaskioko.tvmaniac.db.Genres
-import com.thomaskioko.tvmaniac.db.Last_requests
-import com.thomaskioko.tvmaniac.db.Popular_shows
-import com.thomaskioko.tvmaniac.db.Recommended_shows
-import com.thomaskioko.tvmaniac.db.Season
-import com.thomaskioko.tvmaniac.db.Season_images
-import com.thomaskioko.tvmaniac.db.Season_videos
-import com.thomaskioko.tvmaniac.db.Show_genres
-import com.thomaskioko.tvmaniac.db.Show_metadata
-import com.thomaskioko.tvmaniac.db.Similar_shows
-import com.thomaskioko.tvmaniac.db.Toprated_shows
-import com.thomaskioko.tvmaniac.db.Trailers
-import com.thomaskioko.tvmaniac.db.Trending_shows
-import com.thomaskioko.tvmaniac.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.db.Tvshow
-import com.thomaskioko.tvmaniac.db.Upcoming_shows
-import com.thomaskioko.tvmaniac.db.Watch_providers
-import com.thomaskioko.tvmaniac.db.Watchlist
 import com.thomaskioko.tvmaniac.db.adapters.IdAdapter
 import com.thomaskioko.tvmaniac.db.adapters.InstantColumnAdapter
 import com.thomaskioko.tvmaniac.db.adapters.intColumnAdapter
@@ -139,6 +117,6 @@ class DatabaseFactory(private val sqlDriver: SqlDriver) {
           cast_idAdapter = IdAdapter(),
           show_idAdapter = IdAdapter(),
           season_idAdapter = IdAdapter(),
-        )
+        ),
     )
 }

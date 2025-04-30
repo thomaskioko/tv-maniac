@@ -5,7 +5,7 @@ plugins {
 tvmaniac {
   optIn(
     "kotlinx.coroutines.InternalCoroutinesApi",
-    "kotlin.uuid.ExperimentalUuidApi"
+    "kotlin.uuid.ExperimentalUuidApi",
   )
 }
 

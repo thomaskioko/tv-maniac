@@ -10,7 +10,7 @@ tvmaniac {
   }
 
   optIn(
-    "kotlinx.coroutines.ExperimentalCoroutinesApi"
+    "kotlinx.coroutines.ExperimentalCoroutinesApi",
   )
 }
 

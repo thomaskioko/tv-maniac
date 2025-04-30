@@ -26,7 +26,8 @@ fun RootScreen(rootPresenter: RootPresenter, modifier: Modifier = Modifier) {
   Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
     Column(
       modifier =
-        Modifier.fillMaxSize()
+        Modifier
+          .fillMaxSize()
           .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
     ) {
       ChildrenContent(rootPresenter = rootPresenter, modifier = Modifier.weight(1F))

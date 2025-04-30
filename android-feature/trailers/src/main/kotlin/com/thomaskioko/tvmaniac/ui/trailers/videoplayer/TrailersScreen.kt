@@ -47,6 +47,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstan
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -58,12 +59,11 @@ import com.thomaskioko.tvmaniac.presentation.trailers.ReloadTrailers
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailerError
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailerSelected
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersAction
-import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersContent
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersState
 import com.thomaskioko.tvmaniac.presentation.trailers.VideoPlayerError
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
-import com.thomaskioko.tvmaniac.android.resources.R
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -94,7 +94,9 @@ internal fun TrailersScreen(
       when (state) {
         is LoadingTrailers ->
           LoadingIndicator(
-            modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
+            modifier = Modifier
+              .fillMaxSize()
+              .wrapContentSize(Alignment.Center),
           )
         is TrailersContent -> {
           VideoPlayerContent(
@@ -119,7 +121,9 @@ internal fun TrailersScreen(
             },
             errorMessage = state.errorMessage,
             onRetry = { onAction(ReloadTrailers) },
-            modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
+            modifier = Modifier
+              .fillMaxSize()
+              .wrapContentSize(Alignment.Center),
           )
       }
     },
@@ -205,7 +209,8 @@ private fun TrailerList(
     items(trailerList) { trailer ->
       ConstraintLayout(
         modifier =
-          Modifier.fillMaxWidth()
+          Modifier
+            .fillMaxWidth()
             .height(80.dp)
             .clickable { onTrailerClicked(trailer.key) }
             .padding(horizontal = 8.dp),
@@ -217,7 +222,8 @@ private fun TrailerList(
           contentDescription = trailer.name,
           contentScale = ContentScale.Crop,
           modifier =
-            Modifier.width(140.dp)
+            Modifier
+              .width(140.dp)
               .drawWithCache {
                 onDrawWithContent {
                   drawContent()

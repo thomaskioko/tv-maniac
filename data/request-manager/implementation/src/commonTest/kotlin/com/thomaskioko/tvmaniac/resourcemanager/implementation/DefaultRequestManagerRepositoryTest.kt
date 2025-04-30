@@ -3,12 +3,12 @@ package com.thomaskioko.tvmaniac.resourcemanager.implementation
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.LastRequestsQueries
 import io.kotest.matchers.shouldBe
+import kotlinx.datetime.Clock
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
 
 class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
   private val lastRequestsQueries: LastRequestsQueries = database.lastRequestsQueries

@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.seasondetails.EpisodeClicked
@@ -43,7 +44,6 @@ import com.thomaskioko.tvmaniac.presentation.seasondetails.OnEpisodeHeaderClicke
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.ShowMarkSeasonDialog
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.seasondetails.ui.seasonDetailsLoaded
 import kotlinx.collections.immutable.ImmutableList
 
@@ -77,7 +77,9 @@ fun CollapsableContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         EpisodeItem(
-          modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 84.dp),
+          modifier = Modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = 84.dp),
           imageUrl = episode.imageUrl,
           title = episode.episodeNumberTitle,
           episodeOverview = episode.overview,
@@ -107,16 +109,19 @@ private fun SeasonTitleHeader(
 
   val transition = rememberTransition(transitionState)
   val arrowRotationDegree by
-    transition.animateFloat(
-      label = "rotationDegreeTransition",
-      transitionSpec = { tween(durationMillis = EXPANSION_TRANSITION_DURATION) },
-      targetValueByState = { if (expanded) 0f else 180f },
-    )
+  transition.animateFloat(
+    label = "rotationDegreeTransition",
+    transitionSpec = { tween(durationMillis = EXPANSION_TRANSITION_DURATION) },
+    targetValueByState = { if (expanded) 0f else 180f },
+  )
 
   Card(
     shape = shape,
     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-    modifier = Modifier.fillMaxWidth().height(64.dp).clickable { onAction(OnEpisodeHeaderClicked) },
+    modifier = Modifier
+      .fillMaxWidth()
+      .height(64.dp)
+      .clickable { onAction(OnEpisodeHeaderClicked) },
   ) {
     ConstraintLayout(
       modifier = Modifier.fillMaxSize(),
@@ -128,13 +133,15 @@ private fun SeasonTitleHeader(
         contentDescription = null,
         tint = MaterialTheme.colorScheme.onSurface,
         modifier =
-          Modifier.rotate(arrowRotationDegree).constrainAs(image) {
-            start.linkTo(parent.start, 8.dp)
-            top.linkTo(parent.top)
-            bottom.linkTo(parent.bottom)
+          Modifier
+            .rotate(arrowRotationDegree)
+            .constrainAs(image) {
+              start.linkTo(parent.start, 8.dp)
+              top.linkTo(parent.top)
+              bottom.linkTo(parent.bottom)
 
-            height = Dimension.fillToConstraints
-          },
+              height = Dimension.fillToConstraints
+            },
       )
 
       Text(
@@ -189,14 +196,16 @@ private fun SeasonTitleHeader(
       ShowLinearProgressIndicator(
         progress = watchProgress,
         modifier =
-          Modifier.height(8.dp).constrainAs(watchlistProgress) {
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            top.linkTo(image.bottom)
-            bottom.linkTo(parent.bottom, 12.dp)
+          Modifier
+            .height(8.dp)
+            .constrainAs(watchlistProgress) {
+              start.linkTo(parent.start)
+              end.linkTo(parent.end)
+              top.linkTo(image.bottom)
+              bottom.linkTo(parent.bottom, 12.dp)
 
-            width = Dimension.fillToConstraints
-          },
+              width = Dimension.fillToConstraints
+            },
       )
     }
   }

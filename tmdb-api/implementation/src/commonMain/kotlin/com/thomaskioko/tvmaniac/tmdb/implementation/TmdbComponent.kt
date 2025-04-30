@@ -2,9 +2,6 @@ package com.thomaskioko.tvmaniac.tmdb.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.Configs
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.tmdb.api.TmdbSeasonDetailsNetworkDataSource
-import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
-import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import kotlinx.serialization.json.Json
@@ -20,7 +17,7 @@ typealias TmdbHttpClientEngine = HttpClientEngine
 typealias TmdbJson = Json
 
 @ContributesTo(AppScope::class)
-interface TmdbComponent  {
+interface TmdbComponent {
 
   @Provides
   @SingleIn(AppScope::class)

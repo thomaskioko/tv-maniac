@@ -167,8 +167,8 @@ internal fun DiscoverScreen(
         )
       state.showError -> ErrorUi(
         modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center),
+          .fillMaxSize()
+          .wrapContentSize(Alignment.Center),
         errorIcon = {
           Image(
             modifier = Modifier.size(120.dp),
@@ -215,8 +215,8 @@ private fun DiscoverContent(
 
   Box(
     modifier = Modifier
-        .fillMaxSize()
-        .pullRefresh(pullRefreshState),
+      .fillMaxSize()
+      .pullRefresh(pullRefreshState),
   ) {
     LazyColumnContent(
       modifier = modifier,
@@ -230,8 +230,8 @@ private fun DiscoverContent(
       refreshing = state.isRefreshing,
       state = pullRefreshState,
       modifier = Modifier
-          .align(Alignment.TopCenter)
-          .statusBarsPadding(),
+        .align(Alignment.TopCenter)
+        .statusBarsPadding(),
       scale = true,
       backgroundColor = MaterialTheme.colorScheme.background,
       contentColor = MaterialTheme.colorScheme.secondary,
@@ -248,8 +248,8 @@ private fun DiscoverContent(
           maxLines = 1,
           overflow = TextOverflow.Ellipsis,
           modifier = Modifier
-              .fillMaxWidth()
-              .padding(start = 16.dp),
+            .fillMaxWidth()
+            .padding(start = 16.dp),
         )
       },
       actions = { showScrim ->
@@ -304,8 +304,8 @@ private fun LazyColumnContent(
 ) {
   LazyColumn(
     modifier = modifier
-        .fillMaxSize()
-        .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
+      .fillMaxSize()
+      .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
     state = listState,
   ) {
     if (dataLoadedState.featuredShows.isEmpty()) {
@@ -397,8 +397,8 @@ fun PosterCardsPager(
   Box {
     HorizontalPager(
       modifier = modifier
-          .fillMaxWidth()
-          .height(pagerHeight),
+        .fillMaxWidth()
+        .height(pagerHeight),
       state = pagerState,
       verticalAlignment = Alignment.Bottom,
     ) { currentPage ->
@@ -457,8 +457,8 @@ private fun CircularIndicator(
 ) {
   Row(
     modifier = modifier
-        .fillMaxWidth()
-        .padding(bottom = 8.dp),
+      .fillMaxWidth()
+      .padding(bottom = 8.dp),
     horizontalArrangement = Arrangement.Center,
     verticalAlignment = Alignment.CenterVertically,
   ) {
@@ -468,10 +468,10 @@ private fun CircularIndicator(
 
       Box(
         modifier = Modifier
-            .padding(2.dp)
-            .clip(CircleShape)
-            .size(size)
-            .background(color),
+          .padding(2.dp)
+          .clip(CircleShape)
+          .size(size)
+          .background(color),
       )
     }
   }
@@ -484,20 +484,20 @@ private fun ShowCardOverlay(
 ) {
   Box(
     modifier = Modifier
-        .fillMaxSize()
-        .background(
-            Brush.verticalGradient(
-                listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
-                startY = 500f,
-                endY = 1000f,
-            ),
+      .fillMaxSize()
+      .background(
+        Brush.verticalGradient(
+          listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
+          startY = 500f,
+          endY = 1000f,
         ),
+      ),
   ) {
     Column(
       modifier = Modifier
-          .align(Alignment.BottomCenter)
-          .offset(y = -(20).dp)
-          .padding(16.dp),
+        .align(Alignment.BottomCenter)
+        .offset(y = -(20).dp)
+        .padding(16.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
@@ -534,8 +534,8 @@ private fun HorizontalRowContent(
     Column {
       BoxTextItems(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp),
+          .fillMaxWidth()
+          .padding(start = 16.dp),
         title = category,
         label = stringResource(id = R.string.str_more),
         onMoreClicked = onMoreClicked,

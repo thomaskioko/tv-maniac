@@ -17,5 +17,6 @@ class SimilarShowsInteractor(
       similarShowsRepository.fetchSimilarShows(id = params.id, forceRefresh = params.forceRefresh)
     }
   }
+
   data class Param(val id: Long, val forceRefresh: Boolean = false)
 }

@@ -11,14 +11,14 @@ import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreReposit
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_THEME
 import com.thomaskioko.tvmaniac.datastore.implementation.IgnoreIos
 import io.kotest.matchers.shouldBe
-import kotlin.test.AfterTest
-import kotlin.test.Test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import okio.Path.Companion.toPath
+import kotlin.test.AfterTest
+import kotlin.test.Test
 
 class DatastoreRepositoryImplTest {
 

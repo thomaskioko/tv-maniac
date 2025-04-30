@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.seasondetails.ui.components
 
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,7 +18,7 @@ fun ShowLinearProgressIndicator(
 ) {
   LinearProgressIndicator(
     progress = { progress },
-    color =  MaterialTheme.colorScheme.secondary,
+    color = MaterialTheme.colorScheme.secondary,
     trackColor =
       if (progress == 1f) {
         green.copy(alpha = 0.5F)

@@ -17,11 +17,11 @@ internal fun createDataStore(produceFile: () -> String, coroutineScope: Coroutin
       dataStore
     } else {
       PreferenceDataStoreFactory.createWithPath(
-          corruptionHandler = null,
-          migrations = emptyList(),
-          scope = coroutineScope,
-          produceFile = { produceFile().toPath() },
-        )
+        corruptionHandler = null,
+        migrations = emptyList(),
+        scope = coroutineScope,
+        produceFile = { produceFile().toPath() },
+      )
         .also { dataStore = it }
     }
   }

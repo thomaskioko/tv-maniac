@@ -73,7 +73,7 @@ class HomePresenterTest {
       componentContext = DefaultComponentContext(lifecycle = lifecycle),
       onShowClicked = {},
       onMoreShowClicked = {},
-      onShowGenreClicked = {}
+      onShowGenreClicked = {},
     )
   }
 
@@ -128,7 +128,7 @@ class HomePresenterTest {
           formatterUtil = FakeFormatterUtil(),
         ),
       )
-    }
+    },
   )
 
   private fun buildHomePresenterFactory(): HomePresenter.Factory =
@@ -142,14 +142,16 @@ class HomePresenterTest {
 
   private fun buildSettingsPresenterFactory(
     componentContext: ComponentContext,
-  ): SettingsPresenterFactory = SettingsPresenterFactory(create = { _: ComponentContext, _: () -> Unit ->
-    SettingsPresenter(
-      componentContext = componentContext,
-      launchWebView = {},
-      datastoreRepository = datastoreRepository,
-      traktAuthRepository = FakeTraktAuthRepository(),
-    )
-  })
+  ): SettingsPresenterFactory = SettingsPresenterFactory(
+    create = { _: ComponentContext, _: () -> Unit ->
+      SettingsPresenter(
+        componentContext = componentContext,
+        launchWebView = {},
+        datastoreRepository = datastoreRepository,
+        traktAuthRepository = FakeTraktAuthRepository(),
+      )
+    },
+  )
 
   private fun buildDiscoverPresenterFactory(
     componentContext: ComponentContext,
@@ -196,12 +198,13 @@ class HomePresenterTest {
 
   private fun buildLibraryPresenterFactory(
     componentContext: ComponentContext,
-  ): WatchlistPresenterFactory =WatchlistPresenterFactory(
+  ): WatchlistPresenterFactory = WatchlistPresenterFactory(
     create = { _: ComponentContext, _: (showDetails: Long) -> Unit ->
-    WatchlistPresenter(
-      componentContext = componentContext,
-      navigateToShowDetails = {},
-      repository = FakeWatchlistRepository(),
-    )
-  })
+      WatchlistPresenter(
+        componentContext = componentContext,
+        navigateToShowDetails = {},
+        repository = FakeWatchlistRepository(),
+      )
+    },
+  )
 }

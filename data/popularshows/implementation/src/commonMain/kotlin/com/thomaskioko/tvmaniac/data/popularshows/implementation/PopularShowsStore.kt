@@ -81,9 +81,9 @@ class PopularShowsStore(
     delete = popularShowsDao::deletePopularShow,
     deleteAll = popularShowsDao::deletePopularShows,
   ).usingDispatchers(
-      readDispatcher = dispatchers.databaseRead,
-      writeDispatcher = dispatchers.databaseWrite,
-    ),
+    readDispatcher = dispatchers.databaseRead,
+    writeDispatcher = dispatchers.databaseWrite,
+  ),
 ).validator(
   Validator.by {
     withContext(dispatchers.io) {

@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import android.app.Application
-import android.net.Uri
 import androidx.core.net.toUri
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.model.Configs

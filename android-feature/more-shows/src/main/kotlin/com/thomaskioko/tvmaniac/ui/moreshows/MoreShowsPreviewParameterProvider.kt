@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.flowOf
 
 public val showList =
   List(6) {
-      TvShow(
-        title = "Loki",
-        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-      )
-    }
+    TvShow(
+      title = "Loki",
+      posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+    )
+  }
     .toPersistentList()
 
 class MoreShowsPreviewParameterProvider : PreviewParameterProvider<MoreShowsState> {
@@ -22,7 +22,7 @@ class MoreShowsPreviewParameterProvider : PreviewParameterProvider<MoreShowsStat
       return sequenceOf(
         MoreShowsState(
           categoryTitle = "Upcoming",
-          pagingDataFlow = flowOf(PagingData.from(showList))
+          pagingDataFlow = flowOf(PagingData.from(showList)),
         ),
         MoreShowsState(
           categoryTitle = "Upcoming",

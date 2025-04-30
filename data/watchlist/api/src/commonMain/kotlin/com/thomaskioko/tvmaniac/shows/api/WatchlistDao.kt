@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.shows.api
 
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SearchWatchlist
 import com.thomaskioko.tvmaniac.db.Show_metadata
-import com.thomaskioko.tvmaniac.db.Watchlists
-import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.db.Watchlists
 import kotlinx.coroutines.flow.Flow
 
 interface WatchlistDao {

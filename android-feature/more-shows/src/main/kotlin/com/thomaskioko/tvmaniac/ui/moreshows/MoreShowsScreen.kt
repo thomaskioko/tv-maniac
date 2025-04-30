@@ -103,7 +103,9 @@ internal fun MoreShowsScreen(
               ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+            modifier = Modifier
+              .fillMaxWidth()
+              .padding(start = 16.dp),
           )
         },
         navigationIcon = {
@@ -111,7 +113,9 @@ internal fun MoreShowsScreen(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
             contentDescription = null,
             colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
-            modifier = Modifier.clickable(onClick = { onAction(MoreBackClicked) }).padding(16.dp),
+            modifier = Modifier
+              .clickable(onClick = { onAction(MoreBackClicked) })
+              .padding(16.dp),
           )
         },
         scrollBehavior = scrollBehavior,
@@ -151,7 +155,9 @@ fun GridContent(
   val listState = rememberLazyGridState()
 
   Box(
-    modifier = Modifier.fillMaxSize().pullRefresh(state = refreshState),
+    modifier = Modifier
+      .fillMaxSize()
+      .pullRefresh(state = refreshState),
     contentAlignment = Alignment.Center,
   ) {
     LazyVerticalGrid(
@@ -174,7 +180,9 @@ fun GridContent(
         val show = lazyPagingItems[index]
         show?.let {
           PosterCard(
-            modifier = Modifier.animateItem().fillMaxWidth(),
+            modifier = Modifier
+              .animateItem()
+              .fillMaxWidth(),
             imageUrl = show.posterImageUrl,
             title = show.title,
             onClick = { onAction(MoreShowClicked(show.tmdbId)) },
@@ -185,10 +193,15 @@ fun GridContent(
       if (lazyPagingItems.loadState.append == LoadState.Loading) {
         item(span = { GridItemSpan(1) }) {
           Box(
-            Modifier.fillMaxWidth().padding(24.dp),
+            Modifier
+              .fillMaxWidth()
+              .padding(24.dp),
           ) {
             LoadingIndicator(
-              modifier = Modifier.fillMaxWidth().wrapContentSize(Alignment.Center).padding(24.dp),
+              modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.Center)
+                .padding(24.dp),
             )
           }
         }
@@ -198,10 +211,12 @@ fun GridContent(
     PullRefreshIndicator(
       refreshing = refreshing,
       state = refreshState,
-      modifier = Modifier.align(Alignment.TopCenter).padding(contentPadding),
+      modifier = Modifier
+        .align(Alignment.TopCenter)
+        .padding(contentPadding),
       scale = true,
       backgroundColor = MaterialTheme.colorScheme.background,
-      contentColor = MaterialTheme.colorScheme.secondary
+      contentColor = MaterialTheme.colorScheme.secondary,
     )
   }
 

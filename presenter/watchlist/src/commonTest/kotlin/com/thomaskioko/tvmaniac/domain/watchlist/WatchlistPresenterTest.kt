@@ -5,19 +5,19 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenter
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistContent
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
+import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistContent
+import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenter
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.shouldBe
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.Test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class WatchlistPresenterTest {
 

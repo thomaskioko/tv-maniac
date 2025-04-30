@@ -20,8 +20,8 @@ public abstract class MultiplatformExtension(private val project: Project) {
 
   @JvmOverloads
   public fun addAndroidTarget(
-      configure: KotlinAndroidTarget.() -> Unit = { },
-      androidConfig: (LibraryExtension.() -> Unit) = { },
+    configure: KotlinAndroidTarget.() -> Unit = { },
+    androidConfig: (LibraryExtension.() -> Unit) = { },
   ) {
 
     if (!project.plugins.hasPlugin("com.android.library")) {
@@ -41,8 +41,8 @@ public abstract class MultiplatformExtension(private val project: Project) {
 
   @JvmOverloads
   public fun addIosTargetsWithXcFramework(
-      frameworkName: String,
-      configure: KotlinNativeTarget.(Framework) -> Unit = { },
+    frameworkName: String,
+    configure: KotlinNativeTarget.(Framework) -> Unit = { },
   ) {
     val xcFramework = XCFrameworkConfig(project, frameworkName)
 

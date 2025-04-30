@@ -19,14 +19,14 @@ interface DatabasePlatformComponent {
   @SingleIn(AppScope::class)
   fun provideSqlDriver(): SqlDriver = createNativeSqliteDriver(
     schema = TvManiacDatabase.Schema,
-    name = "tvShows.db"
+    name = "tvShows.db",
   )
 }
 
 fun createNativeSqliteDriver(
   schema: SqlSchema<QueryResult.Value<Unit>>,
   name: String,
-  inMemory: Boolean = false
+  inMemory: Boolean = false,
 ): NativeSqliteDriver = NativeSqliteDriver(
   DatabaseConfiguration(
     name = name,

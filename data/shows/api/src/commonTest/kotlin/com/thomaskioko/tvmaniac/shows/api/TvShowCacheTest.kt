@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.shows.api
 
-import com.thomaskioko.tvmaniac.db.Trending_shows
-import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.Trending_shows
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.shows.api.MockData.getShow
 import com.thomaskioko.tvmaniac.shows.api.MockData.showList
 import io.kotest.matchers.collections.shouldHaveSize
@@ -26,9 +26,9 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     for (show in shows) {
       show.insertTvShowQuery()
       Trending_shows(
-          id = show.id,
-          page = Id(1),
-        )
+        id = show.id,
+        page = Id(1),
+      )
         .insert()
     }
 
@@ -120,26 +120,26 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         id = 1,
         name = "Breaking Bad",
         overview = "A high school chemistry teacher turned meth dealer",
-        popularity = 95.5
+        popularity = 95.5,
       ),
       TestShow(
         id = 2,
         name = "The Walking Dead",
         overview = "Zombie apocalypse drama",
-        popularity = 90.0
+        popularity = 90.0,
       ),
       TestShow(
         id = 3,
         name = "In the Dark",
         overview = "Crime drama series",
-        popularity = 88.0
+        popularity = 88.0,
       ),
       TestShow(
         id = 4,
         name = "Theory of Everything",
         overview = "Crime drama series",
-        popularity = 88.0
-      )
+        popularity = 88.0,
+      ),
     ).forEach { show ->
       tvShowQueries.upsert(
         id = Id(show.id),
@@ -156,7 +156,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         first_air_date = null,
         episode_numbers = null,
         last_air_date = null,
-        season_numbers = null
+        season_numbers = null,
       )
     }
   }
@@ -165,7 +165,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     val id: Long,
     val name: String,
     val overview: String,
-    val popularity: Double
+    val popularity: Double,
   )
 
   private fun Tvshow.insertTvShowQuery() {

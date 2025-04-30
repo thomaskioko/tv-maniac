@@ -2,7 +2,7 @@ name: Weekly Baseline Profile Generation
 
 on:
   schedule:
-    - cron:  '30 0 * * 0,3,5' #Every Sunday, Wednesday, and Friday at 12:30AM
+    - cron: '30 0 * * 0,3,5' #Every Sunday, Wednesday, and Friday at 12:30AM
 
 jobs:
   baseline_profiles:
@@ -53,4 +53,4 @@ jobs:
           -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
           --no-configuration-cache
 
-       ## ToDo: Commit baseline profile changes to main.
+      ## ToDo: Commit baseline profile changes to main.

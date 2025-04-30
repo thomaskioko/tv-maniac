@@ -1,6 +1,5 @@
 package com.thomaskioko.trakt.service.implementation
 
-import com.thomaskioko.tvmaniac.core.logger.Logger as KermitLogger
 import com.thomaskioko.tvmaniac.core.networkutil.model.HttpExceptions
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
@@ -18,6 +17,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLProtocol
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
+import com.thomaskioko.tvmaniac.core.logger.Logger as KermitLogger
 
 const val TIMEOUT_DURATION: Long = 60_000
 
@@ -81,13 +81,13 @@ fun traktHttpClient(
     install(Logging) {
       level = LogLevel.INFO
       logger = if (isDebug) {
-          object : Logger {
-            override fun log(message: String) {
-              kermitLogger.info("TraktHttp", message)
-            }
+        object : Logger {
+          override fun log(message: String) {
+            kermitLogger.info("TraktHttp", message)
           }
-        } else {
-          Logger.EMPTY
         }
+      } else {
+        Logger.EMPTY
+      }
     }
   }

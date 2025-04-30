@@ -7,7 +7,7 @@ tvmaniac {
     addAndroidTarget(
       androidConfig = {
         sourceSets["main"].resources.setSrcDirs(listOf("src/commonMain/resources"))
-      }
+      },
     )
     useKotlinInject()
     useKspAnvilCompiler()
@@ -17,7 +17,7 @@ tvmaniac {
   optIn(
     "kotlinx.coroutines.ExperimentalCoroutinesApi",
     "kotlinx.cinterop.BetaInteropApi",
-    "kotlinx.cinterop.ExperimentalForeignApi"
+    "kotlinx.cinterop.ExperimentalForeignApi",
   )
 }
 
