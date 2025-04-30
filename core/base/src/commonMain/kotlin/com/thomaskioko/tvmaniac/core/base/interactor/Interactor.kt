@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration.Companion.minutes
 
+//https://github.com/chrisbanes/tivi/blob/main/domain/src/commonMain/kotlin/app/tivi/domain/Interactor.kt
 abstract class Interactor<in P> {
   operator fun invoke(
     params: P,
@@ -31,12 +32,16 @@ abstract class Interactor<in P> {
     }
   }.catch { t -> emit(InvokeError(t)) }
 
+  suspend fun executeSync(params: P) = doWork(params)
+
   protected abstract suspend fun doWork(params: P)
 
   companion object {
     private val defaultTimeoutMs = 5.minutes.inWholeMilliseconds
   }
 }
+
+suspend inline fun Interactor<Unit>.executeSync() = executeSync(Unit)
 
 
 abstract class SubjectInteractor<P : Any, T> {
