@@ -142,14 +142,6 @@ internal fun DiscoverScreen(
   modifier: Modifier = Modifier,
 ) {
 
-  state.message?.let { message ->
-    LaunchedEffect(message) {
-      snackBarHostState.showSnackbar(message.message)
-      // Notify the view model that the message has been dismissed
-      onAction(MessageShown(message.id))
-    }
-  }
-
   Scaffold(
     modifier = modifier,
     snackbarHost = {
@@ -159,7 +151,8 @@ internal fun DiscoverScreen(
           background = {},
           dismissContent = { Snackbar(snackbarData = data) },
         )
-      }},
+      }
+    },
   ) { paddingValues ->
     when {
       state.isEmpty ->
@@ -172,63 +165,73 @@ internal fun DiscoverScreen(
           buttonText = stringResource(id = R.string.generic_retry),
           onClick = { onAction(RefreshData) },
         )
-      state.showError ->
-        ErrorUi(
-          modifier = Modifier
+      state.showError -> ErrorUi(
+        modifier = Modifier
             .fillMaxSize()
             .wrapContentSize(Alignment.Center),
-          errorIcon = {
-            Image(
-              modifier = Modifier.size(120.dp),
-              imageVector = Icons.Outlined.ErrorOutline,
-              colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
-              contentDescription = null,
-            )
-          },
-          errorMessage = state.message?.message,
-          onRetry = { onAction(RefreshData) },
-        )
-      else ->
-        DiscoverContent(
-          modifier = modifier,
-          pagerState = pagerState,
-          dataLoadedState = state,
-          onAction = onAction,
-        )
+        errorIcon = {
+          Image(
+            modifier = Modifier.size(120.dp),
+            imageVector = Icons.Outlined.ErrorOutline,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+            contentDescription = null,
+          )
+        },
+        errorMessage = state.message?.message,
+        onRetry = { onAction(RefreshData) },
+      )
+      else -> DiscoverContent(
+        modifier = modifier,
+        pagerState = pagerState,
+        state = state,
+        snackBarHostState = snackBarHostState,
+        onAction = onAction,
+      )
     }
   }
 }
 
 @Composable
 private fun DiscoverContent(
-  dataLoadedState: DiscoverViewState,
+  state: DiscoverViewState,
+  snackBarHostState: SnackbarHostState,
   pagerState: PagerState,
   onAction: (DiscoverShowAction) -> Unit,
   modifier: Modifier = Modifier,
 ) {
+
+  if (state.showSnackBarError) {
+    state.message?.let { message ->
+      LaunchedEffect(message) {
+        snackBarHostState.showSnackbar(message.message)
+        // Notify the view model that the message has been dismissed
+        onAction(MessageShown(message.id))
+      }
+    }
+  }
 
   val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
   val listState = rememberLazyListState()
 
   Box(
     modifier = Modifier
-      .fillMaxSize()
-      .pullRefresh(pullRefreshState),
+        .fillMaxSize()
+        .pullRefresh(pullRefreshState),
   ) {
     LazyColumnContent(
       modifier = modifier,
       pagerState = pagerState,
-      dataLoadedState = dataLoadedState,
+      dataLoadedState = state,
       listState = listState,
       onAction = onAction,
     )
 
     PullRefreshIndicator(
-      refreshing = dataLoadedState.isRefreshing,
+      refreshing = state.isRefreshing,
       state = pullRefreshState,
       modifier = Modifier
-        .align(Alignment.TopCenter)
-        .statusBarsPadding(),
+          .align(Alignment.TopCenter)
+          .statusBarsPadding(),
       scale = true,
       backgroundColor = MaterialTheme.colorScheme.background,
       contentColor = MaterialTheme.colorScheme.secondary,
@@ -245,8 +248,8 @@ private fun DiscoverContent(
           maxLines = 1,
           overflow = TextOverflow.Ellipsis,
           modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp),
+              .fillMaxWidth()
+              .padding(start = 16.dp),
         )
       },
       actions = { showScrim ->
@@ -264,7 +267,7 @@ private fun DiscoverContent(
         }
 
         androidx.compose.animation.AnimatedVisibility(
-          visible = dataLoadedState.isRefreshing,
+          visible = state.isRefreshing,
         ) {
           ScrimButton(
             show = showScrim,
@@ -275,7 +278,7 @@ private fun DiscoverContent(
             RefreshButton(
               modifier = Modifier
                 .size(20.dp),
-              isRefreshing = dataLoadedState.isRefreshing,
+              isRefreshing = state.isRefreshing,
               content = {
                 Icon(
                   imageVector = Icons.Default.Refresh,
@@ -301,8 +304,8 @@ private fun LazyColumnContent(
 ) {
   LazyColumn(
     modifier = modifier
-      .fillMaxSize()
-      .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
+        .fillMaxSize()
+        .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
     state = listState,
   ) {
     if (dataLoadedState.featuredShows.isEmpty()) {
@@ -394,8 +397,8 @@ fun PosterCardsPager(
   Box {
     HorizontalPager(
       modifier = modifier
-        .fillMaxWidth()
-        .height(pagerHeight),
+          .fillMaxWidth()
+          .height(pagerHeight),
       state = pagerState,
       verticalAlignment = Alignment.Bottom,
     ) { currentPage ->
@@ -454,8 +457,8 @@ private fun CircularIndicator(
 ) {
   Row(
     modifier = modifier
-      .fillMaxWidth()
-      .padding(bottom = 8.dp),
+        .fillMaxWidth()
+        .padding(bottom = 8.dp),
     horizontalArrangement = Arrangement.Center,
     verticalAlignment = Alignment.CenterVertically,
   ) {
@@ -465,10 +468,10 @@ private fun CircularIndicator(
 
       Box(
         modifier = Modifier
-          .padding(2.dp)
-          .clip(CircleShape)
-          .size(size)
-          .background(color),
+            .padding(2.dp)
+            .clip(CircleShape)
+            .size(size)
+            .background(color),
       )
     }
   }
@@ -481,20 +484,20 @@ private fun ShowCardOverlay(
 ) {
   Box(
     modifier = Modifier
-      .fillMaxSize()
-      .background(
-        Brush.verticalGradient(
-          listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
-          startY = 500f,
-          endY = 1000f,
+        .fillMaxSize()
+        .background(
+            Brush.verticalGradient(
+                listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
+                startY = 500f,
+                endY = 1000f,
+            ),
         ),
-      ),
   ) {
     Column(
       modifier = Modifier
-        .align(Alignment.BottomCenter)
-        .offset(y = -(20).dp)
-        .padding(16.dp),
+          .align(Alignment.BottomCenter)
+          .offset(y = -(20).dp)
+          .padding(16.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
@@ -531,8 +534,8 @@ private fun HorizontalRowContent(
     Column {
       BoxTextItems(
         modifier = Modifier
-          .fillMaxWidth()
-          .padding(start = 16.dp),
+            .fillMaxWidth()
+            .padding(start = 16.dp),
         title = category,
         label = stringResource(id = R.string.str_more),
         onMoreClicked = onMoreClicked,

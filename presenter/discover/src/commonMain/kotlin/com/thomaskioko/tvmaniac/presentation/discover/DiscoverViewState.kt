@@ -27,6 +27,9 @@ data class DiscoverViewState(
   val showError: Boolean
     get() = message != null && isEmpty
 
+  val showSnackBarError: Boolean
+    get() = message != null && !isEmpty && !isRefreshing
+
   private fun isEmpty(vararg responses: List<DiscoverShow>?): Boolean {
     return responses.all { it.isNullOrEmpty() }
   }
