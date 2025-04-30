@@ -15,7 +15,7 @@ kotlin {
   sourceSets {
     androidMain {
       dependencies {
-        implementation(projects.traktAuth.api)
+        implementation(projects.data.traktauth.api)
 
         implementation(libs.androidx.activity)
         implementation(libs.androidx.browser)
@@ -27,7 +27,7 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.logger.api)
-        implementation(projects.traktAuth.api)
+        implementation(projects.data.traktauth.api)
         implementation(libs.bundles.kotlinInject)
       }
     }

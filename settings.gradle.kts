@@ -113,6 +113,9 @@ include(
   ":data:similar:api",
   ":data:similar:implementation",
   ":data:similar:testing",
+  ":data:traktauth:api",
+  ":data:traktauth:implementation",
+  ":data:traktauth:testing",
   ":data:trendingshows:api",
   ":data:trendingshows:implementation",
   ":data:trendingshows:testing",
@@ -150,7 +153,4 @@ include(
   ":presenter:trailers",
   ":presenter:watchlist",
   ":shared",
-  ":trakt-auth:api",
-  ":trakt-auth:implementation",
-  ":trakt-auth:testing",
 )

@@ -109,8 +109,8 @@ kotlin {
         implementation(projects.data.watchproviders.implementation)
         implementation(projects.data.datastore.api)
         implementation(projects.data.datastore.implementation)
-        implementation(projects.traktAuth.api)
-        implementation(projects.traktAuth.implementation)
+        implementation(projects.data.traktauth.api)
+        implementation(projects.data.traktauth.implementation)
 
         implementation(projects.navigation.implementation)
 
