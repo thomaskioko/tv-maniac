@@ -135,15 +135,13 @@ struct SearchTab: View {
           .padding(.bottom, 8)
       }
 
-      if let shows = state.results, !shows.isEmpty {
-        SearchResultListView(
-          items: shows.map { $0.toSwift() },
-          onClick: { id in
-            presenter.dispatch(action: SearchShowClicked(id: id))
-            isSearchFocused = false
-          }
-        )
-      }
+      SearchResultListView(
+        items: state.results.map { $0.toSwift() },
+        onClick: { id in
+          presenter.dispatch(action: SearchShowClicked(id: id))
+          isSearchFocused = false
+        }
+      )
     }
   }
 

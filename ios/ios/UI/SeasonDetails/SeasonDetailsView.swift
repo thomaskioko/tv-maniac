@@ -16,7 +16,7 @@ struct SeasonDetailsView: View {
 
   @Environment(\.presentationMode) var presentationMode
 
-  @StateFlow private var uiState: SeasonDetails
+  @StateFlow private var uiState: SeasonDetailsModel
   @State private var isTruncated = false
   @State private var showFullText = false
   @State private var showModal = false
@@ -63,7 +63,7 @@ struct SeasonDetailsView: View {
   }
 
   @ViewBuilder
-  private func SeasonDetailsContent(_ state: SeasonDetails) -> some View {
+  private func SeasonDetailsContent(_ state: SeasonDetailsModel) -> some View {
     ParallaxView(
       imageHeight: DimensionConstants.imageHeight,
       collapsedImageHeight: DimensionConstants.collapsedImageHeight,
@@ -122,7 +122,7 @@ struct SeasonDetailsView: View {
   }
 
   @ViewBuilder
-  private func HeaderContent(state: SeasonDetails, progress: CGFloat, headerHeight: CGFloat) -> some View {
+  private func HeaderContent(state: SeasonDetailsModel, progress: CGFloat, headerHeight: CGFloat) -> some View {
     ZStack(alignment: .bottom) {
       HeaderCoverArtWorkView(
         imageUrl: state.imageUrl,
