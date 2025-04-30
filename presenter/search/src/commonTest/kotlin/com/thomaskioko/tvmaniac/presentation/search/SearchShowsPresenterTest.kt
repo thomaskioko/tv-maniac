@@ -4,8 +4,6 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.ServerError
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.genre.ShowGenresEntity
 import com.thomaskioko.tvmaniac.presentation.search.model.ShowGenre

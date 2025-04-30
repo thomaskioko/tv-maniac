@@ -43,7 +43,7 @@ public class BaselineProfilePlugin : Plugin<Project> {
         val artifactsLoader = variant.artifacts.getBuiltArtifactsLoader()
         variant.instrumentationRunnerArguments.put(
           "targetAppId",
-          variant.testedApks.map { artifactsLoader.load(it)?.applicationId }
+          variant.testedApks.map { artifactsLoader.load(it)?.applicationId },
         )
       }
     }

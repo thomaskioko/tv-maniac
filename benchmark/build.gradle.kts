@@ -6,7 +6,7 @@ tvmaniac {
   benchmark {
     minSdkVersion(28)
     useManagedDevices()
- }
+  }
 }
 
 dependencies {

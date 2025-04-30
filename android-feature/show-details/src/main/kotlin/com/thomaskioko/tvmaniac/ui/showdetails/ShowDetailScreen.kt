@@ -105,8 +105,8 @@ import com.thomaskioko.tvmaniac.presentation.showdetails.WatchTrailerClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.CastModel
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ProviderModel
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.SeasonModel
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowDetailsModel
+import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowModel
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.presentation.showdetails.model.TrailerModel
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -417,8 +417,8 @@ private fun HeaderContent(
   val headerHeight = screenHeight / 1.5f
   Box(
     modifier = Modifier
-        .fillMaxWidth()
-        .height(headerHeight),
+      .fillMaxWidth()
+      .height(headerHeight),
   ) {
     KenBurnsViewImage(
       imageUrl = show?.backdropImageUrl,

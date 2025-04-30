@@ -32,9 +32,9 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.green
-import com.thomaskioko.tvmaniac.android.resources.R
 
 @Composable
 fun ConnectionStatus(
@@ -42,10 +42,10 @@ fun ConnectionStatus(
   modifier: Modifier = Modifier,
 ) {
   val backgroundColor by
-    animateColorAsState(
-      if (isConnected) green else MaterialTheme.colorScheme.error,
-      label = "",
-    )
+  animateColorAsState(
+    if (isConnected) green else MaterialTheme.colorScheme.error,
+    label = "",
+  )
   val message =
     if (isConnected) {
       stringResource(id = R.string.status_connected)
@@ -55,7 +55,10 @@ fun ConnectionStatus(
   val icon = if (isConnected) Icons.Outlined.SignalWifi4Bar else Icons.Outlined.SignalWifiOff
 
   Box(
-    modifier = modifier.background(backgroundColor).fillMaxWidth().padding(8.dp),
+    modifier = modifier
+      .background(backgroundColor)
+      .fillMaxWidth()
+      .padding(8.dp),
     contentAlignment = Alignment.TopCenter,
   ) {
     Row(
@@ -89,7 +92,9 @@ fun ErrorUi(
 ) {
   Box(modifier = modifier) {
     Column(
-      modifier = Modifier.align(Alignment.Center).wrapContentSize(),
+      modifier = Modifier
+        .align(Alignment.Center)
+        .wrapContentSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center,
     ) {
@@ -149,7 +154,9 @@ fun EmptyScreen(
 ) {
   Box(modifier = modifier) {
     Column(
-      modifier = Modifier.align(Alignment.Center).wrapContentSize(),
+      modifier = Modifier
+        .align(Alignment.Center)
+        .wrapContentSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       icon()
@@ -191,7 +198,9 @@ private fun RowErrorPreview() {
   TvManiacTheme {
     Surface {
       RowError(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(vertical = 16.dp),
         onRetry = {},
       )
     }

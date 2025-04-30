@@ -22,7 +22,7 @@ class DiscoverShowsInteractor(
   private val trendingShowsRepository: TrendingShowsRepository,
   private val upcomingShowsRepository: UpcomingShowsRepository,
   private val genreRepository: GenreRepository,
-  private val dispatchers: AppCoroutineDispatchers
+  private val dispatchers: AppCoroutineDispatchers,
 ) : SubjectInteractor<Unit, DiscoverShowsData>() {
 
   override fun createObservable(params: Unit): Flow<DiscoverShowsData> = combine(
@@ -31,14 +31,14 @@ class DiscoverShowsInteractor(
     topRatedShowsRepository.observeTopRatedShows(),
     popularShowsRepository.observePopularShows(),
     trendingShowsRepository.observeTrendingShows(),
-    upcomingShowsRepository.observeUpcomingShows()
+    upcomingShowsRepository.observeUpcomingShows(),
   ) { _, featured, topRated, popular, trending, upcoming ->
     DiscoverShowsData(
       featuredShows = featured,
       topRatedShows = topRated,
       popularShows = popular,
       trendingShows = trending,
-      upcomingShows = upcoming
+      upcomingShows = upcoming,
     )
   }.flowOn(dispatchers.io.limitedParallelism(6))
 }
@@ -49,5 +49,5 @@ data class DiscoverShowsData(
   val topRatedShows: List<ShowEntity>,
   val popularShows: List<ShowEntity>,
   val trendingShows: List<ShowEntity>,
-  val upcomingShows: List<ShowEntity>
+  val upcomingShows: List<ShowEntity>,
 )

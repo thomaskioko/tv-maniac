@@ -8,7 +8,7 @@ kotlin {
       dependencies {
         api(projects.core.networkUtil)
 
-        implementation(projects.database)
+        api(projects.data.database.sqldelight)
         implementation(projects.data.shows.api)
 
         api(libs.coroutines.core)

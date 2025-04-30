@@ -40,7 +40,7 @@ class DefaultFeaturedShowsDao(
           title = title,
           posterPath = posterPath,
           inLibrary = inLibrary == 1L,
-          overview = overview
+          overview = overview,
         )
       }
       .asFlow()

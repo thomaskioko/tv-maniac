@@ -9,7 +9,7 @@ tvmaniac {
   }
 
   optIn(
-    "androidx.paging.ExperimentalPagingApi"
+    "androidx.paging.ExperimentalPagingApi",
   )
 }
 
@@ -20,7 +20,7 @@ kotlin {
         implementation(projects.core.base)
         implementation(projects.core.logger.api)
         implementation(projects.core.paging)
-        implementation(projects.database)
+        implementation(projects.data.database.sqldelight)
         implementation(projects.data.trendingshows.api)
         implementation(projects.tmdbApi.api)
         implementation(projects.core.util)

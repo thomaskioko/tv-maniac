@@ -42,11 +42,15 @@ fun EpisodeItem(
     Row {
       PosterCard(
         imageUrl = imageUrl,
-        modifier = Modifier.width(100.dp).aspectRatio(0.8f)
+        modifier = Modifier
+          .width(100.dp)
+          .aspectRatio(0.8f),
       )
 
       Column(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 8.dp),
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(vertical = 4.dp, horizontal = 8.dp),
       ) {
         Text(
           text = title,

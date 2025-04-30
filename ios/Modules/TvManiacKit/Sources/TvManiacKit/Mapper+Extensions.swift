@@ -54,7 +54,7 @@ public extension TvManiac.ShowGenre {
 }
 
 
-public extension TvManiac.Show {
+public extension ShowModel {
     func toSwift() -> SwiftShow {
         .init(
             tmdbId: tmdbId,
@@ -66,7 +66,7 @@ public extension TvManiac.Show {
     }
 }
 
-public extension TvManiac.Trailer {
+public extension TrailerModel {
     func toSwift() -> SwiftTrailer {
         .init(
             showId: showId,
@@ -77,7 +77,7 @@ public extension TvManiac.Trailer {
     }
 }
 
-public extension TvManiac.Casts {
+public extension CastModel {
     func toSwift() -> SwiftCast {
         .init(
             castId: id,
@@ -88,13 +88,13 @@ public extension TvManiac.Casts {
     }
 }
 
-public extension TvManiac.Providers {
+public extension ProviderModel {
     func toSwift() -> SwiftProviders {
         .init(providerId: id, logoUrl: logoUrl)
     }
 }
 
-public extension Season {
+public extension SeasonModel {
     func toSwift() -> SwiftSeason {
         .init(
             tvShowId: tvShowId,

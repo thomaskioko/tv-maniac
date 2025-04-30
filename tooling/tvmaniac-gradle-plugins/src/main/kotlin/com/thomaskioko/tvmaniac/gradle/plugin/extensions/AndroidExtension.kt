@@ -67,7 +67,7 @@ public abstract class AndroidExtension(private val project: Project) {
     deviceName: String = "pixel6Api34",
     device: String = "Pixel 6",
     apiLevel: Int = 34,
-    systemImageSource: String = "aosp"
+    systemImageSource: String = "aosp",
   ) {
     project.android {
       testOptions {

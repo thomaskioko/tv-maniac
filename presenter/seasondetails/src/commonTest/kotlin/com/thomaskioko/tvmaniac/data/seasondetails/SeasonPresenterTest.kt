@@ -12,8 +12,8 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.ObservableSeasonDetailsInte
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.presentation.seasondetails.EpisodeClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.ReloadSeasonDetails
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsBackClicked
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonGalleryClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
@@ -180,7 +180,7 @@ class SeasonPresenterTest {
             imageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             episodeNumber = "1",
             seasonEpisodeNumber = "S01 | E1",
-          )
+          ),
         ),
         seasonCast = persistentListOf(),
       )

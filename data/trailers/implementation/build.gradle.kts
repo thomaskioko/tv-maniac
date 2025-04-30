@@ -15,6 +15,7 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.util)
+        implementation(projects.core.networkUtil)
         implementation(projects.data.requestManager.api)
         implementation(projects.data.shows.api)
         implementation(projects.data.trailers.api)

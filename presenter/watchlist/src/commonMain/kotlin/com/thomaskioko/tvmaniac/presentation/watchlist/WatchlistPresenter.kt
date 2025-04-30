@@ -2,10 +2,10 @@ package com.thomaskioko.tvmaniac.presentation.watchlist
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.db.Watchlists
-import com.thomaskioko.tvmaniac.db.SearchWatchlist
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
+import com.thomaskioko.tvmaniac.db.SearchWatchlist
+import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,7 +43,7 @@ class WatchlistPresenter(
     coroutineScope.launch {
       combine(
         queryFlow,
-        repository.observeWatchlist()
+        repository.observeWatchlist(),
       ) { query, result ->
         query to result
       }.collect { (query, result) ->
@@ -97,8 +97,8 @@ class WatchlistPresenter(
   private suspend fun observeWatchlist() {
     repository.observeWatchlist()
       .onStart { _state.update { LoadingShows } }
-    .catch { handleError(it.message) }
-    .collect { result ->
+      .catch { handleError(it.message) }
+      .collect { result ->
         handleWatchlistResult(queryFlow.replayCache.lastOrNull() ?: "", result)
       }
   }
@@ -110,17 +110,17 @@ class WatchlistPresenter(
         val list = shows.entityToWatchlistShowList()
 
         _state.update { currentState ->
-            (currentState as? WatchlistContent)?.copy(
-              query = query,
-              isSearchActive = true,
-              list = list
-            ) ?: WatchlistContent(
-              list = list,
-              query = query,
-              isSearchActive = true
-            )
+          (currentState as? WatchlistContent)?.copy(
+            query = query,
+            isSearchActive = true,
+            list = list,
+          ) ?: WatchlistContent(
+            list = list,
+            query = query,
+            isSearchActive = true,
+          )
         }
-      }
+      },
     )
   }
 
@@ -133,16 +133,16 @@ class WatchlistPresenter(
             is WatchlistContent -> currentState.copy(
               list = shows.entityToWatchlistShowList(),
               query = query,
-              isSearchActive = query.isNotBlank()
+              isSearchActive = query.isNotBlank(),
             )
             else -> WatchlistContent(
               list = shows.entityToWatchlistShowList(),
               query = query,
-              isSearchActive = query.isNotBlank()
+              isSearchActive = query.isNotBlank(),
             )
           }
         }
-      }
+      },
     )
   }
 
@@ -150,7 +150,7 @@ class WatchlistPresenter(
     _state.value = EmptyWatchlist(
       message = error ?: "Unknown error occurred",
       query = query,
-      isSearchActive = query.isNotBlank()
+      isSearchActive = query.isNotBlank(),
     )
   }
 }

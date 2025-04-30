@@ -4,12 +4,12 @@ import com.thomaskioko.tvmaniac.core.base.model.Configs
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.serialization.JsonConvertException
-import java.net.UnknownHostException
 import kotlinx.serialization.SerializationException
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import java.net.UnknownHostException
 
 @Inject
 @SingleIn(AppScope::class)
@@ -31,7 +31,8 @@ class AndroidNetworkExceptionHandlerUtil(
       }
       is JsonConvertException,
       is SerializationException,
-      is NoTransformationFoundException -> if (configs.isDebug) throwable.message else errorMessage
+      is NoTransformationFoundException,
+        -> if (configs.isDebug) throwable.message else errorMessage
       else -> errorMessage
     }
 }

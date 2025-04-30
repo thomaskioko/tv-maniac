@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -64,7 +65,6 @@ import com.thomaskioko.tvmaniac.presentation.search.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.search.ShowContentAvailable
 import com.thomaskioko.tvmaniac.presentation.search.model.ShowGenre
 import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.ui.search.components.SearchResultItem
 import com.thomaskioko.tvmaniac.ui.search.components.SearchTextContainer
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -287,7 +287,11 @@ private fun GenreContent(
   onItemClicked: (Long) -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  Column(modifier = modifier.fillMaxSize().padding(top = 4.dp)) {
+  Column(
+    modifier = modifier
+      .fillMaxSize()
+      .padding(top = 4.dp),
+  ) {
     BoxTextItems(
       modifier = Modifier.padding(vertical = 12.dp),
       title = "Browse by Genre",

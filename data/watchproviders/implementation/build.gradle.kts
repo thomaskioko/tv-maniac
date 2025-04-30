@@ -14,7 +14,7 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.database)
+        implementation(projects.data.database.sqldelight)
         implementation(projects.tmdbApi.api)
         implementation(projects.core.util)
         implementation(projects.data.watchproviders.api)

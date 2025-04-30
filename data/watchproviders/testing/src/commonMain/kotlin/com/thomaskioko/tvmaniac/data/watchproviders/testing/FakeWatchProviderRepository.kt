@@ -18,6 +18,6 @@ class FakeWatchProviderRepository : WatchProviderRepository {
   }
 
   override fun observeWatchProviders(
-    id: Long
+    id: Long,
   ): Flow<List<WatchProviders>> = watchProvidersResult.asStateFlow()
 }

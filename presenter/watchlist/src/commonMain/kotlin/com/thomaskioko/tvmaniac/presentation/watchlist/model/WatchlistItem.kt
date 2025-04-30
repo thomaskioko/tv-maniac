@@ -8,5 +8,5 @@ data class WatchlistItem(
   val seasonCount: Long = 0,
   val episodeCount: Long = 0,
   val status: String? = null,
-  val year:String? = null
+  val year: String? = null,
 )

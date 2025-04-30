@@ -5,7 +5,7 @@ tvmaniac {
     useCompose()
   }
   optIn(
-    "com.github.takahirom.roborazzi.ExperimentalRoborazziApi"
+    "com.github.takahirom.roborazzi.ExperimentalRoborazziApi",
   )
 }
 

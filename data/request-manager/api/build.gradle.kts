@@ -17,7 +17,7 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        api(projects.database)
+        implementation(projects.data.database.sqldelight)
         api(libs.kotlinx.datetime)
       }
     }

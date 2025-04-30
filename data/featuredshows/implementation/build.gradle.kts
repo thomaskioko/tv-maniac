@@ -15,7 +15,7 @@ kotlin {
       dependencies {
         implementation(projects.core.base)
         implementation(projects.core.paging)
-        implementation(projects.database)
+        implementation(projects.data.database.sqldelight)
         implementation(projects.tmdbApi.api)
         implementation(projects.core.util)
         implementation(projects.data.featuredshows.api)

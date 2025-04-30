@@ -51,17 +51,17 @@ fun DynamicThemePrimaryColorsFromImage(
     MaterialTheme.colorScheme.copy(
       primary =
         animateColorAsState(
-            dominantColorState.color,
-            spring(stiffness = Spring.StiffnessLow),
-            label = "primaryColorAnimation",
-          )
+          dominantColorState.color,
+          spring(stiffness = Spring.StiffnessLow),
+          label = "primaryColorAnimation",
+        )
           .value,
       onPrimary =
         animateColorAsState(
-            dominantColorState.onColor,
-            spring(stiffness = Spring.StiffnessLow),
-            label = "onPrimaryColorAnimation",
-          )
+          dominantColorState.onColor,
+          spring(stiffness = Spring.StiffnessLow),
+          label = "onPrimaryColorAnimation",
+        )
           .value,
     )
 
@@ -131,7 +131,8 @@ class DominantColorState(
   }
 }
 
-@Immutable private data class DominantColors(val color: Color, val onColor: Color)
+@Immutable
+private data class DominantColors(val color: Color, val onColor: Color)
 
 /** Fetches the given [imageUrl] with Coil, then uses [Palette] to calculate the dominant color. */
 private suspend fun calculateSwatchesInImage(

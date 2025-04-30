@@ -142,14 +142,6 @@ internal fun DiscoverScreen(
   modifier: Modifier = Modifier,
 ) {
 
-  state.message?.let { message ->
-    LaunchedEffect(message) {
-      snackBarHostState.showSnackbar(message.message)
-      // Notify the view model that the message has been dismissed
-      onAction(MessageShown(message.id))
-    }
-  }
-
   Scaffold(
     modifier = modifier,
     snackbarHost = {
@@ -159,7 +151,8 @@ internal fun DiscoverScreen(
           background = {},
           dismissContent = { Snackbar(snackbarData = data) },
         )
-      }},
+      }
+    },
   ) { paddingValues ->
     when {
       state.isEmpty ->
@@ -172,40 +165,50 @@ internal fun DiscoverScreen(
           buttonText = stringResource(id = R.string.generic_retry),
           onClick = { onAction(RefreshData) },
         )
-      state.showError ->
-        ErrorUi(
-          modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center),
-          errorIcon = {
-            Image(
-              modifier = Modifier.size(120.dp),
-              imageVector = Icons.Outlined.ErrorOutline,
-              colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
-              contentDescription = null,
-            )
-          },
-          errorMessage = state.message?.message,
-          onRetry = { onAction(RefreshData) },
-        )
-      else ->
-        DiscoverContent(
-          modifier = modifier,
-          pagerState = pagerState,
-          dataLoadedState = state,
-          onAction = onAction,
-        )
+      state.showError -> ErrorUi(
+        modifier = Modifier
+          .fillMaxSize()
+          .wrapContentSize(Alignment.Center),
+        errorIcon = {
+          Image(
+            modifier = Modifier.size(120.dp),
+            imageVector = Icons.Outlined.ErrorOutline,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+            contentDescription = null,
+          )
+        },
+        errorMessage = state.message?.message,
+        onRetry = { onAction(RefreshData) },
+      )
+      else -> DiscoverContent(
+        modifier = modifier,
+        pagerState = pagerState,
+        state = state,
+        snackBarHostState = snackBarHostState,
+        onAction = onAction,
+      )
     }
   }
 }
 
 @Composable
 private fun DiscoverContent(
-  dataLoadedState: DiscoverViewState,
+  state: DiscoverViewState,
+  snackBarHostState: SnackbarHostState,
   pagerState: PagerState,
   onAction: (DiscoverShowAction) -> Unit,
   modifier: Modifier = Modifier,
 ) {
+
+  if (state.showSnackBarError) {
+    state.message?.let { message ->
+      LaunchedEffect(message) {
+        snackBarHostState.showSnackbar(message.message)
+        // Notify the view model that the message has been dismissed
+        onAction(MessageShown(message.id))
+      }
+    }
+  }
 
   val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
   val listState = rememberLazyListState()
@@ -218,13 +221,13 @@ private fun DiscoverContent(
     LazyColumnContent(
       modifier = modifier,
       pagerState = pagerState,
-      dataLoadedState = dataLoadedState,
+      dataLoadedState = state,
       listState = listState,
       onAction = onAction,
     )
 
     PullRefreshIndicator(
-      refreshing = dataLoadedState.isRefreshing,
+      refreshing = state.isRefreshing,
       state = pullRefreshState,
       modifier = Modifier
         .align(Alignment.TopCenter)
@@ -264,7 +267,7 @@ private fun DiscoverContent(
         }
 
         androidx.compose.animation.AnimatedVisibility(
-          visible = dataLoadedState.isRefreshing,
+          visible = state.isRefreshing,
         ) {
           ScrimButton(
             show = showScrim,
@@ -275,7 +278,7 @@ private fun DiscoverContent(
             RefreshButton(
               modifier = Modifier
                 .size(20.dp),
-              isRefreshing = dataLoadedState.isRefreshing,
+              isRefreshing = state.isRefreshing,
               content = {
                 Icon(
                   imageVector = Icons.Default.Refresh,

@@ -29,7 +29,8 @@ class IosExceptionHandler(
       }
       is JsonConvertException,
       is SerializationException,
-      is NoTransformationFoundException, -> if (configs.isDebug) throwable.message else errorMessage
+      is NoTransformationFoundException,
+        -> if (configs.isDebug) throwable.message else errorMessage
       else -> errorMessage
     }
 }

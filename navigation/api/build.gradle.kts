@@ -16,7 +16,7 @@ kotlin {
         api(libs.essenty.lifecycle)
 
         implementation(projects.core.base)
-        implementation(projects.datastore.api)
+        implementation(projects.data.datastore.api)
         implementation(projects.presenter.discover)
         implementation(projects.presenter.home)
         implementation(projects.presenter.watchlist)

@@ -14,7 +14,7 @@ tvmaniac {
 
 dependencies {
   api(projects.presenter.settings)
-  api(projects.datastore.api)
+  api(projects.data.datastore.api)
 
   implementation(projects.androidDesignsystem)
   implementation(projects.androidResources)

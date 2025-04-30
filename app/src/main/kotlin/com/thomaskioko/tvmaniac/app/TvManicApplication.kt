@@ -7,9 +7,9 @@ import com.thomaskioko.tvmaniac.inject.create
 
 class TvManicApplication : Application() {
   private val component: ApplicationComponent by unsafeLazy {
-      ApplicationComponent::class.create(
-          this
-      )
+    ApplicationComponent::class.create(
+      this,
+    )
   }
 
   override fun onCreate() {

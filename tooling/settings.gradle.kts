@@ -1,21 +1,21 @@
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
-    repositories {
-      google {
-        content {
-          includeGroupByRegex(".*google.*")
-          includeGroupByRegex(".*android.*")
-        }
+  repositories {
+    google {
+      content {
+        includeGroupByRegex(".*google.*")
+        includeGroupByRegex(".*android.*")
       }
-      mavenCentral()
-      gradlePluginPortal()
     }
+    mavenCentral()
+    gradlePluginPortal()
+  }
 
-    versionCatalogs {
-        create("libs") {
-            from(files("../gradle/libs.versions.toml"))
-        }
+  versionCatalogs {
+    create("libs") {
+      from(files("../gradle/libs.versions.toml"))
     }
+  }
 }
 
 rootProject.name = "tooling"

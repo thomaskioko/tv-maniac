@@ -29,7 +29,7 @@ interface TmdbShowsNetworkDataSource {
     sortBy: String = DEFAULT_SORT_ORDER,
     genres: String? = null,
     watchProviders: String? = null,
-    screenedTheatrically: Boolean = true
+    screenedTheatrically: Boolean = true,
   ): ApiResponse<TmdbShowResult>
 
   /**

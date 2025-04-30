@@ -28,10 +28,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.android.resources.R
 
 @Composable
 fun SearchResultItem(
@@ -50,9 +50,9 @@ fun SearchResultItem(
       .clickable { onClick() },
     shape = shape,
     elevation =
-    CardDefaults.cardElevation(
-      defaultElevation = 4.dp,
-    ),
+      CardDefaults.cardElevation(
+        defaultElevation = 4.dp,
+      ),
     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
   ) {
     Row(verticalAlignment = Alignment.CenterVertically) {

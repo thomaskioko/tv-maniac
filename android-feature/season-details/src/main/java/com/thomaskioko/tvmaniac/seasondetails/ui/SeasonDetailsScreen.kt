@@ -70,9 +70,9 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonDialog
 import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonGallery
 import com.thomaskioko.tvmaniac.presentation.seasondetails.ReloadSeasonDetails
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsBackClicked
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonGalleryClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.UpdateSeasonWatchedState

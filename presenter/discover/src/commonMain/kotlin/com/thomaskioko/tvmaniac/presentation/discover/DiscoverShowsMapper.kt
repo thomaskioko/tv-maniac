@@ -8,13 +8,13 @@ import kotlinx.collections.immutable.toImmutableList
 
 fun List<ShowEntity>?.toShowList(): ImmutableList<DiscoverShow> =
   this?.map {
-      DiscoverShow(
-        tmdbId = it.id,
-        title = it.title,
-        posterImageUrl = it.posterPath,
-        inLibrary = it.inLibrary,
-        overView = it.overview
-      )
-    }
+    DiscoverShow(
+      tmdbId = it.id,
+      title = it.title,
+      posterImageUrl = it.posterPath,
+      inLibrary = it.inLibrary,
+      overView = it.overview,
+    )
+  }
     ?.toImmutableList()
     ?: persistentListOf()

@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.genre
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
-import com.thomaskioko.tvmaniac.db.Genres
-import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.db.Genres
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import me.tatarka.inject.annotations.Inject
@@ -25,11 +25,11 @@ class ShowsByGenreIdStore(
 ) : Store<String, List<Tvshow>> by StoreBuilder.from(
   fetcher = Fetcher.of { id: String ->
     when (val response = tmdbRemoteDataSource.discoverShows(genres = id)) {
-        is ApiResponse.Success -> response.body
-        is ApiResponse.Error.GenericError -> throw Throwable(response.errorMessage)
-        is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
-        is ApiResponse.Error.SerializationError -> throw Throwable(response.errorMessage)
-      }
+      is ApiResponse.Success -> response.body
+      is ApiResponse.Error.GenericError -> throw Throwable(response.errorMessage)
+      is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
+      is ApiResponse.Error.SerializationError -> throw Throwable(response.errorMessage)
+    }
   },
   sourceOfTruth = SourceOfTruth.of(
     reader = { id: String -> genreDao.observeShowsByGenreId(id) },

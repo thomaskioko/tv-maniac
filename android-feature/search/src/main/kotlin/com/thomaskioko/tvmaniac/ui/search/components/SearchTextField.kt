@@ -36,12 +36,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.presentation.search.ClearQuery
 import com.thomaskioko.tvmaniac.presentation.search.QueryChanged
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowAction
-import com.thomaskioko.tvmaniac.android.resources.R
 import kotlinx.coroutines.launch
 
 @Composable

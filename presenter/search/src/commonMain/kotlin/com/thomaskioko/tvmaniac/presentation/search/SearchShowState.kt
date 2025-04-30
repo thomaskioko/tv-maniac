@@ -13,24 +13,24 @@ sealed interface SearchShowState {
 data class InitialSearchState(
   override val query: String? = null,
   override val isUpdating: Boolean = true,
-): SearchShowState
+) : SearchShowState
 
 data class EmptySearchResult(
   override val query: String? = null,
   override val isUpdating: Boolean = false,
   val errorMessage: String? = null,
-): SearchShowState
+) : SearchShowState
 
 data class SearchResultAvailable(
   override val query: String? = null,
   override val isUpdating: Boolean = false,
   val errorMessage: String? = null,
   val results: ImmutableList<ShowItem> = persistentListOf(),
-): SearchShowState
+) : SearchShowState
 
 data class ShowContentAvailable(
   override val query: String? = null,
   override val isUpdating: Boolean = false,
   val errorMessage: String? = null,
   val genres: ImmutableList<ShowGenre> = persistentListOf(),
-): SearchShowState
+) : SearchShowState

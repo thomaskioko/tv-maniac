@@ -90,7 +90,7 @@ public abstract class RootPlugin : Plugin<Project> {
               "org.jetbrains.kotlin:kotlin-stdlib",
               "androidx.core:core-ktx",
               "androidx.lifecycle:lifecycle-runtime-ktx",
-              "io.coil-kt:coil-compose"
+              "io.coil-kt:coil-compose",
             )
           }
 
@@ -103,7 +103,7 @@ public abstract class RootPlugin : Plugin<Project> {
 
             it.exclude(
               "io.coil-kt:coil-compose",
-              "io.coil-kt:coil-compose-base"
+              "io.coil-kt:coil-compose-base",
             )
           }
 

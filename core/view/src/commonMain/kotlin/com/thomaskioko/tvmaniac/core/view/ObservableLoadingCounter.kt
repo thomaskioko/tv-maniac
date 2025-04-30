@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.core.view
 
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -7,7 +8,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import com.thomaskioko.tvmaniac.core.logger.Logger
 
 class ObservableLoadingCounter {
   private val count = atomic(0)

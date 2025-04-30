@@ -6,10 +6,9 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        api(projects.core.networkUtil)
         api(projects.data.shows.api)
+        api(projects.data.database.sqldelight)
 
-        implementation(projects.database)
         implementation(projects.core.base)
 
         api(libs.androidx.paging.common)

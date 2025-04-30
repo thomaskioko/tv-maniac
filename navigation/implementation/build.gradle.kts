@@ -10,7 +10,7 @@ tvmaniac {
   }
 
   optIn(
-    "kotlinx.coroutines.ExperimentalCoroutinesApi"
+    "kotlinx.coroutines.ExperimentalCoroutinesApi",
   )
 }
 
@@ -42,8 +42,8 @@ kotlin {
 
     commonTest.dependencies {
       implementation(projects.core.util.testing)
-      implementation(projects.core.logger.fixture)
-      implementation(projects.datastore.testing)
+      implementation(projects.core.logger.testing)
+      implementation(projects.data.datastore.testing)
       implementation(projects.traktAuth.testing)
       implementation(projects.data.cast.testing)
       implementation(projects.data.featuredshows.testing)

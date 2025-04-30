@@ -17,7 +17,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 interface ActivityComponent {
   @Provides
   fun provideComponentContext(
-    activity: ComponentActivity
+    activity: ComponentActivity,
   ): ComponentContext = activity.defaultComponentContext()
 
   val traktAuthManager: TraktAuthManager
@@ -26,7 +26,7 @@ interface ActivityComponent {
   @ContributesSubcomponent.Factory(AppScope::class)
   interface Factory {
     fun createComponent(
-      activity: ComponentActivity
+      activity: ComponentActivity,
     ): ActivityComponent
   }
 

@@ -14,17 +14,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Discover
-import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Watchlist
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Search
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Settings
-import com.thomaskioko.tvmaniac.android.resources.R
-import com.thomaskioko.tvmaniac.ui.search.SearchScreen
+import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child.Watchlist
 import com.thomaskioko.tvmaniac.ui.discover.DiscoverScreen
 import com.thomaskioko.tvmaniac.ui.library.WatchlistScreen
+import com.thomaskioko.tvmaniac.ui.search.SearchScreen
 import com.thomaskioko.tvmaniac.ui.settings.SettingsScreen
 
 @Composable

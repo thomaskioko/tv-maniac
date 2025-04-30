@@ -32,11 +32,9 @@ class DefaultSearchRepository(
   override fun observeSearchResults(query: String): Flow<List<ShowEntity>> = tvShowsDao.observeShowsByQuery(query)
 
   private suspend fun hasNoLocalData(query: String): Boolean {
-    return tvShowsDao.observeQueryCount(query)
-      .first()
-      .let { cachedShows ->
-        cachedShows < MIN_SHOW_COUNT
-      }
+    return tvShowsDao.observeQueryCount(query).first().let { cachedShows ->
+      cachedShows < MIN_SHOW_COUNT
+    }
   }
 
 }

@@ -22,15 +22,15 @@ internal fun List<ShowCast>.toCastList(): List<Casts> =
     )
   }
 
-internal  fun List<SimilarShows>.toSimilarShowList(): List<Show> =
- map {
-   Show(
-     tmdbId = it.id.id,
-     title = it.name,
-     posterImageUrl = it.poster_path,
-     backdropImageUrl = it.backdrop_path,
-     isInLibrary = it.in_library == 1L,
-   )
+internal fun List<SimilarShows>.toSimilarShowList(): List<Show> =
+  map {
+    Show(
+      tmdbId = it.id.id,
+      title = it.name,
+      posterImageUrl = it.poster_path,
+      backdropImageUrl = it.backdrop_path,
+      isInLibrary = it.in_library == 1L,
+    )
   }
 
 internal fun List<RecommendedShows>.toRecommendedShowList(): List<Show> =
@@ -44,7 +44,7 @@ internal fun List<RecommendedShows>.toRecommendedShowList(): List<Show> =
     )
   }
 
-internal  fun List<WatchProviders>.toWatchProviderList(): List<Providers> =
+internal fun List<WatchProviders>.toWatchProviderList(): List<Providers> =
   map {
     Providers(
       id = it.id.id,
@@ -53,7 +53,7 @@ internal  fun List<WatchProviders>.toWatchProviderList(): List<Providers> =
     )
   }
 
-internal  fun List<ShowSeasons>.toSeasonsList(): List<Season> =
+internal fun List<ShowSeasons>.toSeasonsList(): List<Season> =
   map {
     Season(
       seasonId = it.season_id.id,
@@ -64,7 +64,7 @@ internal  fun List<ShowSeasons>.toSeasonsList(): List<Season> =
   }
 
 
-internal  fun List<Trailers>.toTrailerList(): List<Trailer> =
+internal fun List<Trailers>.toTrailerList(): List<Trailer> =
   map {
     Trailer(
       showId = it.show_id.id,

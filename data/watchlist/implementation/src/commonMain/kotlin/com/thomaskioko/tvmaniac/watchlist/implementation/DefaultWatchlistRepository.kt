@@ -1,18 +1,17 @@
 package com.thomaskioko.tvmaniac.watchlist.implementation
 
-import com.thomaskioko.tvmaniac.db.SearchWatchlist
-import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.core.networkutil.NetworkExceptionHandler
 import com.thomaskioko.tvmaniac.core.networkutil.model.DefaultError
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
+import com.thomaskioko.tvmaniac.db.SearchWatchlist
+import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.shows.api.WatchlistDao
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -44,13 +43,13 @@ class DefaultWatchlistRepository(
 
   override fun observeUnSyncedItems(): Flow<Unit> {
     return watchlistDao.observeUnSyncedWatchlist().flatMapMerge { ids ->
-        flow {
-          ids.forEach { id ->
-            watchlistMetadataStore.stream(StoreReadRequest.fresh(id)).collect()
-            emit(Unit)
-          }
+      flow {
+        ids.forEach { id ->
+          watchlistMetadataStore.stream(StoreReadRequest.fresh(id)).collect()
+          emit(Unit)
         }
       }
+    }
   }
 
   override fun searchWatchlistByQuery(query: String): Flow<Either<Failure, List<SearchWatchlist>>> {

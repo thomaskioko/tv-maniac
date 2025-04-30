@@ -1,15 +1,14 @@
 package com.thomaskioko.tvmaniac.gradle.plugin
 
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.compilerOptions
+import com.thomaskioko.tvmaniac.gradle.plugin.extensions.MultiplatformExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.baseExtension
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.compilerOptions
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.defaultTestSetup
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.kotlin
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.kotlinMultiplatform
-import com.thomaskioko.tvmaniac.gradle.plugin.extensions.MultiplatformExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.defaultTestSetup
-import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 /**
