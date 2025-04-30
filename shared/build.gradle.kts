@@ -62,6 +62,8 @@ kotlin {
 
         implementation(projects.api.tmdb.api)
         implementation(projects.api.tmdb.implementation)
+        implementation(projects.api.trakt.api)
+        implementation(projects.api.trakt.implementation)
         implementation(projects.core.base)
         implementation(projects.core.logger.api)
         implementation(projects.core.logger.implementation)
@@ -107,8 +109,6 @@ kotlin {
         implementation(projects.data.watchproviders.implementation)
         implementation(projects.data.datastore.api)
         implementation(projects.data.datastore.implementation)
-        implementation(projects.traktApi.api)
-        implementation(projects.traktApi.implementation)
         implementation(projects.traktAuth.api)
         implementation(projects.traktAuth.implementation)
 
