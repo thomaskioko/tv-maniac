@@ -38,12 +38,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -52,6 +50,13 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
+import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_search
+import com.thomaskioko.tvmaniac.i18n.MR.strings.missing_api_key
+import com.thomaskioko.tvmaniac.i18n.MR.strings.msg_search_show_hint
+import com.thomaskioko.tvmaniac.i18n.MR.strings.search_no_results
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.search.DismissSnackBar
 import com.thomaskioko.tvmaniac.presentation.search.EmptySearchResult
 import com.thomaskioko.tvmaniac.presentation.search.GenreCategoryClicked
@@ -102,7 +107,7 @@ internal fun SearchScreen(
       TvManiacTopBar(
         title = {
           Text(
-            text = stringResource(id = R.string.menu_item_search),
+            text = menu_item_search.resolve(),
             style =
               MaterialTheme.typography.titleLarge.copy(
                 color = MaterialTheme.colorScheme.onSurface,
@@ -110,8 +115,8 @@ internal fun SearchScreen(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
-              .fillMaxWidth()
-              .padding(start = 16.dp),
+                .fillMaxWidth()
+                .padding(start = 16.dp),
           )
         },
         scrollBehavior = scrollBehavior,
@@ -151,39 +156,35 @@ private fun SearchScreenContent(
     onAction = onAction,
     lazyListState = lazyListState,
   ) {
-
     when (state) {
       is EmptySearchResult -> {
         if (state.errorMessage != null) {
           EmptyContent(
             imageVector = Icons.Outlined.ErrorOutline,
-            title = stringResource(R.string.generic_empty_content),
-            message = stringResource(R.string.missing_api_key),
-            buttonText = stringResource(id = R.string.generic_retry),
+            title = generic_empty_content.resolve(),
+            message = missing_api_key.resolve(),
+            buttonText = generic_retry.resolve(),
             onClick = { onAction(ReloadShowContent) },
           )
         } else {
           EmptyContent(
             imageVector = Icons.Filled.SearchOff,
-            title = stringResource(R.string.search_no_results),
+            title = search_no_results.resolve(),
           )
         }
       }
-      is SearchResultAvailable ->
-        SearchResultsContent(
-          onAction = onAction,
-          results = state.results,
-          scrollState = lazyListState,
-        )
-      is ShowContentAvailable -> {
-        ShowContent(
-          onAction = onAction,
-          genres = state.genres,
-          errorMessage = state.errorMessage,
-          snackBarHostState = snackBarHostState,
-          lazyListState = lazyListState,
-        )
-      }
+      is SearchResultAvailable -> SearchResultsContent(
+        onAction = onAction,
+        results = state.results,
+        scrollState = lazyListState,
+      )
+      is ShowContentAvailable -> ShowContent(
+        onAction = onAction,
+        genres = state.genres,
+        errorMessage = state.errorMessage,
+        snackBarHostState = snackBarHostState,
+        lazyListState = lazyListState,
+      )
       is InitialSearchState -> LoadingIndicator()
     }
   }
@@ -202,13 +203,13 @@ private fun SearchScreenHeader(
 
   Column(
     modifier = modifier
-      .nestedScroll(scrollBehavior.nestedScrollConnection)
-      .padding(horizontal = 16.dp)
-      .padding(paddingValues.copy(copyBottom = false)),
+        .nestedScroll(scrollBehavior.nestedScrollConnection)
+        .padding(horizontal = 16.dp)
+        .padding(paddingValues.copy(copyBottom = false)),
   ) {
     SearchTextContainer(
       query = query,
-      hint = stringResource(id = R.string.msg_search_show_hint),
+      hint = msg_search_show_hint.resolve(),
       lazyListState = lazyListState,
       onAction = onAction,
       content = content,
@@ -272,6 +273,7 @@ private fun ShowContent(
       }
     }
   }
+
   GenreContent(
     genres = genres,
     onItemClicked = { onAction(GenreCategoryClicked(it)) },
@@ -289,9 +291,11 @@ private fun GenreContent(
 ) {
   Column(
     modifier = modifier
-      .fillMaxSize()
-      .padding(top = 4.dp),
+        .fillMaxSize()
+        .padding(top = 4.dp),
   ) {
+    if (genres.isEmpty()) return
+
     BoxTextItems(
       modifier = Modifier.padding(vertical = 12.dp),
       title = "Browse by Genre",
@@ -311,8 +315,8 @@ private fun GenreContent(
           imageUrl = showGenre.posterUrl,
           title = showGenre.name,
           modifier = Modifier
-            .width(160.dp)
-            .heightIn(160.dp, 220.dp),
+              .width(160.dp)
+              .heightIn(160.dp, 220.dp),
           onClick = { onItemClicked(showGenre.id) },
         )
       }

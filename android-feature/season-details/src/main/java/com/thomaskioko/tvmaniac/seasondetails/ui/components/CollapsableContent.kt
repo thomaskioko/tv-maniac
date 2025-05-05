@@ -36,9 +36,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_episodes
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.seasondetails.EpisodeClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.OnEpisodeHeaderClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
@@ -145,7 +147,7 @@ private fun SeasonTitleHeader(
       )
 
       Text(
-        text = stringResource(id = R.string.title_episodes),
+        text = title_episodes.resolve(),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         style = MaterialTheme.typography.titleMedium,
@@ -188,7 +190,7 @@ private fun SeasonTitleHeader(
           modifier = Modifier.size(28.dp),
           imageVector =
             if (isSeasonWatched) Icons.Rounded.CheckCircle else Icons.Outlined.CheckCircle,
-          contentDescription = stringResource(R.string.cd_navigate_back),
+          contentDescription = cd_navigate_back.resolve(),
           tint = MaterialTheme.colorScheme.onBackground,
         )
       }

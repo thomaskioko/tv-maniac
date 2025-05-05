@@ -28,11 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -41,6 +39,9 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.error_empty_library
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.watchlist.EmptyWatchlist
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.ReloadWatchlist
@@ -80,7 +81,7 @@ internal fun WatchlistScreen(
       TvManiacTopBar(
         title = {
           Text(
-            text = stringResource(id = R.string.menu_item_library),
+            text = menu_item_library.resolve(),
             style =
               MaterialTheme.typography.titleLarge.copy(
                 color = MaterialTheme.colorScheme.onSurface,
@@ -130,7 +131,7 @@ internal fun WatchlistScreen(
             state.list.isEmpty() ->
               EmptyContent(
                 imageVector = Icons.Outlined.Inbox,
-                message = stringResource(id = R.string.error_empty_library),
+                message = error_empty_library.resolve(),
               )
             else ->
               WatchlistGridContent(

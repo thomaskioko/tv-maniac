@@ -71,7 +71,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -90,6 +89,21 @@ import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.backgroundGradient
+import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.i18n.MR.strings.btn_add_to_list
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_images
+import com.thomaskioko.tvmaniac.i18n.MR.strings.following
+import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_error_message
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_casts
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers_label
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_recommended
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_seasons
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_similar
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_trailer
+import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.showdetails.DetailBackClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.DetailShowClicked
 import com.thomaskioko.tvmaniac.presentation.showdetails.DismissErrorSnackbar
@@ -201,7 +215,7 @@ internal fun ShowDetailsScreen(
           navigationIcon = {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = stringResource(R.string.cd_navigate_back),
+              contentDescription = cd_navigate_back.resolve(),
               tint = MaterialTheme.colorScheme.onBackground,
             )
           },
@@ -229,13 +243,13 @@ private fun ShowListSheetContent(
 ) {
   Column(
     modifier = Modifier
-      .fillMaxSize()
-      .padding(horizontal = 16.dp),
+        .fillMaxSize()
+        .padding(horizontal = 16.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     Spacer(modifier = Modifier.height(24.dp))
 
-    val title = stringResource(id = R.string.cd_show_images, state.showDetails.title)
+    val title = stringResource(id = cd_show_images.resourceId, state.showDetails.title)
 
     Card(
       modifier = Modifier
@@ -270,8 +284,8 @@ private fun EmptyListContent(
 ) {
   Column(
     modifier = Modifier
-      .fillMaxSize()
-      .padding(horizontal = 16.dp),
+        .fillMaxSize()
+        .padding(horizontal = 16.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     Text(
@@ -338,9 +352,9 @@ fun LazyColumnContent(
       if (!detailsContent.isRefreshing && detailsContent.message != null) {
         ErrorUi(
           modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 16.dp),
-          errorMessage = stringResource(R.string.generic_error_message),
+              .fillMaxSize()
+              .padding(top = 16.dp),
+          errorMessage = generic_error_message.resolve(),
           onRetry = { onAction(ReloadShowDetails) },
         )
       } else {
@@ -361,9 +375,9 @@ private fun EmptyInfoContent(
   Column {
     ErrorUi(
       modifier = modifier
-        .fillMaxWidth()
-        .padding(top = 16.dp),
-      errorMessage = stringResource(R.string.generic_error_message),
+          .fillMaxWidth()
+          .padding(top = 16.dp),
+      errorMessage = generic_error_message.resolve(),
       onRetry = { onAction(ReloadShowDetails) },
     )
 
@@ -417,14 +431,14 @@ private fun HeaderContent(
   val headerHeight = screenHeight / 1.5f
   Box(
     modifier = Modifier
-      .fillMaxWidth()
-      .height(headerHeight),
+        .fillMaxWidth()
+        .height(headerHeight),
   ) {
     KenBurnsViewImage(
       imageUrl = show?.backdropImageUrl,
       modifier = Modifier
-        .fillMaxSize()
-        .clipToBounds(),
+          .fillMaxSize()
+          .clipToBounds(),
     )
 
     if (show != null) {
@@ -447,10 +461,10 @@ private fun Body(
 
   Box(
     modifier = Modifier
-      .fillMaxSize()
-      .clipToBounds()
-      .background(Brush.verticalGradient(surfaceGradient))
-      .padding(horizontal = 16.dp),
+        .fillMaxSize()
+        .clipToBounds()
+        .background(Brush.verticalGradient(surfaceGradient))
+        .padding(horizontal = 16.dp),
   ) {
     Spacer(modifier = Modifier.height(16.dp))
 
@@ -556,7 +570,7 @@ fun ShowMetadata(
         seasonNumber?.let {
           append(divider)
           withStyle(tagStyle) {
-            append(resources.getQuantityString(R.plurals.season_count, it, it))
+            append(resources.getQuantityString(MR.plurals.season_count.resourceId, it, it))
           }
         }
       }
@@ -650,7 +664,7 @@ fun ShowDetailButtons(
   ) {
     FilledVerticalIconButton(
       shape = MaterialTheme.shapes.medium,
-      text = if (isFollowed) stringResource(id = R.string.unfollow) else stringResource(id = R.string.following),
+      text = if (isFollowed) unfollow.resolve() else following.resolve(),
       imageVector = if (isFollowed) Icons.Filled.LibraryAddCheck else Icons.Filled.LibraryAdd,
       containerColor = if (!isFollowed) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error,
       style = MaterialTheme.typography.labelMedium,
@@ -659,7 +673,7 @@ fun ShowDetailButtons(
 
     FilledVerticalIconButton(
       shape = MaterialTheme.shapes.medium,
-      text = stringResource(id = R.string.btn_add_to_list),
+      text = btn_add_to_list.resolve(),
       imageVector = Icons.Outlined.AutoAwesomeMotion,
       containerColor = Color.Gray,
       style = MaterialTheme.typography.labelMedium,
@@ -678,9 +692,7 @@ private fun SeasonsContent(
 
   Spacer(modifier = Modifier.height(16.dp))
 
-  TextLoadingItem(
-    title = stringResource(id = R.string.title_seasons),
-  ) {
+  TextLoadingItem(title = title_seasons.resolve()) {
     val selectedIndex by remember { mutableIntStateOf(selectedSeasonIndex) }
 
     ScrollableTabRow(
@@ -729,8 +741,8 @@ fun WatchProvider(
   Spacer(modifier = Modifier.height(8.dp))
 
   TextLoadingItem(
-    title = stringResource(R.string.title_providers),
-    subTitle = stringResource(R.string.title_providers_label),
+    title = title_providers.resolve(),
+    subTitle = title_providers_label.resolve(),
   ) {
     val lazyListState = rememberLazyListState()
 
@@ -747,10 +759,10 @@ fun WatchProvider(
         Card(
           modifier =
             Modifier
-              .size(width = 80.dp, height = 60.dp)
-              .padding(
-                end = if (index == list.size - 1) 16.dp else 8.dp,
-              ),
+                .size(width = 80.dp, height = 60.dp)
+                .padding(
+                    end = if (index == list.size - 1) 16.dp else 8.dp,
+                ),
           shape = MaterialTheme.shapes.small,
           elevation =
             CardDefaults.cardElevation(
@@ -763,9 +775,9 @@ fun WatchProvider(
             contentDescription = tvShow.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-              .fillMaxWidth()
-              .aspectRatio(1f)
-              .animateItem(),
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .animateItem(),
           )
         }
       }
@@ -779,9 +791,7 @@ private fun CastContent(
 ) {
   if (castsList.isEmpty()) return
 
-  TextLoadingItem(
-    title = stringResource(R.string.title_casts),
-  ) {
+  TextLoadingItem(title = title_casts.resolve()) {
     Box(
       contentAlignment = Alignment.BottomCenter,
     ) {
@@ -807,8 +817,8 @@ private fun CastContent(
           ) {
             Box(
               modifier = Modifier
-                .fillMaxSize()
-                .size(width = 120.dp, height = 160.dp),
+                  .fillMaxSize()
+                  .size(width = 120.dp, height = 160.dp),
               contentAlignment = Alignment.BottomStart,
             ) {
               AsyncImageComposable(
@@ -816,14 +826,14 @@ private fun CastContent(
                 contentDescription = cast.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                  .fillMaxWidth()
-                  .animateItem(),
+                    .fillMaxWidth()
+                    .animateItem(),
               )
 
               Box(
                 modifier = Modifier
-                  .matchParentSize()
-                  .background(contentBackgroundGradient()),
+                    .matchParentSize()
+                    .background(contentBackgroundGradient()),
               )
               Column(
                 modifier = Modifier.padding(8.dp),
@@ -831,8 +841,8 @@ private fun CastContent(
                 Text(
                   text = cast.name,
                   modifier = Modifier
-                    .padding(vertical = 2.dp)
-                    .wrapContentWidth(),
+                      .padding(vertical = 2.dp)
+                      .wrapContentWidth(),
                   overflow = TextOverflow.Ellipsis,
                   maxLines = 1,
                   style =
@@ -872,7 +882,7 @@ private fun TrailersContent(
   Spacer(modifier = Modifier.height(16.dp))
 
   TextLoadingItem(
-    title = stringResource(id = R.string.title_trailer),
+    title = title_trailer.resolve(),
   ) {
     val lazyListState = rememberLazyListState()
 
@@ -901,20 +911,20 @@ private fun TrailersContent(
                 contentScale = ContentScale.Crop,
                 modifier =
                   Modifier
-                    .height(140.dp)
-                    .aspectRatio(3 / 1.5f)
-                    .drawWithCache {
-                      val gradient =
-                        Brush.verticalGradient(
-                          colors = listOf(Color.Transparent, Color.Black),
-                          startY = size.height / 3,
-                          endY = size.height,
-                        )
-                      onDrawWithContent {
-                        drawContent()
-                        drawRect(gradient, blendMode = BlendMode.Multiply)
-                      }
-                    },
+                      .height(140.dp)
+                      .aspectRatio(3 / 1.5f)
+                      .drawWithCache {
+                          val gradient =
+                              Brush.verticalGradient(
+                                  colors = listOf(Color.Transparent, Color.Black),
+                                  startY = size.height / 3,
+                                  endY = size.height,
+                              )
+                          onDrawWithContent {
+                              drawContent()
+                              drawRect(gradient, blendMode = BlendMode.Multiply)
+                          }
+                      },
               )
 
               Icon(
@@ -922,8 +932,8 @@ private fun TrailersContent(
                 contentDescription = trailer.name,
                 tint = MaterialTheme.colorScheme.onSecondary,
                 modifier = Modifier
-                  .align(Alignment.Center)
-                  .size(48.dp),
+                    .align(Alignment.Center)
+                    .size(48.dp),
               )
             }
           }
@@ -931,8 +941,8 @@ private fun TrailersContent(
           Text(
             text = trailer.name,
             modifier = Modifier
-              .padding(vertical = 8.dp)
-              .widthIn(0.dp, 280.dp),
+                .padding(vertical = 8.dp)
+                .widthIn(0.dp, 280.dp),
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
             style =
@@ -957,9 +967,7 @@ fun RecommendedShowsContent(
   Spacer(modifier = Modifier.height(16.dp))
 
   val lazyListState = rememberLazyListState()
-  TextLoadingItem(
-    title = stringResource(id = R.string.title_recommended),
-  ) {
+  TextLoadingItem(title = title_recommended.resolve()) {
     LazyRow(
       modifier = modifier,
       state = lazyListState,
@@ -994,7 +1002,7 @@ fun SimilarShowsContent(
   val lazyListState = rememberLazyListState()
 
   TextLoadingItem(
-    title = stringResource(id = R.string.title_similar),
+    title = title_similar.resolve(),
   ) {
     LazyRow(
       modifier = modifier,

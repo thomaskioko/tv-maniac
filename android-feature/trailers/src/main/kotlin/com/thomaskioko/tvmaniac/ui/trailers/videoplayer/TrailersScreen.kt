@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -47,13 +46,14 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstan
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more_trailers
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.trailers.LoadingTrailers
 import com.thomaskioko.tvmaniac.presentation.trailers.ReloadTrailers
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailerError
@@ -175,7 +175,7 @@ private fun VideoPlayerContent(
     }
 
     Text(
-      text = stringResource(id = R.string.str_more_trailers),
+      text = str_more_trailers.resolve(),
       style = MaterialTheme.typography.titleMedium,
       modifier = Modifier.padding(horizontal = 16.dp),
     )
