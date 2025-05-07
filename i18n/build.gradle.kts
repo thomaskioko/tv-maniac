@@ -6,6 +6,16 @@ plugins {
 tvmaniac {
   multiplatform {
     addAndroidTarget()
+
+    addIosTargetsWithXcFramework(
+      frameworkName = "i18n",
+    ) { framework ->
+      with(framework) {
+        isStatic = true
+
+        export(libs.moko.resources)
+      }
+    }
   }
 }
 
