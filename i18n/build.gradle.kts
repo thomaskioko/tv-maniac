@@ -1,6 +1,6 @@
 plugins {
   alias(libs.plugins.tvmaniac.kmp)
-  id("dev.icerock.mobile.multiplatform-resources")
+  alias(libs.plugins.moko.resources)
 }
 
 tvmaniac {
