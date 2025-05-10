@@ -8,7 +8,6 @@
 
 import SwiftUI
 import SwiftUIComponents
-import TvManiac
 import TvManiacKit
 
 struct SeasonDetailsView: View {

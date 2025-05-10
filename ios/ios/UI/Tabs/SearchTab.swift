@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftUIComponents
-import TvManiac
 import TvManiacKit
 
 struct SearchTab: View {

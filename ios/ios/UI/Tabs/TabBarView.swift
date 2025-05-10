@@ -1,5 +1,4 @@
 import SwiftUI
-import TvManiac
 import TvManiacKit
 
 public struct TabBarView: View {
