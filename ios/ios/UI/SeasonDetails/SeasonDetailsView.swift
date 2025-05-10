@@ -8,7 +8,6 @@
 
 import SwiftUI
 import SwiftUIComponents
-import TvManiac
 import TvManiacKit
 
 struct SeasonDetailsView: View {
@@ -16,7 +15,7 @@ struct SeasonDetailsView: View {
 
   @Environment(\.presentationMode) var presentationMode
 
-  @StateFlow private var uiState: SeasonDetails
+  @StateFlow private var uiState: SeasonDetailsModel
   @State private var isTruncated = false
   @State private var showFullText = false
   @State private var showModal = false
@@ -37,8 +36,8 @@ struct SeasonDetailsView: View {
       } else {
         FullScreenView(
           systemName: "exclamationmark.triangle.fill",
-          message: "Something went wrong",
-          buttonText: "Retry",
+          message: String(\.generic_error_message),
+          buttonText: String(\.button_error_retry),
           action: { presenter.dispatch(action: ReloadSeasonDetails()) }
         )
       }
@@ -63,7 +62,7 @@ struct SeasonDetailsView: View {
   }
 
   @ViewBuilder
-  private func SeasonDetailsContent(_ state: SeasonDetails) -> some View {
+  private func SeasonDetailsContent(_ state: SeasonDetailsModel) -> some View {
     ParallaxView(
       imageHeight: DimensionConstants.imageHeight,
       collapsedImageHeight: DimensionConstants.collapsedImageHeight,
@@ -79,8 +78,8 @@ struct SeasonDetailsView: View {
         )
       },
       content: {
-        if state.seasonOverview != nil, !state.seasonOverview.isEmpty {
-          Text("Season Overview")
+        if state.seasonOverview.isEmpty {
+          Text(String(\.label_season_overview))
             .font(.title3)
             .fontWeight(.bold)
             .foregroundColor(.textColor)
@@ -122,7 +121,7 @@ struct SeasonDetailsView: View {
   }
 
   @ViewBuilder
-  private func HeaderContent(state: SeasonDetails, progress: CGFloat, headerHeight: CGFloat) -> some View {
+  private func HeaderContent(state: SeasonDetailsModel, progress: CGFloat, headerHeight: CGFloat) -> some View {
     ZStack(alignment: .bottom) {
       HeaderCoverArtWorkView(
         imageUrl: state.imageUrl,
@@ -159,7 +158,7 @@ struct SeasonDetailsView: View {
               .foregroundColor(.secondary)
               .alignmentGuide(.view) { d in d[HorizontalAlignment.leading] }
 
-            Text("^[\(state.seasonImages.count) Image](inflect: true)")
+            Text(String(\.season_images_count, quantity: state.seasonImages.count))
               .bodyMediumFont(size: 16)
               .foregroundColor(.textColor)
               .lineLimit(1)
@@ -185,25 +184,6 @@ struct SeasonDetailsView: View {
   private func toCastsList(_ list: [Cast]) -> [SwiftCast] {
     return list.map { cast -> SwiftCast in
         .init(castId: cast.id, name: cast.name, characterName: cast.characterName, profileUrl: cast.profileUrl)
-    }
-  }
-
-  @ViewBuilder
-  private var empty: some View {
-    if #available(iOS 17.0, *) {
-      ContentUnavailableView(
-        "Please wait while we get your content.",
-        systemImage: "rectangle.on.rectangle"
-      )
-      .padding()
-      .multilineTextAlignment(.center)
-      .font(.callout)
-      .foregroundColor(.secondary)
-    } else {
-      FullScreenView(
-        systemName: "rectangle.on.rectangle",
-        message: "Please wait while we get your content."
-      )
     }
   }
 }

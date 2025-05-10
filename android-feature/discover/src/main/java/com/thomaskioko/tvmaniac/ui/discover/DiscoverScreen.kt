@@ -69,11 +69,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
@@ -87,6 +85,15 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
+import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
+import com.thomaskioko.tvmaniac.i18n.MR.strings.missing_api_key
+import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_popular
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_top_rated
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_trending_today
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_upcoming
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.discover.AccountClicked
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowAction
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
@@ -160,9 +167,9 @@ internal fun DiscoverScreen(
           modifier = Modifier
             .padding(paddingValues.copy(copyBottom = false)),
           imageVector = Icons.Filled.Movie,
-          title = stringResource(R.string.generic_empty_content),
-          message = stringResource(R.string.missing_api_key),
-          buttonText = stringResource(id = R.string.generic_retry),
+          title = generic_empty_content.resolve(),
+          message = missing_api_key.resolve(),
+          buttonText = generic_retry.resolve(),
           onClick = { onAction(RefreshData) },
         )
       state.showError -> ErrorUi(
@@ -324,7 +331,7 @@ private fun LazyColumnContent(
 
     item {
       HorizontalRowContent(
-        category = stringResource(id = R.string.title_category_upcoming),
+        category = title_category_upcoming.resolve(),
         tvShows = dataLoadedState.upcomingShows,
         onItemClicked = { onAction(ShowClicked(it)) },
         onMoreClicked = { onAction(UpComingClicked) },
@@ -333,7 +340,7 @@ private fun LazyColumnContent(
 
     item {
       HorizontalRowContent(
-        category = stringResource(id = R.string.title_category_trending_today),
+        category = title_category_trending_today.resolve(),
         tvShows = dataLoadedState.trendingToday,
         onItemClicked = { onAction(ShowClicked(it)) },
         onMoreClicked = { onAction(TrendingClicked) },
@@ -342,7 +349,7 @@ private fun LazyColumnContent(
 
     item {
       HorizontalRowContent(
-        category = stringResource(id = R.string.title_category_popular),
+        category = title_category_popular.resolve(),
         tvShows = dataLoadedState.popularShows,
         onItemClicked = { onAction(ShowClicked(it)) },
         onMoreClicked = { onAction(PopularClicked) },
@@ -351,7 +358,7 @@ private fun LazyColumnContent(
 
     item {
       HorizontalRowContent(
-        category = stringResource(id = R.string.title_category_top_rated),
+        category = title_category_top_rated.resolve(),
         tvShows = dataLoadedState.topRatedShows,
         onItemClicked = { onAction(ShowClicked(it)) },
         onMoreClicked = { onAction(TopRatedClicked) },
@@ -537,7 +544,7 @@ private fun HorizontalRowContent(
           .fillMaxWidth()
           .padding(start = 16.dp),
         title = category,
-        label = stringResource(id = R.string.str_more),
+        label = str_more.resolve(),
         onMoreClicked = onMoreClicked,
       )
 

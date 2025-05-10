@@ -19,7 +19,7 @@ dependencies {
   api(projects.presenter.watchlist)
 
   implementation(projects.androidDesignsystem)
-  implementation(projects.androidResources)
+  implementation(projects.i18n)
 
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material3)

@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftUIComponents
-import TvManiac
 import TvManiacKit
 
 struct SettingsTab: View {
@@ -14,22 +13,22 @@ struct SettingsTab: View {
   @Environment(\.openURL) var openURL
   @Environment(\.presentationMode) var presentationMode
   @ObservedObject private var model = TraktAuthViewModel()
-
+  
   init(presenter: SettingsPresenter) {
     self.presenter = presenter
     _uiState = .init(presenter.state)
   }
-
+  
   var body: some View {
     Form {
-      Section("App Theme") {
+      Section(String(\.label_settings_section_app_theme)) {
         Picker(
           selection: $store.appTheme,
-          label: Text("Change Theme")
+          label: Text(String(\.label_settings_change_theme))
             .bodyMediumFont(size: 16),
           content: {
             ForEach(DeveiceAppTheme.allCases, id: \.self) { theme in
-
+              
               Text(theme.localizableName)
                 .tag(theme)
             }
@@ -41,38 +40,50 @@ struct SettingsTab: View {
           presenter.dispatch(action: ThemeSelected(appTheme: theme))
         }
       }
-
-      Section("Behavior") {
+      
+      Section(String(\.label_settings_section_behavior)) {
         Toggle(isOn: $openInYouTube) {
-          settingsLabel(title: "Open Trailers in Youtube App", icon: "tv", color: .red)
+          settingsLabel(
+            title: String(\.label_settings_youtube),
+            icon: "tv",
+            color: .red
+          )
         }
       }
-
-      Section("Trakt Account") {
+      
+      Section(String(\.label_settings_section_trakt_account)) {
         Button {
           showingAlert = !(uiState.showTraktDialog)
-
+          
         } label: {
-          settingsLabel(title: "Connect to Trakt", icon: "person.fill", color: Color.accent)
+          settingsLabel(
+            title: String(\.label_settings_trakt_connect),
+            icon: "person.fill",
+            color: Color.accent
+          )
         }
         .buttonStyle(.plain)
         .alert(isPresented: $showingAlert) {
           Alert(
-            title: Text("Trakt Coming Soon"),
-            message: Text("Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch."),
-            primaryButton: .default(Text("Login")) {
+            title: Text(String(\.label_settings_trakt_dialog_title)),
+            message: Text(String(\.label_settings_trakt_dialog_message)),
+            primaryButton: .default(Text(String(\.label_settings_trakt_dialog_button_primary))) {
               model.initiateAuthorization()
             },
-            secondaryButton: .destructive(Text("Cancel"))
+            secondaryButton: .destructive(Text(String(\.label_settings_trakt_dialog_button_secondary)))
           )
         }
       }
-
-      Section("Info") {
+      
+      Section(String(\.label_settings_section_info)) {
         Button {
           aboutPage.toggle()
         } label: {
-          settingsLabel(title: "About TvManiac", icon: "info.circle", color: .black)
+          settingsLabel(
+            title: String(\.label_settings_about),
+            icon: "info.circle",
+            color: .black
+          )
         }
         .buttonStyle(.plain)
         .sheet(isPresented: $aboutPage) {
@@ -82,11 +93,15 @@ struct SettingsTab: View {
               .appTheme()
           }
         }
-
+        
         Button {
           showPolicy.toggle()
         } label: {
-          settingsLabel(title: "Privacy Policy", icon: "hand.raised", color: .indigo)
+          settingsLabel(
+            title: String(\.label_settings_privacy_policy),
+            icon: "hand.raised",
+            color: .indigo
+          )
         }
         .buttonStyle(.plain)
         .sheet(isPresented: $showPolicy) {
@@ -101,13 +116,13 @@ struct SettingsTab: View {
     }
     .scrollContentBackground(.hidden)
     .background(Color.backgroundColor)
-    .navigationTitle("Settings")
+    .navigationTitle(Text(String(\.label_settings_title)))
     .navigationBarTitleDisplayMode(.inline)
     .onChange(of: uiState.appTheme) { newTheme in
       store.appTheme = newTheme.toDeveiceAppTheme()
     }
   }
-
+  
   private func settingsLabel(title: String, icon: String, color: Color) -> some View {
     HStack {
       ZStack {
@@ -120,7 +135,7 @@ struct SettingsTab: View {
       .frame(width: 30, height: 30, alignment: .center)
       .padding(.trailing, 8)
       .accessibilityHidden(true)
-
+      
       Text(title)
     }
     .padding(.vertical, 2)

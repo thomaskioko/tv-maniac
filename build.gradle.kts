@@ -9,6 +9,7 @@ plugins {
   alias(libs.plugins.kotlin.jvm) apply false
   alias(libs.plugins.ksp) apply false
   alias(libs.plugins.multiplatform) apply false
+  alias(libs.plugins.moko.resources) apply false
   alias(libs.plugins.serialization) apply false
   alias(libs.plugins.skie) apply false
   alias(libs.plugins.spotless) apply false

@@ -18,10 +18,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_search
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_settings
+import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
 fun TvManiacNavigationBar(
@@ -84,28 +87,28 @@ private fun TvManiacTvManiacNavigationBarPreviewPreview() {
       TvManiacNavigationBar {
         TvManiacBottomNavigationItem(
           imageVector = Icons.Outlined.Movie,
-          title = stringResource(id = R.string.menu_item_discover),
+          title = menu_item_discover.resolve(),
           selected = true,
           onClick = { },
         )
 
         TvManiacBottomNavigationItem(
           imageVector = Icons.Outlined.Search,
-          title = stringResource(id = R.string.menu_item_search),
+          title = menu_item_search.resolve(),
           selected = false,
           onClick = { },
         )
 
         TvManiacBottomNavigationItem(
           imageVector = Icons.Outlined.VideoLibrary,
-          title = stringResource(id = R.string.menu_item_library),
+          title = menu_item_library.resolve(),
           selected = false,
           onClick = { },
         )
 
         TvManiacBottomNavigationItem(
           imageVector = Icons.Outlined.Settings,
-          title = stringResource(id = R.string.menu_item_settings),
+          title = menu_item_settings.resolve(),
           selected = false,
           onClick = { },
         )

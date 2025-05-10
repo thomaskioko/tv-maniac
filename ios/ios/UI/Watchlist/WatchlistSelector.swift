@@ -6,13 +6,13 @@ public struct WatchlistSelector: View {
   private let title: String
   private let posterUrl: String?
   private let customLists: [String] = []
-
+  
   public init(showView: Binding<Bool>, title: String, posterUrl: String?) {
     self.title = title
     self.posterUrl = posterUrl
     _showView = showView
   }
-
+  
   public var body: some View {
     NavigationStack {
       Form {
@@ -30,7 +30,7 @@ public struct WatchlistSelector: View {
               .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 10)
             }
             .frame(maxWidth: .infinity)
-
+            
             Text(title)
               .fontWeight(.semibold)
               .font(.title3)
@@ -39,20 +39,20 @@ public struct WatchlistSelector: View {
         }
         .listRowInsets(EdgeInsets())
         .listRowBackground(Color.clear)
-
+        
         if !customLists.isEmpty {
           Section {
             List {
               // Add Custom list
             }
-          } header: { Text("Lists") }
+          } header: { Text(String(\.label_watchlist_lists)) }
         } else {
           emptyList
         }
       }
       .scrollBounceBehavior(.basedOnSize, axes: .vertical)
       .scrollContentBackground(.visible)
-      .navigationTitle("Add to...")
+      .navigationTitle(Text(String(\.label_watchlist_title)))
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItem(placement: .topBarLeading) {
@@ -62,7 +62,7 @@ public struct WatchlistSelector: View {
             action: { showView.toggle() }
           )
         }
-
+        
         ToolbarItem(placement: .topBarTrailing) {
           // TODO: Custom list
         }
@@ -75,28 +75,28 @@ public struct WatchlistSelector: View {
     .presentationDragIndicator(.visible)
     .presentationCornerRadius(12)
   }
-
+  
   private var emptyList: some View {
     Section {
       VStack {
-        Text("Create a List")
+        Text(String(\.label_watchlist_create_custom_list))
           .font(.avenirNext(size: 22))
           .fontWeight(.bold)
           .foregroundColor(.textColor)
           .multilineTextAlignment(.center)
           .padding([.horizontal], 8)
-
-        Text("You don't have any lists. Create a new one?")
+        
+        Text(String(\.label_watchlist_empty_list))
           .font(.caption)
-
+        
         Button(action: {}) {
           VStack {
             Image(systemName: "plus.rectangle.on.rectangle.fill")
               .resizable()
               .aspectRatio(contentMode: .fit)
               .frame(height: 24)
-
-            Text("Create")
+            
+            Text(String(\.label_watchlist_create))
               .font(.caption)
           }
           .padding(.vertical, 4)

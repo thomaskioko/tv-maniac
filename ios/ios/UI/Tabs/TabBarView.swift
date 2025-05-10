@@ -1,5 +1,4 @@
 import SwiftUI
-import TvManiac
 import TvManiacKit
 
 public struct TabBarView: View {
@@ -63,13 +62,13 @@ public enum NavigationTab: String, CaseIterable {
 
   var title: String {
     switch self {
-    case .discover: return "Discover"
-    case .search: return "Search"
-    case .watchlist: return "Watchlist"
-    case .settings: return "Settings"
+    case .discover: return String(\.label_tab_discover)
+    case .search: return String(\.label_tab_search)
+    case .watchlist: return String(\.label_tab_watchlist)
+    case .settings: return String(\.label_tab_settings)
     }
   }
-
+  
   var icon: String {
     switch self {
     case .discover: return "tv"

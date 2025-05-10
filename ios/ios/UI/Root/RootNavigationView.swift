@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import TvManiac
 import TvManiacKit
 
 struct RootNavigationView: View {

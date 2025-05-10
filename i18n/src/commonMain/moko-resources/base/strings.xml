@@ -1,6 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+  <string name="button_error_retry">Retry</string>
+
+  <string name="label_tab_discover">Discover</string>
+  <string name="label_tab_search">Search</string>
+  <string name="label_tab_watchlist">Watchlist</string>
+  <string name="label_tab_settings">Settings</string>
+
+
+  <string name="label_discover_upcoming">Upcoming</string>
+  <string name="label_discover_trending_today">Trending Today</string>
+  <string name="label_discover_popular">Popular</string>
+  <string name="label_discover_top_rated">Top Rated</string>
+  <string name="label_discover_featured">Featured</string>
+  <string name="label_discover_title">Discover</string>
+
+  <string name="label_search_title">Search</string>
+  <string name="label_search_placeholder">Enter Show Title</string>
+  <string name="label_search_by_genre">Browse by Genre</string>
+  <string name="label_search_empty_results">No results found. Try a different keyword!</string>
+
+  <string name="label_season_overview">Season Overview</string>
+
+  <string name="label_watchlist_title">Add to ...</string>
+  <string name="label_watchlist_lists">Lists</string>
+  <string name="label_watchlist_create_custom_list">Create a List</string>
+  <string name="label_watchlist_empty_list">You don't have any lists. Create a new one?</string>
+  <string name="label_watchlist_create">Create</string>
+  <string name="label_watchlist_list_style">List Style</string>
+  <string name="label_watchlist_search_hint">Enter a show title to search for Show</string>
+  <string name="label_watchlist_empty_search_results">Enter a show title to search for Show</string>
+  <string name="label_watchlist_sort_list">Sort List</string>
+
+
+  <string name="label_settings_title">Settings</string>
+  <string name="label_settings_change_theme">Change Theme</string>
+  <string name="label_settings_section_trakt_account">Trakt Account</string>
+  <string name="label_settings_section_app_theme">App Theme</string>
+  <string name="label_settings_section_behavior">Behavior</string>
+  <string name="label_settings_section_info">Info</string>
+  <string name="label_settings_youtube">Open Trailers in Youtube App</string>
+  <string name="label_settings_trakt_connect">Connect to Trakt</string>
+  <string name="label_settings_trakt_dialog_title">Connect to Trakt</string>
+  <string name="label_settings_trakt_dialog_message">Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch.</string>
+  <string name="label_settings_trakt_dialog_button_primary">Login</string>
+  <string name="label_settings_trakt_dialog_button_secondary">Cancel</string>
+  <string name="label_settings_about">About TvManiac</string>
+  <string name="label_settings_privacy_policy">Privacy Policy</string>
+
+
   <string name="app_name">Tv Maniac</string>
   <string name="menu_item_discover">Discover</string>
   <string name="menu_item_search">Search</string>
@@ -67,6 +116,7 @@
   <string name="title_all_episodes">All Episodes</string>
   <string name="title_episodes">Episodes</string>
   <string name="title_watch_next">Watch Next</string>
+  <string name="title_browse_by_genre">Browse by Genre</string>
   <string name="status_connected">Back Online!</string>
   <string name="status_no_connection">No Internet Connection!</string>
 

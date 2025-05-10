@@ -56,7 +56,7 @@ fun TvManiacTheme(
   ) {
     MaterialTheme(
       colorScheme = colorScheme,
-      typography = tvManiacTypography,
+      typography = TvManiacTypography(),
       shapes = tvManiacShapes,
       content = content,
     )

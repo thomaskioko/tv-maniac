@@ -19,7 +19,7 @@ dependencies {
   api(projects.presenter.seasondetails)
 
   implementation(projects.androidDesignsystem)
-  implementation(projects.androidResources)
+  implementation(projects.i18n)
 
   implementation(libs.androidx.compose.constraintlayout)
   implementation(libs.androidx.compose.foundation)

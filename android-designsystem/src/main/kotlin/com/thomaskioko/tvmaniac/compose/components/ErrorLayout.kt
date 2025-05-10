@@ -29,12 +29,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.green
+import com.thomaskioko.tvmaniac.i18n.MR.strings.status_connected
+import com.thomaskioko.tvmaniac.i18n.MR.strings.status_no_connection
+import com.thomaskioko.tvmaniac.i18n.MR.strings.unexpected_error_retry
+import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
 fun ConnectionStatus(
@@ -46,12 +48,11 @@ fun ConnectionStatus(
     if (isConnected) green else MaterialTheme.colorScheme.error,
     label = "",
   )
-  val message =
-    if (isConnected) {
-      stringResource(id = R.string.status_connected)
-    } else {
-      stringResource(id = R.string.status_no_connection)
-    }
+  val message = if (isConnected) {
+    status_connected.resolve()
+  } else {
+    status_no_connection.resolve()
+  }
   val icon = if (isConnected) Icons.Outlined.SignalWifi4Bar else Icons.Outlined.SignalWifiOff
 
   Box(
@@ -103,7 +104,7 @@ fun ErrorUi(
       Spacer(modifier = Modifier.height(8.dp))
 
       Text(
-        text = errorMessage ?: stringResource(id = R.string.unexpected_error_retry),
+        text = errorMessage ?: unexpected_error_retry.resolve(),
         style = MaterialTheme.typography.bodyLarge,
         textAlign = TextAlign.Center,
       )
@@ -124,7 +125,7 @@ fun ErrorUi(
 fun RowError(
   onRetry: () -> Unit,
   modifier: Modifier = Modifier,
-  errorMessage: String = stringResource(id = R.string.unexpected_error_retry),
+  errorMessage: String = unexpected_error_retry.resolve(),
 ) {
   Column(
     modifier = modifier,

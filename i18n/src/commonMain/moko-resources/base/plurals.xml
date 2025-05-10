@@ -8,4 +8,8 @@
     <item quantity="one">%d Image</item>
     <item quantity="other">%d Images</item>
   </plurals>
+  <plurals name="episode_count">
+    <item quantity="one">%d Episode</item>
+    <item quantity="other">%d Episodes</item>
+  </plurals>
 </resources>
