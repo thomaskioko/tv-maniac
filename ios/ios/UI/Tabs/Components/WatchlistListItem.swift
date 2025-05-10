@@ -6,7 +6,7 @@ import TvManiacKit
 struct WatchlistListItem: View {
   let item: TvManiac.WatchlistItem
   let namespace: Namespace.ID
-
+  
   var body: some View {
     HStack(spacing: 0) {
       PosterItemView(
@@ -15,7 +15,7 @@ struct WatchlistListItem: View {
         posterWidth: WatchlistListItemConstants.posterWidth,
         posterHeight: WatchlistListItemConstants.height
       )
-
+      
       watchlistItemDetails(item: item)
     }
     .frame(maxWidth: .infinity)
@@ -24,7 +24,7 @@ struct WatchlistListItem: View {
     .cornerRadius(6)
     .matchedGeometryEffect(id: item.tmdbId, in: namespace)
   }
-
+  
   @ViewBuilder
   private func watchlistItemDetails(item: TvManiac.WatchlistItem) -> some View {
     ZStack(alignment: .bottom) {
@@ -34,25 +34,25 @@ struct WatchlistListItem: View {
           .fontWeight(.semibold)
           .foregroundColor(.textColor)
           .lineLimit(1)
-
+        
         HStack(spacing: 4) {
           if item.seasonCount > 0 {
-            Text("^[\(item.seasonCount) Season](inflect: true)")
+            Text(String(\.season_count, quantity: Int(item.seasonCount)))
               .font(.caption)
               .foregroundColor(.gray)
           }
-
+          
           if item.episodeCount > 0 {
             Text("•")
               .font(.avenirNext(size: 8))
               .foregroundColor(.secondary)
-
-            Text("^[\(item.episodeCount) Episode](inflect: true)")
+            
+            Text(String(\.episode_count, quantity: Int(item.episodeCount)))
               .font(.caption)
               .foregroundColor(.gray)
           }
         }
-
+        
         HStack(spacing: 4) {
           if let status = item.status {
             BorderTextView(
@@ -61,26 +61,26 @@ struct WatchlistListItem: View {
               borderOpacity: 0.12,
               weight: .bold
             )
-
+            
             Text("•")
               .font(.avenirNext(size: 8))
               .foregroundColor(.secondary)
           }
-
+          
           if let year = item.year {
             Text("\(year)")
               .font(.caption)
-                        .foregroundColor(.gray)
+              .foregroundColor(.gray)
           }
         }
         .padding(.top, 4)
-
+        
         Spacer()
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.vertical)
       .padding(.horizontal, 8)
-
+      
       ProgressView(value: 0, total: 1)
         .progressViewStyle(RoundedRectProgressViewStyle())
         .offset(y: 2)

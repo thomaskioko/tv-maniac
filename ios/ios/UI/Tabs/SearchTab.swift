@@ -8,14 +8,14 @@ struct SearchTab: View {
   @StateObject @KotlinStateFlow private var uiState: SearchShowState
   @FocusState private var isSearchFocused: Bool
   @State private var showGlass: Double = 0
-
+  
   init(presenter: SearchShowsPresenter) {
     self.presenter = presenter
     _uiState = .init(presenter.state)
   }
-
+  
   // MARK: - Bindings
-
+  
   private var searchQueryBinding: Binding<String> {
     Binding(
       get: { uiState.query ?? "" },
@@ -29,23 +29,23 @@ struct SearchTab: View {
       }
     )
   }
-
+  
   var body: some View {
     ZStack {
       Color.background
         .ignoresSafeArea()
-
+      
       ScrollView(showsIndicators: false) {
         contentView
           .padding(.top, 16)
       }
     }
-    .navigationTitle("Search")
+    .navigationTitle(String(\.label_search_title))
     .navigationBarTitleDisplayMode(.large)
     .searchable(
       text: searchQueryBinding,
       placement: .navigationBarDrawer(displayMode: .always),
-      prompt: "Enter Show Title"
+      prompt: String(\.label_search_placeholder)
     )
     .disableAutocorrection(true)
     .textInputAutocapitalization(.never)
@@ -56,35 +56,35 @@ struct SearchTab: View {
       for: .navigationBar
     )
   }
-
+  
   @ViewBuilder
   private var contentView: some View {
     switch onEnum(of: uiState) {
-    case .initialSearchState:
-      loadingView
-        .transition(.opacity)
-    case let .searchResultAvailable(state):
-      searchResultsView(state: state)
-        .transition(.opacity)
-    case let .showContentAvailable(state):
-      genreSection(state: state)
-    case let .emptySearchResult(state):
-      if state.errorMessage != nil {
-        errorView(state: state)
+      case .initialSearchState:
+        loadingView
           .transition(.opacity)
-      } else if !state.isUpdating {
-        emptyStateView
+      case let .searchResultAvailable(state):
+        searchResultsView(state: state)
           .transition(.opacity)
-      }
+      case let .showContentAvailable(state):
+        genreSection(state: state)
+      case let .emptySearchResult(state):
+        if state.errorMessage != nil {
+          errorView(state: state)
+            .transition(.opacity)
+        } else if !state.isUpdating {
+          emptyStateView
+            .transition(.opacity)
+        }
     }
   }
-
+  
   @ViewBuilder
   private func genreSection(state: ShowContentAvailable) -> some View {
     Section {
       let items = state.genres.map { $0.toSwift() }
       let columns = [GridItem(.adaptive(minimum: 160), spacing: 8)]
-
+      
       ZStack {
         LazyVGrid(columns: columns, spacing: 8) {
           ForEach(items, id: \.id) { item in
@@ -102,7 +102,7 @@ struct SearchTab: View {
             }
           }
         }
-
+        
         if state.isUpdating {
           ProgressView()
             .progressViewStyle(CircularProgressViewStyle())
@@ -114,7 +114,7 @@ struct SearchTab: View {
       }
     } header: {
       HStack {
-        Text("Browse by Genre")
+        Text(String(\.label_search_by_genre))
           .font(.title3)
           .fontWeight(.medium)
         Spacer()
@@ -122,7 +122,7 @@ struct SearchTab: View {
     }
     .padding(.horizontal)
   }
-
+  
   @ViewBuilder
   private func searchResultsView(state: SearchResultAvailable) -> some View {
     VStack {
@@ -134,7 +134,7 @@ struct SearchTab: View {
           .padding(.horizontal)
           .padding(.bottom, 8)
       }
-
+      
       SearchResultListView(
         items: state.results.map { $0.toSwift() },
         onClick: { id in
@@ -144,25 +144,25 @@ struct SearchTab: View {
       )
     }
   }
-
+  
   private var loadingView: some View {
     CenteredFullScreenView {
       LoadingIndicatorView(animate: true)
     }
   }
-
+  
   private var emptyStateView: some View {
     FullScreenView(
       systemName: "exclamationmark.magnifyingglass",
-      message: "No results found. Try a different keyword!"
+      message: String(\.label_search_empty_results)
     )
   }
-
+  
   private func errorView(state: EmptySearchResult) -> some View {
     FullScreenView(
       systemName: "exclamationmark.arrow.triangle.2.circlepath",
-      message: state.errorMessage ?? "No results found. Try a different keyword!",
-      buttonText: "Retry",
+      message: state.errorMessage ?? String(\.label_search_empty_results),
+      buttonText: String(\.button_error_retry),
       action: { presenter.dispatch(action: ReloadShowContent()) }
     )
     .frame(maxWidth: .infinity)
