@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextRange
@@ -198,7 +199,7 @@ private fun SearchTextField(
         IconButton(onClick = onClearClick) {
           Icon(
             imageVector = Icons.Filled.Clear,
-            contentDescription = cd_clear_text.resolve(),
+            contentDescription = cd_clear_text.resolve(LocalContext.current),
             tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
           )
         }

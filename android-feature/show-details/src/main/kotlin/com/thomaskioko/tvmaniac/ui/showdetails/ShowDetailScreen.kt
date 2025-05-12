@@ -215,7 +215,7 @@ internal fun ShowDetailsScreen(
           navigationIcon = {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = cd_navigate_back.resolve(),
+              contentDescription = cd_navigate_back.resolve(LocalContext.current),
               tint = MaterialTheme.colorScheme.onBackground,
             )
           },
@@ -354,7 +354,7 @@ fun LazyColumnContent(
           modifier = Modifier
               .fillMaxSize()
               .padding(top = 16.dp),
-          errorMessage = generic_error_message.resolve(),
+          errorMessage = generic_error_message.resolve(LocalContext.current),
           onRetry = { onAction(ReloadShowDetails) },
         )
       } else {
@@ -364,24 +364,6 @@ fun LazyColumnContent(
         )
       }
     }
-  }
-}
-
-@Composable
-private fun EmptyInfoContent(
-  onAction: (ShowDetailsAction) -> Unit,
-  modifier: Modifier = Modifier,
-) {
-  Column {
-    ErrorUi(
-      modifier = modifier
-          .fillMaxWidth()
-          .padding(top = 16.dp),
-      errorMessage = generic_error_message.resolve(),
-      onRetry = { onAction(ReloadShowDetails) },
-    )
-
-    Spacer(modifier = Modifier.height(16.dp))
   }
 }
 
@@ -662,9 +644,10 @@ fun ShowDetailButtons(
     modifier = modifier.padding(top = 8.dp),
     horizontalArrangement = Arrangement.spacedBy(8.dp),
   ) {
+    val context = LocalContext.current
     FilledVerticalIconButton(
       shape = MaterialTheme.shapes.medium,
-      text = if (isFollowed) unfollow.resolve() else following.resolve(),
+      text = if (isFollowed) unfollow.resolve(context) else following.resolve(context),
       imageVector = if (isFollowed) Icons.Filled.LibraryAddCheck else Icons.Filled.LibraryAdd,
       containerColor = if (!isFollowed) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error,
       style = MaterialTheme.typography.labelMedium,
@@ -673,7 +656,7 @@ fun ShowDetailButtons(
 
     FilledVerticalIconButton(
       shape = MaterialTheme.shapes.medium,
-      text = btn_add_to_list.resolve(),
+      text = btn_add_to_list.resolve(context),
       imageVector = Icons.Outlined.AutoAwesomeMotion,
       containerColor = Color.Gray,
       style = MaterialTheme.typography.labelMedium,
@@ -692,7 +675,7 @@ private fun SeasonsContent(
 
   Spacer(modifier = Modifier.height(16.dp))
 
-  TextLoadingItem(title = title_seasons.resolve()) {
+  TextLoadingItem(title = title_seasons.resolve(LocalContext.current)) {
     val selectedIndex by remember { mutableIntStateOf(selectedSeasonIndex) }
 
     ScrollableTabRow(
@@ -740,9 +723,11 @@ fun WatchProvider(
 
   Spacer(modifier = Modifier.height(8.dp))
 
+  val context = LocalContext.current
+
   TextLoadingItem(
-    title = title_providers.resolve(),
-    subTitle = title_providers_label.resolve(),
+    title = title_providers.resolve(context),
+    subTitle = title_providers_label.resolve(context),
   ) {
     val lazyListState = rememberLazyListState()
 
@@ -791,7 +776,7 @@ private fun CastContent(
 ) {
   if (castsList.isEmpty()) return
 
-  TextLoadingItem(title = title_casts.resolve()) {
+  TextLoadingItem(title = title_casts.resolve(LocalContext.current)) {
     Box(
       contentAlignment = Alignment.BottomCenter,
     ) {
@@ -882,7 +867,7 @@ private fun TrailersContent(
   Spacer(modifier = Modifier.height(16.dp))
 
   TextLoadingItem(
-    title = title_trailer.resolve(),
+    title = title_trailer.resolve(LocalContext.current),
   ) {
     val lazyListState = rememberLazyListState()
 
@@ -967,7 +952,7 @@ fun RecommendedShowsContent(
   Spacer(modifier = Modifier.height(16.dp))
 
   val lazyListState = rememberLazyListState()
-  TextLoadingItem(title = title_recommended.resolve()) {
+  TextLoadingItem(title = title_recommended.resolve(LocalContext.current)) {
     LazyRow(
       modifier = modifier,
       state = lazyListState,
@@ -1002,7 +987,7 @@ fun SimilarShowsContent(
   val lazyListState = rememberLazyListState()
 
   TextLoadingItem(
-    title = title_similar.resolve(),
+    title = title_similar.resolve(LocalContext.current),
   ) {
     LazyRow(
       modifier = modifier,

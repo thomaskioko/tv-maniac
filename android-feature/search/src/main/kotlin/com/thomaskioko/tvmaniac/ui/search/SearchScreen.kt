@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -107,7 +108,7 @@ internal fun SearchScreen(
       TvManiacTopBar(
         title = {
           Text(
-            text = menu_item_search.resolve(),
+            text = menu_item_search.resolve(LocalContext.current),
             style =
               MaterialTheme.typography.titleLarge.copy(
                 color = MaterialTheme.colorScheme.onSurface,
@@ -169,7 +170,7 @@ private fun SearchScreenContent(
         } else {
           EmptyContent(
             imageVector = Icons.Filled.SearchOff,
-            title = search_no_results.resolve(),
+            title = search_no_results.resolve(LocalContext.current),
           )
         }
       }
@@ -209,7 +210,7 @@ private fun SearchScreenHeader(
   ) {
     SearchTextContainer(
       query = query,
-      hint = msg_search_show_hint.resolve(),
+      hint = msg_search_show_hint.resolve(LocalContext.current),
       lazyListState = lazyListState,
       onAction = onAction,
       content = content,

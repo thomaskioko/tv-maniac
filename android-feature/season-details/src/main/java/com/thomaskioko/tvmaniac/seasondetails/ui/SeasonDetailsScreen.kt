@@ -174,7 +174,7 @@ internal fun SeasonDetailsScreen(
           navigationIcon = {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = cd_navigate_back.resolve(),
+              contentDescription = cd_navigate_back.resolve(LocalContext.current),
               tint = MaterialTheme.colorScheme.onBackground,
             )
           },
@@ -327,7 +327,7 @@ private fun HeaderContent(
     ) {
       Icon(
         imageVector = Icons.Filled.PhotoLibrary,
-        contentDescription = cd_navigate_back.resolve(),
+        contentDescription = cd_navigate_back.resolve(LocalContext.current),
         tint = MaterialTheme.colorScheme.onSurface,
       )
 
@@ -376,7 +376,7 @@ private fun BodyContent(
     modifier = modifier.fillMaxSize(),
   ) {
     Text(
-      text = title_season_overview.resolve(),
+      text = title_season_overview.resolve(LocalContext.current),
       modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp),
@@ -421,7 +421,7 @@ private fun CastContent(
   if (castList.isEmpty()) return
   Column {
     Text(
-      text = title_casts.resolve(),
+      text = title_casts.resolve(LocalContext.current),
       modifier = Modifier
         .padding(16.dp)
         .fillMaxWidth(),
@@ -516,23 +516,25 @@ private fun SeasonsWatchDialog(
   isWatched: Boolean,
   onAction: (SeasonDetailsAction) -> Unit,
 ) {
+  val context = LocalContext.current
+
   val title = if (isWatched) {
-      dialog_title_unwatched.resolve()
+      dialog_title_unwatched.resolve(context)
     } else {
-      dialog_title_watched.resolve()
+      dialog_title_watched.resolve(context)
     }
 
   val message = if (isWatched) {
-      dialog_message_unwatched.resolve()
+      dialog_message_unwatched.resolve(context)
     } else {
-      dialog_message_watched.resolve()
+      dialog_message_watched.resolve(context)
     }
 
   BasicDialog(
     dialogTitle = title,
     dialogMessage = message,
-    confirmButtonText = dialog_button_yes.resolve(),
-    dismissButtonText = dialog_button_no.resolve(),
+    confirmButtonText = dialog_button_yes.resolve(context),
+    dismissButtonText = dialog_button_no.resolve(context),
     onDismissDialog = { onAction(DismissSeasonDialog) },
     confirmButtonClicked = { onAction(UpdateSeasonWatchedState) },
     dismissButtonClicked = { onAction(DismissSeasonDialog) },

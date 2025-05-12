@@ -69,6 +69,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -161,15 +162,16 @@ internal fun DiscoverScreen(
       }
     },
   ) { paddingValues ->
+    val context = LocalContext.current
     when {
       state.isEmpty ->
         EmptyContent(
           modifier = Modifier
             .padding(paddingValues.copy(copyBottom = false)),
           imageVector = Icons.Filled.Movie,
-          title = generic_empty_content.resolve(),
-          message = missing_api_key.resolve(),
-          buttonText = generic_retry.resolve(),
+          title = generic_empty_content.resolve(context),
+          message = missing_api_key.resolve(context),
+          buttonText = generic_retry.resolve(context),
           onClick = { onAction(RefreshData) },
         )
       state.showError -> ErrorUi(
@@ -309,6 +311,8 @@ private fun LazyColumnContent(
   modifier: Modifier = Modifier,
   onAction: (DiscoverShowAction) -> Unit,
 ) {
+  val context = LocalContext.current
+
   LazyColumn(
     modifier = modifier
       .fillMaxSize()
@@ -331,7 +335,7 @@ private fun LazyColumnContent(
 
     item {
       HorizontalRowContent(
-        category = title_category_upcoming.resolve(),
+        category = title_category_upcoming.resolve(context),
         tvShows = dataLoadedState.upcomingShows,
         onItemClicked = { onAction(ShowClicked(it)) },
         onMoreClicked = { onAction(UpComingClicked) },
@@ -340,7 +344,7 @@ private fun LazyColumnContent(
 
     item {
       HorizontalRowContent(
-        category = title_category_trending_today.resolve(),
+        category = title_category_trending_today.resolve(context),
         tvShows = dataLoadedState.trendingToday,
         onItemClicked = { onAction(ShowClicked(it)) },
         onMoreClicked = { onAction(TrendingClicked) },
@@ -349,7 +353,7 @@ private fun LazyColumnContent(
 
     item {
       HorizontalRowContent(
-        category = title_category_popular.resolve(),
+        category = title_category_popular.resolve(context),
         tvShows = dataLoadedState.popularShows,
         onItemClicked = { onAction(ShowClicked(it)) },
         onMoreClicked = { onAction(PopularClicked) },
@@ -358,7 +362,7 @@ private fun LazyColumnContent(
 
     item {
       HorizontalRowContent(
-        category = title_category_top_rated.resolve(),
+        category = title_category_top_rated.resolve(context),
         tvShows = dataLoadedState.topRatedShows,
         onItemClicked = { onAction(ShowClicked(it)) },
         onMoreClicked = { onAction(TopRatedClicked) },
@@ -544,7 +548,7 @@ private fun HorizontalRowContent(
           .fillMaxWidth()
           .padding(start = 16.dp),
         title = category,
-        label = str_more.resolve(),
+        label = str_more.resolve(LocalContext.current),
         onMoreClicked = onMoreClicked,
       )
 

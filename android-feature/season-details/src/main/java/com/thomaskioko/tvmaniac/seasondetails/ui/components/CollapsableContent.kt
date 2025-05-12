@@ -30,7 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -147,7 +147,7 @@ private fun SeasonTitleHeader(
       )
 
       Text(
-        text = title_episodes.resolve(),
+        text = title_episodes.resolve(LocalContext.current),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         style = MaterialTheme.typography.titleMedium,
@@ -190,7 +190,7 @@ private fun SeasonTitleHeader(
           modifier = Modifier.size(28.dp),
           imageVector =
             if (isSeasonWatched) Icons.Rounded.CheckCircle else Icons.Outlined.CheckCircle,
-          contentDescription = cd_navigate_back.resolve(),
+          contentDescription = cd_navigate_back.resolve(LocalContext.current),
           tint = MaterialTheme.colorScheme.onBackground,
         )
       }

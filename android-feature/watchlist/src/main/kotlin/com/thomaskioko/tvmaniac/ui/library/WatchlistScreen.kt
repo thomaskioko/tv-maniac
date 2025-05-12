@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -81,7 +82,7 @@ internal fun WatchlistScreen(
       TvManiacTopBar(
         title = {
           Text(
-            text = menu_item_library.resolve(),
+            text = menu_item_library.resolve(LocalContext.current),
             style =
               MaterialTheme.typography.titleLarge.copy(
                 color = MaterialTheme.colorScheme.onSurface,
@@ -131,7 +132,7 @@ internal fun WatchlistScreen(
             state.list.isEmpty() ->
               EmptyContent(
                 imageVector = Icons.Outlined.Inbox,
-                message = error_empty_library.resolve(),
+                message = error_empty_library.resolve(LocalContext.current),
               )
             else ->
               WatchlistGridContent(
