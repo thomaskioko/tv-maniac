@@ -98,9 +98,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Install Dependencies
-        run: ./gradlew dependencies
-
       - name: Roborazzi Screenshot Tests
         id: screenshotsverify
         continue-on-error: true
