@@ -29,8 +29,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
 
 @Composable
 fun PosterCard(
@@ -63,7 +63,7 @@ fun PosterCard(
         AsyncImageComposable(
           model = imageUrl,
           contentScale = contentScale,
-          contentDescription = title?.let { stringResource(R.string.cd_show_poster, title) },
+          contentDescription = title?.let { stringResource(cd_show_poster.resourceId, title) },
           modifier = Modifier
             .fillMaxSize()
             .aspectRatio(aspectRatio),
@@ -143,7 +143,7 @@ fun PosterBackdropCard(
               .aspectRatio(2 / 3f),
             model = imageUrl,
             contentScale = contentScale,
-            contentDescription = stringResource(R.string.cd_show_poster, title),
+            contentDescription = stringResource(cd_show_poster.resourceId, title),
             alignment = Alignment.Center,
           )
 

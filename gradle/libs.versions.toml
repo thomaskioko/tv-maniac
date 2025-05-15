@@ -13,20 +13,20 @@ java-toolchain = "23"
 ktfmt = "0.44"
 
 agp = "8.10.0"
-android-lint = "31.9.2"
+android-lint = "31.10.0"
 androidx-activity = "1.10.1"
 androidx-annotation = "1.9.1"
 androidx-browser = "1.8.0"
 androidx-collections = "1.5.0"
-androidx-compose-ui-test = "1.8.0"
+androidx-compose-ui-test = "1.8.1"
 androidx-core = "1.16.0"
 androidx-core-splashscreen = "1.0.1"
 androidx-datastore = "1.1.4"
-androidx-material = "1.8.0"
+androidx-material = "1.8.1"
 androidx-material3 = "1.3.2"
 androidx-palette = "1.0.0"
 androidx-paging = "3.3.6"
-androidx-savedstate = "1.2.1"
+androidx-savedstate = "1.3.0"
 appauth = "0.11.1"
 atomicfu = "0.27.0"
 baselineprofile = "1.3.4"
@@ -34,7 +34,7 @@ benchmarkMacroJunit4 = "1.3.4"
 coil = "2.7.0"
 compose-bom = "2025.05.00"
 compose-constraintlayout = "1.1.1"
-compose-runtime = "1.8.0"
+compose-runtime = "1.8.1"
 coroutines = "1.10.2"
 datetime = "0.6.2"
 decompose = "3.3.0"
@@ -49,11 +49,12 @@ kermit = "2.0.5"
 kotest = "5.9.1"
 kotlin = "2.1.20"
 kotlininject = "0.8.0"
-kotlin-inject-anvil = "0.1.4"
+kotlin-inject-anvil = "0.1.5"
 kotlinx-collections = "0.3.8"
-ksp = "2.1.20-2.0.0"
-ktor = "3.1.2"
+ksp = "2.1.20-2.0.1"
+ktor = "3.1.3"
 lint = "1.4.2"
+moko-resources = "0.24.5"
 napier = "2.7.1"
 robolectric = "4.14.1"
 roborazzi = "1.43.1"
@@ -145,6 +146,9 @@ ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", 
 
 lint-compose = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "lint" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+moko-resources = { module = "dev.icerock.moko:resources", version.ref = "moko-resources" }
+moko-resources-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "moko-resources" }
+moko-resources-generator = { module = "dev.icerock.moko:resources-generator", version.ref = "moko-resources" }
 
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
@@ -185,6 +189,7 @@ dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.r
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
