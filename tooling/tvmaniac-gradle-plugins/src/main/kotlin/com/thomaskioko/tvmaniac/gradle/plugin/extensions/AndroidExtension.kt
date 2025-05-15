@@ -72,7 +72,7 @@ public abstract class AndroidExtension(private val project: Project) {
     project.android {
       testOptions {
         managedDevices {
-          devices.create(deviceName, ManagedVirtualDevice::class.java) {
+          allDevices.register(deviceName, ManagedVirtualDevice::class.java) {
             it.device = device
             it.apiLevel = apiLevel
             it.systemImageSource = systemImageSource
