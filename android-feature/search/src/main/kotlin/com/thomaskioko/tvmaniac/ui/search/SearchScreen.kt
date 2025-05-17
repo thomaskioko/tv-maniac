@@ -159,12 +159,13 @@ private fun SearchScreenContent(
   ) {
     when (state) {
       is EmptySearchResult -> {
+        val context = LocalContext.current
         if (state.errorMessage != null) {
           EmptyContent(
             imageVector = Icons.Outlined.ErrorOutline,
-            title = generic_empty_content.resolve(),
-            message = missing_api_key.resolve(),
-            buttonText = generic_retry.resolve(),
+            title = generic_empty_content.resolve(context),
+            message = missing_api_key.resolve(context),
+            buttonText = generic_retry.resolve(context),
             onClick = { onAction(ReloadShowContent) },
           )
         } else {

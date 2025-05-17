@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
@@ -86,34 +87,35 @@ internal fun BottomNavigationContent(
 ) {
   val childStack by component.homeChildStack.collectAsState()
   val activeComponent = childStack.active.instance
+  val context = LocalContext.current
 
   TvManiacNavigationBar(
     modifier = modifier,
   ) {
     TvManiacBottomNavigationItem(
       imageVector = Icons.Outlined.Movie,
-      title = menu_item_discover.resolve(),
+      title = menu_item_discover.resolve(context),
       selected = activeComponent is Discover,
       onClick = { component.onDiscoverClicked() },
     )
 
     TvManiacBottomNavigationItem(
       imageVector = Icons.Outlined.Search,
-      title = menu_item_search.resolve(),
+      title = menu_item_search.resolve(context),
       selected = activeComponent is Search,
       onClick = { component.onSearchClicked() },
     )
 
     TvManiacBottomNavigationItem(
       imageVector = Icons.Outlined.VideoLibrary,
-      title = menu_item_library.resolve(),
+      title = menu_item_library.resolve(context),
       selected = activeComponent is Watchlist,
       onClick = { component.onLibraryClicked() },
     )
 
     TvManiacBottomNavigationItem(
       imageVector = Icons.Outlined.Settings,
-      title = menu_item_settings.resolve(),
+      title = menu_item_settings.resolve(context),
       selected = activeComponent is Settings,
       onClick = { component.onSettingsClicked() },
     )

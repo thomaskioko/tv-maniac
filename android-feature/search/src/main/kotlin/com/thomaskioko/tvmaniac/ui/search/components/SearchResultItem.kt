@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -112,7 +113,7 @@ fun SearchResultItem(
               Icon(
                 modifier = Modifier.size(20.dp),
                 imageVector = Icons.Outlined.StarOutline,
-                contentDescription = cd_clear_text.resolve(),
+                contentDescription = cd_clear_text.resolve(LocalContext.current),
                 tint = MaterialTheme.colorScheme.secondary,
               )
               withStyle(tagStyle) { append("$it") }

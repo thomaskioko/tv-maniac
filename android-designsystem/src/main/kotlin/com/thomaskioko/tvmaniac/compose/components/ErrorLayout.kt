@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -49,9 +50,9 @@ fun ConnectionStatus(
     label = "",
   )
   val message = if (isConnected) {
-    status_connected.resolve()
+    status_connected.resolve(LocalContext.current)
   } else {
-    status_no_connection.resolve()
+    status_no_connection.resolve(LocalContext.current)
   }
   val icon = if (isConnected) Icons.Outlined.SignalWifi4Bar else Icons.Outlined.SignalWifiOff
 
@@ -104,7 +105,7 @@ fun ErrorUi(
       Spacer(modifier = Modifier.height(8.dp))
 
       Text(
-        text = errorMessage ?: unexpected_error_retry.resolve(),
+        text = errorMessage ?: unexpected_error_retry.resolve(LocalContext.current),
         style = MaterialTheme.typography.bodyLarge,
         textAlign = TextAlign.Center,
       )
@@ -125,7 +126,7 @@ fun ErrorUi(
 fun RowError(
   onRetry: () -> Unit,
   modifier: Modifier = Modifier,
-  errorMessage: String = unexpected_error_retry.resolve(),
+  errorMessage: String = unexpected_error_retry.resolve(LocalContext.current),
 ) {
   Column(
     modifier = modifier,

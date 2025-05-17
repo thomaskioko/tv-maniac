@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
@@ -87,28 +88,28 @@ private fun TvManiacTvManiacNavigationBarPreviewPreview() {
       TvManiacNavigationBar {
         TvManiacBottomNavigationItem(
           imageVector = Icons.Outlined.Movie,
-          title = menu_item_discover.resolve(),
+          title = menu_item_discover.resolve(LocalContext.current),
           selected = true,
           onClick = { },
         )
 
         TvManiacBottomNavigationItem(
           imageVector = Icons.Outlined.Search,
-          title = menu_item_search.resolve(),
+          title = menu_item_search.resolve(LocalContext.current),
           selected = false,
           onClick = { },
         )
 
         TvManiacBottomNavigationItem(
           imageVector = Icons.Outlined.VideoLibrary,
-          title = menu_item_library.resolve(),
+          title = menu_item_library.resolve(LocalContext.current),
           selected = false,
           onClick = { },
         )
 
         TvManiacBottomNavigationItem(
           imageVector = Icons.Outlined.Settings,
-          title = menu_item_settings.resolve(),
+          title = menu_item_settings.resolve(LocalContext.current),
           selected = false,
           onClick = { },
         )

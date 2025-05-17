@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -27,7 +28,7 @@ fun EmptyContent(
   modifier: Modifier = Modifier,
   message: String? = null,
   buttonText: String? = null,
-  title: String = generic_empty_content.resolve(),
+  title: String = generic_empty_content.resolve(LocalContext.current),
   onClick: () -> Unit = {},
 ) {
   Column(
@@ -77,7 +78,7 @@ private fun EmptyContentViewPreview() {
     Surface {
       EmptyContent(
         imageVector = Icons.Outlined.Inbox,
-        message = generic_empty_content.resolve(),
+        message = generic_empty_content.resolve(LocalContext.current),
       )
     }
   }

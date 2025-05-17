@@ -44,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -117,7 +118,7 @@ internal fun SettingsScreen(
       TvManiacTopBar(
         title = {
           Text(
-            text = title_settings.resolve(),
+            text = title_settings.resolve(LocalContext.current),
             style = MaterialTheme.typography.titleLarge.copy(
               color = MaterialTheme.colorScheme.onSurface,
             ),
@@ -222,7 +223,7 @@ private fun TraktProfileSettingsItem(
         traktUserName ?: traktFullName ?: "",
       )
     } else {
-      settings_title_connect_trakt.resolve()
+      settings_title_connect_trakt.resolve(LocalContext.current)
     }
 
   Column(
@@ -234,7 +235,7 @@ private fun TraktProfileSettingsItem(
   ) {
     Spacer(modifier = Modifier.height(8.dp))
 
-    SettingHeaderTitle(title = settings_title_trakt.resolve())
+    SettingHeaderTitle(title = settings_title_trakt.resolve(LocalContext.current))
 
     Spacer(modifier = Modifier.height(8.dp))
 
@@ -280,7 +281,7 @@ private fun TraktProfileSettingsItem(
         modifier = Modifier.weight(1f),
       ) {
         TitleItem(titleId)
-        SettingDescription(trakt_description.resolve())
+        SettingDescription(trakt_description.resolve(LocalContext.current))
       }
 
       TrackDialog(
@@ -306,18 +307,17 @@ fun TrackDialog(
   onLogoutClicked: () -> Unit,
   onDismissDialog: () -> Unit,
 ) {
-  val title =
-    if (loggedIn) {
-      trakt_dialog_logout_title.resolve()
+  val context = LocalContext.current
+  val title = if (loggedIn) {
+      trakt_dialog_logout_title.resolve(context)
     } else {
-      trakt_dialog_login_title.resolve()
+      trakt_dialog_login_title.resolve(context)
     }
 
-  val message =
-    if (loggedIn) {
-      trakt_dialog_logout_message.resolve()
+  val message = if (loggedIn) {
+      trakt_dialog_logout_message.resolve(context)
     } else {
-      trakt_dialog_login_message.resolve()
+      trakt_dialog_login_message.resolve(context)
     }
   AnimatedVisibility(
     visible = isVisible,
@@ -329,11 +329,12 @@ fun TrackDialog(
         animationSpec = tween(durationMillis = 250),
       ),
   ) {
+    val context = LocalContext.current
     BasicDialog(
       dialogTitle = title,
       dialogMessage = message,
-      confirmButtonText = login.resolve(),
-      dismissButtonText = logout.resolve(),
+      confirmButtonText = login.resolve(context),
+      dismissButtonText = logout.resolve(context),
       onDismissDialog = onDismissDialog,
       confirmButtonClicked = onLoginClicked,
       dismissButtonClicked = onLogoutClicked,
@@ -351,10 +352,11 @@ private fun SettingsThemeItem(
   onThemeClicked: () -> Unit,
   onDismissTheme: () -> Unit,
 ) {
+  val context = LocalContext.current
   val appThemeTitle = when (appTheme) {
-    AppTheme.LIGHT_THEME -> settings_title_theme_dark.resolve()
-    AppTheme.DARK_THEME -> settings_title_theme_light.resolve()
-    AppTheme.SYSTEM_THEME -> settings_title_theme_system.resolve()
+    AppTheme.LIGHT_THEME -> settings_title_theme_dark.resolve(context)
+    AppTheme.DARK_THEME -> settings_title_theme_light.resolve(context)
+    AppTheme.SYSTEM_THEME -> settings_title_theme_system.resolve(context)
   }
 
   Column(
@@ -366,7 +368,7 @@ private fun SettingsThemeItem(
     Spacer(modifier = Modifier.height(8.dp))
 
     SettingHeaderTitle(
-      title = settings_title_ui.resolve(),
+      title = settings_title_ui.resolve(LocalContext.current),
       modifier = Modifier,
     )
 
@@ -391,7 +393,7 @@ private fun SettingsThemeItem(
             .weight(1f),
       ) {
         TitleItem(appThemeTitle)
-        SettingDescription(settings_theme_description.resolve())
+        SettingDescription(settings_theme_description.resolve(LocalContext.current))
       }
 
       ThemeMenu(
@@ -513,14 +515,15 @@ private fun AboutSettingsItem() {
         .clickable {}
         .padding(start = 16.dp, end = 16.dp),
   ) {
-    SettingHeaderTitle(title = settings_title_info.resolve())
+    val context = LocalContext.current
+    SettingHeaderTitle(title = settings_title_info.resolve(context))
 
     Spacer(modifier = Modifier.height(8.dp))
 
-    TitleItem(title = settings_title_about.resolve())
+    TitleItem(title = settings_title_about.resolve(context))
 
     Text(
-      text = settings_about_description.resolve(),
+      text = settings_about_description.resolve(context),
       style = MaterialTheme.typography.bodyMedium,
       fontWeight = FontWeight.Normal,
     )

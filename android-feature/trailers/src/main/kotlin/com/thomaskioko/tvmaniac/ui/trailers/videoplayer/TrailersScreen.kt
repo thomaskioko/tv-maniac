@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -175,7 +176,7 @@ private fun VideoPlayerContent(
     }
 
     Text(
-      text = str_more_trailers.resolve(),
+      text = str_more_trailers.resolve(LocalContext.current),
       style = MaterialTheme.typography.titleMedium,
       modifier = Modifier.padding(horizontal = 16.dp),
     )
