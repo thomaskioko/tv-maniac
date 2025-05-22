@@ -23,7 +23,7 @@
 
   <string name="label_season_overview">Season Overview</string>
 
-  <string name="label_watchlist_title">Add to ...</string>
+  <string name="label_watchlist_title">Add to …</string>
   <string name="label_watchlist_lists">Lists</string>
   <string name="label_watchlist_create_custom_list">Create a List</string>
   <string name="label_watchlist_empty_list">You don't have any lists. Create a new one?</string>
