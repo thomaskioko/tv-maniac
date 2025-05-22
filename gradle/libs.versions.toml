@@ -38,7 +38,7 @@ compose-runtime = "1.8.2"
 coroutines = "1.10.2"
 datetime = "0.6.2"
 decompose = "3.3.0"
-dependency-analysis = "2.15.0"
+dependency-analysis = "2.17.0"
 essenty = "2.5.0"
 espressoCore = "3.6.1"
 desugar = "2.1.5"
@@ -100,10 +100,8 @@ androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", 
 androidx-paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "androidx-paging" }
 androidx-savedstate = { group = "androidx.savedstate", name = "savedstate", version.ref = "androidx-savedstate" }
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
-androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 
 appauth = { module = "net.openid:appauth", version.ref = "appauth" }
 
