@@ -104,107 +104,59 @@ public abstract class RootPlugin : Plugin<Project> {
             it.exclude(
               "io.coil-kt:coil-compose",
               "io.coil-kt:coil-compose-base",
+              // Exclude androidx.compose.foundation which is used for layout components
+              "androidx.compose.foundation:foundation",
             )
           }
 
           project.onUsedTransitiveDependencies {
             it.severity("warn")
+
+            // Exclude commonly used transitive dependencies that are showing up in the report
+            it.exclude(
+              // Common Kotlin dependencies
+              "org.jetbrains.kotlin:kotlin-stdlib",
+
+              // Common Compose dependencies
+              "androidx.compose.animation:animation",
+              "androidx.compose.material:material-icons-core",
+              "androidx.compose.ui:ui-tooling-preview",
+              "androidx.compose.ui:ui",
+
+              // Common libraries
+              "androidx.lifecycle:lifecycle-runtime-compose",
+              "androidx.lifecycle:lifecycle-runtime",
+              "libs.kotlinx.collections",
+              "libs.coroutines.core",
+              "libs.moko.resources",
+              "libs.moko.resources.compose",
+              "libs.androidx.compose.material.icons",
+
+              // Common Android libraries
+              "androidx.activity:activity",
+              "androidx.paging:paging-common",
+              "androidx.sqlite:sqlite",
+              "androidx.datastore:datastore-core",
+
+              // Additional dependencies from the report
+              "com.squareup.okhttp3:okhttp",
+              "libs.kotlinx.serialization.json",
+              "libs.sqldelight.driver.android",
+              "libs.sqldelight.runtime",
+              "libs.sqldelight.driver.jvm",
+              "libs.decompose.decompose",
+              "libs.androidx.paging.common",
+
+              // Common test dependencies
+              "junit:junit",
+              "androidx.junit",
+              "libs.androidx.junit",
+              "io.kotest:kotest-assertions-shared"
+            )
           }
-        }
-      }
-
-      analysis.structure { structure ->
-        structure.ignoreKtx(true)
-
-        structure.bundle("androidx-lifecycle") {
-          it.primary("androidx.lifecycle:lifecycle-runtime")
-          it.includeGroup("androidx.lifecycle")
-          it.includeGroup("androidx.arch.core")
-        }
-
-        structure.bundle("androidx-activity") {
-          it.primary("androidx.activity:activity")
-          it.includeGroup("androidx.activity")
-        }
-
-        structure.bundle("compose-runtime") {
-          it.primary("androidx.compose.runtime:runtime")
-          it.includeGroup("androidx.compose.runtime")
-          it.includeDependency("androidx.compose.runtime:runtime-saveable")
-        }
-
-        structure.bundle("compose-ui") {
-          it.primary("androidx.compose.ui:ui")
-          it.includeGroup("androidx.compose.ui")
-          it.includeDependency("androidx.compose.ui:ui-tooling-preview")
-        }
-
-        structure.bundle("compose-animation") {
-          it.primary("androidx.compose.animation:animation")
-          it.includeGroup("androidx.compose.animation")
-        }
-
-        structure.bundle("compose-foundation") {
-          it.primary("androidx.compose.foundation:foundation")
-          it.includeGroup("androidx.compose.foundation")
-        }
-
-        structure.bundle("compose-material") {
-          it.primary("androidx.compose.material:material")
-          it.includeGroup("androidx.compose.material")
-          it.includeDependency("androidx.compose.material:material-icons-core")
-        }
-
-        structure.bundle("compose-material3") {
-          it.primary("androidx.compose.material3:material3")
-          it.includeGroup("androidx.compose.material3")
-        }
-
-        structure.bundle("coil") {
-          it.primary("io.coil-kt:coil")
-          it.includeGroup("io.coil-kt")
-          it.includeDependency("io.coil-kt:coil-compose")
-          it.includeDependency("io.coil-kt:coil-compose-base")
-        }
-
-        structure.bundle("ktor") {
-          it.primary("io.ktor:ktor-http")
-          it.includeGroup("io.ktor")
-        }
-
-        structure.bundle("kotlin-coroutines") {
-          it.primary("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-          it.includeGroup("org.jetbrains.kotlinx")
-        }
-
-        structure.bundle("kotlin-collections") {
-          it.primary("org.jetbrains.kotlinx:kotlinx-collections-immutable")
-          it.includeGroup("org.jetbrains.kotlinx")
-        }
-
-        structure.bundle("testing") {
-          it.primary("junit:junit")
-          it.includeGroup("org.junit.jupiter")
-          it.includeGroup("io.mockk")
-          it.includeGroup("org.jetbrains.kotlinx.kotlinx-coroutines-test")
-          it.includeGroup("org.robolectric")
-        }
-
-        structure.bundle("sqldelight") {
-          it.primary("com.squareup.sqldelight:runtime")
-          it.includeGroup("com.squareup.sqldelight")
-        }
-
-        structure.bundle("kermit") {
-          it.primary("co.touchlab:kermit")
-          it.includeGroup("co.touchlab")
-        }
-
-        structure.bundle("roborazzi") {
-          it.primary("io.github.takahirom.roborazzi:roborazzi-core")
-          it.includeGroup("io.github.takahirom.roborazzi")
         }
       }
     }
   }
 }
+
