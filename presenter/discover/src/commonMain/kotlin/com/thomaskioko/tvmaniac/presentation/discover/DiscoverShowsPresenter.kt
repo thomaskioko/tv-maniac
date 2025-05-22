@@ -5,10 +5,10 @@ import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
-import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.data.featuredshows.api.interactor.FeaturedShowsInteractor
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
@@ -83,9 +83,11 @@ class DiscoverShowsPresenter(
       upcomingLoadingState.observable,
       discoverShowsInteractor.flow,
       uiMessageManager.message,
-      _state
-    ) { featuredShowsIsUpdating, topRatedShowsIsUpdating, popularShowsIsUpdating,
-        trendingShowsIsUpdating, upComingIsUpdating, showData, message, currentState ->
+      _state,
+    ) {
+        featuredShowsIsUpdating, topRatedShowsIsUpdating, popularShowsIsUpdating,
+        trendingShowsIsUpdating, upComingIsUpdating, showData, message, currentState,
+      ->
 
       currentState.copy(
         message = message,

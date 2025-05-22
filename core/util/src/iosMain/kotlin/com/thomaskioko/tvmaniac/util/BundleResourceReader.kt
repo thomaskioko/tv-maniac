@@ -27,16 +27,16 @@ class BundleResourceReader(
   override fun readResource(name: String): String {
     // TODO: Catch iOS-only exceptions and map them to common ones.
     val (filename, type) = when (val lastPeriodIndex = name.lastIndexOf('.')) {
-        0 -> null to name.drop(1)
-        in 1..Int.MAX_VALUE -> {
-          name.take(lastPeriodIndex) to name.drop(lastPeriodIndex + 1)
-        }
-        else -> name to null
+      0 -> null to name.drop(1)
+      in 1..Int.MAX_VALUE -> {
+        name.take(lastPeriodIndex) to name.drop(lastPeriodIndex + 1)
       }
+      else -> name to null
+    }
     val path = bundle.pathForResource(filename, type)
-        ?: error(
-          "Couldn't get path of $name (parsed as: ${listOfNotNull(filename, type).joinToString(".")})",
-        )
+      ?: error(
+        "Couldn't get path of $name (parsed as: ${listOfNotNull(filename, type).joinToString(".")})",
+      )
 
     return memScoped {
       val errorPtr = alloc<ObjCObjectVar<NSError?>>()

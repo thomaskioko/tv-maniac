@@ -52,15 +52,16 @@ class GenreStore(
 
               withContext(dispatchers.databaseWrite) {
                 genreDao.upsert(
-                    Genres(
-                        id = Id(entity.id),
-                        name = entity.name,
-                        poster_url = entity.posterUrl?.let { formatterUtil.formatTmdbPosterPath(it) },
-                    ),
+                  Genres(
+                    id = Id(entity.id),
+                    name = entity.name,
+                    poster_url = entity.posterUrl?.let { formatterUtil.formatTmdbPosterPath(it) },
+                  ),
                 )
               }
             }
-            else -> { /* Skip failed genres */ }
+            else -> { /* Skip failed genres */
+            }
           }
         }
         results

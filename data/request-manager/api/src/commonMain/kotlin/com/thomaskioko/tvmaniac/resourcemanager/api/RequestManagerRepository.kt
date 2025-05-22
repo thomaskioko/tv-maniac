@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.resourcemanager.api
 
-import kotlin.time.Duration
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlin.time.Duration
 
 interface RequestManagerRepository {
 
@@ -10,7 +10,7 @@ interface RequestManagerRepository {
 
   fun isRequestExpired(entityId: Long, requestType: String, threshold: Duration): Boolean
 
-  fun isRequestValid(requestType: String, threshold: Duration) : Boolean
+  fun isRequestValid(requestType: String, threshold: Duration): Boolean
 
   fun delete(entityId: Long, requestType: String)
 

@@ -3,12 +3,12 @@ package com.thomaskioko.tvmaniac.resourcemanager.implementation
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.LastRequestsQueries
 import io.kotest.matchers.shouldBe
+import kotlinx.datetime.Clock
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
 
 class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
   private val lastRequestsQueries: LastRequestsQueries = database.lastRequestsQueries
@@ -44,8 +44,7 @@ class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
     repository.upsert(entityId, requestType, initialTimestamp)
 
     // Check the initial state
-    val initialRequest =
-      lastRequestsQueries.getLastRequestForId(requestType, entityId).executeAsOne()
+    val initialRequest = lastRequestsQueries.getLastRequestForId(requestType, entityId).executeAsOne()
     initialRequest.entity_id shouldBe entityId
     initialRequest.request_type shouldBe requestType
     initialRequest.timestamp.toEpochMilliseconds() shouldBe initialTimestamp.toEpochMilliseconds()

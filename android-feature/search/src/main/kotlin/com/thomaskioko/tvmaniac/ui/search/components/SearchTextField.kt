@@ -28,9 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -38,10 +38,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear_text
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.search.ClearQuery
 import com.thomaskioko.tvmaniac.presentation.search.QueryChanged
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowAction
-import com.thomaskioko.tvmaniac.android.resources.R
 import kotlinx.coroutines.launch
 
 @Composable
@@ -198,7 +199,7 @@ private fun SearchTextField(
         IconButton(onClick = onClearClick) {
           Icon(
             imageVector = Icons.Filled.Clear,
-            contentDescription = stringResource(R.string.cd_clear_text),
+            contentDescription = cd_clear_text.resolve(LocalContext.current),
             tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
           )
         }

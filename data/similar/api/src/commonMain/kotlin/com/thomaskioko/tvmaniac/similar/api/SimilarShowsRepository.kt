@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface SimilarShowsRepository {
   suspend fun fetchSimilarShows(
     id: Long,
-    forceRefresh: Boolean = false
+    forceRefresh: Boolean = false,
   )
 
   fun observeSimilarShows(id: Long): Flow<List<SimilarShows>>

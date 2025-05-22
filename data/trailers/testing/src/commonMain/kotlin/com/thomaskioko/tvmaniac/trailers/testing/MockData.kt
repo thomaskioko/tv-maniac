@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.trailers.testing
 
-import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.Trailers
 
 val trailers =
   listOf(

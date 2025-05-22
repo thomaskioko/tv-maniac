@@ -6,9 +6,9 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
-        api(projects.core.networkUtil)
-        api(projects.database)
+        api(projects.data.database.sqldelight)
         api(projects.data.shows.api)
+        implementation(projects.core.networkUtil)
 
         implementation(projects.core.base)
 

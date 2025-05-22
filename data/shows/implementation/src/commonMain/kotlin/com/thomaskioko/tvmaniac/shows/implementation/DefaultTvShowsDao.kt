@@ -4,11 +4,11 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Tvshow
-import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -59,7 +59,7 @@ class DefaultTvShowsDao(
         if (genresQueries.exists(Id(genreId.toLong())).executeAsOne()) {
           genresQueries.upsert(
             show_id = show.id,
-            genre_id = Id(genreId.toLong())
+            genre_id = Id(genreId.toLong()),
           )
         }
       }
@@ -82,7 +82,7 @@ class DefaultTvShowsDao(
           overview = overview,
           status = status,
           voteAverage = voteAverage,
-          year = year
+          year = year,
         )
       }
       .asFlow()

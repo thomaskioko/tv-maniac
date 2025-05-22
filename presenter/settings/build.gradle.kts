@@ -8,7 +8,7 @@ tvmaniac {
   }
 
   optIn(
-    "kotlinx.coroutines.ExperimentalCoroutinesApi"
+    "kotlinx.coroutines.ExperimentalCoroutinesApi",
   )
 }
 
@@ -17,8 +17,8 @@ kotlin {
     commonMain {
       dependencies {
         implementation(projects.core.base)
-        implementation(projects.datastore.api)
-        implementation(projects.traktAuth.api)
+        implementation(projects.data.datastore.api)
+        implementation(projects.data.traktauth.api)
 
         api(libs.decompose.decompose)
         api(libs.essenty.lifecycle)
@@ -28,8 +28,8 @@ kotlin {
 
     commonTest {
       dependencies {
-        implementation(projects.datastore.testing)
-        implementation(projects.traktAuth.testing)
+        implementation(projects.data.datastore.testing)
+        implementation(projects.data.traktauth.testing)
 
         implementation(libs.bundles.unittest)
       }

@@ -5,11 +5,12 @@ import kotlinx.coroutines.flow.Flow
 
 interface GenreRepository {
   suspend fun fetchGenresWithShows(
-    forceRefresh: Boolean = false
+    forceRefresh: Boolean = false,
   )
+
   suspend fun fetchShowByGenreId(
     id: String,
-    forceRefresh: Boolean = false
+    forceRefresh: Boolean = false,
   )
 
   fun observeGenresWithShows(): Flow<List<ShowGenresEntity>>

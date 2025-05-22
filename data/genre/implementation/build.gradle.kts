@@ -7,6 +7,10 @@ tvmaniac {
     useKotlinInject()
     useKspAnvilCompiler()
   }
+
+  optIn(
+    "kotlinx.coroutines.DelicateCoroutinesApi",
+  )
 }
 
 kotlin {
@@ -15,12 +19,13 @@ kotlin {
       dependencies {
         api(libs.coroutines.core)
 
+        implementation(projects.api.tmdb.api)
         implementation(projects.core.base)
+        implementation(projects.core.logger.api)
         implementation(projects.core.networkUtil)
         implementation(projects.core.util)
-        implementation(projects.database)
-        implementation(projects.data.genre.api)
-        implementation(projects.tmdbApi.api)
+        implementation(projects.data.database.sqldelight)
+        implementation(projects.domain.genre)
 
         implementation(libs.sqldelight.extensions)
         implementation(libs.store5)

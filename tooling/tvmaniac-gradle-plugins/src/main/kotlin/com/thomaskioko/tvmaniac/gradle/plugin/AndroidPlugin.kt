@@ -7,9 +7,9 @@ import com.thomaskioko.tvmaniac.gradle.plugin.extensions.AndroidExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.addIfNotNull
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.android
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.androidComponents
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.baseExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.configure
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.defaultTestSetup
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.baseExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.getDependencyOrNull
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.getVersion
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.javaTargetVersion

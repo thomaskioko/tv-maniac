@@ -29,12 +29,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.theme.green
-import com.thomaskioko.tvmaniac.android.resources.R
+import com.thomaskioko.tvmaniac.i18n.MR.strings.status_connected
+import com.thomaskioko.tvmaniac.i18n.MR.strings.status_no_connection
+import com.thomaskioko.tvmaniac.i18n.MR.strings.unexpected_error_retry
+import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
 fun ConnectionStatus(
@@ -42,20 +45,22 @@ fun ConnectionStatus(
   modifier: Modifier = Modifier,
 ) {
   val backgroundColor by
-    animateColorAsState(
-      if (isConnected) green else MaterialTheme.colorScheme.error,
-      label = "",
-    )
-  val message =
-    if (isConnected) {
-      stringResource(id = R.string.status_connected)
-    } else {
-      stringResource(id = R.string.status_no_connection)
-    }
+  animateColorAsState(
+    if (isConnected) green else MaterialTheme.colorScheme.error,
+    label = "",
+  )
+  val message = if (isConnected) {
+    status_connected.resolve(LocalContext.current)
+  } else {
+    status_no_connection.resolve(LocalContext.current)
+  }
   val icon = if (isConnected) Icons.Outlined.SignalWifi4Bar else Icons.Outlined.SignalWifiOff
 
   Box(
-    modifier = modifier.background(backgroundColor).fillMaxWidth().padding(8.dp),
+    modifier = modifier
+      .background(backgroundColor)
+      .fillMaxWidth()
+      .padding(8.dp),
     contentAlignment = Alignment.TopCenter,
   ) {
     Row(
@@ -89,7 +94,9 @@ fun ErrorUi(
 ) {
   Box(modifier = modifier) {
     Column(
-      modifier = Modifier.align(Alignment.Center).wrapContentSize(),
+      modifier = Modifier
+        .align(Alignment.Center)
+        .wrapContentSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center,
     ) {
@@ -98,7 +105,7 @@ fun ErrorUi(
       Spacer(modifier = Modifier.height(8.dp))
 
       Text(
-        text = errorMessage ?: stringResource(id = R.string.unexpected_error_retry),
+        text = errorMessage ?: unexpected_error_retry.resolve(LocalContext.current),
         style = MaterialTheme.typography.bodyLarge,
         textAlign = TextAlign.Center,
       )
@@ -119,7 +126,7 @@ fun ErrorUi(
 fun RowError(
   onRetry: () -> Unit,
   modifier: Modifier = Modifier,
-  errorMessage: String = stringResource(id = R.string.unexpected_error_retry),
+  errorMessage: String = unexpected_error_retry.resolve(LocalContext.current),
 ) {
   Column(
     modifier = modifier,
@@ -149,7 +156,9 @@ fun EmptyScreen(
 ) {
   Box(modifier = modifier) {
     Column(
-      modifier = Modifier.align(Alignment.Center).wrapContentSize(),
+      modifier = Modifier
+        .align(Alignment.Center)
+        .wrapContentSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       icon()
@@ -191,7 +200,9 @@ private fun RowErrorPreview() {
   TvManiacTheme {
     Surface {
       RowError(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(vertical = 16.dp),
         onRetry = {},
       )
     }

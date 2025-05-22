@@ -15,10 +15,10 @@ internal abstract class QueryPagingSource<Key : Any, RowType : Any> :
   PagingSource<Key, RowType>(), Query.Listener {
 
   protected var currentQuery: Query<RowType>? by
-    Delegates.observable(null) { _, old, new ->
-      old?.removeListener(this)
-      new?.addListener(this)
-    }
+  Delegates.observable(null) { _, old, new ->
+    old?.removeListener(this)
+    new?.addListener(this)
+  }
 
   init {
     registerInvalidatedCallback {

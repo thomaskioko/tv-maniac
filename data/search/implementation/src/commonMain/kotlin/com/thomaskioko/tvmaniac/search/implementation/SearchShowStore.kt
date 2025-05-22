@@ -27,8 +27,7 @@ class SearchShowStore(
     when (val response = tmdbRemoteDataSource.searchShows(query)) {
       is ApiResponse.Success -> response.body.results
       is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
-      is ApiResponse.Error.HttpError ->
-        throw Throwable("${response.code} - ${response.errorMessage}")
+      is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
       is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
     }
   },

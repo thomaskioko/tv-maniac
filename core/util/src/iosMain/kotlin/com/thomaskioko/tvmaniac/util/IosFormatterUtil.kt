@@ -1,16 +1,14 @@
 package com.thomaskioko.tvmaniac.util
 
-import kotlin.math.abs
-import kotlin.math.floor
-import kotlin.math.log10
-import kotlin.math.pow
-import kotlin.math.sign
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSNumber
 import platform.Foundation.NSNumberFormatter
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import kotlin.math.floor
+import kotlin.math.log10
+import kotlin.math.pow
 
 const val POSTER_PATH = "https://image.tmdb.org/t/p/original%s"
 

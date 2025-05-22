@@ -93,12 +93,12 @@ class TrendingShowsStore(
     writeDispatcher = dispatchers.databaseWrite,
   ),
 ).validator(
-    Validator.by {
-      withContext(dispatchers.io) {
-        requestManagerRepository.isRequestValid(
-          requestType = TRENDING_SHOWS_TODAY.name,
-          threshold = TRENDING_SHOWS_TODAY.duration,
-        )
-      }
-    },
-  ).build()
+  Validator.by {
+    withContext(dispatchers.io) {
+      requestManagerRepository.isRequestValid(
+        requestType = TRENDING_SHOWS_TODAY.name,
+        threshold = TRENDING_SHOWS_TODAY.duration,
+      )
+    }
+  },
+).build()

@@ -44,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -56,6 +57,27 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_profile_pic
+import com.thomaskioko.tvmaniac.i18n.MR.strings.login
+import com.thomaskioko.tvmaniac.i18n.MR.strings.logout
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_description
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_theme_description
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_about
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_connect_trakt
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_disconnect_trakt
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_info
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_theme_dark
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_theme_light
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_theme_system
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_trakt
+import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_ui
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_settings
+import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_description
+import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_login_message
+import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_login_title
+import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_message
+import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_title
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.settings.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.presentation.settings.DismissThemeClicked
 import com.thomaskioko.tvmaniac.presentation.settings.DismissTraktDialog
@@ -67,7 +89,6 @@ import com.thomaskioko.tvmaniac.presentation.settings.ThemeSelected
 import com.thomaskioko.tvmaniac.presentation.settings.TraktLoginClicked
 import com.thomaskioko.tvmaniac.presentation.settings.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.presentation.settings.UserInfo
-import com.thomaskioko.tvmaniac.android.resources.R
 
 @Composable
 fun SettingsScreen(
@@ -97,19 +118,19 @@ internal fun SettingsScreen(
       TvManiacTopBar(
         title = {
           Text(
-            text = stringResource(R.string.title_settings),
-            style =
-              MaterialTheme.typography.titleLarge.copy(
-                color = MaterialTheme.colorScheme.onSurface,
-              ),
+            text = title_settings.resolve(LocalContext.current),
+            style = MaterialTheme.typography.titleLarge.copy(
+              color = MaterialTheme.colorScheme.onSurface,
+            ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp),
           )
         },
         modifier = Modifier,
-        colors =
-        TopAppBarDefaults.centerAlignedTopAppBarColors(
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
           containerColor = MaterialTheme.colorScheme.background,
           scrolledContainerColor = MaterialTheme.colorScheme.background,
         ),
@@ -134,7 +155,9 @@ internal fun SettingsScreen(
         showTraktDialog = state.showTraktDialog,
         isLoading = state.isLoading,
         onAction = onAction,
-        modifier = Modifier.fillMaxSize().padding(innerPadding),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding),
       )
     },
   )
@@ -196,22 +219,23 @@ private fun TraktProfileSettingsItem(
   val titleId =
     if (loggedIn) {
       stringResource(
-        R.string.settings_title_disconnect_trakt,
+        settings_title_disconnect_trakt.resourceId,
         traktUserName ?: traktFullName ?: "",
       )
     } else {
-      stringResource(R.string.settings_title_connect_trakt)
+      settings_title_connect_trakt.resolve(LocalContext.current)
     }
 
   Column(
     modifier =
-      Modifier.fillMaxWidth()
-        .clickable { onAction(ShowTraktDialog) }
-        .padding(start = 16.dp, end = 16.dp),
+      Modifier
+          .fillMaxWidth()
+          .clickable { onAction(ShowTraktDialog) }
+          .padding(start = 16.dp, end = 16.dp),
   ) {
     Spacer(modifier = Modifier.height(8.dp))
 
-    SettingHeaderTitle(title = stringResource(R.string.settings_title_trakt))
+    SettingHeaderTitle(title = settings_title_trakt.resolve(LocalContext.current))
 
     Spacer(modifier = Modifier.height(8.dp))
 
@@ -222,22 +246,24 @@ private fun TraktProfileSettingsItem(
       if (!traktUserPicUrl.isNullOrBlank()) {
         if (isLoading) {
           CircularProgressIndicator(
-            modifier = Modifier.padding(end = 16.dp).size(48.dp),
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .size(48.dp),
             color = MaterialTheme.colorScheme.secondary,
           )
         } else {
           AsyncImageComposable(
             model = traktUserPicUrl,
-            contentDescription =
-              stringResource(
-                R.string.cd_profile_pic,
-                traktUserName ?: traktFullName ?: "",
-              ),
+            contentDescription = stringResource(
+              cd_profile_pic.resourceId,
+              traktUserName ?: traktFullName ?: "",
+            ),
             modifier =
-              Modifier.padding(end = 16.dp)
-                .size(48.dp)
-                .clip(CircleShape)
-                .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape),
+              Modifier
+                  .padding(end = 16.dp)
+                  .size(48.dp)
+                  .clip(CircleShape)
+                  .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape),
           )
         }
       } else {
@@ -245,7 +271,9 @@ private fun TraktProfileSettingsItem(
           imageVector = Icons.Filled.Person,
           tint = MaterialTheme.colorScheme.secondary,
           contentDescription = null,
-          modifier = Modifier.padding(end = 16.dp).size(48.dp),
+          modifier = Modifier
+              .padding(end = 16.dp)
+              .size(48.dp),
         )
       }
 
@@ -253,7 +281,7 @@ private fun TraktProfileSettingsItem(
         modifier = Modifier.weight(1f),
       ) {
         TitleItem(titleId)
-        SettingDescription(stringResource(R.string.trakt_description))
+        SettingDescription(trakt_description.resolve(LocalContext.current))
       }
 
       TrackDialog(
@@ -279,36 +307,34 @@ fun TrackDialog(
   onLogoutClicked: () -> Unit,
   onDismissDialog: () -> Unit,
 ) {
-  val title =
-    if (loggedIn) {
-      stringResource(id = R.string.trakt_dialog_logout_title)
+  val context = LocalContext.current
+  val title = if (loggedIn) {
+      trakt_dialog_logout_title.resolve(context)
     } else {
-      stringResource(id = R.string.trakt_dialog_login_title)
+      trakt_dialog_login_title.resolve(context)
     }
 
-  val message =
-    if (loggedIn) {
-      stringResource(id = R.string.trakt_dialog_logout_message)
+  val message = if (loggedIn) {
+      trakt_dialog_logout_message.resolve(context)
     } else {
-      stringResource(id = R.string.trakt_dialog_login_message)
+      trakt_dialog_login_message.resolve(context)
     }
   AnimatedVisibility(
     visible = isVisible,
-    enter =
-      fadeIn(
+    enter = fadeIn(
         initialAlpha = 0.4f,
       ),
-    exit =
-      fadeOut(
+    exit = fadeOut(
         // Overwrites the default animation with tween
         animationSpec = tween(durationMillis = 250),
       ),
   ) {
+    val context = LocalContext.current
     BasicDialog(
       dialogTitle = title,
       dialogMessage = message,
-      confirmButtonText = stringResource(id = R.string.login),
-      dismissButtonText = stringResource(id = R.string.logout),
+      confirmButtonText = login.resolve(context),
+      dismissButtonText = logout.resolve(context),
       onDismissDialog = onDismissDialog,
       confirmButtonClicked = onLoginClicked,
       dismissButtonClicked = onLogoutClicked,
@@ -326,21 +352,23 @@ private fun SettingsThemeItem(
   onThemeClicked: () -> Unit,
   onDismissTheme: () -> Unit,
 ) {
-  val appThemeTitle =
-    when (appTheme) {
-      AppTheme.LIGHT_THEME -> stringResource(R.string.settings_title_theme_dark)
-      AppTheme.DARK_THEME -> stringResource(R.string.settings_title_theme_light)
-      AppTheme.SYSTEM_THEME -> stringResource(R.string.settings_title_theme_system)
-    }
+  val context = LocalContext.current
+  val appThemeTitle = when (appTheme) {
+    AppTheme.LIGHT_THEME -> settings_title_theme_dark.resolve(context)
+    AppTheme.DARK_THEME -> settings_title_theme_light.resolve(context)
+    AppTheme.SYSTEM_THEME -> settings_title_theme_system.resolve(context)
+  }
 
   Column(
-    modifier =
-      Modifier.fillMaxWidth().clickable { onThemeClicked() }.padding(start = 16.dp, end = 16.dp),
+    modifier = Modifier
+        .fillMaxWidth()
+        .clickable { onThemeClicked() }
+        .padding(start = 16.dp, end = 16.dp),
   ) {
     Spacer(modifier = Modifier.height(8.dp))
 
     SettingHeaderTitle(
-      title = stringResource(R.string.settings_title_ui),
+      title = settings_title_ui.resolve(LocalContext.current),
       modifier = Modifier,
     )
 
@@ -354,14 +382,18 @@ private fun SettingsThemeItem(
         imageVector = Icons.Filled.Palette,
         tint = MaterialTheme.colorScheme.secondary,
         contentDescription = null,
-        modifier = Modifier.padding(end = 16.dp).size(48.dp),
+        modifier = Modifier
+            .padding(end = 16.dp)
+            .size(48.dp),
       )
 
       Column(
-        modifier = Modifier.padding(end = 8.dp, bottom = 8.dp).weight(1f),
+        modifier = Modifier
+            .padding(end = 8.dp, bottom = 8.dp)
+            .weight(1f),
       ) {
         TitleItem(appThemeTitle)
-        SettingDescription(stringResource(R.string.settings_theme_description))
+        SettingDescription(settings_theme_description.resolve(LocalContext.current))
       }
 
       ThemeMenu(
@@ -448,7 +480,9 @@ private fun ThemeMenuItem(
     },
     text = {
       Row(
-        modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
       ) {
@@ -476,16 +510,20 @@ private fun ThemeMenuItem(
 @Composable
 private fun AboutSettingsItem() {
   Column(
-    modifier = Modifier.fillMaxSize().clickable {}.padding(start = 16.dp, end = 16.dp),
+    modifier = Modifier
+        .fillMaxSize()
+        .clickable {}
+        .padding(start = 16.dp, end = 16.dp),
   ) {
-    SettingHeaderTitle(title = stringResource(R.string.settings_title_info))
+    val context = LocalContext.current
+    SettingHeaderTitle(title = settings_title_info.resolve(context))
 
     Spacer(modifier = Modifier.height(8.dp))
 
-    TitleItem(title = stringResource(R.string.settings_title_about))
+    TitleItem(title = settings_title_about.resolve(context))
 
     Text(
-      text = stringResource(R.string.settings_about_description),
+      text = settings_about_description.resolve(context),
       style = MaterialTheme.typography.bodyMedium,
       fontWeight = FontWeight.Normal,
     )

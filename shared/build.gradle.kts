@@ -25,7 +25,7 @@ tvmaniac {
         freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
 
         export(projects.navigation.api)
-        export(projects.datastore.api)
+        export(projects.data.datastore.api)
         export(projects.presenter.discover)
         export(projects.presenter.home)
         export(projects.presenter.watchlist)
@@ -60,6 +60,10 @@ kotlin {
         api(projects.presenter.showDetails)
         api(projects.presenter.trailers)
 
+        implementation(projects.api.tmdb.api)
+        implementation(projects.api.tmdb.implementation)
+        implementation(projects.api.trakt.api)
+        implementation(projects.api.trakt.implementation)
         implementation(projects.core.base)
         implementation(projects.core.logger.api)
         implementation(projects.core.logger.implementation)
@@ -103,15 +107,10 @@ kotlin {
         implementation(projects.data.upcomingshows.implementation)
         implementation(projects.data.watchproviders.api)
         implementation(projects.data.watchproviders.implementation)
-
-        implementation(projects.datastore.api)
-        implementation(projects.datastore.implementation)
-        implementation(projects.tmdbApi.api)
-        implementation(projects.tmdbApi.implementation)
-        implementation(projects.traktApi.api)
-        implementation(projects.traktApi.implementation)
-        implementation(projects.traktAuth.api)
-        implementation(projects.traktAuth.implementation)
+        implementation(projects.data.datastore.api)
+        implementation(projects.data.datastore.implementation)
+        implementation(projects.data.traktauth.api)
+        implementation(projects.data.traktauth.implementation)
 
         implementation(projects.navigation.implementation)
 

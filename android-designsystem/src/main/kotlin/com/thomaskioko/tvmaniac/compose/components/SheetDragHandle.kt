@@ -35,14 +35,14 @@ fun SheetDragHandle(
   modifier: Modifier = Modifier,
   title: String? = null,
   textAlign: TextAlign? = null,
-  tint: Color = LocalContentColor.current
+  tint: Color = LocalContentColor.current,
 ) {
   Box(
     modifier = modifier
-        .fillMaxWidth()
-        .statusBarsPadding()
-        .height(56.dp)
-        .background(Color.Transparent),
+      .fillMaxWidth()
+      .statusBarsPadding()
+      .height(56.dp)
+      .background(Color.Transparent),
   ) {
     Row(
       modifier = Modifier
@@ -55,7 +55,9 @@ fun SheetDragHandle(
         imageVector = imageVector,
         tint = tint,
         contentDescription = "Expand/Collapse",
-        modifier = Modifier.size(24.dp).clickable { onClick() },
+        modifier = Modifier
+          .size(24.dp)
+          .clickable { onClick() },
       )
 
       Spacer(modifier = Modifier.width(8.dp))
@@ -67,7 +69,7 @@ fun SheetDragHandle(
           maxLines = 1,
           overflow = TextOverflow.Ellipsis,
           textAlign = textAlign,
-          modifier = Modifier.fillMaxWidth()
+          modifier = Modifier.fillMaxWidth(),
         )
       }
     }
@@ -82,7 +84,7 @@ private fun CustomSheetDragHandlePreview() {
       SheetDragHandle(
         title = "Drag Handle",
         onClick = {},
-        imageVector = Icons.Outlined.KeyboardArrowDown
+        imageVector = Icons.Outlined.KeyboardArrowDown,
       )
     }
   }

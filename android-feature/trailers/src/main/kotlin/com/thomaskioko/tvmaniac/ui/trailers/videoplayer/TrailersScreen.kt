@@ -36,7 +36,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -53,17 +53,18 @@ import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more_trailers
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.trailers.LoadingTrailers
 import com.thomaskioko.tvmaniac.presentation.trailers.ReloadTrailers
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailerError
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailerSelected
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersAction
-import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersContent
+import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersState
 import com.thomaskioko.tvmaniac.presentation.trailers.VideoPlayerError
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
-import com.thomaskioko.tvmaniac.android.resources.R
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -94,7 +95,9 @@ internal fun TrailersScreen(
       when (state) {
         is LoadingTrailers ->
           LoadingIndicator(
-            modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
+            modifier = Modifier
+              .fillMaxSize()
+              .wrapContentSize(Alignment.Center),
           )
         is TrailersContent -> {
           VideoPlayerContent(
@@ -119,7 +122,9 @@ internal fun TrailersScreen(
             },
             errorMessage = state.errorMessage,
             onRetry = { onAction(ReloadTrailers) },
-            modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
+            modifier = Modifier
+              .fillMaxSize()
+              .wrapContentSize(Alignment.Center),
           )
       }
     },
@@ -171,7 +176,7 @@ private fun VideoPlayerContent(
     }
 
     Text(
-      text = stringResource(id = R.string.str_more_trailers),
+      text = str_more_trailers.resolve(LocalContext.current),
       style = MaterialTheme.typography.titleMedium,
       modifier = Modifier.padding(horizontal = 16.dp),
     )
@@ -205,7 +210,8 @@ private fun TrailerList(
     items(trailerList) { trailer ->
       ConstraintLayout(
         modifier =
-          Modifier.fillMaxWidth()
+          Modifier
+            .fillMaxWidth()
             .height(80.dp)
             .clickable { onTrailerClicked(trailer.key) }
             .padding(horizontal = 8.dp),
@@ -217,7 +223,8 @@ private fun TrailerList(
           contentDescription = trailer.name,
           contentScale = ContentScale.Crop,
           modifier =
-            Modifier.width(140.dp)
+            Modifier
+              .width(140.dp)
               .drawWithCache {
                 onDrawWithContent {
                   drawContent()

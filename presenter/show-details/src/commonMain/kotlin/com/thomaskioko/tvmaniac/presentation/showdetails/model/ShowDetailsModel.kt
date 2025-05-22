@@ -27,27 +27,27 @@ data class ShowDetailsModel(
   val trailersList: ImmutableList<TrailerModel>,
   val selectedSeasonIndex: Int = 0,
 ) {
-    companion object {
-        val Empty = ShowDetailsModel(
-            tmdbId = 0,
-            title = "",
-            overview = "",
-            language = "",
-            posterImageUrl = "",
-            backdropImageUrl = "",
-            year = "",
-            status = "",
-            votes = 0,
-            rating = 0.0,
-            isInLibrary = false,
-            hasWebViewInstalled = false,
-            genres = persistentListOf(),
-            providers = persistentListOf(),
-            castsList = persistentListOf(),
-            seasonsList = persistentListOf(),
-            recommendedShows = persistentListOf(),
-            similarShows = persistentListOf(),
-            trailersList = persistentListOf(),
-        )
-    }
+  companion object {
+    val Empty = ShowDetailsModel(
+      tmdbId = 0,
+      title = "",
+      overview = "",
+      language = "",
+      posterImageUrl = "",
+      backdropImageUrl = "",
+      year = "",
+      status = "",
+      votes = 0,
+      rating = 0.0,
+      isInLibrary = false,
+      hasWebViewInstalled = false,
+      genres = persistentListOf(),
+      providers = persistentListOf(),
+      castsList = persistentListOf(),
+      seasonsList = persistentListOf(),
+      recommendedShows = persistentListOf(),
+      similarShows = persistentListOf(),
+      trailersList = persistentListOf(),
+    )
+  }
 }

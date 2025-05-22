@@ -8,7 +8,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 internal fun buildSeasonDetailsLoaded(
-  episodeDetailsList: ImmutableList<EpisodeDetailsModel> = persistentListOf()
+  episodeDetailsList: ImmutableList<EpisodeDetailsModel> = persistentListOf(),
 ): SeasonDetailsModel {
   return SeasonDetailsModel(
     seasonId = 12343L,

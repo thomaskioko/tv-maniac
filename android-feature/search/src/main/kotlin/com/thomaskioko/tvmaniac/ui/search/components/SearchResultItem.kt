@@ -21,7 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,7 +31,8 @@ import androidx.compose.ui.unit.sp
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.android.resources.R
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear_text
+import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
 fun SearchResultItem(
@@ -50,9 +51,9 @@ fun SearchResultItem(
       .clickable { onClick() },
     shape = shape,
     elevation =
-    CardDefaults.cardElevation(
-      defaultElevation = 4.dp,
-    ),
+      CardDefaults.cardElevation(
+        defaultElevation = 4.dp,
+      ),
     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
   ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -112,7 +113,7 @@ fun SearchResultItem(
               Icon(
                 modifier = Modifier.size(20.dp),
                 imageVector = Icons.Outlined.StarOutline,
-                contentDescription = stringResource(R.string.cd_clear_text),
+                contentDescription = cd_clear_text.resolve(LocalContext.current),
                 tint = MaterialTheme.colorScheme.secondary,
               )
               withStyle(tagStyle) { append("$it") }

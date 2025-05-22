@@ -32,8 +32,8 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.develocity") version ("4.0")
-  id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
+  id("com.gradle.develocity") version ("4.0.1")
+  id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 develocity {
@@ -55,26 +55,29 @@ include(
   ":android-feature:show-details",
   ":android-feature:trailers",
   ":android-feature:watchlist",
-  ":android-resources",
+  ":api:tmdb:api",
+  ":api:tmdb:implementation",
+  ":api:trakt:api",
+  ":api:trakt:implementation",
   ":benchmark",
   ":core:base",
   ":core:logger:api",
   ":core:logger:implementation",
-  ":core:logger:fixture",
+  ":core:logger:testing",
   ":core:network-util",
   ":core:paging",
   ":core:screenshot-tests",
   ":core:util",
   ":core:util:testing",
   ":core:view",
-  ":database",
-  ":database:test",
-  ":datastore:api",
-  ":datastore:implementation",
-  ":datastore:testing",
+  ":data:database:sqldelight",
+  ":data:database:testing",
   ":data:cast:api",
   ":data:cast:implementation",
   ":data:cast:testing",
+  ":data:datastore:api",
+  ":data:datastore:implementation",
+  ":data:datastore:testing",
   ":data:episodes:api",
   ":data:episodes:implementation",
   ":data:episodes:testing",
@@ -109,6 +112,9 @@ include(
   ":data:similar:api",
   ":data:similar:implementation",
   ":data:similar:testing",
+  ":data:traktauth:api",
+  ":data:traktauth:implementation",
+  ":data:traktauth:testing",
   ":data:trendingshows:api",
   ":data:trendingshows:implementation",
   ":data:trendingshows:testing",
@@ -128,11 +134,13 @@ include(
   ":data:watchproviders:implementation",
   ":data:watchproviders:testing",
   ":domain:discover",
+  ":domain:genre",
   ":domain:recommendedshows",
   ":domain:seasondetails",
   ":domain:showdetails",
   ":domain:similarshows",
   ":domain:watchproviders",
+  ":i18n",
   ":navigation:api",
   ":navigation:implementation",
   ":presenter:discover",
@@ -145,11 +153,4 @@ include(
   ":presenter:trailers",
   ":presenter:watchlist",
   ":shared",
-  ":tmdb-api:api",
-  ":tmdb-api:implementation",
-  ":trakt-api:api",
-  ":trakt-api:implementation",
-  ":trakt-auth:api",
-  ":trakt-auth:implementation",
-  ":trakt-auth:testing",
 )

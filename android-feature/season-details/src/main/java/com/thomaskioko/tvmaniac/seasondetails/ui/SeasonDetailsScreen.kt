@@ -54,7 +54,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.BasicDialog
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
@@ -67,12 +66,24 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.plurals.season_images_count
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_images
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_no
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_yes
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_message_unwatched
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_message_watched
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_unwatched
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_watched
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_casts
+import com.thomaskioko.tvmaniac.i18n.MR.strings.title_season_overview
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonDialog
 import com.thomaskioko.tvmaniac.presentation.seasondetails.DismissSeasonGallery
 import com.thomaskioko.tvmaniac.presentation.seasondetails.ReloadSeasonDetails
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsBackClicked
+import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonGalleryClicked
 import com.thomaskioko.tvmaniac.presentation.seasondetails.UpdateSeasonWatchedState
@@ -112,11 +123,7 @@ internal fun SeasonDetailsScreen(
     sheetContent = { ImageGalleryContent(imageList = state.seasonImages) },
     onDismissBottomSheet = { onAction(DismissSeasonGallery) },
     sheetDragHandle = {
-      val title =
-        stringResource(
-          id = R.string.cd_show_images,
-          state.seasonName,
-        )
+      val title = stringResource( cd_show_images.resourceId, state.seasonName)
       SheetDragHandle(
         title = title,
         imageVector = Icons.Outlined.KeyboardArrowDown,
@@ -167,7 +174,7 @@ internal fun SeasonDetailsScreen(
           navigationIcon = {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = stringResource(R.string.cd_navigate_back),
+              contentDescription = cd_navigate_back.resolve(LocalContext.current),
               tint = MaterialTheme.colorScheme.onBackground,
             )
           },
@@ -320,14 +327,14 @@ private fun HeaderContent(
     ) {
       Icon(
         imageVector = Icons.Filled.PhotoLibrary,
-        contentDescription = stringResource(R.string.cd_navigate_back),
+        contentDescription = cd_navigate_back.resolve(LocalContext.current),
         tint = MaterialTheme.colorScheme.onSurface,
       )
 
       Text(
         text =
           resources.getQuantityString(
-            R.plurals.season_images_count,
+            season_images_count.resourceId,
             imagesCount,
             imagesCount,
           ),
@@ -369,7 +376,7 @@ private fun BodyContent(
     modifier = modifier.fillMaxSize(),
   ) {
     Text(
-      text = stringResource(R.string.title_season_overview),
+      text = title_season_overview.resolve(LocalContext.current),
       modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp),
@@ -414,7 +421,7 @@ private fun CastContent(
   if (castList.isEmpty()) return
   Column {
     Text(
-      text = stringResource(R.string.title_casts),
+      text = title_casts.resolve(LocalContext.current),
       modifier = Modifier
         .padding(16.dp)
         .fillMaxWidth(),
@@ -509,25 +516,25 @@ private fun SeasonsWatchDialog(
   isWatched: Boolean,
   onAction: (SeasonDetailsAction) -> Unit,
 ) {
-  val title =
-    if (isWatched) {
-      stringResource(id = R.string.dialog_title_unwatched)
+  val context = LocalContext.current
+
+  val title = if (isWatched) {
+      dialog_title_unwatched.resolve(context)
     } else {
-      stringResource(id = R.string.dialog_title_watched)
+      dialog_title_watched.resolve(context)
     }
 
-  val message =
-    if (isWatched) {
-      stringResource(id = R.string.dialog_message_unwatched)
+  val message = if (isWatched) {
+      dialog_message_unwatched.resolve(context)
     } else {
-      stringResource(id = R.string.dialog_message_watched)
+      dialog_message_watched.resolve(context)
     }
 
   BasicDialog(
     dialogTitle = title,
     dialogMessage = message,
-    confirmButtonText = stringResource(id = R.string.dialog_button_yes),
-    dismissButtonText = stringResource(id = R.string.dialog_button_no),
+    confirmButtonText = dialog_button_yes.resolve(context),
+    dismissButtonText = dialog_button_no.resolve(context),
     onDismissDialog = { onAction(DismissSeasonDialog) },
     confirmButtonClicked = { onAction(UpdateSeasonWatchedState) },
     dismissButtonClicked = { onAction(DismissSeasonDialog) },

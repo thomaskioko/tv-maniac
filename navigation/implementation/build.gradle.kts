@@ -10,7 +10,7 @@ tvmaniac {
   }
 
   optIn(
-    "kotlinx.coroutines.ExperimentalCoroutinesApi"
+    "kotlinx.coroutines.ExperimentalCoroutinesApi",
   )
 }
 
@@ -19,13 +19,13 @@ kotlin {
     commonMain.dependencies {
       implementation(projects.core.base)
       implementation(projects.core.logger.api)
+      implementation(projects.data.traktauth.api)
       implementation(projects.domain.discover)
       implementation(projects.domain.recommendedshows)
       implementation(projects.domain.seasondetails)
       implementation(projects.domain.showdetails)
       implementation(projects.domain.similarshows)
       implementation(projects.domain.watchproviders)
-      implementation(projects.traktAuth.api)
       implementation(projects.navigation.api)
 
       implementation(projects.presenter.discover)
@@ -42,9 +42,8 @@ kotlin {
 
     commonTest.dependencies {
       implementation(projects.core.util.testing)
-      implementation(projects.core.logger.fixture)
-      implementation(projects.datastore.testing)
-      implementation(projects.traktAuth.testing)
+      implementation(projects.core.logger.testing)
+      implementation(projects.data.datastore.testing)
       implementation(projects.data.cast.testing)
       implementation(projects.data.featuredshows.testing)
       implementation(projects.data.genre.testing)
@@ -57,6 +56,7 @@ kotlin {
       implementation(projects.data.showdetails.testing)
       implementation(projects.data.similar.testing)
       implementation(projects.data.topratedshows.testing)
+      implementation(projects.data.traktauth.testing)
       implementation(projects.data.trailers.testing)
       implementation(projects.data.trendingshows.testing)
       implementation(projects.data.upcomingshows.testing)

@@ -47,10 +47,10 @@ class DefaultTrendingShowsRepository(
 
   override fun getPagedTrendingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
     return Pager(
-        config = CommonPagingConfig.pagingConfig,
-        remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
-        pagingSourceFactory = dao::getPagedTrendingShows
-      )
+      config = CommonPagingConfig.pagingConfig,
+      remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
+      pagingSourceFactory = dao::getPagedTrendingShows,
+    )
       .flow
   }
 
@@ -82,14 +82,14 @@ class DefaultTrendingShowsRepository(
     return requestManagerRepository.isRequestExpired(
       entityId = page,
       requestType = TRENDING_SHOWS_TODAY.name,
-      threshold = TRENDING_SHOWS_TODAY.duration
+      threshold = TRENDING_SHOWS_TODAY.duration,
     )
   }
 
   private fun updateRequestManager(page: Long) {
     requestManagerRepository.upsert(
       entityId = TRENDING_SHOWS_TODAY.requestId + page,
-      requestType = TRENDING_SHOWS_TODAY.name
+      requestType = TRENDING_SHOWS_TODAY.name,
     )
   }
 }

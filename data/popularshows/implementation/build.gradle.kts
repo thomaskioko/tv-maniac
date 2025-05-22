@@ -18,6 +18,7 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
+        implementation(projects.api.tmdb.api)
         implementation(projects.core.base)
         implementation(projects.core.logger.api)
         implementation(projects.core.paging)
@@ -25,8 +26,7 @@ kotlin {
         implementation(projects.core.util)
         implementation(projects.data.popularshows.api)
         implementation(projects.data.requestManager.api)
-        implementation(projects.database)
-        implementation(projects.tmdbApi.api)
+        implementation(projects.data.database.sqldelight)
 
         api(libs.coroutines.core)
 

@@ -47,7 +47,10 @@ fun BoxTextItems(
     label?.let {
       Text(
         text = label,
-        modifier = Modifier.align(Alignment.CenterEnd).clickable { onMoreClicked() }.padding(16.dp),
+        modifier = Modifier
+          .align(Alignment.CenterEnd)
+          .clickable { onMoreClicked() }
+          .padding(16.dp),
         style =
           MaterialTheme.typography.labelMedium.copy(
             color = MaterialTheme.colorScheme.secondary,
@@ -65,7 +68,9 @@ fun TextLoadingItem(
   content: @Composable () -> Unit,
 ) {
   Box(
-    modifier = modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 16.dp),
+    modifier = modifier
+      .fillMaxWidth()
+      .padding(vertical = 8.dp, horizontal = 16.dp),
   ) {
     Column(
       modifier = Modifier.align(Alignment.CenterStart),

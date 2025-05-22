@@ -3,13 +3,13 @@ package com.thomaskioko.tvmaniac.resourcemanager.implementation
 import com.thomaskioko.tvmaniac.db.Last_requests
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import kotlin.time.Duration
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import kotlin.time.Duration
 
 @Inject
 @SingleIn(AppScope::class)

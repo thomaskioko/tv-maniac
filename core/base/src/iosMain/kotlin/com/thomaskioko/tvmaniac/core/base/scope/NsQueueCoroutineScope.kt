@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.core.base.scope
 
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlin.coroutines.CoroutineContext
 
 class NsQueueCoroutineScope : CoroutineScope {
 

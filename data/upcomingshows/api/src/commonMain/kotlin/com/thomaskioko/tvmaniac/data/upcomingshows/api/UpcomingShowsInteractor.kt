@@ -10,9 +10,9 @@ class UpcomingShowsInteractor(
   private val upcomingShowsRepository: UpcomingShowsRepository,
   private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Boolean>() {
-    override suspend fun doWork(params: Boolean) {
-        withContext(dispatchers.io) {
-            upcomingShowsRepository.fetchUpcomingShows(params)
-        }
+  override suspend fun doWork(params: Boolean) {
+    withContext(dispatchers.io) {
+      upcomingShowsRepository.fetchUpcomingShows(params)
     }
+  }
 }

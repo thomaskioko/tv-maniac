@@ -13,9 +13,10 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
+        implementation(projects.api.tmdb.api)
         implementation(projects.core.base)
-        implementation(projects.database)
-        implementation(projects.tmdbApi.api)
+        implementation(projects.core.networkUtil)
+        implementation(projects.data.database.sqldelight)
         implementation(projects.data.episodes.api)
         implementation(projects.data.requestManager.api)
         implementation(projects.data.seasons.api)

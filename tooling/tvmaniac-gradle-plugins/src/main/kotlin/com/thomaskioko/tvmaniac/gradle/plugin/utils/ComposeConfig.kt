@@ -7,41 +7,41 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
  * Apply Compose configuration to the project.
  */
 internal fun Project.setupCompose() {
-    plugins.apply("org.jetbrains.kotlin.plugin.compose")
+  plugins.apply("org.jetbrains.kotlin.plugin.compose")
 
-    val enableMetrics = project.booleanProperty("compose.enableCompilerMetrics", false)
-    if (enableMetrics.get()) {
-        val metricsFolderAbsolutePath = project.layout.buildDirectory
-            .file("compose-metrics")
-            .map { it.asFile.absolutePath }
-            .get()
+  val enableMetrics = project.booleanProperty("compose.enableCompilerMetrics", false)
+  if (enableMetrics.get()) {
+    val metricsFolderAbsolutePath = project.layout.buildDirectory
+      .file("compose-metrics")
+      .map { it.asFile.absolutePath }
+      .get()
 
-        kotlin {
-            compilerOptions {
-                freeCompilerArgs.addAll(
-                    "-P",
-                    "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$metricsFolderAbsolutePath",
-                )
-            }
-        }
+    kotlin {
+      compilerOptions {
+        freeCompilerArgs.addAll(
+          "-P",
+          "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$metricsFolderAbsolutePath",
+        )
+      }
     }
+  }
 
-    val enableReports = project.booleanProperty("compose.enableCompilerReports", false)
-    if (enableReports.get()) {
-        val reportsFolderAbsolutePath = project.layout.buildDirectory
-            .file("compose-reports")
-            .map { it.asFile.absolutePath }
-            .get()
+  val enableReports = project.booleanProperty("compose.enableCompilerReports", false)
+  if (enableReports.get()) {
+    val reportsFolderAbsolutePath = project.layout.buildDirectory
+      .file("compose-reports")
+      .map { it.asFile.absolutePath }
+      .get()
 
-        kotlin {
-            compilerOptions {
-                freeCompilerArgs.addAll(
-                    "-P",
-                    "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$reportsFolderAbsolutePath",
-                )
-            }
-        }
+    kotlin {
+      compilerOptions {
+        freeCompilerArgs.addAll(
+          "-P",
+          "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$reportsFolderAbsolutePath",
+        )
+      }
     }
+  }
 
   composeCompiler {
     // Enable 'strong skipping'

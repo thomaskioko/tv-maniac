@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface RecommendedShowsRepository {
   suspend fun fetchRecommendedShows(
     id: Long,
-    forceRefresh: Boolean = false
+    forceRefresh: Boolean = false,
   )
 
   fun observeRecommendedShows(

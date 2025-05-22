@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.gradle.plugin
 
 import com.thomaskioko.tvmaniac.gradle.plugin.extensions.JvmExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.baseExtension
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.defaultTestSetup
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.java
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.javaTargetVersion
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.defaultTestSetup
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
