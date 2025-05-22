@@ -5,7 +5,11 @@ plugins {
 
 tvmaniac {
   multiplatform {
-    addAndroidTarget()
+    addAndroidTarget {
+      lint {
+        baseline = file("lint-baseline.xml")
+      }
+    }
 
     addIosTargetsWithXcFramework(
       frameworkName = "i18n",
