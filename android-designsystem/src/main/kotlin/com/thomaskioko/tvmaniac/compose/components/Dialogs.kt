@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.compose.components
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,7 +42,7 @@ fun BasicDialog(
       )
     },
     text = {
-      Divider()
+      HorizontalDivider()
 
       Text(
         text = dialogMessage,
