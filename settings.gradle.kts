@@ -140,6 +140,7 @@ include(
   ":domain:showdetails",
   ":domain:similarshows",
   ":domain:watchproviders",
+  ":i18n:api",
   ":i18n:generator",
   ":i18n:implementation",
   ":navigation:api",
