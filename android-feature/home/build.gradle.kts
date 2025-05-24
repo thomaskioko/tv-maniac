@@ -12,7 +12,7 @@ dependencies {
   api(projects.presenter.home)
 
   implementation(projects.androidDesignsystem)
-  implementation(projects.i18n.core)
+  implementation(projects.i18n.api)
 
   implementation(projects.androidFeature.discover)
   implementation(projects.androidFeature.watchlist)
