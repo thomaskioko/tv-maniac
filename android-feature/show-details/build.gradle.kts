@@ -19,7 +19,7 @@ dependencies {
   api(projects.presenter.showDetails)
 
   implementation(projects.androidDesignsystem)
-  implementation(projects.i18n)
+  implementation(projects.i18n.core)
 
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material.icons)
