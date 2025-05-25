@@ -4,7 +4,9 @@ plugins {
 
 tvmaniac {
   multiplatform {
-    addAndroidTarget()
+    addAndroidTarget {
+      testOptions.unitTests.isIncludeAndroidResources = true
+    }
     useKotlinInject()
     useKspAnvilCompiler()
   }
@@ -18,11 +20,24 @@ kotlin {
       }
     }
 
+    androidUnitTest {
+      dependencies {
+        implementation(libs.androidx.junit)
+        implementation(libs.robolectric)
+      }
+    }
+
     commonMain {
       dependencies {
         implementation(projects.i18n.api)
 
         api(libs.moko.resources)
+      }
+    }
+
+    commonTest {
+      dependencies {
+        implementation(libs.bundles.unittest)
       }
     }
   }
