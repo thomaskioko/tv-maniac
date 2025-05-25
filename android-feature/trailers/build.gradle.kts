@@ -12,7 +12,7 @@ dependencies {
   api(projects.presenter.trailers)
 
   implementation(projects.androidDesignsystem)
-  implementation(projects.i18n)
+  implementation(projects.i18n.generator)
 
   implementation(libs.androidx.compose.constraintlayout)
   implementation(libs.androidx.compose.foundation)

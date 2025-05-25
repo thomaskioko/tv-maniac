@@ -18,7 +18,7 @@ dependencies {
   api(projects.presenter.search)
 
   implementation(projects.androidDesignsystem)
-  implementation(projects.i18n)
+  implementation(projects.i18n.generator)
 
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.material3)

@@ -27,6 +27,8 @@ dependencies {
   implementation(libs.compose.compiler.gradle.plugin)
   implementation(libs.kotlin.gradle.plugin.api)
   implementation(libs.dependency.analysis.gradle.plugin)
+  implementation(libs.kotlinpoet.ksp)
+  implementation(libs.moko.resources)
 
   compileOnly(libs.baselineprofile.gradlePlugin)
   compileOnly(libs.skie.gradle.plugin)
@@ -75,6 +77,11 @@ gradlePlugin {
     create("spotlessPlugin") {
       id = "com.thomaskioko.tvmaniac.gradle.spotless"
       implementationClass = "com.thomaskioko.tvmaniac.gradle.plugin.checks.SpotlessPlugin"
+    }
+
+    create("resourceGeneratorPlugin") {
+      id = "com.thomaskioko.tvmaniac.resource.generator"
+      implementationClass = "com.thomaskioko.tvmaniac.gradle.plugin.ResourceGeneratorPlugin"
     }
   }
 }

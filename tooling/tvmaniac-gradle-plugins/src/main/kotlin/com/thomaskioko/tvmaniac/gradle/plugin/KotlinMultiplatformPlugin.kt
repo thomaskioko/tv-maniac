@@ -43,7 +43,6 @@ public abstract class KotlinMultiplatformPlugin : Plugin<Project> {
             compileTask.compilerOptions.freeCompilerArgs.addAll(
               "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
               "-opt-in=kotlinx.cinterop.BetaInteropApi",
-              "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
               "-Xallocator=custom",
               "-Xadd-light-debug=enable",
               "-Xexpect-actual-classes",

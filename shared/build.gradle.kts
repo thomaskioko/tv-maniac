@@ -24,6 +24,7 @@ tvmaniac {
         freeCompilerArgs += if (debuggable) "-Xadd-light-debug=enable" else ""
         freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
 
+        export(projects.i18n.api)
         export(projects.navigation.api)
         export(projects.data.datastore.api)
         export(projects.presenter.discover)
@@ -49,6 +50,7 @@ kotlin {
   sourceSets {
     commonMain {
       dependencies {
+        api(projects.i18n.api)
         api(projects.navigation.api)
         api(projects.presenter.discover)
         api(projects.presenter.watchlist)
@@ -111,6 +113,7 @@ kotlin {
         implementation(projects.data.datastore.implementation)
         implementation(projects.data.traktauth.api)
         implementation(projects.data.traktauth.implementation)
+        implementation(projects.i18n.implementation)
 
         implementation(projects.navigation.implementation)
 

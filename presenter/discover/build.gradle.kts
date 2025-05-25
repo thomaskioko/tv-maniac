@@ -6,6 +6,8 @@ tvmaniac {
   multiplatform {
     useKotlinInject()
   }
+
+  optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
 
 kotlin {
