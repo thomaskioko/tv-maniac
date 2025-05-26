@@ -16,6 +16,5 @@ plugins {
   alias(libs.plugins.sqldelight) apply false
   alias(libs.plugins.roborazzi) apply false
 
-  alias(libs.plugins.tvmaniac.spotless)
   alias(libs.plugins.tvmaniac.root)
 }

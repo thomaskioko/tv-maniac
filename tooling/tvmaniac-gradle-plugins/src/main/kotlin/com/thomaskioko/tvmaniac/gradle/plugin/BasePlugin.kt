@@ -1,13 +1,7 @@
 package com.thomaskioko.tvmaniac.gradle.plugin
 
 import com.thomaskioko.tvmaniac.gradle.plugin.extensions.BaseExtension
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.compilerOptions
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.getVersionOrNull
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.java
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.javaTarget
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.javaToolchainVersion
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.jvmTarget
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.kotlin
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.jvm.tasks.Jar
@@ -22,6 +16,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 public abstract class BasePlugin : Plugin<Project> {
   override fun apply(target: Project) {
     target.plugins.apply("com.autonomousapps.dependency-analysis")
+      target.plugins.apply("com.thomaskioko.tvmaniac.gradle.spotless")
 
     target.extensions.create("tvmaniac", BaseExtension::class.java)
 
