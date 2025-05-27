@@ -18,4 +18,6 @@ interface GenreRepository {
     suspend fun observeShowByGenreId(
         id: String,
     ): Flow<List<Tvshow>>
+
+    suspend fun observeGenrePosters()
 }

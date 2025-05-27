@@ -15,6 +15,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(AppScope::class)
 class DefaultGenreRepository(
     private val store: GenreStore,
+    private val genrePosterStore: GenrePosterStore,
     private val showsByGenreIdStore: ShowsByGenreIdStore,
     private val genreDao: GenreDao,
 ) : GenreRepository {
@@ -38,4 +39,15 @@ class DefaultGenreRepository(
     override fun observeGenresWithShows(): Flow<List<ShowGenresEntity>> = genreDao.observeGenres()
 
     override suspend fun observeShowByGenreId(id: String): Flow<List<Tvshow>> = genreDao.observeShowsByGenreId(id)
+
+    override suspend fun observeGenrePosters() {
+        genreDao.observeGenres()
+            .collect { genres ->
+                genres
+                    .filter { it.posterUrl.isNullOrBlank() }
+                    .forEach { genre ->
+                        genrePosterStore.fresh(genre.id)
+                    }
+            }
+    }
 }
