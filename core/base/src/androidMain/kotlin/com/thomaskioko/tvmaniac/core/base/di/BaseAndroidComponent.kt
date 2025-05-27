@@ -13,14 +13,14 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 @ContributesTo(AppScope::class)
 interface BaseAndroidComponent {
 
-  @Provides
-  fun provideContext(application: Application): Context = application
+    @Provides
+    fun provideContext(application: Application): Context = application
 
-  @Provides
-  fun provideCoroutineScope(dispatchers: AppCoroutineDispatchers): AppCoroutineScope =
-    AppCoroutineScope(
-      default = CoroutineScope(Job() + dispatchers.computation),
-      io = CoroutineScope(Job() + dispatchers.io),
-      main = CoroutineScope(Job() + dispatchers.main),
-    )
+    @Provides
+    fun provideCoroutineScope(dispatchers: AppCoroutineDispatchers): AppCoroutineScope =
+        AppCoroutineScope(
+            default = CoroutineScope(Job() + dispatchers.computation),
+            io = CoroutineScope(Job() + dispatchers.io),
+            main = CoroutineScope(Job() + dispatchers.main),
+        )
 }

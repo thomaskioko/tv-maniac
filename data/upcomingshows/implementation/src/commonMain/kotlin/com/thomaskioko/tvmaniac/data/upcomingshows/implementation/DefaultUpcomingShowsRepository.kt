@@ -29,71 +29,69 @@ import kotlin.time.Duration.Companion.days
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultUpcomingShowsRepository(
-  private val dateFormatter: PlatformDateFormatter,
-  private val store: UpcomingShowsStore,
-  private val dao: UpcomingShowsDao,
-  private val requestManagerRepository: RequestManagerRepository,
-  private val kermitLogger: Logger,
+    private val dateFormatter: PlatformDateFormatter,
+    private val store: UpcomingShowsStore,
+    private val dao: UpcomingShowsDao,
+    private val requestManagerRepository: RequestManagerRepository,
+    private val kermitLogger: Logger,
 ) : UpcomingShowsRepository {
 
-  // TODO:: Load this from duration repository. Default range is 4 months
-  private val params =
-    UpcomingParams(
-      startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
-      endDate = dateFormatter.formatDate(startOfDay.plus(122.days).toEpochMilliseconds()),
-      page = DEFAULT_API_PAGE, //TODO:: Get the page from the dao
+    // TODO:: Load this from duration repository. Default range is 4 months
+    private val params = UpcomingParams(
+        startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
+        endDate = dateFormatter.formatDate(startOfDay.plus(122.days).toEpochMilliseconds()),
+        page = DEFAULT_API_PAGE, // TODO:: Get the page from the dao
     )
 
-  override suspend fun fetchUpcomingShows(forceRefresh: Boolean) {
-    when {
-      forceRefresh -> store.fresh(params)
-      else -> store.get(params)
+    override suspend fun fetchUpcomingShows(forceRefresh: Boolean) {
+        when {
+            forceRefresh -> store.fresh(params)
+            else -> store.get(params)
+        }
     }
-  }
 
-  override fun observeUpcomingShows(page: Long): Flow<List<ShowEntity>> = dao.observeUpcomingShows(page)
+    override fun observeUpcomingShows(page: Long): Flow<List<ShowEntity>> = dao.observeUpcomingShows(page)
 
-  override fun getPagedUpcomingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
-    return Pager(
-      config = pagingConfig,
-      remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
-      pagingSourceFactory = dao::getPagedUpcomingShows,
-    )
-      .flow
-  }
-
-  private suspend fun fetchPage(page: Long, forceRefresh: Boolean): FetchResult {
-    return if (forceRefresh || !dao.pageExists(page)) {
-      try {
-        val result = store.fresh(
-          UpcomingParams(
-            startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
-            endDate = dateFormatter.formatDate(startOfDay.plus(122.days).toEpochMilliseconds()),
-            page = page,
-          ),
+    override fun getPagedUpcomingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
+        return Pager(
+            config = pagingConfig,
+            remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
+            pagingSourceFactory = dao::getPagedUpcomingShows,
         )
-        updateRequestManager(page)
-        FetchResult.Success(endOfPaginationReached = result.isEmpty())
-      } catch (e: CancellationException) {
-        throw e
-      } catch (e: Exception) {
-        kermitLogger.error("Error while fetching from UpcomingShows RemoteMediator", e)
-        FetchResult.Error(e)
-      }
-    } else {
-      FetchResult.NoFetch
+            .flow
     }
-  }
 
-  private fun updateRequestManager(page: Long) {
-    requestManagerRepository.upsert(entityId = page, requestType = UPCOMING_SHOWS.name)
-  }
+    private suspend fun fetchPage(page: Long, forceRefresh: Boolean): FetchResult {
+        return if (forceRefresh || !dao.pageExists(page)) {
+            try {
+                val result = store.fresh(
+                    UpcomingParams(
+                        startDate = dateFormatter.formatDate(startOfDay.toEpochMilliseconds()),
+                        endDate = dateFormatter.formatDate(startOfDay.plus(122.days).toEpochMilliseconds()),
+                        page = page,
+                    ),
+                )
+                updateRequestManager(page)
+                FetchResult.Success(endOfPaginationReached = result.isEmpty())
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                kermitLogger.error("Error while fetching from UpcomingShows RemoteMediator", e)
+                FetchResult.Error(e)
+            }
+        } else {
+            FetchResult.NoFetch
+        }
+    }
 
+    private fun updateRequestManager(page: Long) {
+        requestManagerRepository.upsert(entityId = page, requestType = UPCOMING_SHOWS.name)
+    }
 }
 
 data class UpcomingParams(
-  val startDate: String,
-  val endDate: String,
-  val page: Long,
-  val sortBy: String = DEFAULT_SORT_ORDER,
+    val startDate: String,
+    val endDate: String,
+    val page: Long,
+    val sortBy: String = DEFAULT_SORT_ORDER,
 )

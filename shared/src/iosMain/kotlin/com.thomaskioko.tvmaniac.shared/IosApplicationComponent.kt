@@ -10,12 +10,12 @@ import kotlin.reflect.KClass
 @MergeComponent(AppScope::class)
 @SingleIn(AppScope::class)
 abstract class IosApplicationComponent : IosViewPresenterComponent.Factory {
-  abstract val initializers: AppInitializers
-  abstract val componentFactory: IosViewPresenterComponent.Factory
+    abstract val initializers: AppInitializers
+    abstract val componentFactory: IosViewPresenterComponent.Factory
 
-  companion object {
-    fun create() = IosApplicationComponent::class.createComponent()
-  }
+    companion object {
+        fun create() = IosApplicationComponent::class.createComponent()
+    }
 }
 
 /**

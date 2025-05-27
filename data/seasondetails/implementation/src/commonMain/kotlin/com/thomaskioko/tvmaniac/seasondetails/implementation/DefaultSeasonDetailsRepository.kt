@@ -18,23 +18,23 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultSeasonDetailsRepository(
-  private val store: SeasonDetailsStore,
-  private val dao: SeasonDetailsDao,
+    private val store: SeasonDetailsStore,
+    private val dao: SeasonDetailsDao,
 ) : SeasonDetailsRepository {
-  override suspend fun fetchSeasonDetails(
-    param: SeasonDetailsParam,
-    forceRefresh: Boolean,
-  ) {
-    val isEmpty = dao.observeSeasonEpisodeDetails(param.showId, param.seasonNumber).first().episodes.isEmpty()
-    when {
-      forceRefresh || isEmpty -> store.fresh(param)
-      else -> store.get(param)
+    override suspend fun fetchSeasonDetails(
+        param: SeasonDetailsParam,
+        forceRefresh: Boolean,
+    ) {
+        val isEmpty = dao.observeSeasonEpisodeDetails(param.showId, param.seasonNumber).first().episodes.isEmpty()
+        when {
+            forceRefresh || isEmpty -> store.fresh(param)
+            else -> store.get(param)
+        }
     }
-  }
 
-  override fun observeSeasonDetails(
-    param: SeasonDetailsParam,
-  ): Flow<SeasonDetailsWithEpisodes> = dao.observeSeasonEpisodeDetails(param.showId, param.seasonNumber)
+    override fun observeSeasonDetails(
+        param: SeasonDetailsParam,
+    ): Flow<SeasonDetailsWithEpisodes> = dao.observeSeasonEpisodeDetails(param.showId, param.seasonNumber)
 
-  override fun observeSeasonImages(id: Long): Flow<List<Season_images>> = dao.observeSeasonImages(id)
+    override fun observeSeasonImages(id: Long): Flow<List<Season_images>> = dao.observeSeasonImages(id)
 }

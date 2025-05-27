@@ -5,7 +5,7 @@ import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 
 internal actual fun createTestSqlDriver(name: String): SqlDriver {
-  return JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also { db ->
-    TvManiacDatabase.Schema.create(db)
-  }
+    return JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also { db ->
+        TvManiacDatabase.Schema.create(db)
+    }
 }

@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class FakeSeasonsRepository : SeasonsRepository {
 
-  private var seasonsResult = MutableStateFlow<List<ShowSeasons>>(emptyList())
+    private var seasonsResult = MutableStateFlow<List<ShowSeasons>>(emptyList())
 
-  suspend fun setSeasonsResult(result: List<ShowSeasons>) {
-    seasonsResult.emit(result)
-  }
+    suspend fun setSeasonsResult(result: List<ShowSeasons>) {
+        seasonsResult.emit(result)
+    }
 
-  override fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>> = seasonsResult.asStateFlow()
+    override fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>> = seasonsResult.asStateFlow()
 }

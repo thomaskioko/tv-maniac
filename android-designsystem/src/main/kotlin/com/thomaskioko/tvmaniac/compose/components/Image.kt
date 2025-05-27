@@ -30,92 +30,89 @@ import kotlin.math.absoluteValue
 
 @Composable
 fun AsyncImageComposable(
-  model: Any?,
-  contentDescription: String?,
-  modifier: Modifier = Modifier,
-  transform: (AsyncImagePainter.State) -> AsyncImagePainter.State =
-    AsyncImagePainter.DefaultTransform,
-  onState: ((AsyncImagePainter.State) -> Unit)? = null,
-  requestBuilder: (ImageRequest.Builder.() -> ImageRequest.Builder)? = null,
-  alignment: Alignment = Alignment.Center,
-  contentScale: ContentScale = ContentScale.Fit,
-  alpha: Float = DefaultAlpha,
-  colorFilter: ColorFilter? = null,
-  filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+    model: Any?,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    transform: (AsyncImagePainter.State) -> AsyncImagePainter.State = AsyncImagePainter.DefaultTransform,
+    onState: ((AsyncImagePainter.State) -> Unit)? = null,
+    requestBuilder: (ImageRequest.Builder.() -> ImageRequest.Builder)? = null,
+    alignment: Alignment = Alignment.Center,
+    contentScale: ContentScale = ContentScale.Fit,
+    alpha: Float = DefaultAlpha,
+    colorFilter: ColorFilter? = null,
+    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
 ) {
-  AsyncImage(
-    model =
-      requestBuilder?.let { builder ->
-        when (model) {
-          is ImageRequest -> model.newBuilder()
-          else -> ImageRequest.Builder(LocalContext.current).data(model)
-        }
-          .apply { this.builder() }
-          .build()
-      }
-        ?: model,
-    contentDescription = contentDescription,
-    modifier = modifier,
-    transform = transform,
-    onState = onState,
-    alignment = alignment,
-    contentScale = contentScale,
-    alpha = alpha,
-    colorFilter = colorFilter,
-    filterQuality = filterQuality,
-  )
+    AsyncImage(
+        model = requestBuilder?.let { builder ->
+            when (model) {
+                is ImageRequest -> model.newBuilder()
+                else -> ImageRequest.Builder(LocalContext.current).data(model)
+            }
+                .apply { this.builder() }
+                .build()
+        } ?: model,
+        contentDescription = contentDescription,
+        modifier = modifier,
+        transform = transform,
+        onState = onState,
+        alignment = alignment,
+        contentScale = contentScale,
+        alpha = alpha,
+        colorFilter = colorFilter,
+        filterQuality = filterQuality,
+    )
 }
 
 @Composable
 fun KenBurnsViewImage(
-  imageUrl: String?,
-  modifier: Modifier = Modifier,
+    imageUrl: String?,
+    modifier: Modifier = Modifier,
 ) {
-  val context = LocalContext.current
-  val kenBuns = remember { KenBurnsView(context) }
+    val context = LocalContext.current
+    val kenBuns = remember { KenBurnsView(context) }
 
-  AndroidView({ kenBuns }, modifier = modifier) { it.load(imageUrl) }
+    AndroidView({ kenBuns }, modifier = modifier) { it.load(imageUrl) }
 }
 
 @Composable
 fun ParallaxCarouselImage(
-  state: PagerState,
-  currentPage: Int,
-  imageUrl: String?,
-  modifier: Modifier = Modifier,
-  shape: Shape = RectangleShape,
-  overlayContent: @Composable () -> Unit = {},
+    state: PagerState,
+    currentPage: Int,
+    imageUrl: String?,
+    modifier: Modifier = Modifier,
+    shape: Shape = RectangleShape,
+    overlayContent: @Composable () -> Unit = {},
 ) {
-  val currentPageOffset = calculatePageOffset(state, currentPage)
-  val cardTranslationX = lerp(100f, 0f, 1f - currentPageOffset)
-  val cardScaleX = lerp(0.8f, 1f, 1f - currentPageOffset.absoluteValue.coerceIn(0f, 1f))
-  val screenWidth = LocalConfiguration.current.screenWidthDp
-  val parallaxOffset = currentPageOffset * screenWidth * 2f
+    val currentPageOffset = calculatePageOffset(state, currentPage)
+    val cardTranslationX = lerp(100f, 0f, 1f - currentPageOffset)
+    val cardScaleX = lerp(0.8f, 1f, 1f - currentPageOffset.absoluteValue.coerceIn(0f, 1f))
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val parallaxOffset = currentPageOffset * screenWidth * 2f
 
-  Box(
-    modifier = modifier
-      .fillMaxWidth()
-      .graphicsLayer {
-        scaleX = cardScaleX
-        translationX = cardTranslationX
-      },
-  ) {
-    AsyncImageComposable(
-      modifier = Modifier
-        .fillMaxSize()
-        .clip(shape)
-        .graphicsLayer {
-          translationX = lerp(10f, 0f, 1f - currentPageOffset) + parallaxOffset
-        },
-      model = imageUrl,
-      contentDescription = null,
-      contentScale = ContentScale.Crop,
-    )
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                scaleX = cardScaleX
+                translationX = cardTranslationX
+            },
+    ) {
+        AsyncImageComposable(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(shape)
+                .graphicsLayer {
+                    translationX = lerp(10f, 0f, 1f - currentPageOffset) + parallaxOffset
+                },
+            model = imageUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+        )
 
-    overlayContent()
-  }
+        overlayContent()
+    }
 }
 
 private fun calculatePageOffset(state: PagerState, currentPage: Int): Float {
-  return (state.currentPage + state.currentPageOffsetFraction - currentPage).coerceIn(-1f, 1f)
+    return (state.currentPage + state.currentPageOffsetFraction - currentPage).coerceIn(-1f, 1f)
 }

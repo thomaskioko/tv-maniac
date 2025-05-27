@@ -5,7 +5,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 actual class PlatformLocalizer {
-  actual fun localized(stringDesc: StringDesc): String {
-    return stringDesc.localized()
-  }
+    actual fun localized(stringDesc: StringDesc): String {
+        return stringDesc.localized()
+    }
 }

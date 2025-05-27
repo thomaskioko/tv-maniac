@@ -12,12 +12,12 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultTrailerRepository(
-  private val appUtils: AppUtils,
-  private val trailerDao: TrailerDao,
+    private val appUtils: AppUtils,
+    private val trailerDao: TrailerDao,
 ) : TrailerRepository {
 
-  override fun isYoutubePlayerInstalled(): Flow<Boolean> = appUtils.isYoutubePlayerInstalled()
+    override fun isYoutubePlayerInstalled(): Flow<Boolean> = appUtils.isYoutubePlayerInstalled()
 
-  override fun observeTrailers(id: Long): Flow<List<Trailers>> =
-    trailerDao.observeTrailersById(id)
+    override fun observeTrailers(id: Long): Flow<List<Trailers>> =
+        trailerDao.observeTrailersById(id)
 }

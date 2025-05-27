@@ -28,75 +28,75 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 class RecommendedShowsStore(
-  private val networkDataSource: TmdbShowDetailsNetworkDataSource,
-  private val tvShowsDao: TvShowsDao,
-  private val recommendedShowsDao: RecommendedShowsDao,
-  private val requestManagerRepository: RequestManagerRepository,
-  private val formatterUtil: FormatterUtil,
-  private val dateFormatter: PlatformDateFormatter,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val networkDataSource: TmdbShowDetailsNetworkDataSource,
+    private val tvShowsDao: TvShowsDao,
+    private val recommendedShowsDao: RecommendedShowsDao,
+    private val requestManagerRepository: RequestManagerRepository,
+    private val formatterUtil: FormatterUtil,
+    private val dateFormatter: PlatformDateFormatter,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Store<RecommendedShowsParams, List<RecommendedShows>> by storeBuilder(
-  fetcher = Fetcher.of { param: RecommendedShowsParams ->
-    when (val apiResult = networkDataSource.getRecommendedShows(param.showId, param.page)) {
-      is ApiResponse.Success -> apiResult.body
-      is ApiResponse.Error.GenericError -> throw Throwable("${apiResult.errorMessage}")
-      is ApiResponse.Error.HttpError -> throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
-      is ApiResponse.Error.SerializationError -> throw Throwable("${apiResult.errorMessage}")
-    }
-  },
-  sourceOfTruth = SourceOfTruth.of<RecommendedShowsParams, TmdbShowResult, List<RecommendedShows>>(
-    reader = { param: RecommendedShowsParams ->
-      recommendedShowsDao.observeRecommendedShows(
-        param.showId,
-      )
+    fetcher = Fetcher.of { param: RecommendedShowsParams ->
+        when (val apiResult = networkDataSource.getRecommendedShows(param.showId, param.page)) {
+            is ApiResponse.Success -> apiResult.body
+            is ApiResponse.Error.GenericError -> throw Throwable("${apiResult.errorMessage}")
+            is ApiResponse.Error.HttpError -> throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
+            is ApiResponse.Error.SerializationError -> throw Throwable("${apiResult.errorMessage}")
+        }
     },
-    writer = { param: RecommendedShowsParams, response ->
-      response.results.forEach { show ->
-        tvShowsDao.upsert(
-          Tvshow(
-            id = Id(show.id.toLong()),
-            name = show.name,
-            overview = show.overview,
-            language = show.originalLanguage,
-            status = null,
-            first_air_date = show.firstAirDate?.let { dateFormatter.getYear(it) },
-            popularity = show.popularity,
-            episode_numbers = null,
-            last_air_date = null,
-            season_numbers = null,
-            vote_average = show.voteAverage,
-            vote_count = show.voteCount.toLong(),
-            genre_ids = show.genreIds,
-            poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-            backdrop_path = show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-          ),
-        )
+    sourceOfTruth = SourceOfTruth.of<RecommendedShowsParams, TmdbShowResult, List<RecommendedShows>>(
+        reader = { param: RecommendedShowsParams ->
+            recommendedShowsDao.observeRecommendedShows(
+                param.showId,
+            )
+        },
+        writer = { param: RecommendedShowsParams, response ->
+            response.results.forEach { show ->
+                tvShowsDao.upsert(
+                    Tvshow(
+                        id = Id(show.id.toLong()),
+                        name = show.name,
+                        overview = show.overview,
+                        language = show.originalLanguage,
+                        status = null,
+                        first_air_date = show.firstAirDate?.let { dateFormatter.getYear(it) },
+                        popularity = show.popularity,
+                        episode_numbers = null,
+                        last_air_date = null,
+                        season_numbers = null,
+                        vote_average = show.voteAverage,
+                        vote_count = show.voteCount.toLong(),
+                        genre_ids = show.genreIds,
+                        poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        backdrop_path = show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                    ),
+                )
 
-        recommendedShowsDao.upsert(
-          recommendedShowId = show.id.toLong(),
-          showId = param.showId,
-        )
-      }
+                recommendedShowsDao.upsert(
+                    recommendedShowId = show.id.toLong(),
+                    showId = param.showId,
+                )
+            }
 
-      requestManagerRepository.upsert(
-        entityId = param.showId,
-        requestType = RECOMMENDED_SHOWS.name,
-      )
-    },
-    delete = { param -> recommendedShowsDao.delete(param.showId) },
-    deleteAll = recommendedShowsDao::deleteAll,
-  )
-    .usingDispatchers(
-      readDispatcher = dispatchers.databaseRead,
-      writeDispatcher = dispatchers.databaseWrite,
-    ),
+            requestManagerRepository.upsert(
+                entityId = param.showId,
+                requestType = RECOMMENDED_SHOWS.name,
+            )
+        },
+        delete = { param -> recommendedShowsDao.delete(param.showId) },
+        deleteAll = recommendedShowsDao::deleteAll,
+    )
+        .usingDispatchers(
+            readDispatcher = dispatchers.databaseRead,
+            writeDispatcher = dispatchers.databaseWrite,
+        ),
 ).validator(
-  Validator.by {
-    withContext(dispatchers.io) {
-      requestManagerRepository.isRequestValid(
-        requestType = RECOMMENDED_SHOWS.name,
-        threshold = RECOMMENDED_SHOWS.duration,
-      )
-    }
-  },
+    Validator.by {
+        withContext(dispatchers.io) {
+            requestManagerRepository.isRequestValid(
+                requestType = RECOMMENDED_SHOWS.name,
+                threshold = RECOMMENDED_SHOWS.duration,
+            )
+        }
+    },
 ).build()

@@ -17,18 +17,18 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultSimilarShowsRepository(
-  private val store: SimilarShowStore,
-  private val dao: SimilarShowsDao,
+    private val store: SimilarShowStore,
+    private val dao: SimilarShowsDao,
 ) : SimilarShowsRepository {
 
-  override suspend fun fetchSimilarShows(id: Long, forceRefresh: Boolean) {
-    val param = SimilarParams(showId = id, page = DEFAULT_API_PAGE)
-    val isEmpty = dao.observeSimilarShows(id).first().isEmpty()
-    when {
-      forceRefresh || isEmpty -> store.fresh(param)
-      else -> store.get(param)
+    override suspend fun fetchSimilarShows(id: Long, forceRefresh: Boolean) {
+        val param = SimilarParams(showId = id, page = DEFAULT_API_PAGE)
+        val isEmpty = dao.observeSimilarShows(id).first().isEmpty()
+        when {
+            forceRefresh || isEmpty -> store.fresh(param)
+            else -> store.get(param)
+        }
     }
-  }
 
-  override fun observeSimilarShows(id: Long): Flow<List<SimilarShows>> = dao.observeSimilarShows(id)
+    override fun observeSimilarShows(id: Long): Flow<List<SimilarShows>> = dao.observeSimilarShows(id)
 }

@@ -21,44 +21,43 @@ import kotlin.test.Test
 
 class WatchlistPresenterTest {
 
-  private val lifecycle = LifecycleRegistry()
-  private val repository = FakeWatchlistRepository()
-  private val testDispatcher = StandardTestDispatcher()
+    private val lifecycle = LifecycleRegistry()
+    private val repository = FakeWatchlistRepository()
+    private val testDispatcher = StandardTestDispatcher()
 
-  private lateinit var presenter: WatchlistPresenter
+    private lateinit var presenter: WatchlistPresenter
 
-  @BeforeTest
-  fun before() {
-    Dispatchers.setMain(testDispatcher)
+    @BeforeTest
+    fun before() {
+        Dispatchers.setMain(testDispatcher)
 
-    lifecycle.resume()
-    presenter =
-      WatchlistPresenter(
-        navigateToShowDetails = {},
-        repository = repository,
-        componentContext = DefaultComponentContext(lifecycle = lifecycle),
-      )
-  }
-
-  @AfterTest
-  fun tearDown() {
-    Dispatchers.resetMain()
-  }
-
-  @Test
-  fun `should emit LoadingShows on init`() = runTest { presenter.state.value shouldBe LoadingShows }
-
-  @Test
-  fun `should emit LibraryContent on success`() = runTest {
-    repository.setObserveResult(Either.Right(cachedResult))
-
-    presenter.state.test {
-      awaitItem() shouldBe LoadingShows
-      awaitItem() shouldBe WatchlistContent(query = "", list = uiResult)
-
-      repository.setObserveResult(Either.Right(updatedData))
-
-      awaitItem() shouldBe WatchlistContent(query = "", list = expectedUiResult())
+        lifecycle.resume()
+        presenter = WatchlistPresenter(
+            navigateToShowDetails = {},
+            repository = repository,
+            componentContext = DefaultComponentContext(lifecycle = lifecycle),
+        )
     }
-  }
+
+    @AfterTest
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `should emit LoadingShows on init`() = runTest { presenter.state.value shouldBe LoadingShows }
+
+    @Test
+    fun `should emit LibraryContent on success`() = runTest {
+        repository.setObserveResult(Either.Right(cachedResult))
+
+        presenter.state.test {
+            awaitItem() shouldBe LoadingShows
+            awaitItem() shouldBe WatchlistContent(query = "", list = uiResult)
+
+            repository.setObserveResult(Either.Right(updatedData))
+
+            awaitItem() shouldBe WatchlistContent(query = "", list = expectedUiResult())
+        }
+    }
 }

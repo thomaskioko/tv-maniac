@@ -18,30 +18,30 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultWatchProviderDao(
-  private val database: TvManiacDatabase,
-  private val dispatcher: AppCoroutineDispatchers,
+    private val database: TvManiacDatabase,
+    private val dispatcher: AppCoroutineDispatchers,
 ) : WatchProviderDao {
 
-  override fun upsert(entity: Watch_providers) {
-    database.watchProvidersQueries.upsert(
-      id = entity.id,
-      name = entity.name,
-      logo_path = entity.logo_path,
-      tmdb_id = entity.tmdb_id,
-    )
-  }
+    override fun upsert(entity: Watch_providers) {
+        database.watchProvidersQueries.upsert(
+            id = entity.id,
+            name = entity.name,
+            logo_path = entity.logo_path,
+            tmdb_id = entity.tmdb_id,
+        )
+    }
 
-  override fun fetchWatchProviders(id: Long): List<WatchProviders> =
-    database.watchProvidersQueries.watchProviders(Id(id)).executeAsList()
+    override fun fetchWatchProviders(id: Long): List<WatchProviders> =
+        database.watchProvidersQueries.watchProviders(Id(id)).executeAsList()
 
-  override fun observeWatchProviders(id: Long): Flow<List<WatchProviders>> =
-    database.watchProvidersQueries.watchProviders(Id(id)).asFlow().mapToList(dispatcher.io)
+    override fun observeWatchProviders(id: Long): Flow<List<WatchProviders>> =
+        database.watchProvidersQueries.watchProviders(Id(id)).asFlow().mapToList(dispatcher.io)
 
-  override fun delete(id: Long) {
-    database.watchProvidersQueries.delete(Id(id))
-  }
+    override fun delete(id: Long) {
+        database.watchProvidersQueries.delete(Id(id))
+    }
 
-  override fun deleteAll() {
-    database.transaction { database.watchProvidersQueries.deleteAll() }
-  }
+    override fun deleteAll() {
+        database.transaction { database.watchProvidersQueries.deleteAll() }
+    }
 }

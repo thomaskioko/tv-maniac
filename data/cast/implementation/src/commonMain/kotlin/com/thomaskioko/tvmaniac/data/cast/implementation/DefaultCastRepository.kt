@@ -14,11 +14,11 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultCastRepository(
-  private val dao: CastDao,
+    private val dao: CastDao,
 ) : CastRepository {
 
-  override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =
-    dao.observeSeasonCast(seasonId)
+    override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =
+        dao.observeSeasonCast(seasonId)
 
-  override fun observeShowCast(showId: Long): Flow<List<ShowCast>> = dao.observeShowCast(showId)
+    override fun observeShowCast(showId: Long): Flow<List<ShowCast>> = dao.observeShowCast(showId)
 }

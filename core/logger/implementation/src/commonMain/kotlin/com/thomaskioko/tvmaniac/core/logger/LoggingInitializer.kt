@@ -9,11 +9,11 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 @Inject
 @ContributesBinding(AppScope::class, multibinding = true)
 class LoggingInitializer(
-  private val logger: Logger,
-  private val configs: Configs,
+    private val logger: Logger,
+    private val configs: Configs,
 ) : AppInitializer {
 
-  override fun init() {
-    logger.setup(configs.isDebug)
-  }
+    override fun init() {
+        logger.setup(configs.isDebug)
+    }
 }

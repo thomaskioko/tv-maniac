@@ -5,8 +5,8 @@ import com.thomaskioko.tvmaniac.db.Tvshow
 import kotlinx.coroutines.flow.Flow
 
 interface GenreDao {
-  fun upsert(entity: Genres)
-  fun getGenres(): List<Genres>
-  fun observeGenres(): Flow<List<ShowGenresEntity>>
-  fun observeShowsByGenreId(id: String): Flow<List<Tvshow>>
+    fun upsert(entity: Genres)
+    fun getGenres(): List<Genres>
+    fun observeGenres(): Flow<List<ShowGenresEntity>>
+    fun observeShowsByGenreId(id: String): Flow<List<Tvshow>>
 }

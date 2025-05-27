@@ -21,67 +21,67 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultTopRatedShowsDao(
-  database: TvManiacDatabase,
-  private val dispatchers: AppCoroutineDispatchers,
+    database: TvManiacDatabase,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : TopRatedShowsDao {
-  private val topRatedShowsQueries = database.topratedShowsQueries
+    private val topRatedShowsQueries = database.topratedShowsQueries
 
-  override fun upsert(show: Toprated_shows) {
-    topRatedShowsQueries.transaction {
-      topRatedShowsQueries.insert(
-        id = show.id,
-        page = show.page,
-      )
-    }
-  }
-
-  override fun observeTopRatedShows(): Flow<List<TopRatedShows>> =
-    topRatedShowsQueries.topRatedShows().asFlow().mapToList(dispatchers.io)
-
-  override fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>> =
-    topRatedShowsQueries
-      .topRatedShowByPage(Id(page)) { id, showPage, title, imageUrl, inLib ->
-        ShowEntity(
-          id = id.id,
-          page = showPage.id,
-          title = title,
-          posterPath = imageUrl,
-          inLibrary = inLib == 1L,
-        )
-      }
-      .asFlow()
-      .mapToList(dispatchers.io)
-
-  override fun getPagedTopRatedShows(): PagingSource<Int, ShowEntity> =
-    QueryPagingSource(
-      countQuery = topRatedShowsQueries.count(),
-      transacter = topRatedShowsQueries,
-      context = dispatchers.io,
-      queryProvider = { limit, offset ->
-        topRatedShowsQueries.pagedTopRatedShows(
-          limit = limit,
-          offset = offset,
-        ) { id, page, title, imageUrl, inLib ->
-          ShowEntity(
-            id = id.id,
-            page = page.id,
-            title = title,
-            posterPath = imageUrl,
-            inLibrary = inLib == 1L,
-          )
+    override fun upsert(show: Toprated_shows) {
+        topRatedShowsQueries.transaction {
+            topRatedShowsQueries.insert(
+                id = show.id,
+                page = show.page,
+            )
         }
-      },
-    )
+    }
 
-  override fun pageExists(page: Long): Boolean {
-    return topRatedShowsQueries.pageExists(Id(page)).executeAsOne()
-  }
+    override fun observeTopRatedShows(): Flow<List<TopRatedShows>> =
+        topRatedShowsQueries.topRatedShows().asFlow().mapToList(dispatchers.io)
 
-  override fun deleteTrendingShows(id: Long) {
-    topRatedShowsQueries.delete(Id(id))
-  }
+    override fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>> =
+        topRatedShowsQueries
+            .topRatedShowByPage(Id(page)) { id, showPage, title, imageUrl, inLib ->
+                ShowEntity(
+                    id = id.id,
+                    page = showPage.id,
+                    title = title,
+                    posterPath = imageUrl,
+                    inLibrary = inLib == 1L,
+                )
+            }
+            .asFlow()
+            .mapToList(dispatchers.io)
 
-  override fun deleteTrendingShows() {
-    topRatedShowsQueries.transaction { topRatedShowsQueries.deleteAll() }
-  }
+    override fun getPagedTopRatedShows(): PagingSource<Int, ShowEntity> =
+        QueryPagingSource(
+            countQuery = topRatedShowsQueries.count(),
+            transacter = topRatedShowsQueries,
+            context = dispatchers.io,
+            queryProvider = { limit, offset ->
+                topRatedShowsQueries.pagedTopRatedShows(
+                    limit = limit,
+                    offset = offset,
+                ) { id, page, title, imageUrl, inLib ->
+                    ShowEntity(
+                        id = id.id,
+                        page = page.id,
+                        title = title,
+                        posterPath = imageUrl,
+                        inLibrary = inLib == 1L,
+                    )
+                }
+            },
+        )
+
+    override fun pageExists(page: Long): Boolean {
+        return topRatedShowsQueries.pageExists(Id(page)).executeAsOne()
+    }
+
+    override fun deleteTrendingShows(id: Long) {
+        topRatedShowsQueries.delete(Id(id))
+    }
+
+    override fun deleteTrendingShows() {
+        topRatedShowsQueries.transaction { topRatedShowsQueries.deleteAll() }
+    }
 }

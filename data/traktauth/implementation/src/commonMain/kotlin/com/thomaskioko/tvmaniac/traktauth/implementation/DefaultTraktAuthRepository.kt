@@ -22,44 +22,43 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultTraktAuthRepository(
-  private val datastoreRepository: DatastoreRepository,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val datastoreRepository: DatastoreRepository,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : TraktAuthRepository {
-  private val authState = MutableStateFlow(AuthState())
+    private val authState = MutableStateFlow(AuthState())
 
-  private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
+    private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
 
-  override fun observeState(): StateFlow<TraktAuthState> = _state.asStateFlow()
+    override fun observeState(): StateFlow<TraktAuthState> = _state.asStateFlow()
 
-  init {
-    GlobalScope.launch(dispatchers.io) {
-      authState.collect { authState -> updateAuthState(authState) }
+    init {
+        GlobalScope.launch(dispatchers.io) {
+            authState.collect { authState -> updateAuthState(authState) }
+        }
+
+        GlobalScope.launch(dispatchers.main) {
+            val state = withContext(dispatchers.io) { datastoreRepository.getAuthState() }
+            authState.value = state ?: AuthState()
+        }
     }
 
-    GlobalScope.launch(dispatchers.main) {
-      val state = withContext(dispatchers.io) { datastoreRepository.getAuthState() }
-      authState.value = state ?: AuthState()
+    override fun clearAuth() {
+        updateAuthState(AuthState())
+        GlobalScope.launch(dispatchers.io) { datastoreRepository.clearAuthState() }
     }
-  }
 
-  override fun clearAuth() {
-    updateAuthState(AuthState())
-    GlobalScope.launch(dispatchers.io) { datastoreRepository.clearAuthState() }
-  }
-
-  override fun onNewAuthState(newState: AuthState) {
-    GlobalScope.launch(dispatchers.io) {
-      datastoreRepository.saveAuthState(newState)
-      authState.value = newState
-      updateAuthState(newState)
+    override fun onNewAuthState(newState: AuthState) {
+        GlobalScope.launch(dispatchers.io) {
+            datastoreRepository.saveAuthState(newState)
+            authState.value = newState
+            updateAuthState(newState)
+        }
     }
-  }
 
-  override fun updateAuthState(authState: AuthState) {
-    _state.value =
-      when {
-        authState.isAuthorized -> TraktAuthState.LOGGED_IN
-        else -> TraktAuthState.LOGGED_OUT
-      }
-  }
+    override fun updateAuthState(authState: AuthState) {
+        _state.value = when {
+            authState.isAuthorized -> TraktAuthState.LOGGED_IN
+            else -> TraktAuthState.LOGGED_OUT
+        }
+    }
 }

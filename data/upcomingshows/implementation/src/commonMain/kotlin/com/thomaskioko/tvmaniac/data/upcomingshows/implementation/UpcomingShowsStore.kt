@@ -26,78 +26,78 @@ import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
 class UpcomingShowsStore(
-  private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
-  private val requestManagerRepository: RequestManagerRepository,
-  private val upcomingShowsDao: UpcomingShowsDao,
-  private val tvShowsDao: TvShowsDao,
-  private val formatterUtil: FormatterUtil,
-  private val dateFormatter: PlatformDateFormatter,
-  private val databaseTransactionRunner: DatabaseTransactionRunner,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
+    private val requestManagerRepository: RequestManagerRepository,
+    private val upcomingShowsDao: UpcomingShowsDao,
+    private val tvShowsDao: TvShowsDao,
+    private val formatterUtil: FormatterUtil,
+    private val dateFormatter: PlatformDateFormatter,
+    private val databaseTransactionRunner: DatabaseTransactionRunner,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Store<UpcomingParams, List<ShowEntity>> by storeBuilder(
-  fetcher = Fetcher.of { params: UpcomingParams ->
-    val response = tmdbRemoteDataSource.getUpComingShows(
-      page = params.page,
-      firstAirDate = params.startDate,
-      lastAirDate = params.endDate,
-    )
-    when (response) {
-      is ApiResponse.Success -> response.body
-      is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
-      is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
-      is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
-    }
-  },
-  sourceOfTruth = SourceOfTruth.of<UpcomingParams, TmdbShowResult, List<ShowEntity>>(
-    reader = { param -> upcomingShowsDao.observeUpcomingShows(param.page) },
-    writer = { _: UpcomingParams, trendingShows ->
-      databaseTransactionRunner {
-        trendingShows.results.forEach { show ->
-          tvShowsDao.upsert(
-            Tvshow(
-              id = Id(show.id.toLong()),
-              name = show.name,
-              overview = show.overview,
-              language = show.originalLanguage,
-              status = null,
-              first_air_date = show.firstAirDate?.let { dateFormatter.getYear(it) },
-              popularity = show.popularity,
-              episode_numbers = null,
-              last_air_date = null,
-              season_numbers = null,
-              vote_average = show.voteAverage,
-              vote_count = show.voteCount.toLong(),
-              genre_ids = show.genreIds,
-              poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-              backdrop_path = show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-            ),
-          )
-
-          upcomingShowsDao.upsert(
-            Upcoming_shows(
-              id = Id(show.id.toLong()),
-              page = Id(trendingShows.page.toLong()),
-            ),
-          )
-        }
-
-        requestManagerRepository.upsert(
-          entityId = trendingShows.page.toLong(),
-          requestType = UPCOMING_SHOWS.name,
+    fetcher = Fetcher.of { params: UpcomingParams ->
+        val response = tmdbRemoteDataSource.getUpComingShows(
+            page = params.page,
+            firstAirDate = params.startDate,
+            lastAirDate = params.endDate,
         )
-      }
+        when (response) {
+            is ApiResponse.Success -> response.body
+            is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
+            is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
+            is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
+        }
     },
-  ).usingDispatchers(
-    readDispatcher = dispatchers.databaseRead,
-    writeDispatcher = dispatchers.databaseWrite,
-  ),
+    sourceOfTruth = SourceOfTruth.of<UpcomingParams, TmdbShowResult, List<ShowEntity>>(
+        reader = { param -> upcomingShowsDao.observeUpcomingShows(param.page) },
+        writer = { _: UpcomingParams, trendingShows ->
+            databaseTransactionRunner {
+                trendingShows.results.forEach { show ->
+                    tvShowsDao.upsert(
+                        Tvshow(
+                            id = Id(show.id.toLong()),
+                            name = show.name,
+                            overview = show.overview,
+                            language = show.originalLanguage,
+                            status = null,
+                            first_air_date = show.firstAirDate?.let { dateFormatter.getYear(it) },
+                            popularity = show.popularity,
+                            episode_numbers = null,
+                            last_air_date = null,
+                            season_numbers = null,
+                            vote_average = show.voteAverage,
+                            vote_count = show.voteCount.toLong(),
+                            genre_ids = show.genreIds,
+                            poster_path = show.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                            backdrop_path = show.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        ),
+                    )
+
+                    upcomingShowsDao.upsert(
+                        Upcoming_shows(
+                            id = Id(show.id.toLong()),
+                            page = Id(trendingShows.page.toLong()),
+                        ),
+                    )
+                }
+
+                requestManagerRepository.upsert(
+                    entityId = trendingShows.page.toLong(),
+                    requestType = UPCOMING_SHOWS.name,
+                )
+            }
+        },
+    ).usingDispatchers(
+        readDispatcher = dispatchers.databaseRead,
+        writeDispatcher = dispatchers.databaseWrite,
+    ),
 ).validator(
-  Validator.by {
-    withContext(dispatchers.io) {
-      requestManagerRepository.isRequestValid(
-        requestType = UPCOMING_SHOWS.name,
-        threshold = UPCOMING_SHOWS.duration,
-      )
-    }
-  },
+    Validator.by {
+        withContext(dispatchers.io) {
+            requestManagerRepository.isRequestValid(
+                requestType = UPCOMING_SHOWS.name,
+                threshold = UPCOMING_SHOWS.duration,
+            )
+        }
+    },
 ).build()

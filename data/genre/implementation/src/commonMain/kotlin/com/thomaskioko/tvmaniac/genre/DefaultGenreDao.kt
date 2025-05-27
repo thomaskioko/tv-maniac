@@ -17,39 +17,38 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultGenreDao(
-  private val database: TvManiacDatabase,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val database: TvManiacDatabase,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : GenreDao {
-  private val genresQueries = database.genresQueries
+    private val genresQueries = database.genresQueries
 
-  override fun upsert(entity: Genres) {
-    database.transaction {
-      genresQueries.upsert(
-        id = entity.id,
-        name = entity.name,
-        poster_url = entity.poster_url,
-      )
+    override fun upsert(entity: Genres) {
+        database.transaction {
+            genresQueries.upsert(
+                id = entity.id,
+                name = entity.name,
+                poster_url = entity.poster_url,
+            )
+        }
     }
-  }
 
-  override fun getGenres(): List<Genres> = genresQueries.genres().executeAsList()
+    override fun getGenres(): List<Genres> = genresQueries.genres().executeAsList()
 
-  override fun observeGenres(): Flow<List<ShowGenresEntity>> {
-    return genresQueries.genres()
-    { id, name, posterUrl ->
-      ShowGenresEntity(
-        id = id.id,
-        name = name,
-        posterUrl = posterUrl,
-      )
+    override fun observeGenres(): Flow<List<ShowGenresEntity>> {
+        return genresQueries.genres { id, name, posterUrl ->
+            ShowGenresEntity(
+                id = id.id,
+                name = name,
+                posterUrl = posterUrl,
+            )
+        }
+            .asFlow()
+            .mapToList(dispatchers.io)
     }
-      .asFlow()
-      .mapToList(dispatchers.io)
-  }
 
-  override fun observeShowsByGenreId(id: String): Flow<List<Tvshow>> {
-    return database.showGenresQueries.showsByGenreId(Id(id.toLong()))
-      .asFlow()
-      .mapToList(dispatchers.io)
-  }
+    override fun observeShowsByGenreId(id: String): Flow<List<Tvshow>> {
+        return database.showGenresQueries.showsByGenreId(Id(id.toLong()))
+            .asFlow()
+            .mapToList(dispatchers.io)
+    }
 }

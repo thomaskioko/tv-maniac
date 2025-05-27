@@ -8,13 +8,13 @@ const val DEFAULT_API_PAGE: Long = 1
 
 interface PopularShowsRepository {
 
-  suspend fun fetchPopularShows(
-    forceRefresh: Boolean = false,
-  )
+    suspend fun fetchPopularShows(
+        forceRefresh: Boolean = false,
+    )
 
-  fun observePopularShows(
-    page: Long = DEFAULT_API_PAGE,
-  ): Flow<List<ShowEntity>>
+    fun observePopularShows(
+        page: Long = DEFAULT_API_PAGE,
+    ): Flow<List<ShowEntity>>
 
-  fun getPagedPopularShows(forceRefresh: Boolean = false): Flow<PagingData<ShowEntity>>
+    fun getPagedPopularShows(forceRefresh: Boolean = false): Flow<PagingData<ShowEntity>>
 }

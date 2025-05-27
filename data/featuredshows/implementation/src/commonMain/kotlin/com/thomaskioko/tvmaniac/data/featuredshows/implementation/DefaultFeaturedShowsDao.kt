@@ -18,39 +18,39 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultFeaturedShowsDao(
-  database: TvManiacDatabase,
-  private val dispatchers: AppCoroutineDispatchers,
+    database: TvManiacDatabase,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : FeaturedShowsDao {
 
-  private val featuredShowsQueries = database.featuredShowsQueries
+    private val featuredShowsQueries = database.featuredShowsQueries
 
-  override fun upsert(show: Featured_shows) {
-    featuredShowsQueries.transaction {
-      featuredShowsQueries.insert(
-        id = show.id,
-      )
+    override fun upsert(show: Featured_shows) {
+        featuredShowsQueries.transaction {
+            featuredShowsQueries.insert(
+                id = show.id,
+            )
+        }
     }
-  }
 
-  override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> =
-    featuredShowsQueries
-      .featuredShows { id, title, posterPath, overview, inLibrary ->
-        ShowEntity(
-          id = id.id,
-          title = title,
-          posterPath = posterPath,
-          inLibrary = inLibrary == 1L,
-          overview = overview,
-        )
-      }
-      .asFlow()
-      .mapToList(dispatchers.io)
+    override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> =
+        featuredShowsQueries
+            .featuredShows { id, title, posterPath, overview, inLibrary ->
+                ShowEntity(
+                    id = id.id,
+                    title = title,
+                    posterPath = posterPath,
+                    inLibrary = inLibrary == 1L,
+                    overview = overview,
+                )
+            }
+            .asFlow()
+            .mapToList(dispatchers.io)
 
-  override fun deleteFeaturedShows(id: Long) {
-    featuredShowsQueries.delete(Id(id))
-  }
+    override fun deleteFeaturedShows(id: Long) {
+        featuredShowsQueries.delete(Id(id))
+    }
 
-  override fun deleteFeaturedShows() {
-    featuredShowsQueries.transaction { featuredShowsQueries.deleteAll() }
-  }
+    override fun deleteFeaturedShows() {
+        featuredShowsQueries.transaction { featuredShowsQueries.deleteAll() }
+    }
 }

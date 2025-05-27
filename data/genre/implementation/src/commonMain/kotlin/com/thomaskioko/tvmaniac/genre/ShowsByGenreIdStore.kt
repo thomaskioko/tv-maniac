@@ -18,34 +18,33 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 class ShowsByGenreIdStore(
-  private val genreDao: GenreDao,
-  private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
-  private val formatterUtil: FormatterUtil,
-  private val scope: AppCoroutineScope,
+    private val genreDao: GenreDao,
+    private val tmdbRemoteDataSource: TmdbShowsNetworkDataSource,
+    private val formatterUtil: FormatterUtil,
+    private val scope: AppCoroutineScope,
 ) : Store<String, List<Tvshow>> by StoreBuilder.from(
-  fetcher = Fetcher.of { id: String ->
-    when (val response = tmdbRemoteDataSource.discoverShows(genres = id)) {
-      is ApiResponse.Success -> response.body
-      is ApiResponse.Error.GenericError -> throw Throwable(response.errorMessage)
-      is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
-      is ApiResponse.Error.SerializationError -> throw Throwable(response.errorMessage)
-    }
-  },
-  sourceOfTruth = SourceOfTruth.of(
-    reader = { id: String -> genreDao.observeShowsByGenreId(id) },
-    writer = { id: String, response ->
-      response.results.forEach { genre ->
-        genreDao.upsert(
-          Genres(
-            id = Id(id.toLong()),
-            name = genre.name,
-            poster_url = genre.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-          ),
-        )
-      }
+    fetcher = Fetcher.of { id: String ->
+        when (val response = tmdbRemoteDataSource.discoverShows(genres = id)) {
+            is ApiResponse.Success -> response.body
+            is ApiResponse.Error.GenericError -> throw Throwable(response.errorMessage)
+            is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
+            is ApiResponse.Error.SerializationError -> throw Throwable(response.errorMessage)
+        }
     },
-  ),
+    sourceOfTruth = SourceOfTruth.of(
+        reader = { id: String -> genreDao.observeShowsByGenreId(id) },
+        writer = { id: String, response ->
+            response.results.forEach { genre ->
+                genreDao.upsert(
+                    Genres(
+                        id = Id(id.toLong()),
+                        name = genre.name,
+                        poster_url = genre.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                    ),
+                )
+            }
+        },
+    ),
 )
-  .scope(scope.io)
-  .build()
-
+    .scope(scope.io)
+    .build()

@@ -43,7 +43,7 @@ abstract class MokoLocalizerTest {
         val expectedResults = listOf(
             "1 episode of Breaking Bad left.",
             "2 episodes of Breaking Bad left.",
-            "5 episodes of Breaking Bad left."
+            "5 episodes of Breaking Bad left.",
         )
 
         quantities.zip(expectedResults).forEach { (quantity, expected) ->

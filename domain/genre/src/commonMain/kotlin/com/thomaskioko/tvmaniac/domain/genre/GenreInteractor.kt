@@ -8,12 +8,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class GenreInteractor(
-  private val genreRepository: GenreRepository,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val genreRepository: GenreRepository,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Unit>() {
-  override suspend fun doWork(params: Unit) {
-    withContext(dispatchers.io) {
-      genreRepository.fetchGenresWithShows()
+    override suspend fun doWork(params: Unit) {
+        withContext(dispatchers.io) {
+            genreRepository.fetchGenresWithShows()
+        }
     }
-  }
 }

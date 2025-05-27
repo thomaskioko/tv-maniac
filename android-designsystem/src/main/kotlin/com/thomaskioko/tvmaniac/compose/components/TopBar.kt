@@ -48,329 +48,325 @@ import kotlin.math.roundToInt
 
 @Composable
 fun TvManiacTopBar(
-  modifier: Modifier = Modifier,
-  elevation: Dp = 0.dp,
-  colors: TopAppBarColors = TopAppBarDefaults.centerAlignedTopAppBarColors(),
-  scrollBehavior: TopAppBarScrollBehavior? = null,
-  title: @Composable () -> Unit = {},
-  navigationIcon: @Composable () -> Unit = {},
-  actions: @Composable RowScope.() -> Unit = {},
+    modifier: Modifier = Modifier,
+    elevation: Dp = 0.dp,
+    colors: TopAppBarColors = TopAppBarDefaults.centerAlignedTopAppBarColors(),
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    title: @Composable () -> Unit = {},
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
-  TopAppBar(
-    modifier = modifier.shadow(elevation = elevation),
-    scrollBehavior = scrollBehavior,
-    title = title,
-    navigationIcon = navigationIcon,
-    colors = colors,
-    actions = actions,
-  )
+    TopAppBar(
+        modifier = modifier.shadow(elevation = elevation),
+        scrollBehavior = scrollBehavior,
+        title = title,
+        navigationIcon = navigationIcon,
+        colors = colors,
+        actions = actions,
+    )
 }
 
 @Composable
 fun RefreshCollapsableTopAppBar(
-  listState: LazyListState,
-  modifier: Modifier = Modifier,
-  showActionIcon: Boolean = true,
-  isRefreshing: Boolean = false,
-  scrollBehavior: TopAppBarScrollBehavior? = null,
-  title: @Composable () -> Unit = {},
-  navigationIcon: @Composable () -> Unit = {},
-  actionIcon: @Composable () -> Unit = {},
-  onNavIconClicked: () -> Unit = {},
-  onActionIconClicked: () -> Unit = {},
+    listState: LazyListState,
+    modifier: Modifier = Modifier,
+    showActionIcon: Boolean = true,
+    isRefreshing: Boolean = false,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    title: @Composable () -> Unit = {},
+    navigationIcon: @Composable () -> Unit = {},
+    actionIcon: @Composable () -> Unit = {},
+    onNavIconClicked: () -> Unit = {},
+    onActionIconClicked: () -> Unit = {},
 ) {
-  var appBarHeight by remember { mutableIntStateOf(0) }
-  val showAppBarBackground by remember {
-    derivedStateOf {
-      val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
-      when {
-        visibleItemsInfo.isEmpty() -> false
-        appBarHeight <= 0 -> false
-        else -> {
-          val firstVisibleItem = visibleItemsInfo[0]
-          when {
-            firstVisibleItem.index > 0 -> true
-            else -> firstVisibleItem.size + firstVisibleItem.offset - 5 <= appBarHeight
-          }
+    var appBarHeight by remember { mutableIntStateOf(0) }
+    val showAppBarBackground by remember {
+        derivedStateOf {
+            val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
+            when {
+                visibleItemsInfo.isEmpty() -> false
+                appBarHeight <= 0 -> false
+                else -> {
+                    val firstVisibleItem = visibleItemsInfo[0]
+                    when {
+                        firstVisibleItem.index > 0 -> true
+                        else -> firstVisibleItem.size + firstVisibleItem.offset - 5 <= appBarHeight
+                    }
+                }
+            }
         }
-      }
     }
-  }
 
-  RefreshCollapsableTopAppBar(
-    modifier = modifier
-      .fillMaxWidth()
-      .onSizeChanged { appBarHeight = it.height },
-    title = title,
-    navigationIcon = navigationIcon,
-    actionIcon = actionIcon,
-    showAppBarBackground = showAppBarBackground,
-    scrollBehavior = scrollBehavior,
-    onActionClicked = onActionIconClicked,
-    onNavIconPressed = onNavIconClicked,
-    showActionIcon = showActionIcon,
-    isRefreshing = isRefreshing,
-  )
+    RefreshCollapsableTopAppBar(
+        modifier = modifier
+            .fillMaxWidth()
+            .onSizeChanged { appBarHeight = it.height },
+        title = title,
+        navigationIcon = navigationIcon,
+        actionIcon = actionIcon,
+        showAppBarBackground = showAppBarBackground,
+        scrollBehavior = scrollBehavior,
+        onActionClicked = onActionIconClicked,
+        onNavIconPressed = onNavIconClicked,
+        showActionIcon = showActionIcon,
+        isRefreshing = isRefreshing,
+    )
 }
 
 @Composable
 fun RefreshCollapsableTopAppBar(
-  listState: LazyListState,
-  modifier: Modifier = Modifier,
-  scrollBehavior: TopAppBarScrollBehavior? = null,
-  title: @Composable () -> Unit = {},
-  navigationIcon: @Composable () -> Unit = {},
-  actions: @Composable RowScope.(Boolean) -> Unit = {},
+    listState: LazyListState,
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    title: @Composable () -> Unit = {},
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.(Boolean) -> Unit = {},
 ) {
-  var appBarHeight by remember { mutableIntStateOf(0) }
-  val showAppBarBackground by remember {
-    derivedStateOf {
-      val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
-      when {
-        visibleItemsInfo.isEmpty() -> false
-        appBarHeight <= 0 -> false
-        else -> {
-          val firstVisibleItem = visibleItemsInfo[0]
-          when {
-            firstVisibleItem.index > 0 -> true
-            else -> firstVisibleItem.size + firstVisibleItem.offset - 5 <= appBarHeight
-          }
+    var appBarHeight by remember { mutableIntStateOf(0) }
+    val showAppBarBackground by remember {
+        derivedStateOf {
+            val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
+            when {
+                visibleItemsInfo.isEmpty() -> false
+                appBarHeight <= 0 -> false
+                else -> {
+                    val firstVisibleItem = visibleItemsInfo[0]
+                    when {
+                        firstVisibleItem.index > 0 -> true
+                        else -> firstVisibleItem.size + firstVisibleItem.offset - 5 <= appBarHeight
+                    }
+                }
+            }
         }
-      }
     }
-  }
 
-  RefreshCollapsableTopAppBar(
-    modifier = modifier
-      .fillMaxWidth()
-      .onSizeChanged { appBarHeight = it.height },
-    scrollBehavior = scrollBehavior,
-    title = title,
-    navigationIcon = navigationIcon,
-    showAppBarBackground = showAppBarBackground,
-    actions = { actions(showAppBarBackground) },
-  )
+    RefreshCollapsableTopAppBar(
+        modifier = modifier
+            .fillMaxWidth()
+            .onSizeChanged { appBarHeight = it.height },
+        scrollBehavior = scrollBehavior,
+        title = title,
+        navigationIcon = navigationIcon,
+        showAppBarBackground = showAppBarBackground,
+        actions = { actions(showAppBarBackground) },
+    )
 }
 
 @Composable
 internal fun RefreshCollapsableTopAppBar(
-  showAppBarBackground: Boolean,
-  scrollBehavior: TopAppBarScrollBehavior?,
-  title: @Composable () -> Unit,
-  navigationIcon: @Composable () -> Unit,
-  actions: @Composable RowScope.(Boolean) -> Unit,
-  modifier: Modifier = Modifier,
+    showAppBarBackground: Boolean,
+    scrollBehavior: TopAppBarScrollBehavior?,
+    title: @Composable () -> Unit,
+    navigationIcon: @Composable () -> Unit,
+    actions: @Composable RowScope.(Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  val backgroundColor by animateColorAsState(
-    targetValue = when {
-      showAppBarBackground -> MaterialTheme.colorScheme.surface
-      else -> Color.Transparent
-    },
-    animationSpec = spring(),
-    label = "backgroundColorAnimation",
-  )
+    val backgroundColor by animateColorAsState(
+        targetValue = when {
+            showAppBarBackground -> MaterialTheme.colorScheme.surface
+            else -> Color.Transparent
+        },
+        animationSpec = spring(),
+        label = "backgroundColorAnimation",
+    )
 
-  val elevation by animateDpAsState(
-    targetValue = when {
-      showAppBarBackground -> 4.dp
-      else -> 0.dp
-    },
-    animationSpec = spring(),
-    label = "elevationAnimation",
-  )
+    val elevation by animateDpAsState(
+        targetValue = when {
+            showAppBarBackground -> 4.dp
+            else -> 0.dp
+        },
+        animationSpec = spring(),
+        label = "elevationAnimation",
+    )
 
-  TopAppBar(
-    title = {
-      Crossfade(
-        targetState = showAppBarBackground,
-        label = "titleAnimation",
-      ) { show ->
-        if (show) title()
-      }
-    },
-    navigationIcon = navigationIcon,
-    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-      containerColor = backgroundColor,
-    ),
-    actions = { actions(showAppBarBackground) },
-    modifier = modifier.shadow(elevation = elevation),
-    scrollBehavior = scrollBehavior,
-  )
+    TopAppBar(
+        title = {
+            Crossfade(
+                targetState = showAppBarBackground,
+                label = "titleAnimation",
+            ) { show ->
+                if (show) title()
+            }
+        },
+        navigationIcon = navigationIcon,
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = backgroundColor,
+        ),
+        actions = { actions(showAppBarBackground) },
+        modifier = modifier.shadow(elevation = elevation),
+        scrollBehavior = scrollBehavior,
+    )
 }
 
 @Composable
 internal fun RefreshCollapsableTopAppBar(
-  showAppBarBackground: Boolean,
-  isRefreshing: Boolean,
-  showActionIcon: Boolean,
-  scrollBehavior: TopAppBarScrollBehavior?,
-  onActionClicked: () -> Unit,
-  title: @Composable () -> Unit,
-  navigationIcon: @Composable () -> Unit,
-  actionIcon: @Composable () -> Unit,
-  onNavIconPressed: () -> Unit,
-  modifier: Modifier = Modifier,
+    showAppBarBackground: Boolean,
+    isRefreshing: Boolean,
+    showActionIcon: Boolean,
+    scrollBehavior: TopAppBarScrollBehavior?,
+    onActionClicked: () -> Unit,
+    title: @Composable () -> Unit,
+    navigationIcon: @Composable () -> Unit,
+    actionIcon: @Composable () -> Unit,
+    onNavIconPressed: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  val backgroundColor by animateColorAsState(
-    targetValue = when {
-      showAppBarBackground -> MaterialTheme.colorScheme.surface
-      else -> Color.Transparent
-    },
-    animationSpec = spring(),
-    label = "backgroundColorAnimation",
-  )
+    val backgroundColor by animateColorAsState(
+        targetValue = when {
+            showAppBarBackground -> MaterialTheme.colorScheme.surface
+            else -> Color.Transparent
+        },
+        animationSpec = spring(),
+        label = "backgroundColorAnimation",
+    )
 
-  val elevation by animateDpAsState(
-    targetValue = when {
-      showAppBarBackground -> 4.dp
-      else -> 0.dp
-    },
-    animationSpec = spring(),
-    label = "elevationAnimation",
-  )
+    val elevation by animateDpAsState(
+        targetValue = when {
+            showAppBarBackground -> 4.dp
+            else -> 0.dp
+        },
+        animationSpec = spring(),
+        label = "elevationAnimation",
+    )
 
-  TopAppBar(
-    modifier = modifier.shadow(elevation = elevation),
-    title = {
-      Crossfade(
-        targetState = showAppBarBackground,
-        label = "titleAnimation",
-      ) { show ->
-        if (show) title()
-      }
-    },
-    navigationIcon = {
-      ScrimButton(
-        show = showAppBarBackground,
-        onClick = onNavIconPressed,
-      ) {
-        navigationIcon()
-      }
-    },
-    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-      containerColor = backgroundColor,
-    ),
-    actions = {
-      if (showActionIcon) {
-
-        ScrimButton(
-          show = showAppBarBackground,
-          onClick = onActionClicked,
-        ) {
-          RefreshButton(
-            modifier = Modifier
-              .size(20.dp)
-              .padding(2.dp),
-            isRefreshing = isRefreshing,
-            content = actionIcon,
-          )
-        }
-      }
-    },
-    scrollBehavior = scrollBehavior,
-  )
+    TopAppBar(
+        modifier = modifier.shadow(elevation = elevation),
+        title = {
+            Crossfade(
+                targetState = showAppBarBackground,
+                label = "titleAnimation",
+            ) { show ->
+                if (show) title()
+            }
+        },
+        navigationIcon = {
+            ScrimButton(
+                show = showAppBarBackground,
+                onClick = onNavIconPressed,
+            ) {
+                navigationIcon()
+            }
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = backgroundColor,
+        ),
+        actions = {
+            if (showActionIcon) {
+                ScrimButton(
+                    show = showAppBarBackground,
+                    onClick = onActionClicked,
+                ) {
+                    RefreshButton(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(2.dp),
+                        isRefreshing = isRefreshing,
+                        content = actionIcon,
+                    )
+                }
+            }
+        },
+        scrollBehavior = scrollBehavior,
+    )
 }
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun AutoSizedCircularProgressIndicator(
-  modifier: Modifier = Modifier,
-  color: Color = MaterialTheme.colorScheme.onBackground,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onBackground,
 ) {
-  BoxWithConstraints(modifier) {
-    val diameter = with(LocalDensity.current) {
-      // We need to minus the padding added within CircularProgressIndicator
-      min(constraints.maxWidth.toDp(), constraints.maxHeight.toDp()) - 4.dp
-    }
+    BoxWithConstraints(modifier) {
+        val diameter = with(LocalDensity.current) {
+            // We need to minus the padding added within CircularProgressIndicator
+            min(constraints.maxWidth.toDp(), constraints.maxHeight.toDp()) - 4.dp
+        }
 
-    CircularProgressIndicator(
-      strokeWidth = (diameter.value * (4.dp / 40.dp)).roundToInt().dp.coerceAtLeast(2.dp),
-      color = color,
-    )
-  }
+        CircularProgressIndicator(
+            strokeWidth = (diameter.value * (4.dp / 40.dp)).roundToInt().dp.coerceAtLeast(2.dp),
+            color = color,
+        )
+    }
 }
 
 @ThemePreviews
 @Composable
 private fun TopBarPreview() {
-  TvManiacTheme {
-    TvManiacTopBar(
-      title = {
-        Text(
-          text = "Tv Maniac",
-          style =
-            MaterialTheme.typography.titleSmall.copy(
-              color = MaterialTheme.colorScheme.onSurface,
-            ),
-          maxLines = 1,
-          overflow = TextOverflow.Ellipsis,
-          modifier = Modifier.fillMaxWidth(),
+    TvManiacTheme {
+        TvManiacTopBar(
+            title = {
+                Text(
+                    text = "Tv Maniac",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            },
         )
-      },
-    )
-  }
+    }
 }
 
 @ThemePreviews
 @Composable
 private fun TopBarActionPreview() {
-  TvManiacTheme {
-    TvManiacTopBar(
-      title = {
-        Text(
-          text = "Tv Maniac",
-          style =
-            MaterialTheme.typography.titleSmall.copy(
-              color = MaterialTheme.colorScheme.onSurface,
-            ),
-          maxLines = 1,
-          overflow = TextOverflow.Ellipsis,
-          modifier = Modifier.fillMaxWidth(),
+    TvManiacTheme {
+        TvManiacTopBar(
+            title = {
+                Text(
+                    text = "Tv Maniac",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            },
+            actions = {
+                IconButton(
+                    onClick = {},
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Settings,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            },
         )
-      },
-      actions = {
-        IconButton(
-          onClick = {},
-        ) {
-          Icon(
-            imageVector = Icons.Filled.Settings,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface,
-          )
-        }
-      },
-    )
-  }
+    }
 }
 
 @ThemePreviews
 @Composable
 private fun TopBarScrimPreview() {
-  TvManiacTheme {
-    TvManiacTopBar(
-      title = {
-        Text(
-          text = "Tv Maniac",
-          style =
-            MaterialTheme.typography.titleSmall.copy(
-              color = MaterialTheme.colorScheme.onSurface,
-            ),
-          maxLines = 1,
-          overflow = TextOverflow.Ellipsis,
-          modifier = Modifier.fillMaxWidth(),
+    TvManiacTheme {
+        TvManiacTopBar(
+            title = {
+                Text(
+                    text = "Tv Maniac",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            },
+            navigationIcon = {
+                Image(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
+                    modifier = Modifier
+                        .clickable(onClick = {})
+                        .padding(16.dp),
+                )
+            },
+            modifier = Modifier.iconButtonBackgroundScrim(enabled = true, alpha = 0.4f),
         )
-      },
-      navigationIcon = {
-        Image(
-          imageVector = Icons.Filled.ArrowBack,
-          contentDescription = null,
-          colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
-          modifier = Modifier
-            .clickable(onClick = {})
-            .padding(16.dp),
-        )
-      },
-      modifier = Modifier.iconButtonBackgroundScrim(enabled = true, alpha = 0.4f),
-    )
-  }
+    }
 }

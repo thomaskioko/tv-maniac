@@ -6,15 +6,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface SeasonsDao {
 
-  fun upsert(season: Season)
+    fun upsert(season: Season)
 
-  fun upsert(entityList: List<Season>)
+    fun upsert(entityList: List<Season>)
 
-  fun fetchShowSeasons(id: Long): List<ShowSeasons>
+    fun fetchShowSeasons(id: Long): List<ShowSeasons>
 
-  fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>>
+    fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>>
 
-  fun delete(id: Long)
+    fun delete(id: Long)
 
-  fun deleteAll()
+    fun deleteAll()
 }

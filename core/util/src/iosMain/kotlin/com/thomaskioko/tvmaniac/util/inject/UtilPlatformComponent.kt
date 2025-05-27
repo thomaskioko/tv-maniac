@@ -10,9 +10,8 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesTo(AppScope::class)
 interface UtilPlatformComponent {
 
-  @Provides
-  @SingleIn(AppScope::class)
-  fun provideConfigs(resourceReader: YamlResourceReader): Configs =
-    resourceReader.readAndDecodeResource("config.yaml", Configs.serializer())
-
+    @Provides
+    @SingleIn(AppScope::class)
+    fun provideConfigs(resourceReader: YamlResourceReader): Configs =
+        resourceReader.readAndDecodeResource("config.yaml", Configs.serializer())
 }

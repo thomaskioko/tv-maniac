@@ -9,14 +9,14 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SimilarShowsInteractor(
-  private val similarShowsRepository: SimilarShowsRepository,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val similarShowsRepository: SimilarShowsRepository,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Param>() {
-  override suspend fun doWork(params: Param) {
-    withContext(dispatchers.io) {
-      similarShowsRepository.fetchSimilarShows(id = params.id, forceRefresh = params.forceRefresh)
+    override suspend fun doWork(params: Param) {
+        withContext(dispatchers.io) {
+            similarShowsRepository.fetchSimilarShows(id = params.id, forceRefresh = params.forceRefresh)
+        }
     }
-  }
 
-  data class Param(val id: Long, val forceRefresh: Boolean = false)
+    data class Param(val id: Long, val forceRefresh: Boolean = false)
 }

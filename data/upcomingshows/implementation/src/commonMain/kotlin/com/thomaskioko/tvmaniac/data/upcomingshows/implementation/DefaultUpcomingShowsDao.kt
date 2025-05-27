@@ -20,64 +20,64 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultUpcomingShowsDao(
-  database: TvManiacDatabase,
-  private val dispatchers: AppCoroutineDispatchers,
+    database: TvManiacDatabase,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : UpcomingShowsDao {
-  private val upcomingShowsQueries = database.upcomingShowsQueries
+    private val upcomingShowsQueries = database.upcomingShowsQueries
 
-  override fun upsert(show: Upcoming_shows) {
-    upcomingShowsQueries.transaction {
-      upcomingShowsQueries.insert(
-        id = show.id,
-        page = show.page,
-      )
-    }
-  }
-
-  override fun observeUpcomingShows(page: Long): Flow<List<ShowEntity>> =
-    upcomingShowsQueries
-      .upcomingShowsByPage(Id(page)) { id, page, title, imageUrl, inLib ->
-        ShowEntity(
-          id = id.id,
-          page = page.id,
-          title = title,
-          posterPath = imageUrl,
-          inLibrary = inLib == 1L,
-        )
-      }
-      .asFlow()
-      .mapToList(dispatchers.io)
-
-  override fun getPagedUpcomingShows(): PagingSource<Int, ShowEntity> =
-    QueryPagingSource(
-      countQuery = upcomingShowsQueries.count(),
-      transacter = upcomingShowsQueries,
-      context = dispatchers.io,
-      queryProvider = { limit, offset ->
-        upcomingShowsQueries.pagedUpcomingShows(
-          limit = limit,
-          offset = offset,
-        ) { id, page, title, imageUrl, inLib ->
-          ShowEntity(
-            id = id.id,
-            page = page.id,
-            title = title,
-            posterPath = imageUrl,
-            inLibrary = inLib == 1L,
-          )
+    override fun upsert(show: Upcoming_shows) {
+        upcomingShowsQueries.transaction {
+            upcomingShowsQueries.insert(
+                id = show.id,
+                page = show.page,
+            )
         }
-      },
-    )
+    }
 
-  override fun pageExists(page: Long): Boolean {
-    return upcomingShowsQueries.pageExists(Id(page)).executeAsOne()
-  }
+    override fun observeUpcomingShows(page: Long): Flow<List<ShowEntity>> =
+        upcomingShowsQueries
+            .upcomingShowsByPage(Id(page)) { id, page, title, imageUrl, inLib ->
+                ShowEntity(
+                    id = id.id,
+                    page = page.id,
+                    title = title,
+                    posterPath = imageUrl,
+                    inLibrary = inLib == 1L,
+                )
+            }
+            .asFlow()
+            .mapToList(dispatchers.io)
 
-  override fun deleteUpcomingShow(id: Long) {
-    upcomingShowsQueries.delete(Id(id))
-  }
+    override fun getPagedUpcomingShows(): PagingSource<Int, ShowEntity> =
+        QueryPagingSource(
+            countQuery = upcomingShowsQueries.count(),
+            transacter = upcomingShowsQueries,
+            context = dispatchers.io,
+            queryProvider = { limit, offset ->
+                upcomingShowsQueries.pagedUpcomingShows(
+                    limit = limit,
+                    offset = offset,
+                ) { id, page, title, imageUrl, inLib ->
+                    ShowEntity(
+                        id = id.id,
+                        page = page.id,
+                        title = title,
+                        posterPath = imageUrl,
+                        inLibrary = inLib == 1L,
+                    )
+                }
+            },
+        )
 
-  override fun deleteUpcomingShows() {
-    upcomingShowsQueries.transaction { upcomingShowsQueries.deleteAll() }
-  }
+    override fun pageExists(page: Long): Boolean {
+        return upcomingShowsQueries.pageExists(Id(page)).executeAsOne()
+    }
+
+    override fun deleteUpcomingShow(id: Long) {
+        upcomingShowsQueries.delete(Id(id))
+    }
+
+    override fun deleteUpcomingShows() {
+        upcomingShowsQueries.transaction { upcomingShowsQueries.deleteAll() }
+    }
 }

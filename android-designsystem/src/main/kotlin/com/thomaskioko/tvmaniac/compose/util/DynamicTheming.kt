@@ -29,13 +29,13 @@ private const val MAC_COLOR_COUNT = 8
 
 @Composable
 fun rememberDominantColorState(
-  context: Context = LocalContext.current,
-  defaultColor: Color = MaterialTheme.colorScheme.primary,
-  defaultOnColor: Color = MaterialTheme.colorScheme.onPrimary,
-  cacheSize: Int = 12,
-  isColorValid: (Color) -> Boolean = { true },
+    context: Context = LocalContext.current,
+    defaultColor: Color = MaterialTheme.colorScheme.primary,
+    defaultOnColor: Color = MaterialTheme.colorScheme.onPrimary,
+    cacheSize: Int = 12,
+    isColorValid: (Color) -> Boolean = { true },
 ): DominantColorState = remember {
-  DominantColorState(context, defaultColor, defaultOnColor, cacheSize, isColorValid)
+    DominantColorState(context, defaultColor, defaultOnColor, cacheSize, isColorValid)
 }
 
 /**
@@ -44,28 +44,25 @@ fun rememberDominantColorState(
  */
 @Composable
 fun DynamicThemePrimaryColorsFromImage(
-  dominantColorState: DominantColorState = rememberDominantColorState(),
-  content: @Composable () -> Unit,
+    dominantColorState: DominantColorState = rememberDominantColorState(),
+    content: @Composable () -> Unit,
 ) {
-  val colors =
-    MaterialTheme.colorScheme.copy(
-      primary =
-        animateColorAsState(
-          dominantColorState.color,
-          spring(stiffness = Spring.StiffnessLow),
-          label = "primaryColorAnimation",
+    val colors = MaterialTheme.colorScheme.copy(
+        primary = animateColorAsState(
+            dominantColorState.color,
+            spring(stiffness = Spring.StiffnessLow),
+            label = "primaryColorAnimation",
         )
-          .value,
-      onPrimary =
-        animateColorAsState(
-          dominantColorState.onColor,
-          spring(stiffness = Spring.StiffnessLow),
-          label = "onPrimaryColorAnimation",
+            .value,
+        onPrimary = animateColorAsState(
+            dominantColorState.onColor,
+            spring(stiffness = Spring.StiffnessLow),
+            label = "onPrimaryColorAnimation",
         )
-          .value,
+            .value,
     )
 
-  MaterialTheme(colorScheme = colors, content = content)
+    MaterialTheme(colorScheme = colors, content = content)
 }
 
 /**
@@ -81,54 +78,53 @@ fun DynamicThemePrimaryColorsFromImage(
  */
 @Stable
 class DominantColorState(
-  private val context: Context,
-  private val defaultColor: Color,
-  private val defaultOnColor: Color,
-  cacheSize: Int = 12,
-  private val isColorValid: (Color) -> Boolean = { true },
+    private val context: Context,
+    private val defaultColor: Color,
+    private val defaultOnColor: Color,
+    cacheSize: Int = 12,
+    private val isColorValid: (Color) -> Boolean = { true },
 ) {
-  var color by mutableStateOf(defaultColor)
-    private set
+    var color by mutableStateOf(defaultColor)
+        private set
 
-  var onColor by mutableStateOf(defaultOnColor)
-    private set
+    var onColor by mutableStateOf(defaultOnColor)
+        private set
 
-  private val cache =
-    when {
-      cacheSize > 0 -> LruCache<String, DominantColors>(cacheSize)
-      else -> null
+    private val cache = when {
+        cacheSize > 0 -> LruCache<String, DominantColors>(cacheSize)
+        else -> null
     }
 
-  suspend fun updateColorsFromImageUrl(url: String) {
-    val result = calculateDominantColor(url)
-    color = result?.color ?: defaultColor
-    onColor = result?.onColor ?: defaultOnColor
-  }
-
-  private suspend fun calculateDominantColor(url: String): DominantColors? {
-    val cached = cache?.get(url)
-    if (cached != null) {
-      return cached
+    suspend fun updateColorsFromImageUrl(url: String) {
+        val result = calculateDominantColor(url)
+        color = result?.color ?: defaultColor
+        onColor = result?.onColor ?: defaultOnColor
     }
 
-    // Otherwise we calculate the swatches in the image, and return the first valid color
-    return calculateSwatchesInImage(context, url)
-      .sortedByDescending { swatch -> swatch.population }
-      .firstOrNull { swatch -> isColorValid(Color(swatch.rgb)) }
-      ?.let { swatch ->
-        DominantColors(
-          color = Color(swatch.rgb),
-          onColor = Color(swatch.bodyTextColor).copy(alpha = 1f),
-        )
-      }
-      ?.also { result -> cache?.put(url, result) }
-  }
+    private suspend fun calculateDominantColor(url: String): DominantColors? {
+        val cached = cache?.get(url)
+        if (cached != null) {
+            return cached
+        }
 
-  /** Reset the color values to [defaultColor]. */
-  fun reset() {
-    color = defaultColor
-    onColor = defaultColor
-  }
+        // Otherwise we calculate the swatches in the image, and return the first valid color
+        return calculateSwatchesInImage(context, url)
+            .sortedByDescending { swatch -> swatch.population }
+            .firstOrNull { swatch -> isColorValid(Color(swatch.rgb)) }
+            ?.let { swatch ->
+                DominantColors(
+                    color = Color(swatch.rgb),
+                    onColor = Color(swatch.bodyTextColor).copy(alpha = 1f),
+                )
+            }
+            ?.also { result -> cache?.put(url, result) }
+    }
+
+    /** Reset the color values to [defaultColor]. */
+    fun reset() {
+        color = defaultColor
+        onColor = defaultColor
+    }
 }
 
 @Immutable
@@ -136,35 +132,32 @@ private data class DominantColors(val color: Color, val onColor: Color)
 
 /** Fetches the given [imageUrl] with Coil, then uses [Palette] to calculate the dominant color. */
 private suspend fun calculateSwatchesInImage(
-  context: Context,
-  imageUrl: String,
+    context: Context,
+    imageUrl: String,
 ): List<Palette.Swatch> {
-  val request =
-    ImageRequest.Builder(context)
-      .data(imageUrl)
-      .size(COVER_IMAGE_SIZE)
-      .scale(Scale.FILL)
-      .allowHardware(false)
-      .memoryCacheKey("$imageUrl.palette")
-      .build()
+    val request = ImageRequest.Builder(context)
+        .data(imageUrl)
+        .size(COVER_IMAGE_SIZE)
+        .scale(Scale.FILL)
+        .allowHardware(false)
+        .memoryCacheKey("$imageUrl.palette")
+        .build()
 
-  val bitmap =
-    when (val result = context.imageLoader.execute(request)) {
-      is SuccessResult -> result.drawable.toBitmap()
-      else -> null
+    val bitmap = when (val result = context.imageLoader.execute(request)) {
+        is SuccessResult -> result.drawable.toBitmap()
+        else -> null
     }
 
-  return bitmap?.let {
-    withContext(Dispatchers.Default) {
-      val palette =
-        Palette.Builder(bitmap)
-          .resizeBitmapArea(0)
-          .clearFilters()
-          .maximumColorCount(MAC_COLOR_COUNT)
-          .generate()
+    return bitmap?.let {
+        withContext(Dispatchers.Default) {
+            val palette = Palette.Builder(bitmap)
+                .resizeBitmapArea(0)
+                .clearFilters()
+                .maximumColorCount(MAC_COLOR_COUNT)
+                .generate()
 
-      palette.swatches
+            palette.swatches
+        }
     }
-  }
-    ?: emptyList()
+        ?: emptyList()
 }

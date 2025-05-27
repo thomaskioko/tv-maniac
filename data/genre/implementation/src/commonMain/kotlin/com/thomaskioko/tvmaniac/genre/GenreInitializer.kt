@@ -16,20 +16,20 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 @Inject
 @ContributesBinding(AppScope::class, multibinding = true)
 class GenreInitializer(
-  private val interactor: GenreInteractor,
-  private val logger: Logger,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val interactor: GenreInteractor,
+    private val logger: Logger,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : AppInitializer {
-  override fun init() {
-    GlobalScope.launch(dispatchers.main) {
-      interactor(Unit).collect {
-        when (it) {
-          is InvokeError -> logger.error("Error fetching genres", it.throwable)
-          InvokeStarted, InvokeSuccess -> {
-            // No-Op
-          }
+    override fun init() {
+        GlobalScope.launch(dispatchers.main) {
+            interactor(Unit).collect {
+                when (it) {
+                    is InvokeError -> logger.error("Error fetching genres", it.throwable)
+                    InvokeStarted, InvokeSuccess -> {
+                        // No-Op
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }

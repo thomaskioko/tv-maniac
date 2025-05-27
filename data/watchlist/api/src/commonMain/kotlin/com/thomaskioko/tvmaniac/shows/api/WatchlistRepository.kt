@@ -8,12 +8,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface WatchlistRepository {
 
-  fun observeWatchlist(): Flow<Either<Failure, List<Watchlists>>>
+    fun observeWatchlist(): Flow<Either<Failure, List<Watchlists>>>
 
-  fun searchWatchlistByQuery(query: String): Flow<Either<Failure, List<SearchWatchlist>>>
+    fun searchWatchlistByQuery(query: String): Flow<Either<Failure, List<SearchWatchlist>>>
 
-  fun observeUnSyncedItems(): Flow<Unit>
+    fun observeUnSyncedItems(): Flow<Unit>
 
-  suspend fun updateLibrary(id: Long, addToLibrary: Boolean)
-
+    suspend fun updateLibrary(id: Long, addToLibrary: Boolean)
 }

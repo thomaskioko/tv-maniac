@@ -20,30 +20,30 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultCastDao(
-  private val database: TvManiacDatabase,
-  private val dispatcher: AppCoroutineDispatchers,
+    private val database: TvManiacDatabase,
+    private val dispatcher: AppCoroutineDispatchers,
 ) : CastDao {
-  override fun upsert(entity: Casts) {
-    database.castQueries.upsert(
-      id = entity.id,
-      name = entity.name,
-      character_name = entity.character_name,
-      profile_path = entity.profile_path,
-      popularity = entity.popularity,
-    )
-  }
+    override fun upsert(entity: Casts) {
+        database.castQueries.upsert(
+            id = entity.id,
+            name = entity.name,
+            character_name = entity.character_name,
+            profile_path = entity.profile_path,
+            popularity = entity.popularity,
+        )
+    }
 
-  override fun upsert(entity: Cast_appearance) {
-    database.castAppearanceQueries.upsert(
-      cast_id = entity.cast_id,
-      show_id = entity.show_id,
-      season_id = entity.season_id,
-    )
-  }
+    override fun upsert(entity: Cast_appearance) {
+        database.castAppearanceQueries.upsert(
+            cast_id = entity.cast_id,
+            show_id = entity.show_id,
+            season_id = entity.season_id,
+        )
+    }
 
-  override fun observeShowCast(id: Long): Flow<List<ShowCast>> =
-    database.castAppearanceQueries.showCast(Id(id)).asFlow().mapToList(dispatcher.io)
+    override fun observeShowCast(id: Long): Flow<List<ShowCast>> =
+        database.castAppearanceQueries.showCast(Id(id)).asFlow().mapToList(dispatcher.io)
 
-  override fun observeSeasonCast(id: Long): Flow<List<SeasonCast>> =
-    database.castAppearanceQueries.seasonCast(Id(id)).asFlow().mapToList(dispatcher.io)
+    override fun observeSeasonCast(id: Long): Flow<List<SeasonCast>> =
+        database.castAppearanceQueries.seasonCast(Id(id)).asFlow().mapToList(dispatcher.io)
 }

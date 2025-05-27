@@ -9,14 +9,14 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ShowDetailsInteractor(
-  private val showDetailsRepository: ShowDetailsRepository,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val showDetailsRepository: ShowDetailsRepository,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Param>() {
-  override suspend fun doWork(params: Param) {
-    withContext(dispatchers.io) {
-      showDetailsRepository.fetchShowDetails(id = params.id, forceRefresh = params.forceRefresh)
+    override suspend fun doWork(params: Param) {
+        withContext(dispatchers.io) {
+            showDetailsRepository.fetchShowDetails(id = params.id, forceRefresh = params.forceRefresh)
+        }
     }
-  }
 
-  data class Param(val id: Long, val forceRefresh: Boolean = false)
+    data class Param(val id: Long, val forceRefresh: Boolean = false)
 }

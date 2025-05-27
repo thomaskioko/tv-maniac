@@ -6,10 +6,10 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 actual class PlatformLocalizer(
-  private val context: Context,
+    private val context: Context,
 ) {
 
-  actual fun localized(stringDesc: StringDesc): String {
-    return stringDesc.toString(context)
-  }
+    actual fun localized(stringDesc: StringDesc): String {
+        return stringDesc.toString(context)
+    }
 }

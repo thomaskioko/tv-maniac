@@ -22,39 +22,39 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 class WatchlistMetadataStore(
-  private val watchlistDao: WatchlistDao,
-  private val tmdbRemoteDataSource: TmdbShowDetailsNetworkDataSource,
-  private val transactionRunner: DatabaseTransactionRunner,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val watchlistDao: WatchlistDao,
+    private val tmdbRemoteDataSource: TmdbShowDetailsNetworkDataSource,
+    private val transactionRunner: DatabaseTransactionRunner,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Id<TmdbId>, List<Watchlists>> by storeBuilder(
-  fetcher = Fetcher.of { showId: Id<TmdbId> ->
-    //TODO:: Also fetch up next episode.
-    when (val response = tmdbRemoteDataSource.getShowDetails(showId.id)) {
-      is ApiResponse.Success -> response.body
-      is ApiResponse.Error.GenericError -> throw Throwable(response.errorMessage)
-      is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
-      is ApiResponse.Error.SerializationError -> throw Throwable(response.errorMessage)
-    }
-  },
-  sourceOfTruth = SourceOfTruth.of<Id<TmdbId>, TmdbShowDetailsResponse, List<Watchlists>>(
-    reader = { _ -> watchlistDao.observeShowsInWatchlist() },
-    writer = { showId, response ->
-      transactionRunner {
-        watchlistDao.upsert(
-          Show_metadata(
-            show_id = showId,
-            season_count = response.numberOfSeasons.toLong(),
-            episode_count = response.numberOfEpisodes.toLong(),
-            status = response.status,
-          ),
-        )
-        // Mark as synced in watchlist
-        watchlistDao.updateSyncState(showId)
-      }
+    fetcher = Fetcher.of { showId: Id<TmdbId> ->
+        // TODO:: Also fetch up next episode.
+        when (val response = tmdbRemoteDataSource.getShowDetails(showId.id)) {
+            is ApiResponse.Success -> response.body
+            is ApiResponse.Error.GenericError -> throw Throwable(response.errorMessage)
+            is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
+            is ApiResponse.Error.SerializationError -> throw Throwable(response.errorMessage)
+        }
     },
-  ).usingDispatchers(
-    readDispatcher = dispatchers.databaseRead,
-    writeDispatcher = dispatchers.databaseWrite,
-  ),
+    sourceOfTruth = SourceOfTruth.of<Id<TmdbId>, TmdbShowDetailsResponse, List<Watchlists>>(
+        reader = { _ -> watchlistDao.observeShowsInWatchlist() },
+        writer = { showId, response ->
+            transactionRunner {
+                watchlistDao.upsert(
+                    Show_metadata(
+                        show_id = showId,
+                        season_count = response.numberOfSeasons.toLong(),
+                        episode_count = response.numberOfEpisodes.toLong(),
+                        status = response.status,
+                    ),
+                )
+                // Mark as synced in watchlist
+                watchlistDao.updateSyncState(showId)
+            }
+        },
+    ).usingDispatchers(
+        readDispatcher = dispatchers.databaseRead,
+        writeDispatcher = dispatchers.databaseWrite,
+    ),
 )
-  .build()
+    .build()

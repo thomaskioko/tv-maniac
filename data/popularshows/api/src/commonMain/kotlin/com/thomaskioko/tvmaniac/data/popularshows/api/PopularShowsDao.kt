@@ -6,15 +6,15 @@ import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
 interface PopularShowsDao {
-  fun upsert(show: Popular_shows)
+    fun upsert(show: Popular_shows)
 
-  fun observePopularShows(page: Long): Flow<List<ShowEntity>>
+    fun observePopularShows(page: Long): Flow<List<ShowEntity>>
 
-  fun getPagedPopularShows(): PagingSource<Int, ShowEntity>
+    fun getPagedPopularShows(): PagingSource<Int, ShowEntity>
 
-  fun deletePopularShow(id: Long)
+    fun deletePopularShow(id: Long)
 
-  fun deletePopularShows()
+    fun deletePopularShows()
 
-  fun pageExists(page: Long): Boolean
+    fun pageExists(page: Long): Boolean
 }

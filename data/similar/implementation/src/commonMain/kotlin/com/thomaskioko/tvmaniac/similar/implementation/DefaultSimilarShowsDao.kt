@@ -17,31 +17,31 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultSimilarShowsDao(
-  private val database: TvManiacDatabase,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val database: TvManiacDatabase,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : SimilarShowsDao {
 
-  override fun upsert(showId: Long, similarShowId: Long) {
-    database.similarShowsQueries.transaction {
-      database.similarShowsQueries.insertOrReplace(
-        id = Id(similarShowId),
-        similar_show_id = Id(showId),
-      )
+    override fun upsert(showId: Long, similarShowId: Long) {
+        database.similarShowsQueries.transaction {
+            database.similarShowsQueries.insertOrReplace(
+                id = Id(similarShowId),
+                similar_show_id = Id(showId),
+            )
+        }
     }
-  }
 
-  override fun observeSimilarShows(showId: Long): Flow<List<SimilarShows>> {
-    return database.similarShowsQueries
-      .similarShows(Id(showId))
-      .asFlow()
-      .mapToList(dispatchers.io)
-  }
+    override fun observeSimilarShows(showId: Long): Flow<List<SimilarShows>> {
+        return database.similarShowsQueries
+            .similarShows(Id(showId))
+            .asFlow()
+            .mapToList(dispatchers.io)
+    }
 
-  override fun delete(id: Long) {
-    database.similarShowsQueries.delete(Id(id))
-  }
+    override fun delete(id: Long) {
+        database.similarShowsQueries.delete(Id(id))
+    }
 
-  override fun deleteAll() {
-    database.transaction { database.similarShowsQueries.deleteAll() }
-  }
+    override fun deleteAll() {
+        database.transaction { database.similarShowsQueries.deleteAll() }
+    }
 }

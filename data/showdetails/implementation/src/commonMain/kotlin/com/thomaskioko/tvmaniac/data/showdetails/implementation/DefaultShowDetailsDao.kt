@@ -17,18 +17,18 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultShowDetailsDao(
-  database: TvManiacDatabase,
-  private val dispatchers: AppCoroutineDispatchers,
+    database: TvManiacDatabase,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : ShowDetailsDao {
-  private val tvShowQueries = database.tvShowQueries
+    private val tvShowQueries = database.tvShowQueries
 
-  override fun observeTvShows(id: Long): Flow<TvshowDetails> =
-    tvShowQueries.tvshowDetails(Id(id)).asFlow().mapToOne(dispatchers.io)
+    override fun observeTvShows(id: Long): Flow<TvshowDetails> =
+        tvShowQueries.tvshowDetails(Id(id)).asFlow().mapToOne(dispatchers.io)
 
-  override fun getTvShow(id: Long): TvshowDetails =
-    tvShowQueries.tvshowDetails(Id(id)).executeAsOne()
+    override fun getTvShow(id: Long): TvshowDetails =
+        tvShowQueries.tvshowDetails(Id(id)).executeAsOne()
 
-  override fun deleteTvShow(id: Long) {
-    tvShowQueries.delete(Id(id))
-  }
+    override fun deleteTvShow(id: Long) {
+        tvShowQueries.delete(Id(id))
+    }
 }

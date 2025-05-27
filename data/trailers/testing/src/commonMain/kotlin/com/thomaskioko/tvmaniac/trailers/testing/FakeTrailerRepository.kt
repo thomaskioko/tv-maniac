@@ -9,18 +9,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeTrailerRepository : TrailerRepository {
-  private val youtubePlayerInstalled = Channel<Boolean>(Channel.UNLIMITED)
-  private var response = MutableStateFlow<List<Trailers>>(emptyList())
+    private val youtubePlayerInstalled = Channel<Boolean>(Channel.UNLIMITED)
+    private var response = MutableStateFlow<List<Trailers>>(emptyList())
 
-  suspend fun setTrailerResult(result: List<Trailers>) {
-    response.emit(result)
-  }
+    suspend fun setTrailerResult(result: List<Trailers>) {
+        response.emit(result)
+    }
 
-  suspend fun setYoutubePlayerInstalled(installed: Boolean) {
-    youtubePlayerInstalled.send(installed)
-  }
+    suspend fun setYoutubePlayerInstalled(installed: Boolean) {
+        youtubePlayerInstalled.send(installed)
+    }
 
-  override fun observeTrailers(id: Long): Flow<List<Trailers>> = response.asStateFlow()
+    override fun observeTrailers(id: Long): Flow<List<Trailers>> = response.asStateFlow()
 
-  override fun isYoutubePlayerInstalled(): Flow<Boolean> = youtubePlayerInstalled.receiveAsFlow()
+    override fun isYoutubePlayerInstalled(): Flow<Boolean> = youtubePlayerInstalled.receiveAsFlow()
 }

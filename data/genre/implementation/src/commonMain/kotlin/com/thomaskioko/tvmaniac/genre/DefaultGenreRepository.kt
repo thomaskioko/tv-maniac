@@ -14,29 +14,28 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultGenreRepository(
-  private val store: GenreStore,
-  private val showsByGenreIdStore: ShowsByGenreIdStore,
-  private val genreDao: GenreDao,
+    private val store: GenreStore,
+    private val showsByGenreIdStore: ShowsByGenreIdStore,
+    private val genreDao: GenreDao,
 ) : GenreRepository {
 
-  override suspend fun fetchGenresWithShows(forceRefresh: Boolean) {
-    val isEmpty = genreDao.getGenres().isEmpty()
-    when {
-      forceRefresh || isEmpty -> store.fresh(Unit)
-      else -> store.get(Unit)
+    override suspend fun fetchGenresWithShows(forceRefresh: Boolean) {
+        val isEmpty = genreDao.getGenres().isEmpty()
+        when {
+            forceRefresh || isEmpty -> store.fresh(Unit)
+            else -> store.get(Unit)
+        }
     }
-  }
 
-  override suspend fun fetchShowByGenreId(id: String, forceRefresh: Boolean) {
-    val isEmpty = genreDao.observeShowsByGenreId(id).first().isEmpty()
-    when {
-      forceRefresh || isEmpty -> showsByGenreIdStore.fresh(id)
-      else -> showsByGenreIdStore.get(id)
+    override suspend fun fetchShowByGenreId(id: String, forceRefresh: Boolean) {
+        val isEmpty = genreDao.observeShowsByGenreId(id).first().isEmpty()
+        when {
+            forceRefresh || isEmpty -> showsByGenreIdStore.fresh(id)
+            else -> showsByGenreIdStore.get(id)
+        }
     }
-  }
 
-  override fun observeGenresWithShows(): Flow<List<ShowGenresEntity>> = genreDao.observeGenres()
+    override fun observeGenresWithShows(): Flow<List<ShowGenresEntity>> = genreDao.observeGenres()
 
-  override suspend fun observeShowByGenreId(id: String): Flow<List<Tvshow>> = genreDao.observeShowsByGenreId(id)
-
+    override suspend fun observeShowByGenreId(id: String): Flow<List<Tvshow>> = genreDao.observeShowsByGenreId(id)
 }

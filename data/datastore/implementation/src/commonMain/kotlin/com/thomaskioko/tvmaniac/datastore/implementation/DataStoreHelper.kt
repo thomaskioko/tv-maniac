@@ -12,18 +12,18 @@ private val lock = SynchronizedObject()
 private lateinit var dataStore: DataStore<Preferences>
 
 internal fun createDataStore(produceFile: () -> String, coroutineScope: CoroutineScope) =
-  synchronized(lock) {
-    if (::dataStore.isInitialized) {
-      dataStore
-    } else {
-      PreferenceDataStoreFactory.createWithPath(
-        corruptionHandler = null,
-        migrations = emptyList(),
-        scope = coroutineScope,
-        produceFile = { produceFile().toPath() },
-      )
-        .also { dataStore = it }
+    synchronized(lock) {
+        if (::dataStore.isInitialized) {
+            dataStore
+        } else {
+            PreferenceDataStoreFactory.createWithPath(
+                corruptionHandler = null,
+                migrations = emptyList(),
+                scope = coroutineScope,
+                produceFile = { produceFile().toPath() },
+            )
+                .also { dataStore = it }
+        }
     }
-  }
 
-const val dataStoreFileName = "tvmainac.preferences_pb"
+const val DATA_STORE_FILE_NAME = "tvmainac.preferences_pb"

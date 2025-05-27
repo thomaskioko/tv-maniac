@@ -25,118 +25,117 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ShowDetailsPresenterFactory(
-  val create: (
-    componentContext: ComponentContext,
-    id: Long,
-    onBack: () -> Unit,
-    onNavigateToShow: (id: Long) -> Unit,
-    onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
-    onNavigateToTrailer: (id: Long) -> Unit,
-  ) -> ShowDetailsPresenter,
+    val create: (
+        componentContext: ComponentContext,
+        id: Long,
+        onBack: () -> Unit,
+        onNavigateToShow: (id: Long) -> Unit,
+        onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
+        onNavigateToTrailer: (id: Long) -> Unit,
+    ) -> ShowDetailsPresenter,
 )
 
 @Inject
 class ShowDetailsPresenter(
-  @Assisted componentContext: ComponentContext,
-  @Assisted private val showId: Long,
-  @Assisted private val onBack: () -> Unit,
-  @Assisted private val onNavigateToShow: (id: Long) -> Unit,
-  @Assisted private val onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
-  @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
-  private val watchlistRepository: WatchlistRepository,
-  private val recommendedShowsInteractor: RecommendedShowsInteractor,
-  private val showDetailsInteractor: ShowDetailsInteractor,
-  private val similarShowsInteractor: SimilarShowsInteractor,
-  private val watchProvidersInteractor: WatchProvidersInteractor,
-  private val observableShowDetailsInteractor: ObservableShowDetailsInteractor,
-  private val logger: Logger,
+    @Assisted componentContext: ComponentContext,
+    @Assisted private val showId: Long,
+    @Assisted private val onBack: () -> Unit,
+    @Assisted private val onNavigateToShow: (id: Long) -> Unit,
+    @Assisted private val onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
+    @Assisted private val onNavigateToTrailer: (id: Long) -> Unit,
+    private val watchlistRepository: WatchlistRepository,
+    private val recommendedShowsInteractor: RecommendedShowsInteractor,
+    private val showDetailsInteractor: ShowDetailsInteractor,
+    private val similarShowsInteractor: SimilarShowsInteractor,
+    private val watchProvidersInteractor: WatchProvidersInteractor,
+    private val observableShowDetailsInteractor: ObservableShowDetailsInteractor,
+    private val logger: Logger,
 ) : ComponentContext by componentContext {
 
-  private val recommendedShowsLoadingState = ObservableLoadingCounter()
-  private val showDetailsLoadingState = ObservableLoadingCounter()
-  private val similarShowsLoadingState = ObservableLoadingCounter()
-  private val watchProvidersLoadingState = ObservableLoadingCounter()
-  private val uiMessageManager = UiMessageManager()
+    private val recommendedShowsLoadingState = ObservableLoadingCounter()
+    private val showDetailsLoadingState = ObservableLoadingCounter()
+    private val similarShowsLoadingState = ObservableLoadingCounter()
+    private val watchProvidersLoadingState = ObservableLoadingCounter()
+    private val uiMessageManager = UiMessageManager()
 
-  private val coroutineScope = coroutineScope()
-  private val _state = MutableStateFlow(ShowDetailsContent.Empty)
-  val state: StateFlow<ShowDetailsContent> = combine(
-    recommendedShowsLoadingState.observable,
-    showDetailsLoadingState.observable,
-    similarShowsLoadingState.observable,
-    watchProvidersLoadingState.observable,
-    observableShowDetailsInteractor.flow,
-  ) { recommendedShowsUpdating, showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating, showDetails ->
-    ShowDetailsContent(
-      showDetails = showDetails.toShowDetails(),
-      recommendedShowsRefreshing = recommendedShowsUpdating,
-      showDetailsRefreshing = showDetailsUpdating,
-      similarShowsRefreshing = similarShowsUpdating,
-      watchProvidersRefreshing = watchProvidersUpdating,
+    private val coroutineScope = coroutineScope()
+    private val _state = MutableStateFlow(ShowDetailsContent.Empty)
+    val state: StateFlow<ShowDetailsContent> = combine(
+        recommendedShowsLoadingState.observable,
+        showDetailsLoadingState.observable,
+        similarShowsLoadingState.observable,
+        watchProvidersLoadingState.observable,
+        observableShowDetailsInteractor.flow,
+    ) { recommendedShowsUpdating, showDetailsUpdating, similarShowsUpdating, watchProvidersUpdating, showDetails ->
+        ShowDetailsContent(
+            showDetails = showDetails.toShowDetails(),
+            recommendedShowsRefreshing = recommendedShowsUpdating,
+            showDetailsRefreshing = showDetailsUpdating,
+            similarShowsRefreshing = similarShowsUpdating,
+            watchProvidersRefreshing = watchProvidersUpdating,
+        )
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = _state.value,
     )
-  }.stateIn(
-    scope = coroutineScope,
-    started = SharingStarted.WhileSubscribed(),
-    initialValue = _state.value,
-  )
 
-  init {
-    coroutineScope.launch { observeShowDetails() }
-  }
+    init {
+        coroutineScope.launch { observeShowDetails() }
+    }
 
-  fun dispatch(action: ShowDetailsAction) {
-    when (action) {
-      is SeasonClicked -> {
-        _state.update {
-          it.copy(selectedSeasonIndex = action.params.selectedSeasonIndex)
+    fun dispatch(action: ShowDetailsAction) {
+        when (action) {
+            is SeasonClicked -> {
+                _state.update {
+                    it.copy(selectedSeasonIndex = action.params.selectedSeasonIndex)
+                }
+                onNavigateToSeason(action.params)
+            }
+            is DetailShowClicked -> onNavigateToShow(action.id)
+            is WatchTrailerClicked -> onNavigateToTrailer(action.id)
+            is FollowShowClicked -> {
+                coroutineScope.launch {
+                    watchlistRepository.updateLibrary(
+                        id = showId,
+                        addToLibrary = !action.addToLibrary,
+                    )
+                }
+            }
+            DetailBackClicked -> onBack()
+            ReloadShowDetails -> coroutineScope.launch { observeShowDetails(forceReload = true) }
+            DismissErrorSnackbar -> coroutineScope.launch { _state.update { it.copy(message = null) } }
+            DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
+            ShowShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = true) } }
+            CreateCustomList -> {
+                // TODO:: Add implementation
+            }
         }
-        onNavigateToSeason(action.params)
-      }
-      is DetailShowClicked -> onNavigateToShow(action.id)
-      is WatchTrailerClicked -> onNavigateToTrailer(action.id)
-      is FollowShowClicked -> {
+    }
+
+    private fun observeShowDetails(forceReload: Boolean = false) {
         coroutineScope.launch {
-          watchlistRepository.updateLibrary(
-            id = showId,
-            addToLibrary = !action.addToLibrary,
-          )
+            observableShowDetailsInteractor(showId)
         }
-      }
-      DetailBackClicked -> onBack()
-      ReloadShowDetails -> coroutineScope.launch { observeShowDetails(forceReload = true) }
-      DismissErrorSnackbar -> coroutineScope.launch { _state.update { it.copy(message = null) } }
-      DismissShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = false) } }
-      ShowShowsListSheet -> coroutineScope.launch { _state.update { it.copy(showListSheet = true) } }
-      CreateCustomList -> {
-        //TODO:: Add implementation
-      }
-    }
-  }
 
-  private fun observeShowDetails(forceReload: Boolean = false) {
+        coroutineScope.launch {
+            recommendedShowsInteractor(RecommendedShowsInteractor.Param(showId, forceReload))
+                .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
+        }
 
-    coroutineScope.launch {
-      observableShowDetailsInteractor(showId)
-    }
+        coroutineScope.launch {
+            showDetailsInteractor(ShowDetailsInteractor.Param(showId, forceReload))
+                .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
+        }
 
-    coroutineScope.launch {
-      recommendedShowsInteractor(RecommendedShowsInteractor.Param(showId, forceReload))
-        .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
-    }
+        coroutineScope.launch {
+            similarShowsInteractor(SimilarShowsInteractor.Param(showId, forceReload))
+                .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
+        }
 
-    coroutineScope.launch {
-      showDetailsInteractor(ShowDetailsInteractor.Param(showId, forceReload))
-        .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
+        coroutineScope.launch {
+            watchProvidersInteractor(WatchProvidersInteractor.Param(showId, forceReload))
+                .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
+        }
     }
-
-    coroutineScope.launch {
-      similarShowsInteractor(SimilarShowsInteractor.Param(showId, forceReload))
-        .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
-    }
-
-    coroutineScope.launch {
-      watchProvidersInteractor(WatchProvidersInteractor.Param(showId, forceReload))
-        .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
-    }
-  }
 }
