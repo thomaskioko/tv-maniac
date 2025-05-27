@@ -18,3 +18,8 @@ INSERT OR REPLACE INTO genres (
 
 genres:
 SELECT * FROM genres ORDER BY name ASC;
+
+genreById:
+SELECT *
+FROM genres
+WHERE id = ?;

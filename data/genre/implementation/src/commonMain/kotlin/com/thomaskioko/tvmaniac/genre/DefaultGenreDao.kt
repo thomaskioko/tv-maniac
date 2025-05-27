@@ -34,6 +34,10 @@ class DefaultGenreDao(
 
     override fun getGenres(): List<Genres> = genresQueries.genres().executeAsList()
 
+    override fun getGenre(id: Long): Genres {
+        return genresQueries.genreById(Id(id)).executeAsOne()
+    }
+
     override fun observeGenres(): Flow<List<ShowGenresEntity>> {
         return genresQueries.genres { id, name, posterUrl ->
             ShowGenresEntity(

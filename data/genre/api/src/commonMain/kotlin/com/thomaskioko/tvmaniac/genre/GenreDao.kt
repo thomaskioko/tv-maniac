@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface GenreDao {
     fun upsert(entity: Genres)
     fun getGenres(): List<Genres>
+    fun getGenre(id: Long): Genres
     fun observeGenres(): Flow<List<ShowGenresEntity>>
     fun observeShowsByGenreId(id: String): Flow<List<Tvshow>>
 }
