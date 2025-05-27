@@ -19,14 +19,15 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 class DefaultTmdbShowsNetworkDataSource(
     private val httpClient: TmdbHttpClient,
 ) : TmdbShowsNetworkDataSource {
-    override suspend fun getAiringToday(page: Long): ApiResponse<TmdbShowResult> =
-        httpClient.safeRequest {
+    override suspend fun getAiringToday(page: Long): ApiResponse<TmdbShowResult> {
+        return httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("3/tv/airing_today")
                 parameter("page", "$page")
             }
         }
+    }
 
     override suspend fun discoverShows(
         page: Long,
@@ -34,8 +35,8 @@ class DefaultTmdbShowsNetworkDataSource(
         genres: String?,
         watchProviders: String?,
         screenedTheatrically: Boolean,
-    ): ApiResponse<TmdbShowResult> =
-        httpClient.safeRequest {
+    ): ApiResponse<TmdbShowResult> {
+        return httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("3/discover/tv")
@@ -48,39 +49,43 @@ class DefaultTmdbShowsNetworkDataSource(
                 watchProviders?.let { parameter("with_watch_providers", it) }
             }
         }
+    }
 
-    override suspend fun getPopularShows(page: Long): ApiResponse<TmdbShowResult> =
-        httpClient.safeRequest {
+    override suspend fun getPopularShows(page: Long): ApiResponse<TmdbShowResult> {
+        return httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("3/tv/popular")
                 parameter("page", "$page")
             }
         }
+    }
 
-    override suspend fun getTopRatedShows(page: Long): ApiResponse<TmdbShowResult> =
-        httpClient.safeRequest {
+    override suspend fun getTopRatedShows(page: Long): ApiResponse<TmdbShowResult> {
+        return httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("3/tv/top_rated")
                 parameter("page", "$page")
             }
         }
+    }
 
-    override suspend fun getTrendingShows(timeWindow: String): ApiResponse<TmdbShowResult> =
-        httpClient.safeRequest {
+    override suspend fun getTrendingShows(timeWindow: String): ApiResponse<TmdbShowResult> {
+        return httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("3/trending/tv/$timeWindow")
             }
         }
+    }
 
     override suspend fun getUpComingShows(
         year: Int,
         page: Long,
         sortBy: String,
-    ): ApiResponse<TmdbShowResult> =
-        httpClient.safeRequest {
+    ): ApiResponse<TmdbShowResult> {
+        return httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("3/discover/tv")
@@ -89,14 +94,15 @@ class DefaultTmdbShowsNetworkDataSource(
                 parameter("sort_by", sortBy)
             }
         }
+    }
 
     override suspend fun getUpComingShows(
         page: Long,
         firstAirDate: String,
         lastAirDate: String,
         sortBy: String,
-    ): ApiResponse<TmdbShowResult> =
-        httpClient.safeRequest {
+    ): ApiResponse<TmdbShowResult> {
+        return httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("3/discover/tv")
@@ -106,21 +112,24 @@ class DefaultTmdbShowsNetworkDataSource(
                 parameter("sort_by", sortBy)
             }
         }
+    }
 
-    override suspend fun searchShows(query: String): ApiResponse<TmdbShowResult> =
-        httpClient.safeRequest {
+    override suspend fun searchShows(query: String): ApiResponse<TmdbShowResult> {
+        return httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("3/search/tv")
                 parameter("query", query)
             }
         }
+    }
 
-    override suspend fun getGenre(): ApiResponse<TmdbGenreResult> =
-        httpClient.safeRequest {
+    override suspend fun getShowGenres(): ApiResponse<TmdbGenreResult> {
+        return httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
                 path("3/genre/tv/list")
             }
         }
+    }
 }

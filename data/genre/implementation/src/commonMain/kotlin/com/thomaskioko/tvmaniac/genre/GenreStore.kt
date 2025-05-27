@@ -27,7 +27,7 @@ class GenreStore(
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Unit, List<ShowGenresEntity>> by storeBuilder(
     fetcher = Fetcher.of { _: Unit ->
-        when (val response = tmdbRemoteDataSource.getGenre()) {
+        when (val response = tmdbRemoteDataSource.getShowGenres()) {
             is ApiResponse.Success -> {
                 val genres = response.body.genres
                     .filter { genre -> genre.name != "News" || genre.name != "Talk" }

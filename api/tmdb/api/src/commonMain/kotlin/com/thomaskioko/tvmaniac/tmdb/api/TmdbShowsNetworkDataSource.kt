@@ -89,5 +89,5 @@ interface TmdbShowsNetworkDataSource {
     /**
      * Get the list of official genres for TV shows.
      */
-    suspend fun getGenre(): ApiResponse<TmdbGenreResult>
+    suspend fun getShowGenres(): ApiResponse<TmdbGenreResult>
 }
