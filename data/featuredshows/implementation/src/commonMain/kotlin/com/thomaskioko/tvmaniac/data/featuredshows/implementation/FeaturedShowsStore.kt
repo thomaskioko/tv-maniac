@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.featuredshows.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.store.apiFetcher
 import com.thomaskioko.tvmaniac.core.store.storeBuilder
 import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsDao
@@ -14,12 +14,11 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.FEATURED_S
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
-import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
@@ -35,22 +34,14 @@ class FeaturedShowsStore(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<ShowEntity>> by storeBuilder(
-    fetcher = Fetcher.of { page ->
-        when (val response = tmdbRemoteDataSource.discoverShows(page = page)) {
-            is ApiResponse.Success -> response.body.results
-            is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
-            is ApiResponse.Error.HttpError ->
-                throw Throwable("${response.code} - ${response.errorMessage}")
-            is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
-        }
-    },
-    sourceOfTruth = SourceOfTruth.of<Long, List<TmdbShowResponse>, List<ShowEntity>>(
+    fetcher = apiFetcher { page -> tmdbRemoteDataSource.discoverShows(page = page) },
+    sourceOfTruth = SourceOfTruth.of<Long, TmdbShowResult, List<ShowEntity>>(
         reader = { page: Long -> featuredShowsDao.observeFeaturedShows(page) },
-        writer = { _, shows ->
+        writer = { _, response ->
             databaseTransactionRunner {
                 featuredShowsDao.deleteFeaturedShows()
 
-                shows.forEach { show ->
+                response.results.forEach { show ->
 
                     tvShowsDao.upsert(
                         Tvshow(

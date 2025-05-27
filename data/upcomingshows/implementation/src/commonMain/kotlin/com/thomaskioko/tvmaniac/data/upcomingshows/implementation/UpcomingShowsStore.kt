@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.upcomingshows.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.store.apiFetcher
 import com.thomaskioko.tvmaniac.core.store.storeBuilder
 import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
@@ -19,7 +19,6 @@ import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
@@ -35,22 +34,16 @@ class UpcomingShowsStore(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<UpcomingParams, List<ShowEntity>> by storeBuilder(
-    fetcher = Fetcher.of { params: UpcomingParams ->
-        val response = tmdbRemoteDataSource.getUpComingShows(
+    fetcher = apiFetcher { params: UpcomingParams ->
+        tmdbRemoteDataSource.getUpComingShows(
             page = params.page,
             firstAirDate = params.startDate,
             lastAirDate = params.endDate,
         )
-        when (response) {
-            is ApiResponse.Success -> response.body
-            is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
-            is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
-            is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
-        }
     },
     sourceOfTruth = SourceOfTruth.of<UpcomingParams, TmdbShowResult, List<ShowEntity>>(
         reader = { param -> upcomingShowsDao.observeUpcomingShows(param.page) },
-        writer = { _: UpcomingParams, trendingShows ->
+        writer = { _: UpcomingParams, trendingShows: TmdbShowResult ->
             databaseTransactionRunner {
                 trendingShows.results.forEach { show ->
                     tvShowsDao.upsert(

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.showdetails.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.store.apiFetcher
 import com.thomaskioko.tvmaniac.core.store.storeBuilder
 import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.data.cast.api.CastDao
@@ -25,7 +25,6 @@ import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
@@ -44,14 +43,8 @@ class ShowDetailsStore(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, TvshowDetails> by storeBuilder(
-    fetcher = Fetcher.of { id ->
-        when (val response = remoteDataSource.getShowDetails(id)) {
-            is ApiResponse.Success -> response.body
-            is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
-            is ApiResponse.Error.HttpError ->
-                throw Throwable("${response.code} - ${response.errorMessage}")
-            is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
-        }
+    fetcher = apiFetcher { id ->
+        remoteDataSource.getShowDetails(id)
     },
     sourceOfTruth = SourceOfTruth.of<Long, TmdbShowDetailsResponse, TvshowDetails>(
         reader = { id: Long -> showDetailsDao.observeTvShows(id) },

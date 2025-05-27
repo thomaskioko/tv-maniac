@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.core.store
 
+import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -12,6 +13,17 @@ inline fun <Key : Any, Local : Any, Output : Any> storeBuilder(
     fetcher: Fetcher<Key, Local>,
     sourceOfTruth: SourceOfTruth<Key, Local, Output>,
 ): StoreBuilder<Key, Output> = StoreBuilder.from(fetcher, sourceOfTruth)
+
+inline fun <Key : Any, reified Output : Any> apiFetcher(
+    crossinline apiCall: suspend (Key) -> ApiResponse<Output>,
+): Fetcher<Key, Output> = Fetcher.of { key: Key ->
+    when (val response = apiCall(key)) {
+        is ApiResponse.Success -> response.body
+        is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
+        is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
+        is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
+    }
+}
 
 fun <Key : Any, Local : Any, Output : Any> SourceOfTruth<Key, Local, Output>.usingDispatchers(
     readDispatcher: CoroutineDispatcher,

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.recommendedshows.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.store.apiFetcher
 import com.thomaskioko.tvmaniac.core.store.storeBuilder
 import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsDao
@@ -18,7 +18,6 @@ import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
@@ -36,13 +35,8 @@ class RecommendedShowsStore(
     private val dateFormatter: PlatformDateFormatter,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<RecommendedShowsParams, List<RecommendedShows>> by storeBuilder(
-    fetcher = Fetcher.of { param: RecommendedShowsParams ->
-        when (val apiResult = networkDataSource.getRecommendedShows(param.showId, param.page)) {
-            is ApiResponse.Success -> apiResult.body
-            is ApiResponse.Error.GenericError -> throw Throwable("${apiResult.errorMessage}")
-            is ApiResponse.Error.HttpError -> throw Throwable("${apiResult.code} - ${apiResult.errorMessage}")
-            is ApiResponse.Error.SerializationError -> throw Throwable("${apiResult.errorMessage}")
-        }
+    fetcher = apiFetcher { param: RecommendedShowsParams ->
+        networkDataSource.getRecommendedShows(param.showId, param.page)
     },
     sourceOfTruth = SourceOfTruth.of<RecommendedShowsParams, TmdbShowResult, List<RecommendedShows>>(
         reader = { param: RecommendedShowsParams ->

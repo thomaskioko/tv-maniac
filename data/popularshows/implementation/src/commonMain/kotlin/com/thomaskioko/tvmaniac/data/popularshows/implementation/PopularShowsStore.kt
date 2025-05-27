@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.popularshows.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.store.apiFetcher
 import com.thomaskioko.tvmaniac.core.store.storeBuilder
 import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsDao
@@ -18,7 +18,6 @@ import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
@@ -33,14 +32,7 @@ class PopularShowsStore(
     private val formatterUtil: FormatterUtil,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<ShowEntity>> by storeBuilder(
-    fetcher = Fetcher.of { page ->
-        when (val response = tmdbRemoteDataSource.getPopularShows(page = page)) {
-            is ApiResponse.Success -> response.body
-            is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
-            is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
-            is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
-        }
-    },
+    fetcher = apiFetcher { page -> tmdbRemoteDataSource.getPopularShows(page = page) },
     sourceOfTruth = SourceOfTruth.of<Long, TmdbShowResult, List<ShowEntity>>(
         reader = { page -> popularShowsDao.observePopularShows(page) },
         writer = { _, trendingShows ->

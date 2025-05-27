@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.store.apiFetcher
 import com.thomaskioko.tvmaniac.core.store.storeBuilder
 import com.thomaskioko.tvmaniac.core.store.usingDispatchers
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
@@ -20,7 +20,6 @@ import com.thomaskioko.tvmaniac.util.FormatterUtil
 import com.thomaskioko.tvmaniac.util.PlatformDateFormatter
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
@@ -36,19 +35,8 @@ class TrendingShowsStore(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<TrendingShowsParams, List<ShowEntity>> by storeBuilder(
-    fetcher = Fetcher.of { params: TrendingShowsParams ->
-        when (val response = tmdbRemoteDataSource.getTrendingShows(params.timeWindow)) {
-            is ApiResponse.Success -> response.body
-            is ApiResponse.Error.GenericError -> {
-                throw Throwable("${response.errorMessage}")
-            }
-            is ApiResponse.Error.HttpError -> {
-                throw Throwable("${response.code} - ${response.errorMessage}")
-            }
-            is ApiResponse.Error.SerializationError -> {
-                throw Throwable("${response.errorMessage}")
-            }
-        }
+    fetcher = apiFetcher { params: TrendingShowsParams ->
+        tmdbRemoteDataSource.getTrendingShows(params.timeWindow)
     },
     sourceOfTruth = SourceOfTruth.of<TrendingShowsParams, TmdbShowResult, List<ShowEntity>>(
         reader = { param: TrendingShowsParams -> trendingShowsDao.observeTvShow(param.page) },

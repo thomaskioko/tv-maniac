@@ -32,21 +32,20 @@ class GenreStore(
                 val genres = response.body.genres
                     .filter { genre -> genre.name != "News" || genre.name != "Talk" }
 
-                // Process genres sequentially but emit results progressively
                 val results = mutableListOf<ShowGenresEntity>()
 
                 genres.forEach { genre ->
-                    val discoverResponse = tmdbRemoteDataSource.discoverShows(
+                    val showsResponse = tmdbRemoteDataSource.discoverShows(
                         genres = genre.id.toString(),
                         watchProviders = "8,15,283,318,337,350,1899",
                     )
 
-                    when (discoverResponse) {
+                    when (showsResponse) {
                         is ApiResponse.Success -> {
                             val entity = ShowGenresEntity(
                                 id = genre.id.toLong(),
                                 name = genre.name,
-                                posterUrl = discoverResponse.body.results.shuffled().firstOrNull()?.posterPath,
+                                posterUrl = showsResponse.body.results.shuffled().firstOrNull()?.posterPath,
                             )
                             results.add(entity)
 
