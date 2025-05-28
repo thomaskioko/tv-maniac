@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package com.thomaskioko.tvmaniac.core.store
 
 import com.thomaskioko.tvmaniac.core.networkutil.model.ApiResponse
