@@ -180,4 +180,33 @@ class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
 
         result shouldBe false
     }
+
+    @Test
+    fun `should return false when no request exists for isRequestValid`() {
+        val requestType = RequestTypeConfig.FEATURED_SHOWS_TODAY.name
+        val threshold = 1.hours
+
+        val result = repository.isRequestValid(requestType, threshold)
+
+        result shouldBe false
+    }
+
+    @Test
+    fun `should return false for isRequestExpired after updating an expired request`() {
+        val entityId = 1L
+        val requestType = "TEST"
+        val threshold = 1.hours
+        val oldTimestamp = Clock.System.now() - 2.hours
+
+        repository.upsert(entityId, requestType, oldTimestamp)
+
+        val initialResult = repository.isRequestExpired(entityId, requestType, threshold)
+        initialResult shouldBe true
+
+        val currentTimestamp = Clock.System.now()
+        repository.upsert(entityId, requestType, currentTimestamp)
+
+        val updatedResult = repository.isRequestExpired(entityId, requestType, threshold)
+        updatedResult shouldBe false
+    }
 }

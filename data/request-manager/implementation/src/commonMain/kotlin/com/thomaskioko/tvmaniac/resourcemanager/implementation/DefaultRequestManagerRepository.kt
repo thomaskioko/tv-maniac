@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.resourcemanager.implementation
 import com.thomaskioko.tvmaniac.db.Last_requests
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
@@ -39,12 +40,8 @@ class DefaultRequestManagerRepository(
         isRequestBefore(entityId, requestType, Clock.System.now() - threshold)
 
     override fun isRequestValid(requestType: String, threshold: Duration): Boolean {
-        val requestTypeConfig = com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.valueOf(requestType)
-        return !isRequestExpired(requestType, requestTypeConfig.requestId, threshold)
-    }
-
-    private fun isRequestExpired(requestType: String, entityId: Long, threshold: Duration): Boolean {
-        return getLastRequest(requestType, entityId)?.timestamp?.let { it < Clock.System.now() - threshold } ?: true
+        val requestTypeConfig = RequestTypeConfig.valueOf(requestType)
+        return !isRequestExpired(requestTypeConfig.requestId, requestType, threshold)
     }
 
     private fun isRequestBefore(entityId: Long, requestType: String, instant: Instant): Boolean {
