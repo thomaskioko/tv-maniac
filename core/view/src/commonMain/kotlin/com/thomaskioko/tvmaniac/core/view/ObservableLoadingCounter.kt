@@ -29,13 +29,14 @@ fun Flow<InvokeStatus>.onEachStatus(
     counter: ObservableLoadingCounter,
     logger: Logger? = null,
     uiMessageManager: UiMessageManager? = null,
+    sourceId: String? = null,
 ): Flow<InvokeStatus> = onEach { status ->
     when (status) {
         InvokeStarted -> counter.addLoader()
         InvokeSuccess -> counter.removeLoader()
         is InvokeError -> {
-            logger?.info("@InvokeError ${uiMessageManager?.message}", status.throwable)
-            uiMessageManager?.emitMessage(UiMessage(status.throwable))
+            logger?.info("@InvokeError", status.throwable)
+            uiMessageManager?.emitMessageCombined(status.throwable, sourceId)
             counter.removeLoader()
         }
     }
@@ -45,4 +46,5 @@ suspend inline fun Flow<InvokeStatus>.collectStatus(
     counter: ObservableLoadingCounter,
     logger: Logger? = null,
     uiMessageManager: UiMessageManager? = null,
-): Unit = onEachStatus(counter, logger, uiMessageManager).collect()
+    sourceId: String? = null,
+): Unit = onEachStatus(counter, logger, uiMessageManager, sourceId).collect()

@@ -146,26 +146,27 @@ class DiscoverShowsPresenter(
         private fun observeShowData(forceRefresh: Boolean = false) {
             coroutineScope.launch {
                 featuredShowsInteractor(forceRefresh)
-                    .collectStatus(featuredLoadingState, logger, uiMessageManager)
+                    .collectStatus(featuredLoadingState, logger, uiMessageManager, "Featured Shows")
             }
 
             coroutineScope.launch {
                 topRatedShowsInteractor(forceRefresh)
-                    .collectStatus(topRatedLoadingState, logger, uiMessageManager)
+                    .collectStatus(topRatedLoadingState, logger, uiMessageManager, "Top Rated Shows")
             }
 
             coroutineScope.launch {
                 popularShowsInteractor(forceRefresh)
-                    .collectStatus(popularLoadingState, logger, uiMessageManager)
+                    .collectStatus(popularLoadingState, logger, uiMessageManager, "Popular Shows")
             }
 
             coroutineScope.launch {
                 trendingShowsInteractor(forceRefresh)
-                    .collectStatus(trendingLoadingState, logger, uiMessageManager)
+                    .collectStatus(trendingLoadingState, logger, uiMessageManager, "Trending Shows")
             }
+
             coroutineScope.launch {
                 upcomingShowsInteractor(forceRefresh)
-                    .collectStatus(upcomingLoadingState, logger, uiMessageManager)
+                    .collectStatus(upcomingLoadingState, logger, uiMessageManager, "Upcoming Shows")
             }
         }
 

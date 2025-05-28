@@ -11,14 +11,17 @@ import kotlin.uuid.Uuid
 data class UiMessage(
     val message: String,
     val id: Long = Uuid.random().getMostSignificantBitsFromBytes(),
+    val sourceId: String? = null,
 )
 
 fun UiMessage(
     t: Throwable,
     id: Long = Uuid.random().getMostSignificantBitsFromBytes(),
+    sourceId: String? = null,
 ): UiMessage = UiMessage(
     message = t.message ?: "Error occurred: $t",
     id = id,
+    sourceId = sourceId,
 )
 
 internal fun Uuid.getMostSignificantBitsFromBytes(): Long {
@@ -35,9 +38,48 @@ class UiMessageManager {
 
     val message: Flow<UiMessage?> = _messages.map { it.firstOrNull() }.distinctUntilChanged()
 
-    suspend fun emitMessage(message: UiMessage) {
+    suspend fun emitMessageCombined(throwable: Throwable, sourceId: String? = null) {
         mutex.withLock {
-            _messages.value = _messages.value + message
+            val errorMessage = throwable.message ?: "Error occurred: $throwable"
+
+            // Check if we already have messages with the same error type
+            val existingMessages = _messages.value.filter {
+                it.message.contains(errorMessage) || errorMessage.contains(it.message)
+            }
+
+            if (existingMessages.isEmpty()) {
+                _messages.value = _messages.value + UiMessage(throwable, sourceId = sourceId)
+            } else {
+                // We have similar messages, combine them
+                val firstMessage = existingMessages.first()
+                val sources = mutableSetOf<String>()
+
+                // Collect all source IDs from existing messages
+                existingMessages.forEach { message ->
+                    if (message.sourceId != null) {
+                        sources.add(message.sourceId)
+                    }
+                }
+
+                if (sourceId != null) {
+                    sources.add(sourceId)
+                }
+
+                val combinedMessage = if (sources.isEmpty()) {
+                    "Multiple errors of type: $errorMessage"
+                } else {
+                    "Errors in ${sources.joinToString(", ")}: $errorMessage"
+                }
+
+                // We need to store the combined sources in a way that can be retrieved later
+                // For now, we'll use the first source as a representative
+                val representativeSource = sources.firstOrNull()
+
+                // Replace the existing message with the combined one
+                _messages.value = _messages.value.filterNot {
+                    existingMessages.contains(it)
+                } + UiMessage(combinedMessage, firstMessage.id, sourceId = representativeSource)
+            }
         }
     }
 
