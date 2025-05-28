@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.resourcemanager.implementation
 
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.LastRequestsQueries
+import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig
 import io.kotest.matchers.shouldBe
 import kotlinx.datetime.Clock
 import kotlin.test.AfterTest
@@ -132,5 +133,51 @@ class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
         val result = repository.isRequestExpired(entityId, requestType, threshold)
 
         result shouldBe true
+    }
+
+    @Test
+    fun `should return false when request is older than threshold`() {
+        val requestType = RequestTypeConfig.TOP_RATED_SHOWS.name
+        val entityId = RequestTypeConfig.TOP_RATED_SHOWS.requestId
+        val threshold = 1.hours
+        val oldTimestamp = Clock.System.now() - 2.hours
+
+        repository.upsert(entityId, requestType, oldTimestamp)
+
+        val result = repository.isRequestValid(requestType, threshold)
+
+        result shouldBe false
+    }
+
+    @Test
+    fun `should return true when request is newer than threshold`() {
+        val requestType = RequestTypeConfig.TOP_RATED_SHOWS.name
+        val entityId = RequestTypeConfig.TOP_RATED_SHOWS.requestId
+        val threshold = 1.hours
+        val recentTimestamp = Clock.System.now() - 30.minutes
+
+        repository.upsert(entityId, requestType, recentTimestamp)
+
+        val result = repository.isRequestValid(requestType, threshold)
+
+        result shouldBe true
+    }
+
+    @Test
+    fun `should handle multiple rows with same requestType but different entityId`() {
+        val requestType = RequestTypeConfig.TOP_RATED_SHOWS.name
+        val correctEntityId = RequestTypeConfig.TOP_RATED_SHOWS.requestId
+        val differentEntityId = 999L
+        val threshold = 1.hours
+
+        val oldTimestamp = Clock.System.now() - 2.hours
+        repository.upsert(correctEntityId, requestType, oldTimestamp)
+
+        val recentTimestamp = Clock.System.now() - 30.minutes
+        repository.upsert(differentEntityId, requestType, recentTimestamp)
+
+        val result = repository.isRequestValid(requestType, threshold)
+
+        result shouldBe false
     }
 }

@@ -39,11 +39,12 @@ class DefaultRequestManagerRepository(
         isRequestBefore(entityId, requestType, Clock.System.now() - threshold)
 
     override fun isRequestValid(requestType: String, threshold: Duration): Boolean {
-        return !isRequestExpired(requestType, threshold)
+        val requestTypeConfig = com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.valueOf(requestType)
+        return !isRequestExpired(requestType, requestTypeConfig.requestId, threshold)
     }
 
-    fun isRequestExpired(requestType: String, threshold: Duration): Boolean {
-        return getLastRequest(requestType)?.timestamp?.let { it < Clock.System.now() - threshold } ?: true
+    private fun isRequestExpired(requestType: String, entityId: Long, threshold: Duration): Boolean {
+        return getLastRequest(requestType, entityId)?.timestamp?.let { it < Clock.System.now() - threshold } ?: true
     }
 
     private fun isRequestBefore(entityId: Long, requestType: String, instant: Instant): Boolean {
@@ -53,12 +54,6 @@ class DefaultRequestManagerRepository(
     private fun getLastRequest(requestType: String, entityId: Long): Last_requests? {
         return database.lastRequestsQueries
             .getLastRequestForId(requestType, entityId)
-            .executeAsOneOrNull()
-    }
-
-    private fun getLastRequest(requestType: String): Last_requests? {
-        return database.lastRequestsQueries
-            .getLastRequestForType(requestType)
             .executeAsOneOrNull()
     }
 }
