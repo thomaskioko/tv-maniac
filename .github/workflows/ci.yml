@@ -70,6 +70,8 @@ jobs:
             :app:assembleRelease \
             :app:bundleRelease \
             -Pandroidx.baselineprofile.skipgeneration=true \
+              -Pcompose.enableCompilerMetrics=true \
+              -Pcompose.enableCompilerReports=true \
             --no-configuration-cache
 
 
@@ -325,6 +327,7 @@ jobs:
 
 
 
+
   ios-snapshot-test:
     runs-on: macos-15
     timeout-minutes: 60
@@ -381,4 +384,3 @@ jobs:
             fastlane/test_output
             fastlane/logs
             derived_data/Logs/Test
-
