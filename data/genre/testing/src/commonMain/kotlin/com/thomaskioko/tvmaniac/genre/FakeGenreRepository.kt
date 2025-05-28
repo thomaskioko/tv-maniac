@@ -26,4 +26,8 @@ class FakeGenreRepository : GenreRepository {
     override fun observeGenresWithShows(): Flow<List<ShowGenresEntity>> = entityListResult.asStateFlow()
 
     override suspend fun observeShowByGenreId(id: String): Flow<List<Tvshow>> = showListResult.asStateFlow()
+
+    override suspend fun observeGenrePosters() {
+
+    }
 }
