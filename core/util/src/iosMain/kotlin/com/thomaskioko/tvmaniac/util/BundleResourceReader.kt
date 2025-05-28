@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.util
 
+import kotlinx.cinterop.BetaInteropApi
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
@@ -20,6 +22,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 class BundleResourceReader(
     private val bundle: NSBundle = NSBundle.bundleForClass(BundleMarker),
 ) : ResourceReader {
