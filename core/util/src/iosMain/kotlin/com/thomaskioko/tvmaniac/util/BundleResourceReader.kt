@@ -36,10 +36,20 @@ class BundleResourceReader(
             }
             else -> name to null
         }
-        val path = bundle.pathForResource(filename, type)
-            ?: error(
+
+        var path = bundle.pathForResource(filename, type)
+
+        // If not found in the framework bundle, try to find it in the main bundle
+        if (path == null) {
+            path = NSBundle.mainBundle.pathForResource(filename, type)
+        }
+
+        // If still not found, throw an error
+        if (path == null) {
+            error(
                 "Couldn't get path of $name (parsed as: ${listOfNotNull(filename, type).joinToString(".")})",
             )
+        }
 
         return memScoped {
             val errorPtr = alloc<ObjCObjectVar<NSError?>>()
