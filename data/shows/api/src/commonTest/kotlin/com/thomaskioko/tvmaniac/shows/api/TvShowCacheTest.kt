@@ -57,7 +57,12 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         insertTestShows()
         val query = "Breaking"
 
-        val results = tvShowQueries.searchShows(query, query, query, query).executeAsList()
+        val results = tvShowQueries.searchShows(
+            // Parameters for WHERE clause
+            query, query, query, query,
+            // Parameters for ORDER BY clause
+            query, query, query,
+        ).executeAsList()
 
         results shouldHaveSize 1
         with(results.first()) {
@@ -71,7 +76,12 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         insertTestShows()
         val query = "breaking"
 
-        val results = tvShowQueries.searchShows(query, query, query, query).executeAsList()
+        val results = tvShowQueries.searchShows(
+            // Parameters for WHERE clause
+            query, query, query, query,
+            // Parameters for ORDER BY clause
+            query, query, query,
+        ).executeAsList()
 
         results shouldHaveSize 1
         results.first().name shouldBe "Breaking Bad"
@@ -82,7 +92,12 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         insertTestShows()
         val query = "bad"
 
-        val results = tvShowQueries.searchShows(query, query, query, query).executeAsList()
+        val results = tvShowQueries.searchShows(
+            // Parameters for WHERE clause
+            query, query, query, query,
+            // Parameters for ORDER BY clause
+            query, query, query,
+        ).executeAsList()
 
         results shouldHaveSize 1
         results.first().name shouldBe "Breaking Bad"
@@ -93,7 +108,12 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         insertTestShows()
         val query = "nonexistent"
 
-        val results = tvShowQueries.searchShows(query, query, query, query).executeAsList()
+        val results = tvShowQueries.searchShows(
+            // Parameters for WHERE clause
+            query, query, query, query,
+            // Parameters for ORDER BY clause
+            query, query, query,
+        ).executeAsList()
 
         results shouldHaveSize 0
     }
@@ -103,7 +123,12 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
         insertTestShows()
         val query = "the"
 
-        val results = tvShowQueries.searchShows(query, query, query, query).executeAsList()
+        val results = tvShowQueries.searchShows(
+            // Parameters for WHERE clause
+            query, query, query, query,
+            // Parameters for ORDER BY clause
+            query, query, query,
+        ).executeAsList()
 
         results shouldHaveSize 3
         with(results) {

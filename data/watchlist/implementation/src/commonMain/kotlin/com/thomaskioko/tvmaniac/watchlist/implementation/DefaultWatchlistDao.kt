@@ -52,7 +52,12 @@ class DefaultWatchlistDao(
 
     override fun observeWatchlistByQuery(query: String): Flow<List<SearchWatchlist>> {
         return database.watchlistQueries
-            .searchWatchlist(query, query, query, query)
+            .searchWatchlist(
+                // Parameters for WHERE clause
+                query, query, query, query,
+                // Parameters for ORDER BY clause
+                query, query, query,
+            )
             .asFlow()
             .mapToList(dispatchers.io)
     }

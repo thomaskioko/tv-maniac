@@ -37,42 +37,57 @@ class DefaultTvShowsDao(
 
     override fun upsert(show: Tvshow) {
         tvShowQueries.transaction {
-            tvShowQueries.upsert(
-                id = show.id,
-                name = show.name,
-                overview = show.overview,
-                language = show.language,
-                first_air_date = show.first_air_date,
-                vote_average = show.vote_average,
-                vote_count = show.vote_count,
-                popularity = show.popularity,
-                genre_ids = show.genre_ids,
-                status = show.status,
-                episode_numbers = show.episode_numbers,
-                last_air_date = show.last_air_date,
-                season_numbers = show.season_numbers,
-                poster_path = show.poster_path,
-                backdrop_path = show.backdrop_path,
-            )
-
-            show.genre_ids.forEach { genreId ->
-                if (genresQueries.exists(Id(genreId.toLong())).executeAsOne()) {
-                    genresQueries.upsert(
-                        show_id = show.id,
-                        genre_id = Id(genreId.toLong()),
-                    )
-                }
-            }
+            upsertShowWithGenres(show)
         }
     }
 
     override fun upsert(list: List<Tvshow>) {
-        list.forEach { upsert(it) }
+        if (list.isEmpty()) return
+
+        tvShowQueries.transaction {
+            list.forEach { show ->
+                upsertShowWithGenres(show)
+            }
+        }
+    }
+
+    private fun upsertShowWithGenres(show: Tvshow) {
+        tvShowQueries.upsert(
+            id = show.id,
+            name = show.name,
+            overview = show.overview,
+            language = show.language,
+            first_air_date = show.first_air_date,
+            vote_average = show.vote_average,
+            vote_count = show.vote_count,
+            popularity = show.popularity,
+            genre_ids = show.genre_ids,
+            status = show.status,
+            episode_numbers = show.episode_numbers,
+            last_air_date = show.last_air_date,
+            season_numbers = show.season_numbers,
+            poster_path = show.poster_path,
+            backdrop_path = show.backdrop_path,
+        )
+
+        show.genre_ids.forEach { genreId ->
+            if (genresQueries.exists(Id(genreId.toLong())).executeAsOne()) {
+                genresQueries.upsert(
+                    show_id = show.id,
+                    genre_id = Id(genreId.toLong()),
+                )
+            }
+        }
     }
 
     override fun observeShowsByQuery(query: String): Flow<List<ShowEntity>> {
         return tvShowQueries
-            .searchShows(query, query, query, query) { id, title, imageUrl, overview, status, voteAverage, year, inLibrary ->
+            .searchShows(
+                // Parameters for WHERE clause
+                query, query, query, query,
+                // Parameters for ORDER BY clause
+                query, query, query,
+            ) { id, title, imageUrl, overview, status, voteAverage, year, inLibrary ->
                 ShowEntity(
                     id = id.id,
                     title = title,
@@ -89,7 +104,7 @@ class DefaultTvShowsDao(
     }
 
     override fun observeQueryCount(query: String): Flow<Long> {
-        return tvShowQueries.searchShowsCount(query, query)
+        return tvShowQueries.searchShowsCount(query, query, query, query)
             .asFlow()
             .mapToOne(dispatchers.io)
     }
