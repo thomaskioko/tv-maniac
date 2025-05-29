@@ -28,6 +28,5 @@ class FakeGenreRepository : GenreRepository {
     override suspend fun observeShowByGenreId(id: String): Flow<List<Tvshow>> = showListResult.asStateFlow()
 
     override suspend fun observeGenrePosters() {
-
     }
 }
