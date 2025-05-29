@@ -344,7 +344,7 @@ jobs:
               run: brew install swiftformat
 
           -   name: 🔍 Check Swift Format
-              run: fastlane check_swift_format
+              run: bundle exec fastlane check_swift_format
 
   ios-snapshot-test:
     runs-on: macos-15
