@@ -109,9 +109,9 @@ struct DiscoverTab: View {
                     posterWidth: geometry.size.width,
                     posterHeight: scrollViewHeight
                 )
-                    .onTapGesture {
-                        presenter.dispatch(action: ShowClicked(id: item.tmdbId))
-                    }
+                .onTapGesture {
+                    presenter.dispatch(action: ShowClicked(id: item.tmdbId))
+                }
             }
         }
     }
@@ -216,15 +216,15 @@ struct DiscoverTab: View {
                 startPoint: .bottom,
                 endPoint: .top
             )
-                .frame(height: 550)
-                .allowsHitTesting(false)
+            .frame(height: 550)
+            .allowsHitTesting(false)
         )
     }
 
     @ViewBuilder
     private func customIndicator(_ shows: [SwiftShow]) -> some View {
         HStack(spacing: 8) {
-            ForEach(0..<shows.count, id: \.self) { index in
+            ForEach(0 ..< shows.count, id: \.self) { index in
                 Circle()
                     .fill(index == currentIndex ? Color.white : Color.white.opacity(0.3))
                     .frame(width: 8, height: 8)
@@ -243,9 +243,7 @@ struct DiscoverTab: View {
                 HorizontalShowContentView(
                     title: String(\.label_trending_today),
                     chevronStyle: .chevron,
-                    items: state.trendingShows.map {
-                        $0.toSwift()
-                    },
+                    items: state.trendingShows.map { $0.toSwift() },
                     onClick: { id in
                         presenter.dispatch(action: ShowClicked(id: id))
                     },
@@ -259,9 +257,7 @@ struct DiscoverTab: View {
                 HorizontalShowContentView(
                     title: String(\.label_popular),
                     chevronStyle: .chevron,
-                    items: state.popularShows.map {
-                        $0.toSwift()
-                    },
+                    items: state.popularShows.map { $0.toSwift() },
                     onClick: { id in
                         presenter.dispatch(action: ShowClicked(id: id))
                     },
@@ -275,9 +271,7 @@ struct DiscoverTab: View {
                 HorizontalShowContentView(
                     title: String(\.label_top_rated),
                     chevronStyle: .chevron,
-                    items: state.topRatedShows.map {
-                        $0.toSwift()
-                    },
+                    items: state.topRatedShows.map { $0.toSwift() },
                     onClick: { id in
                         presenter.dispatch(action: ShowClicked(id: id))
                     },
@@ -291,9 +285,7 @@ struct DiscoverTab: View {
                 HorizontalShowContentView(
                     title: String(\.label_on_the_air),
                     chevronStyle: .chevron,
-                    items: state.onTheAirShows.map {
-                        $0.toSwift()
-                    },
+                    items: state.onTheAirShows.map { $0.toSwift() },
                     onClick: { id in
                         presenter.dispatch(action: ShowClicked(id: id))
                     },
@@ -307,9 +299,7 @@ struct DiscoverTab: View {
                 HorizontalShowContentView(
                     title: String(\.label_airing_today),
                     chevronStyle: .chevron,
-                    items: state.airingTodayShows.map {
-                        $0.toSwift()
-                    },
+                    items: state.airingTodayShows.map { $0.toSwift() },
                     onClick: { id in
                         presenter.dispatch(action: ShowClicked(id: id))
                     },
