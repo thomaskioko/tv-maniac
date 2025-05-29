@@ -66,4 +66,18 @@ platform :ios do
       derived_data_path: "derived_data"
     )
   end
+
+  desc "Run SwiftFormat"
+  lane :format_swift_code do
+    # Using SwiftFormat directly (installed via Homebrew or Swift Package Manager)
+    # See: https://github.com/nicklockwood/SwiftFormat
+    sh "cd .. && swiftformat ios --config ios/.swiftformat"
+  end
+
+  desc "Check SwiftFormat without making changes"
+  lane :check_swift_format do
+    # Using SwiftFormat directly (installed via Homebrew or Swift Package Manager)
+    # See: https://github.com/nicklockwood/SwiftFormat
+    sh "cd .. && swiftformat ios --config ios/.swiftformat --lint"
+  end
 end
