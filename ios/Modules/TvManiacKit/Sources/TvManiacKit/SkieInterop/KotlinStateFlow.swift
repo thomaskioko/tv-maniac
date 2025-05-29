@@ -1,32 +1,32 @@
-import TvManiac
 import SwiftUI
+import TvManiac
 
 @propertyWrapper
 public class KotlinStateFlow<T: AnyObject>: ObservableObject {
-  @Published public private(set) var wrappedValue: T
-  private var publisher: Task<(), Never>?
-  private let stateFlow: SkieSwiftStateFlow<T>
+    @Published public private(set) var wrappedValue: T
+    private var publisher: Task<Void, Never>?
+    private let stateFlow: SkieSwiftStateFlow<T>
 
-  public init(_ value: SkieSwiftStateFlow<T>) {
-    self.stateFlow = value
-    self.wrappedValue = value.value
+    public init(_ value: SkieSwiftStateFlow<T>) {
+        stateFlow = value
+        wrappedValue = value.value
 
-    startObserving()
-  }
+        startObserving()
+    }
 
-  private func startObserving() {
-    self.publisher = Task { @MainActor [weak self] in
-        if let stateFlow = self?.stateFlow {
-            for await item in stateFlow {
-                self?.wrappedValue = item
+    private func startObserving() {
+        publisher = Task { @MainActor [weak self] in
+            if let stateFlow = self?.stateFlow {
+                for await item in stateFlow {
+                    self?.wrappedValue = item
+                }
             }
         }
     }
-  }
 
-  deinit {
-    publisher?.cancel()
-  }
+    deinit {
+        publisher?.cancel()
+    }
 }
 
 public extension ObservedObject {
@@ -40,4 +40,3 @@ public extension StateObject {
         self.init(wrappedValue: KotlinStateFlow(stateFlow))
     }
 }
-

@@ -1,5 +1,5 @@
 //
-//  HorizontalItemContentListView.swift
+//  HorizontalItemListView.swift
 //  tv-maniac
 //
 //  Created by Thomas Kioko on 19.12.23.

@@ -1,13 +1,13 @@
 import SwiftUI
 
 public extension GeometryProxy {
-
     func getTitleOpacity(geometry: GeometryProxy, imageHeight: CGFloat, collapsedImageHeight: CGFloat) -> Double {
         let progress = -geometry.frame(in: .global).minY / (imageHeight - collapsedImageHeight)
-           return Double(min(1, max(0, progress)))
-       }
+        return Double(min(1, max(0, progress)))
+    }
 
-    private func getTitleOpacity(scrollOffset: CGFloat, imageHeight: CGFloat, collapsedImageHeight: CGFloat) -> CGFloat {
+    private func getTitleOpacity(scrollOffset: CGFloat, imageHeight: CGFloat,
+                                 collapsedImageHeight: CGFloat) -> CGFloat {
         let progress = -scrollOffset / (imageHeight - collapsedImageHeight)
         return min(1, max(0, progress))
     }
@@ -33,5 +33,4 @@ public extension GeometryProxy {
         let blur = (height - max(offset, 0)) / height
         return blur * 6
     }
-
 }

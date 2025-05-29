@@ -27,10 +27,10 @@ public struct SnapCarousel<Content: View>: View {
         additionalGesture: AnyGesture<DragGesture.Value>? = nil,
         @ViewBuilder content: @escaping (SwiftShow) -> Content
     ) {
-        self.list = items
+        list = items
         self.spacing = spacing
         self.trailingSpace = trailingSpace
-        self._index = index
+        _index = index
         self.content = content
         self.additionalGesture = additionalGesture
     }

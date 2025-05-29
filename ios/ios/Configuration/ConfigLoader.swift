@@ -8,8 +8,7 @@
 
 import Foundation
 
-struct ConfigLoader {
-
+enum ConfigLoader {
     static func load() throws -> Config {
         guard let infoDictionary = Bundle.main.infoDictionary else {
             throw ApplicationError(

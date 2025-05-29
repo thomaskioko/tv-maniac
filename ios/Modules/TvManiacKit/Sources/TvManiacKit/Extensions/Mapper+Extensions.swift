@@ -2,57 +2,56 @@ import SwiftUIComponents
 import TvManiac
 
 public extension TvManiac.WatchlistItem {
-  func toSwift() -> ShowPosterImage {
-    .init(
-      tmdbId: tmdbId,
-      title: title,
-      posterUrl: posterImageUrl,
-      inLibrary: true
-    )
-  }
+    func toSwift() -> ShowPosterImage {
+        .init(
+            tmdbId: tmdbId,
+            title: title,
+            posterUrl: posterImageUrl,
+            inLibrary: true
+        )
+    }
 }
 
 public extension TvManiac.SeasonImagesModel {
-  func toSwift() -> ShowPosterImage {
-    .init(
-      tmdbId: id,
-      title: "",
-      posterUrl: imageUrl,
-      inLibrary: false
-    )
-  }
+    func toSwift() -> ShowPosterImage {
+        .init(
+            tmdbId: id,
+            title: "",
+            posterUrl: imageUrl,
+            inLibrary: false
+        )
+    }
 }
 
 public extension TvManiac.TvShow {
-  func toSwift() -> ShowPosterImage {
-    .init(
-      tmdbId: tmdbId,
-      title: title,
-      posterUrl: posterImageUrl,
-      inLibrary: inLibrary
-    )
-  }
+    func toSwift() -> ShowPosterImage {
+        .init(
+            tmdbId: tmdbId,
+            title: title,
+            posterUrl: posterImageUrl,
+            inLibrary: inLibrary
+        )
+    }
 }
 
 public extension DiscoverShow {
-  func toSwift() -> SwiftShow {
-    .init(
-      tmdbId: tmdbId,
-      title: title,
-      posterUrl: posterImageUrl,
-      backdropUrl: nil,
-      inLibrary: inLibrary,
-      overview: overView
-    )
-  }
+    func toSwift() -> SwiftShow {
+        .init(
+            tmdbId: tmdbId,
+            title: title,
+            posterUrl: posterImageUrl,
+            backdropUrl: nil,
+            inLibrary: inLibrary,
+            overview: overView
+        )
+    }
 }
 
 public extension TvManiac.ShowGenre {
-  func toSwift() -> SwiftShowGenre {
-    .init(tmdbId: id, name: name, imageUrl: posterUrl)
-  }
+    func toSwift() -> SwiftShowGenre {
+        .init(tmdbId: id, name: name, imageUrl: posterUrl)
+    }
 }
-
 
 public extension TvManiac.ShowModel {
     func toSwift() -> SwiftShow {
@@ -135,26 +134,25 @@ public extension SeasonImagesModel {
 }
 
 public extension ShowItem {
-  func toSwift() -> SwiftShow {
-    .init(
-      tmdbId: tmdbId,
-      title: title,
-      posterUrl: posterImageUrl,
-      backdropUrl: nil,
-      inLibrary: inLibrary
-    )
-  }
+    func toSwift() -> SwiftShow {
+        .init(
+            tmdbId: tmdbId,
+            title: title,
+            posterUrl: posterImageUrl,
+            backdropUrl: nil,
+            inLibrary: inLibrary
+        )
+    }
 
-  func toSwift() -> SwiftSearchShow {
-    .init(
-      tmdbId: tmdbId,
-      title: title,
-      overview: overview,
-      status: status,
-      imageUrl: posterImageUrl,
-      year: year,
-      voteAverage: voteAverage?.doubleValue
-    )
-  }
+    func toSwift() -> SwiftSearchShow {
+        .init(
+            tmdbId: tmdbId,
+            title: title,
+            overview: overview,
+            status: status,
+            imageUrl: posterImageUrl,
+            year: year,
+            voteAverage: voteAverage?.doubleValue
+        )
+    }
 }
-

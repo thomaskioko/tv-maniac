@@ -1,6 +1,6 @@
 //
 //  TransparentGroupBox.swift
-//  
+//
 //
 //  Created by Thomas Kioko on 9/8/24.
 //
@@ -30,4 +30,3 @@ struct TransparentGroupBox: GroupBoxStyle {
         }
     }
 }
-

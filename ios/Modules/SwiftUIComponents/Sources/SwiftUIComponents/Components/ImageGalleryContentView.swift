@@ -9,11 +9,10 @@
 import SwiftUI
 
 public struct ImageGalleryContentView: View {
-  private let items: [ShowPosterImage]
+    private let items: [ShowPosterImage]
     @Environment(\.presentationMode) private var presentationMode
 
-    public init(items: [ShowPosterImage
-    ]) {
+    public init(items: [ShowPosterImage]) {
         self.items = items
     }
 

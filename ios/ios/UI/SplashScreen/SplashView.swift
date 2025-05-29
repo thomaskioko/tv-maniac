@@ -12,27 +12,27 @@ struct SplashView: View {
     @State private var isActive = false
     private let content: AnyView
 
-    init<Content: View>(@ViewBuilder content: @escaping () -> Content) {
+    init(@ViewBuilder content: @escaping () -> some View) {
         self.content = AnyView(content())
     }
 
     var body: some View {
         if isActive {
-          ZStack {
-            content
-          }
+            ZStack {
+                content
+            }
         } else {
             VStack {
-              Image("TvManiacIcon")
-                  .resizable()
-                  .scaledToFit()
-                  .frame(width: 180, height: 180)
-                  .clipShape(Circle())
+                Image("TvManiacIcon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 180, height: 180)
+                    .clipShape(Circle())
             }
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation {
-                        self.isActive = true
+                        isActive = true
                     }
                 }
             }

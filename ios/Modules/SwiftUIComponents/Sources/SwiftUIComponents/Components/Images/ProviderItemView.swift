@@ -37,8 +37,7 @@ public struct ProviderItemView: View {
                     .clipped()
                     .cornerRadius(imageRadius)
                     .shadow(color: Color.grey200.opacity(0.3), radius: shadowRadius, x: 0, y: 2)
-            }
-            else {
+            } else {
                 providerPlaceholder
             }
         }

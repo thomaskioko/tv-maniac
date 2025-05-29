@@ -1,7 +1,7 @@
 import Foundation
 
 public struct SwiftSeason: Identifiable {
-    public let id: UUID = UUID()
+    public let id: UUID = .init()
     public let tvShowId: Int64
     public let seasonId: Int64
     public let seasonNumber: Int64

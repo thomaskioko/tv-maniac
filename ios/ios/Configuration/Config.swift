@@ -8,9 +8,7 @@
 
 import Foundation
 
-
 struct Config: Decodable {
-
     var BUNDLE_ID: String
     var APP_NAME: String
     var APPICON_NAME: String
@@ -23,19 +21,19 @@ struct Config: Decodable {
     var responseType: String = ""
 
     init() {
-        self.BUNDLE_ID = ""
-        self.APP_NAME = ""
-        self.APPICON_NAME = ""
+        BUNDLE_ID = ""
+        APP_NAME = ""
+        APPICON_NAME = ""
     }
 
     init(bundleID: String, appName: String, appIconName: String) {
-        self.BUNDLE_ID = bundleID
-        self.APP_NAME = appName
-        self.APPICON_NAME = appIconName
+        BUNDLE_ID = bundleID
+        APP_NAME = appName
+        APPICON_NAME = appIconName
     }
 
     func getAuthorizeUrl() throws -> URL {
-        guard let url = URL(string: self.authorizeUrl) else {
+        guard let url = URL(string: authorizeUrl) else {
             throw ApplicationError(
                 title: "Invalid Configuration Error",
                 description: "The authorizeUrl could not be parsed"
@@ -45,7 +43,7 @@ struct Config: Decodable {
     }
 
     func getAccessTokenUrl() throws -> URL {
-        guard let url = URL(string: self.accessTokenUrl) else {
+        guard let url = URL(string: accessTokenUrl) else {
             throw ApplicationError(
                 title: "Invalid Configuration Error",
                 description: "The accessTokenUrl could not be parsed"
@@ -55,7 +53,7 @@ struct Config: Decodable {
     }
 
     func getCallbackURL() throws -> URL {
-        guard let url = URL(string: self.callbackUrl) else {
+        guard let url = URL(string: callbackUrl) else {
             throw ApplicationError(
                 title: "Invalid Configuration Error",
                 description: "The callbackURL could not be parsed"
