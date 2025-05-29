@@ -24,12 +24,14 @@ if [ -d "ios" ]; then
     exit 1
   fi
 
-  # Run SwiftFormat check
-  cd ios && swiftformat . --config .swiftformat --lint
+  # Run SwiftFormat check (lint mode only checks without changing files)
+  cd ios && swiftformat . --config .swiftformat --lint --swiftversion 5.9 --exclude derived_data
 
   # Check the exit code
   if [ $? -ne 0 ]; then
-    echo "❌ Swift code formatting check failed. Please run 'cd ios && swiftformat . --config .swiftformat' to fix formatting issues."
+    echo "❌ Swift code formatting check failed. Please run the following command to fix formatting issues:"
+    echo "cd ios && swiftformat . --config .swiftformat --swiftversion 5.9 --exclude derived_data"
+    echo "Note: This will modify your files to match the formatting rules. After fixing, commit again."
     exit 1
   fi
 
