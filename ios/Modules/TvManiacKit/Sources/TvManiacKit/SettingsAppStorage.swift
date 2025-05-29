@@ -1,8 +1,7 @@
 import SwiftUI
 
 public final class SettingsAppStorage: ObservableObject {
-    private init() {
-    }
+    private init() {}
 
     public static let shared = SettingsAppStorage()
 

@@ -93,7 +93,7 @@ struct SeasonDetailsView: View {
                     OverviewBoxView(
                         overview: state.seasonOverview
                     )
-                        .padding()
+                    .padding()
                 }
 
                 EpisodeListView(
@@ -133,23 +133,23 @@ struct SeasonDetailsView: View {
                 imageUrl: state.imageUrl,
                 posterHeight: headerHeight
             )
-                .foregroundStyle(.ultraThinMaterial)
-                .overlay(
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            .clear,
-                            .clear,
-                            .clear,
-                            .clear,
-                            .clear,
-                            Color.background.opacity(0.8),
-                            Color.background,
-                        ]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
+            .foregroundStyle(.ultraThinMaterial)
+            .overlay(
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        .clear,
+                        .clear,
+                        .clear,
+                        .clear,
+                        .clear,
+                        Color.background.opacity(0.8),
+                        Color.background,
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
                 )
-                .frame(height: headerHeight)
+            )
+            .frame(height: headerHeight)
 
             ZStack(alignment: .bottom) {
                 VStack {

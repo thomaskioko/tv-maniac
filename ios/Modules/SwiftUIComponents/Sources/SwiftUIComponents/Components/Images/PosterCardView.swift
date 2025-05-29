@@ -34,28 +34,28 @@ public struct PosterCardView: View {
             posterHeight: posterHeight,
             posterRadius: posterRadius
         )
-            .overlay {
-                ZStack {
-                    Rectangle().fill(.black.opacity(0.5))
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Text(title)
-                                .foregroundColor(.white)
-                                .font(.avenirNext(size: 18))
-                                .fontWeight(.semibold)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(3)
-                                .frame(maxWidth: .infinity, alignment: .center)
+        .overlay {
+            ZStack {
+                Rectangle().fill(.black.opacity(0.5))
+                VStack {
+                    Spacer()
+                    HStack {
+                        Text(title)
+                            .foregroundColor(.white)
+                            .font(.avenirNext(size: 18))
+                            .fontWeight(.semibold)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(3)
+                            .frame(maxWidth: .infinity, alignment: .center)
 
-                            Spacer()
-                        }
-                        .padding(.horizontal)
-                        .padding(.bottom, 8)
+                        Spacer()
                     }
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
                 }
-                .frame(width: posterWidth, height: posterHeight, alignment: .center)
             }
+            .frame(width: posterWidth, height: posterHeight, alignment: .center)
+        }
     }
 }
 

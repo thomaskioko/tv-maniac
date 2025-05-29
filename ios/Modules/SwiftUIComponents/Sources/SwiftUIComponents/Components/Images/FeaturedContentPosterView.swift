@@ -62,13 +62,13 @@ public struct FeaturedContentPosterView: View {
                             Color.black.opacity(0.6)
                                 .mask {
                                     LinearGradient(colors:
-                                                   [Color.black,
-                                                    Color.black.opacity(0.924),
-                                                    Color.black.opacity(0.707),
-                                                    Color.black.opacity(0.383),
-                                                    Color.black.opacity(0)],
-                                                   startPoint: .bottom,
-                                                   endPoint: .top)
+                                        [Color.black,
+                                         Color.black.opacity(0.924),
+                                         Color.black.opacity(0.707),
+                                         Color.black.opacity(0.383),
+                                         Color.black.opacity(0)],
+                                        startPoint: .bottom,
+                                        endPoint: .top)
                                 }
                         }
                     }
@@ -90,9 +90,9 @@ public struct FeaturedContentPosterView: View {
                 posterHeight: posterHeight,
                 posterRadius: posterRadius
             )
-                .onTapGesture {
-                    onClick(showId)
-                }
+            .onTapGesture {
+                onClick(showId)
+            }
         }
     }
 }

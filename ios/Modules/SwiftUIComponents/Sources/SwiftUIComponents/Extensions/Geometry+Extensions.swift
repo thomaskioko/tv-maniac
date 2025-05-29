@@ -7,7 +7,8 @@ public extension GeometryProxy {
     }
 
     private func getTitleOpacity(scrollOffset: CGFloat, imageHeight: CGFloat,
-                                 collapsedImageHeight: CGFloat) -> CGFloat {
+                                 collapsedImageHeight: CGFloat) -> CGFloat
+    {
         let progress = -scrollOffset / (imageHeight - collapsedImageHeight)
         return min(1, max(0, progress))
     }

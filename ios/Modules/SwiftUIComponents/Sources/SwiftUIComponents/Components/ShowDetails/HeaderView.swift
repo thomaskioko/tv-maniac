@@ -39,23 +39,23 @@ public struct HeaderView: View {
                 imageUrl: backdropImageUrl,
                 posterHeight: headerHeight
             )
-                .foregroundStyle(.ultraThinMaterial)
-                .overlay(
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            .clear,
-                            .clear,
-                            Color.background.opacity(0.1),
-                            Color.background.opacity(0.3),
-                            Color.background.opacity(0.6),
-                            Color.background.opacity(0.9),
-                            Color.background,
-                        ]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
+            .foregroundStyle(.ultraThinMaterial)
+            .overlay(
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        .clear,
+                        .clear,
+                        Color.background.opacity(0.1),
+                        Color.background.opacity(0.3),
+                        Color.background.opacity(0.6),
+                        Color.background.opacity(0.9),
+                        Color.background,
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
                 )
-                .frame(height: headerHeight)
+            )
+            .frame(height: headerHeight)
 
             VStack {
                 Spacer()
@@ -68,8 +68,8 @@ public struct HeaderView: View {
                     language: language,
                     rating: rating
                 )
-                    .opacity(1 - progress)
-                    .padding(.bottom, 2)
+                .opacity(1 - progress)
+                .padding(.bottom, 2)
             }
             .frame(height: headerHeight)
         }

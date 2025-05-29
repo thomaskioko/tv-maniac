@@ -10,8 +10,7 @@ public struct ChevronTitle: View {
         title: String,
         subtitle: String? = nil,
         chevronStyle: ChevronStyle = .none,
-        action: @escaping () -> Void = {
-        }
+        action: @escaping () -> Void = {}
     ) {
         self.title = title
         self.subtitle = subtitle

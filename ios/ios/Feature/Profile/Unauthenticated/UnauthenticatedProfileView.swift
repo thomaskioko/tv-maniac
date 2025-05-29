@@ -30,9 +30,9 @@ struct UnauthentivatedProfileView: View {
             Text(
                 "Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch. By signing in, you will have access to the follwing:"
             )
-                .bodyMediumFont(size: 16)
-                .multilineTextAlignment(.center)
-                .padding(8)
+            .bodyMediumFont(size: 16)
+            .multilineTextAlignment(.center)
+            .padding(8)
 
             BulletList(
                 listItemSpacing: 10,
@@ -74,7 +74,8 @@ struct BulletList: View {
 
     var body: some View {
         VStack(alignment: .leading,
-               spacing: listItemSpacing) {
+               spacing: listItemSpacing)
+        {
             ForEach(listItems, id: \.self) { data in
                 HStack(alignment: .top) {
                     Text(bullet)

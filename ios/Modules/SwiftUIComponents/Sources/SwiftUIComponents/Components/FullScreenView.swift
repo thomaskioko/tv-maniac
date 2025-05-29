@@ -21,8 +21,7 @@ public struct FullScreenView: View {
         message: String = "Something went wrong",
         subtitle: String? = nil,
         buttonText: String? = nil,
-        action: @escaping () -> Void = {
-        },
+        action: @escaping () -> Void = {},
         color: Color = .accent
     ) {
         self.systemName = systemName
@@ -62,9 +61,9 @@ public struct FullScreenView: View {
                     verticalPadding: 8,
                     action: action
                 )
-                    .background(Color.accent)
-                    .cornerRadius(5)
-                    .padding([.top], 4)
+                .background(Color.accent)
+                .cornerRadius(5)
+                .padding([.top], 4)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

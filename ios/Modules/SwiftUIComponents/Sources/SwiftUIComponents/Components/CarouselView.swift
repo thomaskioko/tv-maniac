@@ -51,14 +51,14 @@ public struct CarouselView<T, Content: View>: View {
                         .cornerRadius(0)
                         .simultaneousGesture(
                             DragGesture(minimumDistance: 0)
-                            .onChanged { _ in
-                                isDragging = true
-                                stopAutoScroll()
-                            }
-                            .onEnded { _ in
-                                isDragging = false
-                                setupAutoScroll()
-                            }
+                                .onChanged { _ in
+                                    isDragging = true
+                                    stopAutoScroll()
+                                }
+                                .onEnded { _ in
+                                    isDragging = false
+                                    setupAutoScroll()
+                                }
                         )
                     })
                 }

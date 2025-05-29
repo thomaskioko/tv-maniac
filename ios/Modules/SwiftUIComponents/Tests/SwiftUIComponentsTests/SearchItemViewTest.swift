@@ -13,8 +13,8 @@ class SearchItemViewTest: XCTestCase {
             year: "2024",
             voteAverage: 5.4
         )
-            .padding()
-            .background(Color.background)
-            .assertSnapshot(testName: "SearchItemView")
+        .padding()
+        .background(Color.background)
+        .assertSnapshot(testName: "SearchItemView")
     }
 }

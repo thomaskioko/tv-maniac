@@ -40,10 +40,10 @@ public struct FilledImageButton: View {
             verticalPadding: verticalPadding,
             action: action
         )
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .foregroundColor(color)
-            )
+        .background(
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .foregroundColor(color)
+        )
     }
 }
 

@@ -6,17 +6,17 @@ public struct ToastModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         content
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .overlay(
-            ZStack {
-                mainToastView()
-                    .offset(y: -30)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay(
+                ZStack {
+                    mainToastView()
+                        .offset(y: -30)
+                }
+                .animation(.spring(), value: toast)
+            )
+            .onChange(of: toast) { _ in
+                showToast()
             }
-            .animation(.spring(), value: toast)
-        )
-        .onChange(of: toast) { _ in
-            showToast()
-        }
     }
 
     @ViewBuilder func mainToastView() -> some View {

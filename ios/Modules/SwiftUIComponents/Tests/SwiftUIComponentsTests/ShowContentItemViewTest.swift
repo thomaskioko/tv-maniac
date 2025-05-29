@@ -9,8 +9,8 @@ class ShowContentItemViewTest: XCTestCase {
             title: "The Penguin",
             imageUrl: ""
         )
-            .padding()
-            .background(Color.background)
-            .assertSnapshot(testName: "ShowContentItemView")
+        .padding()
+        .background(Color.background)
+        .assertSnapshot(testName: "ShowContentItemView")
     }
 }

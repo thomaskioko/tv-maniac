@@ -45,7 +45,8 @@ struct WatchlistTab: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 HStack {
                     Button(String(\.label_watchlist_list_style),
-                           systemImage: changeListStyle ? "list.dash" : "square.grid.2x2") {
+                           systemImage: changeListStyle ? "list.dash" : "square.grid.2x2")
+                    {
                         withAnimation {
                             changeListStyle.toggle()
                             presenter.dispatch(action: ChangeListStyleClicked())
@@ -88,7 +89,7 @@ struct WatchlistTab: View {
                     systemName: "exclamationmark.magnifyingglass",
                     message: state.message ?? String(\.label_search_empty_results)
                 )
-                    .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity)
             }
         }
     }
@@ -156,15 +157,15 @@ struct WatchlistTab: View {
         LazyVStack(spacing: 8) {
             ForEach(content.list, id: \.tmdbId) { item in
                 WatchlistListItem(item: item, namespace: animation)
-                .onTapGesture {
-                    presenter.dispatch(action: WatchlistShowClicked(id: item.tmdbId))
-                }
-                .transition(
-                    .asymmetric(
-                        insertion: .scale(scale: 0.9).combined(with: .opacity),
-                        removal: .scale(scale: 1.1).combined(with: .opacity)
+                    .onTapGesture {
+                        presenter.dispatch(action: WatchlistShowClicked(id: item.tmdbId))
+                    }
+                    .transition(
+                        .asymmetric(
+                            insertion: .scale(scale: 0.9).combined(with: .opacity),
+                            removal: .scale(scale: 1.1).combined(with: .opacity)
+                        )
                     )
-                )
             }
         }
         .padding(.horizontal)
@@ -205,7 +206,8 @@ struct WatchlistTab: View {
     private var empty: some View {
         let subtitle = uiState.query?.isEmpty ?? true ? "Add shows to keep track of them" : "Try a different keyword!"
         if let message = uiState.query?
-            .isEmpty ?? true ? "Your watchlist is empty." : "No results found for '\(uiState.query ?? "")'." {
+            .isEmpty ?? true ? "Your watchlist is empty." : "No results found for '\(uiState.query ?? "")'."
+        {
             CenteredFullScreenView {
                 FullScreenView(
                     systemName: "magnifyingglass",
@@ -213,7 +215,7 @@ struct WatchlistTab: View {
                     subtitle: subtitle,
                     color: Color.secondary
                 )
-                    .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity)
             }
         }
     }

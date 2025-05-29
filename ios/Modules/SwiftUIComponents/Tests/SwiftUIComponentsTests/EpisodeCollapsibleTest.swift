@@ -12,8 +12,7 @@ class EpisodeCollapsibleTest: XCTestCase {
             onCollapseClicked: {},
             onWatchedStateClicked: {}
         ) {
-            VStack {
-            }
+            VStack {}
         }
         .padding()
         .background(Color.background)

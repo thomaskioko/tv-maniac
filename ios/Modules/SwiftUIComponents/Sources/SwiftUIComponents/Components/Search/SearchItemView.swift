@@ -48,7 +48,7 @@ public struct SearchItemView: View {
                 posterHeight: imageHeight,
                 posterRadius: imageRadius
             )
-                .padding(.trailing, 4)
+            .padding(.trailing, 4)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)

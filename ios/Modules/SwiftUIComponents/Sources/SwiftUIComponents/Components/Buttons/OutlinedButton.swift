@@ -33,10 +33,10 @@ public struct OutlinedButton: View {
             systemImageName: systemImageName,
             action: action
         )
-            .overlay(
-                RoundedRectangle(cornerRadius: 5)
-                    .stroke(borderColor, lineWidth: 2)
-            )
+        .overlay(
+            RoundedRectangle(cornerRadius: 5)
+                .stroke(borderColor, lineWidth: 2)
+        )
     }
 }
 

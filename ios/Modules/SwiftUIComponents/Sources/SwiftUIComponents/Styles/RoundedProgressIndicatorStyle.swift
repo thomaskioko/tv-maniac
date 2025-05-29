@@ -35,7 +35,7 @@ private enum DimensionConstants {
             value: CGFloat(0.4),
             total: 1
         )
-            .progressViewStyle(RoundedRectProgressViewStyle(progressIndicatorHeight: 6))
+        .progressViewStyle(RoundedRectProgressViewStyle(progressIndicatorHeight: 6))
 
         Spacer()
     }

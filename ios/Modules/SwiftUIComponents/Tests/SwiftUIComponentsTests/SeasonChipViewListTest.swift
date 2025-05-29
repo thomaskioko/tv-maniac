@@ -12,8 +12,8 @@ class SeasonChipViewListTest: XCTestCase {
             ],
             onClick: { _ in }
         )
-            .padding()
-            .background(Color.background)
-            .assertSnapshot(testName: "SeasonChipViewList")
+        .padding()
+        .background(Color.background)
+        .assertSnapshot(testName: "SeasonChipViewList")
     }
 }

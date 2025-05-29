@@ -116,7 +116,7 @@ class ShowInfoViewTest: XCTestCase {
             onSeasonClicked: { _, _ in },
             onShowClicked: { _ in }
         )
-            .background(Color.background)
-            .assertSnapshot(testName: "ShowInfoView")
+        .background(Color.background)
+        .assertSnapshot(testName: "ShowInfoView")
     }
 }

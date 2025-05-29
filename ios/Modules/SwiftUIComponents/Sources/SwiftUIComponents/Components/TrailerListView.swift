@@ -30,9 +30,9 @@ public struct TrailerListView: View {
                                 thumbnailUrl: trailer.youtubeThumbnailUrl,
                                 onError: onError
                             )
-                                .padding(.horizontal, 4)
-                                .padding(.leading, trailer.key == trailers.first?.key ? 16 : 0)
-                                .padding(.trailing, trailer.key == trailers.last?.key ? 16 : 0)
+                            .padding(.horizontal, 4)
+                            .padding(.leading, trailer.key == trailers.first?.key ? 16 : 0)
+                            .padding(.trailing, trailer.key == trailers.last?.key ? 16 : 0)
                         }
                     }
                 }

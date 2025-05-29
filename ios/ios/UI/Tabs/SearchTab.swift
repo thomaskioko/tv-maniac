@@ -95,12 +95,12 @@ struct SearchTab: View {
                             posterWidth: 170,
                             posterHeight: 220
                         )
-                            .clipped()
-                            .onTapGesture {
-                                withAnimation(.none) {
-                                    presenter.dispatch(action: GenreCategoryClicked(id: item.tmdbId))
-                                }
+                        .clipped()
+                        .onTapGesture {
+                            withAnimation(.none) {
+                                presenter.dispatch(action: GenreCategoryClicked(id: item.tmdbId))
                             }
+                        }
                     }
                 }
 
@@ -168,7 +168,7 @@ struct SearchTab: View {
             buttonText: String(\.button_error_retry),
             action: { presenter.dispatch(action: ReloadShowContent()) }
         )
-            .frame(maxWidth: .infinity)
-            .frame(height: 200)
+        .frame(maxWidth: .infinity)
+        .frame(height: 200)
     }
 }

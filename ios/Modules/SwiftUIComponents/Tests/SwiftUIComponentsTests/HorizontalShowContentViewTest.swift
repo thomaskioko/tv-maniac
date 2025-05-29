@@ -33,8 +33,8 @@ class HorizontalShowContentViewViewTest: XCTestCase {
             onClick: { _ in },
             onMoreClicked: {}
         )
-            .padding()
-            .background(Color.background)
-            .assertSnapshot(testName: "HorizontalShowContentView")
+        .padding()
+        .background(Color.background)
+        .assertSnapshot(testName: "HorizontalShowContentView")
     }
 }

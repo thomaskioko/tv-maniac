@@ -65,7 +65,7 @@ public struct CastCardView: View {
             LinearGradient(
                 colors: [.clear, .black], startPoint: .top, endPoint: .bottom
             )
-                .frame(height: 60)
+            .frame(height: 60)
             Rectangle()
         }
     }

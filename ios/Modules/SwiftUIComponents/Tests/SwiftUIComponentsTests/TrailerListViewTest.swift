@@ -22,7 +22,7 @@ class TrailerListViewTest: XCTestCase {
             ],
             openInYouTube: false
         )
-            .background(Color.background)
-            .assertSnapshot(testName: "TrailerListView")
+        .background(Color.background)
+        .assertSnapshot(testName: "TrailerListView")
     }
 }

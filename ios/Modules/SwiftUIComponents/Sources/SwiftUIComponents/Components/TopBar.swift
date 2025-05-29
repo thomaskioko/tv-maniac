@@ -56,7 +56,7 @@ public struct TopBar: View {
                     height: height,
                     action: onBackClicked
                 )
-                    .padding(.leading, 16)
+                .padding(.leading, 16)
 
                 if let title {
                     Text(title)
@@ -79,8 +79,8 @@ public struct TopBar: View {
                     height: height,
                     action: onRefreshClicked
                 )
-                    .rotationEffect(rotation)
-                    .padding(.trailing, 16)
+                .rotationEffect(rotation)
+                .padding(.trailing, 16)
             }
             .frame(height: height)
             .padding(.top, 60)
