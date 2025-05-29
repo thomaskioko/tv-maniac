@@ -1,0 +1,21 @@
+#!/bin/sh
+
+echo "Running pre-commit checks..."
+
+# Run spotlessCheck to verify code formatting
+echo "Checking code formatting with Spotless..."
+./gradlew spotlessCheck
+
+# Check the exit code of the spotlessCheck command
+if [ $? -ne 0 ]; then
+  echo "❌ Code formatting check failed. Please run './gradlew spotlessApply' to fix formatting issues."
+  exit 1
+fi
+
+echo "✅ Code formatting check passed."
+
+# Add additional checks here if needed
+# For example, you could run detekt or other static analysis tools
+
+echo "All pre-commit checks passed! 🎉"
+exit 0
