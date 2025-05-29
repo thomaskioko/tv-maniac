@@ -20,8 +20,7 @@ public struct HorizontalShowContentView: View {
         edgeInsets: EdgeInsets = EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16),
         showEmptyState: Bool = false,
         onClick: @escaping (Int64) -> Void,
-        onMoreClicked: @escaping () -> Void = {
-        }
+        onMoreClicked: @escaping () -> Void = {}
     ) {
         self.items = items
         self.title = title
@@ -49,8 +48,8 @@ public struct HorizontalShowContentView: View {
             chevronStyle: chevronStyle,
             action: onMoreClicked
         )
-            .padding(.vertical, 8)
-            .accessibilityAddTraits(.isHeader)
+        .padding(.vertical, 8)
+        .accessibilityAddTraits(.isHeader)
     }
 
     @ViewBuilder
