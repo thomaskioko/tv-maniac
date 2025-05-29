@@ -71,13 +71,13 @@ platform :ios do
   lane :format_swift_code do
     # Using SwiftFormat directly (installed via Homebrew or Swift Package Manager)
     # See: https://github.com/nicklockwood/SwiftFormat
-    sh "cd .. && swiftformat ios --config ios/.swiftformat"
+    sh "cd .. && swiftformat ios --config ios/.swiftformat --swiftversion 5.9 --exclude derived_data"
   end
 
   desc "Check SwiftFormat without making changes"
   lane :check_swift_format do
     # Using SwiftFormat directly (installed via Homebrew or Swift Package Manager)
     # See: https://github.com/nicklockwood/SwiftFormat
-    sh "cd .. && swiftformat ios --config ios/.swiftformat --lint"
+    sh "cd .. && swiftformat ios --config ios/.swiftformat --lint --swiftversion 5.9 --exclude derived_data"
   end
 end
