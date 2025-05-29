@@ -84,9 +84,14 @@ class DefaultTvShowsDao(
         return tvShowQueries
             .searchShows(
                 // Parameters for WHERE clause
-                query, query, query, query,
+                query,
+                query,
+                query,
+                query,
                 // Parameters for ORDER BY clause
-                query, query, query,
+                query,
+                query,
+                query,
             ) { id, title, imageUrl, overview, status, voteAverage, year, inLibrary ->
                 ShowEntity(
                     id = id.id,

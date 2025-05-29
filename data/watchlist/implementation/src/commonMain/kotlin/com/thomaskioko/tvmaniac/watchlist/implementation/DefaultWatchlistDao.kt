@@ -54,9 +54,14 @@ class DefaultWatchlistDao(
         return database.watchlistQueries
             .searchWatchlist(
                 // Parameters for WHERE clause
-                query, query, query, query,
+                query,
+                query,
+                query,
+                query,
                 // Parameters for ORDER BY clause
-                query, query, query,
+                query,
+                query,
+                query,
             )
             .asFlow()
             .mapToList(dispatchers.io)

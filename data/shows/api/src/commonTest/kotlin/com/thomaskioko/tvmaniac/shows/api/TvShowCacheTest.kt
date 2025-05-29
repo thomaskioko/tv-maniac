@@ -59,9 +59,14 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         val results = tvShowQueries.searchShows(
             // Parameters for WHERE clause
-            query, query, query, query,
+            query,
+            query,
+            query,
+            query,
             // Parameters for ORDER BY clause
-            query, query, query,
+            query,
+            query,
+            query,
         ).executeAsList()
 
         results shouldHaveSize 1
@@ -78,9 +83,14 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         val results = tvShowQueries.searchShows(
             // Parameters for WHERE clause
-            query, query, query, query,
+            query,
+            query,
+            query,
+            query,
             // Parameters for ORDER BY clause
-            query, query, query,
+            query,
+            query,
+            query,
         ).executeAsList()
 
         results shouldHaveSize 1
@@ -94,9 +104,14 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         val results = tvShowQueries.searchShows(
             // Parameters for WHERE clause
-            query, query, query, query,
+            query,
+            query,
+            query,
+            query,
             // Parameters for ORDER BY clause
-            query, query, query,
+            query,
+            query,
+            query,
         ).executeAsList()
 
         results shouldHaveSize 1
@@ -110,9 +125,14 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         val results = tvShowQueries.searchShows(
             // Parameters for WHERE clause
-            query, query, query, query,
+            query,
+            query,
+            query,
+            query,
             // Parameters for ORDER BY clause
-            query, query, query,
+            query,
+            query,
+            query,
         ).executeAsList()
 
         results shouldHaveSize 0
@@ -125,9 +145,14 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         val results = tvShowQueries.searchShows(
             // Parameters for WHERE clause
-            query, query, query, query,
+            query,
+            query,
+            query,
+            query,
             // Parameters for ORDER BY clause
-            query, query, query,
+            query,
+            query,
+            query,
         ).executeAsList()
 
         results shouldHaveSize 3
