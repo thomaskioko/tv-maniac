@@ -93,7 +93,7 @@ class DiscoverShowsPresenter(
                 featuredRefreshing = featuredShowsIsUpdating,
                 topRatedRefreshing = topRatedShowsIsUpdating,
                 popularRefreshing = popularShowsIsUpdating,
-                trendingRefreshing = topRatedShowsIsUpdating,
+                trendingRefreshing = trendingShowsIsUpdating,
                 upcomingRefreshing = upComingIsUpdating,
                 featuredShows = showData.featuredShows.toShowList(),
                 topRatedShows = showData.topRatedShows.toShowList(),
