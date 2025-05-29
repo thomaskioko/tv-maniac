@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.core.logger
 
-import co.touchlab.kermit.Logger as KermitLogger
 import co.touchlab.kermit.Severity
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import co.touchlab.kermit.Logger as KermitLogger
 
 @Inject
 @SingleIn(AppScope::class)
