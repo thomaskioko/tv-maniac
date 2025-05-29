@@ -13,6 +13,7 @@ public enum DeveiceAppTheme: String, CaseIterable {
     var id: String {
         rawValue
     }
+
     case system, light, dark
     public var overrideTheme: ColorScheme? {
         switch self {

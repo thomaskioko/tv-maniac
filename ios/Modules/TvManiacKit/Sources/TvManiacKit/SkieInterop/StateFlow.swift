@@ -19,6 +19,7 @@ public struct StateFlow<T: AnyObject>: DynamicProperty {
     public var wrappedValue: T {
         observable.wrappedValue
     }
+
     public var projectedValue: ObservableStateFlow<T> {
         observable
     }
