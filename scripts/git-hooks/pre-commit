@@ -14,8 +14,28 @@ fi
 
 echo "✅ Code formatting check passed."
 
-# Add additional checks here if needed
-# For example, you could run detekt or other static analysis tools
+# Check Swift code formatting with SwiftFormat
+if [ -d "ios" ]; then
+  echo "Checking Swift code formatting with SwiftFormat..."
+
+  # Check if SwiftFormat is installed
+  if ! command -v swiftformat &> /dev/null; then
+    echo "❌ SwiftFormat is not installed. Please install it using 'brew install swiftformat'."
+    exit 1
+  fi
+
+  # Run SwiftFormat check
+  cd ios && swiftformat . --config .swiftformat --lint
+
+  # Check the exit code
+  if [ $? -ne 0 ]; then
+    echo "❌ Swift code formatting check failed. Please run 'cd ios && swiftformat . --config .swiftformat' to fix formatting issues."
+    exit 1
+  fi
+
+  echo "✅ Swift code formatting check passed."
+  cd ..
+fi
 
 echo "All pre-commit checks passed! 🎉"
 exit 0
