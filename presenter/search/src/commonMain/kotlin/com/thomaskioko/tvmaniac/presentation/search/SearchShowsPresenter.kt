@@ -27,150 +27,150 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SearchPresenterFactory(
-  val create: (
-    componentContext: ComponentContext,
-    onNavigateToShowDetails: (id: Long) -> Unit,
-    onNavigateToGenre: (id: Long) -> Unit,
-  ) -> SearchShowsPresenter,
+    val create: (
+        componentContext: ComponentContext,
+        onNavigateToShowDetails: (id: Long) -> Unit,
+        onNavigateToGenre: (id: Long) -> Unit,
+    ) -> SearchShowsPresenter,
 )
 
 @Inject
 class SearchShowsPresenter(
-  @Assisted componentContext: ComponentContext,
-  @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
-  @Assisted private val onNavigateToGenre: (Long) -> Unit,
-  private val mapper: ShowMapper,
-  private val searchRepository: SearchRepository,
-  private val genreRepository: GenreRepository,
-  private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
+    @Assisted componentContext: ComponentContext,
+    @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
+    @Assisted private val onNavigateToGenre: (Long) -> Unit,
+    private val mapper: Mapper,
+    private val searchRepository: SearchRepository,
+    private val genreRepository: GenreRepository,
+    private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
 ) : ComponentContext by componentContext {
 
-  private val presenterInstance = instanceKeeper.getOrCreate { PresenterInstance() }
-  val state: StateFlow<SearchShowState> = presenterInstance.state
+    private val presenterInstance = instanceKeeper.getOrCreate { PresenterInstance() }
+    val state: StateFlow<SearchShowState> = presenterInstance.state
 
-  init {
-    presenterInstance.init()
-  }
-
-  fun dispatch(action: SearchShowAction) {
-    presenterInstance.dispatch(action)
-  }
-
-  internal inner class PresenterInstance : InstanceKeeper.Instance {
-    private val _state = MutableStateFlow<SearchShowState>(InitialSearchState())
-    val state: StateFlow<SearchShowState> = _state.asStateFlow()
-
-    private val queryFlow = MutableSharedFlow<String>(
-      replay = 1,
-      onBufferOverflow = BufferOverflow.DROP_OLDEST,
-      extraBufferCapacity = 1,
-    )
-
-    fun init() {
-      coroutineScope.launch {
-        launch { observeGenre() }
-        launch { observeQueryFlow() }
-      }
+    init {
+        presenterInstance.init()
     }
 
     fun dispatch(action: SearchShowAction) {
-      when (action) {
-        DismissSnackBar -> {
-          _state.update {
-            (it as? ShowContentAvailable)?.copy(errorMessage = null) ?: it
-          }
-        }
-        ReloadShowContent -> coroutineScope.launch { genreRepository.fetchGenresWithShows(true) }
-        LoadDiscoverShows, ClearQuery -> coroutineScope.launch { observeGenre() }
-        is QueryChanged -> handleQueryChange(action.query)
-        is SearchShowClicked -> onNavigateToShowDetails(action.id)
-        is GenreCategoryClicked -> onNavigateToGenre(action.id)
-      }
+        presenterInstance.dispatch(action)
     }
 
-    private suspend fun observeGenre() {
-      genreRepository.observeGenresWithShows()
-        .onStart { updateShowState() }
-        .collect { result ->
-          _state.update {
-            ShowContentAvailable(
-              isUpdating = false,
-              genres = mapper.toGenreList(result),
-            )
-          }
-        }
-    }
+    internal inner class PresenterInstance : InstanceKeeper.Instance {
+        private val _state = MutableStateFlow<SearchShowState>(InitialSearchState())
+        val state: StateFlow<SearchShowState> = _state.asStateFlow()
 
-    private fun updateShowState() {
-      _state.update { currentState ->
-        when (currentState) {
-          is ShowContentAvailable -> currentState.copy(isUpdating = true)
-          else -> ShowContentAvailable(isUpdating = true)
-        }
-      }
-    }
+        private val queryFlow = MutableSharedFlow<String>(
+            replay = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+            extraBufferCapacity = 1,
+        )
 
-    private suspend fun observeQueryFlow() {
-      queryFlow
-        .distinctUntilChanged()
-        .debounce(300)
-        .filter { it.trim().length >= 3 }
-        .onEach { query ->
-          updateSearchLoadingState(query)
+        fun init() {
+            coroutineScope.launch {
+                launch { observeGenre() }
+                launch { observeQueryFlow() }
+            }
         }
-        .flatMapLatest { query -> searchRepository.observeSearchResults(query) }
-        .catch { error ->
-          _state.update {
-            EmptySearchResult(
-              query = queryFlow.replayCache.lastOrNull(),
-              errorMessage = error.message ?: "An unknown error occurred",
-            )
-          }
-        }
-        .collect { result ->
-          handleSearchResults(result)
-        }
-    }
 
-    private suspend fun updateSearchLoadingState(query: String) {
-      searchRepository.search(query)
-      _state.update { state ->
-        when (state) {
-          is SearchResultAvailable -> state.copy(isUpdating = true, query = query)
-          else -> SearchResultAvailable(isUpdating = true, query = query)
+        fun dispatch(action: SearchShowAction) {
+            when (action) {
+                DismissSnackBar -> {
+                    _state.update {
+                        (it as? ShowContentAvailable)?.copy(errorMessage = null) ?: it
+                    }
+                }
+                ReloadShowContent -> coroutineScope.launch { genreRepository.fetchGenresWithShows(true) }
+                LoadDiscoverShows, ClearQuery -> coroutineScope.launch { observeGenre() }
+                is QueryChanged -> handleQueryChange(action.query)
+                is SearchShowClicked -> onNavigateToShowDetails(action.id)
+                is GenreCategoryClicked -> onNavigateToGenre(action.id)
+            }
         }
-      }
-    }
 
-    private fun handleQueryChange(query: String) {
-      coroutineScope.launch {
-        if (query.isEmpty()) {
-          observeGenre()
-        } else {
-          queryFlow.emit(query)
+        private suspend fun observeGenre() {
+            genreRepository.observeGenresWithShows()
+                .onStart { updateShowState() }
+                .collect { result ->
+                    _state.update {
+                        ShowContentAvailable(
+                            isUpdating = false,
+                            genres = mapper.toGenreList(result),
+                        )
+                    }
+                }
         }
-      }
-    }
 
-    private fun handleSearchResults(shows: List<ShowEntity>) {
-      _state.update { state ->
-        val currentQuery = queryFlow.replayCache.lastOrNull() ?: state.query
-        when {
-          !state.isUpdating && shows.isEmpty() -> EmptySearchResult(
-            query = currentQuery,
-          )
-          state is SearchResultAvailable -> state.copy(
-            isUpdating = false,
-            results = mapper.toShowList(shows),
-            query = currentQuery,
-          )
-          else -> SearchResultAvailable(
-            isUpdating = false,
-            results = mapper.toShowList(shows),
-            query = currentQuery,
-          )
+        private fun updateShowState() {
+            _state.update { currentState ->
+                when (currentState) {
+                    is ShowContentAvailable -> currentState.copy(isUpdating = true)
+                    else -> ShowContentAvailable(isUpdating = true)
+                }
+            }
         }
-      }
+
+        private suspend fun observeQueryFlow() {
+            queryFlow
+                .distinctUntilChanged()
+                .debounce(300)
+                .filter { it.trim().length >= 3 }
+                .onEach { query ->
+                    updateSearchLoadingState(query)
+                }
+                .flatMapLatest { query -> searchRepository.observeSearchResults(query) }
+                .catch { error ->
+                    _state.update {
+                        EmptySearchResult(
+                            query = queryFlow.replayCache.lastOrNull(),
+                            errorMessage = error.message ?: "An unknown error occurred",
+                        )
+                    }
+                }
+                .collect { result ->
+                    handleSearchResults(result)
+                }
+        }
+
+        private suspend fun updateSearchLoadingState(query: String) {
+            searchRepository.search(query)
+            _state.update { state ->
+                when (state) {
+                    is SearchResultAvailable -> state.copy(isUpdating = true, query = query)
+                    else -> SearchResultAvailable(isUpdating = true, query = query)
+                }
+            }
+        }
+
+        private fun handleQueryChange(query: String) {
+            coroutineScope.launch {
+                if (query.isEmpty()) {
+                    observeGenre()
+                } else {
+                    queryFlow.emit(query)
+                }
+            }
+        }
+
+        private fun handleSearchResults(shows: List<ShowEntity>) {
+            _state.update { state ->
+                val currentQuery = queryFlow.replayCache.lastOrNull() ?: state.query
+                when {
+                    !state.isUpdating && shows.isEmpty() -> EmptySearchResult(
+                        query = currentQuery,
+                    )
+                    state is SearchResultAvailable -> state.copy(
+                        isUpdating = false,
+                        results = mapper.toShowList(shows),
+                        query = currentQuery,
+                    )
+                    else -> SearchResultAvailable(
+                        isUpdating = false,
+                        results = mapper.toShowList(shows),
+                        query = currentQuery,
+                    )
+                }
+            }
+        }
     }
-  }
 }

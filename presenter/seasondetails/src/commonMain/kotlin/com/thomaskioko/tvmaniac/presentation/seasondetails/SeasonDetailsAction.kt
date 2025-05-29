@@ -19,9 +19,9 @@ data object DismissSeasonGallery : SeasonDetailsAction
 data object ReloadSeasonDetails : SeasonDetailsAction
 
 data class UpdateEpisodeStatus(
-  val id: Long,
+    val id: Long,
 ) : SeasonDetailsAction
 
 data class EpisodeClicked(
-  val id: Long,
+    val id: Long,
 ) : SeasonDetailsAction

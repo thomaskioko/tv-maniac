@@ -20,30 +20,30 @@ import org.robolectric.annotation.LooperMode
 @LooperMode(LooperMode.Mode.PAUSED)
 class LibraryScreenTest {
 
-  @get:Rule
-  val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+    @get:Rule
+    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-  @Test
-  fun libraryScreenLoadedState() {
-    composeTestRule.captureMultiDevice("LibraryContentState") {
-      TvManiacBackground {
-        WatchlistScreen(
-          state = WatchlistContent(list = list),
-          onAction = {},
-        )
-      }
+    @Test
+    fun libraryScreenLoadedState() {
+        composeTestRule.captureMultiDevice("LibraryContentState") {
+            TvManiacBackground {
+                WatchlistScreen(
+                    state = WatchlistContent(list = list),
+                    onAction = {},
+                )
+            }
+        }
     }
-  }
 
-  @Test
-  fun libraryScreenErrorLoadingShows() {
-    composeTestRule.captureMultiDevice("ErrorLoadingShows") {
-      TvManiacBackground {
-        WatchlistScreen(
-          state = EmptyWatchlist(message = "Something went Wrong"),
-          onAction = {},
-        )
-      }
+    @Test
+    fun libraryScreenErrorLoadingShows() {
+        composeTestRule.captureMultiDevice("ErrorLoadingShows") {
+            TvManiacBackground {
+                WatchlistScreen(
+                    state = EmptyWatchlist(message = "Something went Wrong"),
+                    onAction = {},
+                )
+            }
+        }
     }
-  }
 }

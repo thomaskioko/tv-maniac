@@ -5,9 +5,9 @@ sealed interface TrailersAction
 data object ReloadTrailers : TrailersAction
 
 data class TrailerSelected(
-  val trailerKey: String,
+    val trailerKey: String,
 ) : TrailersAction
 
 data class VideoPlayerError(
-  val errorMessage: String,
+    val errorMessage: String,
 ) : TrailersAction

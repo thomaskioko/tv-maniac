@@ -70,6 +70,8 @@ jobs:
             :app:assembleRelease \
             :app:bundleRelease \
             -Pandroidx.baselineprofile.skipgeneration=true \
+              -Pcompose.enableCompilerMetrics=true \
+              -Pcompose.enableCompilerReports=true \
             --no-configuration-cache
 
 
@@ -322,8 +324,27 @@ jobs:
             fastlane/logs
 
 
+  swift-format:
+      runs-on: macos-latest
+      timeout-minutes: 10
 
+      steps:
+          -   name: 🚚 Checkout project
+              uses: actions/checkout@v4
 
+          -   name: 💎 Set up Ruby
+              uses: ruby/setup-ruby@v1
+              with:
+                  bundler-cache: true
+
+          -   name: 📦 Install dependencies with Bundler
+              run: bundle install
+
+          -   name: 🔧 Install SwiftFormat
+              run: brew install swiftformat
+
+          -   name: 🔍 Check Swift Format
+              run: bundle exec fastlane check_swift_format
 
   ios-snapshot-test:
     runs-on: macos-15
@@ -381,4 +402,3 @@ jobs:
             fastlane/test_output
             fastlane/logs
             derived_data/Logs/Test
-

@@ -10,13 +10,13 @@ import dev.icerock.moko.resources.desc.ResourceFormatted
 import dev.icerock.moko.resources.desc.StringDesc
 
 fun getString(stringResource: StringResource): StringDesc {
-  return StringDesc.Resource(stringResource)
+    return StringDesc.Resource(stringResource)
 }
 
 fun getString(stringResource: StringResource, parameter: Any): StringDesc {
-  return StringDesc.ResourceFormatted(stringResource, parameter)
+    return StringDesc.ResourceFormatted(stringResource, parameter)
 }
 
 fun getPlural(pluralResource: PluralsResource, quantity: Int): StringDesc {
-  return StringDesc.PluralFormatted(pluralResource, quantity)
+    return StringDesc.PluralFormatted(pluralResource, quantity)
 }

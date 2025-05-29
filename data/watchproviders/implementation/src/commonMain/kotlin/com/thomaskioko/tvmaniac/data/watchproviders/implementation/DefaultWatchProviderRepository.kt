@@ -15,18 +15,18 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultWatchProviderRepository(
-  private val store: WatchProvidersStore,
-  private val dao: WatchProviderDao,
+    private val store: WatchProvidersStore,
+    private val dao: WatchProviderDao,
 ) : WatchProviderRepository {
 
-  override suspend fun fetchWatchProviders(id: Long, forceRefresh: Boolean) {
-    when {
-      forceRefresh -> store.fresh(id)
-      else -> store.get(id)
+    override suspend fun fetchWatchProviders(id: Long, forceRefresh: Boolean) {
+        when {
+            forceRefresh -> store.fresh(id)
+            else -> store.get(id)
+        }
     }
-  }
 
-  override fun observeWatchProviders(id: Long): Flow<List<WatchProviders>> {
-    return dao.observeWatchProviders(id)
-  }
+    override fun observeWatchProviders(id: Long): Flow<List<WatchProviders>> {
+        return dao.observeWatchProviders(id)
+    }
 }

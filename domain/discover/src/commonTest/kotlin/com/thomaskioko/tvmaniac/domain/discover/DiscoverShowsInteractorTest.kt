@@ -20,105 +20,104 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class DiscoverShowsInteractorTest {
-  private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = StandardTestDispatcher()
 
-  private val featuredShowsRepository = FakeFeaturedShowsRepository()
-  private val topRatedShowsRepository = FakeTopRatedShowsRepository()
-  private val popularShowsRepository = FakePopularShowsRepository()
-  private val trendingShowsRepository = FakeTrendingShowsRepository()
-  private val upcomingShowsRepository = FakeUpcomingShowsRepository()
-  private val genreRepository = FakeGenreRepository()
+    private val featuredShowsRepository = FakeFeaturedShowsRepository()
+    private val topRatedShowsRepository = FakeTopRatedShowsRepository()
+    private val popularShowsRepository = FakePopularShowsRepository()
+    private val trendingShowsRepository = FakeTrendingShowsRepository()
+    private val upcomingShowsRepository = FakeUpcomingShowsRepository()
+    private val genreRepository = FakeGenreRepository()
 
-  private val coroutineDispatcher = AppCoroutineDispatchers(
-    main = testDispatcher,
-    io = testDispatcher,
-    computation = testDispatcher,
-    databaseWrite = testDispatcher,
-    databaseRead = testDispatcher,
-  )
-
-  private lateinit var interactor: DiscoverShowsInteractor
-
-  @BeforeTest
-  fun setup() {
-    Dispatchers.setMain(testDispatcher)
-
-    interactor = DiscoverShowsInteractor(
-      featuredShowsRepository = featuredShowsRepository,
-      topRatedShowsRepository = topRatedShowsRepository,
-      popularShowsRepository = popularShowsRepository,
-      trendingShowsRepository = trendingShowsRepository,
-      upcomingShowsRepository = upcomingShowsRepository,
-      genreRepository = genreRepository,
-      dispatchers = coroutineDispatcher,
+    private val coroutineDispatcher = AppCoroutineDispatchers(
+        main = testDispatcher,
+        io = testDispatcher,
+        computation = testDispatcher,
+        databaseWrite = testDispatcher,
+        databaseRead = testDispatcher,
     )
-  }
 
-  @AfterTest
-  fun tearDown() {
-    Dispatchers.resetMain()
-  }
+    private lateinit var interactor: DiscoverShowsInteractor
 
-  @Test
-  fun `should return empty DiscoverShowsData when all repositories return empty lists`() = runTest {
-    // Given
-    setTestData()
+    @BeforeTest
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
 
-    // When
-    interactor(Unit)
-
-    // Then
-    interactor.flow.test {
-      awaitItem() shouldBe DiscoverShowsData(
-        featuredShows = emptyList(),
-        topRatedShows = emptyList(),
-        popularShows = emptyList(),
-        trendingShows = emptyList(),
-        upcomingShows = emptyList(),
-      )
-      cancelAndConsumeRemainingEvents()
+        interactor = DiscoverShowsInteractor(
+            featuredShowsRepository = featuredShowsRepository,
+            topRatedShowsRepository = topRatedShowsRepository,
+            popularShowsRepository = popularShowsRepository,
+            trendingShowsRepository = trendingShowsRepository,
+            upcomingShowsRepository = upcomingShowsRepository,
+            genreRepository = genreRepository,
+            dispatchers = coroutineDispatcher,
+        )
     }
-  }
 
-  @Test
-  fun `should return populated DiscoverShowsData when repositories return result`() = runTest {
-    // Given
-    val shows = createTestShows()
-    setTestData(shows)
-
-    // When
-    interactor(Unit)
-
-    // Then
-    interactor.flow.test {
-      awaitItem() shouldBe DiscoverShowsData(
-        featuredShows = shows,
-        topRatedShows = shows,
-        popularShows = shows,
-        trendingShows = shows,
-        upcomingShows = shows,
-      )
-      cancelAndConsumeRemainingEvents()
+    @AfterTest
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
-  }
 
+    @Test
+    fun `should return empty DiscoverShowsData when all repositories return empty lists`() = runTest {
+        // Given
+        setTestData()
 
-  private suspend fun setTestData(shows: List<ShowEntity> = emptyList()) {
-    featuredShowsRepository.setFeaturedShows(shows)
-    topRatedShowsRepository.setTopRatedShows(shows)
-    popularShowsRepository.setPopularShows(shows)
-    trendingShowsRepository.setTrendingShows(shows)
-    upcomingShowsRepository.setUpcomingShows(shows)
-    genreRepository.setGenreResult(emptyList())
-  }
+        // When
+        interactor(Unit)
 
-  private fun createTestShows() = List(3) {
-    ShowEntity(
-      id = it.toLong(),
-      title = "Show $it",
-      posterPath = "poster_$it.jpg",
-      inLibrary = false,
-      overview = "Overview $it",
-    )
-  }
+        // Then
+        interactor.flow.test {
+            awaitItem() shouldBe DiscoverShowsData(
+                featuredShows = emptyList(),
+                topRatedShows = emptyList(),
+                popularShows = emptyList(),
+                trendingShows = emptyList(),
+                upcomingShows = emptyList(),
+            )
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should return populated DiscoverShowsData when repositories return result`() = runTest {
+        // Given
+        val shows = createTestShows()
+        setTestData(shows)
+
+        // When
+        interactor(Unit)
+
+        // Then
+        interactor.flow.test {
+            awaitItem() shouldBe DiscoverShowsData(
+                featuredShows = shows,
+                topRatedShows = shows,
+                popularShows = shows,
+                trendingShows = shows,
+                upcomingShows = shows,
+            )
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    private suspend fun setTestData(shows: List<ShowEntity> = emptyList()) {
+        featuredShowsRepository.setFeaturedShows(shows)
+        topRatedShowsRepository.setTopRatedShows(shows)
+        popularShowsRepository.setPopularShows(shows)
+        trendingShowsRepository.setTrendingShows(shows)
+        upcomingShowsRepository.setUpcomingShows(shows)
+        genreRepository.setGenreResult(emptyList())
+    }
+
+    private fun createTestShows() = List(3) {
+        ShowEntity(
+            id = it.toLong(),
+            title = "Show $it",
+            posterPath = "poster_$it.jpg",
+            inLibrary = false,
+            overview = "Overview $it",
+        )
+    }
 }

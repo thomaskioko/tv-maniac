@@ -9,17 +9,15 @@
 import SwiftUI
 
 struct AuthenticatedProfileView: View {
-    
     var body: some View {
         ZStack {
             VStack {
                 Text("Coming Soon ...")
-                    //TODO:: Add UI
+                // TODO: Add UI
                 Spacer()
             }
-            .frame(width : CGFloat(480.0))
+            .frame(width: CGFloat(480.0))
             .background(Color("Background"))
-            
         }
     }
 }

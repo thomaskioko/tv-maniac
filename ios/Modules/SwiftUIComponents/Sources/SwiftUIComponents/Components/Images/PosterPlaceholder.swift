@@ -31,7 +31,7 @@ public struct PosterPlaceholder: View {
                     .foregroundColor(.white.opacity(0.8))
                     .padding()
 
-                if let title = title {
+                if let title {
                     Text(title)
                         .font(.callout)
                         .foregroundColor(.white.opacity(0.8))

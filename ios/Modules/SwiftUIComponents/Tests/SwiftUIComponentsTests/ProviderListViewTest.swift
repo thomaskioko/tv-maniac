@@ -4,7 +4,7 @@ import SwiftUIComponents
 import XCTest
 
 class ProviderListViewTest: XCTestCase {
-    func test_ProviderListView(){
+    func test_ProviderListView() {
         ProviderListView(
             items: [
                 .init(

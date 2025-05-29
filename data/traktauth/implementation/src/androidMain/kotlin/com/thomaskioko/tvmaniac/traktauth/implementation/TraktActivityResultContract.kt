@@ -11,23 +11,23 @@ import net.openid.appauth.AuthorizationService
 
 @Inject
 class TraktActivityResultContract(
-  private val authService: AuthorizationService,
-  private val request: AuthorizationRequest,
+    private val authService: AuthorizationService,
+    private val request: AuthorizationRequest,
 ) : ActivityResultContract<Unit, TraktActivityResultContract.Result?>() {
-  override fun createIntent(context: Context, input: Unit): Intent {
-    return authService.getAuthorizationRequestIntent(request)
-  }
-
-  override fun parseResult(resultCode: Int, intent: Intent?): Result? =
-    intent?.let {
-      Result(
-        response = AuthorizationResponse.fromIntent(it),
-        exception = AuthorizationException.fromIntent(it),
-      )
+    override fun createIntent(context: Context, input: Unit): Intent {
+        return authService.getAuthorizationRequestIntent(request)
     }
 
-  data class Result(
-    val response: AuthorizationResponse?,
-    val exception: AuthorizationException?,
-  )
+    override fun parseResult(resultCode: Int, intent: Intent?): Result? =
+        intent?.let {
+            Result(
+                response = AuthorizationResponse.fromIntent(it),
+                exception = AuthorizationException.fromIntent(it),
+            )
+        }
+
+    data class Result(
+        val response: AuthorizationResponse?,
+        val exception: AuthorizationException?,
+    )
 }

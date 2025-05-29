@@ -13,9 +13,9 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultSeasonsRepository(
-  private val seasonsDao: SeasonsDao,
+    private val seasonsDao: SeasonsDao,
 ) : SeasonsRepository {
 
-  override fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>> =
-    seasonsDao.observeSeasonsByShowId(id)
+    override fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>> =
+        seasonsDao.observeSeasonsByShowId(id)
 }

@@ -51,199 +51,193 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun CollapsableContent(
-  episodesCount: Long,
-  watchProgress: Float,
-  episodeDetailsModelList: ImmutableList<EpisodeDetailsModel>,
-  collapsed: Boolean,
-  isSeasonWatched: Boolean,
-  onAction: (SeasonDetailsAction) -> Unit,
-  modifier: Modifier = Modifier,
+    episodesCount: Long,
+    watchProgress: Float,
+    episodeDetailsModelList: ImmutableList<EpisodeDetailsModel>,
+    collapsed: Boolean,
+    isSeasonWatched: Boolean,
+    onAction: (SeasonDetailsAction) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  Column(
-    modifier = modifier,
-  ) {
-    Spacer(modifier = Modifier.height(8.dp))
-
-    SeasonTitleHeader(
-      episodesCount = episodesCount,
-      watchProgress = watchProgress,
-      isSeasonWatched = isSeasonWatched,
-      expanded = !collapsed,
-      onAction = onAction,
-    )
-
-    Spacer(modifier = Modifier.height(8.dp))
-
-    if (!collapsed) {
-      episodeDetailsModelList.forEach { episode ->
+    Column(
+        modifier = modifier,
+    ) {
         Spacer(modifier = Modifier.height(8.dp))
 
-        EpisodeItem(
-          modifier = Modifier
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = 84.dp),
-          imageUrl = episode.imageUrl,
-          title = episode.episodeNumberTitle,
-          episodeOverview = episode.overview,
-          onEpisodeClicked = { EpisodeClicked(episode.id) },
-          onAction = onAction,
+        SeasonTitleHeader(
+            episodesCount = episodesCount,
+            watchProgress = watchProgress,
+            isSeasonWatched = isSeasonWatched,
+            expanded = !collapsed,
+            onAction = onAction,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
-      }
+
+        if (!collapsed) {
+            episodeDetailsModelList.forEach { episode ->
+                Spacer(modifier = Modifier.height(8.dp))
+
+                EpisodeItem(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 84.dp),
+                    imageUrl = episode.imageUrl,
+                    title = episode.episodeNumberTitle,
+                    episodeOverview = episode.overview,
+                    onEpisodeClicked = { EpisodeClicked(episode.id) },
+                    onAction = onAction,
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
     }
-  }
 }
 
 @SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
 private fun SeasonTitleHeader(
-  episodesCount: Long,
-  watchProgress: Float,
-  expanded: Boolean,
-  isSeasonWatched: Boolean,
-  onAction: (SeasonDetailsAction) -> Unit,
-  shape: Shape = MaterialTheme.shapes.small,
+    episodesCount: Long,
+    watchProgress: Float,
+    expanded: Boolean,
+    isSeasonWatched: Boolean,
+    onAction: (SeasonDetailsAction) -> Unit,
+    shape: Shape = MaterialTheme.shapes.small,
 ) {
-  val transitionState = remember {
-    MutableTransitionState(expanded).apply { targetState = !expanded }
-  }
-
-  val transition = rememberTransition(transitionState)
-  val arrowRotationDegree by
-  transition.animateFloat(
-    label = "rotationDegreeTransition",
-    transitionSpec = { tween(durationMillis = EXPANSION_TRANSITION_DURATION) },
-    targetValueByState = { if (expanded) 0f else 180f },
-  )
-
-  Card(
-    shape = shape,
-    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-    modifier = Modifier
-      .fillMaxWidth()
-      .height(64.dp)
-      .clickable { onAction(OnEpisodeHeaderClicked) },
-  ) {
-    ConstraintLayout(
-      modifier = Modifier.fillMaxSize(),
-    ) {
-      val (episodeTitle, image, count, watchedStatusIcon, watchlistProgress) = createRefs()
-
-      Icon(
-        imageVector = Icons.Rounded.ExpandLess,
-        contentDescription = null,
-        tint = MaterialTheme.colorScheme.onSurface,
-        modifier =
-          Modifier
-            .rotate(arrowRotationDegree)
-            .constrainAs(image) {
-              start.linkTo(parent.start, 8.dp)
-              top.linkTo(parent.top)
-              bottom.linkTo(parent.bottom)
-
-              height = Dimension.fillToConstraints
-            },
-      )
-
-      Text(
-        text = title_episodes.resolve(LocalContext.current),
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.onSurface,
-        modifier =
-          Modifier.constrainAs(episodeTitle) {
-            start.linkTo(image.end, 8.dp)
-            end.linkTo(count.start)
-            top.linkTo(image.top)
-            bottom.linkTo(image.bottom)
-
-            width = Dimension.fillToConstraints
-          },
-      )
-
-      Text(
-        text = "$episodesCount",
-        maxLines = 1,
-        style = MaterialTheme.typography.bodyMedium,
-        modifier =
-          Modifier.constrainAs(count) {
-            end.linkTo(watchedStatusIcon.start, 8.dp)
-            top.linkTo(watchedStatusIcon.top)
-            bottom.linkTo(watchedStatusIcon.bottom)
-
-            width = Dimension.preferredWrapContent
-          },
-      )
-
-      IconButton(
-        onClick = { onAction(ShowMarkSeasonDialog) },
-        modifier =
-          Modifier.constrainAs(watchedStatusIcon) {
-            centerVerticallyTo(parent)
-            end.linkTo(parent.end, 8.dp)
-          },
-      ) {
-        Icon(
-          modifier = Modifier.size(28.dp),
-          imageVector =
-            if (isSeasonWatched) Icons.Rounded.CheckCircle else Icons.Outlined.CheckCircle,
-          contentDescription = cd_navigate_back.resolve(LocalContext.current),
-          tint = MaterialTheme.colorScheme.onBackground,
-        )
-      }
-
-      ShowLinearProgressIndicator(
-        progress = watchProgress,
-        modifier =
-          Modifier
-            .height(8.dp)
-            .constrainAs(watchlistProgress) {
-              start.linkTo(parent.start)
-              end.linkTo(parent.end)
-              top.linkTo(image.bottom)
-              bottom.linkTo(parent.bottom, 12.dp)
-
-              width = Dimension.fillToConstraints
-            },
-      )
+    val transitionState = remember {
+        MutableTransitionState(expanded).apply { targetState = !expanded }
     }
-  }
+
+    val transition = rememberTransition(transitionState)
+    val arrowRotationDegree by
+        transition.animateFloat(
+            label = "rotationDegreeTransition",
+            transitionSpec = { tween(durationMillis = EXPANSION_TRANSITION_DURATION) },
+            targetValueByState = { if (expanded) 0f else 180f },
+        )
+
+    Card(
+        shape = shape,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .clickable { onAction(OnEpisodeHeaderClicked) },
+    ) {
+        ConstraintLayout(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            val (episodeTitle, image, count, watchedStatusIcon, watchlistProgress) = createRefs()
+
+            Icon(
+                imageVector = Icons.Rounded.ExpandLess,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .rotate(arrowRotationDegree)
+                    .constrainAs(image) {
+                        start.linkTo(parent.start, 8.dp)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+
+                        height = Dimension.fillToConstraints
+                    },
+            )
+
+            Text(
+                text = title_episodes.resolve(LocalContext.current),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.constrainAs(episodeTitle) {
+                    start.linkTo(image.end, 8.dp)
+                    end.linkTo(count.start)
+                    top.linkTo(image.top)
+                    bottom.linkTo(image.bottom)
+
+                    width = Dimension.fillToConstraints
+                },
+            )
+
+            Text(
+                text = "$episodesCount",
+                maxLines = 1,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.constrainAs(count) {
+                    end.linkTo(watchedStatusIcon.start, 8.dp)
+                    top.linkTo(watchedStatusIcon.top)
+                    bottom.linkTo(watchedStatusIcon.bottom)
+
+                    width = Dimension.preferredWrapContent
+                },
+            )
+
+            IconButton(
+                onClick = { onAction(ShowMarkSeasonDialog) },
+                modifier = Modifier.constrainAs(watchedStatusIcon) {
+                    centerVerticallyTo(parent)
+                    end.linkTo(parent.end, 8.dp)
+                },
+            ) {
+                Icon(
+                    modifier = Modifier.size(28.dp),
+                    imageVector = if (isSeasonWatched) Icons.Rounded.CheckCircle else Icons.Outlined.CheckCircle,
+                    contentDescription = cd_navigate_back.resolve(LocalContext.current),
+                    tint = MaterialTheme.colorScheme.onBackground,
+                )
+            }
+
+            ShowLinearProgressIndicator(
+                progress = watchProgress,
+                modifier = Modifier
+                    .height(8.dp)
+                    .constrainAs(watchlistProgress) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        top.linkTo(image.bottom)
+                        bottom.linkTo(parent.bottom, 12.dp)
+
+                        width = Dimension.fillToConstraints
+                    },
+            )
+        }
+    }
 }
 
 @ThemePreviews
 @Composable
 private fun SeasonTitleHeaderPreview() {
-  TvManiacTheme {
-    Surface {
-      SeasonTitleHeader(
-        episodesCount = 8,
-        watchProgress = 0.5f,
-        expanded = true,
-        isSeasonWatched = true,
-        onAction = {},
-      )
+    TvManiacTheme {
+        Surface {
+            SeasonTitleHeader(
+                episodesCount = 8,
+                watchProgress = 0.5f,
+                expanded = true,
+                isSeasonWatched = true,
+                onAction = {},
+            )
+        }
     }
-  }
 }
 
 @ThemePreviews
 @Composable
 private fun CollapsableContentPreview() {
-  TvManiacTheme {
-    Surface {
-      CollapsableContent(
-        episodesCount = seasonDetailsLoaded.episodeCount,
-        watchProgress = seasonDetailsLoaded.watchProgress,
-        episodeDetailsModelList = seasonDetailsLoaded.episodeDetailsList,
-        collapsed = false,
-        isSeasonWatched = false,
-        onAction = {},
-      )
+    TvManiacTheme {
+        Surface {
+            CollapsableContent(
+                episodesCount = seasonDetailsLoaded.episodeCount,
+                watchProgress = seasonDetailsLoaded.watchProgress,
+                episodeDetailsModelList = seasonDetailsLoaded.episodeDetailsList,
+                collapsed = false,
+                isSeasonWatched = false,
+                onAction = {},
+            )
+        }
     }
-  }
 }
 
 const val EXPANSION_TRANSITION_DURATION = 450

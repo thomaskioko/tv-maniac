@@ -5,14 +5,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CreditsResponse(
-  @SerialName("cast") var cast: ArrayList<CastResponse> = arrayListOf(),
+    @SerialName("cast") var cast: ArrayList<CastResponse> = arrayListOf(),
 )
 
 @Serializable
 data class CastResponse(
-  @SerialName("id") var id: Int,
-  @SerialName("name") var name: String,
-  @SerialName("profile_path") var profilePath: String? = null,
-  @SerialName("character") var character: String,
-  @SerialName("popularity") var popularity: Double,
+    @SerialName("id") var id: Int,
+    @SerialName("name") var name: String,
+    @SerialName("profile_path") var profilePath: String? = null,
+    @SerialName("character") var character: String,
+    @SerialName("popularity") var popularity: Double,
 )

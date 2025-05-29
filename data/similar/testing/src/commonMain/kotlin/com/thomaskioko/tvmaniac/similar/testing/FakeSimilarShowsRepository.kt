@@ -8,14 +8,14 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class FakeSimilarShowsRepository : SimilarShowsRepository {
 
-  private val similarShows = MutableStateFlow<List<SimilarShows>>(emptyList())
+    private val similarShows = MutableStateFlow<List<SimilarShows>>(emptyList())
 
-  suspend fun setSimilarShowsResult(result: List<SimilarShows>) {
-    similarShows.emit(result)
-  }
+    suspend fun setSimilarShowsResult(result: List<SimilarShows>) {
+        similarShows.emit(result)
+    }
 
-  override suspend fun fetchSimilarShows(id: Long, forceRefresh: Boolean) {
-  }
+    override suspend fun fetchSimilarShows(id: Long, forceRefresh: Boolean) {
+    }
 
-  override fun observeSimilarShows(id: Long): Flow<List<SimilarShows>> = similarShows.asStateFlow()
+    override fun observeSimilarShows(id: Long): Flow<List<SimilarShows>> = similarShows.asStateFlow()
 }

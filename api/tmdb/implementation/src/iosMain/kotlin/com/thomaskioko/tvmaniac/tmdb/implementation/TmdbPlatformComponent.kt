@@ -9,7 +9,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesTo(AppScope::class)
 interface TmdbPlatformComponent {
 
-  @Provides
-  @SingleIn(AppScope::class)
-  fun provideTmdbHttpClientEngine(): TmdbHttpClientEngine = Darwin.create()
+    @Provides
+    @SingleIn(AppScope::class)
+    fun provideTmdbHttpClientEngine(): TmdbHttpClientEngine = Darwin.create()
 }

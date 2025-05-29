@@ -93,3 +93,6 @@ fastlane/builds
 
 derived_data/
 *.xcresult
+
+#.junie/*
+/.junie/guidelines.md

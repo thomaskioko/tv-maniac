@@ -16,38 +16,38 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultTrailerDao(
-  private val database: TvManiacDatabase,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val database: TvManiacDatabase,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : TrailerDao {
 
-  override fun upsert(trailer: Trailers) {
-    database.trailersQueries.insertOrReplace(
-      id = trailer.id,
-      show_id = trailer.show_id,
-      key = trailer.key,
-      name = trailer.name,
-      site = trailer.site,
-      size = trailer.size,
-      type = trailer.type,
-    )
-  }
+    override fun upsert(trailer: Trailers) {
+        database.trailersQueries.insertOrReplace(
+            id = trailer.id,
+            show_id = trailer.show_id,
+            key = trailer.key,
+            name = trailer.name,
+            site = trailer.site,
+            size = trailer.size,
+            type = trailer.type,
+        )
+    }
 
-  override fun upsert(trailerList: List<Trailers>) {
-    trailerList.forEach { upsert(it) }
-  }
+    override fun upsert(trailerList: List<Trailers>) {
+        trailerList.forEach { upsert(it) }
+    }
 
-  override fun observeTrailersById(showId: Long): Flow<List<Trailers>> {
-    return database.trailersQueries.selectByShowId(Id(showId)).asFlow().mapToList(dispatchers.io)
-  }
+    override fun observeTrailersById(showId: Long): Flow<List<Trailers>> {
+        return database.trailersQueries.selectByShowId(Id(showId)).asFlow().mapToList(dispatchers.io)
+    }
 
-  override fun getTrailersById(showId: Long): List<Trailers> =
-    database.trailersQueries.selectByShowId(Id(showId)).executeAsList()
+    override fun getTrailersById(showId: Long): List<Trailers> =
+        database.trailersQueries.selectByShowId(Id(showId)).executeAsList()
 
-  override fun delete(id: Long) {
-    database.transaction { database.trailersQueries.delete(Id(id)) }
-  }
+    override fun delete(id: Long) {
+        database.transaction { database.trailersQueries.delete(Id(id)) }
+    }
 
-  override fun deleteAll() {
-    database.transaction { database.trailersQueries.deleteAll() }
-  }
+    override fun deleteAll() {
+        database.transaction { database.trailersQueries.deleteAll() }
+    }
 }

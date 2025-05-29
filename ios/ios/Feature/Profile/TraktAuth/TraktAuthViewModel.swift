@@ -1,36 +1,31 @@
-    //
-    //  TraktViewModel.swift
-    //  tv-maniac
-    //
-    //  Created by Kioko on 01/04/2023.
-    //  Copyright © 2023 orgName. All rights reserved.
-    //
+//
+//  TraktAuthViewModel.swift
+//  tv-maniac
+//
+//  Created by Kioko on 01/04/2023.
+//  Copyright © 2023 orgName. All rights reserved.
+//
 
 import Foundation
 import OAuthSwift
 
-
-class TraktAuthViewModel : ObservableObject {
-    
+class TraktAuthViewModel: ObservableObject {
     private let config: Config = try! ConfigLoader.load()
-    
+
     @Published var error: ApplicationError?
-    
-    
+
     func initiateAuthorization() {
-        
         Task {
             do {
                 let credential = try await performAuthorizationRedirect()
-                
+
                 await MainActor.run {
                     print(credential.oauthToken)
                     print(credential.oauthRefreshToken)
-                    //TODO:: Save token
+                    // TODO: Save token
                 }
-                
+
             } catch {
-                
                 await MainActor.run {
                     let appError = error as? ApplicationError
                     if appError != nil {
@@ -39,15 +34,13 @@ class TraktAuthViewModel : ObservableObject {
                 }
             }
         }
-        
     }
-    
+
     private func performAuthorizationRedirect() async throws -> OAuthSwiftCredential {
-        
         let accessTokenUrl = try config.getAccessTokenUrl()
         let authorizeUrl = try config.getAuthorizeUrl()
         let callbackURL = try config.getCallbackURL()
-        
+
         let oauthswift = OAuth2Swift(
             consumerKey: config.clientId,
             consumerSecret: config.clientSecret,
@@ -55,7 +48,7 @@ class TraktAuthViewModel : ObservableObject {
             accessTokenUrl: accessTokenUrl,
             responseType: config.responseType
         )
-        
+
         return try await withCheckedThrowingContinuation { continuation in
             oauthswift.authorize(
                 withCallbackURL: callbackURL,
@@ -66,15 +59,11 @@ class TraktAuthViewModel : ObservableObject {
                 case .success(let (credential, response, _)):
                     print(response as Any)
                     continuation.resume(returning: credential)
-                case .failure(let error):
+                case let .failure(error):
                     print(error, error.localizedDescription, error.errorCode)
                     continuation.resume(throwing: error)
                 }
             }
         }
     }
-    
-
-
 }
-

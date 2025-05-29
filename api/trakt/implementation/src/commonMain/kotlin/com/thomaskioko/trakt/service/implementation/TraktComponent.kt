@@ -16,25 +16,25 @@ typealias TraktJson = Json
 @ContributesTo(AppScope::class)
 interface TraktComponent {
 
-  @Provides
-  fun provideJson(): TraktJson = Json {
-    ignoreUnknownKeys = true
-    prettyPrint = true
-    encodeDefaults = true
-  }
+    @Provides
+    fun provideJson(): TraktJson = Json {
+        ignoreUnknownKeys = true
+        prettyPrint = true
+        encodeDefaults = true
+    }
 
-  @Provides
-  fun provideHttpClient(
-    configs: Configs,
-    json: TraktJson,
-    httpClientEngine: TraktHttpClientEngine,
-    logger: Logger,
-  ): TraktHttpClient =
-    traktHttpClient(
-      isDebug = configs.isDebug,
-      traktClientId = configs.traktClientId,
-      json = json,
-      httpClientEngine = httpClientEngine,
-      kermitLogger = logger,
-    )
+    @Provides
+    fun provideHttpClient(
+        configs: Configs,
+        json: TraktJson,
+        httpClientEngine: TraktHttpClientEngine,
+        logger: Logger,
+    ): TraktHttpClient =
+        traktHttpClient(
+            isDebug = configs.isDebug,
+            traktClientId = configs.traktClientId,
+            json = json,
+            httpClientEngine = httpClientEngine,
+            kermitLogger = logger,
+        )
 }

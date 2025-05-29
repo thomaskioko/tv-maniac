@@ -14,11 +14,7 @@ tvmaniac {
     useSerialization()
   }
 
-  optIn(
-    "kotlinx.coroutines.ExperimentalCoroutinesApi",
-    "kotlinx.cinterop.BetaInteropApi",
-    "kotlinx.cinterop.ExperimentalForeignApi",
-  )
+    optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
 }
 
 kotlin {

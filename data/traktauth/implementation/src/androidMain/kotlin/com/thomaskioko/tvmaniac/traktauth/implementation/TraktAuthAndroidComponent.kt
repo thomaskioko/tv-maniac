@@ -17,37 +17,35 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesTo(ActivityScope::class)
 interface TraktAuthAndroidComponent {
 
-  @Provides
-  @SingleIn(ActivityScope::class)
-  fun provideAuthConfig(): AuthorizationServiceConfiguration {
-    return AuthorizationServiceConfiguration(
-      "https://trakt.tv/oauth/authorize".toUri(),
-      "https://trakt.tv/oauth/token".toUri(),
+    @Provides
+    @SingleIn(ActivityScope::class)
+    fun provideAuthConfig(): AuthorizationServiceConfiguration {
+        return AuthorizationServiceConfiguration(
+            "https://trakt.tv/oauth/authorize".toUri(),
+            "https://trakt.tv/oauth/token".toUri(),
+        )
+    }
+
+    @Provides
+    @SingleIn(ActivityScope::class)
+    fun provideAuthRequest(
+        configuration: AuthorizationServiceConfiguration,
+        configs: Configs,
+    ): AuthorizationRequest = AuthorizationRequest.Builder(
+        configuration,
+        configs.traktClientId,
+        ResponseTypeValues.CODE,
+        configs.traktRedirectUri.toUri(),
     )
-  }
+        .apply { setCodeVerifier(null) }
+        .build()
 
-  @Provides
-  @SingleIn(ActivityScope::class)
-  fun provideAuthRequest(
-    configuration: AuthorizationServiceConfiguration,
-    configs: Configs,
-  ): AuthorizationRequest =
-    AuthorizationRequest.Builder(
-      configuration,
-      configs.traktClientId,
-      ResponseTypeValues.CODE,
-      configs.traktRedirectUri.toUri(),
-    )
-      .apply { setCodeVerifier(null) }
-      .build()
+    @Provides
+    fun provideClientAuth(configs: Configs): ClientAuthentication =
+        ClientSecretBasic(configs.traktClientSecret)
 
-  @Provides
-  fun provideClientAuth(configs: Configs): ClientAuthentication =
-    ClientSecretBasic(configs.traktClientSecret)
-
-  @Provides
-  @SingleIn(ActivityScope::class)
-  fun provideAuthorizationService(application: Application): AuthorizationService =
-    AuthorizationService(application)
-
+    @Provides
+    @SingleIn(ActivityScope::class)
+    fun provideAuthorizationService(application: Application): AuthorizationService =
+        AuthorizationService(application)
 }

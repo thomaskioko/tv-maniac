@@ -23,63 +23,62 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun HorizontalShowContentRow(
-  title: String,
-  tvShows: ImmutableList<ShowItem>?,
-  modifier: Modifier = Modifier,
-  onItemClicked: (Long) -> Unit,
+    title: String,
+    tvShows: ImmutableList<ShowItem>?,
+    modifier: Modifier = Modifier,
+    onItemClicked: (Long) -> Unit,
 ) {
-  val lazyListState = rememberLazyListState()
+    val lazyListState = rememberLazyListState()
 
-  tvShows?.takeIf { it.isNotEmpty() } ?: return
-  Column(modifier = modifier) {
-    BoxTextItems(
-      modifier = Modifier.padding(vertical = 8.dp),
-      title = title,
-    )
-
-    LazyRow(
-      state = lazyListState,
-      flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-    ) {
-      itemsIndexed(tvShows) { index, tvShow ->
-
-        val value = if (index == 0) 0 else 8
-        Spacer(modifier = Modifier.width(value.dp))
-
-        PosterBackdropCard(
-          darkTheme = true,
-          imageUrl = tvShow.posterImageUrl,
-          title = tvShow.title,
-          modifier = Modifier
-            .width(260.dp)
-            .heightIn(160.dp, 220.dp),
-          onClick = { onItemClicked(tvShow.tmdbId) },
+    tvShows?.takeIf { it.isNotEmpty() } ?: return
+    Column(modifier = modifier) {
+        BoxTextItems(
+            modifier = Modifier.padding(vertical = 8.dp),
+            title = title,
         )
-      }
-    }
-  }
-}
 
+        LazyRow(
+            state = lazyListState,
+            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+        ) {
+            itemsIndexed(tvShows) { index, tvShow ->
+
+                val value = if (index == 0) 0 else 8
+                Spacer(modifier = Modifier.width(value.dp))
+
+                PosterBackdropCard(
+                    darkTheme = true,
+                    imageUrl = tvShow.posterImageUrl,
+                    title = tvShow.title,
+                    modifier = Modifier
+                        .width(260.dp)
+                        .heightIn(160.dp, 220.dp),
+                    onClick = { onItemClicked(tvShow.tmdbId) },
+                )
+            }
+        }
+    }
+}
 
 @ThemePreviews
 @Composable
 private fun HorizontalRowContentPreview() {
-  TvManiacTheme {
-    Surface {
-      HorizontalShowContentRow(
-        tvShows = List(5) {
-          ShowItem(
-            tmdbId = 84958,
-            title = "Loki",
-            posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-            overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” an ",
-            status = "Ended",
-            inLibrary = false,
-          )
-        }.toImmutableList(),
-        onItemClicked = {},
-        title = "Being watched",
-      )
+    TvManiacTheme {
+        Surface {
+            HorizontalShowContentRow(
+                tvShows = List(5) {
+                    ShowItem(
+                        tmdbId = 84958,
+                        title = "Loki",
+                        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+                        overview = "After stealing the Tesseract during the events of “Avengers: Endgame,” an ",
+                        status = "Ended",
+                        inLibrary = false,
+                    )
+                }.toImmutableList(),
+                onItemClicked = {},
+                title = "Being watched",
+            )
+        }
     }
-  }
 }

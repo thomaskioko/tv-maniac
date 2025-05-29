@@ -11,12 +11,11 @@ import org.robolectric.annotation.Config
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
 internal class MokoLocalizerAndroidTest : MokoLocalizerTest() {
-  override lateinit var localizer: Localizer
+    override lateinit var localizer: Localizer
 
-  @Before
-  fun setup() {
-    val context = ApplicationProvider.getApplicationContext<Context>()
-    localizer = MokoResourcesLocalizer(PlatformLocalizer(context))
-  }
-
+    @Before
+    fun setup() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        localizer = MokoResourcesLocalizer(PlatformLocalizer(context))
+    }
 }

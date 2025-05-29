@@ -22,70 +22,70 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultDatastoreRepository(
-  private val coroutineScope: AppCoroutineScope,
-  private val dataStore: DataStore<Preferences>,
+    private val coroutineScope: AppCoroutineScope,
+    private val dataStore: DataStore<Preferences>,
 ) : DatastoreRepository {
 
-  override fun saveTheme(appTheme: AppTheme) {
-    coroutineScope.io.launch {
-      dataStore.edit { preferences -> preferences[KEY_THEME] = appTheme.name }
-    }
-  }
-
-  override fun observeTheme(): Flow<AppTheme> =
-    dataStore.data.map { preferences ->
-      when (preferences[KEY_THEME]) {
-        AppTheme.LIGHT_THEME.name -> AppTheme.LIGHT_THEME
-        AppTheme.DARK_THEME.name -> AppTheme.DARK_THEME
-        else -> AppTheme.SYSTEM_THEME
-      }
+    override fun saveTheme(appTheme: AppTheme) {
+        coroutineScope.io.launch {
+            dataStore.edit { preferences -> preferences[KEY_THEME] = appTheme.name }
+        }
     }
 
-  override suspend fun saveAuthState(authState: AuthState) {
-    coroutineScope.io.launch {
-      dataStore.edit { preferences ->
-        preferences[KEY_ACCESS_TOKEN] = authState.accessToken!!
-        preferences[KEY_REFRESH_TOKEN] = authState.refreshToken!!
-        preferences[KEY_IS_AUTHORIZED] = authState.isAuthorized
-      }
-    }
-  }
+    override fun observeTheme(): Flow<AppTheme> =
+        dataStore.data.map { preferences ->
+            when (preferences[KEY_THEME]) {
+                AppTheme.LIGHT_THEME.name -> AppTheme.LIGHT_THEME
+                AppTheme.DARK_THEME.name -> AppTheme.DARK_THEME
+                else -> AppTheme.SYSTEM_THEME
+            }
+        }
 
-  override suspend fun getAuthState(): AuthState? {
-    return if (dataStore.data.first()[KEY_ACCESS_TOKEN] == null) {
-      null
-    } else {
-      AuthState(
-        accessToken = dataStore.data.first()[KEY_ACCESS_TOKEN],
-        refreshToken = dataStore.data.first()[KEY_REFRESH_TOKEN],
-        isAuthorized = dataStore.data.first()[KEY_IS_AUTHORIZED] ?: false,
-      )
-    }
-  }
-
-  override fun clearAuthState() {
-    coroutineScope.io.launch {
-      dataStore.edit {
-        it.remove(KEY_ACCESS_TOKEN)
-        it.remove(KEY_REFRESH_TOKEN)
-        it.remove(KEY_IS_AUTHORIZED)
-      }
-    }
-  }
-
-  override fun observeAuthState(): Flow<AuthState> =
-    dataStore.data.map { preferences ->
-      AuthState(
-        accessToken = preferences[KEY_ACCESS_TOKEN],
-        refreshToken = preferences[KEY_REFRESH_TOKEN],
-        isAuthorized = preferences[KEY_IS_AUTHORIZED] ?: false,
-      )
+    override suspend fun saveAuthState(authState: AuthState) {
+        coroutineScope.io.launch {
+            dataStore.edit { preferences ->
+                preferences[KEY_ACCESS_TOKEN] = authState.accessToken!!
+                preferences[KEY_REFRESH_TOKEN] = authState.refreshToken!!
+                preferences[KEY_IS_AUTHORIZED] = authState.isAuthorized
+            }
+        }
     }
 
-  companion object {
-    val KEY_THEME = stringPreferencesKey("app_theme")
-    val KEY_ACCESS_TOKEN = stringPreferencesKey("auth_state")
-    val KEY_REFRESH_TOKEN = stringPreferencesKey("refresh_token")
-    val KEY_IS_AUTHORIZED = booleanPreferencesKey("isAuthorized")
-  }
+    override suspend fun getAuthState(): AuthState? {
+        return if (dataStore.data.first()[KEY_ACCESS_TOKEN] == null) {
+            null
+        } else {
+            AuthState(
+                accessToken = dataStore.data.first()[KEY_ACCESS_TOKEN],
+                refreshToken = dataStore.data.first()[KEY_REFRESH_TOKEN],
+                isAuthorized = dataStore.data.first()[KEY_IS_AUTHORIZED] ?: false,
+            )
+        }
+    }
+
+    override fun clearAuthState() {
+        coroutineScope.io.launch {
+            dataStore.edit {
+                it.remove(KEY_ACCESS_TOKEN)
+                it.remove(KEY_REFRESH_TOKEN)
+                it.remove(KEY_IS_AUTHORIZED)
+            }
+        }
+    }
+
+    override fun observeAuthState(): Flow<AuthState> =
+        dataStore.data.map { preferences ->
+            AuthState(
+                accessToken = preferences[KEY_ACCESS_TOKEN],
+                refreshToken = preferences[KEY_REFRESH_TOKEN],
+                isAuthorized = preferences[KEY_IS_AUTHORIZED] ?: false,
+            )
+        }
+
+    companion object {
+        val KEY_THEME = stringPreferencesKey("app_theme")
+        val KEY_ACCESS_TOKEN = stringPreferencesKey("auth_state")
+        val KEY_REFRESH_TOKEN = stringPreferencesKey("refresh_token")
+        val KEY_IS_AUTHORIZED = booleanPreferencesKey("isAuthorized")
+    }
 }

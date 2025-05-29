@@ -50,7 +50,8 @@ public struct EpisodeListView: View {
             .alert(isPresented: $showingAlert, content: {
                 let title = isSeasonWatched ? "Mark as unwatched" : "Mark as watched"
                 let messageBody = isSeasonWatched ?
-                    "Are you sure you want to mark the entire season as unwatched?" : "Are you sure you want to mark the entire season as watched?"
+                    "Are you sure you want to mark the entire season as unwatched?" :
+                    "Are you sure you want to mark the entire season as watched?"
                 return Alert(
                     title: Text(title),
                     message: Text(messageBody),

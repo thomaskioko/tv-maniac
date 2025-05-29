@@ -47,184 +47,185 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SearchTextContainer(
-  query: String,
-  hint: String,
-  lazyListState: LazyListState,
-  onAction: (SearchShowAction) -> Unit,
-  modifier: Modifier = Modifier,
-  keyboardType: KeyboardType = KeyboardType.Text,
-  content: @Composable () -> Unit,
+    query: String,
+    hint: String,
+    lazyListState: LazyListState,
+    onAction: (SearchShowAction) -> Unit,
+    modifier: Modifier = Modifier,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    content: @Composable () -> Unit,
 ) {
-  val keyboardController = LocalSoftwareKeyboardController.current
-  val focusManager = LocalFocusManager.current
-  val coroutineScope = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
 
-  val textState = remember(query) {
-    mutableStateOf(TextFieldValue(query, TextRange(query.length)))
-  }
-  val hasFocus = remember { mutableStateOf(false) }
+    val textState = remember(query) {
+        mutableStateOf(TextFieldValue(query, TextRange(query.length)))
+    }
+    val hasFocus = remember { mutableStateOf(false) }
 
-  LaunchedEffect(lazyListState) {
-    snapshotFlow { lazyListState.isScrollInProgress }
-      .collect { isScrolling ->
-        if (isScrolling) {
-          keyboardController?.hide()
-          focusManager.clearFocus()
-        }
-      }
-  }
+    LaunchedEffect(lazyListState) {
+        snapshotFlow { lazyListState.isScrollInProgress }
+            .collect { isScrolling ->
+                if (isScrolling) {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                }
+            }
+    }
 
-  SearchTextFieldContent(
-    modifier = modifier
-      .pointerInput(Unit) {
-        detectTapGestures(
-          onTap = {
+    SearchTextFieldContent(
+        modifier = modifier
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    },
+                )
+            },
+        textFieldValue = textState.value,
+        hint = hint,
+        hasFocus = hasFocus.value,
+        keyboardType = keyboardType,
+        onTextChanged = { newValue ->
+            textState.value = newValue
+            onAction(QueryChanged(newValue.text))
+        },
+        onFocusChanged = { hasFocus.value = it },
+        onClearClick = {
+            textState.value = TextFieldValue()
+            onAction(ClearQuery)
             keyboardController?.hide()
             focusManager.clearFocus()
-          },
-        )
-      },
-    textFieldValue = textState.value,
-    hint = hint,
-    hasFocus = hasFocus.value,
-    keyboardType = keyboardType,
-    onTextChanged = { newValue ->
-      textState.value = newValue
-      onAction(QueryChanged(newValue.text))
-    },
-    onFocusChanged = { hasFocus.value = it },
-    onClearClick = {
-      textState.value = TextFieldValue()
-      onAction(ClearQuery)
-      keyboardController?.hide()
-      focusManager.clearFocus()
-    },
-    onSubmit = {
-      coroutineScope.launch {
-        onAction(QueryChanged(textState.value.text))
-        keyboardController?.hide()
-        focusManager.clearFocus()
-      }
-    },
-    content = content,
-  )
+        },
+        onSubmit = {
+            coroutineScope.launch {
+                onAction(QueryChanged(textState.value.text))
+                keyboardController?.hide()
+                focusManager.clearFocus()
+            }
+        },
+        content = content,
+    )
 }
 
 @Composable
 private fun SearchTextFieldContent(
-  textFieldValue: TextFieldValue,
-  hint: String,
-  hasFocus: Boolean,
-  keyboardType: KeyboardType,
-  onTextChanged: (TextFieldValue) -> Unit,
-  onFocusChanged: (Boolean) -> Unit,
-  onClearClick: () -> Unit,
-  onSubmit: () -> Unit,
-  modifier: Modifier = Modifier,
-  content: @Composable () -> Unit,
+    textFieldValue: TextFieldValue,
+    hint: String,
+    hasFocus: Boolean,
+    keyboardType: KeyboardType,
+    onTextChanged: (TextFieldValue) -> Unit,
+    onFocusChanged: (Boolean) -> Unit,
+    onClearClick: () -> Unit,
+    onSubmit: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
-  Column(modifier = modifier) {
-    SearchTextField(
-      hasFocus = hasFocus,
-      onFocusChanged = onFocusChanged,
-      textFieldValue = textFieldValue,
-      onTextChanged = onTextChanged,
-      hint = hint,
-      keyboardType = keyboardType,
-      onSubmit = onSubmit,
-      onClearClick = onClearClick,
-    )
+    Column(modifier = modifier) {
+        SearchTextField(
+            hasFocus = hasFocus,
+            onFocusChanged = onFocusChanged,
+            textFieldValue = textFieldValue,
+            onTextChanged = onTextChanged,
+            hint = hint,
+            keyboardType = keyboardType,
+            onSubmit = onSubmit,
+            onClearClick = onClearClick,
+        )
 
-    content()
-  }
+        content()
+    }
 }
 
 @Composable
 private fun SearchTextField(
-  hasFocus: Boolean,
-  onFocusChanged: (Boolean) -> Unit,
-  textFieldValue: TextFieldValue,
-  onTextChanged: (TextFieldValue) -> Unit,
-  hint: String,
-  keyboardType: KeyboardType,
-  onSubmit: () -> Unit,
-  onClearClick: () -> Unit,
+    hasFocus: Boolean,
+    onFocusChanged: (Boolean) -> Unit,
+    textFieldValue: TextFieldValue,
+    onTextChanged: (TextFieldValue) -> Unit,
+    hint: String,
+    keyboardType: KeyboardType,
+    onSubmit: () -> Unit,
+    onClearClick: () -> Unit,
 ) {
-  Surface(
-    modifier = Modifier
-      .padding(bottom = 8.dp, top = 8.dp),
-    shape = MaterialTheme.shapes.small,
-    color = MaterialTheme.colorScheme.surface,
-    tonalElevation = if (hasFocus) 3.dp else 1.dp,
-    border = BorderStroke(
-      width = 1.dp,
-      color = if (hasFocus)
-        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-      else
-        MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-    ),
-  ) {
-    OutlinedTextField(
-      modifier = Modifier
-        .fillMaxWidth()
-        .onFocusChanged { onFocusChanged(it.isFocused) },
-      value = textFieldValue,
-      onValueChange = onTextChanged,
-      placeholder = {
-        Text(
-          text = hint,
-          style = MaterialTheme.typography.bodyMedium.copy(
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-          ),
+    Surface(
+        modifier = Modifier
+            .padding(bottom = 8.dp, top = 8.dp),
+        shape = MaterialTheme.shapes.small,
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = if (hasFocus) 3.dp else 1.dp,
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (hasFocus) {
+                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+            } else {
+                MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+            },
+        ),
+    ) {
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { onFocusChanged(it.isFocused) },
+            value = textFieldValue,
+            onValueChange = onTextChanged,
+            placeholder = {
+                Text(
+                    text = hint,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    ),
+                )
+            },
+            singleLine = true,
+            maxLines = 1,
+            textStyle = MaterialTheme.typography.bodyMedium,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = keyboardType,
+                imeAction = ImeAction.Search,
+            ),
+            keyboardActions = KeyboardActions(
+                onSearch = { onSubmit() },
+            ),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                )
+            },
+            trailingIcon = {
+                IconButton(onClick = onClearClick) {
+                    Icon(
+                        imageVector = Icons.Filled.Clear,
+                        contentDescription = cd_clear_text.resolve(LocalContext.current),
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    )
+                }
+            },
+            colors = outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                unfocusedBorderColor = Color.Transparent,
+                cursorColor = MaterialTheme.colorScheme.secondary,
+            ),
         )
-      },
-      singleLine = true,
-      maxLines = 1,
-      textStyle = MaterialTheme.typography.bodyMedium,
-      keyboardOptions = KeyboardOptions(
-        keyboardType = keyboardType,
-        imeAction = ImeAction.Search,
-      ),
-      keyboardActions = KeyboardActions(
-        onSearch = { onSubmit() },
-      ),
-      leadingIcon = {
-        Icon(
-          imageVector = Icons.Filled.Search,
-          contentDescription = null,
-          tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-        )
-      },
-      trailingIcon = {
-        IconButton(onClick = onClearClick) {
-          Icon(
-            imageVector = Icons.Filled.Clear,
-            contentDescription = cd_clear_text.resolve(LocalContext.current),
-            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-          )
-        }
-      },
-      colors = outlinedTextFieldColors(
-        focusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-        unfocusedBorderColor = Color.Transparent,
-        cursorColor = MaterialTheme.colorScheme.secondary,
-      ),
-    )
-  }
+    }
 }
 
 @ThemePreviews
 @Composable
 private fun SearchTextFieldPreview() {
-  TvManiacTheme {
-    Surface {
-      SearchTextContainer(
-        hint = "Enter Show Title",
-        query = "",
-        lazyListState = remember { LazyListState() },
-        onAction = {},
-        content = {},
-      )
+    TvManiacTheme {
+        Surface {
+            SearchTextContainer(
+                hint = "Enter Show Title",
+                query = "",
+                lazyListState = remember { LazyListState() },
+                onAction = {},
+                content = {},
+            )
+        }
     }
-  }
 }

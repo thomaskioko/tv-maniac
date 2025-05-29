@@ -10,8 +10,6 @@ jdk = "17"
 java-target = "17"
 java-toolchain = "23"
 
-ktfmt = "0.44"
-
 agp = "8.10.0"
 android-lint = "31.10.0"
 androidx-activity = "1.10.1"
@@ -40,7 +38,6 @@ datetime = "0.6.2"
 decompose = "3.3.0"
 dependency-analysis = "2.17.0"
 essenty = "2.5.0"
-espressoCore = "3.6.1"
 desugar = "2.1.5"
 gradle-doctor = "0.10.0"
 junit = "1.2.1"
@@ -69,6 +66,7 @@ turbine = "1.2.0"
 yamlkt = "0.13.0"
 youtubePlayer = "12.1.1"
 kotlinPoet = "2.2.0"
+ktlint = "1.4.0"
 
 [libraries]
 android-lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "android-lint" }
@@ -176,7 +174,7 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
 dependency-analysis-gradle-plugin = { module = "com.autonomousapps:dependency-analysis-gradle-plugin", version.ref = "dependency-analysis" }
 gradle-doctor-gradle-plugin = { group = "com.osacky.doctor", name = "doctor-plugin", version.ref = "gradle-doctor" }
-skie-gradle-plugin = { module = "co.touchlab.skie:gradle-plugin", version = "0.10.1" }
+skie-gradle-plugin = { module = "co.touchlab.skie:gradle-plugin", version.ref = "skie" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -1,0 +1,43 @@
+#!/bin/sh
+
+echo "Running pre-commit checks..."
+
+# Run spotlessCheck to verify code formatting
+echo "Checking code formatting with Spotless..."
+./gradlew spotlessCheck
+
+# Check the exit code of the spotlessCheck command
+if [ $? -ne 0 ]; then
+  echo "❌ Code formatting check failed. Please run './gradlew spotlessApply' to fix formatting issues."
+  exit 1
+fi
+
+echo "✅ Code formatting check passed."
+
+# Check Swift code formatting with SwiftFormat
+if [ -d "ios" ]; then
+  echo "Checking Swift code formatting with SwiftFormat..."
+
+  # Check if SwiftFormat is installed
+  if ! command -v swiftformat &> /dev/null; then
+    echo "❌ SwiftFormat is not installed. Please install it using 'brew install swiftformat'."
+    exit 1
+  fi
+
+  # Run SwiftFormat check (lint mode only checks without changing files)
+  cd ios && swiftformat . --config .swiftformat --lint --swiftversion 5.9 --exclude derived_data
+
+  # Check the exit code
+  if [ $? -ne 0 ]; then
+    echo "❌ Swift code formatting check failed. Please run the following command to fix formatting issues:"
+    echo "cd ios && swiftformat . --config .swiftformat --swiftversion 5.9 --exclude derived_data"
+    echo "Note: This will modify your files to match the formatting rules. After fixing, commit again."
+    exit 1
+  fi
+
+  echo "✅ Swift code formatting check passed."
+  cd ..
+fi
+
+echo "All pre-commit checks passed! 🎉"
+exit 0

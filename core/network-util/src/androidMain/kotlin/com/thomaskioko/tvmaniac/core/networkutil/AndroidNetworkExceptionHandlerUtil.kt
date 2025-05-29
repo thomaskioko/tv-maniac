@@ -15,24 +15,23 @@ import java.net.UnknownHostException
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class AndroidNetworkExceptionHandlerUtil(
-  private val configs: Configs,
+    private val configs: Configs,
 ) : NetworkExceptionHandler {
-  val errorMessage = "Something went wrong"
+    val errorMessage = "Something went wrong"
 
-  override fun resolveError(throwable: Throwable) =
-    when (throwable) {
-      is UnknownHostException -> "No Internet Connection!"
-      is ClientRequestException -> {
-        if (configs.isDebug) {
-          "Status Code ${throwable.response.status.value}: Missing Api Key"
-        } else {
-          errorMessage
+    override fun resolveError(throwable: Throwable) = when (throwable) {
+        is UnknownHostException -> "No Internet Connection!"
+        is ClientRequestException -> {
+            if (configs.isDebug) {
+                "Status Code ${throwable.response.status.value}: Missing Api Key"
+            } else {
+                errorMessage
+            }
         }
-      }
-      is JsonConvertException,
-      is SerializationException,
-      is NoTransformationFoundException,
+        is JsonConvertException,
+        is SerializationException,
+        is NoTransformationFoundException,
         -> if (configs.isDebug) throwable.message else errorMessage
-      else -> errorMessage
+        else -> errorMessage
     }
 }

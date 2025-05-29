@@ -7,15 +7,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class FakeSearchRepository : SearchRepository {
-  private var stateFlow = MutableStateFlow<List<ShowEntity>>(emptyList())
+    private var stateFlow = MutableStateFlow<List<ShowEntity>>(emptyList())
 
-  suspend fun setSearchResult(result: List<ShowEntity>) {
-    stateFlow.emit(result)
-  }
+    suspend fun setSearchResult(result: List<ShowEntity>) {
+        stateFlow.emit(result)
+    }
 
-  override suspend fun search(query: String) {
+    override suspend fun search(query: String) {
+    }
 
-  }
-
-  override fun observeSearchResults(query: String): Flow<List<ShowEntity>> = stateFlow.asStateFlow()
+    override fun observeSearchResults(query: String): Flow<List<ShowEntity>> = stateFlow.asStateFlow()
 }

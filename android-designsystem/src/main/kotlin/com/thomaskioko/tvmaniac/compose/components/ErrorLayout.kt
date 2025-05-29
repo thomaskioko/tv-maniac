@@ -41,170 +41,170 @@ import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
 fun ConnectionStatus(
-  isConnected: Boolean,
-  modifier: Modifier = Modifier,
+    isConnected: Boolean,
+    modifier: Modifier = Modifier,
 ) {
-  val backgroundColor by
-  animateColorAsState(
-    if (isConnected) green else MaterialTheme.colorScheme.error,
-    label = "",
-  )
-  val message = if (isConnected) {
-    status_connected.resolve(LocalContext.current)
-  } else {
-    status_no_connection.resolve(LocalContext.current)
-  }
-  val icon = if (isConnected) Icons.Outlined.SignalWifi4Bar else Icons.Outlined.SignalWifiOff
-
-  Box(
-    modifier = modifier
-      .background(backgroundColor)
-      .fillMaxWidth()
-      .padding(8.dp),
-    contentAlignment = Alignment.TopCenter,
-  ) {
-    Row(
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.Center,
-    ) {
-      Icon(
-        imageVector = icon,
-        contentDescription = "Connectivity Icon",
-        tint = Color.White,
-      )
-
-      Spacer(modifier = Modifier.size(8.dp))
-
-      Text(
-        message,
-        color = Color.White,
-        style = MaterialTheme.typography.labelMedium,
-      )
+    val backgroundColor by
+        animateColorAsState(
+            if (isConnected) green else MaterialTheme.colorScheme.error,
+            label = "",
+        )
+    val message = if (isConnected) {
+        status_connected.resolve(LocalContext.current)
+    } else {
+        status_no_connection.resolve(LocalContext.current)
     }
-  }
+    val icon = if (isConnected) Icons.Outlined.SignalWifi4Bar else Icons.Outlined.SignalWifiOff
+
+    Box(
+        modifier = modifier
+            .background(backgroundColor)
+            .fillMaxWidth()
+            .padding(8.dp),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = "Connectivity Icon",
+                tint = Color.White,
+            )
+
+            Spacer(modifier = Modifier.size(8.dp))
+
+            Text(
+                message,
+                color = Color.White,
+                style = MaterialTheme.typography.labelMedium,
+            )
+        }
+    }
 }
 
 @Composable
 fun ErrorUi(
-  errorMessage: String?,
-  modifier: Modifier = Modifier,
-  errorIcon: @Composable () -> Unit = {},
-  onRetry: () -> Unit = {},
-  showRetryButton: Boolean = true,
+    errorMessage: String?,
+    modifier: Modifier = Modifier,
+    errorIcon: @Composable () -> Unit = {},
+    onRetry: () -> Unit = {},
+    showRetryButton: Boolean = true,
 ) {
-  Box(modifier = modifier) {
-    Column(
-      modifier = Modifier
-        .align(Alignment.Center)
-        .wrapContentSize(),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.Center,
-    ) {
-      errorIcon()
+    Box(modifier = modifier) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .wrapContentSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            errorIcon()
 
-      Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-      Text(
-        text = errorMessage ?: unexpected_error_retry.resolve(LocalContext.current),
-        style = MaterialTheme.typography.bodyLarge,
-        textAlign = TextAlign.Center,
-      )
+            Text(
+                text = errorMessage ?: unexpected_error_retry.resolve(LocalContext.current),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+            )
 
-      Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-      AnimatedVisibility(visible = showRetryButton) {
-        HorizontalOutlinedButton(
-          text = "Retry",
-          onClick = onRetry,
-        )
-      }
+            AnimatedVisibility(visible = showRetryButton) {
+                HorizontalOutlinedButton(
+                    text = "Retry",
+                    onClick = onRetry,
+                )
+            }
+        }
     }
-  }
 }
 
 @Composable
 fun RowError(
-  onRetry: () -> Unit,
-  modifier: Modifier = Modifier,
-  errorMessage: String = unexpected_error_retry.resolve(LocalContext.current),
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+    errorMessage: String = unexpected_error_retry.resolve(LocalContext.current),
 ) {
-  Column(
-    modifier = modifier,
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center,
-  ) {
-    Text(
-      text = errorMessage,
-      style = MaterialTheme.typography.bodyLarge,
-      textAlign = TextAlign.Center,
-    )
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = errorMessage,
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+        )
 
-    Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-    HorizontalOutlinedButton(
-      text = "Retry",
-      onClick = onRetry,
-    )
-  }
+        HorizontalOutlinedButton(
+            text = "Retry",
+            onClick = onRetry,
+        )
+    }
 }
 
 @Composable
 fun EmptyScreen(
-  icon: @Composable () -> Unit,
-  text: @Composable () -> Unit,
-  modifier: Modifier = Modifier,
+    icon: @Composable () -> Unit,
+    text: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  Box(modifier = modifier) {
-    Column(
-      modifier = Modifier
-        .align(Alignment.Center)
-        .wrapContentSize(),
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      icon()
+    Box(modifier = modifier) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .wrapContentSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            icon()
 
-      Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-      text()
+            text()
 
-      Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+        }
     }
-  }
 }
 
 @ThemePreviews
 @Composable
 private fun ErrorUiPreview() {
-  TvManiacTheme {
-    Surface {
-      ErrorUi(
-        errorIcon = {
-          Image(
-            modifier = Modifier.size(120.dp),
-            imageVector = Icons.Outlined.ErrorOutline,
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
-            contentDescription = null,
-          )
-        },
-        errorMessage = "Opps! Something went wrong",
-        onRetry = {},
-        modifier = Modifier.fillMaxSize(),
-      )
+    TvManiacTheme {
+        Surface {
+            ErrorUi(
+                errorIcon = {
+                    Image(
+                        modifier = Modifier.size(120.dp),
+                        imageVector = Icons.Outlined.ErrorOutline,
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+                        contentDescription = null,
+                    )
+                },
+                errorMessage = "Opps! Something went wrong",
+                onRetry = {},
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
     }
-  }
 }
 
 @ThemePreviews
 @Composable
 private fun RowErrorPreview() {
-  TvManiacTheme {
-    Surface {
-      RowError(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(vertical = 16.dp),
-        onRetry = {},
-      )
+    TvManiacTheme {
+        Surface {
+            RowError(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                onRetry = {},
+            )
+        }
     }
-  }
 }

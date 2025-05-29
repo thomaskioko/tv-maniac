@@ -16,38 +16,37 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DiscoverShowsInteractor(
-  private val featuredShowsRepository: FeaturedShowsRepository,
-  private val topRatedShowsRepository: TopRatedShowsRepository,
-  private val popularShowsRepository: PopularShowsRepository,
-  private val trendingShowsRepository: TrendingShowsRepository,
-  private val upcomingShowsRepository: UpcomingShowsRepository,
-  private val genreRepository: GenreRepository,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val featuredShowsRepository: FeaturedShowsRepository,
+    private val topRatedShowsRepository: TopRatedShowsRepository,
+    private val popularShowsRepository: PopularShowsRepository,
+    private val trendingShowsRepository: TrendingShowsRepository,
+    private val upcomingShowsRepository: UpcomingShowsRepository,
+    private val genreRepository: GenreRepository,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : SubjectInteractor<Unit, DiscoverShowsData>() {
 
-  override fun createObservable(params: Unit): Flow<DiscoverShowsData> = combine(
-    genreRepository.observeGenresWithShows(),
-    featuredShowsRepository.observeFeaturedShows(),
-    topRatedShowsRepository.observeTopRatedShows(),
-    popularShowsRepository.observePopularShows(),
-    trendingShowsRepository.observeTrendingShows(),
-    upcomingShowsRepository.observeUpcomingShows(),
-  ) { _, featured, topRated, popular, trending, upcoming ->
-    DiscoverShowsData(
-      featuredShows = featured,
-      topRatedShows = topRated,
-      popularShows = popular,
-      trendingShows = trending,
-      upcomingShows = upcoming,
-    )
-  }.flowOn(dispatchers.io.limitedParallelism(6))
+    override fun createObservable(params: Unit): Flow<DiscoverShowsData> = combine(
+        genreRepository.observeGenresWithShows(),
+        featuredShowsRepository.observeFeaturedShows(),
+        topRatedShowsRepository.observeTopRatedShows(),
+        popularShowsRepository.observePopularShows(),
+        trendingShowsRepository.observeTrendingShows(),
+        upcomingShowsRepository.observeUpcomingShows(),
+    ) { _, featured, topRated, popular, trending, upcoming ->
+        DiscoverShowsData(
+            featuredShows = featured,
+            topRatedShows = topRated,
+            popularShows = popular,
+            trendingShows = trending,
+            upcomingShows = upcoming,
+        )
+    }.flowOn(dispatchers.io.limitedParallelism(6))
 }
 
-
 data class DiscoverShowsData(
-  val featuredShows: List<ShowEntity>,
-  val topRatedShows: List<ShowEntity>,
-  val popularShows: List<ShowEntity>,
-  val trendingShows: List<ShowEntity>,
-  val upcomingShows: List<ShowEntity>,
+    val featuredShows: List<ShowEntity>,
+    val topRatedShows: List<ShowEntity>,
+    val popularShows: List<ShowEntity>,
+    val trendingShows: List<ShowEntity>,
+    val upcomingShows: List<ShowEntity>,
 )

@@ -7,13 +7,13 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class PopularShowsInteractor(
-  private val popularShowsRepository: PopularShowsRepository,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val popularShowsRepository: PopularShowsRepository,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Boolean>() {
 
-  override suspend fun doWork(params: Boolean) {
-    withContext(dispatchers.io) {
-      popularShowsRepository.fetchPopularShows(params)
+    override suspend fun doWork(params: Boolean) {
+        withContext(dispatchers.io) {
+            popularShowsRepository.fetchPopularShows(params)
+        }
     }
-  }
 }

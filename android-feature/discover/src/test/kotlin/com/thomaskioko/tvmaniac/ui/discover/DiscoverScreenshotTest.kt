@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.ui.discover
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.pager.rememberPagerState
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
@@ -25,74 +24,74 @@ import org.robolectric.annotation.LooperMode
 @LooperMode(LooperMode.Mode.PAUSED)
 class DiscoverScreenshotTest {
 
-  @get:Rule
-  val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+    @get:Rule
+    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-  @Test
-  fun discoverScreenEmptyState() {
-    composeTestRule.captureMultiDevice("DiscoverScreenEmptyState") {
-      TvManiacBackground {
-        DiscoverScreen(
-          state = DiscoverViewState.Empty,
-          pagerState = rememberPagerState(pageCount = { 5 }),
-          dismissSnackbarState = rememberDismissState { true },
-          snackBarHostState = remember { SnackbarHostState() },
-          onAction = {},
-        )
-      }
+    @Test
+    fun discoverScreenEmptyState() {
+        composeTestRule.captureMultiDevice("DiscoverScreenEmptyState") {
+            TvManiacBackground {
+                DiscoverScreen(
+                    state = DiscoverViewState.Empty,
+                    pagerState = rememberPagerState(pageCount = { 5 }),
+                    dismissSnackbarState = rememberDismissState { true },
+                    snackBarHostState = remember { SnackbarHostState() },
+                    onAction = {},
+                )
+            }
+        }
     }
-  }
 
-  @Test
-  fun discoverScreenLoading() {
-    composeTestRule.captureMultiDevice("DiscoverScreenLoading") {
-      TvManiacBackground {
-        DiscoverScreen(
-          state = DiscoverViewState.Empty.copy(
-            featuredRefreshing = true,
-            topRatedRefreshing = true,
-            trendingRefreshing = true,
-            upcomingRefreshing = true,
-            popularRefreshing = true,
-          ),
-          pagerState = rememberPagerState(pageCount = { 5 }),
-          dismissSnackbarState = rememberDismissState { true },
-          snackBarHostState = remember { SnackbarHostState() },
-          onAction = {},
-        )
-      }
+    @Test
+    fun discoverScreenLoading() {
+        composeTestRule.captureMultiDevice("DiscoverScreenLoading") {
+            TvManiacBackground {
+                DiscoverScreen(
+                    state = DiscoverViewState.Empty.copy(
+                        featuredRefreshing = true,
+                        topRatedRefreshing = true,
+                        trendingRefreshing = true,
+                        upcomingRefreshing = true,
+                        popularRefreshing = true,
+                    ),
+                    pagerState = rememberPagerState(pageCount = { 5 }),
+                    dismissSnackbarState = rememberDismissState { true },
+                    snackBarHostState = remember { SnackbarHostState() },
+                    onAction = {},
+                )
+            }
+        }
     }
-  }
 
-  @Test
-  fun discoverScreenErrorState() {
-    composeTestRule.captureMultiDevice("DiscoverScreenErrorState") {
-      TvManiacBackground {
-        DiscoverScreen(
-          state = DiscoverViewState.Empty.copy(
-            message = UiMessage(message = "Opps! Something went wrong"),
-          ),
-          dismissSnackbarState = rememberDismissState { true },
-          pagerState = rememberPagerState(pageCount = { 5 }),
-          snackBarHostState = remember { SnackbarHostState() },
-          onAction = {},
-        )
-      }
+    @Test
+    fun discoverScreenErrorState() {
+        composeTestRule.captureMultiDevice("DiscoverScreenErrorState") {
+            TvManiacBackground {
+                DiscoverScreen(
+                    state = DiscoverViewState.Empty.copy(
+                        message = UiMessage(message = "Opps! Something went wrong"),
+                    ),
+                    dismissSnackbarState = rememberDismissState { true },
+                    pagerState = rememberPagerState(pageCount = { 5 }),
+                    snackBarHostState = remember { SnackbarHostState() },
+                    onAction = {},
+                )
+            }
+        }
     }
-  }
 
-  @Test
-  fun discoverScreenDataLoaded() {
-    composeTestRule.captureMultiDevice("DiscoverScreenDataLoaded") {
-      TvManiacBackground {
-        DiscoverScreen(
-          state = discoverContentSuccess,
-          pagerState = rememberPagerState(pageCount = { 5 }),
-          dismissSnackbarState = rememberDismissState { true },
-          snackBarHostState = remember { SnackbarHostState() },
-          onAction = {},
-        )
-      }
+    @Test
+    fun discoverScreenDataLoaded() {
+        composeTestRule.captureMultiDevice("DiscoverScreenDataLoaded") {
+            TvManiacBackground {
+                DiscoverScreen(
+                    state = discoverContentSuccess,
+                    pagerState = rememberPagerState(pageCount = { 5 }),
+                    dismissSnackbarState = rememberDismissState { true },
+                    snackBarHostState = remember { SnackbarHostState() },
+                    onAction = {},
+                )
+            }
+        }
     }
-  }
 }

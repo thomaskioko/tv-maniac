@@ -8,21 +8,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class FakePopularShowsRepository : PopularShowsRepository {
-  private val _shows = MutableStateFlow<List<ShowEntity>>(emptyList())
-  private val _pagedShows = MutableStateFlow<PagingData<ShowEntity>>(PagingData.empty())
+    private val _shows = MutableStateFlow<List<ShowEntity>>(emptyList())
+    private val _pagedShows = MutableStateFlow<PagingData<ShowEntity>>(PagingData.empty())
 
-  fun setPopularShows(result: List<ShowEntity>) {
-    _shows.value = result
-  }
+    fun setPopularShows(result: List<ShowEntity>) {
+        _shows.value = result
+    }
 
-  override suspend fun fetchPopularShows(forceRefresh: Boolean) {
-  }
+    override suspend fun fetchPopularShows(forceRefresh: Boolean) {
+    }
 
-  override fun observePopularShows(page: Long): Flow<List<ShowEntity>> {
-    return _shows.asStateFlow()
-  }
+    override fun observePopularShows(page: Long): Flow<List<ShowEntity>> {
+        return _shows.asStateFlow()
+    }
 
-  override fun getPagedPopularShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
-    return _pagedShows.asStateFlow()
-  }
+    override fun getPagedPopularShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
+        return _pagedShows.asStateFlow()
+    }
 }

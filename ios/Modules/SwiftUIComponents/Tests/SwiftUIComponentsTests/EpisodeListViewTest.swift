@@ -30,7 +30,7 @@ class EpisodeListViewTest: XCTestCase {
                     title: "E3 Model 103",
                     overview: "Malcolm confides in Kokoro about his recurring nightmare. The three children continue their underground trek, unaware of looming danger.",
                     imageUrl: ""
-                )
+                ),
             ],
             onEpisodeHeaderClicked: {},
             onWatchedStateClicked: {}

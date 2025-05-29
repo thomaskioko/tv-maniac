@@ -19,28 +19,28 @@ typealias TmdbJson = Json
 @ContributesTo(AppScope::class)
 interface TmdbComponent {
 
-  @Provides
-  @SingleIn(AppScope::class)
-  fun provideTmdbJson(): TmdbJson = Json {
-    isLenient = true
-    ignoreUnknownKeys = true
-    useAlternativeNames = false
-    explicitNulls = false
-  }
+    @Provides
+    @SingleIn(AppScope::class)
+    fun provideTmdbJson(): TmdbJson = Json {
+        isLenient = true
+        ignoreUnknownKeys = true
+        useAlternativeNames = false
+        explicitNulls = false
+    }
 
-  @Provides
-  @SingleIn(AppScope::class)
-  fun provideTmdbHttpClient(
-    configs: Configs,
-    json: TmdbJson,
-    httpClientEngine: TmdbHttpClientEngine,
-    logger: Logger,
-  ): TmdbHttpClient =
-    tmdbHttpClient(
-      tmdbApiKey = configs.tmdbApiKey,
-      json = json,
-      httpClientEngine = httpClientEngine,
-      kermitLogger = logger,
-      isDebug = configs.isDebug,
-    )
+    @Provides
+    @SingleIn(AppScope::class)
+    fun provideTmdbHttpClient(
+        configs: Configs,
+        json: TmdbJson,
+        httpClientEngine: TmdbHttpClientEngine,
+        logger: Logger,
+    ): TmdbHttpClient =
+        tmdbHttpClient(
+            tmdbApiKey = configs.tmdbApiKey,
+            json = json,
+            httpClientEngine = httpClientEngine,
+            kermitLogger = logger,
+            isDebug = configs.isDebug,
+        )
 }

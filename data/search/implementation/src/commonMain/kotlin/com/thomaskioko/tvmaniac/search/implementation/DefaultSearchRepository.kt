@@ -18,23 +18,22 @@ private const val MIN_SHOW_COUNT = 10
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultSearchRepository(
-  private val tvShowsDao: TvShowsDao,
-  private val store: SearchShowStore,
+    private val tvShowsDao: TvShowsDao,
+    private val store: SearchShowStore,
 ) : SearchRepository {
-  override suspend fun search(query: String) {
-    val shouldFetch = hasNoLocalData(query)
-    when {
-      shouldFetch -> store.fresh(query)
-      else -> store.get(query)
+    override suspend fun search(query: String) {
+        val shouldFetch = hasNoLocalData(query)
+        when {
+            shouldFetch -> store.fresh(query)
+            else -> store.get(query)
+        }
     }
-  }
 
-  override fun observeSearchResults(query: String): Flow<List<ShowEntity>> = tvShowsDao.observeShowsByQuery(query)
+    override fun observeSearchResults(query: String): Flow<List<ShowEntity>> = tvShowsDao.observeShowsByQuery(query)
 
-  private suspend fun hasNoLocalData(query: String): Boolean {
-    return tvShowsDao.observeQueryCount(query).first().let { cachedShows ->
-      cachedShows < MIN_SHOW_COUNT
+    private suspend fun hasNoLocalData(query: String): Boolean {
+        return tvShowsDao.observeQueryCount(query).first().let { cachedShows ->
+            cachedShows < MIN_SHOW_COUNT
+        }
     }
-  }
-
 }

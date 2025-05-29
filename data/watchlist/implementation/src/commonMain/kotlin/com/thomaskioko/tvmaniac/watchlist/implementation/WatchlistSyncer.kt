@@ -12,14 +12,14 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 @Inject
 @ContributesBinding(AppScope::class, multibinding = true)
 class WatchlistSyncer(
-  private val watchlistRepository: WatchlistRepository,
-  private val coroutineScope: AppCoroutineScope,
+    private val watchlistRepository: WatchlistRepository,
+    private val coroutineScope: AppCoroutineScope,
 ) : AppInitializer {
-  override fun init() {
-    //TODO: Run this in a task/worker.
-    coroutineScope.io.launch {
-      watchlistRepository.observeUnSyncedItems()
-        .collect()
+    override fun init() {
+        // TODO: Run this in a task/worker.
+        coroutineScope.io.launch {
+            watchlistRepository.observeUnSyncedItems()
+                .collect()
+        }
     }
-  }
 }

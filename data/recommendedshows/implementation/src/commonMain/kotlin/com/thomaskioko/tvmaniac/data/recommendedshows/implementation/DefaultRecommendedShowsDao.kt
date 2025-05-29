@@ -17,30 +17,30 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultRecommendedShowsDao(
-  private val database: TvManiacDatabase,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val database: TvManiacDatabase,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : RecommendedShowsDao {
-  override fun upsert(showId: Long, recommendedShowId: Long) {
-    database.recommendedShowsQueries.transaction {
-      database.recommendedShowsQueries.upsert(
-        id = Id(recommendedShowId),
-        recommended_show_id = Id(showId),
-      )
+    override fun upsert(showId: Long, recommendedShowId: Long) {
+        database.recommendedShowsQueries.transaction {
+            database.recommendedShowsQueries.upsert(
+                id = Id(recommendedShowId),
+                recommended_show_id = Id(showId),
+            )
+        }
     }
-  }
 
-  override fun observeRecommendedShows(traktId: Long): Flow<List<RecommendedShows>> {
-    return database.recommendedShowsQueries
-      .recommendedShows(Id(traktId))
-      .asFlow()
-      .mapToList(dispatchers.io)
-  }
+    override fun observeRecommendedShows(traktId: Long): Flow<List<RecommendedShows>> {
+        return database.recommendedShowsQueries
+            .recommendedShows(Id(traktId))
+            .asFlow()
+            .mapToList(dispatchers.io)
+    }
 
-  override fun delete(id: Long) {
-    database.recommendedShowsQueries.delete(Id(id))
-  }
+    override fun delete(id: Long) {
+        database.recommendedShowsQueries.delete(Id(id))
+    }
 
-  override fun deleteAll() {
-    database.transaction { database.recommendedShowsQueries.deleteAll() }
-  }
+    override fun deleteAll() {
+        database.transaction { database.recommendedShowsQueries.deleteAll() }
+    }
 }

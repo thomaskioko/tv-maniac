@@ -21,30 +21,30 @@ import org.robolectric.annotation.LooperMode
 @LooperMode(LooperMode.Mode.PAUSED)
 class SeasonScreenshotTest {
 
-  @get:Rule
-  val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+    @get:Rule
+    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-  @Test
-  fun seasonDetailsScreenContentLoadedState() {
-    composeTestRule.captureMultiDevice("SeasonDetailsLoadedContent") {
-      TvManiacBackground {
-        SeasonDetailsScreen(
-          state = seasonDetailsLoaded,
-          onAction = {},
-        )
-      }
+    @Test
+    fun seasonDetailsScreenContentLoadedState() {
+        composeTestRule.captureMultiDevice("SeasonDetailsLoadedContent") {
+            TvManiacBackground {
+                SeasonDetailsScreen(
+                    state = seasonDetailsLoaded,
+                    onAction = {},
+                )
+            }
+        }
     }
-  }
 
-  @Test
-  fun seasonDetailsScreenErrorState() {
-    composeTestRule.captureMultiDevice("SeasonDetailsErrorState") {
-      TvManiacBackground {
-        SeasonDetailsScreen(
-          state = seasonDetailsLoaded.copy(message = UiMessage("Opps! Something went wrong")),
-          onAction = {},
-        )
-      }
+    @Test
+    fun seasonDetailsScreenErrorState() {
+        composeTestRule.captureMultiDevice("SeasonDetailsErrorState") {
+            TvManiacBackground {
+                SeasonDetailsScreen(
+                    state = seasonDetailsLoaded.copy(message = UiMessage("Opps! Something went wrong")),
+                    onAction = {},
+                )
+            }
+        }
     }
-  }
 }

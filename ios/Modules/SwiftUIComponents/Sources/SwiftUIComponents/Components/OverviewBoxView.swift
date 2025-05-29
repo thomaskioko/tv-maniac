@@ -44,7 +44,7 @@ public struct OverviewBoxView: View {
                                         .background(GeometryReader { fullGeometry in
                                             // And compare the two
                                             Color.clear.onAppear {
-                                                self.isTruncated = fullGeometry.size.height > displayedGeometry.size.height
+                                                isTruncated = fullGeometry.size.height > displayedGeometry.size.height
                                             }
                                         })
                                 }
@@ -60,12 +60,13 @@ public struct OverviewBoxView: View {
                         Button(
                             action: {
                                 withAnimation { showFullText.toggle() }
-                            }) {
-                                Text(showFullText ? "Show Less" : "Show More")
-                                    .textCase(.uppercase)
-                                    .font(.avenirNext(size: 12))
-                                    .foregroundStyle(Color.accent)
                             }
+                        ) {
+                            Text(showFullText ? "Show Less" : "Show More")
+                                .textCase(.uppercase)
+                                .font(.avenirNext(size: 12))
+                                .foregroundStyle(Color.accent)
+                        }
                     }
                 }
             }

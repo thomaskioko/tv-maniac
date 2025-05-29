@@ -5,7 +5,7 @@ import XCTest
 
 class YoutubeItemViewTest: XCTestCase {
     func test_TrailerItemView() {
-      YoutubeItemView(
+        YoutubeItemView(
             openInYouTube: false,
             key: "XZ8daibM3AE",
             name: "Series Trailer",

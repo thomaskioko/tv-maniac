@@ -9,13 +9,13 @@ internal expect fun createTestSqlDriver(name: String): SqlDriver
 
 abstract class BaseDatabaseTest {
 
-  private val sqlDriver: SqlDriver by lazy {
-    createTestSqlDriver("${this@BaseDatabaseTest::class.simpleName}_${Uuid.random()}")
-  }
+    private val sqlDriver: SqlDriver by lazy {
+        createTestSqlDriver("${this@BaseDatabaseTest::class.simpleName}_${Uuid.random()}")
+    }
 
-  protected val database: TvManiacDatabase by lazy { DatabaseFactory(sqlDriver).createDatabase() }
+    protected val database: TvManiacDatabase by lazy { DatabaseFactory(sqlDriver).createDatabase() }
 
-  fun closeDb() {
-    sqlDriver.close()
-  }
+    fun closeDb() {
+        sqlDriver.close()
+    }
 }

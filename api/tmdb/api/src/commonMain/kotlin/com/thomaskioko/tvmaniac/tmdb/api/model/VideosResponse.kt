@@ -5,18 +5,18 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class VideosResponse(
-  @SerialName("results") var results: ArrayList<VideoResultResponse>,
+    @SerialName("results") var results: ArrayList<VideoResultResponse>,
 )
 
 @Serializable
 data class VideoResultResponse(
-  @SerialName("iso_639_1") var iso6391: String,
-  @SerialName("iso_3166_1") var iso31661: String,
-  @SerialName("name") var name: String,
-  @SerialName("key") var key: String,
-  @SerialName("site") var site: String,
-  @SerialName("size") var size: Int,
-  @SerialName("type") var type: String,
-  @SerialName("official") var official: Boolean,
-  @SerialName("id") var id: String,
+    @SerialName("iso_639_1") var iso6391: String,
+    @SerialName("iso_3166_1") var iso31661: String,
+    @SerialName("name") var name: String,
+    @SerialName("key") var key: String,
+    @SerialName("site") var site: String,
+    @SerialName("size") var size: Int,
+    @SerialName("type") var type: String,
+    @SerialName("official") var official: Boolean,
+    @SerialName("id") var id: String,
 )

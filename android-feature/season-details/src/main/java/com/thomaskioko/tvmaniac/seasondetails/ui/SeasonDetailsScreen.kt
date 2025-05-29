@@ -96,462 +96,450 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun SeasonDetailsScreen(
-  presenter: SeasonDetailsPresenter,
-  modifier: Modifier = Modifier,
+    presenter: SeasonDetailsPresenter,
+    modifier: Modifier = Modifier,
 ) {
-  val state by presenter.state.collectAsState()
+    val state by presenter.state.collectAsState()
 
-  SeasonDetailsScreen(
-    modifier = modifier,
-    state = state,
-    onAction = presenter::dispatch,
-  )
+    SeasonDetailsScreen(
+        modifier = modifier,
+        state = state,
+        onAction = presenter::dispatch,
+    )
 }
 
 @Composable
 internal fun SeasonDetailsScreen(
-  state: SeasonDetailsModel,
-  modifier: Modifier = Modifier,
-  onAction: (SeasonDetailsAction) -> Unit,
+    state: SeasonDetailsModel,
+    modifier: Modifier = Modifier,
+    onAction: (SeasonDetailsAction) -> Unit,
 ) {
+    val listState = rememberLazyListState()
 
-  val listState = rememberLazyListState()
+    TvManiacBottomSheetScaffold(
+        modifier = modifier,
+        showBottomSheet = state.showGalleryBottomSheet,
+        sheetContent = { ImageGalleryContent(imageList = state.seasonImages) },
+        onDismissBottomSheet = { onAction(DismissSeasonGallery) },
+        sheetDragHandle = {
+            val title = stringResource(cd_show_images.resourceId, state.seasonName)
+            SheetDragHandle(
+                title = title,
+                imageVector = Icons.Outlined.KeyboardArrowDown,
+                onClick = { onAction(DismissSeasonGallery) },
+            )
+        },
+        content = { contentPadding ->
+            Box(Modifier.fillMaxSize()) {
+                if (state.message == null) {
+                    LazyColumnContent(
+                        seasonDetailsModel = state,
+                        isLoading = state.isUpdating,
+                        showSeasonWatchStateDialog = state.showSeasonWatchStateDialog,
+                        contentPadding = contentPadding,
+                        onAction = onAction,
+                        listState = listState,
+                    )
+                } else {
+                    ErrorUi(
+                        errorIcon = {
+                            Image(
+                                modifier = Modifier.size(120.dp),
+                                imageVector = Icons.Outlined.ErrorOutline,
+                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+                                contentDescription = null,
+                            )
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                        errorMessage = state.message?.message,
+                        onRetry = { onAction(ReloadSeasonDetails) },
+                    )
+                }
 
-  TvManiacBottomSheetScaffold(
-    modifier = modifier,
-    showBottomSheet = state.showGalleryBottomSheet,
-    sheetContent = { ImageGalleryContent(imageList = state.seasonImages) },
-    onDismissBottomSheet = { onAction(DismissSeasonGallery) },
-    sheetDragHandle = {
-      val title = stringResource( cd_show_images.resourceId, state.seasonName)
-      SheetDragHandle(
-        title = title,
-        imageVector = Icons.Outlined.KeyboardArrowDown,
-        onClick = { onAction(DismissSeasonGallery) },
-      )
-    },
-    content = { contentPadding ->
-      Box(Modifier.fillMaxSize()) {
-        if (state.message == null) {
-          LazyColumnContent(
-            seasonDetailsModel = state,
-            isLoading = state.isUpdating,
-            showSeasonWatchStateDialog = state.showSeasonWatchStateDialog,
-            contentPadding = contentPadding,
-            onAction = onAction,
-            listState = listState,
-          )
-        } else {
-          ErrorUi(
-            errorIcon = {
-              Image(
-                modifier = Modifier.size(120.dp),
-                imageVector = Icons.Outlined.ErrorOutline,
-                colorFilter =
-                  ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
-                contentDescription = null,
-              )
-            },
-            modifier = Modifier.fillMaxSize(),
-            errorMessage = state.message?.message,
-            onRetry = { onAction(ReloadSeasonDetails) },
-          )
-        }
-
-        RefreshCollapsableTopAppBar(
-          listState = listState,
-          title = {
-            Text(
-              text = state.seasonName,
-              style =
-                MaterialTheme.typography.titleMedium.copy(
-                  color = MaterialTheme.colorScheme.onSurface,
-                ),
-              maxLines = 1,
-              overflow = TextOverflow.Ellipsis,
-            )
-          },
-          navigationIcon = {
-            Icon(
-              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = cd_navigate_back.resolve(LocalContext.current),
-              tint = MaterialTheme.colorScheme.onBackground,
-            )
-          },
-          actionIcon = {
-            Icon(
-              imageVector = Icons.Default.Refresh,
-              contentDescription = null,
-              tint = MaterialTheme.colorScheme.onBackground,
-            )
-          },
-          isRefreshing = state.isUpdating,
-          showActionIcon = state.message != null,
-          onNavIconClicked = { onAction(SeasonDetailsBackClicked) },
-          onActionIconClicked = { onAction(ReloadSeasonDetails) },
-        )
-      }
-    },
-  )
+                RefreshCollapsableTopAppBar(
+                    listState = listState,
+                    title = {
+                        Text(
+                            text = state.seasonName,
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                color = MaterialTheme.colorScheme.onSurface,
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    navigationIcon = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = cd_navigate_back.resolve(LocalContext.current),
+                            tint = MaterialTheme.colorScheme.onBackground,
+                        )
+                    },
+                    actionIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onBackground,
+                        )
+                    },
+                    isRefreshing = state.isUpdating,
+                    showActionIcon = state.message != null,
+                    onNavIconClicked = { onAction(SeasonDetailsBackClicked) },
+                    onActionIconClicked = { onAction(ReloadSeasonDetails) },
+                )
+            }
+        },
+    )
 }
 
 @Composable
 fun LazyColumnContent(
-  listState: LazyListState,
-  isLoading: Boolean,
-  showSeasonWatchStateDialog: Boolean,
-  seasonDetailsModel: SeasonDetailsModel,
-  contentPadding: PaddingValues,
-  onAction: (SeasonDetailsAction) -> Unit,
-  modifier: Modifier = Modifier,
+    listState: LazyListState,
+    isLoading: Boolean,
+    showSeasonWatchStateDialog: Boolean,
+    seasonDetailsModel: SeasonDetailsModel,
+    contentPadding: PaddingValues,
+    onAction: (SeasonDetailsAction) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
+    val scrollState = rememberScrollState()
 
-  val scrollState = rememberScrollState()
+    LazyColumn(
+        modifier = modifier,
+        state = listState,
+        contentPadding = contentPadding.copy(copyTop = false),
+    ) {
+        item {
+            HeaderContent(
+                scrollState = scrollState,
+                imageUrl = seasonDetailsModel.imageUrl,
+                title = seasonDetailsModel.seasonName,
+                imagesCount = seasonDetailsModel.seasonImages.size,
+                watchProgress = seasonDetailsModel.watchProgress,
+                isLoading = isLoading,
+                onAction = onAction,
+                listState = listState,
+            )
+        }
 
-  LazyColumn(
-    modifier = modifier,
-    state = listState,
-    contentPadding = contentPadding.copy(copyTop = false),
-  ) {
-    item {
-      HeaderContent(
-        scrollState = scrollState,
-        imageUrl = seasonDetailsModel.imageUrl,
-        title = seasonDetailsModel.seasonName,
-        imagesCount = seasonDetailsModel.seasonImages.size,
-        watchProgress = seasonDetailsModel.watchProgress,
-        isLoading = isLoading,
-        onAction = onAction,
-        listState = listState,
-      )
+        item {
+            BodyContent(
+                seasonDetailsModel = seasonDetailsModel,
+                onAction = onAction,
+            )
+        }
+
+        item { Spacer(modifier = Modifier.height(54.dp)) }
     }
 
-    item {
-      BodyContent(
-        seasonDetailsModel = seasonDetailsModel,
-        onAction = onAction,
-      )
+    if (showSeasonWatchStateDialog) {
+        SeasonsWatchDialog(
+            isWatched = seasonDetailsModel.isSeasonWatched,
+            onAction = onAction,
+        )
     }
-
-    item { Spacer(modifier = Modifier.height(54.dp)) }
-  }
-
-  if (showSeasonWatchStateDialog) {
-    SeasonsWatchDialog(
-      isWatched = seasonDetailsModel.isSeasonWatched,
-      onAction = onAction,
-    )
-  }
 }
 
 @Composable
 fun ImageGalleryContent(
-  imageList: ImmutableList<SeasonImagesModel>,
-  modifier: Modifier = Modifier,
+    imageList: ImmutableList<SeasonImagesModel>,
+    modifier: Modifier = Modifier,
 ) {
-  val listState = rememberLazyListState()
-  LazyVerticalStaggeredGrid(
-    columns = StaggeredGridCells.Fixed(2),
-    verticalItemSpacing = 4.dp,
-    flingBehavior = rememberSnapperFlingBehavior(listState),
-    horizontalArrangement = Arrangement.spacedBy(4.dp),
-    modifier = modifier.fillMaxSize(),
-  ) {
-    items(imageList) { item ->
-      PosterCard(
-        modifier = Modifier
-          .fillMaxWidth()
-          .animateItem(),
-        imageUrl = item.imageUrl,
-        title = "",
-        onClick = {},
-      )
+    val listState = rememberLazyListState()
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        verticalItemSpacing = 4.dp,
+        flingBehavior = rememberSnapperFlingBehavior(listState),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier.fillMaxSize(),
+    ) {
+        items(imageList) { item ->
+            PosterCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateItem(),
+                imageUrl = item.imageUrl,
+                title = "",
+                onClick = {},
+            )
+        }
     }
-  }
 }
 
 @Composable
 private fun HeaderContent(
-  scrollState: ScrollState,
-  imageUrl: String?,
-  title: String,
-  watchProgress: Float,
-  imagesCount: Int,
-  isLoading: Boolean,
-  listState: LazyListState,
-  onAction: (SeasonDetailsAction) -> Unit,
+    scrollState: ScrollState,
+    imageUrl: String?,
+    title: String,
+    watchProgress: Float,
+    imagesCount: Int,
+    isLoading: Boolean,
+    listState: LazyListState,
+    onAction: (SeasonDetailsAction) -> Unit,
 ) {
-  val offset = (scrollState.value / 2)
-  val offsetDp = with(LocalDensity.current) { offset.toDp() }
-  val resources = LocalContext.current.resources
-
-  Box(
-    modifier =
-      Modifier
-        .fillMaxWidth()
-        .height(350.dp)
-        .clipToBounds()
-        .offset {
-          IntOffset(
-            x = 0,
-            y = if (listState.firstVisibleItemIndex == 0) {
-              listState.firstVisibleItemScrollOffset / 2
-            } else {
-              0
-            },
-          )
-        },
-    contentAlignment = Alignment.BottomCenter,
-  ) {
-    PosterCard(
-      imageUrl = imageUrl,
-      title = title,
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(top = offsetDp),
-    )
+    val offset = (scrollState.value / 2)
+    val offsetDp = with(LocalDensity.current) { offset.toDp() }
+    val resources = LocalContext.current.resources
 
     Box(
-      modifier = Modifier
-        .matchParentSize()
-        .background(contentBackgroundGradient()),
-    )
-
-    Row(
-      modifier = Modifier
-        .align(Alignment.BottomStart)
-        .padding(horizontal = 16.dp, vertical = 32.dp)
-        .clickable { onAction(SeasonGalleryClicked) },
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-      Icon(
-        imageVector = Icons.Filled.PhotoLibrary,
-        contentDescription = cd_navigate_back.resolve(LocalContext.current),
-        tint = MaterialTheme.colorScheme.onSurface,
-      )
-
-      Text(
-        text =
-          resources.getQuantityString(
-            season_images_count.resourceId,
-            imagesCount,
-            imagesCount,
-          ),
-        style = MaterialTheme.typography.bodyMedium,
-        modifier = Modifier.padding(horizontal = 8.dp),
-      )
-    }
-
-    AnimatedVisibility(
-      visible = isLoading,
-      modifier = Modifier.align(Alignment.BottomEnd),
-    ) {
-      LoadingIndicator(
         modifier = Modifier
-          .align(Alignment.BottomEnd)
-          .padding(32.dp)
-          .size(28.dp),
-      )
+            .fillMaxWidth()
+            .height(350.dp)
+            .clipToBounds()
+            .offset {
+                IntOffset(
+                    x = 0,
+                    y = if (listState.firstVisibleItemIndex == 0) {
+                        listState.firstVisibleItemScrollOffset / 2
+                    } else {
+                        0
+                    },
+                )
+            },
+        contentAlignment = Alignment.BottomCenter,
+    ) {
+        PosterCard(
+            imageUrl = imageUrl,
+            title = title,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = offsetDp),
+        )
+
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(contentBackgroundGradient()),
+        )
+
+        Row(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(horizontal = 16.dp, vertical = 32.dp)
+                .clickable { onAction(SeasonGalleryClicked) },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Filled.PhotoLibrary,
+                contentDescription = cd_navigate_back.resolve(LocalContext.current),
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+
+            Text(
+                text = resources.getQuantityString(
+                    season_images_count.resourceId,
+                    imagesCount,
+                    imagesCount,
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = 8.dp),
+            )
+        }
+
+        AnimatedVisibility(
+            visible = isLoading,
+            modifier = Modifier.align(Alignment.BottomEnd),
+        ) {
+            LoadingIndicator(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(32.dp)
+                    .size(28.dp),
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        ShowLinearProgressIndicator(
+            progress = watchProgress,
+            modifier = Modifier
+                .height(8.dp)
+                .fillMaxWidth(),
+        )
     }
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    ShowLinearProgressIndicator(
-      progress = watchProgress,
-      modifier = Modifier
-        .height(8.dp)
-        .fillMaxWidth(),
-    )
-  }
 }
 
 @Composable
 private fun BodyContent(
-  seasonDetailsModel: SeasonDetailsModel,
-  onAction: (SeasonDetailsAction) -> Unit,
-  modifier: Modifier = Modifier,
+    seasonDetailsModel: SeasonDetailsModel,
+    onAction: (SeasonDetailsAction) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  Column(
-    modifier = modifier.fillMaxSize(),
-  ) {
-    Text(
-      text = title_season_overview.resolve(LocalContext.current),
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp),
-      style =
-        MaterialTheme.typography.titleLarge.copy(
-          color = MaterialTheme.colorScheme.onSurface,
-          fontWeight = FontWeight.Medium,
-        ),
-    )
+    Column(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        Text(
+            text = title_season_overview.resolve(LocalContext.current),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            style = MaterialTheme.typography.titleLarge.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Medium,
+            ),
+        )
 
-    ExpandingText(
-      text = seasonDetailsModel.seasonOverview,
-      textStyle = MaterialTheme.typography.bodyMedium,
-      fontWeight = FontWeight.Normal,
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 16.dp),
-    )
+        ExpandingText(
+            text = seasonDetailsModel.seasonOverview,
+            textStyle = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Normal,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+        )
 
-    Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-    CollapsableContent(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 16.dp),
-      episodesCount = seasonDetailsModel.episodeCount,
-      watchProgress = seasonDetailsModel.watchProgress,
-      isSeasonWatched = seasonDetailsModel.isSeasonWatched,
-      episodeDetailsModelList = seasonDetailsModel.episodeDetailsList,
-      collapsed = seasonDetailsModel.expandEpisodeItems,
-      onAction = onAction,
-    )
+        CollapsableContent(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            episodesCount = seasonDetailsModel.episodeCount,
+            watchProgress = seasonDetailsModel.watchProgress,
+            isSeasonWatched = seasonDetailsModel.isSeasonWatched,
+            episodeDetailsModelList = seasonDetailsModel.episodeDetailsList,
+            collapsed = seasonDetailsModel.expandEpisodeItems,
+            onAction = onAction,
+        )
 
-    CastContent(seasonDetailsModel.seasonCast)
-  }
+        CastContent(seasonDetailsModel.seasonCast)
+    }
 }
 
 @Composable
 private fun CastContent(
-  castList: ImmutableList<Cast>,
+    castList: ImmutableList<Cast>,
 ) {
-  if (castList.isEmpty()) return
-  Column {
-    Text(
-      text = title_casts.resolve(LocalContext.current),
-      modifier = Modifier
-        .padding(16.dp)
-        .fillMaxWidth(),
-      style =
-        MaterialTheme.typography.titleLarge.copy(
-          color = MaterialTheme.colorScheme.onSurface,
-          fontWeight = FontWeight.Medium,
-        ),
-    )
+    if (castList.isEmpty()) return
+    Column {
+        Text(
+            text = title_casts.resolve(LocalContext.current),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            style = MaterialTheme.typography.titleLarge.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Medium,
+            ),
+        )
 
-    Box(
-      contentAlignment = Alignment.BottomCenter,
-    ) {
-      val lazyListState = rememberLazyListState()
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+        ) {
+            val lazyListState = rememberLazyListState()
 
-      LazyRow(
-        modifier = Modifier,
-        state = lazyListState,
-        flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-      ) {
-        itemsIndexed(castList) { index, cast ->
-          Card(
-            modifier =
-              Modifier.padding(
-                start = if (index == 0) 16.dp else 0.dp,
-                end = if (index == castList.size - 1) 16.dp else 8.dp,
-              ),
-            shape = MaterialTheme.shapes.small,
-            elevation =
-              CardDefaults.cardElevation(
-                defaultElevation = 8.dp,
-              ),
-          ) {
-            Box(
-              modifier = Modifier
-                .fillMaxSize()
-                .size(width = 120.dp, height = 160.dp),
-              contentAlignment = Alignment.BottomStart,
+            LazyRow(
+                modifier = Modifier,
+                state = lazyListState,
+                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
             ) {
-              PosterCard(
-                imageUrl = cast.profileUrl,
-                title = cast.name,
-                modifier = Modifier
-                  .fillMaxWidth()
-                  .animateItem(),
-              )
+                itemsIndexed(castList) { index, cast ->
+                    Card(
+                        modifier = Modifier.padding(
+                            start = if (index == 0) 16.dp else 0.dp,
+                            end = if (index == castList.size - 1) 16.dp else 8.dp,
+                        ),
+                        shape = MaterialTheme.shapes.small,
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 8.dp,
+                        ),
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .size(width = 120.dp, height = 160.dp),
+                            contentAlignment = Alignment.BottomStart,
+                        ) {
+                            PosterCard(
+                                imageUrl = cast.profileUrl,
+                                title = cast.name,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .animateItem(),
+                            )
 
-              Box(
-                modifier = Modifier
-                  .matchParentSize()
-                  .background(contentBackgroundGradient()),
-              )
-              Column(
-                modifier = Modifier.padding(8.dp),
-              ) {
-                Text(
-                  text = cast.name,
-                  modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .wrapContentWidth(),
-                  overflow = TextOverflow.Ellipsis,
-                  maxLines = 1,
-                  style =
-                    MaterialTheme.typography.bodyMedium.copy(
-                      fontWeight = FontWeight.Bold,
-                      color = MaterialTheme.colorScheme.onSurface,
-                    ),
-                )
+                            Box(
+                                modifier = Modifier
+                                    .matchParentSize()
+                                    .background(contentBackgroundGradient()),
+                            )
+                            Column(
+                                modifier = Modifier.padding(8.dp),
+                            ) {
+                                Text(
+                                    text = cast.name,
+                                    modifier = Modifier
+                                        .padding(vertical = 4.dp)
+                                        .wrapContentWidth(),
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1,
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                    ),
+                                )
 
-                Text(
-                  text = cast.characterName,
-                  modifier = Modifier.wrapContentWidth(),
-                  overflow = TextOverflow.Ellipsis,
-                  maxLines = 1,
-                  style =
-                    MaterialTheme.typography.bodyMedium.copy(
-                      fontWeight = FontWeight.Normal,
-                      color = MaterialTheme.colorScheme.onSurface,
-                    ),
-                )
-              }
+                                Text(
+                                    text = cast.characterName,
+                                    modifier = Modifier.wrapContentWidth(),
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1,
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.Normal,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                    ),
+                                )
+                            }
+                        }
+                    }
+                }
             }
-          }
         }
-      }
     }
-  }
 }
 
 @Composable
 private fun SeasonsWatchDialog(
-  isWatched: Boolean,
-  onAction: (SeasonDetailsAction) -> Unit,
+    isWatched: Boolean,
+    onAction: (SeasonDetailsAction) -> Unit,
 ) {
-  val context = LocalContext.current
+    val context = LocalContext.current
 
-  val title = if (isWatched) {
-      dialog_title_unwatched.resolve(context)
+    val title = if (isWatched) {
+        dialog_title_unwatched.resolve(context)
     } else {
-      dialog_title_watched.resolve(context)
+        dialog_title_watched.resolve(context)
     }
 
-  val message = if (isWatched) {
-      dialog_message_unwatched.resolve(context)
+    val message = if (isWatched) {
+        dialog_message_unwatched.resolve(context)
     } else {
-      dialog_message_watched.resolve(context)
+        dialog_message_watched.resolve(context)
     }
 
-  BasicDialog(
-    dialogTitle = title,
-    dialogMessage = message,
-    confirmButtonText = dialog_button_yes.resolve(context),
-    dismissButtonText = dialog_button_no.resolve(context),
-    onDismissDialog = { onAction(DismissSeasonDialog) },
-    confirmButtonClicked = { onAction(UpdateSeasonWatchedState) },
-    dismissButtonClicked = { onAction(DismissSeasonDialog) },
-  )
+    BasicDialog(
+        dialogTitle = title,
+        dialogMessage = message,
+        confirmButtonText = dialog_button_yes.resolve(context),
+        dismissButtonText = dialog_button_no.resolve(context),
+        onDismissDialog = { onAction(DismissSeasonDialog) },
+        confirmButtonClicked = { onAction(UpdateSeasonWatchedState) },
+        dismissButtonClicked = { onAction(DismissSeasonDialog) },
+    )
 }
 
 @ThemePreviews
 @Composable
 private fun SeasonDetailScreenPreview(
-  @PreviewParameter(SeasonPreviewParameterProvider::class) state: SeasonDetailsModel,
+    @PreviewParameter(SeasonPreviewParameterProvider::class) state: SeasonDetailsModel,
 ) {
-  TvManiacTheme {
-    Surface {
-      SeasonDetailsScreen(
-        state = state,
-        onAction = {},
-      )
+    TvManiacTheme {
+        Surface {
+            SeasonDetailsScreen(
+                state = state,
+                onAction = {},
+            )
+        }
     }
-  }
 }

@@ -10,10 +10,10 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @MergeComponent(AppScope::class)
 @SingleIn(AppScope::class)
 abstract class ApplicationComponent(
-  @get:Provides val application: Application,
+    @get:Provides val application: Application,
 ) : ActivityComponent.Factory {
-  abstract val initializers: AppInitializers
-  abstract val activityComponentFactory: ActivityComponent.Factory
+    abstract val initializers: AppInitializers
+    abstract val activityComponentFactory: ActivityComponent.Factory
 
-  companion object
+    companion object
 }

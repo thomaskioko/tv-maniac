@@ -5,17 +5,17 @@ import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisode
 import kotlinx.coroutines.flow.Flow
 
 interface SeasonDetailsDao {
-  fun fetchSeasonDetails(showId: Long, seasonNumber: Long): SeasonDetailsWithEpisodes
+    fun fetchSeasonDetails(showId: Long, seasonNumber: Long): SeasonDetailsWithEpisodes
 
-  fun observeSeasonEpisodeDetails(showId: Long, seasonNumber: Long): Flow<SeasonDetailsWithEpisodes>
+    fun observeSeasonEpisodeDetails(showId: Long, seasonNumber: Long): Flow<SeasonDetailsWithEpisodes>
 
-  fun delete(id: Long)
+    fun delete(id: Long)
 
-  fun deleteAll()
+    fun deleteAll()
 
-  fun upsertSeasonImage(seasonId: Long, imageUrl: String)
+    fun upsertSeasonImage(seasonId: Long, imageUrl: String)
 
-  fun fetchSeasonImages(id: Long): List<Season_images>
+    fun fetchSeasonImages(id: Long): List<Season_images>
 
-  fun observeSeasonImages(id: Long): Flow<List<Season_images>>
+    fun observeSeasonImages(id: Long): Flow<List<Season_images>>
 }

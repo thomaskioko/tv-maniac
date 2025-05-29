@@ -16,26 +16,26 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultFeaturedShowsRepository(
-  private val store: FeaturedShowsStore,
-  private val dao: FeaturedShowsDao,
+    private val store: FeaturedShowsStore,
+    private val dao: FeaturedShowsDao,
 ) : FeaturedShowsRepository {
 
-  companion object {
-    private const val FEATURED_SHOWS_COUNT = 5
-  }
-
-  override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> = dao.observeFeaturedShows(page)
-    .map { shows ->
-      shows
-        .take(FEATURED_SHOWS_COUNT)
+    companion object {
+        private const val FEATURED_SHOWS_COUNT = 5
     }
 
-  override suspend fun fetchFeaturedShows(forceRefresh: Boolean) {
-    //TODO:: Get the page from the dao
-    val page = 1L
-    when {
-      forceRefresh -> store.fresh(page)
-      else -> store.get(page)
+    override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> = dao.observeFeaturedShows(page)
+        .map { shows ->
+            shows
+                .take(FEATURED_SHOWS_COUNT)
+        }
+
+    override suspend fun fetchFeaturedShows(forceRefresh: Boolean) {
+        // TODO:: Get the page from the dao
+        val page = 1L
+        when {
+            forceRefresh -> store.fresh(page)
+            else -> store.get(page)
+        }
     }
-  }
 }

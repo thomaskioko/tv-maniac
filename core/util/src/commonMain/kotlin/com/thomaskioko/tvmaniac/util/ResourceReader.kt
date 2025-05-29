@@ -7,16 +7,16 @@ import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 interface ResourceReader {
-  fun readResource(name: String): String
+    fun readResource(name: String): String
 }
 
 @Inject
 @SingleIn(AppScope::class)
 class YamlResourceReader(
-  private val resourceReader: ResourceReader,
+    private val resourceReader: ResourceReader,
 ) {
-  internal fun <T> readAndDecodeResource(name: String, strategy: DeserializationStrategy<T>): T {
-    val text = resourceReader.readResource(name)
-    return Yaml.decodeFromString(strategy, text)
-  }
+    internal fun <T> readAndDecodeResource(name: String, strategy: DeserializationStrategy<T>): T {
+        val text = resourceReader.readResource(name)
+        return Yaml.decodeFromString(strategy, text)
+    }
 }

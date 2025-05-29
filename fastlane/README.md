@@ -39,6 +39,22 @@ Build iOS App
 
 Clear derived data
 
+### ios format_swift_code
+
+```sh
+[bundle exec] fastlane ios format_swift_code
+```
+
+Run SwiftFormat
+
+### ios check_swift_format
+
+```sh
+[bundle exec] fastlane ios check_swift_format
+```
+
+Check SwiftFormat without making changes
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

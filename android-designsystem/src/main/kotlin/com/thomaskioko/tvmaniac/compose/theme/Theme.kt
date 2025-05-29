@@ -8,8 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.unit.dp
 
-private val LightColorScheme =
-  lightColorScheme(
+private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
     primaryContainer = md_theme_light_primaryContainer,
@@ -21,10 +20,9 @@ private val LightColorScheme =
     surface = md_theme_light_surface,
     onSurface = md_theme_light_onSurface,
     outline = md_theme_light_outline,
-  )
+)
 
-private val DarkColorScheme =
-  darkColorScheme(
+private val DarkColorScheme = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
     primaryContainer = md_theme_dark_primaryContainer,
@@ -36,29 +34,28 @@ private val DarkColorScheme =
     surface = md_theme_dark_surface,
     onSurface = md_theme_dark_onSurface,
     outline = md_theme_dark_outline,
-  )
+)
 
 @Composable
 fun TvManiacTheme(
-  darkTheme: Boolean = isSystemInDarkTheme(),
-  content: @Composable () -> Unit,
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit,
 ) {
-  val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-  val backgroundTheme =
-    BackgroundTheme(
-      color = colorScheme.surface,
-      tonalElevation = 2.dp,
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val backgroundTheme = BackgroundTheme(
+        color = colorScheme.surface,
+        tonalElevation = 2.dp,
     )
 
-  // Composition locals
-  CompositionLocalProvider(
-    LocalBackgroundTheme provides backgroundTheme,
-  ) {
-    MaterialTheme(
-      colorScheme = colorScheme,
-      typography = tvManiacTypography(),
-      shapes = tvManiacShapes,
-      content = content,
-    )
-  }
+    // Composition locals
+    CompositionLocalProvider(
+        LocalBackgroundTheme provides backgroundTheme,
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = tvManiacTypography(),
+            shapes = tvManiacShapes,
+            content = content,
+        )
+    }
 }

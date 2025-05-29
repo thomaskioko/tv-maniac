@@ -2,79 +2,79 @@ import SwiftUI
 import TvManiacKit
 
 public struct TabBarView: View {
-  private let presenter: HomePresenter
-  @StateObject @KotlinStateFlow private var stack: ChildStack<AnyObject, HomePresenterChild>
-  @State private var selectedTab: NavigationTab = .discover
+    private let presenter: HomePresenter
+    @StateObject @KotlinStateFlow private var stack: ChildStack<AnyObject, HomePresenterChild>
+    @State private var selectedTab: NavigationTab = .discover
 
-  init(presenter: HomePresenter) {
-    self.presenter = presenter
-    _stack = .init(presenter.homeChildStack)
-  }
+    init(presenter: HomePresenter) {
+        self.presenter = presenter
+        _stack = .init(presenter.homeChildStack)
+    }
 
-  public var body: some View {
-    TabView(selection: $selectedTab) {
-      ForEach(NavigationTab.allCases, id: \.self) { tab in
-        TabContentView(
-          child: stack.items.first(where: { tabForChild($0.instance) == tab })?.instance,
-          tab: tab
-        ) { child in
-          switch onEnum(of: child) {
-          case let .discover(screen):
-            DiscoverTab(presenter: screen.presenter)
-          case let .search(screen):
-            SearchTab(presenter: screen.presenter)
-          case let .watchlist(screen):
-            WatchlistTab(presenter: screen.presenter)
-          case let .settings(screen):
-            SettingsTab(presenter: screen.presenter)
-          }
+    public var body: some View {
+        TabView(selection: $selectedTab) {
+            ForEach(NavigationTab.allCases, id: \.self) { tab in
+                TabContentView(
+                    child: stack.items.first(where: { tabForChild($0.instance) == tab })?.instance,
+                    tab: tab
+                ) { child in
+                    switch onEnum(of: child) {
+                    case let .discover(screen):
+                        DiscoverTab(presenter: screen.presenter)
+                    case let .search(screen):
+                        SearchTab(presenter: screen.presenter)
+                    case let .watchlist(screen):
+                        WatchlistTab(presenter: screen.presenter)
+                    case let .settings(screen):
+                        SettingsTab(presenter: screen.presenter)
+                    }
+                }
+            }
         }
-      }
+        .appTheme()
+        .onChange(of: selectedTab) { newTab in
+            switch newTab {
+            case .discover: presenter.onDiscoverClicked()
+            case .search: presenter.onSearchClicked()
+            case .watchlist: presenter.onLibraryClicked()
+            case .settings: presenter.onSettingsClicked()
+            }
+        }
     }
-    .appTheme()
-    .onChange(of: selectedTab) { newTab in
-      switch newTab {
-      case .discover: presenter.onDiscoverClicked()
-      case .search: presenter.onSearchClicked()
-      case .watchlist: presenter.onLibraryClicked()
-      case .settings: presenter.onSettingsClicked()
-      }
-    }
-  }
 
-  private func tabForChild(_ child: HomePresenterChild) -> NavigationTab {
-    switch onEnum(of: child) {
-    case .discover: return .discover
-    case .search: return .search
-    case .watchlist: return .watchlist
-    case .settings: return .settings
+    private func tabForChild(_ child: HomePresenterChild) -> NavigationTab {
+        switch onEnum(of: child) {
+        case .discover: .discover
+        case .search: .search
+        case .watchlist: .watchlist
+        case .settings: .settings
+        }
     }
-  }
 }
 
 // MARK: - Tab Item
 
 public enum NavigationTab: String, CaseIterable {
-  case discover
-  case search
-  case watchlist
-  case settings
+    case discover
+    case search
+    case watchlist
+    case settings
 
-  var title: String {
-    switch self {
-    case .discover: return String(\.label_tab_discover)
-    case .search: return String(\.label_tab_search)
-    case .watchlist: return String(\.label_tab_watchlist)
-    case .settings: return String(\.label_tab_settings)
+    var title: String {
+        switch self {
+        case .discover: String(\.label_tab_discover)
+        case .search: String(\.label_tab_search)
+        case .watchlist: String(\.label_tab_watchlist)
+        case .settings: String(\.label_tab_settings)
+        }
     }
-  }
-  
-  var icon: String {
-    switch self {
-    case .discover: return "tv"
-    case .search: return "magnifyingglass"
-    case .watchlist: return "square.stack"
-    case .settings: return "gearshape"
+
+    var icon: String {
+        switch self {
+        case .discover: "tv"
+        case .search: "magnifyingglass"
+        case .watchlist: "square.stack"
+        case .settings: "gearshape"
+        }
     }
-  }
 }

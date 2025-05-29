@@ -1,0 +1,6 @@
+BEGIN TRANSACTION;
+
+-- Add index on the name column in tvshow table to improve search performance
+CREATE INDEX IF NOT EXISTS idx_tvshow_name ON tvshow(name);
+
+COMMIT;

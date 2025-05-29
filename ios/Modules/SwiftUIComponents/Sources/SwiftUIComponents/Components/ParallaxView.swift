@@ -37,10 +37,10 @@ public struct ParallaxView<Header: View, Content: View>: View {
                 VStack(spacing: 0) {
                     GeometryReader { proxy in
                         let offset = proxy.getScrollOffset(proxy)
-                        self.header(proxy)
+                        header(proxy)
                             .frame(width: proxy.size.width, height: proxy.getHeightForHeaderImage(proxy))
-                            .background(GeometryGetter(rect: self.$headerImageRect))
-                            .offset(y: self.getOffsetForHeaderImage(proxy))
+                            .background(GeometryGetter(rect: $headerImageRect))
+                            .offset(y: getOffsetForHeaderImage(proxy))
                             .onChange(of: offset) { newOffset in
                                 onScroll(newOffset)
                             }
@@ -102,7 +102,7 @@ public struct GeometryGetter: View {
                 .preference(key: RectanglePreferenceKey.self, value: geometry.frame(in: .global))
         }
         .onPreferenceChange(RectanglePreferenceKey.self) { value in
-            self.rect = value
+            rect = value
         }
     }
 }

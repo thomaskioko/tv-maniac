@@ -23,8 +23,10 @@ probably doing a couple of things wrong. So a lot is changing, but that shouldn'
 
 > [!IMPORTANT]
 > To fetch data, you will need to [create a TMDB API app](https://www.themoviedb.org/settings/api) and generate an API key if you don't have
-> one. Once you have your keys, add them to `config.yaml`. If the file is unavailable, navigate to the root dir and create a symlink.
-> `$ ln -s core/util/src/commonMain/resources/config.yaml config.yaml`, then add the API keys.
+> one. Once you have your keys, add them to the configuration files:
+> - For development builds: `core/util/src/commonMain/resources/dev.yaml` (also accessible via symlink at `dev.yaml` in
+    the root directory)
+> - For production builds: `core/util/src/commonMain/resources/production.yaml`
 
 ## 🖥 Project Setup & Environment
 
@@ -37,6 +39,19 @@ probably doing a couple of things wrong. So a lot is changing, but that shouldn'
 ### Opening iOS Project
 
 - Navigate to the ios directory & open `.xcodeproj`
+
+### Git Hooks
+
+The project uses Git hooks to enforce code quality checks before commits. To install the hooks, run:
+
+```bash
+./scripts/install-git-hooks.sh
+```
+
+This will install the following hooks:
+
+- **pre-commit**: Runs code formatting checks using Spotless before allowing a commit. If the checks fail, the commit
+  will be aborted.
 
 ## Architecture Overview
 
@@ -77,6 +92,7 @@ probably doing a couple of things wrong. So a lot is changing, but that shouldn'
   AndroidX Paging, and provides UI components to use Paging on iOS.
 * [SQLDelight](https://github.com/cashapp/sqldelight/) - Local storage
   - [Coroutines Extensions](https://cashapp.github.io/sqldelight/js_sqlite/coroutines/) Consume queries as Flow
+* [Paging](https://developer.android.com/jetpack/androidx/releases/paging) -
 
 ### iOS
 
@@ -100,7 +116,6 @@ Android
 - [x] Implement Paging
 - [x] Implement Search
 - [ ] Add Episode detail screen
-- [ ] Add Watchlist
 
 iOS
 
@@ -114,7 +129,6 @@ iOS
 - [x] Implement Paging
 - [x] Implement Search
 - [ ] Add Episode detail screen
-- [ ] Add Watchlist
 
 Shared
 
@@ -123,7 +137,7 @@ Shared
 - [x] Use koin for injection
 - [x] Modularize `shared` module
 - [x] Try out [Flow-Redux](https://github.com/freeletics/FlowRedux)
-- [x] Fix paging
+- [ ] Fix paging
 - [x] Add test cases.
 - [ ] Improve error handling.
 

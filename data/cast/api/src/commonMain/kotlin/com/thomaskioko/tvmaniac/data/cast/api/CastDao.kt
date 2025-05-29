@@ -7,11 +7,11 @@ import com.thomaskioko.tvmaniac.db.ShowCast
 import kotlinx.coroutines.flow.Flow
 
 interface CastDao {
-  fun upsert(entity: Casts)
+    fun upsert(entity: Casts)
 
-  fun upsert(entity: Cast_appearance)
+    fun upsert(entity: Cast_appearance)
 
-  fun observeShowCast(id: Long): Flow<List<ShowCast>>
+    fun observeShowCast(id: Long): Flow<List<ShowCast>>
 
-  fun observeSeasonCast(id: Long): Flow<List<SeasonCast>>
+    fun observeSeasonCast(id: Long): Flow<List<SeasonCast>>
 }

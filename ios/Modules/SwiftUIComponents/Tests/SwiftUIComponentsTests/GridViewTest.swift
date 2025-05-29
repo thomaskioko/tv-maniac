@@ -3,7 +3,6 @@ import SwiftUI
 import SwiftUIComponents
 import XCTest
 
-
 class GridViewTest: XCTestCase {
     func test_GridViewTest() {
         GridView(

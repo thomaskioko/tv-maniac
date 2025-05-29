@@ -4,12 +4,12 @@ import com.thomaskioko.tvmaniac.db.RecommendedShows
 import kotlinx.coroutines.flow.Flow
 
 interface RecommendedShowsRepository {
-  suspend fun fetchRecommendedShows(
-    id: Long,
-    forceRefresh: Boolean = false,
-  )
+    suspend fun fetchRecommendedShows(
+        id: Long,
+        forceRefresh: Boolean = false,
+    )
 
-  fun observeRecommendedShows(
-    id: Long,
-  ): Flow<List<RecommendedShows>>
+    fun observeRecommendedShows(
+        id: Long,
+    ): Flow<List<RecommendedShows>>
 }

@@ -8,16 +8,16 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class FakeFeaturedShowsRepository : FeaturedShowsRepository {
 
-  private val shows = MutableStateFlow<List<ShowEntity>>(emptyList())
+    private val shows = MutableStateFlow<List<ShowEntity>>(emptyList())
 
-  fun setFeaturedShows(result: List<ShowEntity>) {
-    shows.value = result
-  }
+    fun setFeaturedShows(result: List<ShowEntity>) {
+        shows.value = result
+    }
 
-  override suspend fun fetchFeaturedShows(forceRefresh: Boolean) {
-  }
+    override suspend fun fetchFeaturedShows(forceRefresh: Boolean) {
+    }
 
-  override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> {
-    return shows.asStateFlow()
-  }
+    override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> {
+        return shows.asStateFlow()
+    }
 }

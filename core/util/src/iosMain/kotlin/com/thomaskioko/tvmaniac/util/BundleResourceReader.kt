@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.util
 
+import kotlinx.cinterop.BetaInteropApi
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
@@ -20,40 +22,51 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 class BundleResourceReader(
-  private val bundle: NSBundle = NSBundle.bundleForClass(BundleMarker),
+    private val bundle: NSBundle = NSBundle.bundleForClass(BundleMarker),
 ) : ResourceReader {
 
-  override fun readResource(name: String): String {
-    // TODO: Catch iOS-only exceptions and map them to common ones.
-    val (filename, type) = when (val lastPeriodIndex = name.lastIndexOf('.')) {
-      0 -> null to name.drop(1)
-      in 1..Int.MAX_VALUE -> {
-        name.take(lastPeriodIndex) to name.drop(lastPeriodIndex + 1)
-      }
-      else -> name to null
-    }
-    val path = bundle.pathForResource(filename, type)
-      ?: error(
-        "Couldn't get path of $name (parsed as: ${listOfNotNull(filename, type).joinToString(".")})",
-      )
+    override fun readResource(name: String): String {
+        // TODO: Catch iOS-only exceptions and map them to common ones.
+        val (filename, type) = when (val lastPeriodIndex = name.lastIndexOf('.')) {
+            0 -> null to name.drop(1)
+            in 1..Int.MAX_VALUE -> {
+                name.take(lastPeriodIndex) to name.drop(lastPeriodIndex + 1)
+            }
+            else -> name to null
+        }
 
-    return memScoped {
-      val errorPtr = alloc<ObjCObjectVar<NSError?>>()
+        var path = bundle.pathForResource(filename, type)
 
-      NSString.stringWithContentsOfFile(path, encoding = NSUTF8StringEncoding, error = errorPtr.ptr)
-        ?: run {
-          // TODO: Check the NSError and throw common exception.
-          error(
-            "Couldn't load resource: $name. Error: ${errorPtr.value?.localizedDescription} - ${errorPtr.value}",
-          )
+        // If not found in the framework bundle, try to find it in the main bundle
+        if (path == null) {
+            path = NSBundle.mainBundle.pathForResource(filename, type)
+        }
+
+        // If still not found, throw an error
+        if (path == null) {
+            error(
+                "Couldn't get path of $name (parsed as: ${listOfNotNull(filename, type).joinToString(".")})",
+            )
+        }
+
+        return memScoped {
+            val errorPtr = alloc<ObjCObjectVar<NSError?>>()
+
+            NSString.stringWithContentsOfFile(path, encoding = NSUTF8StringEncoding, error = errorPtr.ptr)
+                ?: run {
+                    // TODO: Check the NSError and throw common exception.
+                    error(
+                        "Couldn't load resource: $name. Error: ${errorPtr.value?.localizedDescription} - ${errorPtr.value}",
+                    )
+                }
         }
     }
-  }
 
-  private class BundleMarker : NSObject() {
-    companion object : NSObjectMeta()
-  }
+    private class BundleMarker : NSObject() {
+        companion object : NSObjectMeta()
+    }
 }
 
 data class BundleProvider(val bundle: NSBundle)

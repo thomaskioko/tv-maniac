@@ -22,23 +22,22 @@ import org.robolectric.annotation.LooperMode
 @LooperMode(LooperMode.Mode.PAUSED)
 class MoreShowsScreenTest {
 
-  @get:Rule
-  val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+    @get:Rule
+    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-  @Ignore("Flaky test")
-  @Test
-  fun moreShowsLoadedState() {
-    composeTestRule.captureMultiDevice("MoreShowsLoadedState") {
-      TvManiacBackground {
-        MoreShowsScreen(
-          state =
-            MoreShowsState(
-              categoryTitle = "Upcoming",
-              pagingDataFlow = flowOf(PagingData.from(showList)),
-            ),
-          onAction = {},
-        )
-      }
+    @Ignore("Flaky test")
+    @Test
+    fun moreShowsLoadedState() {
+        composeTestRule.captureMultiDevice("MoreShowsLoadedState") {
+            TvManiacBackground {
+                MoreShowsScreen(
+                    state = MoreShowsState(
+                        categoryTitle = "Upcoming",
+                        pagingDataFlow = flowOf(PagingData.from(showList)),
+                    ),
+                    onAction = {},
+                )
+            }
+        }
     }
-  }
 }

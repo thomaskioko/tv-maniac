@@ -14,5 +14,6 @@ public extension HorizontalAlignment {
             d[HorizontalAlignment.leading]
         }
     }
+
     static let view = HorizontalAlignment(ViewAlignment.self)
 }

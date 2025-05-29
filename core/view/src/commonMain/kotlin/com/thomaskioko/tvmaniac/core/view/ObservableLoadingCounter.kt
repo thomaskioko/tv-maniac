@@ -10,39 +10,41 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
 class ObservableLoadingCounter {
-  private val count = atomic(0)
-  private val loadingState = MutableStateFlow(count.value)
+    private val count = atomic(0)
+    private val loadingState = MutableStateFlow(count.value)
 
-  val observable: Flow<Boolean>
-    get() = loadingState.map { it > 0 }.distinctUntilChanged()
+    val observable: Flow<Boolean>
+        get() = loadingState.map { it > 0 }.distinctUntilChanged()
 
-  fun addLoader() {
-    loadingState.value = count.incrementAndGet()
-  }
+    fun addLoader() {
+        loadingState.value = count.incrementAndGet()
+    }
 
-  fun removeLoader() {
-    loadingState.value = count.decrementAndGet()
-  }
+    fun removeLoader() {
+        loadingState.value = count.decrementAndGet()
+    }
 }
 
 fun Flow<InvokeStatus>.onEachStatus(
-  counter: ObservableLoadingCounter,
-  logger: Logger? = null,
-  uiMessageManager: UiMessageManager? = null,
+    counter: ObservableLoadingCounter,
+    logger: Logger? = null,
+    uiMessageManager: UiMessageManager? = null,
+    sourceId: String? = null,
 ): Flow<InvokeStatus> = onEach { status ->
-  when (status) {
-    InvokeStarted -> counter.addLoader()
-    InvokeSuccess -> counter.removeLoader()
-    is InvokeError -> {
-      logger?.info("@InvokeError ${uiMessageManager?.message}", status.throwable)
-      uiMessageManager?.emitMessage(UiMessage(status.throwable))
-      counter.removeLoader()
+    when (status) {
+        InvokeStarted -> counter.addLoader()
+        InvokeSuccess -> counter.removeLoader()
+        is InvokeError -> {
+            logger?.error("@InvokeError", status.throwable.message ?: "Unknown error")
+            uiMessageManager?.emitMessageCombined(status.throwable, sourceId)
+            counter.removeLoader()
+        }
     }
-  }
 }
 
 suspend inline fun Flow<InvokeStatus>.collectStatus(
-  counter: ObservableLoadingCounter,
-  logger: Logger? = null,
-  uiMessageManager: UiMessageManager? = null,
-): Unit = onEachStatus(counter, logger, uiMessageManager).collect()
+    counter: ObservableLoadingCounter,
+    logger: Logger? = null,
+    uiMessageManager: UiMessageManager? = null,
+    sourceId: String? = null,
+): Unit = onEachStatus(counter, logger, uiMessageManager, sourceId).collect()
