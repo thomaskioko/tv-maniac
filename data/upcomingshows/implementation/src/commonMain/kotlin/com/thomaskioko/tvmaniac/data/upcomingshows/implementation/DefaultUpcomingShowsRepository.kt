@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.data.upcomingshows.implementation
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -33,7 +34,7 @@ class DefaultUpcomingShowsRepository(
     private val store: UpcomingShowsStore,
     private val dao: UpcomingShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
-    private val kermitLogger: Logger,
+    private val logger: Logger,
 ) : UpcomingShowsRepository {
 
     // TODO:: Load this from duration repository. Default range is 4 months
@@ -52,6 +53,7 @@ class DefaultUpcomingShowsRepository(
 
     override fun observeUpcomingShows(page: Long): Flow<List<ShowEntity>> = dao.observeUpcomingShows(page)
 
+    @OptIn(ExperimentalPagingApi::class)
     override fun getPagedUpcomingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
         return Pager(
             config = pagingConfig,
@@ -76,7 +78,7 @@ class DefaultUpcomingShowsRepository(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                kermitLogger.error("Error while fetching from UpcomingShows RemoteMediator", e)
+                logger.error("Error while fetching from UpcomingShows RemoteMediator", e)
                 FetchResult.Error(e)
             }
         } else {

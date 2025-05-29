@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -30,7 +31,7 @@ class DefaultTrendingShowsRepository(
     private val store: TrendingShowsStore,
     private val requestManagerRepository: RequestManagerRepository,
     private val dao: TrendingShowsDao,
-    private val kermitLogger: Logger,
+    private val logger: Logger,
 ) : TrendingShowsRepository {
 
     override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> = dao.observeTvShow(page)
@@ -45,6 +46,7 @@ class DefaultTrendingShowsRepository(
         }
     }
 
+    @OptIn(ExperimentalPagingApi::class)
     override fun getPagedTrendingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
         return Pager(
             config = CommonPagingConfig.pagingConfig,
@@ -63,7 +65,7 @@ class DefaultTrendingShowsRepository(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                kermitLogger.error("Error while fetching from TrendingShows RemoteMediator", e)
+                logger.error("Error while fetching from TrendingShows RemoteMediator", e)
                 FetchResult.Error(e)
             }
         } else {
