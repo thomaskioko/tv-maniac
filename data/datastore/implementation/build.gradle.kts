@@ -1,32 +1,31 @@
 plugins {
-  alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.tvmaniac.kmp)
 }
 
 tvmaniac {
-  multiplatform {
-    addAndroidTarget()
-    useKotlinInject()
-    useKspAnvilCompiler()
-  }
+    multiplatform {
+        addAndroidTarget()
+        useKotlinInject()
+        useKspAnvilCompiler()
+    }
 
-  optIn(
-    "kotlinx.coroutines.ExperimentalCoroutinesApi",
-    "kotlinx.coroutines.InternalCoroutinesApi",
-  )
+    optIn(
+        "kotlinx.coroutines.ExperimentalCoroutinesApi",
+        "kotlinx.coroutines.InternalCoroutinesApi",
+    )
 }
 
 kotlin {
-  sourceSets {
-    commonMain {
-      dependencies {
-        implementation(projects.core.base)
-        implementation(projects.data.datastore.api)
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(projects.core.base)
+                implementation(projects.data.datastore.api)
 
-        api(libs.androidx.datastore.preference)
+                api(libs.androidx.datastore.preference)
+            }
+        }
 
-      }
+        commonTest { dependencies { implementation(libs.bundles.unittest) } }
     }
-
-    commonTest { dependencies { implementation(libs.bundles.unittest) } }
-  }
 }

@@ -1,44 +1,44 @@
 plugins {
-  alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.tvmaniac.kmp)
 }
 
 tvmaniac {
-  multiplatform {
-    addAndroidTarget {
-      testOptions.unitTests.isIncludeAndroidResources = true
+    multiplatform {
+        addAndroidTarget {
+            testOptions.unitTests.isIncludeAndroidResources = true
+        }
+        useKotlinInject()
+        useKspAnvilCompiler()
     }
-    useKotlinInject()
-    useKspAnvilCompiler()
-  }
 }
 
 kotlin {
-  sourceSets {
-    androidMain {
-      dependencies {
-        api(libs.moko.resources.compose)
-      }
-    }
+    sourceSets {
+        androidMain {
+            dependencies {
+                api(libs.moko.resources.compose)
+            }
+        }
 
-    androidUnitTest {
-      dependencies {
-        implementation(libs.androidx.junit)
-        implementation(libs.robolectric)
-      }
-    }
+        androidUnitTest {
+            dependencies {
+                implementation(libs.androidx.junit)
+                implementation(libs.robolectric)
+            }
+        }
 
-    commonMain {
-      dependencies {
-        implementation(projects.i18n.api)
+        commonMain {
+            dependencies {
+                implementation(projects.i18n.api)
 
-        api(libs.moko.resources)
-      }
-    }
+                api(libs.moko.resources)
+            }
+        }
 
-    commonTest {
-      dependencies {
-        implementation(libs.bundles.unittest)
-      }
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+            }
+        }
     }
-  }
 }

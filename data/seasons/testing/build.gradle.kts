@@ -1,17 +1,17 @@
 plugins {
-  alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.tvmaniac.kmp)
 }
 
 kotlin {
-  sourceSets {
-    commonMain {
-      dependencies {
-        api(projects.data.seasons.api)
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(projects.data.seasons.api)
 
-        implementation(projects.data.database.sqldelight)
+                implementation(projects.data.database.sqldelight)
 
-        implementation(libs.coroutines.core)
-      }
+                implementation(libs.coroutines.core)
+            }
+        }
     }
-  }
 }

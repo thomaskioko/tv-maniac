@@ -1,21 +1,21 @@
 plugins {
-  alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.tvmaniac.kmp)
 }
 
 kotlin {
-  sourceSets {
-    commonMain {
-      dependencies {
-        api(projects.data.shows.api)
-        api(projects.data.database.sqldelight)
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(projects.data.shows.api)
+                api(projects.data.database.sqldelight)
 
-        implementation(projects.core.base)
+                implementation(projects.core.base)
 
-        api(libs.androidx.paging.common)
-        api(libs.coroutines.core)
+                api(libs.androidx.paging.common)
+                api(libs.coroutines.core)
 
-        implementation(libs.kotlinInject.runtime)
-      }
+                implementation(libs.kotlinInject.runtime)
+            }
+        }
     }
-  }
 }
