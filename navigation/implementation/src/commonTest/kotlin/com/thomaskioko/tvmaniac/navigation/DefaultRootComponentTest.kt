@@ -97,6 +97,7 @@ class DefaultRootComponentTest {
     )
 
     private lateinit var presenter: DefaultRootPresenter
+    private lateinit var navigator: FakeRootNavigator
 
     @BeforeTest
     fun before() {
@@ -104,8 +105,10 @@ class DefaultRootComponentTest {
         lifecycle.resume()
 
         val componentContext = DefaultComponentContext(lifecycle = lifecycle)
+        navigator = FakeRootNavigator()
         presenter = DefaultRootPresenter(
             componentContext = componentContext,
+            navigator = navigator,
             moreShowsPresenterFactory = buildMoreShowsPresenterFactory(componentContext),
             showDetailsPresenterFactory = buildShowDetailsPresenterPresenterFactory(componentContext),
             seasonDetailsPresenterFactory = buildSeasonDetailsPresenterFactory(componentContext),
@@ -130,13 +133,13 @@ class DefaultRootComponentTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-            presenter.bringToFront(RootDestinationConfig.ShowDetails(1))
+            navigator.bringToFront(RootDestinationConfig.ShowDetails(1))
 
             val moreScreen = awaitItem().active.instance
 
             moreScreen.shouldBeInstanceOf<ShowDetails>()
 
-            presenter.onBackClicked()
+            navigator.pop()
 
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
         }
@@ -147,7 +150,7 @@ class DefaultRootComponentTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-            presenter.bringToFront(RootDestinationConfig.ShowDetails(1))
+            navigator.bringToFront(RootDestinationConfig.ShowDetails(1))
 
             val moreScreen = awaitItem().active.instance
 
@@ -160,7 +163,7 @@ class DefaultRootComponentTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-            presenter.bringToFront(RootDestinationConfig.MoreShows(1))
+            navigator.bringToFront(RootDestinationConfig.MoreShows(1))
 
             val moreScreen = awaitItem().active.instance
 

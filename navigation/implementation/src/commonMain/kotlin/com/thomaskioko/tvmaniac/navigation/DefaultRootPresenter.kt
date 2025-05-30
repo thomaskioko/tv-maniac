@@ -2,13 +2,7 @@ package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
-import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.popTo
-import com.arkivanov.decompose.router.stack.pushNew
-import com.arkivanov.decompose.router.stack.pushToFront
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
@@ -26,15 +20,15 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
-@SingleIn(ActivityScope::class)
-@ContributesBinding(ActivityScope::class, RootPresenter::class)
 class DefaultRootPresenter(
-    componentContext: ComponentContext,
+    @Assisted componentContext: ComponentContext,
+    @Assisted private val navigator: RootNavigator,
     private val homePresenterFactory: HomePresenter.Factory,
     private val moreShowsPresenterFactory: MoreShowsPresenterFactory,
     private val showDetailsPresenterFactory: ShowDetailsPresenterFactory,
@@ -44,10 +38,8 @@ class DefaultRootPresenter(
     datastoreRepository: DatastoreRepository,
 ) : RootPresenter, ComponentContext by componentContext {
 
-    private val navigation = StackNavigation<RootDestinationConfig>()
-
     override val childStack: StateFlow<ChildStack<*, Child>> = childStack(
-        source = navigation,
+        source = navigator.getStackNavigation(),
         key = "RootChildStackKey",
         initialConfiguration = RootDestinationConfig.Home,
         serializer = RootDestinationConfig.serializer(),
@@ -65,27 +57,15 @@ class DefaultRootPresenter(
                 initialValue = ThemeState(),
             )
 
-    override fun bringToFront(config: RootDestinationConfig) {
-        navigation.bringToFront(config)
-    }
-
-    override fun onBackClicked() {
-        navigation.pop()
-    }
-
-    override fun onBackClicked(toIndex: Int) {
-        navigation.popTo(index = toIndex)
-    }
-
     private fun createScreen(config: RootDestinationConfig, componentContext: ComponentContext): Child =
         when (config) {
             is RootDestinationConfig.Home ->
                 Child.Home(
                     presenter = homePresenterFactory.create(
                         componentContext,
-                        { id -> navigation.pushNew(RootDestinationConfig.ShowDetails(id)) },
-                        { id -> navigation.pushNew(RootDestinationConfig.MoreShows(id)) },
-                        { id -> navigation.pushNew(RootDestinationConfig.GenreShows(id)) },
+                        { id -> navigator.pushNew(RootDestinationConfig.ShowDetails(id)) },
+                        { id -> navigator.pushNew(RootDestinationConfig.MoreShows(id)) },
+                        { id -> navigator.pushNew(RootDestinationConfig.GenreShows(id)) },
                     ),
                 )
             is RootDestinationConfig.ShowDetails ->
@@ -93,10 +73,10 @@ class DefaultRootPresenter(
                     presenter = showDetailsPresenterFactory.create(
                         componentContext,
                         config.id,
-                        navigation::pop,
-                        { id -> navigation.pushToFront(RootDestinationConfig.ShowDetails(id)) },
+                        navigator::pop,
+                        { id -> navigator.pushToFront(RootDestinationConfig.ShowDetails(id)) },
                         { params ->
-                            navigation.pushNew(
+                            navigator.pushNew(
                                 RootDestinationConfig.SeasonDetails(
                                     SeasonDetailsUiParam(
                                         showId = params.showId,
@@ -106,7 +86,7 @@ class DefaultRootPresenter(
                                 ),
                             )
                         },
-                        { id -> navigation.pushNew(RootDestinationConfig.Trailers(id)) },
+                        { id -> navigator.pushNew(RootDestinationConfig.Trailers(id)) },
                     ),
                 )
             is RootDestinationConfig.SeasonDetails ->
@@ -114,7 +94,7 @@ class DefaultRootPresenter(
                     presenter = seasonDetailsPresenterFactory.create(
                         componentContext,
                         config.param,
-                        navigation::pop,
+                        navigator::pop,
                     ) { _ ->
                         // TODO:: Navigate to episode details
                     },
@@ -131,11 +111,37 @@ class DefaultRootPresenter(
                     presenter = moreShowsPresenterFactory.create(
                         componentContext,
                         config.id,
-                        navigation::pop,
+                        navigator::pop,
                     ) { id ->
-                        navigation.pushNew(RootDestinationConfig.ShowDetails(id))
+                        navigator.pushNew(RootDestinationConfig.ShowDetails(id))
                     },
                 )
             is RootDestinationConfig.GenreShows -> Child.GenreShows
         }
+
+    @Inject
+    @SingleIn(ActivityScope::class)
+    @ContributesBinding(ActivityScope::class, RootPresenter.Factory::class)
+    class Factory(
+        private val homePresenterFactory: HomePresenter.Factory,
+        private val moreShowsPresenterFactory: MoreShowsPresenterFactory,
+        private val showDetailsPresenterFactory: ShowDetailsPresenterFactory,
+        private val seasonDetailsPresenterFactory: SeasonDetailsPresenterFactory,
+        private val trailersPresenterFactory: TrailersPresenterFactory,
+        private val datastoreRepository: DatastoreRepository,
+    ) : RootPresenter.Factory {
+        override fun create(
+            componentContext: ComponentContext,
+            navigator: RootNavigator,
+        ): RootPresenter = DefaultRootPresenter(
+            componentContext = componentContext,
+            navigator = navigator,
+            homePresenterFactory = homePresenterFactory,
+            moreShowsPresenterFactory = moreShowsPresenterFactory,
+            showDetailsPresenterFactory = showDetailsPresenterFactory,
+            seasonDetailsPresenterFactory = seasonDetailsPresenterFactory,
+            trailersPresenterFactory = trailersPresenterFactory,
+            datastoreRepository = datastoreRepository,
+        )
+    }
 }
