@@ -25,15 +25,37 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ShowDetailsPresenterFactory(
-    val create: (
+    private val watchlistRepository: WatchlistRepository,
+    private val recommendedShowsInteractor: RecommendedShowsInteractor,
+    private val showDetailsInteractor: ShowDetailsInteractor,
+    private val similarShowsInteractor: SimilarShowsInteractor,
+    private val watchProvidersInteractor: WatchProvidersInteractor,
+    private val observableShowDetailsInteractor: ObservableShowDetailsInteractor,
+    private val logger: Logger,
+) {
+    fun create(
         componentContext: ComponentContext,
         id: Long,
         onBack: () -> Unit,
         onNavigateToShow: (id: Long) -> Unit,
         onNavigateToSeason: (param: ShowSeasonDetailsParam) -> Unit,
         onNavigateToTrailer: (id: Long) -> Unit,
-    ) -> ShowDetailsPresenter,
-)
+    ): ShowDetailsPresenter = ShowDetailsPresenter(
+        componentContext = componentContext,
+        showId = id,
+        onBack = onBack,
+        onNavigateToShow = onNavigateToShow,
+        onNavigateToSeason = onNavigateToSeason,
+        onNavigateToTrailer = onNavigateToTrailer,
+        watchlistRepository = watchlistRepository,
+        recommendedShowsInteractor = recommendedShowsInteractor,
+        showDetailsInteractor = showDetailsInteractor,
+        similarShowsInteractor = similarShowsInteractor,
+        watchProvidersInteractor = watchProvidersInteractor,
+        observableShowDetailsInteractor = observableShowDetailsInteractor,
+        logger = logger,
+    )
+}
 
 @Inject
 class ShowDetailsPresenter(

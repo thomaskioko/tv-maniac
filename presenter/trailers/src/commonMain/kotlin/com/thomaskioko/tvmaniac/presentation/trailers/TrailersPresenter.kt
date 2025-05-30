@@ -14,11 +14,17 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TrailersPresenterFactory(
-    val create: (
+    private val repository: TrailerRepository,
+) {
+    fun create(
         componentContext: ComponentContext,
         id: Long,
-    ) -> TrailersPresenter,
-)
+    ): TrailersPresenter = TrailersPresenter(
+        componentContext = componentContext,
+        traktShowId = id,
+        repository = repository,
+    )
+}
 
 class TrailersPresenter
 @Inject

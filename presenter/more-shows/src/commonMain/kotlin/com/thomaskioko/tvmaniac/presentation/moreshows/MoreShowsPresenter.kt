@@ -29,13 +29,27 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class MoreShowsPresenterFactory(
-    val create: (
+    private val popularShowsRepository: PopularShowsRepository,
+    private val upcomingShowsRepository: UpcomingShowsRepository,
+    private val trendingShowsRepository: TrendingShowsRepository,
+    private val topRatedShowsRepository: TopRatedShowsRepository,
+) {
+    fun create(
         componentContext: ComponentContext,
         id: Long,
         onBack: () -> Unit,
         onNavigateToShowDetails: (id: Long) -> Unit,
-    ) -> MoreShowsPresenter,
-)
+    ): MoreShowsPresenter = MoreShowsPresenter(
+        componentContext = componentContext,
+        categoryId = id,
+        onBack = onBack,
+        onNavigateToShowDetails = onNavigateToShowDetails,
+        popularShowsRepository = popularShowsRepository,
+        upcomingShowsRepository = upcomingShowsRepository,
+        trendingShowsRepository = trendingShowsRepository,
+        topRatedShowsRepository = topRatedShowsRepository,
+    )
+}
 
 @Inject
 class MoreShowsPresenter(

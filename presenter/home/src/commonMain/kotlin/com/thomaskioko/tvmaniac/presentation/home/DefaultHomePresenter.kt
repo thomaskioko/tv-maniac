@@ -65,7 +65,10 @@ class DefaultHomePresenter private constructor(
         navigation.switchTab(config)
     }
 
-    private inline fun <C : Any> StackNavigator<C>.switchTab(configuration: C, crossinline onComplete: () -> Unit = {}) {
+    private inline fun <C : Any> StackNavigator<C>.switchTab(
+        configuration: C,
+        crossinline onComplete: () -> Unit = {},
+    ) {
         navigate(
             transformer = { stack ->
                 val existing = stack.find { it::class == configuration::class }
@@ -84,37 +87,42 @@ class DefaultHomePresenter private constructor(
             is HomeConfig.Discover -> {
                 Child.Discover(
                     presenter = discoverPresenterFactory.create(
-                        componentContext,
-                        { id -> onShowClicked(id) },
-                        { id -> onMoreShowClicked(id) },
+                        componentContext = componentContext,
+                        onNavigateToShowDetails = { id -> onShowClicked(id) },
+                        onNavigateToMore = { id -> onMoreShowClicked(id) },
                     ),
                 )
             }
+
             HomeConfig.Library -> {
                 Child.Watchlist(
                     presenter = watchlistPresenterFactory.create(
-                        componentContext,
-                    ) { id ->
-                        onShowClicked(id)
-                    },
-                )
-            }
-            HomeConfig.Search -> {
-                Child.Search(
-                    presenter = searchPresenterFactory.create(
-                        componentContext,
-                        { id -> onShowClicked(id) },
-                        { id -> onShowGenreClicked(id) },
+                        componentContext = componentContext,
+                        navigateToShowDetails = { id ->
+                            onShowClicked(id)
+                        },
                     ),
                 )
             }
+
+            HomeConfig.Search -> {
+                Child.Search(
+                    presenter = searchPresenterFactory.create(
+                        componentContext = componentContext,
+                        onNavigateToShowDetails = { id -> onShowClicked(id) },
+                        onNavigateToGenre = { id -> onShowGenreClicked(id) },
+                    ),
+                )
+            }
+
             HomeConfig.Settings -> {
                 Child.Settings(
                     presenter = settingsPresenterFactory.create(
-                        componentContext,
-                    ) {
-                        traktAuthManager.launchWebView()
-                    },
+                        componentContext = componentContext,
+                        launchWebView = {
+                            traktAuthManager.launchWebView()
+                        },
+                    ),
                 )
             }
         }

@@ -62,23 +62,24 @@ class DefaultRootPresenter(
             is RootDestinationConfig.Home ->
                 Child.Home(
                     presenter = homePresenterFactory.create(
-                        componentContext,
-                        { id -> navigator.pushNew(RootDestinationConfig.ShowDetails(id)) },
-                        { id -> navigator.pushNew(RootDestinationConfig.MoreShows(id)) },
-                        { id -> navigator.pushNew(RootDestinationConfig.GenreShows(id)) },
+                        componentContext = componentContext,
+                        onShowClicked = { id -> navigator.pushNew(RootDestinationConfig.ShowDetails(id)) },
+                        onMoreShowClicked = { id -> navigator.pushNew(RootDestinationConfig.MoreShows(id)) },
+                        onShowGenreClicked = { id -> navigator.pushNew(RootDestinationConfig.GenreShows(id)) },
                     ),
                 )
+
             is RootDestinationConfig.ShowDetails ->
                 Child.ShowDetails(
                     presenter = showDetailsPresenterFactory.create(
-                        componentContext,
-                        config.id,
-                        navigator::pop,
-                        { id -> navigator.pushToFront(RootDestinationConfig.ShowDetails(id)) },
-                        { params ->
+                        componentContext = componentContext,
+                        id = config.id,
+                        onBack = navigator::pop,
+                        onNavigateToShow = { id -> navigator.pushToFront(RootDestinationConfig.ShowDetails(id)) },
+                        onNavigateToSeason = { params ->
                             navigator.pushNew(
-                                RootDestinationConfig.SeasonDetails(
-                                    SeasonDetailsUiParam(
+                                config = RootDestinationConfig.SeasonDetails(
+                                    param = SeasonDetailsUiParam(
                                         showId = params.showId,
                                         seasonNumber = params.seasonNumber,
                                         seasonId = params.seasonId,
@@ -86,36 +87,42 @@ class DefaultRootPresenter(
                                 ),
                             )
                         },
-                        { id -> navigator.pushNew(RootDestinationConfig.Trailers(id)) },
+                        onNavigateToTrailer = { id -> navigator.pushNew(RootDestinationConfig.Trailers(id)) },
                     ),
                 )
+
             is RootDestinationConfig.SeasonDetails ->
                 Child.SeasonDetails(
                     presenter = seasonDetailsPresenterFactory.create(
                         componentContext,
-                        config.param,
-                        navigator::pop,
-                    ) { _ ->
-                        // TODO:: Navigate to episode details
-                    },
+                        param = config.param,
+                        onBack = navigator::pop,
+                        onNavigateToEpisodeDetails = { _ ->
+                            // TODO:: Navigate to episode details
+                        },
+                    ),
                 )
+
             is RootDestinationConfig.Trailers ->
                 Child.Trailers(
                     presenter = trailersPresenterFactory.create(
-                        componentContext,
-                        config.id,
+                        componentContext = componentContext,
+                        id = config.id,
                     ),
                 )
+
             is RootDestinationConfig.MoreShows ->
                 Child.MoreShows(
                     presenter = moreShowsPresenterFactory.create(
-                        componentContext,
-                        config.id,
-                        navigator::pop,
-                    ) { id ->
-                        navigator.pushNew(RootDestinationConfig.ShowDetails(id))
-                    },
+                        componentContext = componentContext,
+                        id = config.id,
+                        onBack = navigator::pop,
+                        onNavigateToShowDetails = { id ->
+                            navigator.pushNew(RootDestinationConfig.ShowDetails(id))
+                        },
+                    ),
                 )
+
             is RootDestinationConfig.GenreShows -> Child.GenreShows
         }
 

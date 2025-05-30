@@ -29,12 +29,33 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DiscoverPresenterFactory(
-    val create: (
+    private val discoverShowsInteractor: DiscoverShowsInteractor,
+    private val watchlistRepository: WatchlistRepository,
+    private val featuredShowsInteractor: FeaturedShowsInteractor,
+    private val topRatedShowsInteractor: TopRatedShowsInteractor,
+    private val popularShowsInteractor: PopularShowsInteractor,
+    private val trendingShowsInteractor: TrendingShowsInteractor,
+    private val upcomingShowsInteractor: UpcomingShowsInteractor,
+    private val logger: Logger,
+) {
+    fun create(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToMore: (categoryId: Long) -> Unit,
-    ) -> DiscoverShowsPresenter,
-)
+    ): DiscoverShowsPresenter = DiscoverShowsPresenter(
+        componentContext = componentContext,
+        onNavigateToShowDetails = onNavigateToShowDetails,
+        onNavigateToMore = onNavigateToMore,
+        discoverShowsInteractor = discoverShowsInteractor,
+        watchlistRepository = watchlistRepository,
+        featuredShowsInteractor = featuredShowsInteractor,
+        topRatedShowsInteractor = topRatedShowsInteractor,
+        popularShowsInteractor = popularShowsInteractor,
+        trendingShowsInteractor = trendingShowsInteractor,
+        upcomingShowsInteractor = upcomingShowsInteractor,
+        logger = logger,
+    )
+}
 
 @Inject
 class DiscoverShowsPresenter(
