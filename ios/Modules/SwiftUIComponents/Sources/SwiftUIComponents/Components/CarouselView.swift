@@ -10,7 +10,7 @@ public struct CarouselView<T, Content: View>: View {
     private let onItemTapped: (Int64) -> Void
     private let content: (Int) -> Content
 
-    @State private var timer: Timer.TimerPublisher = Timer.publish(every: 3, on: .main, in: .common)
+    @State private var timer: Timer.TimerPublisher = Timer.publish(every: 6, on: .main, in: .common)
     @State private var timerCancellable: Cancellable?
     @State private var isDragging: Bool = false
 

@@ -27,12 +27,23 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SearchPresenterFactory(
-    val create: (
+    private val mapper: Mapper,
+    private val searchRepository: SearchRepository,
+    private val genreRepository: GenreRepository,
+) {
+    fun create(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToGenre: (id: Long) -> Unit,
-    ) -> SearchShowsPresenter,
-)
+    ): SearchShowsPresenter = SearchShowsPresenter(
+        componentContext = componentContext,
+        onNavigateToShowDetails = onNavigateToShowDetails,
+        onNavigateToGenre = onNavigateToGenre,
+        mapper = mapper,
+        searchRepository = searchRepository,
+        genreRepository = genreRepository,
+    )
+}
 
 @Inject
 class SearchShowsPresenter(
