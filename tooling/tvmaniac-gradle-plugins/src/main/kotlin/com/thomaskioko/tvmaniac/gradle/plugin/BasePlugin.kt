@@ -1,7 +1,13 @@
 package com.thomaskioko.tvmaniac.gradle.plugin
 
 import com.thomaskioko.tvmaniac.gradle.plugin.extensions.BaseExtension
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.*
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.compilerOptions
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.getVersionOrNull
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.java
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.javaTarget
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.javaToolchainVersion
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.jvmTarget
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.kotlin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.jvm.tasks.Jar
