@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.tmdb.implementation
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.EMPTY
@@ -48,6 +49,11 @@ fun tmdbHttpClient(
             requestTimeoutMillis = TIMEOUT_DURATION
             connectTimeoutMillis = TIMEOUT_DURATION
             socketTimeoutMillis = TIMEOUT_DURATION
+        }
+
+        install(HttpRequestRetry) {
+            retryOnServerErrors(maxRetries = 3)
+            exponentialDelay()
         }
 
         install(Logging) {
