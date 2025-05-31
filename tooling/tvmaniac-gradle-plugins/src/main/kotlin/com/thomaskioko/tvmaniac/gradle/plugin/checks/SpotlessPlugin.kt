@@ -21,10 +21,13 @@ public class SpotlessPlugin : Plugin<Project> {
                     it.target("**/*.kt")
                     it.targetExclude("${layout.buildDirectory}/**/*.kt")
                 }
+
                 kotlinGradle {
+                    it.ktlint(ktlintVersion)
                     it.target("*.kts")
                     it.targetExclude("${layout.buildDirectory}/**/*.kts")
                 }
+
                 format("xml") {
                     it.target("src/**/*.xml")
                     it.targetExclude("**/build/", ".idea/")
