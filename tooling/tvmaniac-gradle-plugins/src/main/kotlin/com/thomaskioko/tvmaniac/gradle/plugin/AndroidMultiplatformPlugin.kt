@@ -1,9 +1,7 @@
 package com.thomaskioko.tvmaniac.gradle.plugin
 
 import com.android.build.api.dsl.androidLibrary
-import com.thomaskioko.tvmaniac.gradle.plugin.extensions.AndroidMultiplatformExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.addIfNotNull
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.baseExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.getDependencyOrNull
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.getVersion
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.jvmCompilerOptions
@@ -17,8 +15,6 @@ public abstract class AndroidMultiplatformPlugin : Plugin<Project> {
             target.plugins.apply("com.android.kotlin.multiplatform.library")
         }
         target.plugins.apply(BasePlugin::class.java)
-
-        target.baseExtension.extensions.create("androidLibrary", AndroidMultiplatformExtension::class.java)
 
         target.configureAndroidKotlinMultiplatform()
     }
