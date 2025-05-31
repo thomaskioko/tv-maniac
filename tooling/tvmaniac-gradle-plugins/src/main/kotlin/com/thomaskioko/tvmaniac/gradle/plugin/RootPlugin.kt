@@ -33,15 +33,6 @@ public abstract class RootPlugin : Plugin<Project> {
             extensions.configure(DoctorExtension::class.java) { doctor ->
                 with(doctor) {
                     /**
-                     * Warn when not using parallel GC. Parallel GC is faster for build type tasks and is no longer the default in Java 9+.
-                     */
-                    warnWhenNotUsingParallelGC.set(false)
-                    /**
-                     * By default, Gradle treats empty directories as inputs to compilation tasks. This can cause cache misses.
-                     */
-                    failOnEmptyDirectories.set(true)
-
-                    /**
                      * Do not allow building all apps simultaneously. This is likely not what the user intended.
                      */
                     allowBuildingAllAndroidAppsSimultaneously.set(false)
