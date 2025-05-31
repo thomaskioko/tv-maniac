@@ -3,7 +3,7 @@ plugins {
 }
 
 tvmaniac {
-      multiplatform {
+    multiplatform {
         addAndroidMultiplatformTarget()
         useKotlinInject()
         useSerialization()
