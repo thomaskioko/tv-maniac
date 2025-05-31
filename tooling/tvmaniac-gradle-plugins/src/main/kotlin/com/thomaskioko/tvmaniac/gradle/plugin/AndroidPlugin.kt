@@ -17,11 +17,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 
-/**
- * Base class for Android plugins, providing common configuration and setup. It also creates the `android` extension,
- * providing a unified way to access and modify the Android-specific configurations.
- *
- */
 public abstract class AndroidPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         if (!target.plugins.hasPlugin("com.android.application")) {
@@ -105,7 +100,7 @@ internal fun Project.androidSetup() {
     dependencies.addIfNotNull("coreLibraryDesugaring", desugarLibrary)
 }
 
-private fun Project.pathBasedAndroidNamespace(): String {
+internal fun Project.pathBasedAndroidNamespace(): String {
     val transformedPath = path.drop(1)
         .split(":")
         .mapIndexed { index, pathElement ->

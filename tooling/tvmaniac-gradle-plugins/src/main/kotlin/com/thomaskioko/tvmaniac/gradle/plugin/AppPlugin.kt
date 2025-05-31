@@ -11,9 +11,6 @@ import com.thomaskioko.tvmaniac.gradle.plugin.utils.stringProperty
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-/**
- * `AppPlugin` is a custom Gradle plugin that configures an Android application module.
- */
 public abstract class AppPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.plugins.apply("com.android.application")

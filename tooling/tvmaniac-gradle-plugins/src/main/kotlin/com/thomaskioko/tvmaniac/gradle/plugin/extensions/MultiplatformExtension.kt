@@ -1,7 +1,12 @@
 package com.thomaskioko.tvmaniac.gradle.plugin.extensions
 
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
+import com.android.build.api.dsl.androidLibrary
 import com.android.build.gradle.LibraryExtension
+import com.thomaskioko.tvmaniac.gradle.plugin.AndroidMultiplatformPlugin
 import com.thomaskioko.tvmaniac.gradle.plugin.AndroidPlugin
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.jvmCompilerOptions
+import com.thomaskioko.tvmaniac.gradle.plugin.utils.jvmTarget
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.kotlinMultiplatform
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
@@ -18,6 +23,7 @@ public abstract class MultiplatformExtension(private val project: Project) {
         }
     }
 
+    @Deprecated("Use addAndroidMultiplatformTarget instead")
     @JvmOverloads
     public fun addAndroidTarget(
         configure: KotlinAndroidTarget.() -> Unit = { },
@@ -37,6 +43,32 @@ public abstract class MultiplatformExtension(private val project: Project) {
 
         project.extensions.configure(LibraryExtension::class.java, androidConfig)
 
+    }
+
+    @Suppress("UnstableApiUsage")
+    @JvmOverloads
+    public fun addAndroidMultiplatformTarget(
+        withJava: Boolean = false,
+        configure: KotlinMultiplatformAndroidLibraryTarget.() -> Unit = { },
+    ) {
+        project.plugins.apply(AndroidMultiplatformPlugin::class.java)
+
+        project.kotlinMultiplatform {
+            androidLibrary {
+                if (withJava) {
+                    configureJava()
+                }
+                configure()
+            }
+        }
+    }
+
+    private fun KotlinMultiplatformAndroidLibraryTarget.configureJava(){
+        jvmCompilerOptions {
+            withJava()
+
+            jvmTarget.set(project.jvmTarget)
+        }
     }
 
     @JvmOverloads

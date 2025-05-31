@@ -11,9 +11,6 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
-/**
- * A base plugin that configures a Kotlin Multiplatform project with common defaults.
- */
 public abstract class KotlinMultiplatformPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.plugins.apply("org.jetbrains.kotlin.multiplatform")

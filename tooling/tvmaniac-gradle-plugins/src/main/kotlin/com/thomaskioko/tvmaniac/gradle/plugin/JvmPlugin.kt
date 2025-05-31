@@ -10,9 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
 
-/**
- * `JvmPlugin` is an abstract plugin that provides common configurations for JVM-based projects.
- */
 public abstract class JvmPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.plugins.apply("org.jetbrains.kotlin.jvm")

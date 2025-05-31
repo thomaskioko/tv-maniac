@@ -25,7 +25,6 @@ public class SpotlessPlugin : Plugin<Project> {
                 kotlinGradle {
                     it.ktlint(ktlintVersion)
                     it.target("*.kts")
-                    it.targetExclude("${layout.buildDirectory}/**/*.kts")
                 }
 
                 format("xml") {

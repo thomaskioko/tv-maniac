@@ -3,11 +3,10 @@ plugins {
 }
 
 tvmaniac {
-    useSerialization()
-
     multiplatform {
-        addAndroidTarget()
+        addAndroidMultiplatformTarget()
         useKotlinInject()
+        useSerialization()
         useKspAnvilCompiler()
     }
 }

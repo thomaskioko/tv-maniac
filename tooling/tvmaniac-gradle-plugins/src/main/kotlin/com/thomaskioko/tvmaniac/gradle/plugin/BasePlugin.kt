@@ -16,9 +16,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
-/**
- * Base class for all plugins in the project. This class provides common configurations that are shared across multiple plugins.
- */
 public abstract class BasePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.plugins.apply("com.autonomousapps.dependency-analysis")

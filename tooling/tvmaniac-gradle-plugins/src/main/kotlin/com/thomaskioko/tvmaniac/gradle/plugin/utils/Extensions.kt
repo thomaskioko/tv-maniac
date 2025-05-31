@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.gradle.plugin.utils
 
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.extensions.AndroidExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.extensions.BaseExtension
@@ -11,6 +12,7 @@ import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginE
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
@@ -89,5 +91,13 @@ internal fun KotlinProjectExtension.compilerOptions(configure: KotlinCommonCompi
         }
 
         else -> throw IllegalStateException("Unsupported kotlin extension ${this::class}")
+    }
+}
+
+internal fun KotlinMultiplatformAndroidLibraryTarget.jvmCompilerOptions(block: KotlinJvmCompilerOptions.() -> Unit) {
+    compilations.configureEach { compilation ->
+        compilation.compilerOptions.configure {
+            block()
+        }
     }
 }

@@ -8,9 +8,6 @@ import com.thomaskioko.tvmaniac.gradle.plugin.utils.baseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-/**
- * `BaselineProfilePlugin` is a Gradle plugin that configures a project for generating Baseline Profiles for Android applications.
- */
 public class BaselineProfilePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.plugins.apply("com.android.test")
