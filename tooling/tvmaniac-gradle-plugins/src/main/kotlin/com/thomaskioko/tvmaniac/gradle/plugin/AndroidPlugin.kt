@@ -100,7 +100,7 @@ internal fun Project.androidSetup() {
     dependencies.addIfNotNull("coreLibraryDesugaring", desugarLibrary)
 }
 
-private fun Project.pathBasedAndroidNamespace(): String {
+internal fun Project.pathBasedAndroidNamespace(): String {
     val transformedPath = path.drop(1)
         .split(":")
         .mapIndexed { index, pathElement ->
