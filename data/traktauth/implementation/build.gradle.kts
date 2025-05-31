@@ -4,7 +4,7 @@ plugins {
 
 tvmaniac {
     multiplatform {
-        addAndroidTarget()
+        addAndroidMultiplatformTarget()
         useKotlinInject()
         useKspAnvilCompiler()
     }
@@ -14,6 +14,8 @@ kotlin {
     sourceSets {
         androidMain {
             dependencies {
+                implementation(libs.appauth)
+                implementation(libs.coroutines.core)
                 implementation(projects.data.traktauth.api)
 
                 implementation(libs.androidx.activity)

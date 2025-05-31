@@ -5,7 +5,7 @@ plugins {
 
 tvmaniac {
     multiplatform {
-        addAndroidTarget()
+        addAndroidMultiplatformTarget()
         useKotlinInject()
         useKspAnvilCompiler()
     }

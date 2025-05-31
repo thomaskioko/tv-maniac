@@ -4,11 +4,7 @@ plugins {
 
 tvmaniac {
     multiplatform {
-        addAndroidTarget(
-            androidConfig = {
-                sourceSets["main"].resources.setSrcDirs(listOf("src/commonMain/resources"))
-            },
-        )
+        addAndroidMultiplatformTarget()
         useKotlinInject()
         useKspAnvilCompiler()
         useSerialization()
