@@ -49,6 +49,11 @@ gradlePlugin {
             implementationClass = "com.thomaskioko.tvmaniac.gradle.plugin.AndroidPlugin"
         }
 
+        create("androidMultiplatformPlugin") {
+            id = "com.thomaskioko.tvmaniac.gradle.android.multiplatform"
+            implementationClass = "com.thomaskioko.tvmaniac.gradle.plugin.AndroidMultiplatformPlugin"
+        }
+
         create("jvmPlugin") {
             id = "com.thomaskioko.tvmaniac.gradle.jvm"
             implementationClass = "com.thomaskioko.tvmaniac.gradle.plugin.JvmPlugin"
