@@ -12,20 +12,20 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 internal val Project.libs: VersionCatalog
-  get() = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
+    get() = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
 
 /**
  * Retrieves the version string associated with the given [name] from the project's properties.
  */
 internal fun Project.getVersion(name: String): String {
-  return getVersionOrNull(name) ?: throw NoSuchElementException("Could not find version $name")
+    return getVersionOrNull(name) ?: throw NoSuchElementException("Could not find version $name")
 }
 
 /**
  * Retrieves the version of a library dependency specified by its name, or null if not found.
  */
 internal fun Project.getVersionOrNull(name: String): String? {
-  return libs.findVersion(name).orElseGet { null }?.requiredVersion
+    return libs.findVersion(name).orElseGet { null }?.requiredVersion
 }
 
 
@@ -33,41 +33,41 @@ internal fun Project.getVersionOrNull(name: String): String? {
  * Adds a dependency to the dependency handler if the provided dependency object is not null.
  */
 internal fun DependencyHandler.addIfNotNull(name: String, dependency: Any?) {
-  if (dependency != null) {
-    add(name, dependency)
-  }
+    if (dependency != null) {
+        add(name, dependency)
+    }
 }
 
 /**
  * Retrieves a library dependency from the version catalog by its alias.
  */
 internal fun Project.getDependency(name: String): Provider<MinimalExternalModuleDependency> {
-  return libs.findLibrary(name).orElseThrow { NoSuchElementException("Could not find library $name") }
+    return libs.findLibrary(name).orElseThrow { NoSuchElementException("Could not find library $name") }
 }
 
 /**
  * Retrieves a library bundle from the version catalog by its alias.
  */
 internal fun Project.getBundleDependencies(name: String): Provider<ExternalModuleDependencyBundle> {
-  return libs.findBundle(name).orElseThrow { NoSuchElementException("Could not find library $name") }
+    return libs.findBundle(name).orElseThrow { NoSuchElementException("Could not find library $name") }
 }
 
 /**
  * Retrieves a dependency bundle from the `libs` catalog by its name, or `null` if the bundle is not found.
  */
 internal fun Project.getDependencyOrNull(name: String): Provider<MinimalExternalModuleDependency>? {
-  return libs.findLibrary(name).orElseGet { null }
+    return libs.findLibrary(name).orElseGet { null }
 }
 
 internal val Project.javaTarget: String
-  get() = getVersion("java-target")
+    get() = getVersion("java-target")
 
 internal val Project.javaTargetVersion: JavaVersion
-  get() = JavaVersion.toVersion(javaTarget)
+    get() = JavaVersion.toVersion(javaTarget)
 
 internal val Project.jvmTarget: JvmTarget
-  get() = JvmTarget.fromTarget(javaTarget)
+    get() = JvmTarget.fromTarget(javaTarget)
 
 internal val Project.javaToolchainVersion: JavaLanguageVersion
-  get() = JavaLanguageVersion.of(getVersion("java-toolchain"))
+    get() = JavaLanguageVersion.of(getVersion("java-toolchain"))
 
