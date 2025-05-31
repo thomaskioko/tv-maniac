@@ -18,6 +18,7 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepo
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.Mapper
@@ -160,6 +161,10 @@ class HomePresenterTest {
         ),
         upcomingShowsInteractor = UpcomingShowsInteractor(
             upcomingShowsRepository = upcomingShowsRepository,
+            dispatchers = coroutineDispatcher,
+        ),
+        genreShowsInteractor = GenreShowsInteractor(
+            repository = genreRepository,
             dispatchers = coroutineDispatcher,
         ),
         logger = FakeLogger(),

@@ -23,6 +23,7 @@ import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObservableSeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
@@ -209,6 +210,10 @@ class DefaultRootComponentTest {
         ),
         upcomingShowsInteractor = UpcomingShowsInteractor(
             upcomingShowsRepository = upcomingShowsRepository,
+            dispatchers = coroutineDispatcher,
+        ),
+        genreShowsInteractor = GenreShowsInteractor(
+            repository = genreRepository,
             dispatchers = coroutineDispatcher,
         ),
         logger = FakeLogger(),

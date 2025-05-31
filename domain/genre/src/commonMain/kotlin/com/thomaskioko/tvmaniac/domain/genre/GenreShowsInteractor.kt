@@ -7,13 +7,13 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class GenresInteractor(
-    private val genreRepository: GenreRepository,
+class GenreShowsInteractor(
+    private val repository: GenreRepository,
     private val dispatchers: AppCoroutineDispatchers,
-) : Interactor<Unit>() {
-    override suspend fun doWork(params: Unit) {
+) : Interactor<Boolean>() {
+    override suspend fun doWork(params: Boolean) {
         withContext(dispatchers.io) {
-            genreRepository.observeGenrePosters()
+            repository.fetchGenresWithShows(params)
         }
     }
 }

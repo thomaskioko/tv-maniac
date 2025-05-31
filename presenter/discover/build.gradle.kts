@@ -18,6 +18,7 @@ kotlin {
                 implementation(projects.core.base)
                 implementation(projects.core.logger.api)
                 implementation(projects.domain.discover)
+                implementation(projects.domain.genre)
                 implementation(projects.data.watchlist.api)
 
                 api(libs.decompose.decompose)
