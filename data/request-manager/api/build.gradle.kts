@@ -1,25 +1,25 @@
 plugins {
-  alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.tvmaniac.kmp)
 }
 
 tvmaniac {
-  multiplatform {
-    useKotlinInject()
-    useKspAnvilCompiler()
-  }
+    multiplatform {
+        useKotlinInject()
+        useKspAnvilCompiler()
+    }
 
-  optIn(
-    "kotlinx.coroutines.ExperimentalCoroutinesApi",
-  )
+    optIn(
+        "kotlinx.coroutines.ExperimentalCoroutinesApi",
+    )
 }
 
 kotlin {
-  sourceSets {
-    commonMain {
-      dependencies {
-        implementation(projects.data.database.sqldelight)
-        api(libs.kotlinx.datetime)
-      }
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(projects.data.database.sqldelight)
+                api(libs.kotlinx.datetime)
+            }
+        }
     }
-  }
 }

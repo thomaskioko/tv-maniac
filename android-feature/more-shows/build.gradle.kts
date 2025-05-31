@@ -1,31 +1,30 @@
 plugins {
-  alias(libs.plugins.tvmaniac.android)
+    alias(libs.plugins.tvmaniac.android)
 }
 
 tvmaniac {
-  android {
-    useCompose()
-    useRoborazzi()
-  }
+    android {
+        useCompose()
+        useRoborazzi()
+    }
 
-  optIn(
-    "androidx.compose.foundation.ExperimentalFoundationApi",
-    "androidx.compose.material.ExperimentalMaterialApi",
-    "androidx.compose.material3.ExperimentalMaterial3Api",
-  )
+    optIn(
+        "androidx.compose.foundation.ExperimentalFoundationApi",
+        "androidx.compose.material.ExperimentalMaterialApi",
+        "androidx.compose.material3.ExperimentalMaterial3Api",
+    )
 }
 
 dependencies {
-  api(projects.presenter.moreShows)
+    api(projects.presenter.moreShows)
 
-  implementation(projects.androidDesignsystem)
+    implementation(projects.androidDesignsystem)
 
-  implementation(libs.androidx.compose.foundation)
-  implementation(libs.androidx.compose.material)
-  implementation(libs.androidx.compose.material3)
-  implementation(libs.androidx.compose.runtime)
-  implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.paging.compose)
 
-  testImplementation(projects.core.screenshotTests)
+    testImplementation(projects.core.screenshotTests)
 }
-

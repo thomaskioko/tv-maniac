@@ -1,38 +1,37 @@
 plugins {
-  alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.tvmaniac.kmp)
 }
 
 tvmaniac {
-  multiplatform {
-    useKotlinInject()
-  }
+    multiplatform {
+        useKotlinInject()
+    }
 
-  optIn(
-    "kotlinx.coroutines.ExperimentalCoroutinesApi",
-  )
+    optIn(
+        "kotlinx.coroutines.ExperimentalCoroutinesApi",
+    )
 }
 
 kotlin {
-  sourceSets {
-    commonMain {
-      dependencies {
-        implementation(projects.core.base)
-        implementation(projects.data.datastore.api)
-        implementation(projects.data.traktauth.api)
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(projects.core.base)
+                implementation(projects.data.datastore.api)
+                implementation(projects.data.traktauth.api)
 
-        api(libs.decompose.decompose)
-        api(libs.essenty.lifecycle)
+                api(libs.decompose.decompose)
+                api(libs.essenty.lifecycle)
+            }
+        }
 
-      }
+        commonTest {
+            dependencies {
+                implementation(projects.data.datastore.testing)
+                implementation(projects.data.traktauth.testing)
+
+                implementation(libs.bundles.unittest)
+            }
+        }
     }
-
-    commonTest {
-      dependencies {
-        implementation(projects.data.datastore.testing)
-        implementation(projects.data.traktauth.testing)
-
-        implementation(libs.bundles.unittest)
-      }
-    }
-  }
 }

@@ -1,30 +1,30 @@
 plugins {
-  alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.tvmaniac.kmp)
 }
 
 tvmaniac {
-  multiplatform {
-    addAndroidTarget()
-    useKotlinInject()
-    useKspAnvilCompiler()
-    useSerialization()
-  }
+    multiplatform {
+        addAndroidTarget()
+        useKotlinInject()
+        useKspAnvilCompiler()
+        useSerialization()
+    }
 
-  optIn(
-    "kotlinx.coroutines.InternalCoroutinesApi",
-  )
+    optIn(
+        "kotlinx.coroutines.InternalCoroutinesApi",
+    )
 }
 
 kotlin {
-  sourceSets {
-    commonMain.dependencies {
+    sourceSets {
+        commonMain.dependencies {
 
-      implementation(projects.core.base)
+            implementation(projects.core.base)
 
-      implementation(libs.androidx.paging.common)
-      implementation(libs.coroutines.core)
-      implementation(libs.ktor.core)
-      implementation(libs.store5)
+            implementation(libs.androidx.paging.common)
+            implementation(libs.coroutines.core)
+            implementation(libs.ktor.core)
+            implementation(libs.store5)
+        }
     }
-  }
 }
