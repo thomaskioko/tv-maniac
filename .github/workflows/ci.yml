@@ -332,7 +332,7 @@ jobs:
                 uses: actions/checkout@v4
 
             -   name: 🔍 Check Swift Format
-                run: swiftformat --lint --config ios/.swiftformat --swiftversion 5.9 --exclude derived_data ios
+                run: swiftformat --lint --config ios/.swiftformat --exclude derived_data ios
 
     ios-snapshot-test:
         runs-on: macos-15
