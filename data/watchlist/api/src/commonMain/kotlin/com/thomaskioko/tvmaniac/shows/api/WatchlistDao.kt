@@ -9,19 +9,19 @@ import kotlinx.coroutines.flow.Flow
 
 interface WatchlistDao {
 
-  fun upsert(id: Long)
+    fun upsert(id: Long)
 
-  fun getShowsInWatchlist(): List<Watchlists>
+    fun getShowsInWatchlist(): List<Watchlists>
 
-  fun updateSyncState(id: Id<TmdbId>)
+    fun updateSyncState(id: Id<TmdbId>)
 
-  fun observeShowsInWatchlist(): Flow<List<Watchlists>>
+    fun observeShowsInWatchlist(): Flow<List<Watchlists>>
 
-  fun observeWatchlistByQuery(query: String): Flow<List<SearchWatchlist>>
+    fun observeWatchlistByQuery(query: String): Flow<List<SearchWatchlist>>
 
-  fun observeUnSyncedWatchlist(): Flow<List<Id<TmdbId>>>
+    fun observeUnSyncedWatchlist(): Flow<List<Id<TmdbId>>>
 
-  fun delete(id: Long)
+    fun delete(id: Long)
 
-  fun upsert(entity: Show_metadata)
+    fun upsert(entity: Show_metadata)
 }

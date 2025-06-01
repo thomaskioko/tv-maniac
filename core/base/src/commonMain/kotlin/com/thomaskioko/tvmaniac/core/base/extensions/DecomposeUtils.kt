@@ -23,41 +23,41 @@ import kotlin.coroutines.CoroutineContext
  * https://github.com/joreilly/Confetti/blob/fb832c2131b2f3e5276a1a3a30666aa571e1e17e/shared/src/commonMain/kotlin/dev/johnoreilly/confetti/decompose/DecomposeUtils.kt#L27
  */
 fun LifecycleOwner.coroutineScope(
-  context: CoroutineContext = Dispatchers.Main.immediate,
+    context: CoroutineContext = Dispatchers.Main.immediate,
 ): CoroutineScope {
-  val scope = CoroutineScope(context + SupervisorJob())
-  lifecycle.doOnDestroy(scope::cancel)
+    val scope = CoroutineScope(context + SupervisorJob())
+    lifecycle.doOnDestroy(scope::cancel)
 
-  return scope
+    return scope
 }
 
 /**
  * Creates a Main [CoroutineScope] instance tied to the lifecycle of this [ComponentContext].
  */
 fun LifecycleOwner.componentCoroutineScope(): CoroutineScope =
-  MainScope().also { coroutineScope ->
-    lifecycle.doOnDestroy { coroutineScope.cancel() }
-  }
+    MainScope().also { coroutineScope ->
+        lifecycle.doOnDestroy { coroutineScope.cancel() }
+    }
 
 /**
  * Converts this Decompose [Value] to Kotlin [StateFlow].
  */
 fun <T : Any> Value<T>.asStateFlow(coroutineScope: CoroutineScope): StateFlow<T> = asFlow()
-  .stateIn(
-    scope = coroutineScope,
-    started = SharingStarted.Lazily,
-    initialValue = value,
-  )
+    .stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.Lazily,
+        initialValue = value,
+    )
 
 /**
  * Converts this Decompose [Value] to Kotlin [Flow].
  */
 fun <T : Any> Value<T>.asFlow(): Flow<T> = callbackFlow {
-  val cancellation = subscribe { value ->
-    trySendBlocking(value)
-  }
+    val cancellation = subscribe { value ->
+        trySendBlocking(value)
+    }
 
-  awaitClose {
-    cancellation.cancel()
-  }
+    awaitClose {
+        cancellation.cancel()
+    }
 }

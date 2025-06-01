@@ -8,21 +8,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class FakeTopRatedShowsRepository : TopRatedShowsRepository {
-  private val shows = MutableStateFlow<List<ShowEntity>>(emptyList())
-  private val pagedShows = MutableStateFlow<PagingData<ShowEntity>>(PagingData.empty())
+    private val shows = MutableStateFlow<List<ShowEntity>>(emptyList())
+    private val pagedShows = MutableStateFlow<PagingData<ShowEntity>>(PagingData.empty())
 
-  fun setTopRatedShows(result: List<ShowEntity>) {
-    shows.value = result
-  }
+    fun setTopRatedShows(result: List<ShowEntity>) {
+        shows.value = result
+    }
 
-  override suspend fun fetchTopRatedShows(forceRefresh: Boolean) {
-  }
+    override suspend fun fetchTopRatedShows(forceRefresh: Boolean) {
+    }
 
-  override fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>> {
-    return shows.asStateFlow()
-  }
+    override fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>> {
+        return shows.asStateFlow()
+    }
 
-  override fun getPagedTopRatedShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
-    return pagedShows.asStateFlow()
-  }
+    override fun getPagedTopRatedShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
+        return pagedShows.asStateFlow()
+    }
 }

@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TraktAccessTokenResponse(
-  @SerialName("scope") val scope: String?,
-  @SerialName("access_token") val accessToken: String?,
-  @SerialName("created_at") val createdAt: Long?,
-  @SerialName("expires_in") val expiresIn: Long?,
-  @SerialName("refresh_token") val refreshToken: String?,
-  @SerialName("token_type") val tokenType: String?,
+    @SerialName("scope") val scope: String?,
+    @SerialName("access_token") val accessToken: String?,
+    @SerialName("created_at") val createdAt: Long?,
+    @SerialName("expires_in") val expiresIn: Long?,
+    @SerialName("refresh_token") val refreshToken: String?,
+    @SerialName("token_type") val tokenType: String?,
 )

@@ -7,23 +7,22 @@ import com.thomaskioko.tvmaniac.presentation.trailers.TrailersState
 import com.thomaskioko.tvmaniac.presentation.trailers.model.Trailer
 import kotlinx.collections.immutable.toPersistentList
 
-private val trailersList =
-  List(4) {
+private val trailersList = List(4) {
     Trailer(
-      showId = 1232,
-      key = "er",
-      name = "Trailer Name",
-      youtubeThumbnailUrl = "",
+        showId = 1232,
+        key = "er",
+        name = "Trailer Name",
+        youtubeThumbnailUrl = "",
     )
-  }
+}
     .toPersistentList()
 
 class TrailerPreviewParameterProvider : PreviewParameterProvider<TrailersState> {
-  override val values: Sequence<TrailersState>
-    get() {
-      return sequenceOf(
-        TrailersContent(trailersList = trailersList),
-        TrailerError(errorMessage = "Opps! Something went wrong"),
-      )
-    }
+    override val values: Sequence<TrailersState>
+        get() {
+            return sequenceOf(
+                TrailersContent(trailersList = trailersList),
+                TrailerError(errorMessage = "Opps! Something went wrong"),
+            )
+        }
 }

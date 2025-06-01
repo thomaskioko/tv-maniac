@@ -74,7 +74,8 @@ public struct EpisodeCollapsible<Content: View>: View {
 
                     ProgressView(value: watchProgress, total: 1)
                         .progressViewStyle(
-                            RoundedRectProgressViewStyle(progressIndicatorHeight: DimensionConstants.progressIndicatorHeight)
+                            RoundedRectProgressViewStyle(progressIndicatorHeight: DimensionConstants
+                                .progressIndicatorHeight)
                         )
                 }
                 .frame(height: DimensionConstants.frameHeight)

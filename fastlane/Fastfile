@@ -32,6 +32,19 @@ platform :ios do
 
   desc "Build iOS App"
   lane :build_tvmaniac do
+
+      sh("xcodebuild -project ../ios/tv-maniac.xcodeproj \
+        -scheme tv-maniac \
+        -destination 'platform=iOS Simulator,name=#{TEST_DEVICE}' \
+        -configuration Debug \
+        clean build \
+        COMPILER_INDEX_STORE_ENABLE=NO"
+        )
+  end
+
+
+  desc "Build TvManiac IPA"
+  lane :build_tvmaniac_ipa do
     # Clear derived data first
     clear_derived_data_lane
 
@@ -65,5 +78,53 @@ platform :ios do
     clear_derived_data(
       derived_data_path: "derived_data"
     )
+  end
+
+  desc "Run SwiftFormat"
+  lane :format_swift_code do
+    # Using SwiftFormat directly (installed via Homebrew or Swift Package Manager)
+    # See: https://github.com/nicklockwood/SwiftFormat
+    # Use absolute paths to ensure the command works regardless of the working directory
+    project_root = File.expand_path('..', Dir.pwd)
+    ios_dir = File.join(project_root, 'ios')
+    config_file = File.join(ios_dir, '.swiftformat')
+
+    # Verify that the directories and files exist
+    unless Dir.exist?(ios_dir)
+      UI.error("iOS directory not found at #{ios_dir}")
+      next
+    end
+
+    unless File.exist?(config_file)
+      UI.error("SwiftFormat config file not found at #{config_file}")
+      next
+    end
+
+    # Run SwiftFormat with absolute paths
+    sh "swiftformat '#{ios_dir}' --config '#{config_file}' --swiftversion 5.9 --exclude derived_data"
+  end
+
+  desc "Check SwiftFormat without making changes"
+  lane :check_swift_format do
+    # Using SwiftFormat directly (installed via Homebrew or Swift Package Manager)
+    # See: https://github.com/nicklockwood/SwiftFormat
+    # Use absolute paths to ensure the command works regardless of the working directory
+    project_root = File.expand_path('..', Dir.pwd)
+    ios_dir = File.join(project_root, 'ios')
+    config_file = File.join(ios_dir, '.swiftformat')
+
+    # Verify that the directories and files exist
+    unless Dir.exist?(ios_dir)
+      UI.error("iOS directory not found at #{ios_dir}")
+      next
+    end
+
+    unless File.exist?(config_file)
+      UI.error("SwiftFormat config file not found at #{config_file}")
+      next
+    end
+
+    # Run SwiftFormat with absolute paths
+    sh "swiftformat '#{ios_dir}' --config '#{config_file}' --lint --swiftversion 5.9 --exclude derived_data"
   end
 end

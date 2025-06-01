@@ -9,14 +9,14 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class WatchProvidersInteractor(
-  private val repository: WatchProviderRepository,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val repository: WatchProviderRepository,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Param>() {
-  override suspend fun doWork(params: Param) {
-    withContext(dispatchers.io) {
-      repository.fetchWatchProviders(id = params.id, forceRefresh = params.forceRefresh)
+    override suspend fun doWork(params: Param) {
+        withContext(dispatchers.io) {
+            repository.fetchWatchProviders(id = params.id, forceRefresh = params.forceRefresh)
+        }
     }
-  }
 
-  data class Param(val id: Long, val forceRefresh: Boolean = false)
+    data class Param(val id: Long, val forceRefresh: Boolean = false)
 }

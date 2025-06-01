@@ -30,62 +30,62 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
 fun SheetDragHandle(
-  onClick: () -> Unit,
-  imageVector: ImageVector,
-  modifier: Modifier = Modifier,
-  title: String? = null,
-  textAlign: TextAlign? = null,
-  tint: Color = LocalContentColor.current,
+    onClick: () -> Unit,
+    imageVector: ImageVector,
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    textAlign: TextAlign? = null,
+    tint: Color = LocalContentColor.current,
 ) {
-  Box(
-    modifier = modifier
-      .fillMaxWidth()
-      .statusBarsPadding()
-      .height(56.dp)
-      .background(Color.Transparent),
-  ) {
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .align(Alignment.CenterStart)
-        .padding(start = 16.dp),
-      verticalAlignment = Alignment.CenterVertically,
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .height(56.dp)
+            .background(Color.Transparent),
     ) {
-      Icon(
-        imageVector = imageVector,
-        tint = tint,
-        contentDescription = "Expand/Collapse",
-        modifier = Modifier
-          .size(24.dp)
-          .clickable { onClick() },
-      )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterStart)
+                .padding(start = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = imageVector,
+                tint = tint,
+                contentDescription = "Expand/Collapse",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { onClick() },
+            )
 
-      Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
-      title?.let {
-        Text(
-          text = title,
-          style = MaterialTheme.typography.titleMedium,
-          maxLines = 1,
-          overflow = TextOverflow.Ellipsis,
-          textAlign = textAlign,
-          modifier = Modifier.fillMaxWidth(),
-        )
-      }
+            title?.let {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = textAlign,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
     }
-  }
 }
 
 @ThemePreviews
 @Composable
 private fun CustomSheetDragHandlePreview() {
-  TvManiacTheme {
-    Surface {
-      SheetDragHandle(
-        title = "Drag Handle",
-        onClick = {},
-        imageVector = Icons.Outlined.KeyboardArrowDown,
-      )
+    TvManiacTheme {
+        Surface {
+            SheetDragHandle(
+                title = "Drag Handle",
+                onClick = {},
+                imageVector = Icons.Outlined.KeyboardArrowDown,
+            )
+        }
     }
-  }
 }

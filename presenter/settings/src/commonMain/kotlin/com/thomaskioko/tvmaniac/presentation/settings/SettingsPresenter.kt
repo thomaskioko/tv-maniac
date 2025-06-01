@@ -16,78 +16,85 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SettingsPresenterFactory(
-  val create: (
-    componentContext: ComponentContext,
-    launchWebView: () -> Unit,
-  ) -> SettingsPresenter,
-)
+    private val datastoreRepository: DatastoreRepository,
+    private val traktAuthRepository: TraktAuthRepository,
+) {
+    fun create(
+        componentContext: ComponentContext,
+        launchWebView: () -> Unit,
+    ): SettingsPresenter = SettingsPresenter(
+        componentContext = componentContext,
+        launchWebView = launchWebView,
+        datastoreRepository = datastoreRepository,
+        traktAuthRepository = traktAuthRepository,
+    )
+}
 
 @Inject
 class SettingsPresenter(
-  @Assisted componentContext: ComponentContext,
-  @Assisted private val launchWebView: () -> Unit,
-  private val datastoreRepository: DatastoreRepository,
-  private val traktAuthRepository: TraktAuthRepository,
+    @Assisted componentContext: ComponentContext,
+    @Assisted private val launchWebView: () -> Unit,
+    private val datastoreRepository: DatastoreRepository,
+    private val traktAuthRepository: TraktAuthRepository,
 ) : ComponentContext by componentContext {
 
-  private val coroutineScope = coroutineScope()
+    private val coroutineScope = coroutineScope()
 
-  private val _state: MutableStateFlow<SettingsState> =
-    MutableStateFlow(SettingsState.DEFAULT_STATE)
-  val state: StateFlow<SettingsState> = _state.asStateFlow()
+    private val _state: MutableStateFlow<SettingsState> = MutableStateFlow(SettingsState.DEFAULT_STATE)
+    val state: StateFlow<SettingsState> = _state.asStateFlow()
 
-  init {
-    coroutineScope.launch {
-      observeTheme()
-      observeTraktAuthState()
-    }
-  }
-
-  fun dispatch(action: SettingsActions) {
-    when (action) {
-      ChangeThemeClicked -> updateThemeDialogState(true)
-      DismissThemeClicked -> updateThemeDialogState(false)
-      DismissTraktDialog -> updateTrackDialogState(false)
-      ShowTraktDialog -> updateTrackDialogState(true)
-      is ThemeSelected -> {
-        datastoreRepository.saveTheme(action.appTheme)
-        updateThemeDialogState(false)
-      }
-      TraktLoginClicked -> {
-        launchWebView()
+    init {
         coroutineScope.launch {
-          _state.update { state -> state.copy(showTraktDialog = !state.showTraktDialog) }
+            observeTheme()
+            observeTraktAuthState()
         }
-      }
-      TraktLogoutClicked -> {
-        coroutineScope.launch { traktAuthRepository.clearAuth() }
-      }
     }
-  }
 
-  private fun updateThemeDialogState(showDialog: Boolean) {
-    coroutineScope.launch { _state.update { state -> state.copy(showthemePopup = showDialog) } }
-  }
-
-  private fun updateTrackDialogState(showDialog: Boolean) {
-    coroutineScope.launch { _state.update { state -> state.copy(showTraktDialog = showDialog) } }
-  }
-
-  private suspend fun observeTheme() {
-    datastoreRepository.observeTheme().collectLatest {
-      _state.update { state -> state.copy(appTheme = it) }
-    }
-  }
-
-  private suspend fun observeTraktAuthState() {
-    traktAuthRepository.observeState().collectLatest { result ->
-      when (result) {
-        TraktAuthState.LOGGED_IN -> {}
-        TraktAuthState.LOGGED_OUT -> {
-          datastoreRepository.clearAuthState()
-          traktAuthRepository.clearAuth()
+    fun dispatch(action: SettingsActions) {
+        when (action) {
+            ChangeThemeClicked -> updateThemeDialogState(true)
+            DismissThemeClicked -> updateThemeDialogState(false)
+            DismissTraktDialog -> updateTrackDialogState(false)
+            ShowTraktDialog -> updateTrackDialogState(true)
+            is ThemeSelected -> {
+                datastoreRepository.saveTheme(action.appTheme)
+                updateThemeDialogState(false)
+            }
+            TraktLoginClicked -> {
+                launchWebView()
+                coroutineScope.launch {
+                    _state.update { state -> state.copy(showTraktDialog = !state.showTraktDialog) }
+                }
+            }
+            TraktLogoutClicked -> {
+                coroutineScope.launch { traktAuthRepository.clearAuth() }
+            }
         }
-      }
     }
-  }
+
+    private fun updateThemeDialogState(showDialog: Boolean) {
+        coroutineScope.launch { _state.update { state -> state.copy(showthemePopup = showDialog) } }
+    }
+
+    private fun updateTrackDialogState(showDialog: Boolean) {
+        coroutineScope.launch { _state.update { state -> state.copy(showTraktDialog = showDialog) } }
+    }
+
+    private suspend fun observeTheme() {
+        datastoreRepository.observeTheme().collectLatest {
+            _state.update { state -> state.copy(appTheme = it) }
+        }
+    }
+
+    private suspend fun observeTraktAuthState() {
+        traktAuthRepository.observeState().collectLatest { result ->
+            when (result) {
+                TraktAuthState.LOGGED_IN -> {}
+                TraktAuthState.LOGGED_OUT -> {
+                    datastoreRepository.clearAuthState()
+                    traktAuthRepository.clearAuth()
+                }
+            }
+        }
+    }
 }

@@ -6,29 +6,34 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 public class SpotlessPlugin : Plugin<Project> {
-  override fun apply(project: Project): Unit = with(project) {
-    pluginManager.apply("com.diffplug.spotless")
+    override fun apply(project: Project): Unit = with(project) {
+        pluginManager.apply("com.diffplug.spotless")
 
-    val ktfmtVersion = libs.findVersion("ktfmt").get().requiredVersion
-    extensions.configure(SpotlessExtension::class.java) { extension ->
-      with(extension) {
-        kotlin {
-          it.ktfmt(ktfmtVersion).googleStyle()
-          it.target("src/**/*.kt")
-          it.targetExclude("${layout.buildDirectory}/**/*.kt")
+        val ktlintVersion = libs.findVersion("ktlint").get().requiredVersion
+        extensions.configure(SpotlessExtension::class.java) { extension ->
+            with(extension) {
+                kotlin {
+                    it.ktlint(ktlintVersion).editorConfigOverride(
+                        mapOf(
+                            "android" to "true",
+                        ),
+                    )
+                    it.target("**/*.kt")
+                    it.targetExclude("${layout.buildDirectory}/**/*.kt")
+                }
+
+                kotlinGradle {
+                    it.ktlint(ktlintVersion)
+                    it.target("*.kts")
+                }
+
+                format("xml") {
+                    it.target("src/**/*.xml")
+                    it.targetExclude("**/build/", ".idea/")
+                    it.trimTrailingWhitespace()
+                    it.endWithNewline()
+                }
+            }
         }
-        kotlinGradle {
-          it.ktfmt(ktfmtVersion).googleStyle()
-          it.target("*.kts")
-          it.targetExclude("${layout.buildDirectory}/**/*.kts")
-        }
-        format("xml") {
-          it.target("src/**/*.xml")
-          it.targetExclude("**/build/", ".idea/")
-          it.trimTrailingWhitespace()
-          it.endWithNewline()
-        }
-      }
     }
-  }
 }

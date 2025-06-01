@@ -23,55 +23,54 @@ import com.thomaskioko.tvmaniac.ui.trailers.videoplayer.TrailersScreen
 
 @Composable
 fun RootScreen(rootPresenter: RootPresenter, modifier: Modifier = Modifier) {
-  Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
-    Column(
-      modifier =
-        Modifier
-          .fillMaxSize()
-          .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
-    ) {
-      ChildrenContent(rootPresenter = rootPresenter, modifier = Modifier.weight(1F))
+    Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
+        ) {
+            ChildrenContent(rootPresenter = rootPresenter, modifier = Modifier.weight(1F))
+        }
     }
-  }
 }
 
 @Composable
 private fun ChildrenContent(rootPresenter: RootPresenter, modifier: Modifier = Modifier) {
-  val childStack by rootPresenter.childStack.collectAsStateWithLifecycle()
+    val childStack by rootPresenter.childStack.collectAsStateWithLifecycle()
 
-  Children(
-    modifier = modifier,
-    stack = childStack,
-  ) { child ->
-    val fillMaxSizeModifier = Modifier.fillMaxSize()
-    when (val screen = child.instance) {
-      is RootPresenter.Child.Home ->
-        HomeScreen(presenter = screen.presenter, modifier = fillMaxSizeModifier)
-      is RootPresenter.Child.ShowDetails -> {
-        ShowDetailsScreen(
-          presenter = screen.presenter,
-          modifier = fillMaxSizeModifier,
-        )
-      }
-      is RootPresenter.Child.SeasonDetails -> {
-        SeasonDetailsScreen(
-          presenter = screen.presenter,
-          modifier = fillMaxSizeModifier,
-        )
-      }
-      is RootPresenter.Child.Trailers ->
-        TrailersScreen(
-          presenter = screen.presenter,
-          modifier = fillMaxSizeModifier,
-        )
-      is RootPresenter.Child.MoreShows ->
-        MoreShowsScreen(
-          presenter = screen.presenter,
-          modifier = fillMaxSizeModifier,
-        )
-      RootPresenter.Child.GenreShows -> {
-        // TODO:: Genre Shows Screen
-      }
+    Children(
+        modifier = modifier,
+        stack = childStack,
+    ) { child ->
+        val fillMaxSizeModifier = Modifier.fillMaxSize()
+        when (val screen = child.instance) {
+            is RootPresenter.Child.Home ->
+                HomeScreen(presenter = screen.presenter, modifier = fillMaxSizeModifier)
+            is RootPresenter.Child.ShowDetails -> {
+                ShowDetailsScreen(
+                    presenter = screen.presenter,
+                    modifier = fillMaxSizeModifier,
+                )
+            }
+            is RootPresenter.Child.SeasonDetails -> {
+                SeasonDetailsScreen(
+                    presenter = screen.presenter,
+                    modifier = fillMaxSizeModifier,
+                )
+            }
+            is RootPresenter.Child.Trailers ->
+                TrailersScreen(
+                    presenter = screen.presenter,
+                    modifier = fillMaxSizeModifier,
+                )
+            is RootPresenter.Child.MoreShows ->
+                MoreShowsScreen(
+                    presenter = screen.presenter,
+                    modifier = fillMaxSizeModifier,
+                )
+            RootPresenter.Child.GenreShows -> {
+                // TODO:: Genre Shows Screen
+            }
+        }
     }
-  }
 }

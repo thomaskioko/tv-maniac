@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.discover.implementation
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -27,69 +28,69 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultTrendingShowsRepository(
-  private val store: TrendingShowsStore,
-  private val requestManagerRepository: RequestManagerRepository,
-  private val dao: TrendingShowsDao,
-  private val kermitLogger: Logger,
+    private val store: TrendingShowsStore,
+    private val requestManagerRepository: RequestManagerRepository,
+    private val dao: TrendingShowsDao,
+    private val logger: Logger,
 ) : TrendingShowsRepository {
 
-  override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> = dao.observeTvShow(page)
+    override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> = dao.observeTvShow(page)
 
-  override suspend fun fetchTrendingShows(forceRefresh: Boolean) {
-    val page = DEFAULT_API_PAGE //TODO:: Get the page from the dao
-    //TODO:: Get the page from the dao
-    val param = TrendingShowsParams(timeWindow = DEFAULT_DAY_TIME_WINDOW, page = page)
-    when {
-      forceRefresh -> store.fresh(param)
-      else -> store.get(param)
+    override suspend fun fetchTrendingShows(forceRefresh: Boolean) {
+        val page = DEFAULT_API_PAGE // TODO:: Get the page from the dao
+        // TODO:: Get the page from the dao
+        val param = TrendingShowsParams(timeWindow = DEFAULT_DAY_TIME_WINDOW, page = page)
+        when {
+            forceRefresh -> store.fresh(param)
+            else -> store.get(param)
+        }
     }
-  }
 
-  override fun getPagedTrendingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
-    return Pager(
-      config = CommonPagingConfig.pagingConfig,
-      remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
-      pagingSourceFactory = dao::getPagedTrendingShows,
-    )
-      .flow
-  }
-
-  private suspend fun fetchPage(page: Long, forceRefresh: Boolean): FetchResult {
-    return if (shouldFetchPage(page, forceRefresh)) {
-      try {
-        val result =
-          store.fresh(TrendingShowsParams(timeWindow = DEFAULT_DAY_TIME_WINDOW, page = page))
-        updateRequestManager(page)
-        FetchResult.Success(endOfPaginationReached = result.isEmpty())
-      } catch (e: CancellationException) {
-        throw e
-      } catch (e: Exception) {
-        kermitLogger.error("Error while fetching from TrendingShows RemoteMediator", e)
-        FetchResult.Error(e)
-      }
-    } else {
-      FetchResult.NoFetch
+    @OptIn(ExperimentalPagingApi::class)
+    override fun getPagedTrendingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
+        return Pager(
+            config = CommonPagingConfig.pagingConfig,
+            remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
+            pagingSourceFactory = dao::getPagedTrendingShows,
+        )
+            .flow
     }
-  }
 
-  private fun shouldFetchPage(page: Long, forceRefresh: Boolean): Boolean {
-    if (forceRefresh) return true
-    val pageExists = dao.pageExists(page)
-    return !pageExists || isRequestExpired(page)
-  }
+    private suspend fun fetchPage(page: Long, forceRefresh: Boolean): FetchResult {
+        return if (shouldFetchPage(page, forceRefresh)) {
+            try {
+                val result = store.fresh(TrendingShowsParams(timeWindow = DEFAULT_DAY_TIME_WINDOW, page = page))
+                updateRequestManager(page)
+                FetchResult.Success(endOfPaginationReached = result.isEmpty())
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                logger.error("Error while fetching from TrendingShows RemoteMediator", e)
+                FetchResult.Error(e)
+            }
+        } else {
+            FetchResult.NoFetch
+        }
+    }
 
-  private fun isRequestExpired(page: Long): Boolean {
-    return requestManagerRepository.isRequestExpired(
-      entityId = page,
-      requestType = TRENDING_SHOWS_TODAY.name,
-      threshold = TRENDING_SHOWS_TODAY.duration,
-    )
-  }
+    private fun shouldFetchPage(page: Long, forceRefresh: Boolean): Boolean {
+        if (forceRefresh) return true
+        val pageExists = dao.pageExists(page)
+        return !pageExists || isRequestExpired(page)
+    }
 
-  private fun updateRequestManager(page: Long) {
-    requestManagerRepository.upsert(
-      entityId = TRENDING_SHOWS_TODAY.requestId + page,
-      requestType = TRENDING_SHOWS_TODAY.name,
-    )
-  }
+    private fun isRequestExpired(page: Long): Boolean {
+        return requestManagerRepository.isRequestExpired(
+            entityId = page,
+            requestType = TRENDING_SHOWS_TODAY.name,
+            threshold = TRENDING_SHOWS_TODAY.duration,
+        )
+    }
+
+    private fun updateRequestManager(page: Long) {
+        requestManagerRepository.upsert(
+            entityId = TRENDING_SHOWS_TODAY.requestId + page,
+            requestType = TRENDING_SHOWS_TODAY.name,
+        )
+    }
 }

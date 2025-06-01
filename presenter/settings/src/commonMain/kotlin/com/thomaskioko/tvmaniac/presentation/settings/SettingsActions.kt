@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 sealed class SettingsActions
 
 data class ThemeSelected(
-  val appTheme: AppTheme,
+    val appTheme: AppTheme,
 ) : SettingsActions()
 
 data object ChangeThemeClicked : SettingsActions()

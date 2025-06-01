@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60D952A2CDBE1160039884B /* TvManiacKit */; };
-		D628B5C02A0C167E00015E45 /* config.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5BF2A0C167E00015E45 /* config.yaml */; };
-		D628B5C42A0C171300015E45 /* dev.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D628B5C32A0C171300015E45 /* dev.yaml */; };
+		D60FA3B32DE8B2C500AB4DFA /* dev.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D60FA3B12DE8B2C500AB4DFA /* dev.yaml */; };
+		D60FA3B42DE8B2C500AB4DFB /* production.yaml in Resources */ = {isa = PBXBuildFile; fileRef = D60FA3B22DE8B2C500AB4DFB /* production.yaml */; };
 		D636CE4D2B4487B1003F7876 /* MoreShowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */; };
 		D653924829D8B6A6000EE673 /* OAuthSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D653924729D8B6A6000EE673 /* OAuthSwift */; };
 		D653924D29D8B70E000EE673 /* TraktManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653924C29D8B70E000EE673 /* TraktManagerError.swift */; };
@@ -20,8 +20,10 @@
 		D653925B29DAC6A5000EE673 /* UnauthenticatedProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925A29DAC6A5000EE673 /* UnauthenticatedProfileView.swift */; };
 		D653925D29DAC89D000EE673 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925C29DAC89D000EE673 /* ProfileView.swift */; };
 		D653926029DAC949000EE673 /* AuthenticatedProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653925F29DAC949000EE673 /* AuthenticatedProfileView.swift */; };
-		D653926B29DAD8FA000EE673 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = D653926A29DAD8FA000EE673 /* config.json */; };
+		D653926B29DAD8FA000EE673 /* trakt_oauth_config.json in Resources */ = {isa = PBXBuildFile; fileRef = D653926A29DAD8FA000EE673 /* trakt_oauth_config.json */; };
 		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
+		D6619D382C89D37A00D273E8 /* config-dev.json in Resources */ = {isa = PBXBuildFile; fileRef = D6619D392C89D37A00D273E8 /* config-dev.json */; };
+		D6619D3A2C89D37A00D273E9 /* config-prod.json in Resources */ = {isa = PBXBuildFile; fileRef = D6619D3B2C89D37A00D273E9 /* config-prod.json */; };
 		E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9AC834B26CEE00D00829A0D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -42,19 +44,23 @@
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D60D95292CDBDFB30039884B /* TvManiacKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TvManiacKit; sourceTree = "<group>"; };
-		D628B5BF2A0C167E00015E45 /* config.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; name = config.yaml; path = ../../../core/util/src/commonMain/resources/config.yaml; sourceTree = "<group>"; };
-		D628B5C32A0C171300015E45 /* dev.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = dev.yaml; sourceTree = "<group>"; };
+		D60FA3B12DE8B2C500AB4DFA /* dev.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = dev.yaml; sourceTree = "<group>"; };
+		D60FA3B22DE8B2C500AB4DFB /* production.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = production.yaml; sourceTree = "<group>"; };
 		D636CE4C2B4487B1003F7876 /* MoreShowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreShowsView.swift; sourceTree = "<group>"; };
 		D653924C29D8B70E000EE673 /* TraktManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktManagerError.swift; sourceTree = "<group>"; };
 		D653924E29D8BC7E000EE673 /* TraktAuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktAuthViewModel.swift; sourceTree = "<group>"; };
 		D653925229DABCEA000EE673 /* ConfigLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigLoader.swift; sourceTree = "<group>"; };
 		D653925429DABD04000EE673 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		D653925629DABD8F000EE673 /* ApplicationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationError.swift; sourceTree = "<group>"; };
+		D653925929DABCF2000EE674 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
+		D653925A29DABCF3000EE675 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
 		D653925A29DAC6A5000EE673 /* UnauthenticatedProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnauthenticatedProfileView.swift; sourceTree = "<group>"; };
 		D653925C29DAC89D000EE673 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		D653925F29DAC949000EE673 /* AuthenticatedProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatedProfileView.swift; sourceTree = "<group>"; };
-		D653926A29DAD8FA000EE673 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
+		D653926A29DAD8FA000EE673 /* trakt_oauth_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = trakt_oauth_config.json; sourceTree = "<group>"; };
 		D6619D352C89D36F00D273E7 /* SwiftUIComponents */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SwiftUIComponents; sourceTree = "<group>"; };
+		D6619D392C89D37A00D273E8 /* config-dev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "config-dev.json"; sourceTree = "<group>"; };
+		D6619D3B2C89D37A00D273E9 /* config-prod.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "config-prod.json"; sourceTree = "<group>"; };
 		D6BDF2BB2C933DBB0042C86D /* SnapshotTestingLib */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SnapshotTestingLib; sourceTree = "<group>"; };
 		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -100,7 +106,9 @@
 			isa = PBXGroup;
 			children = (
 				E9AC834B26CEE00D00829A0D /* Assets.xcassets */,
-				D653926A29DAD8FA000EE673 /* config.json */,
+				D653926A29DAD8FA000EE673 /* trakt_oauth_config.json */,
+				D6619D392C89D37A00D273E8 /* config-dev.json */,
+				D6619D3B2C89D37A00D273E9 /* config-prod.json */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				D65009DC2CF644BE00394D67 /* App */,
 				D653925129DABCBA000EE673 /* Configuration */,
@@ -114,8 +122,8 @@
 		D628B5BE2A0C165400015E45 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D628B5C32A0C171300015E45 /* dev.yaml */,
-				D628B5BF2A0C167E00015E45 /* config.yaml */,
+				D60FA3B12DE8B2C500AB4DFA /* dev.yaml */,
+				D60FA3B22DE8B2C500AB4DFB /* production.yaml */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -146,6 +154,7 @@
 				D653925229DABCEA000EE673 /* ConfigLoader.swift */,
 				D653925429DABD04000EE673 /* Config.swift */,
 				D653925629DABD8F000EE673 /* ApplicationError.swift */,
+				D653925B29DABCF4000EE676 /* XCConfig */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -156,6 +165,15 @@
 				D653925A29DAC6A5000EE673 /* UnauthenticatedProfileView.swift */,
 			);
 			path = Unauthenticated;
+			sourceTree = "<group>";
+		};
+		D653925B29DABCF4000EE676 /* XCConfig */ = {
+			isa = PBXGroup;
+			children = (
+				D653925929DABCF2000EE674 /* Development.xcconfig */,
+				D653925A29DABCF3000EE675 /* Production.xcconfig */,
+			);
+			path = XCConfig;
 			sourceTree = "<group>";
 		};
 		D653925E29DAC911000EE673 /* Authenticated */ = {
@@ -208,7 +226,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7555FFA5242A565B00829871 /* Build configuration list for PBXNativeTarget "tv-maniac" */;
 			buildPhases = (
-				D6C777142D6A1607002FC288 /* ShellScript */,
+				D693F87E2DCB93950060350C /* ShellScript */,
 				7555FF77242A565900829871 /* Sources */,
 				9E9525AE31530CCB1C932286 /* Frameworks */,
 				7555FF79242A565900829871 /* Resources */,
@@ -274,9 +292,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D628B5C02A0C167E00015E45 /* config.yaml in Resources */,
-				D628B5C42A0C171300015E45 /* dev.yaml in Resources */,
-				D653926B29DAD8FA000EE673 /* config.json in Resources */,
+				D653926B29DAD8FA000EE673 /* trakt_oauth_config.json in Resources */,
+				D6619D382C89D37A00D273E8 /* config-dev.json in Resources */,
+				D6619D3A2C89D37A00D273E9 /* config-prod.json in Resources */,
+				D60FA3B32DE8B2C500AB4DFA /* dev.yaml in Resources */,
+				D60FA3B42DE8B2C500AB4DFB /* production.yaml in Resources */,
 				E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -284,7 +304,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		D6C777142D6A1607002FC288 /* ShellScript */ = {
+		D693F87E2DCB93950060350C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -299,7 +319,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+   shellScript = "if which swiftlint >/dev/null; then\n  swiftlint --no-cache\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n\ncd \"$SRCROOT/..\"\n\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" \\\n    :i18n:generator:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.PLATFORM_NAME=\"$PLATFORM_NAME\" \\\n    -Pmoko.resources.CONFIGURATION=\"$CONFIGURATION\" \\\n    -Pmoko.resources.ARCHS=\"$ARCHS\" \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\" \n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -325,6 +345,7 @@
 /* Begin XCBuildConfiguration section */
 		7555FFA3242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D653925929DABCF2000EE674 /* Development.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -366,7 +387,8 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+					"$(SRCROOT)/../i18n/generator/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -395,11 +417,13 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_DEBUG_INFORMATION_VERSION = 5.0;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
 		7555FFA4242A565B00829871 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D653925A29DABCF3000EE675 /* Production.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -438,9 +462,11 @@
 				DEFINES_MODULE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+					"$(SRCROOT)/../i18n/generator/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -461,12 +487,14 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		7555FFA6242A565B00829871 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D653925929DABCF2000EE674 /* Development.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(EMBEDDED_CONTENT_CONTAINS_SWIFT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -477,10 +505,12 @@
 				DEVELOPMENT_TEAM = 2M53227BD2;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+					"$(SRCROOT)/../i18n/generator/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = ios/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TvManiac;
@@ -497,7 +527,7 @@
 					TvManiac,
 					"-lsqlite3",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.thomaskioko.tvmaniac;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thomaskioko.tvmaniac.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -511,6 +541,7 @@
 		};
 		7555FFA7242A565B00829871 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D653925A29DABCF3000EE675 /* Production.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(EMBEDDED_CONTENT_CONTAINS_SWIFT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -520,10 +551,12 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2M53227BD2;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+					"$(SRCROOT)/../i18n/generator/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = ios/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TvManiac;
@@ -540,7 +573,7 @@
 					TvManiac,
 					"-lsqlite3",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.thomaskioko.tvmaniac;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thomaskioko.tvmaniac.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

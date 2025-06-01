@@ -5,13 +5,13 @@ import com.thomaskioko.tvmaniac.db.Watch_providers
 import kotlinx.coroutines.flow.Flow
 
 interface WatchProviderDao {
-  fun upsert(entity: Watch_providers)
+    fun upsert(entity: Watch_providers)
 
-  fun fetchWatchProviders(id: Long): List<WatchProviders>
+    fun fetchWatchProviders(id: Long): List<WatchProviders>
 
-  fun observeWatchProviders(id: Long): Flow<List<WatchProviders>>
+    fun observeWatchProviders(id: Long): Flow<List<WatchProviders>>
 
-  fun delete(id: Long)
+    fun delete(id: Long)
 
-  fun deleteAll()
+    fun deleteAll()
 }

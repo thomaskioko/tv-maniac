@@ -5,15 +5,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface TrailerDao {
 
-  fun upsert(trailer: Trailers)
+    fun upsert(trailer: Trailers)
 
-  fun upsert(trailerList: List<Trailers>)
+    fun upsert(trailerList: List<Trailers>)
 
-  fun observeTrailersById(showId: Long): Flow<List<Trailers>>
+    fun observeTrailersById(showId: Long): Flow<List<Trailers>>
 
-  fun getTrailersById(showId: Long): List<Trailers>
+    fun getTrailersById(showId: Long): List<Trailers>
 
-  fun delete(id: Long)
+    fun delete(id: Long)
 
-  fun deleteAll()
+    fun deleteAll()
 }

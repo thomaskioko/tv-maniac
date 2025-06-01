@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.db.Trailers
 import kotlinx.coroutines.flow.Flow
 
 interface TrailerRepository {
-  fun isYoutubePlayerInstalled(): Flow<Boolean>
+    fun isYoutubePlayerInstalled(): Flow<Boolean>
 
-  fun observeTrailers(id: Long): Flow<List<Trailers>>
+    fun observeTrailers(id: Long): Flow<List<Trailers>>
 }

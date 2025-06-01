@@ -9,39 +9,38 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeDatastoreRepository : DatastoreRepository {
 
-  private val appThemeFlow: Channel<AppTheme> = Channel(Channel.UNLIMITED)
-  private val authStateFlow: Channel<AuthState> = Channel(Channel.UNLIMITED)
+    private val appThemeFlow: Channel<AppTheme> = Channel(Channel.UNLIMITED)
+    private val authStateFlow: Channel<AuthState> = Channel(Channel.UNLIMITED)
 
-  suspend fun setTheme(appTheme: AppTheme) {
-    appThemeFlow.send(appTheme)
-  }
+    suspend fun setTheme(appTheme: AppTheme) {
+        appThemeFlow.send(appTheme)
+    }
 
-  suspend fun setAuthState(authState: AuthState) {
-    authStateFlow.send(authState)
-  }
+    suspend fun setAuthState(authState: AuthState) {
+        authStateFlow.send(authState)
+    }
 
-  override fun saveTheme(appTheme: AppTheme) {
-    // no -op
-  }
+    override fun saveTheme(appTheme: AppTheme) {
+        // no -op
+    }
 
-  override fun observeTheme(): Flow<AppTheme> = appThemeFlow.receiveAsFlow()
+    override fun observeTheme(): Flow<AppTheme> = appThemeFlow.receiveAsFlow()
 
-  override fun clearAuthState() {
-    // no -op
-  }
+    override fun clearAuthState() {
+        // no -op
+    }
 
-  override fun observeAuthState(): Flow<AuthState> = authStateFlow.receiveAsFlow()
+    override fun observeAuthState(): Flow<AuthState> = authStateFlow.receiveAsFlow()
 
-  override suspend fun saveAuthState(authState: AuthState) {
-    // no -op
-  }
+    override suspend fun saveAuthState(authState: AuthState) {
+        // no -op
+    }
 
-  override suspend fun getAuthState(): AuthState = AuthState()
+    override suspend fun getAuthState(): AuthState = AuthState()
 }
 
-val authenticatedAuthState =
-  AuthState(
+val authenticatedAuthState = AuthState(
     isAuthorized = true,
     accessToken = "wrwjqoi294930uknfasf",
     refreshToken = "wrwjqoi294930uknfasf",
-  )
+)

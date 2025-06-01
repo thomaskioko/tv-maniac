@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftUIComponents
-import TvManiac
 import TvManiacKit
 
 struct WatchlistTab: View {
@@ -45,7 +44,7 @@ struct WatchlistTab: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 HStack {
-                    Button("List Style",
+                    Button(String(\.label_watchlist_list_style),
                            systemImage: changeListStyle ? "list.dash" : "square.grid.2x2")
                     {
                         withAnimation {
@@ -67,7 +66,7 @@ struct WatchlistTab: View {
         .searchable(
             text: searchQueryBinding,
             placement: .navigationBarDrawer(displayMode: .always),
-            prompt: "Search watchlist"
+            prompt: String(\.label_watchlist_search_hint)
         )
         .disableAutocorrection(true)
         .textInputAutocapitalization(.never)
@@ -88,7 +87,7 @@ struct WatchlistTab: View {
             CenteredFullScreenView {
                 FullScreenView(
                     systemName: "exclamationmark.magnifyingglass",
-                    message: state.message ?? "No results found. Try a different keyword!"
+                    message: state.message ?? String(\.label_search_empty_results)
                 )
                 .frame(maxWidth: .infinity)
             }
@@ -97,7 +96,7 @@ struct WatchlistTab: View {
 
     private var titleView: some View {
         HStack {
-            Text("Watchlist")
+            Text(String(\.label_tab_watchlist))
                 .fontWeight(Font.Weight.semibold)
                 .lineLimit(1)
                 .foregroundColor(.secondary)
@@ -130,7 +129,7 @@ struct WatchlistTab: View {
                 // TODO: Show Filter menu
             }
         } label: {
-            Label("Sort List", systemImage: "line.3.horizontal.decrease.circle")
+            Label(String(\.label_watchlist_sort_list), systemImage: "line.3.horizontal.decrease.circle")
                 .labelStyle(.iconOnly)
         }
         .buttonBorderShape(.roundedRectangle(radius: 16))
@@ -206,7 +205,9 @@ struct WatchlistTab: View {
     @ViewBuilder
     private var empty: some View {
         let subtitle = uiState.query?.isEmpty ?? true ? "Add shows to keep track of them" : "Try a different keyword!"
-        if let message = uiState.query?.isEmpty ?? true ? "Your watchlist is empty." : "No results found for '\(uiState.query ?? "")'." {
+        if let message = uiState.query?
+            .isEmpty ?? true ? "Your watchlist is empty." : "No results found for '\(uiState.query ?? "")'."
+        {
             CenteredFullScreenView {
                 FullScreenView(
                     systemName: "magnifyingglass",

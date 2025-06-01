@@ -25,49 +25,49 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultPopularShowsRepository(
-  private val store: PopularShowsStore,
-  private val popularShowsDao: PopularShowsDao,
-  private val requestManagerRepository: RequestManagerRepository,
-  private val logger: Logger,
+    private val store: PopularShowsStore,
+    private val popularShowsDao: PopularShowsDao,
+    private val requestManagerRepository: RequestManagerRepository,
+    private val logger: Logger,
 ) : PopularShowsRepository {
 
-  override suspend fun fetchPopularShows(forceRefresh: Boolean) {
-    val page = DEFAULT_API_PAGE //TODO:: Get the page from the dao
-    when {
-      forceRefresh -> store.fresh(page)
-      else -> store.get(page)
+    override suspend fun fetchPopularShows(forceRefresh: Boolean) {
+        val page = DEFAULT_API_PAGE // TODO:: Get the page from the dao
+        when {
+            forceRefresh -> store.fresh(page)
+            else -> store.get(page)
+        }
     }
-  }
 
-  override fun observePopularShows(page: Long): Flow<List<ShowEntity>> = popularShowsDao.observePopularShows(page)
+    override fun observePopularShows(page: Long): Flow<List<ShowEntity>> = popularShowsDao.observePopularShows(page)
 
-  override fun getPagedPopularShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
-    return Pager(
-      config = pagingConfig,
-      remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
-      pagingSourceFactory = popularShowsDao::getPagedPopularShows,
-    )
-      .flow
-  }
-
-  private suspend fun fetchPage(page: Long, forceRefresh: Boolean): FetchResult {
-    return if (forceRefresh) {
-      try {
-        val result = store.fresh(page)
-        updateRequestManager(page)
-        FetchResult.Success(endOfPaginationReached = result.isEmpty())
-      } catch (e: CancellationException) {
-        throw e
-      } catch (e: Exception) {
-        logger.error("Error while fetching from PopularShows RemoteMediator", e)
-        FetchResult.Error(e)
-      }
-    } else {
-      FetchResult.NoFetch
+    override fun getPagedPopularShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
+        return Pager(
+            config = pagingConfig,
+            remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
+            pagingSourceFactory = popularShowsDao::getPagedPopularShows,
+        )
+            .flow
     }
-  }
 
-  private fun updateRequestManager(page: Long) {
-    requestManagerRepository.upsert(entityId = page, requestType = POPULAR_SHOWS.name)
-  }
+    private suspend fun fetchPage(page: Long, forceRefresh: Boolean): FetchResult {
+        return if (forceRefresh) {
+            try {
+                val result = store.fresh(page)
+                updateRequestManager(page)
+                FetchResult.Success(endOfPaginationReached = result.isEmpty())
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                logger.error("Error while fetching from PopularShows RemoteMediator", e)
+                FetchResult.Error(e)
+            }
+        } else {
+            FetchResult.NoFetch
+        }
+    }
+
+    private fun updateRequestManager(page: Long) {
+        requestManagerRepository.upsert(entityId = page, requestType = POPULAR_SHOWS.name)
+    }
 }

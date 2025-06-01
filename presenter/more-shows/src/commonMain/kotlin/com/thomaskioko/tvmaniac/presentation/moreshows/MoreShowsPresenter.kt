@@ -29,140 +29,153 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class MoreShowsPresenterFactory(
-  val create: (
-    componentContext: ComponentContext,
-    id: Long,
-    onBack: () -> Unit,
-    onNavigateToShowDetails: (id: Long) -> Unit,
-  ) -> MoreShowsPresenter,
-)
+    private val popularShowsRepository: PopularShowsRepository,
+    private val upcomingShowsRepository: UpcomingShowsRepository,
+    private val trendingShowsRepository: TrendingShowsRepository,
+    private val topRatedShowsRepository: TopRatedShowsRepository,
+) {
+    fun create(
+        componentContext: ComponentContext,
+        id: Long,
+        onBack: () -> Unit,
+        onNavigateToShowDetails: (id: Long) -> Unit,
+    ): MoreShowsPresenter = MoreShowsPresenter(
+        componentContext = componentContext,
+        categoryId = id,
+        onBack = onBack,
+        onNavigateToShowDetails = onNavigateToShowDetails,
+        popularShowsRepository = popularShowsRepository,
+        upcomingShowsRepository = upcomingShowsRepository,
+        trendingShowsRepository = trendingShowsRepository,
+        topRatedShowsRepository = topRatedShowsRepository,
+    )
+}
 
 @Inject
 class MoreShowsPresenter(
-  @Assisted componentContext: ComponentContext,
-  @Assisted private val categoryId: Long,
-  @Assisted private val onBack: () -> Unit,
-  @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
-  private val popularShowsRepository: PopularShowsRepository,
-  private val upcomingShowsRepository: UpcomingShowsRepository,
-  private val trendingShowsRepository: TrendingShowsRepository,
-  private val topRatedShowsRepository: TopRatedShowsRepository,
+    @Assisted componentContext: ComponentContext,
+    @Assisted private val categoryId: Long,
+    @Assisted private val onBack: () -> Unit,
+    @Assisted private val onNavigateToShowDetails: (Long) -> Unit,
+    private val popularShowsRepository: PopularShowsRepository,
+    private val upcomingShowsRepository: UpcomingShowsRepository,
+    private val trendingShowsRepository: TrendingShowsRepository,
+    private val topRatedShowsRepository: TopRatedShowsRepository,
 ) : ComponentContext by componentContext {
 
-  private val coroutineScope = coroutineScope()
-  private val _state = MutableStateFlow(MoreShowsState())
-  val state: StateFlow<MoreShowsState> = _state.asStateFlow()
+    private val coroutineScope = coroutineScope()
+    private val _state = MutableStateFlow(MoreShowsState())
+    val state: StateFlow<MoreShowsState> = _state.asStateFlow()
 
-  private val showsPagingDataPresenter =
-    object : PagingDataPresenter<TvShow>() {
-      override suspend fun presentPagingDataEvent(event: PagingDataEvent<TvShow>) {
-        updateCharactersSnapshotList()
-      }
-    }
-
-  init {
-    when (categoryId) {
-      UPCOMING.id -> getUpcomingPagedList()
-      TRENDING_TODAY.id -> getTrendingPagedList()
-      POPULAR.id -> getPopularPagedList()
-      TOP_RATED.id -> getTopRatedPagedList()
-    }
-  }
-
-  fun dispatch(action: MoreShowsActions) {
-    when (action) {
-      is MoreShowClicked -> onNavigateToShowDetails(action.showId)
-      MoreBackClicked -> onBack()
-      RefreshMoreShows -> {
-        when (categoryId) {
-          UPCOMING.id -> getUpcomingPagedList(forceRefresh = true)
-          TRENDING_TODAY.id -> getTrendingPagedList(forceRefresh = true)
-          POPULAR.id -> getPopularPagedList(forceRefresh = true)
-          TOP_RATED.id -> getTopRatedPagedList(forceRefresh = true)
+    private val showsPagingDataPresenter = object : PagingDataPresenter<TvShow>() {
+        override suspend fun presentPagingDataEvent(event: PagingDataEvent<TvShow>) {
+            updateCharactersSnapshotList()
         }
-      }
-    }
-  }
-
-  private fun getPopularPagedList(forceRefresh: Boolean = false) {
-    coroutineScope.launch {
-      val pagingList: Flow<PagingData<TvShow>> =
-        popularShowsRepository
-          .getPagedPopularShows(forceRefresh)
-          .mapToTvShow()
-          .cachedIn(coroutineScope)
-
-      updateState(pagingList = pagingList, title = POPULAR.title)
-    }
-  }
-
-  private fun getUpcomingPagedList(forceRefresh: Boolean = false) {
-    coroutineScope.launch {
-      val pagingList: Flow<PagingData<TvShow>> =
-        upcomingShowsRepository
-          .getPagedUpcomingShows(forceRefresh)
-          .mapToTvShow()
-          .cachedIn(coroutineScope)
-
-      updateState(pagingList = pagingList, title = UPCOMING.title)
-    }
-  }
-
-  private fun getTrendingPagedList(forceRefresh: Boolean = false) {
-    coroutineScope.launch {
-      val pagingList: Flow<PagingData<TvShow>> =
-        trendingShowsRepository
-          .getPagedTrendingShows(forceRefresh)
-          .mapToTvShow()
-          .cachedIn(coroutineScope)
-
-      updateState(pagingList = pagingList, title = TRENDING_TODAY.title)
-    }
-  }
-
-  private fun getTopRatedPagedList(forceRefresh: Boolean = false) {
-    coroutineScope.launch {
-      val pagingList: Flow<PagingData<TvShow>> =
-        topRatedShowsRepository
-          .getPagedTopRatedShows(forceRefresh)
-          .mapToTvShow()
-          .cachedIn(coroutineScope)
-
-      updateState(pagingList = pagingList, title = TOP_RATED.title)
-    }
-  }
-
-  private suspend fun updateState(title: String, pagingList: Flow<PagingData<TvShow>>) {
-    _state.update {
-      it.copy(
-        pagingDataFlow = pagingList,
-        categoryTitle = title,
-      )
     }
 
-    pagingList.collectLatest { showsPagingDataPresenter.collectFrom(it) }
-  }
-
-  private fun updateCharactersSnapshotList() {
-    _state.update {
-      it.copy(
-        snapshotList = showsPagingDataPresenter.snapshot(),
-      )
+    init {
+        when (categoryId) {
+            UPCOMING.id -> getUpcomingPagedList()
+            TRENDING_TODAY.id -> getTrendingPagedList()
+            POPULAR.id -> getPopularPagedList()
+            TOP_RATED.id -> getTopRatedPagedList()
+        }
     }
-  }
 
-  /** Helper method used to get a show object in iOS */
-  @Suppress("unused")
-  fun getElement(index: Int): TvShow? = showsPagingDataPresenter[index]
-
-  private fun Flow<PagingData<ShowEntity>>.mapToTvShow(): Flow<PagingData<TvShow>> = map {
-    it.map { show ->
-      TvShow(
-        tmdbId = show.id,
-        title = show.title,
-        posterImageUrl = show.posterPath,
-        inLibrary = show.inLibrary,
-      )
+    fun dispatch(action: MoreShowsActions) {
+        when (action) {
+            is MoreShowClicked -> onNavigateToShowDetails(action.showId)
+            MoreBackClicked -> onBack()
+            RefreshMoreShows -> {
+                when (categoryId) {
+                    UPCOMING.id -> getUpcomingPagedList(forceRefresh = true)
+                    TRENDING_TODAY.id -> getTrendingPagedList(forceRefresh = true)
+                    POPULAR.id -> getPopularPagedList(forceRefresh = true)
+                    TOP_RATED.id -> getTopRatedPagedList(forceRefresh = true)
+                }
+            }
+        }
     }
-  }
+
+    private fun getPopularPagedList(forceRefresh: Boolean = false) {
+        coroutineScope.launch {
+            val pagingList: Flow<PagingData<TvShow>> =
+                popularShowsRepository
+                    .getPagedPopularShows(forceRefresh)
+                    .mapToTvShow()
+                    .cachedIn(coroutineScope)
+
+            updateState(pagingList = pagingList, title = POPULAR.title)
+        }
+    }
+
+    private fun getUpcomingPagedList(forceRefresh: Boolean = false) {
+        coroutineScope.launch {
+            val pagingList: Flow<PagingData<TvShow>> =
+                upcomingShowsRepository
+                    .getPagedUpcomingShows(forceRefresh)
+                    .mapToTvShow()
+                    .cachedIn(coroutineScope)
+
+            updateState(pagingList = pagingList, title = UPCOMING.title)
+        }
+    }
+
+    private fun getTrendingPagedList(forceRefresh: Boolean = false) {
+        coroutineScope.launch {
+            val pagingList: Flow<PagingData<TvShow>> =
+                trendingShowsRepository
+                    .getPagedTrendingShows(forceRefresh)
+                    .mapToTvShow()
+                    .cachedIn(coroutineScope)
+
+            updateState(pagingList = pagingList, title = TRENDING_TODAY.title)
+        }
+    }
+
+    private fun getTopRatedPagedList(forceRefresh: Boolean = false) {
+        coroutineScope.launch {
+            val pagingList: Flow<PagingData<TvShow>> =
+                topRatedShowsRepository
+                    .getPagedTopRatedShows(forceRefresh)
+                    .mapToTvShow()
+                    .cachedIn(coroutineScope)
+
+            updateState(pagingList = pagingList, title = TOP_RATED.title)
+        }
+    }
+
+    private suspend fun updateState(title: String, pagingList: Flow<PagingData<TvShow>>) {
+        _state.update {
+            it.copy(
+                pagingDataFlow = pagingList,
+                categoryTitle = title,
+            )
+        }
+
+        pagingList.collectLatest { showsPagingDataPresenter.collectFrom(it) }
+    }
+
+    private fun updateCharactersSnapshotList() {
+        _state.update {
+            it.copy(
+                snapshotList = showsPagingDataPresenter.snapshot(),
+            )
+        }
+    }
+
+    /** Helper method used to get a show object in iOS */
+    @Suppress("unused")
+    fun getElement(index: Int): TvShow? = showsPagingDataPresenter[index]
+
+    private fun Flow<PagingData<ShowEntity>>.mapToTvShow(): Flow<PagingData<TvShow>> = map {
+        it.map { show ->
+            TvShow(
+                tmdbId = show.id,
+                title = show.title,
+                posterImageUrl = show.posterPath,
+                inLibrary = show.inLibrary,
+            )
+        }
+    }
 }

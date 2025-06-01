@@ -24,432 +24,424 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class SearchShowsPresenterTest {
-  private val testDispatcher = StandardTestDispatcher()
-  private val fakeSearchRepository = FakeSearchRepository()
-  private val genreRepository = FakeGenreRepository()
-  private lateinit var presenter: SearchShowsPresenter
+    private val testDispatcher = StandardTestDispatcher()
+    private val fakeSearchRepository = FakeSearchRepository()
+    private val genreRepository = FakeGenreRepository()
+    private lateinit var presenter: SearchShowsPresenter
 
-  @BeforeTest
-  fun before() {
-    Dispatchers.setMain(testDispatcher)
-    presenter = buildPresenter()
-  }
-
-  @AfterTest
-  fun after() {
-    Dispatchers.resetMain()
-  }
-
-  @Test
-  fun `should return loading state when initialized`() = runTest {
-    presenter.state.test {
-      awaitItem() shouldBe InitialSearchState()
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
+    @BeforeTest
+    fun before() {
+        Dispatchers.setMain(testDispatcher)
+        presenter = buildPresenter()
     }
-  }
 
-  @Test
-  fun `should return initial state when query is blank`() = runTest {
-    presenter.state.test {
-      awaitItem() shouldBe InitialSearchState()
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
-
-      presenter.dispatch(QueryChanged(""))
-      expectNoEvents()
+    @AfterTest
+    fun after() {
+        Dispatchers.resetMain()
     }
-  }
 
-  @Test
-  fun `should return empty state when show content is empty`() = runTest {
-    presenter.state.test {
-      awaitItem() shouldBe InitialSearchState()
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-
-      setList(emptyList())
-
-      awaitItem() shouldBe ShowContentAvailable(errorMessage = null)
+    @Test
+    fun `should return loading state when initialized`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe InitialSearchState()
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
+        }
     }
-  }
 
-  @Test
-  fun `should return show content when show content is not empty`() = runTest {
-    presenter.state.test {
-      awaitItem() shouldBe InitialSearchState()
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
+    @Test
+    fun `should return initial state when query is blank`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe InitialSearchState()
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
-      setList(createGenreShowList())
-
-      awaitItem() shouldBe ShowContentAvailable(
-        isUpdating = false,
-        genres = genreList(),
-      )
+            presenter.dispatch(QueryChanged(""))
+            expectNoEvents()
+        }
     }
-  }
 
-  @Test
-  fun `should not perform search when query is less than 3 characters`() = runTest {
-    presenter.state.test {
-      awaitItem() shouldBe InitialSearchState()
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
+    @Test
+    fun `should return empty state when show content is empty`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe InitialSearchState()
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      presenter.dispatch(QueryChanged("te"))
-      expectNoEvents()
+            setList(emptyList())
+
+            awaitItem() shouldBe ShowContentAvailable(errorMessage = null)
+        }
     }
-  }
 
-  @Test
-  fun `should return empty state when query is valid and results are empty`() = runTest {
-    presenter.state.test {
+    @Test
+    fun `should return show content when show content is not empty`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe InitialSearchState()
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
-      awaitItem() shouldBe InitialSearchState()
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
+            setList(createGenreShowList())
 
-      setList(createGenreShowList())
-      awaitItem() shouldBe ShowContentAvailable(
-        isUpdating = false,
-        genres = genreList(),
-      )
-
-      presenter.dispatch(QueryChanged("test"))
-
-      testScheduler.advanceTimeBy(300) // Wait for debounce
-
-      fakeSearchRepository.setSearchResult(emptyList())
-
-      testScheduler.advanceUntilIdle()
-
-      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
-
-      awaitItem() shouldBe SearchResultAvailable("test", results = persistentListOf())
+            awaitItem() shouldBe ShowContentAvailable(
+                isUpdating = false,
+                genres = genreList(),
+            )
+        }
     }
-  }
 
-  @Test
-  fun `should return loading state with previous results when query changes`() = runTest {
+    @Test
+    fun `should not perform search when query is less than 3 characters`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe InitialSearchState()
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
-    presenter.state.test {
-      awaitItem() shouldBe InitialSearchState()
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
-
-      setList(createGenreShowList())
-
-      awaitItem() shouldBe ShowContentAvailable(
-        isUpdating = false,
-        genres = genreList(),
-      )
-
-      // Dispatch first query change
-      presenter.dispatch(QueryChanged("test"))
-
-
-      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
-
-      // Advance time to trigger debounce and receive the result
-      testScheduler.advanceTimeBy(300)
-
-      fakeSearchRepository.setSearchResult(createDiscoverShowList())
-
-      val firstResult = awaitItem()
-      firstResult shouldBe SearchResultAvailable(
-        isUpdating = false,
-        query = "test",
-      )
-
-      // Dispatch second query change to validate previous results shown as `isUpdating`
-      presenter.dispatch(QueryChanged("new"))
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = false,
-        query = "new",
-        results = uiModelList(),
-      )
+            presenter.dispatch(QueryChanged("te"))
+            expectNoEvents()
+        }
     }
-  }
 
-  @Test
-  fun `should handle transition from valid to short query to empty query`() = runTest {
-    presenter.state.test {
-      setList(emptyList())
+    @Test
+    fun `should return empty state when query is valid and results are empty`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe InitialSearchState()
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
-      awaitItem() shouldBe InitialSearchState()
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+            setList(createGenreShowList())
+            awaitItem() shouldBe ShowContentAvailable(
+                isUpdating = false,
+                genres = genreList(),
+            )
 
-      awaitItem() shouldBe ShowContentAvailable(errorMessage = null)
+            presenter.dispatch(QueryChanged("test"))
 
-      presenter.dispatch(QueryChanged("test"))
-      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = false,
-        query = "test",
-      )
+            testScheduler.advanceTimeBy(300) // Wait for debounce
 
-      presenter.dispatch(QueryChanged("te"))
-      expectNoEvents()
+            fakeSearchRepository.setSearchResult(emptyList())
 
-      presenter.dispatch(QueryChanged(""))
+            testScheduler.advanceUntilIdle()
 
-      expectNoEvents()
+            awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
+
+            awaitItem() shouldBe SearchResultAvailable("test", results = persistentListOf())
+        }
     }
-  }
 
-  @Test
-  fun `should handle transition from short to valid query`() = runTest {
-    presenter.state.test {
-      awaitItem() shouldBe InitialSearchState()
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
+    @Test
+    fun `should return loading state with previous results when query changes`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe InitialSearchState()
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
-      presenter.dispatch(QueryChanged("ab"))
-      expectNoEvents()
+            setList(createGenreShowList())
 
-      // Valid query
-      presenter.dispatch(QueryChanged("abc"))
-      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "abc")
+            awaitItem() shouldBe ShowContentAvailable(
+                isUpdating = false,
+                genres = genreList(),
+            )
 
-      testScheduler.advanceTimeBy(300)
+            // Dispatch first query change
+            presenter.dispatch(QueryChanged("test"))
 
-      fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = false,
-        query = "abc",
-      )
+            // Advance time to trigger debounce and receive the result
+            testScheduler.advanceTimeBy(300)
 
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = false,
-        query = "abc",
-        results = uiModelList(),
-      )
+            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+
+            val firstResult = awaitItem()
+            firstResult shouldBe SearchResultAvailable(
+                isUpdating = false,
+                query = "test",
+            )
+
+            // Dispatch second query change to validate previous results shown as `isUpdating`
+            presenter.dispatch(QueryChanged("new"))
+            awaitItem() shouldBe SearchResultAvailable(
+                isUpdating = false,
+                query = "new",
+                results = uiModelList(),
+            )
+        }
     }
-  }
 
-  @Test
-  fun `should handle empty short and valid query transitions correctly`() = runTest {
-    presenter.state.test {
-      awaitItem() shouldBe InitialSearchState()
+    @Test
+    fun `should handle transition from valid to short query to empty query`() = runTest {
+        presenter.state.test {
+            setList(emptyList())
 
-      presenter.dispatch(QueryChanged(""))
-      expectNoEvents()
+            awaitItem() shouldBe InitialSearchState()
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
 
-      presenter.dispatch(QueryChanged("ab"))
-      expectNoEvents()
+            awaitItem() shouldBe ShowContentAvailable(errorMessage = null)
 
-      testScheduler.advanceTimeBy(300)
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
+            presenter.dispatch(QueryChanged("test"))
+            awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
+            awaitItem() shouldBe SearchResultAvailable(
+                isUpdating = false,
+                query = "test",
+            )
 
-      presenter.dispatch(QueryChanged("test"))
+            presenter.dispatch(QueryChanged("te"))
+            expectNoEvents()
 
-      fakeSearchRepository.setSearchResult(createDiscoverShowList())
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
+            presenter.dispatch(QueryChanged(""))
 
-      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
-
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = false,
-        query = "test",
-        results = uiModelList(),
-      )
-
-      // Back to empty
-      presenter.dispatch(QueryChanged(""))
-      expectNoEvents()
+            expectNoEvents()
+        }
     }
-  }
 
-  @Test
-  fun `should return empty state when query is valid and search returns empty results`() = runTest {
-    presenter.state.test {
-      awaitItem() shouldBe InitialSearchState()
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
+    @Test
+    fun `should handle transition from short to valid query`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe InitialSearchState()
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
-      presenter.dispatch(QueryChanged("test"))
+            presenter.dispatch(QueryChanged("ab"))
+            expectNoEvents()
 
-      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
+            // Valid query
+            presenter.dispatch(QueryChanged("abc"))
+            awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "abc")
 
-      testScheduler.advanceTimeBy(300)
+            testScheduler.advanceTimeBy(300)
 
-      fakeSearchRepository.setSearchResult(emptyList())
+            fakeSearchRepository.setSearchResult(createDiscoverShowList())
 
-      awaitItem() shouldBe SearchResultAvailable("test", results = persistentListOf())
+            awaitItem() shouldBe SearchResultAvailable(
+                isUpdating = false,
+                query = "abc",
+            )
+
+            awaitItem() shouldBe SearchResultAvailable(
+                isUpdating = false,
+                query = "abc",
+                results = uiModelList(),
+            )
+        }
     }
-  }
 
-  @Test
-  fun `should handle sequence of empty and non-empty results`() = runTest {
-    presenter.state.test {
-      awaitItem() shouldBe InitialSearchState()
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
+    @Test
+    fun `should handle empty short and valid query transitions correctly`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe InitialSearchState()
 
-      presenter.dispatch(QueryChanged("empty"))
-      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "empty")
+            presenter.dispatch(QueryChanged(""))
+            expectNoEvents()
 
-      testScheduler.advanceTimeBy(300)
+            presenter.dispatch(QueryChanged("ab"))
+            expectNoEvents()
 
-      fakeSearchRepository.setSearchResult(emptyList())
-      awaitItem() shouldBe SearchResultAvailable("empty", results = persistentListOf())
+            testScheduler.advanceTimeBy(300)
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
-      presenter.dispatch(QueryChanged("test"))
-      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test", results = persistentListOf())
+            presenter.dispatch(QueryChanged("test"))
 
-      testScheduler.advanceTimeBy(300)
+            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
-      fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = false,
-        query = "test",
-      )
+            awaitItem() shouldBe SearchResultAvailable(
+                isUpdating = false,
+                query = "test",
+                results = uiModelList(),
+            )
 
-      val firstResult = awaitItem()
-      firstResult shouldBe SearchResultAvailable(
-        isUpdating = false,
-        query = "test",
-        results = uiModelList(),
-      )
-
-      presenter.dispatch(QueryChanged("none"))
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = true,
-        query = "none",
-        results = (firstResult as SearchResultAvailable).results,
-      )
-
-      testScheduler.advanceTimeBy(300)
-
-      fakeSearchRepository.setSearchResult(emptyList())
-
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = false,
-        query = "none",
-        results = firstResult.results,
-      )
-      awaitItem() shouldBe EmptySearchResult("none")
+            // Back to empty
+            presenter.dispatch(QueryChanged(""))
+            expectNoEvents()
+        }
     }
-  }
 
-  @Test
-  fun `should update state when on clear query and show content is available`() = runTest {
-    presenter.state.test {
-      awaitItem() shouldBe InitialSearchState()
-      setList(createGenreShowList())
+    @Test
+    fun `should return empty state when query is valid and search returns empty results`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe InitialSearchState()
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-      awaitItem() shouldBe ShowContentAvailable(
-        isUpdating = false,
-        genres = genreList(),
-      )
+            presenter.dispatch(QueryChanged("test"))
 
-      presenter.dispatch(QueryChanged("test"))
+            awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
 
-      awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
+            testScheduler.advanceTimeBy(300)
 
-      testScheduler.advanceTimeBy(300)
+            fakeSearchRepository.setSearchResult(emptyList())
 
-      fakeSearchRepository.setSearchResult(createDiscoverShowList())
-
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = false,
-        query = "test",
-      )
-
-      awaitItem() shouldBe SearchResultAvailable(
-        isUpdating = false,
-        query = "test",
-        results = uiModelList(),
-      )
-
-      presenter.dispatch(ClearQuery)
-
-      setList(createGenreShowList())
-
-      awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
-
-      awaitItem() shouldBe ShowContentAvailable(
-        isUpdating = false,
-        genres = genreList(),
-      )
+            awaitItem() shouldBe SearchResultAvailable("test", results = persistentListOf())
+        }
     }
-  }
 
+    @Test
+    fun `should handle sequence of empty and non-empty results`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe InitialSearchState()
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = false)
 
-  private fun buildPresenter(
-    lifecycle: LifecycleRegistry = LifecycleRegistry(),
-  ): SearchShowsPresenter = SearchShowsPresenter(
-    componentContext = DefaultComponentContext(lifecycle = lifecycle),
-    onNavigateToShowDetails = {},
-    onNavigateToGenre = {},
-    searchRepository = fakeSearchRepository,
-    genreRepository = genreRepository,
-    mapper = ShowMapper(
-      formatterUtil = FakeFormatterUtil(),
-    ),
-  )
+            presenter.dispatch(QueryChanged("empty"))
+            awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "empty")
 
+            testScheduler.advanceTimeBy(300)
 
-  private suspend fun TestScope.setList(list: List<ShowGenresEntity>) {
-    genreRepository.setGenreResult(list)
+            fakeSearchRepository.setSearchResult(emptyList())
+            awaitItem() shouldBe SearchResultAvailable("empty", results = persistentListOf())
 
-    testScheduler.advanceUntilIdle()
-  }
+            presenter.dispatch(QueryChanged("test"))
+            awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test", results = persistentListOf())
 
-  private fun createDiscoverShowList(size: Int = LIST_SIZE) =
-    List(size) {
-      ShowEntity(
-        id = 84958,
-        title = "Loki",
-        posterPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        inLibrary = false,
-        overview = null,
-        status = null,
-        voteAverage = null,
-      )
+            testScheduler.advanceTimeBy(300)
+
+            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+
+            awaitItem() shouldBe SearchResultAvailable(
+                isUpdating = false,
+                query = "test",
+            )
+
+            val firstResult = awaitItem()
+            firstResult shouldBe SearchResultAvailable(
+                isUpdating = false,
+                query = "test",
+                results = uiModelList(),
+            )
+
+            presenter.dispatch(QueryChanged("none"))
+            awaitItem() shouldBe SearchResultAvailable(
+                isUpdating = true,
+                query = "none",
+                results = (firstResult as SearchResultAvailable).results,
+            )
+
+            testScheduler.advanceTimeBy(300)
+
+            fakeSearchRepository.setSearchResult(emptyList())
+
+            awaitItem() shouldBe SearchResultAvailable(
+                isUpdating = false,
+                query = "none",
+                results = firstResult.results,
+            )
+            awaitItem() shouldBe EmptySearchResult("none")
+        }
     }
-      .toImmutableList()
 
-  private fun uiModelList(size: Int = LIST_SIZE) =
-    createDiscoverShowList(size)
-      .map {
-        ShowItem(
-          tmdbId = it.id,
-          title = it.title,
-          posterImageUrl = it.posterPath,
-          inLibrary = it.inLibrary,
-          overview = it.overview,
-          status = it.status,
-          voteAverage = it.voteAverage,
-          year = it.year,
-        )
-      }
-      .toImmutableList()
+    @Test
+    fun `should update state when on clear query and show content is available`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe InitialSearchState()
+            setList(createGenreShowList())
 
-  private fun createGenreShowList(size: Int = LIST_SIZE) =
-    List(size) {
-      ShowGenresEntity(
-        id = 84958,
-        name = "Horror",
-        posterUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-      )
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+            awaitItem() shouldBe ShowContentAvailable(
+                isUpdating = false,
+                genres = genreList(),
+            )
+
+            presenter.dispatch(QueryChanged("test"))
+
+            awaitItem() shouldBe SearchResultAvailable(isUpdating = true, query = "test")
+
+            testScheduler.advanceTimeBy(300)
+
+            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+
+            awaitItem() shouldBe SearchResultAvailable(
+                isUpdating = false,
+                query = "test",
+            )
+
+            awaitItem() shouldBe SearchResultAvailable(
+                isUpdating = false,
+                query = "test",
+                results = uiModelList(),
+            )
+
+            presenter.dispatch(ClearQuery)
+
+            setList(createGenreShowList())
+
+            awaitItem() shouldBe ShowContentAvailable(isUpdating = true)
+
+            awaitItem() shouldBe ShowContentAvailable(
+                isUpdating = false,
+                genres = genreList(),
+            )
+        }
     }
-      .toImmutableList()
 
-  private fun genreList(size: Int = LIST_SIZE) = List(size) {
-    ShowGenre(
-      id = 84958,
-      name = "Horror",
-      posterUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+    private fun buildPresenter(
+        lifecycle: LifecycleRegistry = LifecycleRegistry(),
+    ): SearchShowsPresenter = SearchShowsPresenter(
+        componentContext = DefaultComponentContext(lifecycle = lifecycle),
+        onNavigateToShowDetails = {},
+        onNavigateToGenre = {},
+        searchRepository = fakeSearchRepository,
+        genreRepository = genreRepository,
+        mapper = Mapper(
+            formatterUtil = FakeFormatterUtil(),
+        ),
     )
-  }.toImmutableList()
 
-  companion object {
-    const val LIST_SIZE = 5
-  }
+    private suspend fun TestScope.setList(list: List<ShowGenresEntity>) {
+        genreRepository.setGenreResult(list)
+
+        testScheduler.advanceUntilIdle()
+    }
+
+    private fun createDiscoverShowList(size: Int = LIST_SIZE) = List(size) {
+        ShowEntity(
+            id = 84958,
+            title = "Loki",
+            posterPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+            inLibrary = false,
+            overview = null,
+            status = null,
+            voteAverage = null,
+        )
+    }
+        .toImmutableList()
+
+    private fun uiModelList(size: Int = LIST_SIZE) = createDiscoverShowList(size)
+        .map {
+            ShowItem(
+                tmdbId = it.id,
+                title = it.title,
+                posterImageUrl = it.posterPath,
+                inLibrary = it.inLibrary,
+                overview = it.overview,
+                status = it.status,
+                voteAverage = it.voteAverage,
+                year = it.year,
+            )
+        }
+        .toImmutableList()
+
+    private fun createGenreShowList(size: Int = LIST_SIZE) = List(size) {
+        ShowGenresEntity(
+            id = 84958,
+            name = "Horror",
+            posterUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        )
+    }
+        .toImmutableList()
+
+    private fun genreList(size: Int = LIST_SIZE) = List(size) {
+        ShowGenre(
+            id = 84958,
+            name = "Horror",
+            posterUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+        )
+    }.toImmutableList()
+
+    companion object {
+        const val LIST_SIZE = 5
+    }
 }

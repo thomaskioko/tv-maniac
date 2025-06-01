@@ -5,9 +5,9 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessTokenResponse
 
 interface TraktTokenRemoteDataSource {
 
-  suspend fun getAccessToken(authCode: String): TraktAccessTokenResponse
+    suspend fun getAccessToken(authCode: String): TraktAccessTokenResponse
 
-  suspend fun getAccessRefreshToken(refreshToken: String): TraktAccessRefreshTokenResponse
+    suspend fun getAccessRefreshToken(refreshToken: String): TraktAccessRefreshTokenResponse
 
-  suspend fun revokeAccessToken(authCode: String)
+    suspend fun revokeAccessToken(authCode: String)
 }

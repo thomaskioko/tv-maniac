@@ -1,32 +1,32 @@
 plugins {
-  alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.tvmaniac.kmp)
 }
 
 tvmaniac {
-  optIn(
-    "kotlinx.coroutines.ExperimentalCoroutinesApi",
-  )
+    optIn(
+        "kotlinx.coroutines.ExperimentalCoroutinesApi",
+    )
 }
 
 kotlin {
-  sourceSets {
-    commonMain {
-      dependencies {
-        api(projects.data.genre.api)
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(projects.data.genre.api)
 
-        implementation(projects.core.base)
+                implementation(projects.core.base)
 
-        implementation(libs.coroutines.core)
-        implementation(libs.kotlinInject.runtime)
-      }
+                implementation(libs.coroutines.core)
+                implementation(libs.kotlinInject.runtime)
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation(projects.data.genre.testing)
+
+                implementation(libs.bundles.unittest)
+            }
+        }
     }
-
-    commonTest {
-      dependencies {
-        implementation(projects.data.genre.testing)
-
-        implementation(libs.bundles.unittest)
-      }
-    }
-  }
 }

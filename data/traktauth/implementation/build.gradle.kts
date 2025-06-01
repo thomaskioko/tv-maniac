@@ -1,35 +1,35 @@
 plugins {
-  alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.tvmaniac.kmp)
 }
 
 tvmaniac {
-  multiplatform {
-    addAndroidTarget()
-    useKotlinInject()
-    useKspAnvilCompiler()
-  }
+    multiplatform {
+        addAndroidMultiplatformTarget()
+        useKotlinInjectAnvilCompiler()
+    }
 }
 
-
 kotlin {
-  sourceSets {
-    androidMain {
-      dependencies {
-        implementation(projects.data.traktauth.api)
+    sourceSets {
+        androidMain {
+            dependencies {
+                implementation(libs.appauth)
+                implementation(libs.coroutines.core)
+                implementation(projects.data.traktauth.api)
 
-        implementation(libs.androidx.activity)
-        implementation(libs.androidx.browser)
-        implementation(libs.androidx.core.ktx)
-      }
-    }
+                implementation(libs.androidx.activity)
+                implementation(libs.androidx.browser)
+                implementation(libs.androidx.core.ktx)
+            }
+        }
 
-    commonMain {
-      dependencies {
-        implementation(projects.core.base)
-        implementation(projects.core.logger.api)
-        implementation(projects.data.traktauth.api)
-        implementation(libs.bundles.kotlinInject)
-      }
+        commonMain {
+            dependencies {
+                implementation(projects.core.base)
+                implementation(projects.core.logger.api)
+                implementation(projects.data.traktauth.api)
+                implementation(libs.bundles.kotlinInject)
+            }
+        }
     }
-  }
 }

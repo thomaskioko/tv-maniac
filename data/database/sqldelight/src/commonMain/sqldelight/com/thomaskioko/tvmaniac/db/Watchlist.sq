@@ -59,13 +59,20 @@ JOIN
 LEFT JOIN
     show_metadata ON tvshow.id = show_metadata.show_id
 WHERE
-    name LIKE '%' || ? || '%'
+    -- First try exact match on name start (most efficient, can use index)
+    name LIKE ? || '%'
+    -- Then try case-insensitive match on name start
+    OR LOWER(name) LIKE LOWER(?) || '%'
+    -- Then try contains match (less efficient)
+    OR name LIKE '%' || ? || '%'
+    -- Finally try case-insensitive contains match (least efficient)
     OR LOWER(name) LIKE '%' || LOWER(?) || '%'
 ORDER BY
     CASE
-        WHEN name LIKE ? || '%' THEN 1
-        WHEN name LIKE '% ' || ? || '%' THEN 2
-        ELSE 3
+        WHEN name LIKE ? || '%' THEN 1  -- Exact start match
+        WHEN LOWER(name) LIKE LOWER(?) || '%' THEN 2  -- Case-insensitive start match
+        WHEN name LIKE '% ' || ? || '%' THEN 3  -- Word start match
+        ELSE 4  -- Contains match
     END,
     watchlist.created_at DESC;
 

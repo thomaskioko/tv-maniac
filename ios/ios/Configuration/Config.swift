@@ -8,62 +8,57 @@
 
 import Foundation
 
-
 struct Config: Decodable {
+    var BUNDLE_ID: String
+    var APP_NAME: String
+    var APPICON_NAME: String
 
-    let authorizeUrl: String
-    let accessTokenUrl: String
-    let callbackUrl: String
-    let clientId: String
-    let clientSecret: String
-    let responseType: String
-    
+    var authorizeUrl: String = ""
+    var accessTokenUrl: String = ""
+    var callbackUrl: String = ""
+    var clientId: String = ""
+    var clientSecret: String = ""
+    var responseType: String = ""
+
     init() {
-        self.authorizeUrl = ""
-        self.accessTokenUrl = ""
-        self.callbackUrl = ""
-        self.clientId = ""
-        self.clientSecret = ""
-        self.responseType = ""
+        BUNDLE_ID = ""
+        APP_NAME = ""
+        APPICON_NAME = ""
     }
-    
-    func getAuthorizeUrl() throws -> URL {
-        
-        guard let url = URL(string: self.authorizeUrl) else {
 
+    init(bundleID: String, appName: String, appIconName: String) {
+        BUNDLE_ID = bundleID
+        APP_NAME = appName
+        APPICON_NAME = appIconName
+    }
+
+    func getAuthorizeUrl() throws -> URL {
+        guard let url = URL(string: authorizeUrl) else {
             throw ApplicationError(
                 title: "Invalid Configuration Error",
                 description: "The authorizeUrl could not be parsed"
             )
         }
-        
         return url
     }
 
     func getAccessTokenUrl() throws -> URL {
-        
-        guard let url = URL(string: self.accessTokenUrl) else {
-
+        guard let url = URL(string: accessTokenUrl) else {
             throw ApplicationError(
                 title: "Invalid Configuration Error",
                 description: "The accessTokenUrl could not be parsed"
             )
         }
-        
         return url
     }
-    
-    func getCallbackURL() throws -> URL {
-        
-        guard let url = URL(string: self.callbackUrl) else {
 
+    func getCallbackURL() throws -> URL {
+        guard let url = URL(string: callbackUrl) else {
             throw ApplicationError(
                 title: "Invalid Configuration Error",
                 description: "The callbackURL could not be parsed"
             )
         }
-        
         return url
     }
-
 }

@@ -9,25 +9,25 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class FakeTrendingShowsRepository : TrendingShowsRepository {
 
-  private val shows = MutableStateFlow<List<ShowEntity>>(emptyList())
-  private val pagedShows = MutableStateFlow<PagingData<ShowEntity>>(PagingData.empty())
+    private val shows = MutableStateFlow<List<ShowEntity>>(emptyList())
+    private val pagedShows = MutableStateFlow<PagingData<ShowEntity>>(PagingData.empty())
 
-  fun setTrendingShows(result: List<ShowEntity>) {
-    shows.value = result
-  }
+    fun setTrendingShows(result: List<ShowEntity>) {
+        shows.value = result
+    }
 
-  fun setPagedData(result: PagingData<ShowEntity>) {
-    pagedShows.value = result
-  }
+    fun setPagedData(result: PagingData<ShowEntity>) {
+        pagedShows.value = result
+    }
 
-  override suspend fun fetchTrendingShows(forceRefresh: Boolean) {
-  }
+    override suspend fun fetchTrendingShows(forceRefresh: Boolean) {
+    }
 
-  override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> {
-    return shows.asStateFlow()
-  }
+    override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> {
+        return shows.asStateFlow()
+    }
 
-  override fun getPagedTrendingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
-    return pagedShows.asStateFlow()
-  }
+    override fun getPagedTrendingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
+        return pagedShows.asStateFlow()
+    }
 }

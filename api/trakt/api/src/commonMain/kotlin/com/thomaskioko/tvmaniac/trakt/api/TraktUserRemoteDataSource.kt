@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 
 interface TraktUserRemoteDataSource {
 
-  suspend fun getUser(userId: String): ApiResponse<TraktUserResponse>
+    suspend fun getUser(userId: String): ApiResponse<TraktUserResponse>
 
-  suspend fun getUserList(userId: String): List<TraktPersonalListsResponse>
+    suspend fun getUserList(userId: String): List<TraktPersonalListsResponse>
 }

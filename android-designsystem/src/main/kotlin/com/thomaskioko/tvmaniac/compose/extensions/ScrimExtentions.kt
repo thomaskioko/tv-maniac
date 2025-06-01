@@ -32,59 +32,57 @@ import kotlin.math.pow
  */
 @SuppressLint("ComposeModifierComposed")
 fun Modifier.verticalGradientScrim(
-  color: Color,
-  @FloatRange(from = 0.0, to = 1.0) startYPercentage: Float = 0f,
-  @FloatRange(from = 0.0, to = 1.0) endYPercentage: Float = 1f,
-  decay: Float = 1.0f,
-  numStops: Int = 16,
+    color: Color,
+    @FloatRange(from = 0.0, to = 1.0) startYPercentage: Float = 0f,
+    @FloatRange(from = 0.0, to = 1.0) endYPercentage: Float = 1f,
+    decay: Float = 1.0f,
+    numStops: Int = 16,
 ): Modifier = composed {
-  val colors =
-    remember(color, numStops) {
-      if (decay != 1f) {
-        // If we have a non-linear decay, we need to create the color gradient steps
-        // manually
-        val baseAlpha = color.alpha
-        List(numStops) { i ->
-          val x = i * 1f / (numStops - 1)
-          val opacity = x.pow(decay)
-          color.copy(alpha = baseAlpha * opacity)
+    val colors = remember(color, numStops) {
+        if (decay != 1f) {
+            // If we have a non-linear decay, we need to create the color gradient steps
+            // manually
+            val baseAlpha = color.alpha
+            List(numStops) { i ->
+                val x = i * 1f / (numStops - 1)
+                val opacity = x.pow(decay)
+                color.copy(alpha = baseAlpha * opacity)
+            }
+        } else {
+            // If we have a linear decay, we just create a simple list of start + end colors
+            listOf(color.copy(alpha = 0f), color)
         }
-      } else {
-        // If we have a linear decay, we just create a simple list of start + end colors
-        listOf(color.copy(alpha = 0f), color)
-      }
     }
 
-  var height by remember { mutableFloatStateOf(0f) }
-  val brush =
-    remember(color, numStops, startYPercentage, endYPercentage, height) {
-      Brush.verticalGradient(
-        colors = colors,
-        startY = height * startYPercentage,
-        endY = height * endYPercentage,
-      )
+    var height by remember { mutableFloatStateOf(0f) }
+    val brush = remember(color, numStops, startYPercentage, endYPercentage, height) {
+        Brush.verticalGradient(
+            colors = colors,
+            startY = height * startYPercentage,
+            endY = height * endYPercentage,
+        )
     }
 
-  drawBehind {
-    height = size.height
-    drawRect(brush = brush)
-  }
+    drawBehind {
+        height = size.height
+        drawRect(brush = brush)
+    }
 }
 
 @SuppressLint("ComposeModifierComposed")
 fun Modifier.iconButtonBackgroundScrim(
-  enabled: Boolean,
-  shape: Shape = CircleShape,
-  @FloatRange(from = 0.0, to = 1.0) alpha: Float,
+    enabled: Boolean,
+    shape: Shape = CircleShape,
+    @FloatRange(from = 0.0, to = 1.0) alpha: Float,
 ): Modifier = composed {
-  if (enabled) {
-    Modifier
-      .padding(horizontal = 8.dp)
-      .background(
-        color = MaterialTheme.colorScheme.background.copy(alpha = alpha),
-        shape = shape,
-      )
-  } else {
-    this.padding(horizontal = 4.dp)
-  }
+    if (enabled) {
+        Modifier
+            .padding(horizontal = 8.dp)
+            .background(
+                color = MaterialTheme.colorScheme.background.copy(alpha = alpha),
+                shape = shape,
+            )
+    } else {
+        this.padding(horizontal = 4.dp)
+    }
 }

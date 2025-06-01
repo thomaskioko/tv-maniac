@@ -1,5 +1,5 @@
 plugins {
-  `kotlin-dsl`
+    `kotlin-dsl`
 }
 
 group = "com.thomaskioko.tvmaniac.tooling"

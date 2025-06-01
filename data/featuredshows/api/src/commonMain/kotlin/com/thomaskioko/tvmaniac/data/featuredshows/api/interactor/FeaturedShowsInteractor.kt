@@ -8,12 +8,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class FeaturedShowsInteractor(
-  private val featuredShowsRepository: FeaturedShowsRepository,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val featuredShowsRepository: FeaturedShowsRepository,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Boolean>() {
-  override suspend fun doWork(params: Boolean) {
-    withContext(dispatchers.io) {
-      featuredShowsRepository.fetchFeaturedShows(params)
+    override suspend fun doWork(params: Boolean) {
+        withContext(dispatchers.io) {
+            featuredShowsRepository.fetchFeaturedShows(params)
+        }
     }
-  }
 }

@@ -6,37 +6,37 @@ let package = Package(
     name: "SwiftUIComponents",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v16)
+        .iOS(.v16),
     ],
     products: [
         .library(
             name: "SwiftUIComponents",
             targets: ["SwiftUIComponents"]
-        )
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/SDWebImage/SDWebImageSwiftUI.git", from: "3.1.3"),
         .package(url: "https://github.com/SvenTiigi/YouTubePlayerKit.git", from: "2.0.0"),
-        .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib")
+        .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
     ],
     targets: [
         .target(
             name: "SwiftUIComponents",
             dependencies: [
                 "SDWebImageSwiftUI",
-                "YouTubePlayerKit"
+                "YouTubePlayerKit",
             ],
             resources: [
-                .process("Resources/Fonts")
+                .process("Resources/Fonts"),
             ]
         ),
         .testTarget(
             name: "SwiftUIComponentsTests",
             dependencies: [
                 "SnapshotTestingLib",
-                "SwiftUIComponents"
+                "SwiftUIComponents",
             ],
             exclude: ["__Snapshots__"]
-        )
+        ),
     ]
 )

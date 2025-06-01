@@ -15,53 +15,51 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
 fun TvManiacChip(
-  text: String,
-  onClick: () -> Unit,
-  modifier: Modifier = Modifier,
-  selected: Boolean = true,
-  enabled: Boolean = true,
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    selected: Boolean = true,
+    enabled: Boolean = true,
 ) {
-  FilterChip(
-    modifier = modifier,
-    selected = selected,
-    onClick = onClick,
-    label = {
-      ProvideTextStyle(value = MaterialTheme.typography.labelSmall) {
-        Text(
-          text = text,
-          style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.secondary,
-          modifier = Modifier.padding(vertical = 8.dp),
-        )
-      }
-    },
-    enabled = enabled,
-    leadingIcon = null,
-    border = null,
-    shape = RoundedCornerShape(4.dp),
-    colors =
-      FilterChipDefaults.filterChipColors(
-        labelColor =
-          when {
-            selected -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f)
-            else -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f)
-          },
-        selectedContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
-        selectedLabelColor = MaterialTheme.colorScheme.secondary,
-      ),
-  )
+    FilterChip(
+        modifier = modifier,
+        selected = selected,
+        onClick = onClick,
+        label = {
+            ProvideTextStyle(value = MaterialTheme.typography.labelSmall) {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.padding(vertical = 8.dp),
+                )
+            }
+        },
+        enabled = enabled,
+        leadingIcon = null,
+        border = null,
+        shape = RoundedCornerShape(4.dp),
+        colors = FilterChipDefaults.filterChipColors(
+            labelColor = when {
+                selected -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f)
+                else -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f)
+            },
+            selectedContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
+            selectedLabelColor = MaterialTheme.colorScheme.secondary,
+        ),
+    )
 }
 
 @ThemePreviews
 @Composable
 private fun ChipItemSelectedPreview() {
-  TvManiacTheme {
-    Surface {
-      TvManiacChip(
-        selected = true,
-        text = "Season 1",
-        onClick = {},
-      )
+    TvManiacTheme {
+        Surface {
+            TvManiacChip(
+                selected = true,
+                text = "Season 1",
+                onClick = {},
+            )
+        }
     }
-  }
 }

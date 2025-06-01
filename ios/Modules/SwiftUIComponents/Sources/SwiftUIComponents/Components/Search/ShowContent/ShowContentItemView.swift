@@ -97,7 +97,7 @@ private struct MetallicTitleView: View {
                             .linearGradient(
                                 colors: [
                                     .white.opacity(0.7),
-                                    .clear
+                                    .clear,
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -119,14 +119,14 @@ private enum DimensionConstants {
 }
 
 #Preview {
-  VStack {
-    ShowContentItemView(
-      title: "The Penguin",
-      imageUrl: "https://image.tmdb.org/t/p/w780/VSRmtRlYgd0pBISf7d34TAwWgB.jpg"
-    )
-    ShowContentItemView(
-      title: "The Penguin",
-      imageUrl: nil
-    )
-  }
+    VStack {
+        ShowContentItemView(
+            title: "The Penguin",
+            imageUrl: "https://image.tmdb.org/t/p/w780/VSRmtRlYgd0pBISf7d34TAwWgB.jpg"
+        )
+        ShowContentItemView(
+            title: "The Penguin",
+            imageUrl: nil
+        )
+    }
 }

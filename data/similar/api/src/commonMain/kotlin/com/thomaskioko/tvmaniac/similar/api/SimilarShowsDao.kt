@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface SimilarShowsDao {
 
-  fun upsert(showId: Long, similarShowId: Long)
+    fun upsert(showId: Long, similarShowId: Long)
 
-  fun observeSimilarShows(showId: Long): Flow<List<SimilarShows>>
+    fun observeSimilarShows(showId: Long): Flow<List<SimilarShows>>
 
-  fun delete(id: Long)
+    fun delete(id: Long)
 
-  fun deleteAll()
+    fun deleteAll()
 }

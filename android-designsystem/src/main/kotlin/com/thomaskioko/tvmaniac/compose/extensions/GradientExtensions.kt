@@ -7,14 +7,14 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun contentBackgroundGradient(): Brush {
-  return Brush.verticalGradient(
-    listOf(
-      Color.Transparent,
-      Color.Transparent,
-      Color.Transparent,
-      MaterialTheme.colorScheme.background.copy(alpha = 0.6F),
-      MaterialTheme.colorScheme.background.copy(alpha = 0.8F),
-      MaterialTheme.colorScheme.background,
-    ),
-  )
+    return Brush.verticalGradient(
+        listOf(
+            Color.Transparent,
+            Color.Transparent,
+            Color.Transparent,
+            MaterialTheme.colorScheme.background.copy(alpha = 0.6F),
+            MaterialTheme.colorScheme.background.copy(alpha = 0.8F),
+            MaterialTheme.colorScheme.background,
+        ),
+    )
 }

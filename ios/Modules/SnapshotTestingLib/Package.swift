@@ -6,7 +6,7 @@ let package = Package(
     name: "SnapshotTestingLib",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v16)
+        .iOS(.v16),
     ],
     products: [
         .library(
@@ -15,13 +15,13 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", exact: "1.18.3")
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", exact: "1.18.4"),
     ],
     targets: [
         .target(
             name: "SnapshotTestingLib",
             dependencies: [
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ]
         ),
     ]

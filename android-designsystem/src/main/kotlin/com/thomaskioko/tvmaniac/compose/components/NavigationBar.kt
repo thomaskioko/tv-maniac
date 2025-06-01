@@ -18,98 +18,101 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_search
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_settings
+import com.thomaskioko.tvmaniac.i18n.resolve
 
 @Composable
 fun TvManiacNavigationBar(
-  modifier: Modifier = Modifier,
-  content: @Composable RowScope.() -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit,
 ) {
-  NavigationBar(
-    modifier = modifier,
-    containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-    contentColor = NavigationDefaultColors.navigationContentColor(),
-    tonalElevation = 8.dp,
-    content = content,
-  )
+    NavigationBar(
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+        contentColor = NavigationDefaultColors.navigationContentColor(),
+        tonalElevation = 8.dp,
+        content = content,
+    )
 }
 
 @Composable
 fun RowScope.TvManiacBottomNavigationItem(
-  imageVector: ImageVector,
-  title: String,
-  selected: Boolean,
-  modifier: Modifier = Modifier,
-  onClick: () -> Unit,
+    imageVector: ImageVector,
+    title: String,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
 ) {
-  NavigationBarItem(
-    modifier = modifier,
-    icon = {
-      Icon(
-        imageVector = imageVector,
-        contentDescription = title,
-      )
-    },
-    label = { Text(title) },
-    selected = selected,
-    alwaysShowLabel = true,
-    colors =
-      NavigationBarItemDefaults.colors(
-        selectedIconColor = NavigationDefaultColors.navigationSelectedItemColor(),
-        unselectedIconColor = NavigationDefaultColors.navigationContentColor(),
-        selectedTextColor = NavigationDefaultColors.navigationSelectedItemColor(),
-        unselectedTextColor = NavigationDefaultColors.navigationContentColor(),
-        indicatorColor = Color.Transparent,
-      ),
-    onClick = onClick,
-  )
+    NavigationBarItem(
+        modifier = modifier,
+        icon = {
+            Icon(
+                imageVector = imageVector,
+                contentDescription = title,
+            )
+        },
+        label = { Text(title) },
+        selected = selected,
+        alwaysShowLabel = true,
+        colors = NavigationBarItemDefaults.colors(
+            selectedIconColor = NavigationDefaultColors.navigationSelectedItemColor(),
+            unselectedIconColor = NavigationDefaultColors.navigationContentColor(),
+            selectedTextColor = NavigationDefaultColors.navigationSelectedItemColor(),
+            unselectedTextColor = NavigationDefaultColors.navigationContentColor(),
+            indicatorColor = Color.Transparent,
+        ),
+        onClick = onClick,
+    )
 }
 
 object NavigationDefaultColors {
-  @Composable
-  fun navigationContentColor() = MaterialTheme.colorScheme.onSurfaceVariant
+    @Composable
+    fun navigationContentColor() = MaterialTheme.colorScheme.onSurfaceVariant
 
-  @Composable
-  fun navigationSelectedItemColor() = MaterialTheme.colorScheme.secondary
+    @Composable
+    fun navigationSelectedItemColor() = MaterialTheme.colorScheme.secondary
 }
 
 @ThemePreviews
 @Composable
 private fun TvManiacTvManiacNavigationBarPreviewPreview() {
-  TvManiacTheme {
-    Surface {
-      TvManiacNavigationBar {
-        TvManiacBottomNavigationItem(
-          imageVector = Icons.Outlined.Movie,
-          title = stringResource(id = R.string.menu_item_discover),
-          selected = true,
-          onClick = { },
-        )
+    TvManiacTheme {
+        Surface {
+            TvManiacNavigationBar {
+                TvManiacBottomNavigationItem(
+                    imageVector = Icons.Outlined.Movie,
+                    title = menu_item_discover.resolve(LocalContext.current),
+                    selected = true,
+                    onClick = { },
+                )
 
-        TvManiacBottomNavigationItem(
-          imageVector = Icons.Outlined.Search,
-          title = stringResource(id = R.string.menu_item_search),
-          selected = false,
-          onClick = { },
-        )
+                TvManiacBottomNavigationItem(
+                    imageVector = Icons.Outlined.Search,
+                    title = menu_item_search.resolve(LocalContext.current),
+                    selected = false,
+                    onClick = { },
+                )
 
-        TvManiacBottomNavigationItem(
-          imageVector = Icons.Outlined.VideoLibrary,
-          title = stringResource(id = R.string.menu_item_library),
-          selected = false,
-          onClick = { },
-        )
+                TvManiacBottomNavigationItem(
+                    imageVector = Icons.Outlined.VideoLibrary,
+                    title = menu_item_library.resolve(LocalContext.current),
+                    selected = false,
+                    onClick = { },
+                )
 
-        TvManiacBottomNavigationItem(
-          imageVector = Icons.Outlined.Settings,
-          title = stringResource(id = R.string.menu_item_settings),
-          selected = false,
-          onClick = { },
-        )
-      }
+                TvManiacBottomNavigationItem(
+                    imageVector = Icons.Outlined.Settings,
+                    title = menu_item_settings.resolve(LocalContext.current),
+                    selected = false,
+                    onClick = { },
+                )
+            }
+        }
     }
-  }
 }

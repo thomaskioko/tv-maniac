@@ -28,11 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.ErrorUi
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -41,6 +40,9 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.error_empty_library
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.watchlist.EmptyWatchlist
 import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
 import com.thomaskioko.tvmaniac.presentation.watchlist.ReloadWatchlist
@@ -54,137 +56,133 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun WatchlistScreen(
-  presenter: WatchlistPresenter,
-  modifier: Modifier = Modifier,
+    presenter: WatchlistPresenter,
+    modifier: Modifier = Modifier,
 ) {
-  val libraryState by presenter.state.collectAsState()
+    val libraryState by presenter.state.collectAsState()
 
-  WatchlistScreen(
-    modifier = modifier,
-    state = libraryState,
-    onAction = presenter::dispatch,
-  )
+    WatchlistScreen(
+        modifier = modifier,
+        state = libraryState,
+        onAction = presenter::dispatch,
+    )
 }
 
 @Composable
 internal fun WatchlistScreen(
-  state: WatchlistState,
-  modifier: Modifier = Modifier,
-  onAction: (WatchlistAction) -> Unit,
+    state: WatchlistState,
+    modifier: Modifier = Modifier,
+    onAction: (WatchlistAction) -> Unit,
 ) {
-  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-  Scaffold(
-    modifier = modifier.statusBarsPadding(),
-    topBar = {
-      TvManiacTopBar(
-        title = {
-          Text(
-            text = stringResource(id = R.string.menu_item_library),
-            style =
-              MaterialTheme.typography.titleLarge.copy(
-                color = MaterialTheme.colorScheme.onSurface,
-              ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-              .fillMaxWidth()
-              .padding(start = 16.dp),
-          )
-        },
-        scrollBehavior = scrollBehavior,
-        colors =
-          TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            scrolledContainerColor = MaterialTheme.colorScheme.background,
-          ),
-      )
-    },
-    content = { contentPadding ->
-      when (state) {
-        is LoadingShows ->
-          LoadingIndicator(
-            modifier = Modifier
-              .fillMaxSize()
-              .wrapContentSize(Alignment.Center),
-          )
-        is EmptyWatchlist ->
-          ErrorUi(
-            errorIcon = {
-              Image(
-                modifier = Modifier.size(120.dp),
-                imageVector = Icons.Outlined.ErrorOutline,
-                colorFilter =
-                  ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
-                contentDescription = null,
-              )
-            },
-            onRetry = { onAction(ReloadWatchlist) },
-            errorMessage = state.message,
-            modifier = Modifier
-              .fillMaxSize()
-              .wrapContentSize(Alignment.Center),
-          )
-        is WatchlistContent -> {
-          when {
-            state.list.isEmpty() ->
-              EmptyContent(
-                imageVector = Icons.Outlined.Inbox,
-                message = stringResource(id = R.string.error_empty_library),
-              )
-            else ->
-              WatchlistGridContent(
-                list = state.list,
+    Scaffold(
+        modifier = modifier.statusBarsPadding(),
+        topBar = {
+            TvManiacTopBar(
+                title = {
+                    Text(
+                        text = menu_item_library.resolve(LocalContext.current),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = MaterialTheme.colorScheme.onSurface,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp),
+                    )
+                },
                 scrollBehavior = scrollBehavior,
-                paddingValues = contentPadding,
-                onItemClicked = { onAction(WatchlistShowClicked(it)) },
-              )
-          }
-        }
-      }
-    },
-  )
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    scrolledContainerColor = MaterialTheme.colorScheme.background,
+                ),
+            )
+        },
+        content = { contentPadding ->
+            when (state) {
+                is LoadingShows ->
+                    LoadingIndicator(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center),
+                    )
+                is EmptyWatchlist ->
+                    ErrorUi(
+                        errorIcon = {
+                            Image(
+                                modifier = Modifier.size(120.dp),
+                                imageVector = Icons.Outlined.ErrorOutline,
+                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary.copy(alpha = 0.8F)),
+                                contentDescription = null,
+                            )
+                        },
+                        onRetry = { onAction(ReloadWatchlist) },
+                        errorMessage = state.message,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center),
+                    )
+                is WatchlistContent -> {
+                    when {
+                        state.list.isEmpty() ->
+                            EmptyContent(
+                                imageVector = Icons.Outlined.Inbox,
+                                message = error_empty_library.resolve(LocalContext.current),
+                            )
+                        else ->
+                            WatchlistGridContent(
+                                list = state.list,
+                                scrollBehavior = scrollBehavior,
+                                paddingValues = contentPadding,
+                                onItemClicked = { onAction(WatchlistShowClicked(it)) },
+                            )
+                    }
+                }
+            }
+        },
+    )
 }
 
 @Composable
 private fun WatchlistGridContent(
-  list: ImmutableList<WatchlistItem>,
-  scrollBehavior: TopAppBarScrollBehavior,
-  paddingValues: PaddingValues,
-  onItemClicked: (Long) -> Unit,
+    list: ImmutableList<WatchlistItem>,
+    scrollBehavior: TopAppBarScrollBehavior,
+    paddingValues: PaddingValues,
+    onItemClicked: (Long) -> Unit,
 ) {
-  LazyVerticalGrid(
-    columns = GridCells.Fixed(3),
-    verticalArrangement = Arrangement.spacedBy(4.dp),
-    horizontalArrangement = Arrangement.spacedBy(4.dp),
-    modifier =
-      Modifier
-        .nestedScroll(scrollBehavior.nestedScrollConnection)
-        .padding(horizontal = 4.dp)
-        .padding(paddingValues.copy(copyBottom = false)),
-  ) {
-    items(list) { show ->
-      PosterCard(
-        modifier = Modifier.animateItem(),
-        imageUrl = show.posterImageUrl,
-        title = show.title,
-        onClick = { onItemClicked(show.tmdbId) },
-      )
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .padding(horizontal = 4.dp)
+            .padding(paddingValues.copy(copyBottom = false)),
+    ) {
+        items(list) { show ->
+            PosterCard(
+                modifier = Modifier.animateItem(),
+                imageUrl = show.posterImageUrl,
+                title = show.title,
+                onClick = { onItemClicked(show.tmdbId) },
+            )
+        }
     }
-  }
 }
 
 @ThemePreviews
 @Composable
 private fun WatchlistScreenPreview(
-  @PreviewParameter(WatchlistPreviewParameterProvider::class) state: WatchlistState,
+    @PreviewParameter(WatchlistPreviewParameterProvider::class) state: WatchlistState,
 ) {
-  TvManiacTheme {
-    Surface {
-      WatchlistScreen(
-        state = state,
-        onAction = {},
-      )
+    TvManiacTheme {
+        Surface {
+            WatchlistScreen(
+                state = state,
+                onAction = {},
+            )
+        }
     }
-  }
 }

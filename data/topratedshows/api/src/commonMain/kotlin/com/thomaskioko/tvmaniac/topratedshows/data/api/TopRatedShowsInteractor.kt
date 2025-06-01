@@ -7,12 +7,12 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class TopRatedShowsInteractor(
-  private val topRatedShowsRepository: TopRatedShowsRepository,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val topRatedShowsRepository: TopRatedShowsRepository,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Boolean>() {
-  override suspend fun doWork(params: Boolean) {
-    withContext(dispatchers.io) {
-      topRatedShowsRepository.fetchTopRatedShows(params)
+    override suspend fun doWork(params: Boolean) {
+        withContext(dispatchers.io) {
+            topRatedShowsRepository.fetchTopRatedShows(params)
+        }
     }
-  }
 }

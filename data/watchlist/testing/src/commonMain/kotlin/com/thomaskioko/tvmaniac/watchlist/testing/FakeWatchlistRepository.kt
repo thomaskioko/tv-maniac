@@ -12,26 +12,26 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeWatchlistRepository : WatchlistRepository {
 
-  private var watchlistResult: Channel<Either<Failure, List<Watchlists>>> =
-    Channel(Channel.UNLIMITED)
-  private var searchlistResult: Channel<Either<Failure, List<SearchWatchlist>>> =
-    Channel(Channel.UNLIMITED)
+    private var watchlistResult: Channel<Either<Failure, List<Watchlists>>> =
+        Channel(Channel.UNLIMITED)
+    private var searchlistResult: Channel<Either<Failure, List<SearchWatchlist>>> =
+        Channel(Channel.UNLIMITED)
 
-  suspend fun setSearchResult(result: Either<Failure, List<SearchWatchlist>>) {
-    searchlistResult.send(result)
-  }
+    suspend fun setSearchResult(result: Either<Failure, List<SearchWatchlist>>) {
+        searchlistResult.send(result)
+    }
 
-  suspend fun setObserveResult(result: Either<Failure, List<Watchlists>>) {
-    watchlistResult.send(result)
-  }
+    suspend fun setObserveResult(result: Either<Failure, List<Watchlists>>) {
+        watchlistResult.send(result)
+    }
 
-  override fun observeWatchlist(): Flow<Either<Failure, List<Watchlists>>> =
-    watchlistResult.receiveAsFlow()
+    override fun observeWatchlist(): Flow<Either<Failure, List<Watchlists>>> =
+        watchlistResult.receiveAsFlow()
 
-  override fun searchWatchlistByQuery(query: String): Flow<Either<Failure, List<SearchWatchlist>>> =
-    searchlistResult.receiveAsFlow()
+    override fun searchWatchlistByQuery(query: String): Flow<Either<Failure, List<SearchWatchlist>>> =
+        searchlistResult.receiveAsFlow()
 
-  override suspend fun updateLibrary(id: Long, addToLibrary: Boolean) {}
+    override suspend fun updateLibrary(id: Long, addToLibrary: Boolean) {}
 
-  override fun observeUnSyncedItems(): Flow<Unit> = flowOf(Unit)
+    override fun observeUnSyncedItems(): Flow<Unit> = flowOf(Unit)
 }

@@ -10,19 +10,19 @@ package com.thomaskioko.tvmaniac.core.networkutil.model
  */
 sealed class Either<out L, out R> {
 
-  /** Represents the left side of [Either] class which by convention is a "Failure". */
-  data class Left<out L>(val left: L) : Either<L, Nothing>()
+    /** Represents the left side of [Either] class which by convention is a "Failure". */
+    data class Left<out L>(val left: L) : Either<L, Nothing>()
 
-  /** Represents the right side of [Either] class which by convention is a "Success". */
-  data class Right<out R>(val right: R) : Either<Nothing, R>()
+    /** Represents the right side of [Either] class which by convention is a "Success". */
+    data class Right<out R>(val right: R) : Either<Nothing, R>()
 
-  fun <T> fold(onFailure: (L) -> T, onSuccess: (R) -> T): T =
-    when (this) {
-      is Left -> onFailure(left)
-      is Right -> onSuccess(right)
-    }
+    fun <T> fold(onFailure: (L) -> T, onSuccess: (R) -> T): T =
+        when (this) {
+            is Left -> onFailure(left)
+            is Right -> onSuccess(right)
+        }
 
-  fun getOrNull(): R? = (this as? Right)?.right
+    fun getOrNull(): R? = (this as? Right)?.right
 
-  fun getErrorOrNull(): L? = (this as? Left)?.left
+    fun getErrorOrNull(): L? = (this as? Left)?.left
 }

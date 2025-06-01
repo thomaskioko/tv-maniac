@@ -20,36 +20,36 @@ import org.robolectric.annotation.LooperMode
 @LooperMode(LooperMode.Mode.PAUSED)
 class ShowDetailsScreenScreenshotTest {
 
-  @get:Rule
-  val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+    @get:Rule
+    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-  @Test
-  fun showDetailsLoadedState() {
-    composeTestRule.captureMultiDevice("ShowDetailsLoadedState") {
-      TvManiacBackground {
-        ShowDetailsScreen(
-          state = showDetailsContent,
-          title = "",
-          snackBarHostState = SnackbarHostState(),
-          listState = LazyListState(),
-          onAction = {},
-        )
-      }
+    @Test
+    fun showDetailsLoadedState() {
+        composeTestRule.captureMultiDevice("ShowDetailsLoadedState") {
+            TvManiacBackground {
+                ShowDetailsScreen(
+                    state = showDetailsContent,
+                    title = "",
+                    snackBarHostState = SnackbarHostState(),
+                    listState = LazyListState(),
+                    onAction = {},
+                )
+            }
+        }
     }
-  }
 
-  @Test
-  fun showDetailsLoadedWithErrorInfoState() {
-    composeTestRule.captureMultiDevice("ShowDetailsLoadedWithErrorInfoState") {
-      TvManiacBackground {
-        ShowDetailsScreen(
-          state = showDetailsContentWithError,
-          title = "",
-          snackBarHostState = SnackbarHostState(),
-          listState = LazyListState(),
-          onAction = {},
-        )
-      }
+    @Test
+    fun showDetailsLoadedWithErrorInfoState() {
+        composeTestRule.captureMultiDevice("ShowDetailsLoadedWithErrorInfoState") {
+            TvManiacBackground {
+                ShowDetailsScreen(
+                    state = showDetailsContentWithError,
+                    title = "",
+                    snackBarHostState = SnackbarHostState(),
+                    listState = LazyListState(),
+                    onAction = {},
+                )
+            }
+        }
     }
-  }
 }

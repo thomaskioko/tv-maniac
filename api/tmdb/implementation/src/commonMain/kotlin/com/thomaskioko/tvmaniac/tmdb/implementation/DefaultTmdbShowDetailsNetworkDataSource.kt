@@ -18,41 +18,45 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultTmdbShowDetailsNetworkDataSource(
-  private val httpClient: TmdbHttpClient,
+    private val httpClient: TmdbHttpClient,
 ) : TmdbShowDetailsNetworkDataSource {
 
-  override suspend fun getShowDetails(id: Long): ApiResponse<TmdbShowDetailsResponse> =
-    httpClient.safeRequest {
-      url {
-        method = HttpMethod.Get
-        path("3/tv/$id")
-        parameter("append_to_response", "credits,videos")
-      }
+    override suspend fun getShowDetails(id: Long): ApiResponse<TmdbShowDetailsResponse> {
+        return httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("3/tv/$id")
+                parameter("append_to_response", "credits,videos")
+            }
+        }
     }
 
-  override suspend fun getSimilarShows(id: Long, page: Long): ApiResponse<TmdbShowResult> =
-    httpClient.safeRequest {
-      url {
-        method = HttpMethod.Get
-        path("3/tv/$id/similar")
-        parameter("page", "$page")
-      }
+    override suspend fun getSimilarShows(id: Long, page: Long): ApiResponse<TmdbShowResult> {
+        return httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("3/tv/$id/similar")
+                parameter("page", "$page")
+            }
+        }
     }
 
-  override suspend fun getRecommendedShows(id: Long, page: Long): ApiResponse<TmdbShowResult> =
-    httpClient.safeRequest {
-      url {
-        method = HttpMethod.Get
-        path("3/tv/$id/recommendations")
-        parameter("page", "$page")
-      }
+    override suspend fun getRecommendedShows(id: Long, page: Long): ApiResponse<TmdbShowResult> {
+        return httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("3/tv/$id/recommendations")
+                parameter("page", "$page")
+            }
+        }
     }
 
-  override suspend fun getShowWatchProviders(id: Long): ApiResponse<WatchProvidersResult> =
-    httpClient.safeRequest {
-      url {
-        method = HttpMethod.Get
-        path("3/tv/$id/watch/providers")
-      }
+    override suspend fun getShowWatchProviders(id: Long): ApiResponse<WatchProvidersResult> {
+        return httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("3/tv/$id/watch/providers")
+            }
+        }
     }
 }

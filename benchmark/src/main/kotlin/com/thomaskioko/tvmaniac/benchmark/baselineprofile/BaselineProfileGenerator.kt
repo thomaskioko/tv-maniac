@@ -9,15 +9,15 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class BaselineProfileGenerator {
-  @get:Rule
-  val rule = BaselineProfileRule()
+    @get:Rule
+    val rule = BaselineProfileRule()
 
-  @Test
-  fun generateBaselineProfile() = rule.collect(
-    packageName = TARGET_PACKAGE,
-    includeInStartupProfile = true,
-    profileBlock = {
-      startActivityAndWait()
-    },
-  )
+    @Test
+    fun generateBaselineProfile() = rule.collect(
+        packageName = TARGET_PACKAGE,
+        includeInStartupProfile = true,
+        profileBlock = {
+            startActivityAndWait()
+        },
+    )
 }

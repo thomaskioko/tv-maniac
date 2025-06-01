@@ -20,65 +20,65 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultTrendingShowsDao(
-  database: TvManiacDatabase,
-  private val dispatchers: AppCoroutineDispatchers,
+    database: TvManiacDatabase,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : TrendingShowsDao {
 
-  private val trendingShowsQueries = database.trendingShowsQueries
+    private val trendingShowsQueries = database.trendingShowsQueries
 
-  override fun upsert(show: Trending_shows) {
-    trendingShowsQueries.transaction {
-      trendingShowsQueries.insert(
-        id = show.id,
-        page = show.page,
-      )
-    }
-  }
-
-  override fun observeTvShow(page: Long): Flow<List<ShowEntity>> =
-    trendingShowsQueries
-      .trendingShowsByPage(Id(page)) { id, page, title, imageUrl, inLib ->
-        ShowEntity(
-          id = id.id,
-          page = page.id,
-          title = title,
-          posterPath = imageUrl,
-          inLibrary = inLib == 1L,
-        )
-      }
-      .asFlow()
-      .mapToList(dispatchers.io)
-
-  override fun getPagedTrendingShows(): PagingSource<Int, ShowEntity> =
-    QueryPagingSource(
-      countQuery = trendingShowsQueries.count(),
-      transacter = trendingShowsQueries,
-      context = dispatchers.io,
-      queryProvider = { limit, offset ->
-        trendingShowsQueries.pagedTrendingShows(
-          limit = limit,
-          offset = offset,
-        ) { id, page, title, imageUrl, inLib ->
-          ShowEntity(
-            id = id.id,
-            page = page.id,
-            title = title,
-            posterPath = imageUrl,
-            inLibrary = inLib == 1L,
-          )
+    override fun upsert(show: Trending_shows) {
+        trendingShowsQueries.transaction {
+            trendingShowsQueries.insert(
+                id = show.id,
+                page = show.page,
+            )
         }
-      },
-    )
+    }
 
-  override fun pageExists(page: Long): Boolean {
-    return trendingShowsQueries.pageExists(Id(page)).executeAsOne()
-  }
+    override fun observeTvShow(page: Long): Flow<List<ShowEntity>> =
+        trendingShowsQueries
+            .trendingShowsByPage(Id(page)) { id, page, title, imageUrl, inLib ->
+                ShowEntity(
+                    id = id.id,
+                    page = page.id,
+                    title = title,
+                    posterPath = imageUrl,
+                    inLibrary = inLib == 1L,
+                )
+            }
+            .asFlow()
+            .mapToList(dispatchers.io)
 
-  override fun deleteTrendingShow(id: Long) {
-    trendingShowsQueries.delete(Id(id))
-  }
+    override fun getPagedTrendingShows(): PagingSource<Int, ShowEntity> =
+        QueryPagingSource(
+            countQuery = trendingShowsQueries.count(),
+            transacter = trendingShowsQueries,
+            context = dispatchers.io,
+            queryProvider = { limit, offset ->
+                trendingShowsQueries.pagedTrendingShows(
+                    limit = limit,
+                    offset = offset,
+                ) { id, page, title, imageUrl, inLib ->
+                    ShowEntity(
+                        id = id.id,
+                        page = page.id,
+                        title = title,
+                        posterPath = imageUrl,
+                        inLibrary = inLib == 1L,
+                    )
+                }
+            },
+        )
 
-  override fun deleteTrendingShows() {
-    trendingShowsQueries.transaction { trendingShowsQueries.deleteAll() }
-  }
+    override fun pageExists(page: Long): Boolean {
+        return trendingShowsQueries.pageExists(Id(page)).executeAsOne()
+    }
+
+    override fun deleteTrendingShow(id: Long) {
+        trendingShowsQueries.delete(Id(id))
+    }
+
+    override fun deleteTrendingShows() {
+        trendingShowsQueries.transaction { trendingShowsQueries.deleteAll() }
+    }
 }

@@ -32,8 +32,8 @@ dependencyResolutionManagement {
 }
 
 plugins {
-  id("com.gradle.develocity") version ("4.0.1")
-  id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
+  id("com.gradle.develocity") version ("4.0.2")
+  id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 develocity {
@@ -55,7 +55,6 @@ include(
   ":android-feature:show-details",
   ":android-feature:trailers",
   ":android-feature:watchlist",
-  ":android-resources",
   ":api:tmdb:api",
   ":api:tmdb:implementation",
   ":api:trakt:api",
@@ -141,6 +140,9 @@ include(
   ":domain:showdetails",
   ":domain:similarshows",
   ":domain:watchproviders",
+  ":i18n:api",
+  ":i18n:generator",
+  ":i18n:implementation",
   ":navigation:api",
   ":navigation:implementation",
   ":presenter:discover",

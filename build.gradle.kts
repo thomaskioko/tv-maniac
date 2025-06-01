@@ -9,12 +9,13 @@ plugins {
   alias(libs.plugins.kotlin.jvm) apply false
   alias(libs.plugins.ksp) apply false
   alias(libs.plugins.multiplatform) apply false
+  alias(libs.plugins.android.kotlin.multiplatform) apply false
+  alias(libs.plugins.moko.resources) apply false
   alias(libs.plugins.serialization) apply false
   alias(libs.plugins.skie) apply false
   alias(libs.plugins.spotless) apply false
   alias(libs.plugins.sqldelight) apply false
   alias(libs.plugins.roborazzi) apply false
 
-  alias(libs.plugins.tvmaniac.spotless)
   alias(libs.plugins.tvmaniac.root)
 }

@@ -5,14 +5,14 @@ import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisode
 import kotlinx.coroutines.flow.Flow
 
 interface SeasonDetailsRepository {
-  suspend fun fetchSeasonDetails(
-    param: SeasonDetailsParam,
-    forceRefresh: Boolean = false,
-  )
+    suspend fun fetchSeasonDetails(
+        param: SeasonDetailsParam,
+        forceRefresh: Boolean = false,
+    )
 
-  fun observeSeasonDetails(
-    param: SeasonDetailsParam,
-  ): Flow<SeasonDetailsWithEpisodes>
+    fun observeSeasonDetails(
+        param: SeasonDetailsParam,
+    ): Flow<SeasonDetailsWithEpisodes>
 
-  fun observeSeasonImages(id: Long): Flow<List<Season_images>>
+    fun observeSeasonImages(id: Long): Flow<List<Season_images>>
 }

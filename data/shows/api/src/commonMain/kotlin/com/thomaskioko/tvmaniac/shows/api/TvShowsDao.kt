@@ -5,15 +5,15 @@ import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.flow.Flow
 
 interface TvShowsDao {
-  fun upsert(show: Tvshow)
+    fun upsert(show: Tvshow)
 
-  fun upsert(list: List<Tvshow>)
+    fun upsert(list: List<Tvshow>)
 
-  fun observeShowsByQuery(query: String): Flow<List<ShowEntity>>
+    fun observeShowsByQuery(query: String): Flow<List<ShowEntity>>
 
-  fun observeQueryCount(query: String): Flow<Long>
+    fun observeQueryCount(query: String): Flow<Long>
 
-  fun deleteTvShows()
+    fun deleteTvShows()
 
-  suspend fun shouldUpdateShows(shows: List<Int>): Boolean
+    suspend fun shouldUpdateShows(shows: List<Int>): Boolean
 }

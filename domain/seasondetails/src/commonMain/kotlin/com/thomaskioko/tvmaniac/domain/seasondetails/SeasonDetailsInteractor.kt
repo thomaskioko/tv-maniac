@@ -10,17 +10,17 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class SeasonDetailsInteractor(
-  private val seasonDetailsRepository: SeasonDetailsRepository,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val seasonDetailsRepository: SeasonDetailsRepository,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Param>() {
-  override suspend fun doWork(params: Param) {
-    withContext(dispatchers.io) {
-      seasonDetailsRepository.fetchSeasonDetails(
-        param = params.seasonDetails,
-        forceRefresh = params.forceRefresh,
-      )
+    override suspend fun doWork(params: Param) {
+        withContext(dispatchers.io) {
+            seasonDetailsRepository.fetchSeasonDetails(
+                param = params.seasonDetails,
+                forceRefresh = params.forceRefresh,
+            )
+        }
     }
-  }
 
-  data class Param(val seasonDetails: SeasonDetailsParam, val forceRefresh: Boolean = false)
+    data class Param(val seasonDetails: SeasonDetailsParam, val forceRefresh: Boolean = false)
 }

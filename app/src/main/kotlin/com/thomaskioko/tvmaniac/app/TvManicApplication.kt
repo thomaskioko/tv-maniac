@@ -6,16 +6,16 @@ import com.thomaskioko.tvmaniac.inject.ApplicationComponent
 import com.thomaskioko.tvmaniac.inject.create
 
 class TvManicApplication : Application() {
-  private val component: ApplicationComponent by unsafeLazy {
-    ApplicationComponent::class.create(
-      this,
-    )
-  }
+    private val component: ApplicationComponent by unsafeLazy {
+        ApplicationComponent::class.create(
+            this,
+        )
+    }
 
-  override fun onCreate() {
-    super.onCreate()
-    component.initializers.initialize()
-  }
+    override fun onCreate() {
+        super.onCreate()
+        component.initializers.initialize()
+    }
 
-  fun getApplicationComponent() = component
+    fun getApplicationComponent() = component
 }

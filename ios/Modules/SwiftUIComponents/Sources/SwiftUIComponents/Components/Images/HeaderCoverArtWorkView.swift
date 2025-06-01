@@ -1,5 +1,5 @@
 //
-//  CoverArtWorkView.swift
+//  HeaderCoverArtWorkView.swift
 //  tv-maniac
 //
 //  Created by Thomas Kioko on 19.12.23.
@@ -25,7 +25,7 @@ public struct HeaderCoverArtWorkView: View {
     }
 
     public var body: some View {
-        if let imageUrl = imageUrl {
+        if let imageUrl {
             WebImage(
                 url: URL(string: imageUrl), options: .highPriority
             ) { image in

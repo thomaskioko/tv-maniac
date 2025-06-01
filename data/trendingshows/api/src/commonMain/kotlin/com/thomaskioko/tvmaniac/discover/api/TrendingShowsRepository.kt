@@ -8,13 +8,13 @@ const val DEFAULT_API_PAGE: Long = 1
 
 interface TrendingShowsRepository {
 
-  suspend fun fetchTrendingShows(
-    forceRefresh: Boolean,
-  )
+    suspend fun fetchTrendingShows(
+        forceRefresh: Boolean,
+    )
 
-  fun observeTrendingShows(
-    page: Long = DEFAULT_API_PAGE,
-  ): Flow<List<ShowEntity>>
+    fun observeTrendingShows(
+        page: Long = DEFAULT_API_PAGE,
+    ): Flow<List<ShowEntity>>
 
-  fun getPagedTrendingShows(forceRefresh: Boolean = false): Flow<PagingData<ShowEntity>>
+    fun getPagedTrendingShows(forceRefresh: Boolean = false): Flow<PagingData<ShowEntity>>
 }

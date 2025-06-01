@@ -38,12 +38,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.android.resources.R
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
@@ -52,6 +51,13 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
+import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
+import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_search
+import com.thomaskioko.tvmaniac.i18n.MR.strings.missing_api_key
+import com.thomaskioko.tvmaniac.i18n.MR.strings.msg_search_show_hint
+import com.thomaskioko.tvmaniac.i18n.MR.strings.search_no_results
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.search.DismissSnackBar
 import com.thomaskioko.tvmaniac.presentation.search.EmptySearchResult
 import com.thomaskioko.tvmaniac.presentation.search.GenreCategoryClicked
@@ -72,265 +78,258 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun SearchScreen(
-  presenter: SearchShowsPresenter,
-  modifier: Modifier = Modifier,
+    presenter: SearchShowsPresenter,
+    modifier: Modifier = Modifier,
 ) {
-  val state by presenter.state.collectAsState()
+    val state by presenter.state.collectAsState()
 
-  SearchScreen(
-    modifier = modifier,
-    state = state,
-    onAction = presenter::dispatch,
-  )
+    SearchScreen(
+        modifier = modifier,
+        state = state,
+        onAction = presenter::dispatch,
+    )
 }
 
 @Composable
 internal fun SearchScreen(
-  state: SearchShowState,
-  modifier: Modifier = Modifier,
-  onAction: (SearchShowAction) -> Unit,
+    state: SearchShowState,
+    modifier: Modifier = Modifier,
+    onAction: (SearchShowAction) -> Unit,
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val snackBarHostState = remember { SnackbarHostState() }
+    val lazyListState = rememberLazyListState()
 
-  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-  val snackBarHostState = remember { SnackbarHostState() }
-  val lazyListState = rememberLazyListState()
-
-  Scaffold(
-    modifier = modifier.statusBarsPadding(),
-    snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
-    topBar = {
-      TvManiacTopBar(
-        title = {
-          Text(
-            text = stringResource(id = R.string.menu_item_search),
-            style =
-              MaterialTheme.typography.titleLarge.copy(
-                color = MaterialTheme.colorScheme.onSurface,
-              ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-              .fillMaxWidth()
-              .padding(start = 16.dp),
-          )
+    Scaffold(
+        modifier = modifier.statusBarsPadding(),
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+        topBar = {
+            TvManiacTopBar(
+                title = {
+                    Text(
+                        text = menu_item_search.resolve(LocalContext.current),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = MaterialTheme.colorScheme.onSurface,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp),
+                    )
+                },
+                scrollBehavior = scrollBehavior,
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    scrolledContainerColor = MaterialTheme.colorScheme.background,
+                ),
+            )
         },
-        scrollBehavior = scrollBehavior,
-        colors =
-          TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            scrolledContainerColor = MaterialTheme.colorScheme.background,
-          ),
-      )
-    },
-    content = { paddingValues ->
-      SearchScreenContent(
-        state = state,
-        paddingValues = paddingValues,
-        scrollBehavior = scrollBehavior,
-        onAction = onAction,
-        snackBarHostState = snackBarHostState,
-        lazyListState = lazyListState,
-      )
-    },
-  )
+        content = { paddingValues ->
+            SearchScreenContent(
+                state = state,
+                paddingValues = paddingValues,
+                scrollBehavior = scrollBehavior,
+                onAction = onAction,
+                snackBarHostState = snackBarHostState,
+                lazyListState = lazyListState,
+            )
+        },
+    )
 }
 
 @Composable
 private fun SearchScreenContent(
-  state: SearchShowState,
-  paddingValues: PaddingValues,
-  scrollBehavior: TopAppBarScrollBehavior,
-  onAction: (SearchShowAction) -> Unit,
-  snackBarHostState: SnackbarHostState,
-  lazyListState: LazyListState,
+    state: SearchShowState,
+    paddingValues: PaddingValues,
+    scrollBehavior: TopAppBarScrollBehavior,
+    onAction: (SearchShowAction) -> Unit,
+    snackBarHostState: SnackbarHostState,
+    lazyListState: LazyListState,
 ) {
-  SearchScreenHeader(
-    query = state.query ?: "",
-    paddingValues = paddingValues,
-    scrollBehavior = scrollBehavior,
-    onAction = onAction,
-    lazyListState = lazyListState,
-  ) {
-
-    when (state) {
-      is EmptySearchResult -> {
-        if (state.errorMessage != null) {
-          EmptyContent(
-            imageVector = Icons.Outlined.ErrorOutline,
-            title = stringResource(R.string.generic_empty_content),
-            message = stringResource(R.string.missing_api_key),
-            buttonText = stringResource(id = R.string.generic_retry),
-            onClick = { onAction(ReloadShowContent) },
-          )
-        } else {
-          EmptyContent(
-            imageVector = Icons.Filled.SearchOff,
-            title = stringResource(R.string.search_no_results),
-          )
+    SearchScreenHeader(
+        query = state.query ?: "",
+        paddingValues = paddingValues,
+        scrollBehavior = scrollBehavior,
+        onAction = onAction,
+        lazyListState = lazyListState,
+    ) {
+        when (state) {
+            is EmptySearchResult -> {
+                val context = LocalContext.current
+                if (state.errorMessage != null) {
+                    EmptyContent(
+                        imageVector = Icons.Outlined.ErrorOutline,
+                        title = generic_empty_content.resolve(context),
+                        message = missing_api_key.resolve(context),
+                        buttonText = generic_retry.resolve(context),
+                        onClick = { onAction(ReloadShowContent) },
+                    )
+                } else {
+                    EmptyContent(
+                        imageVector = Icons.Filled.SearchOff,
+                        title = search_no_results.resolve(LocalContext.current),
+                    )
+                }
+            }
+            is SearchResultAvailable -> SearchResultsContent(
+                onAction = onAction,
+                results = state.results,
+                scrollState = lazyListState,
+            )
+            is ShowContentAvailable -> ShowContent(
+                onAction = onAction,
+                genres = state.genres,
+                errorMessage = state.errorMessage,
+                snackBarHostState = snackBarHostState,
+                lazyListState = lazyListState,
+            )
+            is InitialSearchState -> LoadingIndicator()
         }
-      }
-      is SearchResultAvailable ->
-        SearchResultsContent(
-          onAction = onAction,
-          results = state.results,
-          scrollState = lazyListState,
-        )
-      is ShowContentAvailable -> {
-        ShowContent(
-          onAction = onAction,
-          genres = state.genres,
-          errorMessage = state.errorMessage,
-          snackBarHostState = snackBarHostState,
-          lazyListState = lazyListState,
-        )
-      }
-      is InitialSearchState -> LoadingIndicator()
     }
-  }
 }
 
 @Composable
 private fun SearchScreenHeader(
-  query: String,
-  onAction: (SearchShowAction) -> Unit,
-  paddingValues: PaddingValues,
-  scrollBehavior: TopAppBarScrollBehavior,
-  lazyListState: LazyListState,
-  modifier: Modifier = Modifier,
-  content: @Composable () -> Unit,
+    query: String,
+    onAction: (SearchShowAction) -> Unit,
+    paddingValues: PaddingValues,
+    scrollBehavior: TopAppBarScrollBehavior,
+    lazyListState: LazyListState,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
-
-  Column(
-    modifier = modifier
-      .nestedScroll(scrollBehavior.nestedScrollConnection)
-      .padding(horizontal = 16.dp)
-      .padding(paddingValues.copy(copyBottom = false)),
-  ) {
-    SearchTextContainer(
-      query = query,
-      hint = stringResource(id = R.string.msg_search_show_hint),
-      lazyListState = lazyListState,
-      onAction = onAction,
-      content = content,
-    )
-
-  }
+    Column(
+        modifier = modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .padding(horizontal = 16.dp)
+            .padding(paddingValues.copy(copyBottom = false)),
+    ) {
+        SearchTextContainer(
+            query = query,
+            hint = msg_search_show_hint.resolve(LocalContext.current),
+            lazyListState = lazyListState,
+            onAction = onAction,
+            content = content,
+        )
+    }
 }
 
 @Composable
 private fun SearchResultsContent(
-  onAction: (SearchShowAction) -> Unit,
-  scrollState: LazyListState,
-  results: ImmutableList<ShowItem>?,
-  modifier: Modifier = Modifier,
+    onAction: (SearchShowAction) -> Unit,
+    scrollState: LazyListState,
+    results: ImmutableList<ShowItem>?,
+    modifier: Modifier = Modifier,
 ) {
-  if (results.isNullOrEmpty()) return
+    if (results.isNullOrEmpty()) return
 
-  LazyColumn(
-    modifier = modifier,
-    state = scrollState,
-  ) {
-    items(results) { item ->
+    LazyColumn(
+        modifier = modifier,
+        state = scrollState,
+    ) {
+        items(results) { item ->
 
-      Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-      SearchResultItem(
-        title = item.title,
-        status = item.status,
-        voteAverage = item.voteAverage,
-        year = item.year,
-        overview = item.overview,
-        imageUrl = item.posterImageUrl,
-        onClick = { onAction(SearchShowClicked(item.tmdbId)) },
-      )
+            SearchResultItem(
+                title = item.title,
+                status = item.status,
+                voteAverage = item.voteAverage,
+                year = item.year,
+                overview = item.overview,
+                imageUrl = item.posterImageUrl,
+                onClick = { onAction(SearchShowClicked(item.tmdbId)) },
+            )
+        }
     }
-  }
 }
 
 @Composable
 private fun ShowContent(
-  errorMessage: String?,
-  snackBarHostState: SnackbarHostState,
-  lazyListState: LazyListState,
-  onAction: (SearchShowAction) -> Unit,
-  genres: ImmutableList<ShowGenre>,
-  modifier: Modifier = Modifier,
+    errorMessage: String?,
+    snackBarHostState: SnackbarHostState,
+    lazyListState: LazyListState,
+    onAction: (SearchShowAction) -> Unit,
+    genres: ImmutableList<ShowGenre>,
+    modifier: Modifier = Modifier,
 ) {
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            val snackBarResult = snackBarHostState.showSnackbar(
+                message = errorMessage,
+                duration = SnackbarDuration.Short,
+            )
 
-  LaunchedEffect(errorMessage) {
-
-    errorMessage?.let {
-      val snackBarResult = snackBarHostState.showSnackbar(
-        message = errorMessage,
-        duration = SnackbarDuration.Short,
-      )
-
-      when (snackBarResult) {
-        SnackbarResult.ActionPerformed,
-        SnackbarResult.Dismissed,
-          -> onAction(DismissSnackBar)
-      }
+            when (snackBarResult) {
+                SnackbarResult.ActionPerformed,
+                SnackbarResult.Dismissed,
+                -> onAction(DismissSnackBar)
+            }
+        }
     }
-  }
-  GenreContent(
-    genres = genres,
-    onItemClicked = { onAction(GenreCategoryClicked(it)) },
-    modifier = modifier,
-    lazyListState = lazyListState,
-  )
+
+    GenreContent(
+        genres = genres,
+        onItemClicked = { onAction(GenreCategoryClicked(it)) },
+        modifier = modifier,
+        lazyListState = lazyListState,
+    )
 }
 
 @Composable
 private fun GenreContent(
-  lazyListState: LazyListState,
-  genres: ImmutableList<ShowGenre>,
-  onItemClicked: (Long) -> Unit,
-  modifier: Modifier = Modifier,
+    lazyListState: LazyListState,
+    genres: ImmutableList<ShowGenre>,
+    onItemClicked: (Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  Column(
-    modifier = modifier
-      .fillMaxSize()
-      .padding(top = 4.dp),
-  ) {
-    BoxTextItems(
-      modifier = Modifier.padding(vertical = 12.dp),
-      title = "Browse by Genre",
-    )
-
-    LazyVerticalStaggeredGrid(
-      columns = StaggeredGridCells.Fixed(2),
-      verticalItemSpacing = 8.dp,
-      flingBehavior = rememberSnapperFlingBehavior(lazyListState),
-      horizontalArrangement = Arrangement.spacedBy(8.dp),
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(top = 4.dp),
     ) {
-      items(genres) { showGenre ->
+        if (genres.isEmpty()) return
 
-        PosterBackdropCard(
-          darkTheme = true,
-          textAlign = TextAlign.Center,
-          imageUrl = showGenre.posterUrl,
-          title = showGenre.name,
-          modifier = Modifier
-            .width(160.dp)
-            .heightIn(160.dp, 220.dp),
-          onClick = { onItemClicked(showGenre.id) },
+        BoxTextItems(
+            modifier = Modifier.padding(vertical = 12.dp),
+            title = "Browse by Genre",
         )
-      }
+
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
+            verticalItemSpacing = 8.dp,
+            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            items(genres) { showGenre ->
+
+                PosterBackdropCard(
+                    darkTheme = true,
+                    textAlign = TextAlign.Center,
+                    imageUrl = showGenre.posterUrl,
+                    title = showGenre.name,
+                    modifier = Modifier
+                        .width(160.dp)
+                        .heightIn(160.dp, 220.dp),
+                    onClick = { onItemClicked(showGenre.id) },
+                )
+            }
+        }
     }
-  }
 }
 
 @ThemePreviews
 @Composable
 private fun SearchContentPreview(
-  @PreviewParameter(SearchPreviewParameterProvider::class) state: SearchShowState,
+    @PreviewParameter(SearchPreviewParameterProvider::class) state: SearchShowState,
 ) {
-  TvManiacTheme {
-    Surface {
-      SearchScreen(
-        state = state,
-        onAction = {},
-      )
+    TvManiacTheme {
+        Surface {
+            SearchScreen(
+                state = state,
+                onAction = {},
+            )
+        }
     }
-  }
 }

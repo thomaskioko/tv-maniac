@@ -1,5 +1,5 @@
 //
-//  ItemContentPosterView.swift
+//  PosterItemView.swift
 //  tv-maniac
 //
 //  Created by Thomas Kioko on 19.12.23.
@@ -37,25 +37,25 @@ public struct PosterItemView: View {
     }
 
     public var body: some View {
-        if let posterUrl = posterUrl {
+        if let posterUrl {
             WebImage(
                 url: URL(string: posterUrl),
                 options: [
-                   .retryFailed,
+                    .retryFailed,
                     .highPriority,
-                   .scaleDownLargeImages
+                    .scaleDownLargeImages,
                 ],
                 context: [
                     .imageThumbnailPixelSize: CGSize(
                         width: posterWidth * 2,
                         height: posterHeight * 2
                     ),
-                    .imageForceDecodePolicy: SDImageForceDecodePolicy.never.rawValue
+                    .imageForceDecodePolicy: SDImageForceDecodePolicy.never.rawValue,
                 ]
             ) { image in
                 image
-                .resizable()
-                .scaledToFill()
+                    .resizable()
+                    .scaledToFill()
             } placeholder: {
                 PosterPlaceholder(
                     title: title,
@@ -69,9 +69,9 @@ public struct PosterItemView: View {
             .clipShape(RoundedRectangle(cornerRadius: posterRadius, style: .continuous))
             .frame(width: posterWidth, height: posterHeight)
             .overlay {
-              if isInLibrary {
-                LibraryOverlay(libraryImageOverlay: libraryImageOverlay)
-              }
+                if isInLibrary {
+                    LibraryOverlay(libraryImageOverlay: libraryImageOverlay)
+                }
             }
         } else {
             PosterPlaceholder(
@@ -86,34 +86,34 @@ public struct PosterItemView: View {
 
 @ViewBuilder
 private func LibraryOverlay(libraryImageOverlay: String) -> some View {
-  VStack {
-    Spacer()
-    HStack {
-      Spacer()
-      Image(systemName: libraryImageOverlay)
-        .imageScale(.medium)
-        .foregroundColor(.white.opacity(0.9))
-        .padding([.vertical])
-        .padding(.trailing, 16)
-        .font(.caption)
-    }
-    .background {
-      Color.black.opacity(0.6)
-        .mask {
-          LinearGradient(
-            colors: [
-              Color.black,
-              Color.black.opacity(0.924),
-              Color.black.opacity(0.707),
-              Color.black.opacity(0.383),
-              Color.black.opacity(0)
-            ],
-            startPoint: .bottom,
-            endPoint: .top
-          )
+    VStack {
+        Spacer()
+        HStack {
+            Spacer()
+            Image(systemName: libraryImageOverlay)
+                .imageScale(.medium)
+                .foregroundColor(.white.opacity(0.9))
+                .padding([.vertical])
+                .padding(.trailing, 16)
+                .font(.caption)
+        }
+        .background {
+            Color.black.opacity(0.6)
+                .mask {
+                    LinearGradient(
+                        colors: [
+                            Color.black,
+                            Color.black.opacity(0.924),
+                            Color.black.opacity(0.707),
+                            Color.black.opacity(0.383),
+                            Color.black.opacity(0),
+                        ],
+                        startPoint: .bottom,
+                        endPoint: .top
+                    )
+                }
         }
     }
-  }
 }
 
 private enum DimensionConstants {

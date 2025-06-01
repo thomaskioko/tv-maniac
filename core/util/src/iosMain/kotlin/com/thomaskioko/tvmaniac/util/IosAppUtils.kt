@@ -12,5 +12,5 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(AppScope::class)
 class IosAppUtils : AppUtils {
 
-  override fun isYoutubePlayerInstalled(): Flow<Boolean> = flowOf(false)
+    override fun isYoutubePlayerInstalled(): Flow<Boolean> = flowOf(false)
 }

@@ -7,9 +7,9 @@ import kotlin.coroutines.CoroutineContext
 
 class NsQueueCoroutineScope : CoroutineScope {
 
-  private val coroutineDispatcher: CoroutineDispatcher = applicationNsQueueDispatcher
-  private val job = Job()
+    private val coroutineDispatcher: CoroutineDispatcher = applicationNsQueueDispatcher
+    private val job = Job()
 
-  override val coroutineContext: CoroutineContext
-    get() = job + coroutineDispatcher
+    override val coroutineContext: CoroutineContext
+        get() = job + coroutineDispatcher
 }

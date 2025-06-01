@@ -11,10 +11,9 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(AppScope::class)
 class DefaultIOSTraktAuthManager : TraktAuthManager {
 
-  override fun launchWebView() {
-  }
+    override fun launchWebView() {
+    }
 
-  override fun registerResult() {
-  }
-
+    override fun registerResult() {
+    }
 }

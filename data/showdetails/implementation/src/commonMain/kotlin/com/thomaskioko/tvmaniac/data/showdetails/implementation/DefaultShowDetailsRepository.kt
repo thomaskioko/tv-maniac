@@ -15,17 +15,17 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultShowDetailsRepository(
-  private val showStore: ShowDetailsStore,
-  private val dao: ShowDetailsDao,
+    private val showStore: ShowDetailsStore,
+    private val dao: ShowDetailsDao,
 ) : ShowDetailsRepository {
 
-  override suspend fun fetchShowDetails(id: Long, forceRefresh: Boolean) {
-    val statusIsNull = dao.getTvShow(id).status.isNullOrBlank()
-    when {
-      forceRefresh || statusIsNull -> showStore.fresh(id)
-      else -> showStore.get(id)
+    override suspend fun fetchShowDetails(id: Long, forceRefresh: Boolean) {
+        val statusIsNull = dao.getTvShow(id).status.isNullOrBlank()
+        when {
+            forceRefresh || statusIsNull -> showStore.fresh(id)
+            else -> showStore.get(id)
+        }
     }
-  }
 
-  override fun observeShowDetails(id: Long): Flow<TvshowDetails> = dao.observeTvShows(id)
+    override fun observeShowDetails(id: Long): Flow<TvshowDetails> = dao.observeTvShows(id)
 }

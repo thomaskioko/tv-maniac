@@ -24,19 +24,19 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
  */
 @Composable
 fun TvManiacBackground(
-  modifier: Modifier = Modifier,
-  content: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
-  val color = LocalBackgroundTheme.current.color
-  val tonalElevation = LocalBackgroundTheme.current.tonalElevation
+    val color = LocalBackgroundTheme.current.color
+    val tonalElevation = LocalBackgroundTheme.current.tonalElevation
 
-  Surface(
-    color = if (color == Color.Unspecified) Color.Transparent else color,
-    tonalElevation = if (tonalElevation == Dp.Unspecified) 0.dp else tonalElevation,
-    modifier = modifier.fillMaxSize(),
-  ) {
-    CompositionLocalProvider(LocalAbsoluteTonalElevation provides 0.dp) { content() }
-  }
+    Surface(
+        color = if (color == Color.Unspecified) Color.Transparent else color,
+        tonalElevation = if (tonalElevation == Dp.Unspecified) 0.dp else tonalElevation,
+        modifier = modifier.fillMaxSize(),
+    ) {
+        CompositionLocalProvider(LocalAbsoluteTonalElevation provides 0.dp) { content() }
+    }
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, name = "Light Theme", showBackground = true)
@@ -46,5 +46,5 @@ annotation class ThemePreviews
 @ThemePreviews
 @Composable
 private fun BackgroundDefault() {
-  TvManiacTheme { TvManiacBackground(Modifier.size(100.dp), content = {}) }
+    TvManiacTheme { TvManiacBackground(Modifier.size(100.dp), content = {}) }
 }

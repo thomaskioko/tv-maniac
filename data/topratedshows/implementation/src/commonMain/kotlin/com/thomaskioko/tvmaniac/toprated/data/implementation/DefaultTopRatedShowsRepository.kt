@@ -25,63 +25,63 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultTopRatedShowsRepository(
-  private val store: TopRatedShowsStore,
-  private val requestManagerRepository: RequestManagerRepository,
-  private val dao: TopRatedShowsDao,
-  private val logger: Logger,
+    private val store: TopRatedShowsStore,
+    private val requestManagerRepository: RequestManagerRepository,
+    private val dao: TopRatedShowsDao,
+    private val logger: Logger,
 ) : TopRatedShowsRepository {
 
-  override suspend fun fetchTopRatedShows(forceRefresh: Boolean) {
-    val page = DEFAULT_API_PAGE //TODO:: Get the page from the dao
-    when {
-      forceRefresh -> store.fresh(page)
-      else -> store.get(page)
+    override suspend fun fetchTopRatedShows(forceRefresh: Boolean) {
+        val page = DEFAULT_API_PAGE // TODO:: Get the page from the dao
+        when {
+            forceRefresh -> store.fresh(page)
+            else -> store.get(page)
+        }
     }
-  }
 
-  override fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>> = dao.observeTopRatedShows(page)
+    override fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>> = dao.observeTopRatedShows(page)
 
-  override fun getPagedTopRatedShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
-    return Pager(
-      config = pagingConfig,
-      remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
-      pagingSourceFactory = dao::getPagedTopRatedShows,
-    )
-      .flow
-  }
-
-  private suspend fun fetchPage(page: Long, forceRefresh: Boolean): FetchResult {
-    return if (shouldFetchPage(page, forceRefresh)) {
-      try {
-        val result = store.fresh(page)
-        updateRequestManager(page)
-        FetchResult.Success(endOfPaginationReached = result.isEmpty())
-      } catch (e: CancellationException) {
-        throw e
-      } catch (e: Exception) {
-        logger.error("Error while fetching from TopRatedShows RemoteMediator", e)
-        FetchResult.Error(e)
-      }
-    } else {
-      FetchResult.NoFetch
+    override fun getPagedTopRatedShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
+        return Pager(
+            config = pagingConfig,
+            remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
+            pagingSourceFactory = dao::getPagedTopRatedShows,
+        )
+            .flow
     }
-  }
 
-  private fun shouldFetchPage(page: Long, forceRefresh: Boolean): Boolean {
-    if (forceRefresh) return true
-    val pageExists = dao.pageExists(page)
-    return !pageExists || isRequestExpired(page)
-  }
+    private suspend fun fetchPage(page: Long, forceRefresh: Boolean): FetchResult {
+        return if (shouldFetchPage(page, forceRefresh)) {
+            try {
+                val result = store.fresh(page)
+                updateRequestManager(page)
+                FetchResult.Success(endOfPaginationReached = result.isEmpty())
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                logger.error("Error while fetching from TopRatedShows RemoteMediator", e)
+                FetchResult.Error(e)
+            }
+        } else {
+            FetchResult.NoFetch
+        }
+    }
 
-  private fun isRequestExpired(page: Long): Boolean {
-    return requestManagerRepository.isRequestExpired(
-      entityId = page,
-      requestType = TOP_RATED_SHOWS.name,
-      threshold = TOP_RATED_SHOWS.duration,
-    )
-  }
+    private fun shouldFetchPage(page: Long, forceRefresh: Boolean): Boolean {
+        if (forceRefresh) return true
+        val pageExists = dao.pageExists(page)
+        return !pageExists || isRequestExpired(page)
+    }
 
-  private fun updateRequestManager(page: Long) {
-    requestManagerRepository.upsert(entityId = page, requestType = TOP_RATED_SHOWS.name)
-  }
+    private fun isRequestExpired(page: Long): Boolean {
+        return requestManagerRepository.isRequestExpired(
+            entityId = page,
+            requestType = TOP_RATED_SHOWS.name,
+            threshold = TOP_RATED_SHOWS.duration,
+        )
+    }
+
+    private fun updateRequestManager(page: Long) {
+        requestManagerRepository.upsert(entityId = page, requestType = TOP_RATED_SHOWS.name)
+    }
 }

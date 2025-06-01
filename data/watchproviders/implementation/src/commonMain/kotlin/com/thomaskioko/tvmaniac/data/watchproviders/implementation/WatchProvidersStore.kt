@@ -23,68 +23,68 @@ import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
 class WatchProvidersStore(
-  private val remoteDataSource: TmdbShowDetailsNetworkDataSource,
-  private val dao: WatchProviderDao,
-  private val formatterUtil: FormatterUtil,
-  private val requestManagerRepository: RequestManagerRepository,
-  private val databaseTransactionRunner: DatabaseTransactionRunner,
-  private val dispatchers: AppCoroutineDispatchers,
+    private val remoteDataSource: TmdbShowDetailsNetworkDataSource,
+    private val dao: WatchProviderDao,
+    private val formatterUtil: FormatterUtil,
+    private val requestManagerRepository: RequestManagerRepository,
+    private val databaseTransactionRunner: DatabaseTransactionRunner,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<WatchProviders>> by storeBuilder(
-  fetcher = Fetcher.of { id ->
-    when (val response = remoteDataSource.getShowWatchProviders(id)) {
-      is ApiResponse.Success -> response.body
-      is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
-      is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
-      is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
-    }
-  },
-  sourceOfTruth = SourceOfTruth.of<Long, WatchProvidersResult, List<WatchProviders>>(
-    reader = { id -> dao.observeWatchProviders(id) },
-    writer = { id, response ->
-      databaseTransactionRunner {
-        // TODO:: Get users locale and format the date accordingly.
-        response.results.US?.let { usProvider ->
-          usProvider.free.forEach {
-            dao.upsert(
-              Watch_providers(
-                id = Id(it.providerId.toLong()),
-                logo_path = it.logoPath?.let { path -> formatterUtil.formatTmdbPosterPath(path) },
-                name = it.providerName,
-                tmdb_id = Id(id),
-              ),
-            )
-          }
-          usProvider.flatrate.forEach {
-            dao.upsert(
-              Watch_providers(
-                id = Id(it.providerId.toLong()),
-                logo_path = it.logoPath?.let { path -> formatterUtil.formatTmdbPosterPath(path) },
-                name = it.providerName,
-                tmdb_id = Id(id),
-              ),
-            )
-          }
+    fetcher = Fetcher.of { id ->
+        when (val response = remoteDataSource.getShowWatchProviders(id)) {
+            is ApiResponse.Success -> response.body
+            is ApiResponse.Error.GenericError -> throw Throwable("${response.errorMessage}")
+            is ApiResponse.Error.HttpError -> throw Throwable("${response.code} - ${response.errorMessage}")
+            is ApiResponse.Error.SerializationError -> throw Throwable("${response.errorMessage}")
         }
-
-        requestManagerRepository.upsert(
-          entityId = id,
-          requestType = WATCH_PROVIDERS.name,
-        )
-      }
     },
-    delete = { databaseTransactionRunner { dao.delete(it) } },
-    deleteAll = { databaseTransactionRunner(dao::deleteAll) },
-  ).usingDispatchers(
-    readDispatcher = dispatchers.databaseRead,
-    writeDispatcher = dispatchers.databaseWrite,
-  ),
+    sourceOfTruth = SourceOfTruth.of<Long, WatchProvidersResult, List<WatchProviders>>(
+        reader = { id -> dao.observeWatchProviders(id) },
+        writer = { id, response ->
+            databaseTransactionRunner {
+                // TODO:: Get users locale and format the date accordingly.
+                response.results.US?.let { usProvider ->
+                    usProvider.free.forEach {
+                        dao.upsert(
+                            Watch_providers(
+                                id = Id(it.providerId.toLong()),
+                                logo_path = it.logoPath?.let { path -> formatterUtil.formatTmdbPosterPath(path) },
+                                name = it.providerName,
+                                tmdb_id = Id(id),
+                            ),
+                        )
+                    }
+                    usProvider.flatrate.forEach {
+                        dao.upsert(
+                            Watch_providers(
+                                id = Id(it.providerId.toLong()),
+                                logo_path = it.logoPath?.let { path -> formatterUtil.formatTmdbPosterPath(path) },
+                                name = it.providerName,
+                                tmdb_id = Id(id),
+                            ),
+                        )
+                    }
+                }
+
+                requestManagerRepository.upsert(
+                    entityId = id,
+                    requestType = WATCH_PROVIDERS.name,
+                )
+            }
+        },
+        delete = { databaseTransactionRunner { dao.delete(it) } },
+        deleteAll = { databaseTransactionRunner(dao::deleteAll) },
+    ).usingDispatchers(
+        readDispatcher = dispatchers.databaseRead,
+        writeDispatcher = dispatchers.databaseWrite,
+    ),
 ).validator(
-  Validator.by {
-    withContext(dispatchers.io) {
-      requestManagerRepository.isRequestValid(
-        requestType = WATCH_PROVIDERS.name,
-        threshold = WATCH_PROVIDERS.duration,
-      )
-    }
-  },
+    Validator.by {
+        withContext(dispatchers.io) {
+            requestManagerRepository.isRequestValid(
+                requestType = WATCH_PROVIDERS.name,
+                threshold = WATCH_PROVIDERS.duration,
+            )
+        }
+    },
 ).build()
