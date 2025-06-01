@@ -39,14 +39,12 @@ public abstract class BaseExtension(private val project: Project) : ExtensionAwa
 
     }
 
-    public fun useKspAnvilCompiler() {
+    public fun useKotlinInjectAnvilCompiler() {
         project.plugins.apply("com.google.devtools.ksp")
 
-        project.addKspDependencyForAllTargets(project.getDependency("kotlinInject-anvil-compiler"))
-    }
-
-    public fun useKotlinInject() {
         project.addBundleImplementationDependency(project.getBundleDependencies("kotlinInject"))
+
+        project.addKspDependencyForAllTargets(project.getDependency("kotlinInject-anvil-compiler"))
     }
 
     public fun android(configure: AndroidExtension.() -> Unit) {
