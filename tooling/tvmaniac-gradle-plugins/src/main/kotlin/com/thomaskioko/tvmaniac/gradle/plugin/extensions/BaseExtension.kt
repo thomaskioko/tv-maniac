@@ -11,47 +11,45 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 
 public abstract class BaseExtension(private val project: Project) : ExtensionAware {
-  public fun explicitApi() {
-    project.kotlin {
-      explicitApi()
+    public fun explicitApi() {
+        project.kotlin {
+            explicitApi()
+        }
     }
-  }
 
-  public fun optIn(vararg classes: String) {
-    project.kotlin {
-      compilerOptions {
-        optIn.addAll(*classes)
-      }
+    public fun optIn(vararg classes: String) {
+        project.kotlin {
+            compilerOptions {
+                optIn.addAll(*classes)
+            }
+        }
     }
-  }
 
-  public fun useSerialization() {
-    project.plugins.apply("org.jetbrains.kotlin.plugin.serialization")
+    public fun useSerialization() {
+        project.plugins.apply("org.jetbrains.kotlin.plugin.serialization")
 
-    project.addImplementationDependency(project.getDependency("kotlin-serialization-core"))
-  }
+        project.addImplementationDependency(project.getDependency("kotlin-serialization-core"))
+    }
 
-  public fun useKspAnvil() {
-    project.plugins.apply("com.google.devtools.ksp")
+    public fun useKspAnvil() {
+        project.plugins.apply("com.google.devtools.ksp")
 
-    project.addKspDependencyForAllTargets(project.getDependency("kotlinInject-compiler"))
-    project.addKspDependencyForAllTargets(project.getDependency("kotlinInject-anvil-compiler"))
+        project.addKspDependencyForAllTargets(project.getDependency("kotlinInject-compiler"))
+        project.addKspDependencyForAllTargets(project.getDependency("kotlinInject-anvil-compiler"))
 
-  }
+    }
 
-  public fun useKspAnvilCompiler() {
-    project.plugins.apply("com.google.devtools.ksp")
+    public fun useKotlinInjectAnvilCompiler() {
+        project.plugins.apply("com.google.devtools.ksp")
 
-    project.addKspDependencyForAllTargets(project.getDependency("kotlinInject-anvil-compiler"))
-  }
+        project.addBundleImplementationDependency(project.getBundleDependencies("kotlinInject"))
 
-  public fun useKotlinInject() {
-    project.addBundleImplementationDependency(project.getBundleDependencies("kotlinInject"))
-  }
+        project.addKspDependencyForAllTargets(project.getDependency("kotlinInject-anvil-compiler"))
+    }
 
-  public fun android(configure: AndroidExtension.() -> Unit) {
-    val androidExtension = extensions.findByType(AndroidExtension::class.java)
-      ?: throw IllegalStateException("Android extension not found. Did you call addAndroidTarget()?")
-    androidExtension.configure()
-  }
+    public fun android(configure: AndroidExtension.() -> Unit) {
+        val androidExtension = extensions.findByType(AndroidExtension::class.java)
+            ?: throw IllegalStateException("Android extension not found. Did you call addAndroidTarget()?")
+        androidExtension.configure()
+    }
 }

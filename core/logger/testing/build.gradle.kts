@@ -1,11 +1,11 @@
 plugins {
-  alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.tvmaniac.kmp)
 }
 
 kotlin {
-  sourceSets {
-    commonMain.dependencies {
-      implementation(projects.core.logger.api)
+    sourceSets {
+        commonMain.dependencies {
+            implementation(projects.core.logger.api)
+        }
     }
-  }
 }

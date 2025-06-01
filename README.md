@@ -23,10 +23,12 @@ probably doing a couple of things wrong. So a lot is changing, but that shouldn'
 
 > [!IMPORTANT]
 > To fetch data, you will need to [create a TMDB API app](https://www.themoviedb.org/settings/api) and generate an API key if you don't have
-> one. Once you have your keys, add them to the configuration files:
-> - For development builds: `core/util/src/commonMain/resources/dev.yaml` (also accessible via symlink at `dev.yaml` in
-    the root directory)
-> - For production builds: `core/util/src/commonMain/resources/production.yaml`
+> one. Each platform has its own resource key file:
+>
+> - **Android**: Add your API keys to `core/util/src/androidMain/resources/dev.yaml`
+> - **iOS**: Add your API keys to `ios/ios/Resources/dev.yaml`
+>
+> In both files, replace the placeholder values with your actual API keys.
 
 ## 🖥 Project Setup & Environment
 

@@ -1,20 +1,19 @@
 plugins {
-  alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.tvmaniac.kmp)
 }
 
 tvmaniac {
-  multiplatform {
-    useSerialization()
-  }
+    multiplatform {
+        useSerialization()
+    }
 }
 
-
 kotlin {
-  sourceSets {
-    commonMain {
-      dependencies {
-        api(projects.core.networkUtil)
-      }
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(projects.core.networkUtil)
+            }
+        }
     }
-  }
 }

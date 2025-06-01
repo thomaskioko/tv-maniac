@@ -34,7 +34,7 @@ public extension TvManiac.TvShow {
     }
 }
 
-public extension DiscoverShow {
+public extension TvManiac.DiscoverShow {
     func toSwift() -> SwiftShow {
         .init(
             tmdbId: tmdbId,
@@ -121,19 +121,19 @@ public extension TvManiac.TvShow {
     }
 }
 
-public extension EpisodeDetailsModel {
+public extension TvManiac.EpisodeDetailsModel {
     func toSwift() -> SwiftEpisode {
         .init(episodeId: id, title: episodeTitle, overview: overview, imageUrl: imageUrl)
     }
 }
 
-public extension SeasonImagesModel {
+public extension TvManiac.SeasonImagesModel {
     func toSwift() -> SwiftShow {
         .init(tmdbId: id, title: "", posterUrl: imageUrl, inLibrary: false)
     }
 }
 
-public extension ShowItem {
+public extension TvManiac.ShowItem {
     func toSwift() -> SwiftShow {
         .init(
             tmdbId: tmdbId,

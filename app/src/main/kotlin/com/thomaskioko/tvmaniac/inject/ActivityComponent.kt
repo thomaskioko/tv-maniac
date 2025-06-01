@@ -15,13 +15,13 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesSubcomponent(ActivityScope::class)
 @SingleIn(ActivityScope::class)
 interface ActivityComponent {
+    val traktAuthManager: TraktAuthManager
+    val rootPresenter: RootPresenter
+
     @Provides
     fun provideComponentContext(
         activity: ComponentActivity,
     ): ComponentContext = activity.defaultComponentContext()
-
-    val traktAuthManager: TraktAuthManager
-    val rootPresenter: RootPresenter
 
     @ContributesSubcomponent.Factory(AppScope::class)
     interface Factory {

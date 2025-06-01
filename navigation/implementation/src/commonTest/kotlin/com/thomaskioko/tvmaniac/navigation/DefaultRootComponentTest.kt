@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.navigation
 
 import app.cash.turbine.test
-import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
@@ -24,6 +23,7 @@ import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObservableSeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
@@ -36,25 +36,15 @@ import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.Home
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.MoreShows
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.discover.DiscoverPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.home.DefaultHomePresenter
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter
-import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.Mapper
 import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.search.SearchShowsPresenter
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
-import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenter
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.showdetails.model.ShowSeasonDetailsParam
-import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenter
 import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenter
 import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenterFactory
 import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
@@ -97,6 +87,7 @@ class DefaultRootComponentTest {
     )
 
     private lateinit var presenter: DefaultRootPresenter
+    private lateinit var navigator: FakeRootNavigator
 
     @BeforeTest
     fun before() {
@@ -104,13 +95,15 @@ class DefaultRootComponentTest {
         lifecycle.resume()
 
         val componentContext = DefaultComponentContext(lifecycle = lifecycle)
+        navigator = FakeRootNavigator()
         presenter = DefaultRootPresenter(
             componentContext = componentContext,
-            moreShowsPresenterFactory = buildMoreShowsPresenterFactory(componentContext),
-            showDetailsPresenterFactory = buildShowDetailsPresenterPresenterFactory(componentContext),
-            seasonDetailsPresenterFactory = buildSeasonDetailsPresenterFactory(componentContext),
-            trailersPresenterFactory = buildTrailersPresenterFactory(componentContext),
-            homePresenterFactory = buildHomePresenterFactory(componentContext),
+            navigator = navigator,
+            moreShowsPresenterFactory = buildMoreShowsPresenterFactory(),
+            showDetailsPresenterFactory = buildShowDetailsPresenterPresenterFactory(),
+            seasonDetailsPresenterFactory = buildSeasonDetailsPresenterFactory(),
+            trailersPresenterFactory = buildTrailersPresenterFactory(),
+            homePresenterFactory = buildHomePresenterFactory(),
             datastoreRepository = datastoreRepository,
         )
     }
@@ -130,13 +123,13 @@ class DefaultRootComponentTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-            presenter.bringToFront(RootDestinationConfig.ShowDetails(1))
+            navigator.bringToFront(RootDestinationConfig.ShowDetails(1))
 
             val moreScreen = awaitItem().active.instance
 
             moreScreen.shouldBeInstanceOf<ShowDetails>()
 
-            presenter.onBackClicked()
+            navigator.pop()
 
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
         }
@@ -147,7 +140,7 @@ class DefaultRootComponentTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-            presenter.bringToFront(RootDestinationConfig.ShowDetails(1))
+            navigator.bringToFront(RootDestinationConfig.ShowDetails(1))
 
             val moreScreen = awaitItem().active.instance
 
@@ -160,7 +153,7 @@ class DefaultRootComponentTest {
         presenter.childStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<Home>()
 
-            presenter.bringToFront(RootDestinationConfig.MoreShows(1))
+            navigator.bringToFront(RootDestinationConfig.MoreShows(1))
 
             val moreScreen = awaitItem().active.instance
 
@@ -188,199 +181,122 @@ class DefaultRootComponentTest {
         }
     }
 
-    private fun buildDiscoverPresenterFactory(
-        componentContext: ComponentContext,
-    ): DiscoverPresenterFactory = DiscoverPresenterFactory(
-        create = { _: ComponentContext, _: (id: Long) -> Unit, _: (categoryId: Long) -> Unit ->
-            DiscoverShowsPresenter(
-                componentContext = componentContext,
-                onNavigateToShowDetails = {},
-                onNavigateToMore = {},
-                discoverShowsInteractor = DiscoverShowsInteractor(
-                    featuredShowsRepository = featuredShowsRepository,
-                    topRatedShowsRepository = topRatedShowsRepository,
-                    popularShowsRepository = popularShowsRepository,
-                    trendingShowsRepository = trendingShowsRepository,
-                    upcomingShowsRepository = upcomingShowsRepository,
-                    genreRepository = genreRepository,
-                    dispatchers = coroutineDispatcher,
-                ),
-                watchlistRepository = FakeWatchlistRepository(),
-                featuredShowsInteractor = FeaturedShowsInteractor(
-                    featuredShowsRepository = featuredShowsRepository,
-                    dispatchers = coroutineDispatcher,
-                ),
-                topRatedShowsInteractor = TopRatedShowsInteractor(
-                    topRatedShowsRepository = topRatedShowsRepository,
-                    dispatchers = coroutineDispatcher,
-                ),
-                popularShowsInteractor = PopularShowsInteractor(
-                    popularShowsRepository = popularShowsRepository,
-                    dispatchers = coroutineDispatcher,
-                ),
-                trendingShowsInteractor = TrendingShowsInteractor(
-                    trendingShowsRepository = trendingShowsRepository,
-                    dispatchers = coroutineDispatcher,
-                ),
-                upcomingShowsInteractor = UpcomingShowsInteractor(
-                    upcomingShowsRepository = upcomingShowsRepository,
-                    dispatchers = coroutineDispatcher,
-                ),
-                logger = FakeLogger(),
-            )
-        },
+    private fun buildDiscoverPresenterFactory(): DiscoverPresenterFactory = DiscoverPresenterFactory(
+        discoverShowsInteractor = DiscoverShowsInteractor(
+            featuredShowsRepository = featuredShowsRepository,
+            topRatedShowsRepository = topRatedShowsRepository,
+            popularShowsRepository = popularShowsRepository,
+            trendingShowsRepository = trendingShowsRepository,
+            upcomingShowsRepository = upcomingShowsRepository,
+            genreRepository = genreRepository,
+            dispatchers = coroutineDispatcher,
+        ),
+        watchlistRepository = FakeWatchlistRepository(),
+        featuredShowsInteractor = FeaturedShowsInteractor(
+            featuredShowsRepository = featuredShowsRepository,
+            dispatchers = coroutineDispatcher,
+        ),
+        topRatedShowsInteractor = TopRatedShowsInteractor(
+            topRatedShowsRepository = topRatedShowsRepository,
+            dispatchers = coroutineDispatcher,
+        ),
+        popularShowsInteractor = PopularShowsInteractor(
+            popularShowsRepository = popularShowsRepository,
+            dispatchers = coroutineDispatcher,
+        ),
+        trendingShowsInteractor = TrendingShowsInteractor(
+            trendingShowsRepository = trendingShowsRepository,
+            dispatchers = coroutineDispatcher,
+        ),
+        upcomingShowsInteractor = UpcomingShowsInteractor(
+            upcomingShowsRepository = upcomingShowsRepository,
+            dispatchers = coroutineDispatcher,
+        ),
+        genreShowsInteractor = GenreShowsInteractor(
+            repository = genreRepository,
+            dispatchers = coroutineDispatcher,
+        ),
+        logger = FakeLogger(),
     )
 
-    private fun buildLibraryPresenterFactory(
-        componentContext: ComponentContext,
-    ): WatchlistPresenterFactory = WatchlistPresenterFactory(
-        create = { _: ComponentContext, _: (showDetails: Long) -> Unit ->
-            WatchlistPresenter(
-                componentContext = componentContext,
-                navigateToShowDetails = {},
-                repository = FakeWatchlistRepository(),
-            )
-        },
+    private fun buildLibraryPresenterFactory(): WatchlistPresenterFactory = WatchlistPresenterFactory(
+        repository = FakeWatchlistRepository(),
     )
 
-    private fun buildMoreShowsPresenterFactory(
-        componentContext: ComponentContext,
-    ): MoreShowsPresenterFactory = MoreShowsPresenterFactory(
-        create = { _: ComponentContext, _: Long, _: () -> Unit, _: (id: Long) -> Unit ->
-            MoreShowsPresenter(
-                componentContext = componentContext,
-                categoryId = 0,
-                onBack = {},
-                onNavigateToShowDetails = {},
-                popularShowsRepository = popularShowsRepository,
-                upcomingShowsRepository = upcomingShowsRepository,
-                trendingShowsRepository = trendingShowsRepository,
-                topRatedShowsRepository = topRatedShowsRepository,
-            )
-        },
+    private fun buildMoreShowsPresenterFactory(): MoreShowsPresenterFactory = MoreShowsPresenterFactory(
+        popularShowsRepository = popularShowsRepository,
+        upcomingShowsRepository = upcomingShowsRepository,
+        trendingShowsRepository = trendingShowsRepository,
+        topRatedShowsRepository = topRatedShowsRepository,
     )
 
-    private fun buildSearchPresenterFactory(
-        componentContext: ComponentContext,
-    ): SearchPresenterFactory = SearchPresenterFactory(
-        create = { _: ComponentContext, _: (id: Long) -> Unit, _: (id: Long) -> Unit ->
-            SearchShowsPresenter(
-                componentContext = componentContext,
-                onNavigateToShowDetails = {},
-                onNavigateToGenre = {},
-                genreRepository = genreRepository,
-                searchRepository = searchRepository,
-                mapper = Mapper(
-                    formatterUtil = FakeFormatterUtil(),
-                ),
-            )
-        },
+    private fun buildSearchPresenterFactory(): SearchPresenterFactory = SearchPresenterFactory(
+        genreRepository = genreRepository,
+        searchRepository = searchRepository,
+        mapper = Mapper(
+            formatterUtil = FakeFormatterUtil(),
+        ),
     )
 
-    private fun buildSettingsPresenterFactory(
-        componentContext: ComponentContext,
-    ): SettingsPresenterFactory = SettingsPresenterFactory(
-        create = { _: ComponentContext, _: () -> Unit ->
-            SettingsPresenter(
-                componentContext = componentContext,
-                launchWebView = {},
-                datastoreRepository = datastoreRepository,
-                traktAuthRepository = FakeTraktAuthRepository(),
-            )
-        },
+    private fun buildSettingsPresenterFactory(): SettingsPresenterFactory = SettingsPresenterFactory(
+        datastoreRepository = datastoreRepository,
+        traktAuthRepository = FakeTraktAuthRepository(),
     )
 
-    private fun buildShowDetailsPresenterPresenterFactory(
-        componentContext: ComponentContext,
-    ): ShowDetailsPresenterFactory = ShowDetailsPresenterFactory(
-        create = {
-                _: ComponentContext,
-                showId: Long,
-                _: () -> Unit,
-                _: (id: Long) -> Unit,
-                _: (param: ShowSeasonDetailsParam) -> Unit,
-                _: (id: Long) -> Unit,
-            ->
-            ShowDetailsPresenter(
-                showId = showId,
-                onBack = {},
-                onNavigateToShow = {},
-                onNavigateToSeason = {},
-                onNavigateToTrailer = {},
-                componentContext = componentContext,
-                watchlistRepository = FakeWatchlistRepository(),
-                recommendedShowsInteractor = RecommendedShowsInteractor(
-                    recommendedShowsRepository = FakeRecommendedShowsRepository(),
-                    dispatchers = coroutineDispatcher,
-                ),
-                showDetailsInteractor = ShowDetailsInteractor(
-                    showDetailsRepository = FakeShowDetailsRepository(),
-                    dispatchers = coroutineDispatcher,
-                ),
-                watchProvidersInteractor = WatchProvidersInteractor(
-                    repository = FakeWatchProviderRepository(),
-                    dispatchers = coroutineDispatcher,
-                ),
-                similarShowsInteractor = SimilarShowsInteractor(
-                    similarShowsRepository = FakeSimilarShowsRepository(),
-                    dispatchers = coroutineDispatcher,
-                ),
-                observableShowDetailsInteractor = ObservableShowDetailsInteractor(
-                    castRepository = FakeCastRepository(),
-                    recommendedShowsRepository = FakeRecommendedShowsRepository(),
-                    seasonsRepository = FakeSeasonsRepository(),
-                    showDetailsRepository = FakeShowDetailsRepository(),
-                    similarShowsRepository = FakeSimilarShowsRepository(),
-                    trailerRepository = FakeTrailerRepository(),
-                    watchProviders = FakeWatchProviderRepository(),
-                    formatterUtil = FakeFormatterUtil(),
-                    dispatchers = coroutineDispatcher,
-                ),
-                logger = FakeLogger(),
-            )
-        },
+    private fun buildShowDetailsPresenterPresenterFactory(): ShowDetailsPresenterFactory = ShowDetailsPresenterFactory(
+        watchlistRepository = FakeWatchlistRepository(),
+        recommendedShowsInteractor = RecommendedShowsInteractor(
+            recommendedShowsRepository = FakeRecommendedShowsRepository(),
+            dispatchers = coroutineDispatcher,
+        ),
+        showDetailsInteractor = ShowDetailsInteractor(
+            showDetailsRepository = FakeShowDetailsRepository(),
+            dispatchers = coroutineDispatcher,
+        ),
+        watchProvidersInteractor = WatchProvidersInteractor(
+            repository = FakeWatchProviderRepository(),
+            dispatchers = coroutineDispatcher,
+        ),
+        similarShowsInteractor = SimilarShowsInteractor(
+            similarShowsRepository = FakeSimilarShowsRepository(),
+            dispatchers = coroutineDispatcher,
+        ),
+        observableShowDetailsInteractor = ObservableShowDetailsInteractor(
+            castRepository = FakeCastRepository(),
+            recommendedShowsRepository = FakeRecommendedShowsRepository(),
+            seasonsRepository = FakeSeasonsRepository(),
+            showDetailsRepository = FakeShowDetailsRepository(),
+            similarShowsRepository = FakeSimilarShowsRepository(),
+            trailerRepository = FakeTrailerRepository(),
+            watchProviders = FakeWatchProviderRepository(),
+            formatterUtil = FakeFormatterUtil(),
+            dispatchers = coroutineDispatcher,
+        ),
+        logger = FakeLogger(),
     )
 
-    private fun buildHomePresenterFactory(componentContext: ComponentContext): HomePresenter.Factory =
+    private fun buildHomePresenterFactory(): HomePresenter.Factory =
         DefaultHomePresenter.Factory(
             traktAuthManager = traktAuthManager,
-            searchPresenterFactory = buildSearchPresenterFactory(componentContext),
-            settingsPresenterFactory = buildSettingsPresenterFactory(componentContext),
-            discoverPresenterFactory = buildDiscoverPresenterFactory(componentContext),
-            watchlistPresenterFactory = buildLibraryPresenterFactory(componentContext),
+            searchPresenterFactory = buildSearchPresenterFactory(),
+            settingsPresenterFactory = buildSettingsPresenterFactory(),
+            discoverPresenterFactory = buildDiscoverPresenterFactory(),
+            watchlistPresenterFactory = buildLibraryPresenterFactory(),
         )
 
-    private fun buildSeasonDetailsPresenterFactory(
-        componentContext: ComponentContext,
-    ): SeasonDetailsPresenterFactory = SeasonDetailsPresenterFactory(
-        create = { _: ComponentContext, param: SeasonDetailsUiParam, _: () -> Unit, _: (id: Long) -> Unit ->
-            SeasonDetailsPresenter(
-                componentContext = componentContext,
-                param = param,
-                onBack = {},
-                onEpisodeClick = {},
-                observableSeasonDetailsInteractor = ObservableSeasonDetailsInteractor(
-                    seasonDetailsRepository = FakeSeasonDetailsRepository(),
-                    castRepository = FakeCastRepository(),
-                ),
-                seasonDetailsInteractor = SeasonDetailsInteractor(
-                    seasonDetailsRepository = FakeSeasonDetailsRepository(),
-                    dispatchers = coroutineDispatcher,
-                ),
-                logger = FakeLogger(),
-            )
-        },
+    private fun buildSeasonDetailsPresenterFactory(): SeasonDetailsPresenterFactory = SeasonDetailsPresenterFactory(
+        observableSeasonDetailsInteractor = ObservableSeasonDetailsInteractor(
+            seasonDetailsRepository = FakeSeasonDetailsRepository(),
+            castRepository = FakeCastRepository(),
+        ),
+        seasonDetailsInteractor = SeasonDetailsInteractor(
+            seasonDetailsRepository = FakeSeasonDetailsRepository(),
+            dispatchers = coroutineDispatcher,
+        ),
+        logger = FakeLogger(),
     )
 
-    private fun buildTrailersPresenterFactory(
-        componentContext: ComponentContext,
-    ): TrailersPresenterFactory = TrailersPresenterFactory(
-        create = { _: ComponentContext, id: Long ->
-            TrailersPresenter(
-                componentContext = componentContext,
-                traktShowId = id,
-                repository = FakeTrailerRepository(),
-            )
-        },
+    private fun buildTrailersPresenterFactory(): TrailersPresenterFactory = TrailersPresenterFactory(
+        repository = FakeTrailerRepository(),
     )
 }

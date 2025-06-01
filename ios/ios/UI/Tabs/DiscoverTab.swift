@@ -222,111 +222,152 @@ struct DiscoverTab: View {
     }
 
     @ViewBuilder
-    private func customIndicator(_ shows: [SwiftShow]) -> some View {
-        HStack(spacing: 8) {
-            ForEach(0 ..< shows.count, id: \.self) { index in
+    func customIndicator(_ shows: [SwiftShow]) -> some View {
+        HStack(spacing: 5) {
+            ForEach(shows.indices, id: \.self) { index in
                 Circle()
-                    .fill(index == currentIndex ? Color.white : Color.white.opacity(0.3))
-                    .frame(width: 8, height: 8)
-                    .scaleEffect(index == currentIndex ? 1.2 : 1.0)
-                    .animation(.spring(), value: currentIndex)
+                    .fill(currentIndex == index ? .white : .gray.opacity(0.5))
+                    .frame(width: currentIndex == index ? 10 : 6, height: currentIndex == index ? 10 : 6)
             }
         }
+        .animation(.easeInOut, value: currentIndex)
     }
 
     // MARK: - Discover List Content
 
     @ViewBuilder
     private func discoverListContent(state: DiscoverViewState) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            if !state.trendingShows.isEmpty {
-                HorizontalShowContentView(
-                    title: String(\.label_trending_today),
-                    chevronStyle: .chevron,
-                    items: state.trendingShows.map { $0.toSwift() },
-                    onClick: { id in
-                        presenter.dispatch(action: ShowClicked(id: id))
-                    },
-                    onMoreClicked: {
-                        presenter.dispatch(action: TrendingShowsClicked())
-                    }
-                )
-            }
+        VStack {
+            HorizontalItemListView(
+                title: String(\.label_discover_upcoming),
+                chevronStyle: .chevronOnly,
+                items: state.upcomingShows.map {
+                    $0.toSwift()
+                },
+                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                onMoreClicked: { presenter.dispatch(action: UpComingClicked()) }
+            )
 
-            if !state.popularShows.isEmpty {
-                HorizontalShowContentView(
-                    title: String(\.label_popular),
-                    chevronStyle: .chevron,
-                    items: state.popularShows.map { $0.toSwift() },
-                    onClick: { id in
-                        presenter.dispatch(action: ShowClicked(id: id))
-                    },
-                    onMoreClicked: {
-                        presenter.dispatch(action: PopularShowsClicked())
-                    }
-                )
-            }
+            HorizontalItemListView(
+                title: String(\.label_discover_trending_today),
+                chevronStyle: .chevronOnly,
+                items: state.trendingToday.map {
+                    $0.toSwift()
+                },
+                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                onMoreClicked: { presenter.dispatch(action: TrendingClicked()) }
+            )
 
-            if !state.topRatedShows.isEmpty {
-                HorizontalShowContentView(
-                    title: String(\.label_top_rated),
-                    chevronStyle: .chevron,
-                    items: state.topRatedShows.map { $0.toSwift() },
-                    onClick: { id in
-                        presenter.dispatch(action: ShowClicked(id: id))
-                    },
-                    onMoreClicked: {
-                        presenter.dispatch(action: TopRatedShowsClicked())
-                    }
-                )
-            }
+            HorizontalItemListView(
+                title: String(\.label_discover_popular),
+                chevronStyle: .chevronOnly,
+                items: state.popularShows.map {
+                    $0.toSwift()
+                },
+                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                onMoreClicked: { presenter.dispatch(action: PopularClicked()) }
+            )
 
-            if !state.onTheAirShows.isEmpty {
-                HorizontalShowContentView(
-                    title: String(\.label_on_the_air),
-                    chevronStyle: .chevron,
-                    items: state.onTheAirShows.map { $0.toSwift() },
-                    onClick: { id in
-                        presenter.dispatch(action: ShowClicked(id: id))
-                    },
-                    onMoreClicked: {
-                        presenter.dispatch(action: OnTheAirShowsClicked())
-                    }
-                )
-            }
-
-            if !state.airingTodayShows.isEmpty {
-                HorizontalShowContentView(
-                    title: String(\.label_airing_today),
-                    chevronStyle: .chevron,
-                    items: state.airingTodayShows.map { $0.toSwift() },
-                    onClick: { id in
-                        presenter.dispatch(action: ShowClicked(id: id))
-                    },
-                    onMoreClicked: {
-                        presenter.dispatch(action: AiringTodayShowsClicked())
-                    }
-                )
-            }
+            HorizontalItemListView(
+                title: String(\.label_discover_top_rated),
+                chevronStyle: .chevronOnly,
+                items: state.topRatedShows.map {
+                    $0.toSwift()
+                },
+                onClick: { id in presenter.dispatch(action: ShowClicked(id: id)) },
+                onMoreClicked: { presenter.dispatch(action: TopRatedClicked()) }
+            )
         }
-        .padding(.bottom, 16)
+        .padding(.top, 16)
+        .padding(.bottom, 90)
+        .background(Color.background)
+        .offset(y: -10)
     }
 
     // MARK: - Empty View
 
+    @ViewBuilder
     private var emptyView: some View {
-        FullScreenView(
-            systemName: "tv",
-            message: String(\.empty_discover_message)
-        )
-    }
+        VStack {
+            Image(systemName: "list.bullet.below.rectangle")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .foregroundColor(Color.accent)
+                .font(Font.title.weight(.thin))
+                .frame(width: 160, height: 180)
 
-    // MARK: - Helper Methods
+            Text(String(\.generic_empty_content))
+                .titleSemiBoldFont(size: 18)
+                .padding(.top, 8)
+
+            Text(String(\.missing_api_key))
+                .captionFont(size: 16)
+                .padding(.top, 1)
+                .padding(.bottom, 16)
+
+            Button(action: {
+                presenter.dispatch(action: RefreshData())
+            }, label: {
+                Text(String(\.button_error_retry))
+                    .bodyMediumFont(size: 16)
+                    .foregroundColor(Color.accent)
+            })
+            .buttonStyle(BorderlessButtonStyle())
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(Color.accent, lineWidth: 2)
+                    .background(.clear)
+                    .cornerRadius(2)
+            )
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding([.trailing, .leading], 16)
+    }
 
     private func getShow(currentIndex: Int, shows: [SwiftShow]) -> SwiftShow? {
         guard !shows.isEmpty, currentIndex < shows.count else {
             return nil
         }
         return shows[currentIndex]
+    }
+
+    private enum CoordinateSpaces {
+        case scrollView
+    }
+}
+
+struct PullToRefreshView: View {
+    var coordinateSpaceName: String
+    var onRefresh: () async -> Void
+    @State private var needRefresh: Bool = false
+
+    var body: some View {
+        GeometryReader { geo in
+            if geo.frame(in: .named(coordinateSpaceName)).midY > 50 {
+                Spacer()
+                    .onAppear {
+                        needRefresh = true
+                    }
+            } else if geo.frame(in: .named(coordinateSpaceName)).midY < 1 {
+                Spacer()
+                    .onAppear {
+                        if needRefresh {
+                            needRefresh = false
+                            Task {
+                                await onRefresh()
+                            }
+                        }
+                    }
+            }
+            HStack {
+                Spacer()
+                if needRefresh {
+                    ProgressView()
+                }
+                Spacer()
+            }
+        }
+        .padding(.top, -50)
     }
 }

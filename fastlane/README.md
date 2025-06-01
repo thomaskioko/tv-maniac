@@ -31,6 +31,14 @@ Run Snapshot Tests
 
 Build iOS App
 
+### ios build_tvmaniac_ipa
+
+```sh
+[bundle exec] fastlane ios build_tvmaniac_ipa
+```
+
+Build TvManiac IPA
+
 ### ios clear_derived_data_lane
 
 ```sh

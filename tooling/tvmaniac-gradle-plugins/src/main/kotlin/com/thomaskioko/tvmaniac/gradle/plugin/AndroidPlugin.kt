@@ -17,106 +17,101 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 
-/**
- * Base class for Android plugins, providing common configuration and setup. It also creates the `android` extension,
- * providing a unified way to access and modify the Android-specific configurations.
- *
- */
 public abstract class AndroidPlugin : Plugin<Project> {
-  override fun apply(target: Project) {
-    if (!target.plugins.hasPlugin("com.android.application")) {
-      target.plugins.apply("com.android.library")
-    }
-    if (!target.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-      target.plugins.apply("org.jetbrains.kotlin.android")
-    }
-    target.plugins.apply(BasePlugin::class.java)
-
-    target.baseExtension.extensions.create("android", AndroidExtension::class.java)
-
-    target.androidSetup()
-    target.configureLint()
-    target.configureUnitTests()
-    target.disableAndroidTests()
-  }
-
-  private fun Project.configureLint() {
-    android {
-      lint.configure(project)
-    }
-  }
-
-  @Suppress("UnstableApiUsage")
-  private fun Project.configureUnitTests() {
-    android {
-      testOptions {
-        unitTests.all(Test::defaultTestSetup)
-      }
-    }
-
-    androidComponents {
-      beforeVariants(
-        selector().withBuildType("release"),
-      ) {
-        (it as? HasUnitTestBuilder)?.enableUnitTest = false
-      }
-    }
-  }
-
-  private fun Project.disableAndroidTests() {
-    androidComponents {
-      beforeVariants {
-        if (it is HasAndroidTestBuilder) {
-          it.androidTest.enable = false
+    override fun apply(target: Project) {
+        if (!target.plugins.hasPlugin("com.android.application")) {
+            target.plugins.apply("com.android.library")
         }
-      }
+        if (!target.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+            target.plugins.apply("org.jetbrains.kotlin.android")
+        }
+        target.plugins.apply(BasePlugin::class.java)
+
+        target.baseExtension.extensions.create("android", AndroidExtension::class.java)
+
+        target.androidSetup()
+        target.configureLint()
+        target.configureUnitTests()
+        target.disableAndroidTests()
     }
-  }
+
+    private fun Project.configureLint() {
+        android {
+            lint.configure(project)
+        }
+    }
+
+    @Suppress("UnstableApiUsage")
+    private fun Project.configureUnitTests() {
+        android {
+            testOptions {
+                unitTests.all(Test::defaultTestSetup)
+            }
+        }
+
+        androidComponents {
+            beforeVariants(
+                selector().withBuildType("release"),
+            ) {
+                (it as? HasUnitTestBuilder)?.enableUnitTest = false
+            }
+        }
+    }
+
+    private fun Project.disableAndroidTests() {
+        androidComponents {
+            beforeVariants {
+                if (it is HasAndroidTestBuilder) {
+                    it.androidTest.enable = false
+                }
+            }
+        }
+    }
 }
 
 internal fun Project.androidSetup() {
-  val desugarLibrary = project.getDependencyOrNull("android-desugarJdkLibs")
-  android {
-    namespace = pathBasedAndroidNamespace()
+    val desugarLibrary = project.getDependencyOrNull("android-desugarJdkLibs")
+    android {
+        namespace = pathBasedAndroidNamespace()
 
-    compileSdk = getVersion("android-compile").toInt()
-    defaultConfig.minSdk = getVersion("android-min").toInt()
-    (defaultConfig as? ApplicationDefaultConfig)?.let {
-      it.targetSdk = getVersion("android-target").toInt()
+        compileSdk = getVersion("android-compile").toInt()
+        defaultConfig.minSdk = getVersion("android-min").toInt()
+        (defaultConfig as? ApplicationDefaultConfig)?.let {
+            it.targetSdk = getVersion("android-target").toInt()
+        }
+
+        // default all features to false, they will be enabled through TvManiacAndroidExtension
+        buildFeatures {
+            viewBinding = false
+            resValues = false
+            buildConfig = false
+            aidl = false
+            renderScript = false
+            shaders = false
+        }
+
+        compileOptions {
+            isCoreLibraryDesugaringEnabled = desugarLibrary != null
+            sourceCompatibility = javaTargetVersion
+            targetCompatibility = javaTargetVersion
+        }
     }
 
-    // default all features to false, they will be enabled through TvManiacAndroidExtension
-    buildFeatures {
-      viewBinding = false
-      resValues = false
-      buildConfig = false
-      aidl = false
-      renderScript = false
-      shaders = false
-    }
-
-    compileOptions {
-      isCoreLibraryDesugaringEnabled = desugarLibrary != null
-      sourceCompatibility = javaTargetVersion
-      targetCompatibility = javaTargetVersion
-    }
-  }
-
-  dependencies.addIfNotNull("coreLibraryDesugaring", desugarLibrary)
+    dependencies.addIfNotNull("coreLibraryDesugaring", desugarLibrary)
 }
 
-private fun Project.pathBasedAndroidNamespace(): String {
-  val transformedPath = path.drop(1)
-    .split(":")
-    .mapIndexed { index, pathElement ->
-      val parts = pathElement.split("-")
-      if (index == 0) {
-        parts.joinToString(separator = ".")
-      } else {
-        parts.joinToString(separator = "")
-      }
-    }
-    .joinToString(separator = ".")
+internal fun Project.pathBasedAndroidNamespace(): String {
+    val transformedPath = path.drop(1)
+        .split(":")
+        .mapIndexed { index, pathElement ->
+            val parts = pathElement.split("-")
+            if (index == 0) {
+                parts.joinToString(separator = ".")
+            } else {
+                parts.joinToString(separator = "")
+            }
+        }
+        .joinToString(separator = ".")
 
-  return "com.thomaskioko.tvmaniac.$transformedPath"
+    return "com.thomaskioko.tvmaniac.$transformedPath"
 }

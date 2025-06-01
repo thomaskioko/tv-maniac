@@ -1,29 +1,28 @@
 plugins {
-  alias(libs.plugins.tvmaniac.kmp)
+    alias(libs.plugins.tvmaniac.kmp)
 }
 
 tvmaniac {
-  multiplatform {
-    addAndroidTarget()
-    useKotlinInject()
-    useKspAnvilCompiler()
-    useSerialization()
-  }
+    multiplatform {
+        addAndroidMultiplatformTarget(withJava = true)
+        useKotlinInjectAnvilCompiler()
+        useSerialization()
+    }
 
-  optIn(
-    "kotlinx.coroutines.InternalCoroutinesApi",
-    "kotlinx.coroutines.ExperimentalCoroutinesApi"
-  )
+    optIn(
+        "kotlinx.coroutines.InternalCoroutinesApi",
+        "kotlinx.coroutines.ExperimentalCoroutinesApi",
+    )
 }
 
 kotlin {
-  sourceSets {
-    commonMain.dependencies {
-      api(projects.core.view)
+    sourceSets {
+        commonMain.dependencies {
+            api(projects.core.view)
 
-      implementation(libs.coroutines.core)
-      implementation(libs.decompose.decompose)
-      implementation(libs.bundles.kotlinInject)
+            implementation(libs.coroutines.core)
+            implementation(libs.decompose.decompose)
+            implementation(libs.bundles.kotlinInject)
+        }
     }
-  }
 }

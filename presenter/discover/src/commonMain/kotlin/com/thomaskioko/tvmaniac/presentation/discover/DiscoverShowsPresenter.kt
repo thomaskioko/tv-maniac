@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
+import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import com.thomaskioko.tvmaniac.shows.api.model.Category
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
@@ -29,12 +30,35 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DiscoverPresenterFactory(
-    val create: (
+    private val discoverShowsInteractor: DiscoverShowsInteractor,
+    private val watchlistRepository: WatchlistRepository,
+    private val featuredShowsInteractor: FeaturedShowsInteractor,
+    private val topRatedShowsInteractor: TopRatedShowsInteractor,
+    private val popularShowsInteractor: PopularShowsInteractor,
+    private val trendingShowsInteractor: TrendingShowsInteractor,
+    private val upcomingShowsInteractor: UpcomingShowsInteractor,
+    private val genreShowsInteractor: GenreShowsInteractor,
+    private val logger: Logger,
+) {
+    fun create(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToMore: (categoryId: Long) -> Unit,
-    ) -> DiscoverShowsPresenter,
-)
+    ): DiscoverShowsPresenter = DiscoverShowsPresenter(
+        componentContext = componentContext,
+        onNavigateToShowDetails = onNavigateToShowDetails,
+        onNavigateToMore = onNavigateToMore,
+        discoverShowsInteractor = discoverShowsInteractor,
+        watchlistRepository = watchlistRepository,
+        featuredShowsInteractor = featuredShowsInteractor,
+        topRatedShowsInteractor = topRatedShowsInteractor,
+        popularShowsInteractor = popularShowsInteractor,
+        trendingShowsInteractor = trendingShowsInteractor,
+        upcomingShowsInteractor = upcomingShowsInteractor,
+        genreShowsInteractor = genreShowsInteractor,
+        logger = logger,
+    )
+}
 
 @Inject
 class DiscoverShowsPresenter(
@@ -48,6 +72,7 @@ class DiscoverShowsPresenter(
     private val popularShowsInteractor: PopularShowsInteractor,
     private val trendingShowsInteractor: TrendingShowsInteractor,
     private val upcomingShowsInteractor: UpcomingShowsInteractor,
+    private val genreShowsInteractor: GenreShowsInteractor,
     private val logger: Logger,
     private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
 ) : ComponentContext by componentContext {
@@ -71,6 +96,7 @@ class DiscoverShowsPresenter(
         private val popularLoadingState = ObservableLoadingCounter()
         private val trendingLoadingState = ObservableLoadingCounter()
         private val upcomingLoadingState = ObservableLoadingCounter()
+        private val genreState = ObservableLoadingCounter()
         private val uiMessageManager = UiMessageManager()
 
         private val _state: MutableStateFlow<DiscoverViewState> = MutableStateFlow(DiscoverViewState.Empty)
@@ -93,7 +119,7 @@ class DiscoverShowsPresenter(
                 featuredRefreshing = featuredShowsIsUpdating,
                 topRatedRefreshing = topRatedShowsIsUpdating,
                 popularRefreshing = popularShowsIsUpdating,
-                trendingRefreshing = topRatedShowsIsUpdating,
+                trendingRefreshing = trendingShowsIsUpdating,
                 upcomingRefreshing = upComingIsUpdating,
                 featuredShows = showData.featuredShows.toShowList(),
                 topRatedShows = showData.topRatedShows.toShowList(),
@@ -144,6 +170,10 @@ class DiscoverShowsPresenter(
         }
 
         private fun observeShowData(forceRefresh: Boolean = false) {
+            coroutineScope.launch {
+                genreShowsInteractor(forceRefresh)
+                    .collectStatus(genreState, logger, uiMessageManager, "Genres")
+            }
             coroutineScope.launch {
                 featuredShowsInteractor(forceRefresh)
                     .collectStatus(featuredLoadingState, logger, uiMessageManager, "Featured Shows")
