@@ -4,8 +4,7 @@ plugins {
 
 tvmaniac {
     multiplatform {
-        useKotlinInject()
-        useKspAnvilCompiler()
+        useKotlinInjectAnvilCompiler()
     }
 
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")

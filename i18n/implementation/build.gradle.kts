@@ -7,8 +7,7 @@ tvmaniac {
         addAndroidTarget {
             testOptions.unitTests.isIncludeAndroidResources = true
         }
-        useKotlinInject()
-        useKspAnvilCompiler()
+        useKotlinInjectAnvilCompiler()
     }
 }
 

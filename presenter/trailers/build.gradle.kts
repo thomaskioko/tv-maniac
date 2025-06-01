@@ -3,10 +3,6 @@ plugins {
 }
 
 tvmaniac {
-    multiplatform {
-        useKotlinInject()
-    }
-
     optIn(
         "kotlinx.coroutines.ExperimentalCoroutinesApi",
     )
@@ -23,6 +19,8 @@ kotlin {
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
+
+                implementation(libs.kotlinInject.runtime)
             }
         }
 

@@ -14,7 +14,6 @@ tvmaniac {
 
     multiplatform {
         useKspAnvil()
-        useKotlinInject()
 
         addIosTargetsWithXcFramework(
             frameworkName = "TvManiac",
