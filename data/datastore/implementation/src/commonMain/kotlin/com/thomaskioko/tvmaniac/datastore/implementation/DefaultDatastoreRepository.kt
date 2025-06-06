@@ -82,10 +82,24 @@ class DefaultDatastoreRepository(
             )
         }
 
+    override suspend fun saveLanguage(languageCode: String) {
+        coroutineScope.io.launch {
+            dataStore.edit { preferences ->
+                preferences[KEY_LANGUAGE] = languageCode
+            }
+        }
+    }
+
+    override fun observeLanguage(): Flow<String> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_LANGUAGE] ?: "en"
+        }
+
     companion object {
         val KEY_THEME = stringPreferencesKey("app_theme")
         val KEY_ACCESS_TOKEN = stringPreferencesKey("auth_state")
         val KEY_REFRESH_TOKEN = stringPreferencesKey("refresh_token")
         val KEY_IS_AUTHORIZED = booleanPreferencesKey("isAuthorized")
+        val KEY_LANGUAGE = stringPreferencesKey("app_language")
     }
 }
