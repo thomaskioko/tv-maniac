@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="button_error_retry">Wiederholen</string>
+
+    <string name="label_tab_discover">Entdecken</string>
+    <string name="label_tab_search">Suchen</string>
+    <string name="label_tab_watchlist">Merkliste</string>
+    <string name="label_tab_settings">Einstellungen</string>
+
+    <string name="label_settings_title">Einstellungen</string>
+    <string name="label_settings_change_theme">Thema ändern</string>
+    <string name="label_settings_section_trakt_account">Trakt-Konto</string>
+    <string name="label_settings_section_app_theme">App-Thema</string>
+    <string name="label_settings_section_behavior">Verhalten</string>
+    <string name="label_settings_section_info">Info</string>
+    <string name="label_settings_youtube">Trailer in der Youtube-App öffnen</string>
+    <string name="label_settings_trakt_connect">Mit Trakt verbinden</string>
+    <string name="label_settings_trakt_dialog_title">Mit Trakt verbinden</string>
+    <string name="label_settings_trakt_dialog_message">Trakt ist eine Plattform, die viele Dinge tut, aber in erster
+        Linie verfolgt, welche TV-Shows und Filme Sie ansehen.
+    </string>
+    <string name="label_settings_trakt_dialog_button_primary">Anmelden</string>
+    <string name="label_settings_trakt_dialog_button_secondary">Abbrechen</string>
+    <string name="label_settings_about">Über TvManiac</string>
+    <string name="label_settings_language">Sprache</string>
+    <string name="label_settings_language_message">Wählen Sie Ihre bevorzugte Sprache für die App-Oberfläche</string>
+    <string name="label_settings_privacy_policy">Datenschutzrichtlinie</string>
+
+    <string name="app_name">Tv Maniac</string>
+    <string name="menu_item_discover">Entdecken</string>
+    <string name="menu_item_search">Suchen</string>
+    <string name="menu_item_follow">Folgen</string>
+    <string name="menu_item_library">Merkliste</string>
+    <string name="menu_item_settings">Einstellungen</string>
+    <string name="menu_item_profile">Profil</string>
+
+    <string name="title_settings">Einstellungen</string>
+    <string name="settings_title_theme_dark">Dunkles Thema aktivieren</string>
+    <string name="settings_title_theme_light">Helles Thema aktivieren</string>
+    <string name="settings_title_theme_system">Thema ändern</string>
+
+    <string name="settings_theme_description">Wählen Sie zwischen hellen und dunklen Farbpaletten für Hintergründe,
+        Überschriften und Text.
+    </string>
+    <string name="settings_about_description">Tv-Maniac ist eine Multiplattform-App (Android &amp; iOS) zum Anzeigen von
+        TV-Shows von Trakt.
+    </string>
+    <string name="trakt_description">Trakt ist eine Plattform, die viele Dinge tut, aber in erster Linie verfolgt,
+        welche TV-Shows und Filme Sie ansehen.
+    </string>
+
+    <string name="settings_title_ui">Benutzeroberfläche</string>
+    <string name="settings_title_trakt">Trakt-Konto</string>
+    <string name="settings_title_connect_trakt">Mit Trakt verbinden</string>
+    <string name="settings_title_disconnect_trakt">Von Trakt %s abmelden</string>
+    <string name="settings_title_info">Info</string>
+    <string name="settings_title_about">Über Tv Maniac</string>
+    <string name="settings_title_trakt_app">Trakt</string>
+    <string name="refresh_credentials">Anmeldedaten aktualisieren</string>
+    <string name="logout">Abmelden</string>
+    <string name="login">Anmelden</string>
+</resources>

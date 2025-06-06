@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="button_error_retry">Réessayer</string>
+
+    <string name="label_tab_discover">Découvrir</string>
+    <string name="label_tab_search">Rechercher</string>
+    <string name="label_tab_watchlist">Liste de suivi</string>
+    <string name="label_tab_settings">Paramètres</string>
+
+    <string name="label_settings_title">Paramètres</string>
+    <string name="label_settings_change_theme">Changer de thème</string>
+    <string name="label_settings_section_trakt_account">Compte Trakt</string>
+    <string name="label_settings_section_app_theme">Thème de l\'application</string>
+    <string name="label_settings_section_behavior">Comportement</string>
+    <string name="label_settings_section_info">Info</string>
+    <string name="label_settings_youtube">Ouvrir les bandes-annonces dans l\'application Youtube</string>
+    <string name="label_settings_trakt_connect">Se connecter à Trakt</string>
+    <string name="label_settings_trakt_dialog_title">Se connecter à Trakt</string>
+    <string name="label_settings_trakt_dialog_message">Trakt est une plateforme qui fait beaucoup de choses, mais qui
+        suit principalement les émissions de télévision et les films que vous regardez.
+    </string>
+    <string name="label_settings_trakt_dialog_button_primary">Connexion</string>
+    <string name="label_settings_trakt_dialog_button_secondary">Annuler</string>
+    <string name="label_settings_about">À propos de TvManiac</string>
+    <string name="label_settings_language">Langue</string>
+    <string name="label_settings_language_message">Choisissez votre langue préférée pour l\'interface de l\'application</string>
+    <string name="label_settings_privacy_policy">Politique de confidentialité</string>
+
+    <string name="app_name">Tv Maniac</string>
+    <string name="menu_item_discover">Découvrir</string>
+    <string name="menu_item_search">Rechercher</string>
+    <string name="menu_item_follow">Suivre</string>
+    <string name="menu_item_library">Liste de suivi</string>
+    <string name="menu_item_settings">Paramètres</string>
+    <string name="menu_item_profile">Profil</string>
+
+    <string name="title_settings">Paramètres</string>
+    <string name="settings_title_theme_dark">Activer le thème sombre</string>
+    <string name="settings_title_theme_light">Activer le thème clair</string>
+    <string name="settings_title_theme_system">Changer de thème</string>
+
+    <string name="settings_theme_description">Choisissez entre des palettes de couleurs claires et sombres pour les
+        arrière-plans, les en-têtes et le texte.
+    </string>
+    <string name="settings_about_description">Tv-Maniac est une application multiplateforme (Android et iOS) pour
+        visualiser les émissions de télévision de Trakt.
+    </string>
+    <string name="trakt_description">Trakt est une plateforme qui fait beaucoup de choses, mais qui suit principalement
+        les émissions de télévision et les films que vous regardez.
+    </string>
+
+    <string name="settings_title_ui">Interface utilisateur</string>
+    <string name="settings_title_trakt">Compte Trakt</string>
+    <string name="settings_title_connect_trakt">Se connecter à Trakt</string>
+    <string name="settings_title_disconnect_trakt">Se déconnecter de Trakt %s</string>
+    <string name="settings_title_info">Info</string>
+    <string name="settings_title_about">À propos de Tv Maniac</string>
+    <string name="settings_title_trakt_app">Trakt</string>
+    <string name="refresh_credentials">Actualiser les identifiants</string>
+    <string name="logout">Déconnexion</string>
+    <string name="login">Connexion</string>
+</resources>

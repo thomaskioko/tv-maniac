@@ -47,6 +47,8 @@
   <string name="label_settings_trakt_dialog_button_primary">Login</string>
   <string name="label_settings_trakt_dialog_button_secondary">Cancel</string>
   <string name="label_settings_about">About TvManiac</string>
+  <string name="label_settings_language">Language</string>
+  <string name="label_settings_language_message">Choose your preferred language for the app interface</string>
   <string name="label_settings_privacy_policy">Privacy Policy</string>
 
 

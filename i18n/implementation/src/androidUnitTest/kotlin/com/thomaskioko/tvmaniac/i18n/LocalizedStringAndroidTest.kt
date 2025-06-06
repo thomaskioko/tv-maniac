@@ -8,12 +8,13 @@ import org.junit.Before
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-internal class MokoLocalizerAndroidTest : MokoLocalizerTest() {
+internal class LocalizedStringAndroidTest : LocalizedStringTest() {
     override lateinit var localizer: Localizer
 
     @Before
     fun setup() {
         val context = ApplicationProvider.getApplicationContext<Context>()
+
         localizer = MokoResourcesLocalizer(PlatformLocalizer(context))
     }
 }
