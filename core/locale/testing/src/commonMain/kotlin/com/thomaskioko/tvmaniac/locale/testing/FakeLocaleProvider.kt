@@ -1,23 +1,25 @@
 package com.thomaskioko.tvmaniac.locale.testing
 
+import com.thomaskioko.tvmaniac.locale.api.Language
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 
 public class FakeLocaleProvider(
-    private var currentLocaleValue: String,
-    private val supportedLocalesValue: List<String>,
+    private val language: Language = Language(code = "en", displayName = "English"),
 ) : LocaleProvider {
-    private var setLocaleCalled = false
-    private var lastSetLocale = ""
+    private val _currentLocale = MutableStateFlow("en")
 
-    override val currentLocale: Flow<String> = flowOf(currentLocaleValue)
+    override val currentLocale: Flow<String> = _currentLocale
 
     override suspend fun setLocale(languageCode: String) {
-        setLocaleCalled = true
-        lastSetLocale = languageCode
-        currentLocaleValue = languageCode
+        _currentLocale.value = languageCode
     }
 
-    override fun getSupportedLocales(): Flow<List<String>> = flowOf(supportedLocalesValue)
+    override fun getSupportedLocales(): Flow<List<String>> {
+        return flowOf(listOf("en", "fr", "de"))
+    }
+
+    override suspend fun getLanguageFromCode(code: String): Language = language
 }

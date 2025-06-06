@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.locale.implementation
 
 import android.content.Context
+import com.thomaskioko.tvmaniac.locale.api.Language
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
@@ -38,12 +39,43 @@ public actual class PlatformLocaleProvider(
     }
 
     public actual fun getSupportedLocales(): Flow<List<String>> {
-        val locales = Locale.getAvailableLocales()
-            .map { it.language }
-            .distinct()
-            .filter { it.isNotEmpty() }
-            .sorted()
+        val userLocales = userLocales()
+        val defaultLocale = listOf(Locale.getDefault().language)
 
-        return flowOf(locales)
+        return flowOf(if (userLocales.isNotEmpty()) userLocales.map { it.language }.sorted() else defaultLocale)
+    }
+
+    private fun userLocales(): List<Locale> {
+        val locales = context.resources.configuration.locales
+        return (0 until locales.size()).mapNotNull { index ->
+            val javaLocale = locales.get(index)
+            val language = javaLocale.language
+            val country = javaLocale.country.toCountryOrNull()
+            if (country != null) {
+                Locale(language, country)
+            } else {
+                Locale(language)
+            }
+        }
+    }
+
+    private fun String.toCountryOrNull(): String? {
+        return if (this.isNotEmpty() && this.length == 2) this else null
+    }
+
+    public actual suspend fun getLanguageFromCode(code: String): Language {
+        val locale = Locale(code)
+        return Language(
+            code = code,
+            displayName = locale.displayLanguage.capitalize(),
+        )
+    }
+
+    private fun String.capitalize(): String {
+        return if (this.isNotEmpty()) {
+            this[0].uppercase() + this.substring(1)
+        } else {
+            this
+        }
     }
 }

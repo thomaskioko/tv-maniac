@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.locale.implementation
 
+import com.thomaskioko.tvmaniac.locale.api.Language
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -22,5 +23,9 @@ public class DefaultLocaleProvider(
 
     override fun getSupportedLocales(): Flow<List<String>> {
         return platformLocaleProvider.getSupportedLocales()
+    }
+
+    override suspend fun getLanguageFromCode(code: String): Language {
+        return platformLocaleProvider.getLanguageFromCode(code)
     }
 }
