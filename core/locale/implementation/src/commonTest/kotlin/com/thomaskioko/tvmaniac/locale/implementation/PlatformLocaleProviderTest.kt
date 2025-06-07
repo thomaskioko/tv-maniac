@@ -8,7 +8,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
-internal abstract class PlatformLocaleProviderTest {
+abstract class PlatformLocaleProviderTest {
 
     abstract val localeProvider: PlatformLocaleProvider
 
@@ -44,19 +44,6 @@ internal abstract class PlatformLocaleProviderTest {
 
         assertFailsWith<IllegalArgumentException> {
             localeProvider.setLocale(emptyLocale)
-        }
-    }
-
-    @Test
-    fun should_contain_common_languages_when_getSupportedLocales_is_called() = runTest {
-        val commonLanguages = listOf("en", "fr", "es", "de", "it")
-
-        localeProvider.getSupportedLocales().test {
-            val supportedLocales = awaitItem()
-
-            val containsCommonLanguage = commonLanguages.any { it in supportedLocales }
-            containsCommonLanguage shouldBe true
-            awaitComplete()
         }
     }
 

@@ -5,12 +5,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
 import me.tatarka.inject.annotations.Inject
+import platform.Foundation.NSBundle
 import platform.Foundation.NSLocale
 import platform.Foundation.NSUserDefaults
-import platform.Foundation.availableLocaleIdentifiers
 import platform.Foundation.currentLocale
-import platform.Foundation.languageCode
 import platform.Foundation.localizedStringForLanguageCode
+import platform.Foundation.preferredLanguages
 
 @Inject
 public actual class PlatformLocaleProvider {
@@ -19,20 +19,7 @@ public actual class PlatformLocaleProvider {
     private val locale = MutableSharedFlow<String>(replay = 1)
 
     init {
-        val savedLocale = userDefaults.stringForKey(LOCALE_KEY)
-
-        val localeCode = if (savedLocale.isNullOrEmpty()) {
-            getSystemLocale()
-        } else if (savedLocale.contains("_")) {
-            savedLocale.split("_")[0]
-        } else {
-            savedLocale
-        }
-
-        val appleLocaleCode = "${localeCode}_${localeCode.uppercase()}"
-        userDefaults.setObject(listOf(appleLocaleCode), "AppleLanguages")
-        userDefaults.synchronize()
-
+        val localeCode = getSystemLocale()
         locale.tryEmit(localeCode)
     }
 
@@ -47,31 +34,21 @@ public actual class PlatformLocaleProvider {
             languageCode
         }
 
-        val appleLocaleCode = "${simpleLanguageCode}_${simpleLanguageCode.uppercase()}"
-
-        userDefaults.setObject(simpleLanguageCode, LOCALE_KEY)
-
-        userDefaults.setObject(listOf(appleLocaleCode), "AppleLanguages")
-        userDefaults.synchronize()
-
         locale.emit(simpleLanguageCode)
     }
 
     public actual fun getSupportedLocales(): Flow<List<String>> {
-        val languageCodes = mutableSetOf<String>()
-
-        val availableIdentifiers = NSLocale.availableLocaleIdentifiers
-
-        availableIdentifiers.forEach { item ->
-            if (item is String) {
-                val languageCode = item.split('_', '-')[0].lowercase()
-                if (languageCode.isNotEmpty()) {
-                    languageCodes.add(languageCode)
-                }
+        val availableIdentifiers = NSLocale.preferredLanguages
+            .filterIsInstance<String>()
+            .mapNotNull { identifier ->
+                // Language identifiers can be complex (e.g., "en-US", "zh-Hans-CN").
+                // Splitting by '-' or '_' and taking the first part is a common way
+                // to get the base language code (e.g., "en", "zh").
+                identifier.split('-', '_').firstOrNull()?.lowercase()
             }
-        }
+            .distinct()
 
-        return flowOf(languageCodes.toList().sorted())
+        return flowOf(availableIdentifiers)
     }
 
     public actual suspend fun getLanguageFromCode(code: String): Language {
@@ -93,7 +70,8 @@ public actual class PlatformLocaleProvider {
     }
 
     private fun getSystemLocale(): String {
-        return NSLocale.currentLocale.languageCode ?: "en"
+        return NSLocale.preferredLanguages().firstOrNull() as? String
+            ?: NSBundle.mainBundle().preferredLocalizations().firstOrNull() as? String ?: "en"
     }
 
     private fun String.capitalize(): String {
@@ -102,9 +80,5 @@ public actual class PlatformLocaleProvider {
         } else {
             this
         }
-    }
-
-    internal companion object {
-        private const val LOCALE_KEY = "preferred_locale"
     }
 }

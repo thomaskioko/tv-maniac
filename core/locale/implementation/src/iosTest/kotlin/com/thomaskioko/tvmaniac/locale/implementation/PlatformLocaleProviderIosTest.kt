@@ -7,7 +7,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-internal class PlatformLocaleProviderIosTest : PlatformLocaleProviderTest() {
+class PlatformLocaleProviderIosTest : PlatformLocaleProviderTest() {
 
     override lateinit var localeProvider: PlatformLocaleProvider
 
@@ -31,6 +31,8 @@ internal class PlatformLocaleProviderIosTest : PlatformLocaleProviderTest() {
 
             val sortedLocales = locales.sorted()
             sortedLocales shouldBe locales
+
+            awaitComplete()
         }
     }
 }
