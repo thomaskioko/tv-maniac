@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.i18n
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import kotlin.test.BeforeTest
 
-class LocalizedStringJvmTest : LocalizedStringTest() {
+internal class LocalizedStringJvmTest : LocalizedStringTest() {
     override lateinit var localizer: Localizer
 
     @BeforeTest
