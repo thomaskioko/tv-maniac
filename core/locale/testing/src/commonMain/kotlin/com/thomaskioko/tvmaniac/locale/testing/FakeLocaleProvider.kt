@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.flowOf
 
 public class FakeLocaleProvider(
     private val language: Language = Language(code = "en", displayName = "English"),
+    private val supportedLanguages: List<String> = listOf("en"),
 ) : LocaleProvider {
     private val _currentLocale = MutableStateFlow("en")
 
@@ -17,9 +18,7 @@ public class FakeLocaleProvider(
         _currentLocale.value = languageCode
     }
 
-    override fun getSupportedLocales(): Flow<List<String>> {
-        return flowOf(listOf("en", "fr", "de"))
-    }
+    override fun getSupportedLocales(): Flow<List<String>> = flowOf(supportedLanguages)
 
     override suspend fun getLanguageFromCode(code: String): Language = language
 }

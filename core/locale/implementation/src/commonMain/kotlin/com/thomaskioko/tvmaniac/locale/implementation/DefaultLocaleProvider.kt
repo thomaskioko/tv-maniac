@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.locale.implementation
 
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.locale.api.Language
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import kotlinx.coroutines.flow.Flow
@@ -13,12 +14,13 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesBinding(AppScope::class)
 public class DefaultLocaleProvider(
     private val platformLocaleProvider: PlatformLocaleProvider,
+    private val datastoreRepository: DatastoreRepository,
 ) : LocaleProvider {
 
-    override val currentLocale: Flow<String> = platformLocaleProvider.getCurrentLocale()
+    override val currentLocale: Flow<String> = datastoreRepository.observeLanguage()
 
     override suspend fun setLocale(languageCode: String) {
-        platformLocaleProvider.setLocale(languageCode)
+        datastoreRepository.saveLanguage(languageCode)
     }
 
     override fun getSupportedLocales(): Flow<List<String>> {
