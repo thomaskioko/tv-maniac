@@ -146,6 +146,7 @@ include(
   ":i18n:api",
   ":i18n:generator",
   ":i18n:implementation",
+  ":i18n:testing",
   ":navigation:api",
   ":navigation:implementation",
   ":presenter:discover",
