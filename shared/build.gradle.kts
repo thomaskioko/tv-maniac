@@ -66,6 +66,8 @@ kotlin {
                 implementation(projects.api.trakt.api)
                 implementation(projects.api.trakt.implementation)
                 implementation(projects.core.base)
+                implementation(projects.core.locale.api)
+                implementation(projects.core.locale.implementation)
                 implementation(projects.core.logger.api)
                 implementation(projects.core.logger.implementation)
                 implementation(projects.data.cast.api)

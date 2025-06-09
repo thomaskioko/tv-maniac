@@ -56,6 +56,7 @@ napier = "2.7.1"
 robolectric = "4.14.1"
 roborazzi = "1.43.1"
 profileinstaller = "1.4.1"
+runner = "1.6.2"
 serialization = "1.8.1"
 skie = "0.10.2"
 snapper = "0.3.0"
@@ -96,6 +97,7 @@ androidx-datastore-preference = { module = "androidx.datastore:datastore-prefere
 androidx-palette = { module = "androidx.palette:palette", version.ref = "androidx-palette" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidx-paging" }
 androidx-paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "androidx-paging" }
+androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 androidx-savedstate = { group = "androidx.savedstate", name = "savedstate", version.ref = "androidx-savedstate" }
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }

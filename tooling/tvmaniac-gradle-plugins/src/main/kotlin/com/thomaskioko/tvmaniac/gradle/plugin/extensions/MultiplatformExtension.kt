@@ -45,9 +45,17 @@ public abstract class MultiplatformExtension(private val project: Project) {
 
     }
 
+    /**
+     * Configures an Android target with various options.
+     *
+     * @param withDeviceTestBuilder Include device test builder configuration
+     * @param withJava Include Java support
+     * @param configure Custom configuration to apply
+     */
     @Suppress("UnstableApiUsage")
     @JvmOverloads
     public fun addAndroidMultiplatformTarget(
+        withDeviceTestBuilder: Boolean = false,
         withJava: Boolean = false,
         configure: KotlinMultiplatformAndroidLibraryTarget.() -> Unit = { },
     ) {
@@ -55,19 +63,23 @@ public abstract class MultiplatformExtension(private val project: Project) {
 
         project.kotlinMultiplatform {
             androidLibrary {
-                if (withJava) {
-                    configureJava()
+                if (withDeviceTestBuilder) {
+                    withDeviceTestBuilder {
+                        sourceSetTreeName = "test"
+                    }.configure {
+                        instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                    }
                 }
+
+                if (withJava) {
+                    jvmCompilerOptions {
+                        withJava()
+                        jvmTarget.set(project.jvmTarget)
+                    }
+                }
+
                 configure()
             }
-        }
-    }
-
-    private fun KotlinMultiplatformAndroidLibraryTarget.configureJava(){
-        jvmCompilerOptions {
-            withJava()
-
-            jvmTarget.set(project.jvmTarget)
         }
     }
 
