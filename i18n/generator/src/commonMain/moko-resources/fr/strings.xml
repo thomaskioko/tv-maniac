@@ -46,7 +46,9 @@
     <string name="label_settings_trakt_dialog_button_secondary">Annuler</string>
     <string name="label_settings_about">À propos de TvManiac</string>
     <string name="label_settings_language">Langue</string>
-    <string name="label_settings_language_message">Choisissez votre langue préférée pour l\'interface de l\'application</string>
+    <string name="label_settings_language_message">Choisissez votre langue préférée pour l\'interface de
+        l\'application
+    </string>
     <string name="label_settings_privacy_policy">Politique de confidentialité</string>
 
     <string name="app_name">Tv Maniac</string>
@@ -98,7 +100,9 @@
     <string name="generic_error_message">Oups ! Quelque chose s'est mal passé !</string>
     <string name="generic_empty_content">Votre réserve semble être vide</string>
     <string name="generic_fetching_data">Veuillez patienter pendant que nous récupérons votre contenu</string>
-    <string name="missing_api_key">Il se peut que vous ayez oublié d'ajouter votre clé API TMDB. Une fois que vous l'aurez configurée, vous pourrez vous perdre dans le vaste monde de la collection Tmdb.</string>
+    <string name="missing_api_key">Il se peut que vous ayez oublié d'ajouter votre clé API TMDB. Une fois que vous
+        l'aurez configurée, vous pourrez vous perdre dans le vaste monde de la collection Tmdb.
+    </string>
     <string name="generic_retry">Réessayer</string>
     <string name="search_no_results">Aucun résultat trouvé. Essayez un autre mot-clé</string>
 
@@ -121,6 +125,9 @@
     <string name="settings_title_theme_dark">Activer le thème sombre</string>
     <string name="settings_title_theme_light">Activer le thème clair</string>
     <string name="settings_title_theme_system">Changer de thème</string>
+    <string name="settings_theme_light">Clair</string>
+    <string name="settings_theme_dark">Sombre</string>
+    <string name="settings_theme_system">Système</string>
 
     <string name="trakt_sync">Synchronisez les émissions que vous regardez.</string>
     <string name="trakt_history">Consultez l'historique de visionnage.</string>
@@ -129,8 +136,12 @@
     <string name="trakt_user_name">Bonjour %s !</string>
     <string name="trakt_dialog_login_title">Se connecter au compte</string>
     <string name="trakt_dialog_logout_title">Se déconnecter du compte</string>
-    <string name="trakt_dialog_login_message">Gardez une trace de ce que vous regardez. L'inscription à Trakt est gratuite et facile</string>
-    <string name="trakt_dialog_logout_message">Êtes-vous sûr de vouloir vous déconnecter ? Ne vous inquiétez pas, votre contenu restera stocké sur votre appareil.</string>
+    <string name="trakt_dialog_login_message">Gardez une trace de ce que vous regardez. L'inscription à Trakt est
+        gratuite et facile
+    </string>
+    <string name="trakt_dialog_logout_message">Êtes-vous sûr de vouloir vous déconnecter ? Ne vous inquiétez pas, votre
+        contenu restera stocké sur votre appareil.
+    </string>
 
     <string name="settings_theme_description">Choisissez entre des palettes de couleurs claires et sombres pour les
         arrière-plans, les en-têtes et le texte.
@@ -141,7 +152,11 @@
     <string name="trakt_description">Trakt est une plateforme qui fait beaucoup de choses, mais qui suit principalement
         les émissions de télévision et les films que vous regardez.
     </string>
-    <string name="settings_trakt_detail_description">Vous allez être redirigé vers votre navigateur et en dehors de l'application TvManiac, où vous serez dirigé vers le site Web de Trakt. De là, vous devrez autoriser TvManiac à accéder à votre compte Trakt afin d'utiliser les fonctionnalités de Trakt dans l'application. Après avoir autorisé, vous reviendrez à l'application et pourrez continuer comme d'habitude.</string>
+    <string name="settings_trakt_detail_description">Vous allez être redirigé vers votre navigateur et en dehors de
+        l'application TvManiac, où vous serez dirigé vers le site Web de Trakt. De là, vous devrez autoriser TvManiac à
+        accéder à votre compte Trakt afin d'utiliser les fonctionnalités de Trakt dans l'application. Après avoir
+        autorisé, vous reviendrez à l'application et pourrez continuer comme d'habitude.
+    </string>
 
     <string name="settings_title_ui">Interface utilisateur</string>
     <string name="settings_title_trakt">Compte Trakt</string>

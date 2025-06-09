@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <plurals name="season_count">
-    <item quantity="one">%d Saison</item>
-    <item quantity="many">%d de Saisons</item>
-    <item quantity="other">%d Saisons</item>
-  </plurals>
-  <plurals name="season_images_count">
-    <item quantity="one">%d Image</item>
-    <item quantity="many">%d d'Images</item>
-    <item quantity="other">%d Images</item>
-  </plurals>
-  <plurals name="episode_count">
-    <item quantity="one">%d Épisode</item>
-    <item quantity="many">%d d'Épisodes</item>
-    <item quantity="other">%d Épisodes</item>
-  </plurals>
-  <plurals name="watched_episodes_count">
-    <item quantity="one">%d épisode de %s restant.</item>
-    <item quantity="many">%d épisodes de %s restants.</item>
-    <item quantity="other">%d épisodes de %s restants.</item>
-  </plurals>
+    <plurals name="season_count">
+        <item quantity="one">%d Saison</item>
+        <item quantity="many">%d de Saisons</item>
+        <item quantity="other">%d Saisons</item>
+    </plurals>
+    <plurals name="season_images_count">
+        <item quantity="one">%d Image</item>
+        <item quantity="many">%d d'Images</item>
+        <item quantity="other">%d Images</item>
+    </plurals>
+    <plurals name="episode_count">
+        <item quantity="one">%d Épisode</item>
+        <item quantity="many">%d d'Épisodes</item>
+        <item quantity="other">%d Épisodes</item>
+    </plurals>
+    <plurals name="watched_episodes_count">
+        <item quantity="one">%d épisode de %s restant.</item>
+        <item quantity="many">%d épisodes de %s restants.</item>
+        <item quantity="other">%d épisodes de %s restants.</item>
+    </plurals>
 </resources>

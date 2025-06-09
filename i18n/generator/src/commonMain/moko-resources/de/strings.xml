@@ -24,8 +24,11 @@
     <string name="label_watchlist_empty_list">Sie haben keine Listen. Möchten Sie eine neue erstellen?</string>
     <string name="label_watchlist_create">Erstellen</string>
     <string name="label_watchlist_list_style">Listenstil</string>
-    <string name="label_watchlist_search_hint">Geben Sie einen Sendungstitel ein, um nach einer Sendung zu suchen</string>
-    <string name="label_watchlist_empty_search_results">Geben Sie einen Sendungstitel ein, um nach einer Sendung zu suchen</string>
+    <string name="label_watchlist_search_hint">Geben Sie einen Sendungstitel ein, um nach einer Sendung zu suchen
+    </string>
+    <string name="label_watchlist_empty_search_results">Geben Sie einen Sendungstitel ein, um nach einer Sendung zu
+        suchen
+    </string>
     <string name="label_watchlist_sort_list">Liste sortieren</string>
     <string name="label_tab_settings">Einstellungen</string>
 
@@ -74,8 +77,11 @@
     <string name="dialog_button_no">Nein</string>
     <string name="dialog_button_yes">Ja</string>
 
-    <string name="dialog_message_unwatched">Sind Sie sicher, dass Sie die gesamte Staffel als ungesehen markieren möchten?</string>
-    <string name="dialog_message_watched">Sind Sie sicher, dass Sie die gesamte Staffel als gesehen markieren möchten?</string>
+    <string name="dialog_message_unwatched">Sind Sie sicher, dass Sie die gesamte Staffel als ungesehen markieren
+        möchten?
+    </string>
+    <string name="dialog_message_watched">Sind Sie sicher, dass Sie die gesamte Staffel als gesehen markieren möchten?
+    </string>
 
     <string name="following">Verfolgen</string>
     <string name="unfollow">Nicht mehr verfolgen</string>
@@ -98,7 +104,9 @@
     <string name="generic_error_message">Hoppla! Etwas ist schiefgelaufen!</string>
     <string name="generic_empty_content">Ihr Speicher scheint leer zu sein</string>
     <string name="generic_fetching_data">Bitte warten Sie, während wir Ihre Inhalte abrufen</string>
-    <string name="missing_api_key">Möglicherweise haben Sie vergessen, Ihren TMDB API-Schlüssel hinzuzufügen. Sobald Sie das eingerichtet haben, können Sie sich in der riesigen Welt der Tmdb-Sammlung verlieren.</string>
+    <string name="missing_api_key">Möglicherweise haben Sie vergessen, Ihren TMDB API-Schlüssel hinzuzufügen. Sobald Sie
+        das eingerichtet haben, können Sie sich in der riesigen Welt der Tmdb-Sammlung verlieren.
+    </string>
     <string name="generic_retry">Wiederholen</string>
     <string name="search_no_results">Keine Ergebnisse gefunden. Versuchen Sie ein anderes Stichwort</string>
 
@@ -119,8 +127,11 @@
     <string name="status_connected">Wieder online!</string>
     <string name="status_no_connection">Keine Internetverbindung!</string>
     <string name="settings_title_theme_dark">Dunkles Thema aktivieren</string>
-    <string name="settings_title_theme_light">Helles Thema aktivieren</string>
+    <string name="settings_title_theme_light">Licht Thema aktivieren</string>
     <string name="settings_title_theme_system">Thema ändern</string>
+    <string name="settings_theme_light">Licht</string>
+    <string name="settings_theme_dark">Dunkel</string>
+    <string name="settings_theme_system">System</string>
 
     <string name="trakt_sync">Synchronisieren Sie Sendungen, die Sie ansehen.</string>
     <string name="trakt_history">Sehen Sie sich den Verlauf an.</string>
@@ -129,8 +140,12 @@
     <string name="trakt_user_name">Hallo %s!</string>
     <string name="trakt_dialog_login_title">Bei Konto anmelden</string>
     <string name="trakt_dialog_logout_title">Von Konto abmelden</string>
-    <string name="trakt_dialog_login_message">Behalten Sie den Überblick darüber, was Sie ansehen. Die Anmeldung bei Trakt ist kostenlos und einfach</string>
-    <string name="trakt_dialog_logout_message">Sind Sie sicher, dass Sie sich abmelden möchten? Keine Sorge, Ihre Inhalte werden weiterhin auf Ihrem Gerät gespeichert.</string>
+    <string name="trakt_dialog_login_message">Behalten Sie den Überblick darüber, was Sie ansehen. Die Anmeldung bei
+        Trakt ist kostenlos und einfach
+    </string>
+    <string name="trakt_dialog_logout_message">Sind Sie sicher, dass Sie sich abmelden möchten? Keine Sorge, Ihre
+        Inhalte werden weiterhin auf Ihrem Gerät gespeichert.
+    </string>
 
     <string name="settings_theme_description">Wählen Sie zwischen hellen und dunklen Farbpaletten für Hintergründe,
         Überschriften und Text.
@@ -141,7 +156,11 @@
     <string name="trakt_description">Trakt ist eine Plattform, die viele Dinge tut, aber in erster Linie verfolgt,
         welche TV-Shows und Filme Sie ansehen.
     </string>
-    <string name="settings_trakt_detail_description">Sie werden zu Ihrem Browser und außerhalb der TvManiac-App weitergeleitet, wo Sie zur Trakt-Website gelangen. Von dort aus müssen Sie TvManiac den Zugriff auf Ihr Trakt-Konto autorisieren, um die Trakt-Funktionalität in der App nutzen zu können. Nachdem Sie die Autorisierung erteilt haben, kehren Sie zur App zurück und können wie gewohnt fortfahren.</string>
+    <string name="settings_trakt_detail_description">Sie werden zu Ihrem Browser und außerhalb der TvManiac-App
+        weitergeleitet, wo Sie zur Trakt-Website gelangen. Von dort aus müssen Sie TvManiac den Zugriff auf Ihr
+        Trakt-Konto autorisieren, um die Trakt-Funktionalität in der App nutzen zu können. Nachdem Sie die Autorisierung
+        erteilt haben, kehren Sie zur App zurück und können wie gewohnt fortfahren.
+    </string>
 
     <string name="settings_title_ui">Benutzeroberfläche</string>
     <string name="settings_title_trakt">Trakt-Konto</string>
