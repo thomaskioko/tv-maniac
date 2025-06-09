@@ -101,7 +101,7 @@ platform :ios do
     end
 
     # Run SwiftFormat with absolute paths
-    sh "swiftformat '#{ios_dir}' --config '#{config_file}' --swiftversion 5.9 --exclude derived_data"
+    sh "swiftformat '#{ios_dir}' --config '#{config_file}' --swiftversion 0.55.3 --exclude derived_data"
   end
 
   desc "Check SwiftFormat without making changes"
