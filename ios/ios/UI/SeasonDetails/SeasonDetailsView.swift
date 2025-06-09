@@ -31,7 +31,7 @@ struct SeasonDetailsView: View {
         ZStack {
             Color.background.edgesIgnoringSafeArea(.all)
 
-            if uiState.message != nil {
+            if uiState.message == nil {
                 SeasonDetailsContent(uiState)
             } else {
                 FullScreenView(
