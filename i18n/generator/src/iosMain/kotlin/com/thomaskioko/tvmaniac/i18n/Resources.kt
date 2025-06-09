@@ -17,6 +17,6 @@ fun getString(stringResource: StringResource, parameter: Any): StringDesc {
     return StringDesc.ResourceFormatted(stringResource, parameter)
 }
 
-fun getPlural(pluralResource: PluralsResource, quantity: Int): StringDesc {
-    return StringDesc.PluralFormatted(pluralResource, quantity)
+fun getPluralFormatted(pluralResource: PluralsResource, quantity: Int): StringDesc {
+    return StringDesc.PluralFormatted(pluralResource, quantity, quantity)
 }
