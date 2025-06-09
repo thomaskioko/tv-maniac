@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="button_error_retry">Réessayer</string>
+
+    <string name="label_tab_discover">Découvrir</string>
+    <string name="label_discover_upcoming">À venir</string>
+    <string name="label_discover_trending_today">Tendances aujourd'hui</string>
+    <string name="label_discover_popular">Populaire</string>
+    <string name="label_discover_top_rated">Les mieux notés</string>
+    <string name="label_discover_featured">En vedette</string>
+    <string name="label_discover_title">Découvrir</string>
+    <string name="label_tab_search">Rechercher</string>
+    <string name="label_search_title">Rechercher</string>
+    <string name="label_search_placeholder">Entrez le titre de l'émission</string>
+    <string name="label_search_by_genre">Parcourir par genre</string>
+    <string name="label_search_empty_results">Aucun résultat trouvé. Essayez un autre mot-clé !</string>
+
+    <string name="label_season_overview">Aperçu de la saison</string>
+
+    <string name="label_tab_watchlist">Liste de suivi</string>
+    <string name="label_watchlist_title">Ajouter à …</string>
+    <string name="label_watchlist_lists">Listes</string>
+    <string name="label_watchlist_create_custom_list">Créer une liste</string>
+    <string name="label_watchlist_empty_list">Vous n'avez pas de listes. Créer une nouvelle ?</string>
+    <string name="label_watchlist_create">Créer</string>
+    <string name="label_watchlist_list_style">Style de liste</string>
+    <string name="label_watchlist_search_hint">Entrez un titre d'émission pour rechercher une émission</string>
+    <string name="label_watchlist_empty_search_results">Entrez un titre d'émission pour rechercher une émission</string>
+    <string name="label_watchlist_sort_list">Trier la liste</string>
+    <string name="label_tab_settings">Paramètres</string>
+
+    <string name="label_settings_title">Paramètres</string>
+    <string name="label_settings_change_theme">Changer de thème</string>
+    <string name="label_settings_section_trakt_account">Compte Trakt</string>
+    <string name="label_settings_section_app_theme">Thème de l\'application</string>
+    <string name="label_settings_section_behavior">Comportement</string>
+    <string name="label_settings_section_info">Info</string>
+    <string name="label_settings_youtube">Bandes-annonces</string>
+    <string name="label_settings_youtube_description">Ouvrir les bandes-annonces dans l\'application Youtube</string>
+    <string name="label_settings_trakt_connect">Se connecter à Trakt</string>
+    <string name="label_settings_trakt_dialog_title">Se connecter à Trakt</string>
+    <string name="label_settings_trakt_dialog_message">Trakt est une plateforme qui fait beaucoup de choses, mais qui
+        suit principalement les émissions de télévision et les films que vous regardez.
+    </string>
+    <string name="label_settings_trakt_dialog_button_primary">Connexion</string>
+    <string name="label_settings_trakt_dialog_button_secondary">Annuler</string>
+    <string name="label_settings_about">À propos de TvManiac</string>
+    <string name="label_settings_language">Langue</string>
+    <string name="label_settings_language_message">Choisissez votre langue préférée pour l\'interface de
+        l\'application
+    </string>
+    <string name="label_settings_privacy_policy">Politique de confidentialité</string>
+
+    <string name="app_name">Tv Maniac</string>
+    <string name="menu_item_discover">Découvrir</string>
+    <string name="menu_item_search">Rechercher</string>
+    <string name="menu_item_follow">Suivre</string>
+    <string name="menu_item_library">Liste de suivi</string>
+    <string name="menu_item_settings">Paramètres</string>
+    <string name="menu_item_profile">Profil</string>
+
+    <string name="cd_show_poster">Image d'affiche</string>
+    <string name="cd_show_poster_image">Image d'affiche pour %s</string>
+    <string name="cd_navigate_back">Retour en arrière</string>
+    <string name="cd_clear">Effacer la recherche</string>
+    <string name="cd_profile_pic">Photo de profil pour %s</string>
+    <string name="cd_user_profile">Profil utilisateur</string>
+    <string name="cd_show_images">%s Images</string>
+    <string name="cd_clear_text">Effacer le texte</string>
+
+    <string name="details_episodes">Épisodes</string>
+    <string name="details_cast">Distribution</string>
+
+    <string name="dialog_title_unwatched">Marquer comme non vu</string>
+    <string name="dialog_title_watched">Marquer comme vu</string>
+    <string name="dialog_button_no">Non</string>
+    <string name="dialog_button_yes">Oui</string>
+
+    <string name="dialog_message_unwatched">Êtes-vous sûr de vouloir marquer toute la saison comme non vue ?</string>
+    <string name="dialog_message_watched">Êtes-vous sûr de vouloir marquer toute la saison comme vue ?</string>
+
+    <string name="following">Suivre</string>
+    <string name="unfollow">Ne plus suivre</string>
+    <string name="btn_add_to_list">Ajouter à la liste</string>
+    <string name="title_recommended">Recommandations</string>
+    <string name="title_similar">Émissions similaires</string>
+    <string name="title_seasons">Parcourir les saisons</string>
+    <string name="title_season_overview">Aperçu</string>
+    <string name="title_trailer">Bandes-annonces</string>
+    <string name="title_release">Sortie récente</string>
+    <string name="title_providers">Où regarder</string>
+    <string name="title_providers_label">Fourni par JustWatch</string>
+
+    <string name="title_casts">Distribution</string>
+
+    <string name="error_empty_library">Votre bibliothèque semble être vide</string>
+    <string name="empty_list">Impossible de charger les saisons.</string>
+    <string name="msg_empty_category">Impossible de charger les données de catégorie d'émission !</string>
+    <string name="msg_search_show_hint">Entrez le titre de l'émission</string>
+    <string name="generic_error_message">Oups ! Quelque chose s'est mal passé !</string>
+    <string name="generic_empty_content">Votre réserve semble être vide</string>
+    <string name="generic_fetching_data">Veuillez patienter pendant que nous récupérons votre contenu</string>
+    <string name="missing_api_key">Il se peut que vous ayez oublié d'ajouter votre clé API TMDB. Une fois que vous
+        l'aurez configurée, vous pourrez vous perdre dans le vaste monde de la collection Tmdb.
+    </string>
+    <string name="generic_retry">Réessayer</string>
+    <string name="search_no_results">Aucun résultat trouvé. Essayez un autre mot-clé</string>
+
+    <string name="str_more">Plus</string>
+    <string name="str_more_trailers">Plus de bandes-annonces</string>
+
+    <string name="title_settings">Paramètres</string>
+    <string name="title_all_seasons">Toutes les saisons</string>
+    <string name="title_category_featured">En vedette</string>
+    <string name="title_category_upcoming">À venir</string>
+    <string name="title_category_trending_today">Tendances aujourd'hui</string>
+    <string name="title_category_popular">Populaire</string>
+    <string name="title_category_top_rated">Les mieux notés</string>
+    <string name="title_all_episodes">Tous les épisodes</string>
+    <string name="title_episodes">Épisodes</string>
+    <string name="title_watch_next">Regarder ensuite</string>
+    <string name="title_browse_by_genre">Parcourir par genre</string>
+    <string name="status_connected">De nouveau en ligne !</string>
+    <string name="status_no_connection">Pas de connexion Internet !</string>
+    <string name="settings_title_theme_dark">Activer le thème sombre</string>
+    <string name="settings_title_theme_light">Activer le thème clair</string>
+    <string name="settings_title_theme_system">Changer de thème</string>
+    <string name="settings_theme_light">Clair</string>
+    <string name="settings_theme_dark">Sombre</string>
+    <string name="settings_theme_system">Système</string>
+
+    <string name="trakt_sync">Synchronisez les émissions que vous regardez.</string>
+    <string name="trakt_history">Consultez l'historique de visionnage.</string>
+    <string name="trakt_release">Vérifiez le calendrier de sortie hebdomadaire.</string>
+    <string name="trakt_more">Plus de fonctionnalités à venir bientôt.</string>
+    <string name="trakt_user_name">Bonjour %s !</string>
+    <string name="trakt_dialog_login_title">Se connecter au compte</string>
+    <string name="trakt_dialog_logout_title">Se déconnecter du compte</string>
+    <string name="trakt_dialog_login_message">Gardez une trace de ce que vous regardez. L'inscription à Trakt est
+        gratuite et facile
+    </string>
+    <string name="trakt_dialog_logout_message">Êtes-vous sûr de vouloir vous déconnecter ? Ne vous inquiétez pas, votre
+        contenu restera stocké sur votre appareil.
+    </string>
+
+    <string name="settings_theme_description">Choisissez entre des palettes de couleurs claires et sombres pour les
+        arrière-plans, les en-têtes et le texte.
+    </string>
+    <string name="settings_about_description">Tv-Maniac est une application multiplateforme (Android et iOS) pour
+        visualiser les émissions de télévision de Trakt.
+    </string>
+    <string name="trakt_description">Trakt est une plateforme qui fait beaucoup de choses, mais qui suit principalement
+        les émissions de télévision et les films que vous regardez.
+    </string>
+    <string name="settings_trakt_detail_description">Vous allez être redirigé vers votre navigateur et en dehors de
+        l'application TvManiac, où vous serez dirigé vers le site Web de Trakt. De là, vous devrez autoriser TvManiac à
+        accéder à votre compte Trakt afin d'utiliser les fonctionnalités de Trakt dans l'application. Après avoir
+        autorisé, vous reviendrez à l'application et pourrez continuer comme d'habitude.
+    </string>
+
+    <string name="settings_title_ui">Interface utilisateur</string>
+    <string name="settings_title_trakt">Compte Trakt</string>
+    <string name="settings_title_connect_trakt">Se connecter à Trakt</string>
+    <string name="settings_title_disconnect_trakt">Se déconnecter de Trakt %s</string>
+    <string name="settings_title_info">Info</string>
+    <string name="settings_title_about">À propos de Tv Maniac</string>
+    <string name="settings_title_trakt_app">Trakt</string>
+    <string name="refresh_credentials">Actualiser les identifiants</string>
+    <string name="logout">Déconnexion</string>
+    <string name="login">Connexion</string>
+    <string name="unexpected_error_retry">Une erreur inattendue s'est produite.</string>
+</resources>

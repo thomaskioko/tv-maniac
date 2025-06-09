@@ -11,6 +11,7 @@ class FakeDatastoreRepository : DatastoreRepository {
 
     private val appThemeFlow: Channel<AppTheme> = Channel(Channel.UNLIMITED)
     private val authStateFlow: Channel<AuthState> = Channel(Channel.UNLIMITED)
+    private val languageFlow: Channel<String> = Channel(Channel.UNLIMITED)
 
     suspend fun setTheme(appTheme: AppTheme) {
         appThemeFlow.send(appTheme)
@@ -18,6 +19,10 @@ class FakeDatastoreRepository : DatastoreRepository {
 
     suspend fun setAuthState(authState: AuthState) {
         authStateFlow.send(authState)
+    }
+
+    suspend fun setLanguage(languageCode: String) {
+        languageFlow.send(languageCode)
     }
 
     override fun saveTheme(appTheme: AppTheme) {
@@ -37,6 +42,12 @@ class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override suspend fun getAuthState(): AuthState = AuthState()
+
+    override suspend fun saveLanguage(languageCode: String) {
+        // no -op
+    }
+
+    override fun observeLanguage(): Flow<String> = languageFlow.receiveAsFlow()
 }
 
 val authenticatedAuthState = AuthState(
