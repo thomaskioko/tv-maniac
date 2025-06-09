@@ -29,6 +29,8 @@ dependencies {
     implementation(projects.api.tmdb.implementation)
     implementation(projects.core.base)
     implementation(projects.core.util)
+    implementation(projects.core.locale.api)
+    implementation(projects.core.locale.implementation)
     implementation(projects.navigation.api)
     implementation(projects.navigation.implementation)
     implementation(projects.core.logger.api)

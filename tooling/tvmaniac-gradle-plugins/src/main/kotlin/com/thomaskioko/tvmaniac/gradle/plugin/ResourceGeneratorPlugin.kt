@@ -13,6 +13,7 @@ public class ResourceGeneratorPlugin : Plugin<Project> {
                 project.tasks.register("generateMokoStrings", MokoResourceGeneratorTask::class.java) { task ->
                     task.group = "build"
                     task.description = "Generates resource sealed class from Moko resources"
+                    task.outputs.upToDateWhen { false }
                 }
 
             val generateMRTask = project.tasks.findByName("generateMRcommonMain")
@@ -31,4 +32,3 @@ public class ResourceGeneratorPlugin : Plugin<Project> {
         }
     }
 }
-
