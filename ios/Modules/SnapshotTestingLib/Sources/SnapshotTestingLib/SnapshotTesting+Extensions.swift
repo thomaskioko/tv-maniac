@@ -48,6 +48,7 @@ public extension View {
         record recording: Bool = false,
         layout: SwiftUISnapshotLayout = .defaultDevice,
         styles: SnapshotStyles = .all,
+        timeout: TimeInterval = 30,
         file: StaticString = #file,
         testName: String
     ) {
@@ -71,6 +72,7 @@ public extension View {
             of: viewController,
             as: themes,
             record: recording,
+            timeout: timeout,
             file: file,
             testName: testName
         )

@@ -28,7 +28,11 @@ kotlin {
 
         commonMain {
             dependencies {
+                implementation(projects.core.base)
+                implementation(projects.core.locale.api)
                 implementation(projects.i18n.api)
+
+                implementation(libs.coroutines.core)
 
                 api(libs.moko.resources)
             }
@@ -36,6 +40,7 @@ kotlin {
 
         commonTest {
             dependencies {
+                implementation(projects.core.locale.testing)
                 implementation(libs.bundles.unittest)
             }
         }
