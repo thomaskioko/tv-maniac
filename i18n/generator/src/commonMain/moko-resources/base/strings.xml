@@ -40,7 +40,8 @@
   <string name="label_settings_section_app_theme">App Theme</string>
   <string name="label_settings_section_behavior">Behavior</string>
   <string name="label_settings_section_info">Info</string>
-  <string name="label_settings_youtube">Open Trailers in Youtube App</string>
+  <string name="label_settings_youtube">Trailers</string>
+  <string name="label_settings_youtube_description">Open Trailers in Youtube App</string>
   <string name="label_settings_trakt_connect">Connect to Trakt</string>
   <string name="label_settings_trakt_dialog_title">Connect to Trakt</string>
   <string name="label_settings_trakt_dialog_message">Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch.</string>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <plurals name="season_count">
+    <item quantity="one">%d Staffel</item>
+    <item quantity="other">%d Staffeln</item>
+  </plurals>
+  <plurals name="season_images_count">
+    <item quantity="one">%d Bild</item>
+    <item quantity="other">%d Bilder</item>
+  </plurals>
+  <plurals name="episode_count">
+    <item quantity="one">%d Folge</item>
+    <item quantity="other">%d Folgen</item>
+  </plurals>
+  <plurals name="watched_episodes_count">
+    <item quantity="one">%d Folge von %s übrig.</item>
+    <item quantity="other">%d Folgen von %s übrig.</item>
+  </plurals>
+</resources>
