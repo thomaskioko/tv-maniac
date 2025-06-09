@@ -28,7 +28,6 @@ struct SettingsTab: View {
                         .bodyMediumFont(size: 16),
                     content: {
                         ForEach(DeveiceAppTheme.allCases, id: \.self) { theme in
-
                             Text(theme.localizableName)
                                 .tag(theme)
                         }
