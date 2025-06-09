@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.locale.implementation
 
 import android.content.Context
+import android.os.LocaleList
 import com.thomaskioko.tvmaniac.locale.api.Language
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,13 +28,10 @@ public actual class PlatformLocaleProvider(
         val newLocale = Locale(languageCode)
         Locale.setDefault(newLocale)
 
-        val resources = context.resources
-        val configuration = resources.configuration
+        val configuration = context.resources.configuration
 
-        configuration.setLocale(newLocale)
-
-        @Suppress("DEPRECATION")
-        resources.updateConfiguration(configuration, resources.displayMetrics)
+        val newLocales = LocaleList(newLocale)
+        configuration.setLocales(newLocales)
 
         locale.emit(languageCode)
     }

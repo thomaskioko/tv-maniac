@@ -7,15 +7,12 @@ import kotlinx.coroutines.flow.flowOf
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSBundle
 import platform.Foundation.NSLocale
-import platform.Foundation.NSUserDefaults
 import platform.Foundation.currentLocale
 import platform.Foundation.localizedStringForLanguageCode
 import platform.Foundation.preferredLanguages
 
 @Inject
 public actual class PlatformLocaleProvider {
-    private val userDefaults = NSUserDefaults.standardUserDefaults
-
     private val locale = MutableSharedFlow<String>(replay = 1)
 
     init {

@@ -6,12 +6,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
+import java.util.Locale
 
 @RunWith(AndroidJUnit4::class)
 internal class PlatformLocaleProviderAndroidTest : PlatformLocaleProviderTest() {
@@ -44,8 +43,8 @@ internal class PlatformLocaleProviderAndroidTest : PlatformLocaleProviderTest() 
         localeProvider.setLocale(newLocale)
 
         val newLocaleProvider = PlatformLocaleProvider(context)
-        val result = newLocaleProvider.getCurrentLocale().first()
-
-        result shouldBe newLocale
+        newLocaleProvider.getCurrentLocale().test {
+            awaitItem() shouldBe newLocale
+        }
     }
 }
