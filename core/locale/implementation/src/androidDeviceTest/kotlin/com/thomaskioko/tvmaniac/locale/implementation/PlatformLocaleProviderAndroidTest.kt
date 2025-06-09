@@ -26,10 +26,10 @@ internal class PlatformLocaleProviderAndroidTest : PlatformLocaleProviderTest() 
     }
 
     @Test
-    fun should_contain_device_default_locale_when_getSupportedLocales_is_called() = runTest {
+    fun should_contain_device_default_locale_when_getPreferredLocales_is_called() = runTest {
         val defaultLocale = Locale.getDefault().language
 
-        localeProvider.getSupportedLocales().test {
+        localeProvider.getPreferredLocales().test {
             val supportedLocales = awaitItem()
             supportedLocales shouldContain defaultLocale
             awaitComplete()

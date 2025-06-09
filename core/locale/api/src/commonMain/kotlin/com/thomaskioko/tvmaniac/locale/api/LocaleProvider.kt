@@ -20,13 +20,5 @@ public interface LocaleProvider {
      *
      * @return A list of supported language codes.
      */
-    public fun getSupportedLocales(): Flow<List<String>>
-
-    /**
-     * Gets a Language object from a language code.
-     *
-     * @param code The ISO 639-1 language code (e.g., "en", "fr", "es").
-     * @return A Language object with the code and its display name.
-     */
-    public suspend fun getLanguageFromCode(code: String): Language
+    public fun getPreferredLocales(): Flow<List<String>>
 }

@@ -26,7 +26,7 @@ class PlatformLocaleProviderIosTest : PlatformLocaleProviderTest() {
 
     @Test
     fun `should return sorted list when getSupportedLocales is called`() = runTest {
-        localeProvider.getSupportedLocales().test {
+        localeProvider.getPreferredLocales().test {
             val locales = awaitItem()
 
             val sortedLocales = locales.sorted()

@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.locale.implementation
 
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.locale.api.Language
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -23,11 +22,7 @@ public class DefaultLocaleProvider(
         datastoreRepository.saveLanguage(languageCode)
     }
 
-    override fun getSupportedLocales(): Flow<List<String>> {
-        return platformLocaleProvider.getSupportedLocales()
-    }
-
-    override suspend fun getLanguageFromCode(code: String): Language {
-        return platformLocaleProvider.getLanguageFromCode(code)
+    override fun getPreferredLocales(): Flow<List<String>> {
+        return platformLocaleProvider.getPreferredLocales()
     }
 }

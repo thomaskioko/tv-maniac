@@ -1,14 +1,11 @@
 package com.thomaskioko.tvmaniac.locale.implementation
 
-import com.thomaskioko.tvmaniac.locale.api.Language
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
 import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSBundle
 import platform.Foundation.NSLocale
-import platform.Foundation.currentLocale
-import platform.Foundation.localizedStringForLanguageCode
 import platform.Foundation.preferredLanguages
 
 @Inject
@@ -34,7 +31,7 @@ public actual class PlatformLocaleProvider {
         locale.emit(simpleLanguageCode)
     }
 
-    public actual fun getSupportedLocales(): Flow<List<String>> {
+    public actual fun getPreferredLocales(): Flow<List<String>> {
         val availableIdentifiers = NSLocale.preferredLanguages
             .filterIsInstance<String>()
             .mapNotNull { identifier ->
@@ -48,34 +45,8 @@ public actual class PlatformLocaleProvider {
         return flowOf(availableIdentifiers)
     }
 
-    public actual suspend fun getLanguageFromCode(code: String): Language {
-        val locale = NSLocale.currentLocale
-
-        // Extract the language code from the locale code (e.g., "fr_FR" -> "fr")
-        val languageCode = if (code.contains("_")) {
-            code.split("_")[0]
-        } else {
-            code
-        }
-
-        val displayName = locale.localizedStringForLanguageCode(languageCode) ?: languageCode
-
-        return Language(
-            code = languageCode,
-            displayName = displayName.capitalize(),
-        )
-    }
-
     private fun getSystemLocale(): String {
         return NSLocale.preferredLanguages().firstOrNull() as? String
             ?: NSBundle.mainBundle().preferredLocalizations().firstOrNull() as? String ?: "en"
-    }
-
-    private fun String.capitalize(): String {
-        return if (this.isNotEmpty()) {
-            this[0].uppercase() + this.substring(1)
-        } else {
-            this
-        }
     }
 }

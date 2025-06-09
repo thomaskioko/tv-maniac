@@ -20,8 +20,8 @@ abstract class PlatformLocaleProviderTest {
     }
 
     @Test
-    fun should_return_a_non_empty_list_when_getSupportedLocales_is_called() = runTest {
-        localeProvider.getSupportedLocales().test {
+    fun should_return_a_non_empty_list_when_getPreferredLocales_is_called() = runTest {
+        localeProvider.getPreferredLocales().test {
             awaitItem().shouldNotBeEmpty()
             awaitComplete()
         }

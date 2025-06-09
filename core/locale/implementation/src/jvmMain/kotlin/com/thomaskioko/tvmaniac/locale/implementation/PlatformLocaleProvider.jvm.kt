@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.locale.implementation
 
-import com.thomaskioko.tvmaniac.locale.api.Language
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
@@ -29,7 +28,7 @@ public actual class PlatformLocaleProvider {
         locale.emit(languageCode)
     }
 
-    public actual fun getSupportedLocales(): Flow<List<String>> {
+    public actual fun getPreferredLocales(): Flow<List<String>> {
         val locales = Locale.getAvailableLocales()
             .map { it.language }
             .distinct()
@@ -42,32 +41,6 @@ public actual class PlatformLocaleProvider {
             flowOf(listOf(defaultLocaleCode, "en_US"))
         } else {
             flowOf(locales)
-        }
-    }
-
-    public actual suspend fun getLanguageFromCode(code: String): Language {
-        val locale = if (code.contains("_")) {
-            val parts = code.split("_")
-            if (parts.size >= 2) {
-                Locale(parts[0], parts[1])
-            } else {
-                Locale(parts[0])
-            }
-        } else {
-            Locale(code)
-        }
-
-        return Language(
-            code = code,
-            displayName = locale.displayLanguage.capitalize(),
-        )
-    }
-
-    private fun String.capitalize(): String {
-        return if (this.isNotEmpty()) {
-            this[0].uppercase() + this.substring(1)
-        } else {
-            this
         }
     }
 }
