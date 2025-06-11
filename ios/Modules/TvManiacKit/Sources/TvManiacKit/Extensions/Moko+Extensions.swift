@@ -22,7 +22,7 @@ public extension String {
 
     init(_ resourceKey: KeyPath<MR.plurals, PluralsResource>, quantity: Int) {
         self.init(
-            ResourcesKt.getPlural(
+            ResourcesKt.getPluralFormatted(
                 pluralResource: MR.plurals()[keyPath: resourceKey],
                 quantity: Int32(quantity)
             ).localized()
