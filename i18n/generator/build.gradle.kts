@@ -11,6 +11,8 @@ tvmaniac {
             lint {
                 baseline = file("lint-baseline.xml")
             }
+
+            testOptions.unitTests.isIncludeAndroidResources = true
         }
 
         addIosTargetsWithXcFramework(
@@ -36,6 +38,14 @@ kotlin {
         commonMain {
             dependencies {
                 api(libs.moko.resources)
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation(projects.i18n.testing)
+
+                implementation(libs.bundles.unittest)
             }
         }
     }
