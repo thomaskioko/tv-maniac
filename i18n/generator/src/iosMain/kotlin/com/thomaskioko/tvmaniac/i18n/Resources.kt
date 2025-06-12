@@ -9,14 +9,14 @@ import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.ResourceFormatted
 import dev.icerock.moko.resources.desc.StringDesc
 
-fun getString(stringResource: StringResource): StringDesc {
+public fun getString(stringResource: StringResource): StringDesc {
     return StringDesc.Resource(stringResource)
 }
 
-fun getString(stringResource: StringResource, parameter: Any): StringDesc {
+public fun getString(stringResource: StringResource, parameter: Any): StringDesc {
     return StringDesc.ResourceFormatted(stringResource, parameter)
 }
 
-fun getPluralFormatted(pluralResource: PluralsResource, quantity: Int): StringDesc {
+public fun getPluralFormatted(pluralResource: PluralsResource, quantity: Int): StringDesc {
     return StringDesc.PluralFormatted(pluralResource, quantity, quantity)
 }

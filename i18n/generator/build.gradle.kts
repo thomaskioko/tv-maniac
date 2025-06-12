@@ -6,6 +6,7 @@ plugins {
 
 tvmaniac {
     multiplatform {
+        explicitApi()
         addAndroidTarget {
             lint {
                 baseline = file("lint-baseline.xml")
