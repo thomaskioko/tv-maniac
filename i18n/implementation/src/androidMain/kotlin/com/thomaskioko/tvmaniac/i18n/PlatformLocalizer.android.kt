@@ -7,11 +7,11 @@ import me.tatarka.inject.annotations.Inject
 import java.util.Locale
 
 @Inject
-actual class PlatformLocalizer(
+public actual class PlatformLocalizer(
     private val context: Context,
 ) {
 
-    actual fun localized(stringDesc: StringDesc): String {
+    public actual fun localized(stringDesc: StringDesc): String {
         val locale = Locale(Locale.getDefault().language)
         val configuration = Configuration(context.resources.configuration)
         configuration.setLocale(locale)

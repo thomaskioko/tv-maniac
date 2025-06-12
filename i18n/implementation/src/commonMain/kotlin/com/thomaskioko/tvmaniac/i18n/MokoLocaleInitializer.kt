@@ -12,7 +12,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
 @ContributesBinding(AppScope::class, multibinding = true)
-class MokoLocaleInitializer(
+public class MokoLocaleInitializer(
     private val localeProvider: LocaleProvider,
     private val dispatchers: AppCoroutineDispatchers,
 ) : AppInitializer {

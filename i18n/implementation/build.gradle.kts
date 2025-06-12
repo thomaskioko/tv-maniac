@@ -4,6 +4,7 @@ plugins {
 
 tvmaniac {
     multiplatform {
+        explicitApi()
         addAndroidTarget {
             testOptions.unitTests.isIncludeAndroidResources = true
         }
