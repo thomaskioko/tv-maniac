@@ -2,21 +2,22 @@ package com.thomaskioko.tvmaniac.i18n.testing.util
 
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
-import dev.icerock.moko.resources.desc.Plural
-import dev.icerock.moko.resources.desc.PluralFormatted
-import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
+import dev.icerock.moko.resources.desc.desc
+import dev.icerock.moko.resources.format
 
-public actual fun StringResourceKey.getString(): String = StringDesc.Resource(resourceId).localized()
+public actual fun StringResourceKey.getString(): String = resourceId.desc().localized()
 
 public actual fun StringResourceKey.getString(vararg args: Any): String {
-    return StringDesc.Resource(resourceId).localized()
+    return resourceId.format(*args).localized()
 }
 
 public actual fun PluralsResourceKey.getPlural(quantity: Int): String {
-    return StringDesc.Plural(resourceId, quantity).localized()
+    return resourceId.format(quantity, quantity).localized()
 }
 
 public actual fun PluralsResourceKey.getPlural(quantity: Int, vararg args: Any): String {
-    return StringDesc.PluralFormatted(resourceId, quantity, *args).toString()
+    return resourceId.format(quantity, *args).localized()
 }
+
+public actual suspend fun StringDesc.getString(): String = localized()
