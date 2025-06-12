@@ -3,12 +3,13 @@ package com.thomaskioko.tvmaniac.i18n
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey.EpisodeCount
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey.WatchedEpisodesCount
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.CdShowPosterImage
-import com.thomaskioko.tvmaniac.i18n.api.Localizer
+import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
+import com.thomaskioko.tvmaniac.i18n.util.BaseResourceTests
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
-abstract class MokoLocalizerTest {
-    abstract val localizer: Localizer
+@IgnoreIos
+class MokoLocalizerTest : BaseResourceTests() {
 
     @Test
     fun `should return localized string for valid key`() {

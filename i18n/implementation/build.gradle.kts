@@ -42,6 +42,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(projects.core.locale.testing)
+                implementation(projects.i18n.testing)
                 implementation(libs.bundles.unittest)
             }
         }
