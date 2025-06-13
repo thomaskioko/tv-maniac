@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.ui.discover
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.core.view.UiMessage
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverViewState
-import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
+import com.thomaskioko.tvmaniac.discover.presenter.DiscoverViewState
+import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import kotlinx.collections.immutable.toImmutableList
 
 val discoverShow = DiscoverShow(

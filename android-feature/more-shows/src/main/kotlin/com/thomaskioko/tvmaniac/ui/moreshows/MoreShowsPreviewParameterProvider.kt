@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.ui.moreshows
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.paging.PagingData
-import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsState
-import com.thomaskioko.tvmaniac.presentation.moreshows.TvShow
+import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsState
+import com.thomaskioko.tvmaniac.moreshows.presentation.TvShow
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.flowOf
 

@@ -51,13 +51,13 @@ import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.presentation.moreshows.MoreBackClicked
-import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowClicked
-import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsActions
-import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenter
-import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsState
-import com.thomaskioko.tvmaniac.presentation.moreshows.RefreshMoreShows
-import com.thomaskioko.tvmaniac.presentation.moreshows.TvShow
+import com.thomaskioko.tvmaniac.moreshows.presentation.MoreBackClicked
+import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowClicked
+import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsActions
+import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
+import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsState
+import com.thomaskioko.tvmaniac.moreshows.presentation.RefreshMoreShows
+import com.thomaskioko.tvmaniac.moreshows.presentation.TvShow
 
 @Composable
 fun MoreShowsScreen(
