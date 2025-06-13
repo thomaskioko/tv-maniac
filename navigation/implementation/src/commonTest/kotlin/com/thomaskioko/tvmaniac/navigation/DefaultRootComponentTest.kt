@@ -8,13 +8,8 @@ import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
-import com.thomaskioko.tvmaniac.data.featuredshows.testing.FakeFeaturedShowsRepository
-import com.thomaskioko.tvmaniac.data.popularshows.testing.FakePopularShowsRepository
 import com.thomaskioko.tvmaniac.data.recommendedshows.testing.FakeRecommendedShowsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
-import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepository
-import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
-import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -27,13 +22,12 @@ import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
 import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
-import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenterFactory
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.Home
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.MoreShows
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.ShowDetails
 import com.thomaskioko.tvmaniac.presentation.home.DefaultHomePresenter
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter
-import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenterFactory
+import com.thomaskioko.tvmaniac.presentation.moreshows.FakeMoreShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.Mapper
 import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenterFactory
@@ -65,11 +59,6 @@ class DefaultRootComponentTest {
     private val testDispatcher = StandardTestDispatcher()
     private val traktAuthManager = FakeTraktAuthManager()
     private val datastoreRepository = FakeDatastoreRepository()
-    private val featuredShowsRepository = FakeFeaturedShowsRepository()
-    private val trendingShowsRepository = FakeTrendingShowsRepository()
-    private val upcomingShowsRepository = FakeUpcomingShowsRepository()
-    private val topRatedShowsRepository = FakeTopRatedShowsRepository()
-    private val popularShowsRepository = FakePopularShowsRepository()
     private val searchRepository = FakeSearchRepository()
     private val genreRepository = FakeGenreRepository()
     private val coroutineDispatcher = AppCoroutineDispatchers(
@@ -93,7 +82,7 @@ class DefaultRootComponentTest {
         presenter = DefaultRootPresenter(
             componentContext = componentContext,
             navigator = navigator,
-            moreShowsPresenterFactory = buildMoreShowsPresenterFactory(),
+            moreShowsPresenterFactory = FakeMoreShowsPresenterFactory(),
             showDetailsPresenterFactory = buildShowDetailsPresenterPresenterFactory(),
             seasonDetailsPresenterFactory = buildSeasonDetailsPresenterFactory(),
             trailersPresenterFactory = buildTrailersPresenterFactory(),
@@ -177,13 +166,6 @@ class DefaultRootComponentTest {
 
     private fun buildLibraryPresenterFactory(): WatchlistPresenterFactory = WatchlistPresenterFactory(
         repository = FakeWatchlistRepository(),
-    )
-
-    private fun buildMoreShowsPresenterFactory(): MoreShowsPresenterFactory = MoreShowsPresenterFactory(
-        popularShowsRepository = popularShowsRepository,
-        upcomingShowsRepository = upcomingShowsRepository,
-        trendingShowsRepository = trendingShowsRepository,
-        topRatedShowsRepository = topRatedShowsRepository,
     )
 
     private fun buildSearchPresenterFactory(): SearchPresenterFactory = SearchPresenterFactory(
