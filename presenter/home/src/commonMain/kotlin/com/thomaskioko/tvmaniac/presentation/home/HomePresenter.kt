@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.presentation.home
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverShowsPresenter
+import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.search.SearchShowsPresenter
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenter
 import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenter

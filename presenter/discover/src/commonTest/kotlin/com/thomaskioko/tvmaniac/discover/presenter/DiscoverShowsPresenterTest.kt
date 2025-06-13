@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.discover
+package com.thomaskioko.tvmaniac.discover.presenter
 
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
@@ -15,10 +15,10 @@ import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepo
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
+import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
-import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository

@@ -22,6 +22,7 @@ import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRep
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
+import com.thomaskioko.tvmaniac.discover.presenter.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
@@ -35,7 +36,6 @@ import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.Home
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.MoreShows
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.ShowDetails
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.home.DefaultHomePresenter
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter
 import com.thomaskioko.tvmaniac.presentation.moreshows.MoreShowsPresenterFactory

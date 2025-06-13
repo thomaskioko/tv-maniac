@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.discover.model
+package com.thomaskioko.tvmaniac.discover.presenter.model
 
 data class DiscoverShow(
     val tmdbId: Long = 0,

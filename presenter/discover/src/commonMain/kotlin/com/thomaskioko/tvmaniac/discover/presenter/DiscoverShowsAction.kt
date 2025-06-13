@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.discover
+package com.thomaskioko.tvmaniac.discover.presenter
 
 sealed interface DiscoverShowAction
 

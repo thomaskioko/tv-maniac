@@ -17,10 +17,10 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
+import com.thomaskioko.tvmaniac.discover.presenter.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
-import com.thomaskioko.tvmaniac.presentation.discover.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.search.Mapper
 import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory

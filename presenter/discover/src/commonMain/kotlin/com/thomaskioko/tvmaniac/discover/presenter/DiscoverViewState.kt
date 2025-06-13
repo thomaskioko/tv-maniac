@@ -1,7 +1,7 @@
-package com.thomaskioko.tvmaniac.presentation.discover
+package com.thomaskioko.tvmaniac.discover.presenter
 
 import com.thomaskioko.tvmaniac.core.view.UiMessage
-import com.thomaskioko.tvmaniac.presentation.discover.model.DiscoverShow
+import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
