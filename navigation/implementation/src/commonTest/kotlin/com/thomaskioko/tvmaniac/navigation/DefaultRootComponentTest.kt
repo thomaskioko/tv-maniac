@@ -8,23 +8,17 @@ import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
-import com.thomaskioko.tvmaniac.data.featuredshows.api.interactor.FeaturedShowsInteractor
 import com.thomaskioko.tvmaniac.data.featuredshows.testing.FakeFeaturedShowsRepository
-import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsInteractor
 import com.thomaskioko.tvmaniac.data.popularshows.testing.FakePopularShowsRepository
 import com.thomaskioko.tvmaniac.data.recommendedshows.testing.FakeRecommendedShowsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepository
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
-import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
-import com.thomaskioko.tvmaniac.discover.presenter.DiscoverPresenterFactory
-import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
-import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
+import com.thomaskioko.tvmaniac.discover.presenter.di.FakeDiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObservableSeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
@@ -50,7 +44,6 @@ import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
-import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
@@ -181,44 +174,6 @@ class DefaultRootComponentTest {
         }
     }
 
-    private fun buildDiscoverPresenterFactory(): DiscoverPresenterFactory = DiscoverPresenterFactory(
-        discoverShowsInteractor = DiscoverShowsInteractor(
-            featuredShowsRepository = featuredShowsRepository,
-            topRatedShowsRepository = topRatedShowsRepository,
-            popularShowsRepository = popularShowsRepository,
-            trendingShowsRepository = trendingShowsRepository,
-            upcomingShowsRepository = upcomingShowsRepository,
-            genreRepository = genreRepository,
-            dispatchers = coroutineDispatcher,
-        ),
-        watchlistRepository = FakeWatchlistRepository(),
-        featuredShowsInteractor = FeaturedShowsInteractor(
-            featuredShowsRepository = featuredShowsRepository,
-            dispatchers = coroutineDispatcher,
-        ),
-        topRatedShowsInteractor = TopRatedShowsInteractor(
-            topRatedShowsRepository = topRatedShowsRepository,
-            dispatchers = coroutineDispatcher,
-        ),
-        popularShowsInteractor = PopularShowsInteractor(
-            popularShowsRepository = popularShowsRepository,
-            dispatchers = coroutineDispatcher,
-        ),
-        trendingShowsInteractor = TrendingShowsInteractor(
-            trendingShowsRepository = trendingShowsRepository,
-            dispatchers = coroutineDispatcher,
-        ),
-        upcomingShowsInteractor = UpcomingShowsInteractor(
-            upcomingShowsRepository = upcomingShowsRepository,
-            dispatchers = coroutineDispatcher,
-        ),
-        genreShowsInteractor = GenreShowsInteractor(
-            repository = genreRepository,
-            dispatchers = coroutineDispatcher,
-        ),
-        logger = FakeLogger(),
-    )
-
     private fun buildLibraryPresenterFactory(): WatchlistPresenterFactory = WatchlistPresenterFactory(
         repository = FakeWatchlistRepository(),
     )
@@ -280,7 +235,7 @@ class DefaultRootComponentTest {
             traktAuthManager = traktAuthManager,
             searchPresenterFactory = buildSearchPresenterFactory(),
             settingsPresenterFactory = buildSettingsPresenterFactory(),
-            discoverPresenterFactory = buildDiscoverPresenterFactory(),
+            discoverPresenterFactory = FakeDiscoverPresenterFactory(),
             watchlistPresenterFactory = buildLibraryPresenterFactory(),
         )
 

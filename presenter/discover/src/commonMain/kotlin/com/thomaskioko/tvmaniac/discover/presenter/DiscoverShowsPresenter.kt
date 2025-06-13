@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.discover
+package com.thomaskioko.tvmaniac.discover.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
@@ -27,38 +27,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-
-@Inject
-class DiscoverPresenterFactory(
-    private val discoverShowsInteractor: DiscoverShowsInteractor,
-    private val watchlistRepository: WatchlistRepository,
-    private val featuredShowsInteractor: FeaturedShowsInteractor,
-    private val topRatedShowsInteractor: TopRatedShowsInteractor,
-    private val popularShowsInteractor: PopularShowsInteractor,
-    private val trendingShowsInteractor: TrendingShowsInteractor,
-    private val upcomingShowsInteractor: UpcomingShowsInteractor,
-    private val genreShowsInteractor: GenreShowsInteractor,
-    private val logger: Logger,
-) {
-    fun create(
-        componentContext: ComponentContext,
-        onNavigateToShowDetails: (id: Long) -> Unit,
-        onNavigateToMore: (categoryId: Long) -> Unit,
-    ): DiscoverShowsPresenter = DiscoverShowsPresenter(
-        componentContext = componentContext,
-        onNavigateToShowDetails = onNavigateToShowDetails,
-        onNavigateToMore = onNavigateToMore,
-        discoverShowsInteractor = discoverShowsInteractor,
-        watchlistRepository = watchlistRepository,
-        featuredShowsInteractor = featuredShowsInteractor,
-        topRatedShowsInteractor = topRatedShowsInteractor,
-        popularShowsInteractor = popularShowsInteractor,
-        trendingShowsInteractor = trendingShowsInteractor,
-        upcomingShowsInteractor = upcomingShowsInteractor,
-        genreShowsInteractor = genreShowsInteractor,
-        logger = logger,
-    )
-}
 
 @Inject
 class DiscoverShowsPresenter(

@@ -17,7 +17,8 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
-import com.thomaskioko.tvmaniac.discover.presenter.DiscoverPresenterFactory
+import com.thomaskioko.tvmaniac.discover.presenter.di.DefaultDiscoverPresenterFactory
+import com.thomaskioko.tvmaniac.discover.presenter.di.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
@@ -132,7 +133,7 @@ class HomePresenterTest {
         traktAuthRepository = FakeTraktAuthRepository(),
     )
 
-    private fun buildDiscoverPresenterFactory(): DiscoverPresenterFactory = DiscoverPresenterFactory(
+    private fun buildDiscoverPresenterFactory(): DiscoverPresenterFactory = DefaultDiscoverPresenterFactory(
         discoverShowsInteractor = DiscoverShowsInteractor(
             featuredShowsRepository = featuredShowsRepository,
             topRatedShowsRepository = topRatedShowsRepository,

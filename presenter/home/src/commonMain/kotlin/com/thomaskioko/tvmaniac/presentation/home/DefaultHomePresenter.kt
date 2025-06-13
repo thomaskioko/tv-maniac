@@ -8,7 +8,7 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
-import com.thomaskioko.tvmaniac.discover.presenter.DiscoverPresenterFactory
+import com.thomaskioko.tvmaniac.discover.presenter.di.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.HomeConfig
 import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
