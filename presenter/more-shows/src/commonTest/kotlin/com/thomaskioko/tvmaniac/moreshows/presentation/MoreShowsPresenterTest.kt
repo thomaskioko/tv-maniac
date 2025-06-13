@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.moreshows
+package com.thomaskioko.tvmaniac.moreshows.presentation
 
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import kotlinx.coroutines.test.StandardTestDispatcher
