@@ -40,9 +40,9 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear_text
 import com.thomaskioko.tvmaniac.i18n.resolve
-import com.thomaskioko.tvmaniac.presentation.search.ClearQuery
-import com.thomaskioko.tvmaniac.presentation.search.QueryChanged
-import com.thomaskioko.tvmaniac.presentation.search.SearchShowAction
+import com.thomaskioko.tvmaniac.search.presentation.ClearQuery
+import com.thomaskioko.tvmaniac.search.presentation.QueryChanged
+import com.thomaskioko.tvmaniac.search.presentation.SearchShowAction
 import kotlinx.coroutines.launch
 
 @Composable

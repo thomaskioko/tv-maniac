@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.search
+package com.thomaskioko.tvmaniac.search.presentation
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper

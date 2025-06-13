@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.ui.search
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.presentation.search.EmptySearchResult
-import com.thomaskioko.tvmaniac.presentation.search.SearchResultAvailable
-import com.thomaskioko.tvmaniac.presentation.search.SearchShowState
-import com.thomaskioko.tvmaniac.presentation.search.ShowContentAvailable
-import com.thomaskioko.tvmaniac.presentation.search.model.ShowGenre
-import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
+import com.thomaskioko.tvmaniac.search.presentation.EmptySearchResult
+import com.thomaskioko.tvmaniac.search.presentation.SearchResultAvailable
+import com.thomaskioko.tvmaniac.search.presentation.SearchShowState
+import com.thomaskioko.tvmaniac.search.presentation.ShowContentAvailable
+import com.thomaskioko.tvmaniac.search.presentation.model.ShowGenre
+import com.thomaskioko.tvmaniac.search.presentation.model.ShowItem
 import kotlinx.collections.immutable.toImmutableList
 
 class SearchPreviewParameterProvider : PreviewParameterProvider<SearchShowState> {

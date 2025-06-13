@@ -11,9 +11,9 @@ import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.discover.presenter.di.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.Child
 import com.thomaskioko.tvmaniac.presentation.home.HomePresenter.HomeConfig
-import com.thomaskioko.tvmaniac.presentation.search.SearchPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.settings.SettingsPresenterFactory
 import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenterFactory
+import com.thomaskioko.tvmaniac.search.presentation.SearchPresenterFactory
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import kotlinx.coroutines.flow.StateFlow
 import me.tatarka.inject.annotations.Assisted

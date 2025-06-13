@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.search.model
+package com.thomaskioko.tvmaniac.search.presentation.model
 
 data class ShowGenre(
     val id: Long,

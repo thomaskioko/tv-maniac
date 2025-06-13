@@ -1,8 +1,8 @@
-package com.thomaskioko.tvmaniac.presentation.search
+package com.thomaskioko.tvmaniac.search.presentation
 
 import com.thomaskioko.tvmaniac.genre.ShowGenresEntity
-import com.thomaskioko.tvmaniac.presentation.search.model.ShowGenre
-import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
+import com.thomaskioko.tvmaniac.search.presentation.model.ShowGenre
+import com.thomaskioko.tvmaniac.search.presentation.model.ShowItem
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.util.FormatterUtil
 import kotlinx.collections.immutable.ImmutableList

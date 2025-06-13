@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.presentation.search
+package com.thomaskioko.tvmaniac.search.presentation
 
 sealed interface SearchShowAction
 

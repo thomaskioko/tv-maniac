@@ -1,7 +1,7 @@
-package com.thomaskioko.tvmaniac.presentation.search
+package com.thomaskioko.tvmaniac.search.presentation
 
-import com.thomaskioko.tvmaniac.presentation.search.model.ShowGenre
-import com.thomaskioko.tvmaniac.presentation.search.model.ShowItem
+import com.thomaskioko.tvmaniac.search.presentation.model.ShowGenre
+import com.thomaskioko.tvmaniac.search.presentation.model.ShowItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
