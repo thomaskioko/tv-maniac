@@ -43,15 +43,15 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.error_empty_library
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
 import com.thomaskioko.tvmaniac.i18n.resolve
-import com.thomaskioko.tvmaniac.presentation.watchlist.EmptyWatchlist
-import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
-import com.thomaskioko.tvmaniac.presentation.watchlist.ReloadWatchlist
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistAction
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistContent
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenter
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistShowClicked
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistState
-import com.thomaskioko.tvmaniac.presentation.watchlist.model.WatchlistItem
+import com.thomaskioko.tvmaniac.watchlist.presenter.EmptyWatchlist
+import com.thomaskioko.tvmaniac.watchlist.presenter.LoadingShows
+import com.thomaskioko.tvmaniac.watchlist.presenter.ReloadWatchlist
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistAction
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistContent
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistShowClicked
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistState
+import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

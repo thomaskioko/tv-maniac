@@ -41,11 +41,11 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_episodes
 import com.thomaskioko.tvmaniac.i18n.resolve
-import com.thomaskioko.tvmaniac.presentation.seasondetails.EpisodeClicked
-import com.thomaskioko.tvmaniac.presentation.seasondetails.OnEpisodeHeaderClicked
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsAction
-import com.thomaskioko.tvmaniac.presentation.seasondetails.ShowMarkSeasonDialog
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
+import com.thomaskioko.tvmaniac.seasondetails.presenter.EpisodeClicked
+import com.thomaskioko.tvmaniac.seasondetails.presenter.OnEpisodeHeaderClicked
+import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsAction
+import com.thomaskioko.tvmaniac.seasondetails.presenter.ShowMarkSeasonDialog
+import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.ui.seasonDetailsLoaded
 import kotlinx.collections.immutable.ImmutableList
 

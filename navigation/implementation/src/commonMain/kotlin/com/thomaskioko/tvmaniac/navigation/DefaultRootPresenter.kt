@@ -10,11 +10,11 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.moreshows.presentation.di.MoreShowsPresenterFactory
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child
-import com.thomaskioko.tvmaniac.presentation.home.HomePresenter
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonDetailsUiParam
-import com.thomaskioko.tvmaniac.presentation.showdetails.ShowDetailsPresenterFactory
-import com.thomaskioko.tvmaniac.presentation.trailers.TrailersPresenterFactory
+import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
+import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenterFactory
+import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenterFactory
+import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenterFactory
+import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

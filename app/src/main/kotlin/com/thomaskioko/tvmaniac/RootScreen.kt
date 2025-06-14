@@ -14,12 +14,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.decompose.extensions.compose.stack.Children
-import com.thomaskioko.tvmaniac.home.HomeScreen
+import com.thomaskioko.tvmaniac.home.ui.HomeScreen
+import com.thomaskioko.tvmaniac.moreshows.ui.MoreShowsScreen
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
 import com.thomaskioko.tvmaniac.seasondetails.ui.SeasonDetailsScreen
-import com.thomaskioko.tvmaniac.ui.moreshows.MoreShowsScreen
-import com.thomaskioko.tvmaniac.ui.showdetails.ShowDetailsScreen
-import com.thomaskioko.tvmaniac.ui.trailers.videoplayer.TrailersScreen
+import com.thomaskioko.tvmaniac.showdetails.ui.ShowDetailsScreen
+import com.thomaskioko.tvmaniac.trailers.ui.TrailersScreen
 
 @Composable
 fun RootScreen(rootPresenter: RootPresenter, modifier: Modifier = Modifier) {

@@ -5,9 +5,9 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistContent
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenter
+import com.thomaskioko.tvmaniac.watchlist.presenter.LoadingShows
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistContent
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
