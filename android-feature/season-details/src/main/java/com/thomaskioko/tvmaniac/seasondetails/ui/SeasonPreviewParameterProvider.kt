@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.seasondetails.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.core.view.UiMessage
-import com.thomaskioko.tvmaniac.presentation.seasondetails.SeasonDetailsModel
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.EpisodeDetailsModel
-import com.thomaskioko.tvmaniac.presentation.seasondetails.model.SeasonImagesModel
+import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsModel
+import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
+import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonImagesModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 

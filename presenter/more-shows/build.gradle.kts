@@ -2,6 +2,12 @@ plugins {
     alias(libs.plugins.tvmaniac.kmp)
 }
 
+tvmaniac {
+    multiplatform {
+        useKotlinInjectAnvilCompiler()
+    }
+}
+
 kotlin {
     sourceSets {
         commonMain {

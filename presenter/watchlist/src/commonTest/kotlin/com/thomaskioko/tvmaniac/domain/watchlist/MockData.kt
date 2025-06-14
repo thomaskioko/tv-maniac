@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.domain.watchlist
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Watchlists
-import com.thomaskioko.tvmaniac.presentation.watchlist.model.WatchlistItem
+import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
 import kotlinx.collections.immutable.toPersistentList
 
 val cachedResult = mutableListOf(
