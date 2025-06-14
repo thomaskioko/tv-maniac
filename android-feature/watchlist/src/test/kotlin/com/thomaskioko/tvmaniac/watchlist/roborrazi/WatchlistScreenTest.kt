@@ -3,11 +3,11 @@ package com.thomaskioko.tvmaniac.watchlist.roborrazi
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
-import com.thomaskioko.tvmaniac.presenter.watchlist.EmptyWatchlist
-import com.thomaskioko.tvmaniac.presenter.watchlist.WatchlistContent
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.ui.library.WatchlistScreen
 import com.thomaskioko.tvmaniac.ui.library.list
+import com.thomaskioko.tvmaniac.watchlist.presenter.EmptyWatchlist
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistContent
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,7 +20,7 @@ import org.robolectric.annotation.LooperMode
 @Config(sdk = [33])
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @LooperMode(LooperMode.Mode.PAUSED)
-class LibraryScreenTest {
+class WatchlistScreenTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
