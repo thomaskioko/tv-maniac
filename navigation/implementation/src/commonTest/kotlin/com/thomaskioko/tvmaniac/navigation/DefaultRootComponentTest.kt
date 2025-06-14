@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.presenter.trailers.di.TrailersPresenterFactory
 import com.thomaskioko.tvmaniac.search.presenter.FakeSearchPresenterFactory
 import com.thomaskioko.tvmaniac.seasondetails.presenter.FakeSeasonDetailsPresenterFactory
 import com.thomaskioko.tvmaniac.seasondetails.presenter.di.SeasonDetailsPresenterFactory
+import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.settings.presenter.FakeSettingsPresenterFactory
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.watchlist.presenter.FakeWatchlistPresenterFactory
@@ -115,6 +116,93 @@ class DefaultRootComponentTest {
     }
 
     @Test
+    fun `should return SeasonDetails as active instance`() = runTest {
+        presenter.childStack.test {
+            awaitItem().active.instance.shouldBeInstanceOf<Home>()
+
+            val param = SeasonDetailsUiParam(
+                showId = 1,
+                seasonId = 2,
+                seasonNumber = 3,
+            )
+            navigator.bringToFront(RootDestinationConfig.SeasonDetails(param))
+
+            val seasonDetailsScreen = awaitItem().active.instance
+
+            seasonDetailsScreen.shouldBeInstanceOf<RootPresenter.Child.SeasonDetails>()
+        }
+    }
+
+    @Test
+    fun `should return Trailers as active instance`() = runTest {
+        presenter.childStack.test {
+            awaitItem().active.instance.shouldBeInstanceOf<Home>()
+
+            navigator.bringToFront(RootDestinationConfig.Trailers(1))
+
+            val trailersScreen = awaitItem().active.instance
+
+            trailersScreen.shouldBeInstanceOf<RootPresenter.Child.Trailers>()
+        }
+    }
+
+    @Test
+    fun `should return GenreShows as active instance`() = runTest {
+        presenter.childStack.test {
+            awaitItem().active.instance.shouldBeInstanceOf<Home>()
+
+            navigator.bringToFront(RootDestinationConfig.GenreShows(1))
+
+            val genreShowsScreen = awaitItem().active.instance
+
+            genreShowsScreen.shouldBeInstanceOf<RootPresenter.Child.GenreShows>()
+        }
+    }
+
+    @Test
+    fun `should navigate to ShowDetails using pushNew`() = runTest {
+        presenter.childStack.test {
+            awaitItem().active.instance.shouldBeInstanceOf<Home>()
+
+            navigator.pushNew(RootDestinationConfig.ShowDetails(1))
+
+            val showDetailsScreen = awaitItem().active.instance
+
+            showDetailsScreen.shouldBeInstanceOf<ShowDetails>()
+        }
+    }
+
+    @Test
+    fun `should navigate to ShowDetails using pushToFront`() = runTest {
+        presenter.childStack.test {
+            awaitItem().active.instance.shouldBeInstanceOf<Home>()
+
+            navigator.pushToFront(RootDestinationConfig.ShowDetails(1))
+
+            val showDetailsScreen = awaitItem().active.instance
+
+            showDetailsScreen.shouldBeInstanceOf<ShowDetails>()
+        }
+    }
+
+    @Test
+    fun `should navigate back to previous screen using popTo`() = runTest {
+        presenter.childStack.test {
+            awaitItem().active.instance.shouldBeInstanceOf<Home>()
+
+            navigator.pushNew(RootDestinationConfig.ShowDetails(1))
+            awaitItem().active.instance.shouldBeInstanceOf<ShowDetails>()
+
+            navigator.pushNew(RootDestinationConfig.MoreShows(1))
+            awaitItem().active.instance.shouldBeInstanceOf<MoreShows>()
+
+            navigator.popTo(0) // Pop back to Home
+
+            awaitItem().active.instance.shouldBeInstanceOf<Home>()
+        }
+    }
+
+    @Test
     fun `should return initial theme state`() = runTest {
         presenter.themeState.value shouldBe ThemeState()
     }
@@ -130,6 +218,21 @@ class DefaultRootComponentTest {
                 ThemeState(
                     isFetching = false,
                     appTheme = AppTheme.DARK_THEME,
+                )
+        }
+    }
+
+    @Test
+    fun `should update theme to Light when LightTheme is set`() = runTest {
+        presenter.themeState.test {
+            awaitItem() shouldBe ThemeState()
+
+            datastoreRepository.setTheme(AppTheme.LIGHT_THEME)
+
+            awaitItem() shouldBe
+                ThemeState(
+                    isFetching = false,
+                    appTheme = AppTheme.LIGHT_THEME,
                 )
         }
     }
