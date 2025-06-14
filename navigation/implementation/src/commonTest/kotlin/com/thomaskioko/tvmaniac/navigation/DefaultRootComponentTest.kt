@@ -4,45 +4,24 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
-import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
-import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
-import com.thomaskioko.tvmaniac.data.recommendedshows.testing.FakeRecommendedShowsRepository
-import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
-import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.discover.presenter.di.FakeDiscoverPresenterFactory
-import com.thomaskioko.tvmaniac.domain.recommendedshows.RecommendedShowsInteractor
-import com.thomaskioko.tvmaniac.domain.seasondetails.ObservableSeasonDetailsInteractor
-import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
-import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
-import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
-import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
-import com.thomaskioko.tvmaniac.domain.watchproviders.WatchProvidersInteractor
-import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.Home
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.MoreShows
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.ShowDetails
 import com.thomaskioko.tvmaniac.presenter.home.DefaultHomePresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.moreshows.FakeMoreShowsPresenterFactory
-import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenterFactory
-import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenterFactory
-import com.thomaskioko.tvmaniac.search.presenter.Mapper
-import com.thomaskioko.tvmaniac.search.presenter.SearchPresenterFactory
-import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
-import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenterFactory
-import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
-import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenterFactory
-import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
-import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
+import com.thomaskioko.tvmaniac.presenter.showdetails.FakeShowDetailsPresenterFactory
+import com.thomaskioko.tvmaniac.presenter.trailers.FakeTrailersPresenterFactory
+import com.thomaskioko.tvmaniac.presenter.trailers.di.TrailersPresenterFactory
+import com.thomaskioko.tvmaniac.search.presenter.FakeSearchPresenterFactory
+import com.thomaskioko.tvmaniac.seasondetails.presenter.FakeSeasonDetailsPresenterFactory
+import com.thomaskioko.tvmaniac.seasondetails.presenter.di.SeasonDetailsPresenterFactory
+import com.thomaskioko.tvmaniac.settings.presenter.FakeSettingsPresenterFactory
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
-import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenterFactory
-import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
+import com.thomaskioko.tvmaniac.watchlist.presenter.FakeWatchlistPresenterFactory
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
@@ -59,15 +38,6 @@ class DefaultRootComponentTest {
     private val testDispatcher = StandardTestDispatcher()
     private val traktAuthManager = FakeTraktAuthManager()
     private val datastoreRepository = FakeDatastoreRepository()
-    private val searchRepository = FakeSearchRepository()
-    private val genreRepository = FakeGenreRepository()
-    private val coroutineDispatcher = AppCoroutineDispatchers(
-        main = testDispatcher,
-        io = testDispatcher,
-        computation = testDispatcher,
-        databaseWrite = testDispatcher,
-        databaseRead = testDispatcher,
-    )
 
     private lateinit var presenter: DefaultRootPresenter
     private lateinit var navigator: FakeRootNavigator
@@ -83,7 +53,7 @@ class DefaultRootComponentTest {
             componentContext = componentContext,
             navigator = navigator,
             moreShowsPresenterFactory = FakeMoreShowsPresenterFactory(),
-            showDetailsPresenterFactory = buildShowDetailsPresenterPresenterFactory(),
+            showDetailsPresenterFactory = FakeShowDetailsPresenterFactory(),
             seasonDetailsPresenterFactory = buildSeasonDetailsPresenterFactory(),
             trailersPresenterFactory = buildTrailersPresenterFactory(),
             homePresenterFactory = buildHomePresenterFactory(),
@@ -164,77 +134,16 @@ class DefaultRootComponentTest {
         }
     }
 
-    private fun buildLibraryPresenterFactory(): WatchlistPresenterFactory = WatchlistPresenterFactory(
-        repository = FakeWatchlistRepository(),
-    )
-
-    private fun buildSearchPresenterFactory(): SearchPresenterFactory = SearchPresenterFactory(
-        genreRepository = genreRepository,
-        searchRepository = searchRepository,
-        mapper = Mapper(
-            formatterUtil = FakeFormatterUtil(),
-        ),
-    )
-
-    private fun buildSettingsPresenterFactory(): SettingsPresenterFactory = SettingsPresenterFactory(
-        datastoreRepository = datastoreRepository,
-        traktAuthRepository = FakeTraktAuthRepository(),
-    )
-
-    private fun buildShowDetailsPresenterPresenterFactory(): ShowDetailsPresenterFactory = ShowDetailsPresenterFactory(
-        watchlistRepository = FakeWatchlistRepository(),
-        recommendedShowsInteractor = RecommendedShowsInteractor(
-            recommendedShowsRepository = FakeRecommendedShowsRepository(),
-            dispatchers = coroutineDispatcher,
-        ),
-        showDetailsInteractor = ShowDetailsInteractor(
-            showDetailsRepository = FakeShowDetailsRepository(),
-            dispatchers = coroutineDispatcher,
-        ),
-        watchProvidersInteractor = WatchProvidersInteractor(
-            repository = FakeWatchProviderRepository(),
-            dispatchers = coroutineDispatcher,
-        ),
-        similarShowsInteractor = SimilarShowsInteractor(
-            similarShowsRepository = FakeSimilarShowsRepository(),
-            dispatchers = coroutineDispatcher,
-        ),
-        observableShowDetailsInteractor = ObservableShowDetailsInteractor(
-            castRepository = FakeCastRepository(),
-            recommendedShowsRepository = FakeRecommendedShowsRepository(),
-            seasonsRepository = FakeSeasonsRepository(),
-            showDetailsRepository = FakeShowDetailsRepository(),
-            similarShowsRepository = FakeSimilarShowsRepository(),
-            trailerRepository = FakeTrailerRepository(),
-            watchProviders = FakeWatchProviderRepository(),
-            formatterUtil = FakeFormatterUtil(),
-            dispatchers = coroutineDispatcher,
-        ),
-        logger = FakeLogger(),
-    )
-
     private fun buildHomePresenterFactory(): HomePresenter.Factory =
         DefaultHomePresenter.Factory(
             traktAuthManager = traktAuthManager,
-            searchPresenterFactory = buildSearchPresenterFactory(),
-            settingsPresenterFactory = buildSettingsPresenterFactory(),
+            searchPresenterFactory = FakeSearchPresenterFactory(),
+            settingsPresenterFactory = FakeSettingsPresenterFactory(),
             discoverPresenterFactory = FakeDiscoverPresenterFactory(),
-            watchlistPresenterFactory = buildLibraryPresenterFactory(),
+            watchlistPresenterFactory = FakeWatchlistPresenterFactory(),
         )
 
-    private fun buildSeasonDetailsPresenterFactory(): SeasonDetailsPresenterFactory = SeasonDetailsPresenterFactory(
-        observableSeasonDetailsInteractor = ObservableSeasonDetailsInteractor(
-            seasonDetailsRepository = FakeSeasonDetailsRepository(),
-            castRepository = FakeCastRepository(),
-        ),
-        seasonDetailsInteractor = SeasonDetailsInteractor(
-            seasonDetailsRepository = FakeSeasonDetailsRepository(),
-            dispatchers = coroutineDispatcher,
-        ),
-        logger = FakeLogger(),
-    )
+    private fun buildSeasonDetailsPresenterFactory(): SeasonDetailsPresenterFactory = FakeSeasonDetailsPresenterFactory()
 
-    private fun buildTrailersPresenterFactory(): TrailersPresenterFactory = TrailersPresenterFactory(
-        repository = FakeTrailerRepository(),
-    )
+    private fun buildTrailersPresenterFactory(): TrailersPresenterFactory = FakeTrailersPresenterFactory()
 }

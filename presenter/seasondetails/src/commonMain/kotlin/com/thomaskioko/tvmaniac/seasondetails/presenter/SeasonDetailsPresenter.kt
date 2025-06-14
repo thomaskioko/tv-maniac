@@ -21,28 +21,6 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class SeasonDetailsPresenterFactory(
-    private val observableSeasonDetailsInteractor: ObservableSeasonDetailsInteractor,
-    private val seasonDetailsInteractor: SeasonDetailsInteractor,
-    private val logger: Logger,
-) {
-    fun create(
-        componentContext: ComponentContext,
-        param: SeasonDetailsUiParam,
-        onBack: () -> Unit,
-        onNavigateToEpisodeDetails: (id: Long) -> Unit,
-    ): SeasonDetailsPresenter = SeasonDetailsPresenter(
-        componentContext = componentContext,
-        param = param,
-        onBack = onBack,
-        onEpisodeClick = onNavigateToEpisodeDetails,
-        observableSeasonDetailsInteractor = observableSeasonDetailsInteractor,
-        seasonDetailsInteractor = seasonDetailsInteractor,
-        logger = logger,
-    )
-}
-
-@Inject
 class SeasonDetailsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val param: SeasonDetailsUiParam,

@@ -20,20 +20,6 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class WatchlistPresenterFactory(
-    private val repository: WatchlistRepository,
-) {
-    fun create(
-        componentContext: ComponentContext,
-        navigateToShowDetails: (showDetails: Long) -> Unit,
-    ): WatchlistPresenter = WatchlistPresenter(
-        componentContext = componentContext,
-        navigateToShowDetails = navigateToShowDetails,
-        repository = repository,
-    )
-}
-
-@Inject
 class WatchlistPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigateToShowDetails: (id: Long) -> Unit,

@@ -15,22 +15,6 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class SettingsPresenterFactory(
-    private val datastoreRepository: DatastoreRepository,
-    private val traktAuthRepository: TraktAuthRepository,
-) {
-    fun create(
-        componentContext: ComponentContext,
-        launchWebView: () -> Unit,
-    ): SettingsPresenter = SettingsPresenter(
-        componentContext = componentContext,
-        launchWebView = launchWebView,
-        datastoreRepository = datastoreRepository,
-        traktAuthRepository = traktAuthRepository,
-    )
-}
-
-@Inject
 class SettingsPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val launchWebView: () -> Unit,

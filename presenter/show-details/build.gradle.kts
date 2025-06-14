@@ -4,6 +4,7 @@ plugins {
 
 tvmaniac {
     multiplatform {
+        useKotlinInjectAnvilCompiler()
         useSerialization()
     }
 

@@ -4,7 +4,6 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.featuredshows.api.interactor.FeaturedShowsInteractor
@@ -22,14 +21,12 @@ import com.thomaskioko.tvmaniac.discover.presenter.di.DiscoverPresenterFactory
 import com.thomaskioko.tvmaniac.domain.discover.DiscoverShowsInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
-import com.thomaskioko.tvmaniac.search.presenter.Mapper
-import com.thomaskioko.tvmaniac.search.presenter.SearchPresenterFactory
+import com.thomaskioko.tvmaniac.presenter.home.fakes.FakeSearchPresenterFactory
+import com.thomaskioko.tvmaniac.presenter.home.fakes.FakeSettingsPresenterFactory
+import com.thomaskioko.tvmaniac.presenter.home.fakes.FakeWatchlistPresenterFactory
 import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenterFactory
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
-import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenterFactory
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
@@ -111,27 +108,14 @@ class HomePresenterTest {
         }
     }
 
-    private fun buildSearchPresenterFactory(): SearchPresenterFactory = SearchPresenterFactory(
-        searchRepository = searchRepository,
-        genreRepository = genreRepository,
-        mapper = Mapper(
-            formatterUtil = FakeFormatterUtil(),
-        ),
-    )
-
     private fun buildHomePresenterFactory(): HomePresenter.Factory =
         DefaultHomePresenter.Factory(
             discoverPresenterFactory = buildDiscoverPresenterFactory(),
-            watchlistPresenterFactory = buildLibraryPresenterFactory(),
-            searchPresenterFactory = buildSearchPresenterFactory(),
-            settingsPresenterFactory = buildSettingsPresenterFactory(),
+            watchlistPresenterFactory = FakeWatchlistPresenterFactory(),
+            searchPresenterFactory = FakeSearchPresenterFactory(),
+            settingsPresenterFactory = FakeSettingsPresenterFactory(),
             traktAuthManager = traktAuthManager,
         )
-
-    private fun buildSettingsPresenterFactory(): SettingsPresenterFactory = SettingsPresenterFactory(
-        datastoreRepository = datastoreRepository,
-        traktAuthRepository = FakeTraktAuthRepository(),
-    )
 
     private fun buildDiscoverPresenterFactory(): DiscoverPresenterFactory = DefaultDiscoverPresenterFactory(
         discoverShowsInteractor = DiscoverShowsInteractor(
@@ -169,9 +153,5 @@ class HomePresenterTest {
             dispatchers = coroutineDispatcher,
         ),
         logger = FakeLogger(),
-    )
-
-    private fun buildLibraryPresenterFactory(): WatchlistPresenterFactory = WatchlistPresenterFactory(
-        repository = FakeWatchlistRepository(),
     )
 }
