@@ -3,9 +3,7 @@ plugins {
 }
 
 tvmaniac {
-    multiplatform {
-        addAndroidMultiplatformTarget()
-    }
+    addAndroidMultiplatformTarget()
 
     optIn(
         "kotlin.uuid.ExperimentalUuidApi",

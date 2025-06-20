@@ -12,33 +12,31 @@ plugins {
 
 tvmaniac {
 
-    multiplatform {
-        useKspAnvil()
+    useKspAnvil()
 
-        addIosTargetsWithXcFramework(
-            frameworkName = "TvManiac",
-        ) { framework ->
-            with(framework) {
-                isStatic = true
-                freeCompilerArgs += if (debuggable) "-Xadd-light-debug=enable" else ""
-                freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
+    addIosTargetsWithXcFramework(
+        frameworkName = "TvManiac",
+    ) { framework ->
+        with(framework) {
+            isStatic = true
+            freeCompilerArgs += if (debuggable) "-Xadd-light-debug=enable" else ""
+            freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
 
-                export(projects.i18n.api)
-                export(projects.navigation.api)
-                export(projects.data.datastore.api)
-                export(projects.presenter.discover)
-                export(projects.presenter.home)
-                export(projects.presenter.watchlist)
-                export(projects.presenter.moreShows)
-                export(projects.presenter.search)
-                export(projects.presenter.seasondetails)
-                export(projects.presenter.settings)
-                export(projects.presenter.showDetails)
-                export(projects.presenter.trailers)
+            export(projects.i18n.api)
+            export(projects.navigation.api)
+            export(projects.data.datastore.api)
+            export(projects.presenter.discover)
+            export(projects.presenter.home)
+            export(projects.presenter.watchlist)
+            export(projects.presenter.moreShows)
+            export(projects.presenter.search)
+            export(projects.presenter.seasondetails)
+            export(projects.presenter.settings)
+            export(projects.presenter.showDetails)
+            export(projects.presenter.trailers)
 
-                export(libs.decompose.decompose)
-                export(libs.essenty.lifecycle)
-            }
+            export(libs.decompose.decompose)
+            export(libs.essenty.lifecycle)
         }
     }
 

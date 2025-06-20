@@ -5,24 +5,24 @@ plugins {
 }
 
 tvmaniac {
-    multiplatform {
-        explicitApi()
-        addAndroidTarget {
+    explicitApi()
+
+    addAndroidTarget(
+        libraryConfiguration = {
             lint {
                 baseline = file("lint-baseline.xml")
             }
-
             testOptions.unitTests.isIncludeAndroidResources = true
-        }
+        },
+    )
 
-        addIosTargetsWithXcFramework(
-            frameworkName = "i18n",
-        ) { framework ->
-            with(framework) {
-                isStatic = true
+    addIosTargetsWithXcFramework(
+        frameworkName = "i18n",
+    ) { framework ->
+        with(framework) {
+            isStatic = true
 
-                export(libs.moko.resources)
-            }
+            export(libs.moko.resources)
         }
     }
 }

@@ -3,12 +3,10 @@ plugins {
 }
 
 tvmaniac {
-    multiplatform {
-        explicitApi()
-        addAndroidTarget {
-            testOptions.unitTests.isIncludeAndroidResources = true
-        }
-        useKotlinInjectAnvilCompiler()
+    explicitApi()
+    useKotlinInjectAnvilCompiler()
+    addAndroidTarget {
+        testOptions.unitTests.isIncludeAndroidResources = true
     }
 }
 

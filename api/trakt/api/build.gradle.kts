@@ -3,9 +3,7 @@ plugins {
 }
 
 tvmaniac {
-    multiplatform {
-        useSerialization()
-    }
+    useSerialization()
 }
 
 kotlin {

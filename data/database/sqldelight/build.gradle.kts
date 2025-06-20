@@ -4,10 +4,8 @@ plugins {
 }
 
 tvmaniac {
-    multiplatform {
-        addAndroidMultiplatformTarget()
-        useKotlinInjectAnvilCompiler()
-    }
+    addAndroidMultiplatformTarget()
+    useKotlinInjectAnvilCompiler()
 }
 
 kotlin {
