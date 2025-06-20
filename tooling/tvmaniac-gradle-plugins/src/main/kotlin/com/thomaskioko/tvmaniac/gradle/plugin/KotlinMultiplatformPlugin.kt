@@ -1,7 +1,5 @@
 package com.thomaskioko.tvmaniac.gradle.plugin
 
-import com.thomaskioko.tvmaniac.gradle.plugin.extensions.MultiplatformExtension
-import com.thomaskioko.tvmaniac.gradle.plugin.utils.baseExtension
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.compilerOptions
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.defaultTestSetup
 import com.thomaskioko.tvmaniac.gradle.plugin.utils.kotlin
@@ -15,8 +13,6 @@ public abstract class KotlinMultiplatformPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.plugins.apply("org.jetbrains.kotlin.multiplatform")
         target.plugins.apply(BasePlugin::class.java)
-
-        target.baseExtension.extensions.create("multiplatform", MultiplatformExtension::class.java)
 
         target.kotlinMultiplatform {
             applyDefaultHierarchyTemplate()
