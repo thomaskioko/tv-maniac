@@ -1,22 +1,24 @@
 package com.thomaskioko.tvmaniac.presenter.home.fakes
 
 import com.arkivanov.decompose.ComponentContext
-import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
-import com.thomaskioko.tvmaniac.settings.presenter.di.SettingsPresenterFactory
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
+import kotlinx.coroutines.flow.StateFlow
 
-class FakeSettingsPresenterFactory : SettingsPresenterFactory {
-    private val datastoreRepository = FakeDatastoreRepository()
-    private val traktAuthRepository = FakeTraktAuthRepository()
+class FakeSettingsPresenterFactory : SettingsPresenter.Factory {
 
-    override fun create(
+    override fun invoke(
         componentContext: ComponentContext,
         launchWebView: () -> Unit,
-    ): SettingsPresenter = SettingsPresenter(
-        componentContext = componentContext,
-        launchWebView = launchWebView,
-        datastoreRepository = datastoreRepository,
-        traktAuthRepository = traktAuthRepository,
-    )
+    ): SettingsPresenter = FakeSettingsPresenter()
+}
+
+internal class FakeSettingsPresenter : SettingsPresenter {
+    override val state: StateFlow<SettingsState>
+        get() = TODO("Not yet implemented")
+
+    override fun dispatch(action: SettingsActions) {
+        TODO("Not yet implemented")
+    }
 }

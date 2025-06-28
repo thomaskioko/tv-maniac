@@ -246,7 +246,7 @@ class SeasonPresenterTest {
         onBack: () -> Unit = {},
         onEpisodeClick: (id: Long) -> Unit = {},
     ): SeasonDetailsPresenter {
-        return SeasonDetailsPresenter(
+        return DefaultSeasonDetailsPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             param =
             SeasonDetailsUiParam(

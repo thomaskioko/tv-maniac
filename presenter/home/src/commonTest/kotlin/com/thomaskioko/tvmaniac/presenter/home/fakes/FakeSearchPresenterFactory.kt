@@ -1,28 +1,25 @@
 package com.thomaskioko.tvmaniac.presenter.home.fakes
 
 import com.arkivanov.decompose.ComponentContext
-import com.thomakioko.tvmaniac.util.testing.FakeFormatterUtil
-import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
-import com.thomaskioko.tvmaniac.search.presenter.Mapper
+import com.thomaskioko.tvmaniac.search.presenter.SearchShowAction
+import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
-import com.thomaskioko.tvmaniac.search.presenter.di.SearchPresenterFactory
-import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
+import kotlinx.coroutines.flow.StateFlow
 
-class FakeSearchPresenterFactory : SearchPresenterFactory {
-    private val searchRepository = FakeSearchRepository()
-    private val genreRepository = FakeGenreRepository()
-    private val mapper = Mapper(formatterUtil = FakeFormatterUtil())
+class FakeSearchPresenterFactory : SearchShowsPresenter.Factory {
 
-    override fun create(
+    override fun invoke(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToGenre: (id: Long) -> Unit,
-    ): SearchShowsPresenter = SearchShowsPresenter(
-        componentContext = componentContext,
-        onNavigateToShowDetails = onNavigateToShowDetails,
-        onNavigateToGenre = onNavigateToGenre,
-        mapper = mapper,
-        searchRepository = searchRepository,
-        genreRepository = genreRepository,
-    )
+    ): SearchShowsPresenter = FakeSearchPresenter()
+}
+
+internal class FakeSearchPresenter : SearchShowsPresenter {
+    override val state: StateFlow<SearchShowState>
+        get() = TODO("Not yet implemented")
+
+    override fun dispatch(action: SearchShowAction) {
+        TODO("Not yet implemented")
+    }
 }

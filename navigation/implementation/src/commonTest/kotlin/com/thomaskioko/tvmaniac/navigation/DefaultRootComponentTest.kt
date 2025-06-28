@@ -15,10 +15,8 @@ import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.moreshows.FakeMoreShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presenter.showdetails.FakeShowDetailsPresenterFactory
 import com.thomaskioko.tvmaniac.presenter.trailers.FakeTrailersPresenterFactory
-import com.thomaskioko.tvmaniac.presenter.trailers.di.TrailersPresenterFactory
 import com.thomaskioko.tvmaniac.search.presenter.FakeSearchPresenterFactory
 import com.thomaskioko.tvmaniac.seasondetails.presenter.FakeSeasonDetailsPresenterFactory
-import com.thomaskioko.tvmaniac.seasondetails.presenter.di.SeasonDetailsPresenterFactory
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.settings.presenter.FakeSettingsPresenterFactory
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
@@ -55,8 +53,8 @@ class DefaultRootComponentTest {
             navigator = navigator,
             moreShowsPresenterFactory = FakeMoreShowsPresenterFactory(),
             showDetailsPresenterFactory = FakeShowDetailsPresenterFactory(),
-            seasonDetailsPresenterFactory = buildSeasonDetailsPresenterFactory(),
-            trailersPresenterFactory = buildTrailersPresenterFactory(),
+            seasonDetailsPresenterFactory = FakeSeasonDetailsPresenterFactory(),
+            trailersPresenterFactory = FakeTrailersPresenterFactory(),
             homePresenterFactory = buildHomePresenterFactory(),
             datastoreRepository = datastoreRepository,
         )
@@ -245,8 +243,4 @@ class DefaultRootComponentTest {
             discoverPresenterFactory = FakeDiscoverPresenterFactory(),
             watchlistPresenterFactory = FakeWatchlistPresenterFactory(),
         )
-
-    private fun buildSeasonDetailsPresenterFactory(): SeasonDetailsPresenterFactory = FakeSeasonDetailsPresenterFactory()
-
-    private fun buildTrailersPresenterFactory(): TrailersPresenterFactory = FakeTrailersPresenterFactory()
 }
