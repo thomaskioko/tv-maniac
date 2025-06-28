@@ -10,7 +10,7 @@ interface ShowDetailsPresenter {
     fun dispatch(action: ShowDetailsAction)
 
     interface Factory {
-        fun create(
+        operator fun invoke(
             componentContext: ComponentContext,
             id: Long,
             onBack: () -> Unit,

@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 
 interface HomePresenter {
     interface Factory {
-        fun create(
+        operator fun invoke(
             componentContext: ComponentContext,
             onShowClicked: (id: Long) -> Unit,
             onMoreShowClicked: (id: Long) -> Unit,

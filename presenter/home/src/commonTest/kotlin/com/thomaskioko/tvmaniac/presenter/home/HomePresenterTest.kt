@@ -29,7 +29,7 @@ class HomePresenterTest {
         Dispatchers.setMain(testDispatcher)
         lifecycle.resume()
 
-        presenter = buildHomePresenterFactory().create(
+        presenter = buildHomePresenterFactory()(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             onShowClicked = {},
             onMoreShowClicked = {},

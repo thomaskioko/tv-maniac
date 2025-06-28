@@ -61,7 +61,7 @@ class DefaultRootPresenter(
         when (config) {
             is RootDestinationConfig.Home ->
                 Child.Home(
-                    presenter = homePresenterFactory.create(
+                    presenter = homePresenterFactory(
                         componentContext = componentContext,
                         onShowClicked = { id -> navigator.pushNew(RootDestinationConfig.ShowDetails(id)) },
                         onMoreShowClicked = { id -> navigator.pushNew(RootDestinationConfig.MoreShows(id)) },
@@ -71,7 +71,7 @@ class DefaultRootPresenter(
 
             is RootDestinationConfig.ShowDetails ->
                 Child.ShowDetails(
-                    presenter = showDetailsPresenterFactory.create(
+                    presenter = showDetailsPresenterFactory(
                         componentContext = componentContext,
                         id = config.id,
                         onBack = navigator::pop,
@@ -113,7 +113,7 @@ class DefaultRootPresenter(
 
             is RootDestinationConfig.MoreShows ->
                 Child.MoreShows(
-                    presenter = moreShowsPresenterFactory.create(
+                    presenter = moreShowsPresenterFactory(
                         componentContext = componentContext,
                         id = config.id,
                         onBack = navigator::pop,
@@ -137,7 +137,7 @@ class DefaultRootPresenter(
         private val trailersPresenterFactory: TrailersPresenter.Factory,
         private val datastoreRepository: DatastoreRepository,
     ) : RootPresenter.Factory {
-        override fun create(
+        override fun invoke(
             componentContext: ComponentContext,
             navigator: RootNavigator,
         ): RootPresenter = DefaultRootPresenter(

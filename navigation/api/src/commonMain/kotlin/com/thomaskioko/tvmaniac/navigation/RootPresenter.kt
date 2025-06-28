@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface RootPresenter {
     interface Factory {
-        fun create(
+        operator fun invoke(
             componentContext: ComponentContext,
             navigator: RootNavigator,
         ): RootPresenter

@@ -148,7 +148,7 @@ class DefaultShowDetailsPresenterFactory(
         onNavigateToTrailer: (id: Long) -> Unit,
     ) -> ShowDetailsPresenter,
 ) : ShowDetailsPresenter.Factory {
-    override fun create(
+    override fun invoke(
         componentContext: ComponentContext,
         id: Long,
         onBack: () -> Unit,

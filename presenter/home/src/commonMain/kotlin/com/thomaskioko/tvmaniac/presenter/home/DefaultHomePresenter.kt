@@ -137,7 +137,7 @@ class DefaultHomePresenter private constructor(
         private val settingsPresenterFactory: SettingsPresenter.Factory,
         private val traktAuthManager: TraktAuthManager,
     ) : HomePresenter.Factory {
-        override fun create(
+        override fun invoke(
             componentContext: ComponentContext,
             onShowClicked: (id: Long) -> Unit,
             onMoreShowClicked: (id: Long) -> Unit,
