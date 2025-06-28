@@ -1,32 +1,24 @@
 package com.thomaskioko.tvmaniac.presenter.moreshows
 
 import com.arkivanov.decompose.ComponentContext
-import com.thomaskioko.tvmaniac.data.popularshows.testing.FakePopularShowsRepository
-import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepository
-import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
-import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
+import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsActions
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
-import com.thomaskioko.tvmaniac.moreshows.presentation.di.MoreShowsPresenterFactory
+import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsState
+import kotlinx.coroutines.flow.StateFlow
 
-class FakeMoreShowsPresenterFactory : MoreShowsPresenterFactory {
-    private val popularShowsRepository = FakePopularShowsRepository()
-    private val upcomingShowsRepository = FakeUpcomingShowsRepository()
-    private val trendingShowsRepository = FakeTrendingShowsRepository()
-    private val topRatedShowsRepository = FakeTopRatedShowsRepository()
-
+class FakeMoreShowsPresenterFactory : MoreShowsPresenter.Factory {
     override fun create(
         componentContext: ComponentContext,
         id: Long,
         onBack: () -> Unit,
         onNavigateToShowDetails: (id: Long) -> Unit,
-    ): MoreShowsPresenter = MoreShowsPresenter(
-        componentContext = componentContext,
-        categoryId = id,
-        onBack = onBack,
-        onNavigateToShowDetails = onNavigateToShowDetails,
-        popularShowsRepository = popularShowsRepository,
-        upcomingShowsRepository = upcomingShowsRepository,
-        trendingShowsRepository = trendingShowsRepository,
-        topRatedShowsRepository = topRatedShowsRepository,
-    )
+    ): MoreShowsPresenter = FakeMoreShowsPresenter()
+}
+
+internal class FakeMoreShowsPresenter : MoreShowsPresenter {
+    override val state: StateFlow<MoreShowsState>
+        get() = TODO("Not yet implemented")
+
+    override fun dispatch(action: MoreShowsActions) {
+    }
 }

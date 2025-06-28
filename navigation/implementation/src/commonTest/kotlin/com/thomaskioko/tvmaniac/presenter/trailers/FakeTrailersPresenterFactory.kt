@@ -1,22 +1,21 @@
 package com.thomaskioko.tvmaniac.presenter.trailers
 
 import com.arkivanov.decompose.ComponentContext
-import com.thomaskioko.tvmaniac.presenter.trailers.di.TrailersPresenterFactory
-import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
+import kotlinx.coroutines.flow.StateFlow
 
-/**
- * A fake implementation of [TrailersPresenterFactory] for testing.
- * This simplifies the creation of [TrailersPresenter] in tests by handling all the dependencies internally.
- */
-class FakeTrailersPresenterFactory : TrailersPresenterFactory {
-    private val repository = FakeTrailerRepository()
+class FakeTrailersPresenterFactory : TrailersPresenter.Factory {
 
-    override fun create(
+    override fun invoke(
         componentContext: ComponentContext,
-        id: Long,
-    ): TrailersPresenter = TrailersPresenter(
-        componentContext = componentContext,
-        traktShowId = id,
-        repository = repository,
-    )
+        traktShowId: Long,
+    ): TrailersPresenter = FakeTrailersPresenter()
+}
+
+internal class FakeTrailersPresenter : TrailersPresenter {
+    override val state: StateFlow<TrailersState>
+        get() = TODO("Not yet implemented")
+
+    override fun dispatch(action: TrailersAction) {
+        TODO("Not yet implemented")
+    }
 }

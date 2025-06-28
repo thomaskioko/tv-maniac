@@ -8,12 +8,12 @@ import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.moreshows.presentation.di.MoreShowsPresenterFactory
+import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
-import com.thomaskioko.tvmaniac.presenter.showdetails.di.ShowDetailsPresenterFactory
-import com.thomaskioko.tvmaniac.presenter.trailers.di.TrailersPresenterFactory
-import com.thomaskioko.tvmaniac.seasondetails.presenter.di.SeasonDetailsPresenterFactory
+import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
+import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
+import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,10 +30,10 @@ class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigator: RootNavigator,
     private val homePresenterFactory: HomePresenter.Factory,
-    private val moreShowsPresenterFactory: MoreShowsPresenterFactory,
-    private val showDetailsPresenterFactory: ShowDetailsPresenterFactory,
-    private val seasonDetailsPresenterFactory: SeasonDetailsPresenterFactory,
-    private val trailersPresenterFactory: TrailersPresenterFactory,
+    private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
+    private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
+    private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
+    private val trailersPresenterFactory: TrailersPresenter.Factory,
     coroutineScope: CoroutineScope = componentContext.coroutineScope(),
     datastoreRepository: DatastoreRepository,
 ) : RootPresenter, ComponentContext by componentContext {
@@ -93,7 +93,7 @@ class DefaultRootPresenter(
 
             is RootDestinationConfig.SeasonDetails ->
                 Child.SeasonDetails(
-                    presenter = seasonDetailsPresenterFactory.create(
+                    presenter = seasonDetailsPresenterFactory(
                         componentContext,
                         param = config.param,
                         onBack = navigator::pop,
@@ -105,9 +105,9 @@ class DefaultRootPresenter(
 
             is RootDestinationConfig.Trailers ->
                 Child.Trailers(
-                    presenter = trailersPresenterFactory.create(
+                    presenter = trailersPresenterFactory(
                         componentContext = componentContext,
-                        id = config.id,
+                        traktShowId = config.id,
                     ),
                 )
 
@@ -131,10 +131,10 @@ class DefaultRootPresenter(
     @ContributesBinding(ActivityScope::class, RootPresenter.Factory::class)
     class Factory(
         private val homePresenterFactory: HomePresenter.Factory,
-        private val moreShowsPresenterFactory: MoreShowsPresenterFactory,
-        private val showDetailsPresenterFactory: ShowDetailsPresenterFactory,
-        private val seasonDetailsPresenterFactory: SeasonDetailsPresenterFactory,
-        private val trailersPresenterFactory: TrailersPresenterFactory,
+        private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
+        private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
+        private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
+        private val trailersPresenterFactory: TrailersPresenter.Factory,
         private val datastoreRepository: DatastoreRepository,
     ) : RootPresenter.Factory {
         override fun create(

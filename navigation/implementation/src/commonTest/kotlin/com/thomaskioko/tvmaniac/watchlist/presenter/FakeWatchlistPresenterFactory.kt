@@ -1,18 +1,21 @@
 package com.thomaskioko.tvmaniac.watchlist.presenter
 
 import com.arkivanov.decompose.ComponentContext
-import com.thomaskioko.tvmaniac.watchlist.presenter.di.WatchlistPresenterFactory
-import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
+import kotlinx.coroutines.flow.StateFlow
 
-class FakeWatchlistPresenterFactory : WatchlistPresenterFactory {
-    val repository = FakeWatchlistRepository()
+class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
 
-    override fun create(
+    override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showDetails: Long) -> Unit,
-    ): WatchlistPresenter = WatchlistPresenter(
-        componentContext = componentContext,
-        navigateToShowDetails = navigateToShowDetails,
-        repository = repository,
-    )
+    ): WatchlistPresenter = FakeWatchlistPresenter()
+}
+
+internal class FakeWatchlistPresenter : WatchlistPresenter {
+    override val state: StateFlow<WatchlistState>
+        get() = TODO("Not yet implemented")
+
+    override fun dispatch(action: WatchlistAction) {
+        TODO("Not yet implemented")
+    }
 }
