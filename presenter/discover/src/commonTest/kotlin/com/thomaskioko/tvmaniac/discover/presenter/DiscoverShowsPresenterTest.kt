@@ -273,7 +273,7 @@ class DiscoverShowsPresenterTest {
 
     private fun buildPresenter(
         lifecycle: LifecycleRegistry = LifecycleRegistry(),
-    ): DiscoverShowsPresenter = DiscoverShowsPresenter(
+    ): DiscoverShowsPresenter = DefaultDiscoverShowsPresenter(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         onNavigateToShowDetails = {},
         onNavigateToMore = {},

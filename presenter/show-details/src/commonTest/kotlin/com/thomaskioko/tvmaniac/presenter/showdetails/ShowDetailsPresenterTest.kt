@@ -230,7 +230,7 @@ class ShowDetailsPresenterTest {
         onNavigateToTrailer: (id: Long) -> Unit = {},
         onNavigateToShow: (id: Long) -> Unit = {},
     ): ShowDetailsPresenter {
-        return ShowDetailsPresenter(
+        return DefaultShowDetailsPresenter(
             showId = 84958,
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
             onBack = onBack,

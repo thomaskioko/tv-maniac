@@ -8,13 +8,13 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
-import com.thomaskioko.tvmaniac.discover.presenter.di.DiscoverPresenterFactory
+import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.Child
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter.HomeConfig
-import com.thomaskioko.tvmaniac.search.presenter.di.SearchPresenterFactory
-import com.thomaskioko.tvmaniac.settings.presenter.di.SettingsPresenterFactory
+import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
-import com.thomaskioko.tvmaniac.watchlist.presenter.di.WatchlistPresenterFactory
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
 import kotlinx.coroutines.flow.StateFlow
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -28,10 +28,10 @@ class DefaultHomePresenter private constructor(
     @Assisted private val onShowClicked: (id: Long) -> Unit,
     @Assisted private val onMoreShowClicked: (id: Long) -> Unit,
     @Assisted private val onShowGenreClicked: (id: Long) -> Unit,
-    private val discoverPresenterFactory: DiscoverPresenterFactory,
-    private val watchlistPresenterFactory: WatchlistPresenterFactory,
-    private val searchPresenterFactory: SearchPresenterFactory,
-    private val settingsPresenterFactory: SettingsPresenterFactory,
+    private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
+    private val watchlistPresenterFactory: WatchlistPresenter.Factory,
+    private val searchPresenterFactory: SearchShowsPresenter.Factory,
+    private val settingsPresenterFactory: SettingsPresenter.Factory,
     private val traktAuthManager: TraktAuthManager,
 ) : ComponentContext by componentContext, HomePresenter {
     private val navigation = StackNavigation<HomeConfig>()
@@ -86,7 +86,7 @@ class DefaultHomePresenter private constructor(
         when (config) {
             is HomeConfig.Discover -> {
                 Child.Discover(
-                    presenter = discoverPresenterFactory.create(
+                    presenter = discoverPresenterFactory(
                         componentContext = componentContext,
                         onNavigateToShowDetails = { id -> onShowClicked(id) },
                         onNavigateToMore = { id -> onMoreShowClicked(id) },
@@ -96,7 +96,7 @@ class DefaultHomePresenter private constructor(
 
             HomeConfig.Library -> {
                 Child.Watchlist(
-                    presenter = watchlistPresenterFactory.create(
+                    presenter = watchlistPresenterFactory(
                         componentContext = componentContext,
                         navigateToShowDetails = { id ->
                             onShowClicked(id)
@@ -107,7 +107,7 @@ class DefaultHomePresenter private constructor(
 
             HomeConfig.Search -> {
                 Child.Search(
-                    presenter = searchPresenterFactory.create(
+                    presenter = searchPresenterFactory(
                         componentContext = componentContext,
                         onNavigateToShowDetails = { id -> onShowClicked(id) },
                         onNavigateToGenre = { id -> onShowGenreClicked(id) },
@@ -117,7 +117,7 @@ class DefaultHomePresenter private constructor(
 
             HomeConfig.Settings -> {
                 Child.Settings(
-                    presenter = settingsPresenterFactory.create(
+                    presenter = settingsPresenterFactory(
                         componentContext = componentContext,
                         launchWebView = {
                             traktAuthManager.launchWebView()
@@ -131,10 +131,10 @@ class DefaultHomePresenter private constructor(
     @SingleIn(ActivityScope::class)
     @ContributesBinding(ActivityScope::class, HomePresenter.Factory::class)
     class Factory(
-        private val discoverPresenterFactory: DiscoverPresenterFactory,
-        private val watchlistPresenterFactory: WatchlistPresenterFactory,
-        private val searchPresenterFactory: SearchPresenterFactory,
-        private val settingsPresenterFactory: SettingsPresenterFactory,
+        private val discoverPresenterFactory: DiscoverShowsPresenter.Factory,
+        private val watchlistPresenterFactory: WatchlistPresenter.Factory,
+        private val searchPresenterFactory: SearchShowsPresenter.Factory,
+        private val settingsPresenterFactory: SettingsPresenter.Factory,
         private val traktAuthManager: TraktAuthManager,
     ) : HomePresenter.Factory {
         override fun create(

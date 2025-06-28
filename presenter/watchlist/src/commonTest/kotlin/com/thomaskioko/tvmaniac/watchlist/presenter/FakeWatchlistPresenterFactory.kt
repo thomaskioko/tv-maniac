@@ -1,16 +1,15 @@
 package com.thomaskioko.tvmaniac.watchlist.presenter
 
 import com.arkivanov.decompose.ComponentContext
-import com.thomaskioko.tvmaniac.watchlist.presenter.di.WatchlistPresenterFactory
 import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
 
-class FakeWatchlistPresenterFactory : WatchlistPresenterFactory {
+class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
     val repository = FakeWatchlistRepository()
 
-    override fun create(
+    override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showDetails: Long) -> Unit,
-    ): WatchlistPresenter = WatchlistPresenter(
+    ): WatchlistPresenter = DefaultWatchlistPresenter(
         componentContext = componentContext,
         navigateToShowDetails = navigateToShowDetails,
         repository = repository,
