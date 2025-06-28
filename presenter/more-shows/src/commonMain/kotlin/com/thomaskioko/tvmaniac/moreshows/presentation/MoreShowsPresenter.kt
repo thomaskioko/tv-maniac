@@ -9,8 +9,10 @@ interface MoreShowsPresenter {
 
     fun dispatch(action: MoreShowsActions)
 
+    fun getElement(index: Int): TvShow?
+
     interface Factory {
-        fun create(
+        operator fun invoke(
             componentContext: ComponentContext,
             id: Long,
             onBack: () -> Unit,

@@ -44,7 +44,6 @@ class DefaultMoreShowsPresenter(
 
     private val coroutineScope = coroutineScope()
     private val _state = MutableStateFlow(MoreShowsState())
-    override val state: StateFlow<MoreShowsState> = _state.asStateFlow()
 
     private val showsPagingDataPresenter = object : PagingDataPresenter<TvShow>() {
         override suspend fun presentPagingDataEvent(event: PagingDataEvent<TvShow>) {
@@ -60,6 +59,8 @@ class DefaultMoreShowsPresenter(
             TOP_RATED.id -> getTopRatedPagedList()
         }
     }
+
+    override val state: StateFlow<MoreShowsState> = _state.asStateFlow()
 
     override fun dispatch(action: MoreShowsActions) {
         when (action) {
@@ -144,8 +145,7 @@ class DefaultMoreShowsPresenter(
     }
 
     /** Helper method used to get a show object in iOS */
-    @Suppress("unused")
-    fun getElement(index: Int): TvShow? = showsPagingDataPresenter[index]
+    override fun getElement(index: Int): TvShow? = showsPagingDataPresenter[index]
 
     private fun Flow<PagingData<ShowEntity>>.mapToTvShow(): Flow<PagingData<TvShow>> = map {
         it.map { show ->
@@ -170,7 +170,7 @@ class DefaultMoreShowsPresenterFactory(
     ) -> MoreShowsPresenter,
 ) : MoreShowsPresenter.Factory {
 
-    override fun create(
+    override fun invoke(
         componentContext: ComponentContext,
         id: Long,
         onBack: () -> Unit,

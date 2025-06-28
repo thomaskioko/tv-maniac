@@ -4,10 +4,11 @@ import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsActions
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsState
+import com.thomaskioko.tvmaniac.moreshows.presentation.TvShow
 import kotlinx.coroutines.flow.StateFlow
 
 class FakeMoreShowsPresenterFactory : MoreShowsPresenter.Factory {
-    override fun create(
+    override fun invoke(
         componentContext: ComponentContext,
         id: Long,
         onBack: () -> Unit,
@@ -20,5 +21,9 @@ internal class FakeMoreShowsPresenter : MoreShowsPresenter {
         get() = TODO("Not yet implemented")
 
     override fun dispatch(action: MoreShowsActions) {
+    }
+
+    override fun getElement(index: Int): TvShow? {
+        return null
     }
 }
