@@ -32,7 +32,7 @@ class WatchlistPresenterTest {
         Dispatchers.setMain(testDispatcher)
 
         lifecycle.resume()
-        presenter = factory.create(
+        presenter = factory.invoke(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             navigateToShowDetails = {},
         )

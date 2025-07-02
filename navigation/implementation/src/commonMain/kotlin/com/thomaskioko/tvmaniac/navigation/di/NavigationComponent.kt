@@ -17,5 +17,5 @@ interface NavigationComponent {
         componentContext: ComponentContext,
         factory: RootPresenter.Factory,
         navigator: RootNavigator,
-    ): RootPresenter = factory.create(componentContext, navigator)
+    ): RootPresenter = factory(componentContext, navigator)
 }
