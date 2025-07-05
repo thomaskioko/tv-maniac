@@ -10,11 +10,13 @@ import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
@@ -34,20 +36,34 @@ class DefaultWatchlistPresenter(
     private val queryFlow = MutableStateFlow("")
     private val _state = MutableStateFlow<WatchlistState>(LoadingShows)
 
-    init {
-        coroutineScope.launch {
-            combine(
-                queryFlow,
-                repository.observeWatchlist(),
-            ) { query, result ->
-                query to result
-            }.collect { (query, result) ->
-                handleWatchlistResult(query, result)
-            }
-        }
-    }
-
-    override val state: StateFlow<WatchlistState> = _state.asStateFlow()
+    override val state: StateFlow<WatchlistState> = combine(
+        queryFlow,
+        repository.observeWatchlist(),
+        repository.observeListStyle(),
+    ) { query, result, isGridMode ->
+        result.fold(
+            onFailure = {
+                EmptyWatchlist(
+                    message = it.errorMessage ?: "Unknown error occurred",
+                    query = query,
+                    isSearchActive = query.isNotBlank(),
+                    isGridMode = isGridMode,
+                )
+            },
+            onSuccess = { shows ->
+                WatchlistContent(
+                    list = shows.entityToWatchlistShowList(),
+                    query = query,
+                    isSearchActive = query.isNotBlank(),
+                    isGridMode = isGridMode,
+                )
+            },
+        )
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = _state.value,
+    )
 
     override fun dispatch(action: WatchlistAction) {
         when (action) {
@@ -55,9 +71,7 @@ class DefaultWatchlistPresenter(
             is WatchlistShowClicked -> navigateToShowDetails(action.id)
             is WatchlistQueryChanged -> updateQuery(action.query)
             is ClearWatchlistQuery -> clearQuery()
-            ChangeListStyleClicked -> {
-                // TODO:: Update settings with change style
-            }
+            ChangeListStyleClicked -> toggleListStyle()
         }
     }
 
@@ -72,6 +86,8 @@ class DefaultWatchlistPresenter(
             queryFlow.emit(query)
             if (query.isNotBlank()) {
                 searchWatchlist(query)
+            } else {
+                observeWatchlist()
             }
         }
     }
@@ -79,76 +95,92 @@ class DefaultWatchlistPresenter(
     private fun clearQuery() {
         coroutineScope.launch {
             queryFlow.emit("")
-            observeWatchlist()
+        }
+    }
+
+    private fun toggleListStyle() {
+        coroutineScope.launch {
+            val currentIsGridMode = repository.observeListStyle().first()
+            val newIsGridMode = !currentIsGridMode
+
+            repository.saveListStyle(newIsGridMode)
         }
     }
 
     private suspend fun searchWatchlist(query: String) {
+        val currentIsGridMode = repository.observeListStyle().first()
         repository.searchWatchlistByQuery(query)
-            .catch { handleError(it.message) }
+            .catch { handleError(it.message, query) }
             .collect { result ->
-                handleSearchResult(query, result)
+                handleSearchResult(query, result, currentIsGridMode)
             }
     }
 
     private suspend fun observeWatchlist() {
+        val currentQuery = queryFlow.value
+        val currentIsGridMode = repository.observeListStyle().first()
         repository.observeWatchlist()
             .onStart { _state.update { LoadingShows } }
-            .catch { handleError(it.message) }
+            .catch { handleError(it.message, currentQuery) }
             .collect { result ->
-                handleWatchlistResult(queryFlow.replayCache.lastOrNull() ?: "", result)
+                handleWatchlistResult(currentQuery, result, currentIsGridMode)
             }
     }
 
-    private fun handleSearchResult(query: String, result: Either<Failure, List<SearchWatchlist>>) {
+    private fun handleSearchResult(
+        query: String,
+        result: Either<Failure, List<SearchWatchlist>>,
+        isGridMode: Boolean,
+    ) {
         result.fold(
             onFailure = { handleError(it.errorMessage, query) },
             onSuccess = { shows ->
                 val list = shows.entityToWatchlistShowList()
-
-                _state.update { currentState ->
-                    (currentState as? WatchlistContent)?.copy(
-                        query = query,
-                        isSearchActive = true,
-                        list = list,
-                    ) ?: WatchlistContent(
+                _state.update {
+                    WatchlistContent(
                         list = list,
                         query = query,
                         isSearchActive = true,
+                        isGridMode = isGridMode,
                     )
                 }
             },
         )
     }
 
-    private fun handleWatchlistResult(query: String, result: Either<Failure, List<Watchlists>>) {
-        result.fold(
-            onFailure = { handleError(it.errorMessage, query) },
+    private fun handleWatchlistResult(
+        query: String,
+        result: Either<Failure, List<Watchlists>>,
+        isGridMode: Boolean,
+    ): WatchlistState {
+        return result.fold(
+            onFailure = {
+                EmptyWatchlist(
+                    message = it.errorMessage ?: "Unknown error occurred",
+                    query = query,
+                    isSearchActive = query.isNotBlank(),
+                    isGridMode = isGridMode,
+                )
+            },
             onSuccess = { shows ->
-                _state.update { currentState ->
-                    when (currentState) {
-                        is WatchlistContent -> currentState.copy(
-                            list = shows.entityToWatchlistShowList(),
-                            query = query,
-                            isSearchActive = query.isNotBlank(),
-                        )
-                        else -> WatchlistContent(
-                            list = shows.entityToWatchlistShowList(),
-                            query = query,
-                            isSearchActive = query.isNotBlank(),
-                        )
-                    }
-                }
+                WatchlistContent(
+                    list = shows.entityToWatchlistShowList(),
+                    query = query,
+                    isSearchActive = query.isNotBlank(),
+                    isGridMode = isGridMode,
+                )
             },
         )
     }
 
-    private fun handleError(error: String?, query: String = "") {
-        _state.value = EmptyWatchlist(
-            message = error ?: "Unknown error occurred",
-            query = query,
-            isSearchActive = query.isNotBlank(),
-        )
+    private fun handleError(error: String?, query: String) {
+        _state.update {
+            EmptyWatchlist(
+                message = error ?: "Unknown error occurred",
+                query = query,
+                isSearchActive = query.isNotBlank(),
+            )
+        }
     }
 }
 

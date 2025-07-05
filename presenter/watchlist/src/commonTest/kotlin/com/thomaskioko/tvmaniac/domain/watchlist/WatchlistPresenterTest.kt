@@ -5,6 +5,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
+import com.thomaskioko.tvmaniac.watchlist.presenter.ChangeListStyleClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.FakeWatchlistPresenterFactory
 import com.thomaskioko.tvmaniac.watchlist.presenter.LoadingShows
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistContent
@@ -57,6 +58,31 @@ class WatchlistPresenterTest {
             factory.repository.setObserveResult(Either.Right(updatedData))
 
             awaitItem() shouldBe WatchlistContent(query = "", list = expectedUiResult())
+        }
+    }
+
+    @Test
+    fun `should toggle list style when ChangeListStyleClicked is dispatched`() = runTest {
+        factory.repository.setObserveResult(Either.Right(cachedResult))
+
+        presenter.state.test {
+            awaitItem() shouldBe LoadingShows
+            val initialState = awaitItem() as WatchlistContent
+            initialState.isGridMode shouldBe true
+
+            // Dispatch action to toggle list style
+            presenter.dispatch(ChangeListStyleClicked)
+
+            val updatedState = awaitItem() as WatchlistContent
+            updatedState.isGridMode shouldBe false
+            updatedState.query shouldBe initialState.query
+            updatedState.list shouldBe initialState.list
+
+            // Toggle back to grid mode
+            presenter.dispatch(ChangeListStyleClicked)
+
+            val finalState = awaitItem() as WatchlistContent
+            finalState.isGridMode shouldBe true
         }
     }
 }
