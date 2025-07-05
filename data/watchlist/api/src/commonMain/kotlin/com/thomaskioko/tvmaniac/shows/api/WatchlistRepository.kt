@@ -15,4 +15,18 @@ interface WatchlistRepository {
     fun observeUnSyncedItems(): Flow<Unit>
 
     suspend fun updateLibrary(id: Long, addToLibrary: Boolean)
+
+    /**
+     * Observes the user's preferred list style for the watchlist.
+     *
+     * @return A Flow of Boolean indicating if grid mode is preferred (true for grid, false for list).
+     */
+    fun observeListStyle(): Flow<Boolean>
+
+    /**
+     * Saves the user's preferred list style for the watchlist.
+     *
+     * @param isGridMode Boolean indicating if grid mode is preferred (true for grid, false for list).
+     */
+    suspend fun saveListStyle(isGridMode: Boolean)
 }
