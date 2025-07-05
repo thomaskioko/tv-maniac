@@ -61,6 +61,7 @@ import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.SheetDragHandle
+import com.thomaskioko.tvmaniac.compose.components.ShowLinearProgressIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
@@ -90,7 +91,6 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.UpdateSeasonWatchedState
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.Cast
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonImagesModel
 import com.thomaskioko.tvmaniac.seasondetails.ui.components.CollapsableContent
-import com.thomaskioko.tvmaniac.seasondetails.ui.components.ShowLinearProgressIndicator
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
