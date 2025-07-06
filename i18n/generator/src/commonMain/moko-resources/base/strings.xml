@@ -30,8 +30,8 @@
     <string name="label_watchlist_create">Create</string>
     <string name="label_watchlist_list_style">List Style</string>
     <string name="label_watchlist_search_hint">Enter a show title to search for Show</string>
-    <string name="label_watchlist_empty_search_results">Enter a show title to search for Show</string>
     <string name="label_watchlist_sort_list">Sort List</string>
+    <string name="label_watchlist_empty_result">%s not found in your watchlist.</string>
 
 
     <string name="label_settings_title">Settings</string>
