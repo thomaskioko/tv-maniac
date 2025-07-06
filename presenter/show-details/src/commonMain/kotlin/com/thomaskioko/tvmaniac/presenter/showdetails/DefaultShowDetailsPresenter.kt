@@ -120,17 +120,17 @@ class DefaultShowDetailsPresenter(
 
         coroutineScope.launch {
             showDetailsInteractor(ShowDetailsInteractor.Param(showId, forceReload))
-                .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
+                .collectStatus(showDetailsLoadingState, logger, uiMessageManager)
         }
 
         coroutineScope.launch {
             similarShowsInteractor(SimilarShowsInteractor.Param(showId, forceReload))
-                .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
+                .collectStatus(similarShowsLoadingState, logger, uiMessageManager)
         }
 
         coroutineScope.launch {
             watchProvidersInteractor(WatchProvidersInteractor.Param(showId, forceReload))
-                .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
+                .collectStatus(watchProvidersLoadingState, logger, uiMessageManager)
         }
     }
 }
