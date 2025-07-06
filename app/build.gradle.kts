@@ -87,6 +87,7 @@ dependencies {
     implementation(projects.domain.showdetails)
     implementation(projects.domain.similarshows)
     implementation(projects.domain.watchproviders)
+    implementation(projects.domain.watchlist)
     implementation(projects.presenter.discover)
     implementation(projects.presenter.watchlist)
     implementation(projects.presenter.home)

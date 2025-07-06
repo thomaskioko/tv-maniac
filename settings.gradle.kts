@@ -142,6 +142,7 @@ include(
     ":domain:seasondetails",
     ":domain:showdetails",
     ":domain:similarshows",
+    ":domain:watchlist",
     ":domain:watchproviders",
     ":i18n:api",
     ":i18n:generator",
