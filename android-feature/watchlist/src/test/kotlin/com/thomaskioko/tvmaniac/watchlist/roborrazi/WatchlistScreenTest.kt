@@ -3,11 +3,11 @@ package com.thomaskioko.tvmaniac.watchlist.roborrazi
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.ui.library.WatchlistScreen
-import com.thomaskioko.tvmaniac.ui.library.list
-import com.thomaskioko.tvmaniac.watchlist.presenter.EmptyWatchlist
-import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistContent
+import com.thomaskioko.tvmaniac.ui.library.watchlistItems
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistState
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,7 +30,7 @@ class WatchlistScreenTest {
         composeTestRule.captureMultiDevice("LibraryContentState") {
             TvManiacBackground {
                 WatchlistScreen(
-                    state = WatchlistContent(list = list),
+                    state = WatchlistState(items = watchlistItems),
                     onAction = {},
                 )
             }
@@ -42,7 +42,11 @@ class WatchlistScreenTest {
         composeTestRule.captureMultiDevice("ErrorLoadingShows") {
             TvManiacBackground {
                 WatchlistScreen(
-                    state = EmptyWatchlist(message = "Something went Wrong"),
+                    state = WatchlistState(
+                        isGridMode = false,
+                        items = watchlistItems,
+                        message = UiMessage(message = "Something went Wrong"),
+                    ),
                     onAction = {},
                 )
             }

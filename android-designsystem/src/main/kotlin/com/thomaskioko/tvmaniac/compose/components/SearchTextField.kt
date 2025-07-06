@@ -187,6 +187,7 @@ private fun SearchTextField(
             unfocusedIndicatorColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            cursorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
         ),
     )
 }
