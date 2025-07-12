@@ -40,7 +40,7 @@ class DefaultShowDetailsPresenter(
     private val showDetailsInteractor: ShowDetailsInteractor,
     private val similarShowsInteractor: SimilarShowsInteractor,
     private val watchProvidersInteractor: WatchProvidersInteractor,
-    private val observableShowDetailsInteractor: ObservableShowDetailsInteractor,
+    observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     private val logger: Logger,
 ) : ShowDetailsPresenter, ComponentContext by componentContext {
 
@@ -54,6 +54,8 @@ class DefaultShowDetailsPresenter(
     private val _state = MutableStateFlow(ShowDetailsContent.Empty)
 
     init {
+        observableShowDetailsInteractor(showId)
+
         coroutineScope.launch { observeShowDetails() }
     }
 
@@ -109,10 +111,6 @@ class DefaultShowDetailsPresenter(
     }
 
     private fun observeShowDetails(forceReload: Boolean = false) {
-        coroutineScope.launch {
-            observableShowDetailsInteractor(showId)
-        }
-
         coroutineScope.launch {
             recommendedShowsInteractor(RecommendedShowsInteractor.Param(showId, forceReload))
                 .collectStatus(recommendedShowsLoadingState, logger, uiMessageManager)
