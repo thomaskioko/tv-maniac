@@ -128,7 +128,7 @@ jobs:
                     file_pattern: '**/*.png'
                     disable_globbing: true
                     commit_message: "🤖 Beep Beep: Update screenshots 🤖"
-                    pull_strategy: 'NO_FF'
+                    pull_strategy: 'REBASE'
                     skip_fetch: false
                     skip_dirty_check: true
 
