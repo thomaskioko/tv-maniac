@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.AuthState
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -95,11 +96,28 @@ class DefaultDatastoreRepository(
             preferences[KEY_LANGUAGE] ?: "en"
         }
 
+    override suspend fun saveListStyle(listStyle: ListStyle) {
+        coroutineScope.io.launch {
+            dataStore.edit { preferences ->
+                preferences[KEY_LIST_STYLE] = listStyle.name
+            }
+        }
+    }
+
+    override fun observeListStyle(): Flow<ListStyle> =
+        dataStore.data.map { preferences ->
+            when (preferences[KEY_LIST_STYLE]) {
+                ListStyle.LIST.name -> ListStyle.LIST
+                else -> ListStyle.GRID // Default to GRID
+            }
+        }
+
     companion object {
         val KEY_THEME = stringPreferencesKey("app_theme")
         val KEY_ACCESS_TOKEN = stringPreferencesKey("auth_state")
         val KEY_REFRESH_TOKEN = stringPreferencesKey("refresh_token")
         val KEY_IS_AUTHORIZED = booleanPreferencesKey("isAuthorized")
         val KEY_LANGUAGE = stringPreferencesKey("app_language")
+        val KEY_LIST_STYLE = stringPreferencesKey("list_style")
     }
 }

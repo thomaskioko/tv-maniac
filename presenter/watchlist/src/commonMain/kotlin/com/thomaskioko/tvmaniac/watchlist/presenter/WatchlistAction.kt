@@ -11,3 +11,5 @@ data class WatchlistQueryChanged(val query: String) : WatchlistAction
 data object ClearWatchlistQuery : WatchlistAction
 
 data object ChangeListStyleClicked : WatchlistAction
+
+data class MessageShown(val id: Long) : WatchlistAction

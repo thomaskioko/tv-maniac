@@ -1,31 +1,15 @@
 package com.thomaskioko.tvmaniac.watchlist.presenter
 
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-sealed interface WatchlistState {
-    val query: String?
-    val isSearchActive: Boolean
-    val isGridMode: Boolean
-}
-
-data object LoadingShows : WatchlistState {
-    override val query: String? = null
-    override val isSearchActive: Boolean = false
-    override val isGridMode: Boolean = true
-}
-
-data class WatchlistContent(
-    override val query: String? = null,
-    override val isSearchActive: Boolean = false,
-    override val isGridMode: Boolean = true,
-    val list: ImmutableList<WatchlistItem> = persistentListOf(),
-) : WatchlistState
-
-data class EmptyWatchlist(
-    override val query: String? = null,
-    override val isSearchActive: Boolean = false,
-    override val isGridMode: Boolean = true,
-    val message: String? = null,
-) : WatchlistState
+data class WatchlistState(
+    val query: String = "",
+    val isSearchActive: Boolean = false,
+    val isGridMode: Boolean = true,
+    val isLoading: Boolean = false,
+    val items: ImmutableList<WatchlistItem> = persistentListOf(),
+    val message: UiMessage? = null,
+)

@@ -37,8 +37,7 @@ class DefaultTrendingShowsRepository(
     override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> = dao.observeTvShow(page)
 
     override suspend fun fetchTrendingShows(forceRefresh: Boolean) {
-        val page = DEFAULT_API_PAGE // TODO:: Get the page from the dao
-        // TODO:: Get the page from the dao
+        val page = DEFAULT_API_PAGE
         val param = TrendingShowsParams(timeWindow = DEFAULT_DAY_TIME_WINDOW, page = page)
         when {
             forceRefresh -> store.fresh(param)
@@ -89,7 +88,7 @@ class DefaultTrendingShowsRepository(
 
     private fun updateRequestManager(page: Long) {
         requestManagerRepository.upsert(
-            entityId = TRENDING_SHOWS_TODAY.requestId + page,
+            entityId = page,
             requestType = TRENDING_SHOWS_TODAY.name,
         )
     }

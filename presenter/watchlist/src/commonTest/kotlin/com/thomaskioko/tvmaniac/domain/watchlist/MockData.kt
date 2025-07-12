@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.domain.watchlist
 
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
@@ -18,18 +17,6 @@ val cachedResult = mutableListOf(
         episode_count = null,
     ),
 )
-
-val uiResult = cachedResult
-    .map {
-        WatchlistItem(
-            tmdbId = it.id.id,
-            title = it.name,
-            posterImageUrl = it.poster_path,
-            status = it.status,
-            year = it.first_air_date,
-        )
-    }
-    .toPersistentList()
 
 val updatedData = listOf(
     Watchlists(
@@ -55,8 +42,8 @@ val updatedData = listOf(
 )
 
 internal fun expectedUiResult(
-    result: Either.Right<List<Watchlists>> = Either.Right(updatedData),
-) = result.right
+    result: List<Watchlists> = updatedData,
+) = result
     .map {
         WatchlistItem(
             tmdbId = it.id.id,

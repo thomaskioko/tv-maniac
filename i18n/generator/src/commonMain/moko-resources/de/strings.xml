@@ -26,10 +26,9 @@
     <string name="label_watchlist_list_style">Listenstil</string>
     <string name="label_watchlist_search_hint">Geben Sie einen Sendungstitel ein, um nach einer Sendung zu suchen
     </string>
-    <string name="label_watchlist_empty_search_results">Geben Sie einen Sendungstitel ein, um nach einer Sendung zu
-        suchen
-    </string>
     <string name="label_watchlist_sort_list">Liste sortieren</string>
+    <string name="label_watchlist_empty_result">%s nicht in Ihrer Beobachtungsliste gefunden.</string>
+
     <string name="label_tab_settings">Einstellungen</string>
 
     <string name="label_settings_title">Einstellungen</string>

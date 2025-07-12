@@ -32,7 +32,7 @@ class DefaultPopularShowsRepository(
 ) : PopularShowsRepository {
 
     override suspend fun fetchPopularShows(forceRefresh: Boolean) {
-        val page = DEFAULT_API_PAGE // TODO:: Get the page from the dao
+        val page = DEFAULT_API_PAGE
         when {
             forceRefresh -> store.fresh(page)
             else -> store.get(page)

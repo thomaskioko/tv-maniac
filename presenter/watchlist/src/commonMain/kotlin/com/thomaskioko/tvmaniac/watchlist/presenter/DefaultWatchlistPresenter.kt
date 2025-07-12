@@ -3,19 +3,23 @@ package com.thomaskioko.tvmaniac.watchlist.presenter
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
-import com.thomaskioko.tvmaniac.db.SearchWatchlist
-import com.thomaskioko.tvmaniac.db.Watchlists
+import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessageManager
+import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistInteractor
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
-import kotlinx.coroutines.CoroutineScope
+import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -28,26 +32,42 @@ class DefaultWatchlistPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted private val navigateToShowDetails: (id: Long) -> Unit,
     private val repository: WatchlistRepository,
-    private val coroutineScope: CoroutineScope = componentContext.coroutineScope(),
+    private val refreshWatchlistInteractor: WatchlistInteractor,
+    private val logger: Logger,
 ) : WatchlistPresenter, ComponentContext by componentContext {
 
+    private val watchlistLoadingState = ObservableLoadingCounter()
+    private val uiMessageManager = UiMessageManager()
+    private val coroutineScope = coroutineScope()
     private val queryFlow = MutableStateFlow("")
-    private val _state = MutableStateFlow<WatchlistState>(LoadingShows)
-
-    init {
-        coroutineScope.launch {
-            combine(
-                queryFlow,
-                repository.observeWatchlist(),
-            ) { query, result ->
-                query to result
-            }.collect { (query, result) ->
-                handleWatchlistResult(query, result)
-            }
+    private val watchListItemFlow: Flow<ImmutableList<WatchlistItem>> = queryFlow.flatMapLatest { query ->
+        if (query.isNotBlank()) {
+            repository.searchWatchlistByQuery(query).map { it.entityToWatchlistShowList() }
+        } else {
+            repository.observeWatchlist().map { it.entityToWatchlistShowList() }
         }
     }
 
-    override val state: StateFlow<WatchlistState> = _state.asStateFlow()
+    override val state: StateFlow<WatchlistState> = combine(
+        watchlistLoadingState.observable,
+        watchListItemFlow,
+        repository.observeListStyle(),
+        uiMessageManager.message,
+        queryFlow,
+    ) { isLoading, watchlistItems, isGridMode, message, query ->
+        WatchlistState(
+            query = query,
+            isSearchActive = query.isNotBlank(),
+            isGridMode = isGridMode,
+            isLoading = isLoading,
+            items = watchlistItems,
+            message = message,
+        )
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = WatchlistState(),
+    )
 
     override fun dispatch(action: WatchlistAction) {
         when (action) {
@@ -55,100 +75,43 @@ class DefaultWatchlistPresenter(
             is WatchlistShowClicked -> navigateToShowDetails(action.id)
             is WatchlistQueryChanged -> updateQuery(action.query)
             is ClearWatchlistQuery -> clearQuery()
-            ChangeListStyleClicked -> {
-                // TODO:: Update settings with change style
-            }
+            ChangeListStyleClicked -> toggleListStyle()
+            is MessageShown -> clearMessage(action.id)
         }
     }
 
     private fun refreshWatchlist() {
         coroutineScope.launch {
-            observeWatchlist()
+            refreshWatchlistInteractor(Unit)
+                .collectStatus(watchlistLoadingState, logger, uiMessageManager)
+        }
+    }
+
+    private fun clearMessage(id: Long) {
+        coroutineScope.launch {
+            uiMessageManager.clearMessage(id)
         }
     }
 
     private fun updateQuery(query: String) {
         coroutineScope.launch {
             queryFlow.emit(query)
-            if (query.isNotBlank()) {
-                searchWatchlist(query)
-            }
         }
     }
 
     private fun clearQuery() {
         coroutineScope.launch {
             queryFlow.emit("")
-            observeWatchlist()
         }
     }
 
-    private suspend fun searchWatchlist(query: String) {
-        repository.searchWatchlistByQuery(query)
-            .catch { handleError(it.message) }
-            .collect { result ->
-                handleSearchResult(query, result)
-            }
-    }
+    private fun toggleListStyle() {
+        coroutineScope.launch {
+            val currentIsGridMode = repository.observeListStyle().first()
+            val newIsGridMode = !currentIsGridMode
 
-    private suspend fun observeWatchlist() {
-        repository.observeWatchlist()
-            .onStart { _state.update { LoadingShows } }
-            .catch { handleError(it.message) }
-            .collect { result ->
-                handleWatchlistResult(queryFlow.replayCache.lastOrNull() ?: "", result)
-            }
-    }
-
-    private fun handleSearchResult(query: String, result: Either<Failure, List<SearchWatchlist>>) {
-        result.fold(
-            onFailure = { handleError(it.errorMessage, query) },
-            onSuccess = { shows ->
-                val list = shows.entityToWatchlistShowList()
-
-                _state.update { currentState ->
-                    (currentState as? WatchlistContent)?.copy(
-                        query = query,
-                        isSearchActive = true,
-                        list = list,
-                    ) ?: WatchlistContent(
-                        list = list,
-                        query = query,
-                        isSearchActive = true,
-                    )
-                }
-            },
-        )
-    }
-
-    private fun handleWatchlistResult(query: String, result: Either<Failure, List<Watchlists>>) {
-        result.fold(
-            onFailure = { handleError(it.errorMessage, query) },
-            onSuccess = { shows ->
-                _state.update { currentState ->
-                    when (currentState) {
-                        is WatchlistContent -> currentState.copy(
-                            list = shows.entityToWatchlistShowList(),
-                            query = query,
-                            isSearchActive = query.isNotBlank(),
-                        )
-                        else -> WatchlistContent(
-                            list = shows.entityToWatchlistShowList(),
-                            query = query,
-                            isSearchActive = query.isNotBlank(),
-                        )
-                    }
-                }
-            },
-        )
-    }
-
-    private fun handleError(error: String?, query: String = "") {
-        _state.value = EmptyWatchlist(
-            message = error ?: "Unknown error occurred",
-            query = query,
-            isSearchActive = query.isNotBlank(),
-        )
+            repository.saveListStyle(newIsGridMode)
+        }
     }
 }
 

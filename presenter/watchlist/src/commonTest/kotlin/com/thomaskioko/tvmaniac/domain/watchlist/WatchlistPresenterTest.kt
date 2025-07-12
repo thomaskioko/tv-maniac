@@ -4,12 +4,13 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
+import com.thomaskioko.tvmaniac.watchlist.presenter.ChangeListStyleClicked
 import com.thomaskioko.tvmaniac.watchlist.presenter.FakeWatchlistPresenterFactory
-import com.thomaskioko.tvmaniac.watchlist.presenter.LoadingShows
-import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistContent
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistQueryChanged
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistState
 import io.kotest.matchers.shouldBe
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -44,19 +45,72 @@ class WatchlistPresenterTest {
     }
 
     @Test
-    fun `should emit LoadingShows on init`() = runTest { presenter.state.value shouldBe LoadingShows }
+    fun `should emit initial state on init`() = runTest {
+        presenter.state.value shouldBe WatchlistState()
+    }
 
     @Test
-    fun `should emit LibraryContent on success`() = runTest {
-        factory.repository.setObserveResult(Either.Right(cachedResult))
+    fun `should emit WatchlistState with content on success`() = runTest {
+        presenter.state.test {
+            val initialState = awaitItem()
+            initialState.query shouldBe ""
+            initialState.isSearchActive shouldBe false
+            initialState.isGridMode shouldBe true
+            initialState.isLoading shouldBe false
+            initialState.items shouldBe persistentListOf()
+
+            factory.repository.setObserveResult(cachedResult)
+
+            val firstUpdate = awaitItem()
+            firstUpdate.items shouldBe expectedUiResult(cachedResult)
+
+            factory.repository.setObserveResult(updatedData)
+
+            val secondUpdate = awaitItem()
+            secondUpdate.items shouldBe expectedUiResult()
+        }
+    }
+
+    @Test
+    fun `should toggle list style when ChangeListStyleClicked is dispatched`() = runTest {
+        factory.repository.setObserveResult(cachedResult)
 
         presenter.state.test {
-            awaitItem() shouldBe LoadingShows
-            awaitItem() shouldBe WatchlistContent(query = "", list = uiResult)
+            val initialState = awaitItem()
+            initialState.isGridMode shouldBe true
 
-            factory.repository.setObserveResult(Either.Right(updatedData))
+            // Dispatch action to toggle list style
+            presenter.dispatch(ChangeListStyleClicked)
 
-            awaitItem() shouldBe WatchlistContent(query = "", list = expectedUiResult())
+            val updatedState = awaitItem()
+            updatedState.isGridMode shouldBe false
+            updatedState.query shouldBe initialState.query
+            updatedState.items shouldBe expectedUiResult(cachedResult)
+
+            // Toggle back to grid mode
+            presenter.dispatch(ChangeListStyleClicked)
+
+            val finalState = awaitItem()
+            finalState.isGridMode shouldBe true
+        }
+    }
+
+    @Test
+    fun `should update query and search state when WatchlistQueryChanged is dispatched`() = runTest {
+        factory.repository.setObserveResult(cachedResult)
+        factory.repository.setSearchResult(emptyList())
+
+        presenter.state.test {
+            val initialState = awaitItem()
+            initialState.query shouldBe ""
+            initialState.isSearchActive shouldBe false
+
+            // Dispatch action to change query
+            presenter.dispatch(WatchlistQueryChanged("test query"))
+
+            val updatedState = awaitItem()
+            updatedState.query shouldBe "test query"
+            updatedState.isSearchActive shouldBe true
         }
     }
 }

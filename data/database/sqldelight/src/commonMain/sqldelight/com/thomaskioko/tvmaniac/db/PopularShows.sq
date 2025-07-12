@@ -64,7 +64,7 @@ SELECT EXISTS(SELECT 1 FROM popular_shows WHERE page = :page LIMIT 1);
 
 delete:
 DELETE FROM popular_shows
-WHERE page = :id;
+WHERE id = :id;
 
 deleteAll:
 DELETE FROM popular_shows;

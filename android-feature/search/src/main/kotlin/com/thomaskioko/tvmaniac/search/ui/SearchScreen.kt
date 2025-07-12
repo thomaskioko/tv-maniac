@@ -47,6 +47,7 @@ import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.EmptyContent
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterBackdropCard
+import com.thomaskioko.tvmaniac.compose.components.SearchTextContainer
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
@@ -58,10 +59,12 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.missing_api_key
 import com.thomaskioko.tvmaniac.i18n.MR.strings.msg_search_show_hint
 import com.thomaskioko.tvmaniac.i18n.MR.strings.search_no_results
 import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.search.presenter.ClearQuery
 import com.thomaskioko.tvmaniac.search.presenter.DismissSnackBar
 import com.thomaskioko.tvmaniac.search.presenter.EmptySearchResult
 import com.thomaskioko.tvmaniac.search.presenter.GenreCategoryClicked
 import com.thomaskioko.tvmaniac.search.presenter.InitialSearchState
+import com.thomaskioko.tvmaniac.search.presenter.QueryChanged
 import com.thomaskioko.tvmaniac.search.presenter.ReloadShowContent
 import com.thomaskioko.tvmaniac.search.presenter.SearchResultAvailable
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowAction
@@ -72,7 +75,6 @@ import com.thomaskioko.tvmaniac.search.presenter.ShowContentAvailable
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowGenre
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import com.thomaskioko.tvmaniac.search.ui.components.SearchResultItem
-import com.thomaskioko.tvmaniac.search.ui.components.SearchTextContainer
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
@@ -172,11 +174,13 @@ private fun SearchScreenContent(
                     )
                 }
             }
+
             is SearchResultAvailable -> SearchResultsContent(
                 onAction = onAction,
                 results = state.results,
                 scrollState = lazyListState,
             )
+
             is ShowContentAvailable -> ShowContent(
                 onAction = onAction,
                 genres = state.genres,
@@ -184,6 +188,7 @@ private fun SearchScreenContent(
                 snackBarHostState = snackBarHostState,
                 lazyListState = lazyListState,
             )
+
             is InitialSearchState -> LoadingIndicator()
         }
     }
@@ -209,8 +214,9 @@ private fun SearchScreenHeader(
             query = query,
             hint = msg_search_show_hint.resolve(LocalContext.current),
             lazyListState = lazyListState,
-            onAction = onAction,
             content = content,
+            onClearQuery = { onAction(ClearQuery) },
+            onQueryChanged = { onAction(QueryChanged(it)) },
         )
     }
 }

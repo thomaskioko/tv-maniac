@@ -1,37 +1,39 @@
 package com.thomaskioko.tvmaniac.watchlist.testing
 
-import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.core.networkutil.model.Failure
 import com.thomaskioko.tvmaniac.db.SearchWatchlist
 import com.thomaskioko.tvmaniac.db.Watchlists
 import com.thomaskioko.tvmaniac.shows.api.WatchlistRepository
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.receiveAsFlow
 
 class FakeWatchlistRepository : WatchlistRepository {
 
-    private var watchlistResult: Channel<Either<Failure, List<Watchlists>>> =
-        Channel(Channel.UNLIMITED)
-    private var searchlistResult: Channel<Either<Failure, List<SearchWatchlist>>> =
-        Channel(Channel.UNLIMITED)
+    private val watchlistResult = MutableStateFlow<List<Watchlists>>(emptyList())
+    private val searchlistResult = MutableStateFlow<List<SearchWatchlist>>(emptyList())
+    private val listStyleFlow = MutableStateFlow(true) // Default to grid mode (true)
 
-    suspend fun setSearchResult(result: Either<Failure, List<SearchWatchlist>>) {
-        searchlistResult.send(result)
+    fun setSearchResult(result: List<SearchWatchlist>) {
+        searchlistResult.value = result
     }
 
-    suspend fun setObserveResult(result: Either<Failure, List<Watchlists>>) {
-        watchlistResult.send(result)
+    fun setObserveResult(result: List<Watchlists>) {
+        watchlistResult.value = result
     }
 
-    override fun observeWatchlist(): Flow<Either<Failure, List<Watchlists>>> =
-        watchlistResult.receiveAsFlow()
+    override fun observeWatchlist(): Flow<List<Watchlists>> =
+        watchlistResult
 
-    override fun searchWatchlistByQuery(query: String): Flow<Either<Failure, List<SearchWatchlist>>> =
-        searchlistResult.receiveAsFlow()
+    override fun searchWatchlistByQuery(query: String): Flow<List<SearchWatchlist>> =
+        searchlistResult
 
     override suspend fun updateLibrary(id: Long, addToLibrary: Boolean) {}
 
     override fun observeUnSyncedItems(): Flow<Unit> = flowOf(Unit)
+
+    override fun observeListStyle(): Flow<Boolean> = listStyleFlow
+
+    override suspend fun saveListStyle(isGridMode: Boolean) {
+        listStyleFlow.value = isGridMode
+    }
 }
