@@ -50,19 +50,21 @@ public abstract class MultiplatformExtension(private val project: Project) {
      *
      * @param withDeviceTestBuilder Include device test builder configuration
      * @param withJava Include Java support
-     * @param configure Custom configuration to apply
+     * @param action Custom configuration to apply
      */
     @Suppress("UnstableApiUsage")
     @JvmOverloads
     public fun addAndroidMultiplatformTarget(
         withDeviceTestBuilder: Boolean = false,
         withJava: Boolean = false,
-        configure: KotlinMultiplatformAndroidLibraryTarget.() -> Unit = { },
+        enableAndroidResources: Boolean = true,
+        action: KotlinMultiplatformAndroidLibraryTarget.() -> Unit = { },
     ) {
         project.plugins.apply(AndroidMultiplatformPlugin::class.java)
 
         project.kotlinMultiplatform {
             androidLibrary {
+                experimentalProperties["android.experimental.kmp.enableAndroidResources"] = enableAndroidResources
                 if (withDeviceTestBuilder) {
                     withDeviceTestBuilder {
                         sourceSetTreeName = "test"
@@ -78,7 +80,7 @@ public abstract class MultiplatformExtension(private val project: Project) {
                     }
                 }
 
-                configure()
+                action()
             }
         }
     }
