@@ -122,15 +122,12 @@ jobs:
                 run: ./gradlew recordRoborazziDebug
 
             -   name: Push New Screenshots if Available
-                uses: stefanzweifel/git-auto-commit-action@v6
+                uses: stefanzweifel/git-auto-commit-action@v5
                 if: steps.screenshotsrecord.outcome == 'success'
                 with:
                     file_pattern: '**/*.png'
                     disable_globbing: true
                     commit_message: "🤖 Beep Beep: Update screenshots 🤖"
-                    pull_strategy: 'REBASE'
-                    skip_fetch: false
-                    skip_dirty_check: true
 
             -   name: Upload Screenshot Results
                 if: ${{ !cancelled() }}
