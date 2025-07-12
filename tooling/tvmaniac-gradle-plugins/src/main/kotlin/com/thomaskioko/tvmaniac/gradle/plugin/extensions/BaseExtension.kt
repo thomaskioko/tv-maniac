@@ -90,13 +90,16 @@ public abstract class BaseExtension(private val project: Project) : ExtensionAwa
     @JvmOverloads
     public fun addAndroidMultiplatformTarget(
         withDeviceTestBuilder: Boolean = false,
+        enableAndroidResources: Boolean = false,
         withJava: Boolean = false,
-        configure: KotlinMultiplatformAndroidLibraryTarget.() -> Unit = { },
+        action: KotlinMultiplatformAndroidLibraryTarget.() -> Unit = { },
     ) {
         project.plugins.apply(AndroidMultiplatformPlugin::class.java)
 
         project.kotlinMultiplatform {
             androidLibrary {
+                experimentalProperties["android.experimental.kmp.enableAndroidResources"] = enableAndroidResources
+
                 if (withDeviceTestBuilder) {
                     withDeviceTestBuilder {
                         sourceSetTreeName = "test"
@@ -112,7 +115,7 @@ public abstract class BaseExtension(private val project: Project) : ExtensionAwa
                     }
                 }
 
-                configure()
+                action()
             }
         }
     }
