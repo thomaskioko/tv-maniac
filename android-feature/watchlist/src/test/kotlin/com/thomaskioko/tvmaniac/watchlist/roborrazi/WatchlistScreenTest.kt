@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.ui.library.WatchlistScreen
 import com.thomaskioko.tvmaniac.ui.library.watchlistItems
 import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistState
+import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,10 +28,43 @@ class WatchlistScreenTest {
 
     @Test
     fun libraryScreenLoadedState() {
-        composeTestRule.captureMultiDevice("LibraryContentState") {
+        composeTestRule.captureMultiDevice("WatchlistListGridView") {
             TvManiacBackground {
                 WatchlistScreen(
                     state = WatchlistState(items = watchlistItems),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun libraryScreenListView() {
+        composeTestRule.captureMultiDevice("WatchlistListView") {
+            TvManiacBackground {
+                WatchlistScreen(
+                    state = WatchlistState(
+                        isGridMode = false,
+                        items = watchlistItems,
+                        message = UiMessage(message = "Something went Wrong"),
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun libraryScreenEmptyState() {
+        composeTestRule.captureMultiDevice("EmptySearchResult") {
+            TvManiacBackground {
+                WatchlistScreen(
+                    state = WatchlistState(
+                        isGridMode = false,
+                        items = persistentListOf(),
+                        query = "Show title",
+                        message = UiMessage(message = "Something went Wrong"),
+                    ),
                     onAction = {},
                 )
             }
@@ -44,7 +78,7 @@ class WatchlistScreenTest {
                 WatchlistScreen(
                     state = WatchlistState(
                         isGridMode = false,
-                        items = watchlistItems,
+                        items = persistentListOf(),
                         message = UiMessage(message = "Something went Wrong"),
                     ),
                     onAction = {},
