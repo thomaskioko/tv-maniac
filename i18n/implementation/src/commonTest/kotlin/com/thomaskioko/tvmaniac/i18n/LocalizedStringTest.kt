@@ -1,14 +1,15 @@
 package com.thomaskioko.tvmaniac.i18n
 
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.ButtonErrorRetry
-import com.thomaskioko.tvmaniac.i18n.api.Localizer
+import com.thomaskioko.tvmaniac.i18n.testing.util.IgnoreIos
+import com.thomaskioko.tvmaniac.i18n.util.BaseResourceTests
 import dev.icerock.moko.resources.desc.StringDesc
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
-abstract class LocalizedStringTest {
-    abstract val localizer: Localizer
+@IgnoreIos
+class LocalizedStringTest : BaseResourceTests() {
 
     @Test
     fun should_return_english_string_for_default_locale() = runTest {

@@ -3,11 +3,9 @@ plugins {
 }
 
 tvmaniac {
-    multiplatform {
-        addAndroidMultiplatformTarget(withJava = true)
-        useKotlinInjectAnvilCompiler()
-        useSerialization()
-    }
+    addAndroidMultiplatformTarget(withJava = true)
+    useKotlinInjectAnvilCompiler()
+    useSerialization()
 
     optIn(
         "kotlinx.coroutines.InternalCoroutinesApi",

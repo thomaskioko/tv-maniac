@@ -3,10 +3,8 @@ plugins {
 }
 
 tvmaniac {
-    multiplatform {
-        addAndroidTarget()
-        explicitApi()
-    }
+    addAndroidTarget()
+    explicitApi()
 }
 
 kotlin {

@@ -3,11 +3,10 @@ plugins {
 }
 
 tvmaniac {
-    multiplatform {
-        addAndroidTarget {
-            testOptions.unitTests.isIncludeAndroidResources = true
-        }
-        useKotlinInjectAnvilCompiler()
+    explicitApi()
+    useKotlinInjectAnvilCompiler()
+    addAndroidTarget {
+        testOptions.unitTests.isIncludeAndroidResources = true
     }
 }
 
@@ -41,6 +40,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(projects.core.locale.testing)
+                implementation(projects.i18n.testing)
                 implementation(libs.bundles.unittest)
             }
         }

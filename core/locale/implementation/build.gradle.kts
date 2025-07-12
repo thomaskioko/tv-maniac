@@ -3,13 +3,11 @@ plugins {
 }
 
 tvmaniac {
-    multiplatform {
-        addAndroidMultiplatformTarget(
-            withDeviceTestBuilder = true,
-        )
-        explicitApi()
-        useKotlinInjectAnvilCompiler()
-    }
+    addAndroidMultiplatformTarget(
+        withDeviceTestBuilder = true,
+    )
+    explicitApi()
+    useKotlinInjectAnvilCompiler()
 }
 
 kotlin {

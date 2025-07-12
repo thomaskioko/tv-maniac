@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.ui.library
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.presentation.watchlist.EmptyWatchlist
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistContent
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistState
-import com.thomaskioko.tvmaniac.presentation.watchlist.model.WatchlistItem
+import com.thomaskioko.tvmaniac.watchlist.presenter.EmptyWatchlist
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistContent
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistState
+import com.thomaskioko.tvmaniac.watchlist.presenter.model.WatchlistItem
 import kotlinx.collections.immutable.toPersistentList
 
 val list = List(6) {

@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.presentation.seasondetails.UpdateEpisodeStatus
+import com.thomaskioko.tvmaniac.seasondetails.presenter.UpdateEpisodeStatus
 import com.thomaskioko.tvmaniac.seasondetails.ui.episodeDetailsModel
 
 @Composable

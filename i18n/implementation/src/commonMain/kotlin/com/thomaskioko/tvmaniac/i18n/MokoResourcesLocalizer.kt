@@ -1,10 +1,8 @@
 package com.thomaskioko.tvmaniac.i18n
 
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
-import dev.icerock.moko.resources.desc.PluralFormatted
-import dev.icerock.moko.resources.desc.Resource
-import dev.icerock.moko.resources.desc.ResourceFormatted
-import dev.icerock.moko.resources.desc.StringDesc
+import dev.icerock.moko.resources.desc.desc
+import dev.icerock.moko.resources.format
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
@@ -13,22 +11,22 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class MokoResourcesLocalizer(
+public class MokoResourcesLocalizer(
     private val platformLocalizer: PlatformLocalizer,
 ) : Localizer {
     override fun getString(key: StringResourceKey): String {
-        return platformLocalizer.localized(StringDesc.Resource(key.resourceId))
+        return platformLocalizer.localized(key.resourceId.desc())
     }
 
     override fun getString(key: StringResourceKey, vararg args: Any): String {
-        return platformLocalizer.localized(StringDesc.ResourceFormatted(key.resourceId, *args))
+        return platformLocalizer.localized(key.resourceId.format(*args))
     }
 
     override fun getPlural(key: PluralsResourceKey, quantity: Int): String {
-        return platformLocalizer.localized(StringDesc.PluralFormatted(key.resourceId, quantity, quantity))
+        return platformLocalizer.localized(key.resourceId.format(quantity, quantity))
     }
 
     override fun getPlural(key: PluralsResourceKey, quantity: Int, vararg args: Any): String {
-        return platformLocalizer.localized(StringDesc.PluralFormatted(key.resourceId, quantity, *args))
+        return platformLocalizer.localized(key.resourceId.format(quantity, *args))
     }
 }

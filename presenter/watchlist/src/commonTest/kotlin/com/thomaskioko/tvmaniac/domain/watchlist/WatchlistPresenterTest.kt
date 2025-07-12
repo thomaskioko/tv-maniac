@@ -5,10 +5,10 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.core.networkutil.model.Either
-import com.thomaskioko.tvmaniac.presentation.watchlist.LoadingShows
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistContent
-import com.thomaskioko.tvmaniac.presentation.watchlist.WatchlistPresenter
-import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
+import com.thomaskioko.tvmaniac.watchlist.presenter.FakeWatchlistPresenterFactory
+import com.thomaskioko.tvmaniac.watchlist.presenter.LoadingShows
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistContent
+import com.thomaskioko.tvmaniac.watchlist.presenter.WatchlistPresenter
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -22,8 +22,8 @@ import kotlin.test.Test
 class WatchlistPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
-    private val repository = FakeWatchlistRepository()
     private val testDispatcher = StandardTestDispatcher()
+    private val factory = FakeWatchlistPresenterFactory()
 
     private lateinit var presenter: WatchlistPresenter
 
@@ -32,10 +32,9 @@ class WatchlistPresenterTest {
         Dispatchers.setMain(testDispatcher)
 
         lifecycle.resume()
-        presenter = WatchlistPresenter(
-            navigateToShowDetails = {},
-            repository = repository,
+        presenter = factory.invoke(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
+            navigateToShowDetails = {},
         )
     }
 
@@ -49,13 +48,13 @@ class WatchlistPresenterTest {
 
     @Test
     fun `should emit LibraryContent on success`() = runTest {
-        repository.setObserveResult(Either.Right(cachedResult))
+        factory.repository.setObserveResult(Either.Right(cachedResult))
 
         presenter.state.test {
             awaitItem() shouldBe LoadingShows
             awaitItem() shouldBe WatchlistContent(query = "", list = uiResult)
 
-            repository.setObserveResult(Either.Right(updatedData))
+            factory.repository.setObserveResult(Either.Right(updatedData))
 
             awaitItem() shouldBe WatchlistContent(query = "", list = expectedUiResult())
         }

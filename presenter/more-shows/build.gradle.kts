@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.tvmaniac.kmp)
 }
 
+tvmaniac {
+    useKotlinInjectAnvilCompiler()
+}
+
 kotlin {
     sourceSets {
         commonMain {

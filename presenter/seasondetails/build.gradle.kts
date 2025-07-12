@@ -3,9 +3,8 @@ plugins {
 }
 
 tvmaniac {
-    multiplatform {
-        useSerialization()
-    }
+    useKotlinInjectAnvilCompiler()
+    useSerialization()
 
     optIn(
         "kotlinx.coroutines.ExperimentalCoroutinesApi",
