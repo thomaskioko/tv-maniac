@@ -8,7 +8,7 @@ android-target = "35"
 
 jdk = "17"
 java-target = "17"
-java-toolchain = "23"
+java-toolchain = "17"
 
 agp = "8.11.1"
 android-lint = "31.11.1"
