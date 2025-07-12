@@ -34,7 +34,6 @@ dependencies {
     implementation(projects.navigation.implementation)
     implementation(projects.core.logger.api)
     implementation(projects.core.logger.implementation)
-    implementation(projects.core.networkUtil)
     implementation(projects.data.cast.api)
     implementation(projects.data.cast.implementation)
     implementation(projects.data.episodes.api)
