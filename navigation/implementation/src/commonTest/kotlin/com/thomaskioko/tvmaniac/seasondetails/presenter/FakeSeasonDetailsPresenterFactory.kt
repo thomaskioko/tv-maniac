@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class FakeSeasonDetailsPresenterFactory : SeasonDetailsPresenter.Factory {
 
-    override fun invoke(
+    override fun create(
         componentContext: ComponentContext,
         param: SeasonDetailsUiParam,
         onBack: () -> Unit,

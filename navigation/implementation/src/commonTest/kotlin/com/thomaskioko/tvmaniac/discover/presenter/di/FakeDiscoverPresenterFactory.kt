@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class FakeDiscoverPresenterFactory : DiscoverShowsPresenter.Factory {
 
-    override fun invoke(
+    override fun create(
         componentContext: ComponentContext,
         onNavigateToShowDetails: (id: Long) -> Unit,
         onNavigateToMore: (categoryId: Long) -> Unit,

@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.locale.implementation
 
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
-import me.tatarka.inject.annotations.Inject
 import platform.Foundation.NSBundle
 import platform.Foundation.NSLocale
 import platform.Foundation.preferredLanguages

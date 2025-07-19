@@ -1,4 +1,4 @@
-package com.thomaskioko.trakt.service.implementation.api
+package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.trakt.service.implementation.TraktHttpClient
 import com.thomaskioko.tvmaniac.core.base.model.Configs
@@ -7,13 +7,13 @@ import com.thomaskioko.tvmaniac.trakt.api.model.AccessTokenBody
 import com.thomaskioko.tvmaniac.trakt.api.model.RefreshAccessTokenBody
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessRefreshTokenResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAccessTokenResponse
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
 @SingleIn(AppScope::class)

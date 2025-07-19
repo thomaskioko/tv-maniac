@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.i18n
 
 import dev.icerock.moko.resources.desc.StringDesc
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 public actual class PlatformLocalizer {

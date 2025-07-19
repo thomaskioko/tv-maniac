@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class FakeSettingsPresenterFactory : SettingsPresenter.Factory {
 
-    override fun invoke(
+    override fun create(
         componentContext: ComponentContext,
         launchWebView: () -> Unit,
     ): SettingsPresenter = FakeSettingsPresenter()

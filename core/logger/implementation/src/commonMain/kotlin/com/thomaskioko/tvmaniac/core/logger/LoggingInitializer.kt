@@ -2,12 +2,12 @@ package com.thomaskioko.tvmaniac.core.logger
 
 import com.thomaskioko.tvmaniac.core.base.AppInitializer
 import com.thomaskioko.tvmaniac.core.base.model.Configs
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 
 @Inject
-@ContributesBinding(AppScope::class, multibinding = true)
+@ContributesBinding(AppScope::class)
 class LoggingInitializer(
     private val logger: Logger,
     private val configs: Configs,

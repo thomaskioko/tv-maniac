@@ -12,9 +12,9 @@ import com.thomaskioko.tvmaniac.domain.showdetails.model.ShowDetails
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsRepository
 import com.thomaskioko.tvmaniac.util.FormatterUtil
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ObservableShowDetailsInteractor(

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class FakeShowDetailsPresenterFactory : ShowDetailsPresenter.Factory {
 
-    override fun invoke(
+    override fun create(
         componentContext: ComponentContext,
         id: Long,
         onBack: () -> Unit,

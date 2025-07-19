@@ -4,14 +4,14 @@ import com.thomaskioko.tvmaniac.core.base.AppInitializer
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import dev.icerock.moko.resources.desc.StringDesc
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @Inject
-@ContributesBinding(AppScope::class, multibinding = true)
+@ContributesBinding(AppScope::class)
 public class MokoLocaleInitializer(
     private val localeProvider: LocaleProvider,
     private val dispatchers: AppCoroutineDispatchers,
