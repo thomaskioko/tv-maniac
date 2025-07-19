@@ -94,10 +94,6 @@ public abstract class BasePlugin : Plugin<Project> {
                         // https://kotlinlang.org/docs/whatsnew-eap.html#support-for-reading-and-writing-annotations-in-kotlin-metadata
                         "-Xannotations-in-metadata",
                     )
-
-                    if (!isAndroid) {
-                        freeCompilerArgs.add("-Xjdk-release=${project.javaTarget}")
-                    }
                 }
             }
         }

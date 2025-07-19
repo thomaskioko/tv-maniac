@@ -12,7 +12,7 @@ kotlin {
 
                 api(libs.coroutines.core)
 
-                implementation(libs.kotlinInject.runtime)
+                implementation(libs.metro.runtime)
             }
         }
     }

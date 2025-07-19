@@ -23,7 +23,7 @@ kotlin {
                 implementation(projects.core.base)
 
                 implementation(libs.coroutines.core)
-                implementation(libs.kotlinInject.runtime)
+                implementation(libs.metro.runtime)
             }
         }
 

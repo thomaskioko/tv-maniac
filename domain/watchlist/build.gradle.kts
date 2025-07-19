@@ -18,7 +18,7 @@ kotlin {
                 implementation(projects.data.watchlist.api)
 
                 implementation(libs.coroutines.core)
-                implementation(libs.kotlinInject.runtime)
+                implementation(libs.metro.runtime)
             }
         }
 

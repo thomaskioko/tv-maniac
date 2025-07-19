@@ -3,7 +3,7 @@ plugins {
 }
 
 tvmaniac {
-    useKotlinInjectAnvilCompiler()
+    useDependencyInjection()
 
     optIn(
         "kotlinx.coroutines.ExperimentalCoroutinesApi",
@@ -21,7 +21,7 @@ kotlin {
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
 
-                implementation(libs.kotlinInject.runtime)
+                implementation(libs.metro.runtime)
             }
         }
 

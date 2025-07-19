@@ -3,7 +3,7 @@ plugins {
 }
 
 tvmaniac {
-    useKotlinInjectAnvilCompiler()
+    useDependencyInjection()
     useSerialization()
 
     optIn(
@@ -29,7 +29,7 @@ kotlin {
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
-                implementation(libs.kotlinInject.runtime)
+                implementation(libs.metro.runtime)
             }
         }
 

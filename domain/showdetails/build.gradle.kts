@@ -21,7 +21,7 @@ kotlin {
                 implementation(projects.core.util)
 
                 implementation(libs.coroutines.core)
-                implementation(libs.kotlinInject.runtime)
+                implementation(libs.metro.runtime)
             }
         }
 

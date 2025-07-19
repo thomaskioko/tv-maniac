@@ -10,8 +10,9 @@ tvmaniac {
         )
     }
 
+    useDependencyInjection()
+
     android {
-        useKspAnvil()
         useCompose()
         useBaselineProfile()
         useManagedDevices()
@@ -104,7 +105,6 @@ dependencies {
 
     implementation(libs.decompose.decompose)
     implementation(libs.decompose.extensions.compose)
-    implementation(libs.bundles.kotlinInject)
 
     implementation(libs.androidx.datastore.core)
     implementation(libs.androidx.savedstate)

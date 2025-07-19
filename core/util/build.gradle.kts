@@ -4,7 +4,7 @@ plugins {
 
 tvmaniac {
     addAndroidMultiplatformTarget()
-    useKotlinInjectAnvilCompiler()
+    useDependencyInjection()
     useSerialization()
 
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
@@ -18,7 +18,6 @@ kotlin {
             implementation(libs.coroutines.core)
             implementation(libs.kermit)
             implementation(libs.kotlinx.datetime)
-            implementation(libs.bundles.kotlinInject)
             implementation(libs.ktor.core)
             implementation(libs.yamlkt)
         }

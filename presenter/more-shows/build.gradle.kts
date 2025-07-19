@@ -3,7 +3,7 @@ plugins {
 }
 
 tvmaniac {
-    useKotlinInjectAnvilCompiler()
+    useDependencyInjection()
 }
 
 kotlin {
@@ -20,7 +20,7 @@ kotlin {
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
-                implementation(libs.kotlinInject.runtime)
+                implementation(libs.metro.runtime)
             }
         }
 
