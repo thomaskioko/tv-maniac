@@ -7,14 +7,13 @@ import com.thomaskioko.tvmaniac.app.TvManicApplication
 import com.thomaskioko.tvmaniac.core.base.annotations.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.RootPresenter
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
-import me.tatarka.inject.annotations.Provides
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesSubcomponent
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesGraphExtension
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.asContribution
 
-@ContributesSubcomponent(ActivityScope::class)
-@SingleIn(ActivityScope::class)
-interface ActivityComponent {
+@ContributesGraphExtension(ActivityScope::class)
+interface ActivityGraph {
     val traktAuthManager: TraktAuthManager
     val rootPresenter: RootPresenter
 
@@ -23,18 +22,18 @@ interface ActivityComponent {
         activity: ComponentActivity,
     ): ComponentContext = activity.defaultComponentContext()
 
-    @ContributesSubcomponent.Factory(AppScope::class)
+    @ContributesGraphExtension.Factory(AppScope::class)
     interface Factory {
         fun createComponent(
-            activity: ComponentActivity,
-        ): ActivityComponent
+            @Provides activity: ComponentActivity,
+        ): ActivityGraph
     }
 
-    companion object {
-        fun create(activity: ComponentActivity): ActivityComponent =
+    companion object Companion {
+        fun create(activity: ComponentActivity): ActivityGraph =
             (activity.application as TvManicApplication)
                 .getApplicationComponent()
-                .activityComponentFactory
+                .asContribution<Factory>()
                 .createComponent(activity)
     }
 }
