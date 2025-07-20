@@ -23,7 +23,6 @@ kotlin {
                 api(libs.kotlinx.collections)
 
                 implementation(libs.coroutines.core)
-                implementation(libs.metro.runtime)
             }
         }
 

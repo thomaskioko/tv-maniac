@@ -20,8 +20,6 @@ kotlin {
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
-
-                implementation(libs.metro.runtime)
             }
         }
 
