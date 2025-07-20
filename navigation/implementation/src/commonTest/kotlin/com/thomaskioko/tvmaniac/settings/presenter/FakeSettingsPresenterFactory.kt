@@ -1,20 +1,21 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.arkivanov.decompose.ComponentContext
-import kotlinx.coroutines.flow.StateFlow
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 
 class FakeSettingsPresenterFactory : SettingsPresenter.Factory {
+
+    private val datastoreRepository = FakeDatastoreRepository()
+    private val traktAuthRepository = FakeTraktAuthRepository()
 
     override fun create(
         componentContext: ComponentContext,
         launchWebView: () -> Unit,
-    ): SettingsPresenter = FakeSettingsPresenter()
-}
-
-internal class FakeSettingsPresenter : SettingsPresenter {
-    override val state: StateFlow<SettingsState>
-        get() = TODO("Not yet implemented")
-
-    override fun dispatch(action: SettingsActions) {
-    }
+    ): SettingsPresenter = SettingsPresenter(
+        componentContext = componentContext,
+        launchWebView = launchWebView,
+        datastoreRepository = datastoreRepository,
+        traktAuthRepository = traktAuthRepository,
+    )
 }

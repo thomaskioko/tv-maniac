@@ -7,12 +7,12 @@ import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.moreshows.presentation.DefaultMoreShowsPresenter
+import com.thomaskioko.tvmaniac.moreshows.presentation.MoreShowsPresenter
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
-import com.thomaskioko.tvmaniac.presenter.showdetails.DefaultShowDetailsPresenter
-import com.thomaskioko.tvmaniac.presenter.trailers.DefaultTrailersPresenter
-import com.thomaskioko.tvmaniac.seasondetails.presenter.DefaultSeasonDetailsPresenter
+import com.thomaskioko.tvmaniac.presenter.home.DefaultHomePresenter
+import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
+import com.thomaskioko.tvmaniac.presenter.trailers.TrailersPresenter
+import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonDetailsUiParam
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
@@ -27,11 +27,11 @@ import kotlinx.coroutines.flow.stateIn
 class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     @Assisted val navigator: RootNavigator,
-    private val homePresenterFactory: HomePresenter.Factory,
-    private val moreShowsPresenterFactory: DefaultMoreShowsPresenter.Factory,
-    private val showDetailsPresenterFactory: DefaultShowDetailsPresenter.Factory,
-    private val seasonDetailsPresenterFactory: DefaultSeasonDetailsPresenter.Factory,
-    private val trailersPresenterFactory: DefaultTrailersPresenter.Factory,
+    private val homePresenterFactory: DefaultHomePresenter.Factory,
+    private val moreShowsPresenterFactory: MoreShowsPresenter.Factory,
+    private val showDetailsPresenterFactory: ShowDetailsPresenter.Factory,
+    private val seasonDetailsPresenterFactory: SeasonDetailsPresenter.Factory,
+    private val trailersPresenterFactory: TrailersPresenter.Factory,
     datastoreRepository: DatastoreRepository,
 ) : RootPresenter, ComponentContext by componentContext {
 
@@ -63,7 +63,7 @@ class DefaultRootPresenter(
         when (config) {
             is RootDestinationConfig.Home ->
                 Child.Home(
-                    presenter = homePresenterFactory(
+                    presenter = homePresenterFactory.create(
                         componentContext = componentContext,
                         onShowClicked = { id ->
                             navigator.pushNew(
@@ -148,7 +148,7 @@ class DefaultRootPresenter(
                 Child.MoreShows(
                     presenter = moreShowsPresenterFactory(
                         componentContext = componentContext,
-                        id = config.id,
+                        categoryId = config.id,
                         onBack = navigator::pop,
                         onNavigateToShowDetails = { id ->
                             navigator.pushNew(RootDestinationConfig.ShowDetails(id))
@@ -162,8 +162,8 @@ class DefaultRootPresenter(
     @AssistedFactory
     fun interface Factory {
         fun create(
-            componentContext: ComponentContext,
-            navigator: RootNavigator,
+            @Assisted componentContext: ComponentContext,
+            @Assisted navigator: RootNavigator,
         ): DefaultRootPresenter
     }
 }

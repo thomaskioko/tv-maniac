@@ -1,21 +1,35 @@
 package com.thomaskioko.tvmaniac.watchlist.presenter
 
 import com.arkivanov.decompose.ComponentContext
-import kotlinx.coroutines.flow.StateFlow
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.domain.watchlist.WatchlistInteractor
+import com.thomaskioko.tvmaniac.watchlist.testing.FakeWatchlistRepository
+import kotlinx.coroutines.test.StandardTestDispatcher
 
 class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
+
+    val repository = FakeWatchlistRepository()
+    private val testDispatcher = StandardTestDispatcher()
+    private val dispatchers = AppCoroutineDispatchers(
+        main = testDispatcher,
+        io = testDispatcher,
+        computation = testDispatcher,
+        databaseWrite = testDispatcher,
+        databaseRead = testDispatcher,
+    )
 
     override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showDetails: Long) -> Unit,
-    ): WatchlistPresenter = FakeWatchlistPresenter()
-}
-
-internal class FakeWatchlistPresenter : WatchlistPresenter {
-    override val state: StateFlow<WatchlistState>
-        get() = TODO("Not yet implemented")
-
-    override fun dispatch(action: WatchlistAction) {
-        TODO("Not yet implemented")
-    }
+    ): WatchlistPresenter = WatchlistPresenter(
+        componentContext = componentContext,
+        navigateToShowDetails = navigateToShowDetails,
+        repository = repository,
+        logger = FakeLogger(),
+        refreshWatchlistInteractor = WatchlistInteractor(
+            watchlistRepository = repository,
+            dispatchers = dispatchers,
+        ),
+    )
 }

@@ -8,5 +8,5 @@ class MoreShowsPresenterTest {
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
 
-    private lateinit var presenter: DefaultMoreShowsPresenter
+    private lateinit var presenter: MoreShowsPresenter
 }

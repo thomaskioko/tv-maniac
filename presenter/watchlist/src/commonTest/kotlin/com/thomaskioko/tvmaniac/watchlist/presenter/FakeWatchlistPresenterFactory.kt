@@ -27,7 +27,7 @@ class FakeWatchlistPresenterFactory : WatchlistPresenter.Factory {
     override fun invoke(
         componentContext: ComponentContext,
         navigateToShowDetails: (showDetails: Long) -> Unit,
-    ): WatchlistPresenter = DefaultWatchlistPresenter(
+    ): WatchlistPresenter = WatchlistPresenter(
         componentContext = componentContext,
         navigateToShowDetails = navigateToShowDetails,
         repository = repository,

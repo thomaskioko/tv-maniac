@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.navigation
 
 import app.cash.turbine.test
+import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
@@ -11,7 +12,6 @@ import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.Home
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.MoreShows
 import com.thomaskioko.tvmaniac.navigation.RootPresenter.Child.ShowDetails
 import com.thomaskioko.tvmaniac.presenter.home.DefaultHomePresenter
-import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.moreshows.FakeMoreShowsPresenterFactory
 import com.thomaskioko.tvmaniac.presenter.showdetails.FakeShowDetailsPresenterFactory
 import com.thomaskioko.tvmaniac.presenter.trailers.FakeTrailersPresenterFactory
@@ -235,12 +235,23 @@ class DefaultRootComponentTest {
         }
     }
 
-    private fun buildHomePresenterFactory(): HomePresenter.Factory =
-        DefaultHomePresenter.Factory(
-            traktAuthManager = traktAuthManager,
-            searchPresenterFactory = FakeSearchPresenterFactory(),
-            settingsPresenterFactory = FakeSettingsPresenterFactory(),
-            discoverPresenterFactory = FakeDiscoverPresenterFactory(),
-            watchlistPresenterFactory = FakeWatchlistPresenterFactory(),
-        )
+    private fun buildHomePresenterFactory(): DefaultHomePresenter.Factory =
+        object : DefaultHomePresenter.Factory {
+            override fun create(
+                componentContext: ComponentContext,
+                onShowClicked: (Long) -> Unit,
+                onMoreShowClicked: (Long) -> Unit,
+                onShowGenreClicked: (Long) -> Unit,
+            ): DefaultHomePresenter = DefaultHomePresenter(
+                componentContext = componentContext,
+                traktAuthManager = traktAuthManager,
+                searchPresenterFactory = FakeSearchPresenterFactory(),
+                settingsPresenterFactory = FakeSettingsPresenterFactory(),
+                discoverPresenterFactory = FakeDiscoverPresenterFactory(),
+                watchlistPresenterFactory = FakeWatchlistPresenterFactory(),
+                onShowClicked = {},
+                onMoreShowClicked = {},
+                onShowGenreClicked = {},
+            )
+        }
 }
