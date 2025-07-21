@@ -28,3 +28,4 @@ excluded:
     - "**/.build"
     - derived_data
     - ios/Modules
+    - vendor/bundle
