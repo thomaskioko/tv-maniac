@@ -118,7 +118,7 @@ public struct HorizontalShowContentView: View {
                     inLibrary: false
                 ),
                 .init(
-                    tmdbId: 123346,
+                    tmdbId: 123_346,
                     title: "The Perfect Couple",
                     posterUrl: "https://image.tmdb.org/t/p/w780//3buRSGVnutw8x4Lww0t70k5dG6R.jpg",
                     backdropUrl: nil,
