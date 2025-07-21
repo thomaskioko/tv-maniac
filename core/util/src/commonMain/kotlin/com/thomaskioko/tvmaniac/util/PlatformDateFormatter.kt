@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.util
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 const val DATE_YYYY_MM_DD_PATTERN = "yyyy-MM-dd"
 
