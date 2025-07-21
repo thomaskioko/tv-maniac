@@ -7,11 +7,11 @@ public struct TransparentBlurView: UIViewRepresentable {
         self.style = style
     }
 
-    public func makeUIView(context: Context) -> UIVisualEffectView {
+    public func makeUIView(context _: Context) -> UIVisualEffectView {
         UIVisualEffectView(effect: UIBlurEffect(style: style))
     }
 
-    public func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
+    public func updateUIView(_ uiView: UIVisualEffectView, context _: Context) {
         uiView.effect = UIBlurEffect(style: style)
     }
 }

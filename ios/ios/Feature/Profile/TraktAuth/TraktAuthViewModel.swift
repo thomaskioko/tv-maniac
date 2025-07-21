@@ -10,9 +10,18 @@ import Foundation
 import OAuthSwift
 
 class TraktAuthViewModel: ObservableObject {
-    private let config: Config = try! ConfigLoader.load()
+    private let config: Config
 
     @Published var error: ApplicationError?
+
+    init() {
+        do {
+            config = try ConfigLoader.load()
+        } catch {
+            // Fallback config or handle error appropriately
+            fatalError("Failed to load configuration: \(error)")
+        }
+    }
 
     func initiateAuthorization() {
         Task {
