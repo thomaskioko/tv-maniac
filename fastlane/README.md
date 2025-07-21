@@ -47,13 +47,21 @@ Build TvManiac IPA
 
 Clear derived data
 
+### ios lint
+
+```sh
+[bundle exec] fastlane ios lint
+```
+
+Run SwiftLint
+
 ### ios format_swift_code
 
 ```sh
 [bundle exec] fastlane ios format_swift_code
 ```
 
-Run SwiftFormat
+Format Swift code with SwiftFormat
 
 ### ios check_swift_format
 
@@ -61,7 +69,7 @@ Run SwiftFormat
 [bundle exec] fastlane ios check_swift_format
 ```
 
-Check SwiftFormat without making changes
+Check Swift code formatting with SwiftFormat
 
 ----
 

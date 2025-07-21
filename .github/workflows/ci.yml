@@ -324,6 +324,7 @@ jobs:
                         fastlane/logs
 
 
+
     swift-format:
         runs-on: macos-latest
 
@@ -331,8 +332,11 @@ jobs:
             -   name: 🚚 Checkout project
                 uses: actions/checkout@v4
 
+            -   name: 📦 Install Swift Lint
+                run: brew install swiftlint
+
             -   name: 🔍 Check Swift Format
-                run: swiftformat --lint --config ios/.swiftformat --swiftversion 0.55.3 --exclude derived_data ios
+                run: bundle exec fastlane lint
 
     ios-snapshot-test:
         runs-on: macos-15
