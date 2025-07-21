@@ -5,7 +5,7 @@ plugins {
 tvmaniac {
     useKotlinInjectAnvilCompiler()
 
-    optIn("androidx.paging.ExperimentalPagingApi")
+    optIn("androidx.paging.ExperimentalPagingApi", "kotlin.time.ExperimentalTime")
 }
 
 kotlin {
