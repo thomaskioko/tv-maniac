@@ -58,7 +58,7 @@ public class KeyboardHeightManager: ObservableObject {
         }
     }
 
-    @objc private func keyboardWillHide(_ notification: Notification) {
+    @objc private func keyboardWillHide(_: Notification) {
         withAnimation(.easeOut) {
             keyboardHeight = 0
         }

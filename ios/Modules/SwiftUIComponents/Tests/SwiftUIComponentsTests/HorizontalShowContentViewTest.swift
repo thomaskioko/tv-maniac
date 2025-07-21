@@ -16,7 +16,7 @@ class HorizontalShowContentViewViewTest: XCTestCase {
                     inLibrary: false
                 ),
                 .init(
-                    tmdbId: 123346,
+                    tmdbId: 123_346,
                     title: "The Perfect Couple",
                     posterUrl: "",
                     backdropUrl: nil,

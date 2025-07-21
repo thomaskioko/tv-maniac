@@ -80,51 +80,22 @@ platform :ios do
     )
   end
 
-  desc "Run SwiftFormat"
-  lane :format_swift_code do
-    # Using SwiftFormat directly (installed via Homebrew or Swift Package Manager)
-    # See: https://github.com/nicklockwood/SwiftFormat
-    # Use absolute paths to ensure the command works regardless of the working directory
-    project_root = File.expand_path('..', Dir.pwd)
-    ios_dir = File.join(project_root, 'ios')
-    config_file = File.join(ios_dir, '.swiftformat')
-
-    # Verify that the directories and files exist
-    unless Dir.exist?(ios_dir)
-      UI.error("iOS directory not found at #{ios_dir}")
-      next
-    end
-
-    unless File.exist?(config_file)
-      UI.error("SwiftFormat config file not found at #{config_file}")
-      next
-    end
-
-    # Run SwiftFormat with absolute paths
-    sh "swiftformat '#{ios_dir}' --config '#{config_file}' --swiftversion 0.55.3 --exclude derived_data"
+  desc "Run SwiftLint"
+  lane :lint do
+      swiftlint(
+          mode: :lint,
+          raise_if_swiftlint_error: true,
+          config_file: ".swiftlint.yml"
+        )
   end
 
-  desc "Check SwiftFormat without making changes"
+  desc "Format Swift code with SwiftFormat"
+  lane :format_swift_code do
+    sh "cd ../ios && swiftformat . --config ../.swiftformat --swiftversion 5.9 --exclude derived_data"
+  end
+
+  desc "Check Swift code formatting with SwiftFormat"
   lane :check_swift_format do
-    # Using SwiftFormat directly (installed via Homebrew or Swift Package Manager)
-    # See: https://github.com/nicklockwood/SwiftFormat
-    # Use absolute paths to ensure the command works regardless of the working directory
-    project_root = File.expand_path('..', Dir.pwd)
-    ios_dir = File.join(project_root, 'ios')
-    config_file = File.join(ios_dir, '.swiftformat')
-
-    # Verify that the directories and files exist
-    unless Dir.exist?(ios_dir)
-      UI.error("iOS directory not found at #{ios_dir}")
-      next
-    end
-
-    unless File.exist?(config_file)
-      UI.error("SwiftFormat config file not found at #{config_file}")
-      next
-    end
-
-    # Run SwiftFormat with absolute paths
-    sh "swiftformat '#{ios_dir}' --config '#{config_file}' --lint --swiftversion 5.9 --exclude derived_data"
+    sh "cd ../ios && swiftformat . --config ../.swiftformat --lint --swiftversion 5.9 --exclude derived_data"
   end
 end
